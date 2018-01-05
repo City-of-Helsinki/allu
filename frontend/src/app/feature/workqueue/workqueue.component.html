@@ -5,10 +5,12 @@
   <div class="work-queue-action-buttons"
        *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION', 'ROLE_SUPERVISE']">
     <button mat-raised-button type="button" color="primary" [disabled]="selectedApplicationIds.length === 0"
-            class="in-front" (click)="moveSelectedToSelf()">OMAKSI</button>
+            class="in-front" (click)="moveSelectedToSelf()">OMAKSI
+    </button>
 
     <button mat-raised-button type="button" color="primary" [disabled]="selectedApplicationIds.length === 0"
-            class="in-front" (click)="openHandlerModal()">SIIRRÄ</button>
+            class="in-front" (click)="openHandlerModal()">SIIRRÄ
+    </button>
   </div>
   <div class="row">
     <div class="col s12">
@@ -17,9 +19,9 @@
           <mat-tab *ngFor="let tab of tabs">
             <ng-template mat-tab-label>{{['workqueue.tab', tab] | translation}}</ng-template>
             <workqueue-content
-                [applications]="applications"
-                (onSortChange)="sortChanged($event)"
-                (onSelectChange)="selectionChanged($event)">
+              [applications]="applications"
+              (onSortChange)="sortChanged($event)"
+              (onSelectChange)="selectionChanged($event)">
             </workqueue-content>
           </mat-tab>
         </mat-tab-group>

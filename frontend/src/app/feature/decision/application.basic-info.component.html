@@ -7,7 +7,8 @@
         <div>{{['application.type', application.type] | translation}}</div>
       </div>
       <div class="col l6 m12 info-field">
-        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.creationTime' | translation}}</mat-card-subtitle>
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.creationTime' | translation}}
+        </mat-card-subtitle>
         <div>{{application.uiApplicationCreationTime}}</div>
       </div>
       <div class="col l6 m12 info-field">
@@ -28,7 +29,7 @@
       </div>
       <div class="col l6 m12 info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.endTime' | translation}}</mat-card-subtitle>
-        <div>{{application.endTime |  date:'shortDate' }}</div>
+        <div>{{application.endTime | date:'shortDate' }}</div>
       </div>
       <div class="col l6 m12 info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.location' | translation}}</mat-card-subtitle>

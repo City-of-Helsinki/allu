@@ -1,69 +1,74 @@
 <mat-card>
-    <mat-card-title>Sijainti</mat-card-title>
-    <mat-card-content>
-        <div class="row">
-            <div class="col m8">
-                <div class="col m12">
-                    <div class="col m3">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="location.postalAddress.streetAddress" [disabled]="readonly" placeholder="Osoite"/>
-                        </mat-form-field>
-                    </div>
-                    <div class="col m9">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="location.info" [disabled]="readonly" placeholder="Lisätietoja paikasta" />
-                        </mat-form-field>
-                    </div>
-                    <div class="col m10" *ngIf="area">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="area" [disabled]="readonly" placeholder="Alue"/>
-                        </mat-form-field>
-                    </div>
-                    <div class="col m2" *ngIf="area">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="sections" [disabled]="readonly" placeholder="Lohko(t)"/>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="col m12">
-                    <div class="col m3">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="location.uiArea" [disabled]="readonly" placeholder="Alueen pinta-ala" />
-                        </mat-form-field>
-                    </div>
-                    <div class="col m3">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="location.areaOverride" [disabled]="readonly"
-                                   placeholder="Käsittelijän syöttämä pinta-ala" />
-                        </mat-form-field>
-                    </div>
-                    <div class="col m3">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="districtName(location.cityDistrictId) | async"
-                                   [disabled]="readonly" placeholder="Kaupunginosa"/>
-                        </mat-form-field>
-                    </div>
-                    <div class="col m3">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" [ngModel]="districtName(location.cityDistrictIdOverride) | async"
-                                   [disabled]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </div>
-            <div class="col m2 offset-m2">
-                <button mat-raised-button type="button" color="primary" [routerLink]="['/applications', application.id, 'location']">MUOKKAA</button>
-            </div>
-            <div class="col m12">
-                <div class="mapcontainer">
-                    <map [selection]="true" [applicationId]="application.id" [showOnlyApplicationArea]="true"></map>
-                </div>
-            </div>
+  <mat-card-title>Sijainti</mat-card-title>
+  <mat-card-content>
+    <div class="row">
+      <div class="col m8">
+        <div class="col m12">
+          <div class="col m3">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="location.postalAddress.streetAddress" [disabled]="readonly"
+                     placeholder="Osoite"/>
+            </mat-form-field>
+          </div>
+          <div class="col m9">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="location.info" [disabled]="readonly"
+                     placeholder="Lisätietoja paikasta"/>
+            </mat-form-field>
+          </div>
+          <div class="col m10" *ngIf="area">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="area" [disabled]="readonly" placeholder="Alue"/>
+            </mat-form-field>
+          </div>
+          <div class="col m2" *ngIf="area">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="sections" [disabled]="readonly" placeholder="Lohko(t)"/>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row" *ngIf="multipleLocations">
-            <div class="col m12">
-                <stored-locations [readonly]="true"></stored-locations>
-            </div>
+        <div class="col m12">
+          <div class="col m3">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="location.uiArea" [disabled]="readonly"
+                     placeholder="Alueen pinta-ala"/>
+            </mat-form-field>
+          </div>
+          <div class="col m3">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="location.areaOverride" [disabled]="readonly"
+                     placeholder="Käsittelijän syöttämä pinta-ala"/>
+            </mat-form-field>
+          </div>
+          <div class="col m3">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="districtName(location.cityDistrictId) | async"
+                     [disabled]="readonly" placeholder="Kaupunginosa"/>
+            </mat-form-field>
+          </div>
+          <div class="col m3">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" [ngModel]="districtName(location.cityDistrictIdOverride) | async"
+                     [disabled]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
+            </mat-form-field>
+          </div>
         </div>
-    </mat-card-content>
+      </div>
+      <div class="col m2 offset-m2">
+        <button mat-raised-button type="button" color="primary"
+                [routerLink]="['/applications', application.id, 'location']">MUOKKAA
+        </button>
+      </div>
+      <div class="col m12">
+        <div class="mapcontainer">
+          <map [selection]="true" [applicationId]="application.id" [showOnlyApplicationArea]="true"></map>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="multipleLocations">
+      <div class="col m12">
+        <stored-locations [readonly]="true"></stored-locations>
+      </div>
+    </div>
+  </mat-card-content>
 </mat-card>

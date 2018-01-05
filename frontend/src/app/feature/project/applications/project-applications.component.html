@@ -1,58 +1,61 @@
 <div class="row valign-wrapper" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-    <div class="col m6 valign">
-        <a mat-raised-button type="button" color="primary" routerLink="/applications/location" [queryParams]="{relatedProject: project.id}">UUSI</a>
-        <a mat-raised-button type="button" color="primary" disabled>KOPIOI</a>
-        <a mat-raised-button type="button" color="primary" (click)="remove()">POISTA</a>
+  <div class="col m6 valign">
+    <a mat-raised-button type="button" color="primary" routerLink="/applications/location"
+       [queryParams]="{relatedProject: project.id}">UUSI</a>
+    <a mat-raised-button type="button" color="primary" disabled>KOPIOI</a>
+    <a mat-raised-button type="button" color="primary" (click)="remove()">POISTA</a>
+  </div>
+  <div class="col s6 valign-wrapper">
+    <div class="col s2 valign input-field-label">Liitä hakemus:</div>
+    <div class="col s10">
+      <mat-form-field class="input-full-width">
+        <input matInput type="text" [readonly]="readonly"
+               [autocompletion]="matchingApplications"
+               nameField="applicationId"
+               (onSearchChange)="onIdentifierSearchChange($event)"
+               (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
+      </mat-form-field>
     </div>
-    <div class="col s6 valign-wrapper">
-        <div class="col s2 valign input-field-label">Liitä hakemus:</div>
-        <div class="col s10">
-            <mat-form-field class="input-full-width">
-                <input matInput type="text" [readonly]="readonly"
-                       [autocompletion]="matchingApplications"
-                       nameField="applicationId"
-                       (onSearchChange)="onIdentifierSearchChange($event)"
-                       (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
-            </mat-form-field>
-        </div>
-    </div>
+  </div>
 </div>
 <div class="row">
-    <div class="row">
-        <div class=" col s12">
-            <table class="bordered responsive-table header">
-                <thead>
-                <tr>
-                    <th>
-                        <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
-                    </th>
-                    <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
-                    <th>Tunnus</th>
-                    <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
-                    <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
-                    <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
-                    <th>Kaupunginosa</th>
-                    <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let row of applicationRows" class="clickable row-highlight" (click)="goToSummary($event.target.cellIndex, row)">
-                    <td>
-                        <mat-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></mat-checkbox>
-                    </td>
-                    <td>{{row.content.handler?.realName}}</td>
-                    <td>
-                        {{row.content.name}} <br>
-                        <span>{{row.content.id}}</span>
-                    </td>
-                    <td>{{['application.type', row.content.type] | translation}}</td>
-                    <td>{{['application.status', row.content.status] | translation}}</td>
-                    <td>{{row.content.applicant.customer.name}}<br></td>
-                    <td>ei tuettuna</td>
-                    <td>{{ row.content.startTime | date:'shortDate' }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+  <div class="row">
+    <div class=" col s12">
+      <table class="bordered responsive-table header">
+        <thead>
+        <tr>
+          <th>
+            <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
+          </th>
+          <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
+          <th>Tunnus</th>
+          <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
+          <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
+          <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija
+          </th>
+          <th>Kaupunginosa</th>
+          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of applicationRows" class="clickable row-highlight"
+            (click)="goToSummary($event.target.cellIndex, row)">
+          <td>
+            <mat-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></mat-checkbox>
+          </td>
+          <td>{{row.content.handler?.realName}}</td>
+          <td>
+            {{row.content.name}} <br>
+            <span>{{row.content.id}}</span>
+          </td>
+          <td>{{['application.type', row.content.type] | translation}}</td>
+          <td>{{['application.status', row.content.status] | translation}}</td>
+          <td>{{row.content.applicant.customer.name}}<br></td>
+          <td>ei tuettuna</td>
+          <td>{{ row.content.startTime | date:'shortDate' }}</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>

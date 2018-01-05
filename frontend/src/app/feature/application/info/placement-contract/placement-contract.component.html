@@ -1,105 +1,111 @@
-<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)" *ngIf="applicationChanges | async as application">
-    <div class="row">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
-                  [readonly]="readonly" [showRepresentative]="true"></customer>
-    </div>
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)"
+      *ngIf="applicationChanges | async as application">
+  <div class="row">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+              [readonly]="readonly" [showRepresentative]="true"></customer>
+  </div>
 
-    <div class="row" *ngIf="hasRepresentative">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative" [readonly]="readonly"></customer>
-    </div>
+  <div class="row" *ngIf="hasRepresentative">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
+              [readonly]="readonly"></customer>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-        <mat-card>
-            <mat-card-title>Sijoitussopimuksen tiedot</mat-card-title>
-            <mat-card-content>
-                <div class="row form-group">
-                    <div class="col m6">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" formControlName="diaryNumber" placeholder="Diaarinumero"/>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div formGroupName="validityTimes">
-                        <div class="col s3">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                       [matDatepicker]="startTimePicker"/>
-                                <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                <mat-datepicker #startTimePicker></mat-datepicker>
-                                <mat-hint>
-                                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                                        {{'application.common.field.validityStartTimeMissing' | translation}}
-                                    </field-error>
-                                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                                        {{'application.common.field.validityStartBeforeEnd' | translation}}
-                                    </field-error>
-                                </mat-hint>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s3">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                       [matDatepicker]="endTimePicker"/>
-                                <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                <mat-datepicker #endTimePicker></mat-datepicker>
-                                <mat-hint>
-                                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                                        {{'application.common.field.validityEndTimeMissing' | translation}}
-                                    </field-error>
-                                </mat-hint>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col m12">
-                        <mat-form-field class="input-full-width">
-                            <textarea matInput matTextareaAutosize formControlName="additionalInfo" placeholder="Työn kuvaus"></textarea>
-                        </mat-form-field>
-                    </div>
-                    <div class="col m12">
-                        <mat-form-field class="input-full-width">
-                            <textarea matInput matTextareaAutosize formControlName="generalTerms" placeholder="Yleiset ehdot"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
+  <div class="row">
+    <div class="col m12">
+      <mat-card>
+        <mat-card-title>Sijoitussopimuksen tiedot</mat-card-title>
+        <mat-card-content>
+          <div class="row form-group">
+            <div class="col m6">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="diaryNumber" placeholder="Diaarinumero"/>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div formGroupName="validityTimes">
+              <div class="col s3">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                         [matDatepicker]="startTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="startTimePicker"
+                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #startTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                      {{'application.common.field.validityStartTimeMissing' | translation}}
+                    </field-error>
+                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                      {{'application.common.field.validityStartBeforeEnd' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col s3">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                         [matDatepicker]="endTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #endTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                      {{'application.common.field.validityEndTimeMissing' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col m12">
+              <mat-form-field class="input-full-width">
+                <textarea matInput matTextareaAutosize formControlName="additionalInfo"
+                          placeholder="Työn kuvaus"></textarea>
+              </mat-form-field>
+            </div>
+            <div class="col m12">
+              <mat-form-field class="input-full-width">
+                <textarea matInput matTextareaAutosize formControlName="generalTerms"
+                          placeholder="Yleiset ehdot"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
-    </div>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-            <pricing-info [form]="applicationForm"></pricing-info>
-        </div>
+  <div class="row">
+    <div class="col m12">
+      <pricing-info [form]="applicationForm"></pricing-info>
     </div>
+  </div>
 
-    <div class="row" *ngIf="readonly">
-        <div class="col m12">
-            <location-details [application]="application" [readonly]="readonly"></location-details>
-        </div>
+  <div class="row" *ngIf="readonly">
+    <div class="col m12">
+      <location-details [application]="application" [readonly]="readonly"></location-details>
     </div>
+  </div>
 
-    <div class="row" *ngIf="showTerms">
-        <div class="col s12">
-            <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
-        </div>
+  <div class="row" *ngIf="showTerms">
+    <div class="col s12">
+      <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms"
+             [readonly]="readonly"></terms>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col s12">
-            <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
-        </div>
+  <div class="row">
+    <div class="col s12">
+      <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col s12">
-            <application-actions
-                [readonly]="readonly"
-                [form]="applicationForm"
-                [submitPending]="submitPending"></application-actions>
-        </div>
+  <div class="row">
+    <div class="col s12">
+      <application-actions
+        [readonly]="readonly"
+        [form]="applicationForm"
+        [submitPending]="submitPending"></application-actions>
     </div>
+  </div>
 </form>

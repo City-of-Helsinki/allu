@@ -1,67 +1,85 @@
 <table class="responsive-table">
-    <thead>
-    <tr>
-        <th>
-            <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
-        </th>
-        <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' | translation}}</th>
-        <th sortBy="applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicationId' | translation}}</th>
-        <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.type.title' | translation}}</th>
-        <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.status.title' | translation}}</th>
-        <th>{{'project.title' | translation}}</th>
-        <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicant' | translation}}</th>
-        <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.streetAddress' | translation}}</th>
-        <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.cityDistrict' | translation}}</th>
-        <th sortBy="creationTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.creationTime' | translation}}</th>
-        <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.startTime' | translation}}</th>
-        <th>{{'application.comments' | translation}}</th>
-    </tr>
-    </thead>
-    <tbody>
-    <ng-container *ngFor="let row of applicationRows; let i=index;">
-        <tr [class.bottom-row]="row.application.applicationTags.length === 0"
-            [class.row-highlight]="i===hoveredRowIndex" (click)="goToApplication($event.target.cellIndex, row.application)"
-            (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
-            <td>
-                <mat-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></mat-checkbox>
-            </td>
-            <td class="clickable">{{row.application.handler?.realName}}</td>
-            <td class="clickable">{{row.application.applicationId}}</td>
-            <td class="clickable">{{['application.type', row.application.type] | translation}}</td>
-            <td class="clickable status-text">{{['application.status', row.application.status] | translation}}</td>
-            <td class="clickable">
-                {{row.application.project?.name}} <br>
-                <span>{{row.application.project?.id}}</span>
-            </td>
-            <td class="clickable">{{row.application.applicant.customer.name}}</td>
-            <td class="clickable">{{row.application.firstLocation?.postalAddress?.streetAddress}}</td>
-            <td class="clickable">{{districtName(row.application.firstLocation.effectiveCityDistrictId) | async}}</td>
-            <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>
-            <td class="clickable">{{row.application.uiStartTime}}</td>
-            <td class="clickable">
+  <thead>
+  <tr>
+    <th>
+      <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
+    </th>
+    <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' |
+      translation}}
+    </th>
+    <th sortBy="applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicationId' |
+      translation}}
+    </th>
+    <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.type.title' | translation}}
+    </th>
+    <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.status.title' |
+      translation}}
+    </th>
+    <th>{{'project.title' | translation}}</th>
+    <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">
+      {{'application.applicant' | translation}}
+    </th>
+    <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">
+      {{'application.streetAddress' | translation}}
+    </th>
+    <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">
+      {{'application.cityDistrict' | translation}}
+    </th>
+    <th sortBy="creationTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.creationTime' |
+      translation}}
+    </th>
+    <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.startTime' |
+      translation}}
+    </th>
+    <th>{{'application.comments' | translation}}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <ng-container *ngFor="let row of applicationRows; let i=index;">
+    <tr [class.bottom-row]="row.application.applicationTags.length === 0"
+        [class.row-highlight]="i===hoveredRowIndex" (click)="goToApplication($event.target.cellIndex, row.application)"
+        (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
+      <td>
+        <mat-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></mat-checkbox>
+      </td>
+      <td class="clickable">{{row.application.handler?.realName}}</td>
+      <td class="clickable">{{row.application.applicationId}}</td>
+      <td class="clickable">{{['application.type', row.application.type] | translation}}</td>
+      <td class="clickable status-text">{{['application.status', row.application.status] | translation}}</td>
+      <td class="clickable">
+        {{row.application.project?.name}} <br>
+        <span>{{row.application.project?.id}}</span>
+      </td>
+      <td class="clickable">{{row.application.applicant.customer.name}}</td>
+      <td class="clickable">{{row.application.firstLocation?.postalAddress?.streetAddress}}</td>
+      <td class="clickable">{{districtName(row.application.firstLocation.effectiveCityDistrictId) | async}}</td>
+      <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>
+      <td class="clickable">{{row.application.uiStartTime}}</td>
+      <td class="clickable">
                     <span *ngIf="row.application.comments.length">
-                        <button mat-raised-button type="button" color="primary" (click)="showComments(row.application.id)">
+                        <button mat-raised-button type="button" color="primary"
+                                (click)="showComments(row.application.id)">
                           {{'common.button.show' | translation | uppercase}}
                         </button>
                     </span>
-            </td>
-        </tr>
-        <tr *ngIf="row.application.applicationTags.length"
-            class="bottom-row clickable" [class.row-highlight]="i===hoveredRowIndex"
-            (click)="goToApplication($event.target.cellIndex, row.application)"
-            (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
-            <td></td>
-            <td colspan="1" class="row-title">{{'application.tags' | translation}}</td>
-            <td colspan="10">
-                <mat-chip-list>
-                    <mat-chip *ngFor="let tag of row.application.applicationTags" [selected]="tagSelected(tag.type)"
-                             class="accent-chip slim-chip" color="accent">
-                        {{['application.tag.type', tag.type] | translation}}
-                    </mat-chip>
-                </mat-chip-list>
-            </td>
-        </tr>
-    </ng-container>
-    </tbody>
+      </td>
+    </tr>
+    <tr *ngIf="row.application.applicationTags.length"
+        class="bottom-row clickable" [class.row-highlight]="i===hoveredRowIndex"
+        (click)="goToApplication($event.target.cellIndex, row.application)"
+        (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
+      <td></td>
+      <td colspan="1" class="row-title">{{'application.tags' | translation}}</td>
+      <td colspan="10">
+        <mat-chip-list>
+          <mat-chip *ngFor="let tag of row.application.applicationTags" [selected]="tagSelected(tag.type)"
+                    class="accent-chip slim-chip" color="accent">
+            {{['application.tag.type', tag.type] | translation}}
+          </mat-chip>
+        </mat-chip-list>
+      </td>
+    </tr>
+  </ng-container>
+  </tbody>
 </table>
 

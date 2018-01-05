@@ -7,7 +7,8 @@
         </button>
       </ng-container>
       <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-        <button *ngIf="showEdit" mat-raised-button type="button" color="primary" [routerLink]="['/applications', applicationId, 'edit']">
+        <button *ngIf="showEdit" mat-raised-button type="button" color="primary"
+                [routerLink]="['/applications', applicationId, 'edit']">
           {{'common.button.edit' | translation | uppercase}}
         </button>
         <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
@@ -38,7 +39,8 @@
           {{'application.button.toHandling' | translation | uppercase}}
         </button>
       </ng-container>
-      <button *ngIf="showDecision" [disabled]="decisionDisabled" mat-raised-button type="button" color="primary" (click)="toDecisionmaking()">
+      <button *ngIf="showDecision" [disabled]="decisionDisabled" mat-raised-button type="button" color="primary"
+              (click)="toDecisionmaking()">
         {{'application.button.toDecision' | translation | uppercase}}
       </button>
     </div>

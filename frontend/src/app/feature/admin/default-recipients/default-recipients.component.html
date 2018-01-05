@@ -1,11 +1,11 @@
 <div class="main-content">
-    <mat-accordion [multi]="true" class="recipient-group">
-        <mat-expansion-panel *ngFor="let type of applicationTypes">
-            <mat-expansion-panel-header>
-                {{['application.type', type] | translation}}
-                ({{itemCountByType(type) | async}})
-            </mat-expansion-panel-header>
-            <recipients-by-type [type]="type"></recipients-by-type>
-        </mat-expansion-panel>
-    </mat-accordion>
+  <mat-accordion [multi]="true" class="recipient-group">
+    <mat-expansion-panel *ngFor="let type of applicationTypes">
+      <mat-expansion-panel-header>
+        {{['application.type', type] | translation}}
+        ({{itemCountByType(type) | async}})
+      </mat-expansion-panel-header>
+      <recipients-by-type [type]="type"></recipients-by-type>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>

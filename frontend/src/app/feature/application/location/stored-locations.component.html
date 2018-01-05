@@ -1,34 +1,36 @@
 <h2 class="mat-card-title">Tallennetut alueet</h2>
 <table class="bordered responsive-table">
-    <thead>
-    <tr>
-        <th></th>
-        <th>Tunniste</th>
-        <th>Aloitus</th>
-        <th>Lopetus</th>
-        <th>Alue</th>
-        <th>Kaupunginosa</th>
-        <th>Lisätiedot</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let location of locations | async; let i = index"
-        [class.selected]="i===locationState.editIndex" class="clickable row-highlight"
-        (click)="editLocation(i)">
-        <th>
-            <button type="button" *ngIf="!readonly" mat-icon-button (click)="remove()"><mat-icon>clear</mat-icon></button>
-            <mat-icon class="icon-middle" *ngIf="location.underpass"
-                     [matTooltip]="'location.underpass' | translation"
-                     matTooltipPosition="above">
-                call_missed_outgoing
-            </mat-icon>
-        </th>
-        <td>{{location.locationKey}}</td>
-        <td>{{location.uiStartTime}}</td>
-        <td>{{location.uiEndTime}}</td>
-        <td>{{location.effectiveUiArea}}</td>
-        <td>{{districtName(location.effectiveCityDistrictId) | async}}</td>
-        <td>{{location.info}}</td>
-    </tr>
-    </tbody>
+  <thead>
+  <tr>
+    <th></th>
+    <th>Tunniste</th>
+    <th>Aloitus</th>
+    <th>Lopetus</th>
+    <th>Alue</th>
+    <th>Kaupunginosa</th>
+    <th>Lisätiedot</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let location of locations | async; let i = index"
+      [class.selected]="i===locationState.editIndex" class="clickable row-highlight"
+      (click)="editLocation(i)">
+    <th>
+      <button type="button" *ngIf="!readonly" mat-icon-button (click)="remove()">
+        <mat-icon>clear</mat-icon>
+      </button>
+      <mat-icon class="icon-middle" *ngIf="location.underpass"
+                [matTooltip]="'location.underpass' | translation"
+                matTooltipPosition="above">
+        call_missed_outgoing
+      </mat-icon>
+    </th>
+    <td>{{location.locationKey}}</td>
+    <td>{{location.uiStartTime}}</td>
+    <td>{{location.uiEndTime}}</td>
+    <td>{{location.effectiveUiArea}}</td>
+    <td>{{districtName(location.effectiveCityDistrictId) | async}}</td>
+    <td>{{location.info}}</td>
+  </tr>
+  </tbody>
 </table>

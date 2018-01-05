@@ -1,11 +1,11 @@
 <div class="row content-main">
-    <div *ngIf="pdfLoaded" class="col s8 content-pdf">
-        <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
-            <p>Päätöksen näyttäminen ei onnistu selaimellasi. Voit ladata sen <a [href]="pdfDownloadUrl">tästä</a></p>
-        </object>
-    </div>
-    <div *ngIf="!pdfLoaded" class="col s8 content-placeholder">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        <img src="assets/images/decision-placeholder.png" alt="Decision placeholder"/>
-    </div>
+  <div *ngIf="pdfLoaded" class="col s8 content-pdf">
+    <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
+      <p>Päätöksen näyttäminen ei onnistu selaimellasi. Voit ladata sen <a [href]="pdfDownloadUrl">tästä</a></p>
+    </object>
+  </div>
+  <div *ngIf="!pdfLoaded" class="col s8 content-placeholder">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <img src="assets/images/decision-placeholder.png" alt="Decision placeholder"/>
+  </div>
 </div>

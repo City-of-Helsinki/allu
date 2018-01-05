@@ -12,7 +12,7 @@
              [matAutocomplete]="addressSearch"/>
       <mat-autocomplete #addressSearch="matAutocomplete">
         <mat-option *ngFor="let address of matchingAddresses | async"
-                   [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
+                    [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
           {{ address.uiStreetAddress }}
         </mat-option>
       </mat-autocomplete>
@@ -29,14 +29,15 @@
       </input-box>
       <mat-autocomplete #addressSearch="matAutocomplete">
         <mat-option *ngFor="let address of matchingAddresses | async"
-                   [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
+                    [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
           {{ address.uiStreetAddress }}
         </mat-option>
       </mat-autocomplete>
     </div>
     <div class="col s2">
       <input-box class="input-raised">
-        <input inputBoxInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä" [matDatepicker]="startDatePicker"/>
+        <input inputBoxInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
+               [matDatepicker]="startDatePicker"/>
         <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #startDatePicker></mat-datepicker>
         <field-error [form]="searchForm" field="startDate" hasError="required">
@@ -46,7 +47,8 @@
     </div>
     <div class="col s2">
       <input-box class="input-raised">
-        <input inputBoxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä" [matDatepicker]="endDatePicker"/>
+        <input inputBoxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
+               [matDatepicker]="endDatePicker"/>
         <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #endDatePicker></mat-datepicker>
         <field-error [form]="searchForm" field="endDate" hasError="required">
@@ -65,7 +67,7 @@
                [matAutocomplete]="addressSearch"/>
         <mat-autocomplete #addressSearch="matAutocomplete">
           <mat-option *ngFor="let address of matchingAddresses | async"
-                     [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
+                      [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
             {{ address.uiStreetAddress }}
           </mat-option>
         </mat-autocomplete>

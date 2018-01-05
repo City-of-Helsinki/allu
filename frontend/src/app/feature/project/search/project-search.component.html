@@ -1,89 +1,91 @@
 <div class="main-content">
-    <div class="search-bar">
-        <h1>HAKU</h1>
-        <form [formGroup]="queryForm">
-            <div class="row">
-                <div class="col m3">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="ownerName" placeholder="Hankkeen omistaja"/>
-                    </mat-form-field>
-                </div>
-                <div class="col m2">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="id" placeholder="Hankkeen tunnus"/>
-                    </mat-form-field>
-                </div>
-                <div class="col m2">
-                    <mat-form-field class="input-full-width">
-                        <mat-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
-                            <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="col m1">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="startTime" placeholder="Alkupvm"
-                               [matDatepicker]="startTimePicker"/>
-                        <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
-                        <mat-datepicker #startTimePicker></mat-datepicker>
-                    </mat-form-field>
-                </div>
-                <div class="col m1">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="endTime" placeholder="Loppupvm"
-                               [matDatepicker]="endTimePicker"/>
-                        <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
-                        <mat-datepicker #endTimePicker></mat-datepicker>
-                    </mat-form-field>
-                </div>
-                <div class="col m3">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="creator" placeholder="Hankkeen lisääjä"/>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col m3">
-                    <mat-checkbox formControlName="onlyActive">Vain aktiiviset</mat-checkbox>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col m12 s12">
-                    <button (click)="search()" mat-raised-button type="button" color="primary">HAE</button>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="row">
-        <div class=" col s12">
-            <table class="bordered responsive-table">
-                <thead>
-                <tr>
-                    <th>Lisääjä</th>
-                    <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
-                    <th sortBy="ownerName" [currentSort]="sort" (onSortChange)="sortBy($event)">Omistaja</th>
-                    <th>Aktiivinen</th>
-                    <th>Kaupunginosa</th>
-                    <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Alku</th>
-                    <th sortBy="endTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Loppu</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let project of projects" class="clickable row-highlight"
-                    (click)="goToSummary(project)">
-                    <td>-</td>
-                    <td>{{project.id}}</td>
-                    <td>{{project.ownerName}}</td>
-                    <td>
-                        <span *ngIf="project.active">AKTIIVINEN</span>
-                        <span *ngIf="!project.active">INAKTIIVINEN</span>
-                    </td>
-                    <td>{{districtNames(project.cityDistricts) | async | commaSeparated}}</td>
-                    <td>{{project.startTime | date:'shortDate'}}</td>
-                    <td>{{project.endTime | date:'shortDate'}}</td>
-                </tr>
-                </tbody>
-            </table>
+  <div class="search-bar">
+    <h1>HAKU</h1>
+    <form [formGroup]="queryForm">
+      <div class="row">
+        <div class="col m3">
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="ownerName" placeholder="Hankkeen omistaja"/>
+          </mat-form-field>
         </div>
+        <div class="col m2">
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="id" placeholder="Hankkeen tunnus"/>
+          </mat-form-field>
+        </div>
+        <div class="col m2">
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa"
+                        class="input-full-width">
+              <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col m1">
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="startTime" placeholder="Alkupvm"
+                   [matDatepicker]="startTimePicker"/>
+            <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startTimePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col m1">
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="endTime" placeholder="Loppupvm"
+                   [matDatepicker]="endTimePicker"/>
+            <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endTimePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col m3">
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="creator" placeholder="Hankkeen lisääjä"/>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col m3">
+          <mat-checkbox formControlName="onlyActive">Vain aktiiviset</mat-checkbox>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col m12 s12">
+          <button (click)="search()" mat-raised-button type="button" color="primary">HAE</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <div class=" col s12">
+      <table class="bordered responsive-table">
+        <thead>
+        <tr>
+          <th>Lisääjä</th>
+          <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
+          <th sortBy="ownerName" [currentSort]="sort" (onSortChange)="sortBy($event)">Omistaja</th>
+          <th>Aktiivinen</th>
+          <th>Kaupunginosa</th>
+          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Alku</th>
+          <th sortBy="endTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Loppu</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let project of projects" class="clickable row-highlight"
+            (click)="goToSummary(project)">
+          <td>-</td>
+          <td>{{project.id}}</td>
+          <td>{{project.ownerName}}</td>
+          <td>
+            <span *ngIf="project.active">AKTIIVINEN</span>
+            <span *ngIf="!project.active">INAKTIIVINEN</span>
+          </td>
+          <td>{{districtNames(project.cityDistricts) | async | commaSeparated}}</td>
+          <td>{{project.startTime | date:'shortDate'}}</td>
+          <td>{{project.endTime | date:'shortDate'}}</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>

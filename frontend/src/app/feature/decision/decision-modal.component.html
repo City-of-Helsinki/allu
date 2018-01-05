@@ -24,7 +24,8 @@
       </div>
       <div fxFlex="100" *ngIf="emailDistribution">
         <mat-form-field class="input-full-width">
-          <textarea matInput matTextareaAutosize formControlName="emailMessage" placeholder="Sähköpostiviesti"></textarea>
+          <textarea matInput matTextareaAutosize formControlName="emailMessage"
+                    placeholder="Sähköpostiviesti"></textarea>
         </mat-form-field>
       </div>
       <div fxFlex="100" *ngIf="status !== 'RETURNED_TO_PREPARATION'">

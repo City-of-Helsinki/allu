@@ -1,49 +1,61 @@
 <div class="search-bar">
-    <h1>{{'supervisionWorkqueue.title' | translation}}</h1>
-    <form [formGroup]="queryForm">
-        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutWrap fxLayoutGap="0.75rem">
-            <div fxFlex="15">
-                <mat-form-field class="input-full-width">
-                    <mat-select formControlName="taskTypes" [multiple]="true" [placeholder]="'supervisionWorkqueue.filter.taskTypes' | translation">
-                        <mat-option *ngFor="let type of taskTypes" [value]="type">{{['supervision.task.type', type] | translation}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div fxFlex="15">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="applicationId" [placeholder]="'supervisionWorkqueue.filter.applicationId' | translation">
-                </mat-form-field>
-            </div>
-            <div fxFlex="15">
-                <mat-form-field class="input-full-width">
-                    <mat-select formControlName="applicationStatus" [multiple]="true" [placeholder]="'supervisionWorkqueue.filter.applicationStatus' | translation">
-                        <mat-option *ngFor="let status of applicationStatusTypes" [value]="status">{{['application.status', status] | translation}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div fxFlex="15">
-                <mat-form-field class="input-full-width">
-                    <mat-select formControlName="applicationTypes" [multiple]="true" [placeholder]="'supervisionWorkqueue.filter.applicationType' | translation">
-                        <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div fxFlex="10">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="after" [placeholder]="'supervisionWorkqueue.filter.after' | translation"
-                           [matDatepicker]="afterPicker"/>
-                    <mat-datepicker-toggle matSuffix [for]="afterPicker"></mat-datepicker-toggle>
-                    <mat-datepicker #afterPicker></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div fxFlex="10">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="before" [placeholder]="'supervisionWorkqueue.filter.before' | translation"
-                           [matDatepicker]="beforePicker"/>
-                    <mat-datepicker-toggle matSuffix [for]="beforePicker"></mat-datepicker-toggle>
-                    <mat-datepicker #beforePicker></mat-datepicker>
-                </mat-form-field>
-            </div>
-        </div>
-    </form>
+  <h1>{{'supervisionWorkqueue.title' | translation}}</h1>
+  <form [formGroup]="queryForm">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutWrap fxLayoutGap="0.75rem">
+      <div fxFlex="15">
+        <mat-form-field class="input-full-width">
+          <mat-select formControlName="taskTypes" [multiple]="true"
+                      [placeholder]="'supervisionWorkqueue.filter.taskTypes' | translation">
+            <mat-option *ngFor="let type of taskTypes" [value]="type">{{['supervision.task.type', type] |
+              translation}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxFlex="15">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="applicationId"
+                 [placeholder]="'supervisionWorkqueue.filter.applicationId' | translation">
+        </mat-form-field>
+      </div>
+      <div fxFlex="15">
+        <mat-form-field class="input-full-width">
+          <mat-select formControlName="applicationStatus" [multiple]="true"
+                      [placeholder]="'supervisionWorkqueue.filter.applicationStatus' | translation">
+            <mat-option *ngFor="let status of applicationStatusTypes" [value]="status">{{['application.status', status]
+              | translation}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxFlex="15">
+        <mat-form-field class="input-full-width">
+          <mat-select formControlName="applicationTypes" [multiple]="true"
+                      [placeholder]="'supervisionWorkqueue.filter.applicationType' | translation">
+            <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] |
+              translation}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxFlex="10">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="after"
+                 [placeholder]="'supervisionWorkqueue.filter.after' | translation"
+                 [matDatepicker]="afterPicker"/>
+          <mat-datepicker-toggle matSuffix [for]="afterPicker"></mat-datepicker-toggle>
+          <mat-datepicker #afterPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div fxFlex="10">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="before"
+                 [placeholder]="'supervisionWorkqueue.filter.before' | translation"
+                 [matDatepicker]="beforePicker"/>
+          <mat-datepicker-toggle matSuffix [for]="beforePicker"></mat-datepicker-toggle>
+          <mat-datepicker #beforePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
 </div>

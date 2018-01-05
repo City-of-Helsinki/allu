@@ -1,12 +1,12 @@
 <mat-list>
-    <ng-container *ngFor="let application of applications | async">
-        <mat-divider></mat-divider>
-        <mat-list-item  (click)="jobClick(application)" >
-            <h1 matLine class="clickable">{{application.name}}</h1>
-            <div matLine>{{['application.type', application.type] | translation}}</div>
-            <div matLine>{{['application.status', application.status] | translation}}</div>
-            <div matLine>{{application.uiStartTime}} - {{application.uiEndTime}}</div>
-        </mat-list-item>
-    </ng-container>
+  <ng-container *ngFor="let application of applications | async">
+    <mat-divider></mat-divider>
+    <mat-list-item (click)="jobClick(application)">
+      <h1 matLine class="clickable">{{application.name}}</h1>
+      <div matLine>{{['application.type', application.type] | translation}}</div>
+      <div matLine>{{['application.status', application.status] | translation}}</div>
+      <div matLine>{{application.uiStartTime}} - {{application.uiEndTime}}</div>
+    </mat-list-item>
+  </ng-container>
 </mat-list>
 

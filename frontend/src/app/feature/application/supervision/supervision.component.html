@@ -1,23 +1,23 @@
 <h1 class="content-header">{{'supervision.title' | translation}}</h1>
 <div class="content">
-    <div fxLayout="row" fxLayout.sm=" column" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-        <div fxFlex="100%">
-            <div class="file-drop-zone">
-                <button mat-raised-button type="button" color="primary" (click)="addNew()">
-                    {{'supervision.addTask' | translation}}
-                    <mat-icon>search</mat-icon>
-                </button>
-            </div>
-        </div>
+  <div fxLayout="row" fxLayout.sm=" column" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+    <div fxFlex="100%">
+      <div class="file-drop-zone">
+        <button mat-raised-button type="button" color="primary" (click)="addNew()">
+          {{'supervision.addTask' | translation}}
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
     </div>
+  </div>
 
-    <ul>
-        <li *ngFor="let task of supervisionTasks.controls; let i = index;">
-            <div fxLayout="row" fxLayout.sm="column">
-                <div fxFlex="100%">
-                    <supervision-task [form]="task" [supervisors]="supervisors" (onRemove)="remove(i)"></supervision-task>
-                </div>
-            </div>
-        </li>
-    </ul>
+  <ul>
+    <li *ngFor="let task of supervisionTasks.controls; let i = index;">
+      <div fxLayout="row" fxLayout.sm="column">
+        <div fxFlex="100%">
+          <supervision-task [form]="task" [supervisors]="supervisors" (onRemove)="remove(i)"></supervision-task>
+        </div>
+      </div>
+    </li>
+  </ul>
 </div>

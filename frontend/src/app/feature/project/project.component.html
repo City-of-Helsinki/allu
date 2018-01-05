@@ -1,17 +1,17 @@
 <div class="row search-bar">
-    <h1>
+  <h1>
         <span *ngIf="project">
             <span>HANKE {{project.id}}: {{project.name}} -</span>
             <span *ngIf="project.active">AKTIIVINEN</span>
             <span *ngIf="!project.active">INAKTIIVINEN</span>
         </span>
-    </h1>
+  </h1>
 </div>
 <div class="row">
-    <div class="col m1">
-        <sidebar [items]="sidebarItems"></sidebar>
-    </div>
-    <div class="col m11">
-        <router-outlet></router-outlet>
-    </div>
+  <div class="col m1">
+    <sidebar [items]="sidebarItems"></sidebar>
+  </div>
+  <div class="col m11">
+    <router-outlet></router-outlet>
+  </div>
 </div>

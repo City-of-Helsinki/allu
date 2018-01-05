@@ -1,151 +1,162 @@
 <div class="main-content">
-    <form [formGroup]="projectInfoForm" id="projectInfoForm" (ngSubmit)="onSubmit(projectInfoForm.value)">
-        <div class="row">
-            <div class="col m6">
-                <mat-card>
-                    <mat-card-title>Hankkeen perustiedot</mat-card-title>
-                    <mat-card-content>
-                        <div class="row form-group">
-                            <div class="col m6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="ownerName" placeholder="Hankkeen omistaja"/>
-                                    <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{'project.field.ownerNameMissing' | translation}}</field-error>
-                                    </mat-hint>
-                                </mat-form-field>
+  <form [formGroup]="projectInfoForm" id="projectInfoForm" (ngSubmit)="onSubmit(projectInfoForm.value)">
+    <div class="row">
+      <div class="col m6">
+        <mat-card>
+          <mat-card-title>Hankkeen perustiedot</mat-card-title>
+          <mat-card-content>
+            <div class="row form-group">
+              <div class="col m6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="ownerName" placeholder="Hankkeen omistaja"/>
+                  <mat-hint>
+                    <field-error [form]="projectInfoForm" field="ownerName" hasError="required">
+                      {{'project.field.ownerNameMissing' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
 
-                            </div>
-                            <div class="col m6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="contactName" placeholder="Yhteyshenkilö"/>
-                                    <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="contactName" hasError="required">
-                                            {{'project.field.contactNameMissing' | translation}}
-                                        </field-error>
-                                    </mat-hint>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col m6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="email" placeholder="Sähköposti"/>
-                                    <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="email" hasError="required">{{'common.field.emailInvalid' | translation}}</field-error>
-                                    </mat-hint>
-                                </mat-form-field>
-                            </div>
-                            <div class="col m6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="phone" placeholder="Puhelinnumero"/>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col m6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="name" placeholder="Hankkeen nimi"/>
-                                    <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="name" hasError="required">{{'project.field.nameMissing' | translation}}</field-error>
-                                    </mat-hint>
-                                </mat-form-field>
-                            </div>
-                            <div class="col m6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="customerReference" placeholder="Asiakkaan viite/työnumero"/>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col m12">
-                                <mat-form-field class="input-full-width">
-                                    <textarea matInput matTextareaAutosize formControlName="additionalInfo" placeholder="Lisätietoja"></textarea>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
+              </div>
+              <div class="col m6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="contactName" placeholder="Yhteyshenkilö"/>
+                  <mat-hint>
+                    <field-error [form]="projectInfoForm" field="contactName" hasError="required">
+                      {{'project.field.contactNameMissing' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
             </div>
-        </div>
-    </form>
-
-    <div class="row">
-        <div class="col m12">
-            <mat-card>
-                <mat-card-title>Liittyvät hakemukset</mat-card-title>
-                <mat-card-content>
-                    <div class="row form-group">
-                        <div class="col m3">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text"
-                                       [autocompletion]="matchingApplications"
-                                       nameField="applicationId"
-                                       (onSearchChange)="onIdentifierSearchChange($event)"
-                                       (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="row">
-                            <div class=" col s12">
-                                <table class="bordered responsive-table">
-                                    <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Käsittelijä</th>
-                                        <th>Tunnus</th>
-                                        <th>Tyyppi</th>
-                                        <th>Tila</th>
-                                        <th>Hakija</th>
-                                        <th>Kaupunginosa</th>
-                                        <th>Aloitus</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr *ngFor="let application of applications" class="clickable row-highlight">
-                                        <td (click)="remove(application.id)"><i class="material-icons">remove</i></td>
-                                        <td>{{application.handler?.realName}}</td>
-                                        <td>
-                                            {{application.name}} <br>
-                                            <span>{{application.id}}</span>
-                                        </td>
-                                        <td>{{['application.type', application.type] | translation}}</td>
-                                        <td>{{['application.status', application.status] | translation}}</td>
-                                        <td>{{application.customer.name}}<br></td>
-                                        <td>ei tuettuna</td>
-                                        <td>{{ application.startTime | date:'shortDate' }}</td>
-                                        <td></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>
+            <div class="row form-group">
+              <div class="col m6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="email" placeholder="Sähköposti"/>
+                  <mat-hint>
+                    <field-error [form]="projectInfoForm" field="email" hasError="required">
+                      {{'common.field.emailInvalid' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col m6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="phone" placeholder="Puhelinnumero"/>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col m6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="name" placeholder="Hankkeen nimi"/>
+                  <mat-hint>
+                    <field-error [form]="projectInfoForm" field="name" hasError="required">{{'project.field.nameMissing'
+                      | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col m6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="customerReference"
+                         placeholder="Asiakkaan viite/työnumero"/>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col m12">
+                <mat-form-field class="input-full-width">
+                  <textarea matInput matTextareaAutosize formControlName="additionalInfo"
+                            placeholder="Lisätietoja"></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
+  </form>
 
-    <div class="row">
-        <div class="col m12">
-            <mat-card>
-                <mat-card-title>Tallennus</mat-card-title>
-                <mat-card-content>
-                    <div class="row">
-                        <div class="col m2">
-                            <button type="submit" form="projectInfoForm" [disabled]="!projectInfoForm.valid"
-                                    mat-raised-button color="primary">TALLENNA</button>
-                        </div>
-                        <div class="col m2">
-                            <button *ngIf="!projectInfoForm.value.id" mat-raised-button type="button" color="primary"
-                                    [routerLink]="['/projectSearch']">PERUUTA</button>
-
-                            <button *ngIf="projectInfoForm.value.id" mat-raised-button type="button" color="primary"
-                                    [routerLink]="['/projects', projectInfoForm.value.id]">PERUUTA</button>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>
+  <div class="row">
+    <div class="col m12">
+      <mat-card>
+        <mat-card-title>Liittyvät hakemukset</mat-card-title>
+        <mat-card-content>
+          <div class="row form-group">
+            <div class="col m3">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text"
+                       [autocompletion]="matchingApplications"
+                       nameField="applicationId"
+                       (onSearchChange)="onIdentifierSearchChange($event)"
+                       (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row">
+              <div class=" col s12">
+                <table class="bordered responsive-table">
+                  <thead>
+                  <tr>
+                    <th></th>
+                    <th>Käsittelijä</th>
+                    <th>Tunnus</th>
+                    <th>Tyyppi</th>
+                    <th>Tila</th>
+                    <th>Hakija</th>
+                    <th>Kaupunginosa</th>
+                    <th>Aloitus</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let application of applications" class="clickable row-highlight">
+                    <td (click)="remove(application.id)"><i class="material-icons">remove</i></td>
+                    <td>{{application.handler?.realName}}</td>
+                    <td>
+                      {{application.name}} <br>
+                      <span>{{application.id}}</span>
+                    </td>
+                    <td>{{['application.type', application.type] | translation}}</td>
+                    <td>{{['application.status', application.status] | translation}}</td>
+                    <td>{{application.customer.name}}<br></td>
+                    <td>ei tuettuna</td>
+                    <td>{{ application.startTime | date:'shortDate' }}</td>
+                    <td></td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
+  </div>
+
+  <div class="row">
+    <div class="col m12">
+      <mat-card>
+        <mat-card-title>Tallennus</mat-card-title>
+        <mat-card-content>
+          <div class="row">
+            <div class="col m2">
+              <button type="submit" form="projectInfoForm" [disabled]="!projectInfoForm.valid"
+                      mat-raised-button color="primary">TALLENNA
+              </button>
+            </div>
+            <div class="col m2">
+              <button *ngIf="!projectInfoForm.value.id" mat-raised-button type="button" color="primary"
+                      [routerLink]="['/projectSearch']">PERUUTA
+              </button>
+
+              <button *ngIf="projectInfoForm.value.id" mat-raised-button type="button" color="primary"
+                      [routerLink]="['/projects', projectInfoForm.value.id]">PERUUTA
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
 </div>

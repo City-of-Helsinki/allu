@@ -33,7 +33,8 @@
           <mat-form-field class="input-full-width">
             <mat-select formControlName="districts" [multiple]="true"
                         [placeholder]="'application.cityDistrict' | translation" class="input-full-width">
-              <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
+              <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -41,7 +42,8 @@
           <mat-form-field class="input-full-width">
             <mat-select formControlName="handler" [multiple]="true"
                         [placeholder]="'applicationSearch.handler' | translation" class="input-full-width">
-              <mat-option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</mat-option>
+              <mat-option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -99,16 +101,33 @@
       <table class="bordered responsive-table">
         <thead>
         <tr>
-          <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' | translation}}</th>
-          <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.name' | translation}}</th>
-          <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.type.title' | translation}}</th>
-          <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.status.title' | translation}}</th>
+          <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' |
+            translation}}
+          </th>
+          <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.name' | translation}}
+          </th>
+          <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.type.title' |
+            translation}}
+          </th>
+          <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.status.title' |
+            translation}}
+          </th>
           <th>Hanke</th>
-          <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicant' | translation}}</th>
-          <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.streetAddress' | translation}}</th>
-          <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.cityDistrict' | translation}}</th>
-          <th sortBy="creationTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.creationTime' | translation}}</th>
-          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.startTime' | translation}}</th>
+          <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">
+            {{'application.applicant' | translation}}
+          </th>
+          <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">
+            {{'application.streetAddress' | translation}}
+          </th>
+          <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">
+            {{'application.cityDistrict' | translation}}
+          </th>
+          <th sortBy="creationTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.creationTime' |
+            translation}}
+          </th>
+          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.startTime' |
+            translation}}
+          </th>
         </tr>
         </thead>
         <tbody>

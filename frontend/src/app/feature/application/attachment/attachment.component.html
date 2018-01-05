@@ -16,8 +16,11 @@
       <div fxLayout="row">
         <div fxFlex="50">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="type" class="input-full-width" required [placeholder]="'attachment.type.title' | translation">
-              <mat-option *ngFor="let type of attachmentTypes" [value]="type">{{['attachment.type', type] | translation}}</mat-option>
+            <mat-select formControlName="type" class="input-full-width" required
+                        [placeholder]="'attachment.type.title' | translation">
+              <mat-option *ngFor="let type of attachmentTypes" [value]="type">{{['attachment.type', type] |
+                translation}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -30,7 +33,7 @@
           </mat-form-field>
 
           <input #realFileInput class="real-file-input" type="file" fileSelect
-                 (attachmentsSelected)="attachmentSelected($event)" />
+                 (attachmentsSelected)="attachmentSelected($event)"/>
         </div>
       </div>
       <div fxLayout="row">

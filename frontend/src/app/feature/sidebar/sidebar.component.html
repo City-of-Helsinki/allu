@@ -14,7 +14,8 @@
       <div *ngSwitchCase="'INVOICING'">
         <div class="oval-18 oval-warn top-right" *ngIf="item.warn | async"
              [matTooltip]="'application.field.invoiceRecipientMissing' | translation"
-             matTooltipPosition="above">!</div>
+             matTooltipPosition="above">!
+        </div>
         <mat-icon class="mat-icon-36">euro_symbol</mat-icon>
         <div>Laskutus</div>
       </div>

@@ -1,60 +1,61 @@
 <form [formGroup]="form">
-    <div fxLayout="row">
-        <div fxFlex="100">
-            <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="text" required
-                       placeholder="{{['chargeBasis.type', form.value.type, 'basis'] | translation}}"
-                       [matAutocomplete]="text"/>
-                <mat-autocomplete #text="matAutocomplete">
-                    <mat-option *ngFor="let text of matchingTexts | async" [value]="text">
-                        {{text}}
-                    </mat-option>
-                </mat-autocomplete>
-                <mat-error *ngIf="form.get('text').hasError('required')">
-                    {{'chargeBasis.field.rowTextMissing' | translation}}
-                </mat-error>
-            </mat-form-field>
-        </div>
+  <div fxLayout="row">
+    <div fxFlex="100">
+      <mat-form-field class="input-full-width">
+        <input matInput type="text" formControlName="text" required
+               placeholder="{{['chargeBasis.type', form.value.type, 'basis'] | translation}}"
+               [matAutocomplete]="text"/>
+        <mat-autocomplete #text="matAutocomplete">
+          <mat-option *ngFor="let text of matchingTexts | async" [value]="text">
+            {{text}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="form.get('text').hasError('required')">
+          {{'chargeBasis.field.rowTextMissing' | translation}}
+        </mat-error>
+      </mat-form-field>
     </div>
-    <div fxLayout="row" fxLayoutWrap class="spaced-out">
-        <div fxFlex>
-            <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="quantity"  required
-                       placeholder="{{'chargeBasis.quantity' | translation}}"/>
-                <mat-error *ngIf="form.get('quantity').hasError('required')">
-                    {{'chargeBasis.field.quantityMissing' | translation}}
-                </mat-error>
-            </mat-form-field>
-        </div>
-        <div fxFlex>
-            <mat-form-field class="input-full-width">
-                <mat-select formControlName="unit" required [placeholder]="'chargeBasis.unit.placeholder' | translation">
-                    <mat-option *ngFor="let unit of unitTypes" [value]="unit">
-                        {{['chargeBasis.unit', unit] | translation}}
-                    </mat-option>
-                </mat-select>
-                <mat-error *ngIf="form.get('unit').hasError('required')">
-                    {{'chargeBasis.field.unitMissing' | translation}}
-                </mat-error>
-            </mat-form-field>
-        </div>
+  </div>
+  <div fxLayout="row" fxLayoutWrap class="spaced-out">
+    <div fxFlex>
+      <mat-form-field class="input-full-width">
+        <input matInput type="number" formControlName="quantity" required
+               placeholder="{{'chargeBasis.quantity' | translation}}"/>
+        <mat-error *ngIf="form.get('quantity').hasError('required')">
+          {{'chargeBasis.field.quantityMissing' | translation}}
+        </mat-error>
+      </mat-form-field>
     </div>
-    <div fxLayout="row" fxLayoutWrap class="spaced-out">
-        <div fxFlex>
-            <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="unitPrice" required
-                       placeholder="{{'chargeBasis.unitPrice' | translation}}"/>
-                <div matSuffix>€</div>
-                <mat-error *ngIf="form.get('unitPrice').hasError('required')">
-                    {{'chargeBasis.field.quantityMissing' | translation}}
-                </mat-error>
-            </mat-form-field>
-        </div>
-        <div fxFlex>
-            <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="netPrice" placeholder="{{'chargeBasis.netPrice' | translation}}"/>
-                <div matSuffix>€</div>
-            </mat-form-field>
-        </div>
+    <div fxFlex>
+      <mat-form-field class="input-full-width">
+        <mat-select formControlName="unit" required [placeholder]="'chargeBasis.unit.placeholder' | translation">
+          <mat-option *ngFor="let unit of unitTypes" [value]="unit">
+            {{['chargeBasis.unit', unit] | translation}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('unit').hasError('required')">
+          {{'chargeBasis.field.unitMissing' | translation}}
+        </mat-error>
+      </mat-form-field>
     </div>
+  </div>
+  <div fxLayout="row" fxLayoutWrap class="spaced-out">
+    <div fxFlex>
+      <mat-form-field class="input-full-width">
+        <input matInput type="number" formControlName="unitPrice" required
+               placeholder="{{'chargeBasis.unitPrice' | translation}}"/>
+        <div matSuffix>€</div>
+        <mat-error *ngIf="form.get('unitPrice').hasError('required')">
+          {{'chargeBasis.field.quantityMissing' | translation}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div fxFlex>
+      <mat-form-field class="input-full-width">
+        <input matInput type="number" formControlName="netPrice"
+               placeholder="{{'chargeBasis.netPrice' | translation}}"/>
+        <div matSuffix>€</div>
+      </mat-form-field>
+    </div>
+  </div>
 </form>

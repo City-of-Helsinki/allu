@@ -1,38 +1,39 @@
 <div class="main-content">
-    <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
-        <div class="row" formGroupName="customer">
-            <div class="col m6">
-                <mat-card>
-                    <mat-card-title>Asiakastiedot</mat-card-title>
-                    <mat-card-content>
-                        <customer-info [form]="customerForm"></customer-info>
-                    </mat-card-content>
-                </mat-card>
+  <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
+    <div class="row" formGroupName="customer">
+      <div class="col m6">
+        <mat-card>
+          <mat-card-title>Asiakastiedot</mat-card-title>
+          <mat-card-content>
+            <customer-info [form]="customerForm"></customer-info>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col m6">
+        <invoicing-address [parentForm]="form"></invoicing-address>
+      </div>
+    </div>
+    <div class="row">
+      <customer-contacts [parentForm]="form" [onAddContact]="contactSubject.asObservable()"></customer-contacts>
+    </div>
+    <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+      <div class="col m12">
+        <mat-card>
+          <div class="row">
+            <div class="col m4">
+              <button type="submit" mat-raised-button color="primary" [disabled]="!validWithChanges()">TALLENNA</button>
+              <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">PERUUTA</button>
             </div>
-            <div class="col m6">
-                <invoicing-address [parentForm]="form"></invoicing-address>
+            <div class="col m8">
+              <button type="button" mat-raised-button color="primary" (click)="newContact()">UUSI YHTEYSHENKILÖ</button>
+              <button type="button" mat-raised-button color="primary"
+                      *ngIf="customerForm.value.id"
+                      (click)="removeFromRegistry(customerWithContactsForm.value)">POISTA REKISTERISTÄ
+              </button>
             </div>
-        </div>
-        <div class="row">
-            <customer-contacts [parentForm]="form" [onAddContact]="contactSubject.asObservable()"></customer-contacts>
-        </div>
-        <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-            <div class="col m12">
-                <mat-card>
-                    <div class="row">
-                        <div class="col m4">
-                            <button type="submit" mat-raised-button color="primary" [disabled]="!validWithChanges()">TALLENNA</button>
-                            <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">PERUUTA</button>
-                        </div>
-                        <div class="col m8">
-                            <button type="button" mat-raised-button color="primary" (click)="newContact()">UUSI YHTEYSHENKILÖ</button>
-                            <button type="button" mat-raised-button color="primary"
-                                    *ngIf="customerForm.value.id"
-                                    (click)="removeFromRegistry(customerWithContactsForm.value)">POISTA REKISTERISTÄ</button>
-                        </div>
-                    </div>
-                </mat-card>
-            </div>
-        </div>
-    </form>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </form>
 </div>

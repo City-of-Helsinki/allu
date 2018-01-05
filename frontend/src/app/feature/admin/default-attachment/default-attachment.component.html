@@ -1,69 +1,72 @@
 <div class="main-content">
-    <mat-card>
-        <mat-card-title>
-            <h1>{{['attachment.type', attachmentType] | translation}}</h1>
-        </mat-card-title>
-        <mat-card-content>
-            <form [formGroup]="attachmentForm">
-                <div class="row">
-                    <div class="col m5">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" formControlName="name" placeholder="Nimi">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m12">
-                        <selection-group formControlName="applicationTypes">
-                            <span class="label-small">Hakemustyypit</span>
-                            <selection-item *ngFor="let type of applicationTypes" [item]="type">
-                                {{['application.type', type] | translation}}
-                            </selection-item>
-                        </selection-group>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m6">
-                        <mat-form-field class="input-full-width">
-                            <mat-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
-                                <mat-option *ngFor="let area of areas | async" [value]="area.id">
-                                    {{area.name}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m6" *ngIf="!file">
-                        <div fileDrop (onFileDrop)="attachmentSelected($event)" (onFileOver)="fileOverDropzone($event)"
-                             class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
-                            <button mat-raised-button type="button" color="primary" (click)="realFileInput.click()">
-                                LISÄÄ LIITE
-                                <mat-icon>file_upload</mat-icon>
-                            </button>
-                        </div>
+  <mat-card>
+    <mat-card-title>
+      <h1>{{['attachment.type', attachmentType] | translation}}</h1>
+    </mat-card-title>
+    <mat-card-content>
+      <form [formGroup]="attachmentForm">
+        <div class="row">
+          <div class="col m5">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" formControlName="name" placeholder="Nimi">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col m12">
+            <selection-group formControlName="applicationTypes">
+              <span class="label-small">Hakemustyypit</span>
+              <selection-item *ngFor="let type of applicationTypes" [item]="type">
+                {{['application.type', type] | translation}}
+              </selection-item>
+            </selection-group>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col m6">
+            <mat-form-field class="input-full-width">
+              <mat-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
+                <mat-option *ngFor="let area of areas | async" [value]="area.id">
+                  {{area.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col m6" *ngIf="!file">
+            <div fileDrop (onFileDrop)="attachmentSelected($event)" (onFileOver)="fileOverDropzone($event)"
+                 class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
+              <button mat-raised-button type="button" color="primary" (click)="realFileInput.click()">
+                LISÄÄ LIITE
+                <mat-icon>file_upload</mat-icon>
+              </button>
+            </div>
 
-                        <input #realFileInput class="real-file-input" type="file" fileSelect
-                               (attachmentsSelected)="attachmentSelected($event)"/>
-                    </div>
-                    <div class="col m6" *ngIf="file">
-                        <div class="file-download-card">
-                            <button type="button" mat-icon-button (click)="download()">
-                                <mat-icon color="primary">attach_file</mat-icon>
-                            </button>
-                            <span>{{attachmentForm.value.name}}</span>
-                        </div>
-                        <button type="button" mat-icon-button (click)="remove()" color="accent"><mat-icon>clear</mat-icon></button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m12">
-                        <button mat-raised-button type="button" color="primary"
-                                (click)="save()" [disabled]="!attachmentForm.valid">TALLENNA</button>
-                        <button mat-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
-                    </div>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
+            <input #realFileInput class="real-file-input" type="file" fileSelect
+                   (attachmentsSelected)="attachmentSelected($event)"/>
+          </div>
+          <div class="col m6" *ngIf="file">
+            <div class="file-download-card">
+              <button type="button" mat-icon-button (click)="download()">
+                <mat-icon color="primary">attach_file</mat-icon>
+              </button>
+              <span>{{attachmentForm.value.name}}</span>
+            </div>
+            <button type="button" mat-icon-button (click)="remove()" color="accent">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col m12">
+            <button mat-raised-button type="button" color="primary"
+                    (click)="save()" [disabled]="!attachmentForm.valid">TALLENNA
+            </button>
+            <button mat-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>

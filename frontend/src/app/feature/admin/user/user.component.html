@@ -1,64 +1,73 @@
 <div class="main-content">
-    <div class="row">
-        <div class="col m6">
-            <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
-                <h5>Käyttäjän tiedot</h5>
-                <div class="row">
-                    <div class="col m12">
-                        <div class="col s12">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="userName" placeholder="Käyttäjänimi"/>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s12">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="realName" placeholder="Nimi"/>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s12">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s12">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="title" placeholder="Tehtävänimike"/>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s12 checkbox-height">
-                            <mat-checkbox formControlName="isActive">Aktiivinen</mat-checkbox>
-                        </div>
-                        <div class="col s12">
-                            <mat-form-field class="input-full-width">
-                                <mat-select formControlName="allowedApplicationTypes" [multiple]="true"
-                                            placeholder="Sallitut hakemustyypit" class="input-full-width">
-                                    <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s12">
-                            <mat-form-field class="input-full-width">
-                                <mat-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit" class="input-full-width">
-                                    <mat-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole() | async">{{'user.role.ROLE_ADMIN' | translation}}</mat-option>
-                                    <mat-option *ngFor="let role of roles" [value]="role">{{['user.role', role] | translation}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s12">
-                            <mat-form-field class="input-full-width">
-                                <mat-select formControlName="cityDistrictIds" [multiple]="true" placeholder="Kaupunginosat" class="input-full-width">
-                                    <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m12">
-                        <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna</button>
-                    </div>
-                </div>
-            </form>
+  <div class="row">
+    <div class="col m6">
+      <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
+        <h5>Käyttäjän tiedot</h5>
+        <div class="row">
+          <div class="col m12">
+            <div class="col s12">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="userName" placeholder="Käyttäjänimi"/>
+              </mat-form-field>
+            </div>
+            <div class="col s12">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="realName" placeholder="Nimi"/>
+              </mat-form-field>
+            </div>
+            <div class="col s12">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
+              </mat-form-field>
+            </div>
+            <div class="col s12">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="title" placeholder="Tehtävänimike"/>
+              </mat-form-field>
+            </div>
+            <div class="col s12 checkbox-height">
+              <mat-checkbox formControlName="isActive">Aktiivinen</mat-checkbox>
+            </div>
+            <div class="col s12">
+              <mat-form-field class="input-full-width">
+                <mat-select formControlName="allowedApplicationTypes" [multiple]="true"
+                            placeholder="Sallitut hakemustyypit" class="input-full-width">
+                  <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] |
+                    translation}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col s12">
+              <mat-form-field class="input-full-width">
+                <mat-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit"
+                            class="input-full-width">
+                  <mat-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole() | async">{{'user.role.ROLE_ADMIN' |
+                    translation}}
+                  </mat-option>
+                  <mat-option *ngFor="let role of roles" [value]="role">{{['user.role', role] | translation}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col s12">
+              <mat-form-field class="input-full-width">
+                <mat-select formControlName="cityDistrictIds" [multiple]="true" placeholder="Kaupunginosat"
+                            class="input-full-width">
+                  <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
+        <div class="row">
+          <div class="col m12">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
+  </div>
 </div>

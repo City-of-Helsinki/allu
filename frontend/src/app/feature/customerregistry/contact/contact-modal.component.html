@@ -1,57 +1,65 @@
 <h1 mat-dialog-title>Yhteyshenkilö</h1>
 <form [formGroup]="contactForm" (ngSubmit)="onSubmit(contactForm.value)">
-    <div mat-dialog-content>
-        <div class="row form-group">
-            <div class="col m6">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
-                    <mat-hint>
-                        <field-error [form]="contactForm" field="name" hasError="required">{{'contact.field.nameMissing' | translation}}</field-error>
-                    </mat-hint>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row form-group">
-            <div class="col m6">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
-                </mat-form-field>
-            </div>
-            <div class="col m3">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
-                    <mat-hint>
-                        <field-error [form]="contactForm" field="postalCode" hasError="pattern">{{'common.field.postalCode' | translation}}</field-error>
-                    </mat-hint>
-                </mat-form-field>
-            </div>
-            <div class="col m3">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row form-group">
-            <div class="col m6">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
-                    <mat-hint>
-                        <field-error [form]="contactForm" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
-                    </mat-hint>
-                </mat-form-field>
-            </div>
-            <div class="col m6">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
-                    <mat-hint>
-                        <field-error [form]="contactForm" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
-                    </mat-hint>
-                </mat-form-field>
-            </div>
-        </div>
+  <div mat-dialog-content>
+    <div class="row form-group">
+      <div class="col m6">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
+          <mat-hint>
+            <field-error [form]="contactForm" field="name" hasError="required">{{'contact.field.nameMissing' |
+              translation}}
+            </field-error>
+          </mat-hint>
+        </mat-form-field>
+      </div>
     </div>
-    <div mat-dialog-actions>
-        <button type="submit" mat-raised-button color="primary" [disabled]="!contactForm.valid">TALLENNA</button>
-        <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    <div class="row form-group">
+      <div class="col m6">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+        </mat-form-field>
+      </div>
+      <div class="col m3">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+          <mat-hint>
+            <field-error [form]="contactForm" field="postalCode" hasError="pattern">{{'common.field.postalCode' |
+              translation}}
+            </field-error>
+          </mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="col m3">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+        </mat-form-field>
+      </div>
     </div>
+    <div class="row form-group">
+      <div class="col m6">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+          <mat-hint>
+            <field-error [form]="contactForm" field="email" hasError="pattern">{{'common.field.emailInvalid' |
+              translation}}
+            </field-error>
+          </mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="col m6">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
+          <mat-hint>
+            <field-error [form]="contactForm" field="phone" hasError="minlength">{{'contact.field.phoneShort' |
+              translation}}
+            </field-error>
+          </mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!contactForm.valid">TALLENNA</button>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+  </div>
 </form>

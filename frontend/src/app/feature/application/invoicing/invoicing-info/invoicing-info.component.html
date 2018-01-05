@@ -6,7 +6,8 @@
           <div fxLayout="row" fxFlexAlign="space-between">
             <div fxFlex>
               {{'invoice.info.address' | translation}}
-              <button mat-icon-button type="button" class="align-with-text" *ngIf="customerCanBeEdited()" (click)="editCustomer()">
+              <button mat-icon-button type="button" class="align-with-text" *ngIf="customerCanBeEdited()"
+                      (click)="editCustomer()">
                 <mat-icon>mode_edit</mat-icon>
               </button>
             </div>
@@ -62,7 +63,7 @@
             <div fxFlex="100">
               <mat-form-field class="input-full-width">
                 <textarea matInput matTextareaAutosize formControlName="depositReason"
-                       [placeholder]="'deposit.reason' | translation"></textarea>
+                          [placeholder]="'deposit.reason' | translation"></textarea>
               </mat-form-field>
             </div>
           </div>

@@ -1,55 +1,55 @@
 <form [formGroup]="form">
-    <div fxLayout="row">
-        <div fxFlex="100">
-            <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="text" required
-                       placeholder="{{['chargeBasis.type', form.value.type, 'basis'] | translation}}" />
-                <mat-error *ngIf="form.get('text').hasError('required')">
-                    {{'chargeBasis.field.rowTextMissing' | translation}}
-                </mat-error>
-            </mat-form-field>
-        </div>
+  <div fxLayout="row">
+    <div fxFlex="100">
+      <mat-form-field class="input-full-width">
+        <input matInput type="text" formControlName="text" required
+               placeholder="{{['chargeBasis.type', form.value.type, 'basis'] | translation}}"/>
+        <mat-error *ngIf="form.get('text').hasError('required')">
+          {{'chargeBasis.field.rowTextMissing' | translation}}
+        </mat-error>
+      </mat-form-field>
     </div>
-    <div fxLayout="row">
-        <div fxFlex>
-            <mat-form-field class="input-full-width">
-                <mat-select [placeholder]="'chargeBasis.discountFor.placeholder' | translation" formControlName="referredTag">
-                    <mat-option value="">{{'chargeBasis.discountFor.wholeInvoice' | translation}}</mat-option>
-                    <mat-option *ngFor="let entry of referableEntries | async" [value]="entry.tag">
-                        {{entry.text}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+  </div>
+  <div fxLayout="row">
+    <div fxFlex>
+      <mat-form-field class="input-full-width">
+        <mat-select [placeholder]="'chargeBasis.discountFor.placeholder' | translation" formControlName="referredTag">
+          <mat-option value="">{{'chargeBasis.discountFor.wholeInvoice' | translation}}</mat-option>
+          <mat-option *ngFor="let entry of referableEntries | async" [value]="entry.tag">
+            {{entry.text}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
+  </div>
+  <div fxLayout="row" fxLayoutWrap class="spaced-out">
+    <div fxFlex="50" *ngIf="form.value.unit==='PIECE'">
+      <mat-form-field class="input-full-width">
+        <input matInput type="number" formControlName="unitPrice" required
+               placeholder="{{'chargeBasis.discount' | translation}}"/>
+        <div matSuffix>€</div>
+        <mat-error *ngIf="form.get('unitPrice').hasError('required')">
+          {{'chargeBasis.field.discountMissing' | translation}}
+        </mat-error>
+      </mat-form-field>
     </div>
-    <div fxLayout="row" fxLayoutWrap class="spaced-out">
-        <div fxFlex="50" *ngIf="form.value.unit==='PIECE'">
-            <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="unitPrice" required
-                       placeholder="{{'chargeBasis.discount' | translation}}"/>
-                <div matSuffix>€</div>
-                <mat-error *ngIf="form.get('unitPrice').hasError('required')">
-                    {{'chargeBasis.field.discountMissing' | translation}}
-                </mat-error>
-            </mat-form-field>
-        </div>
-        <div fxFlex="50" *ngIf="form.value.unit==='PERCENT'">
-            <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="quantity" required min="0" max="100"
-                       placeholder="{{'chargeBasis.discount' | translation}}"/>
-                <div matSuffix>%</div>
-                <mat-error *ngIf="form.get('quantity').hasError('required')">
-                    {{'chargeBasis.field.discountPercentageMissing' | translation}}
-                </mat-error>
-            </mat-form-field>
-        </div>
-        <div fxFlex="20" class="discount-unit">
-            <mat-button-toggle-group formControlName="unit">
-                <mat-button-toggle *ngFor="let unit of unitTypes" [value]="unit">
-                    {{['chargeBasis.discountUnit', unit] | translation}}
-                </mat-button-toggle>
-            </mat-button-toggle-group>
-        </div>
+    <div fxFlex="50" *ngIf="form.value.unit==='PERCENT'">
+      <mat-form-field class="input-full-width">
+        <input matInput type="number" formControlName="quantity" required min="0" max="100"
+               placeholder="{{'chargeBasis.discount' | translation}}"/>
+        <div matSuffix>%</div>
+        <mat-error *ngIf="form.get('quantity').hasError('required')">
+          {{'chargeBasis.field.discountPercentageMissing' | translation}}
+        </mat-error>
+      </mat-form-field>
     </div>
+    <div fxFlex="20" class="discount-unit">
+      <mat-button-toggle-group formControlName="unit">
+        <mat-button-toggle *ngFor="let unit of unitTypes" [value]="unit">
+          {{['chargeBasis.discountUnit', unit] | translation}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
 </form>

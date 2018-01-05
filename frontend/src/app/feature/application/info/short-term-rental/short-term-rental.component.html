@@ -1,11 +1,13 @@
-<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)" *ngIf="applicationChanges | async as application">
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)"
+      *ngIf="applicationChanges | async as application">
   <div class="row">
     <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
               [readonly]="readonly" [showRepresentative]="true" [contactRequired]="!hasRepresentative"></customer>
   </div>
 
   <div class="row" *ngIf="hasRepresentative">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative" [readonly]="readonly"></customer>
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
+              [readonly]="readonly"></customer>
   </div>
 
   <div class="row">
@@ -19,8 +21,12 @@
                 <input matInput type="text" formControlName="name" required
                        [placeholder]="'application.shortTermRental.name' | translation"/>
                 <mat-hint>
-                  <field-error [form]="applicationForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
-                  <field-error [form]="applicationForm" field="name" hasError="minlength">{{'application.field.nameShort' | translation}}</field-error>
+                  <field-error [form]="applicationForm" field="name" hasError="required">
+                    {{'application.field.nameMissing' | translation}}
+                  </field-error>
+                  <field-error [form]="applicationForm" field="name" hasError="minlength">
+                    {{'application.field.nameShort' | translation}}
+                  </field-error>
                 </mat-hint>
               </mat-form-field>
             </div>
@@ -41,7 +47,8 @@
                   <input matInput type="text" formControlName="startTime" required
                          [placeholder]="'application.common.startTime' | translation"
                          [matDatepicker]="startTimePicker"/>
-                  <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker-toggle matSuffix [for]="startTimePicker"
+                                         [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #startTimePicker></mat-datepicker>
                   <mat-hint>
                     <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">

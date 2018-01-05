@@ -1,39 +1,39 @@
 <h1 mat-dialog-title>
-    {{['decision.proposal.type', proposal] | translation}}
+  {{['decision.proposal.type', proposal] | translation}}
 </h1>
 <div mat-dialog-content>
-    <form [formGroup]="proposalForm">
-        <div fxLayout="row" fxLayoutWrap>
-            <div fxFlex="100">
-                <mat-form-field class="input-full-width">
+  <form [formGroup]="proposalForm">
+    <div fxLayout="row" fxLayoutWrap>
+      <div fxFlex="100">
+        <mat-form-field class="input-full-width">
                     <textarea matInput matTextareaAutosize formControlName="comment" required
                               [placeholder]="'decision.proposal.comment' | translation"></textarea>
-                    <mat-error *ngIf="proposalForm.get('comment').hasError('required')">
-                        {{'decision.proposal.field.commentMissing' | translation}}
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div fxFlex="50">
-                <mat-form-field class="input-full-width">
-                    <mat-select [placeholder]="'decision.proposal.selectDecisionMaker' | translation" class="input-full-width"
-                                formControlName="handler" required>
-                        <mat-option *ngFor="let handler of handlers | async" [value]="handler.id">
-                            {{handler.realName}}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="proposalForm.get('handler').hasError('required')">
-                        {{'decision.proposal.field.handlerMissing' | translation}}
-                    </mat-error>
-                </mat-form-field>
-            </div>
-        </div>
-    </form>
+          <mat-error *ngIf="proposalForm.get('comment').hasError('required')">
+            {{'decision.proposal.field.commentMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex="50">
+        <mat-form-field class="input-full-width">
+          <mat-select [placeholder]="'decision.proposal.selectDecisionMaker' | translation" class="input-full-width"
+                      formControlName="handler" required>
+            <mat-option *ngFor="let handler of handlers | async" [value]="handler.id">
+              {{handler.realName}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="proposalForm.get('handler').hasError('required')">
+            {{'decision.proposal.field.handlerMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
 </div>
 <div mat-dialog-actions>
-    <button mat-raised-button type="button" color="primary" [disabled]="!proposalForm.valid" (click)="confirm()">
-        {{'common.button.save' | translation}}
-    </button>
-    <button mat-raised-button type="button" color="primary" (click)="cancel()">
-        {{'common.button.cancel' | translation}}
-    </button>
+  <button mat-raised-button type="button" color="primary" [disabled]="!proposalForm.valid" (click)="confirm()">
+    {{'common.button.save' | translation}}
+  </button>
+  <button mat-raised-button type="button" color="primary" (click)="cancel()">
+    {{'common.button.cancel' | translation}}
+  </button>
 </div>

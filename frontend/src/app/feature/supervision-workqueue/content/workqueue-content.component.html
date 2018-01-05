@@ -1,69 +1,87 @@
 <div fxLayout='column'>
-    <div fxShow fxHide.lt-md="true">
-        <table>
-            <thead>
-            <tr>
-                <th><mat-checkbox [checked]="allSelected" (change)="checkAll($event)"></mat-checkbox></th>
-                <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.taskType' | translation}}</th>
-                <th sortBy="application.applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.applicationId' | translation}}</th>
-                <th sortBy="streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.address' | translation}}</th>
-                <th sortBy="plannedFinishingTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.plannedFinishingTime' | translation}}</th>
-                <th sortBy="application.status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.applicationStatus' | translation}}</th>
-                <th sortBy="project.name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.project' | translation}}</th>
-                <th sortBy="user.realName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.creator' | translation}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of workItems | async" class="clickable row-highlight"
-                (click)="toApplicationTaskView(item.applicationId, $event.target.cellIndex)">
-                <td><mat-checkbox [checked]="selected(item.id)" (change)="checkSingle($event, item.id)"></mat-checkbox></td>
-                <td>{{['supervision.task.type', item.uiType] | translation}}</td>
-                <td>{{item.applicationIdText}}</td>
-                <td>{{item.address?.streetAddress}}</td>
-                <td>{{item.plannedFinishingTime | date:'shortDate'}}</td>
-                <td>{{['application.status', item.uiApplicationStatus] | translation}}</td>
-                <td>{{item.projectName}}</td>
-                <td>{{item.creator?.realName}}</td>
-            </tr>
-            </tbody>
-        </table>
+  <div fxShow fxHide.lt-md="true">
+    <table>
+      <thead>
+      <tr>
+        <th>
+          <mat-checkbox [checked]="allSelected" (change)="checkAll($event)"></mat-checkbox>
+        </th>
+        <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.taskType'
+          | translation}}
+        </th>
+        <th sortBy="application.applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">
+          {{'supervisionWorkqueue.content.applicationId' | translation}}
+        </th>
+        <th sortBy="streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">
+          {{'supervisionWorkqueue.content.address' | translation}}
+        </th>
+        <th sortBy="plannedFinishingTime" [currentSort]="sort" (onSortChange)="sortBy($event)">
+          {{'supervisionWorkqueue.content.plannedFinishingTime' | translation}}
+        </th>
+        <th sortBy="application.status" [currentSort]="sort" (onSortChange)="sortBy($event)">
+          {{'supervisionWorkqueue.content.applicationStatus' | translation}}
+        </th>
+        <th sortBy="project.name" [currentSort]="sort" (onSortChange)="sortBy($event)">
+          {{'supervisionWorkqueue.content.project' | translation}}
+        </th>
+        <th sortBy="user.realName" [currentSort]="sort" (onSortChange)="sortBy($event)">
+          {{'supervisionWorkqueue.content.creator' | translation}}
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of workItems | async" class="clickable row-highlight"
+          (click)="toApplicationTaskView(item.applicationId, $event.target.cellIndex)">
+        <td>
+          <mat-checkbox [checked]="selected(item.id)" (change)="checkSingle($event, item.id)"></mat-checkbox>
+        </td>
+        <td>{{['supervision.task.type', item.uiType] | translation}}</td>
+        <td>{{item.applicationIdText}}</td>
+        <td>{{item.address?.streetAddress}}</td>
+        <td>{{item.plannedFinishingTime | date:'shortDate'}}</td>
+        <td>{{['application.status', item.uiApplicationStatus] | translation}}</td>
+        <td>{{item.projectName}}</td>
+        <td>{{item.creator?.realName}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div fxShow fxHide.gt-sm="true">
+    <div fxLayout='column' fxLayoutGap="0.75rem">
+      <mat-card fxFlex *ngFor="let item of workItems | async">
+        <mat-card-title>
+          <mat-checkbox [checked]="selected(item.id)" (change)="checkSingle($event, item.id)"></mat-checkbox>
+          {{['supervision.task.type', item.uiType] | translation}}
+        </mat-card-title>
+        <mat-card-content>
+          <mat-list dense>
+            <mat-list-item>
+              <h3 class="list-item-title">{{'supervisionWorkqueue.content.applicationId' | translation}}:</h3>
+              <span class="list-item-content">{{item.applicationIdText}}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <h3 class="list-item-title">{{'supervisionWorkqueue.content.address' | translation}}:</h3>
+              <span class="list-item-content">{{item.address?.streetAddress}}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <h3 class="list-item-title">{{'supervisionWorkqueue.content.plannedFinishingTime' | translation}}:</h3>
+              <span class="list-item-content">{{item.plannedFinishingTime | date:'shortDate'}}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <h3 class="list-item-title">{{'supervisionWorkqueue.content.applicationStatus' | translation}}:</h3>
+              <span class="list-item-content">{{['application.status', item.uiApplicationStatus] | translation}}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <h3 class="list-item-title">{{'supervisionWorkqueue.content.project' | translation}}:</h3>
+              <span class="list-item-content">{{item.projectName}}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <h3 class="list-item-title">{{'supervisionWorkqueue.content.creator' | translation}}:</h3>
+              <span class="list-item-content">{{item.creator?.realName}}</span>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
     </div>
-    <div fxShow fxHide.gt-sm="true">
-        <div fxLayout='column' fxLayoutGap="0.75rem">
-            <mat-card fxFlex *ngFor="let item of workItems | async">
-                <mat-card-title>
-                    <mat-checkbox [checked]="selected(item.id)" (change)="checkSingle($event, item.id)"></mat-checkbox>
-                    {{['supervision.task.type', item.uiType] | translation}}
-                </mat-card-title>
-                <mat-card-content>
-                    <mat-list dense>
-                        <mat-list-item>
-                            <h3 class="list-item-title">{{'supervisionWorkqueue.content.applicationId' | translation}}:</h3>
-                            <span class="list-item-content">{{item.applicationIdText}}</span>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <h3 class="list-item-title">{{'supervisionWorkqueue.content.address' | translation}}:</h3>
-                            <span class="list-item-content">{{item.address?.streetAddress}}</span>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <h3 class="list-item-title">{{'supervisionWorkqueue.content.plannedFinishingTime' | translation}}:</h3>
-                            <span class="list-item-content">{{item.plannedFinishingTime | date:'shortDate'}}</span>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <h3 class="list-item-title">{{'supervisionWorkqueue.content.applicationStatus' | translation}}:</h3>
-                            <span class="list-item-content">{{['application.status', item.uiApplicationStatus] | translation}}</span>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <h3 class="list-item-title">{{'supervisionWorkqueue.content.project' | translation}}:</h3>
-                            <span class="list-item-content">{{item.projectName}}</span>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <h3 class="list-item-title">{{'supervisionWorkqueue.content.creator' | translation}}:</h3>
-                            <span class="list-item-content">{{item.creator?.realName}}</span>
-                        </mat-list-item>
-                    </mat-list>
-                </mat-card-content>
-            </mat-card>
-        </div>
-    </div>
+  </div>
 </div>

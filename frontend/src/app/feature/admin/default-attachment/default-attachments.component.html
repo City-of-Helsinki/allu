@@ -1,31 +1,34 @@
 <div class="main-content">
-    <div class="row loose">
-        <div class=" col s12">
-            <a mat-raised-button type="button" color="primary" [routerLink]="['new']">UUSI</a>
-        </div>
+  <div class="row loose">
+    <div class=" col s12">
+      <a mat-raised-button type="button" color="primary" [routerLink]="['new']">UUSI</a>
     </div>
-    <div class="row">
-        <div class=" col s12">
-            <table class="bordered responsive-table">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Nimi</th>
-                    <th>Hakemustyypit</th>
-                    <th>Alueet</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let row of attachmentRows" class="clickable row-highlight" (click)="goToDetails($event.target.cellIndex, row)">
-                    <td>
-                        <button mat-icon-button type="button" color="primary" (click)="remove(row)"><mat-icon>clear</mat-icon></button>
-                    </td>
-                    <td>{{row.content.name}}</td>
-                    <td>{{translateArray('application.type', row.content.applicationTypes) | commaSeparated}}</td>
-                    <td>{{areaName(row.content.fixedLocationId) | async}}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+  </div>
+  <div class="row">
+    <div class=" col s12">
+      <table class="bordered responsive-table">
+        <thead>
+        <tr>
+          <th></th>
+          <th>Nimi</th>
+          <th>Hakemustyypit</th>
+          <th>Alueet</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of attachmentRows" class="clickable row-highlight"
+            (click)="goToDetails($event.target.cellIndex, row)">
+          <td>
+            <button mat-icon-button type="button" color="primary" (click)="remove(row)">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </td>
+          <td>{{row.content.name}}</td>
+          <td>{{translateArray('application.type', row.content.applicationTypes) | commaSeparated}}</td>
+          <td>{{areaName(row.content.fixedLocationId) | async}}</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>

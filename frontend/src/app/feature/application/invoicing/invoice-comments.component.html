@@ -1,14 +1,14 @@
 <mat-card>
-    <mat-card-title>Kommentit</mat-card-title>
-    <mat-card-content>
-        <div class="comment-entry" *ngFor="let comment of comments | async">
-            <div class="comment-header">
-                <span>{{comment.user.realName}}</span>
-                <span>{{comment.uiCreateTime}} - Päivitetty {{comment.uiUpdateTime}}</span>
-            </div>
-            <div class="comment-content">
-                {{comment.text}}
-            </div>
-        </div>
-    </mat-card-content>
+  <mat-card-title>Kommentit</mat-card-title>
+  <mat-card-content>
+    <div class="comment-entry" *ngFor="let comment of comments | async">
+      <div class="comment-header">
+        <span>{{comment.user.realName}}</span>
+        <span>{{comment.uiCreateTime}} - Päivitetty {{comment.uiUpdateTime}}</span>
+      </div>
+      <div class="comment-content">
+        {{comment.text}}
+      </div>
+    </div>
+  </mat-card-content>
 </mat-card>

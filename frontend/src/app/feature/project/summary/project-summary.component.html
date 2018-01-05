@@ -1,135 +1,138 @@
 <div class="row">
-    <div class="col m6">
-        <mat-card>
-            <mat-card-title>Hankkeen perustiedot</mat-card-title>
-            <mat-card-content>
-                <div class="row">
-                    <div class="col m6 info-field-group">
-                        <div>
-                            <label class="info-label">Arvioitu aloitus</label>
-                            <div *ngIf="!project.startTime">-</div>
-                            <div *ngIf="project.startTime" class="info-field">{{project.startTime | date:'shortDate'}}</div>
-                        </div>
-                        <div>
-                            <label class="info-label">Arvioitu päättyminen</label>
-                            <div *ngIf="!project.endTime">-</div>
-                            <div *ngIf="project.endTime" class="info-field">{{project.endTime | date:'shortDate'}}</div>
-                        </div>
-                        <div>
-                            <label class="info-label">Asiakkaan tyonro/viite</label>
-                            <div class="info-field">{{project.customerReference}}</div>
-                        </div>
-                    </div>
-                    <div class="col m6 info-field-group">
-                        <div>
-                            <label class="info-label">Hankkeen omistaja ja yhteyshenkilö</label>
-                            <div class="info-field">{{project.ownerName}}, {{project.contactName}}</div>
-                        </div>
-                        <div>
-                            <label class="info-label">Puhelinnumero</label>
-                            <div class="info-field">{{project.phone}}</div>
-                        </div>
-                        <div>
-                            <label class="info-label">Sähköpostiosoite</label>
-                            <div class="info-field"><a href="mailto:{{project.email}}">{{project.email}}</a></div>
-                        </div>
-                    </div>
-                    <div class="col m12 info-field-group">
-                        <div>
-                            <label class="info-label">Kaupunginosa(t)</label>
-                            <div class="info-field">{{districts | async | commaSeparated}}</div>
-                        </div>
-                    </div>
-                    <div class="col m12 info-field-group">
-                        <div>
-                            <label class="info-label">Lisätietoja</label>
-                            <div class="info-field">{{project.additionalInfo}}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-                    <div class="col m12">
-                        <button mat-raised-button type="button" color="primary"
-                                [routerLink]="['/projects', project.id, 'edit']">MUOKKAA</button>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col m6">
-        <div class="mapcontainer">
-            <map [zoom]="true" [projectId]="project.id">Loading map</map>
+  <div class="col m6">
+    <mat-card>
+      <mat-card-title>Hankkeen perustiedot</mat-card-title>
+      <mat-card-content>
+        <div class="row">
+          <div class="col m6 info-field-group">
+            <div>
+              <label class="info-label">Arvioitu aloitus</label>
+              <div *ngIf="!project.startTime">-</div>
+              <div *ngIf="project.startTime" class="info-field">{{project.startTime | date:'shortDate'}}</div>
+            </div>
+            <div>
+              <label class="info-label">Arvioitu päättyminen</label>
+              <div *ngIf="!project.endTime">-</div>
+              <div *ngIf="project.endTime" class="info-field">{{project.endTime | date:'shortDate'}}</div>
+            </div>
+            <div>
+              <label class="info-label">Asiakkaan tyonro/viite</label>
+              <div class="info-field">{{project.customerReference}}</div>
+            </div>
+          </div>
+          <div class="col m6 info-field-group">
+            <div>
+              <label class="info-label">Hankkeen omistaja ja yhteyshenkilö</label>
+              <div class="info-field">{{project.ownerName}}, {{project.contactName}}</div>
+            </div>
+            <div>
+              <label class="info-label">Puhelinnumero</label>
+              <div class="info-field">{{project.phone}}</div>
+            </div>
+            <div>
+              <label class="info-label">Sähköpostiosoite</label>
+              <div class="info-field"><a href="mailto:{{project.email}}">{{project.email}}</a></div>
+            </div>
+          </div>
+          <div class="col m12 info-field-group">
+            <div>
+              <label class="info-label">Kaupunginosa(t)</label>
+              <div class="info-field">{{districts | async | commaSeparated}}</div>
+            </div>
+          </div>
+          <div class="col m12 info-field-group">
+            <div>
+              <label class="info-label">Lisätietoja</label>
+              <div class="info-field">{{project.additionalInfo}}</div>
+            </div>
+          </div>
         </div>
+        <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+          <div class="col m12">
+            <button mat-raised-button type="button" color="primary"
+                    [routerLink]="['/projects', project.id, 'edit']">MUOKKAA
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col m6">
+    <div class="mapcontainer">
+      <map [zoom]="true" [projectId]="project.id">Loading map</map>
     </div>
+  </div>
 </div>
 <div class="row">
-    <div class="col m3">
-        <mat-card>
-            <mat-card-title>Hakemukset</mat-card-title>
-            <mat-card-content>
-                <div class="row">
-                    <div class="col m12 info-field-group">
-                        <label class="info-label">Aktiivisia</label>
-                        <div *ngIf="activeApplications.length === 0">Ei aktiivisia hakemuksia</div>
-                        <div *ngFor="let application of activeApplications">
-                            <div class="col m6 info-field-group">
-                                <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
-                            </div>
-                            <div class="col m6 info-field-group">{{['application.status', application.status] | translation}}</div>
-                        </div>
-                    </div>
-                    <div class="col m12 info-field-group">
-                        <label class="info-label">Päätökset</label>
-                        <div *ngIf="decidedApplications.length === 0">Ei päätettyjä hakemuksia</div>
-                        <div *ngFor="let application of decidedApplications">
-                            <div class="col m6 info-field-group">
-                                <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
-                            </div>
-                            <div class="col m6 info-field-group">{{['application.status', application.status] | translation}}</div>
-                        </div>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col m3">
-        <mat-card>
-            <mat-card-title>Liittyvät hankkeet</mat-card-title>
-            <mat-card-content>
-                <div class="row">
-                    <div class="col m12 info-field-group">
-                        <div *ngIf="parentProjects.length === 0 && childProjects.length === 0">Hankkeeseen ei liity muita hankkeita</div>
-                        <div *ngFor="let project of parentProjects">
-                            <div class="col m12">
-                                <a [routerLink]="['/projects', project.id, 'info']">Hanke {{project.id}}</a>
-                            </div>
-                        </div>
-                        <div *ngFor="let project of childProjects">
-                            <div class="col m12">
-                                <a [routerLink]="['/projects', project.id, 'info']">Hanke {{project.id}}</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col m6">
-        <mat-card>
-            <mat-card-title>Historia</mat-card-title>
-            <mat-card-content>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
-            </mat-card-content>
-        </mat-card>
-    </div>
+  <div class="col m3">
+    <mat-card>
+      <mat-card-title>Hakemukset</mat-card-title>
+      <mat-card-content>
+        <div class="row">
+          <div class="col m12 info-field-group">
+            <label class="info-label">Aktiivisia</label>
+            <div *ngIf="activeApplications.length === 0">Ei aktiivisia hakemuksia</div>
+            <div *ngFor="let application of activeApplications">
+              <div class="col m6 info-field-group">
+                <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
+              </div>
+              <div class="col m6 info-field-group">{{['application.status', application.status] | translation}}</div>
+            </div>
+          </div>
+          <div class="col m12 info-field-group">
+            <label class="info-label">Päätökset</label>
+            <div *ngIf="decidedApplications.length === 0">Ei päätettyjä hakemuksia</div>
+            <div *ngFor="let application of decidedApplications">
+              <div class="col m6 info-field-group">
+                <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
+              </div>
+              <div class="col m6 info-field-group">{{['application.status', application.status] | translation}}</div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col m3">
+    <mat-card>
+      <mat-card-title>Liittyvät hankkeet</mat-card-title>
+      <mat-card-content>
+        <div class="row">
+          <div class="col m12 info-field-group">
+            <div *ngIf="parentProjects.length === 0 && childProjects.length === 0">Hankkeeseen ei liity muita
+              hankkeita
+            </div>
+            <div *ngFor="let project of parentProjects">
+              <div class="col m12">
+                <a [routerLink]="['/projects', project.id, 'info']">Hanke {{project.id}}</a>
+              </div>
+            </div>
+            <div *ngFor="let project of childProjects">
+              <div class="col m12">
+                <a [routerLink]="['/projects', project.id, 'info']">Hanke {{project.id}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col m6">
+    <mat-card>
+      <mat-card-title>Historia</mat-card-title>
+      <mat-card-content>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
 <div class="row">
-    <div class="col m12">
-        <mat-card>
-            <mat-card-title>Sisäiset kommentit</mat-card-title>
-            <mat-card-content>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
-            </mat-card-content>
-        </mat-card>
-    </div>
+  <div class="col m12">
+    <mat-card>
+      <mat-card-title>Sisäiset kommentit</mat-card-title>
+      <mat-card-content>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

@@ -1,56 +1,58 @@
 <form [formGroup]="form">
-    <mat-card>
-        <mat-card-title>
-            <div fxLayout="row">
-                <div fxFlex="70">
-                    {{'chargeBasis.title' | translation}}
-                    <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="newEntry()" class="align-with-text">
-                      <mat-icon>add</mat-icon>
-                    </button>
-                </div>
-                <div fxFlex="15" fxFlexOffset="90px">
-                    {{calculatedPrice}} €
-                </div>
-            </div>
-        </mat-card-title>
-        <mat-card-content>
-            <div formArrayName="chargeBasisEntries">
-                <ul>
-                    <li *ngFor="let entry of chargeBasisEntries.controls; let i=index;">
-                        <mat-card class="slim-card" [class.indented]="entry.value.referredTag">
-                            <mat-card-content>
-                                <div fxLayout="row" fxLayout.sm="column" fxLayoutWrap>
-                                    <div fxFlex="100px">
-                                        <ng-container *ngIf="entry.value.manuallySet">
-                                            <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="editEntry(i)">
-                                              <mat-icon>edit</mat-icon>
-                                            </button>
-                                            <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="removeEntry(i)">
-                                              <mat-icon>clear</mat-icon>
-                                            </button>
-                                        </ng-container>
-                                    </div>
-                                    <div fxFlex="40" class="row-header">{{entry.value.text}}</div>
-                                    <div fxFlex="15" fxFlexOffset="30" class="row-field-highlight" *ngIf="showMinimal(entry.value); else normalEntry">
-                                        <span *ngIf="entry.value.unit==='PERCENT'">{{entry.value.quantity}} %</span>
-                                        <span *ngIf="entry.value.unit==='PIECE'">{{entry.value.unitPrice}} €</span>
-                                    </div>
-                                    <ng-template #normalEntry>
-                                        <div fxFlex="15">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}</div>
-                                        <div fxFlex="15">à {{entry.value.unitPrice}} €</div>
-                                        <div fxFlex="15" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
-                                    </ng-template>
-                                    <div fxFlex="90" fxFlexOffset="100px">
+  <mat-card>
+    <mat-card-title>
+      <div fxLayout="row">
+        <div fxFlex="70">
+          {{'chargeBasis.title' | translation}}
+          <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="newEntry()" class="align-with-text">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <div fxFlex="15" fxFlexOffset="90px">
+          {{calculatedPrice}} €
+        </div>
+      </div>
+    </mat-card-title>
+    <mat-card-content>
+      <div formArrayName="chargeBasisEntries">
+        <ul>
+          <li *ngFor="let entry of chargeBasisEntries.controls; let i=index;">
+            <mat-card class="slim-card" [class.indented]="entry.value.referredTag">
+              <mat-card-content>
+                <div fxLayout="row" fxLayout.sm="column" fxLayoutWrap>
+                  <div fxFlex="100px">
+                    <ng-container *ngIf="entry.value.manuallySet">
+                      <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="editEntry(i)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="removeEntry(i)">
+                        <mat-icon>clear</mat-icon>
+                      </button>
+                    </ng-container>
+                  </div>
+                  <div fxFlex="40" class="row-header">{{entry.value.text}}</div>
+                  <div fxFlex="15" fxFlexOffset="30" class="row-field-highlight"
+                       *ngIf="showMinimal(entry.value); else normalEntry">
+                    <span *ngIf="entry.value.unit==='PERCENT'">{{entry.value.quantity}} %</span>
+                    <span *ngIf="entry.value.unit==='PIECE'">{{entry.value.unitPrice}} €</span>
+                  </div>
+                  <ng-template #normalEntry>
+                    <div fxFlex="15">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}
+                    </div>
+                    <div fxFlex="15">à {{entry.value.unitPrice}} €</div>
+                    <div fxFlex="15" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
+                  </ng-template>
+                  <div fxFlex="90" fxFlexOffset="100px">
                                         <span *ngFor="let explanationEntry of entry.value.explanation; let last=last;">
                                             {{explanationEntry | commaSeparated:last}}
                                         </span>
-                                    </div>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>
-                    </li>
-                </ul>
-            </div>
-        </mat-card-content>
-    </mat-card>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </li>
+        </ul>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </form>

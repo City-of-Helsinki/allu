@@ -1,273 +1,287 @@
-<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)" *ngIf="applicationChanges | async as application">
-    <div class="row">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
-                  [readonly]="readonly" [showPropertyDeveloper]="true" [contactRequired]="true"></customer>
-    </div>
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)"
+      *ngIf="applicationChanges | async as application">
+  <div class="row">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+              [readonly]="readonly" [showPropertyDeveloper]="true" [contactRequired]="true"></customer>
+  </div>
 
-    <div class="row" *ngIf="hasPropertyDeveloper">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.propertyDeveloper"
-                  [readonly]="readonly"></customer>
-    </div>
+  <div class="row" *ngIf="hasPropertyDeveloper">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.propertyDeveloper"
+              [readonly]="readonly"></customer>
+  </div>
 
-    <div class="row">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
-                  [readonly]="readonly" [showRepresentative]="true" [contactRequired]="true"></customer>
-    </div>
+  <div class="row">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
+              [readonly]="readonly" [showRepresentative]="true" [contactRequired]="true"></customer>
+  </div>
 
-    <div class="row" *ngIf="hasRepresentative">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
-                  [readonly]="readonly"></customer>
-    </div>
+  <div class="row" *ngIf="hasRepresentative">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
+              [readonly]="readonly"></customer>
+  </div>
 
-    <div class="row">
-        <div class="col m6">
-            <mat-card>
-                <mat-card-title>Kaivuilmoituksen voimassaolo</mat-card-title>
-                <mat-card-content>
-                    <div class="row form-group">
-                        <div formGroupName="validityTimes">
-                            <div class="col s6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                           [matDatepicker]="startTimePicker"/>
-                                    <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                    <mat-datepicker #startTimePicker></mat-datepicker>
-                                    <mat-hint>
-                                        <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                                            {{'application.common.field.validityStartTimeMissing' | translation}}
-                                        </field-error>
-                                        <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                                            {{'application.common.field.validityStartBeforeEnd' | translation}}
-                                        </field-error>
-                                    </mat-hint>
-                                </mat-form-field>
-                            </div>
-                            <div class="col s6">
-                                <mat-form-field class="input-full-width" [inputWarning]="validityEndTimeCtrl">
-                                    <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                           [matDatepicker]="endTimePicker"/>
-                                    <button type="button" mat-icon-button [disabled]="readonly" matSuffix (click)="onValidityEndTimePickerClick(endTimePicker)">
-                                        <mat-icon [color]="validityEndTimeIcon.color"
-                                                 [matTooltipDisabled]="validityEndTimeIcon.tooltipDisabled"
-                                                 matTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}}"
-                                                 matTooltipPosition="above">
-                                            {{validityEndTimeIcon.icon}}
-                                        </mat-icon>
-                                    </button>
-                                    <mat-datepicker #endTimePicker></mat-datepicker>
-                                    <mat-hint>
-                                        <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                                            {{'application.common.field.validityEndTimeMissing' | translation}}
-                                        </field-error>
-                                        <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="inWinterTime">
-                                            <span>{{'application.excavationAnnouncement.field.inWinterTime' | translation}}</span>
-                                        </field-error>
-                                    </mat-hint>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div formGroupName="unauthorizedWork">
-                            <div class="col s6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
-                                           [matDatepicker]="unauthorizedStartTimePicker"/>
-                                    <mat-datepicker-toggle matSuffix [for]="unauthorizedStartTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                    <mat-datepicker #unauthorizedStartTimePicker></mat-datepicker>
-                                    <mat-hint>
-                                        <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
-                                            {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
-                                        </field-error>
-                                    </mat-hint>
-                                </mat-form-field>
-                            </div>
-                            <div class="col s6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
-                                           [matDatepicker]="unauthorizedEndTimePicker"/>
-                                    <mat-datepicker-toggle matSuffix [for]="unauthorizedEndTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                    <mat-datepicker #unauthorizedEndTimePicker></mat-datepicker>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="col s6">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"
-                                       [matDatepicker]="winterTimeOperationPicker"/>
-                                <mat-datepicker-toggle matSuffix [for]="winterTimeOperationPicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                <mat-datepicker #winterTimeOperationPicker></mat-datepicker>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s6">
-                            <mat-form-field class="input-full-width">
-                                <input matInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s6">
-                            <mat-form-field class="input-full-width">
-                                <input matInput readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>
-        <div class="col m6">
-            <mat-card>
-                <mat-card-title>Asiakkaan ilmoittama voimassaolo</mat-card-title>
-                <mat-card-content>
-                    <div class="row form-group">
-                        <div formGroupName="customerValidityTimes">
-                            <div class="col s6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus"
-                                           [matDatepicker]="customerStartTimePicker"/>
-                                    <mat-datepicker-toggle matSuffix [for]="customerStartTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                    <mat-datepicker #customerStartTimePicker></mat-datepicker>
-                                    <mat-hint>
-                                        <field-error [form]="applicationForm" field="customerValidityTimes" hasError="startBeforeEnd">
-                                            {{'application.common.field.validityStartBeforeEnd' | translation}}
-                                        </field-error>
-                                    </mat-hint>
-                                </mat-form-field>
-                            </div>
-                            <div class="col s6">
-                                <mat-form-field class="input-full-width">
-                                    <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus"
-                                           [matDatepicker]="customerEndTimePicker"/>
-                                    <mat-datepicker-toggle matSuffix [for]="customerEndTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                    <mat-datepicker #customerEndTimePicker></mat-datepicker>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="col s6">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="customerWinterTimeOperation" placeholder="Talvityön toiminn. kunto"
-                                       [matDatepicker]="customerWinterTimeOperationPicker"/>
-                                <mat-datepicker-toggle matSuffix [for]="customerWinterTimeOperationPicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                <mat-datepicker #customerWinterTimeOperationPicker></mat-datepicker>
-                            </mat-form-field>
-                        </div>
-                        <div class="col s6">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="customerWorkFinished" placeholder="Työ valmis"
-                                       [matDatepicker]="customerWorkFinishedPicker"/>
-                                <mat-datepicker-toggle matSuffix [for]="customerWorkFinishedPicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                <mat-datepicker #customerWorkFinishedPicker></mat-datepicker>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>
+  <div class="row">
+    <div class="col m6">
+      <mat-card>
+        <mat-card-title>Kaivuilmoituksen voimassaolo</mat-card-title>
+        <mat-card-content>
+          <div class="row form-group">
+            <div formGroupName="validityTimes">
+              <div class="col s6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                         [matDatepicker]="startTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="startTimePicker"
+                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #startTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                      {{'application.common.field.validityStartTimeMissing' | translation}}
+                    </field-error>
+                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                      {{'application.common.field.validityStartBeforeEnd' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col s6">
+                <mat-form-field class="input-full-width" [inputWarning]="validityEndTimeCtrl">
+                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                         [matDatepicker]="endTimePicker"/>
+                  <button type="button" mat-icon-button [disabled]="readonly" matSuffix
+                          (click)="onValidityEndTimePickerClick(endTimePicker)">
+                    <mat-icon [color]="validityEndTimeIcon.color"
+                              [matTooltipDisabled]="validityEndTimeIcon.tooltipDisabled"
+                              matTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}}"
+                              matTooltipPosition="above">
+                      {{validityEndTimeIcon.icon}}
+                    </mat-icon>
+                  </button>
+                  <mat-datepicker #endTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                      {{'application.common.field.validityEndTimeMissing' | translation}}
+                    </field-error>
+                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="inWinterTime">
+                      <span>{{'application.excavationAnnouncement.field.inWinterTime' | translation}}</span>
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+            <div formGroupName="unauthorizedWork">
+              <div class="col s6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
+                         [matDatepicker]="unauthorizedStartTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="unauthorizedStartTimePicker"
+                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #unauthorizedStartTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
+                      {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col s6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
+                         [matDatepicker]="unauthorizedEndTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="unauthorizedEndTimePicker"
+                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #unauthorizedEndTimePicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col s6">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"
+                       [matDatepicker]="winterTimeOperationPicker"/>
+                <mat-datepicker-toggle matSuffix [for]="winterTimeOperationPicker"
+                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #winterTimeOperationPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col s6">
+              <mat-form-field class="input-full-width">
+                <input matInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
+              </mat-form-field>
+            </div>
+            <div class="col s6">
+              <mat-form-field class="input-full-width">
+                <input matInput readonly type="text" formControlName="guaranteeEndTime"
+                       placeholder="Takuu päättyy (katutyö)"/>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
+    <div class="col m6">
+      <mat-card>
+        <mat-card-title>Asiakkaan ilmoittama voimassaolo</mat-card-title>
+        <mat-card-content>
+          <div class="row form-group">
+            <div formGroupName="customerValidityTimes">
+              <div class="col s6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus"
+                         [matDatepicker]="customerStartTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="customerStartTimePicker"
+                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #customerStartTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm" field="customerValidityTimes" hasError="startBeforeEnd">
+                      {{'application.common.field.validityStartBeforeEnd' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col s6">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus"
+                         [matDatepicker]="customerEndTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="customerEndTimePicker"
+                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #customerEndTimePicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col s6">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="customerWinterTimeOperation"
+                       placeholder="Talvityön toiminn. kunto"
+                       [matDatepicker]="customerWinterTimeOperationPicker"/>
+                <mat-datepicker-toggle matSuffix [for]="customerWinterTimeOperationPicker"
+                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #customerWinterTimeOperationPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col s6">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="customerWorkFinished" placeholder="Työ valmis"
+                       [matDatepicker]="customerWorkFinishedPicker"/>
+                <mat-datepicker-toggle matSuffix [for]="customerWorkFinishedPicker"
+                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #customerWorkFinishedPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-        <mat-card>
-            <mat-card-title>Kaivuilmoituksen tiedot</mat-card-title>
-            <mat-card-content>
-                <div class="row form-group">
-                    <div class="col m6">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" formControlName="cableReportIdentifier"
-                                   placeholder="Johtoselvitys"
-                                   [matAutocomplete]="cableReportSearch"/>
-                            <mat-autocomplete #cableReportSearch="matAutocomplete">
-                                <mat-option *ngFor="let application of matchingApplications | async"
-                                           [value]="application.applicationId" (click)="setCableReport(application)">
-                                    {{ application.applicationId }}
-                                </mat-option>
-                            </mat-autocomplete>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col m2">
-                        <mat-checkbox formControlName="pksCard">Pks-kortti</mat-checkbox>
-                    </div>
-                    <div class="col m2">
-                        <mat-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</mat-checkbox>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col m2">
-                        <mat-checkbox formControlName="constructionWork">Rakentaminen</mat-checkbox>
-                    </div>
-                    <div class="col m2">
-                        <mat-checkbox formControlName="maintenanceWork">Kunnossapito</mat-checkbox>
-                    </div>
-                    <div class="col m2">
-                        <mat-checkbox formControlName="emergencyWork">Hätätyö</mat-checkbox>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col m12">
-                        <mat-form-field class="input-full-width">
+  <div class="row">
+    <div class="col m12">
+      <mat-card>
+        <mat-card-title>Kaivuilmoituksen tiedot</mat-card-title>
+        <mat-card-content>
+          <div class="row form-group">
+            <div class="col m6">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="cableReportIdentifier"
+                       placeholder="Johtoselvitys"
+                       [matAutocomplete]="cableReportSearch"/>
+                <mat-autocomplete #cableReportSearch="matAutocomplete">
+                  <mat-option *ngFor="let application of matchingApplications | async"
+                              [value]="application.applicationId" (click)="setCableReport(application)">
+                    {{ application.applicationId }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col m2">
+              <mat-checkbox formControlName="pksCard">Pks-kortti</mat-checkbox>
+            </div>
+            <div class="col m2">
+              <mat-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</mat-checkbox>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col m2">
+              <mat-checkbox formControlName="constructionWork">Rakentaminen</mat-checkbox>
+            </div>
+            <div class="col m2">
+              <mat-checkbox formControlName="maintenanceWork">Kunnossapito</mat-checkbox>
+            </div>
+            <div class="col m2">
+              <mat-checkbox formControlName="emergencyWork">Hätätyö</mat-checkbox>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col m12">
+              <mat-form-field class="input-full-width">
                                 <textarea matInput matTextareaAutosize formControlName="trafficArrangements"
                                           placeholder="Suoritettavat liikennejärjestelyt"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m12">
-                        <mat-button-toggle-group formControlName="trafficArrangementImpedimentType">
-                            <mat-button-toggle value="NO_IMPEDIMENT">
-                                {{'application.trafficArrangementImpedimentType.NO_IMPEDIMENT' | translation}}
-                            </mat-button-toggle>
-                            <mat-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
-                                {{'application.trafficArrangementImpedimentType.INSIGNIFICANT_IMPEDIMENT' | translation}}
-                            </mat-button-toggle>
-                            <mat-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
-                                {{'application.trafficArrangementImpedimentType.IMPEDIMENT_FOR_HEAVY_TRAFFIC' | translation}}
-                            </mat-button-toggle>
-                            <mat-button-toggle value="SIGNIFICANT_IMPEDIMENT">
-                                {{'application.trafficArrangementImpedimentType.SIGNIFICANT_IMPEDIMENT' | translation}}
-                            </mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col m12">
-                        <mat-form-field class="input-full-width">
-                            <textarea matInput matTextareaAutosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col m12">
+              <mat-button-toggle-group formControlName="trafficArrangementImpedimentType">
+                <mat-button-toggle value="NO_IMPEDIMENT">
+                  {{'application.trafficArrangementImpedimentType.NO_IMPEDIMENT' | translation}}
+                </mat-button-toggle>
+                <mat-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
+                  {{'application.trafficArrangementImpedimentType.INSIGNIFICANT_IMPEDIMENT' | translation}}
+                </mat-button-toggle>
+                <mat-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
+                  {{'application.trafficArrangementImpedimentType.IMPEDIMENT_FOR_HEAVY_TRAFFIC' | translation}}
+                </mat-button-toggle>
+                <mat-button-toggle value="SIGNIFICANT_IMPEDIMENT">
+                  {{'application.trafficArrangementImpedimentType.SIGNIFICANT_IMPEDIMENT' | translation}}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col m12">
+              <mat-form-field class="input-full-width">
+                <textarea matInput matTextareaAutosize formControlName="additionalInfo"
+                          placeholder="Lisätiedot"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
-    </div>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-            <pricing-info [form]="applicationForm"></pricing-info>
-        </div>
+  <div class="row">
+    <div class="col m12">
+      <pricing-info [form]="applicationForm"></pricing-info>
     </div>
+  </div>
 
-    <div class="row" *ngIf="readonly">
-        <div class="col m12">
-            <location-details [application]="application" [readonly]="readonly"></location-details>
-        </div>
+  <div class="row" *ngIf="readonly">
+    <div class="col m12">
+      <location-details [application]="application" [readonly]="readonly"></location-details>
     </div>
+  </div>
 
-    <div class="row" *ngIf="showTerms">
-        <div class="col s12">
-            <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
-        </div>
+  <div class="row" *ngIf="showTerms">
+    <div class="col s12">
+      <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms"
+             [readonly]="readonly"></terms>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col s12">
-            <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
-        </div>
+  <div class="row">
+    <div class="col s12">
+      <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col s12">
-            <application-actions
-                [readonly]="readonly"
-                [form]="applicationForm"
-                [submitPending]="submitPending"></application-actions>
-        </div>
+  <div class="row">
+    <div class="col s12">
+      <application-actions
+        [readonly]="readonly"
+        [form]="applicationForm"
+        [submitPending]="submitPending"></application-actions>
     </div>
+  </div>
 </form>

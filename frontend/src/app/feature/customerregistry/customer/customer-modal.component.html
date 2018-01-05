@@ -1,10 +1,10 @@
 <h1 mat-dialog-title>Asiakastiedot</h1>
 <form [formGroup]="customerForm" (ngSubmit)="onSubmit(customerForm.value)">
-    <div mat-dialog-content>
-        <customer-info [form]="customerForm"></customer-info>
-    </div>
-    <div mat-dialog-actions>
-        <button type="submit" mat-raised-button color="primary" [disabled]="!customerForm.valid">TALLENNA</button>
-        <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
-    </div>
+  <div mat-dialog-content>
+    <customer-info [form]="customerForm"></customer-info>
+  </div>
+  <div mat-dialog-actions>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!customerForm.valid">TALLENNA</button>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+  </div>
 </form>
