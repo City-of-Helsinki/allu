@@ -56,7 +56,7 @@ export class ApplicationStore {
   }
 
   get snapshot(): ApplicationState {
-    return ObjectUtil.clone(this.store.getValue());
+    return ObjectUtil.clone(this.current);
   }
 
   get changes(): Observable<ApplicationState> {
@@ -76,18 +76,18 @@ export class ApplicationStore {
 
   applicationChange(application: Application) {
     this.store.next({
-      ...this.snapshot,
+      ...this.current,
       application: application
     });
   }
 
   get isNew(): boolean {
-    return this.snapshot.application.id === undefined;
+    return this.current.application.id === undefined;
   }
 
   applicationCopyChange(application: Application) {
     this.store.next({
-      ...this.snapshot,
+      ...this.current,
       applicationCopy: ObjectUtil.clone(application)
     });
   }
@@ -104,7 +104,7 @@ export class ApplicationStore {
   }
 
   replace(): Observable<Application> {
-    return this.applicationService.replace(this.snapshot.application.id)
+    return this.applicationService.replace(this.current.application.id)
       .do(replacement => this.applicationChange(replacement));
   }
 
@@ -113,11 +113,11 @@ export class ApplicationStore {
   }
 
   changeTags(tags: Array<ApplicationTag>) {
-    this.store.next({...this.snapshot, tags});
+    this.store.next({...this.current, tags});
   }
 
   saveTags(tags: Array<ApplicationTag>) {
-    const applicationId = this.snapshot.application.id;
+    const applicationId = this.current.application.id;
     if (!NumberUtil.isDefined(applicationId)) {
       throw new Error('Cannot save tags when application state has no saved application');
     }
@@ -137,7 +137,7 @@ export class ApplicationStore {
   }
 
   changeTab(tab: SidebarItemType): void {
-    this.store.next({...this.snapshot, tab});
+    this.store.next({...this.current, tab});
   }
 
   get attachments(): Observable<Array<AttachmentInfo>> {
@@ -159,7 +159,7 @@ export class ApplicationStore {
   addAttachment(attachment: AttachmentInfo) {
     const current = this.snapshot.pendingAttachments.slice();
     this.store.next({
-      ...this.snapshot,
+      ...this.current,
       pendingAttachments: current.concat(attachment)
     });
   }
@@ -184,29 +184,29 @@ export class ApplicationStore {
 
   loadAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
     return this.applicationService.getAttachments(applicationId)
-      .do(attachments => this.store.next({...this.snapshot, attachments}));
+      .do(attachments => this.store.next({...this.current, attachments}));
   }
 
   saveComment(applicationId: number, comment: Comment): Observable<Comment> {
     return this.commentHub.saveComment(applicationId, comment)
-      .do(c => this.loadComments(this.snapshot.application.id).subscribe());
+      .do(c => this.loadComments(this.current.application.id).subscribe());
   }
 
   removeComment(commentId: number): Observable<HttpResponse> {
     return this.commentHub.removeComment(commentId)
-      .do(c => this.loadComments(this.snapshot.application.id).subscribe());
+      .do(c => this.loadComments(this.current.application.id).subscribe());
   }
 
   loadComments(id: number): Observable<Array<Comment>> {
     return this.commentHub.getComments(id)
-      .do(comments => this.store.next({...this.snapshot, comments}));
+      .do(comments => this.store.next({...this.current, comments}));
   }
 
   load(id: number): Observable<Application> {
     return this.applicationService.get(id)
       .do(application => {
         this.store.next({
-          ...this.snapshot,
+          ...this.current,
           application,
           attachments: application.attachmentList,
           tags: application.applicationTags,
@@ -234,13 +234,13 @@ export class ApplicationStore {
   }
 
   changeRelatedProject(projectId: number) {
-    this.store.next({...this.snapshot, relatedProject: projectId});
+    this.store.next({...this.current, relatedProject: projectId});
   }
 
   loadDeposit(): Observable<Deposit> {
     const appId = this.snapshot.application.id;
     return this.depositService.fetchByApplication(appId)
-      .do(deposit => this.store.next({...this.snapshot, deposit}));
+      .do(deposit => this.store.next({...this.current, deposit}));
   }
 
   get deposit(): Observable<Deposit> {
@@ -251,7 +251,7 @@ export class ApplicationStore {
     return this.depositService.save(deposit)
       .do(saved => {
         this.load(deposit.applicationId).subscribe();
-        this.store.next({...this.snapshot, deposit: saved});
+        this.store.next({...this.current, deposit: saved});
       });
   }
 
@@ -299,13 +299,17 @@ export class ApplicationStore {
         () => {
           result.next(application);
           result.complete();
-          this.store.next({...this.snapshot, pendingAttachments: []});
+          this.store.next({...this.current, pendingAttachments: []});
         });
 
     return result.asObservable();
   }
 
   private saved(application: Application): void {
-    this.store.next({...this.snapshot, application, tags: application.applicationTags});
+    this.store.next({...this.current, application, tags: application.applicationTags});
+  }
+
+  private get current(): ApplicationState {
+    return this.store.getValue();
   }
 }
