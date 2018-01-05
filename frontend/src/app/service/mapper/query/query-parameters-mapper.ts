@@ -24,7 +24,7 @@ export const START_TIME_FIELD = 'startTime';
 export const END_TIME_FIELD = 'endTime';
 
 export class QueryParametersMapper {
-  public static mapSortToSearchServiceQuery(sort: Sort) : RequestOptionsArgs {
+  public static mapSortToSearchServiceQuery(sort: Sort): RequestOptionsArgs {
     if (sort) {
       return QueryParametersMapper.mapSortToQueryParameters(
         new Sort(QueryParametersMapper.getBackendSortField(sort.field), sort.direction)
