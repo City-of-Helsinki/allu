@@ -20,6 +20,7 @@ import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {StatusChangeInfoMapper} from '../mapper/status-change-info-mapper';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentInfoMapper} from '../mapper/attachment-info-mapper';
+import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -77,7 +78,8 @@ export class ApplicationService {
 
     return this.authHttp.post(
       searchUrl,
-      JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)))
+      JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
+      QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));

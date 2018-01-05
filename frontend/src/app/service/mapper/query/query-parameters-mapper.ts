@@ -1,4 +1,4 @@
-import {BackendQueryParameter, BackendQuerySort} from '../../backend-model/backend-query-parameters';
+import {BackendQueryParameter} from '../../backend-model/backend-query-parameters';
 import {Direction, Sort} from '../../../model/common/sort';
 import {Some} from '../../../util/option';
 import {SearchQuery} from '../../../model/common/search-query';
@@ -24,6 +24,14 @@ export const START_TIME_FIELD = 'startTime';
 export const END_TIME_FIELD = 'endTime';
 
 export class QueryParametersMapper {
+  public static mapSortToSearchServiceQuery(sort: Sort) : RequestOptionsArgs {
+    if (sort) {
+      return QueryParametersMapper.mapSortToQueryParameters(
+        new Sort(QueryParametersMapper.getBackendSortField(sort.field), sort.direction)
+      );
+    }
+    return {};
+  }
   public static mapSortToQueryParameters(sort: Sort): RequestOptionsArgs {
     if (sort) {
       let sortParam = [sort.field];
@@ -31,14 +39,6 @@ export class QueryParametersMapper {
       return {params: {sort: sortParam.join(',')}};
     }
     return {};
-  }
-
-  public static mapSort(query: SearchQuery): BackendQuerySort {
-    return (query.sort && query.sort.field && query.sort.direction !== undefined) ?
-    {
-      field: QueryParametersMapper.getBackendSortField(query.sort.field),
-      direction: Direction[query.sort.direction]
-    } : undefined;
   }
 
   public static mapParameter(

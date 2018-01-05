@@ -8,14 +8,13 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.QueryParameterJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.UserService;
-import fi.hel.allu.servicecore.service.WorkQueueService;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -50,20 +49,18 @@ public class WorkQueueServiceTest {
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
     userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
-    Mockito.when(applicationServiceComposer.search(Mockito.any())).thenReturn(emptyList);
+    Mockito.when(applicationServiceComposer.search(Mockito.any(QueryParametersJson.class), Mockito.any(Pageable.class)))
+        .thenReturn(emptyList);
   }
 
   @Test
   public void testSearchSharedByGroup() {
 
-    userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
-    userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
-    Mockito.when(applicationServiceComposer.search(Mockito.any())).thenReturn(emptyList);
 
-    List<ApplicationJson> result = workQueueService.searchSharedByGroup(new QueryParametersJson());
+    List<ApplicationJson> result = workQueueService.searchSharedByGroup(new QueryParametersJson(), null);
 
-    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture());
+    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any());
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);
@@ -92,10 +89,10 @@ public class WorkQueueServiceTest {
     QueryParametersJson queryParametersJson = new QueryParametersJson();
     QueryParameterJson dummyParameter = new QueryParameterJson("dummy", Collections.emptyList());
     QueryParameterJson typeParameter = new QueryParameterJson(QueryParameter.FIELD_NAME_STATUS, Collections.singletonList(StatusType.REJECTED.name()));
-    queryParametersJson.setQueryParameters(new ArrayList(Arrays.asList(dummyParameter, typeParameter)));
-    List<ApplicationJson> result = workQueueService.searchSharedByGroup(queryParametersJson);
+    queryParametersJson.setQueryParameters(new ArrayList<>(Arrays.asList(dummyParameter, typeParameter)));
+    List<ApplicationJson> result = workQueueService.searchSharedByGroup(queryParametersJson, null);
 
-    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture());
+    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any());
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);

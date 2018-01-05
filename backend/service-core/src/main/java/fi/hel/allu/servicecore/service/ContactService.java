@@ -8,19 +8,21 @@ import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,10 +72,11 @@ public class ContactService {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public List<ContactJson> search(QueryParametersJson queryParameters) {
+  public List<ContactJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
     List<ContactJson> resultList = Collections.emptyList();
     if (!queryParameters.getQueryParameters().isEmpty()) {
-      List<Integer> ids = searchService.searchContact(QueryParameterMapper.mapToQueryParameters(queryParameters));
+      List<Integer> ids = searchService.searchContact(QueryParameterMapper.mapToQueryParameters(queryParameters),
+          pageRequest);
       resultList = getContactsById(ids);
     }
     return resultList;

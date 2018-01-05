@@ -10,6 +10,7 @@ import {ErrorType} from '../../../service/ui-state/error-type';
 import {HttpUtil} from '../../../util/http.util';
 import {ErrorInfo} from '../../../service/ui-state/error-info';
 import {ApplicationQueryParametersMapper} from '../../../service/mapper/query/application-query-parameters-mapper';
+import {QueryParametersMapper} from '../../../service/mapper/query/query-parameters-mapper';
 
 @Injectable()
 export class WorkQueueService {
@@ -20,7 +21,8 @@ export class WorkQueueService {
   public searchApplicationsSharedByGroup(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
     return this.authHttp.post(
       WorkQueueService.WORK_QUEUE_URL,
-      JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)))
+      JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
+      QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_WORKQUEUE_SEARCH_FAILED, HttpUtil.extractMessage(err))));

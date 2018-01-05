@@ -8,8 +8,7 @@ export class ProjectQueryParametersMapper {
   public static mapFrontend(query: ProjectSearchQuery): BackendQueryParameters {
     return Some(query).map(q => {
       return {
-        queryParameters: ProjectQueryParametersMapper.mapProjectParameters(query),
-        sort: QueryParametersMapper.mapSort(query)
+        queryParameters: ProjectQueryParametersMapper.mapProjectParameters(query)
       };
     }).orElse(undefined);
   }

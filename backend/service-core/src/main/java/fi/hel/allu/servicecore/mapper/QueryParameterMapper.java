@@ -4,6 +4,7 @@ import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.QueryParameterJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +25,6 @@ public class QueryParameterMapper {
             .stream().map(p -> mapToQueryParameter(p))
             .filter(p -> p != null)
             .collect(Collectors.toList()));
-
-    if (queryParametersJson.getSort() != null) {
-      queryParameters.setSort(
-          new QueryParameters.Sort(
-              queryParametersJson.getSort().field,
-              QueryParameters.Sort.Direction.valueOf(queryParametersJson.getSort().direction.name())));
-    }
 
     return queryParameters;
   }

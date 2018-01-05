@@ -5,6 +5,8 @@ import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.ApplicationSearchService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,8 +65,9 @@ public class ApplicationController {
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
-  public ResponseEntity<List<Integer>> search(@Valid @RequestBody QueryParameters queryParameters) {
-    return new ResponseEntity<>(applicationSearchService.findByField(queryParameters), HttpStatus.OK);
+  public ResponseEntity<List<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
+    return new ResponseEntity<>(applicationSearchService.findByField(queryParameters, pageRequest), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/sync/start", method = RequestMethod.POST)

@@ -39,6 +39,8 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -55,6 +57,9 @@ import java.util.stream.Collectors;
  */
 public class GenericSearchService<T> {
   private static final Logger logger = LoggerFactory.getLogger(GenericSearchService.class);
+  private static final int DEFAULT_PAGE = 0;
+  private static final int DEFAULT_PAGESIZE = 100;
+  private static final Pageable DEFAULT_PAGEREQUEST = new PageRequest(DEFAULT_PAGE, DEFAULT_PAGESIZE);
 
   private ElasticSearchMappingConfig elasticSearchMappingConfig;
   private Client client;
@@ -210,13 +215,21 @@ public class GenericSearchService<T> {
 
   /**
    * Search index with the given query parameters.
-   * <p>Supports also partial searching. Note that partial search requires special ElasticSearch mapping for the field
-   * (see {{@link ElasticSearchMappingConfig}}.
+   * <p>
+   * Supports also partial searching. Note that partial search requires special
+   * ElasticSearch mapping for the field (see
+   * {{@link ElasticSearchMappingConfig}}.
    *
-   * @param queryParameters   Query parameters.
-   * @return List of ids found from search index. The list is ordered as specified by the query parameters.
+   * @param queryParameters Query parameters.
+   * @param pageRequest Page request. Can be null, in which case the default
+   *          request is assumed.
+   * @return List of ids found from search index. The list is ordered as
+   *         specified by the query parameters.
    */
-  public List<Integer> findByField(QueryParameters queryParameters) {
+  public List<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {
+    if (pageRequest == null) {
+      pageRequest = DEFAULT_PAGEREQUEST;
+    }
     try {
       BoolQueryBuilder qb = QueryBuilders.boolQuery();
 
@@ -224,19 +237,19 @@ public class GenericSearchService<T> {
         qb.must(createQueryBuilder(param));
       }
 
-      // TODO: paging to search results. Before paging is implemented, the maximum number of results is configured below (100)
-      SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexName()).setSize(100)
+      SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexName())
+          .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
           .setTypes(indexTypeName).setQuery(qb);
 
-      if (queryParameters.getSort() != null) {
-        SortBuilder sb = SortBuilders.fieldSort(queryParameters.getSort().field);
-        if (queryParameters.getSort().direction.equals(QueryParameters.Sort.Direction.ASC)) {
+      Optional.ofNullable(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
+        SortBuilder<?> sb = SortBuilders.fieldSort(o.getProperty());
+        if (o.isAscending()) {
           sb.order(SortOrder.ASC);
         } else {
           sb.order(SortOrder.DESC);
         }
         srBuilder.addSort(sb);
-      }
+      }));
 
       logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexName(),
           srBuilder.toString());
