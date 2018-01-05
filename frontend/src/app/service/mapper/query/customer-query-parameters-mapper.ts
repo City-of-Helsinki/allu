@@ -5,8 +5,7 @@ import {Sort} from '../../../model/common/sort';
 export class CustomerQueryParametersMapper {
   public static mapFrontend(query: CustomerSearchQuery): BackendQueryParameters {
     return {
-      queryParameters: CustomerQueryParametersMapper.mapCustomerParameters(query),
-      sort: QueryParametersMapper.mapSort(query)
+      queryParameters: CustomerQueryParametersMapper.mapCustomerParameters(query)
     };
   }
 

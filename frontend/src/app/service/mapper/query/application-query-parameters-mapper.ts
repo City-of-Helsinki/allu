@@ -7,8 +7,7 @@ export class ApplicationQueryParametersMapper {
   public static mapFrontend(query: ApplicationSearchQuery): BackendQueryParameters {
     return (query) ?
       {
-        queryParameters: ApplicationQueryParametersMapper.mapApplicationParameters(query),
-        sort: QueryParametersMapper.mapSort(query)
+        queryParameters: ApplicationQueryParametersMapper.mapApplicationParameters(query)
       } : undefined;
   }
 

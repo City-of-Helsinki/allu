@@ -12,6 +12,7 @@ import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {ProjectQueryParametersMapper} from '../mapper/query/project-query-parameters-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
+import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 
 @Injectable()
 export class ProjectService {
@@ -28,7 +29,8 @@ export class ProjectService {
 
     return this.authHttp.post(
       searchUrl,
-      JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)))
+      JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)),
+      QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
       .map(response => response.json())
       .map(json => json.map(project => ProjectMapper.mapBackend(project)))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.searchFailed')));

@@ -10,6 +10,7 @@ import {Some} from '../../util/option';
 import {CustomerQueryParametersMapper, CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
 import {Customer} from '../../model/customer/customer';
 import {CustomerWithContacts} from '../../model/customer/customer-with-contacts';
+import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 
 const CUSTOMERS_URL = '/api/customers';
 const CUSTOMERS_SEARCH_URL = CUSTOMERS_URL + '/search';
@@ -24,7 +25,10 @@ export class CustomerService {
   }
 
   public searchCustomersBy(searchQuery: CustomerSearchQuery): Observable<Array<Customer>> {
-    return this.authHttp.post(CUSTOMERS_SEARCH_URL, JSON.stringify(CustomerQueryParametersMapper.mapFrontend(searchQuery)))
+    return this.authHttp.post(
+      CUSTOMERS_SEARCH_URL,
+      JSON.stringify(CustomerQueryParametersMapper.mapFrontend(searchQuery)),
+      QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
       .map(response => response.json())
       .map(customers => customers.map(c => CustomerMapper.mapBackend(c)))
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')));
