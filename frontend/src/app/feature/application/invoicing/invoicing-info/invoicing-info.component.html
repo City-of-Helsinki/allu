@@ -52,6 +52,12 @@
           <div fxLayout="row" fxLayoutWrap>
             <div fxFlex="50">
               <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="customerReference"
+                       [placeholder]="'invoice.info.customerReference' | translation"/>
+              </mat-form-field>
+            </div>
+            <div fxFlex="50">
+              <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="depositAmount"
                        [placeholder]="'deposit.amount' | translation"/>
                 <span matSuffix>€</span>

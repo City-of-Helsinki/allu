@@ -51,7 +51,8 @@ export class Application {
     public notBillableReason?: string,
     public invoiceRecipientId?: number,
     public replacesApplicationId?: number,
-    public replacedByApplicationId?: number) {
+    public replacedByApplicationId?: number,
+    public customerReference?: string) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

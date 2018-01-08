@@ -114,7 +114,8 @@ export class InvoicingInfoComponent implements OnInit {
 
       this.form.patchValue({
         notBillable: app.notBillable,
-        notBillableReason: app.notBillableReason
+        notBillableReason: app.notBillableReason,
+        customerReference: app.customerReference
       });
 
       if (!applicationCanBeEdited(app.statusEnum)) {

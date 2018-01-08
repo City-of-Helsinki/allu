@@ -889,7 +889,8 @@ export const translations = {
       address: 'Laskutusosoite',
       depositAndOthers: 'Vakuus ja muut tiedot',
       notBillable: 'Ei laskuteta',
-      notBillableReason: 'Peruste'
+      notBillableReason: 'Peruste',
+      customerReference: 'Asiakkaan viite'
     },
     negligenceFeeType: {
       START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',

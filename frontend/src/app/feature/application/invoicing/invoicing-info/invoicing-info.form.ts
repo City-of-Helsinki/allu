@@ -9,7 +9,8 @@ export class InvoicingInfoForm {
     public notBillableReason?: string,
     public depositAmount?: number,
     public depositReason?: string,
-    public depositStatus?: string) {
+    public depositStatus?: string,
+    public customerReference?: string) {
     this.invoiceRecipient = invoiceRecipient || new CustomerForm();
   }
 
@@ -21,7 +22,8 @@ export class InvoicingInfoForm {
       notBillableReason: [undefined],
       depositAmount: [{value: undefined, disabled: true}],
       depositReason: [{value: undefined, disabled: true}],
-      depositStatus: [undefined]
+      depositStatus: [undefined],
+      customerReference: [undefined]
     });
   }
 }

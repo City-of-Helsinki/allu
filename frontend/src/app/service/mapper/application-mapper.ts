@@ -48,6 +48,7 @@ export class ApplicationMapper {
     application.invoiceRecipientId = backendApplication.invoiceRecipientId;
     application.replacesApplicationId = backendApplication.replacesApplicationId;
     application.replacedByApplicationId = backendApplication.replacedByApplicationId;
+    application.customerReference = backendApplication.customerReference;
     return application;
   }
 
@@ -81,7 +82,8 @@ export class ApplicationMapper {
       notBillableReason: application.notBillableReason,
       invoiceRecipientId: application.invoiceRecipientId,
       replacedByApplicationId: application.replacedByApplicationId,
-      replacesApplicationId: application.replacesApplicationId
+      replacesApplicationId: application.replacesApplicationId,
+      customerReference: application.customerReference
     };
   }
 }
