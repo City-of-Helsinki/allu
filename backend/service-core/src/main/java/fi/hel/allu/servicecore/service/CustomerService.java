@@ -12,6 +12,7 @@ import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -194,14 +195,9 @@ public class CustomerService {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public List<CustomerJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    List<CustomerJson> resultList = Collections.emptyList();
-    if (!queryParameters.getQueryParameters().isEmpty()) {
-      List<Integer> ids = searchService.searchCustomer(QueryParameterMapper.mapToQueryParameters(queryParameters),
-          pageRequest);
-      resultList = getCustomersById(ids);
-    }
-    return resultList;
+  public Page<CustomerJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
+    return searchService.searchCustomer(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
+        ids -> getCustomersById(ids));
   }
 
   public List<CustomerJson> getCustomersById(List<Integer> customerIds) {

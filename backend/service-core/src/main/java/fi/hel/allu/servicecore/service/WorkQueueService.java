@@ -9,6 +9,7 @@ import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +51,7 @@ public class WorkQueueService {
    * @param   queryParametersJson   Original query, which will get user specific filtering added.
    * @return  List of applications matching the given search query.
    */
-  public List<ApplicationJson> searchSharedByGroup(QueryParametersJson queryParametersJson, Pageable pageRequest) {
+  public Page<ApplicationJson> searchSharedByGroup(QueryParametersJson queryParametersJson, Pageable pageRequest) {
     // find application type and status query parameters, if any
     Map<Boolean, List<QueryParameterJson>> partitionedByType =
         partitionByField(queryParametersJson.getQueryParameters(), QueryParameter.FIELD_NAME_APPLICATION_TYPE);

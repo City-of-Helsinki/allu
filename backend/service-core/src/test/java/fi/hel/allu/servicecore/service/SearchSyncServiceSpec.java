@@ -49,7 +49,7 @@ public class SearchSyncServiceSpec {
   private SearchSyncService searchSyncService;
 
   {
-    describe("Mail sending service", () -> {
+    describe("Search sync service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
         searchSyncService = new SearchSyncService(restTemplate, applicationProperties, applicationMapper,

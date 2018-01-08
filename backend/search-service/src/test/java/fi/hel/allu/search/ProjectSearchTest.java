@@ -77,7 +77,7 @@ public class ProjectSearchTest {
     projectSearchService.insert(projectES);
     QueryParameters params = SearchTestUtil.createQueryParameters("name", projectName);
     projectSearchService.refreshIndex();
-    List<Integer> appList = projectSearchService.findByField(params, null);
+    List<Integer> appList = projectSearchService.findByField(params, null).getContent();
     assertNotNull(appList);
     assertEquals(1, appList.size());
   }
