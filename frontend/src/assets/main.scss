@@ -259,7 +259,7 @@ ul.card-list {
     flex-wrap: wrap;
     align-items: center;
 
-    div {
+    & > div {
       padding: 0 10px;
       white-space: nowrap;
     }

@@ -14,7 +14,7 @@ import {HttpResponse} from '../util/http-response';
 
 const uploadUrl = '/api/applications/appId/attachments';
 const downloadUrl = '/api/applications/attachments/:attachmentId/data';
-const attachmentUrl = '/api/applications/:appId/attachments';
+const updateUrl = '/api/applications/attachments/:attachmentId';
 const defaultAttachmentGetUrl = '/api/applications/default-attachments';
 const defaultAttachmentUrlEdit = '/api/admin/attachments';
 
@@ -53,6 +53,13 @@ export class AttachmentService {
     const options = {responseType: ResponseContentType.Blob };
     return this.authHttp.get(url, options)
       .map(response => response.blob());
+  }
+
+  updateAttachmentInfo(attachment: AttachmentInfo): Observable<AttachmentInfo> {
+    const url = updateUrl.replace(':attachmentId', String(attachment.id));
+    return this.authHttp.put(url, attachment)
+      .map(response => response.json())
+      .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
   }
 
   getDefaultAttachmentInfo(id: number): Observable<DefaultAttachmentInfo> {

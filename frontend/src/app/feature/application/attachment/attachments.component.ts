@@ -3,16 +3,18 @@ import * as filesaver from 'file-saver';
 
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
 import {Application} from '../../../model/application/application';
-import {MaterializeUtil} from '../../../util/materialize.util';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {AttachmentHub} from './attachment-hub';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSlideToggleChange} from '@angular/material';
 import {TimeUtil} from '../../../util/time.util';
 import {Some} from '../../../util/option';
 import {AttachmentType, isCommon} from '../../../model/application/attachment/attachment-type';
 import {Subject} from 'rxjs/Subject';
 import {applicationCanBeEdited} from '../../../model/application/application-status';
+import {NumberUtil} from '../../../util/number.util';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {findTranslation} from '../../../util/translations';
 
 const toastTime = 4000;
 
@@ -66,25 +68,19 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
   }
 
   save(attachment: AttachmentInfo, index?: number) {
-    if (this.application.id) {
-      this.applicationStore.saveAttachment(this.application.id, attachment).subscribe(
-        saved => {
-          MaterializeUtil.toast('Liite ' + saved.name + ' tallennettu', toastTime);
-          Some(index).do(i => this.editableAttachments.splice(i, 1));
-        },
-        error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' tallennus epäonnistui', toastTime)
-      );
-    } else {
-      this.applicationStore.addAttachment(attachment);
-      Some(index).do(i => this.editableAttachments.splice(i, 1));
-      MaterializeUtil.toast('Liite ' + attachment.name + ' lisätty hakemukselle', toastTime);
-    }
+    this.applicationStore.saveAttachment(attachment).subscribe(
+      saved => {
+        NotificationService.message(findTranslation('attachment.action.added', {name: saved.name}), toastTime);
+        Some(index).do(i => this.editableAttachments.splice(i, 1));
+      },
+      error => NotificationService.errorMessage(findTranslation('attachment.error.addFailed', {name: attachment.name}), toastTime)
+    );
   }
 
   remove(attachment: AttachmentInfo, index?: number) {
     if (isCommon(attachment.type)) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: {title: 'Haluatko varmasti poistaa liitteen', description: attachment.name}
+        data: {title: findTranslation('attachment.action.confirmDelete'), description: attachment.name}
       });
       dialogRef.afterClosed()
         .filter(result => result) // Ignore no answers
@@ -111,12 +107,19 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
     this.hasFileOverDropzone = hasFileOverDropzone;
   }
 
+  decisionAttachmentToggle(attachment: AttachmentInfo, index: number, change: MatSlideToggleChange): void {
+    attachment.decisionAttachment = change.checked;
+    this.applicationStore.saveAttachment(attachment, index).subscribe(
+      saved => {},
+      error => NotificationService.errorMessage(findTranslation('attachment.error.addFailed', {name: attachment.name}), toastTime)
+    );
+  }
+
   private onRemoveConfirm(attachment: AttachmentInfo, index?: number) {
     this.applicationStore.removeAttachment(attachment.id, index)
-      .subscribe(status => {
-          MaterializeUtil.toast('Liite ' + attachment.name + ' poistettu', toastTime);
-        },
-        error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' poistaminen epäonnistui', toastTime));
+      .subscribe(
+        status => NotificationService.message(findTranslation('attachment.action.deleted', {name: attachment.name}), toastTime),
+        error => NotificationService.errorMessage(findTranslation('attachment.error.deleteFailed', {name: attachment.name}), toastTime));
 
   }
 

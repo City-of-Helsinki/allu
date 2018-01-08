@@ -774,9 +774,16 @@ export const translations = {
       DEFAULT: 'Vakioliitteet',
       DEFAULT_IMAGE: 'Tyyppikuvat'
     },
+    action: {
+      added: 'Liite {{name}} lisätty hakemukselle',
+      deleted: 'Liite {{name}} poistettu',
+      confirmDelete: 'Haluatko varmasti poistaa liitteen'
+    },
     error: {
       defaultAttachmentByArea: 'Vakioliitteen automaattinen lisääminen alueen perusteella epäonnistui. ' +
-      'Voit lisätä vakioliitteen Liitteet-välilehdeltä'
+      'Voit lisätä vakioliitteen Liitteet-välilehdeltä',
+      addFailed: 'Liiteen {{name}} tallennus epäonnistui',
+      deleteFailed: 'Liiteen {{name}} poistaminen epäonnistui'
     }
   },
   comment: {
@@ -1072,6 +1079,12 @@ const toKey = (path: string | Array<string>): Option<Array<string>> => {
 type Path = string | Array<string>;
 interface Params { [key: string]: string; }
 
+/**
+ * Replaces parameters in string with matching key's value
+ * @param {string} text string containing translation with tokens
+ * @param {Params} params object containing values to replace tokens in translation string
+ * @returns {string} text with tokens replaced with matching parameters
+ */
 function replaceParams(text: string, params: Params): string {
   let replaced = text;
   Object.keys(params).forEach(key => {

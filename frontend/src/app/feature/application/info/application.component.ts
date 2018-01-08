@@ -48,6 +48,13 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     this.applicationChanges
       .takeUntil(this.destroy)
       .subscribe(app => this.onApplicationChange(app));
+
+    this.defaultAttachmentsForArea(this.applicationStore.snapshot.application)
+      .takeWhile(() => this.applicationStore.isNew) // Only add default attachments if it is a new application
+      .takeUntil(this.destroy)
+      .subscribe(
+        attachments => attachments.forEach(a => this.applicationStore.saveAttachment(a)),
+        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
   }
 
   ngOnDestroy(): void {
@@ -61,12 +68,6 @@ export class ApplicationComponent implements OnInit, OnDestroy {
 
     this.readonly = UrlUtil.urlPathContains(this.route, 'summary');
     this.progressStep = stepFrom(ApplicationStatus[application.status], this.readonly);
-
-    this.defaultAttachmentsForArea(application)
-      .takeUntil(this.destroy)
-      .subscribe(
-        attachments => attachments.forEach(a => this.applicationStore.addAttachment(a)),
-        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
 
     this.sidebarItems = Some(application.typeEnum).map(type => this.createSidebar(type, this.readonly)).orElse([]);
   }

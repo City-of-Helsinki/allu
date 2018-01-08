@@ -263,7 +263,6 @@ public class AttachmentService {
     result.setName(attachmentInfoJson.getName());
     result.setDescription(attachmentInfoJson.getDescription());
     result.setCreationTime(attachmentInfoJson.getCreationTime());
-    result.setAttachmentDataId(attachmentInfoJson.getAttachmentDataId());
     result.setDecisionAttachment(attachmentInfoJson.isDecisionAttachment());
     if (attachmentInfoJson instanceof DefaultAttachmentInfoJson) {
       DefaultAttachmentInfoJson defaultAttachmentInfoJson = (DefaultAttachmentInfoJson) attachmentInfoJson;

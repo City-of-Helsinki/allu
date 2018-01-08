@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
@@ -9,11 +10,13 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ import static fi.hel.allu.QAttachment.attachment;
 import static fi.hel.allu.QAttachmentData.attachmentData;
 import static fi.hel.allu.QDefaultAttachment.defaultAttachment;
 import static fi.hel.allu.QDefaultAttachmentApplicationType.defaultAttachmentApplicationType;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class AttachmentDao {
@@ -34,6 +38,8 @@ public class AttachmentDao {
   private SQLQueryFactory queryFactory;
 
   final QBean<AttachmentInfo> attachmentInfoBean = bean(AttachmentInfo.class, attachment.all());
+
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(attachment.attachmentDataId);
 
   /**
    * find all attachment infos for an application
@@ -271,7 +277,8 @@ public class AttachmentDao {
   @Transactional
   public AttachmentInfo update(int id, AttachmentInfo info) {
     info.setId(id);
-    long changed = queryFactory.update(attachment).populate(info, DefaultMapper.WITH_NULL_BINDINGS)
+    long changed = queryFactory.update(attachment)
+        .populate(info, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
         .where(attachment.id.eq(id))
         .execute();
     if (changed == 0) {

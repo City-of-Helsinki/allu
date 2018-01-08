@@ -5,6 +5,7 @@ import {AttachmentInfo} from '../../../model/application/attachment/attachment-i
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
+import {Observable} from 'rxjs/Observable';
 
 @Injectable()
 export class AttachmentHub {
@@ -28,6 +29,11 @@ export class AttachmentHub {
    */
   download = (attachmentId: number) => this.attachmentService.download(attachmentId);
 
+
+  /**
+   * Updates attachment info
+   */
+  update = (attachment: AttachmentInfo) => this.attachmentService.updateAttachmentInfo(attachment);
 
   /**
    * Fetches single default attachment info

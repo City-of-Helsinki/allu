@@ -28,12 +28,9 @@
           <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
         </div>
         <mat-card-content class="card-content">
-          <div fxLayout="row" fxLayoutWrap>
+          <div fxLayout="row" fxLayoutWrap class="spaced-out">
             <div fxFlex>
               <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
-            </div>
-            <div fxFlex *ngIf="attachment.decisionAttachment">
-              {{'attachment.decisionAttachment' | translation}}
             </div>
             <div fxFlex>
               <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
@@ -45,6 +42,14 @@
             <div fxFlex>
               {{attachment.description}}
             </div>
+          </div>
+          <div class="card-item-align-right">
+            <mat-slide-toggle
+              [ngModel]="attachment.decisionAttachment"
+              (change)="decisionAttachmentToggle(attachment, i, $event)"
+              labelPosition="before">
+              {{'attachment.decisionAttachment' | translation}}
+            </mat-slide-toggle>
           </div>
         </mat-card-content>
       </mat-card>
