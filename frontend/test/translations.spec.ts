@@ -26,4 +26,16 @@ describe('translations', () => {
   it('should return key if only part of the path is valid', () => {
     expect(findTranslation(['application.status', 'SHOULD_NOT_EXITS'])).toEqual('application.status.SHOULD_NOT_EXITS');
   });
+
+  it('should translate with parameters', () => {
+    const from = {withParams: 'this is with {{param1}} given param'};
+    expect(findTranslation(['withParams'], {param1: 'replaced'}, from))
+      .toEqual('this is with replaced given param');
+  });
+
+  it('should translate when parameter not found', () => {
+    const from = {withParams: 'this is with given param'};
+    expect(findTranslation(['withParams'], {param1: 'replaced'}, from))
+      .toEqual('this is with given param');
+  });
 });

@@ -1070,16 +1070,31 @@ const toKey = (path: string | Array<string>): Option<Array<string>> => {
 };
 
 type Path = string | Array<string>;
+interface Params { [key: string]: string; }
+
+function replaceParams(text: string, params: Params): string {
+  let replaced = text;
+  Object.keys(params).forEach(key => {
+    const replacement = `{{${key}}}`;
+    replaced = replaced.replace(replacement, params[key]);
+  });
+  return replaced;
+}
 
 /**
  * Finds translation for given path
  * @param path path to translation eg. application.status.HANDLED
+ * @param params additional parameters as object
+ * @param from object which contains translations (default to translations described in this file)
+ *
  * @returns translation if found with path, otherwise returns path
  */
-export const findTranslation = (path: Path): string => {
-  return toKey(path)
-    .map(pathParts => pathParts.reduce((acc: any, cur: any) => Some(acc[cur]).orElse(pathParts.join('.')) , translations))
+export const findTranslation = (path: Path, params?: Params, from: any = translations): string => {
+  const translated = toKey(path)
+    .map(pathParts => pathParts.reduce((acc: any, cur: any) => Some(acc[cur]).orElse(pathParts.join('.')) , from))
     .orElse('');
+
+  return params ? replaceParams(translated, params) : translated;
 };
 
 /**
