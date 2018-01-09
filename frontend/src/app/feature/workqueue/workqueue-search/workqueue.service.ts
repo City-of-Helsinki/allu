@@ -4,27 +4,29 @@ import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQue
 import {Observable} from 'rxjs/Observable';
 import {ApplicationMapper} from '../../../service/mapper/application-mapper';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
-import {UIStateHub} from '../../../service/ui-state/ui-state-hub';
 import {Application} from '../../../model/application/application';
 import {ErrorType} from '../../../service/ui-state/error-type';
 import {HttpUtil} from '../../../util/http.util';
 import {ErrorInfo} from '../../../service/ui-state/error-info';
 import {ApplicationQueryParametersMapper} from '../../../service/mapper/query/application-query-parameters-mapper';
 import {QueryParametersMapper} from '../../../service/mapper/query/query-parameters-mapper';
+import {PageMapper} from '../../../service/common/page-mapper';
+import {ErrorHandler} from '../../../service/error/error-handler.service';
+import {findTranslation} from '../../../util/translations';
 
 @Injectable()
 export class WorkQueueService {
   static WORK_QUEUE_URL = '/api/workqueue';
 
-  constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {}
+  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {}
 
   public searchApplicationsSharedByGroup(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
     return this.authHttp.post(
       WorkQueueService.WORK_QUEUE_URL,
       JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
       QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
-      .map(response => response.json())
-      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_WORKQUEUE_SEARCH_FAILED, HttpUtil.extractMessage(err))));
+      .map(response => PageMapper.mapBackend(response.json(), ApplicationMapper.mapBackend))
+      .map(page => page.content)
+      .catch(err => this.errorHandler.handle(err, findTranslation('workqueue.error.searchFailed')));
   }
 }

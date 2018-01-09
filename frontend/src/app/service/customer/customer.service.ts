@@ -11,6 +11,7 @@ import {CustomerQueryParametersMapper, CustomerSearchQuery} from '../mapper/quer
 import {Customer} from '../../model/customer/customer';
 import {CustomerWithContacts} from '../../model/customer/customer-with-contacts';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
+import { PageMapper } from '../common/page-mapper';
 
 const CUSTOMERS_URL = '/api/customers';
 const CUSTOMERS_SEARCH_URL = CUSTOMERS_URL + '/search';
@@ -29,8 +30,8 @@ export class CustomerService {
       CUSTOMERS_SEARCH_URL,
       JSON.stringify(CustomerQueryParametersMapper.mapFrontend(searchQuery)),
       QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
-      .map(response => response.json())
-      .map(customers => customers.map(c => CustomerMapper.mapBackend(c)))
+      .map(response => PageMapper.mapBackend(response.json(), CustomerMapper.mapBackend))
+      .map(page => page.content)
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')));
   }
 
