@@ -1028,7 +1028,10 @@ export const translations = {
       WAITING: 'Odottaa'
     },
     commonTypes: 'Yhteiset hakemustyypit',
-    commonStatuses: 'Yhteiset tilat'
+    commonStatuses: 'Yhteiset tilat',
+    error: {
+      searchFailed: 'Työjonon hakeminen epäonnistui'
+    }
   },
   history: {
     error: {

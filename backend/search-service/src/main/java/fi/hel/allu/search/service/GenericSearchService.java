@@ -39,15 +39,14 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -141,7 +140,7 @@ public class GenericSearchService<T> {
 
   /* Bulk insert into given index */
   private void bulkInsertInto(String indexName, List<T> objectsToInsert) {
-    List<DocWriteRequest> indexRequests =
+    List<DocWriteRequest<?>> indexRequests =
         objectsToInsert.stream().map(entry -> createRequestInto(indexName, keyMapper.apply(entry), entry))
             .collect(Collectors.toList());
 
@@ -164,7 +163,7 @@ public class GenericSearchService<T> {
   }
 
   private void bulkUpdateInto(String indexName, List<T> objectsToUpdate) {
-    List<DocWriteRequest> updateRequests =
+    List<DocWriteRequest<?>> updateRequests =
         objectsToUpdate.stream().map(entry -> updateRequestInto(indexName, keyMapper.apply(entry), entry))
             .collect(Collectors.toList());
 
@@ -187,7 +186,7 @@ public class GenericSearchService<T> {
   }
 
   public void partialUpdateInto(String indexName, Map<Integer, Object> idToPartialUpdateObj) {
-    List<DocWriteRequest> updateRequests = idToPartialUpdateObj.entrySet().stream()
+    List<DocWriteRequest<?>> updateRequests = idToPartialUpdateObj.entrySet().stream()
         .map(entry -> updateRequestInto(indexName, entry.getKey().toString(), entry.getValue()))
         .collect(Collectors.toList());
 
@@ -223,10 +222,10 @@ public class GenericSearchService<T> {
    * @param queryParameters Query parameters.
    * @param pageRequest Page request. Can be null, in which case the default
    *          request is assumed.
-   * @return List of ids found from search index. The list is ordered as
+   * @return A page of matching application IDs. Results are ordered as
    *         specified by the query parameters.
    */
-  public List<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {
+  public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {
     if (pageRequest == null) {
       pageRequest = DEFAULT_PAGEREQUEST;
     }
@@ -255,7 +254,9 @@ public class GenericSearchService<T> {
           srBuilder.toString());
 
       SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
-      return iterateIntSearchResponse(response);
+      long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
+      List<Integer> results = (totalHits == 0) ? Collections.emptyList() : iterateIntSearchResponse(response);
+      return new PageImpl<>(results, pageRequest, totalHits);
     } catch (IOException e) {
       throw new SearchException(e);
     }
@@ -515,7 +516,7 @@ public class GenericSearchService<T> {
     return (startOrEnd == 0) ? 1 : startOrEnd;
   }
 
-  private void executeBulk(List<DocWriteRequest> requests) {
+  private void executeBulk(List<DocWriteRequest<?>> requests) {
     final BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessorListener())
         .setConcurrentRequests(1)           // at most 1 concurrent request
         .setBulkActions(1000)               // maximum of 1000 updates per request

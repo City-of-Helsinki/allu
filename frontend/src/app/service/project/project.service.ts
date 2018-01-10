@@ -13,6 +13,7 @@ import {ProjectQueryParametersMapper} from '../mapper/query/project-query-parame
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
+import { PageMapper } from '../common/page-mapper';
 
 @Injectable()
 export class ProjectService {
@@ -31,8 +32,8 @@ export class ProjectService {
       searchUrl,
       JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)),
       QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
-      .map(response => response.json())
-      .map(json => json.map(project => ProjectMapper.mapBackend(project)))
+      .map(response => PageMapper.mapBackend(response.json(), ProjectMapper.mapBackend))
+      .map(page => page.content)
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.searchFailed')));
   }
 

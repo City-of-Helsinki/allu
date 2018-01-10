@@ -13,6 +13,7 @@ import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,14 +72,9 @@ public class ContactService {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public List<ContactJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    List<ContactJson> resultList = Collections.emptyList();
-    if (!queryParameters.getQueryParameters().isEmpty()) {
-      List<Integer> ids = searchService.searchContact(QueryParameterMapper.mapToQueryParameters(queryParameters),
-          pageRequest);
-      resultList = getContactsById(ids);
-    }
-    return resultList;
+  public Page<ContactJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
+    return searchService.searchContact(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
+        ids -> getContactsById(ids));
   }
 
 

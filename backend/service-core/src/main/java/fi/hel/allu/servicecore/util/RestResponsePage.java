@@ -1,5 +1,7 @@
 package fi.hel.allu.servicecore.util;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -121,6 +123,7 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return sort;
   }
 
+  @JsonDeserialize(using = SortDeserializer.class)
   public void setSort(Sort sort) {
     this.sort = sort;
   }
@@ -136,4 +139,5 @@ public class RestResponsePage<T> extends PageImpl<T> {
   public PageImpl<T> pageImpl() {
     return new PageImpl<>(getContent(), new PageRequest(getNumber(), getSize(), getSort()), getTotalElements());
   }
+
 }

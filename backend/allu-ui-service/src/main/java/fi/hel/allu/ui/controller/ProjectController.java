@@ -9,6 +9,7 @@ import fi.hel.allu.servicecore.service.ProjectService;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class ProjectController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ProjectJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
+  public ResponseEntity<Page<ProjectJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
     return new ResponseEntity<>(projectServiceComposer.search(queryParameters, pageRequest), HttpStatus.OK);
   }

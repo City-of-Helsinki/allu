@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -170,15 +173,15 @@ public class ApplicationServiceComposer {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public List<ApplicationJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    List<ApplicationJson> resultList = Collections.emptyList();
-    if (!queryParameters.getQueryParameters().isEmpty()) {
-      List<Integer> ids = searchService.searchApplication(QueryParameterMapper.mapToQueryParameters(queryParameters),
-          pageRequest);
-      resultList = getFullyPopulatedApplications(ids);
-      SearchService.orderByIdList(ids, resultList, (applicationJson) -> applicationJson.getId());
-    }
-    return resultList;
+  public Page<ApplicationJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
+    return searchService.searchApplication(
+        QueryParameterMapper.mapToQueryParameters(queryParameters),
+        pageRequest,
+        (idlist) -> {
+          List<ApplicationJson> resultList = getFullyPopulatedApplications(idlist);
+          SearchService.orderByIdList(idlist, resultList, (applicationJson) -> applicationJson.getId());
+          return resultList;
+        });
   }
 
   /**

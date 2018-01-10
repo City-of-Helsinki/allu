@@ -7,10 +7,14 @@ import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,13 +47,13 @@ public class ProjectServiceComposer {
    * @param   queryParameters   Parameters for search query.
    * @return  found projects in the order defined by query.
    */
-  public List<ProjectJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    List<ProjectJson> resultList = Collections.emptyList();
-    List<Integer> ids = searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters),
-        pageRequest);
-    resultList = projectService.findByIds(ids);
-    SearchService.orderByIdList(ids, resultList, (projectJson) -> projectJson.getId());
-    return resultList;
+  public Page<ProjectJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
+    return searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
+        idlist -> {
+          List<ProjectJson> resultList = projectService.findByIds(idlist);
+          SearchService.orderByIdList(idlist, resultList, (projectJson) -> projectJson.getId());
+          return resultList;
+        });
   }
 
   /**

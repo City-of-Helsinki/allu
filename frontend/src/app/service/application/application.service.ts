@@ -21,6 +21,7 @@ import {StatusChangeInfoMapper} from '../mapper/status-change-info-mapper';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentInfoMapper} from '../mapper/attachment-info-mapper';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
+import { PageMapper } from '../common/page-mapper';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -80,8 +81,8 @@ export class ApplicationService {
       searchUrl,
       JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
       QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
-      .map(response => response.json())
-      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+      .map(response => PageMapper.mapBackend(response.json(), ApplicationMapper.mapBackend))
+      .map(page => page.content)
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
   }
 

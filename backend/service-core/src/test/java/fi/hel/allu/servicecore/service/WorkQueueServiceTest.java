@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.*;
@@ -50,7 +51,7 @@ public class WorkQueueServiceTest {
     userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
     Mockito.when(applicationServiceComposer.search(Mockito.any(QueryParametersJson.class), Mockito.any(Pageable.class)))
-        .thenReturn(emptyList);
+        .thenReturn(new PageImpl<>(emptyList));
   }
 
   @Test
@@ -58,7 +59,7 @@ public class WorkQueueServiceTest {
 
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
 
-    List<ApplicationJson> result = workQueueService.searchSharedByGroup(new QueryParametersJson(), null);
+    List<ApplicationJson> result = workQueueService.searchSharedByGroup(new QueryParametersJson(), null).getContent();
 
     Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any());
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
@@ -90,7 +91,7 @@ public class WorkQueueServiceTest {
     QueryParameterJson dummyParameter = new QueryParameterJson("dummy", Collections.emptyList());
     QueryParameterJson typeParameter = new QueryParameterJson(QueryParameter.FIELD_NAME_STATUS, Collections.singletonList(StatusType.REJECTED.name()));
     queryParametersJson.setQueryParameters(new ArrayList<>(Arrays.asList(dummyParameter, typeParameter)));
-    List<ApplicationJson> result = workQueueService.searchSharedByGroup(queryParametersJson, null);
+    List<ApplicationJson> result = workQueueService.searchSharedByGroup(queryParametersJson, null).getContent();
 
     Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any());
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();

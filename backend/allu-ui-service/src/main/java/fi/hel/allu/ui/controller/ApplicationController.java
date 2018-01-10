@@ -10,6 +10,7 @@ import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.InvoiceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
@@ -93,7 +94,7 @@ public class ApplicationController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
+  public ResponseEntity<Page<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
     return new ResponseEntity<>(applicationServiceComposer.search(queryParameters, pageRequest), HttpStatus.OK);
   }

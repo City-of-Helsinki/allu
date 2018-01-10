@@ -8,15 +8,23 @@ import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -175,40 +183,56 @@ public class SearchService {
    * Find applications by given fields.
    *
    * @param queryParameters list of query parameters
-   * @return List of ids of found applications.
+   * @pageRequest paging request for the search
+   * @param mapper function that maps a list of application ids to the matching
+   *          applications.
+   * @return List of found applications.
    */
-  public List<Integer> searchApplication(QueryParameters queryParameters, Pageable pageRequest) {
-    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest);
+  public Page<ApplicationJson> searchApplication(QueryParameters queryParameters, Pageable pageRequest,
+      Function<List<Integer>, List<ApplicationJson>> mapper) {
+    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, mapper);
   }
 
   /**
    * Find projects by given fields.
    *
    * @param queryParameters list of query parameters
-   * @return List of ids of found projects.
+   * @pageRequest paging request for the search
+   * @param mapper function that maps a list of project ids to the matching
+   *          projects.
+   * @return List of found projects.
    */
-  public List<Integer> searchProject(QueryParameters queryParameters, Pageable pageRequest) {
-    return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest);
+  public Page<ProjectJson> searchProject(QueryParameters queryParameters, Pageable pageRequest,
+      Function<List<Integer>, List<ProjectJson>> mapper) {
+    return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest, mapper);
   }
 
   /**
    * Find customers by given fields.
    *
    * @param queryParameters list of query parameters
-   * @return List of ids of found customers.
+   * @pageRequest paging request for the search
+   * @param mapper function that maps a list of customer ids to the matching
+   *          customers.
+   * @return List of found customers.
    */
-  public List<Integer> searchCustomer(QueryParameters queryParameters, Pageable pageRequest) {
-    return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest);
+  public Page<CustomerJson> searchCustomer(QueryParameters queryParameters, Pageable pageRequest,
+      Function<List<Integer>, List<CustomerJson>> mapper) {
+    return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest, mapper);
   }
 
   /**
    * Find contacts by given fields.
    *
    * @param queryParameters list of query parameters
-   * @return List of ids of found contacts.
+   * @pageRequest paging request for the search
+   * @param mapper function that maps a list of contact ids to the matching
+   *          contacts.
+   * @return List of found contacts.
    */
-  public List<Integer> searchContact(QueryParameters queryParameters, Pageable pageRequest) {
-    return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest);
+  public Page<ContactJson> searchContact(QueryParameters queryParameters, Pageable pageRequest,
+      Function<List<Integer>, List<ContactJson>> mapper) {
+    return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, mapper);
   }
 
   public void updateCustomerOfApplications(
@@ -243,11 +267,25 @@ public class SearchService {
   }
 
 
-  private List<Integer> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest) {
-    URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest);
-    ResponseEntity<Integer[]> searchResult = restTemplate.postForEntity(
-        targetUri, queryParameters, Integer[].class);
+  private <T> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest,
+      Function<List<Integer>, List<T>> mapper) {
+    if (queryParameters.getQueryParameters().isEmpty()) {
+      return new PageImpl<>(Collections.emptyList());
+    } else {
+      ParameterizedTypeReference<RestResponsePage<Integer>> typeref = new ParameterizedTypeReference<RestResponsePage<Integer>>() {
+      };
 
-    return Arrays.asList(searchResult.getBody());
+      URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest);
+      ResponseEntity<RestResponsePage<Integer>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
+          new HttpEntity<>(queryParameters), typeref);
+
+      final Page<Integer> responsePage = response.getBody();
+      final PageRequest responsePageRequest = new PageRequest(responsePage.getNumber(),
+          Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
+
+      final Page<T> result = new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
+          responsePage.getTotalElements());
+      return result;
+    }
   }
 }

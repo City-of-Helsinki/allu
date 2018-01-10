@@ -5,6 +5,7 @@ import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.service.WorkQueueService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 /**
  * Controller for different workqueue related interactions.
  */
@@ -30,7 +29,7 @@ public class WorkQueueController {
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> searchSharedByGroup(
+  public ResponseEntity<Page<ApplicationJson>> searchSharedByGroup(
       @Valid @RequestBody QueryParametersJson queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
     return new ResponseEntity<>(workQueueService.searchSharedByGroup(queryParameters, pageRequest), HttpStatus.OK);
