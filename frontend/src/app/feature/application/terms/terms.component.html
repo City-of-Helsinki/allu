@@ -1,24 +1,28 @@
 <form [formGroup]="form">
   <mat-card>
-    <mat-card-title>Ehdot</mat-card-title>
+    <mat-card-title>{{'terms.title' | translation}}</mat-card-title>
     <mat-card-content>
       <div class="row">
         <div *ngIf="!readonly" class="col s6">
           <mat-form-field class="input-full-width">
-            <mat-select class="input-full-width" placeholder="Vakiotekstit"
-                        (selectionChange)="addDefaultText(index, $event.value)">
-              <mat-option *ngFor="let defaultText of defaultTexts" [value]="defaultText.text">
+            <mat-select class="input-full-width" [placeholder]="'terms.selectTerm' | translation">
+              <mat-option *ngFor="let defaultText of defaultTexts"
+                          [value]="defaultText.text"
+                          (click)="addDefaultText(defaultText.text)">
                 {{defaultText.text}}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
         <div *ngIf="!readonly" class="col s4">
-          <button mat-raised-button type="button" color="primary" (click)="editDefaultTexts()">MUOKKAA</button>
+          <button mat-raised-button type="button" color="primary" (click)="editDefaultTexts()">
+            {{'common.button.edit' | translation | uppercase}}
+          </button>
         </div>
         <div class="col s12">
           <mat-form-field class="input-full-width">
-            <textarea matInput matTextareaAutosize formControlName="terms" placeholder="Hakemuksen ehdot"></textarea>
+            <textarea matInput matTextareaAutosize formControlName="terms"
+                      [placeholder]="'terms.applicationTerms' | translation"></textarea>
           </mat-form-field>
         </div>
       </div>

@@ -357,6 +357,11 @@ export const translations = {
     location: 'Sijainti',
     handler: 'Käsittelijä'
   },
+  terms: {
+    title: 'Ehdot',
+    selectTerm: 'Valitse ehto',
+    applicationTerms: 'Hakemuksen ehdot'
+  },
   project: {
     title: 'Hanke',
     field: {

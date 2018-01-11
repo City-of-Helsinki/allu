@@ -41,7 +41,7 @@ export class TermsComponent implements OnInit {
     );
   }
 
-  addDefaultText(entryIndex: number, text: string) {
+  addDefaultText(text: string) {
     let textValue = this.termsControl.value;
     textValue = Some(textValue).map(tv => tv + ' ' + text).orElse(text);
     this.termsControl.patchValue(textValue);
