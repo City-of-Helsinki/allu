@@ -21,6 +21,10 @@ export class ConfigService {
     return this.configuration$.asObservable().first();
   }
 
+  isProduction(): Observable<boolean> {
+    return this.getConfiguration().map(conf => conf.production);
+  }
+
   private loadConfiguration(): void {
     this.authHttp.get(CONFIG_URL)
       .map(response => response.json())

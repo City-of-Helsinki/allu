@@ -14,7 +14,7 @@ import {translations} from '../../util/translations';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {pathStyle} from './map-draw-styles';
 import {MapPopup} from './map-popup';
-import {MapLayerService} from './map-layer.service';
+import {DEFAULT_OVERLAY, MapLayerService} from './map-layer.service';
 import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
 import '../../js/leaflet/draw-line';
@@ -40,6 +40,7 @@ export interface MapStateConfig {
 
 export class MapState {
   private map: L.Map;
+  private defaultOverlay: L.Layer;
   private mapOverlayLayers: any;
   private drawControl: L.Control.Draw;
   private drawnItems: {[key: string]: L.FeatureGroup} = {};
@@ -164,8 +165,8 @@ export class MapState {
   // For some reason leaflet does not show layer after angular route change
   // unless it is removed and added back
   selectDefaultLayer(): void {
-    this.map.removeLayer(this.mapOverlayLayers.kaupunkikartta);
-    this.map.addLayer(this.mapOverlayLayers.kaupunkikartta);
+    this.map.removeLayer(this.defaultOverlay);
+    this.map.addLayer(this.defaultOverlay);
   }
 
   get shapes(): Observable<ShapeAdded> {
@@ -237,8 +238,9 @@ export class MapState {
   private createLayers(): Array<L.Layer> {
     // Default selected layers and overlays
     this.mapOverlayLayers = this.mapLayerService.overlays;
+    this.defaultOverlay = this.mapOverlayLayers[DEFAULT_OVERLAY];
     this.drawnItems = this.mapLayerService.applicationLayers;
-    return [this.mapOverlayLayers.kaupunkikartta].concat(this.mapLayerService.applicationLayerArray);
+    return [this.defaultOverlay].concat(this.mapLayerService.applicationLayerArray);
   }
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {

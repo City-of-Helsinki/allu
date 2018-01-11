@@ -1,0 +1,18 @@
+map_layers_common:
+ - name: helsinki_karttasarja
+   title: Helsinki Karttasarja
+   sources: [hki_karttasarja_cache]
+ - name: helsinki_kantakartta
+   title: Helsinki Kantakartta
+   sources: [hki_kantakartta_cache]
+ - name: helsinki_ajantasa_asemakaava
+   title: Helsinki Ajantasa-asemakaava
+   sources: [hki_ajantasa_asemakaava_cache]
+ - name: helsinki_kiinteistokartta
+   title: Helsinki Kiinteistökartta
+   sources: [hki_kiinteistokartta_cache]
+ - name: helsinki_ortoilmakuva
+   title: Helsinki Ortoilmakuva
+   sources: [hki_ortoilmakuva_cache]
+
+map_layers_restricted: []

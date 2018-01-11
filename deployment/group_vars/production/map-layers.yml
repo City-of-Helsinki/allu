@@ -1,0 +1,37 @@
+map_layers_restricted:
+  - name: helsinki_maanomistus_vuokrausalueet_yhdistelma
+    title: Helsinki Maanomistus ja vuokraus yhdistelmä
+    sources: [hki_maanomistus_vuokrausalueet_yhdistelma_cache]
+  - name: helsinki_maanomistus_vuokrausalueet
+    title: Helsinki Maanomistus vuokrausalueet
+    sources: [hki_maanomistus_vuokrausalueet_cache]
+  - name: helsinki_maanomistus_sisainen
+    title: Helsinki Maanomistus sisäinen vuokraus
+    sources: [hki_maanomistus_sisainen_cache]
+  - name: helsinki_maanalaiset_tilat
+    title: Helsinki Maanalaiset tilat
+    sources: [hki_maanalaiset_tilat_cache]
+  - name: helsinki_maanalaiset_tilat_alueet
+    title: Helsinki Maanalaiset tilat alueet
+    sources: [hki_maanalaiset_tilat_alueet_cache]
+  - name: helsinki_maalampokaivot
+    title: Helsinki Maalämpökaivot
+    sources: [hki_maalampokaivot_cache]
+  - name: helsinki_johtokartta_sahko
+    title: Helsinki Johtokartta sähkö
+    sources: [hki_johtokartta_sahko_cache]
+  - name: helsinki_johtokartta_tietoliikenne
+    title: Helsinki Johtokartta tietoliikenne
+    sources: [hki_johtokartta_tietoliikenne_cache]
+  - name: helsinki_johtokartta_kaukolampo
+    title: Helsinki Johtokartta kaukolampo
+    sources: [hki_johtokartta_kaukolampo_cache]
+  - name: helsinki_johtokartta_kaasu
+    title: Helsinki Johtokartta kaasu
+    sources: [hki_johtokartta_kaasu_cache]
+  - name: helsinki_johtokartta_vesijohto
+    title: Helsinki Johtokartta vesijohto
+    sources: [hki_johtokartta_vesijohto_cache]
+  - name: helsinki_johtokartta_viemari
+    title: Helsinki Johtokartta viemari
+    sources: [hki_johtokartta_viemari_cache]

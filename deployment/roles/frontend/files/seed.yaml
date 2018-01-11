@@ -1,6 +1,24 @@
 cleanups:
   remove_all_to_refresh_cache:
-    caches: [hki_karttasarja_cache, hki_ortoilmakuva_cache, hki_kiinteistokartta_cache, hki_ajantasaasemakaava_cache, hki_opaskartta_cache, hki_kaupunginosajako_cache]
+    caches: [
+      hki_karttasarja_cache,
+      hki_kantakartta_cache,
+      hki_ajantasa_asemakaava_cache,
+      hki_kiinteistokartta_cache,
+      hki_ortoilmakuva_cache,
+      hki_maanomistus_vuokrausalueet_yhdistelma_cache,
+      hki_wms_maanomistus_vuokrausalueet_cache,
+      hki_wms_maanomistus_sisainen_cache,
+      hki_wms_maanalaiset_tilat_cache,
+      hki_maanalaiset_tilat_alueet_cache,
+      hki_maalampokaivot_cache,
+      hki_johtokartta_sahko_cache,
+      hki_johtokartta_tietoliikenne_cache,
+      hki_johtokartta_kaukolampo_cache,
+      hki_johtokartta_kaasu_cache,
+      hki_johtokartta_vesijohto_cache,
+      hki_johtokartta_viemari_cache
+    ]
     remove_before:
     #  weeks: 1
       days: 1

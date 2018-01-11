@@ -5,18 +5,21 @@ import '../../js/leaflet/wms-authentication';
 import {AuthService} from '../authorization/auth.service';
 import {Injectable} from '@angular/core';
 import TimeoutOptions = L.TimeoutOptions;
+import {ConfigService} from '../config/config.service';
 
 const timeout: TimeoutOptions = {
   response: 10000,
   deadline: 60000
 };
 
+export const DEFAULT_OVERLAY = 'Karttasarja';
+
 @Injectable()
 export class MapLayerService {
-  _applicationLayers: {[key: string]: L.FeatureGroup} = {};
-  _overlays: L.Control.LayersObject = {};
+  private _applicationLayers: {[key: string]: L.FeatureGroup} = {};
+  private _overlays: L.Control.LayersObject = {};
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private config: ConfigService) {
     this.initOverlays();
 
     EnumUtil.enumValues(ApplicationType)
@@ -39,24 +42,51 @@ export class MapLayerService {
   private initOverlays(): void {
     const token = this.authService.token;
     this._overlays = {
-      kaupunkikartta: L.tileLayer.wmsAuth('/wms?',
+      'Karttasarja': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      ortoilmakuva: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      kiinteistokartta: L.tileLayer.wmsAuth('/wms?',
+      'Kantakartta': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_kantakartta', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Ajantasa-asemakaava': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_ajantasa_asemakaava', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Kiinteistökartta': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      ajantasaasemakaava: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ajantasaasemakaava', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      opaskartta: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_opaskartta', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      kaupunginosajako: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kaupunginosajako', format: 'image/png', transparent: true, token: token, timeout: timeout})
-      // working URL for accessing Helsinki maps directly (requires authentication)
-      // testi: new L.tileLayer.wms('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
-      //   {layers: 'helsinki:Kaupunkikartta'}),
-      // TMS works, but unfortunately seems to use somehow invalid CRS. Thus, WMS is used. Left here for possible future use
-      // testi: new L.TileLayer('http://10.176.127.67:8080/tms/1.0.0/helsinki_kaupunkikartta/EPSG_3879/{z}/{x}/{y}.png',
-      //   { tms: true }),
+      'Ortoilmakuva': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: token, timeout: timeout})
+    };
+
+    this.config.isProduction()
+      .filter(isProd => isProd)
+      .subscribe(isProd => {
+        this._overlays = {...this._overlays, ...this.initRestrictedOverlays(token) };
+    });
+  }
+
+  private initRestrictedOverlays(token: string): L.Control.LayersObject {
+    return {
+      'Maanomistus ja vuokraus yhdistelmä': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_maanomistus_vuokrausalueet_yhdistelma', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Maanomistus vuokrausalueet': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_maanomistus_vuokrausalueet', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Maanomistus sisäinen vuokraus': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_maanomistus_sisainen', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Maanalaiset tilat': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_maanalaiset_tilat', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Maanalaiset tilat alueet': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_maanalaiset_tilat_alueet', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Maalämpökaivot': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_maalampokaivot', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Sähkö': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_johtokartta_sahko', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Tietoliikenne': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_johtokartta_tietoliikenne', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Kaukolampo': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_johtokartta_kaukolampo', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Kaasu': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_johtokartta_kaasu', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Vesijohto': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_johtokartta_vesijohto', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+      'Viemari': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_johtokartta_viemari', format: 'image/png', transparent: true, token: token, timeout: timeout})
     };
   }
 }
