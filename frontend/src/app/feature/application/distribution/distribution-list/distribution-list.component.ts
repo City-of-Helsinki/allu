@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 import {DistributionType} from '../../../../model/common/distribution-type';
@@ -11,7 +11,8 @@ import {emailValidator, postalCodeValidator} from '../../../../util/complex-vali
   templateUrl: './distribution-list.component.html',
   styleUrls: [
     './distribution-list.component.scss'
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DistributionListComponent implements OnInit {
   @Input() form: FormGroup;

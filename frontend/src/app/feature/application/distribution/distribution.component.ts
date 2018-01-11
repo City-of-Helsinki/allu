@@ -1,13 +1,11 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {PublicityType} from '../../../model/application/publicity-type';
 import {EnumUtil} from '../../../util/enum.util';
 import {DistributionType} from '../../../model/common/distribution-type';
-import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
 import {DistributionEntry} from '../../../model/common/distribution-entry';
 import {Subscription} from 'rxjs/Subscription';
-import {DefaultRecipient} from '../../../model/common/default-recipient';
 
 @Component({
   selector: 'distribution',
@@ -22,11 +20,11 @@ export class DistributionComponent implements OnInit, OnDestroy {
 
   communicationForm: FormGroup;
   publicityTypes = EnumUtil.enumValues(PublicityType);
-  distributionList: Array<DistributionEntry> = undefined;
+  distributionList: Array<DistributionEntry>;
 
   private recipientSubscription: Subscription;
 
-  constructor(private fb: FormBuilder, private defaultRecipientHub: DefaultRecipientHub) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.communicationForm = this.fb.group({
@@ -34,7 +32,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
       publicityType: [this.application.decisionPublicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
     });
     this.form.addControl('communication', this.communicationForm);
-    this.initDistributionList();
+    this.distributionList = this.application.decisionDistributionList;
 
     if (this.readonly) {
       this.communicationForm.disable();
@@ -45,24 +43,5 @@ export class DistributionComponent implements OnInit, OnDestroy {
     if (this.recipientSubscription) {
       this.recipientSubscription.unsubscribe();
     }
-  }
-
-  initDistributionList(): void {
-    // Only use default recipients when creating new application
-    if (!this.readonly && this.application.id === undefined) {
-      this.recipientSubscription = this.defaultRecipientHub.defaultRecipientsByApplicationType(this.application.type)
-        .map(recipients => recipients.map(r => this.toDistributionEntry(r)))
-        .subscribe(distributionEntries => this.distributionList = distributionEntries);
-    } else {
-      this.distributionList = this.application.decisionDistributionList;
-    }
-  }
-
-  private toDistributionEntry(recipient: DefaultRecipient): DistributionEntry {
-    const de = new DistributionEntry();
-    de.name = recipient.email;
-    de.email = recipient.email;
-    de.distributionType = DistributionType.EMAIL;
-    return de;
   }
 }

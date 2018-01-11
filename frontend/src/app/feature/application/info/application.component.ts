@@ -18,6 +18,10 @@ import {Option, Some} from '../../../util/option';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {NumberUtil} from '../../../util/number.util';
 import {Subject} from 'rxjs/Subject';
+import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
+import {DefaultRecipient} from '../../../model/common/default-recipient';
+import {DistributionEntry} from '../../../model/common/distribution-entry';
+import {DistributionType} from '../../../model/common/distribution-type';
 
 @Component({
   selector: 'application',
@@ -40,21 +44,19 @@ export class ApplicationComponent implements OnInit, OnDestroy {
               private applicationStore: ApplicationStore,
               private attachmentHub: AttachmentHub,
               private mapHub: MapHub,
-              private supervisionTaskStore: SupervisionTaskStore) {
+              private supervisionTaskStore: SupervisionTaskStore,
+              private defaultRecipientHub: DefaultRecipientHub) {
   }
 
   ngOnInit(): void {
+    const application = this.applicationStore.snapshot.application;
+    this.initDefaultAttachments(application);
+    this.initDistribution(application);
+
     this.applicationChanges = this.applicationStore.application;
     this.applicationChanges
       .takeUntil(this.destroy)
       .subscribe(app => this.onApplicationChange(app));
-
-    this.defaultAttachmentsForArea(this.applicationStore.snapshot.application)
-      .takeWhile(() => this.applicationStore.isNew) // Only add default attachments if it is a new application
-      .takeUntil(this.destroy)
-      .subscribe(
-        attachments => attachments.forEach(a => this.applicationStore.saveAttachment(a)),
-        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
   }
 
   ngOnDestroy(): void {
@@ -120,6 +122,32 @@ export class ApplicationComponent implements OnInit, OnDestroy {
       && inHandling(change.application.statusEnum));
   }
 
+  private sidebarItem(appType: ApplicationType, item: SidebarItem): Option<SidebarItem> {
+    return Some(visibleFor(ApplicationType[appType], item.type))
+      .filter(visible => visible)
+      .map(visible => item);
+  }
+
+  private initDefaultAttachments(application: Application): void {
+    this.defaultAttachmentsForArea(application)
+      .takeWhile(() => this.applicationStore.isNew) // Only add default attachments if it is a new application
+      .takeUntil(this.destroy)
+      .subscribe(
+        attachments => attachments.forEach(a => this.applicationStore.saveAttachment(a)),
+        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
+  }
+
+  private initDistribution(application: Application): void {
+    this.defaultRecipientHub.defaultRecipientsByApplicationType(application.type)
+      .takeWhile(() => this.applicationStore.isNew) // Only add default attachments if it is a new application
+      .takeUntil(this.destroy)
+      .map(recipients => recipients.map(r => this.toDistributionEntry(r)))
+      .subscribe(distributionEntries => {
+        application.decisionDistributionList = distributionEntries;
+        this.applicationStore.applicationChange(application);
+      }, err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
+  }
+
   private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {
     return Some(application.firstLocation)
       .map(loc => loc.fixedLocationIds)
@@ -128,9 +156,11 @@ export class ApplicationComponent implements OnInit, OnDestroy {
       .orElse(Observable.of([]));
   }
 
-  private sidebarItem(appType: ApplicationType, item: SidebarItem): Option<SidebarItem> {
-    return Some(visibleFor(ApplicationType[appType], item.type))
-      .filter(visible => visible)
-      .map(visible => item);
+  private toDistributionEntry(recipient: DefaultRecipient): DistributionEntry {
+    const de = new DistributionEntry();
+    de.name = recipient.email;
+    de.email = recipient.email;
+    de.distributionType = DistributionType.EMAIL;
+    return de;
   }
 }
