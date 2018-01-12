@@ -2,11 +2,16 @@ package fi.hel.allu.search.config;
 
 import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.search.SearchModule;
@@ -38,12 +43,30 @@ public class ElasticSearchMappingConfig {
   private static final String ANALYZER_AUTOCOMPLETE = "autocomplete";
   private static final String FILTER_AUTOCOMPLETE = "autocomplete_filter";
 
+  // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
+  private static final String MAPPINGS_VERSION_NUMBER = "1";
+
+  private static final String VERSION_TYPE_NAME = "version";
+  private static final String VERSION_NUMBER_KEY = "versionNumber";
+  private static final String VERSION_NUMBER_ID = "1";
+
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
-  private Client client;
+  private final Client client;
 
   @Autowired
   public ElasticSearchMappingConfig(Client client) {
     this.client = client;
+  }
+
+  public boolean areMappingsUpToDate() {
+    final GetResponse response = client.prepareGet(APPLICATION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID).get();
+    if (response.isExists()) {
+      final Object version = response.getSource().get(VERSION_NUMBER_KEY);
+      if (version != null) {
+        return MAPPINGS_VERSION_NUMBER.equals(version);
+      }
+    }
+    return false;
   }
 
   /**
@@ -83,6 +106,33 @@ public class ElasticSearchMappingConfig {
     initializeIndex(APPLICATION_TEMP_INDEX_NAME);
     initializeIndex(CUSTOMER_INDEX_NAME);
     initializeIndex(CUSTOMER_TEMP_INDEX_NAME);
+
+    try {
+      final IndexRequestBuilder indexRequestBuilder = client.prepareIndex(APPLICATION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID);
+      final XContentBuilder contentBuilder = jsonBuilder().startObject().prettyPrint();
+      contentBuilder.field(VERSION_NUMBER_KEY, MAPPINGS_VERSION_NUMBER);
+      contentBuilder.endObject();
+      indexRequestBuilder.setSource(contentBuilder);
+      indexRequestBuilder .execute();
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to write version number to elasticsearch");
+    }
+  }
+
+  public void deleteIndices() {
+    deleteIndex(APPLICATION_INDEX_NAME);
+    deleteIndex(APPLICATION_TEMP_INDEX_NAME);
+    deleteIndex(CUSTOMER_INDEX_NAME);
+    deleteIndex(CUSTOMER_TEMP_INDEX_NAME);
+  }
+
+  private void deleteIndex(final String index) {
+    final DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
+    if (response == null || !response.isAcknowledged()) {
+      logger.info("Failed to delete index {}", index);
+    } else {
+      logger.debug("Deleted index {}", index);
+    }
   }
 
   /**

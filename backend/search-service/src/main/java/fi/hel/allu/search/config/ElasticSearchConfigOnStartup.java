@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ElasticSearchConfigOnStartup implements ApplicationListener<ApplicationReadyEvent> {
 
-  private ElasticSearchMappingConfig elasticSearchMappingConfig;
+  private final ElasticSearchMappingConfig elasticSearchMappingConfig;
 
   @Autowired
   public ElasticSearchConfigOnStartup(ElasticSearchMappingConfig elasticSearchMappingConfig) {
@@ -25,6 +25,10 @@ public class ElasticSearchConfigOnStartup implements ApplicationListener<Applica
    */
   @Override
   public void onApplicationEvent(final ApplicationReadyEvent event) {
+    if (!elasticSearchMappingConfig.areMappingsUpToDate()) {
+      // Mappings need to be updated -> just delete indices and they are recreated when indices are initialized.
+      elasticSearchMappingConfig.deleteIndices();
+    }
     elasticSearchMappingConfig.initializeIndices();
   }
 }
