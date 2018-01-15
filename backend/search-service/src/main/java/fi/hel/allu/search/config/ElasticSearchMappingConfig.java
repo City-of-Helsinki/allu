@@ -14,6 +14,7 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
+import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.search.SearchModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,12 +60,16 @@ public class ElasticSearchMappingConfig {
   }
 
   public boolean areMappingsUpToDate() {
-    final GetResponse response = client.prepareGet(APPLICATION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID).get();
-    if (response.isExists()) {
-      final Object version = response.getSource().get(VERSION_NUMBER_KEY);
-      if (version != null) {
-        return MAPPINGS_VERSION_NUMBER.equals(version);
+    try {
+      final GetResponse response = client.prepareGet(APPLICATION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID).get();
+      if (response.isExists()) {
+        final Object version = response.getSource().get(VERSION_NUMBER_KEY);
+        if (version != null) {
+          return MAPPINGS_VERSION_NUMBER.equals(version);
+        }
       }
+    } catch (IndexNotFoundException e) {
+      // => not up-to-date
     }
     return false;
   }
@@ -127,11 +132,15 @@ public class ElasticSearchMappingConfig {
   }
 
   private void deleteIndex(final String index) {
-    final DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
-    if (response == null || !response.isAcknowledged()) {
-      logger.info("Failed to delete index {}", index);
-    } else {
-      logger.debug("Deleted index {}", index);
+    try {
+      final DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
+      if (response == null || !response.isAcknowledged()) {
+        logger.info("Failed to delete index {}", index);
+      } else {
+        logger.debug("Deleted index {}", index);
+      }
+    } catch (IndexNotFoundException e) {
+      // This is ok
     }
   }
 
