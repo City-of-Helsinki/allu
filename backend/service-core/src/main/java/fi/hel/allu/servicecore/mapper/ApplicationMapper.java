@@ -289,6 +289,10 @@ public class ApplicationMapper {
     return lsc;
   }
 
+  public ApplicationIdentifierJson mapApplicationIdentifierToJson(ApplicationIdentifier applicationIdentifier) {
+    return new ApplicationIdentifierJson(applicationIdentifier.getId(), applicationIdentifier.getApplicationId());
+  }
+
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {
     if (locationJsons != null) {
       return locationJsons.stream()

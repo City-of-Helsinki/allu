@@ -320,4 +320,14 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationServiceComposer.replaceApplication(id), HttpStatus.OK);
   }
 
+  /**
+   * Loads given application's replacement history.
+   * History include applications which were replaced and those which given
+   * application replaces
+   */
+  @RequestMapping(value = "/{id}/replacementHistory",  method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ApplicationIdentifierJson>> replacementHistory(@PathVariable int id) {
+    return new ResponseEntity<>(applicationServiceComposer.replacementHistory(id), HttpStatus.OK);
+  }
 }

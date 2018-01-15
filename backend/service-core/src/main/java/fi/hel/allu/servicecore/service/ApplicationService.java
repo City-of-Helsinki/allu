@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
@@ -13,9 +14,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import com.sun.mail.iap.Response;
-
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -168,7 +169,7 @@ public class ApplicationService {
   Application createApplication(ApplicationJson newApplication) {
     newApplication.setApplicationTags(tagsWithUserInfo(newApplication.getApplicationTags()));
     Application applicationModel = restTemplate.postForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION),
         applicationMapper.createApplicationModel(newApplication),
         Application.class);
 
@@ -274,6 +275,21 @@ public class ApplicationService {
     return restTemplate.exchange(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_REPLACE), HttpMethod.POST,
         null, Integer.class, applicationId).getBody();
+  }
+
+  public List<ApplicationIdentifierJson> replacementHistory(int id) {
+    Application application = findApplicationById(id);
+    String baseApplicationId = ApplicationIdUtil.getBaseApplicationId(application.getApplicationId());
+
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION))
+        .queryParam("applicationIdStartsWith", baseApplicationId)
+        .buildAndExpand().toUri();
+
+    HttpEntity<ApplicationIdentifier[]> result = restTemplate.getForEntity(uri, ApplicationIdentifier[].class);
+
+    return Arrays.stream(result.getBody())
+        .map(applicationMapper::mapApplicationIdentifierToJson)
+        .collect(Collectors.toList());
   }
 }
 

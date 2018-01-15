@@ -1,25 +1,34 @@
-<div class="row item-bar">
-  <div class="item-bar-content">
+<div fxLayout="row" fxLayoutAlign="space-between center" class="item-bar">
+  <div fxFlex="20" class="item-bar-content application-info align-with-content">
     <ng-container *ngIf="application | async as app">
-          <span class="single-line" *ngIf="app.startTime">
-            {{app.uiStartTime}} - {{app.uiEndTime}}
-          </span>
+      <span class="application-status-text">{{['application.status', app.status] | translation}}</span>
+      <span *ngIf="app.startTime">
+        {{app.uiStartTime}} - {{app.uiEndTime}}
+      </span>
     </ng-container>
-    <span>{{'application.tags' | translation}}:</span>
-    <mat-chip-list>
-      <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of tags | async; let i = index;">
-        {{['application.tag.type', tag.type] | translation}}
-        <button *ngIf="canBeRemoved(tag.type)" mat-icon-button (click)="remove(i)">
-          <mat-icon>remove_circle_outline</mat-icon>
-        </button>
-      </mat-chip>
-    </mat-chip-list>
-    <span class="single-line">
-            <mat-chip class="slim-chip chip-outline" color="primary" selected="true">
-                Lisää tunniste
-                <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>
-            </mat-chip>
-        </span>
+  </div>
+  <div fxFlex>
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutWrap class="tags">
+      <div fxFlex="initial">
+          {{'application.tags' | translation}}:
+      </div>
+      <div fxFlex="initial">
+        <mat-chip-list>
+          <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of tags | async; let i = index;">
+            {{['application.tag.type', tag.type] | translation}}
+            <button *ngIf="canBeRemoved(tag.type)" mat-icon-button (click)="remove(i)">
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </mat-chip>
+        </mat-chip-list>
+      </div>
+      <div fxFlex="initial">
+        <mat-chip class="slim-chip chip-outline" color="primary" selected="true">
+          Lisää tunniste
+          <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>
+        </mat-chip>
+      </div>
+    </div>
   </div>
 </div>
 <mat-menu x-position="before" #menu="matMenu">

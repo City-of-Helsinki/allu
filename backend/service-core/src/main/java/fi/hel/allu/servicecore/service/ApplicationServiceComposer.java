@@ -332,4 +332,8 @@ public class ApplicationServiceComposer {
 
     return replacingApplication;
   }
+
+  public List<ApplicationIdentifierJson> replacementHistory(int applicationId) {
+    return applicationService.replacementHistory(applicationId);
+  }
 }

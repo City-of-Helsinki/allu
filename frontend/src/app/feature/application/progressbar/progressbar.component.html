@@ -1,13 +1,17 @@
-<mat-toolbar fxLayout="row">
-  <div fxFlex="400px" class="progress-header">
-    <span *ngIf="!existingApplication">{{identifier | uppercase}}</span>
-    <a *ngIf="existingApplication" [routerLink]="['/applications', application.id, 'summary']">
-      <span *ngIf="application.replacesApplicationId">{{'application.replacing' | translation}} - </span>
-      <span>{{identifier | uppercase}}</span>
-    </a>
-    <span *ngIf="status" class="application-status-text">{{['application.status', status] | translation}}</span>
+<mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
+  <div fxFlex="200px" class="progress-header align-with-content">
+    <div *ngIf="!existingApplication">{{'application.newApplication' | translation | uppercase}}</div>
+    <div *ngIf="existingApplication">
+      <mat-select class="input-no-underline"
+                  [(ngModel)]="selectedApplication"
+                  (onClose)="showSelected()">
+        <mat-option *ngFor="let replacement of replacements" [value]="replacement.id">
+          {{replacement.applicationId}}
+        </mat-option>
+      </mat-select>
+    </div>
   </div>
-  <div fxFlex="85" class="progress-label">
+  <div fxFlex="60" class="progress-label">
     <div fxLayout="row">
       <div fxFlex class="center-align">
         <p>{{'application.progress.location' | translation}}</p>

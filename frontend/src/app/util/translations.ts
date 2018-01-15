@@ -17,7 +17,6 @@ export const translations = {
   },
   application: {
     newApplication: 'Uusi hakemus',
-    replacing: 'Korvaava päätös',
     handler: 'Käsittelijä',
     name: 'Nimi',
     applicationId: 'Tunnus',
@@ -37,6 +36,7 @@ export const translations = {
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui',
       replaceFailed: 'Hakemuksen korvaaminen epäonnistui',
+      replacementHistory: 'Hakemuksen korvaushistorian haku epäonnistui',
       deleteFailed: 'Hakemuksen poistaminen epäonnistui',
       tagUpdateFailed: 'Hakemuksen tarkenteiden tallentaminen epäonnistui',
       toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',

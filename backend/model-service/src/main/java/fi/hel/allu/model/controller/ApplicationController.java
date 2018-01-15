@@ -1,6 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -8,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -97,6 +99,17 @@ public class ApplicationController {
   }
 
   /**
+   * Find applications by applicationId starting with given text
+   *
+   * @param applicationIdStartsWith string containing part of applicationId used in search
+   * @return list of application identifier which start with given text
+   */
+  @RequestMapping(method = RequestMethod.GET)
+  public ResponseEntity<List<ApplicationIdentifier>> findByApplicationIdStartingWith(@RequestParam String applicationIdStartsWith) {
+    return new ResponseEntity<>(applicationService.findByApplicationIdStartingWith(applicationIdStartsWith), HttpStatus.OK);
+  }
+
+  /**
    * Find all applications, with paging support
    *
    * @param pageRequest page request for the search
@@ -168,6 +181,8 @@ public class ApplicationController {
   public ResponseEntity<Integer> replace(@PathVariable int id) {
     return new ResponseEntity<>(applicationReplacementService.replaceApplication(id), HttpStatus.OK);
   }
+
+
 
 
   /**

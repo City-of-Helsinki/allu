@@ -100,3 +100,7 @@ td.mat-calendar-body-cell:hover {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.mat-input-container.input-no-underline .mat-input-underline {
+  display: none;
+}

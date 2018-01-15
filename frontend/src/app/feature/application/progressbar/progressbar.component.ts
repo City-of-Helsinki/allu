@@ -1,9 +1,12 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Application} from '../../../model/application/application';
 import {ProgressStep} from './progress-step';
 import {Some} from '../../../util/option';
-import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
+import {ApplicationIdentifier} from '../../../model/application/application-identifier';
+import {ApplicationService} from '../../../service/application/application.service';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'progressbar',
@@ -11,29 +14,41 @@ import {NumberUtil} from '../../../util/number.util';
   styleUrls: [
     './progressbar.component.scss'
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
-export class ProgressbarComponent implements OnInit {
+export class ProgressbarComponent implements OnChanges {
   @Input() step: number;
   @Input() application: Application;
   width: number;
-  identifier: string;
-  status: string;
+  replacements: Array<ApplicationIdentifier>;
+  selectedApplication: number;
 
-  constructor() {}
+  constructor(private router: Router, private service: ApplicationService) {
+  }
 
-  ngOnInit() {
-    this.width = this.calculateWidth(this.step);
-    this.status = this.application ? this.application.status : undefined;
-    this.identifier = Some(this.application)
-      .map(app => app.applicationId)
-      .orElse(findTranslation('application.newApplication'));
+  ngOnChanges(changes: SimpleChanges): void {
+    Some(changes.step)
+      .map(change => change.currentValue)
+      .map(step => this.calculateWidth(step))
+      .do(width => this.width = width);
+
+    Some(changes.application)
+      .map(change => change.currentValue)
+      .do(app => {
+        this.selectedApplication = app.id;
+        this.updateReplacementHistory(app);
+      });
   }
 
   get existingApplication(): boolean {
     return Some(this.application)
       .map(app => NumberUtil.isDefined(app.id))
       .orElse(false);
+  }
+
+  showSelected() {
+    this.router.navigate(['/applications', this.selectedApplication, 'summary']);
   }
 
   private calculateWidth(step: ProgressStep): number {
@@ -50,6 +65,20 @@ export class ProgressbarComponent implements OnInit {
         return 75;
       default:
         return  0;
+    }
+  }
+
+  private updateReplacementHistory(application: Application): void {
+    if (NumberUtil.isDefined(application.id)) {
+      const defaultReplacements = [new ApplicationIdentifier(application.id, application.applicationId)];
+
+      this.service.getReplacementHistory(application.id)
+        .startWith(defaultReplacements)
+        .subscribe(
+          (replacements) => this.replacements = replacements,
+          (err) => NotificationService.error(err));
+    } else {
+      this.replacements = [];
     }
   }
 }

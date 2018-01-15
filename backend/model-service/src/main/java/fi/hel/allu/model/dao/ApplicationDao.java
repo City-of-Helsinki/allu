@@ -12,10 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
@@ -68,6 +65,7 @@ public class ApplicationDao {
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
+  final QBean<ApplicationIdentifier> applicationIdentifierBean = bean(ApplicationIdentifier.class, application.id, application.applicationId);
 
   @Autowired
   public ApplicationDao(
@@ -653,6 +651,14 @@ public class ApplicationDao {
         .where(application.invoiceRecipientId.eq(invoiceRecipientId)).
         fetch();
     return applicationIds;
+  }
+
+  public List<ApplicationIdentifier> findByApplicationIdStartingWith(String idStart) {
+    return queryFactory
+        .select(applicationIdentifierBean)
+        .from(application)
+        .where(application.applicationId.startsWith(idStart))
+        .fetch();
   }
 
   public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {

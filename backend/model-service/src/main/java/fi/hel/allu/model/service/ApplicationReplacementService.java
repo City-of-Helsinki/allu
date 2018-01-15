@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CommentDao;
 import fi.hel.allu.model.dao.DepositDao;
@@ -23,8 +24,6 @@ import fi.hel.allu.model.domain.*;
  */
 @Service
 public class ApplicationReplacementService {
-
-  private static final String VERSION_NUMBER_SEPARATOR = "-";
   private static final Set<CommentType> COMMENT_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(CommentType.PROPOSE_APPROVAL,
       CommentType.PROPOSE_REJECT));
 
@@ -136,18 +135,8 @@ public class ApplicationReplacementService {
   }
 
   private static String generateReplacingApplicationId(Application applicationToReplace) {
-    int currentVersion;
     String applicationId = applicationToReplace.getApplicationId();
-    if (applicationToReplace.getReplacesApplicationId() != null) {
-      // Replaced application has replaced some other application, parse and increase version number
-      int separatorIndex = applicationId.lastIndexOf(VERSION_NUMBER_SEPARATOR);
-      currentVersion= Integer.valueOf(applicationId.substring(
-          separatorIndex + 1));
-      applicationId = applicationId.substring(0, separatorIndex);
-    } else {
-      currentVersion = 1;
-    }
-    return applicationId + VERSION_NUMBER_SEPARATOR + (++currentVersion);
+    boolean firstReplace = applicationToReplace.getReplacesApplicationId() == null;
+    return ApplicationIdUtil.generateReplacingApplicationId(applicationId, firstReplace);
   }
-
 }

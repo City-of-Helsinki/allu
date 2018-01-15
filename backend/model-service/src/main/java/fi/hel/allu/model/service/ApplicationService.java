@@ -114,6 +114,18 @@ public class ApplicationService {
   }
 
   /**
+   * Fetches all applications whose applicationId's start with given string
+   *
+   * @param idStart start of the applicationId to be fetched
+   * @return list of applications which replaced / were replaced matching give applicationId
+   */
+  @Transactional(readOnly = true)
+  public List<ApplicationIdentifier> findByApplicationIdStartingWith(String idStart) {
+    List<ApplicationIdentifier> identifiers = applicationDao.findByApplicationIdStartingWith(idStart);
+    return identifiers;
+  }
+
+  /**
    * Update existing application
    *
    * @param id

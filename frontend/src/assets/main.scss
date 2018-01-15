@@ -289,18 +289,13 @@ ul.card-list {
   font-weight: 400;
   font-family: Roboto,"Helvetica Neue",sans-serif;
   padding: 0 16px;
-  display: flex;
-  flex-direction: column;
   min-height: 64px;
   background-color: mat-contrast($allu-primary, 500);
   color: mat-color($allu-primary, 500);
+  margin-bottom: 20px;
 
   .item-bar-content {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
     box-sizing: border-box;
-    min-height: 64px;
     width: 100%;
     padding: 10px 0px;
   }

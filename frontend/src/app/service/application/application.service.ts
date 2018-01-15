@@ -22,6 +22,7 @@ import {AttachmentInfo} from '../../model/application/attachment/attachment-info
 import {AttachmentInfoMapper} from '../mapper/attachment-info-mapper';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 import { PageMapper } from '../common/page-mapper';
+import {ApplicationIdentifier} from '../../model/application/application-identifier';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -139,7 +140,7 @@ export class ApplicationService {
   }
 
   /**
-   * Changes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
+   * Changes handler of given applications. Does not return anything. Use Observable's subscribe complete.
    */
   public changeHandler(handler: number, applicationIds: Array<number>): Observable<any> {
     const url = APPLICATIONS_URL + '/handler/' + handler;
@@ -178,6 +179,14 @@ export class ApplicationService {
     return this.authHttp.post(url, undefined)
       .map(response => ApplicationMapper.mapBackend(response.json()))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replaceFailed')));
+  }
+
+  getReplacementHistory(id: number): Observable<Array<ApplicationIdentifier>> {
+    const url = `${APPLICATIONS_URL}/${id}/replacementHistory`;
+    return this.authHttp.get(url)
+      .map(response => response.json())
+      .map(json => json.map(identifier => new ApplicationIdentifier(identifier.id, identifier.applicationId)))
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replacementHistory')));
   }
 }
 

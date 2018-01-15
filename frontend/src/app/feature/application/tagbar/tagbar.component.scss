@@ -1,13 +1,26 @@
 @import '../../../../assets/colors';
 
-.item-bar .item-bar-content > span:first-of-type {
-    padding: 0 40px 0 5px;
-}
-
 .single-line {
     white-space: nowrap;
 }
 
 mat-chip {
-    height: 40px;
+  height: 30px;
+}
+
+.application-status-text {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.application-info {
+  min-width: 200px;
+}
+
+.tags > div {
+  margin: 0 0 0 8px;
+}
+
+.tags[fxLayout="row"] {
+  margin-bottom: 0;
 }

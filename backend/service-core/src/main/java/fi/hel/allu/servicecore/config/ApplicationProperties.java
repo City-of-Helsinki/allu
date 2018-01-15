@@ -40,9 +40,9 @@ public class ApplicationProperties {
   public static final String PATH_PREFIX = "http://";
 
   /**
-   * Model-service path to create a new application
+   * Model-service path to fetch / create a new application
    */
-  public static final String PATH_MODEL_APPLICATION_CREATE = "/applications";
+  public static final String PATH_MODEL_APPLICATION = "/applications";
 
   /**
    * Model-service path to find application by identifier
