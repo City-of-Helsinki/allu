@@ -1,10 +1,17 @@
 package fi.hel.allu.scheduler.controller;
 
+import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -12,21 +19,33 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ScheduleRunner {
-  private ApplicantReminderService applicantReminderService;
-  private InvoicingService invoicingService;
-  private SapCustomerService sapCustomerService;
-  private SapCustomerNotificationService sapCustomerNotificationService;
-  private SearchSynchService searchSyncService;
+  private final ApplicantReminderService applicantReminderService;
+  private final InvoicingService invoicingService;
+  private final SapCustomerService sapCustomerService;
+  private final SapCustomerNotificationService sapCustomerNotificationService;
+  private final SearchSynchService searchSyncService;
+  private final ApplicationProperties applicationProperties;
 
   @Autowired
   public ScheduleRunner(ApplicantReminderService applicantReminderService, InvoicingService invoicingService,
       SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService,
-      SearchSynchService searchSynchService) {
+      SearchSynchService searchSynchService,
+      ApplicationProperties applicationProperties) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
     this.sapCustomerService = sapCustomerService;
     this.sapCustomerNotificationService = sapCustomerNotificationService;
     this.searchSyncService = searchSynchService;
+    this.applicationProperties = applicationProperties;
+  }
+
+  @EventListener(ApplicationReadyEvent.class)
+  private void scheduleSearchDataSync() {
+    final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+    scheduledExecutorService.schedule(
+        () -> syncSearchData(),
+        applicationProperties.getSearchSyncStartupDelay(),
+        TimeUnit.SECONDS);
   }
 
   @Scheduled(cron = "${applicantReminder.cronstring}")

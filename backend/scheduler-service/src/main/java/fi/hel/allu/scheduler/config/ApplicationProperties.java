@@ -10,32 +10,33 @@ import java.util.List;
 @Component
 public class ApplicationProperties {
 
-  private String modelServiceHost;
-  private String modelServicePort;
-  private String extServiceHost;
-  private String extServicePort;
-  private List<String> emailAllowedAddresses;
-  private String emailSenderAddress;
-  private String invoiceArchiveDir;
-  private String sapFtpInvoiceHost;
-  private String sapFtpInvoiceUser;
-  private String sapFtpInvoicePassword;
-  private String sapFtpInvoiceDirectory;
-  private boolean customerUpdateEnabled;
-  private String customerSourceDir;
-  private String customerArchiveDir;
-  private String failedCustomerUpdateDir;
-  private String sapFtpCustomerHost;
-  private String sapFtpCustomerUser;
-  private String sapFtpCustomerPassword;
-  private String sapFtpCustomerDirectory;
-  private String sapFtpCustomerArchive;
-  private String serviceAuth;
-  private String customerNotificationReceiverEmail;
-  private String customerNotificationSubject;
-  private String uiBaseUrl;
-  private String invoiceNotificationReceiverEmail;
-  private String invoiceNotificationSubject;
+  private final String modelServiceHost;
+  private final String modelServicePort;
+  private final String extServiceHost;
+  private final String extServicePort;
+  private final List<String> emailAllowedAddresses;
+  private final String emailSenderAddress;
+  private final String invoiceArchiveDir;
+  private final String sapFtpInvoiceHost;
+  private final String sapFtpInvoiceUser;
+  private final String sapFtpInvoicePassword;
+  private final String sapFtpInvoiceDirectory;
+  private final boolean customerUpdateEnabled;
+  private final String customerSourceDir;
+  private final String customerArchiveDir;
+  private final String failedCustomerUpdateDir;
+  private final String sapFtpCustomerHost;
+  private final String sapFtpCustomerUser;
+  private final String sapFtpCustomerPassword;
+  private final String sapFtpCustomerDirectory;
+  private final String sapFtpCustomerArchive;
+  private final String serviceAuth;
+  private final String customerNotificationReceiverEmail;
+  private final String customerNotificationSubject;
+  private final String uiBaseUrl;
+  private final String invoiceNotificationReceiverEmail;
+  private final String invoiceNotificationSubject;
+  private final int searchSyncStartupDelay;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
@@ -63,7 +64,8 @@ public class ApplicationProperties {
       @Value("${customer.notification.subject}") @NotEmpty String customerNotificationSubject,
       @Value("${invoice.notification.receiveremail}") String invoiceNotificationReceiverEmail,
       @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
-      @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl) {
+      @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl,
+      @Value("${search.sync.startup.delay}") int searchSyncStartupDelay) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.extServiceHost = extServiceHost;
@@ -90,6 +92,7 @@ public class ApplicationProperties {
     this.invoiceNotificationReceiverEmail = invoiceNotificationReceiverEmail;
     this.invoiceNotificationSubject = invoiceNotificationSubject;
     this.uiBaseUrl = uiBaseUrl;
+    this.searchSyncStartupDelay = searchSyncStartupDelay;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -321,5 +324,9 @@ public class ApplicationProperties {
    */
   public String getInvoiceNotificationSubject() {
     return invoiceNotificationSubject;
+  }
+
+  public int getSearchSyncStartupDelay() {
+    return searchSyncStartupDelay;
   }
 }
