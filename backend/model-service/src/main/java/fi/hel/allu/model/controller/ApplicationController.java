@@ -104,7 +104,7 @@ public class ApplicationController {
    * @param applicationIdStartsWith string containing part of applicationId used in search
    * @return list of application identifier which start with given text
    */
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(value = "/identifiers", method = RequestMethod.GET)
   public ResponseEntity<List<ApplicationIdentifier>> findByApplicationIdStartingWith(@RequestParam String applicationIdStartsWith) {
     return new ResponseEntity<>(applicationService.findByApplicationIdStartingWith(applicationIdStartsWith), HttpStatus.OK);
   }

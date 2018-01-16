@@ -281,7 +281,7 @@ public class ApplicationService {
     Application application = findApplicationById(id);
     String baseApplicationId = ApplicationIdUtil.getBaseApplicationId(application.getApplicationId());
 
-    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION))
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationIdentifierUrl())
         .queryParam("applicationIdStartsWith", baseApplicationId)
         .buildAndExpand().toUri();
 

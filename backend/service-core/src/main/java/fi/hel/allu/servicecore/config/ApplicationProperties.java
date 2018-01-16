@@ -167,6 +167,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to search application identifiers by prefix
+   */
+  public String getApplicationIdentifierUrl() {
+    return getModelServiceUrl("/applications/identifiers");
+  }
+
+  /**
    * @return url to delete a note in model service.
    */
   public String getNoteDeleteUrl() {
