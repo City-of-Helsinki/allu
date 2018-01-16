@@ -57,7 +57,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     const config = {...DECISION_MODAL_CONFIG};
     config.data.status = ApplicationStatus[status];
     config.data.distributionList = this.application.decisionDistributionList;
-    config.data.distributionType = DistributionType[this.application.decisionDistributionType];
 
     const dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config);
     dialogRef.afterClosed()

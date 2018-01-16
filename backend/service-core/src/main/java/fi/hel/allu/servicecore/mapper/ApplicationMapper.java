@@ -63,7 +63,6 @@ public class ApplicationMapper {
     if (applicationJson.getExtension() != null) {
       applicationDomain.setExtension(createExtensionModel(applicationJson));
     }
-    applicationDomain.setDecisionDistributionType(applicationJson.getDecisionDistributionType());
     applicationDomain.setDecisionPublicityType(applicationJson.getDecisionPublicityType());
     if (applicationJson.getDecisionDistributionList() != null) {
       applicationDomain.setDecisionDistributionList(applicationJson.getDecisionDistributionList().stream()
@@ -140,7 +139,6 @@ public class ApplicationMapper {
     if (application.getExtension() != null) {
       applicationJson.setExtension(createExtensionJson(application));
     }
-    applicationJson.setDecisionDistributionType(application.getDecisionDistributionType());
     applicationJson.setDecisionPublicityType(application.getDecisionPublicityType());
     if (application.getDecisionDistributionList() != null) {
       applicationJson.setDecisionDistributionList(application.getDecisionDistributionList().stream()

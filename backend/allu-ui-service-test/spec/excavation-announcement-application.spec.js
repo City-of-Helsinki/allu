@@ -110,7 +110,6 @@ describe('Excavation announcement application', () => {
         'notBillable': 'false',
         'name': 'Manskun lämpö ja puhallus',
         'decisionPublicityType': 'PUBLIC',
-        'decisionDistributionType': 'EMAIL',
         'creationTime': '2016-07-15T10:36:09.721Z',
         'customersWithContacts':[applicantCustomersWithContactsCreated, contractorCustomersWithContactsCreated],
         'locations': [

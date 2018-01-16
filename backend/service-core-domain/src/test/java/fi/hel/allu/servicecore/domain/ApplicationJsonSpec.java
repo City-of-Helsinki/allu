@@ -47,7 +47,6 @@ public class ApplicationJsonSpec {
       describe("Minimally valid application", () -> {
         beforeEach(() -> {
           applicationJson.setType(ApplicationType.CABLE_REPORT);
-          applicationJson.setDecisionDistributionType(DistributionType.EMAIL);
           applicationJson.setName("Test application");
           CableReportJson extension = new CableReportJson();
           applicationJson.setExtension(extension);

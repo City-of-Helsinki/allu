@@ -59,7 +59,6 @@ public class ApplicationExtMapper {
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setExtension(mapApplicationExtensionJson(applicationExt));
     applicationJson.setKindsWithSpecifiers(applicationExt.getKindsWithSpecifiers());
-    applicationJson.setDecisionDistributionType(DistributionType.EMAIL);
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
     applicationJson.setNotBillable(false);
     return applicationJson;

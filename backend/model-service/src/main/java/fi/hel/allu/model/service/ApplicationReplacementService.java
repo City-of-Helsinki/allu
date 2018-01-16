@@ -111,7 +111,6 @@ public class ApplicationReplacementService {
     Application application = new Application();
     application.setApplicationId(generateReplacingApplicationId(applicationToReplace));
     application.setCustomersWithContacts(applicationToReplace.getCustomersWithContacts());
-    application.setDecisionDistributionType(applicationToReplace.getDecisionDistributionType());
     application.setDecisionPublicityType(applicationToReplace.getDecisionPublicityType());
     application.setEndTime(applicationToReplace.getEndTime());
     application.setExtension(applicationToReplace.getExtension());

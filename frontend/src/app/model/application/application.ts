@@ -40,7 +40,6 @@ export class Application {
     public extension?: ApplicationExtension,
     public decisionTime?: Date,
     public decisionMaker?: string,
-    public decisionDistributionType?: string,
     public decisionPublicityType?: string,
     public decisionDistributionList?: Array<DistributionEntry>,
     public attachmentList?: Array<AttachmentInfo>,
@@ -58,7 +57,6 @@ export class Application {
     this.attachmentList = attachmentList || [];
     this.applicationTags = applicationTags || [];
     this.comments = comments || [];
-    this.decisionDistributionType = decisionDistributionType || DistributionType[DistributionType.EMAIL];
     this.decisionPublicityType = decisionPublicityType || PublicityType[PublicityType.PUBLIC];
     this.decisionDistributionList = decisionDistributionList || [];
     this.kindsWithSpecifiers = this.kindsWithSpecifiers || {};

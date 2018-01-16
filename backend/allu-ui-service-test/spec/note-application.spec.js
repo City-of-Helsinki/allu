@@ -116,7 +116,6 @@ describe('Note application', () => {
       ],
       'name': 'Ylijäämäkuusien alennusmyynti',
       'decisionPublicityType': 'PUBLIC',
-      'decisionDistributionType': 'EMAIL',
       'extension': {
         'description': 'Joulusta ylijääneiden kuusien alennusmyynti hintatietoisille.',
         'reoccurring': true,

@@ -6,7 +6,6 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.util.TimeUtil;
 
@@ -47,7 +46,6 @@ public class Application {
   @NotNull
   @Valid
   private ApplicationExtension extension;
-  private DistributionType decisionDistributionType = DistributionType.EMAIL;
   private PublicityType decisionPublicityType = PublicityType.PUBLIC;
   private ZonedDateTime decisionTime;
   private Integer decisionMaker;
@@ -242,19 +240,6 @@ public class Application {
 
   public void setExtension(ApplicationExtension applicationExtension) {
     this.extension = applicationExtension;
-  }
-
-  /**
-   * The distribution type of the decision. Used for sending decision to customer.
-   *
-   * @return  The distribution type of the decision. Used for sending decision to customer.
-   */
-  public DistributionType getDecisionDistributionType() {
-    return decisionDistributionType;
-  }
-
-  public void setDecisionDistributionType(DistributionType decisionDistributionType) {
-    this.decisionDistributionType = decisionDistributionType;
   }
 
   /**

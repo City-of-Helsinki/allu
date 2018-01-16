@@ -6,7 +6,6 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.validator.NotFalse;
 
@@ -55,8 +54,6 @@ public class ApplicationJson {
   @NotNull(message = "{application.extension}")
   @Valid
   private ApplicationExtensionJson extension;
-  @NotNull
-  private DistributionType decisionDistributionType;
   @NotNull
   private PublicityType decisionPublicityType;
   private ZonedDateTime decisionTime;
@@ -268,19 +265,6 @@ public class ApplicationJson {
 
   public void setExtension(ApplicationExtensionJson event) {
     this.extension = event;
-  }
-
-  /**
-   * The distribution type of the decision. Used for sending decision to customer.
-   *
-   * @return  The distribution type of the decision. Used for sending decision to customer.
-   */
-  public DistributionType getDecisionDistributionType() {
-    return decisionDistributionType;
-  }
-
-  public void setDecisionDistributionType(DistributionType decisionDistributionType) {
-    this.decisionDistributionType = decisionDistributionType;
   }
 
   /**

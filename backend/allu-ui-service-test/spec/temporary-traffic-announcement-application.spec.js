@@ -103,7 +103,6 @@ describe('Temporary traffic announcement application', () => {
         'notBillable': 'false',
         'name': 'Liikennejärjestely',
         'decisionPublicityType': 'PUBLIC',
-        'decisionDistributionType': 'EMAIL',
         'customersWithContacts':[lasseCustomersWithContactsCreated, liikenneCustomersWithContactsCreated],
         'locations': [
           {

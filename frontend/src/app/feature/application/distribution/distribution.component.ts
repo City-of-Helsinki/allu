@@ -28,7 +28,6 @@ export class DistributionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.communicationForm = this.fb.group({
-      distributionType: [this.application.decisionDistributionType || DistributionType[DistributionType.EMAIL], Validators.required],
       publicityType: [this.application.decisionPublicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
     });
     this.form.addControl('communication', this.communicationForm);

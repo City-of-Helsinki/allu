@@ -168,8 +168,7 @@ describe('Cable report application', () => {
         }
       ],
       'name': 'Johtoselvitys',
-      'decisionPublicityType': 'PUBLIC',
-      'decisionDistributionType': 'EMAIL'
+      'decisionPublicityType': 'PUBLIC'
     }
 
 

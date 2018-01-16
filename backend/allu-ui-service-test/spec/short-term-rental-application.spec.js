@@ -75,7 +75,6 @@ describe('Short term rental application', () => {
         'notBillable': 'false',
         'name': 'Siltamainos Porkkalassa',
         'decisionPublicityType': 'PUBLIC',
-        'decisionDistributionType': 'EMAIL',
         'creationTime': '2016-07-15T10:36:09.721Z',
         'customersWithContacts':[applicantCustomersWithContactsCreated],
         'locations': [

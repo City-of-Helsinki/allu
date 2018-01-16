@@ -27,7 +27,6 @@ export interface BackendApplication {
   extension: any;
   decisionTime: string;
   decisionMaker: string;
-  decisionDistributionType?: string;
   decisionPublicityType?: string;
   decisionDistributionList?: Array<BackendDistributionEntry>;
   attachmentList: Array<BackendAttachmentInfo>;

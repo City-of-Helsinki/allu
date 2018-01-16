@@ -14,7 +14,6 @@ export interface ApplicationForm {
 }
 
 export interface CommunicationForm {
-  distributionType?: string;
   publicityType?: string;
   distributionRows?: Array<DistributionEntryForm>;
 }

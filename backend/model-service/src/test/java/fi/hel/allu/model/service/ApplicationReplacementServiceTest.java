@@ -217,7 +217,6 @@ public class ApplicationReplacementServiceTest {
 
     // Following data should be equal with original application
     assertEquals(originalApplication.getCustomersWithContacts().get(0).getCustomer().getId(), application.getCustomersWithContacts().get(0).getCustomer().getId());
-    assertEquals(originalApplication.getDecisionDistributionType(), application.getDecisionDistributionType());
     assertEquals(originalApplication.getDecisionPublicityType(), application.getDecisionPublicityType());
     assertEquals(originalApplication.getEndTime(), application.getEndTime());
     assertEquals(originalApplication.getHandler(), application.getHandler());
@@ -258,7 +257,6 @@ public class ApplicationReplacementServiceTest {
     CustomerWithContacts customer = new CustomerWithContacts(CustomerRoleType.APPLICANT, testCommon.insertPerson(), Collections.emptyList());
     originalApplication = new Application();
     originalApplication.setCustomersWithContacts(Collections.singletonList(customer));
-    originalApplication.setDecisionDistributionType(DistributionType.EMAIL);
     originalApplication.setDecisionDistributionList(Collections.singletonList(createDistributionEntry()));
     originalApplication.setDecisionPublicityType(PublicityType.CONFIDENTIAL_PARTIALLY);
     originalApplication.setEndTime(ENDTIME);

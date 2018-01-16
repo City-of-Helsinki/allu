@@ -110,7 +110,6 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     application.customersWithContacts = this.getCustomers(form);
 
     Some(form.communication).map(c => {
-      application.decisionDistributionType = c.distributionType;
       application.decisionPublicityType = c.publicityType;
       application.decisionDistributionList = c.distributionRows.map(distribution => DistributionEntryForm.to(distribution));
     });

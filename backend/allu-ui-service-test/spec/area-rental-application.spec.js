@@ -108,7 +108,6 @@ describe('Area rental application', () => {
       'kindsWithSpecifiers': {'PROPERTY_RENOVATION' : []},
       'name': 'Aluevuokraus',
       'decisionPublicityType': 'PUBLIC',
-      'decisionDistributionType': 'EMAIL',
       'customersWithContacts':[
         reimaCustomersWithContactsCreated, bulvaaniCustomersWithContactsCreated
       ],

@@ -71,7 +71,6 @@ describe('Event application mass insert', () => {
         'kindsWithSpecifiers': {'OUTDOOREVENT' : []},
         'name': 'Hernesaaren hytinät',
         'decisionPublicityType': 'PUBLIC',
-        'decisionDistributionType': 'EMAIL',
         'decisionDistributionList': [
           {
             'id': null,

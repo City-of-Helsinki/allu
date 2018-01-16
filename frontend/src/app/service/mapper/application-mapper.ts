@@ -34,7 +34,6 @@ export class ApplicationMapper {
     application.extension = ApplicationExtensionMapper.mapBackend(backendApplication.extension);
     application.decisionTime = TimeUtil.dateFromBackend(backendApplication.decisionTime);
     application.decisionMaker = backendApplication.decisionMaker;
-    application.decisionDistributionType = backendApplication.decisionDistributionType;
     application.decisionPublicityType = backendApplication.decisionPublicityType;
     application.decisionDistributionList = DistributionMapper.mapBackendList(backendApplication.decisionDistributionList);
     application.attachmentList = Some(backendApplication.attachmentList)
@@ -72,7 +71,6 @@ export class ApplicationMapper {
       extension: ApplicationExtensionMapper.mapFrontend(application),
       decisionTime: TimeUtil.dateToBackend(application.decisionTime),
       decisionMaker: application.decisionMaker,
-      decisionDistributionType: application.decisionDistributionType,
       decisionPublicityType: application.decisionPublicityType,
       decisionDistributionList: DistributionMapper.mapFrontendList(application.decisionDistributionList),
       attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application

@@ -103,7 +103,6 @@ describe('Placement contract application', () => {
         'notBillable': 'false',
         'name': 'Sijoitussopimus',
         'decisionPublicityType': 'PUBLIC',
-        'decisionDistributionType': 'EMAIL',
         'customersWithContacts':[applicantWithContactsCreated, representativeCustomersWithContactsCreated],
         'locations': [
           {

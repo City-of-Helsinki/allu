@@ -117,7 +117,6 @@ describe('Event application', () => {
         'kindsWithSpecifiers': {'OUTDOOREVENT' : []},
         'name': 'Hernesaaren hytinät',
         'decisionPublicityType': 'PUBLIC',
-        'decisionDistributionType': 'EMAIL',
         'decisionDistributionList': [
           {
             'id': null,
@@ -274,7 +273,6 @@ describe('Event application', () => {
         ],
         'name': 'Tervasaaren tohinat',
         'decisionPublicityType': 'PUBLIC',
-        'decisionDistributionType': 'EMAIL',
         'creationTime': '2016-07-15T05:08:10.514Z',
         'customersWithContacts':[tervaCustomersWithContactsCreated],
         'locations': [

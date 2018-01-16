@@ -275,12 +275,16 @@ public class ApplicationServiceComposer {
     ApplicationJson applicationJson = replaceDistributionList(applicationId,
         decisionDetailsJson.getDecisionDistributionList());
 
-    if (DistributionType.PAPER.equals(applicationJson.getDecisionDistributionType())) {
+    if (hasPaperDistribution(decisionDetailsJson)) {
       ApplicationTagJson tag = new ApplicationTagJson(null, ApplicationTagType.DECISION_NOT_SENT, ZonedDateTime.now());
       applicationService.addTag(applicationId, tag);
     }
-
     mailComposerService.sendDecision(applicationJson, decisionDetailsJson);
+  }
+
+  private boolean hasPaperDistribution(DecisionDetailsJson decisionDetailsJson) {
+    return decisionDetailsJson.getDecisionDistributionList() != null
+        && decisionDetailsJson.getDecisionDistributionList().stream().anyMatch(d -> DistributionType.PAPER.equals(d.getDistributionType()));
   }
 
   /*

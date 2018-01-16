@@ -4,14 +4,6 @@
     <mat-card-content>
       <div class="row">
         <div class="col l4 m6 s12">
-          <mat-radio-group formControlName="distributionType">
-            <mat-radio-button value="EMAIL">Sähköposti</mat-radio-button>
-            <mat-radio-button value="PAPER">Paperi</mat-radio-button>
-          </mat-radio-group>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col l4 m6 s12">
           <mat-form-field class="input-full-width">
             <mat-select class="input-full-width" formControlName="publicityType" placeholder="Julkisuus*">
               <mat-option *ngFor="let type of publicityTypes" [value]="type">
