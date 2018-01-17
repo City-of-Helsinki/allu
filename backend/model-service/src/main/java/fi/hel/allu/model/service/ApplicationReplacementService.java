@@ -123,6 +123,7 @@ public class ApplicationReplacementService {
     application.setRecurringEndTime(applicationToReplace.getRecurringEndTime());
     application.setStartTime(applicationToReplace.getStartTime());
     application.setType(applicationToReplace.getType());
+    application.setCustomerReference(applicationToReplace.getCustomerReference());
 
     // Application DAO will automatically create copies of following
     application.setApplicationTags(applicationToReplace.getApplicationTags());
