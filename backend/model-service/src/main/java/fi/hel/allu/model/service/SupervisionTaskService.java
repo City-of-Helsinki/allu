@@ -8,18 +8,19 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.SupervisionTask;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
+import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.APPROVED;
+import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.OPEN;
+import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.REJECTED;
 
 /**
  * The service class for supervision task operations
@@ -69,7 +70,7 @@ public class SupervisionTaskService {
   }
 
   @Transactional(readOnly = true)
-  public List<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
+  public Page<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     return supervisionTaskDao.search(searchCriteria, pageRequest);
   }
 

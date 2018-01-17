@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
@@ -66,7 +67,7 @@ public class CustomerDao {
 
   @Transactional(readOnly = true)
   public List<Customer> findByBusinessId(String businessId) {
-    List<Expression> mappedExpressions = new ArrayList<>(Arrays.asList(customer.all()));
+    List<Expression<?>> mappedExpressions = new ArrayList<>(Arrays.asList(customer.all()));
     mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));
     List<Customer> customers = queryFactory
         .select(Projections.bean(Customer.class, mappedExpressions.toArray(new Expression[0])))
@@ -101,17 +102,16 @@ public class CustomerDao {
   public Page<Customer> findAll(Pageable pageRequest) {
     int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
-    List<Tuple> customerPostalAddress = queryFactory
+    QueryResults<Tuple> customerPostalAddress = queryFactory
         .select(customerBean, postalAddressBean)
         .from(customer)
         .leftJoin(postalAddress).on(customer.postalAddressId.eq(postalAddress.id))
-        .orderBy(customer.id.asc()).offset(offset).limit(count).fetch();
-    long total = queryFactory.select(customerBean).from(customer).fetchCount();
+        .orderBy(customer.id.asc()).offset(offset).limit(count).fetchResults();
 
-    List<Customer> customers = customerPostalAddress.stream()
+    List<Customer> customers = customerPostalAddress.getResults().stream()
         .map(apa -> PostalAddressUtil.mapPostalAddress(apa).get(0, Customer.class))
         .collect(Collectors.toList());
-    return new PageImpl<>(customers, pageRequest, total);
+    return new PageImpl<>(customers, pageRequest, customerPostalAddress.getTotal());
   }
 
   @Transactional(readOnly = true)

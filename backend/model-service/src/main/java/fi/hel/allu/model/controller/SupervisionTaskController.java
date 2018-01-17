@@ -3,9 +3,9 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.SupervisionTaskService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class SupervisionTaskController {
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<Page<SupervisionTask>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria,
       Pageable pageRequest) {
-    return new ResponseEntity<>(new PageImpl<>(supervisionTaskService.search(searchCriteria, pageRequest)), HttpStatus.OK);
+    return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
