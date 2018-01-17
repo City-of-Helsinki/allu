@@ -18,7 +18,6 @@ import javax.mail.internet.MimeMessage;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 
@@ -56,8 +55,7 @@ public class AlluMailServiceSpec {
 
         it("Should fail with forbidden email", () -> {
           try {
-            alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "potsmasher@masher.xx"), "Cheep Cialis",
-                "Prescription.jpg", "Body", Stream.empty());
+            alluMailService.newMailTo(Arrays.asList("yucca@jucca.org", "potsmasher@masher.xx"));
             Assert.fail("Did not throw!");
           } catch (IllegalArgumentException e) {
             // this was expected
@@ -67,15 +65,17 @@ public class AlluMailServiceSpec {
         });
 
         it("Should accept allowed emails", () -> {
-          alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"), "Cheep Cialis",
-              "Decision.doc", "Body", Stream.empty());
+          alluMailService.newMailTo(Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"))
+              .withSubject("Cheep Cialis").withDecision("Decision.doc", 123).withBody("Body").send();
           Mockito.verify(javaMailSender).send(Mockito.any(MimeMessage.class));
         });
 
         it("Should add all attachments", () -> {
-          alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"),
-              "iPhone 5 only $1!!", "image.jpg.exe", "BUY NOW!",
-              Stream.of(new Attachment("eka", "EKA".getBytes()), new Attachment("toka", "TOKA".getBytes())));
+          alluMailService.newMailTo(Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"))
+              .withSubject("iPhone 5 only $1!!").withDecision("image.jpg.exe", 123).withBody("BUY NOW!")
+              .withAttachments(
+                  Arrays.asList(new Attachment("eka", "EKA".getBytes()), new Attachment("toka", "TOKA".getBytes())))
+              .send();
           ArgumentCaptor<Multipart> contentCaptor = ArgumentCaptor.forClass(Multipart.class);
           Mockito.verify(mockMimeMessage.get()).setContent(contentCaptor.capture());
           // body, decision, and two attachments -> four parts:

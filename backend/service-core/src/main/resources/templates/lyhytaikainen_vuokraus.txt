@@ -1,0 +1,22 @@
+Hei,
+
+viestin liitteenä on hakemaanne alueenkäyttöön liittyvä sopimus ${applicationId} liitteineen. Tutustukaa sopimuksen sisältöön huolellisesti ja ottakaa yhteyttä, mikäli teillä on kysyttävää tai huomautettavaa siihen liittyen.
+
+${accompanyingMessage}
+
+<#if totalPrice gt 0 >
+Lähetämme laskun erikseen.
+
+</#if>
+Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/i2ridc3ydx
+
+Ystävällisin terveisin
+
+${handlerName}
+
+Helsingin kaupunki
+Kaupunkiympäristön asukas- ja yrityspalvelut
+Alueidenkäyttö
+Puh. 09 310 22111
+hkr.ulkoilma@hel.fi
+www.hel.fi/luvat/yleisetalueet

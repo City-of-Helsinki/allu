@@ -3,21 +3,18 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
+import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service that's responsible for creating the outgoing emails and passing them
@@ -40,9 +37,23 @@ public class MailComposerService {
   private static final String SUBJECT_AREA_RENTAL = "Aluevarauspäätös %s";
 
   // E-mail templates for various application types:
-  private static final String TEMPLATE_GENERIC = "yleinen.txt";
+  private static final String TEMPLATE_GENERIC = "yleinen";
 
-  private static final String TEMPLATE_CABLE_REPORT = "johtoselvitys.txt";
+  private static final String TEMPLATE_CABLE_REPORT = "johtoselvitys";
+
+  private static final String TEMPLATE_SHORT_TERM_RENTAL = "lyhytaikainen_vuokraus";
+
+  private static final String TEMPLATE_EVENT = "tapahtuma";
+
+  // File extensions:
+  private static final String EXTENSION_TXT = ".txt";
+  private static final String EXTENSION_HTML = ".html";
+
+  // Inline image for logo in HTML:
+  private static final String INLINE_LOGO_FILE = "logo-hki-color-fi.png";
+
+  // Content-ID for the inline logo
+  private static final String INLINE_LOGO_CID = "logoHkiColorFi";
 
   // Path to template files in resources:
   private static final String TEMPLATE_PATH = "/templates/";
@@ -64,33 +75,64 @@ public class MailComposerService {
         .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
 
     if (!emailRecipients.isEmpty()) {
-      Stream<Attachment> attachments = applicationJson.getAttachmentList().stream()
+      List<Attachment> attachments = applicationJson.getAttachmentList().stream()
           .filter(ai -> ai.isDecisionAttachment())
-          .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())));
+          .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())))
+          .collect(Collectors.toList());
 
-      String messageBody = messageBodyFor(applicationJson, decisionDetailsJson.getMessageBody());
-      alluMailService.sendDecision(applicationJson.getId(), emailRecipients, subject,
-          String.format("%s.pdf", applicationJson.getApplicationId()), messageBody, attachments);
+      List<InlineResource> inlineResources = inlineResources();
+
+      alluMailService.newMailTo(emailRecipients)
+        .withSubject(subject)
+        .withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId())
+        .withBody(textBodyFor(applicationJson))
+        .withHtmlBody(htmlBodyFor(applicationJson))
+        .withAttachments(attachments)
+        .withInlineResources(inlineResources)
+        .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody()))
+        .send();
     } else {
       logger.warn("No email recipients");
     }
   }
 
-  private String messageBodyFor(ApplicationJson applicationJson, String accompanyingMessage) {
-    String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType());
+  private List<InlineResource> inlineResources() {
     try {
-      String mailTemplate = ResourceUtil.readClassPathResource(templateFile);
-      return StrSubstitutor.replace(mailTemplate, mailVariables(applicationJson, accompanyingMessage));
+      return Arrays.asList(new InlineResource(INLINE_LOGO_FILE, INLINE_LOGO_CID,
+          ResourceUtil.readClassPathResourceAsBytes(TEMPLATE_PATH + INLINE_LOGO_FILE)));
+    } catch (IOException e) {
+      return Collections.emptyList();
+    }
+
+  }
+
+  private String textBodyFor(ApplicationJson applicationJson) {
+    String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType()) + EXTENSION_TXT;
+    try {
+      return ResourceUtil.readClassPathResource(templateFile);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
-      return accompanyingMessage;
+      return null;
     }
   }
 
-  private Map<String, String> mailVariables(ApplicationJson applicationJson, String accompanyingMessage) {
-    Map<String, String> result = new HashMap<>();
+  private String htmlBodyFor(ApplicationJson applicationJson) {
+    String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType()) + EXTENSION_HTML;
+    try {
+      return ResourceUtil.readClassPathResource(templateFile);
+    } catch (IOException e) {
+      logger.info("Can't find HTML template: " + e);
+      return null;
+    }
+  }
+
+  private Map<String, Object> mailModel(ApplicationJson applicationJson, String accompanyingMessage) {
+    Map<String, Object> result = new HashMap<>();
     result.put("applicationId", applicationJson.getApplicationId());
     result.put("accompanyingMessage", accompanyingMessage);
+    result.put("handlerName", Optional.ofNullable(applicationJson.getHandler()).map(h -> h.getRealName()).orElse(null));
+    result.put("totalPrice", applicationJson.getCalculatedPrice());
+    result.put("inlineImageName", "cid:" + INLINE_LOGO_CID);
     return result;
   }
 
@@ -98,6 +140,10 @@ public class MailComposerService {
     switch (type) {
       case CABLE_REPORT:
         return TEMPLATE_CABLE_REPORT;
+      case SHORT_TERM_RENTAL:
+        return TEMPLATE_SHORT_TERM_RENTAL;
+      case EVENT:
+        return TEMPLATE_EVENT;
       default:
         return TEMPLATE_GENERIC;
     }

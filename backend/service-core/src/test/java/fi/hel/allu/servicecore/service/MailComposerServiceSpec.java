@@ -4,6 +4,8 @@ import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.mail.model.MailMessage.Attachment;
+import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
@@ -19,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
@@ -31,6 +32,8 @@ public class MailComposerServiceSpec {
   private AttachmentService attachmentService;
   @Mock
   private AlluMailService alluMailService;
+  @Mock
+  private AlluMailService.MailBuilder mailBuilder;
 
   private MailComposerService mailComposerService;
 
@@ -38,6 +41,14 @@ public class MailComposerServiceSpec {
     describe("Mail composer service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
+        Mockito.when(mailBuilder.withAttachments(Mockito.anyListOf(Attachment.class))).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withBody(Mockito.anyString())).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withDecision(Mockito.anyString(), Mockito.anyInt())).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withHtmlBody(Mockito.anyString())).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withInlineResources(Mockito.anyListOf(InlineResource.class))).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withSubject(Mockito.anyString())).thenReturn(mailBuilder);
+        Mockito.when(mailBuilder.withModel(Mockito.anyMapOf(String.class, Object.class))).thenReturn(mailBuilder);
+        Mockito.when(alluMailService.newMailTo(Mockito.anyListOf(String.class))).thenReturn(mailBuilder);
         mailComposerService = new MailComposerService(alluMailService, attachmentService);
       });
       describe("Create decision e-mail", () -> {
@@ -69,10 +80,18 @@ public class MailComposerServiceSpec {
           decisionDetailsJson.setMessageBody("MessageBody");
           mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson);
 
-          ArgumentCaptor<Stream> attachmentsCaptor = ArgumentCaptor.forClass(Stream.class);
-          Mockito.verify(alluMailService).sendDecision(Mockito.eq(APPLICATION_ID), Mockito.anyListOf(String.class),
-              Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), attachmentsCaptor.capture());
-          assertEquals(2, attachmentsCaptor.getValue().count());
+          Mockito.verify(alluMailService).newMailTo(Mockito.anyListOf(String.class));
+          Mockito.verify(mailBuilder).withSubject(Mockito.anyString());
+          Mockito.verify(mailBuilder).withDecision(Mockito.anyString(), Mockito.eq(APPLICATION_ID));
+          Mockito.verify(mailBuilder).withBody(Mockito.anyString());
+
+          @SuppressWarnings("deprecation")
+          ArgumentCaptor<List<Attachment>> attachmentsCaptor = new ArgumentCaptor<>();
+
+          Mockito.verify(mailBuilder).withAttachments(attachmentsCaptor.capture());
+          Mockito.verify(mailBuilder).send();
+
+          assertEquals(2, attachmentsCaptor.getValue().size());
         });
       });
 

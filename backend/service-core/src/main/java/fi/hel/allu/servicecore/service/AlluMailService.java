@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.mail.model.MailMessage;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
+import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service for sending mail from allu
@@ -46,40 +49,83 @@ public class AlluMailService {
     }
   }
 
-  /**
-   * Send the decision as an email to given recipients
-   *
-   * @param applicationId
-   * @param recipients list of e-mail addresses
-   * @param subject The subject of the e-mail
-   * @param decisionPdfName What name to give to the decision PDF attachment
-   * @param body The body of the email
-   * @param attachments attachments that should be added to the mail
-   * @return
-   */
-  public void sendDecision(int applicationId, List<String> recipients, String subject, String decisionPdfName,
-      String body, Stream<Attachment> attachments) {
-    if (emailAcceptPattern != null) {
-      List<String> forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
-          .collect(Collectors.toList());
-      if (forbidden.size() != 0) {
-        throw new IllegalArgumentException("Forbidden recipient addresses: " + String.join(", ", forbidden));
-      }
-    }
-    MailMessage message = new MailMessage();
-    message.setBody(body);
-    message.setSubject(subject);
-    message.setTo(recipients);
-    message.setFrom(applicationProperties.getEmailSenderAddress());
+  public class MailBuilder {
+    private MailMessage mailMessage = new MailMessage();
+    private Map<String, Object> model = null;
+    private Attachment decisionAttachment = null;
+    private List<Attachment> otherAttachments = Collections.emptyList();
 
-    message.setAttachments(
-        Stream.concat(Stream.of(new Attachment(decisionPdfName, decisionService.getDecision(applicationId))),
-            attachments).collect(Collectors.toList()));
-    try {
-      mailService.send(message);
-    } catch (MessagingException e) {
-      throw new RuntimeException(e);
+    MailBuilder(List<String> recipients) {
+      if (emailAcceptPattern != null) {
+        List<String> forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
+            .collect(Collectors.toList());
+        if (forbidden.size() != 0) {
+          throw new IllegalArgumentException("Forbidden recipient addresses: " + String.join(", ", forbidden));
+        }
+      }
+      mailMessage.setTo(recipients);
+      mailMessage.setFrom(applicationProperties.getEmailSenderAddress());
+    }
+
+    public MailBuilder withBody(String body) {
+      mailMessage.setBody(body);
+      return this;
+    }
+
+    public MailBuilder withHtmlBody(String htmlBody) {
+      mailMessage.setHtmlBody(htmlBody);
+      return this;
+    }
+
+    public MailBuilder withSubject(String subject) {
+      mailMessage.setSubject(subject);
+      return this;
+    }
+
+    public MailBuilder withDecision(String decisionPdfName, int applicationId) {
+      decisionAttachment = new Attachment(decisionPdfName, decisionService.getDecision(applicationId));
+      return this;
+    }
+
+    public MailBuilder withAttachments(List<Attachment> attachments) {
+      otherAttachments = attachments;
+      return this;
+    }
+
+    public MailBuilder withInlineResources(List<InlineResource> inlineResources) {
+      mailMessage.setInlineResources(inlineResources);
+      return this;
+    }
+
+    public MailBuilder withModel(Map<String, Object> model) {
+      this.model = model;
+      return this;
+    }
+
+    public void send() {
+      List<Attachment> attachments = new ArrayList<>();
+      if (decisionAttachment != null) {
+        attachments.add(decisionAttachment);
+      }
+      if (otherAttachments != null) {
+        attachments.addAll(otherAttachments);
+      }
+      mailMessage.setAttachments(attachments);
+
+      try {
+        if (model != null) {
+          mailService.send(mailMessage, model);
+        } else {
+          mailService.send(mailMessage);
+        }
+      } catch (MessagingException e) {
+        throw new RuntimeException(e);
+      }
+
     }
   }
 
+  public MailBuilder newMailTo(List<String> recipients) {
+    return new MailBuilder(recipients);
+  }
 }

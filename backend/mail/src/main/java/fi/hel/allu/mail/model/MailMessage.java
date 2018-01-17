@@ -1,5 +1,7 @@
 package fi.hel.allu.mail.model;
 
+import org.springframework.core.io.ByteArrayResource;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +14,9 @@ public class MailMessage {
   private String from;
   private List<String> to;
   private String body;
+  private String htmlBody;
   private List<Attachment> attachments = Collections.emptyList();
+  private List<InlineResource> inlineResources = Collections.emptyList();
 
   public MailMessage() {
   }
@@ -25,7 +29,9 @@ public class MailMessage {
     this.setFrom(mailMessage.getFrom());
     this.setTo(new ArrayList<>(mailMessage.getTo()));
     this.setBody(mailMessage.getBody());
+    this.setHtmlBody(mailMessage.getHtmlBody());
     this.setAttachments(new ArrayList<>(mailMessage.getAttachments()));
+    this.setInlineResources(new ArrayList<>(mailMessage.getInlineResources()));
   }
 
   /**
@@ -62,8 +68,22 @@ public class MailMessage {
   }
 
   /**
-   * @return  the email body. It is assumed that the body may contain FreeMarker template. If there's no FreeMarker markup, body won't be
-   *          changed, when email is sent.
+   * @return the email body (HTML part). It is assumed that the body may contain
+   *         FreeMarker template. If there's no FreeMarker markup, body won't be
+   *         changed when email is sent.
+   */
+  public String getHtmlBody() {
+    return htmlBody;
+  }
+
+  public void setHtmlBody(String htmlBody) {
+    this.htmlBody = htmlBody;
+  }
+
+  /**
+   * @return the email body (text only). It is assumed that the body may contain
+   *         FreeMarker template. If there's no FreeMarker markup, body won't be
+   *         changed when email is sent.
    */
   public String getBody() {
     return body;
@@ -83,6 +103,20 @@ public class MailMessage {
   public void setAttachments(List<Attachment> attachments) {
     if (attachments == null) { throw new NullPointerException("Attempted to set MailMessage attachment to null"); };
     this.attachments = attachments;
+  }
+
+  /**
+   * @return list of inline resources. Never <code>null</code>
+   */
+  public List<InlineResource> getInlineResources() {
+    return inlineResources;
+  }
+
+  public void setInlineResources(List<InlineResource> inlineResources) {
+    if (inlineResources == null) {
+      throw new NullPointerException("Attempted to set MailMessage inline resources to null");
+    }
+    this.inlineResources = inlineResources;
   }
 
   /**
@@ -109,6 +143,29 @@ public class MailMessage {
      */
     public byte[] getBytes() {
       return bytes;
+    }
+  }
+
+  /*
+   * Inline attachment data & metadata.
+   */
+  public static class InlineResource extends ByteArrayResource {
+    private String filename;
+    private String contentId;
+
+    public InlineResource(String filename, String contentId, byte[] byteArray) {
+      super(byteArray);
+      this.filename = filename;
+      this.contentId = contentId;
+    }
+
+    @Override
+    public String getFilename() {
+      return filename;
+    }
+
+    public String getContentId() {
+      return contentId;
     }
   }
 }

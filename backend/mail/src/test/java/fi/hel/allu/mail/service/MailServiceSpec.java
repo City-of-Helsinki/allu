@@ -1,29 +1,25 @@
 package fi.hel.allu.mail.service;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.mail.model.MailMessage;
+
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.util.StreamUtils;
 
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayInputStream;
+import javax.activation.FileTypeMap;
+
+import java.nio.charset.Charset;
 import java.util.*;
-import java.util.function.Supplier;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeAll;
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.context;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
-import static com.greghaskins.spectrum.dsl.specification.Specification.let;
-import static com.greghaskins.spectrum.dsl.specification.Specification.xdescribe;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 
 @RunWith(Spectrum.class)
 public class MailServiceSpec {
@@ -32,126 +28,204 @@ public class MailServiceSpec {
   private MailService mailService;
   private MailMessage mailMessage;
 
-  static String getEmailBody(MimeMessage msg) throws Exception {
-    MimeMultipart content = (MimeMultipart) msg.getContent();
-    MimeBodyPart bodyPart = (MimeBodyPart) content.getBodyPart(0);
-    MimeMultipart content2 = (MimeMultipart) bodyPart.getContent();
-    String body = (String) content2.getBodyPart(0).getContent();
-    return body;
-  }
-
-  static byte[] getFirstAttachment(MimeMessage msg) throws Exception {
-    MimeMultipart content = (MimeMultipart) msg.getContent();
-    MimeBodyPart bodyPart = (MimeBodyPart) content.getBodyPart(1);
-    ByteArrayInputStream bais = (ByteArrayInputStream) bodyPart.getContent();
-    byte[] attachment = new byte[1024];
-    int byteCount = bais.read(attachment, 0, 1024);
-    return Arrays.copyOf(attachment, byteCount);
-  }
+  private MailService.MessageHelperMaker mockMessageHelperMaker;
+  private MimeMessageHelper mockMimeMessageHelper;
 
   {
-    describe("MailService send using mocks", () -> {
-      final ArgumentCaptor<MimeMessage> msgCaptor = ArgumentCaptor.forClass(MimeMessage.class);
-      beforeEach(() -> {
-        mailSender = Mockito.mock(JavaMailSenderImpl.class);
-        MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(Mockito.mock(Properties.class)));
-        Mockito.when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
-        mailService = new MailService(mailSender);
-        mailMessage = new MailMessage();
-        mailMessage.setSubject("Test subject");
-        mailMessage.setFrom("test@from.fi");
-        mailMessage.setTo(Collections.singletonList("test@to.fi"));
-        mailMessage.setBody("Test body");
-      });
-      context("with plain text body", () -> {
+    final String TEXT_BODY = "Test body";
+    final String HTML_BODY = "<HTML><HEAD></HEAD><BODY>Boo</BODY></HTML>";
+
+    context("MailService", () -> {
+
+      context("With mocks", () -> {
         beforeEach(() -> {
-          mailService.send(mailMessage);
-          Mockito.verify(mailSender).send(msgCaptor.capture());
+          mailSender = Mockito.mock(JavaMailSenderImpl.class);
+          mailMessage = new MailMessage();
+          mailMessage.setSubject("Test subject");
+          mailMessage.setFrom("test@from.fi");
+          mailMessage.setTo(Collections.singletonList("test@to.fi"));
+          mailMessage.setBody(TEXT_BODY);
+
+          mockMimeMessageHelper = Mockito.mock(MimeMessageHelper.class);
+          Mockito.when(mockMimeMessageHelper.getFileTypeMap()).thenReturn(FileTypeMap.getDefaultFileTypeMap());
+          mockMessageHelperMaker = Mockito.mock(MailService.MessageHelperMaker.class);
+          Mockito
+              .when(mockMessageHelperMaker.createMimeMessageHelper(Mockito.any(), Mockito.anyBoolean(), Mockito.any()))
+              .thenReturn(mockMimeMessageHelper);
+          mailService = new MailService(mailSender, mockMessageHelperMaker);
         });
-        final Supplier<MimeMessage> capturedMimeMessage = let(() -> {
-          return msgCaptor.getValue();
+
+        describe("with HTML body", () -> {
+          it("should set both HTML and text bodies correcly", () -> {
+            mailMessage.setHtmlBody(HTML_BODY);
+            mailService.send(mailMessage);
+            ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> htmlCaptor = ArgumentCaptor.forClass(String.class);
+            Mockito.verify(mockMimeMessageHelper).setText(textCaptor.capture(), htmlCaptor.capture());
+            Assert.assertEquals(TEXT_BODY, textCaptor.getValue());
+            Assert.assertEquals(HTML_BODY, htmlCaptor.getValue());
+          });
         });
-        it("should populate subject correctly", () -> {
-          MimeMessage mimeMessage = capturedMimeMessage.get();
-          Assert.assertEquals("Test subject", mimeMessage.getSubject());
+
+        describe("with plain text body", () -> {
+          final ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+          beforeEach(() -> {
+            mailService.send(mailMessage);
+          });
+          it("should populate subject correctly", () -> {
+            Mockito.verify(mockMimeMessageHelper).setSubject(stringCaptor.capture());
+            Assert.assertEquals("Test subject", stringCaptor.getValue());
+          });
+          it("should populate from correctly", () -> {
+            Mockito.verify(mockMimeMessageHelper).setFrom(stringCaptor.capture());
+            Assert.assertEquals("test@from.fi", stringCaptor.getValue());
+          });
+          it("should populate to correctly", () -> {
+            ArgumentCaptor<String[]> strArrayCaptor = ArgumentCaptor.forClass(String[].class);
+            Mockito.verify(mockMimeMessageHelper).setTo(strArrayCaptor.capture());
+            Assert.assertEquals(1, strArrayCaptor.getValue().length);
+            Assert.assertEquals("test@to.fi", strArrayCaptor.getValue()[0]);
+          });
+          it("should populate body correctly", () -> {
+            Mockito.verify(mockMimeMessageHelper).setText(stringCaptor.capture());
+            Assert.assertEquals(TEXT_BODY, stringCaptor.getValue());
+          });
         });
-        it("should populate from correctly", () -> {
-          MimeMessage mimeMessage = capturedMimeMessage.get();
-          Assert.assertEquals("test@from.fi", mimeMessage.getFrom()[0].toString());
+        describe("with FreeMarker template in the body", () -> {
+          it("should populate FreeMarker template with values", () -> {
+            mailMessage.setBody("This value comes from model: ${testkey}");
+            Map<String, Object> model = Collections.singletonMap("testkey", "testvalue");
+            mailService.send(mailMessage, model);
+            ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+            Mockito.verify(mockMimeMessageHelper).setText(stringCaptor.capture());
+            String body = stringCaptor.getValue();
+            Assert.assertEquals("This value comes from model: testvalue", body);
+          });
+          it("should work with missing FreeMarker template i.e. with plain text", () -> {
+            mailMessage.setBody("No template");
+            mailService.send(mailMessage, Collections.emptyMap());
+            ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+            Mockito.verify(mockMimeMessageHelper).setText(stringCaptor.capture());
+            String body = stringCaptor.getValue();
+            Assert.assertEquals("No template", body);
+          });
+          it("should also expand template in HTML body", () -> {
+            final String TEXT_TEMPLATE = "Text template ${testKey}";
+            final String HTML_TEMPLATE = "HTML template ${otherKey}";
+            final String TEXT_EXPANDED = "Text template Expanded";
+            final String HTML_EXPANDED = "HTML template Even More Expanded";
+            final Map<String, Object> model = new HashMap<String, Object>() {
+              {
+                put("testKey", "Expanded");
+                put("otherKey", "Even More Expanded");
+              }
+            };
+            mailMessage.setBody(TEXT_TEMPLATE);
+            mailMessage.setHtmlBody(HTML_TEMPLATE);
+            mailService.send(mailMessage, model);
+            ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> htmlCaptor = ArgumentCaptor.forClass(String.class);
+            Mockito.verify(mockMimeMessageHelper).setText(textCaptor.capture(), htmlCaptor.capture());
+            Assert.assertEquals(TEXT_EXPANDED, textCaptor.getValue());
+            Assert.assertEquals(HTML_EXPANDED, htmlCaptor.getValue());
+          });
         });
-        it("should populate to correctly", () -> {
-          MimeMessage mimeMessage = capturedMimeMessage.get();
-          Assert.assertEquals(1, mimeMessage.getRecipients(Message.RecipientType.TO).length);
-          Assert.assertEquals("test@to.fi", mimeMessage.getRecipients(Message.RecipientType.TO)[0].toString());
+        describe("with Attachments in email", () -> {
+          it("should handle attachments correctly", () -> {
+            mailMessage.setAttachments(
+                Collections.singletonList(new MailMessage.Attachment("somename", "somebytes".getBytes())));
+            mailService.send(mailMessage);
+            ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<InputStreamSource> issCaptor = ArgumentCaptor.forClass(InputStreamSource.class);
+            Mockito.verify(mockMimeMessageHelper).addAttachment(stringCaptor.capture(), issCaptor.capture());
+            Assert.assertEquals("somename", stringCaptor.getValue());
+            Assert.assertEquals("somebytes",
+                StreamUtils.copyToString(issCaptor.getValue().getInputStream(), Charset.forName("UTF-8")));
+          });
         });
-        it("should populate body correctly", () -> {
-          MimeMessage mimeMessage = capturedMimeMessage.get();
-          Assert.assertEquals("Test body", getEmailBody(mimeMessage));
+        describe("with inline resources in email", () -> {
+          it("should handle inline resources correctly", () -> {
+            mailMessage.setInlineResources(
+                Collections
+                    .singletonList(new MailMessage.InlineResource("somename.ext", "somename", "somebytes".getBytes())));
+            mailService.send(mailMessage);
+            ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Resource> resourceCaptor = ArgumentCaptor.forClass(Resource.class);
+            Mockito.verify(mockMimeMessageHelper).addInline(stringCaptor.capture(), resourceCaptor.capture());
+            Assert.assertEquals("somename", stringCaptor.getValue());
+            Assert.assertEquals("somebytes",
+                StreamUtils.copyToString(resourceCaptor.getValue().getInputStream(), Charset.forName("UTF-8")));
+          });
         });
+
       });
-      context("with FreeMarker template in the body", () -> {
-        it("should populate FreeMarker template with values", () -> {
-          mailMessage.setBody("This value comes from model: ${testkey}");
-          Map<String, Object> model = Collections.singletonMap("testkey", "testvalue");
-          mailService.send(mailMessage, model);
-          Mockito.verify(mailSender).send(msgCaptor.capture());
-          String body = getEmailBody(msgCaptor.getValue());
-          Assert.assertEquals("This value comes from model: testvalue", body);
+
+      xdescribe("Send to localhost", () -> {
+        beforeAll(() -> {
+          mailSender = new JavaMailSenderImpl();
+          mailSender.setHost("localhost");
+          mailSender.setPort(2525);
+          mailSender.setUsername("alluprojekti@gmail.com");
+
+          Properties javaMailProperties = new Properties();
+          javaMailProperties.put("mail.transport.protocol", "smtp");
+          // javaMailProperties.put("mail.debug", "true"); //Prints out
+          // everything on screen
+          mailSender.setJavaMailProperties(javaMailProperties);
         });
-        it("should work with missing FreeMarker template i.e. with plain text", () -> {
-          mailMessage.setBody("No template");
-          mailService.send(mailMessage, Collections.emptyMap());
-          Mockito.verify(mailSender).send(msgCaptor.capture());
-          String body = getEmailBody(msgCaptor.getValue());
-          Assert.assertEquals("No template", body);
-        });
+
+        sendTests();
       });
-      context("with Attachments in email", () -> {
-        it("should handle attachments correctly", () -> {
-          mailMessage.setAttachments(Collections.singletonList(new MailMessage.Attachment("somename", "somebytes".getBytes())));
-          mailService.send(mailMessage);
-          Mockito.verify(mailSender).send(msgCaptor.capture());
-          MimeMessage mimeMessage = msgCaptor.getValue();
-          Assert.assertEquals("somebytes", new String(getFirstAttachment(mimeMessage), "UTF-8"));
+
+      xdescribe("Send using gmail", () -> {
+        beforeAll(() -> {
+          mailSender = new JavaMailSenderImpl();
+          mailSender.setHost("smtp.gmail.com");
+          mailSender.setPort(587);
+          mailSender.setUsername("alluprojekti@gmail.com");
+          mailSender.setPassword("insertpasswordhere");
+
+          Properties javaMailProperties = new Properties();
+          javaMailProperties.put("mail.smtp.starttls.enable", "true");
+          javaMailProperties.put("mail.smtp.auth", "true");
+          javaMailProperties.put("mail.transport.protocol", "smtp");
+          // javaMailProperties.put("mail.debug", "true"); //Prints out
+          // everything on screen
+          mailSender.setJavaMailProperties(javaMailProperties);
         });
+
+        sendTests();
       });
     });
+  }
 
-    xdescribe("MailService send using gmail", () -> {
-      beforeAll(() -> {
-        mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
-        mailSender.setUsername("alluprojekti@gmail.com");
-        mailSender.setPassword("insertpasswordhere");
-
-        Properties javaMailProperties = new Properties();
-        javaMailProperties.put("mail.smtp.starttls.enable", "true");
-        javaMailProperties.put("mail.smtp.auth", "true");
-        javaMailProperties.put("mail.transport.protocol", "smtp");
-        // javaMailProperties.put("mail.debug", "true"); //Prints out everything on screen
-        mailSender.setJavaMailProperties(javaMailProperties);
-      });
-      beforeEach(() -> {
-        mailService = new MailService(mailSender);
-        mailMessage = new MailMessage();
-        mailMessage.setSubject("Test email from allu");
-        mailMessage.setFrom("alluprojekti@gmail.com");
-        mailMessage.setTo(Collections.singletonList("alluprojekti@gmail.com"));
-        mailMessage.setBody("leipäteksti");
-      });
-      it("should send email successfully", () -> {
-        mailService.send(mailMessage);
-      });
-      it("should send email with attachment", () -> {
-        mailMessage.setAttachments(Collections.singletonList(
-            new MailMessage.Attachment("liitetiedost.txt", "liitetiedoston sisältö".getBytes())));
-        mailService.send(mailMessage);
-      });
-      it("should send email to multiple recipients", () -> {
-        mailMessage.setTo(Arrays.asList("alluprojekti+1@vincit.fi", "alluprojekti+2@vincit.fi"));
-        mailService.send(mailMessage);
-      });
+  private void sendTests() {
+    beforeEach(() -> {
+      mailService = new MailService(mailSender);
+      mailMessage = new MailMessage();
+      mailMessage.setSubject("Test email from allu");
+      mailMessage.setFrom("alluprojekti@gmail.com");
+      mailMessage.setTo(Collections.singletonList("alluprojekti@gmail.com"));
+      mailMessage.setBody("leipäteksti");
+    });
+    it("should send email successfully", () -> {
+      mailService.send(mailMessage);
+    });
+    it("should send email with attachment", () -> {
+      mailMessage.setAttachments(Collections
+          .singletonList(new MailMessage.Attachment("liitetiedost.txt", "liitetiedoston sisältö".getBytes())));
+      mailService.send(mailMessage);
+    });
+    it("should send HTML mail with inline resource", () -> {
+      mailMessage.setHtmlBody("<HTML><HEAD></HEAD><BODY>Test email</BODY></HTML>");
+      mailMessage.setInlineResources(Collections
+          .singletonList(
+              new MailMessage.InlineResource("liitetiedost.png", "liitetied", "liitetiedoston sisältö".getBytes())));
+      mailService.send(mailMessage);
+    });
+    it("should send email to multiple recipients", () -> {
+      mailMessage.setTo(Arrays.asList("alluprojekti+1@vincit.fi", "alluprojekti+2@vincit.fi"));
+      mailService.send(mailMessage);
     });
   }
 }
