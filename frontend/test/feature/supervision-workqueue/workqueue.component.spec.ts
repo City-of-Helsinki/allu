@@ -12,7 +12,7 @@ import {MatDialog} from '@angular/material';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
-import {HandlerModalModule} from '../../../src/app/feature/common/handlerModal/handler-modal.module';
+import {OwnerModalModule} from '../../../src/app/feature/common/ownerModal/owner-modal.module';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {getButtonWithText} from '../../selector-helpers';
 import {Page} from '../../../src/app/model/common/page';
@@ -49,7 +49,7 @@ describe('SupervisionWorkqueueComponent', () => {
       imports: [
         FormsModule,
         AlluCommonModule,
-        HandlerModalModule
+        OwnerModalModule
       ],
       declarations: [
         WorkQueueComponent,
