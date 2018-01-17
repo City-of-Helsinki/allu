@@ -277,23 +277,19 @@ public class SearchService {
 
   private <T> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest,
       Function<List<Integer>, List<T>> mapper) {
-    if (queryParameters.getQueryParameters().isEmpty()) {
-      return new PageImpl<>(Collections.emptyList());
-    } else {
-      ParameterizedTypeReference<RestResponsePage<Integer>> typeref = new ParameterizedTypeReference<RestResponsePage<Integer>>() {
-      };
+    ParameterizedTypeReference<RestResponsePage<Integer>> typeref = new ParameterizedTypeReference<RestResponsePage<Integer>>() {
+    };
 
-      URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest);
-      ResponseEntity<RestResponsePage<Integer>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
-          new HttpEntity<>(queryParameters), typeref);
+    URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest);
+    ResponseEntity<RestResponsePage<Integer>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
+        new HttpEntity<>(queryParameters), typeref);
 
-      final Page<Integer> responsePage = response.getBody();
-      final PageRequest responsePageRequest = new PageRequest(responsePage.getNumber(),
-          Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
+    final Page<Integer> responsePage = response.getBody();
+    final PageRequest responsePageRequest = new PageRequest(responsePage.getNumber(),
+        Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
 
-      final Page<T> result = new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
-          responsePage.getTotalElements());
-      return result;
-    }
+    final Page<T> result = new PageImpl<>(mapper.apply(responsePage.getContent()), responsePageRequest,
+        responsePage.getTotalElements());
+    return result;
   }
 }
