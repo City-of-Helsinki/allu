@@ -27,11 +27,11 @@ import java.util.Map;
 @Service
 public class ApplicationService {
 
-  private ApplicationDao applicationDao;
-  private PricingService pricingService;
-  private ChargeBasisService chargeBasisService;
-  private InvoiceService invoiceService;
-  private CustomerDao customerDao;
+  private final ApplicationDao applicationDao;
+  private final PricingService pricingService;
+  private final ChargeBasisService chargeBasisService;
+  private final InvoiceService invoiceService;
+  private final CustomerDao customerDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
@@ -142,24 +142,24 @@ public class ApplicationService {
   }
 
   /**
-   * Updates handler of given applications.
+   * Updates owner of given applications.
    *
-   * @param   handlerId     New handler set to the applications.
-   * @param   applications  Applications whose handler is updated.
+   * @param   ownerId     New owner set to the applications.
+   * @param   applications  Applications whose owner is updated.
    */
   @Transactional
-  public void updateHandler(int handlerId, List<Integer> applications) {
-    applicationDao.updateHandler(handlerId, applications);
+  public void updateOwner(int ownerId, List<Integer> applications) {
+    applicationDao.updateOwner(ownerId, applications);
   }
 
   /**
-   * Removes handler of given applications.
+   * Removes owner of given applications.
    *
-   * @param   applications  Applications whose handler is removed.
+   * @param   applications  Applications whose owner is removed.
    */
   @Transactional
-  public void removeHandler(List<Integer> applications) {
-    applicationDao.removeHandler(applications);
+  public void removeOwner(List<Integer> applications) {
+    applicationDao.removeOwner(applications);
   }
 
   /**
@@ -218,6 +218,8 @@ public class ApplicationService {
         // the fall-through is intentional here
       case REJECTED:
         return applicationDao.updateDecision(applicationId, statusType, userId);
+      case DECISIONMAKING:
+        return applicationDao.startDecisionMaking(applicationId, statusType, userId);
       default:
         return applicationDao.updateStatus(applicationId, statusType);
     }

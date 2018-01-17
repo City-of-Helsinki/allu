@@ -157,19 +157,19 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Assert.assertEquals(0, tagChanges.stream().filter(c -> c.getFieldName().endsWith("/id")).count());
   }
 
-  /* Make sure that handler changes are not generated */
+  /* Make sure that owner changes are not generated */
   @Test
-  public void testNoHandlerChanges() {
+  public void testNoOwnerChanges() {
     final int APPLICATION_ID = 432;
     setupChangeCapture(APPLICATION_ID);
 
     ApplicationJson oldApplication = createMockApplicationJson(APPLICATION_ID);
-    oldApplication.setHandler(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "perustaja", true, null,
+    oldApplication.setOwner(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "perustaja", true, null,
         Collections.singletonList(ApplicationType.AREA_RENTAL), Collections.singletonList(RoleType.ROLE_DECISION),
         Collections.singletonList(1)));
     oldApplication.setName("Old application");
     ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
-    newApplication.setHandler(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "romuttaja", true, null,
+    newApplication.setOwner(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "romuttaja", true, null,
         Collections.singletonList(ApplicationType.CABLE_REPORT),
         Collections.singletonList(RoleType.ROLE_CREATE_APPLICATION), Collections.singletonList(2)));
     newApplication.setName("New application");
@@ -182,6 +182,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
     List<FieldChange> fieldChanges = capturedChange.getFieldChanges();
     List<FieldChange> tagChanges = fieldChanges.stream()
         .filter(chg -> chg.getFieldName().startsWith("/handler/")).collect(Collectors.toList());
+    fieldChanges.forEach(change -> System.out.println(change.toString()));
     Assert.assertEquals(0, tagChanges.size());
   }
 

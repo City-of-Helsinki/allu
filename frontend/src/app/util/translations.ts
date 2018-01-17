@@ -17,6 +17,7 @@ export const translations = {
   },
   application: {
     newApplication: 'Uusi hakemus',
+    owner: 'Omistaja',
     handler: 'Käsittelijä',
     name: 'Nimi',
     applicationId: 'Tunnus',
@@ -32,7 +33,7 @@ export const translations = {
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
-      handlerChangeFailed: 'Hakemuksen käsittelijän vaihto epäonnistui',
+      ownerChangeFailed: 'Hakemuksen omistajan vaihto epäonnistui',
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui',
       replaceFailed: 'Hakemuksen korvaaminen epäonnistui',
@@ -341,6 +342,7 @@ export const translations = {
     applicationId: 'Hakemuksen tunnus',
     type: 'Hakemuksen tyyppi',
     status: 'Hakemuksen tila',
+    owner: 'Hakemuksen omistaja',
     handler: 'Hakemuksen käsittelijä',
     address: 'Osoite',
     startTime: 'Alkupäivämäärä',
@@ -1036,6 +1038,12 @@ export const translations = {
     commonStatuses: 'Yhteiset tilat',
     error: {
       searchFailed: 'Työjonon hakeminen epäonnistui'
+    },
+    notifications: {
+      ownerChanged: 'Hakemuksien omistaja vaihdettu',
+      ownerChangeFailed: 'Hakemuksien omistajan vaihtaminen epäonnistui',
+      ownerRemoved: 'Omistaja poistettu hakemuksilta',
+      ownerRemoveFailed: 'Omistajan poistaminen hakemuksilta epäonnistui'
     }
   },
   history: {

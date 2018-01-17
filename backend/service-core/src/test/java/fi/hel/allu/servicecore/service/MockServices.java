@@ -199,7 +199,7 @@ public abstract class MockServices {
     applicationJson.setDecisionTime(ZonedDateTime.now());
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
     applicationJson.setStatus(StatusType.PENDING);
-    applicationJson.setHandler(UserMapper.mapToUserJson(createMockUser()));
+    applicationJson.setOwner(UserMapper.mapToUserJson(createMockUser()));
     applicationJson.setCustomersWithContacts(Collections.singletonList(createCustomersWithContacts(null)));
     applicationJson.setLocations(Collections.singletonList(createLocationJson(null)));
     applicationJson.setProject(createProjectJson(null));
@@ -216,7 +216,7 @@ public abstract class MockServices {
     application.setProjectId(100);
     application.setCreationTime(ZonedDateTime.now());
     application.setDecisionTime(ZonedDateTime.now());
-    application.setHandler(createMockUser().getId());
+    application.setOwner(createMockUser().getId());
     application.setType(ApplicationType.EVENT);
     Customer customer = new Customer();
     customer.setId(103);
@@ -279,7 +279,7 @@ public abstract class MockServices {
     applicationES.setName("Mock name, ES");
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     User user = createMockUser();
-    applicationES.setHandler(new UserES(user.getUserName(), user.getRealName()));
+    applicationES.setOwner(new UserES(user.getUserName(), user.getRealName()));
     applicationES.setId(1);
     applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
     applicationES.setApplicationTypeData(createApplicationTypeDataES());
@@ -339,7 +339,7 @@ public abstract class MockServices {
     Application applicationModel = new Application();
     applicationModel.setId(1234);
     applicationModel.setType(ApplicationType.EVENT);
-    applicationModel.setHandler(createMockUser().getId());
+    applicationModel.setOwner(createMockUser().getId());
     applicationModel.setStatus(StatusType.HANDLING);
     applicationModel.setProjectId(4321);
     applicationModel.setName("MockName2");

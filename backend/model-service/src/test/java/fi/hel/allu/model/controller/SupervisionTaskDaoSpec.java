@@ -66,7 +66,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
       wtc.setup();
       outdoorApp = insertApplication(testCommon.dummyOutdoorApplication("existing", "Handlaaja"));
       existingSupervisionTask = supervisionTaskDao.insert(
-          createTask(outdoorApp.getId(), SupervisionTaskType.SUPERVISION, outdoorApp.getHandler()));
+          createTask(outdoorApp.getId(), SupervisionTaskType.SUPERVISION, outdoorApp.getOwner()));
       shortTermApp = insertApplication(testCommon.dummyBridgeBannerApplication("other", "otherUser"));
     });
 
@@ -96,7 +96,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
       });
 
       it("Create", () -> {
-        SupervisionTask newTask = createTask(outdoorApp.getId(), SupervisionTaskType.SUPERVISION, outdoorApp.getHandler());
+        SupervisionTask newTask = createTask(outdoorApp.getId(), SupervisionTaskType.SUPERVISION, outdoorApp.getOwner());
         SupervisionTask created = supervisionTaskDao.insert(newTask);
 
         assertEquals(newTask.getType(), created.getType());
@@ -141,7 +141,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         });
 
         it("Find all when empty criteria", () -> {
-          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
 
           List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria());
@@ -150,7 +150,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
         it("Sort by creationTime when empty criteria", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION,
-              shortTermApp.getHandler());
+              shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
 
           Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "creationTime"));
@@ -168,7 +168,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
         it("Sort by type when empty criteria", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
-              shortTermApp.getHandler());
+              shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
           Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "type"));
           List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
@@ -181,7 +181,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
         it("Sort by application type when empty criteria", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
-              shortTermApp.getHandler());
+              shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
           Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "application.type"));
           List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
@@ -195,7 +195,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
         it("Sort by application status when empty criteria", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
-              shortTermApp.getHandler());
+              shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
           applicationDao.updateStatus(shortTermApp.getId(), StatusType.CANCELLED);
           applicationDao.updateStatus(outdoorApp.getId(), StatusType.HANDLING);
@@ -209,7 +209,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         });
 
         it("Find by application id", () -> {
-          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           SupervisionTask inserted = supervisionTaskDao.insert(taskForOther);
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
@@ -220,7 +220,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         });
 
         it("Find by task type", () -> {
-          SupervisionTask otherTask = createTask(outdoorApp.getId(), SupervisionTaskType.WARRANTY, outdoorApp.getHandler());
+          SupervisionTask otherTask = createTask(outdoorApp.getId(), SupervisionTaskType.WARRANTY, outdoorApp.getOwner());
           supervisionTaskDao.insert(otherTask);
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
@@ -231,7 +231,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         });
 
         it("Find by application type", () -> {
-          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
@@ -242,7 +242,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         });
 
         it("Find by dates", () -> {
-          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           taskForOther.setPlannedFinishingTime(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
           supervisionTaskDao.insert(taskForOther);
 
@@ -256,7 +256,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         });
 
         it("Find by application status", () -> {
-          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
@@ -268,7 +268,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           beforeEach(() -> {
             for (int i = 0; i < 100; ++i) {
               SupervisionTask task_i = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION,
-                  shortTermApp.getHandler());
+                  shortTermApp.getOwner());
               task_i.setDescription(String.format("00 - Task %03d", i));
               supervisionTaskDao.insert(task_i);
             }

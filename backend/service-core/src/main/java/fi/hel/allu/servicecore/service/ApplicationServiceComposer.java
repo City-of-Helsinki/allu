@@ -156,27 +156,27 @@ public class ApplicationServiceComposer {
   }
 
   /**
-   * Updates handler of given applications.
+   * Updates owner of given applications.
    *
-   * @param updatedHandler
-   *          Handler to be set.
+   * @param updatedOwner
+   *          Owner to be set.
    * @param applicationIds
    *          Applications to be updated.
    */
-  public void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
-    applicationService.updateApplicationHandler(updatedHandler, applicationIds);
+  public void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds) {
+    applicationService.updateApplicationOwner(updatedOwner, applicationIds);
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
     searchService.updateApplications(applicationJsons);
   }
 
   /**
-   * Removes handler of given applications.
+   * Removes owner of given applications.
    *
-   * @param applicationIds  Applications whose handler should be removed.
+   * @param applicationIds  Applications whose owner should be removed.
    */
-  public void removeApplicationHandler(List<Integer> applicationIds) {
-    applicationService.removeApplicationHandler(applicationIds);
+  public void removeApplicationOwner(List<Integer> applicationIds) {
+    applicationService.removeApplicationOwner(applicationIds);
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
     searchService.updateApplications(applicationJsons);
@@ -221,7 +221,7 @@ public class ApplicationServiceComposer {
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
 
     if (info != null) {
-      changeHandlerOnStatusChange(application, info.getHandler());
+      changeOwnerOnStatusChange(application, info.getOwner());
     }
 
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
@@ -321,13 +321,13 @@ public class ApplicationServiceComposer {
   }
 
 
-  private void changeHandlerOnStatusChange(Application application, Integer newHandler) {
-    if (newHandler != null) {
-      updateApplicationHandler(newHandler, Collections.singletonList(application.getId()));
-    } else if (StatusType.HANDLING.equals(application.getStatus()) && application.getHandler() == null) {
-      updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
+  private void changeOwnerOnStatusChange(Application application, Integer newOwner) {
+    if (newOwner != null) {
+      updateApplicationOwner(newOwner, Collections.singletonList(application.getId()));
+    } else if (StatusType.HANDLING.equals(application.getStatus()) && application.getOwner() == null) {
+      updateApplicationOwner(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
     } else if (StatusType.CANCELLED.equals(application.getStatus())) {
-      removeApplicationHandler(Collections.singletonList(application.getId()));
+      removeApplicationOwner(Collections.singletonList(application.getId()));
     }
   }
 

@@ -4,7 +4,7 @@
     <th>
       <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
     </th>
-    <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' |
+    <th sortBy="owner.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.owner' |
       translation}}
     </th>
     <th sortBy="applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicationId' |
@@ -42,7 +42,7 @@
       <td>
         <mat-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></mat-checkbox>
       </td>
-      <td class="clickable">{{row.application.handler?.realName}}</td>
+      <td class="clickable">{{row.application.owner?.realName}}</td>
       <td class="clickable">{{row.application.applicationId}}</td>
       <td class="clickable">{{['application.type', row.application.type] | translation}}</td>
       <td class="clickable status-text">{{['application.status', row.application.status] | translation}}</td>

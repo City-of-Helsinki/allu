@@ -9,7 +9,7 @@ public class StatusChangeInfoJson {
 
     private CommentType type;
     private String comment;
-    private Integer handler;
+    private Integer owner;
 
     /**
      * Type of comment
@@ -34,13 +34,13 @@ public class StatusChangeInfoJson {
     }
 
     /**
-     * Id of the new handler for application which status is changed
+     * Id of the new owner for application which status is changed
      */
-    public Integer getHandler() {
-        return handler;
+    public Integer getOwner() {
+        return owner;
     }
 
-    public void setHandler(Integer handler) {
-        this.handler = handler;
+    public void setOwner(Integer owner) {
+        this.owner = owner;
     }
 }

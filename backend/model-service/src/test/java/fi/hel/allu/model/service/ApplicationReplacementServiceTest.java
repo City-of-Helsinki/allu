@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.SynchronizationType;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -219,7 +217,7 @@ public class ApplicationReplacementServiceTest {
     assertEquals(originalApplication.getCustomersWithContacts().get(0).getCustomer().getId(), application.getCustomersWithContacts().get(0).getCustomer().getId());
     assertEquals(originalApplication.getDecisionPublicityType(), application.getDecisionPublicityType());
     assertEquals(originalApplication.getEndTime(), application.getEndTime());
-    assertEquals(originalApplication.getHandler(), application.getHandler());
+    assertEquals(originalApplication.getOwner(), application.getOwner());
     assertEquals(originalApplication.getInvoiceRecipientId(), application.getInvoiceRecipientId());
     assertEquals(originalApplication.getKind(), application.getKind());
     assertEquals(originalApplication.getKindsWithSpecifiers(), application.getKindsWithSpecifiers());
@@ -261,7 +259,7 @@ public class ApplicationReplacementServiceTest {
     originalApplication.setDecisionPublicityType(PublicityType.CONFIDENTIAL_PARTIALLY);
     originalApplication.setEndTime(ENDTIME);
     originalApplication.setExtension(createExtension());
-    originalApplication.setHandler(testCommon.insertUser("handler").getId());
+    originalApplication.setOwner(testCommon.insertUser("Owner").getId());
     originalApplication.setInvoiceRecipientId(testCommon.insertPerson().getId());
     originalApplication.setKind(ApplicationKind.AGILE_KIOSK_AREA);
     originalApplication.setKindsWithSpecifiers(createKindsWithSpecifiers());

@@ -1,14 +1,10 @@
 package fi.hel.allu.servicecore.mapper;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
 import fi.hel.allu.search.domain.ESFlatValue;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.service.UserService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -52,7 +47,7 @@ public class ApplicationMapperTest {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setType(ApplicationType.EVENT);
     applicationJson.setExtension(eventJson);
-    applicationJson.setHandler(userJson);
+    applicationJson.setOwner(userJson);
     applicationJson.setCustomersWithContacts(Collections.singletonList(new CustomerWithContactsJson()));
 
     ApplicationES applicationES = applicationMapper.createApplicationESModel(applicationJson);

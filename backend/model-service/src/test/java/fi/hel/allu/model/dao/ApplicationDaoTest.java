@@ -48,7 +48,7 @@ public class ApplicationDaoTest {
 
   @Test
   public void testFindApplicationsWithContacts() {
-    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     Contact contact = new Contact();
     final String testContactName = "kontakti ihminen";
     final String testEmail = "test@emai.fi";
@@ -88,8 +88,8 @@ public class ApplicationDaoTest {
 
   @Test
   public void testFindApplicationsByCustomer() {
-    Application application1 = testCommon.dummyOutdoorApplication("Test Application 1", "Test Handler 1");
-    Application application2 = testCommon.dummyOutdoorApplication("Test Application 2", "Test Handler 2");
+    Application application1 = testCommon.dummyOutdoorApplication("Test Application 1", "Test Owner 1");
+    Application application2 = testCommon.dummyOutdoorApplication("Test Application 2", "Test Owner 2");
     application2.setCustomersWithContacts(application1.getCustomersWithContacts());
     Application insertedApplication1 = applicationDao.insert(application1);
     Application insertedApplication2 = applicationDao.insert(application2);
@@ -121,7 +121,7 @@ public class ApplicationDaoTest {
   @Test
   public void testInsertApplication() {
 
-    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers = new HashMap<>();
     kindsWithSpecifiers.put(ApplicationKind.OUTDOOREVENT, Collections.EMPTY_LIST);
     kindsWithSpecifiers.put(ApplicationKind.MILITARY_EXCERCISE, Collections.singletonList(ApplicationSpecifier.OTHER));
@@ -140,7 +140,7 @@ public class ApplicationDaoTest {
 
   @Test
   public void testUpdateApplication() {
-    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     Application applOut = applicationDao.insert(application);
     applOut.setName("Updated application");
     applOut.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
@@ -154,7 +154,7 @@ public class ApplicationDaoTest {
 
   @Test
   public void testUpdateStatus() {
-    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     Application applOut = applicationDao.insert(application);
     Application updated = applicationDao.updateStatus(applOut.getId(), StatusType.CANCELLED);
     assertEquals(StatusType.CANCELLED, updated.getStatus());
@@ -162,17 +162,17 @@ public class ApplicationDaoTest {
 
   @Test
   public void testDecisionStatus() {
-    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     Application applOut = applicationDao.insert(application);
-    Application updated = applicationDao.updateDecision(applOut.getId(), StatusType.REJECTED, application.getHandler());
+    Application updated = applicationDao.updateDecision(applOut.getId(), StatusType.REJECTED, application.getOwner());
     assertEquals(StatusType.REJECTED, updated.getStatus());
-    assertEquals(application.getHandler(), updated.getDecisionMaker());
+    assertEquals(application.getOwner(), updated.getDecisionMaker());
     assertNotNull(updated.getDecisionTime());
   }
 
   @Test
   public void testInsertApplicationTags() {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     newApplication.setApplicationTags(Collections.singletonList(createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
     Application application = applicationDao.insert(newApplication);
     assertNotNull(application.getApplicationTags());
@@ -182,7 +182,7 @@ public class ApplicationDaoTest {
 
   @Test
   public void testAddApplicationTag() {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     newApplication.setApplicationTags(
         Collections.singletonList(createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
     Application application = applicationDao.insert(newApplication);
@@ -199,7 +199,7 @@ public class ApplicationDaoTest {
 
   @Test
   public void testUpdateApplicationTags() {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     newApplication.setApplicationTags(Collections.singletonList(
         createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
     Application application = applicationDao.insert(newApplication);
@@ -220,7 +220,7 @@ public class ApplicationDaoTest {
     // Insert three applications that end in different times in future, remember
     // their ids:
     List<Integer> applicationIds = new ArrayList<>();
-    Application application = testCommon.dummyOutdoorApplication("Test application", "Test handler");
+    Application application = testCommon.dummyOutdoorApplication("Test application", "Test Owner");
     ZonedDateTime time0 = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
     application.setEndTime(time0.plusDays(100));
     applicationIds.add(applicationDao.insert(application).getId());
@@ -243,14 +243,14 @@ public class ApplicationDaoTest {
     // Insert three applications that end in different times in future, remember
     // their ids, set different statuses for all:
     List<Integer> applicationIds = new ArrayList<>();
-    Application application = testCommon.dummyOutdoorApplication("Test outdoor application", "Test handler EINS");
+    Application application = testCommon.dummyOutdoorApplication("Test outdoor application", "Test Owner EINS");
     ZonedDateTime time0 = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
     application.setEndTime(time0.plusDays(100));
     applicationIds.add(applicationDao.insert(application).getId());
-    application = testCommon.dummyAreaRentalApplication("Test area rental", "Test handler ZWEI");
+    application = testCommon.dummyAreaRentalApplication("Test area rental", "Test Owner ZWEI");
     application.setEndTime(time0.plusDays(30));
     applicationIds.add(applicationDao.insert(application).getId());
-    application = testCommon.dummyBridgeBannerApplication("Test bridge banner", "Test handler DREI");
+    application = testCommon.dummyBridgeBannerApplication("Test bridge banner", "Test Owner DREI");
     application.setEndTime(time0.plusDays(10));
     applicationIds.add(applicationDao.insert(application).getId());
     applicationDao.updateStatus(applicationIds.get(0), StatusType.HANDLING);
@@ -304,7 +304,7 @@ public class ApplicationDaoTest {
     // Insert three applications that end in different times in future, remember
     // their ids:
     List<Integer> applicationIds = new ArrayList<>();
-    Application application = testCommon.dummyOutdoorApplication("Test application", "Test handler");
+    Application application = testCommon.dummyOutdoorApplication("Test application", "Test Owner");
     ZonedDateTime time0 = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
     application.setEndTime(time0.plusDays(100));
     applicationIds.add(applicationDao.insert(application).getId());

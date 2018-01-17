@@ -19,6 +19,7 @@ export class ApplicationMapper {
     application.id = backendApplication.id;
     application.applicationId = backendApplication.applicationId;
     application.project = ProjectMapper.mapBackend(backendApplication.project);
+    application.owner = UserMapper.mapBackend(backendApplication.owner);
     application.handler = UserMapper.mapBackend(backendApplication.handler);
     application.status = backendApplication.status;
     application.type = backendApplication.type;
@@ -56,6 +57,7 @@ export class ApplicationMapper {
       id: application.id,
       applicationId: application.applicationId,
       project: ProjectMapper.mapFrontend(application.project),
+      owner: UserMapper.mapFrontend(application.owner),
       handler: UserMapper.mapFrontend(application.handler),
       status: application.status,
       type: application.type,

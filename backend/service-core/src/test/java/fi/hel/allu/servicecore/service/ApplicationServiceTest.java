@@ -3,7 +3,6 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
@@ -89,8 +88,7 @@ public class ApplicationServiceTest extends MockServices {
     userJson = new UserJson(USER_ID, null, null, null, null, true, null, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
-    applicationService = new ApplicationService(
-        props, restTemplate, locationService, customerService, applicationMapper, contactService, userService);
+    applicationService = new ApplicationService(props, restTemplate, locationService, applicationMapper, userService);
   }
 
   @Test
@@ -137,13 +135,13 @@ public class ApplicationServiceTest extends MockServices {
     applicationService.updateApplication(1, applicationJson);
     assertNotNull(applicationJson);
     assertEquals(1, applicationJson.getId().intValue());
-    assertEquals(createMockUser().getId(), applicationJson.getHandler().getId());
+    assertEquals(createMockUser().getId(), applicationJson.getOwner().getId());
   }
 
   @Test
-  public void testUpdateApplicationHandler() {
+  public void testUpdateApplicationOwner() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
-    applicationService.updateApplicationHandler(2, Collections.singletonList(applicationJson.getId()));
+    applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()));
     Mockito.verify(restTemplate, Mockito.times(1)).put(null, Collections.singletonList(applicationJson.getId()), 2);
   }
 
@@ -182,12 +180,12 @@ public class ApplicationServiceTest extends MockServices {
 
 
   @Test
-  public void testRemoveApplicationHandler() {
+  public void testRemoveApplicationOwner() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
     ApplicationProperties ap = Mockito.mock(ApplicationProperties.class);
-    Mockito.when(ap.getApplicationHandlerRemoveUrl()).thenReturn("asdf");
+    Mockito.when(ap.getApplicationOwnerRemoveUrl()).thenReturn("asdf");
     applicationService.setApplicationProperties(ap);
-    applicationService.removeApplicationHandler(Collections.singletonList(applicationJson.getId()));
+    applicationService.removeApplicationOwner(Collections.singletonList(applicationJson.getId()));
     Mockito.verify(restTemplate, Mockito.times(1)).put("asdf", Collections.singletonList(applicationJson.getId()));
   }
 

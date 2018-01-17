@@ -52,16 +52,16 @@ public class ApplicationDao {
   /** Fields that won't be updated in regular updates */
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
-          application.metadataVersion, application.handler, application.replacedByApplicationId, application.replacesApplicationId);
+          application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
-  private SQLQueryFactory queryFactory;
-  private ApplicationSequenceDao applicationSequenceDao;
-  private StructureMetaDao structureMetaDao;
-  private DistributionEntryDao distributionEntryDao;
-  private CustomerDao customerDao;
-  private AttachmentDao attachmentDao;
+  private final SQLQueryFactory queryFactory;
+  private final ApplicationSequenceDao applicationSequenceDao;
+  private final StructureMetaDao structureMetaDao;
+  private final DistributionEntryDao distributionEntryDao;
+  private final CustomerDao customerDao;
+  private final AttachmentDao attachmentDao;
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
@@ -369,30 +369,44 @@ public class ApplicationDao {
 
 
   /**
-   * Updates handler of given applications.
+   * Updates owner of given applications.
    *
-   * @param handler New handler set to the applications.
-   * @param applications Applications whose handler is updated.
+   * @param owner New owner set to the applications.
+   * @param applications Applications whose owner is updated.
    * @return Number of updated applications.
    */
   @Transactional
-  public int updateHandler(int handler, List<Integer> applications) {
+  public int updateOwner(int owner, List<Integer> applications) {
     int updated = (int) queryFactory
         .update(application)
-        .set(application.handler, handler)
+        .set(application.owner, owner)
         .where(application.id.in(applications))
         .execute();
     return updated;
   }
 
   @Transactional
-  public int removeHandler(List<Integer> applications) {
+  public int removeOwner(List<Integer> applications) {
     int updated = (int) queryFactory
         .update(application)
-        .set(application.handler, Expressions.nullExpression())
+        .set(application.owner, Expressions.nullExpression())
         .where(application.id.in(applications))
         .execute();
     return updated;
+  }
+
+  @Transactional
+  public Application startDecisionMaking(int applicationId, StatusType status, int userId) {
+    int updated = (int) queryFactory
+        .update(application)
+        .set(application.handler, userId)
+        .set(application.status, status)
+        .where(application.id.eq(applicationId))
+        .execute();
+    if (updated != 1) {
+      throw new NoSuchEntityException("Attempted to update decision status of non-existent application", Integer.toString(applicationId));
+    }
+    return findByIds(Collections.singletonList(applicationId)).get(0);
   }
 
   /**

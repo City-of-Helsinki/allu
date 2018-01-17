@@ -2,7 +2,7 @@ export interface ApplicationSearchQueryForm {
   applicationId?: string;
   type?: Array<string>;
   status?: Array<string>;
-  handler?: Array<string>;
+  owner?: Array<string>;
   address?: string;
   districts?: Array<number>;
   applicant?: string;

@@ -66,17 +66,17 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/handler/{id}", method = RequestMethod.PUT)
+  @RequestMapping(value = "/owner/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> updateApplicationHandler(@PathVariable int id, @RequestBody(required = true) List<Integer> applicationsIds) {
-    applicationServiceComposer.updateApplicationHandler(id, applicationsIds);
+  public ResponseEntity<Void> updateApplicationOwner(@PathVariable int id, @RequestBody(required = true) List<Integer> applicationsIds) {
+    applicationServiceComposer.updateApplicationOwner(id, applicationsIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
+  @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> removeApplicationHandler(@RequestBody(required = true) List<Integer> applicationsIds) {
-    applicationServiceComposer.removeApplicationHandler(applicationsIds);
+  public ResponseEntity<Void> removeApplicationOwner(@RequestBody(required = true) List<Integer> applicationsIds) {
+    applicationServiceComposer.removeApplicationOwner(applicationsIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

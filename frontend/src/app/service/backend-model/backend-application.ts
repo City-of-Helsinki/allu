@@ -12,6 +12,7 @@ export interface BackendApplication {
   id: number;
   applicationId: string;
   project: BackendProject;
+  owner: BackendUser;
   handler: BackendUser;
   status: string;
   type: string;

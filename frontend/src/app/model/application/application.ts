@@ -25,6 +25,7 @@ export class Application {
     public id?: number,
     public applicationId?: string,
     public project?: Project,
+    public owner?: User,
     public handler?: User,
     public status?: string,
     public type?: string,

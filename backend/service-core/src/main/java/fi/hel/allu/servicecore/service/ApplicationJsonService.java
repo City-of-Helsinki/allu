@@ -17,23 +17,17 @@ import java.util.List;
 @Service
 public class ApplicationJsonService {
 
-  private ApplicationMapper applicationMapper;
-  private ProjectService projectService;
-  private CustomerService customerService;
-  private ContactService contactService;
-  private MetaService metaService;
-  private UserService userService;
-  private LocationService locationService;
-  private AttachmentService attachmentService;
-  private CommentService commentService;
+  private final ApplicationMapper applicationMapper;
+  private final ProjectService projectService;
+  private final UserService userService;
+  private final LocationService locationService;
+  private final AttachmentService attachmentService;
+  private final CommentService commentService;
 
   @Autowired
   public ApplicationJsonService(
       ApplicationMapper applicationMapper,
       ProjectService projectService,
-      CustomerService customerService,
-      ContactService contactService,
-      MetaService metaService,
       UserService userService,
       LocationService locationService,
       AttachmentService attachmentService,
@@ -41,9 +35,6 @@ public class ApplicationJsonService {
   ) {
     this.applicationMapper = applicationMapper;
     this.projectService = projectService;
-    this.customerService = customerService;
-    this.contactService = contactService;
-    this.metaService = metaService;
     this.userService = userService;
     this.locationService = locationService;
     this.attachmentService = attachmentService;
@@ -66,6 +57,7 @@ public class ApplicationJsonService {
       }
       applicationJson.setProject(projects.get(0));
     }
+    applicationJson.setOwner(applicationModel.getOwner() != null ? userService.findUserById(applicationModel.getOwner()) : null);
     applicationJson.setHandler(applicationModel.getHandler() != null ? userService.findUserById(applicationModel.getHandler()) : null);
 
     applicationJson.setLocations(locationService.findLocationsByApplication(applicationModel.getId()));

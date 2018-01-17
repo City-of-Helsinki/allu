@@ -25,7 +25,7 @@ export class SearchComponent implements OnInit {
   sort: Sort = new Sort(undefined, undefined);
   queryForm: FormGroup;
   applications: Array<Application>;
-  handlers: Observable<Array<User>>;
+  owners: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
   applicationStatusStrings = searchable.map(status => ApplicationStatus[status]);
   applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
@@ -40,7 +40,7 @@ export class SearchComponent implements OnInit {
       type: undefined,
       status: undefined,
       districts: undefined,
-      handler: undefined,
+      owner: undefined,
       address: undefined,
       applicant: undefined,
       contact: undefined,
@@ -51,7 +51,7 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.handlers = this.userHub.getActiveUsers();
+    this.owners = this.userHub.getActiveUsers();
     this.districts = this.mapHub.districts();
   }
 

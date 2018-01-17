@@ -40,9 +40,9 @@
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="handler" [multiple]="true"
-                        [placeholder]="'applicationSearch.handler' | translation" class="input-full-width">
-              <mat-option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}
+            <mat-select formControlName="owner" [multiple]="true"
+                        [placeholder]="'applicationSearch.owner' | translation" class="input-full-width">
+              <mat-option *ngFor="let owner of owners | async" [value]="owner.userName">{{owner.realName}}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -101,7 +101,7 @@
       <table class="bordered responsive-table">
         <thead>
         <tr>
-          <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' |
+          <th sortBy="owner.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.owner' |
             translation}}
           </th>
           <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.name' | translation}}
@@ -133,7 +133,7 @@
         <tbody>
         <tr *ngFor="let application of applications" class="clickable row-highlight"
             (click)="goToSummary(application)">
-          <td>{{application.handler?.realName}}</td>
+          <td>{{application.owner?.realName}}</td>
           <td>{{application.name}}</td>
           <td>{{ ['application.type', application.type] | translation }}</td>
           <td>{{ ['application.status', application.status] | translation }}</td>

@@ -19,6 +19,7 @@ import {NotificationService} from '../../service/notification/notification.servi
 import {ConnectableObservable} from 'rxjs/observable/ConnectableObservable';
 import {Subscription} from 'rxjs/Subscription';
 import {ApplicationService} from '../../service/application/application.service';
+import {findTranslation} from '../../util/translations';
 
 @Component({
   selector: 'workqueue',
@@ -81,7 +82,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   moveSelectedToSelf() {
     this.currentUser.user
-      .subscribe(u => this.changeHandler(u, this.selectedApplicationIds));
+      .subscribe(u => this.changeOwner(u, this.selectedApplicationIds));
   }
 
   openHandlerModal() {
@@ -98,9 +99,9 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {
         if (dialogCloseValue.result) {
-          this.changeHandler(dialogCloseValue.result, this.selectedApplicationIds);
+          this.changeOwner(dialogCloseValue.result, this.selectedApplicationIds);
         } else {
-          this.removeHandler(this.selectedApplicationIds);
+          this.removeOwner(this.selectedApplicationIds);
         }
       }
       this.dialogRef = undefined;
@@ -118,17 +119,17 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     }
   }
 
-  private changeHandler(handler: User, ids: Array<number>): void {
-    this.applicationService.changeHandler(handler.id, ids).subscribe(
-      () => NotificationService.message('Hakemuksien käsittelijä vaihdettu'),
-      () => NotificationService.errorMessage('Hakemuksien käsittelijän vaihtaminen epäonnistui'),
+  private changeOwner(owner: User, ids: Array<number>): void {
+    this.applicationService.changeOwner(owner.id, ids).subscribe(
+      () => NotificationService.message(findTranslation('workqueue.notifications.ownerChanged')),
+      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerChangeFailed')),
       () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
   }
 
-  private removeHandler(ids: Array<number>): void {
-    this.applicationService.removeHandler(ids).subscribe(
-      () => NotificationService.message('Käsittelijä poistettu hakemuksilta'),
-      () => NotificationService.errorMessage('Käsittelijän poistaminen hakemuksilta epäonnistui'),
+  private removeOwner(ids: Array<number>): void {
+    this.applicationService.removeOwner(ids).subscribe(
+      () => NotificationService.message(findTranslation('workqueue.notifications.ownerRemoved')),
+      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerRemoveFailed')),
       () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
   }
 }

@@ -114,7 +114,7 @@ public class ApplicationReplacementService {
     application.setDecisionPublicityType(applicationToReplace.getDecisionPublicityType());
     application.setEndTime(applicationToReplace.getEndTime());
     application.setExtension(applicationToReplace.getExtension());
-    application.setHandler(applicationToReplace.getHandler());
+    application.setOwner(applicationToReplace.getOwner());
     application.setInvoiceRecipientId(applicationToReplace.getInvoiceRecipientId());
     application.setName(applicationToReplace.getName());
     application.setNotBillable(applicationToReplace.getNotBillable());

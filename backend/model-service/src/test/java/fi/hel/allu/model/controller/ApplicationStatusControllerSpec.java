@@ -40,8 +40,8 @@ public class ApplicationStatusControllerSpec extends SpeccyTestBase {
     beforeEach(() -> {
       wtc.setup();
 
-      Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
-      final Customer newCustomer = insertCustomer("TestCustomer", "SAP_ID", newApplication.getHandler());
+      Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Owner");
+      final Customer newCustomer = insertCustomer("TestCustomer", "SAP_ID", newApplication.getOwner());
       newApplication.setInvoiceRecipientId(newCustomer.getId());
       ResultActions resultActions = wtc.perform(post("/applications"), newApplication).andExpect(status().isOk());
       testApplication = wtc.parseObjectFromResult(resultActions, Application.class);
@@ -49,14 +49,19 @@ public class ApplicationStatusControllerSpec extends SpeccyTestBase {
 
     describe("Application status update", () -> {
       it("Updates decision status", () -> {
-        Application updatedApplication = updateStatusWithDecision(testApplication.getId(), StatusType.DECISION, testApplication.getHandler());
+        Application updatedApplication = updateStatusWithUserId(testApplication.getId(), StatusType.DECISION, testApplication.getOwner());
         Assert.assertEquals(StatusType.DECISION, updatedApplication.getStatus());
-        Assert.assertEquals(testApplication.getHandler(), updatedApplication.getDecisionMaker());
+        Assert.assertEquals(testApplication.getOwner(), updatedApplication.getDecisionMaker());
+      });
+      it("Updates decision making status", () -> {
+        Application updatedApplication = updateStatusWithUserId(testApplication.getId(), StatusType.DECISIONMAKING, testApplication.getOwner());
+        Assert.assertEquals(StatusType.DECISIONMAKING, updatedApplication.getStatus());
+        Assert.assertEquals(testApplication.getOwner(), updatedApplication.getHandler());
       });
       it("Updates rejected status", () -> {
-        Application updatedApplication = updateStatusWithDecision(testApplication.getId(), StatusType.REJECTED, testApplication.getHandler());
+        Application updatedApplication = updateStatusWithUserId(testApplication.getId(), StatusType.REJECTED, testApplication.getOwner());
         Assert.assertEquals(StatusType.REJECTED, updatedApplication.getStatus());
-        Assert.assertEquals(testApplication.getHandler(), updatedApplication.getDecisionMaker());
+        Assert.assertEquals(testApplication.getOwner(), updatedApplication.getDecisionMaker());
       });
       it("Updates other status", () -> {
         Application updatedApplication = updateApplicationStatus(testApplication.getId(), StatusType.CANCELLED);
@@ -83,13 +88,14 @@ public class ApplicationStatusControllerSpec extends SpeccyTestBase {
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
-  private Application updateStatusWithDecision(int applicationId, StatusType statusType, int userId) throws Exception {
+  private Application updateStatusWithUserId(int applicationId, StatusType statusType, int userId) throws Exception {
     ResultActions resultActions =
         wtc.perform(put(getStatusUpdateUrl(applicationId, statusType)), userId).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
   private String getStatusUpdateUrl(int applicationId, StatusType statusType) {
+    System.out.println("Call " + "/applications/" + applicationId + "/status/" + statusType.toString().toLowerCase());
     return "/applications/" + applicationId + "/status/" + statusType.toString().toLowerCase();
   }
 }

@@ -44,10 +44,10 @@ public class TestCommon {
     sqlRunner.runSql(DELETE_ALL_DATA);
   }
 
-  private Application dummyBasicApplication(String name, String handler) {
+  private Application dummyBasicApplication(String name, String owner) {
     Customer person = insertPerson();
     Integer projectId = insertProject();
-    User user = insertUser(handler);
+    User user = insertUser(owner);
     Application app = new Application();
     app.setCustomersWithContacts(
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, person, Collections.emptyList())));
@@ -59,7 +59,7 @@ public class TestCommon {
     app.setMetadataVersion(1);
     app.setDecisionTime(ZonedDateTime.now());
     app.setName(name);
-    app.setHandler(user.getId());
+    app.setOwner(user.getId());
     app.setNotBillable(false);
     return app;
   }
@@ -72,36 +72,36 @@ public class TestCommon {
    *
    * @param name
    *          application name
-   * @param handler
-   *          application handler's name
+   * @param owner
+   *          application owner's name
    * @return prepared application
    */
-  public Application dummyOutdoorApplication(String name, String handler) {
-    Application app = dummyBasicApplication(name, handler);
+  public Application dummyOutdoorApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
     app.setType(ApplicationType.EVENT);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
     app.setExtension(dummyOutdoorEvent());
     return app;
   }
 
-  public Application dummyBridgeBannerApplication(String name, String handler) {
-    Application app = dummyBasicApplication(name, handler);
+  public Application dummyBridgeBannerApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
     app.setType(ApplicationType.SHORT_TERM_RENTAL);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.BRIDGE_BANNER, Collections.emptyList()));
     app.setExtension(dummyBridgeBannerEvent());
     return app;
   }
 
-  public Application dummyAreaRentalApplication(String name, String handler) {
-    Application app = dummyBasicApplication(name, handler);
+  public Application dummyAreaRentalApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
     app.setType(ApplicationType.AREA_RENTAL);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OTHER, Collections.emptyList()));
     app.setExtension(dummyAreaRentalEvent());
     return app;
   }
 
-  public Application dummyNoteApplication(String name, String handler) {
-    Application app = dummyBasicApplication(name, handler);
+  public Application dummyNoteApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
     app.setType(ApplicationType.NOTE);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.STATEMENT, Collections.emptyList()));
     app.setExtension(dummyNote());
@@ -151,12 +151,12 @@ public class TestCommon {
    *
    * @param name
    *          application's name
-   * @param handler
-   *          application's handler's name
+   * @param owner
+   *          application's owner's name
    * @return application's ID.
    */
-  public Integer insertApplication(String name, String handler) {
-    Application appl = dummyOutdoorApplication(name, handler);
+  public Integer insertApplication(String name, String owner) {
+    Application appl = dummyOutdoorApplication(name, owner);
     return applicationDao.insert(appl).getId();
   }
 

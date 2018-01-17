@@ -26,28 +26,22 @@ import java.util.stream.Collectors;
 @Service
 public class ApplicationService {
   private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private LocationService locationService;
-  private CustomerService customerService;
-  private ApplicationMapper applicationMapper;
-  private ContactService contactService;
-  private UserService userService;
+  private final RestTemplate restTemplate;
+  private final LocationService locationService;
+  private final ApplicationMapper applicationMapper;
+  private final UserService userService;
 
   @Autowired
   public ApplicationService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
       LocationService locationService,
-      CustomerService customerService,
       ApplicationMapper applicationMapper,
-      ContactService contactService,
       UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
-    this.customerService = customerService;
     this.applicationMapper = applicationMapper;
-    this.contactService = contactService;
     this.userService = userService;
   }
 
@@ -222,12 +216,12 @@ public class ApplicationService {
   }
 
 
-  void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
-    restTemplate.put(applicationProperties.getApplicationHandlerUpdateUrl(), applicationIds, updatedHandler);
+  void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds) {
+    restTemplate.put(applicationProperties.getApplicationOwnerUpdateUrl(), applicationIds, updatedOwner);
   }
 
-  void removeApplicationHandler(List<Integer> applicationIds) {
-    restTemplate.put(applicationProperties.getApplicationHandlerRemoveUrl(), applicationIds);
+  void removeApplicationOwner(List<Integer> applicationIds) {
+    restTemplate.put(applicationProperties.getApplicationOwnerRemoveUrl(), applicationIds);
   }
 
   Application changeApplicationStatus(int applicationId, StatusType statusType) {
@@ -244,11 +238,11 @@ public class ApplicationService {
 
   private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
     HttpEntity<Integer> requestEntity;
-    if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType)) {
+    if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType) || StatusType.DECISIONMAKING.equals(statusType)) {
       UserJson currentUser = userService.getCurrentUser();
       requestEntity = new HttpEntity<>(currentUser.getId());
     } else {
-      requestEntity = new HttpEntity<>((Integer) null);
+      requestEntity = new HttpEntity<>(null);
     }
     return requestEntity;
   }

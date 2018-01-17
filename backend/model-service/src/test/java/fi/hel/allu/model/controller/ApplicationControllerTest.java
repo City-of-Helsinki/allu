@@ -91,7 +91,7 @@ public class ApplicationControllerTest {
   @Test
   public void testFindExistingOutdoor() throws Exception {
     // Setup: insert an application
-    Application appIn = testCommon.dummyOutdoorApplication("Test Application", "Handler");
+    Application appIn = testCommon.dummyOutdoorApplication("Test Application", "Owner");
     Application appInResult = insertApplication(appIn);
     // Test: try to read the same application back
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
@@ -108,7 +108,7 @@ public class ApplicationControllerTest {
   @Test
   public void testFindExistingShortTimeRental() throws Exception {
     // Setup: insert an application
-    Application appIn = testCommon.dummyBridgeBannerApplication("Test Application", "Handler");
+    Application appIn = testCommon.dummyBridgeBannerApplication("Test Application", "Owner");
     Application appInResult = insertApplication(appIn);
     // Test: try to read the same application back
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
@@ -121,7 +121,7 @@ public class ApplicationControllerTest {
   @Test
   public void testUpdateExisting() throws Exception {
     // Setup: insert an application
-    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Owner"));
     // Test: try to update the application
     appInResult.setStatus(StatusType.HANDLING);
     appInResult.setName("updatedname");
@@ -133,32 +133,32 @@ public class ApplicationControllerTest {
   }
 
   @Test
-  public void testUpdateHandler() throws Exception {
-    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
+  public void testUpdateOwner() throws Exception {
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Owner"));
     User changedUser = testCommon.insertUser("changed");
-    appInResult.setHandler(changedUser.getId());
-    wtc.perform(put(String.format("/applications/handler/%d", appInResult.getHandler())), Collections.singletonList(appInResult.getId()))
+    appInResult.setOwner(changedUser.getId());
+    wtc.perform(put(String.format("/applications/owner/%d", appInResult.getOwner())), Collections.singletonList(appInResult.getId()))
         .andExpect(status().isOk());
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
-    assertEquals(changedUser.getId(), updateResult.getHandler());
+    assertEquals(changedUser.getId(), updateResult.getOwner());
   }
 
   @Test
-  public void testRemoveHandler() throws Exception {
-    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
-    wtc.perform(put(String.format("/applications/handler/remove")), Collections.singletonList(appInResult.getId()))
+  public void testRemoveOwner() throws Exception {
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Owner"));
+    wtc.perform(put(String.format("/applications/owner/remove")), Collections.singletonList(appInResult.getId()))
         .andExpect(status().isOk());
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
-    assertNull(updateResult.getHandler());
+    assertNull(updateResult.getOwner());
   }
 
   @Test
   public void testReplaceDistributionList() throws Exception {
-    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Owner"));
     final String testEmail = "testi@testi.fi";
     DistributionEntry distributionEntry = new DistributionEntry();
     distributionEntry.setEmail(testEmail);
@@ -208,7 +208,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void testFindByStatus() throws Exception {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application1", "Test Handler1");
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application1", "Test Owner1");
     newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
     newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
     Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
@@ -217,7 +217,7 @@ public class ApplicationControllerTest {
         newApplication.getStartTime(), newApplication.getEndTime());
     setApplicationToFinished(inserted.getId());
 
-    Application withNonMatchinStatus = testCommon.dummyOutdoorApplication("Test Application2", "Test Handler2");
+    Application withNonMatchinStatus = testCommon.dummyOutdoorApplication("Test Application2", "Test Owner2");
     withNonMatchinStatus.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
     withNonMatchinStatus.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
     Application insertedNonMatching = insertApplicationWithGeometry(withNonMatchinStatus, geometryCollection, "katu 1",
@@ -236,7 +236,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void testFindNonFinishedAfterEndTime() throws Exception {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
     newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
     Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
@@ -265,7 +265,7 @@ public class ApplicationControllerTest {
   @Test
   public void testFindAttachments() throws Exception {
     // Setup: insert an application
-    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Owner"));
     // Test: read the application's attachment list
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d/attachments", appInResult.getId())))
         .andExpect(status().isOk());
@@ -337,7 +337,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void testRecurringWithinCalendarYear() throws Exception {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
     newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
     newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-08-03T10:15:30+02:00"));
@@ -413,7 +413,7 @@ public class ApplicationControllerTest {
   @Test
   public void testRecurringWithinTwoCalendarYears() throws Exception {
 
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
     newApplication.setEndTime(ZonedDateTime.parse("2016-03-03T10:15:30+02:00"));
     newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-03-03T10:15:30+02:00"));

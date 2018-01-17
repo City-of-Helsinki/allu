@@ -272,18 +272,18 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/find");
   }
 
-  /**
-   * @return url to update handler of applications.
+/**
+   * @return url to update owner of applications.
    */
-  public String getApplicationHandlerUpdateUrl() {
-    return getModelServiceUrl("/applications/handler/{handlerId}");
+  public String getApplicationOwnerUpdateUrl() {
+    return getModelServiceUrl("/applications/owner/{ownerId}");
   }
 
   /**
-   * @return url to remove handler of applications.
+   * @return url to remove owner of applications.
    */
-  public String getApplicationHandlerRemoveUrl() {
-    return getModelServiceUrl("/applications/handler/remove");
+  public String getApplicationOwnerRemoveUrl() {
+    return getModelServiceUrl("/applications/owner/remove");
   }
 
   public String getApplicationStatusUpdateUrl(StatusType statusType) {

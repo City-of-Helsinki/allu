@@ -140,21 +140,21 @@ export class ApplicationService {
   }
 
   /**
-   * Changes handler of given applications. Does not return anything. Use Observable's subscribe complete.
+   * Changes owner of given applications. Does not return anything. Use Observable's subscribe complete.
    */
-  public changeHandler(handler: number, applicationIds: Array<number>): Observable<any> {
-    const url = APPLICATIONS_URL + '/handler/' + handler;
+  public changeOwner(owner: number, applicationIds: Array<number>): Observable<any> {
+    const url = APPLICATIONS_URL + '/owner/' + owner;
     return this.authHttp.put(url, JSON.stringify(applicationIds))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')));
   }
 
   /**
-   * Removes handler of given applications. Does not return anything. Use Observable's subscribe complete.
+   * Removes owner of given applications. Does not return anything. Use Observable's subscribe complete.
    */
-  public removeHandler(applicationIds: Array<number>): Observable<any> {
-    const url = APPLICATIONS_URL + '/handler/remove';
+  public removeOwner(applicationIds: Array<number>): Observable<any> {
+    const url = APPLICATIONS_URL + '/owner/remove';
     return this.authHttp.put(url, JSON.stringify(applicationIds))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')));
   }
 
   /**

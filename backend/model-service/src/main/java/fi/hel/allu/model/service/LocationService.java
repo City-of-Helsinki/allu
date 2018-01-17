@@ -47,12 +47,12 @@ public class LocationService {
     locations.forEach(l -> newLocations.add(locationDao.insert(l)));
     int applicationId = getApplicationId(newLocations);
     Application application = findApplication(applicationId);
-    if (application.getHandler() == null) {
+    if (application.getOwner() == null) {
       // TODO: area rental with multiple locations will get more or less "random" location
-      newLocations.forEach(insertedLocation -> tryToAssignHandler(application, insertedLocation));
-      if (application.getHandler() != null) {
-        // New handler was assigned, set it
-        applicationService.updateHandler(application.getHandler(), Collections.singletonList(application.getId()));
+      newLocations.forEach(insertedLocation -> tryToAssignOwner(application, insertedLocation));
+      if (application.getOwner() != null) {
+        // New owner was assigned, set it
+        applicationService.updateOwner(application.getOwner(), Collections.singletonList(application.getId()));
       }
     }
     updateApplicationAndProject(application);
@@ -132,13 +132,13 @@ public class LocationService {
    * Try to find a user that matches the given application and location and
    * assign the application to him/her.
    */
-  private void tryToAssignHandler(Application application, Location location) {
+  private void tryToAssignOwner(Application application, Location location) {
     Integer cityDistrictId = location.getEffectiveCityDistrictId();
     ApplicationType applicationType = application.getType();
     if (cityDistrictId != null && applicationType != null) {
       List<User> users = userDao.findMatching(RoleType.ROLE_PROCESS_APPLICATION, applicationType, cityDistrictId);
       if (!users.isEmpty()) {
-        application.setHandler(users.get(0).getId());
+        application.setOwner(users.get(0).getId());
       }
     }
   }

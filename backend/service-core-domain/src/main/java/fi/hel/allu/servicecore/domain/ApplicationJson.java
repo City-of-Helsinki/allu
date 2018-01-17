@@ -41,6 +41,7 @@ public class ApplicationJson {
   private String applicationId;
   @Valid
   private ProjectJson project;
+  private UserJson owner;
   private UserJson handler;
   private StatusType status;
   @NotNull(message = "{application.type}", groups = {Draft.class, Default.class})
@@ -119,6 +120,17 @@ public class ApplicationJson {
 
   public void setProject(ProjectJson project) {
     this.project = project;
+  }
+
+  /**
+   * in Finnish: Hakemuksen omistaja
+   */
+  public UserJson getOwner() {
+    return owner;
+  }
+
+  public void setOwner(UserJson owner) {
+    this.owner = owner;
   }
 
   /**

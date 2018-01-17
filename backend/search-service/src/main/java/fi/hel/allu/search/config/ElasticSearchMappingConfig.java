@@ -45,7 +45,7 @@ public class ElasticSearchMappingConfig {
   private static final String FILTER_AUTOCOMPLETE = "autocomplete_filter";
 
   // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
-  private static final String MAPPINGS_VERSION_NUMBER = "1";
+  private static final String MAPPINGS_VERSION_NUMBER = "2";
 
   private static final String VERSION_TYPE_NAME = "version";
   private static final String VERSION_NUMBER_KEY = "versionNumber";
@@ -178,7 +178,7 @@ public class ElasticSearchMappingConfig {
           .startObject()
             .startObject("properties")
               .field("applicationId").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
-              .startObject("handler") // alphabetical sorting for handler.userName
+              .startObject("owner") // alphabetical sorting for owner.userName
                 .startObject("properties")
                   .startObject("userName")
                     .field("type", "text")

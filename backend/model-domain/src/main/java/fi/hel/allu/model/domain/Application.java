@@ -38,6 +38,7 @@ public class Application {
   private Integer id;
   private String applicationId;
   private Integer projectId;
+  private Integer owner;
   private Integer handler;
   @NotEmpty
   private List<CustomerWithContacts> customersWithContacts;
@@ -114,6 +115,19 @@ public class Application {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  /**
+   * in Finnish: Hakemuksen omistaja
+   *
+   * @return id of the owner or <code>null</code> if no owner is linked to the application.
+   */
+  public Integer getOwner() {
+    return owner;
+  }
+
+  public void setOwner(Integer owner) {
+    this.owner = owner;
   }
 
   /**

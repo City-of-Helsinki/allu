@@ -9,7 +9,7 @@ export class ApplicationSearchQuery implements SearchQuery {
   public type: Array<string>;
   public status: Array<string>;
   public districts: Array<string>;
-  public handler: Array<string>;
+  public owner: Array<string>;
   public address: string;
   public applicant: string;
   public contact: string;
@@ -45,7 +45,7 @@ export class ApplicationSearchQuery implements SearchQuery {
       .map(ds => ds
         .map(d => d.toString()))
       .orElse([]);
-    query.handler = queryForm.handler;
+    query.owner = queryForm.owner;
     query.address = queryForm.address;
     query.applicant = queryForm.applicant;
     query.contact = queryForm.contact;
@@ -76,7 +76,7 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.type = this.type;
     query.status = this.status;
     query.districts = this.districts;
-    query.handler = this.handler;
+    query.owner = this.owner;
     query.address = this.address;
     query.applicant = this.applicant;
     query.contact = this.contact;

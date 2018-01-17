@@ -19,7 +19,7 @@ export class ApplicationQueryParametersMapper {
       QueryParametersMapper.removeExtraWhitespace(query.applicant));
     QueryParametersMapper.mapParameter(queryParameters, 'customers.applicant.contacts.name',
       QueryParametersMapper.removeExtraWhitespace(query.contact));
-    QueryParametersMapper.mapArrayParameter(queryParameters, 'handler.userName', query.handler);
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'owner.userName', query.owner);
     QueryParametersMapper.mapParameter(queryParameters, 'applicationId', QueryParametersMapper.removeExtraWhitespace(query.applicationId));
     QueryParametersMapper.mapArrayParameter(queryParameters, 'status', query.status);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'locations.cityDistrictId', query.districts);

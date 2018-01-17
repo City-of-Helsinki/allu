@@ -26,7 +26,7 @@ import fi.hel.allu.servicecore.mapper.extension.*;
 public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
 
-  private CustomerMapper customerMapper;
+  private final CustomerMapper customerMapper;
 
   @Autowired
   public ApplicationMapper(CustomerMapper customerMapper) {
@@ -53,6 +53,7 @@ public class ApplicationMapper {
     applicationDomain.setEndTime(applicationJson.getEndTime());
     applicationDomain.setRecurringEndTime(applicationJson.getRecurringEndTime());
     applicationDomain.setCustomersWithContacts(customerMapper.createWithContactsModel(applicationJson.getCustomersWithContacts()));
+    applicationDomain.setOwner(applicationJson.getOwner() != null ? applicationJson.getOwner().getId() : null);
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
     applicationDomain.setKindsWithSpecifiers(applicationJson.getKindsWithSpecifiers());
@@ -96,9 +97,9 @@ public class ApplicationMapper {
           new RecurringApplication(applicationJson.getStartTime(), applicationJson.getEndTime(), recurringEndTime);
       applicationES.setRecurringApplication(recurringApplication);
     }
-    applicationES.setHandler(
-        applicationJson.getHandler() != null ?
-            new UserES(applicationJson.getHandler().getUserName(), applicationJson.getHandler().getRealName()) : null);
+    applicationES.setOwner(
+        applicationJson.getOwner() != null ?
+            new UserES(applicationJson.getOwner().getUserName(), applicationJson.getOwner().getRealName()) : null);
     applicationES.setType(new ApplicationTypeES(applicationJson.getType()));
     applicationES.setApplicationTags(createTagES(applicationJson.getApplicationTags()));
     applicationES.setStatus(new StatusTypeES(applicationJson.getStatus()));

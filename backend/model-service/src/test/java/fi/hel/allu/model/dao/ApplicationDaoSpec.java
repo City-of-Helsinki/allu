@@ -50,7 +50,7 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
     describe("ApplicationDao.deleteNote", () -> {
       context("Application is not note", () -> {
         beforeEach(() -> {
-          application = applicationDao.insert(testCommon.dummyOutdoorApplication("name", "handler"));
+          application = applicationDao.insert(testCommon.dummyOutdoorApplication("name", "owner"));
           assertNotNull(application.getId());
         });
         it("Can't be deleted", () -> {
@@ -61,7 +61,7 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
       });
       context("Application is NOTE", () -> {
         beforeEach(() -> {
-          application = applicationDao.insert(testCommon.dummyNoteApplication("name", "handler"));
+          application = applicationDao.insert(testCommon.dummyNoteApplication("name", "owner"));
           assertNotNull(application.getId());
         });
         it("Can be deleted", () -> {
@@ -87,7 +87,7 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
             final Variable<Integer> otherAttachmentId = new Variable<>();
 
             beforeEach(() -> {
-              otherApplicationId.set(testCommon.insertApplication("Other", "Other handler"));
+              otherApplicationId.set(testCommon.insertApplication("Other", "Other owner"));
               AttachmentInfo ai = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_HANDLER, "mimeTYpe",
                   "TestToo.dat", "Test attachment, too", 12,
                   ZonedDateTime.parse("2017-02-15T16:43:12+02:00[Europe/Helsinki]"), true);

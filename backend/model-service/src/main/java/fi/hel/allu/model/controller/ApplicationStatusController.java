@@ -36,8 +36,8 @@ public class ApplicationStatusController {
   }
 
   @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
-  public ResponseEntity<Application> changeStatusToDecisionMaking(@PathVariable int id) {
-    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.DECISIONMAKING, null), HttpStatus.OK);
+  public ResponseEntity<Application> changeStatusToDecisionMaking(@PathVariable int id, @RequestBody Integer userId) {
+    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.DECISIONMAKING, userId), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/status/decision", method = RequestMethod.PUT)

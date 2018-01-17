@@ -135,25 +135,25 @@ public class ApplicationController {
   }
 
   /**
-   * Updates handler of given applications.
+   * Updates owner of given applications.
    *
-   * @param   handlerId     New handler set to the applications.
-   * @param   applications  Applications whose handler is updated.
+   * @param   ownerId     New owner set to the applications.
+   * @param   applications  Applications whose owner is updated.
    */
-  @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
-  public ResponseEntity<Void> updateHandler(@PathVariable int handlerId, @RequestBody List<Integer> applications) {
-    applicationService.updateHandler(handlerId, applications);
+  @RequestMapping(value = "/owner/{ownerId}", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestBody List<Integer> applications) {
+    applicationService.updateOwner(ownerId, applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**
-   * Removes handler of given applications.
+   * Removes owner of given applications.
    *
-   * @param   applications  Applications whose handler is removed.
+   * @param   applications  Applications whose owner is removed.
    */
-  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
-  public ResponseEntity<Void> removeHandler(@RequestBody List<Integer> applications) {
-    applicationService.removeHandler(applications);
+  @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
+  public ResponseEntity<Void> removeOwner(@RequestBody List<Integer> applications) {
+    applicationService.removeOwner(applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

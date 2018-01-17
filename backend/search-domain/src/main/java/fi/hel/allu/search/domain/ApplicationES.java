@@ -15,7 +15,7 @@ public class ApplicationES {
   @NotBlank
   private Integer id;
   private String applicationId;
-  private UserES handler;
+  private UserES owner;
   private StatusTypeES status;
   private ApplicationTypeES type;
   private List<String> applicationTags;
@@ -46,12 +46,12 @@ public class ApplicationES {
     this.applicationId = applicationId;
   }
 
-  public UserES getHandler() {
-    return handler;
+  public UserES getOwner() {
+    return owner;
   }
 
-  public void setHandler(UserES handler) {
-    this.handler = handler;
+  public void setOwner(UserES owner) {
+    this.owner = owner;
   }
 
   public StatusTypeES getStatus() {

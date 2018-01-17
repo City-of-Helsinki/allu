@@ -21,9 +21,6 @@ public class ApplicationJsonServiceTest {
 
   private ApplicationMapper applicationMapper;
   private ProjectService projectService;
-  private CustomerService customerService;
-  private ContactService contactService;
-  private MetaService metaService;
   private UserService userService;
   private LocationService locationService;
   private AttachmentService attachmentService;
@@ -48,9 +45,6 @@ public class ApplicationJsonServiceTest {
   public void init() {
     applicationMapper = Mockito.mock(ApplicationMapper.class);
     projectService = Mockito.mock(ProjectService.class);
-    customerService = Mockito.mock(CustomerService.class);
-    contactService = Mockito.mock(ContactService.class);
-    metaService = Mockito.mock(MetaService.class);
     userService = Mockito.mock(UserService.class);
     locationService = Mockito.mock(LocationService.class);
     attachmentService = Mockito.mock(AttachmentService.class);
@@ -61,7 +55,7 @@ public class ApplicationJsonServiceTest {
     customer.setId(customerId);
     Mockito.when(application.getCustomersWithContacts())
         .thenReturn(Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
-    Mockito.when(application.getHandler()).thenReturn(userId);
+    Mockito.when(application.getOwner()).thenReturn(userId);
     Mockito.when(application.getProjectId()).thenReturn(projectId);
     Mockito.when(application.getType()).thenReturn(ApplicationType.SHORT_TERM_RENTAL);
     Mockito.when(application.getMetadataVersion()).thenReturn(1);
@@ -86,16 +80,13 @@ public class ApplicationJsonServiceTest {
     ApplicationJsonService applicationJsonService = new ApplicationJsonService(
         applicationMapper,
         projectService,
-        customerService,
-        contactService,
-        metaService,
         userService,
         locationService,
         attachmentService,
         commentService);
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     Assert.assertEquals(projectJson, applicationJson.getProject());
-    Assert.assertEquals(userJson, applicationJson.getHandler());
+    Assert.assertEquals(userJson, applicationJson.getOwner());
     Assert.assertEquals(locationJson, applicationJson.getLocations().get(0));
     Assert.assertEquals(0, applicationJson.getAttachmentList().size());
     Assert.assertEquals(2, applicationJson.getComments().size());

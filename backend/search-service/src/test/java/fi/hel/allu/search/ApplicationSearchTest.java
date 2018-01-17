@@ -54,7 +54,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = new ApplicationES();
     applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
     applicationES.setId(1);
-    applicationES.setHandler(createUser());
+    applicationES.setOwner(createUser());
     applicationES.setName("Ensimmäinen testi");
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     applicationES.setApplicationTypeData(createApplicationTypeData());
@@ -107,7 +107,7 @@ public class ApplicationSearchTest {
     applicationSearchService.insert(applicationES3);
 
     QueryParameters params = new QueryParameters();
-    QueryParameter parameter = new QueryParameter("handler.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
+    QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
@@ -133,7 +133,7 @@ public class ApplicationSearchTest {
     }
     applicationSearchService.refreshIndex();
     QueryParameters parameters = new QueryParameters();
-    parameters.setQueryParameters(Collections.singletonList(new QueryParameter("handler.userName", USERNAME)));
+    parameters.setQueryParameters(Collections.singletonList(new QueryParameter("owner.userName", USERNAME)));
     Page<Integer> appPage = applicationSearchService.findByField(parameters,
         new PageRequest(2, 10, Direction.ASC, "name.alphasort"));
     assertEquals(10, appPage.getSize());
@@ -146,7 +146,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES1 = createApplication(1);
 
     applicationES1.setName(USERNAME + " " + 1);
-    applicationES1.setHandler(new UserES(USERNAME + " " + 1, "not used"));
+    applicationES1.setOwner(new UserES(USERNAME + " " + 1, "not used"));
     CustomerES customerES = new CustomerES();
     customerES.setName(USERNAME + " " + 1);
     RoleTypedCustomerES roleTypedCustomerES =
@@ -159,7 +159,7 @@ public class ApplicationSearchTest {
 
     ApplicationES applicationES2 = createApplication(2);
     applicationES2.setName(USERNAME + " " + 2);
-    applicationES2.setHandler(new UserES(USERNAME + " " + 2, "not used"));
+    applicationES2.setOwner(new UserES(USERNAME + " " + 2, "not used"));
     customerES = new CustomerES();
     customerES.setName(USERNAME + " " + 2);
     roleTypedCustomerES =
@@ -170,7 +170,7 @@ public class ApplicationSearchTest {
 
     ApplicationES applicationES3 = createApplication(3);
     applicationES3.setName(USERNAME + " " + 3);
-    applicationES3.setHandler(new UserES(USERNAME + " " + 3, "not used"));
+    applicationES3.setOwner(new UserES(USERNAME + " " + 3, "not used"));
     customerES = new CustomerES();
     customerES.setName(USERNAME + " " + 3);
     roleTypedCustomerES =
@@ -187,17 +187,17 @@ public class ApplicationSearchTest {
 
     QueryParameters params = new QueryParameters();
     QueryParameter nameParameter = new QueryParameter("name", USERNAME);
-    QueryParameter handlerNameParameter = new QueryParameter("handler.userName", Arrays.asList(USERNAME));
+    QueryParameter ownerNameParameter = new QueryParameter("owner.userName", Arrays.asList(USERNAME));
     QueryParameter customerNameParameter = new QueryParameter("customers.applicant.customer.name", Arrays.asList(USERNAME));
 
-    List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, handlerNameParameter, customerNameParameter));
+    List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, ownerNameParameter, customerNameParameter));
     params.setQueryParameters(parameterList);
     PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "name.alphasort");
     List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    pageRequest = new PageRequest(0, 100, Direction.ASC, "handler.userName.alphasort");
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "owner.userName.alphasort");
     appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
@@ -271,12 +271,12 @@ public class ApplicationSearchTest {
   }
 
   @Test
-  public void testFindByMultipleHandlers() {
+  public void testFindByMultipleOwners() {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insert(applicationES);
 
     QueryParameters params = new QueryParameters();
-    QueryParameter parameter = new QueryParameter("handler.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
+    QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
@@ -550,7 +550,7 @@ public class ApplicationSearchTest {
     applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
     applicationES.setId(id);
     applicationES.setApplicationId("TP000001");
-    applicationES.setHandler(createUser());
+    applicationES.setOwner(createUser());
     applicationES.setName("Mock testi");
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     ZonedDateTime dateTime = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");

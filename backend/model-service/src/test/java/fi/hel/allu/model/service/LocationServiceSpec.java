@@ -64,8 +64,8 @@ public class LocationServiceSpec {
           locationService.insert(Collections.singletonList(dummyLocation()));
         });
 
-        it("should set application handler", () -> {
-          assertEquals(TEST_USER_ID, testApplication.getHandler().intValue());
+        it("should set application owner", () -> {
+          assertEquals(TEST_USER_ID, testApplication.getOwner().intValue());
         });
 
         it("should update the application in database", () -> {

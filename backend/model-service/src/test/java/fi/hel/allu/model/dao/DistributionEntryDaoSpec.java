@@ -38,7 +38,7 @@ public class DistributionEntryDaoSpec extends SpeccyTestBase {
     // manual transaction handling done in parent class
     beforeEach(() -> {
       testCommon.deleteAllData();
-      applicationId = testCommon.insertApplication("test application", "dummy handler");
+      applicationId = testCommon.insertApplication("test application", "dummy owner");
       testDistributionEntry.setApplicationId(applicationId);
       testDistributionEntry.setDistributionType(DistributionType.EMAIL);
     });
