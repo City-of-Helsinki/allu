@@ -87,7 +87,15 @@ public class SearchService {
    * @param applicationId note application's database ID
    */
   public void deleteNote(int applicationId) {
-    restTemplate.delete(applicationProperties.getNoteSearchRemoveUrl(), applicationId);
+    restTemplate.delete(applicationProperties.getApplicationSearchRemoveUrl(), applicationId);
+  }
+
+  /**
+   * Delete a draft froms search-service's database.
+   * @param applicationId draft's database ID.
+   */
+  public void deleteDraft(int applicationId) {
+    restTemplate.delete(applicationProperties.getApplicationSearchRemoveUrl(), applicationId);
   }
 
   /**

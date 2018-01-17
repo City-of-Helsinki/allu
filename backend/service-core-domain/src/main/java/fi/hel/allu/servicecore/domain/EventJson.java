@@ -1,13 +1,13 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.EventNature;
-
-import org.hibernate.validator.constraints.NotBlank;
+import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import java.time.ZonedDateTime;
+import org.hibernate.validator.constraints.NotBlank;
+
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.types.EventNature;
 
 public class EventJson extends ApplicationExtensionJson {
   @NotNull(message = "{event.nature}")

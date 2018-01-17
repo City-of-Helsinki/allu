@@ -181,6 +181,14 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to delete a draft in model service.
+   */
+  public String getDraftDeleteUrl() {
+    return getModelServiceUrl("/applications/drafts/{id}");
+  }
+
+
+  /**
    * @return url to send application search queries.
    */
   public String getApplicationSearchUrl() {
@@ -209,9 +217,9 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return url to delete note from search index.,
+   * @return url to delete application from search index.,
    */
-  public String getNoteSearchRemoveUrl() {
+  public String getApplicationSearchRemoveUrl() {
     return getSearchServiceUrl("/applications/{id}");
   }
 

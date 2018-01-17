@@ -190,6 +190,18 @@ public class ApplicationService {
     applicationDao.deleteNote(id);
   }
 
+
+  /**
+   * Delete draft and its related data
+   *
+   * @param id application's database ID.
+   */
+  @Transactional
+  public void deleteDraft(int id) {
+    applicationDao.deleteDraft(id);
+  }
+
+
   /**
    * Change application status.
    *

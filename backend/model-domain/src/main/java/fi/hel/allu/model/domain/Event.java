@@ -9,9 +9,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Event extends ApplicationExtension {
-  @NotNull
+  @NotNull(groups = Application.Complete.class)
   private EventNature nature;
-  @NotBlank
+  @NotBlank(groups = Application.Complete.class)
   private String description;
   private String url;
   private int attendees;
@@ -23,9 +23,9 @@ public class Event extends ApplicationExtension {
   private float structureArea;
   private String structureDescription;
   private String timeExceptions;
-  @Min(value = 0)
+  @Min(value = 0, groups = Application.Complete.class)
   private long buildSeconds;
-  @Min(value = 0)
+  @Min(value = 0, groups = Application.Complete.class)
   private long teardownSeconds;
 
   @Override

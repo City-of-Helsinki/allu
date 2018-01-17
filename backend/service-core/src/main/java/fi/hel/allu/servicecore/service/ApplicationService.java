@@ -212,6 +212,16 @@ public class ApplicationService {
     restTemplate.delete(applicationProperties.getNoteDeleteUrl(), applicationId);
   }
 
+  /**
+   * Delete a draft
+   *
+   * @param applicationId draft application's database ID
+   */
+  void deleteDraft(int applicationId) {
+    restTemplate.delete(applicationProperties.getDraftDeleteUrl(), applicationId);
+  }
+
+
   void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
     restTemplate.put(applicationProperties.getApplicationHandlerUpdateUrl(), applicationIds, updatedHandler);
   }

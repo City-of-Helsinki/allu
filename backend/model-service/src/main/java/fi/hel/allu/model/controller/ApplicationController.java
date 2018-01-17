@@ -197,6 +197,17 @@ public class ApplicationController {
   }
 
   /**
+   * Delete draft and its related data
+   *
+   * @param id application's database ID.
+   */
+  @RequestMapping(value = "/draft/{id}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> deleteDraft(@PathVariable int id) {
+    applicationService.deleteDraft(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
    * Add single tag to application
    *
    * @param id Application's database ID

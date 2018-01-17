@@ -1,5 +1,20 @@
 package fi.hel.allu.model.domain;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.group.GroupSequenceProvider;
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -9,22 +24,16 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.util.TimeUtil;
 
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 /**
  * In Finnish: hakemus
  */
+@GroupSequenceProvider(ApplicationGroupSequenceProvider.class)
 public class Application {
+
+  /**
+   * Validation group for complete application (non draft) constraints.
+   */
+  public interface Complete {}
 
   private Integer id;
   private String applicationId;

@@ -1,12 +1,13 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.service.ApplicationStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.service.ApplicationStatusService;
 
 /**
  * Controller for managing application status changes.
@@ -23,10 +24,6 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.PRE_RESERVED, null), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/status/pending", method = RequestMethod.PUT)
-  public ResponseEntity<Application> changeStatusToPending(@PathVariable int id) {
-    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.PENDING, null), HttpStatus.OK);
-  }
 
   @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
   public ResponseEntity<Application> changeStatusToHandling(@PathVariable int id) {

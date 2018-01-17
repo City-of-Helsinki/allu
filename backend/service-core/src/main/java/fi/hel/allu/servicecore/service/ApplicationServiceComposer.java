@@ -86,6 +86,21 @@ public class ApplicationServiceComposer {
    * @return Transfer object that contains list of created applications and their identifiers
    */
   public ApplicationJson createApplication(ApplicationJson applicationJson) {
+    return createApplication(applicationJson, StatusType.PENDING);
+  }
+
+  /**
+   * Create application draft (alustava varaus).
+   *
+   * @param applicationDraftJson Draft to be created
+   * @return Created draft.
+   */
+  public ApplicationJson createDraft(ApplicationJson applicationDraftJson) {
+    return createApplication(applicationDraftJson, StatusType.PRE_RESERVED);
+  }
+
+  private ApplicationJson createApplication(ApplicationJson applicationJson, StatusType status) {
+    applicationJson.setStatus(status);
     Application createdApplication = applicationService.createApplication(applicationJson);
     ApplicationJson createdApplicationJson = applicationJsonService.getFullyPopulatedApplication(createdApplication);
     applicationHistoryService.addApplicationCreated(createdApplication.getId());
@@ -337,7 +352,17 @@ public class ApplicationServiceComposer {
     return replacingApplication;
   }
 
+
   public List<ApplicationIdentifierJson> replacementHistory(int applicationId) {
     return applicationService.replacementHistory(applicationId);
+  }
+
+  /**
+   * Delete application draft.
+   * @param id Id of the application draft to be deleted
+   */
+  public void deleteDraft(int id) {
+    applicationService.deleteDraft(id);
+    searchService.deleteDraft(id);
   }
 }

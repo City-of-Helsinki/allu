@@ -1,5 +1,17 @@
 package fi.hel.allu.servicecore.domain;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -9,26 +21,21 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.validator.NotFalse;
 
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 /**
  * in Finnish: Hakemus
  */
 @NotFalse(rules = {
     "recurringEndTime, lessThanYearActivity, Recurring applications start and end time duration has to be less than a year",
     "kind, kindsMatchType, Application kinds must be valid for the type",
-    "extension, specifiersMatchKind, Application specifiers must be suitable for application kind" })
+    "extension, specifiersMatchKind, Application specifiers must be suitable for application kind"
+ })
 
 public class ApplicationJson {
+
+  /**
+   * Validation group for application draft constraints
+   */
+  public interface Draft {}
 
   private Integer id;
   private String applicationId;
@@ -36,19 +43,19 @@ public class ApplicationJson {
   private ProjectJson project;
   private UserJson handler;
   private StatusType status;
-  @NotNull(message = "{application.type}")
+  @NotNull(message = "{application.type}", groups = {Draft.class, Default.class})
   private ApplicationType type;
   private List<ApplicationTagJson> applicationTags;
   private Integer metadataVersion;
-  @NotBlank(message = "{application.name}")
+  @NotBlank(message = "{application.name}", groups = {Draft.class, Default.class})
   private String name;
   private ZonedDateTime creationTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ZonedDateTime recurringEndTime;
-  @NotEmpty(message = "{application.customersWithContacts}")
+  @NotEmpty(message = "{application.customersWithContacts}", groups = {Draft.class, Default.class})
   private List<CustomerWithContactsJson> customersWithContacts;
-  @NotEmpty(message = "{application.locations}")
+  @NotEmpty(message = "{application.locations}", groups = {Draft.class, Default.class})
   @Valid
   private List<LocationJson> locations;
   @NotNull(message = "{application.extension}")

@@ -307,8 +307,11 @@ public class ApplicationDao {
   public Application insert(Application appl) {
     // Use application id from application if present, otherwise generate id.
     appl.setApplicationId(Optional.ofNullable(appl.getApplicationId()).orElse(createApplicationId(appl.getType())));
-    appl.setStatus(StatusType.PENDING);
     appl.setCreationTime(ZonedDateTime.now());
+    // Do not overwrite given status
+    if (appl.getStatus() == null) {
+      appl.setStatus(StatusType.PENDING);
+    }
     appl.setMetadataVersion(structureMetaDao.getLatestMetadataVersion());
     Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
     if (id == null) {
@@ -335,6 +338,25 @@ public class ApplicationDao {
     if (ApplicationType.NOTE != applicationType) {
       throw new IllegalArgumentException("Trying to delete non-note application");
     }
+    deleteApplication(id);
+  }
+
+  /**
+   * Delete draft application and its related data
+   *
+   * @param id application's database ID.
+   */
+  @Transactional
+  public void deleteDraft(int id) {
+    StatusType status = queryFactory.select(application.status).from(application)
+        .where(application.id.eq(id)).fetchOne();
+    if (StatusType.PRE_RESERVED != status) {
+      throw new IllegalArgumentException("Trying to delete application which is not a draft");
+    }
+    deleteApplication(id);
+  }
+
+  private void deleteApplication(int id) {
     queryFactory.delete(application).where(application.id.eq(id)).execute();
     /*
      * After removing the application, some attachments might be unreferenced,
@@ -344,6 +366,7 @@ public class ApplicationDao {
      */
     attachmentDao.deleteUnreferencedAttachments();
   }
+
 
   /**
    * Updates handler of given applications.
