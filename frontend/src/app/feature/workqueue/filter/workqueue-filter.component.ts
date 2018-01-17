@@ -25,7 +25,7 @@ const COMMON_MULTISELECT_VALUE = ['common'];
 })
 export class WorkQueueFilterComponent implements OnInit {
   queryForm: FormGroup;
-  @Input() handlers: Array<User>;
+  @Input() owners: Array<User>;
   districts: Observable<Array<CityDistrict>>;
   applicationStatuses = searchable.map(status => ApplicationStatus[status]);
   applicationTypes = EnumUtil.enumValues(ApplicationType);
@@ -33,7 +33,7 @@ export class WorkQueueFilterComponent implements OnInit {
   tab: string;
 
   private typeCtrl: FormControl;
-  private handlerCtrl: FormControl;
+  private ownerCtrl: FormControl;
   private statusCtrl: FormControl;
   private tagsCtrl: FormControl;
 
@@ -43,12 +43,12 @@ export class WorkQueueFilterComponent implements OnInit {
               private workQueueHub: WorkQueueHub,
               private currentUser: CurrentUser) {
     this.typeCtrl = fb.control(undefined);
-    this.handlerCtrl = fb.control(undefined);
+    this.ownerCtrl = fb.control(undefined);
     this.statusCtrl = fb.control(undefined);
     this.tagsCtrl = fb.control([]);
     this.queryForm = fb.group({
       type: this.typeCtrl,
-      handler: this.handlerCtrl,
+      owner: this.ownerCtrl,
       status: this.statusCtrl,
       districts: undefined,
       startTime: undefined,
@@ -87,18 +87,18 @@ export class WorkQueueFilterComponent implements OnInit {
     // remove waiting tag filter if such was selected
     const tags = this.tagsCtrl.value.filter(tag => tag !== ApplicationTagType[ApplicationTagType.WAITING]);
     this.tagsCtrl.setValue(tags);
-    this.currentUser.user.subscribe(user => this.handlerCtrl.patchValue([user.userName]));
+    this.currentUser.user.subscribe(user => this.ownerCtrl.patchValue([user.userName]));
   }
 
   private waitingTabSelected(): void {
     this.tagsCtrl.patchValue([ApplicationTagType[ApplicationTagType.WAITING]]);
-    this.handlerCtrl.patchValue([]);
+    this.ownerCtrl.patchValue([]);
   }
 
   private commonTabSelected(): void {
     this.tagTypes = EnumUtil.enumValues(ApplicationTagType);
     this.queryForm.patchValue({tags: [], type: COMMON_MULTISELECT_VALUE, status: COMMON_MULTISELECT_VALUE});
-    this.handlerCtrl.patchValue([]);
+    this.ownerCtrl.patchValue([]);
     this.typeCtrl.disable();
     this.statusCtrl.disable();
   }

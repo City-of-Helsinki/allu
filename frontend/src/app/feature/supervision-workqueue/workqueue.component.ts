@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {WorkQueueTab} from '../workqueue/workqueue-tab';
 import {SupervisionWorkItemStore} from './supervision-work-item-store';
 import {MatDialog, MatDialogRef, MatTabChangeEvent} from '@angular/material';
-import {HANDLER_MODAL_CONFIG, HandlerModalComponent} from '../common/handlerModal/handler-modal.component';
+import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
 import {DialogCloseReason} from '../common/dialog-close-value';
 import {User} from '../../model/user/user';
@@ -20,7 +20,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   tabs = [WorkQueueTab[WorkQueueTab.OWN], WorkQueueTab[WorkQueueTab.COMMON]];
   noneSelected = true;
 
-  private dialogRef: MatDialogRef<HandlerModalComponent>;
+  private dialogRef: MatDialogRef<OwnerModalComponent>;
   private activeSupervisors: Array<User> = [];
   private changeSubscription: Subscription;
 
@@ -49,40 +49,40 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   moveSelectedToSelf() {
     this.currentUser.user
-      .subscribe(u => this.changeHandler(u));
+      .subscribe(u => this.changeOwner(u));
   }
 
   openHandlerModal() {
     const config = {
-      ...HANDLER_MODAL_CONFIG,
+      ...OWNER_MODAL_CONFIG,
       data: {
         type: 'SUPERVISOR',
         users : this.activeSupervisors
       }
     };
-    this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, config);
+    this.dialogRef = this.dialog.open<OwnerModalComponent>(OwnerModalComponent, config);
 
     this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {
         if (dialogCloseValue.result) {
-          this.changeHandler(dialogCloseValue.result);
+          this.changeOwner(dialogCloseValue.result);
         } else {
-          this.removeHandler();
+          this.removeOwner();
         }
       }
       this.dialogRef = undefined;
     });
   }
 
-  private changeHandler(handler: User): void {
-    this.store.changeHandlerForSelected(handler.id)
+  private changeOwner(owner: User): void {
+    this.store.changeHandlerForSelected(owner.id)
       .subscribe(
         () => NotificationService.translateMessage('supervision.task.action.handlerChanged'),
         () => NotificationService.translateErrorMessage('supervision.task.error.handlerChange')
       );
   }
 
-  private removeHandler(): void {
+  private removeOwner(): void {
     this.store.removeHandlerFromSelected().subscribe(
       () => NotificationService.translateMessage('supervision.task.action.handlerRemoved'),
       () => NotificationService.translateErrorMessage('supervision.task.error.handlerRemove')

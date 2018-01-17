@@ -1,10 +1,10 @@
-<h1 mat-dialog-title>{{['handlerModal', type, 'title'] | translation}}</h1>
+<h1 mat-dialog-title>{{['ownerModal', type, 'title'] | translation}}</h1>
 <div mat-dialog-content>
   <div class="col s2">
     <mat-form-field class="input-full-width">
       <mat-select [(ngModel)]="selectedUser" class="input-full-width"
-                  [placeholder]="['handlerModal', type, 'selectedUser'] | translation">
-        <mat-option value="">{{['handlerModal', type, 'noSelectedUser'] | translation}}</mat-option>
+                  [placeholder]="['ownerModal', type, 'selectedUser'] | translation">
+        <mat-option value="">{{['ownerModal', type, 'noSelectedUser'] | translation}}</mat-option>
         <mat-option *ngFor="let user of allUsers" [value]="user">{{user.realName}}</mat-option>
       </mat-select>
     </mat-form-field>

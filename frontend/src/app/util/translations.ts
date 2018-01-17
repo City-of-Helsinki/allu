@@ -343,7 +343,6 @@ export const translations = {
     type: 'Hakemuksen tyyppi',
     status: 'Hakemuksen tila',
     owner: 'Hakemuksen omistaja',
-    handler: 'Hakemuksen käsittelijä',
     address: 'Osoite',
     startTime: 'Alkupäivämäärä',
     endTime: 'Loppupäivämäärä',
@@ -1067,11 +1066,11 @@ export const translations = {
       }
     }
   },
-  handlerModal: {
-    HANDLER: {
-      title: 'Siirrä käsittelijälle',
-      selectedUser: 'Käsittelijä',
-      noSelectedUser: 'Ei käsittelijää'
+  ownerModal: {
+    OWNER: {
+      title: 'Siirrä omistajalle',
+      selectedUser: 'Omistaja',
+      noSelectedUser: 'Ei omistajaa'
     },
     SUPERVISOR: {
       title: 'Siirrä valvojalle',

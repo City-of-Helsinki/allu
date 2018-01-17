@@ -5,26 +5,26 @@ import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {DialogCloseReason, DialogCloseValue} from '../dialog-close-value';
 
-export const HANDLER_MODAL_CONFIG = {width: '400px', data: {}};
+export const OWNER_MODAL_CONFIG = {width: '400px', data: {}};
 
 @Component({
-  selector: 'handler-modal',
-  templateUrl: './handler-modal.component.html',
+  selector: 'owner-modal',
+  templateUrl: './owner-modal.component.html',
   styleUrls: []
 })
-export class HandlerModalComponent implements OnInit {
+export class OwnerModalComponent implements OnInit {
   allUsers: Array<User>;
   selectedUser: User;
-  type: HandlerModalType;
+  type: OwnerModalType;
 
-  constructor(public dialogRef: MatDialogRef<HandlerModalComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: HandlerModalData,
+  constructor(public dialogRef: MatDialogRef<OwnerModalComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: OwnerModalData,
               private currentUser: CurrentUser) { }
 
   ngOnInit(): void {
     this.currentUser.user.subscribe(u => this.selectedUser = u);
     this.allUsers = this.data.users || [this.selectedUser];
-    this.type = this.data.type || 'HANDLER';
+    this.type = this.data.type || 'OWNER';
   }
 
   confirm() {
@@ -36,9 +36,9 @@ export class HandlerModalComponent implements OnInit {
   }
 }
 
-export type HandlerModalType = 'HANDLER' | 'SUPERVISOR';
+export type OwnerModalType = 'OWNER' | 'SUPERVISOR';
 
-export interface HandlerModalData {
-  type: HandlerModalType;
+export interface OwnerModalData {
+  type: OwnerModalType;
   users: Array<User>;
 }

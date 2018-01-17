@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {HandlerModalComponent} from './handler-modal.component';
+import {OwnerModalComponent} from './owner-modal.component';
 import {CommonModule} from '@angular/common';
 import {AlluCommonModule} from '../allu-common.module';
 
@@ -11,13 +11,13 @@ import {AlluCommonModule} from '../allu-common.module';
     AlluCommonModule
   ],
   declarations: [
-    HandlerModalComponent
+    OwnerModalComponent
   ],
   exports: [
-    HandlerModalComponent
+    OwnerModalComponent
   ],
   entryComponents: [
-    HandlerModalComponent
+    OwnerModalComponent
   ]
 })
-export class HandlerModalModule {}
+export class OwnerModalModule {}

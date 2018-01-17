@@ -8,7 +8,7 @@ import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {EnumUtil} from '../../util/enum.util';
 import {Sort} from '../../model/common/sort';
-import {HANDLER_MODAL_CONFIG, HandlerModalComponent} from '../common/handlerModal/handler-modal.component';
+import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
 import {UserHub} from '../../service/user/user-hub';
@@ -33,8 +33,8 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   applications: ConnectableObservable<Array<Application>>;
   tabs = EnumUtil.enumValues(WorkQueueTab);
   tab = WorkQueueTab.OWN;
-  dialogRef: MatDialogRef<HandlerModalComponent>;
-  handlers: Array<User>;
+  dialogRef: MatDialogRef<OwnerModalComponent>;
+  owners: Array<User>;
   private selectedApplicationIds = new Array<number>();
   private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
   private sort: Sort;
@@ -54,7 +54,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       .catch(err => NotificationService.errorCatch(err, []))
       .publish();
 
-    this.userHub.getActiveUsers().subscribe(users => this.handlers = users);
+    this.userHub.getActiveUsers().subscribe(users => this.owners = users);
     this.searchQuerySub = this.workqueueHub.searchQuery.subscribe(query => this.queryChanged(query));
   }
 
@@ -87,14 +87,14 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   openHandlerModal() {
     const config = {
-      ...HANDLER_MODAL_CONFIG,
+      ...OWNER_MODAL_CONFIG,
       data: {
-        type: 'HANDLER',
-        users : this.handlers
+        type: 'OWNER',
+        users : this.owners
       }
     };
 
-    this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, config);
+    this.dialogRef = this.dialog.open<OwnerModalComponent>(OwnerModalComponent, config);
 
     this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {

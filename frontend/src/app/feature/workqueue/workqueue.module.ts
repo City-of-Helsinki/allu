@@ -10,7 +10,7 @@ import {WorkQueueService} from './workqueue-search/workqueue.service';
 import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 import {CommentsModalComponent} from '../application/comment/comments-modal.component';
-import {HandlerModalModule} from '../common/handlerModal/handler-modal.module';
+import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 
 @NgModule({
   imports: [
@@ -20,7 +20,7 @@ import {HandlerModalModule} from '../common/handlerModal/handler-modal.module';
     MatButtonToggleModule,
     MatChipsModule,
     SelectionGroupModule,
-    HandlerModalModule
+    OwnerModalModule
   ],
   declarations: [
     WorkQueueComponent,

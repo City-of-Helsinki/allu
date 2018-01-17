@@ -15,9 +15,9 @@
       </div>
       <div class="col s2" [hidden]="tab==='OWN'">
         <mat-form-field class="input-full-width">
-          <mat-select formControlName="handler" [multiple]="true" class="input-full-width"
-                      [placeholder]="'applicationSearch.handler' | translation">
-            <mat-option *ngFor="let handler of handlers" [value]="handler.userName">{{handler.realName}}</mat-option>
+          <mat-select formControlName="owner" [multiple]="true" class="input-full-width"
+                      [placeholder]="'applicationSearch.owner' | translation">
+            <mat-option *ngFor="let owner of owners" [value]="owner.userName">{{owner.realName}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
