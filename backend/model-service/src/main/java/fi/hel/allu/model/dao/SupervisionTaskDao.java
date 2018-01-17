@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
@@ -19,6 +20,8 @@ import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -119,11 +122,11 @@ public class SupervisionTaskDao {
 
   @Transactional
   public List<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria) {
-    return search(searchCriteria, null);
+    return search(searchCriteria, null).getContent();
   }
 
   @Transactional
-  public List<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
+  public Page<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     BooleanExpression conditions = conditions(searchCriteria)
         .reduce((left, right) -> left.and(right))
         .orElse(Expressions.TRUE);
@@ -148,7 +151,8 @@ public class SupervisionTaskDao {
 
     q = handlePageRequest(q, pageRequest);
 
-    return q.fetch();
+    QueryResults<SupervisionTask> results = q.fetchResults();
+    return new PageImpl<>(results.getResults(), pageRequest, results.getTotal());
   }
 
   /*
