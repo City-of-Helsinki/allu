@@ -28,13 +28,8 @@
           </div>
         </div>
       </div>
-      <div class="row form-group" *ngIf="kind==='BRIDGE_BANNER'">
+      <div class="row form-group" *ngIf="kind==='PROMOTION_OR_SALES'">
         <div class="col m6 no-padding">
-          <div class="col m12">
-            <mat-checkbox formControlName="commercial">{{'application.pricing.commercial' | translation}}</mat-checkbox>
-          </div>
-        </div>
-        <div *ngIf="kind==='PROMOTION_OR_SALES'" class="col m6 no-padding">
           <div class="col m12">
             <mat-checkbox formControlName="largeSalesArea">{{'application.pricing.largeSalesArea' | translation}}
             </mat-checkbox>
