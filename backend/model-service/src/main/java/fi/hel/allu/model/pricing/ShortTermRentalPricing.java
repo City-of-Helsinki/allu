@@ -149,9 +149,6 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case OTHER:
       // Handler should set the price override
-      setPriceInCents(0);
-        addChargeBasisEntry(ChargeBasisTag.ShortTermRentalOther(), ChargeBasisUnit.PIECE, 1, 0,
-            InvoiceLines.OTHER_SHORT_TERM_RENTAL, 0);
       break;
     case PROMOTION_OR_SALES:
       // 0.8 x 3.0 sqm: free of charge
