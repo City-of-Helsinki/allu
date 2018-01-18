@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -254,8 +252,14 @@ public class ApplicationServiceComposer {
    * @return New stored tags
    */
   public List<ApplicationTagJson> updateTags(int id, List<ApplicationTagJson> tags) {
+    List<ApplicationTagJson> oldTags = applicationService.findTagsByApplicationId(id);
     List<ApplicationTagJson> updatedTags = applicationService.updateTags(id, tags);
     searchService.updateTags(id, tags);
+    ApplicationJson withOldTags = new ApplicationJson();
+    ApplicationJson withNewTags = new ApplicationJson();
+    withOldTags.setApplicationTags(oldTags);
+    withNewTags.setApplicationTags(updatedTags);
+    applicationHistoryService.addFieldChanges(id, withOldTags, withNewTags);
     return updatedTags;
   }
 
