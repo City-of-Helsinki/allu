@@ -23,8 +23,8 @@
     </div>
 
   </div>
-  <div fxLayout="row" fxLayoutWrap class="spaced-out">
-    <div fxFlex="50" *ngIf="form.value.unit==='PIECE'">
+  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+    <div fxFlex="calc(50% - 18px)" *ngIf="form.value.unit==='PIECE'">
       <mat-form-field class="input-full-width">
         <input matInput type="number" formControlName="unitPrice" required
                placeholder="{{'chargeBasis.discount' | translation}}"/>
@@ -34,7 +34,7 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div fxFlex="50" *ngIf="form.value.unit==='PERCENT'">
+    <div fxFlex="calc(50% - 18px)" *ngIf="form.value.unit==='PERCENT'">
       <mat-form-field class="input-full-width">
         <input matInput type="number" formControlName="quantity" required min="0" max="100"
                placeholder="{{'chargeBasis.discount' | translation}}"/>
@@ -44,7 +44,7 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div fxFlex="20" class="discount-unit">
+    <div fxFlex="calc(20% - 18px)" class="discount-unit">
       <mat-button-toggle-group formControlName="unit">
         <mat-button-toggle *ngFor="let unit of unitTypes" [value]="unit">
           {{['chargeBasis.discountUnit', unit] | translation}}
