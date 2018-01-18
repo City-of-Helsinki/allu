@@ -1,6 +1,6 @@
 <form [formGroup]="form" novalidate>
-  <div fxLayout="row" fxLayoutWrap class="spaced-out">
-    <div fxFlex="50" *ngIf="billable">
+  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+    <div fxFlex *ngIf="billable">
       <mat-card>
         <mat-card-title>
           <div fxLayout="row" fxFlexAlign="space-between">
@@ -25,7 +25,7 @@
         </mat-card-content>
       </mat-card>
     </div>
-    <div fxFlex="50">
+    <div fxFlex>
       <mat-card>
         <mat-card-title>
           {{'invoice.info.depositAndOthers' | translation}}
@@ -49,14 +49,14 @@
               </mat-form-field>
             </div>
           </div>
-          <div fxLayout="row" fxLayoutWrap>
-            <div fxFlex="50">
+          <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+            <div fxFlex>
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="customerReference"
                        [placeholder]="'invoice.info.customerReference' | translation"/>
               </mat-form-field>
             </div>
-            <div fxFlex="50">
+            <div fxFlex>
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="depositAmount"
                        [placeholder]="'deposit.amount' | translation"/>

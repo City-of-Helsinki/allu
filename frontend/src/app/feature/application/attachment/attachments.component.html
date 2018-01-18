@@ -28,7 +28,7 @@
           <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
         </div>
         <mat-card-content class="card-content">
-          <div fxLayout="row" fxLayoutWrap class="spaced-out">
+          <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
             <div fxFlex>
               <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
             </div>

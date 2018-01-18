@@ -1,7 +1,7 @@
 <ng-container *ngIf="applicationChanges | async as application">
   <progressbar [step]="progressStep" [application]="application"></progressbar>
-  <div fxLayout="row" class="content-main spaced-out">
-    <div fxFlex="33">
+  <div fxLayout="row" fxLayoutGap="18px" class="content-main">
+    <div fxFlex="calc(33% - 18px)">
       <div fxLayout="row">
         <div fxFlex>
           <application-basic-info [application]="application"></application-basic-info>
@@ -25,14 +25,14 @@
         </div>
       </div>
     </div>
-    <div fxFlex="66" class="content-pdf" *ngIf="pdfLoaded">
+    <div fxFlex="calc(66% - 18px)" class="content-pdf" *ngIf="pdfLoaded">
       <div class="pdf-header"></div>
       <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
         <p>Päätöksen näyttäminen ei onnistu selaimellasi. Voit ladata sen <a [href]="pdfDownloadUrl">tästä</a></p>
       </object>
       <decision-actions [application]="application" (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
     </div>
-    <div fxFlex="80" class="content-placeholder" *ngIf="!pdfLoaded">
+    <div fxFlex="calc(66% - 18px)" class="content-placeholder" *ngIf="!pdfLoaded">
       <div class="pdf-header"></div>
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       <img src="assets/images/decision-placeholder.png" alt="Decision placeholder"/>

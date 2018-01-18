@@ -5,15 +5,3 @@
 [fxFlex].loose {
   padding: 0 0.75rem;
 }
-
-.spaced-out [ng-reflect-flex]:not(:first-child):not(:last-child)  {
-  padding: 0 0.75rem;
-}
-
-.spaced-out [ng-reflect-flex]:first-child:not(:only-child) {
-  padding-right: 0.75rem;
-}
-
-.spaced-out [ng-reflect-flex]:last-child:not(:only-child) {
-  padding-left: 0.75rem;
-}
