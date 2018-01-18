@@ -6,4 +6,22 @@
   th {
     color: mat-color($primary, 500);
   }
+
+  .allu-table-header.mat-header-row .mat-header-cell {
+    color: mat-color($primary, 500);
+  }
+}
+
+.allu-table-header .mat-sort-header-container {
+    align-items: center;
+}
+
+.allu-table-header.mat-header-row .mat-header-cell {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+// Bug fix for mat-checkbox inside a mat-cell
+mat-cell, .mat-cell, .mat-header-cell {
+  overflow: visible !important;
 }

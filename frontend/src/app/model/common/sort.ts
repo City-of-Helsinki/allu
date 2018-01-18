@@ -1,19 +1,22 @@
-export enum Direction {
-  ASC,
-  DESC
-}
+import {Sort as MatSort} from '@angular/material';
+
+export type SortDirection = 'asc' | 'desc' | '';
 
 export class Sort {
-  constructor(public field?: string, public direction?: Direction) {
+  constructor(public field?: string, public direction?: SortDirection) {
     this.field = field;
     this.direction = direction;
   }
 
+  public static fromMatSort(matSort: MatSort): Sort {
+    return new Sort(matSort.active, matSort.direction);
+  }
+
   public byDirection<T>(original: Array<T>, sorted: Array<T>): Array<T> {
     switch (this.direction) {
-      case Direction.ASC:
+      case 'asc':
         return sorted.reverse();
-      case Direction.DESC:
+      case 'desc':
         return sorted;
       default:
         return original;
@@ -21,9 +24,9 @@ export class Sort {
   }
 
   public icon(): string {
-    if (this.direction === Direction.DESC) {
+    if (this.direction === 'desc') {
       return 'keyboard_arrow_down';
-    } else if (this.direction === Direction.ASC) {
+    } else if (this.direction === 'asc') {
       return 'keyboard_arrow_up';
     } else {
       return '';

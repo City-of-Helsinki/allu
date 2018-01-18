@@ -35,7 +35,7 @@ import {CustomerHub} from '../../service/customer/customer-hub';
 import {CustomerService} from '../../service/customer/customer.service';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DateAdapter} from '@angular/material';
+import {DateAdapter, MatPaginatorIntl} from '@angular/material';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
 import {ConfigService} from '../../service/config/config.service';
@@ -44,6 +44,7 @@ import {UserService} from '../../service/user/user-service';
 import {DownloadModule} from '../download/download.module';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {CanActivateLogin} from '../../service/authorization/can-activate-login';
+import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
 
 
 @NgModule({
@@ -107,7 +108,8 @@ import {CanActivateLogin} from '../../service/authorization/can-activate-login';
       deps: [Http]
     },
     { provide: DateAdapter, useClass: AlluDateAdapter },
-    { provide: LOCALE_ID, useValue: 'fi-FI' }
+    { provide: LOCALE_ID, useValue: 'fi-FI' },
+    { provide: MatPaginatorIntl, useClass: AlluPaginatorIntl }
   ]
 })
 export class AlluModule {}

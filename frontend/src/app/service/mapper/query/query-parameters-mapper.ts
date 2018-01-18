@@ -1,8 +1,10 @@
 import {BackendQueryParameter} from '../../backend-model/backend-query-parameters';
-import {Direction, Sort} from '../../../model/common/sort';
+import {Sort} from '../../../model/common/sort';
 import {Some} from '../../../util/option';
-import {SearchQuery} from '../../../model/common/search-query';
 import {RequestOptionsArgs} from '@angular/http';
+import {PageRequest} from '../../../model/common/page-request';
+import {URLSearchParams} from '@angular/http/src/url_search_params';
+import {HttpParams} from '@angular/common/http';
 
 export const enumFields = [
   'status',
@@ -33,12 +35,18 @@ export class QueryParametersMapper {
     return {};
   }
   public static mapSortToQueryParameters(sort: Sort): RequestOptionsArgs {
-    if (sort) {
-      let sortParam = [sort.field];
-      sortParam = Some(sort.direction).map(dir => sortParam.concat(Direction[dir].toLowerCase())).orElse(sortParam);
-      return {params: {sort: sortParam.join(',')}};
-    }
-    return {};
+    const sortParams = QueryParametersMapper.sortToSortParams(sort);
+    let params = new HttpParams();
+    params = Some(sortParams).map(sp => params.append('sort', sp)).orElse(new HttpParams());
+    return QueryParametersMapper.toRequestOptions(params);
+  }
+
+  public static pageRequestToQueryParameters(pageRequest: PageRequest, sort: Sort): RequestOptionsArgs {
+    let params = new HttpParams();
+    params = Some(pageRequest).map(pr => pr.page).map(page => params.append('page', page.toString())).orElse(params);
+    params = Some(pageRequest).map(pr => pr.size).map(size => params.append('size', size.toString())).orElse(params);
+    params = Some(sort).map(s => QueryParametersMapper.sortToSortParams(s)).map(sp => params.append('sort', sp)).orElse(params);
+    return QueryParametersMapper.toRequestOptions(params);
   }
 
   public static mapParameter(
@@ -172,5 +180,24 @@ export class QueryParametersMapper {
     } else {
       return field;
     }
+  }
+
+  private static sortToSortParams(sort: Sort): string {
+    let sortParam = [];
+    if (sort) {
+      sortParam = [sort.field];
+      sortParam = Some(sort.direction).map(dir => sortParam.concat(dir)).orElse(sortParam);
+    }
+    return sortParam.join(',');
+  }
+
+  // Helper method to convert HttpParams -> RequestOptionsArgs until new angular http-client is used
+  // TODO: fix to use HttpParams after new client is used
+  private static toRequestOptions(httpParams: HttpParams): RequestOptionsArgs {
+    const params = {};
+    httpParams.keys().forEach(key => {
+      params[key] = httpParams.get(key);
+    });
+    return { params };
   }
 }

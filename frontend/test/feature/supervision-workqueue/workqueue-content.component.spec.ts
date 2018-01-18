@@ -12,6 +12,7 @@ import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.modu
 import {WorkQueueContentComponent} from '../../../src/app/feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '../../../src/app/model/common/page';
 import {Router} from '@angular/router';
+import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -29,7 +30,10 @@ describe('SupervisionWorkqueueContentComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
-        AlluCommonModule
+        AlluCommonModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule
       ],
       declarations: [
         WorkQueueContentComponent
@@ -56,38 +60,34 @@ describe('SupervisionWorkqueueContentComponent', () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    comp.ngOnDestroy();
-  });
-
   it('should show content', fakeAsync(() => {
-    expect(de.queryAll(By.css('tr.clickable')).length).toEqual(defaultItems.content.length);
+    expect(de.queryAll(By.css('mat-row.clickable')).length).toEqual(defaultItems.content.length);
   }));
 
   it('should check all selected checkbox based on state', fakeAsync(() => {
     store.changeSubject.next({...store.changeSubject.getValue(), allSelected: true});
     fixture.detectChanges();
     tick();
-    expect(de.query(By.css('th .mat-checkbox-checked'))).toBeDefined();
+    expect(de.query(By.css('.mat-header-cell .mat-checkbox-checked'))).toBeDefined();
 
     store.changeSubject.next({...store.changeSubject.getValue(), allSelected: false});
     fixture.detectChanges();
     tick();
-    expect(de.query(By.css('th .mat-checkbox-checked'))).toBeFalsy();
+    expect(de.query(By.css('.mat-header-cell .mat-checkbox-checked'))).toBeFalsy();
   }));
 
   it('should check item checkboxes based on state', fakeAsync(() => {
-    expect(de.queryAll(By.css('td .mat-checkbox-checked')).length).toEqual(0);
+    expect(de.queryAll(By.css('.mat-cell .mat-checkbox-checked')).length).toEqual(0);
 
     const selected = defaultItems.content.map(item => item.id);
     store.changeSubject.next({...store.changeSubject.getValue(), selectedItems: selected});
     fixture.detectChanges();
     tick();
-    expect(de.queryAll(By.css('td .mat-checkbox-checked')).length).toEqual(2);
+    expect(de.queryAll(By.css('.mat-cell .mat-checkbox-checked')).length).toEqual(2);
   }));
 
   it('should notify store when items are checked', fakeAsync(() => {
-    const checkbox = de.query(By.css('td label.mat-checkbox-layout')).nativeElement;
+    const checkbox = de.query(By.css('.mat-cell label.mat-checkbox-layout')).nativeElement;
     spyOn(store, 'toggleSingle');
     checkbox.click();
     fixture.detectChanges();

@@ -9,11 +9,13 @@ import {HttpResponse} from '../../util/http-response';
 import {ArrayUtil} from '../../util/array-util';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
+import {PageRequest} from '../../model/common/page-request';
 
 const initialState: SupervisionWorkqueueState = {
   tab: WorkQueueTab.OWN,
   search: new SupervisionTaskSearchCriteria(),
   sort: new Sort(),
+  pageRequest: new PageRequest(),
   page: new Page<SupervisionWorkItem>(),
   selectedItems: [],
   allSelected: false
@@ -26,7 +28,8 @@ export class SupervisionWorkItemStore {
   constructor(private service: SupervisionTaskService) {
     Observable.merge(
       this.changes.map(state => state.search).distinctUntilChanged(),
-      this.changes.map(state => state.sort).distinctUntilChanged()
+      this.changes.map(state => state.sort).distinctUntilChanged(),
+      this.changes.map(state => state.pageRequest).distinctUntilChanged()
     ).subscribe(changes => this.refresh());
   }
 
@@ -44,6 +47,10 @@ export class SupervisionWorkItemStore {
 
   public sortChange(sort: Sort) {
     this.update({sort: sort});
+  }
+
+  public pageRequestChange(pageRequest: PageRequest) {
+    this.update({pageRequest});
   }
 
   public pageChange(page: Page<SupervisionWorkItem>) {
@@ -98,10 +105,10 @@ export class SupervisionWorkItemStore {
   }
 
   private refresh(): void {
-    const search = this.store.getValue().search;
-    const sort = this.store.getValue().sort;
+    const state = this.store.getValue();
     this.selectedItems([]);
-    this.service.search(search, sort).subscribe(page => this.pageChange(page));
+    this.service.search(state.search, state.sort, state.pageRequest)
+      .subscribe(page => this.pageChange(page));
   }
 
   private allSelected(items: Array<number>, selected: Array<number>): boolean {
@@ -118,6 +125,7 @@ export interface SupervisionWorkqueueState {
   tab?: WorkQueueTab;
   search?: SupervisionTaskSearchCriteria;
   sort?: Sort;
+  pageRequest?: PageRequest;
   page?: Page<SupervisionWorkItem>;
   selectedItems?: Array<number>;
   allSelected?: boolean;

@@ -15,6 +15,7 @@ import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 import {TimeUtil} from '../../util/time.util';
+import {PageRequest} from '../../model/common/page-request';
 
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
 const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';
@@ -59,10 +60,10 @@ export class SupervisionTaskService {
       .catch(error => this.errorHandler.handle(error, findTranslation('supervisiontask.error.remove')));
   }
 
-  search(searchCriteria: SupervisionTaskSearchCriteria, sort?: Sort): Observable<Page<SupervisionWorkItem>> {
+  search(searchCriteria: SupervisionTaskSearchCriteria, sort?: Sort, pageRequest?: PageRequest): Observable<Page<SupervisionWorkItem>> {
     return this.authHttp.post(SUPERVISION_TASK_SEARCH_URL,
       JSON.stringify(SupervisionSearchMapper.mapSearchCriteria(searchCriteria)),
-      QueryParametersMapper.mapSortToQueryParameters(sort))
+      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
       .map(response => PageMapper.mapBackend(response.json(), SupervisionSearchMapper.mapWorkItem))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.fetch')));
   }

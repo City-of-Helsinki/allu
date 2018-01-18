@@ -639,6 +639,12 @@ export const translations = {
     },
     error: {
       downloadFailed: 'Tiedoston lataus epäonnistui'
+    },
+    paginator: {
+      itemsPerPage: 'Tuloksia sivulla',
+      nextPage: 'Seuraava',
+      previousPage: 'Edellinen',
+      of: '/'
     }
   },
   map: {

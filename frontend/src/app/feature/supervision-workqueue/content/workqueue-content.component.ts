@@ -1,12 +1,13 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SupervisionWorkItemStore} from '../supervision-work-item-store';
-import {Observable} from 'rxjs/Observable';
-import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
-import {MatCheckboxChange} from '@angular/material';
+import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
 import {Subscription} from 'rxjs/Subscription';
-import {Page} from '../../../model/common/page';
 import {Sort} from '../../../model/common/sort';
 import {Router} from '@angular/router';
+import {Subject} from 'rxjs/Subject';
+import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
+import {Some} from '../../../util/option';
+import {EventUtil} from '../../../../../test/util/event-util';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -14,40 +15,40 @@ import {Router} from '@angular/router';
   styleUrls: ['./workqueue-content.component.scss']
 })
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
-
-  workItems: Observable<Array<SupervisionWorkItem>>;
-  page: Observable<Page<SupervisionWorkItem>>;
+  displayedColumns = [
+    'selected', 'type', 'application.applicationId', 'streetAddress',
+    'plannedFinishingTime', 'application.status', 'project.name', 'user.realName'
+  ];
+  dataSource: SupervisionWorkItemDatasource;
   allSelected = false;
-  sort = new Sort();
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   private selectedItems: Array<number> = [];
-  private selectedItemsSubscription: Subscription;
+  private destroy = new Subject<boolean>();
   private allSelectedSubscription: Subscription;
-  private sortSubscription: Subscription;
 
-  constructor(private store: SupervisionWorkItemStore, private router: Router) {}
+  constructor(private store: SupervisionWorkItemStore, private router: Router) {
+  }
 
   ngOnInit(): void {
-    this.page = this.store.changes.map(state => state.page).distinctUntilChanged();
-    this.workItems = this.page.map(p => p.content);
+    this.dataSource = new SupervisionWorkItemDatasource(this.store, this.paginator, this.sort);
 
-    this.selectedItemsSubscription = this.store.changes.map(state => state.selectedItems)
+    this.store.changes.map(state => state.selectedItems)
       .distinctUntilChanged()
+      .takeUntil(this.destroy)
       .subscribe(selected => this.selectedItems = selected);
 
     this.allSelectedSubscription = this.store.changes.map(state => state.allSelected)
       .distinctUntilChanged()
+      .takeUntil(this.destroy)
       .subscribe(allSelected => this.allSelected = allSelected);
-
-    this.sortSubscription = this.store.changes.map(state => state.sort)
-      .distinctUntilChanged()
-      .subscribe(sort => this.sort = sort);
   }
 
   ngOnDestroy(): void {
-    this.selectedItemsSubscription.unsubscribe();
-    this.allSelectedSubscription.unsubscribe();
-    this.sortSubscription.unsubscribe();
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   selected(id: number): boolean {
@@ -66,9 +67,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.store.sortChange(sort);
   }
 
-  toApplicationTaskView(applicationId: number, col: number): void {
-    // undefined and 0 should not trigger navigation
-    if (col) {
+  toApplicationTaskView(applicationId: number, event: any): void {
+    if (EventUtil.targetHasClass(event, 'checkbox')) {
       this.router.navigate(['applications', applicationId, 'summary', 'supervision']);
     }
   }

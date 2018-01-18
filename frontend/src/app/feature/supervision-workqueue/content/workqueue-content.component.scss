@@ -1,11 +1,5 @@
 @import '../../../../assets/colors';
 
-td {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-}
-
 h3.list-item-title {
   font-size: 18px;
   font-weight: 400;
@@ -21,6 +15,7 @@ h3.list-item-title {
   color: mat-color($allu-primary, 500);
 }
 
-tr .mat-checkbox {
+.mat-checkbox {
   padding-left: 10px;
 }
+

@@ -1,6 +1,6 @@
 import {Directive, Input, Output, EventEmitter, HostListener, Renderer, ViewContainerRef, OnInit
 } from '@angular/core';
-import {Sort, Direction} from '../../../model/common/sort';
+import {Sort} from '../../../model/common/sort';
 
 @Directive({
   selector: 'th[sortBy]'
@@ -42,9 +42,9 @@ export class SortByDirective implements OnInit {
     const unsorted = this.localSort.field !== this.sortBy || this.localSort.direction === undefined;
 
     if (unsorted) {
-      this.localSort = new Sort(this.sortBy, Direction.DESC);
-    } else if (this.localSort.direction === Direction.DESC) {
-      this.localSort = new Sort(this.localSort.field, Direction.ASC);
+      this.localSort = new Sort(this.sortBy, 'desc');
+    } else if (this.localSort.direction === 'desc') {
+      this.localSort = new Sort(this.localSort.field, 'asc');
     } else {
       this.localSort = new Sort(this.sortBy, undefined);
     }
