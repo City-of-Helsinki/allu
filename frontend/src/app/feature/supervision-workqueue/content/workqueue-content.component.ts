@@ -8,6 +8,7 @@ import {Subject} from 'rxjs/Subject';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
 import {Some} from '../../../util/option';
 import {EventUtil} from '../../../../../test/util/event-util';
+import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -71,5 +72,9 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     if (EventUtil.targetHasClass(event, 'checkbox')) {
       this.router.navigate(['applications', applicationId, 'summary', 'supervision']);
     }
+  }
+
+  trackById(index: number, item: SupervisionWorkItem) {
+    return item.id;
   }
 }
