@@ -4,15 +4,15 @@
 <div mat-dialog-content>
   <form [formGroup]="decisionForm">
     <div fxLayout="row" fxLayoutWrap>
-      <div fxFlex="50" *ngIf="handlerSelection">
+      <div fxFlex="50" *ngIf="ownerSelection">
         <mat-form-field class="input-full-width">
           <mat-select [placeholder]="'decision.selectHandler' | translation" class="input-full-width"
-                      formControlName="handler" required>
-            <mat-option *ngFor="let handler of handlers | async" [value]="handler.id">
-              {{handler.realName}}
+                      formControlName="owner" required>
+            <mat-option *ngFor="let owner of ownerss | async" [value]="owner.id">
+              {{owner.realName}}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="decisionForm.get('handler').hasError('required')">
+          <mat-error *ngIf="decisionForm.get('owner').hasError('required')">
             {{'decision.field.handlerMissing' | translation}}
           </mat-error>
         </mat-form-field>

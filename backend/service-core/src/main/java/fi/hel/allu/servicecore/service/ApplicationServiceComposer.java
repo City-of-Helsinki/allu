@@ -30,13 +30,13 @@ public class ApplicationServiceComposer {
 
   private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceComposer.class);
 
-  private ApplicationService applicationService;
-  private ProjectService projectService;
-  private SearchService searchService;
-  private ApplicationJsonService applicationJsonService;
-  private ApplicationHistoryService applicationHistoryService;
-  private MailComposerService mailComposerService;
-  private UserService userService;
+  private final ApplicationService applicationService;
+  private final ProjectService projectService;
+  private final SearchService searchService;
+  private final ApplicationJsonService applicationJsonService;
+  private final ApplicationHistoryService applicationHistoryService;
+  private final MailComposerService mailComposerService;
+  private final UserService userService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -222,7 +222,9 @@ public class ApplicationServiceComposer {
       changeOwnerOnStatusChange(application, info.getOwner());
     }
 
-    ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
+    // Get application again so that updated owner is included
+    ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(
+        applicationService.findApplicationById(applicationId));
 
     applicationHistoryService.addStatusChange(applicationId, newStatus);
     searchService.updateApplications(Collections.singletonList(applicationJson));

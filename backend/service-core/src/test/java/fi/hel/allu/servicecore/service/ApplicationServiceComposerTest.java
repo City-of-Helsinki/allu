@@ -1,10 +1,13 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import org.junit.Before;
@@ -14,6 +17,8 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
+import org.mockito.Matchers;
+
 
 public class ApplicationServiceComposerTest {
 
@@ -28,6 +33,7 @@ public class ApplicationServiceComposerTest {
 
   private static final int applicationId = 1;
   private static final int projectId = 12;
+  private static final int ownerId = 4;
 
   private ProjectJson projectJson = Mockito.mock(ProjectJson.class);
   private QueryParametersJson queryParametersJson = Mockito.mock(QueryParametersJson.class);
@@ -71,6 +77,37 @@ public class ApplicationServiceComposerTest {
 
     Mockito.verify(projectService, Mockito.times(1)).updateProjectInformation(Collections.singletonList(projectId));
     Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
+  }
+
+  @Test
+  public void testChangeStatus() {
+    final StatusChangeInfoJson info = new StatusChangeInfoJson();
+    info.setOwner(ownerId);
+
+    final UserJson user = new UserJson();
+    user.setId(ownerId);
+
+    final Application updatedApplication = new Application();
+    updatedApplication.setStatus(StatusType.DECISIONMAKING);
+    updatedApplication.setProjectId(projectJson.getId());
+
+    final ApplicationJson updatedApplicationJson = new ApplicationJson();
+    updatedApplicationJson.setOwner(user);
+    updatedApplicationJson.setProject(projectJson);
+
+    final Application applicationWithOwner = new Application();
+    applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
+    applicationWithOwner.setProjectId(projectJson.getId());
+    applicationWithOwner.setOwner(ownerId);
+
+    Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
+    Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISIONMAKING)).thenReturn(updatedApplication);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
+
+    assertEquals(updatedApplicationJson, applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, info));
+
+    Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
+    Mockito.verify(searchService).updateApplications(Matchers.refEq(Collections.singletonList(updatedApplicationJson)));
   }
 
   @Test

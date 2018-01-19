@@ -4,7 +4,7 @@ import {CommentType} from '../../model/application/comment/comment-type';
 export interface BackendStatusChangeInfo {
   type?: string;
   comment?: string;
-  handler?: number;
+  owner?: number;
 }
 
 export class StatusChangeInfoMapper {
@@ -12,7 +12,7 @@ export class StatusChangeInfoMapper {
     return changeInfo ? {
       type: CommentType[changeInfo.type],
       comment: changeInfo.comment,
-      handler: changeInfo.handler
+      owner: changeInfo.owner
     } : undefined;
   }
 }

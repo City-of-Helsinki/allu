@@ -33,7 +33,7 @@ export interface DecisionConfirmation {
   distributionList: Array<DistributionEntry>;
   emailMessage: string;
   comment: string;
-  handler?: number;
+  owner?: number;
 }
 
 @Component({
@@ -45,11 +45,11 @@ export class DecisionModalComponent implements OnInit {
   status: string;
   distributionList: Array<DistributionEntry>;
   emailDistribution: boolean;
-  handlerSelection: boolean;
+  ownerSelection: boolean;
 
   decisionForm: FormGroup;
 
-  handlers: Observable<Array<User>>;
+  owners: Observable<Array<User>>;
 
   constructor(private dialogRef: MatDialogRef<DecisionModalComponent>,
               private userHub: UserHub,
@@ -67,10 +67,10 @@ export class DecisionModalComponent implements OnInit {
     this.distributionList = this.data.distributionList;
     this.emailDistribution = DistributionType.EMAIL === this.data.distributionType
       && this.data.status !== ApplicationStatus.RETURNED_TO_PREPARATION;
-    this.handlerSelection = DistributionType.PAPER === this.data.distributionType
+    this.ownerSelection = DistributionType.PAPER === this.data.distributionType
       || this.data.status === ApplicationStatus.RETURNED_TO_PREPARATION;
 
-    this.initHandlers(this.handlerSelection);
+    this.initOwners(this.ownerSelection);
   }
 
   confirm() {
@@ -81,7 +81,7 @@ export class DecisionModalComponent implements OnInit {
       distributionList: this.decisionDistribution(),
       emailMessage: formValue.emailMessage,
       comment: formValue.comment,
-      handler: formValue.handler
+      owner: formValue.owner
     });
   }
 
@@ -94,15 +94,15 @@ export class DecisionModalComponent implements OnInit {
     return rows.map(d => DistributionEntryForm.to(d));
   }
 
-  private initHandlers(handlerSelection: boolean): void {
-    if (handlerSelection) {
-      this.handlers = this.userHub.getByRole(RoleType.ROLE_PROCESS_APPLICATION);
-      this.decisionForm.addControl('handler', this.fb.control(undefined, Validators.required));
-      this.preferredHandler().subscribe(preferred => this.decisionForm.patchValue({handler: preferred.id}));
+  private initOwners(ownerSelection: boolean): void {
+    if (ownerSelection) {
+      this.owners = this.userHub.getByRole(RoleType.ROLE_PROCESS_APPLICATION);
+      this.decisionForm.addControl('owner', this.fb.control(undefined, Validators.required));
+        this.preferredOwner().subscribe(preferred => this.decisionForm.patchValue({owner: preferred.id}));
     }
   }
 
-  private preferredHandler(): Observable<User> {
+  private preferredOwner(): Observable<User> {
     const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
     return this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))

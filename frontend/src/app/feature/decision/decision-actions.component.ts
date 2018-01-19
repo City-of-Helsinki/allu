@@ -86,7 +86,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
-    const changeInfo = new StatusChangeInfo(undefined, confirmation.comment, confirmation.handler);
+    const changeInfo = new StatusChangeInfo(undefined, confirmation.comment, confirmation.owner);
     return this.applicationStore.changeStatus(this.application.id, confirmation.status, changeInfo)
       .do(application => this.statusChanged(application));
   }

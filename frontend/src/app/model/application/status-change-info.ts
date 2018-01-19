@@ -4,6 +4,6 @@ export class StatusChangeInfo {
   constructor(
     public type?: CommentType,
     public comment?: string,
-    public handler?: number) {
+    public owner?: number) {
   }
 }
