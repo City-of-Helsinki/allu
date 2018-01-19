@@ -60,13 +60,37 @@ public class GenericSearchService<T> {
   private static final int DEFAULT_PAGESIZE = 100;
   private static final Pageable DEFAULT_PAGEREQUEST = new PageRequest(DEFAULT_PAGE, DEFAULT_PAGESIZE);
 
-  private ElasticSearchMappingConfig elasticSearchMappingConfig;
-  private Client client;
-  private String indexTypeName;
-  private ObjectMapper objectMapper;
-  private IndexConductor indexConductor;
-  private Function<T, String> keyMapper;
-  private Class<T> valueType;
+  /* Sort field suffix for alphabetic sort */
+  private static final String ALPHASORT = ".alphasort";
+
+  /* Sort field suffix for ordinal sort */
+  private static final String ORDINAL = ".ordinal";
+
+  /* Fields that should be sorted alphabetically */
+  private static final String[] alphaSortFields = {
+      "name",
+      "customers.applicant.customer.name",
+      "customer.name",
+      "contacts.name",
+      "handler.userName",
+      "locations.streetAddress",
+      "applicationId",
+      "ownerName",
+      "owner.userName",
+      "registryKey"
+      };
+
+  /* Fields that should be sorted ordinally */
+  private static final String[] ordinalSortFields = { "status", "type" };
+
+  private final ElasticSearchMappingConfig elasticSearchMappingConfig;
+  private final Client client;
+  private final String indexTypeName;
+  private final ObjectMapper objectMapper;
+  private final IndexConductor indexConductor;
+  private final Function<T, String> keyMapper;
+  private final Class<T> valueType;
+  private final Map<String, String> propertyToSort;
 
   /**
    * Instantiate a search service.
@@ -95,6 +119,19 @@ public class GenericSearchService<T> {
     this.valueType = valueType;
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    propertyToSort = createPropertyToSort();
+  }
+
+  /* Setup the lookup map for property's sort suffix: */
+  private Map<String, String> createPropertyToSort() {
+    Map<String, String> map = new HashMap<>();
+    for (String field : alphaSortFields) {
+      map.put(field, ALPHASORT);
+    }
+    for (String field : ordinalSortFields) {
+      map.put(field, ORDINAL);
+    }
+    return map;
   }
 
   /**
@@ -160,6 +197,14 @@ public class GenericSearchService<T> {
     if (indexConductor.isSyncActive()) {
       bulkUpdateInto(indexConductor.getTempIndexName(), objectsToUpdate);
     }
+  }
+
+  /*
+   * Given a property name (e.g., "userName"), return a suitable sort fied for
+   * it (e.g., "userName.alphasort")
+   */
+  private String getSortFieldForProperty(String propertyName) {
+    return propertyName + propertyToSort.getOrDefault(propertyName, "");
   }
 
   private void bulkUpdateInto(String indexName, List<T> objectsToUpdate) {
@@ -241,7 +286,7 @@ public class GenericSearchService<T> {
           .setTypes(indexTypeName).setQuery(qb);
 
       Optional.ofNullable(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
-        SortBuilder<?> sb = SortBuilders.fieldSort(o.getProperty());
+        SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty()));
         if (o.isAscending()) {
           sb.order(SortOrder.ASC);
         } else {

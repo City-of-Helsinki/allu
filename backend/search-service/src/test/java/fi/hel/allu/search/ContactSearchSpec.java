@@ -105,12 +105,12 @@ public class ContactSearchSpec {
           });
           it("should sort found contacts by name in alphabetical order with ASC sorting parameter", () -> {
             List<Integer> contacts = contactSearchService.findByField(params,
-                new PageRequest(0, 100, Direction.ASC, "name.alphasort")).getContent();
+                new PageRequest(0, 100, Direction.ASC, "name")).getContent();
             assertEquals(Arrays.asList(1, 2, 3), contacts);
           });
           it("should sort found contacts by name in inverted alphabetical order with DESC sorting parameter", () -> {
             List<Integer> contacts = contactSearchService.findByField(params,
-                new PageRequest(0, 100, Direction.DESC, "name.alphasort")).getContent();
+                new PageRequest(0, 100, Direction.DESC, "name")).getContent();
             assertEquals(Arrays.asList(3, 2, 1), contacts);
           });
 
@@ -137,7 +137,7 @@ public class ContactSearchSpec {
           it("should sort found contacts by name in alphabetical order with ASC sorting parameter", ()->{
             QueryParameters params = SearchTestUtil.createQueryParameters("name", "searchstr");
             List<Integer> contacts = contactSearchService.findByField(params,
-                new PageRequest(0, 100, Direction.ASC, "name.alphasort")).getContent();
+                new PageRequest(0, 100, Direction.ASC, "name")).getContent();
             assertEquals(Arrays.asList(1, 2, 3), contacts);
           });
         });

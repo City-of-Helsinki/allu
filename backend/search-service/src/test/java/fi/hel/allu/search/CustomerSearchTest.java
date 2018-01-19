@@ -103,7 +103,7 @@ public class CustomerSearchTest {
     QueryParameters params = SearchTestUtil.createQueryParameters("name", "baabeli");
 
     List<Integer> appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "name.alphasort")).getContent();
+        new PageRequest(0, 100, Direction.ASC, "name")).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(3, 2, 1), appList);
   }
@@ -126,7 +126,7 @@ public class CustomerSearchTest {
     QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "9");
 
     List<Integer> appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort")).getContent();
+        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(3, 2, 1), appList);
 
@@ -134,7 +134,7 @@ public class CustomerSearchTest {
     params = SearchTestUtil.createQueryParameters("registryKey", "9222");
 
     appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort")).getContent();
+        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(3), appList);
 
@@ -142,7 +142,7 @@ public class CustomerSearchTest {
     params = SearchTestUtil.createQueryParameters("registryKey", "9444-9231");
 
     appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort")).getContent();
+        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(1), appList);
 
@@ -150,7 +150,7 @@ public class CustomerSearchTest {
     params = SearchTestUtil.createQueryParameters("registryKey", "23");
 
     appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort")).getContent();
+        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(1, appList.size());
   }
 

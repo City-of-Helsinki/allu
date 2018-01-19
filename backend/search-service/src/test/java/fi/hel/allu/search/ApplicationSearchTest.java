@@ -111,7 +111,7 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "name.alphasort");
+    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "name");
     applicationSearchService.refreshIndex();
     List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertNotNull(appList);
@@ -135,7 +135,7 @@ public class ApplicationSearchTest {
     QueryParameters parameters = new QueryParameters();
     parameters.setQueryParameters(Collections.singletonList(new QueryParameter("owner.userName", USERNAME)));
     Page<Integer> appPage = applicationSearchService.findByField(parameters,
-        new PageRequest(2, 10, Direction.ASC, "name.alphasort"));
+        new PageRequest(2, 10, Direction.ASC, "name"));
     assertEquals(10, appPage.getSize());
     assertEquals(Arrays.asList(30, 31, 32, 33, 34, 35, 36, 37, 38, 39), appPage.getContent());
     assertEquals(89, appPage.getTotalElements());
@@ -192,22 +192,22 @@ public class ApplicationSearchTest {
 
     List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, ownerNameParameter, customerNameParameter));
     params.setQueryParameters(parameterList);
-    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "name.alphasort");
+    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "name");
     List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    pageRequest = new PageRequest(0, 100, Direction.ASC, "owner.userName.alphasort");
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "owner.userName");
     appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    pageRequest = new PageRequest(0, 100, Direction.ASC, "customers.applicant.customer.name.alphasort");
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "customers.applicant.customer.name");
     appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    pageRequest = new PageRequest(0, 100, Direction.ASC, "locations.streetAddress.alphasort");
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "locations.streetAddress");
     appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
@@ -238,7 +238,7 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "status.ordinal");
+    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "status");
     applicationSearchService.refreshIndex();
     List<Integer> appList = applicationSearchService.findByField(params, pageRequest).getContent();
     assertNotNull(appList);
