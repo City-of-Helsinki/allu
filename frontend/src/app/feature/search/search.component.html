@@ -90,65 +90,83 @@
           </mat-form-field>
         </div>
         <div class="col m12 s12">
-          <button (click)="search()" mat-raised-button type="button" color="primary">HAE</button>
+          <button (click)="search()" mat-raised-button type="button" color="primary">
+            {{'common.button.search' | translation | uppercase}}
+          </button>
         </div>
       </div>
     </form>
   </div>
+</div>
+<div class="row">
+  <div class=" col s12">
+    <div class="mat-elevation-z8">
+      <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+        <ng-container matColumnDef="owner.realName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
+        </ng-container>
 
-  <div class="row">
-    <div class=" col s12">
-      <table class="bordered responsive-table">
-        <thead>
-        <tr>
-          <th sortBy="owner.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.owner' |
-            translation}}
-          </th>
-          <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.name' | translation}}
-          </th>
-          <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.type.title' |
-            translation}}
-          </th>
-          <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.status.title' |
-            translation}}
-          </th>
-          <th>Hanke</th>
-          <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">
-            {{'application.applicant' | translation}}
-          </th>
-          <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">
-            {{'application.streetAddress' | translation}}
-          </th>
-          <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">
-            {{'application.cityDistrict' | translation}}
-          </th>
-          <th sortBy="creationTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.creationTime' |
-            translation}}
-          </th>
-          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.startTime' |
-            translation}}
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let application of applications" class="clickable row-highlight"
-            (click)="goToSummary(application)">
-          <td>{{application.owner?.realName}}</td>
-          <td>{{application.name}}</td>
-          <td>{{ ['application.type', application.type] | translation }}</td>
-          <td>{{ ['application.status', application.status] | translation }}</td>
-          <td>
-            {{application.project?.name}} <br>
-            <span>{{application.project?.id}}</span>
-          </td>
-          <td>{{application.applicant.customer.name}}</td>
-          <td>{{application.firstLocation.postalAddress.streetAddress}}</td>
-          <td>{{districtName(application.firstLocation.effectiveCityDistrictId) | async}}</td>
-          <td>{{application.uiApplicationCreationTime}}</td>
-          <td>{{application.uiStartTime}}</td>
-        </tr>
-        </tbody>
-      </table>
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.name' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.type.title' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ ['application.type', row.type] | translation }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.status.title' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ ['application.status', row.status] | translation }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="project.name">
+          <mat-header-cell *matHeaderCellDef>{{'project.title' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.project?.name}} <br>
+            <span>{{row.project?.id}}</span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="customers.applicant.customer.name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.applicant.customer.name}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="locations.streetAddress">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.streetAddress' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.firstLocation.postalAddress.streetAddress}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="locations.cityDistrictId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{districtName(row.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="creationTime">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.creationTime' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.creationTime | date:'shortDate'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="startTime">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.startTime' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.startTime | date:'shortDate'}}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"
+                 class="row-highlight clickable"
+                 (click)="toSummary(row.id)"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator
+                     [length]="dataSource.length"
+                     [pageIndex]="0"
+                     [pageSize]="10"
+                     [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
     </div>
   </div>
 </div>

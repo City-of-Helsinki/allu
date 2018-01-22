@@ -3,6 +3,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {SearchComponent} from './search.component';
 import {AlluCommonModule} from '../common/allu-common.module';
+import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 
 
 @NgModule({
@@ -10,7 +11,10 @@ import {AlluCommonModule} from '../common/allu-common.module';
     ReactiveFormsModule,
     FormsModule,
     AlluCommonModule,
-    RouterModule.forChild([])
+    RouterModule.forChild([]),
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule
   ],
   declarations: [
     SearchComponent

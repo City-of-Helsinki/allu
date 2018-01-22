@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
@@ -10,11 +10,11 @@ import {ApplicationType} from '../../model/application/type/application-type';
 import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/user/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {Sort} from '../../model/common/sort';
 import {MapHub} from '../../service/map/map-hub';
 import {CityDistrict} from '../../model/common/city-district';
-import {NotificationService} from '../../service/notification/notification.service';
 import {ApplicationService} from '../../service/application/application.service';
+import {MatPaginator, MatSort} from '@angular/material';
+import {ApplicationSearchDatasource} from '../../service/application/application-search-datasource';
 
 @Component({
   selector: 'search',
@@ -22,13 +22,21 @@ import {ApplicationService} from '../../service/application/application.service'
 })
 export class SearchComponent implements OnInit {
 
-  sort: Sort = new Sort(undefined, undefined);
+  displayedColumns = [
+    'owner.realName', 'name', 'type', 'status', 'project.name', 'customers.applicant.customer.name',
+    'locations.streetAddress', 'locations.cityDistrictId', 'creationTime', 'startTime'
+  ];
+
   queryForm: FormGroup;
   applications: Array<Application>;
   owners: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
   applicationStatusStrings = searchable.map(status => ApplicationStatus[status]);
   applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
+  dataSource: ApplicationSearchDatasource;
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private applicationService: ApplicationService,
               private userHub: UserHub,
@@ -51,29 +59,18 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.paginator, this.sort);
     this.owners = this.userHub.getActiveUsers();
     this.districts = this.mapHub.districts();
   }
 
-  goToSummary(application: Application): void {
-    this.router.navigate(['applications', application.id, 'summary']);
-  }
-
-  sortBy(sort: Sort) {
-    this.sort = sort;
-    this.search();
+  toSummary(applicationId: number): void {
+    this.router.navigate(['applications', applicationId, 'summary']);
   }
 
   search(): void {
-    const query = ApplicationSearchQuery.from(this.queryForm.value, this.sort);
-    this.applicationService.search(query)
-      .subscribe(
-        apps => this.applications = apps,
-        err => {
-          NotificationService.error(err);
-          this.applications = [];
-        }
-    );
+    const query = ApplicationSearchQuery.from(this.queryForm.value);
+    this.dataSource.searchChange(query);
   }
 
   districtName(id: number): Observable<string> {

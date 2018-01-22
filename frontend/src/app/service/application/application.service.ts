@@ -23,6 +23,9 @@ import {AttachmentInfoMapper} from '../mapper/attachment-info-mapper';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 import { PageMapper } from '../common/page-mapper';
 import {ApplicationIdentifier} from '../../model/application/application-identifier';
+import {Sort} from '../../model/common/sort';
+import {PageRequest} from '../../model/common/page-request';
+import {Page} from '../../model/common/page';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -75,16 +78,23 @@ export class ApplicationService {
   /**
    * Fetches applications based on given search query
    */
-  public search(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
+  public pagedSearch(searchQuery: ApplicationSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Page<Application>> {
     const searchUrl = APPLICATIONS_URL + SEARCH;
 
     return this.authHttp.post(
       searchUrl,
       JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
-      QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
+      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
       .map(response => PageMapper.mapBackend(response.json(), ApplicationMapper.mapBackend))
-      .map(page => page.content)
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
+  }
+
+  /**
+   * Helper search function to return only content without page
+   */
+  public search(searchQuery: ApplicationSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Application>> {
+    return this.pagedSearch(searchQuery, sort, pageRequest)
+      .map(page => page.content);
   }
 
   /**

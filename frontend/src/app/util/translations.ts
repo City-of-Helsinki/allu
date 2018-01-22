@@ -635,7 +635,8 @@ export const translations = {
       remove: 'POISTA',
       edit: 'MUOKKAA',
       home: 'Etusivulle',
-      show: 'Näytä'
+      show: 'Näytä',
+      search: 'Hae'
     },
     error: {
       downloadFailed: 'Tiedoston lataus epäonnistui'

@@ -3,7 +3,6 @@ import {Sort} from '../../../model/common/sort';
 import {Some} from '../../../util/option';
 import {RequestOptionsArgs} from '@angular/http';
 import {PageRequest} from '../../../model/common/page-request';
-import {URLSearchParams} from '@angular/http/src/url_search_params';
 import {HttpParams} from '@angular/common/http';
 
 export const enumFields = [

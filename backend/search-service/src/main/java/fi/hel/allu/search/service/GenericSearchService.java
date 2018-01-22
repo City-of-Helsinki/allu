@@ -77,6 +77,7 @@ public class GenericSearchService<T> {
       "applicationId",
       "ownerName",
       "owner.userName",
+      "owner.realName",
       "registryKey"
       };
 
