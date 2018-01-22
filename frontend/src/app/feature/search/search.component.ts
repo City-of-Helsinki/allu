@@ -15,6 +15,7 @@ import {CityDistrict} from '../../model/common/city-district';
 import {ApplicationService} from '../../service/application/application.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {ApplicationSearchDatasource} from '../../service/application/application-search-datasource';
+import {SupervisionWorkItem} from '../../model/application/supervision/supervision-work-item';
 
 @Component({
   selector: 'search',
@@ -75,5 +76,9 @@ export class SearchComponent implements OnInit {
 
   districtName(id: number): Observable<string> {
     return id !== undefined ? this.mapHub.districtById(id).map(d => d.name) : Observable.empty();
+  }
+
+  trackById(index: number, item: Application) {
+    return item.id;
   }
 }
