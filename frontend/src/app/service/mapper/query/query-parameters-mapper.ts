@@ -11,17 +11,6 @@ export const enumFields = [
   'type'
 ];
 
-export const alphaSortFields = [
-  'name',
-  'customers.applicant.customer.name',
-  'customer.name',
-  'contacts.name',
-  'handler.userName',
-  'locations.streetAddress',
-  'applicationId',
-  'ownerName'
-];
-
 export const START_TIME_FIELD = 'startTime';
 export const END_TIME_FIELD = 'endTime';
 
@@ -29,7 +18,7 @@ export class QueryParametersMapper {
   public static mapSortToSearchServiceQuery(sort: Sort): RequestOptionsArgs {
     if (sort) {
       return QueryParametersMapper.mapSortToQueryParameters(
-        new Sort(QueryParametersMapper.getBackendSortField(sort.field), sort.direction)
+        new Sort(sort.field, sort.direction)
       );
     }
     return {};
@@ -162,16 +151,6 @@ export class QueryParametersMapper {
         startDateValue: undefined,
         endDateValue: undefined
       };
-  }
-
-  private static getBackendSortField(field: string): string {
-    if (enumFields.indexOf(field) > -1) {
-      return field + '.ordinal';
-    } else if (alphaSortFields.indexOf(field) > -1) {
-      return field + '.alphasort';
-    } else {
-      return field;
-    }
   }
 
   private static getBackendValueField(field: string): string {
