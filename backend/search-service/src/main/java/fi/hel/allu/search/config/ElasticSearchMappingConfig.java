@@ -47,6 +47,7 @@ public class ElasticSearchMappingConfig {
   // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
   private static final String MAPPINGS_VERSION_NUMBER = "2";
 
+  private static final String VERSION_INDEX_NAME = "versions";
   private static final String VERSION_TYPE_NAME = "version";
   private static final String VERSION_NUMBER_KEY = "versionNumber";
   private static final String VERSION_NUMBER_ID = "1";
@@ -61,7 +62,7 @@ public class ElasticSearchMappingConfig {
 
   public boolean areMappingsUpToDate() {
     try {
-      final GetResponse response = client.prepareGet(APPLICATION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID).get();
+      final GetResponse response = client.prepareGet(VERSION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID).get();
       if (response.isExists()) {
         final Object version = response.getSource().get(VERSION_NUMBER_KEY);
         if (version != null) {
@@ -111,9 +112,8 @@ public class ElasticSearchMappingConfig {
     initializeIndex(APPLICATION_TEMP_INDEX_NAME);
     initializeIndex(CUSTOMER_INDEX_NAME);
     initializeIndex(CUSTOMER_TEMP_INDEX_NAME);
-
     try {
-      final IndexRequestBuilder indexRequestBuilder = client.prepareIndex(APPLICATION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID);
+      final IndexRequestBuilder indexRequestBuilder = client.prepareIndex(VERSION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID);
       final XContentBuilder contentBuilder = jsonBuilder().startObject().prettyPrint();
       contentBuilder.field(VERSION_NUMBER_KEY, MAPPINGS_VERSION_NUMBER);
       contentBuilder.endObject();
