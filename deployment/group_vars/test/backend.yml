@@ -25,3 +25,6 @@ mail_server_host: smtp.gmail.com
 mail_server_port: 587
 email_allowed_addresses: "*@vincit.fi,*@hel.fi"
 email_sender_address: Allu Test Aluevaraus <noreply@allu.alluallu.invalid>
+
+sap_ftp_invoice_host: 137.163.136.62
+sap_ftp_invoice_directory: /
