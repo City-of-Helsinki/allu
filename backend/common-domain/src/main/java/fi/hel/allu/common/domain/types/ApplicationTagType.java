@@ -1,6 +1,5 @@
 package fi.hel.allu.common.domain.types;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,17 +41,17 @@ public enum ApplicationTagType {
   // toiminnallinen kunto hyväksytty
   OPERATIONAL_CONDITION_ACCEPTED(OPERATIONAL_CONDITION_REPORTED, OPERATIONAL_CONDITION_REJECTED),
   // työn valmistuminen ilmoitettu
-  WORK_READY_REPORTED,
+  FINAL_SUPERVISION_REQUESTED,
   // työn valmistuminen hylätty
-  WORK_READY_REJECTED(WORK_READY_REPORTED),
+  FINAL_SUPERVISION_REJECTED(FINAL_SUPERVISION_REQUESTED),
   // työn valmistuminen hyväksytty
-  WORK_READY_ACCEPTED(WORK_READY_REPORTED, WORK_READY_REJECTED),
+  FINAL_SUPERVISION_ACCEPTED(FINAL_SUPERVISION_REQUESTED, FINAL_SUPERVISION_REJECTED),
   // laskutettavan sap-tunnus ei tiedossa
   SAP_ID_MISSING,
   // Päätös lähettämättä
   DECISION_NOT_SENT;
 
-  private List<ApplicationTagType> replaces;
+  private final List<ApplicationTagType> replaces;
 
   private ApplicationTagType() {
     replaces = new ArrayList<>();

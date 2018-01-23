@@ -31,12 +31,12 @@ export enum ApplicationTagType {
   OPERATIONAL_CONDITION_REJECTED,
   // toiminnallinen kunto hyväksytty
   OPERATIONAL_CONDITION_ACCEPTED,
-  // työn valmistuminen ilmoitettu
-  WORK_READY_REPORTED,
-  // työn valmistuminen hylätty
-  WORK_READY_REJECTED,
-  // työn valmistuminen hyväksytty
-  WORK_READY_ACCEPTED,
+  // Loppuvalvontapyyntö lähetetty
+  FINAL_SUPERVISION_REQUESTED,
+  // Loppuvalvonta hylätty
+  FINAL_SUPERVISION_REJECTED,
+  // Loppuvalvonta hyväksytty
+  FINAL_SUPERVISION_ACCEPTED,
   // laskutettavan sap-tunnus ei tiedossa
   SAP_ID_MISSING,
   // Päätös lähettämättä

@@ -209,9 +209,9 @@ export const translations = {
         OPERATIONAL_CONDITION_REPORTED: 'Toiminnallinen kunto ilmoitettu',
         OPERATIONAL_CONDITION_ACCEPTED: 'Toiminnallinen kunto hyväksytty',
         OPERATIONAL_CONDITION_REJECTED: 'Toiminnallinen kunto hylätty',
-        WORK_READY_REPORTED: 'Työn valmistuminen ilmoitettu',
-        WORK_READY_ACCEPTED: 'Työn valmistuminen hyväksytty',
-        WORK_READY_REJECTED: 'Työn valmistuminen hylätty',
+        FINAL_SUPERVISION_REQUESTED: 'Loppuvalvontapyyntö lähetetty',
+        FINAL_SUPERVISION_ACCEPTED: 'Loppuvalvonta hyväksytty',
+        FINAL_SUPERVISION_REJECTED: 'Loppuvalvonta hylätty',
         SAP_ID_MISSING: 'Laskutettavan SAP-tunnus puuttuu',
         DECISION_NOT_SENT: 'Päätös lähettämättä'
       },

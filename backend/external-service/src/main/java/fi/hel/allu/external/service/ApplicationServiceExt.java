@@ -68,7 +68,7 @@ public class ApplicationServiceExt {
         .orElseGet(() -> new ArrayList<>());
     if (workFinished.isPresent()) {
       addTagIfNotPresent(tags,
-          new ApplicationTagJson(userId, ApplicationTagType.WORK_READY_REPORTED, ZonedDateTime.now()));
+          new ApplicationTagJson(userId, ApplicationTagType.FINAL_SUPERVISION_REQUESTED, ZonedDateTime.now()));
     }
     if (winterTimeOperation.isPresent()) {
       addTagIfNotPresent(tags,
@@ -97,15 +97,15 @@ public class ApplicationServiceExt {
             applicationProgressStatusExt.getWinterTimeOperationStatus()
                 .setComment(findNewestComment(CommentType.OPERATIONAL_CONDITION_REJECTED, comments));
             break;
-          case WORK_READY_ACCEPTED:
+          case FINAL_SUPERVISION_ACCEPTED:
             applicationProgressStatusExt.getWorkFinishedStatus().setState(State.ACCEPTED);
             applicationProgressStatusExt.getWinterTimeOperationStatus()
-                .setComment(findNewestComment(CommentType.WORK_READY_ACCEPTED, comments));
+                .setComment(findNewestComment(CommentType.FINAL_SUPERVISION_ACCEPTED, comments));
             break;
-          case WORK_READY_REJECTED:
+          case FINAL_SUPERVISION_REJECTED:
             applicationProgressStatusExt.getWorkFinishedStatus().setState(State.REJECTED);
             applicationProgressStatusExt.getWinterTimeOperationStatus()
-                .setComment(findNewestComment(CommentType.WORK_READY_REJECTED, comments));
+                .setComment(findNewestComment(CommentType.FINAL_SUPERVISION_REJECTED, comments));
             break;
           default:
             break;
