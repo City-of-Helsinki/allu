@@ -125,7 +125,8 @@ describe('Short term rental application', () => {
           'applicationType': 'SHORT_TERM_RENTAL',
           'description': 'Porkkalan siltamainos',
           'commercial': true
-        }
+        },
+        'invoicingDate': '2018-12-22T22:00:00Z'
       };
 
 

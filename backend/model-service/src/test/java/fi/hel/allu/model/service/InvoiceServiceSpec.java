@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.InvoiceDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
@@ -27,6 +28,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
   private ChargeBasisDao chargeBasisDao;
   private InvoiceDao invoiceDao;
   private PricingService pricingService;
+  private ApplicationDao applicationDao;
 
   private InvoiceService invoiceService;
 
@@ -35,7 +37,8 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
       chargeBasisDao = Mockito.mock(ChargeBasisDao.class);
       invoiceDao = Mockito.mock(InvoiceDao.class);
       pricingService = Mockito.mock(PricingService.class);
-      invoiceService = new InvoiceService(chargeBasisDao, invoiceDao, pricingService);
+      applicationDao = Mockito.mock(ApplicationDao.class);
+      invoiceService = new InvoiceService(chargeBasisDao, invoiceDao, pricingService, applicationDao);
     });
 
     describe("InvoiceService", () -> {

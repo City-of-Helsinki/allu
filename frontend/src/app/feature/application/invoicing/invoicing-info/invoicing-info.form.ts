@@ -1,4 +1,4 @@
-import {FormBuilder} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 
 export class InvoicingInfoForm {
@@ -10,7 +10,8 @@ export class InvoicingInfoForm {
     public depositAmount?: number,
     public depositReason?: string,
     public depositStatus?: string,
-    public customerReference?: string) {
+    public customerReference?: string,
+    public invoicingDate?: Date) {
     this.invoiceRecipient = invoiceRecipient || new CustomerForm();
   }
 
@@ -23,7 +24,8 @@ export class InvoicingInfoForm {
       depositAmount: [{value: undefined, disabled: true}],
       depositReason: [{value: undefined, disabled: true}],
       depositStatus: [undefined],
-      customerReference: [undefined]
+      customerReference: [undefined],
+      invoicingDate: [undefined]
     });
   }
 }

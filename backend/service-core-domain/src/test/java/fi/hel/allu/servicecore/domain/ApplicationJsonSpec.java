@@ -52,6 +52,7 @@ public class ApplicationJsonSpec {
           applicationJson.setExtension(extension);
           applicationJson.setKind(ApplicationKind.STREET_AND_GREEN);
           applicationJson.setDecisionPublicityType(PublicityType.CONFIDENTIAL);
+          applicationJson.setInvoicingDate(ZonedDateTime.now());
           CustomerWithContactsJson customer = new CustomerWithContactsJson();
           applicationJson.setCustomersWithContacts(Collections.singletonList(customer));
           LocationJson locationJson = new LocationJson();

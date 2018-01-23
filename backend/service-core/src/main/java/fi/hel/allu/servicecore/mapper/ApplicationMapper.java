@@ -74,6 +74,7 @@ public class ApplicationMapper {
     applicationDomain.setNotBillableReason(applicationJson.getNotBillableReason());
     applicationDomain.setInvoiceRecipientId(applicationJson.getInvoiceRecipientId());
     applicationDomain.setCustomerReference(applicationJson.getCustomerReference());
+    applicationDomain.setInvoicingDate(applicationJson.getInvoicingDate());
     return applicationDomain;
   }
 
@@ -153,6 +154,7 @@ public class ApplicationMapper {
     applicationJson.setReplacedByApplicationId(application.getReplacedByApplicationId());
     applicationJson.setReplacesApplicationId(application.getReplacesApplicationId());
     applicationJson.setCustomerReference(application.getCustomerReference());
+    applicationJson.setInvoicingDate(application.getInvoicingDate());
     return applicationJson;
   }
 

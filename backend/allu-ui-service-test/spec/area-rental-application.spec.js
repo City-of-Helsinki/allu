@@ -275,7 +275,8 @@ describe('Area rental application', () => {
         'trafficArrangementImpedimentType': 'INSIGNIFICANT_IMPEDIMENT'
       },
       'applicationTags': [
-      ]
+      ],
+      'invoicingDate': '2018-12-22T22:00:00Z'
     };
 
 

@@ -124,6 +124,7 @@ public class ApplicationReplacementService {
     application.setStartTime(applicationToReplace.getStartTime());
     application.setType(applicationToReplace.getType());
     application.setCustomerReference(applicationToReplace.getCustomerReference());
+    application.setInvoicingDate(applicationToReplace.getInvoicingDate());
 
     // Application DAO will automatically create copies of following
     application.setApplicationTags(applicationToReplace.getApplicationTags());

@@ -903,7 +903,8 @@ export const translations = {
       depositAndOthers: 'Vakuus ja muut tiedot',
       notBillable: 'Ei laskuteta',
       notBillableReason: 'Peruste',
-      customerReference: 'Asiakkaan viite'
+      customerReference: 'Asiakkaan viite',
+      invoicingDate: 'Laskutuspäivä'
     },
     negligenceFeeType: {
       START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',
@@ -930,7 +931,8 @@ export const translations = {
     field: {
       workIdMissing: 'Työnumero puuttuu',
       invoiceReferenceMissing: 'Laskutusviite puuttuu',
-      notBillableReasonMissing: 'Korvauksettomuuden peruste puuttuu'
+      notBillableReasonMissing: 'Korvauksettomuuden peruste puuttuu',
+      invoicingDateMissing: 'Laskutuspäivä puuttuu'
     },
     confirmSave: {
       title: 'Tallennetaanko muutokset',

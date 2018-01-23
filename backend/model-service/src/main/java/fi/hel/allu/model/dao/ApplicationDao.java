@@ -712,4 +712,17 @@ public class ApplicationDao {
         .where(application.id.eq(replacedApplicationId))
         .execute();
   }
+
+  /**
+   * Get invoicing date for application with given application ID
+   * @param applicationId
+   * @return
+   */
+  public ZonedDateTime getInvoicingDate(int applicationId) {
+    return queryFactory
+      .select(application.invoicingDate)
+      .from(application)
+      .where(application.id.eq(applicationId))
+      .fetchOne();
+  }
 }

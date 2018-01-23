@@ -56,6 +56,21 @@
                        [placeholder]="'invoice.info.customerReference' | translation"/>
               </mat-form-field>
             </div>
+            <div fxFlex *ngIf="billable">
+              <mat-form-field class="input-full-width">
+                <input matInput formControlName="invoicingDate" required
+                       [placeholder]="'invoice.info.invoicingDate' | translation"
+                       [matDatepicker]="invoicingDatePicker">
+                <mat-datepicker-toggle matSuffix [for]="invoicingDatePicker"
+                                       [disabled]="form.disabled"></mat-datepicker-toggle>
+                <mat-datepicker #invoicingDatePicker></mat-datepicker>
+                <mat-hint>
+                  <field-error [form]="form" field="invoicingDate" hasError="required">
+                    {{'invoice.field.invoicingDateMissing' | translation}}
+                  </field-error>
+                </mat-hint>
+                </mat-form-field>
+            </div>
             <div fxFlex>
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="depositAmount"

@@ -21,6 +21,7 @@ import {Deposit} from '../../../../model/application/invoice/deposit';
 import {ObjectUtil} from '../../../../util/object.util';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
+import { ApplicationType } from '../../../../model/application/type/application-type';
 
 @Component({
   selector: 'invoicing-info',
@@ -37,6 +38,7 @@ export class InvoicingInfoComponent implements OnInit {
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
+  private invoicingDateCtrl: FormControl;
 
   constructor(private applicationStore: ApplicationStore,
               private customerHub: CustomerHub,
@@ -47,6 +49,7 @@ export class InvoicingInfoComponent implements OnInit {
     this.recipientForm = <FormGroup>this.form.get('invoiceRecipient');
     this.notBillableCtrl = <FormControl>this.form.get('notBillable');
     this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
+    this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
     this.initForm();
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
   }
@@ -115,7 +118,8 @@ export class InvoicingInfoComponent implements OnInit {
       this.form.patchValue({
         notBillable: app.notBillable,
         notBillableReason: app.notBillableReason,
-        customerReference: app.customerReference
+        customerReference: app.customerReference,
+        invoicingDate: app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app)
       });
 
       if (!applicationCanBeEdited(app.statusEnum)) {
@@ -143,9 +147,11 @@ export class InvoicingInfoComponent implements OnInit {
 
   private onNotBillableChange(notBillable: boolean) {
     if (notBillable) {
+      this.invoicingDateCtrl.clearValidators();
       this.notBillableReasonCtrl.setValidators([Validators.required]);
       this.form.removeControl('invoiceRecipient');
     } else {
+      this.invoicingDateCtrl.setValidators([Validators.required]);
       this.notBillableReasonCtrl.clearValidators();
       this.form.addControl('invoiceRecipient', this.recipientForm);
     }
@@ -160,5 +166,11 @@ export class InvoicingInfoComponent implements OnInit {
   private currentDeposit(): Deposit {
     const applicationId = this.applicationStore.snapshot.application.id;
     return this.applicationStore.snapshot.deposit || Deposit.forApplication(applicationId);
+  }
+
+  private defaultInvoicingDate(application: Application): Date {
+    const result = new Date(application.startTime);
+    result.setDate(result.getDate() + 15);
+    return result;
   }
 }

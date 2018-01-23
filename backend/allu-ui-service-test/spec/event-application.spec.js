@@ -237,7 +237,8 @@ describe('Event application', () => {
           'structureEndTime': structure1EndTime,
           'timeExceptions': 'Pyhäpäivinä tauko'
         },
-        'decisionTime': null
+        'decisionTime': null,
+        'invoicingDate': '2018-12-22T22:00:00Z'
       };
 
       let options = TestUtil.getPostOptions('/api/applications', hernesaari);
@@ -446,7 +447,8 @@ describe('Event application', () => {
           'structureEndTime': structure2EndTime,
           'timeExceptions': 'Tapahtuma-ajalla ei ole poikkeuksia'
         },
-        'decisionTime': null
+        'decisionTime': null,
+        'invoicingDate': '2018-12-22T22:00:00Z'
       };
 
       let options = TestUtil.getPostOptions('/api/applications', tervasaari);

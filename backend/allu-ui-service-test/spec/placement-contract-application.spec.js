@@ -168,7 +168,8 @@ describe('Placement contract application', () => {
           'generalTerms': 'Ei saa rikkoa puistoa!'
         },
         'applicationTags': [
-        ]
+        ],
+        'invoicingDate': '2018-12-22T22:00:00Z'
       };
 
 

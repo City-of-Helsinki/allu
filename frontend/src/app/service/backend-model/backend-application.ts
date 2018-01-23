@@ -40,4 +40,5 @@ export interface BackendApplication {
   replacesApplicationId?: number;
   replacedByApplicationId?: number;
   customerReference?: string;
+  invoicingDate?: Date;
 }

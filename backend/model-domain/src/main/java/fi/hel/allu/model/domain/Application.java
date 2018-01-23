@@ -68,6 +68,7 @@ public class Application {
   private Integer replacesApplicationId;
   private Integer replacedByApplicationId;
   private String customerReference;
+  private ZonedDateTime invoicingDate;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -444,6 +445,17 @@ public class Application {
 
   public boolean hasTypeAndKind(ApplicationType type, ApplicationKind kind) {
     return type == this.type && kindsWithSpecifiers != null && kindsWithSpecifiers.containsKey(kind);
+  }
+
+  /**
+   * Get invoicing date for application.
+   */
+  public ZonedDateTime getInvoicingDate() {
+    return invoicingDate;
+  }
+
+  public void setInvoicingDate(ZonedDateTime invoicingDate) {
+    this.invoicingDate = invoicingDate;
   }
 
 }

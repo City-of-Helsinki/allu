@@ -177,7 +177,8 @@ describe('Temporary traffic announcement application', () => {
           'trafficArrangementImpedimentType': 'SIGNIFICANT_IMPEDIMENT'
         },
         'applicationTags': [
-        ]
+        ],
+        'invoicingDate': '2018-12-22T22:00:00Z'
       };
 
 

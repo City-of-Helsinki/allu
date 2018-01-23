@@ -55,6 +55,7 @@ public class TestCommon {
     app.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
     app.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
     app.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
+    app.setInvoicingDate(ZonedDateTime.parse("2015-01-18T10:15:30+02:00"));
     app.setRecurringEndTime(app.getEndTime());
     app.setMetadataVersion(1);
     app.setDecisionTime(ZonedDateTime.now());

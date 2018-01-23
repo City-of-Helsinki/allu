@@ -197,6 +197,7 @@ public abstract class MockServices {
     applicationJson.setStartTime(ZonedDateTime.now());
     applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
     applicationJson.setDecisionTime(ZonedDateTime.now());
+    applicationJson.setInvoicingDate(ZonedDateTime.now());
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
     applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setOwner(UserMapper.mapToUserJson(createMockUser()));

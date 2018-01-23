@@ -29,7 +29,6 @@ import fi.hel.allu.common.validator.NotFalse;
     "kind, kindsMatchType, Application kinds must be valid for the type",
     "extension, specifiersMatchKind, Application specifiers must be suitable for application kind"
  })
-
 public class ApplicationJson {
 
   /**
@@ -85,7 +84,7 @@ public class ApplicationJson {
   private Integer replacedByApplicationId;
 
   private String customerReference;
-
+  private ZonedDateTime invoicingDate;
   /**
   /**
    * in Finnish: Hakemuksen tunniste tietokannassa
@@ -507,5 +506,17 @@ public class ApplicationJson {
 
   public void setCustomerReference(String customerReference) {
     this.customerReference = customerReference;
+  }
+
+  /**
+   * Get invoicing date for application.
+   * @return
+   */
+  public ZonedDateTime getInvoicingDate() {
+    return invoicingDate;
+  }
+
+  public void setInvoicingDate(ZonedDateTime invoicingDate) {
+    this.invoicingDate = invoicingDate;
   }
 }
