@@ -13,7 +13,6 @@ import fi.hel.allu.search.domain.QueryParameters;
 
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -24,13 +23,14 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.cluster.metadata.AliasMetaData;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.reindex.ReindexAction;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -50,6 +50,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 
 /**
  * Generic ElasticSearch functionality for different kinds of searches.
@@ -72,7 +73,6 @@ public class GenericSearchService<T> {
       "customers.applicant.customer.name",
       "customer.name",
       "contacts.name",
-      "handler.userName",
       "locations.streetAddress",
       "applicationId",
       "ownerName",
@@ -123,6 +123,29 @@ public class GenericSearchService<T> {
     propertyToSort = createPropertyToSort();
   }
 
+  public void initIndex(boolean checkVersion) {
+    String currentIndexName = getCurrentIndexName();
+
+    if (checkVersion && currentIndexName != null && !elasticSearchMappingConfig.areMappingsUpToDate()) {
+      logger.debug("Index {} is outdated, deleting it", currentIndexName);
+
+      deleteIndex(indexConductor.getIndexAliasName());
+      currentIndexName = null;
+    }
+
+    if (currentIndexName == null) {
+      logger.debug("No current index -> create one");
+
+      indexConductor.generateNewIndexName();
+      initializeIndex(indexConductor.getNewIndexName());
+      addAlias(indexConductor.getNewIndexName(), indexConductor.getIndexAliasName());
+      indexConductor.commitNewIndex();
+    } else {
+      logger.debug("Current index name for {} is {} ({})", indexConductor.getIndexAliasName(), currentIndexName, this);
+      indexConductor.setCurrentIndexName(currentIndexName);
+    }
+  }
+
   /* Setup the lookup map for property's sort suffix: */
   private Map<String, String> createPropertyToSort() {
     Map<String, String> map = new HashMap<>();
@@ -141,9 +164,9 @@ public class GenericSearchService<T> {
    * @param indexedObject   Data added to search index.
    */
   public void insert(T indexedObject) {
-    insertInto(indexConductor.getIndexName(), indexedObject);
+    insertInto(indexConductor.getIndexAliasName(), indexedObject);
     if (indexConductor.isSyncActive()) {
-      insertInto(indexConductor.getTempIndexName(), indexedObject);
+      insertInto(indexConductor.getNewIndexName(), indexedObject);
     }
   }
 
@@ -170,9 +193,9 @@ public class GenericSearchService<T> {
    *          index as JSON.
    */
   public void bulkInsert(List<T> objectsToInsert) {
-    bulkInsertInto(indexConductor.getIndexName(), objectsToInsert);
+    bulkInsertInto(indexConductor.getIndexAliasName(), objectsToInsert);
     if (indexConductor.isSyncActive()) {
-      bulkInsertInto(indexConductor.getTempIndexName(), objectsToInsert);
+      bulkInsertInto(indexConductor.getNewIndexName(), objectsToInsert);
     }
   }
 
@@ -194,9 +217,9 @@ public class GenericSearchService<T> {
    */
   public void bulkUpdate(List<T> objectsToUpdate) {
 
-    bulkUpdateInto(indexConductor.getIndexName(), objectsToUpdate);
+    bulkUpdateInto(indexConductor.getIndexAliasName(), objectsToUpdate);
     if (indexConductor.isSyncActive()) {
-      bulkUpdateInto(indexConductor.getTempIndexName(), objectsToUpdate);
+      bulkUpdateInto(indexConductor.getNewIndexName(), objectsToUpdate);
     }
   }
 
@@ -225,9 +248,9 @@ public class GenericSearchService<T> {
    *          fields to modify and their new values.
    */
   public void partialUpdate(Map<Integer, Object> idToPartialUpdateObj) {
-    partialUpdateInto(indexConductor.getIndexName(), idToPartialUpdateObj);
+    partialUpdateInto(indexConductor.getIndexAliasName(), idToPartialUpdateObj);
     if (indexConductor.isSyncActive()) {
-      partialUpdateInto(indexConductor.getTempIndexName(), idToPartialUpdateObj);
+      partialUpdateInto(indexConductor.getNewIndexName(), idToPartialUpdateObj);
     }
   }
 
@@ -245,9 +268,9 @@ public class GenericSearchService<T> {
    * @param id              Id to be deleted.
    */
   public void delete(String id) {
-    deleteFrom(indexConductor.getIndexName(), id);
+    deleteFrom(indexConductor.getIndexAliasName(), id);
     if (indexConductor.isSyncActive()) {
-      deleteFrom(indexConductor.getTempIndexName(), id);
+      deleteFrom(indexConductor.getNewIndexName(), id);
     }
   }
 
@@ -282,7 +305,7 @@ public class GenericSearchService<T> {
         qb.must(createQueryBuilder(param));
       }
 
-      SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexName())
+      SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
           .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
           .setTypes(indexTypeName).setQuery(qb);
 
@@ -296,7 +319,7 @@ public class GenericSearchService<T> {
         srBuilder.addSort(sb);
       }));
 
-      logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexName(),
+      logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
           srBuilder.toString());
 
       SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
@@ -309,12 +332,13 @@ public class GenericSearchService<T> {
   }
 
   /**
-   * Prepare for sync: delete the temporary index and mark sync active
+   * Prepare for sync: create a new index and mark sync active
    */
   public void prepareSync() {
     if (indexConductor.tryStartSync()) {
       try {
-        deleteIndex(indexConductor.getTempIndexName());
+        indexConductor.generateNewIndexName();
+        initializeIndex(indexConductor.getNewIndexName());
         indexConductor.setSyncActive();
       } catch(Exception e) {
         indexConductor.setSyncPassive();
@@ -331,25 +355,25 @@ public class GenericSearchService<T> {
    */
   public void syncData(List<T> objectsToSync) {
     if (indexConductor.isSyncActive()) {
-      bulkInsertInto(indexConductor.getTempIndexName(), objectsToSync);
+      bulkInsertInto(indexConductor.getNewIndexName(), objectsToSync);
     }
   }
 
   /**
-   * End sync operation: move everything from temp index to main index.
+   * End sync operation: Update alias and delete old index
    */
   public void endSync() {
     if (indexConductor.tryDeactivateSync()) {
       try {
-        deleteIndex(indexConductor.getIndexName());
-        reindex(indexConductor.getTempIndexName(), indexConductor.getIndexName());
+        updateAlias(indexConductor.getCurrentIndexName(), indexConductor.getNewIndexName(), indexConductor.getIndexAliasName());
+        final String oldIndex = indexConductor.getCurrentIndexName();
+        indexConductor.commitNewIndex();
+        deleteIndex(oldIndex);
         indexConductor.setSyncPassive();
       } catch (Exception e) {
         indexConductor.setSyncActive();
         throw e;
       }
-      // OK if this fails
-      deleteIndex(indexConductor.getTempIndexName());
     }
   }
 
@@ -359,16 +383,39 @@ public class GenericSearchService<T> {
   public void cancelSync() {
     if (indexConductor.tryDeactivateSync()) {
       try {
-        deleteIndex(indexConductor.getTempIndexName());
+        deleteIndex(indexConductor.getNewIndexName());
       } finally {
         indexConductor.setSyncPassive();
       }
     }
   }
 
-  /* Reindex data from one index to another */
-  private void reindex(String fromIndexName, String toIndexName) {
-    ReindexAction.INSTANCE.newRequestBuilder(client).source(fromIndexName).destination(toIndexName).get();
+  private String getCurrentIndexName() {
+
+    ImmutableOpenMap<String, List<AliasMetaData>> aliases =
+        client.admin().indices().prepareGetAliases(indexConductor.getIndexAliasName()).get().getAliases();
+
+    if (aliases.isEmpty()) {
+      return null;
+    } else if (aliases.size() > 1) {
+      logger.error("Index aliases are messed up for index {}", indexConductor.getIndexAliasName());
+    }
+    return aliases.keysIt().next();
+  }
+
+  private void addAlias(String indexName, String alias) {
+    logger.debug("Add alias {} for index {}", alias, indexName);
+    client.admin().indices().prepareAliases().addAlias(indexName, alias).execute().actionGet();
+  }
+
+  private void updateAlias(String oldIndexName, String newIndexName, String alias) {
+    logger.debug("Update alias '{}' {}->{}", alias, oldIndexName, newIndexName);
+    client.admin().indices().prepareAliases().removeAlias(oldIndexName, alias).addAlias(newIndexName, alias).execute().actionGet();
+  }
+
+  private void initializeIndex(String indexName) {
+    logger.debug("initializeIndex {}", indexName);
+    elasticSearchMappingConfig.initializeIndex(indexName);
   }
 
   /**
@@ -379,7 +426,7 @@ public class GenericSearchService<T> {
    */
   public Optional<T> findObjectById(String id) {
     QueryBuilder qb = QueryBuilders.matchQuery("_id", id);
-    SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexName()).setTypes(indexTypeName)
+    SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName()).setTypes(indexTypeName)
         .setQuery(qb);
     logger.debug("Finding object with the following query:\n {}", srBuilder.toString());
     SearchResponse response = srBuilder.execute().actionGet();
@@ -402,25 +449,25 @@ public class GenericSearchService<T> {
   /**
    * Deletes search index and re-initializes new index with the correct mapping.
    */
-  public void deleteIndex(String indexName) {
-    DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(indexName)).actionGet();
-    if (response == null || !response.isAcknowledged()) {
-      throw new SearchException("Unable to delete application index");
-    } else {
-      // make sure index with proper configuration exists for later use
-      elasticSearchMappingConfig.initializeIndex(indexName);
-    }
+  public void deleteIndex() {
+    indexConductor.generateNewIndexName();
+    initializeIndex(indexConductor.getNewIndexName());
+    updateAlias(indexConductor.getCurrentIndexName(), indexConductor.getCurrentIndexName(), indexConductor.getIndexAliasName());
+    final String oldIndex = indexConductor.getCurrentIndexName();
+    indexConductor.commitNewIndex();
+    deleteIndex(oldIndex);
   }
 
-  public void deleteIndex() {
-    deleteIndex(indexConductor.getIndexName());
+  private void deleteIndex(String indexName) {
+    logger.debug("deleteIndex {}", indexName);
+    client.admin().indices().delete(new DeleteIndexRequest(indexName)).actionGet();
   }
 
   /**
    * Force index refresh. Use for testing only.
    */
   public void refreshIndex() {
-    client.admin().indices().prepareRefresh(indexConductor.getIndexName()).execute().actionGet();
+    client.admin().indices().prepareRefresh(indexConductor.getIndexAliasName()).execute().actionGet();
   }
 
   private UpdateRequest updateRequestInto(String indexName, String id, Object indexedObject) {

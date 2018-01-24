@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class ApplicationIndexConductor extends IndexConductor {
 
   public ApplicationIndexConductor() {
-    super(ElasticSearchMappingConfig.APPLICATION_INDEX_NAME, ElasticSearchMappingConfig.APPLICATION_TEMP_INDEX_NAME);
+    super(ElasticSearchMappingConfig.APPLICATION_INDEX_ALIAS);
   }
 
 }

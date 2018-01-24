@@ -2,8 +2,6 @@ package fi.hel.allu.search.config;
 
 import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
@@ -30,10 +28,8 @@ import java.util.Collections;
 @Component
 public class ElasticSearchMappingConfig {
 
-  public static final String APPLICATION_INDEX_NAME = "applications";
-  public static final String APPLICATION_TEMP_INDEX_NAME = "applications_temp";
-  public static final String CUSTOMER_INDEX_NAME = "customers";
-  public static final String CUSTOMER_TEMP_INDEX_NAME = "customers_temp";
+  public static final String APPLICATION_INDEX_ALIAS = "applications";
+  public static final String CUSTOMER_INDEX_ALIAS = "customers";
 
   public static final String APPLICATION_TYPE_NAME = "application";
   public static final String PROJECT_TYPE_NAME = "project";
@@ -82,14 +78,14 @@ public class ElasticSearchMappingConfig {
    */
   public void initializeIndex(String indexName) {
     try {
-      if (APPLICATION_INDEX_NAME.equals(indexName) || APPLICATION_TEMP_INDEX_NAME.equals(indexName)) {
+      if (indexName.startsWith(APPLICATION_INDEX_ALIAS)) {
         CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
             .setSettings(getIndexSettingsForApplication());
         createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultApplicationsIndex());
         createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
         createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
         createIndexRequestBuilder.execute().actionGet();
-      } else if (CUSTOMER_INDEX_NAME.equals(indexName) || CUSTOMER_TEMP_INDEX_NAME.equals(indexName)) {
+      } else if (indexName.startsWith(CUSTOMER_INDEX_ALIAS)) {
         CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
             .setSettings(getIndexSettingsForCustomer());
         createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultCustomersIndex());
@@ -104,14 +100,7 @@ public class ElasticSearchMappingConfig {
     }
   }
 
-  /**
-   * Initialize ElasticSearch mappings for all known indices.
-   */
-  public void initializeIndices() {
-    initializeIndex(APPLICATION_INDEX_NAME);
-    initializeIndex(APPLICATION_TEMP_INDEX_NAME);
-    initializeIndex(CUSTOMER_INDEX_NAME);
-    initializeIndex(CUSTOMER_TEMP_INDEX_NAME);
+  public void updateMappingsVersionToIndex() {
     try {
       final IndexRequestBuilder indexRequestBuilder = client.prepareIndex(VERSION_INDEX_NAME, VERSION_TYPE_NAME, VERSION_NUMBER_ID);
       final XContentBuilder contentBuilder = jsonBuilder().startObject().prettyPrint();
@@ -121,26 +110,6 @@ public class ElasticSearchMappingConfig {
       indexRequestBuilder .execute();
     } catch (IOException e) {
       throw new RuntimeException("Unable to write version number to elasticsearch");
-    }
-  }
-
-  public void deleteIndices() {
-    deleteIndex(APPLICATION_INDEX_NAME);
-    deleteIndex(APPLICATION_TEMP_INDEX_NAME);
-    deleteIndex(CUSTOMER_INDEX_NAME);
-    deleteIndex(CUSTOMER_TEMP_INDEX_NAME);
-  }
-
-  private void deleteIndex(final String index) {
-    try {
-      final DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
-      if (response == null || !response.isAcknowledged()) {
-        logger.info("Failed to delete index {}", index);
-      } else {
-        logger.debug("Deleted index {}", index);
-      }
-    } catch (IndexNotFoundException e) {
-      // This is ok
     }
   }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,19 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.extension.*;
+import fi.hel.allu.servicecore.service.UserService;
 
 @Component
 public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
 
   private final CustomerMapper customerMapper;
+  private final UserService userService;
 
   @Autowired
-  public ApplicationMapper(CustomerMapper customerMapper) {
+  public ApplicationMapper(CustomerMapper customerMapper, UserService userService) {
     this.customerMapper = customerMapper;
+    this.userService = userService;
   }
 
   /**
@@ -146,6 +150,7 @@ public class ApplicationMapper {
       applicationJson.setDecisionDistributionList(application.getDecisionDistributionList().stream()
           .map(dEntry -> createDistributionEntryJson(dEntry)).collect(Collectors.toList()));
     }
+    applicationJson.setOwner(createUserJson(application.getOwner()));
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setNotBillable(application.getNotBillable());
     applicationJson.setNotBillableReason(application.getNotBillableReason());
@@ -321,5 +326,12 @@ public class ApplicationMapper {
     distributionEntryJson.setEmail(distributionEntry.getEmail());
     distributionEntryJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(distributionEntry.getPostalAddress()));
     return distributionEntryJson;
+  }
+
+  private UserJson createUserJson(Integer userId) {
+    if (userId == null) {
+      return null;
+    }
+    return userService.findUserById(userId);
   }
 }

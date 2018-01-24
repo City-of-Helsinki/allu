@@ -5,6 +5,7 @@ import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.CustomerWithContactsES;
 import fi.hel.allu.search.domain.ESFlatValue;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.UserService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,12 +27,14 @@ public class ApplicationMapperTest {
 
   @Mock
   private CustomerMapper customerMapper;
+  @Mock
+  private UserService userService;
 
   private ApplicationMapper applicationMapper;
 
   @Before
   public void setup() {
-    applicationMapper = new ApplicationMapper(customerMapper);
+    applicationMapper = new ApplicationMapper(customerMapper, userService);
     when(customerMapper.createWithContactsES(any(CustomerWithContactsJson.class))).thenReturn(new CustomerWithContactsES());
   }
 

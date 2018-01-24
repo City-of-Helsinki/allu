@@ -10,9 +10,8 @@ import org.elasticsearch.index.IndexNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_NAME;
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_TEMP_INDEX_NAME;
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_ALIAS;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.CUSTOMER_INDEX_ALIAS;
 
 public class SearchTestUtil {
 
@@ -21,19 +20,18 @@ public class SearchTestUtil {
 
     try {
       // delete indexes
-      client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_INDEX_NAME)).actionGet();
-      client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_TEMP_INDEX_NAME)).actionGet();
-      client.admin().indices().delete(new DeleteIndexRequest(CUSTOMER_INDEX_NAME)).actionGet();
+      client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_INDEX_ALIAS)).actionGet();
+      client.admin().indices().delete(new DeleteIndexRequest(CUSTOMER_INDEX_ALIAS)).actionGet();
     } catch (IndexNotFoundException e) {
       System.out.println("Index not found for deleting...");
     }
 
-    elasticSearchMappingConfig.initializeIndices();
+    elasticSearchMappingConfig.initializeIndex(APPLICATION_INDEX_ALIAS);
+    elasticSearchMappingConfig.initializeIndex(CUSTOMER_INDEX_ALIAS);
 
     try {
-      client.admin().indices().prepareGetMappings(APPLICATION_INDEX_NAME).get();
-      client.admin().indices().prepareGetMappings(APPLICATION_TEMP_INDEX_NAME).get();
-      client.admin().indices().prepareGetMappings(CUSTOMER_INDEX_NAME).get();
+      client.admin().indices().prepareGetMappings(APPLICATION_INDEX_ALIAS).get();
+      client.admin().indices().prepareGetMappings(CUSTOMER_INDEX_ALIAS).get();
     } catch (IndexNotFoundException e) {
       System.out.println("Warning, indexes were not created immediately... test may fail because of this");
     }
