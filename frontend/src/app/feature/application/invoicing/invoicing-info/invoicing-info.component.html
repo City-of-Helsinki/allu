@@ -50,7 +50,7 @@
             </div>
           </div>
           <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
-            <div fxFlex>
+            <div fxFlex *ngIf="billable">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="customerReference"
                        [placeholder]="'invoice.info.customerReference' | translation"/>
