@@ -71,6 +71,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     const application = this.applicationStore.snapshot.application;
     application.id = undefined;
     application.applicationId = undefined;
+    application.status = ApplicationStatus[ApplicationStatus.PENDING];
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
     this.applicationStore.applicationCopyChange(application);
