@@ -196,7 +196,7 @@ public class ApplicationReplacementServiceTest {
   }
 
   private void setToDecisionState(Integer applicationId) {
-    applicationDao.updateDecision(applicationId, StatusType.DECISION, testCommon.insertUser("decisionmaker").getId());
+    applicationDao.updateDecision(applicationId, StatusType.DECISION, testCommon.insertUser("decisionmaker").getId(), originalApplication.getHandler());
   }
 
   private void validateReplacingApplicationData(Application application) {
@@ -209,6 +209,8 @@ public class ApplicationReplacementServiceTest {
     assertNotEquals(originalApplication.getApplicationId(), application.getApplicationId());
     // Should have new ID
     assertNotEquals(originalApplication.getId(), application.getId());
+    // Owner should be same as handler
+    assertEquals(originalApplication.getHandler(), application.getOwner());
 
     validateReplacingDecisionDistributionList(application.getDecisionDistributionList());
     validateReplacingExtension(application.getExtension());
@@ -217,7 +219,6 @@ public class ApplicationReplacementServiceTest {
     assertEquals(originalApplication.getCustomersWithContacts().get(0).getCustomer().getId(), application.getCustomersWithContacts().get(0).getCustomer().getId());
     assertEquals(originalApplication.getDecisionPublicityType(), application.getDecisionPublicityType());
     assertEquals(originalApplication.getEndTime(), application.getEndTime());
-    assertEquals(originalApplication.getOwner(), application.getOwner());
     assertEquals(originalApplication.getInvoiceRecipientId(), application.getInvoiceRecipientId());
     assertEquals(originalApplication.getKind(), application.getKind());
     assertEquals(originalApplication.getKindsWithSpecifiers(), application.getKindsWithSpecifiers());
@@ -259,6 +260,7 @@ public class ApplicationReplacementServiceTest {
     originalApplication.setDecisionPublicityType(PublicityType.CONFIDENTIAL_PARTIALLY);
     originalApplication.setEndTime(ENDTIME);
     originalApplication.setExtension(createExtension());
+    originalApplication.setHandler(testCommon.insertUser("Handler").getId());
     originalApplication.setOwner(testCommon.insertUser("Owner").getId());
     originalApplication.setInvoiceRecipientId(testCommon.insertPerson().getId());
     originalApplication.setKind(ApplicationKind.AGILE_KIOSK_AREA);

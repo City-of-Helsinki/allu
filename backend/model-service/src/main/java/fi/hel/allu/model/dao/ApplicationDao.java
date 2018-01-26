@@ -420,10 +420,11 @@ public class ApplicationDao {
    * @return  Updated application.
    */
   @Transactional
-  public Application updateDecision(int applicationId, StatusType status, int userId) {
+  public Application updateDecision(int applicationId, StatusType status, int decisionMakerId, Integer ownerId) {
     int updated = (int) queryFactory
         .update(application)
-        .set(application.decisionMaker, userId)
+        .set(application.owner, ownerId)
+        .set(application.decisionMaker, decisionMakerId)
         .set(application.status, status)
         .set(application.decisionTime, ZonedDateTime.now())
         .where(application.id.eq(applicationId))

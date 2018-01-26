@@ -164,7 +164,7 @@ public class ApplicationDaoTest {
   public void testDecisionStatus() {
     Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     Application applOut = applicationDao.insert(application);
-    Application updated = applicationDao.updateDecision(applOut.getId(), StatusType.REJECTED, application.getOwner());
+    Application updated = applicationDao.updateDecision(applOut.getId(), StatusType.REJECTED, application.getOwner(), application.getOwner());
     assertEquals(StatusType.REJECTED, updated.getStatus());
     assertEquals(application.getOwner(), updated.getDecisionMaker());
     assertNotNull(updated.getDecisionTime());

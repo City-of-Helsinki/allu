@@ -3,7 +3,6 @@ package fi.hel.allu.model.service;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ApplicationTag;
@@ -99,9 +98,10 @@ public class ApplicationServiceTest {
     Mockito.when(application.getNotBillable()).thenReturn(false);
     Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
     Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
+    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
     Mockito.verify(invoiceService).createInvoices(APP_ID, false);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, 0);
     Mockito.verify(applicationDao, times(0)).addTag(Mockito.anyInt(), Mockito.any());
   }
 
@@ -117,9 +117,10 @@ public class ApplicationServiceTest {
     Mockito.when(application.getNotBillable()).thenReturn(false);
     Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
     Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
+    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
     Mockito.verify(invoiceService).createInvoices(APP_ID, true);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, 0);
     ArgumentCaptor<ApplicationTag> tagCaptor = ArgumentCaptor.forClass(ApplicationTag.class);
     Mockito.verify(applicationDao, times(1)).addTag(Mockito.eq(APP_ID), tagCaptor.capture());
     assertEquals(ApplicationTagType.SAP_ID_MISSING, tagCaptor.getValue().getType());
@@ -129,9 +130,11 @@ public class ApplicationServiceTest {
   public void testChangeStatusToRejected() {
     final int APP_ID = 123;
     final int UID = 234;
+    Application application = Mockito.mock(Application.class);
+    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.REJECTED, UID);
     Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID, false);
-    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID, 0);
   }
 
   @Test
@@ -141,6 +144,36 @@ public class ApplicationServiceTest {
     applicationService.changeApplicationStatus(APP_ID, StatusType.FINISHED, UID);
     Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID, false);
     Mockito.verify(applicationDao).updateStatus(APP_ID, StatusType.FINISHED);
+  }
+
+  @Test
+  public void decisionSetsHandlerAsOwner() {
+    final int APP_ID = 123;
+    final int UID = 234;
+    final int HANDLER_ID = 235;
+    final Integer IID = 345;
+    final Customer customer = new Customer();
+    customer.setSapCustomerNumber("");
+    Application application = Mockito.mock(Application.class);
+    Mockito.when(application.getHandler()).thenReturn(HANDLER_ID);
+    Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
+    Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
+    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, HANDLER_ID);
+  }
+
+  @Test
+  public void rejectedSetsHandlerAsOwner() {
+    final int APP_ID = 123;
+    final int UID = 234;
+    final int HANDLER_ID = 235;
+    final Application application = new Application();
+    application.setHandler(HANDLER_ID);
+    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    applicationService.changeApplicationStatus(APP_ID, StatusType.REJECTED, UID);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID, HANDLER_ID);
   }
 
 }

@@ -217,7 +217,8 @@ public class ApplicationService {
         createInvoiceIfNeeded(applicationId, userId);
         // the fall-through is intentional here
       case REJECTED:
-        return applicationDao.updateDecision(applicationId, statusType, userId);
+        final Integer handlerId = applicationDao.findById(applicationId).getHandler();
+        return applicationDao.updateDecision(applicationId, statusType, userId, handlerId);
       case DECISIONMAKING:
         return applicationDao.startDecisionMaking(applicationId, statusType, userId);
       default:
