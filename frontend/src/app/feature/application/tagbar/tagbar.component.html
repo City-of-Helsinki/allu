@@ -1,7 +1,7 @@
 <div fxLayout="row" fxLayoutAlign="space-between center" class="item-bar">
   <div fxFlex="20" class="item-bar-content application-info align-with-content">
     <ng-container *ngIf="application | async as app">
-      <span class="application-status-text">{{['application.status', app.status] | translation}}</span>
+      <span *ngIf="app.status" class="application-status-text">{{['application.status', app.status] | translation}}</span>
       <span *ngIf="app.startTime">
         {{app.uiStartTime}} - {{app.uiEndTime}}
       </span>
