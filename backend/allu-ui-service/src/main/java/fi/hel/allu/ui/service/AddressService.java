@@ -11,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -49,9 +51,7 @@ public class AddressService {
    * @throws NoSuchEntityException in case given address does not exist.
    */
   public CoordinateJson geocodeAddress(String streetName, int streetNumber) {
-
-    HttpEntity<String> requestEntity =
-        WfsUtil.createRequestEntity(applicationProperties.getWfsUsername(), applicationProperties.getWfsPassword());
+    HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
     HttpEntity<String> wfsXmlEntity = restTemplate.exchange(
         applicationProperties.getStreetGeocodeUrl(),
         HttpMethod.GET,
@@ -81,8 +81,7 @@ public class AddressService {
     Optional<String> optionalStreetNumber = findStreetNumber(partialStreetName);
     String partialStreetNameNoNumber = partialStreetName.replaceAll(NUMBER_REGEX,"").trim();
 
-    HttpEntity<String> requestEntity =
-        WfsUtil.createRequestEntity(applicationProperties.getWfsUsername(), applicationProperties.getWfsPassword());
+    HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
     HttpEntity<String> wfsXmlEntity = restTemplate.exchange(
         applicationProperties.getStreetSearchUrl(),
         HttpMethod.GET,

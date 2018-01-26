@@ -29,7 +29,7 @@ public class WfsUtil {
     }
   }
 
-  public static HttpEntity<String> createRequestEntity(String wfsUsername, String wfsPassword) {
+  public static HttpEntity<String> createAuthRequestEntity(String wfsUsername, String wfsPassword) {
     HttpHeaders httpHeaders = new HttpHeaders();
 
     String auth = wfsUsername + ":" + wfsPassword;
@@ -38,4 +38,5 @@ public class WfsUtil {
     httpHeaders.set(HttpHeaders.AUTHORIZATION, authHeader);
     return new HttpEntity<>(httpHeaders);
   }
+
 }
