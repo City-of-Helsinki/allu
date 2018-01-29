@@ -59,4 +59,10 @@ public class ApplicationStatusController {
   public ResponseEntity<Application> changeStatusToCancelled(@PathVariable int id) {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.CANCELLED, null), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/status/archived", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToArchived(@PathVariable int id) {
+    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.ARCHIVED, null), HttpStatus.OK);
+  }
+
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.AttachmentDao;
 import fi.hel.allu.model.dao.DecisionDao;
@@ -372,5 +373,13 @@ public class ApplicationController {
   public ResponseEntity<Void> releasePendingInvoice(@PathVariable Integer id) {
     invoiceService.releasePending(id);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Finds finished applications having one of the given statuses.
+   */
+  @RequestMapping(value = "/finished", method = RequestMethod.POST)
+  public ResponseEntity<List<Integer>> findFinishedApplications(@RequestBody List<StatusType> statuses) {
+    return new ResponseEntity<>(applicationService.findFinishedApplications(statuses), HttpStatus.OK);
   }
 }

@@ -160,6 +160,7 @@ public class ApplicationMapper {
     applicationJson.setReplacesApplicationId(application.getReplacesApplicationId());
     applicationJson.setCustomerReference(application.getCustomerReference());
     applicationJson.setInvoicingDate(application.getInvoicingDate());
+    applicationJson.setInvoiced(application.getInvoiced());
     return applicationJson;
   }
 

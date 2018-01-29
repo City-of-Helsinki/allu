@@ -8,7 +8,8 @@ export enum ApplicationStatus {
   REJECTED,
   FINISHED,
   CANCELLED,
-  REPLACED
+  REPLACED,
+  ARCHIVED
 }
 
 export function applicationCanBeEdited(status: ApplicationStatus): boolean {
@@ -20,6 +21,19 @@ export function inHandling(status: ApplicationStatus): boolean {
 }
 
 export const searchable = [
+  ApplicationStatus.PRE_RESERVED,
+  ApplicationStatus.PENDING,
+  ApplicationStatus.HANDLING,
+  ApplicationStatus.RETURNED_TO_PREPARATION,
+  ApplicationStatus.DECISIONMAKING,
+  ApplicationStatus.DECISION,
+  ApplicationStatus.REJECTED,
+  ApplicationStatus.FINISHED,
+  ApplicationStatus.CANCELLED,
+  ApplicationStatus.ARCHIVED
+];
+
+export const workqueue_searchable = [
   ApplicationStatus.PRE_RESERVED,
   ApplicationStatus.PENDING,
   ApplicationStatus.HANDLING,

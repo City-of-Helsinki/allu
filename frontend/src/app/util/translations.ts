@@ -68,7 +68,8 @@ export const translations = {
       REJECTED: 'Hylätty päätös',
       FINISHED: 'Valmis',
       CANCELLED: 'Peruttu',
-      REPLACED: 'Korvattu'
+      REPLACED: 'Korvattu',
+      ARCHIVED: 'Arkistoitu'
     },
     statusChange: {
       HANDLING: 'Hakemus siirretty käsittelyyn',

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -315,6 +316,16 @@ public class ApplicationService {
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(applicationId)));
     applicationDao.update(applicationId, application);
   }
+
+  /**
+   * Finds finished applications having one of the given statuses.
+   * @return
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> findFinishedApplications(List<StatusType> statuses) {
+    return applicationDao.findByEndTime(null, ZonedDateTime.now(), null, statuses);
+  }
+
 
   /*
    * Create invoice for the given application if it's needed

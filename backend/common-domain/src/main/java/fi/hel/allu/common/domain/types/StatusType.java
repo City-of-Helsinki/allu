@@ -14,5 +14,6 @@ public enum StatusType {
   REJECTED, // Hylätty päätös
   FINISHED, // Valmis
   CANCELLED, // Peruttu
-  REPLACED // Korvattu
+  REPLACED, // Korvattu
+  ARCHIVED // Arkistoitu
 }

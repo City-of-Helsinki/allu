@@ -85,6 +85,7 @@ public class ApplicationJson {
 
   private String customerReference;
   private ZonedDateTime invoicingDate;
+  private Boolean invoiced;
   /**
   /**
    * in Finnish: Hakemuksen tunniste tietokannassa
@@ -518,5 +519,16 @@ public class ApplicationJson {
 
   public void setInvoicingDate(ZonedDateTime invoicingDate) {
     this.invoicingDate = invoicingDate;
+  }
+
+  /**
+   * Gets value indicating whether application is completely invoiced.
+   */
+  public Boolean getInvoiced() {
+    return invoiced;
+  }
+
+  public void setInvoiced(Boolean invoiced) {
+    this.invoiced = invoiced;
   }
 }

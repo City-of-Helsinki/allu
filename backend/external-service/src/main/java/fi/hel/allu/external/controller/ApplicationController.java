@@ -1,12 +1,8 @@
 package fi.hel.allu.external.controller;
 
-import fi.hel.allu.external.domain.ApplicationExt;
-import fi.hel.allu.external.domain.ApplicationProgressReportExt;
-import fi.hel.allu.external.domain.ApplicationProgressStatusExt;
-import fi.hel.allu.external.mapper.ApplicationExtMapper;
-import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import fi.hel.allu.external.domain.ApplicationExt;
+import fi.hel.allu.external.domain.ApplicationProgressReportExt;
+import fi.hel.allu.external.domain.ApplicationProgressStatusExt;
+import fi.hel.allu.external.mapper.ApplicationExtMapper;
+import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.service.ApplicationArchiverService;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 
 /**
  * Public interface for managing applications.
@@ -31,6 +34,9 @@ public class ApplicationController {
 
   @Autowired
   ApplicationServiceExt applicationServiceExt;
+
+  @Autowired
+  ApplicationArchiverService applicationArchiverService;
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
@@ -72,4 +78,19 @@ public class ApplicationController {
     // TODO: ROLE_TRUSTED_PARTNER should only be allowed to check own applications
     return new ResponseEntity<>(applicationServiceExt.getProgressStatus(id), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/finished/status", method = RequestMethod.PATCH)
+  @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
+  public ResponseEntity<Void> updateStatusForFinishedApplications() {
+    applicationArchiverService.updateStatusForFinishedApplications();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/finished/archive", method = RequestMethod.PATCH)
+  @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
+  public ResponseEntity<Void> archiveFinishedApplications(@RequestBody List<Integer> applicationIds) {
+    applicationArchiverService.archiveApplicationsIfNecessary(applicationIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 }

@@ -15,6 +15,8 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestTemplate;
@@ -49,14 +51,16 @@ public class InvoicingService {
   private ApplicationProperties applicationProperties;
   private SftpService sftpService;
   private AlluMailService alluMailService;
+  private ApplicationStatusUpdaterService applicationStatusUpdaterService;
 
   @Autowired
   public InvoicingService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
-      SftpService sftpService, AlluMailService alluMailService) {
+      SftpService sftpService, AlluMailService alluMailService, ApplicationStatusUpdaterService applicationStatusUpdaterService) {
     this.restTemplate = restTemplate;
     this.applicationProperties = applicationProperties;
     this.sftpService = sftpService;
     this.alluMailService = alluMailService;
+    this.applicationStatusUpdaterService = applicationStatusUpdaterService;
   }
 
   @PostConstruct
@@ -81,6 +85,7 @@ public class InvoicingService {
     if (sendToSap(salesOrderContainer)) {
       markInvoicesSent(invoices.stream().map(i -> i.getId()).collect(Collectors.toList()));
       sendNotificationEmail(applicationsById.values().stream().map(a -> a.getApplicationId()).collect(Collectors.toList()));
+      applicationStatusUpdaterService.archiveApplications(new ArrayList<>(applicationsById.keySet()));
     }
   }
 
@@ -152,4 +157,5 @@ public class InvoicingService {
     result.put("invoiceApplicationIds", String.join(", ", applicationIds));
     return result;
   }
+
 }

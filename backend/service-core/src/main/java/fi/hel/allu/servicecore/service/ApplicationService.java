@@ -295,5 +295,15 @@ public class ApplicationService {
         .map(applicationMapper::mapApplicationIdentifierToJson)
         .collect(Collectors.toList());
   }
+
+
+  /**
+   * Finds finished applications having one of the given statuses
+   */
+  public List<Integer> findFinishedApplications(List<StatusType> statuses) {
+    ParameterizedTypeReference<List<Integer>> typeRef = new ParameterizedTypeReference<List<Integer>>() {};
+    return restTemplate.exchange(applicationProperties.getFinishedApplicationsUrl(),
+        HttpMethod.POST, new HttpEntity<>(statuses), typeRef).getBody();
+  }
 }
 

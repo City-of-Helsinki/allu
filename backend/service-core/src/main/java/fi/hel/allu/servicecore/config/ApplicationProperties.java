@@ -1110,4 +1110,11 @@ public class ApplicationProperties {
   public String getSyncContactsUrl() {
     return getSearchServiceUrl("/contacts/sync/data");
   }
+
+  /**
+   * @return url to fetch finished applications
+   */
+  public String getFinishedApplicationsUrl() {
+     return getModelServiceUrl("/applications/finished");
+  }
 }

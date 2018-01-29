@@ -43,6 +43,7 @@ import static fi.hel.allu.QApplicationKind.applicationKind;
 import static fi.hel.allu.QApplicationReminder.applicationReminder;
 import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QContact.contact;
+import static fi.hel.allu.QInvoice.invoice;
 import static fi.hel.allu.QKindSpecifier.kindSpecifier;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
@@ -56,7 +57,8 @@ public class ApplicationDao {
   /** Fields that won't be updated in regular updates */
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
-          application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId);
+          application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
+          application.invoiced);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
@@ -725,5 +727,14 @@ public class ApplicationDao {
       .from(application)
       .where(application.id.eq(applicationId))
       .fetchOne();
+  }
+
+  /**
+   * Mark applications (completely) invoiced
+   */
+  @Transactional
+  public void markInvoiced(List<Integer> applicationIds) {
+    queryFactory.update(application).set(application.invoiced, true).where(application.id.in(applicationIds)).execute();
+
   }
 }

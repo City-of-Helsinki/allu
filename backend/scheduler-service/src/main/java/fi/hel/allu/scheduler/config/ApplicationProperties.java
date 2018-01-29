@@ -329,4 +329,13 @@ public class ApplicationProperties {
   public int getSearchSyncStartupDelay() {
     return searchSyncStartupDelay;
   }
+
+  public String getUpdateFinishedApplicationsUrl() {
+    return getExtServiceUrl("/v1/applications/finished/status");
+  }
+
+  public String getArchiveApplicationsUrl() {
+    return getExtServiceUrl("/v1/applications/finished/archive");
+  }
+
 }

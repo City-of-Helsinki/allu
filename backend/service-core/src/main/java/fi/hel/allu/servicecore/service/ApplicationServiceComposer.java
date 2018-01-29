@@ -332,7 +332,7 @@ public class ApplicationServiceComposer {
       updateApplicationOwner(newOwner, Collections.singletonList(application.getId()));
     } else if (StatusType.HANDLING.equals(application.getStatus()) && application.getOwner() == null) {
       updateApplicationOwner(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
-    } else if (StatusType.CANCELLED.equals(application.getStatus())) {
+    } else if (StatusType.CANCELLED.equals(application.getStatus()) || StatusType.ARCHIVED.equals(application.getStatus())) {
       removeApplicationOwner(Collections.singletonList(application.getId()));
     }
   }
@@ -370,5 +370,12 @@ public class ApplicationServiceComposer {
   public void deleteDraft(int id) {
     applicationService.deleteDraft(id);
     searchService.deleteDraft(id);
+  }
+
+  /**
+   * Finds finished applications having one of the given statuses
+   */
+  public List<Integer> findFinishedApplications(List<StatusType> statuses) {
+    return applicationService.findFinishedApplications(statuses);
   }
 }

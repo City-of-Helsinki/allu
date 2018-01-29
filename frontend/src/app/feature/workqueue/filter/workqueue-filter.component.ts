@@ -3,7 +3,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {EnumUtil} from '../../../util/enum.util';
-import {ApplicationStatus, searchable} from '../../../model/application/application-status';
+import {ApplicationStatus, workqueue_searchable} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
@@ -30,7 +30,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
   queryForm: FormGroup;
   districts: Observable<Array<CityDistrict>>;
-  applicationStatuses = searchable.map(status => ApplicationStatus[status]);
+  applicationStatuses = workqueue_searchable.map(status => ApplicationStatus[status]);
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
   tab: string;

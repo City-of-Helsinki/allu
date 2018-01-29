@@ -1,5 +1,6 @@
 package fi.hel.allu.scheduler.controller;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.*;
 
@@ -24,18 +25,22 @@ public class ScheduleRunner {
   private final SapCustomerService sapCustomerService;
   private final SapCustomerNotificationService sapCustomerNotificationService;
   private final SearchSynchService searchSyncService;
+  private final ApplicationStatusUpdaterService applicationStatusUpdaterService;
   private final ApplicationProperties applicationProperties;
 
   @Autowired
   public ScheduleRunner(ApplicantReminderService applicantReminderService, InvoicingService invoicingService,
       SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService,
       SearchSynchService searchSynchService,
-      ApplicationProperties applicationProperties) {
+      ApplicationStatusUpdaterService applicationStatusUpdaterService,
+      ApplicationProperties applicationProperties
+      ) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
     this.sapCustomerService = sapCustomerService;
     this.sapCustomerNotificationService = sapCustomerNotificationService;
     this.searchSyncService = searchSynchService;
+    this.applicationStatusUpdaterService = applicationStatusUpdaterService;
     this.applicationProperties = applicationProperties;
   }
 
@@ -74,5 +79,11 @@ public class ScheduleRunner {
   public void syncSearchData() {
     searchSyncService.startSearchSync();
   }
+
+  @Scheduled(cron = "${application.status.update.cronstring}")
+  public void updateApplicationStatuses() {
+    applicationStatusUpdaterService.updateApplicationStatuses();
+  }
+
 
 }

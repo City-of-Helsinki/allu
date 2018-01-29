@@ -181,4 +181,11 @@ public class InvoiceDao {
       inserter.execute();
     }
   }
+
+  public List<Integer> getApplicationIdsForInvoices(List<Integer> invoiceIds) {
+    return queryFactory
+        .select(invoice.applicationId)
+        .from(invoice)
+        .where(invoice.id.in(invoiceIds)).fetch();
+  }
 }

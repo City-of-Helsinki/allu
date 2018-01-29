@@ -69,6 +69,7 @@ public class Application {
   private Integer replacedByApplicationId;
   private String customerReference;
   private ZonedDateTime invoicingDate;
+  private Boolean invoiced;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -456,6 +457,17 @@ public class Application {
 
   public void setInvoicingDate(ZonedDateTime invoicingDate) {
     this.invoicingDate = invoicingDate;
+  }
+
+  /**
+   * Gets value indicating whether application is completely invoiced.
+   */
+  public Boolean getInvoiced() {
+    return invoiced;
+  }
+
+  public void setInvoiced(Boolean invoiced) {
+    this.invoiced = invoiced;
   }
 
 }

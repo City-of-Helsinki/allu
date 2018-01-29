@@ -8,11 +8,13 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
+import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import fi.hel.allu.servicecore.util.PageRequestBuilder;
 import fi.hel.allu.servicecore.util.RestResponsePage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,14 +42,17 @@ public class SupervisionTaskService {
   private RestTemplate restTemplate;
   private UserService userService;
   private ApplicationServiceComposer applicationServiceComposer;
+  private ApplicationEventPublisher applicationEventPublisher;
 
   @Autowired
   public SupervisionTaskService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-                                UserService userService, ApplicationServiceComposer applicationServiceComposer) {
+                                UserService userService, ApplicationServiceComposer applicationServiceComposer,
+                                ApplicationEventPublisher archiveEventPublisher) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationServiceComposer = applicationServiceComposer;
+    this.applicationEventPublisher = archiveEventPublisher;
   }
 
 
@@ -92,6 +97,7 @@ public class SupervisionTaskService {
         SupervisionTask.class,
         taskJson.getId());
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
+    applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -117,6 +123,7 @@ public class SupervisionTaskService {
     SupervisionTaskJson taskJson = findById(id);
     restTemplate.delete(applicationProperties.getSupervisionTaskByIdUrl(), id);
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
+    applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
   }
 
   public Page<SupervisionWorkItemJson> search(SupervisionTaskSearchCriteria searchCriteria,
