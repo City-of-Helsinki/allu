@@ -25,6 +25,9 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
   }
 
   connect(): Observable<ApplicationWorkItemRow[]> {
+    // Initial paging
+    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
+
     this.sort.sortChange
       .takeUntil(this.destroy)
       .subscribe(sortChange => this.store.sortChange(Sort.fromMatSort(sortChange)));

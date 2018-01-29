@@ -28,7 +28,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   private selectedItems: Array<number> = [];
   private destroy = new Subject<boolean>();
-  private allSelectedSubscription: Subscription;
 
   constructor(private store: SupervisionWorkItemStore, private router: Router) {
   }

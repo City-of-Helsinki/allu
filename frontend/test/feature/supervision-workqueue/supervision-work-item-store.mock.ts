@@ -7,6 +7,7 @@ import {SupervisionWorkItem} from '../../../src/app/model/application/supervisio
 import {Sort} from '../../../src/app/model/common/sort';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
+import {PageRequest} from '../../../src/app/model/common/page-request';
 
 
 const initialState: SupervisionWorkqueueState = {
@@ -32,6 +33,9 @@ export class SupervisionWorkItemStoreMock {
   }
 
   public pageChange(page: Page<SupervisionWorkItem>) {
+  }
+
+  public pageRequestChange(pageRequest: PageRequest) {
   }
 
   public toggleAll(checked: boolean) {
