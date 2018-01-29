@@ -1,25 +1,17 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/publish';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {MatDialog, MatDialogRef, MatTabChangeEvent} from '@angular/material';
-
-import {Application} from '../../model/application/application';
-import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
+import {MatDialog, MatTabChangeEvent} from '@angular/material';
 import {EnumUtil} from '../../util/enum.util';
-import {Sort} from '../../model/common/sort';
 import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
 import {UserHub} from '../../service/user/user-hub';
 import {DialogCloseReason} from '../common/dialog-close-value';
-import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 import {WorkQueueTab} from './workqueue-tab';
 import {NotificationService} from '../../service/notification/notification.service';
-import {ConnectableObservable} from 'rxjs/observable/ConnectableObservable';
-import {Subscription} from 'rxjs/Subscription';
-import {ApplicationService} from '../../service/application/application.service';
 import {findTranslation} from '../../util/translations';
+import {Subject} from 'rxjs/Subject';
+import {ApplicationWorkItemStore} from './application-work-item-store';
 
 @Component({
   selector: 'workqueue',
@@ -29,60 +21,41 @@ import {findTranslation} from '../../util/translations';
   ]
 })
 export class WorkQueueComponent implements OnInit, OnDestroy {
-
-  applications: ConnectableObservable<Array<Application>>;
   tabs = EnumUtil.enumValues(WorkQueueTab);
-  tab = WorkQueueTab.OWN;
-  dialogRef: MatDialogRef<OwnerModalComponent>;
   owners: Array<User>;
-  private selectedApplicationIds = new Array<number>();
-  private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
-  private sort: Sort;
-  private searchQuerySub: Subscription;
+  noneSelected = true;
 
-  constructor(private applicationService: ApplicationService,
-              private workqueueHub: WorkQueueHub,
+  private destroy = new Subject<boolean>();
+
+  constructor(private store: ApplicationWorkItemStore,
               private dialog: MatDialog,
               private userHub: UserHub,
-              private currentUser: CurrentUser) { }
+              private currentUser: CurrentUser) {
+    this.store.tabChange(WorkQueueTab.OWN);
+  }
 
   ngOnInit() {
-    this.applications = this.applicationQuery.asObservable()
-      .debounceTime(500)
-      .distinctUntilChanged()
-      .switchMap(query => this.getApplicationsSearch(query))
-      .catch(err => NotificationService.errorCatch(err, []))
-      .publish();
-
     this.userHub.getActiveUsers().subscribe(users => this.owners = users);
-    this.searchQuerySub = this.workqueueHub.searchQuery.subscribe(query => this.queryChanged(query));
+
+    this.store.changes.map(state => state.selectedItems)
+      .distinctUntilChanged()
+      .takeUntil(this.destroy)
+      .subscribe(items => this.noneSelected = (items.length === 0));
   }
 
   ngOnDestroy() {
-    this.searchQuerySub.unsubscribe();
-  }
-
-  queryChanged(query: ApplicationSearchQuery) {
-    this.applicationQuery.next(query.withSort(this.sort));
-  }
-
-  sortChanged(sort: Sort) {
-    // use old query parameters and new sort
-    this.sort = sort;
-    this.queryChanged(this.applicationQuery.getValue());
-  }
-
-  selectionChanged(applicationIds: Array<number>) {
-    this.selectedApplicationIds = applicationIds;
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   tabSelected(event: MatTabChangeEvent) {
-    this.tab = WorkQueueTab[this.tabs[event.index]];
+    this.store.tabChange(WorkQueueTab[this.tabs[event.index]]);
   }
 
   moveSelectedToSelf() {
     this.currentUser.user
-      .subscribe(u => this.changeOwner(u, this.selectedApplicationIds));
+      .takeUntil(this.destroy)
+      .subscribe(u => this.changeOwner(u));
   }
 
   openHandlerModal() {
@@ -94,42 +67,28 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.dialogRef = this.dialog.open<OwnerModalComponent>(OwnerModalComponent, config);
+    const dialogRef = this.dialog.open<OwnerModalComponent>(OwnerModalComponent, config);
 
-    this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
+    dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {
         if (dialogCloseValue.result) {
-          this.changeOwner(dialogCloseValue.result, this.selectedApplicationIds);
+          this.changeOwner(dialogCloseValue.result);
         } else {
-          this.removeOwner(this.selectedApplicationIds);
+          this.removeOwner();
         }
       }
-      this.dialogRef = undefined;
     });
   }
 
-  private getApplicationsSearch(query: ApplicationSearchQuery): Observable<Array<Application>> {
-    if (this.tab === WorkQueueTab.COMMON) {
-      return this.workqueueHub.searchApplicationsSharedByGroup(query);
-    } else if (this.tab === WorkQueueTab.OWN) {
-      return this.applicationService.search(query)
-        .map(apps => apps.filter(app => !app.waiting));
-    } else {
-      return this.applicationService.search(query);
-    }
-  }
-
-  private changeOwner(owner: User, ids: Array<number>): void {
-    this.applicationService.changeOwner(owner.id, ids).subscribe(
+  private changeOwner(owner: User): void {
+    this.store.changeOwnerForSelected(owner.id).subscribe(
       () => NotificationService.message(findTranslation('workqueue.notifications.ownerChanged')),
-      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerChangeFailed')),
-      () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
+      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerChangeFailed')));
   }
 
-  private removeOwner(ids: Array<number>): void {
-    this.applicationService.removeOwner(ids).subscribe(
+  private removeOwner(): void {
+    this.store.removeOwnerFromSelected().subscribe(
       () => NotificationService.message(findTranslation('workqueue.notifications.ownerRemoved')),
-      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerRemoveFailed')),
-      () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
+      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerRemoveFailed')));
   }
 }

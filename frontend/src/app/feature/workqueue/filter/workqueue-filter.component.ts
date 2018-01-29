@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
@@ -11,7 +11,8 @@ import {ApplicationTagType} from '../../../model/application/tag/application-tag
 import {CityDistrict} from '../../../model/common/city-district';
 import {MapHub} from '../../../service/map/map-hub';
 import {WorkQueueTab} from '../workqueue-tab';
-import {WorkQueueHub} from '../workqueue-search/workqueue-hub';
+import {ApplicationWorkItemStore} from '../application-work-item-store';
+import {Subject} from 'rxjs/Subject';
 
 
 const COMMON_MULTISELECT_VALUE = ['common'];
@@ -23,9 +24,11 @@ const COMMON_MULTISELECT_VALUE = ['common'];
     './workqueue-filter.component.scss'
   ]
 })
-export class WorkQueueFilterComponent implements OnInit {
-  queryForm: FormGroup;
+export class WorkQueueFilterComponent implements OnInit, OnDestroy {
+
   @Input() owners: Array<User>;
+
+  queryForm: FormGroup;
   districts: Observable<Array<CityDistrict>>;
   applicationStatuses = searchable.map(status => ApplicationStatus[status]);
   applicationTypes = EnumUtil.enumValues(ApplicationType);
@@ -37,10 +40,11 @@ export class WorkQueueFilterComponent implements OnInit {
   private statusCtrl: FormControl;
   private tagsCtrl: FormControl;
 
+  private destroy = new Subject<boolean>();
 
   constructor(fb: FormBuilder,
               private mapHub: MapHub,
-              private workQueueHub: WorkQueueHub,
+              private store: ApplicationWorkItemStore,
               private currentUser: CurrentUser) {
     this.typeCtrl = fb.control(undefined);
     this.ownerCtrl = fb.control(undefined);
@@ -59,14 +63,26 @@ export class WorkQueueFilterComponent implements OnInit {
 
   ngOnInit(): void {
     this.queryForm.valueChanges
+      .takeUntil(this.destroy)
       .distinctUntilChanged()
-      .subscribe(query => this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(query)));
+      .debounceTime(300)
+      .subscribe(query => this.store.searchChange(ApplicationSearchQuery.from(query)));
 
     this.districts = this.mapHub.districts();
-    this.selectedTab = WorkQueueTab.OWN;
+
+    this.store.changes
+      .takeUntil(this.destroy)
+      .map(change => change.tab)
+      .distinctUntilChanged()
+      .subscribe(tab => this.onTabChange(tab));
   }
 
-  @Input() set selectedTab(tab: WorkQueueTab) {
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
+
+  onTabChange(tab: WorkQueueTab) {
     this.tab = WorkQueueTab[tab];
     this.queryForm.enable();
     this.typeCtrl.reset();

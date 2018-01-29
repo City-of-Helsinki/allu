@@ -1,6 +1,9 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatButtonToggleModule, MatChipsModule} from '@angular/material';
+import {
+  MatButtonToggleModule, MatChipsModule, MatPaginatorModule, MatSortModule,
+  MatTableModule
+} from '@angular/material';
 
 import {WorkQueueComponent} from './workqueue.component';
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -11,6 +14,8 @@ import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 import {CommentsModalComponent} from '../application/comment/comments-modal.component';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
+import {ApplicationWorkItemStore} from './application-work-item-store';
+import {ApplicationWorkItemDatasource} from './content/application-work-item-datasource';
 
 @NgModule({
   imports: [
@@ -18,6 +23,9 @@ import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
     FormsModule,
     AlluCommonModule,
     MatButtonToggleModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
     MatChipsModule,
     SelectionGroupModule,
     OwnerModalModule
@@ -30,6 +38,7 @@ import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
   ],
   providers: [
     WorkQueueHub,
+    ApplicationWorkItemStore,
     WorkQueueService
   ],
   entryComponents: [

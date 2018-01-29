@@ -26,6 +26,7 @@ import {ApplicationIdentifier} from '../../model/application/application-identif
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
+import {WorkQueueService} from '../../feature/workqueue/workqueue-search/workqueue.service';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -34,6 +35,7 @@ const ATTACHMENTS_URL = '/api/applications/:appId/attachments';
 const SEARCH = '/search';
 const SEARCH_LOCATION = '/search_location';
 const METADATA_URL = '/api/meta';
+const WORK_QUEUE_URL = '/api/workqueue';
 
 @Injectable()
 export class ApplicationService {
@@ -95,6 +97,19 @@ export class ApplicationService {
   public search(searchQuery: ApplicationSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Application>> {
     return this.pagedSearch(searchQuery, sort, pageRequest)
       .map(page => page.content);
+  }
+
+  /**
+   * Fetches applications based on given search query and those shared by current users group
+   */
+  public pagedSearchSharedByGroup(searchQuery: ApplicationSearchQuery, sort?: Sort, pageRequest?: PageRequest):
+    Observable<Page<Application>> {
+    return this.authHttp.post(
+      WORK_QUEUE_URL,
+      JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
+      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
+      .map(response => PageMapper.mapBackend(response.json(), ApplicationMapper.mapBackend))
+      .catch(err => this.errorHandler.handle(err, findTranslation('workqueue.error.searchFailed')));
   }
 
   /**

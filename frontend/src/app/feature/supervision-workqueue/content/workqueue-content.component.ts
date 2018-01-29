@@ -41,7 +41,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
       .takeUntil(this.destroy)
       .subscribe(selected => this.selectedItems = selected);
 
-    this.allSelectedSubscription = this.store.changes.map(state => state.allSelected)
+    this.store.changes.map(state => state.allSelected)
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(allSelected => this.allSelected = allSelected);

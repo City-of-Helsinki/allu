@@ -636,7 +636,9 @@ export const translations = {
       edit: 'MUOKKAA',
       home: 'Etusivulle',
       show: 'Näytä',
-      search: 'Hae'
+      search: 'Hae',
+      toSelf: 'Omaksi',
+      moveTo: 'Siirrä'
     },
     error: {
       downloadFailed: 'Tiedoston lataus epäonnistui'
@@ -1037,6 +1039,7 @@ export const translations = {
     }
   },
   workqueue: {
+    title: 'Työjono',
     tab: {
       OWN: 'Omat',
       COMMON:  'Yhteiset',

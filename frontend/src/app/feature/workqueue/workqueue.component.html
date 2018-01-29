@@ -1,28 +1,27 @@
 <div class="main-content work-queue-controls">
-  <workqueue-filter [owners]="owners" [selectedTab]="tab"></workqueue-filter>
+  <workqueue-filter [owners]="owners"></workqueue-filter>
 
-
-  <div class="work-queue-action-buttons"
+  <div fxLayout='row' class="work-queue-action-buttons"
        *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION', 'ROLE_SUPERVISE']">
-    <button mat-raised-button type="button" color="primary" [disabled]="selectedApplicationIds.length === 0"
-            class="in-front" (click)="moveSelectedToSelf()">OMAKSI
-    </button>
-
-    <button mat-raised-button type="button" color="primary" [disabled]="selectedApplicationIds.length === 0"
-            class="in-front" (click)="openHandlerModal()">SIIRRÄ
-    </button>
+    <div fxFlex="25">
+      <button mat-raised-button type="button" color="primary" [disabled]="noneSelected"
+              class="in-front" (click)="moveSelectedToSelf()">
+        {{'common.button.toSelf' | translation | uppercase}}
+      </button>
+      <button mat-raised-button type="button" color="primary" [disabled]="noneSelected"
+              class="in-front" (click)="openHandlerModal()">
+        {{'common.button.moveTo' | translation | uppercase}}
+      </button>
+    </div>
   </div>
-  <div class="row">
-    <div class="col s12">
+
+  <div fxLayout='row'>
+    <div fxFlex>
       <div class="labels-solid labels-end">
         <mat-tab-group (selectedTabChange)="tabSelected($event)">
           <mat-tab *ngFor="let tab of tabs">
             <ng-template mat-tab-label>{{['workqueue.tab', tab] | translation}}</ng-template>
-            <workqueue-content
-              [applications]="applications"
-              (onSortChange)="sortChanged($event)"
-              (onSelectChange)="selectionChanged($event)">
-            </workqueue-content>
+            <workqueue-content></workqueue-content>
           </mat-tab>
         </mat-tab-group>
       </div>

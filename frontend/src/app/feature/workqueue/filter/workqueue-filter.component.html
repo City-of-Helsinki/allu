@@ -1,13 +1,13 @@
 <div class="search-bar">
-  <h1>TYÖJONO</h1>
+  <h1>{{'workqueue.title' | translation | uppercase }}</h1>
   <form [formGroup]="queryForm">
     <div class="row row-slim">
       <div class="col s2">
         <mat-form-field class="input-full-width">
           <mat-select formControlName="type" [multiple]="true" class="input-full-width"
                       [placeholder]="'applicationSearch.type' | translation" selected="1">
-            <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] |
-              translation}}
+            <mat-option *ngFor="let type of applicationTypes" [value]="type">
+              {{['application.type', type] | translation}}
             </mat-option>
             <mat-option *ngIf="tab==='COMMON'" value="common">{{'workqueue.commonTypes' | translation}}</mat-option>
           </mat-select>
@@ -25,8 +25,8 @@
         <mat-form-field class="input-full-width">
           <mat-select formControlName="status" [multiple]="true" class="input-full-width"
                       [placeholder]="'applicationSearch.status' | translation">
-            <mat-option *ngFor="let status of applicationStatuses" [value]="status">{{['application.status', status] |
-              translation}}
+            <mat-option *ngFor="let status of applicationStatuses" [value]="status">
+              {{['application.status', status] | translation}}
             </mat-option>
             <mat-option *ngIf="tab==='COMMON'" value="common">{{'workqueue.commonStatuses' | translation}}</mat-option>
           </mat-select>
