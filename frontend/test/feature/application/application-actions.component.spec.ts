@@ -19,6 +19,9 @@ import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {ApplicationStatus} from '../../../src/app/model/application/application-status';
 import {MatDialog} from '@angular/material';
+import {User} from '../../../src/app/model/user/user';
+import {UserHub} from '../../../src/app/service/user/user-hub';
+import {UserSearchCriteria} from '../../../src/app/model/user/user-search-criteria';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -32,6 +35,10 @@ class MatDialogMock {
   }
 }
 
+class UserHubMock {
+  searchUsers(criteria: UserSearchCriteria) { return Observable.of([]); }
+}
+
 describe('ApplicationActionsComponent', () => {
   let comp: ApplicationActionsComponent;
   let fixture: ComponentFixture<ApplicationActionsComponent>;
@@ -39,6 +46,7 @@ describe('ApplicationActionsComponent', () => {
   let router: RouterMock;
   let applicationStore: ApplicationStoreMock;
   let dialog: MatDialogMock;
+  let userHub: UserHubMock;
   const currentUserMock = CurrentUserMock.create(true, true);
   const applicationId = 15;
   const form = new FormGroup({});
@@ -59,7 +67,8 @@ describe('ApplicationActionsComponent', () => {
         {provide: Router, useClass: RouterMock},
         {provide: ActivatedRoute},
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
-        {provide: MatDialog, useClass: MatDialogMock}
+        {provide: MatDialog, useClass: MatDialogMock},
+        {provide: UserHub, useClass: UserHubMock}
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
     .compileComponents();
@@ -72,6 +81,7 @@ describe('ApplicationActionsComponent', () => {
     router = TestBed.get(Router) as RouterMock;
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
     dialog = TestBed.get(MatDialog) as MatDialogMock;
+    userHub = TestBed.get(UserHub) as UserHubMock;
 
     applicationStore._application.id  = applicationId;
     comp.form = form;
@@ -125,6 +135,9 @@ describe('ApplicationActionsComponent', () => {
     spyOn(router, 'navigate');
     const location = new Location(12, 12, 12, new Date());
 
+    const preferredOwner = new User(52);
+    spyOn(userHub, 'searchUsers').and.returnValue(Observable.of([preferredOwner]));
+
     const application = applicationStore._application;
     application.id = 1;
     application.attachmentList = [new AttachmentInfo(15, 'type', 'name'), new AttachmentInfo(10, 'type', 'name')];
@@ -137,6 +150,8 @@ describe('ApplicationActionsComponent', () => {
     expect(applicationStore._applicationCopy.attachmentList).toEqual([]);
     expect(applicationStore._applicationCopy.locations.length).toEqual(1);
     expect(applicationStore._applicationCopy.locations[0].startTime).toEqual(location.startTime);
+    expect(applicationStore._applicationCopy.owner).toEqual(preferredOwner);
+    expect(applicationStore._applicationCopy.handler).toBeUndefined();
     expect(router.navigate).toHaveBeenCalledWith(['/applications/edit']);
   });
 

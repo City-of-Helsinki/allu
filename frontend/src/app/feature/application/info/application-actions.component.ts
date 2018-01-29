@@ -11,10 +11,13 @@ import {Some} from '../../../util/option';
 import {NumberUtil} from '../../../util/number.util';
 import {Subscription} from 'rxjs/Subscription';
 import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
-import {ObjectUtil} from '../../../util/object.util';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material';
 import {findTranslation} from '../../../util/translations';
+import {User} from '../../../model/user/user';
+import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
+import {ArrayUtil} from '../../../util/array-util';
+import {UserHub} from '../../../service/user/user-hub';
 
 @Component({
   selector: 'application-actions',
@@ -46,7 +49,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router,
               private applicationStore: ApplicationStore,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private userHub: UserHub) {
   }
 
   ngOnInit(): void {
@@ -71,11 +75,15 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     const application = this.applicationStore.snapshot.application;
     application.id = undefined;
     application.applicationId = undefined;
+    application.handler = undefined;
     application.status = ApplicationStatus[ApplicationStatus.PENDING];
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
-    this.applicationStore.applicationCopyChange(application);
-    this.router.navigate(['/applications/edit']);
+    this.findDefaultRegionalOwner(application).subscribe(owner => {
+      application.owner = owner;
+      this.applicationStore.applicationCopyChange(application);
+      this.router.navigate(['/applications/edit']);
+    });
   }
 
   replace(): void {
@@ -165,5 +173,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private validForDecision(app: Application): boolean {
     return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
+  }
+
+  private findDefaultRegionalOwner(app: Application): Observable<User> {
+    const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
+    return this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred));
   }
 }
