@@ -41,13 +41,16 @@ public class DecisionService {
   private static final FixedLocationJson BAD_LOCATION;
   private static final String ADDRESS_LINE_SEPARATOR = "; ";
   private static final Map<DefaultTextType, String> defaultTextTypeTranslations;
+  private static final Map<ApplicationKind, String> applicationKindTranslations;
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private LocationService locationService;
-  private CustomerService customerService;
-  private ContactService contactService;
-  private ApplicationServiceComposer applicationServiceComposer;
+  private static final String UNKNOWN_ADDRESS = "[Osoite ei tiedossa]";
+
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final LocationService locationService;
+  private final CustomerService customerService;
+  private final ContactService contactService;
+  private final ApplicationServiceComposer applicationServiceComposer;
   private final ZoneId zoneId;
   private final Locale locale;
   private final DateTimeFormatter dateTimeFormatter;
@@ -70,6 +73,7 @@ public class DecisionService {
     tempMap.put(DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, "Geotekninen tarkkailupiste");
     tempMap.put(DefaultTextType.OTHER, "Yleisesti/muut");
     defaultTextTypeTranslations = Collections.unmodifiableMap(tempMap);
+    applicationKindTranslations = Collections.unmodifiableMap(createApplicationKindTranslations());
   }
 
   @Autowired
@@ -90,6 +94,29 @@ public class DecisionService {
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
     timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
+  }
+
+  /*
+   * Set up translations for application kinds (FIXME: get them from MetaService
+   * instead)
+   */
+  private static Map<ApplicationKind, String> createApplicationKindTranslations() {
+    Map<ApplicationKind, String> translations = new HashMap<>();
+    translations.put(ApplicationKind.BRIDGE_BANNER, "Banderollit silloissa");
+    translations.put(ApplicationKind.BENJI, "Benji-hyppylaite");
+    translations.put(ApplicationKind.PROMOTION_OR_SALES, "Esittely- tai myyntitila liikkeen edustalla");
+    translations.put(ApplicationKind.URBAN_FARMING, "Kaupunkiviljelypaikka");
+    translations.put(ApplicationKind.KESKUSKATU_SALES, "Keskuskadun myyntipaikka");
+    translations.put(ApplicationKind.SUMMER_THEATER, "Kesäteatterit");
+    translations.put(ApplicationKind.DOG_TRAINING_FIELD, "Koirakoulutuskentät");
+    translations.put(ApplicationKind.DOG_TRAINING_EVENT, "Koirakoulutustapahtuma");
+    translations.put(ApplicationKind.SMALL_ART_AND_CULTURE, "Pienimuotoinen taide- ja kulttuuritoiminta");
+    translations.put(ApplicationKind.SEASON_SALE, "Sesonkimyynti");
+    translations.put(ApplicationKind.CIRCUS, "Sirkus/tivolivierailu");
+    translations.put(ApplicationKind.ART, "Taideteos");
+    translations.put(ApplicationKind.STORAGE_AREA, "Varastoalue");
+    translations.put(ApplicationKind.OTHER, "Muu");
+    return translations;
   }
 
   /**
@@ -171,7 +198,7 @@ public class DecisionService {
       fillEventSpecifics(decisionJson, application.getExtension());
       break;
     case SHORT_TERM_RENTAL:
-      fillShortTermRentalSpecifics(decisionJson, application.getExtension());
+        fillShortTermRentalSpecifics(decisionJson, application);
       break;
     case CABLE_REPORT:
       fillCableReportSpecifics(decisionJson, application);
@@ -197,8 +224,9 @@ public class DecisionService {
     decisionJson.setSiteAdditionalInfo(additionalInfos);
     decisionJson.setDecisionDate(
         Optional.ofNullable(application.getDecisionTime()).map(dt -> formatDateWithDelta(dt, 0)).orElse("[Päätöspvm]"));
-    decisionJson.setVatPercentage(99);
-    decisionJson.setAdditionalConditions("[Ehtokentän teksti]");
+    decisionJson.setVatPercentage(24); // FIXME: find actual value somehow
+    decisionJson.setAdditionalConditions(
+        Optional.ofNullable(application.getExtension()).map(e -> e.getTerms()).orElse(null));
     decisionJson.setDecisionTimestamp(ZonedDateTime.now().withZoneSameInstant(zoneId).format(timeStampFormatter));
     UserJson decider = application.getDecisionMaker();
     if (decider != null) {
@@ -216,13 +244,57 @@ public class DecisionService {
 
   }
 
-  private void fillShortTermRentalSpecifics(DecisionJson decisionJson, ApplicationExtensionJson extension) {
-    ShortTermRentalJson strj = (ShortTermRentalJson) extension;
+  private void fillShortTermRentalSpecifics(DecisionJson decisionJson, ApplicationJson application) {
+    ShortTermRentalJson strj = (ShortTermRentalJson) application.getExtension();
     if (strj != null) {
-      decisionJson.setEventNature("[Tapahtuman tyyppi]");
-      decisionJson.setEventDescription("[Tapahtuman kuvaus]");
-      decisionJson.setEventUrl("[Tapahtuman kotisivu]");
-      decisionJson.setPriceReason("[Hinnan peruste]");
+      decisionJson
+          .setEventNature("Lyhytaikainen maanvuokraus, " + applicationKindTranslations.get(application.getKind()));
+      decisionJson.setEventDescription(strj.getDescription());
+      decisionJson.setPriceReason(null);
+      decisionJson.setPriceBasisText(shortTermPriceBasis(application.getKind()));
+    }
+    if (ApplicationKind.BRIDGE_BANNER.equals(application.getKind())) {
+      // For bridge banners, site area should be skipped in printout
+      decisionJson.setSiteArea(null);
+    }
+  }
+
+  /*
+   * Return the application-kind specific price basis text for Short term
+   * rentals
+   */
+  private String shortTermPriceBasis(ApplicationKind kind) {
+    switch (kind) {
+      case BENJI:
+        return "320 &euro;/päivä + alv";
+      case BRIDGE_BANNER:
+        return "<ul><li>Ei-kaupalliset toimijat: 150 &euro;/kalenteriviikko + alv</li>"
+            + "<li>Kaupalliset toimijat: 750 &euro;/kalenteriviikko + alv</li></ul>";
+      case CIRCUS:
+        return "200 €/päivä + alv";
+      case DOG_TRAINING_EVENT:
+        return "<ul><li>Kertamaksu yhdistyksille: 50 &euro;/kerta + alv</li>"
+            + "<li>Kertamaksu yrityksille: 100 &euro;/kerta + alv</li></ul>";
+      case DOG_TRAINING_FIELD:
+        return "<ul><li>Vuosivuokra yhdistyksille: 100 &euro;/vuosi</li>"
+            + "<li>Vuosivuokra yrityksille: 200 &euro;/vuosi</li></ul>";
+      case KESKUSKATU_SALES:
+      case SEASON_SALE:
+        return "<ul><li>(1–14 päivää): 50 &euro;/päivä/alkava 10 m&sup2; + alv</li>"
+            + "<li>(15. päivästä alkaen): 25 &euro;/päivä/alkava 10 m&sup2; + alv</li></ul>";
+      case PROMOTION_OR_SALES:
+        return "150 &euro;/kalenterivuosi + alv";
+      case SUMMER_THEATER:
+        return "120 &euro;/kuukausi näytäntöajalta";
+      case URBAN_FARMING:
+        return "2 &euro;/m&sup2;/viljelykausi";
+      case OTHER:
+      case ART:
+      case SMALL_ART_AND_CULTURE:
+      case STORAGE_AREA:
+        return null;
+      default:
+        return "[FIXME: Perustetta ei määritetty]";
     }
   }
 
@@ -349,69 +421,69 @@ public class DecisionService {
     Optional<CustomerWithContactsJson> cwcOpt =
         application.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
     final List<String> contactLines = new ArrayList<>();
-    cwcOpt.ifPresent(cwc -> {
+    cwcOpt.ifPresent(cwc ->
       contactLines.addAll(
           cwc.getContacts().stream()
-          .flatMap(c ->
-              Stream.of(cwc.getCustomer().getName(), String.format("%s, %s", cwc.getCustomer().getEmail(), cwc.getCustomer().getPhone())))
-          .collect(Collectors.toList()));
-    });
+            .flatMap(c -> Stream.of(c.getName(), String.format("%s, %s", c.getEmail(), c.getPhone())))
+            .collect(Collectors.toList())));
     return contactLines;
   }
 
   private String siteAddressLine(ApplicationJson application) {
-    List<Integer> locationIds = null;
-    if (application.getLocations() != null) {
-      locationIds = application.getLocations().stream()
-          .filter(l -> l.getFixedLocationIds() != null)
-          .flatMap(l -> l.getFixedLocationIds().stream())
-          .collect(Collectors.toList());
+    if (application.getLocations() == null || application.getLocations().isEmpty()) {
+      return "";
     }
-
-    StringBuilder sb = new StringBuilder();
-    if (locationIds != null && !locationIds.isEmpty()) {
-      sb.append(fixedLocationAddressLine(locationIds, application.getKind()));
-    }
-    if (application.getLocations() != null && application.getLocations().size() > 0) {
-      if (sb.length() != 0) {
-        sb.append(ADDRESS_LINE_SEPARATOR);
-      }
-      // return comma separated street address list
-      sb.append(application.getLocations().stream()
-          .filter(l -> l.getPostalAddress() != null)
-          .map(l -> l.getPostalAddress().getStreetAddress())
-          .filter(s -> s != null)
-          .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR)));
-    }
-
-    return sb.toString();
+    final Map<Integer, FixedLocationJson> fixedLocationsById = fetchFixedLocations(application);
+    return application.getLocations().stream().map(l -> locationAddress(l, fixedLocationsById))
+        .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR));
   }
 
-  private String fixedLocationAddressLine(List<Integer> locationIds, ApplicationKind applicationKind) {
-    // Get all defined fixed outdoor event locations from locationService:
-    List<FixedLocationJson> allFixedLocations = locationService.getFixedLocationList().stream()
-        .filter(fl -> fl.getApplicationKind() == applicationKind).collect(Collectors.toList());
-    // Create lookup map id -> fixed location:
-    Map<Integer, FixedLocationJson> flMap = allFixedLocations.stream()
-        .collect(Collectors.toMap(FixedLocationJson::getId, Function.identity()));
-    // Find all fixed locations that match locationIds and group them by area
-    // name:
-    Map<String, List<FixedLocationJson>> grouped = locationIds.stream().map(id -> flMap.get(id))
+  /*
+   * If the application references any fixed locations, fetches all fixed
+   * locations that match the application's kind and creates a lookup map.
+   * Otherwise, just returns an empty map.
+   */
+  Map<Integer, FixedLocationJson> fetchFixedLocations(ApplicationJson applicationJson) {
+    if (applicationJson.getLocations().stream().map(l -> l.getFixedLocationIds())
+        .allMatch(flIds -> flIds == null || flIds.isEmpty())) {
+      return Collections.emptyMap();
+    } else {
+      final ApplicationKind applicationKind = applicationJson.getKind();
+      return locationService.getFixedLocationList().stream()
+          .filter(fl -> fl.getApplicationKind() == applicationKind)
+          .collect(Collectors.toMap(FixedLocationJson::getId, Function.identity()));
+    }
+  }
+
+  /*
+   * Generate a location address text. If the location refers to fixed
+   * locations, create the string "[Fixed location name], [Segments]". Otherwise
+   * use location's postal address.
+   */
+  private String locationAddress(LocationJson locationJson, Map<Integer, FixedLocationJson> fixedLocationsById) {
+    if (locationJson.getFixedLocationIds() != null && !locationJson.getFixedLocationIds().isEmpty()) {
+      return fixedLocationAddresses(locationJson.getFixedLocationIds(), fixedLocationsById);
+    } else {
+      return Optional.ofNullable(locationJson.getPostalAddress()).map(pa -> postalAddress(pa)).orElse(UNKNOWN_ADDRESS);
+    }
+  }
+
+  /*
+   * Given a list of fixed locations, return an address line
+   */
+  private String fixedLocationAddresses(List<Integer> fixedLocationIds,
+      Map<Integer, FixedLocationJson> fixedLocationsById) {
+    Map<String, List<FixedLocationJson>> grouped = fixedLocationIds.stream()
+        .map(id -> fixedLocationsById.get(id))
         .filter(fl -> fl != null)
         .collect(Collectors.groupingBy(FixedLocationJson::getArea));
     if (grouped.isEmpty()) {
       return BAD_LOCATION.getArea();
     }
-    // Now generate the line for each area:
-    StringBuilder addressLine = new StringBuilder();
-    for (Map.Entry<String, List<FixedLocationJson>> entry : grouped.entrySet()) {
-      if (addressLine.length() != 0) {
-        addressLine.append(ADDRESS_LINE_SEPARATOR);
-      }
-      addressLine.append(addressLineFor(entry.getValue()));
-    }
-    return addressLine.toString();
+    return grouped.entrySet().stream().map(es -> addressLineFor(es.getValue()))
+        .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR));
   }
+
 
   // Generate a line like "Rautatientori, lohkot A, C, D".
   // all locations are from same area, there is always at least one location.

@@ -47,6 +47,7 @@ public class DecisionJson {
 
   private String totalRent;
   private int vatPercentage;
+  private String priceBasisText;
   private String priceReason;
   private boolean hasEkokompassi;
   private boolean separateBill;
@@ -296,6 +297,18 @@ public class DecisionJson {
 
   public void setVatPercentage(int vatPercentage) {
     this.vatPercentage = vatPercentage;
+  }
+
+  /**
+   * Get the price basis text. NOTE: this text will be output raw, no HTML
+   * escaping is done.
+   */
+  public String getPriceBasisText() {
+    return priceBasisText;
+  }
+
+  public void setPriceBasisText(String priceBasisText) {
+    this.priceBasisText = priceBasisText;
   }
 
   public String getPriceReason() {

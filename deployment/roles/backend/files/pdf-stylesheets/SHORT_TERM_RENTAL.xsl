@@ -11,8 +11,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <xsl:attribute name="href">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
-    </xsl:element>  
-    <link rel="stylesheet" href="style.css" />
+    </xsl:element>
+    <link rel="stylesheet" href="new-style.css" />
     <xsl:if test="data/draft = 'true'">
       <link rel="stylesheet" href="watermark.css" />
     </xsl:if>
@@ -20,57 +20,55 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <body>
     <div class="body">
 
-      <div>
+      <div class="unboxed">
         <section class="half-left">
-          <h1>Päätöksen hakija</h1>
-          <!-- <p>[Hakijan nimi], [Y-tunnus]<br/>[Osoite, postinumero, toimipaikka]<br/>
-            [Sähköpostiosoite, puhelin]</p> -->
-          <p>
-            <xsl:for-each select="data/customerAddressLines">
-              <xsl:value-of select="." /><br/>
-            </xsl:for-each>
-          </p>
+          <h2>Päätöksen hakija</h2>
+          <!-- <p>[Hakijan nimi], [Y-tunnus]</p>
+                 <p>[Osoite, postinumero, toimipaikka]</p>
+            <p>  [Sähköpostiosoite, puhelin]</p> -->
+          <xsl:for-each select="data/customerAddressLines">
+            <p><xsl:value-of select="." /></p>
+          </xsl:for-each>
         </section>
 
         <section class="half-right">
-          <h1>Yhteyshenkilö</h1>
-          <!-- <p>[Yhteyshenkilön nimi]<br/>[Sähköpostiosoite, puhelin]</p> -->
-          <p>
-            <xsl:for-each select="data/customerContactLines">
-              <xsl:value-of select="."/><br/>
-            </xsl:for-each>
-          </p>
+          <h2>Yhteyshenkilö</h2>
+          <!-- <p>[Yhteyshenkilön nimi]</p>
+               <p>[Sähköpostiosoite, puhelin]</p> -->
+           <xsl:for-each select="data/customerContactLines">
+             <p><xsl:value-of select="."/></p>
+           </xsl:for-each>
         </section>
       </div>
 
-      <hr/>
-
-      <div>
+      <div class="unboxed">
 
         <section class="half-left">
-          <h1>Kohde</h1>
+          <h2>Kohde</h2>
           <p>
-            <!-- Käytetään vuokrattavaa paikkaa ja lohkoa, jos joku pudotusvalikossa määritetty paikka;
+            <!-- Käytetään vuokrattavaa paikkaa ja lohkoa, jos joku
+                 pudotusvalikossa määritetty paikka;
                  käytetään Osoitetta, jos ei pudotusvalikossa määritetty paikka -->
             <!-- [Vuokrattava paikka, Lohko], [Osoite] -->
             <xsl:value-of select="data/siteAddressLine"/>
           </p>
           <xsl:if test="data/siteAdditionalInfo != ''">
-            <p>
+            <p class="space-above">
               <!-- Käytetään, jos Lisätietoja paikasta täytetty -->
               <!-- [Lisätietoja paikasta] -->
               <xsl:value-of select="data/siteAdditionalInfo"/>
             </p>
           </xsl:if>
+          <!-- Ei tarvita, jos banderolli: -->
           <xsl:if test="data/siteArea != ''">
-            <p>
+            <p class="space-above">
                Pinta-ala: <xsl:value-of select="data/siteArea" /> m<sup>2</sup><!-- [Alueen pinta-ala] -->
             </p>
           </xsl:if>
         </section>
 
         <section class="half-right">
-          <h1>Vuokra-aika</h1>
+          <h2>Vuokra-aika</h2>
 
           <p class="text-flow">
             <!-- [Varauksen alkupäivämäärä] -->
@@ -78,125 +76,126 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <xsl:if test="data/numReservationDays > 1">
               <!-- Käytetään, jos varauspäiviä enemmän kuin 1. -->
               <!-- -[Varauksen loppupäivämäärä] -->
-              &#8204; &#x2013; <xsl:value-of select="data/reservationEndDate"/>
+              &#8211; <xsl:value-of select="data/reservationEndDate"/>
             </xsl:if>
           </p>
 
         </section>
       </div>
 
-      <hr/>
-
-      <div>
+      <div class="unboxed">
         <section class="half-left">
-          <h1>Vuokrauksen tarkoitus</h1>
+          <h2>Vuokrauksen tarkoitus</h2>
           <p>
-            <!-- [Tapahtuman tyyppi]  -->
+            <!-- [Hakemuksen tyyppi ja laji]  -->
             <xsl:value-of select="data/eventNature"/>
           </p>
-          <p>
-            <!-- [Tapahtuman nimi]  -->
+          <p class="space-above">
+            <!-- [Vuokrauksen nimi]  -->
             <xsl:value-of select="data/eventName"/>
           </p>
-          <p>
-            <!--  [Tapahtuman kuvaus]  -->
+          <p class="space-above">
+            <!--  [Vuokrauksen kuvaus]  -->
             <xsl:value-of select="data/eventDescription"/>
-            <xsl:if test="data/eventUrl != ''">,
-              <xsl:element name="a">
-                <xsl:attribute name="href">
-                  <xsl:value-of select="data/eventUrl"/>
-                </xsl:attribute>
-                <xsl:value-of select="data/eventUrl"/>
-              </xsl:element>
-            </xsl:if>
           </p>
         </section>
 
         <section class="half-right">
-          <h1>Vuokra</h1>
+          <h2>Vuokra</h2>
           <p>
             <!-- [Hinta] -->
             <xsl:value-of select="data/totalRent"/>
             <!-- alv 24 % tai alv 0 %, riippuen asiakkaasta -->
-             + alv <xsl:value-of select="data/vatPercentage"/> %
+             + ALV <xsl:value-of select="data/vatPercentage"/> %
+          </p>
+          <!-- Hinnan peruste tyyppikohtaisesti. Erillinen lista -->
+          <!-- Confluencessa: -->
+          <p class="space-above">
+            <!-- [Hinnan peruste, raakaa HTML:ää] -->
+            <xsl:value-of select="data/priceBasisText" disable-output-escaping="yes"/>
           </p>
           <xsl:if test="data/priceReason != ''">
-            <p>
-              <!-- Käytetään, jos tapahtuma korvauksetta ja sille valittu peruste. Perusteen pidempi muoto erillisessä taulukossa. -->
-              Hinnan peruste: <xsl:value-of select="data/priceReason"/>
+            <!-- Käytetään, jos hinta syötetty erikseen ja perustelu -->
+            <!-- kirjoitettu: -->
+            <p class="space-above"> <!-- [Peruste poikkeavaan hintaan] -->
+              <xsl:value-of select="data/priceReason"/>
             </p>
           </xsl:if>
           <xsl:if test="data/priceReason = ''">
-            <p>
-              <!-- Ei käytetä, jos hinta syötetty erikseen ja erilliset perustelut kirjoitettu. -->
-              Vuokrauspäätöksen hinta perustuu yleisten töiden lautakunnan päätökseen 11.11.2014 § 431.
-            </p>
+              <!-- Ei käytetä, jos hinta syötetty erikseen ja
+                   erilliset perustelut kirjoitettu: -->
+            <p class="space-above">Vuokrauspäätöksen hinta perustuu
+            yleisten töiden lautakunnan päätökseen 11.11.2014 § 431.</p>
           </xsl:if>
           <xsl:if test="data/separateBill = 'true'">
-            <p>
-              <!-- Käytetään, jos lasku enemmän kuin 0 €. -->
-              Lasku lähetetään erikseen.
-            </p>
+            <!-- Käytetään, jos lasku enemmän kuin 0 €: -->
+            <p class="space-above">Lasku lähetetään erikseen.</p>
           </xsl:if>
         </section>
       </div>
-      
-      <hr/>
 
-      <div>
-        <section>
-          <h1>Ehdot</h1>
-          <p>
-            Liitteenä olevia ehtoja on noudatettava.
-          </p>
-          <xsl:if test="data/additionalConditions != ''">
-            <!-- Käytetään, jos Alluun on kirjoitettu vapaaseen tekstikenttään lisäehtoja. -->
-            <p class="text-flow">
-              Lisäksi on noudatettava seuraavia ehtoja:
-            </p>
-            <p>
-              <!-- [Ehtokentän teksti]  -->
-              <xsl:value-of select="data/additionalConditions"/>
-            </p>
-          </xsl:if>
-        </section>
+      <section class="unboxed">
+        <h2>Ehdot</h2>
+        <p>Liitteenä olevia ehtoja on noudatettava.</p>
 
-        <section>
-          <h1>Päätös</h1>
-          <p>
-            Hakija on hakenut oikeutta alueen käyttöön, toimittanut hakemuksen liitteineen rakennusvirastolle ja ilmoittanut sitoutuvansa alueen käyttöä koskevaan ohjeistukseen sekä sopimusehtoihin.
+        <xsl:if test="data/additionalConditions != ''">
+          <!-- Käytetään, jos Alluun on kirjoitettu vapaaseen
+               tekstikenttään lisäehtoja. -->
+          <p class="space-above">
+            Lisäksi on noudatettava seuraavia ehtoja:
           </p>
           <p>
-            Rakennustoimen johtosäännön 4 § 8 kohdan mukaan yleisten töiden lautakunnan tehtävänä on hyväksyä perusteet, joiden mukaan viranhaltija päättää vuokralle antamisesta ja muusta käyttöön luovuttamisesta. Yleisten töiden lautakunta on päätöksissään Ytlk 30.9.2014 § 364 ja Ytlk 11.11.2014 § 431 päättänyt nämä edellä mainitut perusteet.
+            <!-- [Ehtokentän teksti]  -->
+            <xsl:value-of select="data/additionalConditions"/>
           </p>
-          <p>
-            Rakennusviraston palveluosaston alueidenkäyttöpäällikkö päätti myöntää luvan hakijalle haetun alueen käyttämiseen yllä olevin ehdoin.
-          </p>
-          <p>
-            Tämä päätös on sähköisesti allekirjoitettu.
-          </p>
-          <p>
-            <!-- [aikaleima], [päättäjän työnimike], [päättäjän nimi] -->
-            <xsl:value-of select="data/decisionTimestamp"/>,
-            <xsl:value-of select="data/deciderTitle"/>,
-            <xsl:value-of select="data/deciderName"/>
-          </p>
-        </section>
-      </div>
-    
-      <div>
+        </xsl:if>
+      </section>
+
+      <section class="unboxed">
+        <h2>Päätös</h2>
+        <p>
+          Hakija on hakenut oikeutta alueen käyttöön, toimittanut
+          hakemuksen liitteineen asukas- ja yrityspalveluihin ja
+          ilmoittanut sitoutuvansa alueen käyttöä koskevaan
+          ohjeistukseen sekä sopimusehtoihin.
+        </p>
+
+        <p class="space-above">
+          XXXX MUUTTUU VIELÄ!!! Helsingin kaupungin
+          hallintosäännön 16 luvun 8 §:n 2 momentin 3 kohdan mukaan
+          asiakkuusjohtaja päättää tai hyväksyy perusteet ja rajat, joiden
+          mukaan viranhaltija päättää, maanomistajan suostumuksen
+          antamisesta kokoontumislain mukaisen yleisötilaisuuden
+          järjestämiselle sekä yleisen alueen muulle tilapäiselle
+          käytölle. Asiakkuusjohtaja on päätöksellään 1.6.2017 § 17
+          siirtänyt yleisötilaisuuksiin liittyvän toimivallan alueidenkäyttö
+          ja -valvontayksikön tiimipäällikölle.MUUTTUU VIELÄ!!!!XXXX
+        </p>
+
+        <p class="space-above">Alueidenkäyttö ja -valvontayksikön
+          tiimipäällikkö päätti myöntää luvan hakijalle haetun alueen
+          käyttämiseen yllä olevin ehdoin</p>
+
+        <p class="space-above">Tämä päätös on sähköisesti
+          allekirjoitettu.</p>
+
+        <p class="space-above">
+          <!-- [aikaleima], [päättäjän työnimike], [päättäjän nimi] -->
+          <xsl:value-of select="data/decisionTimestamp"/>,
+          <xsl:value-of select="data/deciderTitle"/>,
+          <xsl:value-of select="data/deciderName"/>
+        </p>
+      </section>
+
+      <div class="unboxed">
         <section class="half-left">
-          <h1>Lisätiedot</h1>
-          <p class="text-flow">
-            Rakennusviraston palveluosaston alueidenkäyttö
-          </p>
-          <p>
-            hkr.ulkoilma@hel.fi, 09 310 39869
-          </p>
+          <h2>Lisätiedot</h2>
+          <p>Alueidenkäyttö ja -valvontayksikkö</p>
+          <p>ulkoilma@hel.fi</p>
         </section>
 
         <section class="half-right">
-          <h1>Käsittelijä</h1>
+          <h2>Käsittelijä</h2>
           <p>
             <!--  [titteli, tarkastajan nimi] -->
             <xsl:value-of select="data/handlerTitle"/>,
@@ -205,27 +204,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </div>
 
-      <hr/>
-
-      <div>
-        <section class="half-left">
-          <h1>Liitteet</h1>
-          <p>
-            <!--  [Lista liitteiden nimistä] -->
-            <xsl:for-each select="data/attachmentNames">
-              <xsl:value-of select="." /><br/>
-            </xsl:for-each>
-          </p>
-        </section>
-
-        <section class="half-right">
-          <h1>Muutoksenhaku</h1>
-          <p>
-            <!-- [Muutoksenhakuohjeet] -->
-            <xsl:value-of select="data/appealInstructions"/>
-          </p>
-        </section>
-      </div>
+      <section class="unboxed">
+        <h2>Liitteet</h2>
+        <!--  [Lista liitteiden nimistä] -->
+        <xsl:for-each select="data/attachmentNames">
+          <p><xsl:value-of select="." /></p>
+        </xsl:for-each>
+      </section>
 
     </div>
   </body>
