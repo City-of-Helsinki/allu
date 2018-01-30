@@ -8,7 +8,7 @@
         <mat-form-field class="input-full-width">
           <mat-select [placeholder]="'decision.selectHandler' | translation" class="input-full-width"
                       formControlName="owner" required>
-            <mat-option *ngFor="let owner of ownerss | async" [value]="owner.id">
+            <mat-option *ngFor="let owner of owners | async" [value]="owner.id">
               {{owner.realName}}
             </mat-option>
           </mat-select>
