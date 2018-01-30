@@ -79,6 +79,8 @@ public class ContactService {
 
 
   public List<ContactJson> createContacts(List<ContactJson> contactJsons) {
+    // Created contacts active by default
+    contactJsons.forEach(c -> c.setActive(true));
     ContactChange contactChange = new ContactChange(userService.getCurrentUser().getId(),
         contactJsons.stream().map(cJson -> customerMapper.createContactModel(cJson)).collect(Collectors.toList()));
     Contact[] contacts = restTemplate.postForObject(
