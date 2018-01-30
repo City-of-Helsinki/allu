@@ -14,11 +14,12 @@
     color: mat-color($primary, 500);
   }
 
-  a {
-    color: mat-contrast($primary, 500);
-  }
-
   nav {
+
+    a {
+      color: mat-contrast($primary, 500);
+    }
+
     background: mat-color($primary, 500);
 
     .active,
