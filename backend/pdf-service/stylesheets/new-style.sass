@@ -77,22 +77,27 @@ hr
       table
         width: 100%
         border-style: none
+        td
+          padding: 0px
         td.c1
           width: 35%
           font-size: $p-small-font-size
         td.c2
-          display: inline
           font-size: $p-font-size
 
 .body
 
+  .unboxed
+    margin-bottom: $p-font-size
   .boxed
     border: solid black thin
-    padding: 0 10px
+    padding: 0 $p-font-size
     margin: 12pt 0
   h1, h2, p, ul
     margin-bottom: 0px
     margin-top: 0px
+  p.space-above
+    margin-top: $p-font-size
   li
     margin-top: 2pt
   hr

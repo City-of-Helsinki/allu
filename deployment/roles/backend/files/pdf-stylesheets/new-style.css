@@ -61,20 +61,25 @@ hr {
       .header .half-right .id table {
         width: 100%;
         border-style: none; }
+        .header .half-right .id table td {
+          padding: 0px; }
         .header .half-right .id table td.c1 {
           width: 35%;
           font-size: 8pt; }
         .header .half-right .id table td.c2 {
-          display: inline;
           font-size: 10pt; }
 
+.body .unboxed {
+  margin-bottom: 10pt; }
 .body .boxed {
   border: solid black thin;
-  padding: 0 10px;
+  padding: 0 10pt;
   margin: 12pt 0; }
 .body h1, .body h2, .body p, .body ul {
   margin-bottom: 0px;
   margin-top: 0px; }
+.body p.space-above {
+  margin-top: 10pt; }
 .body li {
   margin-top: 2pt; }
 .body hr {

@@ -11,8 +11,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <xsl:attribute name="href">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
-    </xsl:element>  
-    <link rel="stylesheet" href="style.css" />
+    </xsl:element> 
+    <link rel="stylesheet" href="new-style.css" />
     <script type="text/javascript">
       <![CDATA[
       var pdfInfo = {};
@@ -27,27 +27,34 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       ]]>
     </script>
   </head>
-  <body style='height:30mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
+  <body style='height:34mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
     <div class="header">
-      <div class="half-left">
-        <img src="HKR_Fin_RGB_png_50734.png" />
+      <div class="logo">
+        <img src="helsinki-logo.png" />
       </div>
-      <div class="half-right inline">
+      <div class="department">
+        <p>Kaupunkiympäristö</p>
+        <p>Alueidenkäyttö ja -valvonta</p>
+        <p>ulkoilma@hel.fi</p>
+      </div>
+      <div class="half-right">
         <h1>Vuokrauspäätös</h1>
         <p class="page">
           <span id="pdfkit_page_current" />/<span id="pdfkit_page_count" />
         </p>
         <div class="id">
-          <span>Päätöspäivämäärä:</span>
-          <p style="float: right">
-            <!--  [päätöspvm] -->
-            <xsl:value-of select="data/decisionDate" />
-          </p>
-          <span>Tunnus:</span>
-          <p style="float: right">
-            <!-- [tunnus]  -->
-            <xsl:value-of select="data/decisionId" />
-          </p>
+          <table>
+            <tr>
+              <td class="c1">Päätöspäivämäärä:</td>
+              <!-- [päätöspvm] -->
+              <td class="c2"><xsl:value-of select="data/decisionDate" /></td>
+            </tr>
+            <tr>
+              <td class="c1">Tunnus:</td>
+              <!-- [tunnus]  -->
+              <td class="c2"><xsl:value-of select="data/decisionId" /></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
