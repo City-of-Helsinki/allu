@@ -20,6 +20,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.validator.NotFalse;
+import fi.hel.allu.servicecore.domain.validator.ValidApplication;
 
 /**
  * in Finnish: Hakemus
@@ -29,6 +30,7 @@ import fi.hel.allu.common.validator.NotFalse;
     "kind, kindsMatchType, Application kinds must be valid for the type",
     "extension, specifiersMatchKind, Application specifiers must be suitable for application kind"
  })
+@ValidApplication
 public class ApplicationJson {
 
   /**

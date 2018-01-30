@@ -10,7 +10,6 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
 
 public class EventJson extends ApplicationExtensionJson {
-  @NotNull(message = "{event.nature}")
   private EventNature nature;
   @NotBlank(message = "{event.description}")
   private String description;

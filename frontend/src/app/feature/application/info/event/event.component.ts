@@ -38,7 +38,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   protected initForm() {
     this.applicationForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      nature: ['', Validators.required],
+      nature: [''],
       description: ['', Validators.required],
       url: [''],
       eventTimes: this.fb.group({
@@ -69,6 +69,13 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
 
   protected onApplicationChange(application: Application): void {
     super.onApplicationChange(application);
+
+    const natureElement = this.applicationForm.get('nature')
+    if (application.kind === 'OUTDOOREVENT') {
+      natureElement.setValidators([Validators.required])
+    } else {
+      natureElement.clearValidators();
+    }
 
     const event = this.event(application);
     this.applicationForm.patchValue(EventForm.fromEvent(application, event));

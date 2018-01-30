@@ -5,7 +5,6 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
 
 import org.junit.runner.RunWith;
@@ -94,6 +93,34 @@ public class ApplicationJsonSpec {
 
       });
 
+      describe("Outdoor event without nature", () -> {
+        beforeEach(() -> {
+          applicationJson.setType(ApplicationType.EVENT);
+          applicationJson.setName("Test application");
+          EventJson extension = new EventJson();
+          extension.setDescription("Outdoor happening");
+          ZonedDateTime start = ZonedDateTime.now();
+          extension.setEventStartTime(start);
+          extension.setEventEndTime(start.plusDays(2));
+          applicationJson.setExtension(extension);
+          applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
+          applicationJson.setDecisionPublicityType(PublicityType.CONFIDENTIAL);
+          applicationJson.setInvoicingDate(ZonedDateTime.now());
+          CustomerWithContactsJson customer = new CustomerWithContactsJson();
+          applicationJson.setCustomersWithContacts(Collections.singletonList(customer));
+          LocationJson locationJson = new LocationJson();
+          locationJson.setStartTime(ZonedDateTime.now().minusDays(1));
+          locationJson.setEndTime(ZonedDateTime.now());
+          applicationJson.setLocations(Collections.singletonList(locationJson));
+          applicationJson.setNotBillable(false);
+        });
+        context("With added errors", () -> {
+          it("shouldn't validate", () -> {
+            Set<ConstraintViolation<ApplicationJson>> constraintViolations = validator.validate(applicationJson);
+            assertEquals(1, constraintViolations.size());
+          });
+        });
+      });
     });
   }
 }
