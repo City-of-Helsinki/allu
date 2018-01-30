@@ -506,8 +506,17 @@ public class DecisionService {
     return line;
   }
 
-  private String postalAddress(PostalAddressJson a) {
-    return String.format("%s, %s %s", a.getStreetAddress(), a.getPostalCode(), a.getCity());
+  /*
+   * Return address like "Mannerheimintie 3, 00100 Helsinki", skip null/empty
+   * values
+   */
+  String postalAddress(PostalAddressJson a) {
+    final String postalCodeAndCity = Arrays.asList(a.getPostalCode(), a.getCity()).stream()
+        .filter(s -> s != null && !s.isEmpty())
+        .collect(Collectors.joining(" "));
+    return Arrays.asList(a.getStreetAddress(), postalCodeAndCity).stream()
+        .filter(s -> s != null && !s.isEmpty())
+        .collect(Collectors.joining(", "));
   }
 
   private String eventNature(EventNature nature) {

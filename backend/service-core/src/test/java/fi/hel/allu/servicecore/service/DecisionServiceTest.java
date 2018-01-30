@@ -181,6 +181,20 @@ public class DecisionServiceTest {
     Assert.assertArrayEquals(mockData, decision);
   }
 
+  @Test
+  public void testPostalAddress() {
+    PostalAddressJson postalAddressJson = new PostalAddressJson("Aapakatu 12", "123456", "Aapala");
+    Assert.assertEquals("Aapakatu 12, 123456 Aapala", decisionService.postalAddress(postalAddressJson));
+    postalAddressJson = new PostalAddressJson("", null, "Apaa");
+    Assert.assertEquals("Apaa", decisionService.postalAddress(postalAddressJson));
+    postalAddressJson = new PostalAddressJson("Syrjäpolku 3", null, null);
+    Assert.assertEquals("Syrjäpolku 3", decisionService.postalAddress(postalAddressJson));
+    postalAddressJson = new PostalAddressJson("Yypöntie 1", null, "Ypäjä");
+    Assert.assertEquals("Yypöntie 1, Ypäjä", decisionService.postalAddress(postalAddressJson));
+    postalAddressJson = new PostalAddressJson(null, null, null);
+    Assert.assertEquals("", decisionService.postalAddress(postalAddressJson));
+  }
+
   private List<CustomerWithContactsJson> createDummyCustomersWithContactsJson() {
     CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
     customerWithContactsJson.setCustomer(new CustomerJson());
@@ -192,4 +206,5 @@ public class DecisionServiceTest {
     customerWithContactsJson.setRoleType(CustomerRoleType.APPLICANT);
     return Collections.singletonList(customerWithContactsJson);
   }
+
 }
