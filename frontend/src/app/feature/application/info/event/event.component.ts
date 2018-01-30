@@ -70,9 +70,9 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   protected onApplicationChange(application: Application): void {
     super.onApplicationChange(application);
 
-    const natureElement = this.applicationForm.get('nature')
+    const natureElement = this.applicationForm.get('nature');
     if (application.kind === 'OUTDOOREVENT') {
-      natureElement.setValidators([Validators.required])
+      natureElement.setValidators([Validators.required]);
     } else {
       natureElement.clearValidators();
     }
