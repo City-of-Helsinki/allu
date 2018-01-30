@@ -778,6 +778,7 @@ export const translations = {
     description: 'Liitteen kuvaus',
     decisionAttachment: 'Päätöksen liite',
     unknownHandler: 'Tuntematon lisääjä',
+    noArea: 'Ei aluetta',
     type: {
       title: 'Liitteen tyyppi',
       ADDED_BY_CUSTOMER: 'Asiakkaan lisäämä liite',

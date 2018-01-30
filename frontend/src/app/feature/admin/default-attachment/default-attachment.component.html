@@ -26,6 +26,7 @@
           <div class="col m6">
             <mat-form-field class="input-full-width">
               <mat-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
+                <mat-option value="" selected>{{'attachment.noArea' | translation}}</mat-option>
                 <mat-option *ngFor="let area of areas | async" [value]="area.id">
                   {{area.name}}
                 </mat-option>
