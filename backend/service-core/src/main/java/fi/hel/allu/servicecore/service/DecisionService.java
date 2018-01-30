@@ -438,27 +438,13 @@ public class DecisionService {
    * Return address like "Mannerheimintie 3, 00100 Helsinki", skip null/empty
    * values
    */
-  private String postalAddress(PostalAddressJson a) {
-    Optional<String> street = Optional.ofNullable(a.getStreetAddress()).filter(s -> !s.isEmpty());
-    Optional<String> postal = Optional.ofNullable(a.getPostalCode()).filter(s -> !s.isEmpty());
-    Optional<String> city = Optional.ofNullable(a.getCity()).filter(s -> !s.isEmpty());
-    StringBuilder sb = new StringBuilder();
-    if (street.isPresent()) {
-      sb.append(street.get());
-      if (postal.isPresent() || city.isPresent()) {
-        sb.append(", ");
-      }
-    }
-    if (postal.isPresent()) {
-      sb.append(postal.get());
-      if (city.isPresent()) {
-        sb.append(" ");
-      }
-    }
-    if (city.isPresent()) {
-      sb.append(city.get());
-    }
-    return sb.toString();
+  String postalAddress(PostalAddressJson a) {
+    final String postalCodeAndCity = Arrays.asList(a.getPostalCode(), a.getCity()).stream()
+        .filter(s -> s != null && !s.isEmpty())
+        .collect(Collectors.joining(" "));
+    return Arrays.asList(a.getStreetAddress(), postalCodeAndCity).stream()
+        .filter(s -> s != null && !s.isEmpty())
+        .collect(Collectors.joining(", "));
   }
 
   private String eventNature(EventNature nature) {
