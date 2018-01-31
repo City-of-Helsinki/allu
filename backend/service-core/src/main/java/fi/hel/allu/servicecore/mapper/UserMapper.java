@@ -1,5 +1,7 @@
 package fi.hel.allu.servicecore.mapper;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.domain.UserJson;
 
@@ -24,7 +26,7 @@ public class UserMapper {
   public static User mapToModelUser(UserJson userJson) {
     return new User(
         userJson.getId(),
-        userJson.getUserName(),
+        StringUtils.lowerCase(userJson.getUserName()),
         userJson.getRealName(),
         userJson.getEmailAddress(),
         userJson.getTitle(),

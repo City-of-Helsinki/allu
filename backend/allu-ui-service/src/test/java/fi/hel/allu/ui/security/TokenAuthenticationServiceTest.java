@@ -49,7 +49,7 @@ public class TokenAuthenticationServiceTest {
   private final String redirectUri = "https://redirect.uri";
   private final String code = "123";
   private final String codeBody = "client_id=" + clientId + "&redirect_uri=" + redirectUri + "&code=" + code + "&grant_type=authorization_code";
-  private final String USER_NAME = "USERNAME";
+  private final String USER_NAME = "username";
 
   private final String oauth2TokenUrl = "https://token.url";
   private TokenAuthenticationService.TokenWrapper tokenWrapper;

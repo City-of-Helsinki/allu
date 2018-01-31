@@ -61,13 +61,13 @@ public class UserDaoTest {
   public void TestFindMatching() {
     // Set-up: add two users with partially overlapping roles and application
     // types
-    User user1 = createDummyUser("User1");
+    User user1 = createDummyUser("user1");
     user1.setAllowedApplicationTypes(
         Arrays.asList(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT));
     user1.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_INVOICING));
     user1.setCityDistrictIds(Arrays.asList(1, 2));
     User insertedUser1 = userDao.insert(user1);
-    User user2 = createDummyUser("User2");
+    User user2 = createDummyUser("user2");
     user2.setAllowedApplicationTypes(Arrays.asList(ApplicationType.CABLE_REPORT, ApplicationType.EVENT));
     user2.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_DECISION));
     user2.setCityDistrictIds(Arrays.asList(1, 3));

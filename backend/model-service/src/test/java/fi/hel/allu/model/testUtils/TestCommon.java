@@ -10,6 +10,7 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.LocationService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -223,7 +224,7 @@ public class TestCommon {
     user.setEmailAddress("email");
     user.setRealName("realname");
     user.setTitle("title");
-    user.setUserName(userName);
+    user.setUserName(StringUtils.lowerCase(userName));
     return userDao.insert(user);
   }
 

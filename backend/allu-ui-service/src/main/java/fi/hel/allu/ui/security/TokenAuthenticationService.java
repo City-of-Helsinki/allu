@@ -10,6 +10,8 @@ import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,13 +129,14 @@ public class TokenAuthenticationService extends AuthenticationServiceInterface {
     AdfsJwtTokenFields tokenFields = parseToken(adfsToken);
 
     UserJson userJson = null;
+    String username = StringUtils.lowerCase(tokenFields.winAccountName);
     try {
-      userJson = userService.findUserByUserName(tokenFields.winAccountName);
+      userJson = userService.findUserByUserName(username);
     } catch (NoSuchEntityException e) {
       if (tokenFields.hasAlluGroup) {
         userJson = new UserJson(
             null,
-            tokenFields.winAccountName,
+            username,
             tokenFields.uniqueName,
             tokenFields.email,
             "", // using empty value as title, because title is required. However, the correct title is unknown at this point
