@@ -45,11 +45,21 @@ public class ApplicationArchiverService {
 
   /**
    * Change status of finished applications (end date before current date)
-   * with decision-status to finished.
+   * with decision-status to finished or if application is ready for archive
+   * (no open invoices, supervision tasks or deposits) directly to
+   * archived-status.
    */
   public void updateStatusForFinishedApplications() {
     List<Integer> readyApplications = fetchFinishedApplications();
-    readyApplications.forEach(id -> applicationServiceComposer.changeStatus(id, StatusType.FINISHED));
+    readyApplications.forEach(id -> moveToFinishedOrArchived(id));
+  }
+
+  private void moveToFinishedOrArchived(Integer applicationId) {
+    if (readyForArchive(applicationServiceComposer.findApplicationById(applicationId))) {
+      archiveApplication(applicationId);
+    } else {
+      applicationServiceComposer.changeStatus(applicationId, StatusType.FINISHED);
+    }
   }
 
   private List<Integer> fetchFinishedApplications() {
