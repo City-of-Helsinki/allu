@@ -169,8 +169,9 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   private defaultInvoicingDate(application: Application): Date {
+    const currentDate = new Date();
     const result = new Date(application.startTime);
-    result.setDate(result.getDate() + 15);
-    return result;
+    result.setDate(result.getDate() - 15);
+    return result > currentDate ? result : currentDate;
   }
 }
