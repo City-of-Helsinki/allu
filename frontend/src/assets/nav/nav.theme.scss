@@ -30,6 +30,9 @@
 
   .nav-controls {
     margin-left: auto;
+    a {
+      color: mat-contrast($primary, 500);
+    }
   }
 }
 
