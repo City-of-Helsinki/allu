@@ -1,0 +1,16 @@
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='EVENT'),'terms','Ehdot','STRING');
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='SHORT_TERM_RENTAL'),'terms','Ehdot','STRING');
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='CABLE_REPORT'),'terms','Ehdot','STRING');
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='EXCAVATION_ANNOUNCEMENT'),'terms','Ehdot','STRING');
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='NOTE'),'terms','Ehdot','STRING');
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='TEMPORARY_TRAFFIC_ARRANGEMENTS'),'terms','Ehdot','STRING');
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='PLACEMENT_CONTRACT'),'terms','Ehdot','STRING');
+insert into attribute_meta (structure_meta_id,name,ui_name,data_type) values (
+  (select id from structure_meta where type_name='ApplicationExtension'),'terms','Ehdot','STRING');
