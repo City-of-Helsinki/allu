@@ -1,9 +1,13 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.common.types.DefaultTextType;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
+import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
@@ -120,6 +124,45 @@ public class DecisionServiceTest {
         Matchers.eq(String.class), Mockito.anyInt());
   }
 
+  @Test
+  public void testChargeInfoGeneration() throws IOException {
+    setupRestMocks();
+    final List<ChargeBasisEntry> ENTRIES = Arrays.asList(
+        new ChargeBasisEntry("TAG1", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.DAY, 14.0, "Two weeks",
+            null, 10000, 140000),
+        new ChargeBasisEntry("TAG2", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.YEAR, 1.0, "One year",
+            null, 999900, 999900),
+        new ChargeBasisEntry(null, "TAG1", true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.PERCENT, -10.0,
+            "10% discount", null, 0, 0),
+        new ChargeBasisEntry("TAG3", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.SQUARE_METER, 1.0,
+            "One sqm", null, 100, 100));
+    Mockito.when(chargeBasisService.getChargeBasis(Mockito.anyInt())).thenReturn(ENTRIES);
+
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
+    applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
+    applicationJson.setId(123);
+    // Call the method under test
+    decisionService.getDecisionPreview(applicationJson);
+
+    // - PDF creation was executed with the right stylesheet name :
+    final ArgumentCaptor<DecisionJson> jsonCaptor = ArgumentCaptor.forClass(DecisionJson.class);
+    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), jsonCaptor.capture(),
+        Matchers.eq(byte[].class), Matchers.eq("SHORT_TERM_RENTAL"));
+    // - Sent JSON object contains chargeInfoEntries:
+    DecisionJson decisionJson = jsonCaptor.getValue();
+    List<ChargeInfoTexts> items = decisionJson.getChargeInfoEntries();
+
+    // Some sanity checks about ordering:
+    Assert.assertEquals(ENTRIES.get(0).getText(), items.get(0).getText());
+    Assert.assertEquals(ENTRIES.get(2).getText(), items.get(1).getText());
+    Assert.assertEquals(ENTRIES.get(1).getText(), items.get(2).getText());
+    Assert.assertEquals(ENTRIES.get(3).getText(), items.get(3).getText());
+
+    Assert.assertEquals(0, items.get(0).getLevel());
+    Assert.assertEquals(1, items.get(1).getLevel());
+
+  }
 
   @Test
   public void testGenerateCableReport() throws IOException {
