@@ -75,6 +75,8 @@ public class DecisionJson {
 
   private String cableReportOrderer;
 
+  private List<ChargeInfoTexts> chargeInfoEntries;
+
   public boolean isDraft() {
     return isDraft;
   }
@@ -447,6 +449,14 @@ public class DecisionJson {
 
   public void setCableReportOrderer(String cableReportOrderer) {
     this.cableReportOrderer = cableReportOrderer;
+  }
+
+  public List<ChargeInfoTexts> getChargeInfoEntries() {
+    return chargeInfoEntries;
+  }
+
+  public void setChargeInfoEntries(List<ChargeInfoTexts> chargeInfoEntries) {
+    this.chargeInfoEntries = chargeInfoEntries;
   }
 
 }

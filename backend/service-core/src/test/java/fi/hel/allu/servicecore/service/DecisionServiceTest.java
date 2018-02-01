@@ -39,6 +39,8 @@ public class DecisionServiceTest {
   private CustomerService customerService;
   @Mock
   private ContactService contactService;
+  @Mock
+  private ChargeBasisService chargeBasisService;
 
   private DecisionService decisionService;
 
@@ -50,7 +52,7 @@ public class DecisionServiceTest {
     Mockito.when(applicationProperties.getModelServiceUrl(Mockito.anyString())).thenReturn("ModelServiceUrl");
 
     decisionService = new DecisionService(applicationProperties, restTemplate, locationService,
-        applicationServiceComposer, customerService, contactService);
+        applicationServiceComposer, customerService, contactService, chargeBasisService);
   }
 
   @Test(expected = IllegalArgumentException.class)
