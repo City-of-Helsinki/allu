@@ -141,7 +141,7 @@ public class DecisionService {
     DecisionJson decisionJson = new DecisionJson();
     fillJson(decisionJson, application);
     byte[] pdfData = restTemplate.postForObject(
-        applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE), decisionJson, byte[].class,
+        applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,
         styleSheetName(application));
     // Store the generated PDF to model:
     MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
@@ -156,7 +156,7 @@ public class DecisionService {
     HttpEntity<?> requestEntity = new HttpEntity<>(requestParts, requestHeader);
     // ...then execute the request
     ResponseEntity<String> response = restTemplate.exchange(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_STORE), HttpMethod.POST,
+        applicationProperties.getStoreDecisionUrl(), HttpMethod.POST,
         requestEntity, String.class, applicationId);
     if (!response.getStatusCode().is2xxSuccessful()) {
       throw new IOException(response.getBody());
@@ -172,7 +172,7 @@ public class DecisionService {
    */
   public byte[] getDecision(int applicationId) {
     return restTemplate.getForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_GET), byte[].class,
+        applicationProperties.getDecisionUrl(), byte[].class,
         applicationId);
   }
 
@@ -186,7 +186,7 @@ public class DecisionService {
     DecisionJson decisionJson = new DecisionJson();
     fillJson(decisionJson, application);
     decisionJson.setDraft(true);
-    return restTemplate.postForObject(applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE),
+    return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application));
   }
 
