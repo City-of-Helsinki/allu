@@ -114,25 +114,52 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <!-- [Hinnan peruste, raakaa HTML:ää] -->
             <xsl:value-of select="data/priceBasisText" disable-output-escaping="yes"/>
           </p>
-          <xsl:if test="data/priceReason != ''">
-            <!-- Käytetään, jos hinta syötetty erikseen ja perustelu -->
-            <!-- kirjoitettu: -->
-            <p class="space-above"> <!-- [Peruste poikkeavaan hintaan] -->
-              <xsl:value-of select="data/priceReason"/>
-            </p>
-          </xsl:if>
-          <xsl:if test="data/priceReason = ''">
-              <!-- Ei käytetä, jos hinta syötetty erikseen ja
-                   erilliset perustelut kirjoitettu: -->
-            <p class="space-above">Vuokrauspäätöksen hinta perustuu
+          <p class="space-above">Vuokrauspäätöksen hinta perustuu
             yleisten töiden lautakunnan päätökseen 11.11.2014 § 431.</p>
-          </xsl:if>
           <xsl:if test="data/separateBill = 'true'">
             <!-- Käytetään, jos lasku enemmän kuin 0 €: -->
             <p class="space-above">Lasku lähetetään erikseen.</p>
           </xsl:if>
         </section>
       </div>
+
+      <xsl-if test="data/chargeInfoEntries != ''">
+        <section class="unboxed">
+        </section>
+        <h2>Vuokran erittely</h2>
+
+        <div class="charge-info">
+          <xsl:for-each select="data/chargeInfoEntries">
+            <div class="row">
+              <span class="c1">
+                <xsl:if test="./level > 0">
+                  <span class="up-arrow" style="padding-left: {level}em"></span>
+                </xsl:if>
+                <xsl:value-of select="text"/>
+                <xsl:for-each select="explanation">
+                  <div class="explanation"><xsl:value-of select="."/></div>
+                </xsl:for-each>
+              </span>
+              <span class="c2">
+                <xsl:value-of select="quantity"/>
+              </span>
+              <span class="c3">
+                <xsl:value-of select="unitPrice"/>
+              </span>
+              <span class="c4">
+                <xsl:value-of select="netPrice"/>
+              </span>
+            </div>
+          </xsl:for-each>
+
+          <div class="sum-row">
+          <span class="c1">YHTEENSÄ</span>
+          <span class="c2"></span>
+          <span class="c3"></span>
+          <span class="c4"><xsl:value-of select="data/totalRent"/></span>
+          </div>
+        </div>
+      </xsl-if>
 
       <section class="unboxed">
         <h2>Ehdot</h2>
