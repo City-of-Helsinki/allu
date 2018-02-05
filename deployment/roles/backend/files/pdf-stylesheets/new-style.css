@@ -111,6 +111,38 @@ hr {
   display: inline-block;
   vertical-align: top;
   width: 25%; }
+.body .charge-info {
+  margin-top: 10pt;
+  font-size: 10pt;
+  width: 95%;
+  font-weight: bold;
+  display: table; }
+  .body .charge-info .row {
+    display: table-row; }
+  .body .charge-info .c1, .body .charge-info .c2, .body .charge-info .c3, .body .charge-info .c4 {
+    display: table-cell; }
+  .body .charge-info .c1 {
+    width: 50%; }
+    .body .charge-info .c1 .explanation {
+      float: none;
+      font-weight: normal; }
+    .body .charge-info .c1 .up-arrow {
+      display: block;
+      float: left;
+      border-bottom: 1pt dashed;
+      border-left: 1pt dashed;
+      height: 5pt;
+      padding-left: 1em;
+      margin: 0 0.5em; }
+  .body .charge-info .c2, .body .charge-info .c3 {
+    width: 15%; }
+  .body .charge-info .c4 {
+    text-align: right;
+    width: 20%; }
+  .body .charge-info .sum-row {
+    display: table-row; }
+    .body .charge-info .sum-row .c1, .body .charge-info .sum-row .c2, .body .charge-info .sum-row .c3, .body .charge-info .sum-row .c4 {
+      border-top: 1.5pt solid; }
 
 .footer {
   padding-bottom: 30px;

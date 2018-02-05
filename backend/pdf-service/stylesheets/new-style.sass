@@ -130,6 +130,38 @@ hr
     vertical-align: top
     width: 25%
 
+  .charge-info
+    margin-top: $p-font-size
+    font-size: $p-font-size
+    width: 95%
+    font-weight: bold
+    display: table
+    .row
+      display: table-row
+    .c1, .c2, .c3, .c4
+      display: table-cell
+    .c1
+      width: 50%
+      .explanation
+        float: none
+        font-weight: normal
+      .up-arrow
+        display: block
+        float: left
+        border-bottom: 1pt dashed
+        border-left: 1pt dashed
+        height: $p-font-size/2
+        padding-left: 1em
+        margin: 0 0.5em
+    .c2, .c3
+      width: 15%
+    .c4
+      text-align: right
+      width: 20%
+    .sum-row
+      display: table-row
+      .c1, .c2, .c3, .c4
+        border-top: 1.5pt solid
 .footer
   padding-bottom: 30px
   width: 100%

@@ -2,14 +2,18 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
+import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +26,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -51,10 +56,12 @@ public class DecisionService {
   private final CustomerService customerService;
   private final ContactService contactService;
   private final ApplicationServiceComposer applicationServiceComposer;
+  private final ChargeBasisService chargeBasisService;
   private final ZoneId zoneId;
   private final Locale locale;
   private final DateTimeFormatter dateTimeFormatter;
   private final DateTimeFormatter timeStampFormatter;
+  private final DecimalFormat decimalFormatter;
 
   static {
     BAD_LOCATION = new FixedLocationJson();
@@ -83,17 +90,19 @@ public class DecisionService {
       LocationService locationService,
       ApplicationServiceComposer applicationServiceComposer,
       CustomerService customerService,
-      ContactService contactService) {
+      ContactService contactService, ChargeBasisService chargeBasisService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
     this.applicationServiceComposer = applicationServiceComposer;
     this.customerService = customerService;
     this.contactService = contactService;
+    this.chargeBasisService = chargeBasisService;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
     timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
+    decimalFormatter = new DecimalFormat("0.##");
   }
 
   /*
@@ -132,7 +141,7 @@ public class DecisionService {
     DecisionJson decisionJson = new DecisionJson();
     fillJson(decisionJson, application);
     byte[] pdfData = restTemplate.postForObject(
-        applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE), decisionJson, byte[].class,
+        applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,
         styleSheetName(application));
     // Store the generated PDF to model:
     MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
@@ -147,7 +156,7 @@ public class DecisionService {
     HttpEntity<?> requestEntity = new HttpEntity<>(requestParts, requestHeader);
     // ...then execute the request
     ResponseEntity<String> response = restTemplate.exchange(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_STORE), HttpMethod.POST,
+        applicationProperties.getStoreDecisionUrl(), HttpMethod.POST,
         requestEntity, String.class, applicationId);
     if (!response.getStatusCode().is2xxSuccessful()) {
       throw new IOException(response.getBody());
@@ -163,7 +172,7 @@ public class DecisionService {
    */
   public byte[] getDecision(int applicationId) {
     return restTemplate.getForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_GET), byte[].class,
+        applicationProperties.getDecisionUrl(), byte[].class,
         applicationId);
   }
 
@@ -177,7 +186,7 @@ public class DecisionService {
     DecisionJson decisionJson = new DecisionJson();
     fillJson(decisionJson, application);
     decisionJson.setDraft(true);
-    return restTemplate.postForObject(applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE),
+    return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application));
   }
 
@@ -241,7 +250,113 @@ public class DecisionService {
       decisionJson.setTotalRent(decimalFormat.format(priceInCents / 100.0));
       decisionJson.setSeparateBill(priceInCents > 0);
     }
+    fillCargeBasisInfo(decisionJson, application);
+  }
 
+  /*
+   * Read application's charge basis entries, order them, and generate matching
+   * charge info texts.
+   */
+  private void fillCargeBasisInfo(DecisionJson decisionJson, ApplicationJson application) {
+    if (application.getId() == null) {
+      return;
+    }
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(application.getId());
+    Map<String, List<ChargeBasisEntry>> entriesByReferred = chargeBasisEntries.stream()
+        .collect(Collectors.groupingBy(cbe -> StringUtils.defaultString(cbe.getReferredTag())));
+    List<Pair<Integer, ChargeBasisEntry>> orderedEntries = listReferringEntries(entriesByReferred, "", 0);
+    decisionJson.setChargeInfoEntries(orderedEntries.stream().map(p -> new ChargeInfoTexts(p.getLeft(),
+        p.getRight().getText(), p.getRight().getExplanation(),
+        chargeQuantity(p.getRight()), chargeUnitPrice(p.getRight()), chargeNetPrice(p.getRight())))
+        .collect(Collectors.toList()));
+  }
+
+  /*
+   * What to write in the "quantity" column in charge itemization? (skipped for
+   * percent entries)
+   */
+  private String chargeQuantity(ChargeBasisEntry e) {
+    if (ChargeBasisUnit.PERCENT.equals(e.getUnit())) {
+      return null;
+    } else {
+      return decimalFormatter.format(e.getQuantity()) + unitString(e.getUnit());
+    }
+  }
+
+  /*
+   * How to write the charge unit in itemization
+   */
+  private String unitString(ChargeBasisUnit unit) {
+    switch (unit) {
+      case DAY:
+        return " pv";
+      case HOUR:
+        return " t";
+      case MONTH:
+        return " kk";
+      case PERCENT:
+        return " %";
+      case PIECE:
+        return " kpl";
+      case SQUARE_METER:
+        return " m²";
+      case WEEK:
+        return " vko";
+      case YEAR:
+        return " v";
+      default:
+        return "";
+    }
+  }
+
+  /*
+   * How to write the unit price in itemization (skipped for percentage entries)
+   */
+  private String chargeUnitPrice(ChargeBasisEntry e) {
+    if (ChargeBasisUnit.PERCENT.equals(e.getUnit())) {
+      return null;
+    } else {
+      return "à " + decimalFormatter.format(e.getUnitPrice() * 0.01) + " €";
+    }
+  }
+
+  /*
+   * How to write the total price in itemization
+   */
+  private String chargeNetPrice(ChargeBasisEntry e) {
+    if (ChargeBasisUnit.PERCENT.equals(e.getUnit())) {
+      return e.getQuantity() + " %";
+    } else {
+      return decimalFormatter.format(e.getNetPrice() * 0.01) + " €";
+    }
+  }
+
+  /*
+   * Recursively go trough the multimap of [key, referring entries] to generate
+   * the list of entries in referral order:
+   *
+   * EntryA
+   * +--EntryB(refers A)
+   *     +--- EntryD(refers B)
+   * +--EntryC(refers A)
+   * EntryE
+   */
+  private List<Pair<Integer, ChargeBasisEntry>> listReferringEntries(
+      Map<String, List<ChargeBasisEntry>> entriesByReferred, String key,
+      int level) {
+    // Avoid infinite recursion if data has errors:
+    final int RECURSION_LIMIT = 99;
+    if (level > RECURSION_LIMIT) {
+      return Collections.emptyList();
+    }
+    List<Pair<Integer, ChargeBasisEntry>> result = new ArrayList<>();
+    entriesByReferred.getOrDefault(key, Collections.emptyList()).forEach(e -> {
+      result.add(Pair.of(level, e));
+      if (!StringUtils.isEmpty(e.getTag())) {
+        result.addAll(listReferringEntries(entriesByReferred, e.getTag(), level + 1));
+      }
+    });
+    return result;
   }
 
   private void fillShortTermRentalSpecifics(DecisionJson decisionJson, ApplicationJson application) {

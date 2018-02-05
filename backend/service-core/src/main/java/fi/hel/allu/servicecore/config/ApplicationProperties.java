@@ -89,23 +89,6 @@ public class ApplicationProperties {
    */
   public static final String PATH_MODEL_ATTACHMENT_GET_SIZE = "/attachments/{attachmentId}/size";
 
-
-  /**
-   * Model-service path to store decision
-   */
-  public static final String PATH_MODEL_DECISION_STORE = "/applications/{id}/decision";
-
-  /**
-   * Model-service path to retrieve decision
-   */
-  public static final String PATH_MODEL_DECISION_GET = "/applications/{id}/decision";
-
-  /**
-   * PDF-service path to generate pdf
-   */
-  public static final String PATH_PDF_GENERATE = "/generate?stylesheet={stylesheet}";
-
-
   /**
    * Model-service path to create a new application
    */
@@ -141,8 +124,29 @@ public class ApplicationProperties {
    *          resource path that is added to url after host and port values
    * @return absolute url to pdf-service resource
    */
-  public String getPdfServiceUrl(String path) {
+  private String getPdfServiceUrl(String path) {
     return PATH_PREFIX + pdfServiceHost + ":" + pdfServicePort + path;
+  }
+
+  /**
+   * @return url to generate PDF
+   */
+  public String getGeneratePdfUrl() {
+    return getPdfServiceUrl("/generate?stylesheet={stylesheet}");
+  }
+
+  /**
+   * @return url to store decision
+   */
+  public String getStoreDecisionUrl() {
+    return getModelServiceUrl("/applications/{id}/decision");
+  }
+
+  /**
+   * @return url to retrieve decision
+   */
+  public String getDecisionUrl() {
+    return getModelServiceUrl("/applications/{id}/decision");
   }
 
   /**

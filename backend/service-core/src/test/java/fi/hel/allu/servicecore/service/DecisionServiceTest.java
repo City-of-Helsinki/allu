@@ -1,13 +1,18 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.common.types.DefaultTextType;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
+import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +32,12 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class DecisionServiceTest {
 
+  private static final String STORE_DECISION_URL = "StoreDecisionUrl";
+  private static final String DECISION_URL = "DecisionUrl";
+  private static final String GENERATE_PDF_URL = "GeneratePdfUrl";
+  private static final byte[] MOCK_PDF_DATA = StringUtils.repeat("MockPdfData", 100).getBytes();
+  private static final byte[] MOCK_DECISION_DATA = StringUtils.repeat("MockDecision", 100).getBytes();
+
   @Mock
   private RestTemplate restTemplate;
   @Mock
@@ -39,6 +50,8 @@ public class DecisionServiceTest {
   private CustomerService customerService;
   @Mock
   private ContactService contactService;
+  @Mock
+  private ChargeBasisService chargeBasisService;
 
   private DecisionService decisionService;
 
@@ -46,11 +59,12 @@ public class DecisionServiceTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    Mockito.when(applicationProperties.getPdfServiceUrl(Mockito.anyString())).thenReturn("PdfServiceUrl");
-    Mockito.when(applicationProperties.getModelServiceUrl(Mockito.anyString())).thenReturn("ModelServiceUrl");
+    Mockito.when(applicationProperties.getGeneratePdfUrl()).thenReturn(GENERATE_PDF_URL);
+    Mockito.when(applicationProperties.getStoreDecisionUrl()).thenReturn(STORE_DECISION_URL);
+    Mockito.when(applicationProperties.getDecisionUrl()).thenReturn(DECISION_URL);
 
     decisionService = new DecisionService(applicationProperties, restTemplate, locationService,
-        applicationServiceComposer, customerService, contactService);
+        applicationServiceComposer, customerService, contactService, chargeBasisService);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -61,15 +75,19 @@ public class DecisionServiceTest {
     decisionService.generateDecision(123, applicationJson);
   }
 
+  private void setupRestMocks() {
+    // Setup mocks
+    Mockito.when(restTemplate.postForObject(Mockito.eq(GENERATE_PDF_URL), Mockito.anyObject(), Mockito.eq(byte[].class),
+        Mockito.anyString())).thenReturn(MOCK_PDF_DATA);
+    Mockito.when(restTemplate.exchange(Mockito.eq(STORE_DECISION_URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
+        Mockito.eq(String.class), Mockito.anyInt())).thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
+    Mockito.when(restTemplate.getForObject(Mockito.eq(DECISION_URL), Mockito.eq(byte[].class), Mockito.anyInt()))
+        .thenReturn(MOCK_DECISION_DATA);
+  }
+
   @Test
   public void testGenerateShortTermRental() throws IOException {
-    // Setup mocks
-    byte[] mockData = new byte[123];
-    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.anyObject(), Matchers.eq(byte[].class),
-        Mockito.anyString())).thenReturn(mockData);
-    ResponseEntity<String> mockResponse = new ResponseEntity<>(HttpStatus.CREATED);
-    Mockito.when(restTemplate.exchange(Mockito.anyString(), Matchers.eq(HttpMethod.POST), Mockito.any(),
-        Matchers.eq(String.class), Mockito.anyInt())).thenReturn(mockResponse);
+    setupRestMocks();
 
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
@@ -79,23 +97,17 @@ public class DecisionServiceTest {
 
     // Verify that some important REST calls were made:
     // - PDF creation was executed with the right stylesheet name :
-    Mockito.verify(restTemplate).postForObject(Matchers.eq("PdfServiceUrl"), Mockito.anyObject(),
+    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), Mockito.anyObject(),
         Matchers.eq(byte[].class),
         Matchers.eq("SHORT_TERM_RENTAL"));
     // - Generated PDF was stored to model:
-    Mockito.verify(restTemplate).exchange(Matchers.eq("ModelServiceUrl"), Matchers.eq(HttpMethod.POST), Mockito.any(),
+    Mockito.verify(restTemplate).exchange(Matchers.eq(STORE_DECISION_URL), Matchers.eq(HttpMethod.POST), Mockito.any(),
         Matchers.eq(String.class), Mockito.anyInt());
   }
 
   @Test
   public void testGenerateEvent() throws IOException {
-    // Setup mocks
-    byte[] mockData = new byte[123];
-    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.anyObject(), Matchers.eq(byte[].class),
-        Mockito.anyString())).thenReturn(mockData);
-    ResponseEntity<String> mockResponse = new ResponseEntity<>(HttpStatus.CREATED);
-    Mockito.when(restTemplate.exchange(Mockito.anyString(), Matchers.eq(HttpMethod.POST), Mockito.any(),
-        Matchers.eq(String.class), Mockito.anyInt())).thenReturn(mockResponse);
+    setupRestMocks();
 
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
@@ -105,24 +117,58 @@ public class DecisionServiceTest {
 
     // Verify that some important REST calls were made:
     // - PDF creation was executed with the right stylesheet name:
-    Mockito.verify(restTemplate).postForObject(Matchers.eq("PdfServiceUrl"), Mockito.anyObject(),
+    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), Mockito.anyObject(),
         Matchers.eq(byte[].class), Matchers.eq("EVENT"));
     // - Generated PDF was stored to model:
-    Mockito.verify(restTemplate).exchange(Matchers.eq("ModelServiceUrl"), Matchers.eq(HttpMethod.POST), Mockito.any(),
+    Mockito.verify(restTemplate).exchange(Matchers.eq(STORE_DECISION_URL), Matchers.eq(HttpMethod.POST), Mockito.any(),
         Matchers.eq(String.class), Mockito.anyInt());
   }
 
+  @Test
+  public void testChargeInfoGeneration() throws IOException {
+    setupRestMocks();
+    final List<ChargeBasisEntry> ENTRIES = Arrays.asList(
+        new ChargeBasisEntry("TAG1", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.DAY, 14.0, "Two weeks",
+            null, 10000, 140000),
+        new ChargeBasisEntry("TAG2", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.YEAR, 1.0, "One year",
+            null, 999900, 999900),
+        new ChargeBasisEntry(null, "TAG1", true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.PERCENT, -10.0,
+            "10% discount", null, 0, 0),
+        new ChargeBasisEntry("TAG3", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.SQUARE_METER, 1.0,
+            "One sqm", null, 100, 100));
+    Mockito.when(chargeBasisService.getChargeBasis(Mockito.anyInt())).thenReturn(ENTRIES);
+
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
+    applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
+    applicationJson.setId(123);
+    // Call the method under test
+    decisionService.getDecisionPreview(applicationJson);
+
+    // - PDF creation was executed with the right stylesheet name :
+    final ArgumentCaptor<DecisionJson> jsonCaptor = ArgumentCaptor.forClass(DecisionJson.class);
+    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), jsonCaptor.capture(),
+        Matchers.eq(byte[].class), Matchers.eq("SHORT_TERM_RENTAL"));
+    // - Sent JSON object contains chargeInfoEntries:
+    DecisionJson decisionJson = jsonCaptor.getValue();
+    List<ChargeInfoTexts> items = decisionJson.getChargeInfoEntries();
+
+    // Some sanity checks about ordering:
+    Assert.assertEquals(ENTRIES.get(0).getText(), items.get(0).getText());
+    Assert.assertEquals(ENTRIES.get(2).getText(), items.get(1).getText());
+    Assert.assertEquals(ENTRIES.get(1).getText(), items.get(2).getText());
+    Assert.assertEquals(ENTRIES.get(3).getText(), items.get(3).getText());
+
+    Assert.assertEquals(0, items.get(0).getLevel());
+    Assert.assertEquals(1, items.get(1).getLevel());
+
+  }
 
   @Test
   public void testGenerateCableReport() throws IOException {
     final int MAP_EXCTRACT_COUNT = 93;
-    // Setup mocks
-    byte[] mockData = new byte[123];
-    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.anyObject(), Matchers.eq(byte[].class),
-        Mockito.anyString())).thenReturn(mockData);
-    ResponseEntity<String> mockResponse = new ResponseEntity<>(HttpStatus.CREATED);
-    Mockito.when(restTemplate.exchange(Mockito.anyString(), Matchers.eq(HttpMethod.POST), Mockito.any(),
-        Matchers.eq(String.class), Mockito.anyInt())).thenReturn(mockResponse);
+
+    setupRestMocks();
 
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
@@ -141,7 +187,7 @@ public class DecisionServiceTest {
     // Verify that some important REST calls were made:
     // - PDF creation was executed with the right stylesheet name :
     final ArgumentCaptor<DecisionJson> jsonCaptor = ArgumentCaptor.forClass(DecisionJson.class);
-    Mockito.verify(restTemplate).postForObject(Matchers.eq("PdfServiceUrl"), jsonCaptor.capture(),
+    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), jsonCaptor.capture(),
         Matchers.eq(byte[].class),
         Matchers.eq("CABLE_REPORT"));
     // - Sent JSON object contains field cableInfoEntries
@@ -156,7 +202,7 @@ public class DecisionServiceTest {
     CableReportJson cableReportJsonOut = (CableReportJson) msgCaptor.getValue().getExtension();
     Assert.assertNotNull(cableReportJsonOut.getValidityTime());
     // - Generated PDF was stored to model:
-    Mockito.verify(restTemplate).exchange(Matchers.eq("ModelServiceUrl"), Matchers.eq(HttpMethod.POST), Mockito.any(),
+    Mockito.verify(restTemplate).exchange(Matchers.eq(STORE_DECISION_URL), Matchers.eq(HttpMethod.POST), Mockito.any(),
         Matchers.eq(String.class), Mockito.anyInt());
   }
 
@@ -169,16 +215,11 @@ public class DecisionServiceTest {
 
   @Test
   public void testGetDecision() {
-    byte[] mockData = new byte[123];
-    for (int i = 0; i < mockData.length; ++i) {
-      mockData[i] = (byte) i;
-    }
-    Mockito.when(restTemplate.getForObject(Matchers.eq("ModelServiceUrl"), Matchers.eq(byte[].class), Mockito.anyInt()))
-        .thenReturn(mockData);
+    setupRestMocks();
 
     byte[] decision = decisionService.getDecision(911);
 
-    Assert.assertArrayEquals(mockData, decision);
+    Assert.assertArrayEquals(MOCK_DECISION_DATA, decision);
   }
 
   @Test
