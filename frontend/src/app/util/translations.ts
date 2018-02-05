@@ -814,11 +814,21 @@ export const translations = {
       PROPOSE_APPROVAL: 'Ehdotettu hyväksyttäväksi',
       PROPOSE_REJECT: 'Ehdotettu hylättäväksi'
     },
+    addComment: 'LISÄÄ KOMMENTTI',
+    newComment: 'Uusi kommentti',
+    commentType: 'Kommentin tyyppi',
+    comments: 'Kommentit',
     updated: 'Päivitetty',
     error: {
       fetch: 'Kommenttien hakeminen epäonnistui',
       save: 'Kommentin tallentaminen epäonnistui',
       remove: 'Kommentin poistaminen epäonnistui'
+    },
+    confirmDiscard: {
+      title: 'Hylätäänkö muutokset',
+      description: 'Sinulla on keskeneräisiä muutoksia. Hylätäänkö muutokset?',
+      confirmText: 'Hylkää',
+      cancelText: 'Palaa muokkaamaan'
     }
   },
   supervision: {

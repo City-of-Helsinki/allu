@@ -19,7 +19,7 @@ export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
   { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard] },
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard] },
-  { path: 'comments', component: CommentsComponent, canActivate: [AuthGuard] },
+  { path: 'comments', component: CommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
   { path: 'decision-preview', component: DecisionPreviewComponent, canActivate: [AuthGuard] },
   { path: 'supervision', component: SupervisionComponent, canActivate: [AuthGuard] },

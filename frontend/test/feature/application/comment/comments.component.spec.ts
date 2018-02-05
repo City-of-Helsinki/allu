@@ -1,14 +1,14 @@
 import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/core';
+import {FormArray, FormGroup, FormBuilder, FormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
-import {FormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
 import {CommentsComponent} from '../../../../src/app/feature/application/comment/comments.component';
+import {CommentForm} from '../../../../src/app/feature/application/comment/comment-form';
 import {ApplicationStore} from '../../../../src/app/service/application/application-store';
 import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
 import {Comment} from '../../../../src/app/model/application/comment/comment';
-import {Subject} from 'rxjs/Subject';
 import {ErrorInfo} from '../../../../src/app/service/ui-state/error-info';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
 import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
@@ -35,7 +35,7 @@ const COMMENT_TWO = new Comment(
   template: ''
 })
 class MockCommentComponent {
-  @Input() comment = new Comment();
+  @Input() form: FormGroup;
   @Output() onRemove = new EventEmitter<Comment>();
   @Output() onSave = new EventEmitter<Comment>();
 }
@@ -55,6 +55,7 @@ describe('CommentsComponent', () => {
         MockCommentComponent
       ],
       providers: [
+        FormBuilder,
         { provide: ApplicationStore, useClass: ApplicationStoreMock }
       ]
     })
@@ -69,7 +70,7 @@ describe('CommentsComponent', () => {
     de = fixture.debugElement;
 
     comp.ngOnInit();
-    comp.comments = [COMMENT_ONE, COMMENT_TWO];
+    applicationStore.comments$.next([COMMENT_ONE, COMMENT_TWO]);
     fixture.detectChanges();
   });
 
