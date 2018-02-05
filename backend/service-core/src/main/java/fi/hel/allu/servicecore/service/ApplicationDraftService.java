@@ -40,8 +40,9 @@ public class ApplicationDraftService {
   }
 
   public ApplicationJson convertToApplication(int id, ApplicationJson applicationJson) {
-    applicationJson.setStatus(StatusType.PENDING);
-    return applicationServiceComposer.updateApplication(id, applicationJson);
+    applicationServiceComposer.updateApplication(id, applicationJson);
+    return applicationServiceComposer.changeStatus(id, StatusType.PENDING);
+
   }
 
 }
