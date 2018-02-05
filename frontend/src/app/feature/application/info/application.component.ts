@@ -71,7 +71,8 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     this.readonly = UrlUtil.urlPathContains(this.route, 'summary');
     this.progressStep = stepFrom(ApplicationStatus[application.status], this.readonly);
 
-    this.sidebarItems = Some(application.typeEnum).map(type => this.createSidebar(type, this.readonly)).orElse([]);
+    const existingApplication = NumberUtil.isDefined(application.id);
+    this.sidebarItems = Some(application.typeEnum).map(type => this.createSidebar(type, existingApplication)).orElse([]);
   }
 
   private verifyTypeExists(type: ApplicationType) {
@@ -81,13 +82,13 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createSidebar(applicationType: ApplicationType, summary: boolean): Array<SidebarItem> {
+  private createSidebar(applicationType: ApplicationType, existing: boolean): Array<SidebarItem> {
       const sidebar: Array<SidebarItem> = [
-        { type: 'BASIC_INFO' },
-        { type: 'ATTACHMENTS', count: this.attachmentCount }
+        { type: 'BASIC_INFO' }
       ];
 
-      if (summary) {
+      if (existing) {
+        this.sidebarItem(applicationType, {type: 'ATTACHMENTS', count: this.attachmentCount }).do(item => sidebar.push(item));
         this.sidebarItem(applicationType, {type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
         this.sidebarItem(applicationType, {type: 'HISTORY'}).do(item => sidebar.push(item));
         this.sidebarItem(applicationType, {type: 'DECISION'}).do(item => sidebar.push(item));
@@ -98,11 +99,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private get attachmentCount(): Observable<number> {
-    return Observable.combineLatest(
-      this.applicationStore.attachments,
-      this.applicationStore.pendingAttachments,
-      (saved, pending) => saved.length + pending.length
-    );
+    return this.applicationStore.attachments.map(attachments => attachments.length);
   }
 
   private get commentCount(): Observable<number> {

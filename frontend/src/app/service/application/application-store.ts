@@ -25,7 +25,6 @@ export interface ApplicationState {
   application?: Application;
   applicationCopy?: Application;
   tags?: Array<ApplicationTag>;
-  pendingAttachments?: Array<AttachmentInfo>;
   attachments?: Array<AttachmentInfo>;
   comments?: Array<Comment>;
   tab?: SidebarItemType;
@@ -37,7 +36,6 @@ export const initialState: ApplicationState = {
   application: new Application(),
   applicationCopy: undefined,
   tags: [],
-  pendingAttachments: [],
   attachments: [],
   comments: [],
   tab: 'BASIC_INFO',
@@ -145,42 +143,20 @@ export class ApplicationStore {
     return this.store.map(state => state.attachments).distinctUntilChanged();
   }
 
-  get pendingAttachments(): Observable<Array<AttachmentInfo>> {
-    return this.store.map(state => state.pendingAttachments).distinctUntilChanged();
-  }
-
-  get allAttachments(): Observable<Array<AttachmentInfo>> {
-    return Observable.combineLatest(
-      this.attachments,
-      this.pendingAttachments,
-      (saved, pending) => saved.concat(pending)
-    );
-  }
-
-  saveAttachment(attachment: AttachmentInfo, index?: number): Observable<AttachmentInfo> {
-    if (this.isNew) {
-      this.storePending(attachment, index);
-      return Observable.of(attachment);
+  saveAttachment(attachment: AttachmentInfo): Observable<AttachmentInfo> {
+    if (NumberUtil.isDefined(attachment.id) && isCommon(attachment.type)) {
+      return this.updateAttachment(attachment);
     } else {
-      if (NumberUtil.isDefined(attachment.id) && isCommon(attachment.type)) {
-        return this.updateAttachment(attachment);
-      } else {
-        return this.saveAttachments(this.snapshot.application.id, [attachment])
-          .filter(attachments => attachments.length > 0)
-          .map(attachments => attachments[0]);
-      }
+      return this.saveAttachments(this.snapshot.application.id, [attachment])
+        .filter(attachments => attachments.length > 0)
+        .map(attachments => attachments[0]);
     }
   }
 
-  removeAttachment(attachmentId: number, index?: number): Observable<HttpResponse> {
-    if (this.isNew) {
-      this.removePending(attachmentId, index);
-      return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
-    } else {
-      const appId = this.snapshot.application.id;
-      return this.attachmentHub.remove(appId, attachmentId)
-        .do(response => this.loadAttachments(appId).subscribe());
-    }
+  removeAttachment(attachmentId: number): Observable<HttpResponse> {
+    const appId = this.snapshot.application.id;
+    return this.attachmentHub.remove(appId, attachmentId)
+      .do(response => this.loadAttachments(appId).subscribe());
   }
 
   loadAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
@@ -219,7 +195,6 @@ export class ApplicationStore {
   save(application: Application): Observable<Application> {
     return this.saveCustomersAndContacts(application)
       .switchMap(app => this.saveApplication(app))
-      .switchMap(app => this.savePending(app))
       .do(app => this.saved(app));
   }
 
@@ -256,35 +231,6 @@ export class ApplicationStore {
       });
   }
 
-  private storePending(attachment: AttachmentInfo, index: number) {
-    const current = this.current.pendingAttachments.slice();
-
-    const next = Some(index)
-      .map(i => {
-        current.splice(i, 1, attachment);
-        return current;
-      })
-      .orElse(current.concat(attachment));
-
-    this.store.next({
-      ...this.current,
-      pendingAttachments: next
-    });
-  }
-
-  private removePending(attachmentId: number, index?: number): void {
-    const pending = this.current.pendingAttachments.slice();
-    let result = pending;
-    if (NumberUtil.isDefined(attachmentId)) {
-      result = pending.filter(a => a.id !== attachmentId);
-    } else if (NumberUtil.isDefined(index)) {
-      pending.splice(index, 1);
-      result = pending;
-    }
-
-    this.store.next({...this.snapshot, pendingAttachments: result});
-  }
-
   private saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
     if (attachments.length === 0) {
       return this.loadAttachments(applicationId);
@@ -318,26 +264,6 @@ export class ApplicationStore {
   private saveApplication(application: Application): Observable<Application> {
     application.applicationTags = this.snapshot.tags;
     return this.applicationService.save(application);
-  }
-
-  private savePending(application: Application) {
-    return this.savePendingAttachments(application);
-  }
-
-  private savePendingAttachments(application: Application): Observable<Application> {
-    const result = new Subject<Application>();
-
-    this.saveAttachments(application.id, this.current.pendingAttachments)
-      .subscribe(
-        items => { /* Nothing to do with saved items */ },
-        error => result.error(error),
-        () => {
-          result.next(application);
-          result.complete();
-          this.store.next({...this.current, pendingAttachments: []});
-        });
-
-    return result.asObservable();
   }
 
   private saved(application: Application): void {

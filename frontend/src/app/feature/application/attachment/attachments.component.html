@@ -22,7 +22,7 @@
       <mat-card class="slim-card">
         <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
           <div class="clickable" *ngIf="canEdit(attachment)"
-               (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
+               (click)="remove(attachment)"><i class="material-icons">clear</i></div>
         </div>
         <div *ngIf="attachment.id !== undefined">
           <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
@@ -46,7 +46,7 @@
           <div class="card-item-align-right">
             <mat-slide-toggle
               [ngModel]="attachment.decisionAttachment"
-              (change)="decisionAttachmentToggle(attachment, i, $event)"
+              (change)="decisionAttachmentToggle(attachment, $event)"
               labelPosition="before">
               {{'attachment.decisionAttachment' | translation}}
             </mat-slide-toggle>

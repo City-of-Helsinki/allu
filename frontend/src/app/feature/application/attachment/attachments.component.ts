@@ -12,7 +12,6 @@ import {Some} from '../../../util/option';
 import {AttachmentType, isCommon} from '../../../model/application/attachment/attachment-type';
 import {Subject} from 'rxjs/Subject';
 import {applicationCanBeEdited} from '../../../model/application/application-status';
-import {NumberUtil} from '../../../util/number.util';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 
@@ -43,7 +42,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.application = this.applicationStore.snapshot.application;
     this.applicationCanBeEdited = applicationCanBeEdited(this.application.statusEnum);
-    this.applicationStore.allAttachments
+    this.applicationStore.attachments
       .takeUntil(this.destroy)
       .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
       .subscribe(sorted => this.setAttachments(sorted));
@@ -77,16 +76,16 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
     );
   }
 
-  remove(attachment: AttachmentInfo, index?: number) {
+  remove(attachment: AttachmentInfo) {
     if (isCommon(attachment.type)) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {title: findTranslation('attachment.action.confirmDelete'), description: attachment.name}
       });
       dialogRef.afterClosed()
         .filter(result => result) // Ignore no answers
-        .subscribe(result => this.onRemoveConfirm(attachment, index));
+        .subscribe(result => this.onRemoveConfirm(attachment));
     } else {
-      this.onRemoveConfirm(attachment, index);
+      this.onRemoveConfirm(attachment);
     }
   }
 
@@ -107,16 +106,16 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
     this.hasFileOverDropzone = hasFileOverDropzone;
   }
 
-  decisionAttachmentToggle(attachment: AttachmentInfo, index: number, change: MatSlideToggleChange): void {
+  decisionAttachmentToggle(attachment: AttachmentInfo, change: MatSlideToggleChange): void {
     attachment.decisionAttachment = change.checked;
-    this.applicationStore.saveAttachment(attachment, index).subscribe(
+    this.applicationStore.saveAttachment(attachment).subscribe(
       saved => {},
       error => NotificationService.errorMessage(findTranslation('attachment.error.addFailed', {name: attachment.name}), toastTime)
     );
   }
 
-  private onRemoveConfirm(attachment: AttachmentInfo, index?: number) {
-    this.applicationStore.removeAttachment(attachment.id, index)
+  private onRemoveConfirm(attachment: AttachmentInfo) {
+    this.applicationStore.removeAttachment(attachment.id)
       .subscribe(
         status => NotificationService.message(findTranslation('attachment.action.deleted', {name: attachment.name}), toastTime),
         error => NotificationService.errorMessage(findTranslation('attachment.error.deleteFailed', {name: attachment.name}), toastTime));
