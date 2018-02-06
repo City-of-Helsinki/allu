@@ -121,6 +121,9 @@ public class PricingServiceTest {
     application.setEndTime(ZonedDateTime.parse("2016-11-28T05:59:59+02:00"));
     // Three calendar week commercial -> 2250 EUR
     checkPrice(application, 225000);
+    // Make sure "skip price calculation" is respected:
+    application.setSkipPriceCalculation(true);
+    checkPrice(application, 0);
   }
 
   @Test

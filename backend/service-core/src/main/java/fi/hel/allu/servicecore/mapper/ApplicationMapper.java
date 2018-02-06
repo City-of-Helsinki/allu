@@ -1,20 +1,11 @@
 package fi.hel.allu.servicecore.mapper;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
+
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
@@ -23,6 +14,17 @@ import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.extension.*;
 import fi.hel.allu.servicecore.service.UserService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class ApplicationMapper {
@@ -79,6 +81,7 @@ public class ApplicationMapper {
     applicationDomain.setInvoiceRecipientId(applicationJson.getInvoiceRecipientId());
     applicationDomain.setCustomerReference(applicationJson.getCustomerReference());
     applicationDomain.setInvoicingDate(applicationJson.getInvoicingDate());
+    applicationDomain.setSkipPriceCalculation(applicationJson.getSkipPriceCalculation());
     return applicationDomain;
   }
 
@@ -161,6 +164,7 @@ public class ApplicationMapper {
     applicationJson.setCustomerReference(application.getCustomerReference());
     applicationJson.setInvoicingDate(application.getInvoicingDate());
     applicationJson.setInvoiced(application.getInvoiced());
+    applicationJson.setSkipPriceCalculation(application.getSkipPriceCalculation());
     return applicationJson;
   }
 

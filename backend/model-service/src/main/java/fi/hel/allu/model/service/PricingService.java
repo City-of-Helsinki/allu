@@ -57,7 +57,9 @@ public class PricingService {
    */
   @Transactional
   public List<ChargeBasisEntry> calculateChargeBasis(Application application) {
-    if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
+    if (application.getSkipPriceCalculation() == true) {
+      return Collections.emptyList();
+    } else if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
       return updateShortTermRentalPrice(application);
     } else if (application.hasTypeAndKind(ApplicationType.EVENT, ApplicationKind.OUTDOOREVENT)) {
       return updateOutdoorEventPrice(application);
