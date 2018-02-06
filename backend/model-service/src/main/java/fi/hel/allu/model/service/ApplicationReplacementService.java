@@ -27,12 +27,12 @@ public class ApplicationReplacementService {
   private static final Set<CommentType> COMMENT_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(CommentType.PROPOSE_APPROVAL,
       CommentType.PROPOSE_REJECT));
 
-  private ApplicationService applicationService;
-  private ApplicationDao applicationDao;
-  private CommentDao commentDao;
-  private LocationService locationService;
-  private SupervisionTaskDao supervisionTaskDao;
-  private DepositDao depositDao;
+  private final ApplicationService applicationService;
+  private final ApplicationDao applicationDao;
+  private final CommentDao commentDao;
+  private final LocationService locationService;
+  private final SupervisionTaskDao supervisionTaskDao;
+  private final DepositDao depositDao;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
@@ -76,9 +76,8 @@ public class ApplicationReplacementService {
 
     copyApplicationRelatedData(applicationId, replacingApplication);
 
-    // Update application statuses
+    // Update application status
     applicationDao.updateStatus(replacingApplication.getId(), StatusType.HANDLING);
-    applicationDao.updateStatus(applicationId, StatusType.REPLACED);
     // Remove replaced application from project
     applicationDao.updateProject(null, Collections.singletonList(applicationToReplace.getId()));
     // Set replaces and replaced by

@@ -77,6 +77,13 @@ public class ApplicationReplacementServiceTest {
   }
 
   @Test
+  public void originalStatusIsKept() {
+    replaceApplication();
+    Application updatedOriginalApplication = applicationService.findById(originalApplication.getId());
+    assertEquals(StatusType.DECISION, updatedOriginalApplication.getStatus());
+  }
+
+  @Test
   public void shouldCopyComments() {
     insertComment();
     Application application = replaceApplication();
