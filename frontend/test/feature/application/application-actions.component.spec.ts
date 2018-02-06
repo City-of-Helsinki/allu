@@ -1,4 +1,4 @@
-import {DebugElement, TemplateRef} from '@angular/core';
+import {Component, DebugElement, ViewChild} from '@angular/core';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
@@ -39,9 +39,25 @@ class UserHubMock {
   searchUsers(criteria: UserSearchCriteria) { return Observable.of([]); }
 }
 
+
+@Component({
+  template: `
+    <application-actions
+      *ngIf="visible"
+      [readonly]="readonly"
+      [valid]="valid"
+      [submitPending]="submitPending"></application-actions>`
+})
+class TestHostComponent {
+  readonly = true;
+  valid = true;
+  submitPending = false;
+  visible = true;
+}
+
 describe('ApplicationActionsComponent', () => {
-  let comp: ApplicationActionsComponent;
-  let fixture: ComponentFixture<ApplicationActionsComponent>;
+  let comp: TestHostComponent;
+  let fixture: ComponentFixture<TestHostComponent>;
   let de: DebugElement;
   let router: RouterMock;
   let applicationStore: ApplicationStoreMock;
@@ -49,8 +65,6 @@ describe('ApplicationActionsComponent', () => {
   let userHub: UserHubMock;
   const currentUserMock = CurrentUserMock.create(true, true);
   const applicationId = 15;
-  const form = new FormGroup({});
-
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -61,6 +75,7 @@ describe('ApplicationActionsComponent', () => {
         RouterTestingModule.withRoutes([])
       ],
       declarations: [
+        TestHostComponent,
         ApplicationActionsComponent
       ],
       providers: [
@@ -75,7 +90,7 @@ describe('ApplicationActionsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ApplicationActionsComponent);
+    fixture = TestBed.createComponent(TestHostComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
     router = TestBed.get(Router) as RouterMock;
@@ -83,9 +98,15 @@ describe('ApplicationActionsComponent', () => {
     dialog = TestBed.get(MatDialog) as MatDialogMock;
     userHub = TestBed.get(UserHub) as UserHubMock;
 
-    applicationStore._application.id  = applicationId;
-    comp.form = form;
-    comp.ngOnInit();
+    const app = applicationStore.snapshot.application;
+    app.id  = applicationId;
+    applicationStore.applicationChange(app);
+    comp.valid = true;
+    fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    comp.visible = false;
     fixture.detectChanges();
   });
 
@@ -100,22 +121,22 @@ describe('ApplicationActionsComponent', () => {
   });
 
   it('should hide edit button for decided application', () => {
-    applicationStore._application.statusEnum = ApplicationStatus.DECISION;
+    applicationStore.updateStatus(ApplicationStatus.DECISION);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('common.button.edit').toUpperCase())).toBeUndefined();
   });
 
   it('should show replace button for decided application and hide for others', () => {
-    applicationStore._application.statusEnum = ApplicationStatus.DECISION;
+    applicationStore.updateStatus(ApplicationStatus.DECISION);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('application.button.replace').toUpperCase())).toBeDefined();
-    applicationStore._application.statusEnum = ApplicationStatus.HANDLING;
+    applicationStore.updateStatus(ApplicationStatus.HANDLING);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('application.button.replace').toUpperCase())).toBeUndefined();
   });
 
   it('should replace application', fakeAsync(() => {
-    applicationStore._application.statusEnum = ApplicationStatus.DECISION;
+    applicationStore.updateStatus(ApplicationStatus.DECISION);
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'replace').and.returnValue(applicationStore.application);
@@ -138,7 +159,7 @@ describe('ApplicationActionsComponent', () => {
     const preferredOwner = new User(52);
     spyOn(userHub, 'searchUsers').and.returnValue(Observable.of([preferredOwner]));
 
-    const application = applicationStore._application;
+    const application = applicationStore.snapshot.application;
     application.id = 1;
     application.attachmentList = [new AttachmentInfo(15, 'type', 'name'), new AttachmentInfo(10, 'type', 'name')];
     application.locations = [location];
@@ -146,17 +167,18 @@ describe('ApplicationActionsComponent', () => {
     const copyAsNewBtn = getButtonWithText(de, findTranslation('application.button.copy').toUpperCase());
     copyAsNewBtn.click();
 
-    expect(applicationStore._applicationCopy.id).toBeUndefined();
-    expect(applicationStore._applicationCopy.attachmentList).toEqual([]);
-    expect(applicationStore._applicationCopy.locations.length).toEqual(1);
-    expect(applicationStore._applicationCopy.locations[0].startTime).toEqual(location.startTime);
-    expect(applicationStore._applicationCopy.owner).toEqual(preferredOwner);
-    expect(applicationStore._applicationCopy.handler).toBeUndefined();
+    const copy = applicationStore.snapshot.applicationCopy;
+    expect(copy.id).toBeUndefined();
+    expect(copy.attachmentList).toEqual([]);
+    expect(copy.locations.length).toEqual(1);
+    expect(copy.locations[0].startTime).toEqual(location.startTime);
+    expect(copy.owner).toEqual(preferredOwner);
+    expect(copy.handler).toBeUndefined();
     expect(router.navigate).toHaveBeenCalledWith(['/applications/edit']);
   });
 
   it('should delete NOTE', fakeAsync(() => {
-    applicationStore._application.type = ApplicationType[ApplicationType.NOTE];
+    applicationStore.updateType(ApplicationType.NOTE);
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'delete').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
@@ -172,33 +194,33 @@ describe('ApplicationActionsComponent', () => {
   }));
 
   it('should hide delete for other than NOTE', () => {
-    applicationStore._application.type = ApplicationType[ApplicationType.EVENT];
+    applicationStore.updateType(ApplicationType.EVENT);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('common.button.remove').toUpperCase())).toBeUndefined();
   });
 
   it('should show / hide save button on depending on readonly', () => {
     setAndInit(false);
-    expect(getButtonWithText(de, findTranslation('application.button.toSummary').toUpperCase())).toBeDefined();
+    expect(getButtonWithText(de, findTranslation('common.button.save').toUpperCase())).toBeDefined();
     setAndInit(true);
-    expect(getButtonWithText(de, findTranslation('application.button.toSummary').toUpperCase())).toBeUndefined();
+    expect(getButtonWithText(de, findTranslation('common.button.save').toUpperCase())).toBeUndefined();
   });
 
   it('should show cancel button when status is before decision', () => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.DECISIONMAKING];
+    applicationStore.updateStatus(ApplicationStatus.DECISIONMAKING);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase())).toBeDefined();
 
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.DECISION];
+    applicationStore.updateStatus(ApplicationStatus.DECISION);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase())).toBeUndefined();
   });
 
   it('should change application as canceled on approve', fakeAsync(() => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
+    applicationStore.updateStatus(ApplicationStatus.HANDLING);
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
+    spyOn(applicationStore, 'changeStatus').and.callThrough();
     spyOn(NotificationService, 'translateMessage');
 
     const dialogRef = new MatDialogRefMock();
@@ -215,7 +237,7 @@ describe('ApplicationActionsComponent', () => {
   }));
 
   it('should ignore cancel when cancel not approved', fakeAsync(() => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
+    applicationStore.updateStatus(ApplicationStatus.HANDLING);
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
@@ -235,20 +257,20 @@ describe('ApplicationActionsComponent', () => {
   }));
 
   it('should show move to handling depending on status', () => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.PENDING];
+    applicationStore.updateStatus(ApplicationStatus.PENDING);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('application.button.toHandling').toUpperCase())).toBeDefined();
 
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
+    applicationStore.updateStatus(ApplicationStatus.HANDLING);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('common.button.toHandling').toUpperCase())).toBeUndefined();
   });
 
   it('should move application to handling', fakeAsync(() => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.PENDING];
+    applicationStore.updateStatus(ApplicationStatus.PENDING);
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
+    spyOn(applicationStore, 'changeStatus').and.callThrough();
     spyOn(NotificationService, 'translateMessage');
 
     const toHandlingBtn = getButtonWithText(de, findTranslation('application.button.toHandling').toUpperCase());
@@ -262,57 +284,71 @@ describe('ApplicationActionsComponent', () => {
 
   it('should show move to decision depending on status and type', () => {
     // Don't show for status before HANDLING
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.PENDING];
-    applicationStore._application.type = ApplicationType[ApplicationType.EVENT];
+    let app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.PENDING;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    applicationStore.applicationChange(app);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase())).toBeUndefined();
 
     // Don't show for states HANDLING and after
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
-    applicationStore._application.type = ApplicationType[ApplicationType.NOTE];
+    app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.HANDLING;
+    app.type = ApplicationType[ApplicationType.NOTE];
+    applicationStore.applicationChange(app);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase())).toBeUndefined();
 
     // Should show
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
-    applicationStore._application.type = ApplicationType[ApplicationType.EVENT];
+    app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.HANDLING;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    applicationStore.applicationChange(app);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase())).toBeDefined();
   });
 
   it('should disable to decision making button when no invoice recipient is set', () => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
-    applicationStore._application.type = ApplicationType[ApplicationType.EVENT];
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.HANDLING;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    applicationStore.applicationChange(app);
     setAndInit(true);
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
     expect(decisionBtn.getAttribute('ng-reflect-disabled')).toEqual('true');
   });
 
   it('should enable to decision making button when invoice recipient is set', () => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
-    applicationStore._application.type = ApplicationType[ApplicationType.EVENT];
-    applicationStore._application.invoiceRecipientId = 1;
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.HANDLING;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    app.invoiceRecipientId = 1;
+    applicationStore.applicationChange(app);
     setAndInit(true);
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
     expect(decisionBtn.getAttribute('ng-reflect-disabled')).toEqual('false');
   });
 
   it('should enable to decision making button when application is set to not billable', () => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
-    applicationStore._application.type = ApplicationType[ApplicationType.EVENT];
-    applicationStore._application.notBillable = true;
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.HANDLING;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    app.notBillable = true;
+    applicationStore.applicationChange(app);
     setAndInit(true);
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
     expect(decisionBtn.getAttribute('ng-reflect-disabled')).toEqual('false');
   });
 
   it('should change status of Cable report to decision making', fakeAsync(() => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
-    applicationStore._application.type = ApplicationType[ApplicationType.CABLE_REPORT];
-    applicationStore._application.invoiceRecipientId = 1;
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.HANDLING;
+    app.type = ApplicationType[ApplicationType.CABLE_REPORT];
+    app.invoiceRecipientId = 1;
+    applicationStore.applicationChange(app);
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
+    spyOn(applicationStore, 'changeStatus').and.callThrough();
     spyOn(NotificationService, 'translateMessage');
 
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
@@ -321,13 +357,15 @@ describe('ApplicationActionsComponent', () => {
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.DECISIONMAKING);
     expect(NotificationService.translateMessage).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationStore._application.id, 'decision']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'decision']);
   }));
 
   it('should navigate to decision making for other application types', fakeAsync(() => {
-    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
-    applicationStore._application.type = ApplicationType[ApplicationType.EVENT];
-    applicationStore._application.invoiceRecipientId = 1;
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.HANDLING;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    app.invoiceRecipientId = 1;
+    applicationStore.applicationChange(app);
     setAndInit(true);
     spyOn(router, 'navigate');
 
@@ -335,12 +373,14 @@ describe('ApplicationActionsComponent', () => {
     decisionBtn.click();
     tickAndDetect();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationStore._application.id, 'decision']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'decision']);
   }));
 
   function setAndInit(readonly: boolean) {
     comp.readonly = readonly;
-    comp.ngOnInit();
+    comp.visible = false;
+    fixture.detectChanges();
+    comp.visible = true;
     fixture.detectChanges();
   }
 

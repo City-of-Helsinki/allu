@@ -73,9 +73,11 @@ describe('ContactComponent', () => {
     comp.customerRoleType = CustomerRoleType[CustomerRoleType.APPLICANT];
 
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
-    applicationStore._application.customersWithContacts = [
+    const app = applicationStore.snapshot.application;
+    app.customersWithContacts = [
       new CustomerWithContacts(CustomerRoleType.APPLICANT, undefined, CONTACTS_ALL)
     ];
+    applicationStore.applicationChange(app);
 
     fixture.detectChanges();
     page = new ContactPage();

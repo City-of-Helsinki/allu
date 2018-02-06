@@ -186,8 +186,9 @@ input:-webkit-autofill:active {
   font-weight: bold;
 }
 
-.input-field-checkbox {
-  margin: 10px 0;
+.input-field-checkbox .mat-checkbox-layout {
+  margin: 8px 0;
+  padding-bottom: 1.25em;
 }
 
 .row.no-left-pad .col {

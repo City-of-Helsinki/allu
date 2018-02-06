@@ -32,7 +32,8 @@
             </div>
             <div class="col m6">
               <mat-form-field class="input-full-width">
-                            <textarea matInput matTextareaAutosize formControlName="description" required
+                            <textarea matInput matTextareaAutosize formControlName="description"
+                                      [required]="required(applicationForm.get('description'))"
                                       [placeholder]="'application.shortTermRental.description' | translation"></textarea>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="description" hasError="required">
@@ -123,7 +124,7 @@
     <div class="col m12">
       <application-actions
         [readonly]="readonly"
-        [form]="applicationForm"
+        [valid]="applicationForm.valid"
         [submitPending]="submitPending"></application-actions>
     </div>
   </div>

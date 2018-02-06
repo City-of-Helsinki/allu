@@ -2,6 +2,8 @@ import {TimePeriod} from '../time-period';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
+import {FormBuilder, Validators} from '@angular/forms';
+import {ComplexValidator} from '../../../../util/complex-validator';
 
 export class ShortTermRentalForm implements ApplicationForm {
   constructor(
@@ -32,5 +34,30 @@ export class ShortTermRentalForm implements ApplicationForm {
     rental.largeSalesArea = form.largeSalesArea;
     rental.terms = form.terms;
     return rental;
+  }
+
+  static createStructure(fb: FormBuilder): { [key: string]: any; } {
+    return {
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      description: ['', Validators.required],
+      area: undefined,
+      commercial: [false],
+      largeSalesArea: [false],
+      calculatedPrice: [0],
+      rentalTimes: fb.group({
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
+      }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
+    };
+  }
+
+  static createDraftStructure(fb: FormBuilder): { [key: string]: any; } {
+    const form = ShortTermRentalForm.createStructure(fb);
+    form.description = [''];
+    form.rentalTimes = fb.group({
+      startTime: [undefined, Validators.required],
+      endTime: [undefined, Validators.required]
+    }, ComplexValidator.startBeforeEnd('startTime', 'endTime'));
+    return form;
   }
 }

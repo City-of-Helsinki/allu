@@ -17,6 +17,7 @@ export const translations = {
   },
   application: {
     newApplication: 'Uusi hakemus',
+    draft: 'Alustava varaus',
     owner: 'Omistaja',
     handler: 'Käsittelijä',
     name: 'Nimi',
@@ -30,12 +31,15 @@ export const translations = {
     endTime: 'Lopetus',
     comments: 'Kommentit',
     tags: 'Tunnisteet',
+    pricingBasis: 'Hinnoitteluperusteet',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
       ownerChangeFailed: 'Hakemuksen omistajan vaihto epäonnistui',
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui',
+      removeFailed: 'Hakemuksen poistaminen epäonnistui',
+      convertToApplicationFailed: 'Alustavan varauksen muuttaminen hakemukseksi epäonnistui',
       replaceFailed: 'Hakemuksen korvaaminen epäonnistui',
       replacementHistory: 'Hakemuksen korvaushistorian haku epäonnistui',
       deleteFailed: 'Hakemuksen poistaminen epäonnistui',
@@ -78,6 +82,7 @@ export const translations = {
     },
     type: {
       title: 'Tyyppi',
+      titleLong: 'Hakemuksen tyyppi',
       EVENT: 'Tapahtuma',
       SHORT_TERM_RENTAL: 'Lyhytaikainen maanvuokraus',
       CABLE_REPORT: 'Johtoselvitys',
@@ -88,6 +93,10 @@ export const translations = {
       NOTE: 'Muistiinpano'
     },
     kind: {
+      placeholder: {
+        single: 'Hakemuksen laji',
+        multiple: 'Hakemuksen lajit'
+      },
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
       PROMOTION: 'Promootio',
       AREA_RENTAL: 'Aluevuokraus',
@@ -137,6 +146,7 @@ export const translations = {
       OTHER: 'Muu'
     },
     specifier: {
+      placeholder: 'Työn tarkenne',
       ASPHALT: 'Asfaltointityö',
       INDUCTION_LOOP: 'Induktiosilmukka',
       COVER_STRUCTURE: 'Kansisto',
@@ -252,6 +262,27 @@ export const translations = {
       }
     },
     event: {
+      title: 'Tapahtuman tiedot',
+      name: 'Tapahtuman nimi',
+      startTime: 'Tapahtuman alkupäivämäärä',
+      endTime: 'Tapahtuman loppupäivämäärä',
+      description: 'Tapahtuman kuvaus',
+      timeExceptions: 'Tapahtuma-ajan poikkeukset',
+      url: 'Tapahtuman www-sivu',
+      attendees: 'Yleisömäärä',
+      entryFee: 'Osallistumismaksu, jos urheilutapahtuma',
+      structures: 'Rakenteet',
+      hasStructures: 'Tapahtuma sisältää rakenteita',
+      structureArea: 'Rakenteiden kokonaisneliömäärä',
+      structureDescription: 'Rakenteiden kuvaus',
+      structureTimeRequired: 'Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä',
+      structureStartTime: 'Rakennuspäivämäärä',
+      structureEndTime: 'Purkupäivämäärä',
+      marketingProvidersTitle: 'Myyntitoiminta',
+      hasMarketingProviders: 'Tapahtuma sisältää myynti- tai mainostoimintaa',
+      marketingProvidersDescription: 'Myynti- tai mainostoiminnan kuvaus',
+      hasFoodSales: 'Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua',
+      foodProviders: 'Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua',
       billingType: {
         CASH: 'Käteinen',
         INVOICE: 'Lasku'
@@ -329,8 +360,8 @@ export const translations = {
     button: {
       copy: 'Kopioi uudeksi',
       replace: 'Korvaava päätös',
-      toSummary: 'Yhteenvetoon',
       toHandling: 'Käsittelyyn',
+      convertToApplication: 'Vahvista varaus',
       toDecision: 'Päättämiseen'
     },
     confirmCancel: {

@@ -202,7 +202,7 @@ public class ApplicationController {
    *
    * @param id application's database ID.
    */
-  @RequestMapping(value = "/draft/{id}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/drafts/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteDraft(@PathVariable int id) {
     applicationService.deleteDraft(id);
     return new ResponseEntity<>(HttpStatus.OK);

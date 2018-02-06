@@ -11,6 +11,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ProjectHub} from '../../../../service/project/project-hub';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {TimeUtil} from '../../../../util/time.util';
+import {EventForm} from '../event/event.form';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -42,18 +43,13 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   }
 
   protected initForm() {
-    this.applicationForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      description: ['', Validators.required],
-      area: undefined,
-      commercial: [false],
-      largeSalesArea: [false],
-      calculatedPrice: [0],
-      rentalTimes: this.fb.group({
-        startTime: [undefined, Validators.required],
-        endTime: [undefined, Validators.required]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
-    });
+    const draft = this.applicationStore.snapshot.draft;
+    this.completeFormStructure = ShortTermRentalForm.createStructure(this.fb);
+    this.draftFormStructure = ShortTermRentalForm.createDraftStructure(this.fb);
+
+    this.applicationForm = draft
+      ? this.fb.group(this.draftFormStructure)
+      : this.fb.group(this.completeFormStructure);
 
     this.commercialCtrl = <FormControl>this.applicationForm.get('commercial');
 

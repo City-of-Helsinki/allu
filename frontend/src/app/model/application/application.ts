@@ -12,7 +12,6 @@ import {NumberUtil} from '../../util/number.util';
 import {ApplicationType} from './type/application-type';
 import {PublicityType} from './publicity-type';
 import {DistributionEntry} from '../common/distribution-entry';
-import {DistributionType} from '../common/distribution-type';
 import {ArrayUtil} from '../../util/array-util';
 import {CustomerWithContacts} from '../customer/customer-with-contacts';
 import {CustomerRoleType} from '../customer/customer-role-type';

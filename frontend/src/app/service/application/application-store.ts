@@ -20,6 +20,7 @@ import {Deposit} from '../../model/application/invoice/deposit';
 import {DepositService} from './deposit/deposit.service';
 import {ApplicationService} from './application.service';
 import {isCommon} from '../../model/application/attachment/attachment-type';
+import {ApplicationDraftService} from './application-draft.service';
 
 export interface ApplicationState {
   application?: Application;
@@ -30,6 +31,7 @@ export interface ApplicationState {
   tab?: SidebarItemType;
   relatedProject?: number;
   deposit?: Deposit;
+  draft?: boolean;
 }
 
 export const initialState: ApplicationState = {
@@ -40,7 +42,8 @@ export const initialState: ApplicationState = {
   comments: [],
   tab: 'BASIC_INFO',
   relatedProject: undefined,
-  deposit: undefined
+  deposit: undefined,
+  draft: false
 };
 
 @Injectable()
@@ -48,6 +51,7 @@ export class ApplicationStore {
   private store = new BehaviorSubject<ApplicationState>(initialState);
 
   constructor(private applicationService: ApplicationService,
+              private applicationDraftService: ApplicationDraftService,
               private customerHub: CustomerHub,
               private attachmentHub: AttachmentHub,
               private commentHub: CommentHub,
@@ -125,6 +129,10 @@ export class ApplicationStore {
       .do(savedTags => this.changeTags(savedTags));
   }
 
+  changeDraft(draft: boolean) {
+    this.store.next({...this.current, draft});
+  }
+
   get comments(): Observable<Array<Comment>> {
     return this.store.map(state => state.comments).distinctUntilChanged();
   }
@@ -187,7 +195,8 @@ export class ApplicationStore {
           application,
           attachments: application.attachmentList,
           tags: application.applicationTags,
-          comments: application.comments
+          comments: application.comments,
+          draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
         });
       });
   }
@@ -199,8 +208,11 @@ export class ApplicationStore {
   }
 
   delete(id: number): Observable<HttpResponse> {
-    return this.applicationService.remove(id)
-      .do(response => this.reset());
+    const response = this.snapshot.draft
+      ? this.applicationDraftService.remove(id)
+      : this.applicationService.remove(id);
+
+    return response.do(() => this.reset());
   }
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
@@ -262,8 +274,18 @@ export class ApplicationStore {
   }
 
   private saveApplication(application: Application): Observable<Application> {
-    application.applicationTags = this.snapshot.tags;
-    return this.applicationService.save(application);
+    const snapshot = this.snapshot;
+    application.applicationTags = snapshot.tags;
+    if (snapshot.draft) {
+      return this.applicationDraftService.save(application);
+    } else {
+      // Convert to full application
+      if (application.statusEnum === ApplicationStatus.PRE_RESERVED) {
+        return this.applicationDraftService.convertToApplication(application);
+      } else {
+        return this.applicationService.save(application);
+      }
+    }
   }
 
   private saved(application: Application): void {

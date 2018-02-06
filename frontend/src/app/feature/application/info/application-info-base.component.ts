@@ -1,11 +1,11 @@
 import {AfterContentInit, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationForm} from './application-form';
-import {ApplicationStatus, applicationCanBeEdited} from '../../../model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
@@ -16,6 +16,8 @@ import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {ProjectHub} from '../../../service/project/project-hub';
+import {FormUtil} from '../../../util/form.util';
+
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
 
@@ -24,6 +26,10 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   submitPending = false;
   showTerms = false;
   applicationChanges: Observable<Application>;
+  required = FormUtil.required;
+
+  protected completeFormStructure: { [key: string]: any; } = {};
+  protected draftFormStructure:  { [key: string]: any; } = {};
 
   protected destroy = new Subject<boolean>();
 
@@ -48,6 +54,11 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.applicationChanges
       .takeUntil(this.destroy)
       .subscribe(app => this.onApplicationChange(app));
+
+    this.applicationStore.changes.map(change => change.draft)
+      .takeUntil(this.destroy)
+      .distinctUntilChanged()
+      .subscribe(draft => this.onDraftChange(draft));
   }
 
   ngAfterContentInit(): void {
@@ -103,6 +114,17 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   }
 
   /**
+   * Handles application draft status changes
+   */
+  protected onDraftChange(draft: boolean): void {
+    if (draft) {
+      Object.keys(this.draftFormStructure).forEach(key => this.updateValidators(key, this.draftFormStructure));
+    } else {
+      Object.keys(this.completeFormStructure).forEach(key => this.updateValidators(key, this.completeFormStructure));
+    }
+  }
+
+  /**
    * Updates application based on given form and returns updated application
    */
   protected update(form: ApplicationForm): Application {
@@ -152,5 +174,15 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
         .subscribe(project => this.router.navigate(['/projects', project.id])));
 
     this.router.navigate(['applications', application.id, 'summary']);
+  }
+
+  private updateValidators(key: string, formStructure: { [key: string]: any; }): void {
+    // Only if there is validators (second index)
+    Some(formStructure[key])
+      .map(s => s.length > 1 ? s[1] : [])
+      .do(validators => {
+        this.applicationForm.get(key).setValidators(validators);
+        this.applicationForm.get(key).updateValueAndValidity();
+      });
   }
 }

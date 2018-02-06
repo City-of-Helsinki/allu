@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
+import {UrlUtil} from '../../../util/url.util';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'application-info',
@@ -10,11 +11,17 @@ import {ApplicationStore} from '../../../service/application/application-store';
 })
 export class ApplicationInfoComponent implements OnInit {
 
-  application: Application;
+  type: string;
+  showDraftSelection: boolean;
+  readonly: boolean;
 
-  constructor(private applicationStore: ApplicationStore) {}
+  constructor(private applicationStore: ApplicationStore, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.application = this.applicationStore.snapshot.application;
+    const application = this.applicationStore.snapshot.application;
+    this.type = application.type;
+    this.showDraftSelection = this.applicationStore.isNew;
+
+    this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary');
   }
 }

@@ -3,6 +3,8 @@ import {TimePeriod} from '../time-period';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
+import {ComplexValidator} from '../../../../util/complex-validator';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 export class EventForm implements ApplicationForm {
   constructor(public name?: string,
@@ -68,5 +70,54 @@ export class EventForm implements ApplicationForm {
     event.structureEndTime = form.structureTimes.endTime;
     event.terms = form.terms;
     return event;
+  }
+
+  static eventForm(fb: FormBuilder): { [key: string]: any; } {
+    return {
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      description: ['', Validators.required],
+      url: [''],
+      eventTimes: fb.group({
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
+      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      timeExceptions: [''],
+      attendees: [0, ComplexValidator.greaterThanOrEqual(0)],
+      entryFee: [0, ComplexValidator.greaterThanOrEqual(0)],
+      notBillable: [false],
+      notBillableReason: [''],
+      salesActivity: [false],
+      heavyStructure: [false],
+      ecoCompass: [false],
+      foodSales: [false],
+      foodProviders: [''],
+      marketingProviders: [''],
+      calculatedPrice: [0],
+      structureArea: [undefined, ComplexValidator.greaterThanOrEqual(0)],
+      structureDescription: [''],
+      structureTimes: fb.group({
+        startTime: [undefined],
+        endTime: [undefined]
+      }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
+    };
+  }
+
+  static eventDraft(fb: FormBuilder): { [key: string]: any; } {
+    const form = EventForm.eventForm(fb);
+    form.description = [''];
+    return form;
+  }
+
+  static outdoorEventForm(fb: FormBuilder): { [key: string]: any; } {
+    const form = EventForm.eventForm(fb);
+    form.nature = ['', Validators.required];
+    return form;
+  }
+
+  static outdoorEventDraft(fb: FormBuilder): { [key: string]: any; } {
+    const form = EventForm.outdoorEventForm(fb);
+    form.description = [''];
+    form.nature = [''];
+    return form;
   }
 }

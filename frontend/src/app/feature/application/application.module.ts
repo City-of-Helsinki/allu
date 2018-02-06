@@ -40,6 +40,7 @@ import {InvoicingModule} from './invoicing/invoicing.module';
 import {RecurringComponent} from './info/recurring/recurring.component';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {SupervisionModule} from './supervision/supervision.module';
+import {ApplicationDraftService} from '../../service/application/application-draft.service';
 
 @NgModule({
   imports: [
@@ -89,7 +90,8 @@ import {SupervisionModule} from './supervision/supervision.module';
     RecurringComponent
   ],
   providers: [
-    ApplicationResolve
+    ApplicationResolve,
+    ApplicationDraftService
   ],
   entryComponents: [
     DefaultTextModalComponent

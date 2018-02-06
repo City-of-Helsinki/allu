@@ -1,4 +1,4 @@
-import {FormArray} from '@angular/forms';
+import {AbstractControl, FormArray} from '@angular/forms';
 
 export class FormUtil {
   public static clearArray(formArray: FormArray) {
@@ -19,5 +19,24 @@ export class FormUtil {
   public static contains(formArray: FormArray, condition: (val: any) => boolean) {
     const values = formArray.value;
     return values ? values.some(condition) : false;
+  }
+
+  public static required(abstractControl: AbstractControl): boolean {
+    if (abstractControl.validator) {
+      const validator = abstractControl.validator({} as AbstractControl);
+      if (validator && validator.required) {
+        return true;
+      }
+    }
+    if (abstractControl['controls']) {
+      for (const controlName in abstractControl['controls']) {
+        if (abstractControl['controls'][controlName]) {
+          if (FormUtil.required(abstractControl['controls'][controlName])) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }

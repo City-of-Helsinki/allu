@@ -13,12 +13,13 @@
   <div class="row">
     <div class="col m12">
       <mat-card>
-        <mat-card-title>Tapahtuman tiedot</mat-card-title>
+        <mat-card-title>{{'application.event.title' | translation}}</mat-card-title>
         <mat-card-content>
-          <div class="row form-group">
-            <div class="col m6">
+          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+            <div fxFlex="calc(50% - 18px)">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="name" placeholder="Tapahtuman nimi*"/>
+                <input matInput type="text" formControlName="name" required
+                       [placeholder]="'application.event.name' | translation"/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="name" hasError="required">
                     {{'application.field.nameMissing' | translation}}
@@ -29,10 +30,11 @@
                 </mat-hint>
               </mat-form-field>
             </div>
-            <div formGroupName="eventTimes">
-              <div class="col m3">
+            <ng-container formGroupName="eventTimes">
+              <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Tapahtuman alkupäivämäärä*"
+                  <input matInput type="text" formControlName="startTime" required
+                         [placeholder]="'application.event.startTime' | translation"
                          [matDatepicker]="startTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -47,9 +49,10 @@
                   </mat-hint>
                 </mat-form-field>
               </div>
-              <div class="col m3">
+              <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Tapahtuman loppupäivämäärä*"
+                  <input matInput type="text" formControlName="endTime" required
+                         [placeholder]="'application.event.endTime' | translation"
                          [matDatepicker]="endTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
@@ -60,11 +63,12 @@
                   </mat-hint>
                 </mat-form-field>
               </div>
-            </div>
-            <div class="col m12">
+            </ng-container>
+            <div fxFlex="calc(100% - 18px)">
               <mat-form-field class="input-full-width">
                 <textarea matInput matTextareaAutosize formControlName="description"
-                          placeholder="Tapahtuman kuvaus*"></textarea>
+                          [required]="required(applicationForm.get('description'))"
+                          [placeholder]="'application.event.description' | translation"></textarea>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="description" hasError="required">
                     {{'application.event.field.descriptionMissing' | translation}}
@@ -72,21 +76,22 @@
                 </mat-hint>
               </mat-form-field>
             </div>
-            <div class="col m12">
+            <div fxFlex="calc(100% - 18px)">
               <mat-form-field class="input-full-width">
                 <textarea matInput matTextareaAutosize formControlName="timeExceptions"
-                          placeholder="Tapahtuma-ajan poikkeukset"></textarea>
+                          [placeholder]="'application.event.timeExceptions' | translation"></textarea>
               </mat-form-field>
             </div>
-            <div class="col m6">
+            <div fxFlex="calc(50% - 18px)">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="url" placeholder="Tapahtuman www-sivu"/>
+                <input matInput type="text" formControlName="url"
+                       [placeholder]="'application.event.url' | translation"/>
               </mat-form-field>
             </div>
-            <div class="col m3">
+            <div fxFlex="calc(25% - 18px)">
               <mat-form-field class="input-full-width">
                 <input matInput type="number" formControlName="attendees"
-                       step="1" min="0" placeholder="Yleisömäärä"/>
+                       step="1" min="0" [placeholder]="'application.event.attendees' | translation"/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="attendees" hasError="greaterThanOrEqual">
                     {{'application.event.field.attendeesGreaterThanOrEqual' | translation}}
@@ -94,10 +99,10 @@
                 </mat-hint>
               </mat-form-field>
             </div>
-            <div class="col m3">
+            <div fxFlex="calc(25% - 18px)">
               <mat-form-field class="input-full-width">
                 <input matInput type="number" formControlName="entryFee"
-                       step="any" min="0" placeholder="Osallistumismaksu, jos urheilutapahtuma"/>
+                       step="any" min="0" [placeholder]="'application.event.entryFee' | translation"/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="entryFee" hasError="greaterThanOrEqual">
                     {{'application.event.field.eventEntryFeeThanOrEqual' | translation}}
@@ -114,18 +119,20 @@
   <div class="row">
     <div class="col m12">
       <mat-card>
-        <mat-card-title>Rakenteet</mat-card-title>
+        <mat-card-title>{{'application.event.structures' | translation}}</mat-card-title>
         <mat-card-content>
-          <div class="row">
-            <div class="col m3 input-field-checkbox">
-              <mat-checkbox #structureArea [disabled]="readonly" [checked]="applicationForm.value.structureArea">
-                Tapahtuma sisältää rakenteita
+          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+            <div fxFlex="0 0 calc(25% - 18px)">
+              <mat-checkbox #structureArea [disabled]="readonly"
+                            class="input-field-checkbox"
+                            [checked]="applicationForm.value.structureArea">
+                {{'application.event.hasStructures' | translation}}
               </mat-checkbox>
             </div>
-            <div class="col m3" [hidden]="!structureArea.checked">
+            <div fxFlex="0 0 calc(25% - 18px)" [hidden]="!structureArea.checked">
               <mat-form-field class="input-full-width">
                 <input matInput type="number" formControlName="structureArea" step="any" min="0"
-                       placeholder="Rakenteiden kokonaisneliömäärä"/>
+                       [placeholder]="'application.event.structureArea' | translation"/>
                 <mat-hint>
                   <field-error [form]="applicationForm" field="structureArea" hasError="greaterThanOrEqual">
                     {{'application.event.field.structureAreaGreaterThanOrEqual' | translation}}
@@ -133,25 +140,26 @@
                 </mat-hint>
               </mat-form-field>
             </div>
-            <div class="col m12" [hidden]="!structureArea.checked">
+            <div fxFlex="calc(100% - 18px)" [hidden]="!structureArea.checked">
               <mat-form-field class="input-full-width">
-                            <textarea matInput matTextareaAutosize formControlName="structureDescription"
-                                      placeholder="Rakenteiden kuvaus"></textarea>
+                <textarea matInput matTextareaAutosize formControlName="structureDescription"
+                          [placeholder]="'application.event.structureDescription' | translation"></textarea>
               </mat-form-field>
             </div>
           </div>
-          <div class="row">
-            <div class="col m3 input-field-checkbox">
-              <mat-checkbox #structureTimes [disabled]="readonly"
+          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+            <div fxFlex="0 0 calc(25% - 18px)">
+              <mat-checkbox #structureTimes [disabled]="readonly" class="input-field-checkbox"
                             [checked]="applicationForm.get('structureTimes').value.startTime || applicationForm.get('structureTimes').value.endTime">
-                Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä
+                {{'application.event.structureTimeRequired' | translation}}
               </mat-checkbox>
             </div>
 
-            <div formGroupName="structureTimes" [hidden]="!structureTimes.checked">
-              <div class="col m3">
+            <ng-container formGroupName="structureTimes" *ngIf="structureTimes.checked">
+              <div fxFlex="0 0 calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Rakennuspäivämäärä"
+                  <input matInput type="text" formControlName="startTime"
+                         [placeholder]="'application.event.structureStartTime' | translation"
                          [matDatepicker]="structureStartTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="structureStartTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -163,16 +171,17 @@
                   </mat-hint>
                 </mat-form-field>
               </div>
-              <div class="col m3">
+              <div fxFlex="0 0 calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Purkupäivämäärä"
+                  <input matInput type="text" formControlName="endTime"
+                         [placeholder]="'application.event.structureEndTime' | translation"
                          [matDatepicker]="structureEndTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="structureEndTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #structureEndTimePicker></mat-datepicker>
                 </mat-form-field>
               </div>
-            </div>
+            </ng-container>
           </div>
         </mat-card-content>
       </mat-card>
@@ -194,29 +203,31 @@
   <div class="row">
     <div class="col m12">
       <mat-card>
-        <mat-card-title>Myyntitoiminta</mat-card-title>
+        <mat-card-title>{{'application.event.marketingProvidersTitle' | translation}}</mat-card-title>
         <mat-card-content>
-          <div class="row form-group">
-            <div class="col m12 input-field-checkbox">
-              <mat-checkbox #marketingProviders [disabled]="readonly"
+          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+            <div fxFlex="calc(100% - 18px)">
+              <mat-checkbox #marketingProviders [disabled]="readonly" class="input-field-checkbox"
                             [checked]="applicationForm.value.marketingProviders">
-                Tapahtuma sisältää myynti- tai mainostoimintaa
+                {{'application.event.hasMarketingProviders' | translation}}
               </mat-checkbox>
             </div>
-            <div class="col m12" [hidden]="!marketingProviders.checked">
+            <div fxFlex="calc(100% - 18px)" [hidden]="!marketingProviders.checked">
               <mat-form-field class="input-full-width">
-                                <textarea matInput matTextareaAutosize formControlName="marketingProviders"
-                                          placeholder="Myynti- tai mainostoiminnan kuvaus"></textarea>
+                <textarea matInput matTextareaAutosize formControlName="marketingProviders"
+                          [placeholder]="'application.event.marketingProvidersDescription' | translation"
+                          ></textarea>
               </mat-form-field>
             </div>
-            <div class="col m12 input-field-checkbox">
-              <mat-checkbox #foodSales formControlName="foodSales">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua
+            <div fxFlex="calc(100% - 18px)" class="input-field-checkbox">
+              <mat-checkbox #foodSales formControlName="foodSales">
+                {{'application.event.hasFoodSales' | translation}}
               </mat-checkbox>
             </div>
-            <div class="col m12" [hidden]="!foodSales.checked">
+            <div fxFlex="calc(100% - 18px)" [hidden]="!foodSales.checked">
               <mat-form-field class="input-full-width">
-                                <textarea matInput matTextareaAutosize formControlName="foodProviders"
-                                          placeholder="Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua"></textarea>
+                <textarea matInput matTextareaAutosize formControlName="foodProviders"
+                          [placeholder]="'application.event.foodProviders' | translation"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -244,7 +255,7 @@
     <div class="col s12">
       <application-actions
         [readonly]="readonly"
-        [form]="applicationForm"
+        [valid]="applicationForm.valid"
         [submitPending]="submitPending"></application-actions>
     </div>
   </div>

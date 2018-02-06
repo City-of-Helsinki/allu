@@ -1,40 +1,45 @@
 <div class="row">
   <div class="col m6">
     <mat-card>
-      <mat-card-title>Hakemuksen tyyppi</mat-card-title>
+      <mat-card-title>{{'application.type.titleLong' | translation}}</mat-card-title>
       <mat-card-content>
         <form [formGroup]="form">
-          <div class="row">
-            <div class="col m12 type-select">
+          <div fxLayout="row" fxLayoutWrap>
+            <div fxFlex="100%" class="type-select">
               <mat-form-field class="input-full-width">
-                <mat-select formControlName="type" class="input-full-width" placeholder="Hakemuksen tyyppi">
+                <mat-select formControlName="type" class="input-full-width"
+                            [placeholder]="'application.type.titleLong' | translation">
                   <mat-option *ngFor="let type of applicationTypes" [value]="type">
                     {{['application.type', type] | translation}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col m12 type-select" *ngIf="multipleKinds">
+            <div fxFlex="100%" class="type-select" *ngIf="multipleKinds">
               <mat-form-field class="input-full-width">
-                <mat-select formControlName="kinds" multiple class="input-full-width" placeholder="Hakemuksen lajit">
+                <mat-select formControlName="kinds" multiple class="input-full-width"
+                            [placeholder]="'application.kind.placeholder.multiple' | translation">
                   <mat-option *ngFor="let kind of availableKinds" [value]="kind">
                     {{['application.kind', kind] | translation}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col m12 type-select" *ngIf="!multipleKinds">
+            <div fxFlex="100%" class="type-select" *ngIf="!multipleKinds">
               <mat-form-field class="input-full-width">
-                <mat-select formControlName="kinds" class="input-full-width" placeholder="Hakemuksen laji">
+                <mat-select formControlName="kinds" class="input-full-width"
+                            [placeholder]="'application.kind.placeholder.single' | translation">
                   <mat-option *ngFor="let kind of availableKinds" [value]="kind">
                     {{['application.kind', kind] | translation}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col m12 type-select" *ngIf="showSpecifierSelection()">
+            <div fxFlex="100%" class="type-select" *ngIf="showSpecifierSelection()">
               <mat-form-field class="input-full-width">
-                <mat-select formControlName="specifiers" multiple placeholder="Työn tarkenne" class="input-full-width">
+                <mat-select formControlName="specifiers" multiple
+                            [placeholder]="'application.specifier.placeholder' | translation"
+                            class="input-full-width">
                   <mat-optgroup *ngFor="let kindEntry of availableKindsWithSpecifiers"
                                 [label]="['application.kind', kindEntry.uiKind] | translation">
                     <mat-option *ngFor="let specifierEntry of kindEntry.specifierEntriesSortedByTranslation"
@@ -44,6 +49,11 @@
                   </mat-optgroup>
                 </mat-select>
               </mat-form-field>
+            </div>
+            <div fxFlex="100%" *ngIf="showDraftSelection">
+              <mat-slide-toggle formControlName="draft">
+                {{'application.draft' | translation}}
+              </mat-slide-toggle>
             </div>
           </div>
         </form>

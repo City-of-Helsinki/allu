@@ -16,41 +16,43 @@ import {ChargeBasisEntry} from '../src/app/model/application/invoice/charge-basi
 import {CurrentUser} from '../src/app/service/user/current-user';
 import {ApplicationState} from '../src/app/service/application/application-store';
 import {Comment} from '../src/app/model/application/comment/comment';
+import {ApplicationType} from '../src/app/model/application/type/application-type';
 
 /**
  * Mock for application state
  */
 export class ApplicationStoreMock {
-  public _application: Application;
-  public _applicationCopy: Application;
+  private application$ = new BehaviorSubject(new Application());
+  private applicationCopy$ =  new BehaviorSubject(undefined);
   public comments$ = new Subject<Array<Comment>>();
 
   constructor() {
-    this._application = new Application(1);
-    this._application.statusEnum = ApplicationStatus.PENDING;
+    const application = new Application(1);
+    application.statusEnum = ApplicationStatus.PENDING;
     const location = new Location(1);
     location.cityDistrictId = 1;
-    this._application.locations.push(location);
+    application.locations.push(location);
+    this.application$.next(application);
   }
 
   get snapshot(): ApplicationState {
-    return {application: this._application};
+    return {application: this.application$.getValue(), applicationCopy: this.applicationCopy$.getValue()};
   }
 
   get application() {
-    return Observable.of(this._application);
+    return this.application$.asObservable();
   }
 
   applicationChange(value: Application) {
-    this._application = value;
+    this.application$.next(value);
   }
 
   get changes(): Observable<ApplicationState> {
-    return Observable.of({application: this._application});
+    return this.application$.map(app => ({application: app}));
   }
 
   applicationCopyChange(app: Application) {
-    this._applicationCopy = app;
+    this.applicationCopy$.next(app);
   }
 
   delete(id: number): Observable<HttpResponse> {
@@ -62,7 +64,8 @@ export class ApplicationStoreMock {
   }
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
-    return Observable.of(this._application);
+    this.applicationChange(this.application$.getValue());
+    return Observable.of(this.snapshot.application);
   }
 
   get comments() { return this.comments$.asObservable(); }
@@ -70,6 +73,20 @@ export class ApplicationStoreMock {
   saveComment(applicationId: number, comment: Comment) {}
 
   removeComment(comment: Comment) {}
+
+  // Testing helper which updates status of application and emits new application
+  updateStatus(status: ApplicationStatus): void {
+    const app = this.application$.getValue();
+    app.statusEnum = status;
+    this.applicationChange(app);
+  }
+
+  // Testing helper which updates type of application and emits new application
+  updateType(type: ApplicationType): void {
+    const app = this.application$.getValue();
+    app.type = ApplicationType[type];
+    this.applicationChange(app);
+  }
 }
 
 /**

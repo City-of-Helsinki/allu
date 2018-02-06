@@ -138,7 +138,7 @@ export class ApplicationService {
     const url = APPLICATIONS_URL + '/note/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response))
-      .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')));
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')));
   }
 
   /**

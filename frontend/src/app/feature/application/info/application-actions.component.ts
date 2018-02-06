@@ -1,5 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {ApplicationStatus} from '../../../model/application/application-status';
@@ -30,9 +29,9 @@ import {UserHub} from '../../../service/user/user-hub';
 export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   @Input() readonly = true;
-  @Input() form: FormGroup;
   @Input() status: string;
   @Input() submitPending: boolean;
+  @Input() valid: boolean;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
@@ -43,6 +42,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showDelete = false;
   showCancel = false;
   showReplace = false;
+  showConvertToApplication = false;
   applicationId: number;
 
   private applicationSub: Subscription;
@@ -58,11 +58,12 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       const status = app.statusEnum;
       this.showDecision = this.showDecisionForApplication(app);
       this.decisionDisabled = !this.validForDecision(app);
-      this.showHandling = (status < ApplicationStatus.HANDLING) && (app.typeEnum !== ApplicationType.NOTE);
-      this.showDelete = app.typeEnum === ApplicationType.NOTE;
-      this.showCancel = status < ApplicationStatus.DECISION;
+      this.showHandling = (status === ApplicationStatus.PENDING) && (app.typeEnum !== ApplicationType.NOTE);
+      this.showDelete = (app.typeEnum === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
+      this.showCancel = (ApplicationStatus.PRE_RESERVED < status) && (status < ApplicationStatus.DECISION);
       this.showEdit = status < ApplicationStatus.DECISION;
       this.showReplace = status === ApplicationStatus.DECISION;
+      this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
       this.applicationId = app.id;
     });
   }
@@ -76,7 +77,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     application.id = undefined;
     application.applicationId = undefined;
     application.handler = undefined;
-    application.status = ApplicationStatus[ApplicationStatus.PENDING];
+    // Pre-reserved should be kept as such
+    application.statusEnum = application.statusEnum === ApplicationStatus.PRE_RESERVED
+      ? ApplicationStatus.PRE_RESERVED
+      : ApplicationStatus.PENDING;
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
     this.findDefaultRegionalOwner(application).subscribe(owner => {
@@ -96,14 +100,19 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
         (error) => NotificationService.translateMessage(error));
   }
 
+  convertToApplication(): void {
+    this.applicationStore.changeDraft(false);
+    this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
+  }
+
   moveToHandling(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.HANDLING)
       .subscribe(app => {
-        NotificationService.translateMessage('application.statusChange.HANDLING');
-        this.applicationStore.applicationChange(app);
-        this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
-    },
-    err => NotificationService.translateErrorMessage('application.error.toHandling'));
+          NotificationService.translateMessage('application.statusChange.HANDLING');
+          this.applicationStore.applicationChange(app);
+          this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
+        },
+        err => NotificationService.translateErrorMessage('application.error.toHandling'));
   }
 
   toDecisionmaking(): void {
@@ -127,7 +136,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
         cancelText: findTranslation('application.confirmCancel.cancelText')
       };
 
-      this.dialog.open(ConfirmDialogComponent, { data })
+      this.dialog.open(ConfirmDialogComponent, {data})
         .afterClosed()
         .filter(result => result) // Ignore no answers
         .subscribe(() => this.cancelApplication());
@@ -148,11 +157,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     if (this.shouldMoveToDecisionMaking()) {
       return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING)
         .map(app => {
-          NotificationService.translateMessage('application.statusChange.DECISIONMAKING');
-          this.applicationStore.applicationChange(app);
-          return app;
-        },
-        err => NotificationService.translateErrorMessage('application.error.toDecisionmaking'));
+            NotificationService.translateMessage('application.statusChange.DECISIONMAKING');
+            this.applicationStore.applicationChange(app);
+            return app;
+          },
+          err => NotificationService.translateErrorMessage('application.error.toDecisionmaking'));
     } else {
       return Observable.of(this.applicationStore.snapshot.application);
     }
@@ -161,7 +170,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   private shouldMoveToDecisionMaking(): boolean {
     const app = this.applicationStore.snapshot.application;
     const appType = app.typeEnum;
-    const status =  app.statusEnum;
+    const status = app.statusEnum;
     return appType === ApplicationType.CABLE_REPORT && status === ApplicationStatus.HANDLING;
   }
 

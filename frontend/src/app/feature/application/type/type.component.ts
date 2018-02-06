@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {
   ApplicationType,
@@ -17,6 +17,8 @@ import {
 } from '../../../model/application/type/application-specifier';
 import {EnumUtil} from '../../../util/enum.util';
 import {ArrayUtil} from '../../../util/array-util';
+import {ApplicationStatus} from '../../../model/application/application-status';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'application-type',
@@ -25,8 +27,10 @@ import {ArrayUtil} from '../../../util/array-util';
     './type.component.scss'
   ]
 })
-export class TypeComponent implements OnInit {
+export class TypeComponent implements OnInit, OnDestroy {
+  @Input() readonly  = false;
   @Input() typeChangeDisabled = false;
+  @Input() showDraftSelection = false;
   @Output() onTypeChange = new EventEmitter<ApplicationType>();
   @Output() onKindSpecifierChange = new EventEmitter<KindsWithSpecifiers>();
 
@@ -39,6 +43,8 @@ export class TypeComponent implements OnInit {
   private typeCtrl: FormControl;
   private kindsCtrl: FormControl;
   private specifiersCtrl: FormControl;
+  private draftCtrl: FormControl;
+  private destroy = new Subject<boolean>();
 
   constructor(private applicationStore: ApplicationStore, private fb: FormBuilder) {
   }
@@ -49,13 +55,33 @@ export class TypeComponent implements OnInit {
     if (this.typeChangeDisabled) {
       // Show all values although only event and short term rental can be selected
       this.applicationTypes = EnumUtil.enumValues(ApplicationType);
-      this.form.disable();
       this.kindsCtrl.updateValueAndValidity();
     }
 
-    this.typeCtrl.valueChanges.subscribe(type => this.typeSelection(type));
-    this.kindsCtrl.valueChanges.subscribe(kinds => this.kindSelection(kinds));
-    this.specifiersCtrl.valueChanges.subscribe(specifiers => this.onSpecifierSelection(specifiers));
+    if (this.readonly) {
+      this.form.disable();
+    }
+
+    this.typeCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .subscribe(type => this.typeSelection(type));
+
+    this.kindsCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .subscribe(kinds => this.kindSelection(kinds));
+
+    this.specifiersCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .subscribe(specifiers => this.onSpecifierSelection(specifiers));
+
+    this.draftCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .subscribe(draft => this.applicationStore.changeDraft(draft));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   typeSelection(type: string) {
@@ -104,18 +130,22 @@ export class TypeComponent implements OnInit {
     const selectedKinds = application.uiKinds;
     const selectedSpecifiers = fromKindsWithSpecifiers(application.kindsWithSpecifiers);
 
-    this.typeCtrl = this.fb.control(application.type);
+    this.typeCtrl = this.fb.control({ value: application.type, disabled: this.typeChangeDisabled });
     this.availableKinds = this.getAvailableKinds(application.type);
     this.availableKindsWithSpecifiers = this.getAvailableSpecifiers(application.type, selectedKinds);
 
     this.multipleKinds = hasMultipleKinds(application.typeEnum);
-    this.kindsCtrl = this.fb.control(this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds));
-    this.specifiersCtrl = this.fb.control(selectedSpecifiers);
+    const kinds = this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds);
+    this.kindsCtrl = this.fb.control({ value: kinds, disabled: this.typeChangeDisabled });
+    this.specifiersCtrl = this.fb.control({ value: selectedSpecifiers, disabled: this.typeChangeDisabled });
+
+    this.draftCtrl = this.fb.control(this.applicationStore.snapshot.draft);
 
     this.form = this.fb.group({
       type: this.typeCtrl,
       kinds: this.kindsCtrl,
-      specifiers: this.specifiersCtrl
+      specifiers: this.specifiersCtrl,
+      draft: this.draftCtrl
     });
   }
 

@@ -27,4 +27,5 @@ import 'rxjs/add/operator/last';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/skip';
 import 'rxjs/add/operator/skipUntil';
+import 'rxjs/add/operator/pluck';
 

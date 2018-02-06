@@ -114,7 +114,7 @@ describe('CommentsComponent', () => {
     fixture.whenStable().then(val => {
       const commentEl = de.query(By.css('comment'));
       commentEl.triggerEventHandler('onSave', COMMENT_ONE);
-      expect(applicationStore.saveComment).toHaveBeenCalledWith(applicationStore._application.id, COMMENT_ONE);
+      expect(applicationStore.saveComment).toHaveBeenCalledWith(applicationStore.snapshot.application.id, COMMENT_ONE);
       expect(NotificationService.message).toHaveBeenCalled();
       expect(de.queryAll(By.css('li')).length).toEqual(2, 'Was expecting 2 comments');
     });

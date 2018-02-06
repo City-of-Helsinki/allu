@@ -1,5 +1,7 @@
-<application-type typeChangeDisabled="true"></application-type>
-<div [ngSwitch]="application.type">
+<application-type typeChangeDisabled="true"
+                  [showDraftSelection]="showDraftSelection"
+                  [readonly]="readonly"></application-type>
+<div [ngSwitch]="type">
   <event *ngSwitchCase="'EVENT'"></event>
   <short-term-rental *ngSwitchCase="'SHORT_TERM_RENTAL'"></short-term-rental>
   <cable-report *ngSwitchCase="'CABLE_REPORT'"></cable-report>
