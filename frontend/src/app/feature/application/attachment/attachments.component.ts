@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
 import * as filesaver from 'file-saver';
 
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
@@ -14,6 +15,7 @@ import {Subject} from 'rxjs/Subject';
 import {applicationCanBeEdited} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
+import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
 
 const toastTime = 4000;
 
@@ -24,7 +26,7 @@ const toastTime = 4000;
     './attachments.component.scss'
   ]
 })
-export class AttachmentsComponent implements OnInit, OnDestroy {
+export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   application: Application;
   commonAttachments: AttachmentInfo[] = [];
   defaultAttachments: AttachmentInfo[] = [];
@@ -114,12 +116,28 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
     );
   }
 
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.editableAttachments.length > 0) {
+      return this.confirmChanges();
+    }
+    return true;
+  }
+
+  private confirmChanges(): Observable<boolean> {
+    const data = {
+      title: findTranslation(['attachment.confirmDiscard.title']),
+      description: findTranslation(['attachment.confirmDiscard.description']),
+      confirmText: findTranslation(['attachment.confirmDiscard.confirmText']),
+      cancelText: findTranslation(['attachment.confirmDiscard.cancelText'])
+    };
+    return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
+  }
+
   private onRemoveConfirm(attachment: AttachmentInfo) {
     this.applicationStore.removeAttachment(attachment.id)
       .subscribe(
         status => NotificationService.message(findTranslation('attachment.action.deleted', {name: attachment.name}), toastTime),
         error => NotificationService.errorMessage(findTranslation('attachment.error.deleteFailed', {name: attachment.name}), toastTime));
-
   }
 
   private setAttachments(attachments: Array<AttachmentInfo>): void {

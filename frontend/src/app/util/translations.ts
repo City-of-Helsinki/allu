@@ -832,6 +832,12 @@ export const translations = {
       'Voit lisätä vakioliitteen Liitteet-välilehdeltä',
       addFailed: 'Liiteen {{name}} tallennus epäonnistui',
       deleteFailed: 'Liiteen {{name}} poistaminen epäonnistui'
+    },
+    confirmDiscard: {
+      title: 'Hylätäänkö muutokset',
+      description: 'Sinulla on keskeneräisiä muutoksia. Hylätäänkö muutokset?',
+      confirmText: 'Hylkää',
+      cancelText: 'Palaa muokkaamaan'
     }
   },
   comment: {
