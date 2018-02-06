@@ -1,20 +1,5 @@
 package fi.hel.allu.model.domain;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.groups.Default;
-
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.group.GroupSequenceProvider;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -23,6 +8,19 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.util.TimeUtil;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.group.GroupSequenceProvider;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * In Finnish: hakemus
@@ -70,6 +68,7 @@ public class Application {
   private String customerReference;
   private ZonedDateTime invoicingDate;
   private Boolean invoiced;
+  private boolean skipPriceCalculation = false;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -468,6 +467,17 @@ public class Application {
 
   public void setInvoiced(Boolean invoiced) {
     this.invoiced = invoiced;
+  }
+
+  /**
+   * Should the automatic price calculation be skipped for this application?
+   */
+  public boolean getSkipPriceCalculation() {
+    return skipPriceCalculation;
+  }
+
+  public void setSkipPriceCalculation(boolean skipPriceCalculation) {
+    this.skipPriceCalculation = skipPriceCalculation;
   }
 
 }
