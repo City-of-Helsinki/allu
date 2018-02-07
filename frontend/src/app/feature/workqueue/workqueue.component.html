@@ -18,7 +18,7 @@
   <div fxLayout='row'>
     <div fxFlex>
       <div class="labels-solid labels-end">
-        <nav mat-tab-nav-bar (selectedTabChange)="tabSelected($event)">
+        <nav mat-tab-nav-bar>
           <a mat-tab-link
              *ngFor="let tab of tabs"
              [routerLink]="tab | lowercase"
