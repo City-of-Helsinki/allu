@@ -21,14 +21,14 @@
         <mat-card>
           <div class="row">
             <div class="col m4">
-              <button type="submit" mat-raised-button color="primary" [disabled]="!validWithChanges()">TALLENNA</button>
-              <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">PERUUTA</button>
+              <button type="submit" mat-raised-button color="primary" [disabled]="!validWithChanges()">{{'common.button.save' | translation}}</button>
+              <button type="button" mat-raised-button color="primary" [routerLink]="['/customers']">{{'common.button.cancel' | translation}}</button>
             </div>
             <div class="col m8">
-              <button type="button" mat-raised-button color="primary" (click)="newContact()">UUSI YHTEYSHENKILÖ</button>
+              <button type="button" mat-raised-button color="primary" (click)="newContact()">{{'customers.newContact' | translation}}</button>
               <button type="button" mat-raised-button color="primary"
                       *ngIf="customerForm.value.id"
-                      (click)="removeFromRegistry(customerWithContactsForm.value)">POISTA REKISTERISTÄ
+                      (click)="removeFromRegistry(form.value)">{{'customers.removeFromRegistry' | translation}}
               </button>
             </div>
           </div>

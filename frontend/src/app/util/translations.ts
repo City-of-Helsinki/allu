@@ -1127,6 +1127,10 @@ export const translations = {
       }
     }
   },
+  customers: {
+    newContact: 'UUSI YHTEYSHENKILÖ',
+    removeFromRegistry: 'POISTA REKISTERISTÄ'
+  },
   ownerModal: {
     OWNER: {
       title: 'Siirrä omistajalle',
