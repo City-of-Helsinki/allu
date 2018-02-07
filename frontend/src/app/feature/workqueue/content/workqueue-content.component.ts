@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {MatCheckboxChange, MatDialog, MatPaginator, MatSort} from '@angular/material';
 
@@ -13,6 +13,7 @@ import {EventUtil} from '../../../../../test/util/event-util';
 import {ApplicationWorkItemDatasource, ApplicationWorkItemRow} from './application-work-item-datasource';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {Some} from '../../../util/option';
+import {WorkQueueTab} from '../workqueue-tab';
 
 @Component({
   selector: 'workqueue-content',
@@ -37,12 +38,19 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private destroy = new Subject<boolean>();
 
   constructor(private router: Router,
+              private route: ActivatedRoute,
               private mapHub: MapHub,
               private dialog: MatDialog,
-              private store: ApplicationWorkItemStore) {}
+              private store: ApplicationWorkItemStore) {
+  }
 
   ngOnInit(): void {
     this.dataSource = new ApplicationWorkItemDatasource(this.store, this.paginator, this.sort);
+
+    this.route.data
+      .map(data => data.tab)
+      .takeUntil(this.destroy)
+      .subscribe((tab: string) => this.store.tabChange(WorkQueueTab[tab]));
 
     this.store.changes.map(state => state.selectedItems)
       .distinctUntilChanged()
@@ -100,10 +108,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   isTagRow(index: number, row: ApplicationWorkItemRow): boolean {
     return Array.isArray(row.content);
-  }
-
-  isApplicationRow(index: number, row: ApplicationWorkItemRow): boolean {
-    return row.content instanceof Application;
   }
 
   tagSelected(tagName: string): boolean {

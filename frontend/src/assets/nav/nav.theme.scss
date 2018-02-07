@@ -4,12 +4,14 @@
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
 
-  .labels-solid .mat-tab-label {
+  .labels-solid .mat-tab-label,
+  .labels-solid .mat-tab-link {
     background-color: mat-color($primary, 200);
     color: mat-contrast($primary, 500);
   }
 
-  .labels-solid .mat-tab-label.mat-tab-label-active {
+  .labels-solid .mat-tab-label.mat-tab-label-active,
+  .labels-solid .mat-tab-link.mat-tab-label-active {
     background-color: white;
     color: mat-color($primary, 500);
   }
@@ -19,8 +21,6 @@
     a {
       color: mat-contrast($primary, 500);
     }
-
-    background: mat-color($primary, 500);
 
     .active,
     a.active {

@@ -40,7 +40,8 @@ nav.nav-bar-secondary {
   }
 }
 
-.labels-solid .mat-tab-label {
+.labels-solid .mat-tab-label,
+.labels-solid .mat-tab-link {
   margin: 0 5px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
@@ -52,7 +53,12 @@ nav.nav-bar-secondary {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
 }
 
-.labels-end .mat-tab-labels {
+.labels-end .mat-tab-labels,
+.labels-end .mat-tab-links {
   justify-content: flex-end;
   padding-right:10%;
+}
+
+.mat-tab-links {
+  display: flex;
 }

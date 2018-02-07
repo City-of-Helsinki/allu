@@ -8,15 +8,26 @@ import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
 import {Oauth2Component} from '../oauth2/oauth2.component';
 import {CanActivateLogin} from '../../service/authorization/can-activate-login';
+import {WorkQueueContentComponent} from '../workqueue/content/workqueue-content.component';
+import {WorkQueueContentComponent as SupervisionWorkQueueContentComponent}
+  from '../supervision-workqueue/content/workqueue-content.component';
 
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: MapSearchComponent, canActivate: [AuthGuard]},
   { path: 'workqueue', component: WorkQueueComponent, canActivate: [AuthGuard], children: [
-    { path: 'owner', component: OwnerModalComponent, canActivate: [AuthGuard] }
+    { path: '', redirectTo: 'own', pathMatch: 'full'},
+    { path: 'owner', component: OwnerModalComponent, canActivate: [AuthGuard] },
+    { path: 'own', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'OWN'}},
+    { path: 'common', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'COMMON'}},
+    { path: 'waiting', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'WAITING'}}
   ]},
   { path: 'supervision-tasks', component: SupervisionWorkqueueComponent, canActivate: [AuthGuard], children: [
-    { path: 'owner', component: OwnerModalComponent, canActivate: [AuthGuard] }
+    { path: '', redirectTo: 'own', pathMatch: 'full'},
+    { path: 'own', component: SupervisionWorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'OWN'}},
+    { path: 'common', component: SupervisionWorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'COMMON'}},
+    { path: 'waiting', component: SupervisionWorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'WAITING'}},
+    { path: 'owner', component: OwnerModalComponent, canActivate: [AuthGuard] },
   ]},
   { path: 'login', component: LoginComponent, canActivate: [CanActivateLogin] },
   { path: 'logout', component: LoginComponent },

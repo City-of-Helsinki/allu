@@ -22,18 +22,20 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
 
   constructor(private store: ApplicationWorkItemStore, private paginator: MatPaginator, private sort: MatSort) {
     super();
+
+    // Initial paging
+    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
   }
 
   connect(): Observable<ApplicationWorkItemRow[]> {
-    // Initial paging
-    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
-
     this.sort.sortChange
       .takeUntil(this.destroy)
+      .distinctUntilChanged()
       .subscribe(sortChange => this.store.sortChange(Sort.fromMatSort(sortChange)));
 
     this.paginator.page
       .takeUntil(this.destroy)
+      .distinctUntilChanged()
       .subscribe(p => this.store.pageRequestChange(new PageRequest(p.pageIndex, p.pageSize)));
 
     // Material datatable when condition is not run properly if empty data is not provided

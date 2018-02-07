@@ -53,15 +53,15 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.formSubscription = this.queryForm.valueChanges
-      .distinctUntilChanged()
-      .debounceTime(300)
-      .subscribe(values => this.search(values));
-
     this.changeSubscription = this.store.changes
       .map(change => change.tab)
       .distinctUntilChanged()
       .subscribe(tab => this.onTabChange(tab));
+
+    this.formSubscription = this.queryForm.valueChanges
+      .distinctUntilChanged()
+      .debounceTime(300)
+      .subscribe(values => this.search(values));
   }
 
   ngOnDestroy(): void {

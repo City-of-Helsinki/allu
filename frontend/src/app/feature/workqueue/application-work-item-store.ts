@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {WorkQueueTab} from '../workqueue/workqueue-tab';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse} from '../../util/http-response';
 import {ArrayUtil} from '../../util/array-util';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
@@ -13,10 +12,10 @@ import '../../rxjs-extensions';
 import {ApplicationService} from '../../service/application/application.service';
 
 const initialState: ApplicationWorkqueueState = {
-  tab: WorkQueueTab.OWN,
+  tab: undefined,
   search: new ApplicationSearchQuery(),
   sort: new Sort(),
-  pageRequest: new PageRequest(),
+  pageRequest: new PageRequest(0, 25),
   page: new Page<Application>(),
   selectedItems: [],
   allSelected: false
@@ -27,11 +26,12 @@ export class ApplicationWorkItemStore {
   private store = new BehaviorSubject<ApplicationWorkqueueState>(initialState);
 
   constructor(private service: ApplicationService) {
-    Observable.merge(
+    Observable.combineLatest(
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
       this.changes.map(state => state.pageRequest).distinctUntilChanged()
-    ).subscribe(() => this.refresh());
+    ).switchMap(() => this.pagedSearch())
+      .subscribe(page => this.pageChange(page));
   }
 
   get changes(): Observable<ApplicationWorkqueueState> {
@@ -84,16 +84,18 @@ export class ApplicationWorkItemStore {
     this.selectedItems(selected);
   }
 
-  public changeOwnerForSelected(ownerId: number): Observable<HttpResponse> {
+  public changeOwnerForSelected(ownerId: number): Observable<Page<Application>> {
     const selected = this.store.getValue().selectedItems;
     return this.service.changeOwner(ownerId, selected)
-      .do(() => this.refresh());
+      .switchMap(() => this.pagedSearch())
+      .do(result => this.pageChange(result));
   }
 
-  public removeOwnerFromSelected(): Observable<HttpResponse> {
+  public removeOwnerFromSelected(): Observable<Page<Application>> {
     const selected = this.store.getValue().selectedItems;
     return this.service.removeOwner(selected)
-      .do(() => this.refresh());
+      .switchMap(() => this.pagedSearch())
+      .do(result => this.pageChange(result));
   }
 
   private selectedItems(selected: Array<number>) {
@@ -103,11 +105,6 @@ export class ApplicationWorkItemStore {
       selectedItems: selected,
       allSelected: this.allSelected(itemIds, selected)
     });
-  }
-
-  private refresh(): void {
-    this.selectedItems([]);
-    this.pagedSearch().subscribe(page => this.pageChange(page));
   }
 
   private pagedSearch(): Observable<Page<Application>> {

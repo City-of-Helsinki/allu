@@ -16,6 +16,7 @@ import {OwnerModalModule} from '../../../src/app/feature/common/ownerModal/owner
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {getButtonWithText} from '../../selector-helpers';
 import {Page} from '../../../src/app/model/common/page';
+import {RouterTestingModule} from '@angular/router/testing';
 
 const defaultItems = [
   new SupervisionWorkItem(1),
@@ -48,6 +49,7 @@ describe('SupervisionWorkqueueComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
+        RouterTestingModule,
         AlluCommonModule,
         OwnerModalModule
       ],
@@ -96,15 +98,6 @@ describe('SupervisionWorkqueueComponent', () => {
     de.queryAll(By.css('.mat-raised-button'))
       .map(btn => btn.nativeElement)
       .forEach(btn => expect(btn.disabled).toEqual(false));
-  }));
-
-  it('should react to tab change', fakeAsync(() => {
-    const secondTab = de.queryAll(By.css('.mat-tab-label'))[1].nativeElement;
-    spyOn(store, 'tabChange').and.callThrough();
-    secondTab.click();
-    fixture.detectChanges();
-    tick();
-    expect(store.tabChange).toHaveBeenCalledTimes(1);
   }));
 
   it('should react changing items to self', fakeAsync(() => {

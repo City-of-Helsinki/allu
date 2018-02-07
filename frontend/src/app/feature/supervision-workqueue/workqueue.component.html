@@ -18,12 +18,18 @@
   <div fxLayout='row'>
     <div fxFlex>
       <div class="labels-solid labels-end">
-        <mat-tab-group (selectedTabChange)="tabSelected($event)" headerPosition="end">
-          <mat-tab *ngFor="let tab of tabs">
-            <ng-template mat-tab-label>{{['workqueue.tab', tab] | translation}}</ng-template>
-            <supervision-workqueue-content></supervision-workqueue-content>
-          </mat-tab>
-        </mat-tab-group>
+        <nav mat-tab-nav-bar headerPosition="end">
+          <a mat-tab-link
+             *ngFor="let tab of tabs"
+             [routerLink]="tab | lowercase"
+             routerLinkActive #rla="routerLinkActive"
+             [active]="rla.isActive">
+            {{['workqueue.tab', tab] | translation}}
+          </a>
+        </nav>
+      </div>
+      <div>
+        <router-outlet></router-outlet>
       </div>
     </div>
   </div>

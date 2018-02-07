@@ -3,12 +3,13 @@ import {SupervisionWorkItemStore} from '../supervision-work-item-store';
 import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
 import {Subscription} from 'rxjs/Subscription';
 import {Sort} from '../../../model/common/sort';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
 import {Some} from '../../../util/option';
 import {EventUtil} from '../../../../../test/util/event-util';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
+import {WorkQueueTab} from '../../workqueue/workqueue-tab';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -29,11 +30,18 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private selectedItems: Array<number> = [];
   private destroy = new Subject<boolean>();
 
-  constructor(private store: SupervisionWorkItemStore, private router: Router) {
+  constructor(private store: SupervisionWorkItemStore,
+              private router: Router,
+              private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
     this.dataSource = new SupervisionWorkItemDatasource(this.store, this.paginator, this.sort);
+
+    this.route.data
+      .map(data => data.tab)
+      .takeUntil(this.destroy)
+      .subscribe((tab: string) => this.store.tabChange(WorkQueueTab[tab]));
 
     this.store.changes.map(state => state.selectedItems)
       .distinctUntilChanged()

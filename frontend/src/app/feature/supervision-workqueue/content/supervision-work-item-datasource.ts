@@ -14,12 +14,12 @@ export class SupervisionWorkItemDatasource extends DataSource<any> {
 
   constructor(private store: SupervisionWorkItemStore, private paginator: MatPaginator, private sort: MatSort) {
     super();
+
+    // Initial paging
+    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
   }
 
   connect(): Observable<SupervisionWorkItem[]> {
-    // Initial paging
-    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
-
     this.sort.sortChange
       .takeUntil(this.destroy)
       .subscribe(sortChange => this.store.sortChange(Sort.fromMatSort(sortChange)));

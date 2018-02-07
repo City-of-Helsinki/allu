@@ -12,7 +12,7 @@ import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 
 const initialState: SupervisionWorkqueueState = {
-  tab: WorkQueueTab.OWN,
+  tab: undefined,
   search: new SupervisionTaskSearchCriteria(),
   sort: new Sort(),
   pageRequest: new PageRequest(),
@@ -26,11 +26,11 @@ export class SupervisionWorkItemStore {
   private store = new BehaviorSubject<SupervisionWorkqueueState>(initialState);
 
   constructor(private service: SupervisionTaskService) {
-    Observable.merge(
+    Observable.combineLatest(
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
       this.changes.map(state => state.pageRequest).distinctUntilChanged()
-    ).subscribe(changes => this.refresh());
+    ).subscribe(() => this.refresh());
   }
 
   get changes(): Observable<SupervisionWorkqueueState> {

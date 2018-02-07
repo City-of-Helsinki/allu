@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {WorkQueueTab} from '../workqueue/workqueue-tab';
 import {SupervisionWorkItemStore} from './supervision-work-item-store';
-import {MatDialog, MatDialogRef, MatTabChangeEvent} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
 import {DialogCloseReason} from '../common/dialog-close-value';
@@ -41,10 +41,6 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.changeSubscription.unsubscribe();
-  }
-
-  tabSelected(event: MatTabChangeEvent) {
-    this.store.tabChange(WorkQueueTab[this.tabs[event.index]]);
   }
 
   moveSelectedToSelf() {

@@ -4,15 +4,16 @@ import {By} from '@angular/platform-browser';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
-import {availableToDirectiveMockMeta, CurrentUserMock, RouterMock} from '../../mocks';
+import {ActivatedRouteMock, availableToDirectiveMockMeta, CurrentUserMock, RouterMock} from '../../mocks';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '../../../src/app/feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '../../../src/app/model/common/page';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
+import '../../../src/app/rxjs-extensions';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -42,7 +43,8 @@ describe('SupervisionWorkqueueContentComponent', () => {
         FormBuilder,
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
-        {provide: Router, useClass: RouterMock}
+        {provide: Router, useClass: RouterMock},
+        {provide: ActivatedRoute, useValue: new ActivatedRouteMock()}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))

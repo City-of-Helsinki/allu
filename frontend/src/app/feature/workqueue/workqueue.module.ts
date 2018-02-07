@@ -15,12 +15,13 @@ import {SelectionGroupModule} from '../common/selection-group/selection-group.mo
 import {CommentsModalComponent} from '../application/comment/comments-modal.component';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 import {ApplicationWorkItemStore} from './application-work-item-store';
-import {ApplicationWorkItemDatasource} from './content/application-work-item-datasource';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [
     ReactiveFormsModule,
     FormsModule,
+    RouterModule,
     AlluCommonModule,
     MatButtonToggleModule,
     MatTableModule,

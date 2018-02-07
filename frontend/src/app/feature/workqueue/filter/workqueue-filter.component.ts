@@ -62,12 +62,6 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.queryForm.valueChanges
-      .takeUntil(this.destroy)
-      .distinctUntilChanged()
-      .debounceTime(300)
-      .subscribe(query => this.store.searchChange(ApplicationSearchQuery.from(query)));
-
     this.districts = this.mapHub.districts();
 
     this.store.changes
@@ -75,6 +69,12 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       .map(change => change.tab)
       .distinctUntilChanged()
       .subscribe(tab => this.onTabChange(tab));
+
+    this.queryForm.valueChanges
+      .takeUntil(this.destroy)
+      .distinctUntilChanged()
+      .debounceTime(300)
+      .subscribe(query => this.store.searchChange(ApplicationSearchQuery.from(query)));
   }
 
   ngOnDestroy(): void {

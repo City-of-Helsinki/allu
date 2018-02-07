@@ -11,11 +11,13 @@ import {WorkQueueContentComponent} from './content/workqueue-content.component';
 import {SupervisionTaskService} from '../../service/supervision/supervision-task.service';
 import {SupervisionWorkItemStore} from './supervision-work-item-store';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [
     ReactiveFormsModule,
     FormsModule,
+    RouterModule,
     AlluCommonModule,
     MatButtonToggleModule,
     MatChipsModule,

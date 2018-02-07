@@ -155,6 +155,22 @@ export class RouterMock {
   }
 }
 
+export class ActivatedRouteMock {
+  private params$ = new BehaviorSubject({});
+  private data$ = new BehaviorSubject({});
+
+  params  = this.params$.asObservable();
+  data = this.data$.asObservable();
+
+  set testParams(newParams: any) {
+    this.params$.next(newParams);
+  }
+
+  set testData(data: any) {
+    this.data$.next(data);
+  }
+}
+
 /**
  * Mock for InvoiceHub
  */

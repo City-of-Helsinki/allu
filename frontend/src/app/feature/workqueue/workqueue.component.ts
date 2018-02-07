@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import 'rxjs/add/operator/publish';
-import {MatDialog, MatTabChangeEvent} from '@angular/material';
+import {MatDialog} from '@angular/material';
 import {EnumUtil} from '../../util/enum.util';
 import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
@@ -12,6 +12,7 @@ import {NotificationService} from '../../service/notification/notification.servi
 import {findTranslation} from '../../util/translations';
 import {Subject} from 'rxjs/Subject';
 import {ApplicationWorkItemStore} from './application-work-item-store';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'workqueue',
@@ -31,7 +32,6 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private userHub: UserHub,
               private currentUser: CurrentUser) {
-    this.store.tabChange(WorkQueueTab.OWN);
   }
 
   ngOnInit() {
@@ -46,10 +46,6 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy.next(true);
     this.destroy.unsubscribe();
-  }
-
-  tabSelected(event: MatTabChangeEvent) {
-    this.store.tabChange(WorkQueueTab[this.tabs[event.index]]);
   }
 
   moveSelectedToSelf() {
