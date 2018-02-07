@@ -39,7 +39,6 @@ export class InvoicingInfoComponent implements OnInit {
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
   private invoicingDateCtrl: FormControl;
-  private skipPriceCalculation: FormControl;
 
   constructor(private applicationStore: ApplicationStore,
               private customerHub: CustomerHub,
@@ -51,9 +50,8 @@ export class InvoicingInfoComponent implements OnInit {
     this.notBillableCtrl = <FormControl>this.form.get('notBillable');
     this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
     this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
-    this.skipPriceCalculation = <FormControl>this.form.get('skipPriceCalculation');
-    this.initForm();
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
+    this.initForm();
   }
 
   invoiceRecipientChange(recipient: CustomerForm) {
