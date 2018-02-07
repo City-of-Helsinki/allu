@@ -9,8 +9,9 @@ import {OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
 import {Oauth2Component} from '../oauth2/oauth2.component';
 import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 import {WorkQueueContentComponent} from '../workqueue/content/workqueue-content.component';
-import {WorkQueueContentComponent as SupervisionWorkQueueContentComponent}
-  from '../supervision-workqueue/content/workqueue-content.component';
+import {
+  WorkQueueContentComponent as SupervisionWorkQueueContentComponent
+} from '../supervision-workqueue/content/workqueue-content.component';
 
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },

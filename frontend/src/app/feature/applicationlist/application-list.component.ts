@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
-import {MapHub} from '../../service/map/map-hub';
+import {MapStore} from '../../service/map/map-store';
 
 
 @Component({
@@ -18,17 +18,17 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
 
   applications: Observable<Array<Application>>;
 
-  constructor(private mapHub: MapHub) {
+  constructor(private mapStore: MapStore) {
   }
 
   ngOnInit() {
-    this.applications = this.mapHub.applications();
+    this.applications = this.mapStore.applications;
   }
 
   ngOnDestroy() {
   }
 
   jobClick(application: Application) {
-    this.mapHub.selectApplication(application);
+    this.mapStore.selectedApplicationChange(application);
   }
 }

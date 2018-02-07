@@ -10,12 +10,11 @@ import {ApplicationType} from '../../model/application/type/application-type';
 import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/user/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {MapHub} from '../../service/map/map-hub';
 import {CityDistrict} from '../../model/common/city-district';
 import {ApplicationService} from '../../service/application/application.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {ApplicationSearchDatasource} from '../../service/application/application-search-datasource';
-import {SupervisionWorkItem} from '../../model/application/supervision/supervision-work-item';
+import {CityDistrictService} from '../../service/map/city-district.service';
 
 @Component({
   selector: 'search',
@@ -41,7 +40,7 @@ export class SearchComponent implements OnInit {
 
   constructor(private applicationService: ApplicationService,
               private userHub: UserHub,
-              private mapHub: MapHub,
+              private cityDistrictService: CityDistrictService,
               private router: Router,
               private fb: FormBuilder) {
     this.queryForm = this.fb.group({
@@ -62,7 +61,7 @@ export class SearchComponent implements OnInit {
   ngOnInit(): void {
     this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.paginator, this.sort);
     this.owners = this.userHub.getActiveUsers();
-    this.districts = this.mapHub.districts();
+    this.districts = this.cityDistrictService.get();
   }
 
   toSummary(applicationId: number): void {
@@ -75,7 +74,7 @@ export class SearchComponent implements OnInit {
   }
 
   districtName(id: number): Observable<string> {
-    return id !== undefined ? this.mapHub.districtById(id).map(d => d.name) : Observable.empty();
+    return id !== undefined ? this.cityDistrictService.byId(id).map(d => d.name) : Observable.empty();
   }
 
   trackById(index: number, item: Application) {

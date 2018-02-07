@@ -7,12 +7,13 @@ import * as filesaver from 'file-saver';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {CityDistrict} from '../../../model/common/city-district';
-import {MapHub} from '../../../service/map/map-hub';
 import {AttachmentHub} from '../../application/attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {MaterializeUtil} from '../../../util/materialize.util';
 import {ArrayUtil} from '../../../util/array-util';
 import {FixedLocationArea} from '../../../model/common/fixed-location-area';
+import {FixedLocationService} from '../../../service/map/fixed-location.service';
+import {CityDistrictService} from '../../../service/map/city-district.service';
 
 @Component({
   selector: 'default-attachment',
@@ -26,13 +27,17 @@ export class DefaultAttachmentComponent implements OnInit {
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   hasFileOverDropzone = false;
   attachmentType: string;
-  areas = this.mapHub.fixedLocationAreas()
+  areas = this.fixedLocationService.existing
     .map(areas => areas.sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name)));
 
   file: Blob;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
-              private mapHub: MapHub, private attachmentHub: AttachmentHub) {
+  constructor(private fb: FormBuilder,
+              private route: ActivatedRoute,
+              private router: Router,
+              private fixedLocationService: FixedLocationService,
+              private cityDistrictService: CityDistrictService,
+              private attachmentHub: AttachmentHub) {
 
     this.attachmentForm = this.fb.group({
       id: [undefined],
@@ -48,7 +53,7 @@ export class DefaultAttachmentComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.districts = this.mapHub.districts();
+    this.districts = this.cityDistrictService.get();
 
     this.route.params
       .map(params => params['id'])

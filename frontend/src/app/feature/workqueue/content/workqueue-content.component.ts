@@ -4,7 +4,6 @@ import {Observable} from 'rxjs/Observable';
 import {MatCheckboxChange, MatDialog, MatPaginator, MatSort} from '@angular/material';
 
 import {Application} from '../../../model/application/application';
-import {MapHub} from '../../../service/map/map-hub';
 import {CommentsModalComponent} from '../../application/comment/comments-modal.component';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {Subject} from 'rxjs/Subject';
@@ -14,6 +13,8 @@ import {ApplicationWorkItemDatasource, ApplicationWorkItemRow} from './applicati
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {Some} from '../../../util/option';
 import {WorkQueueTab} from '../workqueue-tab';
+import {CityDistrictService} from '../../../service/map/city-district.service';
+import {MapStore} from '../../../service/map/map-store';
 
 @Component({
   selector: 'workqueue-content',
@@ -39,7 +40,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router,
               private route: ActivatedRoute,
-              private mapHub: MapHub,
+              private mapStore: MapStore,
+              private cityDistrictService: CityDistrictService,
               private dialog: MatDialog,
               private store: ApplicationWorkItemStore) {
   }
@@ -99,7 +101,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   districtName(id: number): Observable<string> {
-    return id !== undefined ? this.mapHub.districtById(id).map(d => d.name) : Observable.empty();
+    return id !== undefined ? this.cityDistrictService.byId(id).map(d => d.name) : Observable.empty();
   }
 
   trackById(index: number, item: SupervisionWorkItem) {

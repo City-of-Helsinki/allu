@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {NumberUtil} from '../../util/number.util';
 import {Location} from '../../model/common/location';
-import {MapHub} from '../map/map-hub';
+import {MapStore} from '../map/map-store';
 import {Some} from '../../util/option';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class LocationState {
   private locations$ = new BehaviorSubject<Array<Location>>([]);
   private _editIndex: number;
 
-  constructor(private mapHub: MapHub) {
+  constructor(private mapStore: MapStore) {
     this.locations.subscribe(locations => this.notifyOnChange(locations));
   }
 
@@ -66,7 +66,7 @@ export class LocationState {
 
   private clearEdited(): void {
     this._editIndex = undefined;
-    this.mapHub.editLocation(undefined);
+    this.mapStore.editedLocationChange(undefined);
   }
 
   private notifyOnChange(locations: Array<Location>): void {
@@ -75,8 +75,8 @@ export class LocationState {
       .map(index => otherLocations.splice(index, 1)[0]) // Splice returns removed value
       .orElse(undefined);
 
-    this.mapHub.editLocation(editedLocation);
-    this.mapHub.drawLocations(otherLocations);
+    this.mapStore.editedLocationChange(editedLocation);
+    this.mapStore.locationsToDrawChange(otherLocations);
   }
 
   private validLocation(location: Location): boolean {

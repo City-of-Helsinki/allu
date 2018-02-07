@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {MapUtil} from '../../../service/map/map.util';
-import {MapHub} from '../../../service/map/map-hub';
+import {MapStore} from '../../../service/map/map-store';
 import {Some} from '../../../util/option';
 import {ApplicationType, hasSingleKind} from '../../../model/application/type/application-type';
 import {drawingAllowedForKind} from '../../../model/application/type/application-kind';
@@ -31,7 +31,9 @@ import {LocationState} from '../../../service/application/location-state';
 import {Location} from '../../../model/common/location';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 import {defaultFilter, MapSearchFilter} from '../../../service/map-search-filter';
-import {Subscription} from 'rxjs/Subscription';
+import {CityDistrictService} from '../../../service/map/city-district.service';
+import {FixedLocationService} from '../../../service/map/fixed-location.service';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'type',
@@ -55,17 +57,16 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   districts: Observable<Array<CityDistrict>>;
   multipleLocations = false;
 
-  private routeEventSubscription: Subscription;
-  private searchFilterSubscription: Subscription;
-  private shapeSubscription: Subscription;
-  private editedLocationSubscription: Subscription;
+  private destroy = new Subject<boolean>();
 
   constructor(
     private applicationStore: ApplicationStore,
     private locationState: LocationState,
     private mapService: MapUtil,
     private router: Router,
-    private mapHub: MapHub,
+    private mapStore: MapStore,
+    private cityDistrictService: CityDistrictService,
+    private fixedLocationService: FixedLocationService,
     private fb: FormBuilder) {
 
     this.areaCtrl = this.fb.control(undefined);
@@ -94,11 +95,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.mapHub.addSearchFilter(defaultFilter);
+    this.mapStore.searchFilterChange(defaultFilter);
 
-    this.routeEventSubscription = this.router.events
+    this.router.events
+      .takeUntil(this.destroy)
       .filter(e => e instanceof NavigationStart)
-      .subscribe(navEvent => this.mapHub.addSearchFilter(defaultFilter));
+      .subscribe(() => this.mapStore.searchFilterChange(defaultFilter));
 
     this.application = this.applicationStore.snapshot.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
@@ -106,28 +108,39 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadFixedLocations();
 
     this.progressStep = ProgressStep.LOCATION;
-    this.searchFilterSubscription = this.mapHub.searchFilter().subscribe(filter => this.searchUpdated(filter));
-    this.shapeSubscription = this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
-    this.districts = this.mapHub.districts();
+    this.mapStore.searchFilter
+      .takeUntil(this.destroy)
+      .subscribe(filter => this.searchUpdated(filter));
+
+    this.mapStore.shape
+      .takeUntil(this.destroy)
+      .subscribe(shape => this.shapeAdded(shape));
+
+    this.districts = this.cityDistrictService.get();
 
     this.initForm();
-    this.editedLocationSubscription = this.mapHub.editedLocation().subscribe(loc => this.editLocation(loc));
 
-    this.areaCtrl.valueChanges.subscribe(id => this.onAreaChange(id));
+    this.mapStore.editedLocation
+      .takeUntil(this.destroy)
+      .subscribe(loc => this.editLocation(loc));
+
+    this.areaCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .subscribe(id => this.onAreaChange(id));
+
     this.sectionsCtrl.valueChanges
+      .takeUntil(this.destroy)
       .distinctUntilChanged(ArrayUtil.numberArrayEqual)
       .subscribe(ids => this.onSectionsChange(ids));
   }
 
   ngOnDestroy() {
-    this.routeEventSubscription.unsubscribe();
-    this.searchFilterSubscription.unsubscribe();
-    this.shapeSubscription.unsubscribe();
-    this.editedLocationSubscription.unsubscribe();
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   ngAfterViewInit(): void {
-    this.mapHub.selectApplication(this.application);
+    this.mapStore.selectedApplicationChange(this.application);
   }
 
   onApplicationTypeChange(type: ApplicationType) {
@@ -197,14 +210,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   districtName(id: number): Observable<string> {
-    return this.mapHub.districtById(id).map(d => d.name);
+    return this.cityDistrictService.byId(id).map(d => d.name);
   }
 
   notifyEditingAllowed(): void {
     const isAllowedForKind = Some(this.application.kinds)
       .map(kinds => kinds.every(kind => drawingAllowedForKind(kind)))
       .orElse(true);
-    this.mapHub.setDrawingAllowed(isAllowedForKind && (this.sectionsCtrl.value.length === 0));
+    this.mapStore.drawingAllowedChange(isAllowedForKind && (this.sectionsCtrl.value.length === 0));
   }
 
   get submitAllowed(): boolean {
@@ -215,7 +228,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private editLocation(loc: Location): void {
     if (!!loc) {
       this.locationForm.patchValue(LocationForm.from(loc));
-      this.mapHub.addSearchFilter(this.createFilter(loc));
+      this.mapStore.searchFilterChange(this.createFilter(loc));
     }
   }
 
@@ -229,7 +242,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private loadFixedLocations(): void {
     if (hasSingleKind(this.application.typeEnum)) {
-      this.mapHub.fixedLocationAreas()
+      this.fixedLocationService.existing
         .subscribe(fixedLocations => {
           this.areas = fixedLocations
             .filter(f => f.hasSectionsForKind(this.application.kind))
@@ -272,7 +285,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private onSectionsChange(ids: Array<number>) {
-    this.mapHub.selectFixedLocationSections(ids);
+    this.mapStore.selectedSectionsChange(ids);
   }
 
   private initForm(): void {
@@ -282,7 +295,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       const formValues = LocationForm.from(this.application.firstLocation);
       this.locationForm.patchValue(formValues);
       this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
-      this.mapHub.addSearchFilter(this.createFilter(this.application.firstLocation));
+      this.mapStore.searchFilterChange(this.createFilter(this.application.firstLocation));
     }
   }
 
@@ -328,7 +341,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private resetForm(): void {
     this.locationForm.reset(LocationForm.from(new Location()));
-    this.mapHub.addSearchFilter({address: undefined, startDate: undefined, endDate: undefined});
+    this.mapStore.searchFilterChange({address: undefined, startDate: undefined, endDate: undefined});
   }
 
   private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {

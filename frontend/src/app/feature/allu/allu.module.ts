@@ -10,7 +10,7 @@ import '../../rxjs-extensions';
 import {ApplicationModule} from '../application/application.module';
 import {ApplicationService} from '../../service/application/application.service';
 import {LocationService} from '../../service/location.service';
-import {MapHub} from '../../service/map/map-hub';
+import {MapStore} from '../../service/map/map-store';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {AlluComponent} from './allu.component';
@@ -82,7 +82,7 @@ import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
     CustomerService,
     CustomerHub,
     UserHub,
-    MapHub,
+    MapStore,
     UIStateHub,
     AuthGuard,
     CanDeactivateGuard,

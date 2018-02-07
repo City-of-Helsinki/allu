@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 
 import {MapUtil} from './map.util';
 import {MapLayerService} from './map-layer.service';
-import {MapState, MapStateConfig} from './map-state';
+import {MapController, MapControllerConfig} from './map-controller';
 
 @Injectable()
 export class MapService {
@@ -16,13 +16,13 @@ export class MapService {
     selection: boolean = false,
     showOnlyApplicationArea: boolean = false
   ) {
-    const config: MapStateConfig = {
+    const config: MapControllerConfig = {
       draw: draw,
       edit: edit,
       zoom: zoom,
       selection: selection,
       showOnlyApplicationArea: showOnlyApplicationArea
     };
-    return new MapState(this.mapUtil, this.mapLayerService, config);
+    return new MapController(this.mapUtil, this.mapLayerService, config);
   }
 }

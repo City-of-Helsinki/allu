@@ -1,16 +1,16 @@
 import {Component, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 
 import {UserHub} from '../../../service/user/user-hub';
-import {MapHub} from '../../../service/map/map-hub';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Some} from '../../../util/option';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {CityDistrict} from '../../../model/common/city-district';
 import {User} from '../../../model/user/user';
+import {CityDistrictService} from '../../../service/map/city-district.service';
 
 @Component({
   selector: 'user',
@@ -35,7 +35,7 @@ export class UserComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private userHub: UserHub,
-              private mapHub: MapHub,
+              private cityDistrictService: CityDistrictService,
               private fb: FormBuilder,
               private router: Router,
               private currentUser: CurrentUser) {
@@ -61,7 +61,7 @@ export class UserComponent implements OnInit {
       });
     });
 
-    this.districts = this.mapHub.districts();
+    this.districts = this.cityDistrictService.get();
   }
 
   save(user: User): void {

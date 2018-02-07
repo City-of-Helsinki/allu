@@ -3,8 +3,8 @@ import {Observable} from 'rxjs/Observable';
 import {Project} from '../../model/project/project';
 import {Application} from '../../model/application/application';
 import {ProjectHub} from './project-hub';
-import {MapHub} from '../map/map-hub';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {CityDistrictService} from '../map/city-district.service';
 
 @Injectable()
 export class ProjectState {
@@ -14,7 +14,7 @@ export class ProjectState {
   private applications$ = new BehaviorSubject<Array<Application>>([]);
 
   constructor(private projectHub: ProjectHub,
-              private mapHub: MapHub) {}
+              private cityDistrictService: CityDistrictService) {}
 
   createNew(): Observable<Project> {
     this._project = new Project();
@@ -108,7 +108,7 @@ export class ProjectState {
   districtNames(ids?: Array<number>): Observable<Array<string>> {
     const districtIds = ids || this._project.cityDistricts;
 
-    return this.mapHub.districtsById(districtIds)
+    return this.cityDistrictService.byIds(districtIds)
       .map(ds => ds.map(d => d.name));
   }
 }

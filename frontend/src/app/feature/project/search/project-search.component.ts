@@ -9,7 +9,7 @@ import {ProjectHub} from '../../../service/project/project-hub';
 import {Sort} from '../../../model/common/sort';
 import {CityDistrict} from '../../../model/common/city-district';
 import {ProjectState} from '../../../service/project/project-state';
-import {MapHub} from '../../../service/map/map-hub';
+import {CityDistrictService} from '../../../service/map/city-district.service';
 
 
 @Component({
@@ -24,7 +24,7 @@ export class ProjectSearchComponent implements OnInit {
 
   constructor(private projectHub: ProjectHub,
               private projectState: ProjectState,
-              private mapHub: MapHub,
+              private cityDistrictService: CityDistrictService,
               private router: Router,
               fb: FormBuilder) {
     this.queryForm = fb.group({
@@ -39,7 +39,7 @@ export class ProjectSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.districts = this.mapHub.districts();
+    this.districts = this.cityDistrictService.get();
   }
 
   goToSummary(project: Project): void {

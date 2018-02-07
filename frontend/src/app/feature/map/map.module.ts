@@ -4,6 +4,8 @@ import {MapComponent} from './map.component';
 import {MapUtil} from '../../service/map/map.util';
 import {MapService} from '../../service/map/map.service';
 import {MapLayerService} from '../../service/map/map-layer.service';
+import {FixedLocationService} from '../../service/map/fixed-location.service';
+import {CityDistrictService} from '../../service/map/city-district.service';
 
 @NgModule({
   imports: [
@@ -18,7 +20,9 @@ import {MapLayerService} from '../../service/map/map-layer.service';
   providers: [
     MapUtil,
     MapService,
-    MapLayerService
+    MapLayerService,
+    FixedLocationService,
+    CityDistrictService
   ]
 })
 export class MapModule {}

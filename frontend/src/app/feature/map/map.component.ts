@@ -1,6 +1,6 @@
 import {Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 
-import {MapHub} from '../../service/map/map-hub';
+import {MapStore} from '../../service/map/map-store';
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
@@ -9,11 +9,12 @@ import {styleByApplicationType, pathStyle} from '../../service/map/map-draw-styl
 import {MapService} from '../../service/map/map.service';
 import {MapPopup} from '../../service/map/map-popup';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
-import {Subscription} from 'rxjs/Subscription';
 import {Location} from '../../model/common/location';
 import {Circle} from 'leaflet';
-import {MapState, ShapeAdded} from '../../service/map/map-state';
+import {MapController, ShapeAdded} from '../../service/map/map-controller';
 import {Router} from '@angular/router';
+import {Subject} from 'rxjs/Subject';
+import {FixedLocationService} from '../../service/map/fixed-location.service';
 
 @Component({
   selector: 'map',
@@ -31,12 +32,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
-  private mapState: MapState;
-  private subscriptions: Array<Subscription> = [];
+  private mapController: MapController;
+  private destroy = new Subject<boolean>();
 
   constructor(
     private mapService: MapService,
-    private mapHub: MapHub,
+    private mapStore: MapStore,
+    private fixedLocationService: FixedLocationService,
     private projectHub: ProjectHub,
     private router: Router) {}
 
@@ -48,35 +50,36 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
    * since map div might not be available during ngOnInit
    */
   ngAfterViewInit(): void {
-    this.mapState = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
+    this.mapController = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
     this.initSubscriptions();
     Some(this.projectId).do(id => this.drawProject(id));
-    this.mapState.selectDefaultLayer();
+    this.mapController.selectDefaultLayer();
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   applicationSelected(application: Application) {
-    this.mapState.clearDrawn();
+    this.mapController.clearDrawn();
 
     // Check to see if the application has a location
     if (application.hasGeometry()) {
-      this.mapState.drawGeometry(application.geometries(), findTranslation(['application.type', application.type]));
-      this.mapState.centerAndZoomOnDrawn();
+      this.mapController.drawGeometry(application.geometries(), findTranslation(['application.type', application.type]));
+      this.mapController.centerAndZoomOnDrawn();
     }
   }
 
   private drawProject(id: number) {
     this.projectHub.getProjectApplications(id).subscribe(apps => {
       this.drawApplications(apps);
-      this.mapState.centerAndZoomOnDrawn();
+      this.mapController.centerAndZoomOnDrawn();
     });
   }
 
   private drawApplications(applications: Array<Application>) {
-    this.mapState.clearDrawn();
+    this.mapController.clearDrawn();
     applications
       .filter(app => this.applicationShouldBeDrawn(app))
       .filter(app => app.id !== this.applicationId) // Only draw other than edited application
@@ -84,7 +87,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private drawApplication(application: Application): void {
-    this.mapState.drawGeometry(
+    this.mapController.drawGeometry(
       application.geometries(),
       findTranslation(['application.type', application.type]),
       styleByApplicationType[application.type],
@@ -98,22 +101,22 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private drawFocusedLocations(locations: Array<Location>): void {
-    this.mapState.clearFocused();
+    this.mapController.clearFocused();
     const geometries = locations.map(loc => loc.geometry).filter(geometry => !!geometry);
-    this.mapState.drawFocused(geometries);
+    this.mapController.drawFocused(geometries);
   }
 
   private drawEditedLocation(location: Location): void {
-    this.mapState.clearEdited();
+    this.mapController.clearEdited();
     if (location) {
-      this.mapState.drawEditableGeometry(location.geometry, pathStyle.DEFAULT);
+      this.mapController.drawEditableGeometry(location.geometry, pathStyle.DEFAULT);
       this.updateMapControls([location]);
     }
   }
 
   private updateMapControls(locations: Array<Location>) {
     if (locations.some(loc => loc.hasFixedGeometry())) {
-      this.mapState.setDynamicControls(false);
+      this.mapController.setDynamicControls(false);
     } else {
       const geometryCount = locations.reduce((cur, acc) => cur + acc.geometryCount(), 0);
       this.editedItemCountChanged.emit(geometryCount);
@@ -121,21 +124,21 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private drawFixedLocations(fixedLocations: Array<FixedLocationSection>) {
-    this.mapState.clearEdited();
+    this.mapController.clearEdited();
 
     const geometries = fixedLocations.map(fl => fl.geometry);
     if (geometries.length > 0) {
-      this.mapState.drawFixedLocations(geometries);
-      this.mapState.fitEditedToView();
+      this.mapController.drawFixedLocations(geometries);
+      this.mapController.fitEditedToView();
     }
 
     // Disable editing map with draw controls when we have fixed locations
-    this.mapState.setDynamicControls(fixedLocations.length === 0);
+    this.mapController.setDynamicControls(fixedLocations.length === 0);
   }
 
   private addShape(shapeAdded: ShapeAdded) {
     const shape = this.featuresToGeoJSON(shapeAdded.features);
-    this.mapHub.addShape(shape);
+    this.mapStore.shapeChange(shape);
 
     if (shapeAdded.affectsControls) {
       this.editedItemCountChanged.emit(shape.features.length);
@@ -170,23 +173,46 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initSubscriptions(): void {
-    const coordinateSubscription = this.mapHub.coordinates().subscribe((optCoords) =>
-      optCoords.map(coordinates => this.mapState.panToCoordinates(coordinates)));
+    this.mapStore.coordinates
+      .takeUntil(this.destroy)
+      .subscribe(opt => opt.map(coordinates => this.mapController.panToCoordinates(coordinates)));
 
-    this.subscriptions = [
-      this.mapState.shapes.subscribe(shapes => this.addShape(shapes)),
-      this.mapState.mapView.subscribe(view => this.mapHub.addMapView(view)),
-      coordinateSubscription,
-      this.mapHub.applications().subscribe(applications => this.drawApplications(applications)),
-      this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app)),
-      this.mapHub.selectedFixedLocationSections().subscribe(fxs => this.drawFixedLocations(fxs)),
-      this.mapHub.editedLocation().subscribe(loc => this.drawEditedLocation(loc)),
-      this.mapHub.locationsToDraw().subscribe(locs => this.drawFocusedLocations(locs)),
-      this.mapHub.drawingAllowed().subscribe(allowed => this.drawingAllowed(allowed))
-    ];
+    this.mapController.shapes
+      .takeUntil(this.destroy)
+      .subscribe(shapes => this.addShape(shapes));
+
+    this.mapController.mapView
+      .takeUntil(this.destroy)
+      .subscribe(view => this.mapStore.mapViewChange(view));
+
+    this.mapStore.applications
+      .takeUntil(this.destroy)
+      .subscribe(applications => this.drawApplications(applications));
+
+    this.mapStore.selectedApplication
+      .takeUntil(this.destroy)
+      .filter(app => !!app)
+      .subscribe(app => this.applicationSelected(app));
+
+      this.mapStore.selectedSections
+        .takeUntil(this.destroy)
+        .switchMap(ids => this.fixedLocationService.sectionsByIds(ids))
+        .subscribe(fxs => this.drawFixedLocations(fxs));
+
+    this.mapStore.editedLocation
+      .takeUntil(this.destroy)
+      .subscribe(loc => this.drawEditedLocation(loc));
+
+    this.mapStore.locationsToDraw
+      .takeUntil(this.destroy)
+      .subscribe(locs => this.drawFocusedLocations(locs));
+
+    this.mapStore.drawingAllowed
+      .takeUntil(this.destroy)
+      .subscribe(allowed => this.drawingAllowed(allowed));
   }
 
   private drawingAllowed(allowed: boolean) {
-    this.mapState.setDynamicControls(allowed);
+    this.mapController.setDynamicControls(allowed);
   }
 }

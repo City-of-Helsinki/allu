@@ -1,12 +1,14 @@
 import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
-import {MapHub} from '../../../../service/map/map-hub';
+import {MapStore} from '../../../../service/map/map-store';
 import {Application} from '../../../../model/application/application';
 import {Location} from '../../../../model/common/location';
 import {ArrayUtil} from '../../../../util/array-util';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {LocationState} from '../../../../service/application/location-state';
+import {FixedLocationService} from '../../../../service/map/fixed-location.service';
+import {CityDistrictService} from '../../../../service/map/city-district.service';
 
 @Component({
   selector: 'location-details',
@@ -23,7 +25,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
   sections: string;
   multipleLocations = false;
 
-  constructor(private mapHub: MapHub, private locationState: LocationState) {
+  constructor(private mapStore: MapStore,
+              private locationState: LocationState,
+              private fixedLocationService: FixedLocationService,
+              private cityDistrictService: CityDistrictService) {
   }
 
   ngOnInit(): void {
@@ -32,24 +37,24 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     // Sections can be selected only from single area so we can
     // get area based on its sections
-    this.mapHub.fixedLocationAreaBySectionIds(this.location.fixedLocationIds)
+    this.fixedLocationService.areaBySectionIds(this.location.fixedLocationIds)
       .subscribe(area => this.area = area.name);
 
-    this.mapHub.fixedLocationSectionsBy(this.location.fixedLocationIds)
+    this.fixedLocationService.sectionsByIds(this.location.fixedLocationIds)
       .map(sections => sections.map(s => s.name))
       .map(names => names.sort(ArrayUtil.naturalSort((name: string) => name)))
       .map(names => names.join(', '))
       .subscribe(sectionNames => this.sections = sectionNames);
 
-    this.mapHub.editedLocation().subscribe(loc => this.editLocation(loc));
+    this.mapStore.editedLocation.subscribe(loc => this.editLocation(loc));
   }
 
   ngAfterViewInit(): void {
-    this.mapHub.selectApplication(this.application);
+    this.mapStore.selectedApplicationChange(this.application);
   }
 
   districtName(id: number): Observable<string> {
-    return this.mapHub.districtById(id).map(d => d.name);
+    return this.cityDistrictService.byId(id).map(d => d.name);
   }
 
   private editLocation(loc: Location): void {

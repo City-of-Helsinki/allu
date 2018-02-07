@@ -30,7 +30,7 @@ export class ShapeAdded {
   constructor(public features: L.FeatureGroup, public affectsControls: boolean = true) {}
 }
 
-export interface MapStateConfig {
+export interface MapControllerConfig {
   draw: boolean;
   edit: boolean;
   zoom: boolean;
@@ -38,7 +38,7 @@ export interface MapStateConfig {
   showOnlyApplicationArea;
 }
 
-export class MapState {
+export class MapController {
   private map: L.Map;
   private defaultOverlay: L.Layer;
   private mapOverlayLayers: any;
@@ -52,7 +52,7 @@ export class MapState {
   constructor(
     private mapUtil: MapUtil,
     private mapLayerService: MapLayerService,
-    private config: MapStateConfig
+    private config: MapControllerConfig
   ) {
     this.initMap();
   }
@@ -152,8 +152,10 @@ export class MapState {
   }
 
   public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: Object) {
-    this.drawGeometryToLayer(geometry, this.editedItems, style);
-    this.showMeasurements(this.editedItems);
+    if (geometry) {
+      this.drawGeometryToLayer(geometry, this.editedItems, style);
+      this.showMeasurements(this.editedItems);
+    }
   }
 
   public fitEditedToView() {

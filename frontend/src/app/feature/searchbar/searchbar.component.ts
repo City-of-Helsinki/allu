@@ -1,13 +1,12 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
-import {MapHub} from '../../service/map/map-hub';
+import {MapStore} from '../../service/map/map-store';
 import {PostalAddress} from '../../model/common/postal-address';
 import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../service/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {StringUtil} from '../../util/string.util';
-import {EnumUtil} from '../../util/enum.util';
 import {ApplicationStatus, searchable} from '../../model/application/application-status';
 import {MapSearchFilter} from '../../service/map-search-filter';
 import {Subject} from 'rxjs/Subject';
@@ -36,7 +35,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   private destroy = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder, private mapHub: MapHub) {
+  constructor(private fb: FormBuilder, private mapStore: MapStore) {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
@@ -47,21 +46,25 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.searchForm.patchValue(this.mapHub.searchFilterSnapshot());
+    this.searchForm.patchValue(this.mapStore.snapshot.mapSearchFilter);
 
-    this.mapHub.coordinates()
+    this.mapStore.coordinates
       .takeUntil(this.destroy)
       .filter(coords => !coords.isDefined())
-      .subscribe(coords => NotificationService.message('Osoitetta ei löytynyt', 4000));
+      .subscribe(() => NotificationService.message('Osoitetta ei löytynyt', 4000));
 
     this.searchForm.valueChanges
       .takeUntil(this.destroy)
       .subscribe(form => this.notifySearchUpdated(form));
 
-    this.matchingAddresses = this.addressControl.valueChanges
+    this.addressControl.valueChanges
+      .takeUntil(this.destroy)
       .debounceTime(300)
       .filter(searchTerm => !!searchTerm && searchTerm.length >= 3)
-      .switchMap(searchTerm => this.mapHub.findMatchingAddresses(searchTerm))
+      .subscribe(searchTerm => this.mapStore.addressSearchChange(searchTerm));
+
+    this.matchingAddresses = this.mapStore.matchingAddresses
+      .takeUntil(this.destroy)
       .map(matching => matching.sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress)));
   }
 
@@ -71,11 +74,11 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   public notifySearchUpdated(filter: MapSearchFilter): void {
-    this.mapHub.addSearchFilter(filter);
+    this.mapStore.searchFilterChange(filter);
   }
 
   public addressSelected(streetAddress: string) {
-    this.mapHub.coordinateSearch(StringUtil.capitalize(streetAddress));
+    this.mapStore.coordinateSearchChange(StringUtil.capitalize(streetAddress));
     this.searchForm.patchValue({address: streetAddress});
   }
 

@@ -9,10 +9,10 @@ import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
 import {CityDistrict} from '../../../model/common/city-district';
-import {MapHub} from '../../../service/map/map-hub';
 import {WorkQueueTab} from '../workqueue-tab';
 import {ApplicationWorkItemStore} from '../application-work-item-store';
 import {Subject} from 'rxjs/Subject';
+import {CityDistrictService} from '../../../service/map/city-district.service';
 
 
 const COMMON_MULTISELECT_VALUE = ['common'];
@@ -43,7 +43,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   private destroy = new Subject<boolean>();
 
   constructor(fb: FormBuilder,
-              private mapHub: MapHub,
+              private cityDistrictService: CityDistrictService,
               private store: ApplicationWorkItemStore,
               private currentUser: CurrentUser) {
     this.typeCtrl = fb.control(undefined);
@@ -62,7 +62,13 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.districts = this.mapHub.districts();
+    this.queryForm.valueChanges
+      .takeUntil(this.destroy)
+      .distinctUntilChanged()
+      .debounceTime(300)
+      .subscribe(query => this.store.searchChange(ApplicationSearchQuery.from(query)));
+
+    this.districts = this.cityDistrictService.get();
 
     this.store.changes
       .takeUntil(this.destroy)

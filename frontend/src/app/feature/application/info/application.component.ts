@@ -10,7 +10,6 @@ import {SidebarItem, visibleFor} from '../../sidebar/sidebar-item';
 import {ProgressStep, stepFrom} from '../progressbar/progress-step';
 import {ApplicationStatus, inHandling} from '../../../model/application/application-status';
 import {AttachmentHub} from '../attachment/attachment-hub';
-import {MapHub} from '../../../service/map/map-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
@@ -22,6 +21,7 @@ import {DefaultRecipientHub} from '../../../service/recipients/default-recipient
 import {DefaultRecipient} from '../../../model/common/default-recipient';
 import {DistributionEntry} from '../../../model/common/distribution-entry';
 import {DistributionType} from '../../../model/common/distribution-type';
+import {FixedLocationService} from '../../../service/map/fixed-location.service';
 
 @Component({
   selector: 'application',
@@ -43,7 +43,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
               private router: Router,
               private applicationStore: ApplicationStore,
               private attachmentHub: AttachmentHub,
-              private mapHub: MapHub,
+              private fixedLocationService: FixedLocationService,
               private supervisionTaskStore: SupervisionTaskStore,
               private defaultRecipientHub: DefaultRecipientHub) {
   }
@@ -148,7 +148,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {
     return Some(application.firstLocation)
       .map(loc => loc.fixedLocationIds)
-      .map(ids => this.mapHub.fixedLocationAreaBySectionIds(ids)
+      .map(ids => this.fixedLocationService.areaBySectionIds(ids)
         .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.typeEnum, area.id)))
       .orElse(Observable.of([]));
   }

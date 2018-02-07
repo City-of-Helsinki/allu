@@ -7,8 +7,8 @@ import {TimeUtil} from '../../util/time.util';
 import {findTranslation} from '../../util/translations';
 import {Some} from '../../util/option';
 import {StringUtil} from '../../util/string.util';
-import {MapHub} from '../../service/map/map-hub';
 import {CityDistrict} from '../../model/common/city-district';
+import {CityDistrictService} from '../map/city-district.service';
 
 @Injectable()
 export class ApplicationHistoryFormatter {
@@ -16,8 +16,8 @@ export class ApplicationHistoryFormatter {
   private meta: StructureMeta;
   private cityDistricts: Array<CityDistrict> = [];
 
-  constructor(private mapHub: MapHub) {
-    this.mapHub.districts()
+  constructor(private cityDistrictService: CityDistrictService) {
+    this.cityDistrictService.get()
     .subscribe(districts => this.cityDistricts = districts)
     .unsubscribe();
   }
