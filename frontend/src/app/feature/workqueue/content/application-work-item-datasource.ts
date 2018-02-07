@@ -64,12 +64,12 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
   }
 
   private toRows(applications: Application[]): ApplicationWorkItemRow[] {
-    return applications.reduce((prev, cur, index) => {
+    return applications.reduce((prev, cur) => {
       const tagRow = Some(cur.applicationTags)
         .filter(tags => tags.length > 0)
-        .map((tags) => ({content: tags, relatedIndex: index}));
+        .map((tags) => ({content: tags, relatedIndex: prev.length}));
 
-      prev.push({content: cur, relatedIndex: tagRow.map(() => index + 1).orElse(undefined)});
+      prev.push({content: cur, relatedIndex: tagRow.map(() => prev.length + 1).orElse(undefined)});
       tagRow.do(tags => prev.push(tags));
 
       return prev;
