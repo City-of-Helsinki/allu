@@ -11,7 +11,8 @@ export class InvoicingInfoForm {
     public depositReason?: string,
     public depositStatus?: string,
     public customerReference?: string,
-    public invoicingDate?: Date) {
+    public invoicingDate?: Date,
+    public skipPriceCalculation: boolean = false) {
     this.invoiceRecipient = invoiceRecipient || new CustomerForm();
   }
 
@@ -25,7 +26,8 @@ export class InvoicingInfoForm {
       depositReason: [{value: undefined, disabled: true}],
       depositStatus: [undefined],
       customerReference: [undefined],
-      invoicingDate: [undefined]
+      invoicingDate: [undefined],
+      skipPriceCalculation: [false]
     });
   }
 }

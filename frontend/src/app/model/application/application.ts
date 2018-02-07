@@ -52,7 +52,8 @@ export class Application {
     public replacesApplicationId?: number,
     public replacedByApplicationId?: number,
     public customerReference?: string,
-    public invoicingDate?: Date) {
+    public invoicingDate?: Date,
+    public skipPriceCalculation: boolean = false) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

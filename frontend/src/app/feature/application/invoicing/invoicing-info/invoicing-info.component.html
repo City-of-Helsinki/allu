@@ -49,6 +49,11 @@
               </mat-form-field>
             </div>
           </div>
+          <div fxLayout="row" fxLayoutWrap>
+            <div fxFlex class="height-fix-bottom">
+              <mat-checkbox formControlName="skipPriceCalculation">{{'invoice.info.skipPriceCalculation' | translation}}</mat-checkbox>
+            </div>
+          </div>
           <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
             <div fxFlex *ngIf="billable">
               <mat-form-field class="input-full-width">

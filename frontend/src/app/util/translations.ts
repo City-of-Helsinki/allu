@@ -955,7 +955,8 @@ export const translations = {
       notBillable: 'Ei laskuteta',
       notBillableReason: 'Peruste',
       customerReference: 'Asiakkaan viite',
-      invoicingDate: 'Laskutuspäivä'
+      invoicingDate: 'Laskutuspäivä',
+      skipPriceCalculation: 'Ei automaattista hinnanlaskentaa'
     },
     negligenceFeeType: {
       START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',
