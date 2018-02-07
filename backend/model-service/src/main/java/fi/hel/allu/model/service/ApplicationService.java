@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -218,8 +217,9 @@ public class ApplicationService {
         createInvoiceIfNeeded(applicationId, userId);
         // the fall-through is intentional here
       case REJECTED:
-        final Integer handlerId = applicationDao.findById(applicationId).getHandler();
-        return applicationDao.updateDecision(applicationId, statusType, userId, handlerId);
+        final Application application = findById(applicationId);
+        changeReplacedApplicationStatus(application);
+        return applicationDao.updateDecision(applicationId, statusType, userId, application.getHandler());
       case DECISIONMAKING:
         return applicationDao.startDecisionMaking(applicationId, statusType, userId);
       default:
@@ -347,7 +347,13 @@ public class ApplicationService {
       applicationDao.addTag(applicationId,
           new ApplicationTag(userId, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
     }
+  }
 
+  private void changeReplacedApplicationStatus(Application application) {
+    final Integer replacedAppId = application.getReplacesApplicationId();
+    if (replacedAppId != null) {
+      applicationDao.updateStatus(replacedAppId, StatusType.REPLACED);
+    }
   }
 
 }

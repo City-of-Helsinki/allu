@@ -176,4 +176,18 @@ public class ApplicationServiceTest {
     Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID, HANDLER_ID);
   }
 
+  @Test
+  public void decisionSetsReplacedApplicationAsReplaced() {
+    final int APP_ID = 123;
+    final int REPLACED_APP_ID = 456;
+    final int UID = 234;
+    final Application application = new Application();
+    application.setReplacesApplicationId(REPLACED_APP_ID);
+    application.setNotBillable(true);
+    Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
+    applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
+    Mockito.verify(applicationDao).updateStatus(REPLACED_APP_ID, StatusType.REPLACED);
+  }
+
 }
