@@ -1,5 +1,5 @@
 - name: create virtual host file
-  template: src=virtualhost.conf dest=/home/allu/apache/sites-available/{{ proxy_domain }}.conf
+  template: src=virtualhost.conf dest=/home/allu/apache/sites-available/allufront.conf
 
 - name: copy frontend files under web server
   copy: src=../frontend/dist/ dest=/home/allu/apache/www
