@@ -64,6 +64,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     application.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;
     application.customerReference = invoicingInfo.customerReference;
     application.invoicingDate = invoicingInfo.invoicingDate;
+    application.skipPriceCalculation = invoicingInfo.skipPriceCalculation;
 
     return this.saveCustomer()
       .switchMap(customer => {

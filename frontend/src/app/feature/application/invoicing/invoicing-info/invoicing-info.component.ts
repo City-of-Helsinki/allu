@@ -50,8 +50,8 @@ export class InvoicingInfoComponent implements OnInit {
     this.notBillableCtrl = <FormControl>this.form.get('notBillable');
     this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
     this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
-    this.initForm();
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
+    this.initForm();
   }
 
   invoiceRecipientChange(recipient: CustomerForm) {
@@ -119,7 +119,8 @@ export class InvoicingInfoComponent implements OnInit {
         notBillable: app.notBillable,
         notBillableReason: app.notBillableReason,
         customerReference: app.customerReference,
-        invoicingDate: app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app)
+        invoicingDate: app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app),
+        skipPriceCalculation: app.skipPriceCalculation
       });
 
       if (!applicationCanBeEdited(app.statusEnum)) {
