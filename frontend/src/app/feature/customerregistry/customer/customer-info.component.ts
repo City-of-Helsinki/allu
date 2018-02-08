@@ -63,7 +63,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
 
   onSearchChange(terms: CustomerSearchQuery): Observable<Array<Customer>> {
     if (this.allowSearch) {
-      const termsWithType = {...terms, type: this.typeControl.value};
+      const termsWithType = {...terms, type: this.typeControl.value, active: true};
       return this.customerHub.searchCustomersBy(termsWithType);
     } else {
       return Observable.empty();
