@@ -1,4 +1,5 @@
 import {SupervisionTask} from '../../../model/application/supervision/supervision-task';
+import {isAutomaticSupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
 import {Some} from '../../../util/option';
 import {User} from '../../../model/user/user';
 
@@ -16,7 +17,8 @@ export class SupervisionTaskForm {
     public actualFinishingTime?: Date,
     public status?: string,
     public description?: string,
-    public result?: string
+    public result?: string,
+    public automatic?: boolean
   ) {}
 
   static from(task: SupervisionTask): SupervisionTaskForm {
@@ -38,6 +40,7 @@ export class SupervisionTaskForm {
     form.status = task.uiStatus;
     form.description = task.description;
     form.result = task.result;
+    form.automatic = isAutomaticSupervisionTaskType(task.type);
     return form;
   }
 

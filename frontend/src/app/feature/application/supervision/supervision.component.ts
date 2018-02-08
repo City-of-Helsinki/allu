@@ -59,7 +59,8 @@ export class SupervisionComponent implements OnInit, OnDestroy {
       actualFinishingTime: [undefined],
       status: [undefined],
       description: [undefined],
-      result: [undefined]
+      result: [undefined],
+      automatic: [undefined]
     });
     formGroup.patchValue(SupervisionTaskForm.from(task));
 

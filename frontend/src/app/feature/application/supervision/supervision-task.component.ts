@@ -7,7 +7,7 @@ import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {EnumUtil} from '../../../util/enum.util';
-import {SupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
+import {SupervisionTaskType, isAutomaticSupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
 import {SupervisionTaskStatusType} from '../../../model/application/supervision/supervision-task-status-type';
 import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
 import {RoleType} from '../../../model/user/role-type';
@@ -34,7 +34,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   @Input() supervisors: Array<User> = [];
   @Output() onRemove = new EventEmitter<void>();
 
-  taskTypes = EnumUtil.enumValues(SupervisionTaskType);
+  taskTypes: string[] = [];
   statusTypes = EnumUtil.enumValues(SupervisionTaskStatusType);
   canEdit = false;
   canApprove = false;
@@ -55,6 +55,12 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.form.disable();
     } else {
       this.preferredSupervisor();
+    }
+    if (formValue.automatic) {
+      this.taskTypes = EnumUtil.enumValues(SupervisionTaskType);
+    } else {
+      this.taskTypes = EnumUtil.enumValues(SupervisionTaskType)
+        .filter(type => !isAutomaticSupervisionTaskType(SupervisionTaskType[type]));
     }
     this.currentUserCanEdit(formValue.creatorId);
     this.currentUserCanApprove(formValue.handlerId, formValue.status);
@@ -106,6 +112,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   edit(): void {
     this.form.enable();
     this.originalEntry = this.form.value;
+    if (this.form.value.automatic) {
+      this.form.controls['type'].disable();
+    }
   }
 
   approve(): void {

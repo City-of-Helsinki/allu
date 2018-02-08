@@ -20,3 +20,8 @@ export enum SupervisionTaskType {
    */
   WARRANTY
 }
+
+export function isAutomaticSupervisionTaskType(type: SupervisionTaskType): boolean {
+  return type === SupervisionTaskType.OPERATIONAL_CONDITION ||
+         type === SupervisionTaskType.WARRANTY;
+}
