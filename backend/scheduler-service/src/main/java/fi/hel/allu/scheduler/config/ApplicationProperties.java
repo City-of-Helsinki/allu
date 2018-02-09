@@ -18,6 +18,7 @@ public class ApplicationProperties {
   private final String emailSenderAddress;
   private final String invoiceArchiveDir;
   private final String sapFtpInvoiceHost;
+  private final int sapFtpInvoicePort;
   private final String sapFtpInvoiceUser;
   private final String sapFtpInvoicePassword;
   private final String sapFtpInvoiceDirectory;
@@ -26,6 +27,7 @@ public class ApplicationProperties {
   private final String customerArchiveDir;
   private final String failedCustomerUpdateDir;
   private final String sapFtpCustomerHost;
+  private final int sapFtpCustomerPort;
   private final String sapFtpCustomerUser;
   private final String sapFtpCustomerPassword;
   private final String sapFtpCustomerDirectory;
@@ -47,6 +49,7 @@ public class ApplicationProperties {
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
       @Value("${invoice.archivedir}") @NotEmpty String invoiceArchiveDir,
       @Value("${sap.ftp.invoice.host}") @NotEmpty String sapFtpInvoiceHost,
+      @Value("${sap.ftp.invoice.port}") int sapFtpInvoicePort,
       @Value("${sap.ftp.invoice.user}") @NotEmpty String sapFtpInvoiceUser,
       @Value("${sap.ftp.invoice.password}") @NotEmpty String sapFtpInvoicePassword,
       @Value("${sap.ftp.invoice.directory}") @NotEmpty String sapFtpInvoiceDirectory,
@@ -55,6 +58,7 @@ public class ApplicationProperties {
       @Value("${customer.archivedir}") @NotEmpty String customerArchiveDir,
       @Value("${customer.failedupdatedir}") @NotEmpty String failedCustomerUpdateDir,
       @Value("${sap.ftp.customer.host}") @NotEmpty String sapFtpCustomerHost,
+      @Value("${sap.ftp.customer.port}") int sapFtpCustomerPort,
       @Value("${sap.ftp.customer.user}") @NotEmpty String sapFtpCustomerUser,
       @Value("${sap.ftp.customer.password}") @NotEmpty String sapFtpCustomerPassword,
       @Value("${sap.ftp.customer.directory}") @NotEmpty String sapFtpCustomerDirectory,
@@ -74,6 +78,7 @@ public class ApplicationProperties {
     this.emailSenderAddress = emailSenderAddress;
     this.invoiceArchiveDir = invoiceArchiveDir;
     this.sapFtpInvoiceHost = sapFtpInvoiceHost;
+    this.sapFtpInvoicePort = sapFtpInvoicePort;
     this.sapFtpInvoiceUser = sapFtpInvoiceUser;
     this.sapFtpInvoicePassword = sapFtpInvoicePassword;
     this.sapFtpInvoiceDirectory = sapFtpInvoiceDirectory;
@@ -82,6 +87,7 @@ public class ApplicationProperties {
     this.customerArchiveDir = customerArchiveDir;
     this.failedCustomerUpdateDir = failedCustomerUpdateDir;
     this.sapFtpCustomerHost = sapFtpCustomerHost;
+    this.sapFtpCustomerPort = sapFtpCustomerPort;
     this.sapFtpCustomerUser = sapFtpCustomerUser;
     this.sapFtpCustomerPassword = sapFtpCustomerPassword;
     this.sapFtpCustomerDirectory = sapFtpCustomerDirectory;
@@ -187,6 +193,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * FTP server port for SAP invoice upload
+   */
+  public int getSapFtpInvoicePort() {
+    return sapFtpInvoicePort;
+  }
+
+  /**
    * FTP user name for SAP invoice upload
    */
   public String getSapFtpInvoiceUser() {
@@ -230,6 +243,13 @@ public class ApplicationProperties {
    */
   public String getSapFtpCustomerHost() {
     return sapFtpCustomerHost;
+  }
+
+  /**
+   * FTP server port for SAP customer update
+   */
+  public int getSapFtpCustomerPort() {
+    return sapFtpCustomerPort;
   }
 
   /**
@@ -337,5 +357,4 @@ public class ApplicationProperties {
   public String getArchiveApplicationsUrl() {
     return getExtServiceUrl("/v1/applications/finished/archive");
   }
-
 }

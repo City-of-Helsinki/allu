@@ -72,7 +72,7 @@ public class SapCustomerService {
   }
 
   private boolean downloadFilesFromFtp() {
-    return ftpService.downloadFiles(applicationProperties.getSapFtpCustomerHost(),
+    return ftpService.downloadFiles(applicationProperties.getSapFtpCustomerHost(), applicationProperties.getSapFtpCustomerPort(),
         applicationProperties.getSapFtpCustomerUser(), applicationProperties.getSapFtpCustomerPassword(),
         applicationProperties.getSapFtpCustomerDirectory(), applicationProperties.getSapFtpCustomerArchive(), getCustomerSourceDirectory().toString());
   }

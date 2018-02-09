@@ -93,6 +93,7 @@ public class InvoicingService {
     return writeToTempFile(salesOrderContainer).map(dir -> {
       boolean sentOk = sftpService.uploadFiles(
           applicationProperties.getSapFtpInvoiceHost(),
+          applicationProperties.getSapFtpInvoicePort(),
           applicationProperties.getSapFtpInvoiceUser(),
           applicationProperties.getSapFtpInvoicePassword(),
           dir.toString(),

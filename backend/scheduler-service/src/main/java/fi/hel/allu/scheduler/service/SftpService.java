@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class SftpService {
 
-  private static final int UNDEFINED_PORT = -1;
   private static final Integer SFTP_TIMEOUT = Integer.valueOf(10000);
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
@@ -33,6 +32,7 @@ public class SftpService {
    * uploaded files to local archive directory.
    *
    * @param host SFTP server host
+   * @param port SFTP port
    * @param user SFTP username
    * @param password SFTP password
    * @param localDirectory Local source directory
@@ -41,13 +41,13 @@ public class SftpService {
    * @param remoteDirectory Target directory on remote server
    * @return true if files uploaded successfully; otherwise, false
    */
-  public boolean uploadFiles(String host, String user, String password, String localDirectory, String localArchiveDirectory,
+  public boolean uploadFiles(String host, int port, String user, String password, String localDirectory, String localArchiveDirectory,
       String remoteDirectory) {
     try {
       initialize();
       FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
       FileObject localArchiveDirectoryObject = createLocalDirectoryObject(localArchiveDirectory);
-      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, user, password, remoteDirectory);
+      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteDirectory);
       moveFiles(localDirectoryObject, remoteDirectoryObject, localArchiveDirectoryObject);
     } catch (IOException | URISyntaxException ex) {
       logger.warn("Failed to upload files.", ex);
@@ -64,6 +64,7 @@ public class SftpService {
    * to SFTP server's archive directory
    *
    * @param host SFTP server host
+   * @param port SFTP port
    * @param user SFTP username
    * @param password SFTP password
    * @param remoteDirectory Directory in SFTP server where to download from
@@ -72,12 +73,12 @@ public class SftpService {
    * @param localDirectory Local target directory
    * @return true if files downloaded successfully; otherwise, false
    */
-  public boolean downloadFiles(String host, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
+  public boolean downloadFiles(String host, int port, String user, String password, String remoteDirectory, String remoteArchiveDirectory,
       String localDirectory) {
     try {
       initialize();
-      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, user, password, remoteDirectory);
-      FileObject remoteArchiveDirectoryObject = createRemoteDirectoryObject(host, user, password, remoteArchiveDirectory);
+      FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteDirectory);
+      FileObject remoteArchiveDirectoryObject = createRemoteDirectoryObject(host, port, user, password, remoteArchiveDirectory);
       FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
       moveFiles(remoteDirectoryObject, localDirectoryObject, remoteArchiveDirectoryObject);
     } catch (IOException | URISyntaxException ex) {
@@ -130,9 +131,9 @@ public class SftpService {
     return localDirectoryObject;
   }
 
-  private FileObject createRemoteDirectoryObject(String host, String user, String password,
+  private FileObject createRemoteDirectoryObject(String host, int port, String user, String password,
       String directory) throws IOException, URISyntaxException {
-    String connectionString = buildConnectionString(host, user, password, directory);
+    String connectionString = buildConnectionString(host, port, user, password, directory);
     FileObject remoteDirectoryObject = manager.resolveFile(connectionString, sftpOptions);
     if (!directoryExists(remoteDirectoryObject)) {
       throw new FileNotFoundException("Remote directory not found");
@@ -144,9 +145,8 @@ public class SftpService {
     return remoteDirectoryObject.exists() && remoteDirectoryObject.isFolder();
   }
 
-  private String buildConnectionString(String host, String user, String password, String remoteDirectory) throws URISyntaxException {
-    // By default don't append port to URI. Port can be included in host if needed.
-    return new URI("sftp", user + ":" + password, host, UNDEFINED_PORT, remoteDirectory, null, null).toString();
+  private String buildConnectionString(String host, int port, String user, String password, String remoteDirectory) throws URISyntaxException {
+    return new URI("sftp", user + ":" + password, host, port, remoteDirectory, null, null).toString();
   }
 
   private void initializeSftpOptions() throws FileSystemException {
