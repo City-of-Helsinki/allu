@@ -63,7 +63,6 @@ export class MapUtil {
   }
 
   public wgs84ToEpsg3879(coordinate: Array<number>): Array<number> {
-    ;
     const projected = this.EPSG3879.projection.project(L.latLng(coordinate[1], coordinate[0]));
     return [projected.x, projected.y];
   }
