@@ -58,19 +58,18 @@ export class MapUtil {
     this.epsg3879 = this.createCrsEPSG3879();
   }
 
-  public getEPSG3879(): L.Proj.CRS {
+  get EPSG3879(): L.Proj.CRS {
     return this.epsg3879;
   }
 
   public wgs84ToEpsg3879(coordinate: Array<number>): Array<number> {
-    const myProj = this.getEPSG3879();
-    const projected = myProj.projection.project(L.latLng(coordinate[1], coordinate[0]));
+    ;
+    const projected = this.EPSG3879.projection.project(L.latLng(coordinate[1], coordinate[0]));
     return [projected.x, projected.y];
   }
 
   public epsg3879ToWgs84(coordinate: Array<number>): Array<number> {
-    const myProj = this.getEPSG3879();
-    const projected = myProj.projection.unproject(L.point(coordinate[0], coordinate[1]));
+    const projected = this.EPSG3879.projection.unproject(L.point(coordinate[0], coordinate[1]));
     return [projected.lng, projected.lat];
   }
 

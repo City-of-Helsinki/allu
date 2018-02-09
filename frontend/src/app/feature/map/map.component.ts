@@ -181,10 +181,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       .takeUntil(this.destroy)
       .subscribe(shapes => this.addShape(shapes));
 
-    this.mapController.mapView
-      .takeUntil(this.destroy)
-      .subscribe(view => this.mapStore.mapViewChange(view));
-
     this.mapStore.applications
       .takeUntil(this.destroy)
       .subscribe(applications => this.drawApplications(applications));

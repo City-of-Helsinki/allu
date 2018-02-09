@@ -26,6 +26,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.mapStore.reset();
   }
 
   jobClick(application: Application) {

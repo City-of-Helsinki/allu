@@ -1,11 +1,12 @@
 import {ApplicationStatus} from '../model/application/application-status';
+import LatLngBounds = L.LatLngBounds;
 
 export interface MapSearchFilter {
   address?: string;
   startDate?: Date;
   endDate?: Date;
   statusTypes?: Array<string>;
-  geometry?: GeoJSON.GeometryObject;
+  geometry?: LatLngBounds;
 }
 
 export const defaultFilter = {

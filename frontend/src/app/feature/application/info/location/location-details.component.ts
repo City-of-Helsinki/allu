@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 import {MapStore} from '../../../../service/map/map-store';
@@ -16,7 +16,7 @@ import {CityDistrictService} from '../../../../service/map/city-district.service
   templateUrl: './location-details.component.html',
   styleUrls: []
 })
-export class LocationDetailsComponent implements OnInit, AfterViewInit {
+export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() application: Application;
   @Input() readonly: boolean;
   location: Location;
@@ -51,6 +51,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.mapStore.selectedApplicationChange(this.application);
+  }
+
+  ngOnDestroy(): void {
+    this.mapStore.reset();
   }
 
   districtName(id: number): Observable<string> {

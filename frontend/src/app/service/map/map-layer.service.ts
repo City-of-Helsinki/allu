@@ -6,42 +6,63 @@ import {AuthService} from '../authorization/auth.service';
 import {Injectable} from '@angular/core';
 import TimeoutOptions = L.TimeoutOptions;
 import {ConfigService} from '../config/config.service';
+import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
+import {pathStyle} from './map-draw-styles';
+import {MapUtil} from './map.util';
+import 'leaflet-wfst';
 
 const timeout: TimeoutOptions = {
   response: 10000,
   deadline: 60000
 };
 
-export const DEFAULT_OVERLAY = 'Karttasarja';
+const DEFAULT_OVERLAY = 'Karttasarja';
+const STATUS_PLAN = 'PLAN';
+const STATUS_ACTIVE = 'ACTIVE';
 
 @Injectable()
 export class MapLayerService {
-  private _applicationLayers: {[key: string]: L.FeatureGroup} = {};
-  private _overlays: L.Control.LayersObject = {};
+  public readonly overlays: L.Control.LayersObject;
+  public readonly contentLayers: FeatureGroupsObject;
+  public readonly defaultOverlay: L.Layer;
+  public readonly winkkiRoadWorks: L.Control.LayersObject;
+  public readonly winkkiEvents: L.Control.LayersObject;
+  public readonly cityDistricts: L.Control.LayersObject;
 
-  constructor(private authService: AuthService, private config: ConfigService) {
-    this.initOverlays();
+  constructor(private authService: AuthService, private config: ConfigService, private mapUtil: MapUtil) {
+    this.overlays = this.createOverlays();
+    this.defaultOverlay = this.overlays[DEFAULT_OVERLAY];
 
+    const contentLayers = {};
     EnumUtil.enumValues(ApplicationType)
       .map(type => findTranslation(['application.type', type]))
-      .forEach(type => this._applicationLayers[type] = L.featureGroup());
+      .forEach(type => contentLayers[type] = L.featureGroup());
+    this.contentLayers = contentLayers;
+
+    this.winkkiRoadWorks = {
+      'Tulevat': this.createWinkkiLayer('winkki_works', STATUS_PLAN),
+      'Aktiiviset': this.createWinkkiLayer('winkki_works', STATUS_ACTIVE)
+    };
+
+    this.winkkiEvents = {
+      'Tulevat': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN),
+      'Aktiiviset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE)
+    };
   }
 
-  get overlays(): L.Control.LayersObject {
-    return this._overlays;
+  get contentLayerArray(): Array<L.FeatureGroup> {
+    return Object.keys(this.contentLayers).map(k => this.contentLayers[k]);
   }
 
-  get applicationLayers(): {[key: string]: L.FeatureGroup} {
-    return this._applicationLayers;
+  get initialLayers(): Array<L.Layer> {
+    const initialLayer = [this.overlays[DEFAULT_OVERLAY]];
+    return initialLayer
+      .concat(this.contentLayerArray);
   }
 
-  get applicationLayerArray(): Array<L.FeatureGroup> {
-    return Object.keys(this._applicationLayers).map(k => this._applicationLayers[k]);
-  }
-
-  private initOverlays(): void {
+  private createOverlays(): L.Control.LayersObject {
     const token = this.authService.token;
-    this._overlays = {
+    let overlays = {
       'Karttasarja': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       'Kantakartta': L.tileLayer.wmsAuth('/wms?',
@@ -57,8 +78,9 @@ export class MapLayerService {
     this.config.isProduction()
       .filter(isProd => isProd)
       .subscribe(isProd => {
-        this._overlays = {...this._overlays, ...this.initRestrictedOverlays(token) };
+        overlays = {...overlays, ...this.initRestrictedOverlays(token) };
     });
+    return overlays;
   }
 
   private initRestrictedOverlays(token: string): L.Control.LayersObject {
@@ -88,5 +110,39 @@ export class MapLayerService {
       'Viemari': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_johtokartta_viemari', format: 'image/png', transparent: true, token: token, timeout: timeout})
     };
+  }
+
+  private createWinkkiLayer(layerName: string, status: string): L.FeatureGroup {
+    const statusFilter = L.Filter.eq('licence_status', status);
+    return this.winkkiWFS(layerName, statusFilter);
+  }
+
+  private winkkiWFS(layerName: string, filter: L.Filter): L.FeatureGroup {
+    return L.wfs({
+      url: 'http://geoserver.hel.fi/geoserver/hkr/ows?',
+      typeNS: 'hkr',
+      typeName: layerName,
+      geometryField: 'wkb_geometry',
+      crs: this.mapUtil.EPSG3879,
+      style: pathStyle.DEFAULT,
+      opacity: pathStyle.DEFAULT.opacity,
+      fillOpacity: pathStyle.DEFAULT.fillOpacity,
+      showExisting: true,
+      filter: filter
+    });
+  }
+
+  private createCityDistrictLayer(): L.FeatureGroup {
+    return L.wfs({
+      url: 'https://kartta.hel.fi/ws/geoserver/avoindata/wfs',
+      typeNS: 'avoindata',
+      typeName: 'Kaupunginosajako',
+      geometryField: 'geom',
+      crs: this.mapUtil.EPSG3879,
+      style: pathStyle.DEFAULT,
+      opacity: pathStyle.DEFAULT.opacity,
+      fillOpacity: pathStyle.DEFAULT.fillOpacity,
+      showExisting: true
+    });
   }
 }

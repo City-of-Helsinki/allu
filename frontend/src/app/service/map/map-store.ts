@@ -4,15 +4,16 @@ import {Geocoordinates} from '../../model/common/geocoordinates';
 
 import {Application} from '../../model/application/application';
 import {Option} from '../../util/option';
-import {ApplicationService} from '../application/application.service';
-import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {LocationService} from '../location.service';
 import {Location} from '../../model/common/location';
 import {NotificationService} from '../notification/notification.service';
 import {defaultFilter, MapSearchFilter} from '../map-search-filter';
-import {ObjectUtil} from '../../util/object.util';
 import {Observable} from 'rxjs/Observable';
 import {PostalAddress} from '../../model/common/postal-address';
+import {MapDataService} from './map-data-service';
+import LatLngBounds = L.LatLngBounds;
+import {ObjectUtil} from '../../util/object.util';
+import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
 
 export interface MapState {
   coordinates: Option<Geocoordinates>;
@@ -46,28 +47,26 @@ const initialState: MapState = {
 export class MapStore {
   private store = new BehaviorSubject<MapState>(initialState);
 
-  constructor(private applicationService: ApplicationService, private locationService: LocationService) {
+  constructor(private mapDataService: MapDataService, private locationService: LocationService) {
     this.searchFilter
       .debounceTime(300)
       .filter(filter => !!filter.geometry)
-      .map(filter => this.toApplicationLocationQuery(filter))
-      .switchMap(query => this.applicationService.getByLocation(query))
-      .subscribe(applications => this.applicationsChange(applications));
+      .subscribe(filter => this.fetchMapDataByFilter(filter));
 
     // When search changes fetches new coordinates and adds them to coordinates observable
     this.coordinateSearch
       .filter(search => !!search)
       .debounceTime(300)
       .distinctUntilChanged()
-      .switchMap(term => this.locationService.geocode(term))
-      .subscribe(
-        coordinates => this.coordinateChange(coordinates),
-        err => NotificationService.error(err)
-      );
+      .subscribe(term => this.fetchCoordinates(term));
+  }
+
+  reset(): void {
+    this.store.next(ObjectUtil.clone(initialState));
   }
 
   get snapshot(): MapState {
-    return ObjectUtil.clone(this.store.getValue());
+    return this.store.getValue();
   }
 
   get applications(): Observable<Array<Application>> {
@@ -127,7 +126,6 @@ export class MapStore {
     this.store.next({...this.store.getValue(), coordinates});
   }
 
-
   selectedApplicationChange(application: Application): void {
     this.store.next({...this.store.getValue(), selectedApplication: application});
   }
@@ -150,9 +148,9 @@ export class MapStore {
     this.store.next({...this.store.getValue(), mapSearchFilter: next});
   }
 
-  mapViewChange(geometry: GeoJSON.GeometryObject): void {
+  mapViewChange(bounds: LatLngBounds): void {
     const current = this.snapshot.mapSearchFilter;
-    const next = {...current, geometry: geometry};
+    const next = {...current, geometry: bounds};
     this.store.next({...this.store.getValue(), mapSearchFilter: next});
   }
 
@@ -173,11 +171,16 @@ export class MapStore {
       .subscribe(result => this.store.next({...this.store.getValue(), matchingAddresses: result}));
   }
 
-  private toApplicationLocationQuery(filter: MapSearchFilter) {
-    return new ApplicationLocationQuery(
-      filter.startDate,
-      filter.endDate,
-      filter.statusTypes,
-      filter.geometry);
+  private fetchMapDataByFilter(filter: MapSearchFilter): void {
+    this.mapDataService.applicationsByLocation(filter)
+      .subscribe(applications => this.applicationsChange(applications));
+  }
+
+  private fetchCoordinates(term: string) {
+    this.locationService.geocode(term)
+      .subscribe(
+        coordinates => this.coordinateChange(coordinates),
+        err => NotificationService.error(err)
+      );
   }
 }

@@ -1,25 +1,25 @@
-import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
 import 'leaflet-groupedlayercontrol';
 import 'leaflet-measure-path';
 
 import {Subject} from 'rxjs/Subject';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 
 import {MapUtil} from './map.util';
 import {Some} from '../../util/option';
 import {translations} from '../../util/translations';
 import {Geocoordinates} from '../../model/common/geocoordinates';
-import {pathStyle} from './map-draw-styles';
 import {MapPopup} from './map-popup';
-import {DEFAULT_OVERLAY, MapLayerService} from './map-layer.service';
+import {MapLayerService} from './map-layer.service';
 import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
 import '../../js/leaflet/draw-line';
 import {NotificationService} from '../notification/notification.service';
+import {drawOptions, editOptions} from './map-config';
+import {MapStore} from './map-store';
 import GeoJSONOptions = L.GeoJSONOptions;
+import {MapSearchFilter} from '../map-search-filter';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -27,7 +27,8 @@ const alluIcon = L.icon({
 });
 
 export class ShapeAdded {
-  constructor(public features: L.FeatureGroup, public affectsControls: boolean = true) {}
+  constructor(public features: L.FeatureGroup, public affectsControls: boolean = true) {
+  }
 }
 
 export interface MapControllerConfig {
@@ -40,27 +41,21 @@ export interface MapControllerConfig {
 
 export class MapController {
   private map: L.Map;
-  private defaultOverlay: L.Layer;
-  private mapOverlayLayers: any;
   private drawControl: L.Control.Draw;
-  private drawnItems: {[key: string]: L.FeatureGroup} = {};
   private focusedItems: L.FeatureGroup;
   private editedItems: L.FeatureGroup;
   private shapes$ = new Subject<ShapeAdded>();
-  private mapView$: BehaviorSubject<GeoJSON.GeometryObject>;
 
-  constructor(
-    private mapUtil: MapUtil,
-    private mapLayerService: MapLayerService,
-    private config: MapControllerConfig
-  ) {
+  constructor(private mapUtil: MapUtil,
+              private mapStore: MapStore,
+              private mapLayerService: MapLayerService,
+              private config: MapControllerConfig) {
     this.initMap();
   }
 
   public clearDrawn() {
-    Object.keys(this.drawnItems)
-      .map(key => this.drawnItems[key])
-      .map(featureGroup => featureGroup.clearLayers());
+    this.mapLayerService.contentLayerArray
+      .forEach(featureGroup => featureGroup.clearLayers());
   }
 
   public clearEdited() {
@@ -86,39 +81,13 @@ export class MapController {
   public setDynamicControls(controlsEnabled: boolean, editedItems?: L.FeatureGroup): void {
     const items = editedItems || this.editedItems;
 
-    const draw = controlsEnabled ? {
-      // todo: this <false>false can be removed when typescript compiler allows type parameter of | false
-      polyline: <false>false,
-      marker: <false>false,
-      circlemarker: <false>false,
-      polygon: {
-        shapeOptions: pathStyle.DEFAULT_DRAW,
-        allowIntersection: false,
-        showArea: true
-      },
-      circle: {
-        shapeOptions: pathStyle.DEFAULT_DRAW
-      },
-      rectangle: {
-        shapeOptions: pathStyle.DEFAULT_DRAW
-      },
-      bufferPolyline: {
-        shapeOptions: pathStyle.DEFAULT_DRAW,
-        polyOptions: {
-          shapeOptions: pathStyle.DEFAULT_DRAW
-        }
-      }
-    } : undefined;
-
-    const edit = controlsEnabled ? { selectedPathOptions: pathStyle.DEFAULT_EDIT } : false;
-
     const drawControl = new L.Control.Draw({
       position: 'topright',
-      draw: draw,
-      intersectLayers: this.mapLayerService.applicationLayerArray,
+      draw: drawOptions(controlsEnabled),
+      intersectLayers: this.mapLayerService.contentLayerArray,
       edit: {
         featureGroup: items,
-        edit: edit,
+        edit: editOptions(controlsEnabled),
         remove: controlsEnabled
       }
     });
@@ -134,7 +103,7 @@ export class MapController {
 
   public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
                       style?: Object, popup?: MapPopup) {
-    const layer = this.drawnItems[layerName];
+    const layer = this.mapLayerService.contentLayers[layerName];
     if (layer) {
       geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, popup));
     } else {
@@ -167,16 +136,12 @@ export class MapController {
   // For some reason leaflet does not show layer after angular route change
   // unless it is removed and added back
   selectDefaultLayer(): void {
-    this.map.removeLayer(this.defaultOverlay);
-    this.map.addLayer(this.defaultOverlay);
+    this.map.removeLayer(this.mapLayerService.defaultOverlay);
+    this.map.addLayer(this.mapLayerService.defaultOverlay);
   }
 
   get shapes(): Observable<ShapeAdded> {
     return this.shapes$.asObservable();
-  }
-
-  get mapView(): Observable<GeoJSON.GeometryObject> {
-    return this.mapView$.asObservable();
   }
 
   private drawGeometryToLayer(geometryCollection: GeoJSON.GeometryCollection,
@@ -200,14 +165,14 @@ export class MapController {
 
   private initMap(): void {
     this.map = this.createMap();
-    this.mapView$ = new BehaviorSubject(this.getCurrentMapView());
+    this.mapStore.mapViewChange(this.map.getBounds());
 
     const editedItems = L.featureGroup();
     editedItems.addTo(this.map);
     this.editedItems = editedItems;
 
     this.setupEventHandling(editedItems);
-    this.setupLayers();
+    this.setupLayerControls();
 
     L.control.zoom({
       position: 'topright',
@@ -229,20 +194,12 @@ export class MapController {
       maxZoom: 13,
       maxBounds:
         L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
-      layers: this.createLayers(),
-      crs: this.mapUtil.getEPSG3879(),
+      layers: this.mapLayerService.initialLayers,
+      crs: this.mapUtil.EPSG3879,
       continuousWorld: true,
       worldCopyJump: false
     };
     return L.map('map', mapOption);
-  }
-
-  private createLayers(): Array<L.Layer> {
-    // Default selected layers and overlays
-    this.mapOverlayLayers = this.mapLayerService.overlays;
-    this.defaultOverlay = this.mapOverlayLayers[DEFAULT_OVERLAY];
-    this.drawnItems = this.mapLayerService.applicationLayers;
-    return [this.defaultOverlay].concat(this.mapLayerService.applicationLayerArray);
   }
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {
@@ -258,7 +215,7 @@ export class MapController {
 
     this.map.on('moveend', (e: any) => {
       if (!self.config.showOnlyApplicationArea) {
-        self.mapView$.next(self.getCurrentMapView());
+        self.mapStore.mapViewChange(this.map.getBounds());
       }
     });
 
@@ -267,10 +224,12 @@ export class MapController {
     });
   }
 
-  private setupLayers(): void {
+  private setupLayerControls(): void {
     const groupedOverlays = {
-      Karttatasot: this.mapOverlayLayers,
-      Hakemustyypit: this.drawnItems
+      'Karttatasot': this.mapLayerService.overlays,
+      'Hakemustyypit': this.mapLayerService.contentLayers,
+      'Winkin katutyöt': this.mapLayerService.winkkiRoadWorks,
+      'Winkin vuokraukset ja tapahtumat': this.mapLayerService.winkkiEvents
     };
     this.focusedItems = L.featureGroup();
 
@@ -278,17 +237,12 @@ export class MapController {
     this.focusedItems.addTo(this.map);
   }
 
-  private getCurrentMapView(): GeoJSON.GeometryObject {
-    const viewPoly = this.mapUtil.polygonFromBounds(this.map.getBounds());
-    return this.mapUtil.featureToGeometry(viewPoly.toGeoJSON());
-  }
-
   private setLocalizations(): void {
     L.drawLocal = translations.map;
   }
 
   private drawLayers(): L.FeatureGroup {
-    return this.mapLayerService.applicationLayerArray
+    return this.mapLayerService.contentLayerArray
       .reduce((allLayers, currentLayer) => {
         allLayers.addLayer(currentLayer);
         return allLayers;

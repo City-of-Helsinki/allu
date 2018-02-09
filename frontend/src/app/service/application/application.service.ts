@@ -5,8 +5,6 @@ import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
 import {StructureMetaMapper} from './../mapper/structure-meta-mapper';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
-import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
-import {ApplicationLocationQueryMapper} from './../mapper/application-location-query-mapper';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {ErrorHandler} from '../error/error-handler.service';
@@ -21,19 +19,17 @@ import {StatusChangeInfoMapper} from '../mapper/status-change-info-mapper';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentInfoMapper} from '../mapper/attachment-info-mapper';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
-import { PageMapper } from '../common/page-mapper';
+import {PageMapper} from '../common/page-mapper';
 import {ApplicationIdentifier} from '../../model/application/application-identifier';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
-import {WorkQueueService} from '../../feature/workqueue/workqueue-search/workqueue.service';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
 const TAGS_URL = '/api/applications/:appId/tags';
 const ATTACHMENTS_URL = '/api/applications/:appId/attachments';
 const SEARCH = '/search';
-const SEARCH_LOCATION = '/search_location';
 const METADATA_URL = '/api/meta';
 const WORK_QUEUE_URL = '/api/workqueue';
 
@@ -60,21 +56,6 @@ export class ApplicationService {
       .map(response => response.json())
       .map(app => ApplicationMapper.mapBackend(app))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')));
-  }
-
-  public getByLocation(query: ApplicationLocationQuery): Observable<Array<Application>> {
-    if (query.statusTypes && query.statusTypes.length) {
-      const searchUrl = APPLICATIONS_URL + SEARCH_LOCATION;
-
-      return this.authHttp.post(
-        searchUrl,
-        JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query)))
-        .map(response => response.json())
-        .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-        .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
-    } else {
-      return Observable.of([]);
-    }
   }
 
   /**

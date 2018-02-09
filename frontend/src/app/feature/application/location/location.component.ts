@@ -137,6 +137,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+    this.mapStore.reset();
   }
 
   ngAfterViewInit(): void {
