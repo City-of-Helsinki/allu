@@ -40,7 +40,6 @@ export class ShortTermRentalForm implements ApplicationForm {
     return {
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', Validators.required],
-      area: undefined,
       commercial: [false],
       largeSalesArea: [false],
       calculatedPrice: [0],

@@ -76,12 +76,6 @@
                 </mat-form-field>
               </div>
             </div>
-            <div class="col m6">
-              <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="area"
-                       [placeholder]="'application.common.area' | translation"/>
-              </mat-form-field>
-            </div>
             <div class="col m6" *ngIf="showCommercial">
               <mat-slide-toggle formControlName="commercial">
                 {{commercialLabel | translation}}
