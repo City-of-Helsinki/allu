@@ -6,7 +6,7 @@
     "changeOrigin": false
   },
   "/wms": {
-    "target": "http://185.26.49.172",
+    "target": "https://185.26.49.172",
     "pathRewrite": {"/wms/": "/wms"},
     "secure": false,
     "changeOrigin": true
