@@ -1,7 +1,11 @@
 # add environment specific frontend variables here
 http_port: 80
-proxy_domain: allufront
+https_port: 443
+proxy_domain: staging.allu.kaupunkiymparisto.fi
 proxypass_api_context: /api/
 proxypass_api_target: http://172.17.0.1:9000/
 proxypass_external_context: /external/
 proxypass_external_target: http://172.17.0.1:9040/
+server_admin: alluprojekti@gmail.com
+ssl_certificate_file: apache-selfsigned.crt
+ssl_certificate_key_file: apache-selfsigned.key

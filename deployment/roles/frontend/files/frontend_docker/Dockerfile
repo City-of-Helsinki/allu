@@ -44,10 +44,13 @@ EXPOSE 443
 VOLUME /mapproxy
 VOLUME /etc/apache2/sites-available
 VOLUME /var/www/html
+VOLUME /etc/ssl/allu
 
 ######################################################################################
 # Apache
 ######################################################################################
+
+COPY fqdn.conf ssl-params.conf /etc/apache2/conf-available/
 
 COPY apache_start.sh /home/allu/apache
 RUN chmod ugo+x /home/allu/apache/apache_start.sh
@@ -58,6 +61,8 @@ RUN a2enmod proxy_http
 RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2enmod wsgi
+RUN a2enconf fqdn ssl-params
+RUN a2enmod ssl
 
 RUN a2dissite 000-default
 # Disable automated Apache start on system start-up (Apache is executed in foreground, not as daemon)
