@@ -173,7 +173,8 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case STORAGE_AREA:
       // 0.50 EUR/sqm/month
-        updatePriceByTimeAndArea(STORAGE_AREA_MONTHLY_PRICE, ChronoUnit.DAYS, 1, false, InvoiceLines.STORAGE_AREA, null,
+        updatePriceByTimeAndArea(STORAGE_AREA_MONTHLY_PRICE, ChronoUnit.MONTHS, 1, false, InvoiceLines.STORAGE_AREA,
+            null,
             ChargeBasisTag.ShortTermRentalStorageArea(), null);
       break;
     case SUMMER_THEATER:
