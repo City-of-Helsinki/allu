@@ -2,21 +2,19 @@ package fi.hel.allu.scheduler.service;
 
 import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.sap.mapper.AlluMapper;
 import fi.hel.allu.sap.marshaller.AlluMarshaller;
 import fi.hel.allu.sap.model.SalesOrder;
 import fi.hel.allu.sap.model.SalesOrderContainer;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
-import freemarker.template.utility.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestTemplate;
@@ -34,7 +32,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service for sending invoices
@@ -78,7 +75,10 @@ public class InvoicingService {
         getApplications(new ArrayList<>(invoices.stream().map(i -> i.getApplicationId()).collect(Collectors.toSet())))
             .stream().collect(Collectors.toMap(Application::getId, Function.identity()));
     final List<SalesOrder> salesOrders = invoices.stream()
-        .map(i -> AlluMapper.mapToSalesOrder(applicationsById.get(i.getApplicationId()), i.getRows()))
+        .map(i -> {
+          final Application app = applicationsById.get(i.getApplicationId());
+          return AlluMapper.mapToSalesOrder(app, getCustomer(app.getInvoiceRecipientId()), i.getRows());
+        })
         .collect(Collectors.toList());
     SalesOrderContainer salesOrderContainer = new SalesOrderContainer();
     salesOrderContainer.setSalesOrders(salesOrders);
@@ -129,6 +129,10 @@ public class InvoicingService {
   private List<Application> getApplications(List<Integer> applicationIds) {
     return Arrays.asList(restTemplate.postForObject(applicationProperties.getFindApplicationsUrl(), applicationIds,
         Application[].class));
+  }
+
+  private Customer getCustomer(int id) {
+    return restTemplate.getForObject(applicationProperties.getFindCustomerUrl(), Customer.class, id);
   }
 
   private void markInvoicesSent(List<Integer> invoiceIds) {

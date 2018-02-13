@@ -4,8 +4,10 @@ import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.sap.mapper.AlluMapper;
 import fi.hel.allu.sap.marshaller.AlluMarshaller;
 
@@ -90,7 +92,7 @@ public class SapSpec {
           final Application application = dummyApplication();
 
           describe("Mapped to SAP SalesOrder", () -> {
-            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, invoiceRows);
+            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, dummyCustomer(), invoiceRows);
 
             it("All lines are in", () -> {
               assertEquals(invoiceRows.size(), salesOrder.getLineItems().size());
@@ -101,9 +103,7 @@ public class SapSpec {
             });
 
             describe("Customer was mapped properly", () -> {
-              final Customer applicationCustomer = application.getCustomersWithContacts().stream()
-                  .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT).map(cwc -> cwc.getCustomer())
-                  .findFirst().orElseThrow(() -> new AssertionError("Application didn't have customer"));
+              final Customer applicationCustomer = dummyCustomer();
 
               it("Customer name matches", () -> {
                 assertEquals(applicationCustomer.getName(), salesOrder.getOrderParty().getInfoName1());
@@ -151,8 +151,6 @@ public class SapSpec {
     final Application application = new Application();
     application.setName("Dummy Application");
     application.setType(ApplicationType.EVENT);
-    application.setCustomersWithContacts(
-        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, dummyCustomer(), null)));
     return application;
   }
 

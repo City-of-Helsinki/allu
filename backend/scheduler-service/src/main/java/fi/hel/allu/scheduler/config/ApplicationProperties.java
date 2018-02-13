@@ -146,6 +146,12 @@ public class ApplicationProperties {
     return getExtServiceUrl("/v1/customers");
   }
 
+  /*
+   * @return url to find Customer info by id.
+   */
+  public String getFindCustomerUrl() {
+    return getModelServiceUrl("/customers/{id}");
+  }
   /**
    * @return url to get list of pending invoices
    */
