@@ -1,3 +1,4 @@
+import * as L from 'leaflet';
 
 export class MapPopup {
   constructor(

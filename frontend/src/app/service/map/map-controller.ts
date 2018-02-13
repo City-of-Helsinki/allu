@@ -1,25 +1,24 @@
+import * as L from 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
 import 'leaflet-groupedlayercontrol';
 import 'leaflet-measure-path';
+import '../../js/leaflet/draw-transform';
+import '../../js/leaflet/draw-intersect';
+import '../../js/leaflet/draw-line';
 
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
-
 import {MapUtil} from './map.util';
 import {Some} from '../../util/option';
 import {translations} from '../../util/translations';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {MapPopup} from './map-popup';
 import {MapLayerService} from './map-layer.service';
-import '../../js/leaflet/draw-transform';
-import '../../js/leaflet/draw-intersect';
-import '../../js/leaflet/draw-line';
 import {NotificationService} from '../notification/notification.service';
 import {drawOptions, editOptions} from './map-config';
 import {MapStore} from './map-store';
 import GeoJSONOptions = L.GeoJSONOptions;
-import {MapSearchFilter} from '../map-search-filter';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -238,7 +237,9 @@ export class MapController {
   }
 
   private setLocalizations(): void {
-    L.drawLocal = translations.map;
+    // Need to cast as any since ES6 module declaration exports variables
+    // as constants so you cannot assign to them
+    (<any>L).drawLocal = translations.map;
   }
 
   private drawLayers(): L.FeatureGroup {

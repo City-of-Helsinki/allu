@@ -1,5 +1,5 @@
+import {LatLngBounds} from 'leaflet';
 import {ApplicationStatus} from '../model/application/application-status';
-import LatLngBounds = L.LatLngBounds;
 
 export interface MapSearchFilter {
   address?: string;

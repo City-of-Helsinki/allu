@@ -1,3 +1,5 @@
+import {FeatureGroup} from 'leaflet';
+
 export interface FeatureGroupsObject {
-  [key: string]: L.FeatureGroup;
+  [key: string]: FeatureGroup;
 }

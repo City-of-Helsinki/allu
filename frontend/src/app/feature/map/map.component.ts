@@ -10,7 +10,7 @@ import {MapService} from '../../service/map/map.service';
 import {MapPopup} from '../../service/map/map-popup';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Location} from '../../model/common/location';
-import {Circle} from 'leaflet';
+import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '../../service/map/map-controller';
 import {Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
@@ -148,7 +148,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private featuresToGeoJSON(featureGroup: L.FeatureGroup): GeoJSON.FeatureCollection<GeoJSON.GeometryObject> {
     const features = L.featureGroup();
     featureGroup.eachLayer(l => {
-      if (l instanceof Circle) {
+      if (l instanceof L.Circle) {
         // Convert circle to polygon since GeoJSON does not support circle
         features.addLayer(l.toPolygon());
       } else {

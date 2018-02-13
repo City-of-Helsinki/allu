@@ -11,9 +11,8 @@ import {defaultFilter, MapSearchFilter} from '../map-search-filter';
 import {Observable} from 'rxjs/Observable';
 import {PostalAddress} from '../../model/common/postal-address';
 import {MapDataService} from './map-data-service';
-import LatLngBounds = L.LatLngBounds;
+import {LatLngBounds} from 'leaflet';
 import {ObjectUtil} from '../../util/object.util';
-import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
 
 export interface MapState {
   coordinates: Option<Geocoordinates>;

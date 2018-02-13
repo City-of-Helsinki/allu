@@ -2,7 +2,9 @@
  * Extend Leaflet typings with grouped layers plugin support.
  */
 
-declare namespace L {
+import * as L from 'leaflet';
+
+declare module 'leaflet' {
   namespace control {
     export function groupedLayers(
       baseLayers: L.Control.LayersObject,

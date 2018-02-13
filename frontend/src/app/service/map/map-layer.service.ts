@@ -1,15 +1,16 @@
 import {ApplicationType} from '../../model/application/type/application-type';
 import {EnumUtil} from '../../util/enum.util';
 import {findTranslation} from '../../util/translations';
-import '../../js/leaflet/wms-authentication';
 import {AuthService} from '../authorization/auth.service';
 import {Injectable} from '@angular/core';
-import TimeoutOptions = L.TimeoutOptions;
 import {ConfigService} from '../config/config.service';
 import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
 import {pathStyle} from './map-draw-styles';
 import {MapUtil} from './map.util';
+import * as L from 'leaflet';
+import '../../js/leaflet/wms-authentication';
 import 'leaflet-wfst';
+import TimeoutOptions = L.TimeoutOptions;
 
 const timeout: TimeoutOptions = {
   response: 10000,
