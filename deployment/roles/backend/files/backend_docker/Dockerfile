@@ -36,6 +36,11 @@ RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
 RUN mkdir -p /home/allu/external-service
 
+RUN mkdir -p /home/allu/scheduler-service/sap/customer-process
+RUN mkdir -p /home/allu/scheduler-service/sap/customer-archive
+RUN mkdir -p /home/allu/scheduler-service/sap/customer-failed
+RUN chown -R allu:allu /home/allu/scheduler-service/sap
+
 ######################################################################################
 # Expose ports
 ######################################################################################
