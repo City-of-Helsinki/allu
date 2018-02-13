@@ -1,6 +1,9 @@
 package fi.hel.allu.sap.mapper;
 
-import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.Event;
@@ -43,7 +46,8 @@ public class AlluMapper {
    * @param invoiceRows
    * @return
    */
-  public static SalesOrder mapToSalesOrder(Application application, List<InvoiceRow> invoiceRows) {
+  public static SalesOrder mapToSalesOrder(Application application, Customer invoiceRecipient,
+      List<InvoiceRow> invoiceRows) {
     SalesOrder salesOrder = new SalesOrder();
     salesOrder.setBillTextL1(application.getName());
     salesOrder.setDistributionChannel(ALLU_DISTRIBUTION_CHANNEL);
@@ -51,11 +55,7 @@ public class AlluMapper {
     final String sapMaterial = mapToSapMaterial(application);
     salesOrder.setLineItems(
         invoiceRows.stream().map(entry -> mapToLineItem(entry, sapMaterial)).collect(Collectors.toList()));
-    Customer orderer = Optional.ofNullable(application.getCustomersWithContacts())
-        .orElseThrow(() -> new IllegalArgumentException("Application's customersWithContacts is null")).stream()
-        .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT).map(cwc -> cwc.getCustomer()).findAny()
-        .orElseThrow(() -> new IllegalArgumentException("Application doesn't have applicant"));
-    salesOrder.setOrderParty(mapToOrderParty(orderer));
+    salesOrder.setOrderParty(mapToOrderParty(invoiceRecipient));
     salesOrder.setOrderType(mapToOrderType(application.getType()));
     salesOrder.setPaymentTerm(ALLU_PAYMENT_TERM);
     salesOrder.setPoNumber(application.getCustomerReference());
