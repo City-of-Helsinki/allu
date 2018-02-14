@@ -6,6 +6,8 @@ proxypass_api_context: /api/
 proxypass_api_target: http://10.1.2.157:9000/
 proxypass_external_context: /external/
 proxypass_external_target: http://10.1.2.157:9040/
+proxypass_geoserver_context: /geoserver/
+proxypass_geoserver_target: http://geoserver.hel.fi/geoserver/
 server_admin: alluprojekti@gmail.com
 ssl_certificate_file: apache-selfsigned.crt
 ssl_certificate_key_file: apache-selfsigned.key
