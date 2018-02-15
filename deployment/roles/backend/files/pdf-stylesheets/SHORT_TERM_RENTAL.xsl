@@ -102,79 +102,91 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
         <section class="half-right">
           <h2>Vuokra</h2>
-          <p>
-            <!-- [Hinta] -->
-            <xsl:value-of select="data/totalRent"/>
-            <!-- alv 24 % tai alv 0 %, riippuen asiakkaasta -->
-             + ALV <xsl:value-of select="data/vatPercentage"/> %
-          </p>
-          <!-- Hinnan peruste tyyppikohtaisesti. Erillinen lista -->
-          <!-- Confluencessa: -->
-          <p class="space-above">
-            <!-- [Hinnan peruste, raakaa HTML:ää] -->
-            <xsl:value-of select="data/priceBasisText" disable-output-escaping="yes"/>
-          </p>
+          <xsl:choose>
+            <xsl:when test="data/notBillable = 'false'">
+              <p>
+                <!-- [Hinta] -->
+                <xsl:value-of select="data/totalRent"/>
+                <!-- alv 24 % tai alv 0 %, riippuen asiakkaasta -->
+                 + ALV <xsl:value-of select="data/vatPercentage"/> %
+              </p>
+              <!-- Hinnan peruste tyyppikohtaisesti. Erillinen lista -->
+              <!-- Confluencessa: -->
+              <p class="space-above">
+                <!-- [Hinnan peruste, raakaa HTML:ää] -->
+                <xsl:value-of select="data/priceBasisText" disable-output-escaping="yes"/>
+              </p>
+            </xsl:when>
+            <xsl:otherwise>
+              <p>Korvauksetta.</p>
+              <p class="space-above">
+                Korvauksettomuuden peruste: <xsl:value-of select="data/notBillableReason"/>
+              </p>
+            </xsl:otherwise>
+          </xsl:choose>
           <p class="space-above">Vuokrauspäätöksen hinta perustuu
             yleisten töiden lautakunnan päätökseen 11.11.2014 § 431.</p>
-          <xsl:if test="data/separateBill = 'true'">
+          <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <!-- Käytetään, jos lasku enemmän kuin 0 €: -->
             <p class="space-above">Lasku lähetetään erikseen.</p>
           </xsl:if>
         </section>
       </div>
 
-      <xsl-if test="data/chargeInfoEntries != ''">
+      <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
         <section class="unboxed">
-        </section>
-        <h2>Vuokran erittely</h2>
+          <h2>Vuokran erittely</h2>
 
-        <div class="charge-info">
-          <xsl:for-each select="data/chargeInfoEntries">
-            <div class="row">
-              <span class="c1">
-                <xsl:if test="./level > 0">
-                  <span class="up-arrow" style="padding-left: {level}em"></span>
-                </xsl:if>
-                <xsl:value-of select="text"/>
-                <xsl:for-each select="explanation">
-                  <div class="explanation"><xsl:value-of select="."/></div>
-                </xsl:for-each>
-              </span>
-              <span class="c2">
-                <xsl:value-of select="quantity"/>
-              </span>
-              <span class="c3">
-                <xsl:value-of select="unitPrice"/>
-              </span>
-              <span class="c4">
-                <xsl:value-of select="netPrice"/>
-              </span>
+          <div class="charge-info">
+            <xsl:for-each select="data/chargeInfoEntries">
+              <div class="row">
+                <span class="c1">
+                  <xsl:if test="./level > 0">
+                    <span class="up-arrow" style="padding-left: {level}em"></span>
+                  </xsl:if>
+                  <xsl:value-of select="text"/>
+                  <xsl:for-each select="explanation">
+                    <div class="explanation"><xsl:value-of select="."/></div>
+                  </xsl:for-each>
+                </span>
+                <span class="c2">
+                  <xsl:value-of select="quantity"/>
+                </span>
+                <span class="c3">
+                  <xsl:value-of select="unitPrice"/>
+                </span>
+                <span class="c4">
+                  <xsl:value-of select="netPrice"/>
+                </span>
+              </div>
+            </xsl:for-each>
+
+            <div class="sum-row">
+            <span class="c1">YHTEENSÄ</span>
+            <span class="c2"></span>
+            <span class="c3"></span>
+            <span class="c4"><xsl:value-of select="data/totalRent"/></span>
             </div>
-          </xsl:for-each>
-
-          <div class="sum-row">
-          <span class="c1">YHTEENSÄ</span>
-          <span class="c2"></span>
-          <span class="c3"></span>
-          <span class="c4"><xsl:value-of select="data/totalRent"/></span>
           </div>
-        </div>
-      </xsl-if>
+        </section>
+      </xsl:if>
 
       <section class="unboxed">
         <h2>Ehdot</h2>
         <p>Liitteenä olevia ehtoja on noudatettava.</p>
 
-        <xsl:if test="data/additionalConditions != ''">
+        <xsl:if test="data/additionalConditions">
           <!-- Käytetään, jos Alluun on kirjoitettu vapaaseen
                tekstikenttään lisäehtoja. -->
           <p class="space-above">
             Lisäksi on noudatettava seuraavia ehtoja:
           </p>
-          <p>
-            <!-- [Ehtokentän teksti]  -->
-            <xsl:value-of select="data/additionalConditions"/>
-          </p>
+          <xsl:for-each select="data/additionalConditions">
+            <p>
+              <!-- [Ehtokentän teksti]  -->
+              <xsl:value-of select="."/>
+            </p>
+          </xsl:for-each>
         </xsl:if>
       </section>
 
@@ -185,18 +197,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           hakemuksen liitteineen asukas- ja yrityspalveluihin ja
           ilmoittanut sitoutuvansa alueen käyttöä koskevaan
           ohjeistukseen sekä sopimusehtoihin.
-        </p>
-
-        <p class="space-above">
-          XXXX MUUTTUU VIELÄ!!! Helsingin kaupungin
-          hallintosäännön 16 luvun 8 §:n 2 momentin 3 kohdan mukaan
-          asiakkuusjohtaja päättää tai hyväksyy perusteet ja rajat, joiden
-          mukaan viranhaltija päättää, maanomistajan suostumuksen
-          antamisesta kokoontumislain mukaisen yleisötilaisuuden
-          järjestämiselle sekä yleisen alueen muulle tilapäiselle
-          käytölle. Asiakkuusjohtaja on päätöksellään 1.6.2017 § 17
-          siirtänyt yleisötilaisuuksiin liittyvän toimivallan alueidenkäyttö
-          ja -valvontayksikön tiimipäällikölle.MUUTTUU VIELÄ!!!!XXXX
         </p>
 
         <p class="space-above">Alueidenkäyttö ja -valvontayksikön

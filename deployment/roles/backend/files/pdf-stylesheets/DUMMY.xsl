@@ -111,10 +111,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <!-- alv 24 % tai alv 0 %, riippuen asiakkaasta -->
              + alv <xsl:value-of select="data/vatPercentage"/> %
           </p>
-          <xsl:if test="data/priceReason != ''">
+          <xsl:if test="data/notBillableReason != ''">
             <p>
               <!-- Käytetään, jos tapahtuma korvauksetta ja sille valittu peruste. Perusteen pidempi muoto erillisessä taulukossa. -->
-              Hinnan peruste: <xsl:value-of select="data/priceReason"/>
+              Hinnan peruste: <xsl:value-of select="data/notBillableReason"/>
             </p>
           </xsl:if>
            <xsl:if test="data/priceReason = ''">
@@ -140,16 +140,20 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <p>
             Liitteenä olevia ehtoja on noudatettava.
           </p>
-          <xsl:if test="data/additionalConditions != ''">
-            <!-- Käytetään, jos Alluun on kirjoitettu vapaaseen tekstikenttään lisäehtoja. -->
+          <xsl:if test="data/additionalConditions">
+            <!-- Käytetään, jos Alluun on kirjoitettu vapaaseen
+                 tekstikenttään lisäehtoja. -->
             <p class="text-flow">
               Lisäksi on noudatettava seuraavia ehtoja:
             </p>
-            <p>
-              <!-- [Ehtokentän teksti]  -->
-              <xsl:value-of select="data/additionalConditions"/>
-            </p>
+            <xsl:for-each select="data/additionalConditions">
+              <p>
+                <!-- [Ehtokentän teksti]  -->
+                <xsl:value-of select="."/>
+              </p>
+            </xsl:for-each>
           </xsl:if>
+
         </section>
 
         <section>

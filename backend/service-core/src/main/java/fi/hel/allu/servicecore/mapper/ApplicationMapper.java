@@ -145,6 +145,7 @@ public class ApplicationMapper {
     applicationJson.setRecurringEndTime(application.getRecurringEndTime());
     applicationJson.setName(application.getName());
     applicationJson.setDecisionTime(application.getDecisionTime());
+    applicationJson.setDecisionMaker(createUserJson(application.getDecisionMaker()));
     if (application.getExtension() != null) {
       applicationJson.setExtension(createExtensionJson(application));
     }
