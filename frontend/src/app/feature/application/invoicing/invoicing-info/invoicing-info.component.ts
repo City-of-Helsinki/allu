@@ -1,8 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {CustomerType} from '../../../../model/customer/customer-type';
-import {EnumUtil} from '../../../../util/enum.util';
-import {InvoicePartition} from '../../../../model/application/invoice/ivoice-partition';
+import {Observable} from 'rxjs/Observable';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {Some} from '../../../../util/option';
@@ -13,15 +11,14 @@ import {
   CUSTOMER_MODAL_CONFIG,
   CustomerModalComponent
 } from '../../../customerregistry/customer/customer-modal.component';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialog} from '@angular/material';
 import {NumberUtil} from '../../../../util/number.util';
 import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-modal.component';
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {Deposit} from '../../../../model/application/invoice/deposit';
-import {ObjectUtil} from '../../../../util/object.util';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
-import { ApplicationType } from '../../../../model/application/type/application-type';
+import {InvoicingInfoForm} from './invoicing-info.form';
 
 @Component({
   selector: 'invoicing-info',
@@ -33,12 +30,15 @@ import { ApplicationType } from '../../../../model/application/type/application-
 export class InvoicingInfoComponent implements OnInit {
 
   @Input() form: FormGroup;
+  @Input() reset: Observable<boolean>;
 
   recipientForm: FormGroup;
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
   private invoicingDateCtrl: FormControl;
+  private originalForm: InvoicingInfoForm;
+  private originalRecipientForm: CustomerForm;
 
   constructor(private applicationStore: ApplicationStore,
               private customerHub: CustomerHub,
@@ -52,6 +52,7 @@ export class InvoicingInfoComponent implements OnInit {
     this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
     this.initForm();
+    this.reset.filter(r => r).subscribe(r => this.resetMe(r));
   }
 
   invoiceRecipientChange(recipient: CustomerForm) {
@@ -122,6 +123,7 @@ export class InvoicingInfoComponent implements OnInit {
         invoicingDate: app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app),
         skipPriceCalculation: app.skipPriceCalculation
       });
+      this.originalForm = this.form.getRawValue();
 
       if (!applicationCanBeEdited(app.statusEnum)) {
         this.form.disable();
@@ -143,7 +145,10 @@ export class InvoicingInfoComponent implements OnInit {
   private findAndPatchCustomer(id: number): void {
     this.disableCustomerEdit();
     this.customerHub.findCustomerById(id)
-      .subscribe(customer => this.recipientForm.patchValue(CustomerForm.fromCustomer(customer)));
+      .subscribe(customer => {
+        this.recipientForm.patchValue(CustomerForm.fromCustomer(customer));
+        this.originalRecipientForm = this.recipientForm.getRawValue();
+    });
   }
 
   private onNotBillableChange(notBillable: boolean) {
@@ -174,5 +179,18 @@ export class InvoicingInfoComponent implements OnInit {
     const result = new Date(application.startTime);
     result.setDate(result.getDate() - 15);
     return result > currentDate ? result : currentDate;
+  }
+
+  private resetMe(reset: boolean) {
+    if (this.originalForm) {
+      this.form.reset(this.originalForm);
+    } else {
+      this.form.reset();
+    }
+    if (this.originalRecipientForm) {
+      this.recipientForm.reset(this.originalRecipientForm);
+    } else {
+      this.recipientForm.reset();
+    }
   }
 }

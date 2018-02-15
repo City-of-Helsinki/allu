@@ -23,6 +23,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   applicationId: number;
   infoForm: FormGroup;
+  reset = new Subject<boolean>();
 
   private recipientForm: FormGroup;
   private notBillableCtrl: FormControl;
@@ -53,7 +54,8 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
   }
 
   cancel(): void {
-    this.infoForm.reset();
+    this.reset.next(true);
+
   }
 
   private saveApplicationInfo(): Observable<Application> {

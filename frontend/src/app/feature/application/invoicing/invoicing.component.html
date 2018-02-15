@@ -1,7 +1,7 @@
 <form [formGroup]="infoForm" (ngSubmit)="onSubmit()" novalidate>
   <div fxLayout="row" fxLayoutWrap>
     <div fxFlex="100">
-      <invoicing-info [form]="infoForm"></invoicing-info>
+      <invoicing-info [form]="infoForm" [reset]="reset.asObservable()"></invoicing-info>
     </div>
   </div>
   <div fxLayout="row" fxLayoutWrap>
@@ -17,9 +17,10 @@
   <bottom-bar fxLayout="row" fxFlexAlign="center center">
     <div fxFlex fxFlexAlign="center">
       <button type="submit" mat-raised-button color="primary" [disabled]="!(infoForm.valid && infoForm.dirty)">
-        TALLENNA
+        {{'common.button.save' | translation}}
       </button>
-      <button type="button" mat-raised-button color="primary" [disabled]="!infoForm.dirty" (click)="cancel()">PERUUTA
+      <button type="button" mat-raised-button color="primary" [disabled]="!infoForm.dirty" (click)="cancel()">
+        {{'common.button.cancel' | translation}}
       </button>
     </div>
   </bottom-bar>
