@@ -35,11 +35,8 @@ RUN mkdir -p /home/allu/pdf-service
 RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
 RUN mkdir -p /home/allu/external-service
+RUN mkdir -p /home/allu/scheduler-service/sap
 
-RUN mkdir -p /home/allu/scheduler-service/sap/customer-process
-RUN mkdir -p /home/allu/scheduler-service/sap/customer-archive
-RUN mkdir -p /home/allu/scheduler-service/sap/customer-failed
-RUN chown -R allu:allu /home/allu/scheduler-service/sap
 
 ######################################################################################
 # Expose ports
@@ -84,6 +81,11 @@ RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\
 
 # Stylesheets for pdf-service
 RUN ln -s /servicehome/services/pdf-service/stylesheets /home/allu/pdf-service/stylesheets
+
+# Directories for SAP customer files
+RUN ln -s /servicehome/services/scheduler-service/sap/customer-archive /home/allu/scheduler-service/sap/customer-archive
+RUN ln -s /servicehome/services/scheduler-service/sap/customer-failed /home/allu/scheduler-service/sap/customer-failed
+RUN ln -s /servicehome/services/scheduler-service/sap/customer-process /home/allu/scheduler-service/sap/customer-process
 
 ######################################################################################
 # Copy files to image

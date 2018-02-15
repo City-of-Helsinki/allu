@@ -13,3 +13,24 @@
         group=allu
         mode="u=rwx,g=r,o=r"
   with_items: "{{ allu_service_list }}"
+
+- name: create process directory for SAP customer files
+  file: path=/home/allu/services/scheduler-service/sap/customer-process
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=r,o=r"
+
+- name: create archive directory for SAP customer files
+  file: path=/home/allu/services/scheduler-service/sap/customer-archive
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=r,o=r"
+
+- name: create archive  directory for failed SAP customer files
+  file: path=/home/allu/services/scheduler-service/sap/customer-failed
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=r,o=r"
