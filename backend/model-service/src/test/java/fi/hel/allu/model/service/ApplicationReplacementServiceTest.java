@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +21,11 @@ import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
+import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import static org.geolatte.geom.builder.DSL.*;
@@ -50,6 +53,8 @@ public class ApplicationReplacementServiceTest {
   private DepositDao depositDao;
   @Autowired
   private AttachmentDao attachmentDao;
+  @Autowired
+  private UserDao userDao;
 
   @Autowired
   private TestCommon testCommon;
@@ -74,6 +79,15 @@ public class ApplicationReplacementServiceTest {
   public void shouldAddPrefixToApplicationId() {
     Application application = replaceApplication();
     assertEquals(originalApplication.getApplicationId() + "-2", application.getApplicationId());
+  }
+
+  @Test
+  public void applicationIdIsIncreased() {
+    for (int i = 0; i < 12; i++) {
+      Application application = replaceApplication();
+      assertEquals(ApplicationIdUtil.getBaseApplicationId(originalApplication.getApplicationId()) + "-" + (i + 2), application.getApplicationId());
+      originalApplication = application;
+    }
   }
 
   @Test
@@ -203,7 +217,9 @@ public class ApplicationReplacementServiceTest {
   }
 
   private void setToDecisionState(Integer applicationId) {
-    applicationDao.updateDecision(applicationId, StatusType.DECISION, testCommon.insertUser("decisionmaker").getId(), originalApplication.getHandler());
+    Optional<User> userOpt = userDao.findByUserName("decisionmaker");
+    User decisionMaker = userOpt.isPresent() ? userOpt.get() : testCommon.insertUser("decisionmaker");
+    applicationDao.updateDecision(applicationId, StatusType.DECISION, decisionMaker.getId(), originalApplication.getHandler());
   }
 
   private void validateReplacingApplicationData(Application application) {

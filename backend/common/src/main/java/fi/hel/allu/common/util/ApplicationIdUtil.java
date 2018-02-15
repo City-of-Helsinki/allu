@@ -3,15 +3,12 @@ package fi.hel.allu.common.util;
 public class ApplicationIdUtil {
   private static final String VERSION_NUMBER_SEPARATOR = "-";
 
-  public static String generateReplacingApplicationId(String applicationId, boolean firstReplace) {
-    int currentVersion;
-    if (firstReplace) {
-      currentVersion = 1;
-    } else {
+  public static String generateReplacingApplicationId(String applicationId) {
+    int currentVersion = 1;
+    final int separatorIndex = applicationId.lastIndexOf(VERSION_NUMBER_SEPARATOR);
+    if (separatorIndex != -1) {
       // Replaced application has replaced some other application, parse and increase version number
-      int separatorIndex = applicationId.lastIndexOf(VERSION_NUMBER_SEPARATOR);
-      currentVersion= Integer.valueOf(applicationId.substring(
-          separatorIndex + 1));
+      currentVersion = Integer.valueOf(applicationId.substring(separatorIndex + 1));
       applicationId = applicationId.substring(0, separatorIndex);
     }
 

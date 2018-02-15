@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,9 +135,16 @@ public class ApplicationReplacementService {
     return application;
   }
 
-  private static String generateReplacingApplicationId(Application applicationToReplace) {
+  private String generateReplacingApplicationId(Application applicationToReplace) {
     String applicationId = applicationToReplace.getApplicationId();
-    boolean firstReplace = applicationToReplace.getReplacesApplicationId() == null;
-    return ApplicationIdUtil.generateReplacingApplicationId(applicationId, firstReplace);
+
+    final List<ApplicationIdentifier> appIds = applicationDao.findByApplicationIdStartingWith(
+            ApplicationIdUtil.getBaseApplicationId(applicationId));
+    if (!appIds.isEmpty()) {
+      // Find latest application ID
+      Collections.sort(appIds, (a1, a2) -> Integer.valueOf(a2.getId()).compareTo(a1.getId()));
+      applicationId = appIds.get(0).getApplicationId();
+    }
+    return ApplicationIdUtil.generateReplacingApplicationId(applicationId);
   }
 }
