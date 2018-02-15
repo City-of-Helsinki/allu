@@ -48,11 +48,12 @@ public class DecisionJson {
   private String totalRent;
   private int vatPercentage;
   private String priceBasisText;
-  private String priceReason;
+  private boolean notBillable;
+  private String notBillableReason;
   private boolean hasEkokompassi;
   private boolean separateBill;
 
-  private String additionalConditions;
+  private List<String> additionalConditions;
 
   private String decisionTimestamp;
   private String deciderTitle;
@@ -313,12 +314,26 @@ public class DecisionJson {
     this.priceBasisText = priceBasisText;
   }
 
-  public String getPriceReason() {
-    return priceReason;
+  /**
+   * Is the application marked as "not billable"?
+   */
+  public boolean isNotBillable() {
+    return notBillable;
   }
 
-  public void setPriceReason(String priceReason) {
-    this.priceReason = priceReason;
+  public void setNotBillable(boolean notBillable) {
+    this.notBillable = notBillable;
+  }
+
+  /**
+   * The reason for not being billable
+   */
+  public String getNotBillableReason() {
+    return notBillableReason;
+  }
+
+  public void setNotBillableReason(String notBillableReason) {
+    this.notBillableReason = notBillableReason;
   }
 
   public boolean isHasEkokompassi() {
@@ -337,11 +352,11 @@ public class DecisionJson {
     this.separateBill = separateBill;
   }
 
-  public String getAdditionalConditions() {
+  public List<String> getAdditionalConditions() {
     return additionalConditions;
   }
 
-  public void setAdditionalConditions(String additionalConditions) {
+  public void setAdditionalConditions(List<String> additionalConditions) {
     this.additionalConditions = additionalConditions;
   }
 

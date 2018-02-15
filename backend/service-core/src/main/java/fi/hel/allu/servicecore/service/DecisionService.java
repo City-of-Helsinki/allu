@@ -235,7 +235,7 @@ public class DecisionService {
         Optional.ofNullable(application.getDecisionTime()).map(dt -> formatDateWithDelta(dt, 0)).orElse("[Päätöspvm]"));
     decisionJson.setVatPercentage(24); // FIXME: find actual value somehow
     decisionJson.setAdditionalConditions(
-        Optional.ofNullable(application.getExtension()).map(e -> e.getTerms()).orElse(null));
+        splitToList(Optional.ofNullable(application.getExtension()).map(e -> e.getTerms())));
     decisionJson.setDecisionTimestamp(ZonedDateTime.now().withZoneSameInstant(zoneId).format(timeStampFormatter));
     UserJson decider = application.getDecisionMaker();
     if (decider != null) {
@@ -243,7 +243,8 @@ public class DecisionService {
       decisionJson.setDeciderName(decider.getRealName());
     }
     decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
-    decisionJson.setPriceReason(application.getNotBillableReason());
+    decisionJson.setNotBillable(Boolean.TRUE.equals(application.getNotBillable()));
+    decisionJson.setNotBillableReason(application.getNotBillableReason());
     Integer priceInCents = application.getCalculatedPrice();
     if (priceInCents != null) {
       NumberFormat decimalFormat = NumberFormat.getCurrencyInstance(locale);
@@ -253,6 +254,15 @@ public class DecisionService {
     fillCargeBasisInfo(decisionJson, application);
   }
 
+  /*
+   * Split the given string into a list of strings. For empty Optional, give
+   * empty list.
+   */
+  private List<String> splitToList(Optional<String> string) {
+    return string.map(s -> s.split("\n"))
+        .map(a -> Arrays.stream(a)).map(s -> s.collect(Collectors.toList()))
+        .orElse(Collections.emptyList());
+  }
   /*
    * Read application's charge basis entries, order them, and generate matching
    * charge info texts.
@@ -365,7 +375,6 @@ public class DecisionService {
       decisionJson
           .setEventNature("Lyhytaikainen maanvuokraus, " + applicationKindTranslations.get(application.getKind()));
       decisionJson.setEventDescription(strj.getDescription());
-      decisionJson.setPriceReason(null);
       decisionJson.setPriceBasisText(shortTermPriceBasis(application.getKind()));
     }
     if (ApplicationKind.BRIDGE_BANNER.equals(application.getKind())) {
@@ -381,12 +390,12 @@ public class DecisionService {
   private String shortTermPriceBasis(ApplicationKind kind) {
     switch (kind) {
       case BENJI:
-        return "320 &euro;/päivä + alv";
+        return "320 &euro;/p&auml;iv&auml; + alv";
       case BRIDGE_BANNER:
         return "<ul><li>Ei-kaupalliset toimijat: 150 &euro;/kalenteriviikko + alv</li>"
             + "<li>Kaupalliset toimijat: 750 &euro;/kalenteriviikko + alv</li></ul>";
       case CIRCUS:
-        return "200 €/päivä + alv";
+        return "200 €/p&auml;iv&auml; + alv";
       case DOG_TRAINING_EVENT:
         return "<ul><li>Kertamaksu yhdistyksille: 50 &euro;/kerta + alv</li>"
             + "<li>Kertamaksu yrityksille: 100 &euro;/kerta + alv</li></ul>";
@@ -395,12 +404,12 @@ public class DecisionService {
             + "<li>Vuosivuokra yrityksille: 200 &euro;/vuosi</li></ul>";
       case KESKUSKATU_SALES:
       case SEASON_SALE:
-        return "<ul><li>(1–14 päivää): 50 &euro;/päivä/alkava 10 m&sup2; + alv</li>"
-            + "<li>(15. päivästä alkaen): 25 &euro;/päivä/alkava 10 m&sup2; + alv</li></ul>";
+        return "<ul><li>(1&ndash;14 p&auml;iv&auml;&auml;): 50 &euro;/p&auml;iv&auml;/alkava 10 m&sup2; + alv</li>"
+            + "<li>(15. p&auml;iv&auml;st&auml; alkaen): 25 &euro;/p&auml;iv&auml;/alkava 10 m&sup2; + alv</li></ul>";
       case PROMOTION_OR_SALES:
         return "150 &euro;/kalenterivuosi + alv";
       case SUMMER_THEATER:
-        return "120 &euro;/kuukausi näytäntöajalta";
+        return "120 &euro;/kuukausi n&auml;yt&auml;nt&ouml;ajalta";
       case URBAN_FARMING:
         return "2 &euro;/m&sup2;/viljelykausi";
       case OTHER:
@@ -409,7 +418,7 @@ public class DecisionService {
       case STORAGE_AREA:
         return null;
       default:
-        return "[FIXME: Perustetta ei määritetty]";
+        return "[FIXME: Perustetta ei m&auml;&auml;ritetty]";
     }
   }
 
