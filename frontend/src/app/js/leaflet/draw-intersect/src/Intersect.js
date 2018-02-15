@@ -1,4 +1,4 @@
-const turfIntersect = require('@turf/intersect');
+const intersect = require('@turf/intersect').default;
 const pip = require('@mapbox/leaflet-pip');
 
 function Intersect (map) {
@@ -22,9 +22,9 @@ Intersect.prototype.check = function(layer, againstLayer) {
 
 Intersect.prototype.validLayers = function(l1, l2) {
   if (l1 && l2) {
-    const bothOnMap = !!l1._map && !!l2._map;
+    const comparedOnMap = !!l2._map;
     const differentLayers = l1._leaflet_id !== l2._leaflet_id;
-    return bothOnMap && differentLayers;
+    return comparedOnMap && differentLayers;
   } else {
     return false;
   }
@@ -34,7 +34,7 @@ Intersect.prototype.polyIntersect = function(layer, againstLayer) {
   // Skip checking self
   if (layer._leaflet_id === againstLayer._leaflet_id) return [];
 
-  const intersecting = turfIntersect(this.toGeoJSON(layer), this.toGeoJSON(againstLayer));
+  const intersecting = intersect(this.toGeoJSON(layer), this.toGeoJSON(againstLayer));
   return intersecting ? [againstLayer] : [];
 }
 

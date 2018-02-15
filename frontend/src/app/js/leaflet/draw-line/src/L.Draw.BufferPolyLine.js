@@ -1,4 +1,4 @@
-const buffer = require('@turf/buffer');
+const buffer = require('@turf/buffer').default;
 
 L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
   statics: {
