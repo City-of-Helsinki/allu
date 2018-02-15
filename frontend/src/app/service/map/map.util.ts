@@ -3,6 +3,9 @@ import * as L from 'leaflet';
 import 'proj4leaflet';
 import {GeometryCollection} from '../../typings/geojson';
 import {GeometryObject} from '../../typings/geojson';
+import {Feature, FeatureCollection} from 'geojson';
+import {MapFeatureInfo} from './map-feature-info';
+import {ALLU_PREFIX} from './map-layer-id';
 
 @Injectable()
 export class MapUtil {
@@ -10,7 +13,7 @@ export class MapUtil {
   private epsg3879: L.Proj.CRS;
 
   public featureCollectionToGeometryCollection(
-    featureCollection: GeoJSON.FeatureCollection<GeometryObject>): GeoJSON.GeometryCollection {
+    featureCollection: FeatureCollection<GeometryObject>): GeometryCollection {
     let geometryCollection: GeometryCollection;
     if (featureCollection && featureCollection.features) {
       const features = featureCollection.features;
@@ -27,18 +30,17 @@ export class MapUtil {
     return geometryCollection;
   }
 
-  public geometryCollectionToFeatureCollection(
-    geometryCollection: GeoJSON.GeometryCollection): GeoJSON.FeatureCollection<GeometryObject> {
+  public geometryCollectionToFeatureCollection(geometryCollection: GeometryCollection, featureInfo?: MapFeatureInfo):
+    FeatureCollection<GeometryObject> {
+    let featureCollection;
     if (geometryCollection && geometryCollection.geometries) {
       const geometries: GeometryObject[] = geometryCollection.geometries;
-      const features: GeoJSON.Feature<GeometryObject>[] = geometries.map(g => this.createFeature(g, undefined));
-      return {
+      featureCollection = {
         type: 'FeatureCollection',
-        features: features
+        features: geometries.map(g => this.createFeature(g, featureInfo))
       };
-    } else {
-      return undefined;
     }
+    return featureCollection;
   }
 
   public featureToGeometry(feature: GeoJSON.Feature<GeometryObject>) {
@@ -84,12 +86,14 @@ export class MapUtil {
     });
   }
 
-  private createFeature(geometry: GeometryObject, properties: any): GeoJSON.Feature<GeometryObject> {
+  private createFeature(geometry: GeometryObject, featureInfo?: MapFeatureInfo): GeoJSON.Feature<GeometryObject> {
     return {
+      id: featureInfo ? `${ALLU_PREFIX}.${featureInfo.id}` : undefined,
       type: 'Feature',
       geometry: this.mapEPSG3879Geometry(geometry),
-      properties: undefined
+      properties: featureInfo
     };
+
   }
 
   private createGeometry(feature: GeoJSON.Feature<GeometryObject>): GeometryObject {

@@ -19,6 +19,9 @@ import {NotificationService} from '../notification/notification.service';
 import {drawOptions, editOptions} from './map-config';
 import {MapStore} from './map-store';
 import GeoJSONOptions = L.GeoJSONOptions;
+import {MapEventHandler} from './map-event-handler';
+import {MapFeatureInfo} from './map-feature-info';
+import {Router} from '@angular/router';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -48,6 +51,7 @@ export class MapController {
   constructor(private mapUtil: MapUtil,
               private mapStore: MapStore,
               private mapLayerService: MapLayerService,
+              private router: Router,
               private config: MapControllerConfig) {
     this.initMap();
   }
@@ -101,10 +105,10 @@ export class MapController {
   }
 
   public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
-                      style?: Object, popup?: MapPopup) {
+                      style?: Object, featureInfo?: MapFeatureInfo) {
     const layer = this.mapLayerService.contentLayers[layerName];
     if (layer) {
-      geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, popup));
+      geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, featureInfo));
     } else {
       throw new Error('No draw layer with name ' + layerName);
     }
@@ -145,19 +149,19 @@ export class MapController {
 
   private drawGeometryToLayer(geometryCollection: GeoJSON.GeometryCollection,
                               drawLayer: L.LayerGroup,
-                              style?: GeoJSONOptions, popup?: MapPopup) {
+                              style?: GeoJSONOptions, featureInfo?: MapFeatureInfo) {
     if (geometryCollection.geometries.length) {
       style = style || {};
-      const featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
-      style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon});
+      const featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection, featureInfo);
+      style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
+        .bindPopup((layer: any) => MapPopup.create([layer.feature], this.router), {className: 'allu-map-popup'});
       const geoJSON = L.geoJSON(featureCollection, style);
-      this.drawGeoJSON(geoJSON, drawLayer, popup);
+      this.drawGeoJSON(geoJSON, drawLayer);
     }
   }
 
-  private drawGeoJSON(geoJSON: L.GeoJSON, drawLayer: L.LayerGroup, popup?: MapPopup): void {
+  private drawGeoJSON(geoJSON: L.GeoJSON, drawLayer: L.LayerGroup): void {
     geoJSON.eachLayer((l: any) => {
-      Some(popup).do(pu => l.bindPopup((_) => pu.content()));
       drawLayer.addLayer(l);
     });
   }
@@ -221,6 +225,17 @@ export class MapController {
     this.map.on(L.Draw.Event.INTERSECTS, (e: any) => {
       NotificationService.errorMessage(translations.map.areasIntersect, 2000);
     });
+
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      const intersecting = MapEventHandler.clickIntersects(e, self.map, self.mapLayerService.clickableLayers);
+      if (intersecting.length) {
+        const features = intersecting.map((l: any) => l.feature);
+        L.popup({className: 'allu-map-popup'})
+          .setLatLng(e.latlng)
+          .setContent(MapPopup.create(features, this.router))
+          .openOn(this.map);
+      }
+    });
   }
 
   private setupLayerControls(): void {
@@ -228,7 +243,8 @@ export class MapController {
       'Karttatasot': this.mapLayerService.overlays,
       'Hakemustyypit': this.mapLayerService.contentLayers,
       'Winkin katutyöt': this.mapLayerService.winkkiRoadWorks,
-      'Winkin vuokraukset ja tapahtumat': this.mapLayerService.winkkiEvents
+      'Winkin vuokraukset ja tapahtumat': this.mapLayerService.winkkiEvents,
+      'Muut': this.mapLayerService.cityDistricts
     };
     this.focusedItems = L.featureGroup();
 

@@ -1,18 +1,16 @@
-import {Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 import {MapStore} from '../../service/map/map-store';
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
-import {styleByApplicationType, pathStyle} from '../../service/map/map-draw-styles';
+import {pathStyle, styleByApplicationType} from '../../service/map/map-draw-styles';
 import {MapService} from '../../service/map/map.service';
-import {MapPopup} from '../../service/map/map-popup';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Location} from '../../model/common/location';
 import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '../../service/map/map-controller';
-import {Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
 import {FixedLocationService} from '../../service/map/fixed-location.service';
 
@@ -39,8 +37,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapService: MapService,
     private mapStore: MapStore,
     private fixedLocationService: FixedLocationService,
-    private projectHub: ProjectHub,
-    private router: Router) {}
+    private projectHub: ProjectHub) {}
 
   ngOnInit() {
   }
@@ -87,11 +84,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private drawApplication(application: Application): void {
+    const featureInfo = {
+      id: application.id,
+      name: application.name,
+      applicationId: application.applicationId,
+      startTime: application.uiStartTime,
+      endTime: application.uiEndTime
+    };
+
     this.mapController.drawGeometry(
       application.geometries(),
       findTranslation(['application.type', application.type]),
       styleByApplicationType[application.type],
-      this.applicationPopup(application));
+      featureInfo);
   }
 
   private applicationShouldBeDrawn(application: Application): boolean {
@@ -157,19 +162,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     return <GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>features.toGeoJSON();
-  }
-
-  private applicationPopup(application: Application): MapPopup {
-    const header = L.DomUtil.create('h1', 'popup-header clickable');
-    header.innerHTML = application.name;
-    header.onclick = (event: MouseEvent) => this.router.navigate(['applications', application.id, 'summary']);
-
-    const contentRows = [
-      application.applicationId,
-      findTranslation(['application.type', application.type]),
-      application.uiStartTime + ' - ' + application.uiEndTime
-    ];
-    return new MapPopup(header, contentRows);
   }
 
   private initSubscriptions(): void {

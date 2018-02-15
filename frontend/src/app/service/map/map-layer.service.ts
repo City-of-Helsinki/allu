@@ -29,6 +29,7 @@ export class MapLayerService {
   public readonly winkkiRoadWorks: L.Control.LayersObject;
   public readonly winkkiEvents: L.Control.LayersObject;
   public readonly cityDistricts: L.Control.LayersObject;
+  public readonly clickableLayers = [];
 
   constructor(private authService: AuthService, private config: ConfigService, private mapUtil: MapUtil) {
     this.overlays = this.createOverlays();
@@ -49,6 +50,11 @@ export class MapLayerService {
       'Tulevat': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN),
       'Aktiiviset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE)
     };
+
+    this.clickableLayers = []
+      .concat(Object.values(this.contentLayers))
+      .concat(Object.values(this.winkkiRoadWorks))
+      .concat(Object.values(this.winkkiEvents));
   }
 
   get contentLayerArray(): Array<L.FeatureGroup> {

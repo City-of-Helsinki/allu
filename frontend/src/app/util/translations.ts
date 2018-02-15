@@ -799,6 +799,9 @@ export const translations = {
         totalArea: 'Kokonaispinta-ala (arvio)',
         segmentLength: 'Sivun pituus'
       }
+    },
+    popup: {
+      titleMultipleFeatures: '{{count}} hakemusta'
     }
   },
   attachments: 'Liitteet',

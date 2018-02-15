@@ -13,7 +13,14 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
   height: 100%;
 }
 
-.leaflet-popup-content-wrapper {
+.leaflet-container .allu-map-popup a.leaflet-popup-close-button {
+  top: 2px;
+  right: 4px;
+  color: mat-contrast($allu-primary, 500);
+  font-size: 20px;
+}
+
+.allu-map-popup .leaflet-popup-content-wrapper {
   padding: 0 0 1px;
 
   .leaflet-popup-content {
@@ -21,7 +28,7 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
   }
 }
 
-.leaflet-popup-content {
+.allu-map-popup .leaflet-popup-content {
   h1.popup-header {
     font-size: 15px;
     line-height: 20px;
@@ -63,5 +70,6 @@ img.leaflet-marker-icon {
 .leaflet-control-layers-group:not(:last-of-type) {
   border-bottom: 1px solid #ddd;
 }
+
 
 
