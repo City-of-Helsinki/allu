@@ -3,15 +3,12 @@ package fi.hel.allu.model.domain;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Event extends ApplicationExtension {
   @NotNull(groups = Application.Complete.class)
   private EventNature nature;
-  @NotBlank(groups = Application.Complete.class)
   private String description;
   private String url;
   private int attendees;

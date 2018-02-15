@@ -39,7 +39,7 @@ export class ShortTermRentalForm implements ApplicationForm {
   static createStructure(fb: FormBuilder): { [key: string]: any; } {
     return {
       name: ['', [Validators.required, Validators.minLength(2)]],
-      description: ['', Validators.required],
+      description: [''],
       commercial: [false],
       largeSalesArea: [false],
       calculatedPrice: [0],

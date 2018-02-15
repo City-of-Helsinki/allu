@@ -4,14 +4,11 @@ import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
 
 public class EventJson extends ApplicationExtensionJson {
   private EventNature nature;
-  @NotBlank(message = "{event.description}")
   private String description;
   private String url;
   @NotNull(message = "{event.starttime}")

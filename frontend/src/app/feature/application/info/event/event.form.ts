@@ -75,7 +75,7 @@ export class EventForm implements ApplicationForm {
   static eventForm(fb: FormBuilder): { [key: string]: any; } {
     return {
       name: ['', [Validators.required, Validators.minLength(2)]],
-      description: ['', Validators.required],
+      description: [''],
       url: [''],
       eventTimes: fb.group({
         startTime: [undefined, Validators.required],
