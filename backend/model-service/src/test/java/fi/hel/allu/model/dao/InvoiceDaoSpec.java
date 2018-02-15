@@ -1,25 +1,27 @@
 package fi.hel.allu.model.dao;
 
-import com.greghaskins.spectrum.Spectrum;
-import com.greghaskins.spectrum.Variable;
-
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Invoice;
-import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import com.greghaskins.spectrum.Spectrum;
+import com.greghaskins.spectrum.Variable;
+
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Invoice;
+import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.*;
@@ -30,6 +32,9 @@ import static org.junit.Assert.*;
 public class InvoiceDaoSpec extends SpeccyTestBase {
 
   final static Invoice TEST_INVOICE = testInvoice();
+
+  @Autowired
+  private ApplicationDao applicationDao;
 
   @Autowired
   private InvoiceDao invoiceDao;
@@ -150,6 +155,31 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
             assertEquals(1, invoices.size());
             assertNotEquals(invoiceId, invoices.get(0).getId());
           });
+        });
+        context("When application is replaced find pending invoices", () -> {
+          beforeEach(() -> {
+            Invoice tmp = testInvoice();
+            tmp.setInvoicableTime(ZonedDateTime.now().minusDays(2));
+            tmp.setInvoiced(false);
+            invoiceDao.insert(appId.get(), tmp);
+          });
+          it("should not return invoice of replaced application if replacing application not cancelled", () -> {
+            Application app = testCommon.dummyBridgeBannerApplication("replacing_app", "replacing_app");
+            app.setReplacesApplicationId(appId.get());
+            app.setStatus(StatusType.DECISION);
+            applicationDao.insert(app);
+            final List<Invoice> invoices = invoiceDao.findPending();
+            assertTrue(invoices.isEmpty());
+          });
+          it("should return invoice of replaced application if replacing application cancelled", () -> {
+            Application app = testCommon.dummyBridgeBannerApplication("replacing_app", "replacing_app");
+            app.setReplacesApplicationId(appId.get());
+            app.setStatus(StatusType.CANCELLED);
+            applicationDao.insert(app);
+            final List<Invoice> invoices = invoiceDao.findPending();
+            assertEquals(1, invoices.size());
+          });
+
         });
       });
     });

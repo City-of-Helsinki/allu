@@ -4,6 +4,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.model.domain.InvoiceRow;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QInvoice.invoice;
 import static fi.hel.allu.QInvoiceRow.invoiceRow;
 
@@ -145,7 +147,16 @@ public class InvoiceDao {
         .where(invoice.invoicableTime.before(ZonedDateTime.now()).and(invoice.invoiced.ne(true))
             .and(invoice.sapIdPending.isFalse()))
         .fetch().stream()
-        .map(id -> find(id)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        .map(id -> find(id)).filter(Optional::isPresent).map(Optional::get)
+          .filter(i -> isNotReplaced(i.getApplicationId()))
+          .collect(Collectors.toList());
+  }
+
+  private boolean isNotReplaced(Integer applicationId) {
+    // Checks whether theres application which replaces application with given application id and which is not cancelled
+    return queryFactory.select(application.id).from(application)
+        .where(application.replacesApplicationId.eq(applicationId).and(application.status.ne(StatusType.CANCELLED)))
+        .fetchCount() == 0;
   }
 
   /**
