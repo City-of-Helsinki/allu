@@ -120,7 +120,7 @@ export class MapLayerService {
 
   private winkkiWFS(layerName: string, filter: L.Filter): L.FeatureGroup {
     return L.wfs({
-      url: 'http://geoserver.hel.fi/geoserver/hkr/ows?',
+      url: '/geoserver/hkr/ows',
       typeNS: 'hkr',
       typeName: layerName,
       geometryField: 'wkb_geometry',

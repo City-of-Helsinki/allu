@@ -49,7 +49,7 @@
     "superagent": "3.6.0"
   },
   "devDependencies": {
-    "@angular/cli": "^1.6.0",
+    "@angular/cli": "^1.6.8",
     "@angular/compiler-cli": "^5.0.0",
     "@angular/language-service": "^5.0.0",
     "@types/core-js": "0.9.36",
@@ -61,10 +61,10 @@
     "@types/node": "~6.0.60",
     "@types/proj4leaflet": "1.0.5",
     "codelyzer": "~3.2.0",
-    "jasmine-core": "~2.6.2",
+    "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.1.0",
-    "karma": "~1.7.0",
-    "karma-chrome-launcher": "~2.1.1",
+    "karma": "~2.0.0",
+    "karma-chrome-launcher": "~2.2.0",
     "karma-cli": "~1.0.1",
     "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-jasmine": "~1.1.0",
