@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as L from 'leaflet';
 import 'proj4leaflet';
-import {GeometryCollection} from '../../typings/geojson';
-import {GeometryObject} from '../../typings/geojson';
-import {Feature, FeatureCollection} from 'geojson';
+import {Feature, FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
 import {MapFeatureInfo} from './map-feature-info';
 import {ALLU_PREFIX} from './map-layer-id';
 

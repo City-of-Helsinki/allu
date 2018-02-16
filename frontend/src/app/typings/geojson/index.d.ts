@@ -1,20 +1,24 @@
-import {GeoJsonGeometryTypes, GeoJsonTypes} from 'geojson';
+import * as GeoJSON from 'geojson';
 
-export interface GeoJsonCRS {
-  properties: {name: string};
-  type: string;
+declare module 'geojson' {
+  interface GeoJsonCRS {
+    properties: {name: string};
+    type: string;
+  }
+
+  interface GeoJsonObject {
+    type: GeoJsonTypes;
+    crs?: GeoJsonCRS;
+  }
+
+  interface GeometryObject {
+    type: GeoJsonGeometryTypes;
+  }
+
+  interface GeometryCollection {
+    type: 'GeometryCollection';
+  }
 }
 
-export interface GeoJsonObject extends GeoJSON.GeoJsonObject {
-  type: GeoJsonTypes;
-  crs?: GeoJsonCRS;
-}
 
-export interface GeometryObject extends GeoJsonObject, GeoJSON.GeometryObject {
-  type: GeoJsonGeometryTypes;
-}
-
-export interface GeometryCollection extends GeoJsonObject, GeoJSON.GeometryCollection {
-  type: 'GeometryCollection';
-}
 
