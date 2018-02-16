@@ -1133,7 +1133,12 @@ export const translations = {
   },
   customers: {
     newContact: 'UUSI YHTEYSHENKILÖ',
-    removeFromRegistry: 'POISTA REKISTERISTÄ'
+    removeFromRegistry: 'POISTA REKISTERISTÄ',
+    notifications: {
+      contactRemoved: 'Yhteyshenkilö poistettu',
+      contactRemoveFailed: 'Yhteyshenkilön poistaminen epäonnistui'
+    }
+
   },
   ownerModal: {
     OWNER: {

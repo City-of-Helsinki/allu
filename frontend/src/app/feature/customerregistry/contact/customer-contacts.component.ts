@@ -8,6 +8,7 @@ import {CustomerHub} from '../../../service/customer/customer-hub';
 import {NumberUtil} from '../../../util/number.util';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 @Component({
   selector: 'customer-contacts',
@@ -21,12 +22,14 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   contacts: FormArray;
 
   private contactSubscription: Subscription;
+  private customerId: number;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private customerHub: CustomerHub) {}
 
   ngOnInit(): void {
     this.contacts = <FormArray>this.parentForm.get('contacts');
     this.contactSubscription = this.onAddContact.subscribe(c => this.addContact(c));
+    this.route.params.map(p => p['id']).subscribe(p => this.customerId = p);
 
     this.route.params
       .map(p => p['id'])
@@ -37,6 +40,18 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.contactSubscription.unsubscribe();
+  }
+
+  removeContact(index: number, contactValue: any): void {
+    if (NumberUtil.isDefined(contactValue.id)) {
+      this.contacts.at(index).patchValue({active: false});
+      this.customerHub.saveContactsForCustomer(this.customerId, this.contacts.value)
+        .subscribe(
+          result => NotificationService.translateMessage('customers.notifications.contactRemoved'),
+          error => NotificationService.translateErrorMessage('customers.notifications.contactRemoveFailed'));
+    } else {
+      this.contacts.removeAt(index);
+    }
   }
 
   private addContact(contact: Contact): void {
