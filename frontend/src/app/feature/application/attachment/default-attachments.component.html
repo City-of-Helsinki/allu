@@ -1,10 +1,11 @@
 <mat-card *ngIf="defaultAttachments?.length > 0">
   <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
   <mat-card-content>
-    <div class="row" *ngIf="isAllowedToEdit">
-      <selection-group [ngModel]="selectedAttachments" (select)="onSelect($event)"
+    <div *ngIf="isAllowedToEdit">
+      <selection-group fxLayout="row" fxLayoutWrap fxLayoutGap="18px" fxLayoutAlign="start"
+                       [ngModel]="selectedAttachments" (select)="onSelect($event)"
                        *ngIf="defaultAttachments">
-        <div class="col m3" *ngFor="let attachment of defaultAttachments">
+        <div fxFlex="nogrow" *ngFor="let attachment of defaultAttachments">
           <selection-item [item]="attachment" selectType="CHECKBOX">
             {{attachment.name}}
           </selection-item>
@@ -14,8 +15,8 @@
         </div>
       </selection-group>
     </div>
-    <div class="row" *ngIf="!isAllowedToEdit">
-      <div class="col m3" *ngFor="let attachment of defaultAttachments">
+    <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px" fxLayoutAlign="start" *ngIf="!isAllowedToEdit">
+      <div fxFlex="nogrow" *ngFor="let attachment of selectedAttachments">
         <span>{{attachment.name}}</span>
         <button mat-icon-button (click)="download(attachment)">
           <mat-icon>file_download</mat-icon>
