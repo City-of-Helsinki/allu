@@ -24,7 +24,8 @@
         "../node_modules/leaflet/dist/leaflet.css",
         "../node_modules/leaflet-draw/dist/leaflet.draw.css",
         "../node_modules/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css",
-        "../node_modules/leaflet-measure-path/leaflet-measure-path.css"
+        "../node_modules/leaflet-measure-path/leaflet-measure-path.css",
+        "../node_modules/leaflet.markercluster/dist/MarkerCluster.css"
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",

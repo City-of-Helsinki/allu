@@ -8,6 +8,8 @@ import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
 import {pathStyle} from './map-draw-styles';
 import {MapUtil} from './map.util';
 import * as L from 'leaflet';
+import 'leaflet.markercluster';
+import 'leaflet.markercluster.layersupport';
 import '../../js/leaflet/wms-authentication';
 import 'leaflet-wfst';
 import TimeoutOptions = L.TimeoutOptions;
@@ -30,6 +32,11 @@ export class MapLayerService {
   public readonly winkkiEvents: L.Control.LayersObject;
   public readonly cityDistricts: L.Control.LayersObject;
   public readonly clickableLayers = [];
+  public readonly markerSupport = L.markerClusterGroup.layerSupport({
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    zoomToBoundsOnClick: true
+  });
 
   constructor(private authService: AuthService, private config: ConfigService, private mapUtil: MapUtil) {
     this.overlays = this.createOverlays();

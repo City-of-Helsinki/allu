@@ -1,0 +1,52 @@
+@import 'colors';
+$marker-green: #3C9708;
+
+.marker-cluster-small div {
+  background-color: $marker-green;
+}
+
+.marker-cluster-medium div {
+  background-color: $marker-green;
+}
+
+.marker-cluster-large div {
+  background-color: $marker-green;
+}
+
+/* IE 6-8 fallback colors */
+
+.leaflet-oldie .marker-cluster-small div {
+  background-color: $marker-green;
+}
+
+.leaflet-oldie .marker-cluster-medium div {
+  background-color: $marker-green;
+}
+
+.leaflet-oldie .marker-cluster-large div {
+  background-color: $marker-green;
+}
+
+.marker-cluster {
+  background-clip: padding-box;
+  border-radius: 20px;
+}
+
+.marker-cluster div {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  margin-top: 5px;
+  color: mat-contrast($allu-primary, 500);
+
+  text-align: center;
+  border: 2px solid mat-contrast($allu-primary, 500);
+  border-radius: 15px;
+  box-shadow: 0 2px 4px 0 #757575;
+  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+.marker-cluster span {
+  line-height: 26px;
+}

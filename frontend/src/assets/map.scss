@@ -1,4 +1,5 @@
 @import 'colors';
+@import 'marker-cluster';
 
 input[type="radio"]:not(:checked).leaflet-control-layers-selector,
 input[type="radio"]:checked.leaflet-control-layers-selector,
@@ -51,11 +52,6 @@ img.leaflet-marker-icon {
   height: 20px !important;
   margin-left: -7px !important;
   margin-top: -20px !important;
-}
-
-.leaflet-marker-icon {
-  height: 13px !important;
-  width: 13px !important;
 }
 
 /* Change cursor when mousing over clickable layer */

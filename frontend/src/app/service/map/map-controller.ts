@@ -246,9 +246,20 @@ export class MapController {
       'Winkin vuokraukset ja tapahtumat': this.mapLayerService.winkkiEvents,
       'Muut': this.mapLayerService.cityDistricts
     };
-    this.focusedItems = L.featureGroup();
+    const groupedControl = L.control.groupedLayers(undefined, groupedOverlays);
 
-    L.control.groupedLayers(undefined, groupedOverlays).addTo(this.map);
+    // Add marker group support for application layers
+    this.mapLayerService.markerSupport.addTo(this.map);
+    this.mapLayerService.markerSupport.checkIn(this.mapLayerService.contentLayerArray);
+
+    // Add layer group control to map
+    groupedControl.addTo(this.map);
+
+    // Need to add content layers (applications) to map again to pre-select
+    // them from layer selection control
+    this.mapLayerService.contentLayerArray.forEach(l => l.addTo(this.map));
+
+    this.focusedItems = L.featureGroup();
     this.focusedItems.addTo(this.map);
   }
 
