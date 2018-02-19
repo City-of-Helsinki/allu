@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as L from 'leaflet';
 import 'proj4leaflet';
-import {Feature, FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
 import {MapFeatureInfo} from './map-feature-info';
 import {ALLU_PREFIX} from './map-layer-id';
 
@@ -11,11 +10,11 @@ export class MapUtil {
   private epsg3879: L.Proj.CRS;
 
   public featureCollectionToGeometryCollection(
-    featureCollection: FeatureCollection<GeometryObject>): GeometryCollection {
-    let geometryCollection: GeometryCollection;
+    featureCollection: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>): GeoJSON.GeometryCollection {
+    let geometryCollection: GeoJSON.GeometryCollection;
     if (featureCollection && featureCollection.features) {
       const features = featureCollection.features;
-      const geometries: GeometryObject[] = features.map(f => f.geometry);
+      const geometries: GeoJSON.GeometryObject[] = features.map(f => f.geometry);
       geometryCollection = {
         type: 'GeometryCollection',
         crs: {
@@ -28,11 +27,11 @@ export class MapUtil {
     return geometryCollection;
   }
 
-  public geometryCollectionToFeatureCollection(geometryCollection: GeometryCollection, featureInfo?: MapFeatureInfo):
-    FeatureCollection<GeometryObject> {
+  public geometryCollectionToFeatureCollection(geometryCollection: GeoJSON.GeometryCollection, featureInfo?: MapFeatureInfo):
+  GeoJSON.FeatureCollection<GeoJSON.GeometryObject> {
     let featureCollection;
     if (geometryCollection && geometryCollection.geometries) {
-      const geometries: GeometryObject[] = geometryCollection.geometries;
+      const geometries: GeoJSON.GeometryObject[] = geometryCollection.geometries;
       featureCollection = {
         type: 'FeatureCollection',
         features: geometries.map(g => this.createFeature(g, featureInfo))
@@ -41,7 +40,7 @@ export class MapUtil {
     return featureCollection;
   }
 
-  public featureToGeometry(feature: GeoJSON.Feature<GeometryObject>) {
+  public featureToGeometry(feature: GeoJSON.Feature<GeoJSON.GeometryObject>) {
     const geometry = this.createGeometry(feature);
     geometry.crs = {
       properties: {
@@ -84,7 +83,7 @@ export class MapUtil {
     });
   }
 
-  private createFeature(geometry: GeometryObject, featureInfo?: MapFeatureInfo): GeoJSON.Feature<GeometryObject> {
+  private createFeature(geometry: GeoJSON.GeometryObject, featureInfo?: MapFeatureInfo): GeoJSON.Feature<GeoJSON.GeometryObject> {
     return {
       id: featureInfo ? `${ALLU_PREFIX}.${featureInfo.id}` : undefined,
       type: 'Feature',
@@ -94,7 +93,7 @@ export class MapUtil {
 
   }
 
-  private createGeometry(feature: GeoJSON.Feature<GeometryObject>): GeometryObject {
+  private createGeometry(feature: GeoJSON.Feature<GeoJSON.GeometryObject>): GeoJSON.GeometryObject {
     return this.mapWgs84Geometry(feature.geometry);
   }
 

@@ -1,4 +1,5 @@
 import {MapUtil} from '../src/app/service/map/map.util';
+import {DirectGeometryObject, GeometryObject} from 'geojson';
 
 describe('MapService', () => {
   it('should project wgs84 to epsg:3879 correctly', () => {
@@ -40,7 +41,7 @@ describe('MapService', () => {
 
     const featureCollection = mapService.geometryCollectionToFeatureCollection(originalGeometryCollection);
     const geometryCollection = mapService.featureCollectionToGeometryCollection(featureCollection);
-    const processedGeometries = geometryCollection.geometries[0];
+    const processedGeometries = <DirectGeometryObject>geometryCollection.geometries[0];
     const processedCoordinates = <number[][]>processedGeometries.coordinates[0];
 
     // compare converted coordinates after rounding them a little bit
