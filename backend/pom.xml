@@ -45,6 +45,7 @@
         <module>sap-interface</module>
         <module>external-service</module>
         <module>external-domain</module>
+        <module>sap-import</module>
     </modules>
 
     <build>
