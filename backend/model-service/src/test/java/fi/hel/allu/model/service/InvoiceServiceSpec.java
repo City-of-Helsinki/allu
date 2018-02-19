@@ -14,12 +14,20 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Spectrum.class)
@@ -29,6 +37,8 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
   private InvoiceDao invoiceDao;
   private PricingService pricingService;
   private ApplicationDao applicationDao;
+  private InvoiceRecipientDao invoiceRecipientDao;
+  private CustomerDao customerDao;
 
   private InvoiceService invoiceService;
 
@@ -38,7 +48,9 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
       invoiceDao = Mockito.mock(InvoiceDao.class);
       pricingService = Mockito.mock(PricingService.class);
       applicationDao = Mockito.mock(ApplicationDao.class);
-      invoiceService = new InvoiceService(chargeBasisDao, invoiceDao, pricingService, applicationDao);
+      invoiceRecipientDao = Mockito.mock(InvoiceRecipientDao.class);
+      customerDao = Mockito.mock(CustomerDao.class);
+      invoiceService = new InvoiceService(chargeBasisDao, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao);
     });
 
     describe("InvoiceService", () -> {
@@ -46,13 +58,39 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         final int APPLICATION_ID = 123;
         final List<ChargeBasisEntry> CB_ENTRIES = Collections.singletonList(new ChargeBasisEntry());
         final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(new InvoiceRow());
+        final int INVOICE_RECIPIENT_ID = 33;
+        final Customer customer = new Customer();
+        customer.setType(CustomerType.COMPANY);
+        customer.setName("The Company");
+        Application application = new Application();
+        application.setInvoiceRecipientId(INVOICE_RECIPIENT_ID);
         Mockito.when(chargeBasisDao.getChargeBasis(Mockito.eq(APPLICATION_ID))).thenReturn(CB_ENTRIES);
         Mockito.when(pricingService.toSingleInvoice(Mockito.eq(CB_ENTRIES))).thenReturn(INVOICE_ROWS);
+        Mockito.when(customerDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(customer));
+        Mockito.when(invoiceRecipientDao.insert(Mockito.any())).thenReturn(INVOICE_RECIPIENT_ID);
+        Mockito.when(applicationDao.findById(APPLICATION_ID)).thenReturn(application);
         invoiceService.createInvoices(APPLICATION_ID, false);
         Mockito.verify(invoiceDao).deleteByApplication(Mockito.eq(APPLICATION_ID));
         ArgumentCaptor<Invoice> invoiceCaptor = ArgumentCaptor.forClass(Invoice.class);
         Mockito.verify(invoiceDao).insert(Mockito.eq(APPLICATION_ID), invoiceCaptor.capture());
         assertEquals(invoiceCaptor.getValue().getRows(), INVOICE_ROWS);
+        assertEquals(INVOICE_RECIPIENT_ID, (long)invoiceCaptor.getValue().getRecipientId());
+      });
+
+      it("Find pending invoices", () -> {
+        final int INVOICE_RECIPIENT_ID = 33;
+        final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(CustomerType.COMPANY, "The Company");
+        final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(new InvoiceRow());
+        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID);
+        List<Invoice> pendingInvoices = Collections.singletonList(invoice);
+        Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
+        Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
+
+        List<Invoice> foundPendingInvoices = invoiceService.findPending();
+        assertEquals(pendingInvoices.size(), foundPendingInvoices.size());
+        Invoice foundInvoice = foundPendingInvoices.get(0);
+        assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
+        assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
       });
     });
   }

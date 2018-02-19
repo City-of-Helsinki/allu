@@ -312,6 +312,11 @@
                             <type>fi.hel.allu.model.querydsl.StringToCustomerType</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>invoice_recipient</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToCustomerType</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>application_customer</table>
                             <column>customer_role_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToCustomerRoleType</type>

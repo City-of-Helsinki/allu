@@ -14,14 +14,17 @@ public class Invoice {
   private boolean invoiced;
   private boolean sapIdPending;
   private List<InvoiceRow> rows;
+  private Integer recipientId;
+  private InvoiceRecipient invoiceRecipient;
 
   public Invoice(Integer id, Integer applicationId, ZonedDateTime invoicableTime, boolean invoiced,
-      boolean sapIdPending, List<InvoiceRow> rows) {
+      boolean sapIdPending, List<InvoiceRow> rows, Integer recipientId) {
     this.id = id;
     this.applicationId = applicationId;
     this.invoicableTime = invoicableTime;
     this.invoiced = invoiced;
     this.sapIdPending = sapIdPending;
+    this.recipientId = recipientId;
     setRows(rows);
   }
 
@@ -106,6 +109,22 @@ public class Invoice {
     } else {
       this.rows = new ArrayList<>();
     }
+  }
+
+  public Integer getRecipientId() {
+    return recipientId;
+  }
+
+  public void setRecipientId(Integer recipientId) {
+    this.recipientId = recipientId;
+  }
+
+  public InvoiceRecipient getInvoiceRecipient() {
+    return invoiceRecipient;
+  }
+
+  public void setInvoiceRecipient(InvoiceRecipient invoiceRecipient) {
+    this.invoiceRecipient = invoiceRecipient;
   }
 
 }

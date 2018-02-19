@@ -24,6 +24,8 @@ import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -31,17 +33,22 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 public class InvoiceDaoSpec extends SpeccyTestBase {
 
-  final static Invoice TEST_INVOICE = testInvoice();
+  private Invoice TEST_INVOICE;
 
   @Autowired
   private ApplicationDao applicationDao;
 
   @Autowired
   private InvoiceDao invoiceDao;
+
+  @Autowired
+  private InvoiceRecipientDao invoiceRecipientDao;
+
   {
     describe("InvoiceDao", () -> {
       beforeEach(() -> {
         testCommon.deleteAllData();
+        TEST_INVOICE = testInvoice();
       });
 
       context("When DB is empty", () -> {
@@ -191,9 +198,11 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
     assertEquals(expected.getRows().size(), actual.getRows().size());
   }
 
-  private static Invoice testInvoice() {
+  private Invoice testInvoice() {
+    InvoiceRecipient customer = new InvoiceRecipient(CustomerType.COMPANY, "the company");
+    int customerId = invoiceRecipientDao.insert(customer);
     Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-15T08:00:00+02:00[Europe/Helsinki]"), false,
-        false, null);
+        false, null, customerId);
     invoice.setRows(Arrays.asList(
         new InvoiceRow(ChargeBasisUnit.PIECE, 3.141, "One Pie", new String[] { "A pie", "With Apples" }, 12300, -99999),
         new InvoiceRow(ChargeBasisUnit.DAY, 14, "A Forthnight", new String[] { "Two weeks", "Fourteen nights" }, 300,
@@ -201,9 +210,11 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
     return invoice;
   }
 
-  private static Invoice otherInvoice() {
+  private Invoice otherInvoice() {
+    InvoiceRecipient customer = new InvoiceRecipient(CustomerType.COMPANY, "the company");
+    int customerId = invoiceRecipientDao.insert(customer);
     Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-07T08:00:00+02:00[Europe/Helsinki]"), true,
-        false, null);
+        false, null, customerId);
     invoice.setRows(Arrays.asList(
         new InvoiceRow(ChargeBasisUnit.MONTH, 12, "A Whole year", new String[] { "A calendar year", "About 365 days" },
             12000, 144000),

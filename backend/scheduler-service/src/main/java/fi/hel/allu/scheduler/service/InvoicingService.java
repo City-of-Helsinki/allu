@@ -44,11 +44,11 @@ public class InvoicingService {
       .ofPattern("yyyyMMddHHmmssSSS");
   private static final String MAIL_TEMPLATE = "/templates/invoice-notification-mail-template.txt";
 
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private SftpService sftpService;
-  private AlluMailService alluMailService;
-  private ApplicationStatusUpdaterService applicationStatusUpdaterService;
+  private final RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final SftpService sftpService;
+  private final AlluMailService alluMailService;
+  private final ApplicationStatusUpdaterService applicationStatusUpdaterService;
 
   @Autowired
   public InvoicingService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
@@ -77,7 +77,7 @@ public class InvoicingService {
     final List<SalesOrder> salesOrders = invoices.stream()
         .map(i -> {
           final Application app = applicationsById.get(i.getApplicationId());
-          return AlluMapper.mapToSalesOrder(app, getCustomer(app.getInvoiceRecipientId()), i.getRows());
+          return AlluMapper.mapToSalesOrder(app, i.getInvoiceRecipient(), getCustomer(app.getInvoiceRecipientId()).getSapCustomerNumber(), i.getRows());
         })
         .collect(Collectors.toList());
     SalesOrderContainer salesOrderContainer = new SalesOrderContainer();

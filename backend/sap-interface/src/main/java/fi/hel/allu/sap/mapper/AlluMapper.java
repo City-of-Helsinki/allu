@@ -5,8 +5,8 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.Event;
+import fi.hel.allu.model.domain.InvoiceRecipient;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.sap.model.LineItem;
 import fi.hel.allu.sap.model.OrderParty;
@@ -46,8 +46,8 @@ public class AlluMapper {
    * @param invoiceRows
    * @return
    */
-  public static SalesOrder mapToSalesOrder(Application application, Customer invoiceRecipient,
-      List<InvoiceRow> invoiceRows) {
+  public static SalesOrder mapToSalesOrder(Application application, InvoiceRecipient invoiceRecipient,
+      String sapCustomerNumber, List<InvoiceRow> invoiceRows) {
     SalesOrder salesOrder = new SalesOrder();
     salesOrder.setBillTextL1(application.getName());
     salesOrder.setDistributionChannel(ALLU_DISTRIBUTION_CHANNEL);
@@ -55,7 +55,7 @@ public class AlluMapper {
     final String sapMaterial = mapToSapMaterial(application);
     salesOrder.setLineItems(
         invoiceRows.stream().map(entry -> mapToLineItem(entry, sapMaterial)).collect(Collectors.toList()));
-    salesOrder.setOrderParty(mapToOrderParty(invoiceRecipient));
+    salesOrder.setOrderParty(mapToOrderParty(invoiceRecipient, sapCustomerNumber));
     salesOrder.setOrderType(mapToOrderType(application.getType()));
     salesOrder.setPaymentTerm(ALLU_PAYMENT_TERM);
     salesOrder.setPoNumber(application.getCustomerReference());
@@ -109,22 +109,20 @@ public class AlluMapper {
   /**
    * Map an Allu Customer into a SAP OrderParty
    *
-   * @param customer
+   * @param invoiceRecipient
    * @return
    */
-  public static OrderParty mapToOrderParty(Customer customer) {
+  public static OrderParty mapToOrderParty(InvoiceRecipient invoiceRecipient, String sapCustomerNumber) {
     OrderParty orderParty = new OrderParty();
-    orderParty.setSapCustomerId(customer.getSapCustomerNumber());
-    orderParty.setInfoName1(customer.getName());
-    Optional.ofNullable(customer.getPostalAddress()).ifPresent(postalAddress -> {
-      Optional.ofNullable(postalAddress.getStreetAddress()).ifPresent(sa -> orderParty.setInfoAddress1(sa));
-      Optional.ofNullable(postalAddress.getPostalCode()).ifPresent(poc -> orderParty.setInfoPoCode(poc));
-      Optional.ofNullable(postalAddress.getCity()).ifPresent(c -> orderParty.setInfoCity(c));
-    });
-    if (customer.getType() == CustomerType.PERSON) {
-      orderParty.setInfoCustomerId(customer.getRegistryKey());
+    orderParty.setSapCustomerId(sapCustomerNumber);
+    orderParty.setInfoName1(invoiceRecipient.getName());
+    orderParty.setInfoAddress1(invoiceRecipient.getStreetAddress());
+    orderParty.setInfoPoCode(invoiceRecipient.getPostalCode());
+    orderParty.setInfoCity(invoiceRecipient.getCity());
+    if (invoiceRecipient.getType() == CustomerType.PERSON) {
+      orderParty.setInfoCustomerId(invoiceRecipient.getRegistryKey());
     } else {
-      orderParty.setInfoCustomerYid(customer.getRegistryKey());
+      orderParty.setInfoCustomerYid(invoiceRecipient.getRegistryKey());
     }
     return orderParty;
   }

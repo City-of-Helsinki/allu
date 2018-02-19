@@ -5,9 +5,7 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.sap.mapper.AlluMapper;
 import fi.hel.allu.sap.marshaller.AlluMarshaller;
 
@@ -21,6 +19,8 @@ import java.util.List;
 import static com.greghaskins.spectrum.Spectrum.beforeEach;
 import static com.greghaskins.spectrum.Spectrum.describe;
 import static com.greghaskins.spectrum.Spectrum.it;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -92,7 +92,7 @@ public class SapSpec {
           final Application application = dummyApplication();
 
           describe("Mapped to SAP SalesOrder", () -> {
-            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, dummyCustomer(), invoiceRows);
+            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, dummyInvoiceRecipient(), "sap123", invoiceRows);
 
             it("All lines are in", () -> {
               assertEquals(invoiceRows.size(), salesOrder.getLineItems().size());
@@ -103,14 +103,14 @@ public class SapSpec {
             });
 
             describe("Customer was mapped properly", () -> {
-              final Customer applicationCustomer = dummyCustomer();
+              final InvoiceRecipient applicationCustomer = dummyInvoiceRecipient();
 
               it("Customer name matches", () -> {
                 assertEquals(applicationCustomer.getName(), salesOrder.getOrderParty().getInfoName1());
               });
 
               it("Customer street matches", () -> {
-                assertEquals(applicationCustomer.getPostalAddress().getStreetAddress(),
+                assertEquals(applicationCustomer.getStreetAddress(),
                     salesOrder.getOrderParty().getInfoAddress1());
               });
 
@@ -154,10 +154,11 @@ public class SapSpec {
     return application;
   }
 
-  private Customer dummyCustomer() {
-    final Customer customer = new Customer();
-    customer.setName("Dummy C. Ustomer");
-    customer.setPostalAddress(new PostalAddress("DummyStreet 12 A", "01230", "Dumville"));
-    return customer;
+  private InvoiceRecipient dummyInvoiceRecipient() {
+    InvoiceRecipient invoiceRecipient = new InvoiceRecipient(CustomerType.COMPANY, "Dummy Company");
+    invoiceRecipient.setStreetAddress("DummyStreet 12 A");
+    invoiceRecipient.setPostalCode("01230");
+    invoiceRecipient.setCity("Dumville");
+    return invoiceRecipient;
   }
 }
