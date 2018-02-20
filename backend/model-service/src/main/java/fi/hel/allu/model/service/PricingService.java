@@ -61,8 +61,8 @@ public class PricingService {
       return Collections.emptyList();
     } else if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
       return updateShortTermRentalPrice(application);
-    } else if (application.hasTypeAndKind(ApplicationType.EVENT, ApplicationKind.OUTDOOREVENT)) {
-      return updateOutdoorEventPrice(application);
+    } else if (application.getType() == ApplicationType.EVENT) {
+      return updateEventPrice(application);
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       return updateExcavationAnnouncementPrice(application);
     } else if (application.getType() == ApplicationType.AREA_RENTAL) {
@@ -97,9 +97,9 @@ public class PricingService {
   }
 
   /*
-   * Calculate price for outdoor event
+   * Calculate price for event application
    */
-  private List<ChargeBasisEntry> updateOutdoorEventPrice(Application application) {
+  private List<ChargeBasisEntry> updateEventPrice(Application application) {
     Event event = (Event) application.getExtension();
     // check that application is not new
     if (application.getId() != null && event != null) {
@@ -171,7 +171,12 @@ public class PricingService {
 
     EventNature nature = event.getNature();
     if (nature == null) {
-      return 0; // No nature defined -> no price
+      if (application.hasTypeAndKind(ApplicationType.EVENT, ApplicationKind.PROMOTION)) {
+        // Promotion application has promotion nature by default.
+        nature = EventNature.PROMOTION;
+      } else {
+        return 0; // No nature defined -> no price
+      }
     }
 
     List<PricingConfiguration> pricingConfigs = getEventPricing(location, nature);

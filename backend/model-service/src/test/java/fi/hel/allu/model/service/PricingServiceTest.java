@@ -10,6 +10,7 @@ import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.pricing.ChargeBasisCalc;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +21,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,25 +50,14 @@ public class PricingServiceTest {
   @Autowired
   private CustomerDao customerDao;
 
-  @SuppressWarnings("serial")
-  private static class Pair<A, B> extends AbstractMap.SimpleImmutableEntry<A, B> {
-    public Pair(A key, B value) {
-      super(key, value);
-    }
-  }
 
-  private Map<Pair<String, String>, FixedLocation> knownFixedLocations;
-
-  private static <A, B> Pair<A, B> makePair(A a, B b) {
-    return new Pair<>(a, b);
-  }
+  private Map<Triple<ApplicationKind, String, String>, FixedLocation> knownFixedLocations;
 
   @Before
   public void setUp() throws Exception {
     knownFixedLocations = locationDao.getFixedLocationList().stream()
-        .filter(fl -> fl.getApplicationKind() == ApplicationKind.OUTDOOREVENT)
         .collect(Collectors
-        .toMap(fl -> makePair(fl.getArea(), fl.getSection()), Function.identity()));
+            .toMap(fl -> Triple.of(fl.getApplicationKind(), fl.getArea(), fl.getSection()), Function.identity()));
   }
 
   @Test
@@ -90,7 +83,9 @@ public class PricingServiceTest {
     application.setNotBillable(false);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
-    List<Integer> fixedLocationIds = Arrays.asList(makePair("Kansalaistori", "A"), makePair("Kansalaistori", "C"))
+    List<Integer> fixedLocationIds = Arrays
+        .asList(Triple.of(ApplicationKind.OUTDOOREVENT, "Kansalaistori", "A"),
+            Triple.of(ApplicationKind.OUTDOOREVENT, "Kansalaistori", "C"))
         .stream()
         .map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
     location.setFixedLocationIds(fixedLocationIds);
@@ -99,6 +94,38 @@ public class PricingServiceTest {
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     assertEquals(283500, pricingService.totalPrice(chargeBasisEntries));
     checkPrice(application, 283500);
+  }
+
+  @Test
+  public void testPromotionEvent() {
+    // fixed locations "Rautatientori, lohko A" and "Rautatientori, lohko C".
+    // The expected price is (4 * (500 + 500) + 1 * (250 + 250)) =
+    // 4500.00 EUR
+    Application application = new Application();
+    application.setType(ApplicationType.EVENT);
+    application.setStartTime(ZonedDateTime.parse("2018-05-03T09:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2018-05-07T09:00:00+02:00"));
+    application.setRecurringEndTime(application.getEndTime());
+    application.setMetadataVersion(1);
+    Event event = new Event();
+    event.setNature(EventNature.PROMOTION);
+    event.setBuildSeconds(60 * 60 * 24); // 24 hours
+    application.setExtension(event);
+    application.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.PROMOTION, Collections.emptyList()));
+    addDummyCustomer(application, CustomerType.PERSON);
+    application.setNotBillable(false);
+    application = applicationDao.insert(application);
+    Location location = newLocationWithDefaults();
+    List<Integer> fixedLocationIds = Arrays
+        .asList(Triple.of(ApplicationKind.PROMOTION, "Rautatientori", "A"),
+            Triple.of(ApplicationKind.PROMOTION, "Rautatientori", "C"))
+        .stream().map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
+    location.setFixedLocationIds(fixedLocationIds);
+    location.setApplicationId(application.getId());
+    locationDao.insert(location);
+    List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
+    assertEquals(450000, pricingService.totalPrice(chargeBasisEntries));
+    checkPrice(application, 450000);
   }
 
   @Test
