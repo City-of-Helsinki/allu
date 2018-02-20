@@ -75,7 +75,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, [Validators.required, ComplexValidator.inWinterTime]]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       pksCard: [false],
       constructionWork: [{value: false, disabled: this.readonly}],
       maintenanceWork: [{value: false, disabled: this.readonly}],
@@ -86,12 +86,12 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       unauthorizedWork: this.fb.group({
         startTime: [undefined],
         endTime: [undefined]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       guaranteeEndTime: [undefined],
       customerValidityTimes: this.fb.group({
         startTime: [undefined],
         endTime: [undefined]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       customerWinterTimeOperation: [undefined],
       customerWorkFinished: [undefined],
       calculatedPrice: [0],

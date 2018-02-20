@@ -81,7 +81,7 @@ export class EventForm implements ApplicationForm {
       eventTimes: fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, {validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       timeExceptions: [''],
       attendees: [0, ComplexValidator.greaterThanOrEqual(0)],
       entryFee: [0, ComplexValidator.greaterThanOrEqual(0)],
@@ -99,7 +99,7 @@ export class EventForm implements ApplicationForm {
       structureTimes: fb.group({
         startTime: [undefined],
         endTime: [undefined]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') })
     };
   }
 

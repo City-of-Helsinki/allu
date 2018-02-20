@@ -10,8 +10,6 @@ import * as finnishSsn from 'finnish-ssn';
  * Multi field validators return {validator: validationFn} objects.
  */
 export class ComplexValidator {
-  constructor(public validator: (validated: AbstractControl) => ValidationResult) {}
-
   static greaterThanOrEqual(value: number): ValidatorFn {
     const validationFn = (fc: AbstractControl) => {
       // Need to use dirty here since input[type="number"] does not set touched unless arrows are clicked
@@ -66,8 +64,8 @@ export class ComplexValidator {
     return undefined;
   }
 
-  static startBeforeEnd(startField: string, endField: string) {
-    const validationFn = (fg: FormGroup) => {
+  static startBeforeEnd(startField: string, endField: string): ValidatorFn {
+    return (fg: FormGroup) => {
       const start = this.fieldValue(fg, startField);
       const end = this.fieldValue(fg, endField);
 
@@ -79,8 +77,6 @@ export class ComplexValidator {
       }
       return undefined;
     };
-
-    return new ComplexValidator(validationFn);
   }
 
   static inThePast(fc: AbstractControl): ValidationErrors {
@@ -96,10 +92,6 @@ export class ComplexValidator {
       .map(control => control.value)
       .orElse(undefined);
   }
-}
-
-interface ValidationResult {
-  [key: string]: boolean;
 }
 
 export interface AbstractControlWarn extends AbstractControl {

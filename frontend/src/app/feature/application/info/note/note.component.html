@@ -34,10 +34,10 @@
                   <mat-datepicker #startTimePicker></mat-datepicker>
                   <mat-hint>
                     <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                      {{'application.note.field.validityStartTimeMissing' | translation}}
+                      {{'application.common.field.validityStartTimeMissing' | translation}}
                     </field-error>
                     <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                      {{'application.note.field.validityStartBeforeEnd' | translation}}
+                      {{'application.common.field.validityStartBeforeEnd' | translation}}
                     </field-error>
                   </mat-hint>
                 </mat-form-field>

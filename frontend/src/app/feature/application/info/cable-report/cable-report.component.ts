@@ -49,7 +49,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
       reportTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       workDescription: [''],
       ordererId: [OrdererIdForm.createDefault(), Validators.required]
     });

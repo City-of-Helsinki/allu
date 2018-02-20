@@ -38,7 +38,7 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       diaryNumber: [''],
       calculatedPrice: [0],
       additionalInfo: [''],

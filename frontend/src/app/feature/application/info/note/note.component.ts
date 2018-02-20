@@ -37,7 +37,7 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       description: [''],
       recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
     });

@@ -46,7 +46,7 @@ export class ShortTermRentalForm implements ApplicationForm {
       rentalTimes: fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') })
     };
   }
 
@@ -56,7 +56,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     form.rentalTimes = fb.group({
       startTime: [undefined, Validators.required],
       endTime: [undefined, Validators.required]
-    }, ComplexValidator.startBeforeEnd('startTime', 'endTime'));
+    }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') });
     return form;
   }
 }

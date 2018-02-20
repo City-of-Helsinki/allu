@@ -118,9 +118,11 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
    */
   protected onDraftChange(draft: boolean): void {
     if (draft) {
-      Object.keys(this.draftFormStructure).forEach(key => this.updateValidators(key, this.draftFormStructure));
+      Object.keys(this.draftFormStructure)
+        .forEach(key => this.updateValidators(key, this.draftFormStructure, this.applicationForm));
     } else {
-      Object.keys(this.completeFormStructure).forEach(key => this.updateValidators(key, this.completeFormStructure));
+      Object.keys(this.completeFormStructure)
+        .forEach(key => this.updateValidators(key, this.completeFormStructure, this.applicationForm));
     }
   }
 
@@ -176,13 +178,19 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.router.navigate(['applications', application.id, 'summary']);
   }
 
-  private updateValidators(key: string, formStructure: { [key: string]: any; }): void {
-    // Only if there is validators (second index)
-    Some(formStructure[key])
-      .map(s => s.length > 1 ? s[1] : [])
-      .do(validators => {
-        this.applicationForm.get(key).setValidators(validators);
-        this.applicationForm.get(key).updateValueAndValidity();
-      });
+  private updateValidators(key: string, formStructure: { [key: string]: any; }, form: FormGroup): void {
+    const subStructure = formStructure[key];
+    if (subStructure) {
+      const subGroup = form.get(key);
+
+      // Handle nester form groups recursively
+      if (subGroup instanceof FormGroup) {
+        Object.keys(subStructure).forEach(subKey => this.updateValidators(subKey, subStructure, subGroup));
+      } else if (subGroup) {
+        const validators = subStructure.length > 1 ? subStructure[1] : [];
+        subGroup.setValidators(validators);
+        subGroup.updateValueAndValidity();
+      }
+    }
   }
 }

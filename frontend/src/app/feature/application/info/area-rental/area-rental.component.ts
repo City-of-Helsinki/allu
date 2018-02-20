@@ -38,7 +38,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       pksCard: [false],
       workFinished: [undefined],
       calculatedPrice: [0],
