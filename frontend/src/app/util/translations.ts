@@ -425,42 +425,42 @@ export const translations = {
         nameLabel: 'Yrityksen nimi',
         id: 'Y-tunnus',
         ovt: 'OVT-tunnus',
-        invoicingOperator: "Välittäjän tunnus"
+        invoicingOperator: 'Välittäjän tunnus'
       },
       ASSOCIATION: {
         name: 'Yhdistys',
         nameLabel: 'Yhdistyksen nimi',
         id: 'Y-tunnus',
         ovt: 'OVT-tunnus',
-        invoicingOperator: "Välittäjän tunnus"
+        invoicingOperator: 'Välittäjän tunnus'
       },
       PERSON: {
         name: 'Yksityishenkilö',
         nameLabel: 'Henkilön nimi',
         id: 'Henkilötunnus',
         ovt: 'OVT-tunnus',
-        invoicingOperator: "Välittäjän tunnus"
+        invoicingOperator: 'Välittäjän tunnus'
       },
       PROPERTY: {
         name: 'Kiinteistö',
         nameLabel: 'Kiinteistön nimi',
         id: 'Kiinteistötunnus',
         ovt: 'OVT-tunnus',
-        invoicingOperator: "Välittäjän tunnus"
+        invoicingOperator: 'Välittäjän tunnus'
       },
       OTHER: {
         name: 'Muu',
         nameLabel: 'Asiakkaan nimi',
         id: 'Y-tunnus',
         ovt: 'OVT-tunnus',
-        invoicingOperator: "Välittäjän tunnus"
+        invoicingOperator: 'Välittäjän tunnus'
       },
       DEFAULT: {
         name: 'Asiakas',
         nameLabel: 'Asiakkaan nimi',
         id: 'Y-tunnus',
         ovt: 'OVT-tunnus',
-        invoicingOperator: "Välittäjän tunnus"
+        invoicingOperator: 'Välittäjän tunnus'
       }
     },
     role: {

@@ -26,6 +26,7 @@ describe('CustomerInfoComponent', () => {
     customerNameInput: HTMLInputElement;
     registryKeyInput: HTMLInputElement;
     ovtInput: HTMLInputElement;
+    invoicingOperatorInput: HTMLInputElement;
     customerAddressInput: HTMLInputElement;
     customerPostalCodeInput: HTMLInputElement;
     customerCityInput: HTMLInputElement;
@@ -37,6 +38,7 @@ describe('CustomerInfoComponent', () => {
       this.customerNameInput = debugElement.query(By.css('[formControlName="name"]')).nativeElement;
       this.registryKeyInput = debugElement.query(By.css('[formControlName="registryKey"]')).nativeElement;
       this.ovtInput = debugElement.query(By.css('[formControlName="ovt"]')).nativeElement;
+      this.invoicingOperatorInput = debugElement.query(By.css('[formControlName="invoicingOperator"]')).nativeElement;
       this.customerAddressInput = debugElement.query(By.css('[formControlName="streetAddress"]')).nativeElement;
       this.customerPostalCodeInput = debugElement.query(By.css('[formControlName="postalCode"]')).nativeElement;
       this.customerCityInput = debugElement.query(By.css('[formControlName="city"]')).nativeElement;
@@ -66,6 +68,7 @@ describe('CustomerInfoComponent', () => {
       name: ['NameTest'],
       registryKey: ['12345'],
       ovt: ['003712345'],
+      invoicingOperator: ['IO123'],
       country: undefined,
       postalAddress: fb.group({
         streetAddress: ['streetAddressTest'],
@@ -89,6 +92,7 @@ describe('CustomerInfoComponent', () => {
       expect(page.customerNameInput.value).toEqual(customerForm.value.name);
       expect(page.registryKeyInput.value).toEqual(customerForm.value.registryKey);
       expect(page.ovtInput.value).toEqual(customerForm.value.ovt);
+      expect(page.invoicingOperatorInput.value).toEqual(customerForm.value.invoicingOperator);
       expect(page.customerAddressInput.value).toEqual(customerForm.value.postalAddress.streetAddress);
       expect(page.customerPostalCodeInput.value).toEqual(customerForm.value.postalAddress.postalCode);
       expect(page.customerCityInput.value).toEqual(customerForm.value.postalAddress.city);
