@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
@@ -204,7 +206,14 @@ public class ApplicationMapper {
   public ApplicationExtension createExtensionModel(ApplicationJson applicationJson) {
     switch (applicationJson.getType()) {
       case EVENT:
-        return EventMapper.jsonToModel((EventJson) applicationJson.getExtension());
+      {
+        Event event = EventMapper.jsonToModel((EventJson) applicationJson.getExtension());
+        // Make sure promotion events have promotion nature:
+        Optional.ofNullable(applicationJson.getKindsWithSpecifiers())
+            .filter(m -> m.containsKey(ApplicationKind.PROMOTION))
+            .ifPresent(m -> event.setNature(EventNature.PROMOTION));
+        return event;
+      }
       case SHORT_TERM_RENTAL:
         return  ShortTermRentalMapper.jsonToModel((ShortTermRentalJson) applicationJson.getExtension());
       case CABLE_REPORT:
