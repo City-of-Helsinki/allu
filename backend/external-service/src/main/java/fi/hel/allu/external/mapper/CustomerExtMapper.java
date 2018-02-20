@@ -21,6 +21,7 @@ public class CustomerExtMapper {
     customerJson.setPhone(customerExt.getPhone());
     customerJson.setSapCustomerNumber(customerExt.getSapCustomerNumber());
     customerJson.setInvoicingProhibited(BooleanUtils.isTrue(customerExt.getInvoicingProhibited()));
+    customerJson.setInvoicingOperator(customerExt.getInvoicingOperator());
     if (customerExt.getPostalAddress() != null) {
       customerJson.setPostalAddress(new PostalAddressJson(
           customerExt.getPostalAddress().getStreetAddress(),
@@ -42,6 +43,7 @@ public class CustomerExtMapper {
     customerExt.setPhone(customerJson.getPhone());
     customerExt.setSapCustomerNumber(customerJson.getSapCustomerNumber());
     customerExt.setInvoicingProhibited(customerJson.isInvoicingProhibited());
+    customerExt.setInvoicingOperator(customerJson.getInvoicingOperator());
     if (customerJson.getPostalAddress() != null) {
       customerExt.setPostalAddress(new PostalAddressExt(
           customerJson.getPostalAddress().getStreetAddress(),
@@ -64,6 +66,7 @@ public class CustomerExtMapper {
     Optional.ofNullable(customerExt.getPhone()).ifPresent(s -> currentCustomerJson.setPhone(s));
     Optional.ofNullable(customerExt.getSapCustomerNumber()).ifPresent(s -> currentCustomerJson.setSapCustomerNumber(s));
     Optional.ofNullable(customerExt.getInvoicingProhibited()).ifPresent(s -> currentCustomerJson.setInvoicingProhibited(s.booleanValue()));
+    Optional.ofNullable(customerExt.getInvoicingOperator()).ifPresent(s -> currentCustomerJson.setInvoicingOperator(s));
     Optional.ofNullable(customerExt.getPostalAddress())
        .map(a -> new PostalAddressJson(
           customerExt.getPostalAddress().getStreetAddress(),

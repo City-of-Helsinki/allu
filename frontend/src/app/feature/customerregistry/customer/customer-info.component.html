@@ -22,7 +22,7 @@
     </div>
   </div>
   <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
-    <div fxFlex="calc(50% - 18px)">
+    <div [fxFlex]="form.value.type==='PERSON' ? 'calc(50% - 18px)' : 'calc(40% - 18px)'">
       <mat-form-field class="input-full-width">
         <input matInput type="text" formControlName="name"
                placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
@@ -42,7 +42,7 @@
         </mat-hint>
       </mat-form-field>
     </div>
-    <div [fxFlex]="form.value.type==='PERSON' ? 'calc(50% - 18px)' : 'calc(25% - 18px)'">
+    <div [fxFlex]="form.value.type==='PERSON' ? 'calc(50% - 18px)' : 'calc(20% - 18px)'">
       <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
         <input matInput type="text" formControlName="registryKey"
                placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"
@@ -68,19 +68,27 @@
         </mat-hint>
       </mat-form-field>
     </div>
-    <div fxFlex="calc(25% - 18px)" *ngIf="form.value.type!=='PERSON'">
-      <mat-form-field class="input-full-width">
-        <input matInput type="text" formControlName="ovt"
-               placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'ovt'] | translation}}"/>
+    <ng-container *ngIf="form.value.type!=='PERSON'">
+      <div fxFlex="calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="ovt"
+                placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'ovt'] | translation}}"/>
 
-        <mat-hint>
-          <field-error [form]="form" field="ovt" hasError="minlength">{{'customer.field.ovtShort' | translation}}
-          </field-error>
-          <field-error [form]="form" field="ovt" hasError="maxlength">{{'customer.field.ovtLong' | translation}}
-          </field-error>
-        </mat-hint>
-      </mat-form-field>
-    </div>
+          <mat-hint>
+            <field-error [form]="form" field="ovt" hasError="minlength">{{'customer.field.ovtShort' | translation}}
+            </field-error>
+            <field-error [form]="form" field="ovt" hasError="maxlength">{{'customer.field.ovtLong' | translation}}
+            </field-error>
+          </mat-hint>
+        </mat-form-field>
+      </div>
+      <div fxFlex="calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="invoicingOperator"
+                placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'invoicingOperator'] | translation}}"/>
+        </mat-form-field>
+      </div>
+    </ng-container>
   </div>
   <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px" formGroupName="postalAddress">
     <div fxFlex="calc(50% - 18px)">

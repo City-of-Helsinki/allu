@@ -18,7 +18,8 @@ public abstract class CustomerExport {
     POSTALCODE("postalcode", (CustomerJson c) -> c.getPostalAddress() != null ? emptyIfNull(c.getPostalAddress().getPostalCode()) : ""),
     CITY("city", (CustomerJson c) -> c.getPostalAddress() != null ? emptyIfNull(c.getPostalAddress().getCity()) : ""),
     KEY("key", CustomerJson::getRegistryKey),
-    OVT("ovt", CustomerJson::getOvt);
+    OVT("ovt", CustomerJson::getOvt),
+    INVOICING_OPERATOR("operator", CustomerJson::getInvoicingOperator);
 
     private String header;
     private Function<CustomerJson, String> valueGetter;

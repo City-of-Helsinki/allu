@@ -10,6 +10,7 @@ export class CustomerForm {
     public name?: string,
     public registryKey?: string,
     public ovt?: string,
+    public invoicingOperator?: string,
     public country?: string,
     public postalAddress?: PostalAddress,
     public email?: string,
@@ -26,6 +27,7 @@ export class CustomerForm {
       customer.name,
       customer.registryKey,
       customer.ovt,
+      customer.invoicingOperator,
       'Suomi',
       customer.postalAddress || new PostalAddress(),
       customer.email,
@@ -43,6 +45,7 @@ export class CustomerForm {
     customer.name = form.name;
     customer.registryKey = form.registryKey;
     customer.ovt = form.ovt;
+    customer.invoicingOperator = form.invoicingOperator;
     customer.postalAddress = form.postalAddress;
     customer.email = form.email;
     customer.phone = form.phone;
@@ -59,6 +62,7 @@ export class CustomerForm {
       name: ['', [Validators.required, Validators.minLength(2)]],
       registryKey: ['', [Validators.required, Validators.minLength(2)]],
       ovt: ['', [Validators.minLength(12), Validators.maxLength(17)]],
+      invoicingOperator: [''],
       country: ['Suomi'],
       postalAddress: fb.group({
         streetAddress: [''],

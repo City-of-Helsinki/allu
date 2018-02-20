@@ -83,6 +83,8 @@ public class SapCustomerImport implements CommandLineRunner {
     customerModel.setType(customerData.getStcd1() != null ? CustomerType.COMPANY : CustomerType.PERSON);
     customerModel.setName(customerData.getName1());
     customerModel.setRegistryKey(customerData.getStcd1() != null ? customerData.getStcd1() : customerData.getStcd2());
+    customerModel.setOvt(customerData.getStcd3());
+    customerModel.setInvoicingOperator(customerData.getStcd4());
     customerModel.setPostalAddress(postalAddress);
     customerModel.setActive(true);
     customerModel.setSapCustomerNumber(customerData.getKunnr());

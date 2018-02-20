@@ -42,6 +42,7 @@ public class CustomerMapper {
     customerJson.setActive(customer.isActive());
     customerJson.setSapCustomerNumber(customer.getSapCustomerNumber());
     customerJson.setInvoicingProhibited(customer.isInvoicingProhibited());
+    customerJson.setInvoicingOperator(customer.getInvoicingOperator());
     return customerJson;
   }
 
@@ -58,6 +59,7 @@ public class CustomerMapper {
     customerModel.setActive(customerJson.isActive());
     customerModel.setSapCustomerNumber(customerJson.getSapCustomerNumber());
     customerModel.setInvoicingProhibited(customerJson.isInvoicingProhibited());
+    customerModel.setInvoicingOperator(customerJson.getInvoicingOperator());
     return customerModel;
   }
 

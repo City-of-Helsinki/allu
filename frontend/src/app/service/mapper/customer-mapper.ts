@@ -22,6 +22,7 @@ export class CustomerMapper {
         backendCustomer.name,
         backendCustomer.registryKey,
         backendCustomer.ovt,
+        backendCustomer.invoicingOperator,
         postalAddress,
         backendCustomer.email,
         backendCustomer.phone,
@@ -41,6 +42,7 @@ export class CustomerMapper {
       name: customer.name,
       registryKey: customer.registryKey,
       ovt: customer.ovt,
+      invoicingOperator: customer.invoicingOperator,
       postalAddress: (customer.postalAddress) ?
         { streetAddress: customer.postalAddress.streetAddress,
           postalCode: customer.postalAddress.postalCode,

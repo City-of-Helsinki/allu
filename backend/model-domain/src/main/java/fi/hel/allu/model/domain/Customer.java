@@ -24,6 +24,7 @@ public class Customer implements PostalAddressItem {
   private boolean isActive = true;
   private String sapCustomerNumber;
   private boolean invoicingProhibited = false;
+  private String invoicingOperator;
 
   public Integer getId() {
     return id;
@@ -161,6 +162,17 @@ public class Customer implements PostalAddressItem {
 
   public void setInvoicingProhibited(boolean invoicingProhibited) {
     this.invoicingProhibited = invoicingProhibited;
+  }
+
+  /**
+   * E-invoicing operator code
+   */
+  public String getInvoicingOperator() {
+    return invoicingOperator;
+  }
+
+  public void setInvoicingOperator(String invoicingOperator) {
+    this.invoicingOperator = invoicingOperator;
   }
 
   @Override

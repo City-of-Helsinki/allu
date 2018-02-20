@@ -185,6 +185,8 @@ public class SapCustomerService {
     customer.setRegistryKey(getRegistryKey(sapCustomerData));
     customer.setName(sapCustomerData.getName1());
     customer.setInvoicingProhibited(isInvoicingProhibited(sapCustomerData));
+    customer.setOvt(sapCustomerData.getStcd3());
+    customer.setInvoicingOperator(sapCustomerData.getStcd4());
     PostalAddressExt postalAddress = new PostalAddressExt();
     postalAddress.setStreetAddress(sapCustomerData.getStras());
     postalAddress.setCity(sapCustomerData.getOrt01());

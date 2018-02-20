@@ -22,6 +22,7 @@ public class CustomerExt {
   private String ovt;
   private String sapCustomerNumber;
   private Boolean invoicingProhibited;
+  private String invoicingOperator;
 
   public Integer getId() {
     return id;
@@ -142,5 +143,16 @@ public class CustomerExt {
 
   public void setInvoicingProhibited(Boolean invoicingProhibited) {
     this.invoicingProhibited = invoicingProhibited;
+  }
+
+  /**
+   * E-invoicing operator code.
+   */
+  public String getInvoicingOperator() {
+    return invoicingOperator;
+  }
+
+  public void setInvoicingOperator(String invoicingOperator) {
+    this.invoicingOperator = invoicingOperator;
   }
 }

@@ -6,6 +6,7 @@ export interface BackendCustomer {
   name: string;
   registryKey: string;
   ovt: string;
+  invoicingOperator: string;
   postalAddress: BackendPostalAddress;
   email: string;
   phone: string;

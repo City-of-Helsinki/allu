@@ -12,6 +12,8 @@ public class E1KNA1M {
   private String kunnr;
   private String stcd1;
   private String stcd2;
+  private String stcd3;
+  private String stcd4;
   private String ktokd;
   private String land1;
   private String name1;
@@ -69,6 +71,32 @@ public class E1KNA1M {
   public void setStcd2(String stcd2) {
     this.stcd2 = stcd2;
   }
+
+  /**
+   * OVT
+   */
+  @XmlElement(name = "STCD3")
+  public String getStcd3() {
+    return stcd3;
+  }
+
+  public void setStcd3(String stcd3) {
+    this.stcd3 = stcd3;
+  }
+
+  /**
+   * E-invoicing operator code
+   */
+  @XmlElement(name = "STCD4")
+  public String getStcd4() {
+    return stcd4;
+  }
+
+  public void setStcd4(String stcd4) {
+    this.stcd4 = stcd4;
+  }
+
+
 
   /**
    * Customer account group
