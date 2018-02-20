@@ -5,6 +5,7 @@ import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {TimeUtil} from '../../../../util/time.util';
 
 export class EventForm implements ApplicationForm {
   constructor(public name?: string,
@@ -56,8 +57,8 @@ export class EventForm implements ApplicationForm {
     event.description = form.description;
     event.url = form.url;
     event.applicationType = ApplicationType[type];
-    event.eventStartTime = form.eventTimes.startTime;
-    event.eventEndTime = form.eventTimes.endTime;
+    event.eventStartTime = TimeUtil.toStartDate(form.eventTimes.startTime);
+    event.eventEndTime = TimeUtil.toEndDate(form.eventTimes.endTime);
     event.timeExceptions = form.timeExceptions;
     event.attendees = form.attendees;
     event.ecoCompass = form.ecoCompass;
@@ -66,8 +67,8 @@ export class EventForm implements ApplicationForm {
     event.marketingProviders = form.marketingProviders;
     event.structureArea = form.structureArea;
     event.structureDescription = form.structureDescription;
-    event.structureStartTime = form.structureTimes.startTime;
-    event.structureEndTime = form.structureTimes.endTime;
+    event.structureStartTime = TimeUtil.toStartDate(form.structureTimes.startTime);
+    event.structureEndTime = TimeUtil.toEndDate(form.structureTimes.endTime);
     event.terms = form.terms;
     return event;
   }
