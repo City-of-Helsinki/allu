@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <base href="PATH_TO_STYLESHEETS">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="new-style.css">
     <script type="text/javascript">
       var pdfInfo = {};
       var x = document.location.search.substring(1).split('&');
@@ -16,25 +16,32 @@
       }
     </script>
   </head>
-  <body style="height:30mm;margin:0;padding:0;" onLoad="getPdfInfo()">
+  <body style="height:34mm;margin:0;padding:0;" onLoad="getPdfInfo()">
     <div class="header">
-      <div class="half-left">
-        <img src="HKR_Fin_RGB_png_50734.png"/>
+      <div class="logo">
+        <img src="helsinki-logo.png"/>
       </div>
-      <div class="half-right inline">
+      <div class="department">
+        <p>Kaupunkiympäristö</p>
+        <p>Alueidenkäyttö ja -valvonta</p>
+        <p>ulkoilma@hel.fi</p>
+      </div>
+      <div class="half-right">
         <h1>Yleisen alueen vuokrauspäätös</h1>
         <p class="page">
           <span id="pdfkit_page_current"></span>/<span id="pdfkit_page_count"></span>
         </p>
         <div class="id">
-          <span>Päätöspäivämäärä:</span>
-          <p style="float: right">
-            [päätöspvm]
-          </p>
-          <span>Tunnus:</span>
-          <p style="float: right">
-             [tunnus]
-          </p>
+	  <table>
+	    <tr>
+	      <td class="c1">Päätöspäivämäärä:</td>
+              <td class="c2">[päätöspvm]</td>
+            </tr>
+	    <tr>
+	      <td class="c1">Tunnus:</td>
+              <td class="c2">[tunnus]</td>
+	    </tr>
+	  </table>
         </div>
       </div>
     </div>
