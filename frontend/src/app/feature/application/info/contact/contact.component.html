@@ -17,8 +17,8 @@
             </button>
           </mat-card-title>
           <mat-card-content>
-            <div class="row form-group">
-              <div class="col m6">
+            <div fxLayout="row">
+              <div fxFlex="50%">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="name"
                          placeholder="Yhteyshenkilön nimi*"
@@ -37,13 +37,13 @@
                 </mat-form-field>
               </div>
             </div>
-            <div class="row form-group">
-              <div class="col m6">
+            <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+              <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
                 </mat-form-field>
               </div>
-              <div class="col m3">
+              <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
                   <mat-hint>
@@ -53,14 +53,14 @@
                   </mat-hint>
                 </mat-form-field>
               </div>
-              <div class="col m3">
+              <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
                 </mat-form-field>
               </div>
             </div>
-            <div class="row form-group">
-              <div class="col m6">
+            <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+              <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                   <mat-hint>
@@ -70,7 +70,7 @@
                   </mat-hint>
                 </mat-form-field>
               </div>
-              <div class="col m6">
+              <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
                   <mat-hint>
@@ -81,8 +81,8 @@
                 </mat-form-field>
               </div>
             </div>
-            <div class="row form-group" *ngIf="showOrderer" id="orderer">
-              <div class="col m12">
+            <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap *ngIf="showOrderer" id="orderer">
+              <div fxFlex>
                 <mat-radio-button name="orderer" [checked]="isOrderer(index)" [disabled]="readonly"
                                   (change)="selectOrderer(index)">
                   Hakemuksen tilaaja
