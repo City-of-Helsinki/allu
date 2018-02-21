@@ -190,7 +190,7 @@ public class SearchSyncService {
 
   void sendContacts(List<ContactES> contacts) {
     talkToServer("Send contacts",
-        () -> restTemplate.postForEntity(applicationProperties.getSyncProjectsUrl(), contacts, Void.class));
+        () -> restTemplate.postForEntity(applicationProperties.getSyncContactsUrl(), contacts, Void.class));
   }
 
   @SuppressWarnings("serial")
