@@ -28,9 +28,6 @@
       </button>
     </div>
     <div *ngIf="readonly">
-      <button mat-raised-button type="button" color="primary" [routerLink]="['/']">
-        {{'common.button.home' | translation | uppercase}}
-      </button>
       <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
         <button *ngIf="showCancel" mat-raised-button type="button" color="primary" (click)="cancel()">
           {{'common.button.cancel' | translation | uppercase}}

@@ -1,7 +1,9 @@
 <div fxLayout="row" fxFill class="toolbar">
   <div fxFlex="250px" fxFlexAlign="center" class="logo">
     <div>
-      <img src="assets/svg/allu-logo.svg">
+      <a [routerLink]="['/home']" routerLinkActive="active">
+        <img src="assets/svg/allu-logo.svg" [alt]="'nav.home' | translation">
+      </a>
     </div>
     <div class="version">{{version | async}}</div>
   </div>
