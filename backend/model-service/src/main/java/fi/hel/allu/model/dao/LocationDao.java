@@ -272,7 +272,9 @@ public class LocationDao {
     if (geometry != null) {
       if (geometry instanceof GeometryCollection) {
         GeometryCollection gc = removeOverlaps((GeometryCollection) geometry);
-        gc.forEach(
+        List<Geometry> flat = new ArrayList<>();
+        flatten(gc, flat);
+        flat.forEach(
             geo -> queryFactory.insert(locationGeometry).columns(locationGeometry.locationId, locationGeometry.geometry)
             .values(locationId, geo).execute());
       } else {
@@ -297,6 +299,17 @@ public class LocationDao {
   private GeometryCollection toGeometryCollection(List<Geometry> geometries) {
     Geometry[] geoArray = geometries.toArray(new Geometry[geometries.size()]);
     return new GeometryCollection(geoArray);
+  }
+
+  /*
+   * flatten the geometries into destination
+   */
+  private void flatten(Geometry geometry, Collection<Geometry> destination) {
+    if (geometry instanceof GeometryCollection) {
+      ((GeometryCollection) geometry).forEach(g -> flatten(g, destination));
+    } else {
+      destination.add(geometry);
+    }
   }
 
   private void setFixedLocationIds(int locationId, List<Integer> fixedLocationIds) {
