@@ -76,10 +76,12 @@ describe('CustomerInfoComponent', () => {
         city: ['cityTest']
       }),
       phone: ['phoneTest'],
-      email: ['emailTest']
+      email: ['emailTest'],
+      invoicingOnly: [true]
     });
 
     comp.form = customerForm;
+    comp.showInvoicingOnly = true;
     comp.ngOnInit();
     fixture.detectChanges();
     page = new CustomerInfoPage();
@@ -98,6 +100,7 @@ describe('CustomerInfoComponent', () => {
       expect(page.customerCityInput.value).toEqual(customerForm.value.postalAddress.city);
       expect(page.customerPhoneInput.value).toEqual(customerForm.value.phone);
       expect(page.customerEmailInput.value).toEqual(customerForm.value.email);
+      expect(debugElement.query(By.css('[formControlName="invoicingOnly"] .mat-checkbox-checked'))).toBeDefined();
     });
   }));
 

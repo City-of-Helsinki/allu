@@ -13,7 +13,8 @@ export class Customer {
     public phone?: string,
     public active = true,
     public sapCustomerNumber?: string,
-    public invoicingProhibited = false) {
+    public invoicingProhibited = false,
+    public invoicingOnly = false) {
     this.postalAddress = postalAddress || new PostalAddress();
   }
 }

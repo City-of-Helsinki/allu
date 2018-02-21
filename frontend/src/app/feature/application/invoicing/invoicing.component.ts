@@ -13,6 +13,7 @@ import {MatDialog} from '@angular/material';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
 import {findTranslation} from '../../../util/translations';
+import {NumberUtil} from '../../../util/number.util';
 
 @Component({
   selector: 'invoicing',
@@ -78,6 +79,9 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
   private saveCustomer(): Observable<Customer> {
     const billable = !this.notBillableCtrl.value;
     const customer = CustomerForm.toCustomer(this.recipientForm.getRawValue());
+    if (!NumberUtil.isDefined(customer.id)) {
+      customer.invoicingOnly = true;
+    }
     if (billable && this.recipientForm.dirty) {
       return this.customerHub.saveCustomer(customer);
     } else {

@@ -25,6 +25,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() allowSearch = false;
   @Input() showInvoicingInfo = false;
+  @Input() showInvoicingOnly = false;
 
   @Output() customerChange = new EventEmitter<Customer>();
 

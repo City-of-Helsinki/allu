@@ -17,7 +17,8 @@ export class CustomerForm {
     public phone?: string,
     public active = true,
     public readonly sapCustomerNumber?: string,
-    public readonly invoicingProhibited = false
+    public readonly invoicingProhibited = false,
+    public invoicingOnly = false
   ) {}
 
   static fromCustomer(customer: Customer): CustomerForm {
@@ -34,7 +35,8 @@ export class CustomerForm {
       customer.phone,
       customer.active,
       customer.sapCustomerNumber,
-      customer.invoicingProhibited
+      customer.invoicingProhibited,
+      customer.invoicingOnly
     );
   }
 
@@ -50,6 +52,7 @@ export class CustomerForm {
     customer.email = form.email;
     customer.phone = form.phone;
     customer.active = form.active;
+    customer.invoicingOnly = form.invoicingOnly;
     return customer;
   }
 
@@ -73,7 +76,8 @@ export class CustomerForm {
       phone: ['', Validators.minLength(2)],
       active: [true],
       sapCustomerNumber: [{value: '', disabled: true}],
-      invoicingProhibited: [{value: false, disabled: true}]
+      invoicingProhibited: [{value: false, disabled: true}],
+      invoicingOnly: [false]
     });
   }
 }

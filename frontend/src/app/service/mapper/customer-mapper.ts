@@ -28,7 +28,8 @@ export class CustomerMapper {
         backendCustomer.phone,
         backendCustomer.active,
         backendCustomer.sapCustomerNumber,
-        backendCustomer.invoicingProhibited);
+        backendCustomer.invoicingProhibited,
+        backendCustomer.invoicingOnly);
     } else {
       return undefined;
     }
@@ -49,7 +50,8 @@ export class CustomerMapper {
           city: customer.postalAddress.city } : undefined,
       email: customer.email,
       phone: customer.phone,
-      active: customer.active
+      active: customer.active,
+      invoicingOnly: customer.invoicingOnly
     } : undefined;
 
   }

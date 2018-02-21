@@ -137,4 +137,11 @@
       </mat-form-field>
     </div>
   </div>
+  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+    <div fxFlex="calc(25% - 18px)" *ngIf="showInvoicingOnly">
+        <mat-checkbox class="input-field-checkbox" formControlName="invoicingOnly" labelPosition='after'>
+          {{'customer.invoicingOnly' | translation}}
+        </mat-checkbox>
+    </div>
+  </div>
 </form>

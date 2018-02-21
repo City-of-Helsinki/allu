@@ -23,6 +23,7 @@ public class CustomerJson {
   private String sapCustomerNumber;
   private boolean invoicingProhibited;
   private String invoicingOperator;
+  private boolean invoicingOnly;
 
   /**
    * in Finnish: Tietokantatunniste
@@ -156,6 +157,14 @@ public class CustomerJson {
 
   public void setInvoicingOperator(String invoicingOperator) {
     this.invoicingOperator = invoicingOperator;
+  }
+
+  public boolean isInvoicingOnly() {
+    return invoicingOnly;
+  }
+
+  public void setInvoicingOnly(boolean invoicingOnly) {
+    this.invoicingOnly = invoicingOnly;
   }
 
 }
