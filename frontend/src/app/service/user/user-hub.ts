@@ -32,7 +32,12 @@ export class UserHub {
   /**
    * Fetches single user by username
    */
-  public getUser = (userName: string) => this.userService.getUser(userName);
+  public getByUsername = (userName: string) => this.userService.getByUsername(userName);
+
+  /**
+   * Fetches single user by id
+   */
+  public getById = (id: number) => this.userService.getById(id);
 
   /**
    * Fetches currently logged user

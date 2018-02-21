@@ -1118,10 +1118,14 @@ export const translations = {
     }
   },
   history: {
+    title: 'Muutoshistoria',
+    changeTime: 'Muutettu',
+    changer: 'Tekijä',
     error: {
       metadata: 'Historian kenttien käännöksien lataus epäonnistui'
     },
     change: {
+      title: 'Muutos',
       type: {
         CREATED: 'Luotu',
         STATUS_CHANGED: 'Siirretty tilaan',

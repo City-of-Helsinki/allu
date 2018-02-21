@@ -8,12 +8,12 @@ import {EnumUtil} from '../../../util/enum.util';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {Contact} from '../../../model/customer/contact';
-import {CustomerHub} from '../../../service/customer/customer-hub';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from './customer-with-contacts.form';
+import {CustomerService} from '../../../service/customer/customer.service';
 
 @Component({
   selector: 'customer',
@@ -30,7 +30,7 @@ export class CustomerComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private customerHub: CustomerHub,
+              private customerService: CustomerService,
               private fb: FormBuilder) {
     this.form = CustomerWithContactsForm.initialForm(this.fb);
     this.customerForm = <FormGroup>this.form.get('customer');
@@ -40,7 +40,7 @@ export class CustomerComponent implements OnInit {
     this.route.params
       .map(p => p['id'])
       .filter(id => NumberUtil.isDefined(id))
-      .switchMap(id => this.customerHub.findCustomerById(id))
+      .switchMap(id => this.customerService.findCustomerById(id))
       .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 
@@ -70,7 +70,7 @@ export class CustomerComponent implements OnInit {
 
   private save(customer: Customer, contacts: Array<Contact>): Observable<CustomerWithContacts> {
     const customerWithContacts = new CustomerWithContacts(undefined, customer, contacts);
-    return this.customerHub.saveCustomerWithContacts(customerWithContacts);
+    return this.customerService.saveCustomerWithContacts(customerWithContacts);
   }
 
   private notifyAndNavigateToCustomers(message: string): void {

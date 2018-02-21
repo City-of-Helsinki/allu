@@ -2,14 +2,6 @@ import {ApplicationFieldChange} from './application-field-change';
 import {TimeUtil} from '../../../util/time.util';
 
 export class ApplicationChange {
-  constructor()
-  constructor(
-    userId: number,
-    changeType: string,
-    newStatus: string,
-    changeTime: Date,
-    fieldChanges: Array<ApplicationFieldChange>
-  )
   constructor(
     public userId?: number,
     public changeType?: string,

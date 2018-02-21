@@ -92,7 +92,7 @@ export class ApplicationStoreMock {
 /**
  * Mock for customer hub
  */
-export class CustomerHubMock {
+export class CustomerServiceMock {
   public orderer$ = new Subject<Contact>();
 
   searchCustomersByField(fieldName: string, term: string) {}

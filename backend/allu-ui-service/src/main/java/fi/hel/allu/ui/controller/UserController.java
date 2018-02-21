@@ -57,6 +57,12 @@ public class UserController {
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<UserJson> getUser(@PathVariable Integer id) {
+    return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/role/{roleType}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE')")
   public ResponseEntity<List<UserJson>> findByRole(@PathVariable RoleType roleType) {

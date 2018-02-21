@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Application} from '../../model/application/application';
-import {Some} from '../../util/option';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
 import {Subject} from 'rxjs/Subject';
@@ -10,10 +9,9 @@ import {Comment} from '../../model/application/comment/comment';
 import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
-import {HttpResponse, HttpStatus} from '../../util/http-response';
+import {HttpResponse} from '../../util/http-response';
 import {NumberUtil} from '../../util/number.util';
 import {ObjectUtil} from '../../util/object.util';
-import {CustomerHub} from '../customer/customer-hub';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {Deposit} from '../../model/application/invoice/deposit';
@@ -21,6 +19,7 @@ import {DepositService} from './deposit/deposit.service';
 import {ApplicationService} from './application.service';
 import {isCommon} from '../../model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
+import {CustomerService} from '../customer/customer.service';
 
 export interface ApplicationState {
   application?: Application;
@@ -52,7 +51,7 @@ export class ApplicationStore {
 
   constructor(private applicationService: ApplicationService,
               private applicationDraftService: ApplicationDraftService,
-              private customerHub: CustomerHub,
+              private customerService: CustomerService,
               private attachmentHub: AttachmentHub,
               private commentHub: CommentHub,
               private depositService: DepositService) {
@@ -266,7 +265,7 @@ export class ApplicationStore {
   private saveCustomersAndContacts(application: Application): Observable<Application> {
     const app = ObjectUtil.clone(application);
     return Observable.forkJoin(application.customersWithContacts.map(cwc =>
-      this.customerHub.saveCustomerWithContacts(cwc))
+      this.customerService.saveCustomerWithContacts(cwc))
     ).map(savedCustomersWithContacts => {
       app.customersWithContacts = savedCustomersWithContacts;
       return app;

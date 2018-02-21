@@ -5,8 +5,7 @@ import {MatCardModule} from '@angular/material';
 import {ContactComponent} from '../../../../../src/app/feature/application/info/contact/contact.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
 import {ApplicationStore} from '../../../../../src/app/service/application/application-store';
-import {ApplicationStoreMock, CustomerHubMock} from '../../../../mocks';
-import {CustomerHub} from '../../../../../src/app/service/customer/customer-hub';
+import {ApplicationStoreMock, CustomerServiceMock} from '../../../../mocks';
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {CustomerWithContactsForm} from '../../../../../src/app/feature/customerregistry/customer/customer-with-contacts.form';
 import {DebugElement} from '@angular/core';
@@ -16,6 +15,7 @@ import {ApplicationType} from '../../../../../src/app/model/application/type/app
 import {Application} from '../../../../../src/app/model/application/application';
 import {OrdererIdForm} from '../../../../../src/app/feature/application/info/cable-report/cable-report.form';
 import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
+import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');
@@ -58,7 +58,7 @@ describe('ContactComponent', () => {
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerHub, useClass: CustomerHubMock}
+        {provide: CustomerService, useClass: CustomerServiceMock}
       ]
     }).compileComponents();
   }));

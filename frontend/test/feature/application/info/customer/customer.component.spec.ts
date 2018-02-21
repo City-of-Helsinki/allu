@@ -5,15 +5,15 @@ import {MatCardModule} from '@angular/material';
 
 import {CustomerComponent} from '../../../../../src/app/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
-import {CustomerHub} from '../../../../../src/app/service/customer/customer-hub';
 import {CustomerInfoComponent} from '../../../../../src/app/feature/customerregistry/customer/customer-info.component';
 import {Customer} from '../../../../../src/app/model/customer/customer';
 import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {Component, Input} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
-import {CustomerHubMock} from '../../../../mocks';
+import {CustomerServiceMock} from '../../../../mocks';
 import {Application} from '../../../../../src/app/model/application/application';
+import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 
 const headerText = 'Hakija';
 
@@ -71,7 +71,7 @@ describe('CustomerComponent', () => {
       declarations: [CustomerComponent, MockContactComponent, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerHub, useClass: CustomerHubMock}
+        {provide: CustomerService, useClass: CustomerServiceMock}
       ]
     }).compileComponents();
   }));

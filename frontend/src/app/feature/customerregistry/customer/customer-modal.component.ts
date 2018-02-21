@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
-import {CustomerHub} from '../../../service/customer/customer-hub';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
+import {CustomerService} from '../../../service/customer/customer.service';
 
 export const CUSTOMER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};
 
@@ -21,19 +21,19 @@ export class CustomerModalComponent implements OnInit {
   customerForm: FormGroup;
 
   constructor(public dialogRef: MatDialogRef<CustomerModalComponent>,
-              private customerHub: CustomerHub,
+              private customerService: CustomerService,
               fb: FormBuilder) {
     this.customerForm = CustomerForm.initialForm(fb);
   }
 
   ngOnInit(): void {
-    this.customerHub.findCustomerById(this.customerId)
+    this.customerService.findCustomerById(this.customerId)
       .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 
   onSubmit(customerForm: CustomerForm) {
     const customer = CustomerForm.toCustomer(customerForm);
-    this.customerHub.saveCustomer(customer)
+    this.customerService.saveCustomer(customer)
       .subscribe(
         saved => {
           NotificationService.message(findTranslation('customer.action.save'));

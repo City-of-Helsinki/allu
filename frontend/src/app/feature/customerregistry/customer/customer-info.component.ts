@@ -5,11 +5,11 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {NumberUtil} from '../../../util/number.util';
-import {CustomerHub} from '../../../service/customer/customer-hub';
 import {CustomerForm} from './customer.form';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerSearchQuery} from '../../../service/mapper/query/customer-query-parameters-mapper';
+import {CustomerService} from '../../../service/customer/customer.service';
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
@@ -38,7 +38,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   private nameControl: FormControl;
   private typeControl: FormControl;
 
-  constructor(private customerHub: CustomerHub) {}
+  constructor(private customerService: CustomerService) {}
 
   ngOnInit() {
     this.nameControl = <FormControl>this.form.get('name');
@@ -65,7 +65,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   onSearchChange(terms: CustomerSearchQuery): Observable<Array<Customer>> {
     if (this.allowSearch) {
       const termsWithType = {...terms, type: this.typeControl.value, active: true};
-      return this.customerHub.searchCustomersBy(termsWithType);
+      return this.customerService.searchCustomersBy(termsWithType);
     } else {
       return Observable.empty();
     }

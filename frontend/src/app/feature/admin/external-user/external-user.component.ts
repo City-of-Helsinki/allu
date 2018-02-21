@@ -8,11 +8,11 @@ import {ExternalUserHub} from '../../../service/user/external-user-hub';
 import {ExternalRoleType} from '../../../model/common/external-role-type';
 import {Customer} from '../../../model/customer/customer';
 import {Observable} from 'rxjs/Observable';
-import {CustomerHub} from '../../../service/customer/customer-hub';
 import {emailValidator} from '../../../util/complex-validator';
 import {ExternalUserForm} from './external-user-form';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {translations} from '../../../util/translations';
+import {CustomerService} from '../../../service/customer/customer.service';
 
 const DEBOUNCE_TIME_MS = 300;
 
@@ -37,7 +37,7 @@ export class ExternalUserComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private userHub: ExternalUserHub,
-              private customerHub: CustomerHub,
+              private customerService: CustomerService,
               private fb: FormBuilder) {
 
     this.connectedCustomersCtrl = this.fb.control([]);
@@ -73,7 +73,7 @@ export class ExternalUserComponent implements OnInit {
 
     this.matchingNameCustomers = this.customerNameControl.valueChanges
       .debounceTime(DEBOUNCE_TIME_MS)
-      .switchMap(name => this.customerHub.searchCustomersBy({name: name}));
+      .switchMap(name => this.customerService.searchCustomersBy({name: name}));
   }
 
   save(): void {
@@ -108,7 +108,7 @@ export class ExternalUserComponent implements OnInit {
   }
 
   private updateConnectedCustomers(customerIds: Array<number>) {
-    this.customerHub.findByCustomerIds(customerIds)
+    this.customerService.findByCustomerIds(customerIds)
       .subscribe(customers => {
         this.connectedCustomersCtrl.patchValue(customerIds);
         this.connectedCustomers$.next(customers);

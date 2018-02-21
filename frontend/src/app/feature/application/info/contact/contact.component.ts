@@ -7,7 +7,6 @@ import {NumberUtil} from '../../../../util/number.util';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
 import {Observable} from 'rxjs/Observable';
-import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 import {ApplicationStore} from '../../../../service/application/application-store';
@@ -15,6 +14,7 @@ import {ApplicationType} from '../../../../model/application/type/application-ty
 import {OrdererIdForm} from '../cable-report/cable-report.form';
 import {Subject} from 'rxjs/Subject';
 import {FormUtil} from '../../../../util/form.util';
+import {CustomerService} from '../../../../service/customer/customer.service';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -43,12 +43,12 @@ export class ContactComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
-              private customerHub: CustomerHub,
+              private customerService: CustomerService,
               private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
     this.availableContacts = this.customerIdChanges.asObservable()
-      .switchMap(id => this.customerHub.findCustomerActiveContacts(id));
+      .switchMap(id => this.customerService.findCustomerActiveContacts(id));
 
     this.initContacts();
     this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationStore.snapshot.application.typeEnum;
@@ -114,7 +114,7 @@ export class ContactComponent implements OnInit {
   onCustomerChange(customerId: number) {
     this.resetContacts();
     if (NumberUtil.isDefined(customerId)) {
-      this.availableContacts = this.customerHub.findCustomerActiveContacts(customerId);
+      this.availableContacts = this.customerService.findCustomerActiveContacts(customerId);
     }
   }
 

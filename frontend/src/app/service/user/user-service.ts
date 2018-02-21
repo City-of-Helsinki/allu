@@ -50,8 +50,15 @@ export class UserService {
       .catch(err => this.errorHandler.handle(HttpUtil.extractMessage(err)));
   }
 
-  public getUser(userName: string): Observable<User> {
+  public getByUsername(userName: string): Observable<User> {
     const url = USER_BY_USERNAME_URL + '/' + userName;
+    return this.authHttp.get(url)
+      .map(response => UserMapper.mapBackend(response.json()))
+      .catch(err => this.errorHandler.handle(HttpUtil.extractMessage(err)));
+  }
+
+  public getById(id: number): Observable<User> {
+    const url = `${USERS_URL}/${id}`;
     return this.authHttp.get(url)
       .map(response => UserMapper.mapBackend(response.json()))
       .catch(err => this.errorHandler.handle(HttpUtil.extractMessage(err)));

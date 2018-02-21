@@ -6,13 +6,13 @@ import {HistoryHub} from '../../../service/history/history-hub';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {ApplicationChange} from '../../../model/application/application-change/application-change';
 import {UserHub} from '../../../service/user/user-hub';
-import {User} from '../../../model/user/user';
 import {ApplicationHistoryDetailsComponent} from './application-history-details.component';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
 import {ApplicationService} from '../../../service/application/application.service';
+import {ArrayUtil} from '../../../util/array-util';
 
 @Component({
   selector: 'application-history',
@@ -24,8 +24,8 @@ import {ApplicationService} from '../../../service/application/application.servi
 export class ApplicationHistoryComponent implements OnInit {
 
   history: Observable<Array<ApplicationChange>>;
-  handlers = new Map<number, User>();
   meta: StructureMeta;
+  users = new Map<number, string>();
 
   constructor(private applicationStore: ApplicationStore,
               private applicationService: ApplicationService,
@@ -38,17 +38,29 @@ export class ApplicationHistoryComponent implements OnInit {
     this.applicationService.loadMetadata(this.applicationStore.snapshot.application.type).subscribe(meta => {
       this.meta = meta;
       this.formatter.setMeta(meta);
-      this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id);
-      this.userHub.getAllUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
+      this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id)
+        .do(changes => this.fetchUsersForChanges(changes));
     },
     err => NotificationService.errorMessage(findTranslation('history.error.metadata')));
   }
 
   showDetails(change: ApplicationChange) {
-    const dialogRef = this.dialog.open<ApplicationHistoryDetailsComponent>(ApplicationHistoryDetailsComponent);
-    const detailsComponent = dialogRef.componentInstance;
-    detailsComponent.change = change;
-    detailsComponent.user = this.handlers.get(change.userId);
-    detailsComponent.meta = this.meta;
+    this.userHub.getById(change.userId).subscribe(user => {
+      const dialogRef = this.dialog.open<ApplicationHistoryDetailsComponent>(ApplicationHistoryDetailsComponent);
+      const detailsComponent = dialogRef.componentInstance;
+      detailsComponent.change = change;
+      detailsComponent.user = user;
+      detailsComponent.meta = this.meta;
+    });
+  }
+
+  fetchUsersForChanges(changes: Array<ApplicationChange>): void {
+    const userIds = changes
+      .map(c => c.userId)
+      .filter(ArrayUtil.unique);
+
+    Observable.combineLatest(userIds.map(id => this.userHub.getById(id)))
+      .map(user => user )
+      .subscribe(users => users.forEach(user => this.users.set(user.id, user.realName)));
   }
 }

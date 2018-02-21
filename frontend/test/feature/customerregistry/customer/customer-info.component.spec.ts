@@ -5,9 +5,9 @@ import {MatCardModule} from '@angular/material';
 
 import {CustomerInfoComponent} from '../../../../src/app/feature/customerregistry/customer/customer-info.component';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {CustomerHub} from '../../../../src/app/service/customer/customer-hub';
 import {CustomerType} from '../../../../src/app/model/customer/customer-type';
 import {DebugElement} from '@angular/core';
+import {CustomerService} from '../../../../src/app/service/customer/customer.service';
 
 class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}
@@ -53,7 +53,7 @@ describe('CustomerInfoComponent', () => {
       declarations: [CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerHub, useClass: CustomerHubMock}
+        {provide: CustomerService, useClass: CustomerHubMock}
       ]
     }).compileComponents();
   }));

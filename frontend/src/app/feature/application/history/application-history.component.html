@@ -1,14 +1,14 @@
 <mat-card>
   <mat-card-title>
-    Muutoshistoria
+    {{'history.title' | translation}}
   </mat-card-title>
   <mat-card-content>
     <table class="bordered responsive-table">
       <thead>
       <tr>
-        <th>Muutettu</th>
-        <th>Muutos</th>
-        <th>Tekijä</th>
+        <th>{{'history.changeTime' | translation}}</th>
+        <th>{{'history.change.title' | translation}}</th>
+        <th>{{'history.changer' | translation}}</th>
       </tr>
       </thead>
       <tbody>
@@ -18,10 +18,10 @@
           <span>{{['history.change.type', change.changeType] | translation}}</span>
           <span *ngIf="change.newStatus">{{['application.status', change.newStatus] | translation}}</span>
           <span *ngFor="let fieldChange of change.fieldChanges; let last=last">
-                            {{formatter.toFormattedFieldNames(fieldChange).uiFieldName | commaSeparated: last}}
-                        </span>
+              {{formatter.toFormattedFieldNames(fieldChange).uiFieldName | commaSeparated: last}}
+          </span>
         </td>
-        <td class="no-wrap">{{handlers.get(change.userId)?.realName}}</td>
+        <td class="no-wrap">{{users.get(change.userId)}}</td>
       </tr>
       </tbody>
     </table>

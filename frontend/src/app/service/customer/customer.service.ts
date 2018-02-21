@@ -67,11 +67,20 @@ export class CustomerService {
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetchContacts')));
   }
 
+  findCustomerActiveContacts(customerId: number): Observable<Array<Contact>> {
+    return this.findCustomerContacts(customerId)
+      .map(contacts => contacts.filter(c => c.active));
+  }
+
   public saveCustomer(customer: Customer): Observable<Customer> {
     return Some(customer.id)
       .map(id => this.updateCustomer(id, customer))
       .orElse(this.createCustomer(customer))
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.save')));
+  }
+
+  public saveContactsForCustomer(customerId: number, contacts: Array<Contact>): Observable<CustomerWithContacts> {
+    return this.saveCustomerWithContacts(new CustomerWithContacts(undefined, undefined, contacts));
   }
 
   public saveCustomerWithContacts(customerWithContacts: CustomerWithContacts): Observable<CustomerWithContacts> {

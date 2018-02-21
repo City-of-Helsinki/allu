@@ -31,7 +31,6 @@ import {Oauth2Component} from '../oauth2/oauth2.component';
 import {ErrorHandler} from '../../service/error/error-handler.service';
 import {DefaultTextService} from '../../service/application/default-text.service';
 import {LocationState} from '../../service/application/location-state';
-import {CustomerHub} from '../../service/customer/customer-hub';
 import {CustomerService} from '../../service/customer/customer.service';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -80,7 +79,6 @@ import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
     UserService,
     LocationService,
     CustomerService,
-    CustomerHub,
     UserHub,
     MapStore,
     UIStateHub,

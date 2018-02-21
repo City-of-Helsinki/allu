@@ -4,11 +4,11 @@ import {ActivatedRoute} from '@angular/router';
 
 import {Contact} from '../../../model/customer/contact';
 import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
-import {CustomerHub} from '../../../service/customer/customer-hub';
 import {NumberUtil} from '../../../util/number.util';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../../service/notification/notification.service';
+import {CustomerService} from '../../../service/customer/customer.service';
 
 @Component({
   selector: 'customer-contacts',
@@ -24,7 +24,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   private contactSubscription: Subscription;
   private customerId: number;
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private customerHub: CustomerHub) {}
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private customerService: CustomerService) {}
 
   ngOnInit(): void {
     this.contacts = <FormArray>this.parentForm.get('contacts');
@@ -34,7 +34,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
     this.route.params
       .map(p => p['id'])
       .filter(id => NumberUtil.isDefined(id))
-      .switchMap(id => this.customerHub.findCustomerActiveContacts(id))
+      .switchMap(id => this.customerService.findCustomerActiveContacts(id))
       .subscribe(contacts => contacts.forEach(c => this.addContact(c)));
   }
 
@@ -45,7 +45,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   removeContact(index: number, contactValue: any): void {
     if (NumberUtil.isDefined(contactValue.id)) {
       this.contacts.at(index).patchValue({active: false});
-      this.customerHub.saveContactsForCustomer(this.customerId, this.contacts.value)
+      this.customerService.saveContactsForCustomer(this.customerId, this.contacts.value)
         .subscribe(
           result => NotificationService.translateMessage('customers.notifications.contactRemoved'),
           error => NotificationService.translateErrorMessage('customers.notifications.contactRemoveFailed'));

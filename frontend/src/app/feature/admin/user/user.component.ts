@@ -55,7 +55,7 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       Some(params['userName']).do(userName => {
-        this.userHub.getUser(userName).subscribe(user => {
+        this.userHub.getByUsername(userName).subscribe(user => {
           this.userForm.patchValue(user);
         });
       });

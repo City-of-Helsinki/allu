@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {ApplicationStore} from '../../../../service/application/application-store';
-import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {Some} from '../../../../util/option';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Application} from '../../../../model/application/application';
@@ -19,6 +18,7 @@ import {Deposit} from '../../../../model/application/invoice/deposit';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
+import {CustomerService} from '../../../../service/customer/customer.service';
 
 @Component({
   selector: 'invoicing-info',
@@ -41,7 +41,7 @@ export class InvoicingInfoComponent implements OnInit {
   private originalRecipientForm: CustomerForm;
 
   constructor(private applicationStore: ApplicationStore,
-              private customerHub: CustomerHub,
+              private customerService: CustomerService,
               private dialog: MatDialog) {
   }
 
@@ -144,7 +144,7 @@ export class InvoicingInfoComponent implements OnInit {
 
   private findAndPatchCustomer(id: number): void {
     this.disableCustomerEdit();
-    this.customerHub.findCustomerById(id)
+    this.customerService.findCustomerById(id)
       .subscribe(customer => {
         this.recipientForm.patchValue(CustomerForm.fromCustomer(customer));
         this.originalRecipientForm = this.recipientForm.getRawValue();

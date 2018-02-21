@@ -7,13 +7,13 @@ import {Observable} from 'rxjs/Observable';
 import {Application} from '../../../model/application/application';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerForm} from '../../customerregistry/customer/customer.form';
-import {CustomerHub} from '../../../service/customer/customer-hub';
 import {Subject} from 'rxjs/Subject';
 import {MatDialog} from '@angular/material';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
 import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
+import {CustomerService} from '../../../service/customer/customer.service';
 
 @Component({
   selector: 'invoicing',
@@ -32,7 +32,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   constructor(private applicationStore: ApplicationStore,
               private fb: FormBuilder,
-              private customerHub: CustomerHub,
+              private customerService: CustomerService,
               private dialog: MatDialog) {
   }
 
@@ -83,7 +83,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
       customer.invoicingOnly = true;
     }
     if (billable && this.recipientForm.dirty) {
-      return this.customerHub.saveCustomer(customer);
+      return this.customerService.saveCustomer(customer);
     } else {
       return Observable.of(customer);
     }
