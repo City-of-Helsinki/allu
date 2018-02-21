@@ -3,6 +3,7 @@ package fi.hel.allu.search.controller;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerSearchService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,11 +22,14 @@ import java.util.Map;
 @RequestMapping("/applications")
 public class ApplicationController {
 
-  private ApplicationSearchService applicationSearchService;
+  private final ApplicationSearchService applicationSearchService;
+  private final CustomerSearchService customerSearchService;
 
   @Autowired
-  public ApplicationController(ApplicationSearchService applicationSearchService) {
+  public ApplicationController(ApplicationSearchService applicationSearchService,
+                               CustomerSearchService customerSearchService) {
     this.applicationSearchService = applicationSearchService;
+    this.customerSearchService = customerSearchService;
   }
 
   @RequestMapping(method = RequestMethod.POST)
@@ -74,18 +78,21 @@ public class ApplicationController {
   @RequestMapping(value = "/sync/start", method = RequestMethod.POST)
   public ResponseEntity<Void> startSync() {
     applicationSearchService.prepareSync();
+    customerSearchService.prepareSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/sync/commit", method = RequestMethod.POST)
   public ResponseEntity<Void> commitSync() {
     applicationSearchService.endSync();
+    customerSearchService.endSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/sync/cancel", method = RequestMethod.POST)
   public ResponseEntity<Void> cancelSync() {
     applicationSearchService.cancelSync();
+    customerSearchService.cancelSync();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

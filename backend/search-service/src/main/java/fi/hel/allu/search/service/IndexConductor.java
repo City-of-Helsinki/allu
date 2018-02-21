@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.AtomicReference;
  * syncing status, etc).
  */
 public class IndexConductor {
-  private static final AtomicReference<SyncState> SYNC_STATE = new AtomicReference<>(SyncState.NOT_ACTIVE);
-
   private final String indexAliasName;
   private String currentIndexName;
   private String newIndexName;
+
+  private final AtomicReference<SyncState> syncState;
 
   private enum SyncState {
     NOT_ACTIVE, ACTIVE, ACTIVATING, DEACTIVATING
@@ -21,6 +21,7 @@ public class IndexConductor {
 
   public IndexConductor(String indexAliasName) {
     this.indexAliasName = indexAliasName;
+    this.syncState =  new AtomicReference<>(SyncState.NOT_ACTIVE);
   }
 
   public String getIndexAliasName() {
@@ -53,22 +54,22 @@ public class IndexConductor {
   }
 
   public final boolean isSyncActive() {
-    return !SyncState.NOT_ACTIVE.equals(SYNC_STATE.get());
+    return !SyncState.NOT_ACTIVE.equals(syncState.get());
   }
 
   public final boolean tryStartSync() {
-    return SYNC_STATE.compareAndSet(SyncState.NOT_ACTIVE, SyncState.ACTIVATING);
+    return syncState.compareAndSet(SyncState.NOT_ACTIVE, SyncState.ACTIVATING);
   }
 
   public final boolean tryDeactivateSync() {
-    return SYNC_STATE.compareAndSet(SyncState.ACTIVE, SyncState.DEACTIVATING);
+    return syncState.compareAndSet(SyncState.ACTIVE, SyncState.DEACTIVATING);
   }
 
   public final void setSyncPassive() {
-    SYNC_STATE.set(SyncState.NOT_ACTIVE);
+    syncState.set(SyncState.NOT_ACTIVE);
   }
 
   public final void setSyncActive() {
-    SYNC_STATE.set(SyncState.ACTIVE);
+    syncState.set(SyncState.ACTIVE);
   }
 }
