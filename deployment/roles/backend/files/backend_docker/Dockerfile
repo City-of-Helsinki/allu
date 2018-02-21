@@ -86,6 +86,8 @@ RUN ln -s /servicehome/services/pdf-service/stylesheets /home/allu/pdf-service/s
 RUN ln -s /servicehome/services/scheduler-service/sap/customer-archive /home/allu/scheduler-service/sap/customer-archive
 RUN ln -s /servicehome/services/scheduler-service/sap/customer-failed /home/allu/scheduler-service/sap/customer-failed
 RUN ln -s /servicehome/services/scheduler-service/sap/customer-process /home/allu/scheduler-service/sap/customer-process
+# Directory for invoices
+RUN ln -s /servicehome/services/scheduler-service/sap/invoice-archive /home/allu/scheduler-service/sap/invoice-archive
 
 ######################################################################################
 # Copy files to image

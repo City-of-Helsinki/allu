@@ -34,3 +34,10 @@
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
+
+- name: create archive directory for SAP invoices
+  file: path=/home/allu/services/scheduler-service/sap/invoice-archive
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=r,o=r"
