@@ -7,11 +7,15 @@ import {findTranslation} from '../../util/translations';
 import {ContactMapper} from '../mapper/contact-mapper';
 import {Contact} from '../../model/customer/contact';
 import {Some} from '../../util/option';
-import {CustomerQueryParametersMapper, CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
+import {CustomerQueryParametersMapper} from '../mapper/query/customer-query-parameters-mapper';
 import {Customer} from '../../model/customer/customer';
 import {CustomerWithContacts} from '../../model/customer/customer-with-contacts';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 import { PageMapper } from '../common/page-mapper';
+import {CustomerSearchQuery} from './customer-search-query';
+import {PageRequest} from '../../model/common/page-request';
+import {Sort} from '../../model/common/sort';
+import {Page} from '../../model/common/page';
 
 const CUSTOMERS_URL = '/api/customers';
 const CUSTOMERS_SEARCH_URL = CUSTOMERS_URL + '/search';
@@ -25,14 +29,18 @@ export class CustomerService {
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
   }
 
-  public searchCustomersBy(searchQuery: CustomerSearchQuery): Observable<Array<Customer>> {
+  public pagedSearch(searchQuery: CustomerSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Page<Customer>> {
     return this.authHttp.post(
       CUSTOMERS_SEARCH_URL,
       JSON.stringify(CustomerQueryParametersMapper.mapFrontend(searchQuery)),
-      QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
+      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
       .map(response => PageMapper.mapBackend(response.json(), CustomerMapper.mapBackend))
-      .map(page => page.content)
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')));
+  }
+
+  public search(searchQuery: CustomerSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Customer>> {
+    return this.pagedSearch(searchQuery, sort, pageRequest)
+      .map(page => page.content);
   }
 
   public findCustomerById(id: number): Observable<Customer> {

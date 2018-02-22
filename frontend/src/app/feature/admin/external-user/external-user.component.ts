@@ -73,7 +73,7 @@ export class ExternalUserComponent implements OnInit {
 
     this.matchingNameCustomers = this.customerNameControl.valueChanges
       .debounceTime(DEBOUNCE_TIME_MS)
-      .switchMap(name => this.customerService.searchCustomersBy({name: name}));
+      .switchMap(name => this.customerService.search({name: name}));
   }
 
   save(): void {

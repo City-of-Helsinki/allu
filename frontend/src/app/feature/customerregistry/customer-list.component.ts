@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {AfterContentInit, AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../util/enum.util';
@@ -7,6 +6,8 @@ import {CustomerType} from '../../model/customer/customer-type';
 import {Sort} from '../../model/common/sort';
 import {Customer} from '../../model/customer/customer';
 import {CustomerService} from '../../service/customer/customer.service';
+import {MatPaginator, MatSort} from '@angular/material';
+import {CustomerDatasource} from '../../service/customer/customer-datasource';
 
 @Component({
   selector: 'customer-list',
@@ -15,40 +16,47 @@ import {CustomerService} from '../../service/customer/customer.service';
     './customer-list.component.scss'
   ]
 })
-export class CustomerListComponent implements OnInit {
+export class CustomerListComponent implements OnInit, AfterViewInit {
 
-  customers: Observable<Array<Customer>>;
+  displayedColumns = ['name', 'type', 'registryKey', 'email', 'phone', 'postalAddress'];
+
   searchForm: FormGroup;
   customerTypes = EnumUtil.enumValues(CustomerType);
+  customerSource: CustomerDatasource;
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private router: Router, private customerService: CustomerService, private fb: FormBuilder) {
     this.searchForm = this.fb.group({
       name: [''],
       registryKey: [''],
       type: [''],
-      active: [true],
-      sort: [new Sort()]
+      active: [true]
     });
   }
 
   ngOnInit(): void {
-    this.customers = this.customerService.searchCustomersBy(this.searchForm.value);
+    this.customerSource = new CustomerDatasource(this.customerService, this.paginator, this.sort);
+  }
+
+  ngAfterViewInit(): void {
+    this.search();
   }
 
   newCustomer(): void {
     this.router.navigate(['customers/new']);
   }
 
-  onSelect(customer: Customer): void {
-    this.router.navigate(['customers', customer.id]);
+  onSelect(id: number): void {
+    this.router.navigate(['customers', id]);
   }
 
   search(): void {
-    this.customers = this.customerService.searchCustomersBy(this.searchForm.value);
+    this.customerSource.searchChange(this.searchForm.value);
   }
 
-  sortBy(sort: Sort) {
-    this.searchForm.patchValue({sort: sort});
-    this.search();
+  trackById(index: number, item: Customer) {
+    return item.id;
   }
 }

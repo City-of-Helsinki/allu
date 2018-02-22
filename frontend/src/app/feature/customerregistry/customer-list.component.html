@@ -1,63 +1,85 @@
 <div class="main-content">
-  <div [formGroup]="searchForm" class="row">
-    <div class="col s3">
+  <div [formGroup]="searchForm" fxLayout="row" fxLayoutGap="18px" fxLayoutWrap fxLayoutAlign="start center">
+    <div fxFlex="calc(25% - 18px)">
       <input-box>
-        <input inputBoxInput type="text" formControlName="name" placeholder="Asiakkaan nimi"/>
+        <input inputBoxInput type="text" formControlName="name" [placeholder]="'customer.search.name' | translation"/>
       </input-box>
     </div>
-    <div class="col s3">
+    <div fxFlex="calc(25% - 18px)">
       <input-box>
-        <input inputBoxInput type="text" formControlName="registryKey" placeholder="Asiakkaan tunniste"/>
+        <input inputBoxInput type="text" formControlName="registryKey" [placeholder]="'customer.search.registryKey' | translation"/>
       </input-box>
     </div>
-    <div class="col s2">
+    <div fxFlex="calc(25% - 18px)">
       <input-box>
         <select inputBoxInput formControlName="type">
-          <option value="" selected>Asiakkaan tyyppi</option>
+          <option value="" selected>{{'customer.search.type' | translation}}</option>
           <option *ngFor="let type of customerTypes" value="{{type}}">
             {{['customer.type', type, 'name'] | translation}}
           </option>
         </select>
       </input-box>
     </div>
-    <div class="col s3">
-      <button mat-raised-button type="button" color="primary" (click)="search()">HAE</button>
+    <div fxFlex="calc(25% - 18px)">
+      <button mat-raised-button type="button" color="primary" (click)="search()">
+        {{'common.button.search' | translation}}
+      </button>
     </div>
   </div>
-  <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-    <div class="col s12">
-      <button mat-raised-button type="button" color="primary" (click)="newCustomer()">Lisää uusi asiakas</button>
+  <div fxLayout="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+    <div fxFlex>
+      <button mat-raised-button type="button" color="primary" (click)="newCustomer()">
+        {{'customer.addNew' | translation}}
+      </button>
     </div>
   </div>
-  <div class="row" *ngIf="(customers | async)?.length > 0">
-    <div class="col s12">
-      Hakuehdoilla löytyi {{(customers | async)?.length}} asiakasta
-    </div>
-  </div>
-  <div class="row">
-    <div class=" col s12">
-      <table class="bordered responsive-table">
-        <thead>
-        <tr>
-          <th sortBy="name" (onSortChange)="sortBy($event)">Nimi</th>
-          <th>Tyyppi</th>
-          <th>Tunniste</th>
-          <th>Sähköposti</th>
-          <th>Puhelin</th>
-          <th>Osoite</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let customer of customers | async" class="clickable row-highlight" (click)="onSelect(customer)">
-          <td>{{customer.name}}</td>
-          <td>{{['customer.type', customer.type, 'name'] | translation}}</td>
-          <td>{{customer.registryKey}}</td>
-          <td>{{customer.email}}</td>
-          <td>{{customer.phone}}</td>
-          <td>{{customer.postalAddress?.uiAddress}}</td>
-        </tr>
-        </tbody>
-      </table>
+  <div fxLayout="row">
+    <div fxFlex>
+      <div class="mat-elevation-z8">
+        <mat-table #table [dataSource]="customerSource" matSort [trackBy]="trackById">
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'customer.nameLabel' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef>{{'customer.type.title' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ ['customer.type', row.type, 'name'] | translation }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="registryKey">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'customer.registryKey' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.registryKey}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <mat-header-cell *matHeaderCellDef>{{'customer.email' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.email}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="phone">
+            <mat-header-cell *matHeaderCellDef>{{'customer.phone' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.phone}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="postalAddress">
+            <mat-header-cell *matHeaderCellDef>{{'customer.postalAddress' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.postalAddress.uiStreetAddress}}</mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"
+                   class="row-highlight clickable"
+                   (click)="onSelect(row.id)"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator
+                       [length]="customerSource.length"
+                       [pageIndex]="0"
+                       [pageSize]="25"
+                       [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
     </div>
   </div>
 </div>

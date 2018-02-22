@@ -1,6 +1,6 @@
 import {BackendQueryParameter, BackendQueryParameters} from '../../backend-model/backend-query-parameters';
 import {QueryParametersMapper} from './query-parameters-mapper';
-import {Sort} from '../../../model/common/sort';
+import {CustomerSearchQuery} from '../../customer/customer-search-query';
 
 export class CustomerQueryParametersMapper {
   public static mapFrontend(query: CustomerSearchQuery): BackendQueryParameters {
@@ -17,12 +17,4 @@ export class CustomerQueryParametersMapper {
     QueryParametersMapper.mapBooleanParameter(queryParameters, 'active', query.active);
     return queryParameters;
   }
-}
-
-export interface CustomerSearchQuery {
-  name?: string;
-  type?: string;
-  registryKey?: string;
-  active?: boolean;
-  sort?: Sort;
 }

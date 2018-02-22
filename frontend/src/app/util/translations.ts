@@ -414,6 +414,11 @@ export const translations = {
   },
   customer: {
     nameLabel: 'Nimi',
+    registryKey: 'Tunniste',
+    email: 'Sähköposti',
+    phone: 'Puhelin',
+    postalAddress: 'Osoite',
+    addNew: 'Lisää uusi asiakas',
     invoiceRecipient: 'Laskun saaja',
     handledByRepresentative: 'Asiaa hoitaa asiamies',
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
@@ -421,6 +426,7 @@ export const translations = {
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
     invoicingOnly: 'Laskutusasiakas',
     type: {
+      title: 'Tyyppi',
       COMPANY: {
         name: 'Yritys',
         nameLabel: 'Yrityksen nimi',
@@ -499,6 +505,11 @@ export const translations = {
       fetchContacts: 'Asiakkaan yhteyshenkilöiden hakeminen epäonnistui',
       save: 'Asiakkaan tallentaminen epäonnistui',
       remove: 'Asiakkaan poistaminen rekisteristä epäonnistui'
+    },
+    search: {
+      name: 'Asiakkaan nimi',
+      registryKey: 'Asiakkaan tunniste',
+      type: 'Asiakkaan tyyppi'
     }
   },
   contact: {

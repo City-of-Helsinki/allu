@@ -11,12 +11,16 @@ import {CustomerContactsComponent} from './contact/customer-contacts.component';
 import {CustomerModalComponent} from './customer/customer-modal.component';
 import {ContactModalComponent} from './contact/contact-modal.component';
 import {CustomerInfoComponent} from './customer/customer-info.component';
+import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 
 @NgModule({
   imports: [
     RouterModule.forChild(customerRegistryRoutes),
     FormsModule,
     ReactiveFormsModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
     AlluCommonModule
   ],
   declarations: [

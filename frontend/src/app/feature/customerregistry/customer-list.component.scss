@@ -1,3 +1,7 @@
-.row:first-of-type {
+.main-content:first-child {
   margin-top: 20px;
+}
+
+[fxLayout="row"] {
+  margin-bottom: 20px;
 }

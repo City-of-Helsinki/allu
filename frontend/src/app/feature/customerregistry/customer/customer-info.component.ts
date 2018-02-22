@@ -8,8 +8,8 @@ import {NumberUtil} from '../../../util/number.util';
 import {CustomerForm} from './customer.form';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
-import {CustomerSearchQuery} from '../../../service/mapper/query/customer-query-parameters-mapper';
 import {CustomerService} from '../../../service/customer/customer.service';
+import {CustomerSearchQuery} from '../../../service/customer/customer-search-query';
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
@@ -65,7 +65,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   onSearchChange(terms: CustomerSearchQuery): Observable<Array<Customer>> {
     if (this.allowSearch) {
       const termsWithType = {...terms, type: this.typeControl.value, active: true};
-      return this.customerService.searchCustomersBy(termsWithType);
+      return this.customerService.search(termsWithType);
     } else {
       return Observable.empty();
     }
