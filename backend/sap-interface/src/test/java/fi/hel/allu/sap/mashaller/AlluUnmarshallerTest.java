@@ -23,7 +23,7 @@ public class AlluUnmarshallerTest {
     assertNotNull(debmas06.getiDoc());
     assertNotNull(debmas06.getiDoc().getE1kna1m());
     assertNotNull(debmas06.getiDoc().getE1kna1m().getE1knvvm());
-    assertNotNull(debmas06.getiDoc().getE1kna1m().getE1knvvm().getEikto());
+    assertNotNull(debmas06.getiDoc().getE1kna1m().getE1knvvm().get(0).getEikto());
   }
 
   private InputStream getInputStream() {

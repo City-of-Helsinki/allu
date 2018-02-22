@@ -1,5 +1,7 @@
 package fi.hel.allu.sap.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,17 +24,17 @@ public class E1KNA1M {
   private String stras;
   private String sperr;
 
-  private E1KNVVM e1knvvm;
+  private List<E1KNVVM> e1knvvm;
 
   /**
    * Customer sales data.
    */
   @XmlElement(name = "E1KNVVM", required = true)
-  public E1KNVVM getE1knvvm() {
+  public List<E1KNVVM> getE1knvvm() {
     return e1knvvm;
   }
 
-  public void setE1knvvm(E1KNVVM e1knvvm) {
+  public void setE1knvvm(List<E1KNVVM> e1knvvm) {
     this.e1knvvm = e1knvvm;
   }
 

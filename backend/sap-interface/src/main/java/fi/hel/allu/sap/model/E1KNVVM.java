@@ -14,7 +14,7 @@ public class E1KNVVM {
   /**
    * Allu ID (SAP customer account number)
    */
-  @XmlElement(name = "EIKTO", required = true)
+  @XmlElement(name = "EIKTO")
   public String getEikto() {
     return eikto;
   }

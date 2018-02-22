@@ -5,8 +5,10 @@ import fi.hel.allu.external.domain.PostalAddressExt;
 import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
 import fi.hel.allu.sap.model.DEBMAS06;
 import fi.hel.allu.sap.model.E1KNA1M;
+import fi.hel.allu.sap.model.E1KNVVM;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 /**
  * Service for updating customer with data from SAP.
@@ -196,7 +199,11 @@ public class SapCustomerService {
   }
 
   private Integer getAlluId(E1KNA1M sapCustomerData) {
-    return Integer.valueOf(sapCustomerData.getE1knvvm().getEikto());
+    Optional<E1KNVVM> eiknvvm = sapCustomerData.getE1knvvm().stream().filter(e -> StringUtils.isNotBlank(e.getEikto()))
+        .findFirst();
+    return eiknvvm.map(e -> Integer.valueOf(e.getEikto()))
+        .orElseThrow(() -> new IllegalArgumentException("No Allu ID found for customer number " +  sapCustomerData.getKunnr()));
+
   }
 
   private static boolean isInvoicingProhibited(E1KNA1M basicInformation) {
