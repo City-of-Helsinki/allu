@@ -28,6 +28,7 @@
     "@turf/buffer": "5.0.0",
     "@turf/inside": "5.0.0",
     "@turf/intersect": "5.0.0",
+    "@turf/clean-coords": "5.1.5",
     "angular2-jwt": "0.2.3",
     "angular2-materialize": "15.1.10",
     "core-js": "^2.4.1",
