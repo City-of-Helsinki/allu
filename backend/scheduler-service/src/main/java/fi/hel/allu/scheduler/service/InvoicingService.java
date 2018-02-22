@@ -62,7 +62,10 @@ public class InvoicingService {
 
   @PostConstruct
   public void createDirectories() throws IOException {
-    Files.createDirectories(Paths.get(applicationProperties.getInvoiceArchiveDir()));
+    Path archiveDirectory = Paths.get(applicationProperties.getInvoiceArchiveDir());
+    if (!Files.exists(archiveDirectory)) {
+      Files.createDirectories(archiveDirectory);
+    }
   }
 
   public void sendInvoices() {
