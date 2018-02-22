@@ -22,6 +22,9 @@ public class InvoiceRecipient {
   private String postalCode;
   private String city;
 
+  public InvoiceRecipient() {
+  }
+
   public InvoiceRecipient(CustomerType type, String name) {
     this.type = type;
     this.name = name;
