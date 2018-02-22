@@ -3,4 +3,5 @@ export interface CustomerSearchQuery {
   registryKey?: string;
   type?: string;
   active?: boolean;
+  invoicingOnly?: boolean;
 }

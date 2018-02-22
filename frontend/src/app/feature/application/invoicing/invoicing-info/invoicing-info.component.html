@@ -20,7 +20,7 @@
           </div>
         </mat-card-title>
         <mat-card-content>
-          <customer-info [form]="recipientForm" [allowSearch]="true" [showInvoicingInfo]="true"
+          <customer-info [form]="recipientForm" [allowSearch]="true" [showInvoicingInfo]="true" [excludeInvoicingOnlyCustomers]="false"
                          (customerChange)="invoiceRecipientChange($event)"></customer-info>
         </mat-card-content>
       </mat-card>

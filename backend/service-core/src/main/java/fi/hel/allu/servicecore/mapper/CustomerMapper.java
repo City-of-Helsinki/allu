@@ -111,7 +111,8 @@ public class CustomerMapper {
           customerJson.getRegistryKey(),
           customerJson.getOvt(),
           customerJson.getType(),
-          customerJson.isActive());
+          customerJson.isActive(),
+          customerJson.isInvoicingOnly());
     } else {
       return null;
     }

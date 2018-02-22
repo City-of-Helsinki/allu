@@ -216,7 +216,7 @@ public class SearchSyncService {
 
   CustomerES mapToES(Customer customer) {
     return new CustomerES(customer.getId(), customer.getName(), customer.getRegistryKey(), customer.getOvt(),
-        customer.getType(), customer.isActive());
+        customer.getType(), customer.isActive(), customer.isInvoicingOnly());
   }
 
   ContactES mapToES(Contact contact) {

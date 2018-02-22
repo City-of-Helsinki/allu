@@ -15,6 +15,7 @@ export class CustomerQueryParametersMapper {
     QueryParametersMapper.mapParameter(queryParameters, 'registryKey', QueryParametersMapper.removeExtraWhitespace(query.registryKey));
     QueryParametersMapper.mapRawParameter(queryParameters, 'type', query.type);
     QueryParametersMapper.mapBooleanParameter(queryParameters, 'active', query.active);
+    QueryParametersMapper.mapBooleanParameter(queryParameters, 'invoicingOnly', query.invoicingOnly);
     return queryParameters;
   }
 }

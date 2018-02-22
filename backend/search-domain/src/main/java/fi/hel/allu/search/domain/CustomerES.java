@@ -12,18 +12,20 @@ public class CustomerES {
   private String ovt;
   private CustomerType type;
   private boolean isActive;
+  private boolean invoicingOnly;
 
   public CustomerES() {
     // JSON serialization
   }
 
-  public CustomerES(Integer id, String name, String registryKey, String ovt, CustomerType type, boolean isActive) {
+  public CustomerES(Integer id, String name, String registryKey, String ovt, CustomerType type, boolean isActive, boolean invoicingOnly) {
     this.id = id;
     this.name = name;
     this.registryKey = registryKey;
     this.ovt = ovt;
     this.type = type;
     this.isActive = isActive;
+    this.invoicingOnly = invoicingOnly;
   }
 
   /**
@@ -92,5 +94,13 @@ public class CustomerES {
 
   public void setActive(boolean active) {
     isActive = active;
+  }
+
+  public boolean isInvoicingOnly() {
+    return invoicingOnly;
+  }
+
+  public void setInvoicingOnly(boolean invoicingOnly) {
+    this.invoicingOnly = invoicingOnly;
   }
 }

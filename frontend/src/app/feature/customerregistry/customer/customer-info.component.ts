@@ -26,6 +26,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   @Input() allowSearch = false;
   @Input() showInvoicingInfo = false;
   @Input() showInvoicingOnly = false;
+  @Input() excludeInvoicingOnlyCustomers = true;
 
   @Output() customerChange = new EventEmitter<Customer>();
 
@@ -65,6 +66,9 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   onSearchChange(terms: CustomerSearchQuery): Observable<Array<Customer>> {
     if (this.allowSearch) {
       const termsWithType = {...terms, type: this.typeControl.value, active: true};
+      if (this.excludeInvoicingOnlyCustomers) {
+        termsWithType['invoicingOnly'] = false;
+      }
       return this.customerService.search(termsWithType);
     } else {
       return Observable.empty();
