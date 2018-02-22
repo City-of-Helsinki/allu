@@ -16,10 +16,11 @@ pdf_service_host: localhost
 pdf_service_port: 9030
 
 mail_server_host: securemail.vincit.cloud
-mail_server_port: 587
+mail_server_port: 25
 email_allowed_addresses: "*@vincit.fi,*@hel.fi"
 email_sender_address: Allu Staging Aluevaraus <noreply@allu.alluallu.invalid>
 
+invoice_cronstring: "0 0  * * * MON-FRI"
 sap_ftp_invoice_host: 137.163.136.62
 sap_ftp_invoice_port: 22
 sap_ftp_invoice_directory: /
@@ -33,7 +34,7 @@ sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
 # Customer update configuration
-customer_update_enabled: false
+customer_update_enabled: true
 customer_update_cronstring: "0 0/30 * * * ?"
 customer_update_sourcedir: /home/allu/scheduler-service/sap/customer-process
 customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
