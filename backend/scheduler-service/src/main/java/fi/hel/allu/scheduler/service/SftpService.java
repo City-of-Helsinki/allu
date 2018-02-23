@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemOptions;
@@ -111,7 +112,8 @@ public class SftpService {
 
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
     FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName());
-    file.moveTo(targetFile);
+    targetFile.copyFrom(file, new AllFileSelector());
+    file.delete();
   }
 
   private boolean isFile(FileObject file) {
