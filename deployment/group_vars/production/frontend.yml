@@ -1,7 +1,7 @@
 # add environment specific frontend variables here
 http_port: 80
 https_port: 443
-proxy_domain: allufront
+proxy_domain: allu.kaupunkiymparisto.fi
 proxypass_api_context: /api/
 proxypass_api_target: "http://{{ hostvars['backendEndpoint'].ansible_host }}:9000/"
 proxypass_external_context: /external/

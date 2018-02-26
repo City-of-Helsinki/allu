@@ -1,17 +1,10 @@
 - name: allow Docker container access to local services in test environment
   ufw: rule=allow port={{ item }} src=172.17.0.1/24
-  when: "'test' in group_names or 'staging' in group_names"
+  when: "'test' in group_names or 'staging' in group_names or 'production' in group_names"
   become: yes
   with_items:
     - 9200 # ElasticSearch
     - 9300 # ElasticSearch
-
-- name: allow local network access to backend processes
-  ufw: rule=allow port={{ item }} src=10.0.0.0/8
-  become: yes
-  with_items:
-    - 9200 # elasticsearch http
-    - 9300 # elasticsearch tcp
 
 - name: allow local network access to backend processes
   ufw: rule=allow port={{ item }} src=10.0.0.0/8

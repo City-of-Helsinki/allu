@@ -6,4 +6,8 @@
   with_items:
     - 5432 # database
 
-# TODO: add firewall rule for accessing database from local network to support deployment of database to separate server
+- name: allow local network access to backend processes
+  ufw: rule=allow port={{ item }} src=10.0.0.0/8
+  become: yes
+  with_items:
+    - 5432 # database
