@@ -1,4 +1,6 @@
-import {Component, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'allu',
@@ -6,8 +8,22 @@ import {Component, ViewEncapsulation} from '@angular/core';
   encapsulation: ViewEncapsulation.None,
   styleUrls: []
 })
-export class AlluComponent {
+export class AlluComponent implements OnInit, OnDestroy {
 
-  constructor() {
+  private routeEventSub: Subscription;
+
+  constructor(private router: Router) {
+  }
+
+  ngOnInit(): void {
+    this.routeEventSub = this.router.events.subscribe(evt => {
+      if (evt instanceof NavigationEnd) {
+        window.scrollTo(0, 0);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.routeEventSub.unsubscribe();
   }
 }
