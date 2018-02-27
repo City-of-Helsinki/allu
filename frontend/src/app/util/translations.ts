@@ -80,6 +80,12 @@ export const translations = {
       DECISIONMAKING: 'Hakemus siirretty odottamaan päätöstä',
       CANCELLED: 'Hakemus peruttu'
     },
+    confirmDiscard: {
+      title: 'Hylätäänkö muutokset',
+      description: 'Sinulla on keskeneräisiä muutoksia. Hylätäänkö muutokset?',
+      confirmText: 'Hylkää',
+      cancelText: 'Palaa muokkaamaan'
+    },
     type: {
       title: 'Tyyppi',
       titleLong: 'Hakemuksen tyyppi',

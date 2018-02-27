@@ -2,12 +2,12 @@
                   [showDraftSelection]="showDraftSelection"
                   [readonly]="readonly"></application-type>
 <div [ngSwitch]="type">
-  <event *ngSwitchCase="'EVENT'"></event>
-  <short-term-rental *ngSwitchCase="'SHORT_TERM_RENTAL'"></short-term-rental>
-  <cable-report *ngSwitchCase="'CABLE_REPORT'"></cable-report>
-  <excavation-announcement *ngSwitchCase="'EXCAVATION_ANNOUNCEMENT'"></excavation-announcement>
-  <note *ngSwitchCase="'NOTE'"></note>
-  <traffic-arrangement *ngSwitchCase="'TEMPORARY_TRAFFIC_ARRANGEMENTS'"></traffic-arrangement>
-  <placement-contract *ngSwitchCase="'PLACEMENT_CONTRACT'"></placement-contract>
-  <area-rental *ngSwitchCase="'AREA_RENTAL'"></area-rental>
+  <event *ngSwitchCase="'EVENT'" (formDirty)="formDirtyChanged($event)"></event>
+  <short-term-rental *ngSwitchCase="'SHORT_TERM_RENTAL'" (formDirty)="formDirtyChanged($event)"></short-term-rental>
+  <cable-report *ngSwitchCase="'CABLE_REPORT'" (formDirty)="formDirtyChanged($event)"></cable-report>
+  <excavation-announcement *ngSwitchCase="'EXCAVATION_ANNOUNCEMENT'" (formDirty)="formDirtyChanged($event)"></excavation-announcement>
+  <note *ngSwitchCase="'NOTE'" (formDirty)="formDirtyChanged($event)"></note>
+  <traffic-arrangement *ngSwitchCase="'TEMPORARY_TRAFFIC_ARRANGEMENTS'" (formDirty)="formDirtyChanged($event)"></traffic-arrangement>
+  <placement-contract *ngSwitchCase="'PLACEMENT_CONTRACT'" (formDirty)="formDirtyChanged($event)"></placement-contract>
+  <area-rental *ngSwitchCase="'AREA_RENTAL'" (formDirty)="formDirtyChanged($event)"></area-rental>
 </div>

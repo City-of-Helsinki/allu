@@ -1,6 +1,6 @@
-import {AfterContentInit, OnDestroy, OnInit} from '@angular/core';
+import {AfterContentInit, OnDestroy, OnInit, Output, EventEmitter} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {AbstractControl, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
@@ -20,6 +20,8 @@ import {FormUtil} from '../../../util/form.util';
 
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
+
+  @Output() formDirty: EventEmitter<boolean> = new EventEmitter();
 
   applicationForm: FormGroup;
   readonly: boolean;
@@ -44,6 +46,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
   ngOnInit(): void {
     this.initForm();
+    this.applicationForm.valueChanges.subscribe(val => this.formDirty.emit(this.applicationForm.dirty));
     this.hasPropertyDeveloperCtrl = this.fb.control(false);
     this.hasRepresentativeCtrl = this.fb.control(false);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
@@ -159,7 +162,10 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   private save(application: Application) {
     this.applicationStore.save(application)
       .subscribe(
-        app => this.applicationSaved(app),
+        app => {
+          this.applicationSaved(app);
+          this.formDirty.emit(false);
+        },
         err => {
           NotificationService.error(err);
           this.submitPending = false;

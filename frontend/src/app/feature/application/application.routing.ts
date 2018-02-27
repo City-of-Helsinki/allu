@@ -17,7 +17,7 @@ import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
-  { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard] },
+  { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'comments', component: CommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
