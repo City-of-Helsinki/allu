@@ -9,5 +9,6 @@ proxypass_external_target: http://172.17.0.1:9040/
 proxypass_geoserver_context: /geoserver/
 proxypass_geoserver_target: http://geoserver.hel.fi/geoserver/
 server_admin: alluprojekti@gmail.com
-ssl_certificate_file: apache-selfsigned.crt
-ssl_certificate_key_file: apache-selfsigned.key
+ssl_certificate_file: star_kaupunkiymparisto_fi.crt
+ssl_certificate_key_file: star_kaupunkiymparisto_fi.key
+ssl_certificate_chain_file: DigiCertCA.crt
