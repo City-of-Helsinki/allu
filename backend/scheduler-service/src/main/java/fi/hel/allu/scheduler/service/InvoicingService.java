@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for sending invoices
@@ -143,16 +144,19 @@ public class InvoicingService {
   }
 
   private void sendNotificationEmail(List<String> applicationIds) {
-    String receiverEmail = applicationProperties.getInvoiceNotificationReceiverEmail();
-    if (StringUtils.isEmpty(receiverEmail)) {
+    String receiverEmails = applicationProperties.getInvoiceNotificationReceiverEmails();
+    if (StringUtils.isEmpty(receiverEmails)) {
       return;
     }
+
     String subject = applicationProperties.getInvoiceNotificationSubject();
     String mailTemplate = null;
     try {
       mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
       String body = StrSubstitutor.replace(mailTemplate, mailVariables(applicationIds));
-      alluMailService.sendEmail(Collections.singletonList(receiverEmail), subject, body);
+      Arrays.stream(receiverEmails.split(","))
+          .map(receiver -> receiver.trim())
+          .forEach(receiver -> alluMailService.sendEmail(Collections.singletonList(receiver), subject, body));
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }

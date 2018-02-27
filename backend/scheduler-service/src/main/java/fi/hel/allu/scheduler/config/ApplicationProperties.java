@@ -36,7 +36,7 @@ public class ApplicationProperties {
   private final String customerNotificationReceiverEmail;
   private final String customerNotificationSubject;
   private final String uiBaseUrl;
-  private final String invoiceNotificationReceiverEmail;
+  private final String invoiceNotificationReceiverEmails;
   private final String invoiceNotificationSubject;
   private final int searchSyncStartupDelay;
 
@@ -66,7 +66,7 @@ public class ApplicationProperties {
       @Value("${service.authkey}") @NotEmpty String serviceAuth,
       @Value("${customer.notification.receiveremail}") String customerNotificationReceiverEmail,
       @Value("${customer.notification.subject}") @NotEmpty String customerNotificationSubject,
-      @Value("${invoice.notification.receiveremail}") String invoiceNotificationReceiverEmail,
+      @Value("${invoice.notification.receiveremails}") String invoiceNotificationReceiverEmails,
       @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl,
       @Value("${search.sync.startup.delay}") int searchSyncStartupDelay) {
@@ -95,7 +95,7 @@ public class ApplicationProperties {
     this.serviceAuth = serviceAuth;
     this.customerNotificationReceiverEmail = customerNotificationReceiverEmail;
     this.customerNotificationSubject = customerNotificationSubject;
-    this.invoiceNotificationReceiverEmail = invoiceNotificationReceiverEmail;
+    this.invoiceNotificationReceiverEmails = invoiceNotificationReceiverEmails;
     this.invoiceNotificationSubject = invoiceNotificationSubject;
     this.uiBaseUrl = uiBaseUrl;
     this.searchSyncStartupDelay = searchSyncStartupDelay;
@@ -341,8 +341,8 @@ public class ApplicationProperties {
   /**
   * Get receiver email for SAP invoice notifications
   */
-  public String getInvoiceNotificationReceiverEmail() {
-    return invoiceNotificationReceiverEmail;
+  public String getInvoiceNotificationReceiverEmails() {
+    return invoiceNotificationReceiverEmails;
   }
 
   /**
