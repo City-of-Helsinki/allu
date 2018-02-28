@@ -65,9 +65,17 @@ export class LocationService {
 
   private geocodeUrl(address: string, defaultStreetNumber?: number) {
     const streetAddress = StreetAddress.fromAddressString(address, defaultStreetNumber);
-    return ADDRESS_URL + GEOCODE_URL
-      + '/' + streetAddress.streetName
-      + '/' + streetAddress.streetNumber;
+    if (!!streetAddress.streetLetter) {
+      return ADDRESS_URL + GEOCODE_URL
+        + '/' + streetAddress.streetName
+        + '/' + streetAddress.streetNumber
+        + '/' + streetAddress.streetLetter;
+
+    } else {
+      return ADDRESS_URL + GEOCODE_URL
+        + '/' + streetAddress.streetName
+        + '/' + streetAddress.streetNumber;
+    }
   }
 
   private handleNotFound(error: any, address: string): Observable<any> {

@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AddressServiceTest {
 
@@ -54,41 +55,51 @@ public class AddressServiceTest {
   protected WfsRestTemplate wfsRestTemplate;
   @Mock
   protected ResponseEntity<String> wfsXmlEntity;
+  private AddressService addressService;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     Mockito.when(applicationProperties.getStreetGeocodeUrl()).thenReturn(GEOCODE_URL);
+    Mockito.when(applicationProperties.getStreetGeocodeUrlWithLetter()).thenReturn(GEOCODE_URL);
     Mockito.when(applicationProperties.getStreetSearchUrl()).thenReturn(SEARCH_URL);
+    addressService = new AddressService(applicationProperties, wfsRestTemplate);
   }
 
   @Test
   public void testGeocodeAddress() {
-    AddressService addressService = new AddressService(applicationProperties, wfsRestTemplate);
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
-    CoordinateJson coordinateJson = addressService.geocodeAddress("Testikatu", 1);
+        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"))).thenReturn(wfsXmlEntity);
+    CoordinateJson coordinateJson = addressService.geocodeAddress("Testikatu", 1, Optional.empty());
+    Assert.assertEquals(25496886, coordinateJson.getX(), 0);
+    Assert.assertEquals(6675339, coordinateJson.getY(), 0);
+  }
+
+  @Test
+  public void testGeocodeAddressWithLetter() {
+    Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
+    Mockito.when(wfsRestTemplate.exchange(
+        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"), Mockito.eq("a"))).thenReturn(wfsXmlEntity);
+    CoordinateJson coordinateJson = addressService.geocodeAddress("Testikatu", 1, Optional.of("a"));
     Assert.assertEquals(25496886, coordinateJson.getX(), 0);
     Assert.assertEquals(6675339, coordinateJson.getY(), 0);
   }
 
   @Test(expected = NoSuchEntityException.class)
   public void testGeocodeMissingAddress() {
-    AddressService addressService = new AddressService(applicationProperties, wfsRestTemplate);
     // use regex to remove the featureMember part of XML to simulate WFS answer for unknown location
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml.replaceAll("<gml:featureMember>.+</gml:featureMember>", ""));
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
-    addressService.geocodeAddress("Testikatu", 1);
+        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"))).thenReturn(wfsXmlEntity);
+    addressService.geocodeAddress("Testikatu", 1, Optional.empty());
   }
 
   @Test
   public void testFindMatchingStreet() {
-    AddressService addressService = new AddressService(applicationProperties, wfsRestTemplate);
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
+        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn(wfsXmlEntity);
     List<PostalAddressJson> postalAddressList = addressService.findMatchingStreet("Testikatu");
     Assert.assertEquals(2, postalAddressList.size());
     Assert.assertEquals("Viipurinkatu 10", postalAddressList.get(0).getStreetAddress());
@@ -100,10 +111,9 @@ public class AddressServiceTest {
   @Test
   public void testFindMatchingStreetWithStreetNumber() {
     String streetNumber = "1";
-    AddressService addressService = new AddressService(applicationProperties, wfsRestTemplate);
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
+        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn(wfsXmlEntity);
     List<PostalAddressJson> postalAddressList = addressService.findMatchingStreet("Testikatu " + streetNumber);
     Assert.assertEquals(2, postalAddressList.size());
     Assert.assertEquals("Viipurinkatu 10", postalAddressList.get(0).getStreetAddress());
@@ -115,11 +125,24 @@ public class AddressServiceTest {
   @Test
   public void testFindMatchingExactStreetWithStreetNumber() {
     String streetNumber = "10";
-    AddressService addressService = new AddressService(applicationProperties, wfsRestTemplate);
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
+        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn(wfsXmlEntity);
     List<PostalAddressJson> postalAddressList = addressService.findMatchingStreet("Testikatu " + streetNumber);
+    Assert.assertEquals(1, postalAddressList.size());
+    Assert.assertEquals("Viipurinkatu 10", postalAddressList.get(0).getStreetAddress());
+    Assert.assertEquals("00510", postalAddressList.get(0).getPostalCode());
+    Assert.assertEquals("Helsinki", postalAddressList.get(0).getCity());
+  }
+
+  @Test
+  public void testFindMatchingExactStreetWithStreetNumberAndLetter() {
+    final String streetNumber = "10";
+    final String streetLetter = "a";
+    Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
+    Mockito.when(wfsRestTemplate.exchange(
+        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn(wfsXmlEntity);
+    List<PostalAddressJson> postalAddressList = addressService.findMatchingStreet("Testikatu " + streetNumber + streetLetter);
     Assert.assertEquals(1, postalAddressList.size());
     Assert.assertEquals("Viipurinkatu 10", postalAddressList.get(0).getStreetAddress());
     Assert.assertEquals("00510", postalAddressList.get(0).getPostalCode());

@@ -25,6 +25,8 @@ public class StreetAddressXml {
     public String streetName;
     @XmlElement(name = "osoitenumero", namespace = NAMESPACE_HEL_FI_OPEN)
     public int streetNumber;
+    @XmlElement(name = "osoitenumero_teksti", namespace = NAMESPACE_HEL_FI_OPEN)
+    public String streetNumberText;
     // TODO: rename y and x to lat and long to make names more describing
     @XmlElement(name = "n", namespace = NAMESPACE_HEL_FI_OPEN)
     public double y;

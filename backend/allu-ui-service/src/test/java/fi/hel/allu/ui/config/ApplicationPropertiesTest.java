@@ -11,6 +11,7 @@ public class ApplicationPropertiesTest {
         false,
         "1.1",
         "localhost/geocode",
+        "localhost/geocode",
         "9090",
         "localhost",
         "9090",

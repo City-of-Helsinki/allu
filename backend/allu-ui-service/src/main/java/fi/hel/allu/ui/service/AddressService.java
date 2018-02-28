@@ -16,7 +16,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -32,8 +31,9 @@ public class AddressService {
   private static final Logger logger = LoggerFactory.getLogger(AddressService.class);
   private static final String NUMBER_REGEX = "\\d+";
   private static final Pattern NUMBER_PATTERN = Pattern.compile(NUMBER_REGEX);
-  private ApplicationProperties applicationProperties;
-  private WfsRestTemplate restTemplate;
+  private static final String NUMBER_LETTER_REGEX = "\\d+\\s*[a-zA-Z]*";
+  private final ApplicationProperties applicationProperties;
+  private final WfsRestTemplate restTemplate;
 
   @Autowired
   public AddressService(ApplicationProperties applicationProperties, WfsRestTemplate restTemplate) {
@@ -50,24 +50,37 @@ public class AddressService {
    *
    * @throws NoSuchEntityException in case given address does not exist.
    */
-  public CoordinateJson geocodeAddress(String streetName, int streetNumber) {
+  public CoordinateJson geocodeAddress(String streetName, int streetNumber, Optional<String> streetLetter) {
     HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
-    HttpEntity<String> wfsXmlEntity = restTemplate.exchange(
-        applicationProperties.getStreetGeocodeUrl(),
-        HttpMethod.GET,
-        requestEntity,
-        String.class,
-        streetName,
-        Integer.toString(streetNumber));
+    HttpEntity<String> wfsXmlEntity;
 
-      StreetAddressXml streetAddressXml = WfsUtil.unmarshalWfs(wfsXmlEntity.getBody(), StreetAddressXml.class);
-      if (streetAddressXml.featureMember == null || streetAddressXml.featureMember.size() < 1) {
-        throw new NoSuchEntityException("Geocoded address not found");
-      } else {
-        // assuming that any address geocoding query returns at most a single address
-        return new CoordinateJson(
-            streetAddressXml.featureMember.get(0).geocodedAddress.x, streetAddressXml.featureMember.get(0).geocodedAddress.y);
-      }
+    if (streetLetter.isPresent()) {
+      wfsXmlEntity = restTemplate.exchange(
+          applicationProperties.getStreetGeocodeUrlWithLetter(),
+          HttpMethod.GET,
+          requestEntity,
+          String.class,
+          streetName,
+          Integer.toString(streetNumber),
+          streetLetter.get());
+    } else {
+      wfsXmlEntity = restTemplate.exchange(
+          applicationProperties.getStreetGeocodeUrl(),
+          HttpMethod.GET,
+          requestEntity,
+          String.class,
+          streetName,
+          Integer.toString(streetNumber));
+    }
+
+    StreetAddressXml streetAddressXml = WfsUtil.unmarshalWfs(wfsXmlEntity.getBody(), StreetAddressXml.class);
+    if (streetAddressXml.featureMember == null || streetAddressXml.featureMember.size() < 1) {
+      throw new NoSuchEntityException("Geocoded address not found");
+    } else {
+      // assuming that any address geocoding query returns at most a single address
+      return new CoordinateJson(
+          streetAddressXml.featureMember.get(0).geocodedAddress.x, streetAddressXml.featureMember.get(0).geocodedAddress.y);
+    }
   }
 
   /**
@@ -79,7 +92,7 @@ public class AddressService {
   public List<PostalAddressJson> findMatchingStreet(String partialStreetName) {
 
     Optional<String> optionalStreetNumber = findStreetNumber(partialStreetName);
-    String partialStreetNameNoNumber = partialStreetName.replaceAll(NUMBER_REGEX,"").trim();
+    String partialStreetNameNoNumber = partialStreetName.replaceAll(NUMBER_LETTER_REGEX,"").trim();
 
     HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
     HttpEntity<String> wfsXmlEntity = restTemplate.exchange(
@@ -98,7 +111,7 @@ public class AddressService {
     }
     logger.debug("For street search {}, the following addresses were found {}", partialStreetName, addresses);
 
-    return addresses.stream().filter(a -> filterByStreetNumber(a, optionalStreetNumber)).distinct().collect(Collectors.toList());
+    return addresses.stream().filter(a -> filterByStreetNumber(a, optionalStreetNumber)).collect(Collectors.toList());
   }
 
   private Optional<String> findStreetNumber(String partialStreetName) {
@@ -125,7 +138,7 @@ public class AddressService {
     PostalAddressJson postalAddressJson = new PostalAddressJson();
     postalAddressJson.setCity(featureMember.geocodedAddress.city);
     postalAddressJson.setPostalCode(featureMember.geocodedAddress.postalCode);
-    postalAddressJson.setStreetAddress(featureMember.geocodedAddress.streetName + " " + featureMember.geocodedAddress.streetNumber);
+    postalAddressJson.setStreetAddress(featureMember.geocodedAddress.streetName + " " + featureMember.geocodedAddress.streetNumberText);
     return postalAddressJson;
   }
 }

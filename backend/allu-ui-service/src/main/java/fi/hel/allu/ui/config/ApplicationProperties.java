@@ -11,26 +11,28 @@ import java.util.List;
 @Component
 public class ApplicationProperties {
 
-  private boolean production;
-  private String versionNumber;
-  private String geocodeUrl;
-  private String streetSearchUrl;
-  private String wfsUsername;
-  private String wfsPassword;
-  private String jwtSecret;
-  private Integer jwtExpirationHours;
-  private String jwtSecretExternalService;
-  private String oauth2AuthorizationEndpointUrl;
-  private String oauth2TokenUrl;
-  private String oauth2ClientId;
-  private String oauth2RedirectUri;
-  private String oauth2Certificate;
-  private List<String> anonymousAccessPaths;
+  private final boolean production;
+  private final String versionNumber;
+  private final String geocodeUrl;
+  private final String geocodeUrlWithLetter;
+  private final String streetSearchUrl;
+  private final String wfsUsername;
+  private final String wfsPassword;
+  private final String jwtSecret;
+  private final Integer jwtExpirationHours;
+  private final String jwtSecretExternalService;
+  private final String oauth2AuthorizationEndpointUrl;
+  private final String oauth2TokenUrl;
+  private final String oauth2ClientId;
+  private final String oauth2RedirectUri;
+  private final String oauth2Certificate;
+  private final List<String> anonymousAccessPaths;
 
   @Autowired
   public ApplicationProperties(@Value("${production}") boolean production,
                                @Value("${version.number}") String versionNumber,
                                @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
+                               @Value("${wfs.template.street.geocode.with.letter}") @NotEmpty String geocodeUrlWithLetter,
                                @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
                                @Value("${wfs.username}") @NotEmpty String wfsUsername,
                                @Value("${wfs.password}") @NotEmpty String wfsPassword,
@@ -46,6 +48,7 @@ public class ApplicationProperties {
     this.production = production;
     this.versionNumber = versionNumber;
     this.geocodeUrl = geocodeUrl;
+    this.geocodeUrlWithLetter = geocodeUrlWithLetter;
     this.streetSearchUrl = streetSearchUrl;
     this.wfsUsername = wfsUsername;
     this.wfsPassword = wfsPassword;
@@ -73,6 +76,10 @@ public class ApplicationProperties {
    */
   public String getStreetGeocodeUrl() {
     return this.geocodeUrl;
+  }
+
+  public String getStreetGeocodeUrlWithLetter() {
+    return geocodeUrlWithLetter;
   }
 
   /**

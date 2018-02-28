@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/address")
@@ -23,7 +24,13 @@ public class AddressController {
   @RequestMapping(value = "/geocode/{city}/{street}/{number}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<CoordinateJson> geocode(@PathVariable final String city, @PathVariable final String street, @PathVariable final int number) {
-    return new ResponseEntity<>(addressService.geocodeAddress(street, number), HttpStatus.OK);
+    return new ResponseEntity<>(addressService.geocodeAddress(street, number, Optional.empty()), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/geocode/{city}/{street}/{number}/{letter}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<CoordinateJson> geocode(@PathVariable final String city, @PathVariable final String street, @PathVariable final int number, @PathVariable final String letter) {
+    return new ResponseEntity<>(addressService.geocodeAddress(street, number, Optional.of(letter)), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search/{partialStreetName}", method = RequestMethod.GET)
