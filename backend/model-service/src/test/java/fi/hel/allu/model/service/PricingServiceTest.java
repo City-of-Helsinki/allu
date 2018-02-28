@@ -62,21 +62,23 @@ public class PricingServiceTest {
 
   @Test
   public void testMultiSectionApplication() {
-    // Create a five day application with one build day, EcoCompass discount and
+    // Create a one-day event with two build days and one teardown day,
+    // EcoCompass discount and
     // fixed locations "Kansalaistori, lohko A" and "Kansalaistori, lohko C".
-    // The expected price is (4 * (500 + 400) + 1 * (250 + 200)) * 0.7 EUR =
-    // 2835.00 EUR
+    // The expected price is (1 * (500 + 400) + 3 * (250 + 200)) * 0.7 EUR =
+    // 1575.00 EUR
     Application application = new Application();
     application.setType(ApplicationType.EVENT);
-    application.setStartTime(ZonedDateTime.parse("2016-12-03T09:00:00+02:00"));
-    application.setEndTime(ZonedDateTime.parse("2016-12-07T09:00:00+02:00"));
+    application.setStartTime(ZonedDateTime.parse("2018-03-28T00:00:00+03:00"));
+    application.setEndTime(ZonedDateTime.parse("2018-03-31T23:59:59.999+03:00"));
     application.setRecurringEndTime(application.getEndTime());
     application.setMetadataVersion(1);
     Event event = new Event();
     event.setEcoCompass(true);
     event.setNature(EventNature.PUBLIC_FREE);
-    event.setEventStartTime(application.getStartTime().plusHours(24)); // 24 hours
-    event.setEventEndTime(application.getEndTime());
+    event.setEventStartTime(ZonedDateTime.parse("2018-03-29T21:00:00Z")); // 24
+                                                                          // hours
+    event.setEventEndTime(ZonedDateTime.parse("2018-03-30T20:59:59.999Z"));
     application.setExtension(event);
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
@@ -93,8 +95,14 @@ public class PricingServiceTest {
     location.setApplicationId(application.getId());
     locationDao.insert(location);
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
-    assertEquals(283500, pricingService.totalPrice(chargeBasisEntries));
-    checkPrice(application, 283500);
+    // Make sure there is one event day...
+    assertEquals(1.0, chargeBasisEntries.stream().filter(cbe -> cbe.getUnitPrice() == 50000)
+        .map(cbe -> cbe.getQuantity()).findFirst().orElse(0.0).doubleValue(), 0.0001);
+    // ...and three build/teardown days
+    assertEquals(3.0, chargeBasisEntries.stream().filter(cbe -> cbe.getUnitPrice() == 25000)
+        .map(cbe -> cbe.getQuantity()).findFirst().orElse(0.0).doubleValue(), 0.0001);
+    assertEquals(157500, pricingService.totalPrice(chargeBasisEntries));
+    checkPrice(application, 157500);
   }
 
   @Test
@@ -104,8 +112,8 @@ public class PricingServiceTest {
     // 4500.00 EUR
     Application application = new Application();
     application.setType(ApplicationType.EVENT);
-    application.setStartTime(ZonedDateTime.parse("2018-05-03T09:00:00+02:00"));
-    application.setEndTime(ZonedDateTime.parse("2018-05-07T09:00:00+02:00"));
+    application.setStartTime(ZonedDateTime.parse("2018-05-03T00:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2018-05-07T23:59:59+02:00"));
     application.setRecurringEndTime(application.getEndTime());
     application.setMetadataVersion(1);
     Event event = new Event();

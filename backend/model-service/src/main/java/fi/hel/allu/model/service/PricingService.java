@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -181,12 +180,9 @@ public class PricingService {
 
     List<PricingConfiguration> pricingConfigs = getEventPricing(location, nature);
 
-    int eventDays = (int) CalendarUtil.startingUnitsBetween(event.getEventStartTime(), event.getEventEndTime(),
-        ChronoUnit.DAYS);
-    int buildDays = (int) CalendarUtil.unitsBetween(application.getStartTime(), event.getEventStartTime(),
-        ChronoUnit.DAYS);
-    buildDays += (int) CalendarUtil.unitsBetween(event.getEventEndTime(), application.getEndTime(),
-      ChronoUnit.DAYS);
+    int eventDays = CalendarUtil.daysBetween(event.getEventStartTime(), event.getEventEndTime());
+    int buildDays = CalendarUtil.daysBetween(application.getStartTime(), event.getEventStartTime());
+    buildDays += CalendarUtil.daysBetween(event.getEventEndTime(), application.getEndTime());
 
     double structureArea = event.getStructureArea();
     double area = location.getEffectiveArea();
