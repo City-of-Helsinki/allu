@@ -26,11 +26,19 @@ export class AttachmentThumbnailsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.thumbnails = this.attachments
-      .map(a => ({id: a.id, name: a.name, icon: FileUtil.iconForMimeType(a.mimeType)}));
+      .map(a => this.toThumbnail(a));
   }
 
   download(thumbnail: AttachmentThumbnail): void {
     this.attachmentService.download(thumbnail.id)
       .subscribe(file => filesaver.saveAs(file, thumbnail.name));
+  }
+
+  private toThumbnail(attachment: AttachmentInfo): AttachmentThumbnail {
+    return {
+      id: attachment.id,
+      name: attachment.description ? attachment.description : attachment.name,
+      icon: FileUtil.iconForMimeType(attachment.mimeType)
+    };
   }
 }
