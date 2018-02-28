@@ -3,8 +3,8 @@ import {StringUtil} from './string.util';
 export const translations = {
   logout: {
     header: 'Olet kirjautunut ulos',
-    infoText: 'Kirjauduit ulos Allu järjestelmästä. ' +
-    'Mikäli haluat varmistaa ulos kirjautumisen myös Helsingin kaupungin AD tunnistuksesta tyhjennä selaimen tiedot.'
+    infoText: 'Kirjauduit ulos Allu-järjestelmästä. ' +
+    'Mikäli haluat varmistaa uloskirjautumisen myös Helsingin kaupungin AD-tunnistuksesta, tyhjennä selaimen välimuisti.'
   },
   nav: {
     home: 'ETUSIVU',
@@ -371,7 +371,7 @@ export const translations = {
       toDecision: 'Päättämiseen'
     },
     confirmCancel: {
-      title: 'Haluatko varmasti perua hakemuksen',
+      title: 'Haluatko varmasti perua hakemuksen?',
       confirmText: 'Hyväksy',
       cancelText: 'Hylkää'
     }
