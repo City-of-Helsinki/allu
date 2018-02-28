@@ -307,8 +307,8 @@ public class ApplicationControllerTest {
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, eventCustomer, Collections.emptyList())));
     // TODO: remove these two lines setStartTime and setEndTime, because they should get set automatically from location
     newApplication.setStartTime(ZonedDateTime.parse("2017-02-01T00:00:01+02:00[Europe/Helsinki]"));
-    newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
-    newApplication.setRecurringEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
+    newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T23:59:59+02:00[Europe/Helsinki]"));
+    newApplication.setRecurringEndTime(ZonedDateTime.parse("2017-02-08T23:59:59+02:00[Europe/Helsinki]"));
     newApplication.setMetadataVersion(1);
     newApplication.setKindsWithSpecifiers(
         Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
@@ -328,7 +328,7 @@ public class ApplicationControllerTest {
             new GeometryCollection(new Geometry[] { geometry }),
             "Mannerheimintie 1",
             ZonedDateTime.parse("2017-02-01T00:00:01+02:00[Europe/Helsinki]"),
-            ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
+            ZonedDateTime.parse("2017-02-08T23:59:59+02:00[Europe/Helsinki]"));
 
     // read application back from database and check the calculated price
     ResultActions ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
