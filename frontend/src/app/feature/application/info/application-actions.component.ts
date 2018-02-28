@@ -77,6 +77,14 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     application.id = undefined;
     application.applicationId = undefined;
     application.handler = undefined;
+    application.decisionMaker = undefined;
+    application.decisionTime = undefined;
+    application.invoicingDate = undefined;
+    application.invoiceRecipientId = undefined;
+    application.skipPriceCalculation = false;
+    application.customerReference = undefined;
+    application.replacesApplicationId = undefined;
+    application.replacedByApplicationId = undefined;
     // Pre-reserved should be kept as such
     application.statusEnum = application.statusEnum === ApplicationStatus.PRE_RESERVED
       ? ApplicationStatus.PRE_RESERVED
