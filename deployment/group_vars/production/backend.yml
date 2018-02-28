@@ -19,7 +19,7 @@ mail_server_host: securemail.vincit.cloud
 mail_server_port: 25
 mail_server_auth: false
 email_allowed_addresses:
-email_sender_address: Allu <noreply.allu@kaupunkiymparisto.fi>
+email_sender_address: Allu <noreply@kaupunkiymparisto.fi>
 
 invoice_cronstring: "0 0 7 * * *"
 

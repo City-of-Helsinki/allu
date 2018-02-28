@@ -19,7 +19,7 @@ mail_server_host: securemail.vincit.cloud
 mail_server_port: 25
 mail_server_auth: false
 email_allowed_addresses: "*@vincit.fi,*@hel.fi"
-email_sender_address: Allu Staging Aluevaraus <noreply.allu@hel.fi>
+email_sender_address: Allu Staging Aluevaraus <noreply@staging.allu.kaupunkiymparisto.fi>
 
 invoice_cronstring: "0 0  * * * MON-FRI"
 sap_ftp_invoice_host: 137.163.136.62
