@@ -16,9 +16,22 @@ public class CalendarUtil {
    * @param begin starting time
    * @param end   end time
    * @param unit  time unit used
-   * @return
    */
   public static long startingUnitsBetween(ZonedDateTime begin, ZonedDateTime end, ChronoUnit unit) {
+    if (begin == null || end == null) {
+      return 0;
+    }
+    return 1 + unitsBetween(begin, end, unit);
+  }
+
+  /**
+   * Return the amount of time between given timestamps, expressed in given units
+   *
+   * @param begin starting time
+   * @param end   end time
+   * @param unit  time unit used
+   */
+  public static long unitsBetween(ZonedDateTime begin, ZonedDateTime end, ChronoUnit unit) {
     if (begin == null || end == null) {
       return 0;
     }
@@ -28,24 +41,24 @@ public class CalendarUtil {
     ZonedDateTime adjustedBegin = begin.truncatedTo(ChronoUnit.DAYS);
     ZonedDateTime adjustedEnd = end.truncatedTo(ChronoUnit.DAYS);
     switch (unit) {
-    case DAYS:
-      break;
-    case WEEKS:
-      adjustedBegin = adjustedBegin.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-      adjustedEnd = adjustedEnd.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-      break;
-    case MONTHS:
-      adjustedBegin = adjustedBegin.with(TemporalAdjusters.firstDayOfMonth());
-      adjustedEnd = adjustedEnd.with(TemporalAdjusters.firstDayOfMonth());
-      break;
-    case YEARS:
-      adjustedBegin = adjustedBegin.with(TemporalAdjusters.firstDayOfYear());
-      adjustedEnd = adjustedEnd.with(TemporalAdjusters.firstDayOfYear());
-      break;
-    default:
-      adjustedBegin = adjustedBegin.truncatedTo(unit);
-      adjustedEnd = adjustedEnd.truncatedTo(unit);
+      case DAYS:
+        break;
+      case WEEKS:
+        adjustedBegin = adjustedBegin.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        adjustedEnd = adjustedEnd.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        break;
+      case MONTHS:
+        adjustedBegin = adjustedBegin.with(TemporalAdjusters.firstDayOfMonth());
+        adjustedEnd = adjustedEnd.with(TemporalAdjusters.firstDayOfMonth());
+        break;
+      case YEARS:
+        adjustedBegin = adjustedBegin.with(TemporalAdjusters.firstDayOfYear());
+        adjustedEnd = adjustedEnd.with(TemporalAdjusters.firstDayOfYear());
+        break;
+      default:
+        adjustedBegin = adjustedBegin.truncatedTo(unit);
+        adjustedEnd = adjustedEnd.truncatedTo(unit);
     }
-    return 1 + adjustedBegin.until(adjustedEnd, unit);
+    return adjustedBegin.until(adjustedEnd, unit);
   }
 }

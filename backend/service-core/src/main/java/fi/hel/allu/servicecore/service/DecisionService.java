@@ -204,7 +204,7 @@ public class DecisionService {
     }
     switch (application.getType()) {
     case EVENT:
-      fillEventSpecifics(decisionJson, application.getExtension());
+      fillEventSpecifics(decisionJson, application);
       break;
     case SHORT_TERM_RENTAL:
         fillShortTermRentalSpecifics(decisionJson, application);
@@ -422,19 +422,20 @@ public class DecisionService {
     }
   }
 
-  private void fillEventSpecifics(DecisionJson decisionJson, ApplicationExtensionJson extension) {
-    EventJson ej = (EventJson) extension;
+  private void fillEventSpecifics(DecisionJson decisionJson, ApplicationJson application) {
+    EventJson ej = (EventJson) application.getExtension();
     if (ej != null) {
       decisionJson.setEventStartDate(formatDateWithDelta(ej.getEventStartTime(), 0));
       decisionJson.setEventEndDate(formatDateWithDelta(ej.getEventEndTime(), 0));
       decisionJson.setNumEventDays(daysBetween(ej.getEventStartTime(), ej.getEventEndTime()) + 1);
-      decisionJson.setBuildStartDate(formatDateWithDelta(ej.getStructureStartTime(), 0));
+      decisionJson.setBuildStartDate(formatDateWithDelta(buildTearDate(application.getStartTime(), ej.getEventStartTime()), 0));
       decisionJson.setBuildEndDate(formatDateWithDelta(ej.getEventStartTime(), -1));
       decisionJson.setTeardownStartDate(formatDateWithDelta(ej.getEventEndTime(), 1));
-      decisionJson.setTeardownEndDate(formatDateWithDelta(ej.getStructureEndTime(), 0));
+      decisionJson.setTeardownEndDate(formatDateWithDelta(buildTearDate(application.getEndTime(), ej.getEventEndTime()), 0));
 
-      decisionJson.setNumBuildAndTeardownDays(daysBetween(ej.getStructureStartTime(), ej.getEventStartTime())
-          + daysBetween(ej.getEventEndTime(), ej.getStructureEndTime()));
+      decisionJson.setNumBuildAndTeardownDays(
+          daysBetween(application.getStartTime(), ej.getEventStartTime())
+          + daysBetween(ej.getEventEndTime(), application.getEndTime()));
       decisionJson.setReservationTimeExceptions(ej.getTimeExceptions());
       decisionJson.setEventDescription(ej.getDescription());
       decisionJson.setStructureArea(String.format("%.0f", ej.getStructureArea()));
@@ -443,6 +444,14 @@ public class DecisionService {
       decisionJson.setHasEkokompassi(ej.isEcoCompass());
       decisionJson.setEventNature(eventNature(ej.getNature()));
     }
+  }
+
+  private ZonedDateTime buildTearDate(ZonedDateTime applicationDate, ZonedDateTime eventDate) {
+    if (applicationDate != null && eventDate != null) {
+      // build and tear dates exist when application's date differs from event's date
+      return applicationDate.equals(eventDate) ? null : applicationDate;
+    }
+    return null;
   }
 
   private void fillCableReportSpecifics(DecisionJson decisionJson, ApplicationJson applicationJson) {

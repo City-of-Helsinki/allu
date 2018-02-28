@@ -36,8 +36,6 @@ export class ApplicationExtensionMapper {
           backendExtension.marketingProviders,
           backendExtension.structureArea,
           backendExtension.structureDescription,
-          TimeUtil.dateFromBackend(backendExtension.structureStartTime),
-          TimeUtil.dateFromBackend(backendExtension.structureEndTime),
           backendExtension.terms);
       case ApplicationType.SHORT_TERM_RENTAL:
         return new ShortTermRental(
@@ -155,8 +153,6 @@ export class ApplicationExtensionMapper {
         marketingProviders: event.marketingProviders,
         structureArea: event.structureArea,
         structureDescription: event.structureDescription,
-        structureStartTime: TimeUtil.dateToBackend(event.structureStartTime),
-        structureEndTime: TimeUtil.dateToBackend(event.structureEndTime),
         terms: event.terms
     };
   }

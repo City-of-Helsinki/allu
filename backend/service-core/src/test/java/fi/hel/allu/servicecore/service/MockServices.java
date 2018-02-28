@@ -265,8 +265,6 @@ public abstract class MockServices {
     event.setEcoCompass(true);
     event.setFoodSales(true);
     event.setEntryFee(1234);
-    event.setBuildSeconds(60 * 60 * 24);
-    event.setTeardownSeconds(60 * 60 * 24 * 2);
     return event;
   }
 

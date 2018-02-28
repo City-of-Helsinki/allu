@@ -129,6 +129,10 @@ export class TimeUtil {
     }
   }
 
+  public static equals(left: Date, right: Date): boolean {
+    return this.compareTo(left, right) === 0;
+  }
+
   public static isInWinterTime(date: Date): boolean {
     const checked = moment(date).year(WINTER_TIME_START.year());
     return checked.isSameOrAfter(WINTER_TIME_START) || checked.isBefore(WINTER_TIME_END);

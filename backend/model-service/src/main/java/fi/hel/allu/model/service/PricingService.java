@@ -181,11 +181,13 @@ public class PricingService {
 
     List<PricingConfiguration> pricingConfigs = getEventPricing(location, nature);
 
-    int reservationDays = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
+    int eventDays = (int) CalendarUtil.startingUnitsBetween(event.getEventStartTime(), event.getEventEndTime(),
         ChronoUnit.DAYS);
-    int buildDays = (int) Math.round((double) event.getBuildSeconds() / (24 * 60 * 60));
-    buildDays += (int) Math.round((double) event.getTeardownSeconds() / (24 * 60 * 60));
-    int eventDays = reservationDays - buildDays;
+    int buildDays = (int) CalendarUtil.unitsBetween(application.getStartTime(), event.getEventStartTime(),
+        ChronoUnit.DAYS);
+    buildDays += (int) CalendarUtil.unitsBetween(event.getEventEndTime(), application.getEndTime(),
+      ChronoUnit.DAYS);
+
     double structureArea = event.getStructureArea();
     double area = location.getEffectiveArea();
 

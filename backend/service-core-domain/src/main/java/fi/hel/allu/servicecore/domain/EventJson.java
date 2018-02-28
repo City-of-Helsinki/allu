@@ -23,8 +23,6 @@ public class EventJson extends ApplicationExtensionJson {
   private String marketingProviders;
   private float structureArea;
   private String structureDescription;
-  private ZonedDateTime structureStartTime;
-  private ZonedDateTime structureEndTime;
   private String timeExceptions;
 
   @Override
@@ -175,28 +173,6 @@ public class EventJson extends ApplicationExtensionJson {
 
   public void setStructureDescription(String structureDescription) {
     this.structureDescription = structureDescription;
-  }
-
-  /**
-   * in Finnish: Rakenteiden rakennuspäivämäärä
-   */
-  public ZonedDateTime getStructureStartTime() {
-    return structureStartTime;
-  }
-
-  public void setStructureStartTime(ZonedDateTime structureStartTime) {
-    this.structureStartTime = structureStartTime;
-  }
-
-  /**
-   * in Finnish: Rakenteiden purkupäivämäärä
-   */
-  public ZonedDateTime getStructureEndTime() {
-    return structureEndTime;
-  }
-
-  public void setStructureEndTime(ZonedDateTime structureEndTime) {
-    this.structureEndTime = structureEndTime;
   }
 
   /**

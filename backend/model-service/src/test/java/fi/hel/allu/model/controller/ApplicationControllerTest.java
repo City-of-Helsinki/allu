@@ -317,6 +317,8 @@ public class ApplicationControllerTest {
     event.setDescription("Eventti");
     event.setEcoCompass(true);
     event.setNature(EventNature.CLOSED);
+    event.setEventStartTime(newApplication.getStartTime());
+    event.setEventEndTime(newApplication.getEndTime());
     newApplication.setExtension(event);
     Geometry geometry = polygon(3879,
         ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));

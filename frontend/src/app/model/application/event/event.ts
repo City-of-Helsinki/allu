@@ -17,8 +17,6 @@ export class Event extends ApplicationExtension {
               public marketingProviders?: string,
               public structureArea?: number,
               public structureDescription?: string,
-              public structureStartTime?: Date,
-              public structureEndTime?: Date,
               public terms?: string) {
     super(applicationType, terms);
   }
@@ -41,21 +39,5 @@ export class Event extends ApplicationExtension {
 
   public set uiEndTime(dateString: string) {
     this.eventEndTime = TimeUtil.getDateFromUi(dateString);
-  }
-
-  public get uiStructureStartTime(): string {
-    return TimeUtil.getUiDateString(this.structureStartTime);
-  }
-
-  public set uiStructureStartTime(dateString: string) {
-    this.structureStartTime = TimeUtil.getDateFromUi(dateString);
-  }
-
-  public get uiStructureEndTime(): string {
-    return TimeUtil.getUiDateString(this.structureEndTime);
-  }
-
-  public set uiStructureEndTime(dateString: string) {
-    this.structureEndTime = TimeUtil.getDateFromUi(dateString);
   }
 }

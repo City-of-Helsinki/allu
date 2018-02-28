@@ -1,9 +1,9 @@
 package fi.hel.allu.model.domain;
 
+import java.time.ZonedDateTime;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Event extends ApplicationExtension {
@@ -20,10 +20,8 @@ public class Event extends ApplicationExtension {
   private float structureArea;
   private String structureDescription;
   private String timeExceptions;
-  @Min(value = 0, groups = Application.Complete.class)
-  private long buildSeconds;
-  @Min(value = 0, groups = Application.Complete.class)
-  private long teardownSeconds;
+  private ZonedDateTime eventStartTime;
+  private ZonedDateTime eventEndTime;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -61,6 +59,28 @@ public class Event extends ApplicationExtension {
 
   public void setUrl(String url) {
     this.url = url;
+  }
+
+  /**
+   * in Finnish: Tapahtuman alkuaika
+   */
+  public ZonedDateTime getEventStartTime() {
+    return eventStartTime;
+  }
+
+  public void setEventStartTime(ZonedDateTime eventStartTime) {
+    this.eventStartTime = eventStartTime;
+  }
+
+  /**
+   * in Finnish: Tapahtuman päättymisaika
+   */
+  public ZonedDateTime getEventEndTime() {
+    return eventEndTime;
+  }
+
+  public void setEventEndTime(ZonedDateTime eventEndTime) {
+    this.eventEndTime = eventEndTime;
   }
 
   /**
@@ -160,31 +180,5 @@ public class Event extends ApplicationExtension {
 
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
-  }
-
-  /**
-   * Build time in seconds. 0 if there's no build time needed.
-   *
-   * @return
-   */
-  public long getBuildSeconds() {
-    return buildSeconds;
-  }
-
-  public void setBuildSeconds(long buildSeconds) {
-    this.buildSeconds = buildSeconds;
-  }
-
-  /**
-   * Teardown time in seconds or 0 if no teardown is needed.
-   *
-   * @return
-   */
-  public long getTeardownSeconds() {
-    return teardownSeconds;
-  }
-
-  public void setTeardownSeconds(long teardownSeconds) {
-    this.teardownSeconds = teardownSeconds;
   }
 }

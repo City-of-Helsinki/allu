@@ -60,6 +60,8 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     application.name = form.name;
     application.startTime = TimeUtil.toStartDate(form.structureTimes.startTime || form.eventTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.structureTimes.endTime || form.eventTimes.endTime);
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
     application.type = ApplicationType[ApplicationType.EVENT];
     application.extension = EventForm.toEvent(form, ApplicationType.EVENT);
     return application;

@@ -46,7 +46,7 @@ export class EventForm implements ApplicationForm {
       event.marketingProviders,
       event.structureArea,
       event.structureDescription,
-      new TimePeriod(event.structureStartTime, event.structureEndTime),
+      this.structureTimes(application, event),
       application.calculatedPriceEuro,
       event.terms);
   }
@@ -67,8 +67,6 @@ export class EventForm implements ApplicationForm {
     event.marketingProviders = form.marketingProviders;
     event.structureArea = form.structureArea;
     event.structureDescription = form.structureDescription;
-    event.structureStartTime = TimeUtil.toStartDate(form.structureTimes.startTime);
-    event.structureEndTime = TimeUtil.toEndDate(form.structureTimes.endTime);
     event.terms = form.terms;
     return event;
   }
@@ -120,5 +118,12 @@ export class EventForm implements ApplicationForm {
     form.description = [''];
     form.nature = [''];
     return form;
+  }
+
+  private static structureTimes(application: Application, event: Event): TimePeriod {
+    const tp = new TimePeriod();
+    tp.startTime = TimeUtil.equals(application.startTime, event.eventStartTime) ? undefined : application.startTime;
+    tp.endTime = TimeUtil.equals(application.endTime, event.eventEndTime) ? undefined : application.endTime;
+    return tp;
   }
 }

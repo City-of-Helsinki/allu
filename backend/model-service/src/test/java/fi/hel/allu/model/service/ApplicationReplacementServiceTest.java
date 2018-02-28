@@ -259,7 +259,8 @@ public class ApplicationReplacementServiceTest {
     Event replacing = (Event)extension;
     assertEquals(original.getApplicationType(), replacing.getApplicationType());
     assertEquals(original.getAttendees(), replacing.getAttendees());
-    assertEquals(original.getBuildSeconds(), replacing.getBuildSeconds());
+    assertEquals(original.getEventStartTime(), replacing.getEventStartTime());
+    assertEquals(original.getEventEndTime(), replacing.getEventEndTime());
     assertEquals(original.getDescription(), replacing.getDescription());
     assertEquals(original.isFoodSales(), replacing.isFoodSales());
   }
@@ -319,7 +320,7 @@ public class ApplicationReplacementServiceTest {
   private Event createExtension() {
     Event extension = new Event();
     extension.setAttendees(29);
-    extension.setBuildSeconds(20);
+    extension.setEventStartTime(STARTTIME);
     extension.setDescription("extension description");
     extension.setFoodSales(true);
     return extension;

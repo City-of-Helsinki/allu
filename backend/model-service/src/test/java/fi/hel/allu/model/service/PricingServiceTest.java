@@ -75,7 +75,8 @@ public class PricingServiceTest {
     Event event = new Event();
     event.setEcoCompass(true);
     event.setNature(EventNature.PUBLIC_FREE);
-    event.setBuildSeconds(60 * 60 * 24); // 24 hours
+    event.setEventStartTime(application.getStartTime().plusHours(24)); // 24 hours
+    event.setEventEndTime(application.getEndTime());
     application.setExtension(event);
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
@@ -109,7 +110,8 @@ public class PricingServiceTest {
     application.setMetadataVersion(1);
     Event event = new Event();
     event.setNature(EventNature.PROMOTION);
-    event.setBuildSeconds(60 * 60 * 24); // 24 hours
+    event.setEventStartTime(application.getStartTime().plusHours(24)); // 24 hours
+    event.setEventEndTime(application.getEndTime());
     application.setExtension(event);
     application.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.PROMOTION, Collections.emptyList()));
     addDummyCustomer(application, CustomerType.PERSON);

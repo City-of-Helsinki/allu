@@ -9,16 +9,11 @@ describe('Event application', () => {
   let application1EndTime = TestUtil.getISODateString(1);
   let event1StartTime = TestUtil.getISODateString(-13);
   let event1EndTime = TestUtil.getISODateString(0);
-  let structure1StartTime = application1StartTime;
-  let structure1EndTime = application1EndTime;
 
   let application2StartTime = TestUtil.getISODateString(-30);
   let application2EndTime = TestUtil.getISODateString(-16);
   let event2StartTime = TestUtil.getISODateString(-29);
   let event2EndTime = TestUtil.getISODateString(-17);
-  let structure2StartTime = application2StartTime;
-  let structure2EndTime = application2EndTime;
-
 
   let herneCustomersWithContactsCreated;
   let tervaCustomersWithContactsCreated;
@@ -233,8 +228,6 @@ describe('Event application', () => {
           'marketingProviders': 'Tapahtumassa ei luultavimmin ole markkinointitoimintaa',
           'structureArea': 54.0,
           'structureDescription': 'Paikalle rakennetaan linna',
-          'structureStartTime': structure1StartTime,
-          'structureEndTime': structure1EndTime,
           'timeExceptions': 'Pyhäpäivinä tauko'
         },
         'decisionTime': null,
@@ -443,8 +436,6 @@ describe('Event application', () => {
           'marketingProviders': 'Markkinoidaan tervaa ja myydään tynnyreitä',
           'structureArea': 205.0,
           'structureDescription': 'Paikalla tervan polttohauta',
-          'structureStartTime': structure2StartTime,
-          'structureEndTime': structure2EndTime,
           'timeExceptions': 'Tapahtuma-ajalla ei ole poikkeuksia'
         },
         'decisionTime': null,
