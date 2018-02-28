@@ -222,7 +222,9 @@ public class DecisionService {
     }
     List<AttachmentInfoJson> attachments = application.getAttachmentList();
     if (attachments != null) {
-      decisionJson.setAttachmentNames(attachments.stream().map(a -> a.getDescription()).collect(Collectors.toList()));
+      decisionJson.setAttachmentNames(attachments.stream().filter(a -> a.isDecisionAttachment())
+          .map(a -> StringUtils.defaultIfEmpty(a.getDescription(), a.getName()))
+          .collect(Collectors.toList()));
     }
     decisionJson.setReservationStartDate(formatDateWithDelta(application.getStartTime(), 0));
     decisionJson.setReservationEndDate(formatDateWithDelta(application.getEndTime(), 0));
