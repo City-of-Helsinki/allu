@@ -10,6 +10,7 @@ import '../../rxjs-extensions';
 import {CustomerService} from './customer.service';
 import {Customer} from '../../model/customer/customer';
 import {CustomerSearchQuery} from './customer-search-query';
+import {Application} from '../../model/application/application';
 
 export class CustomerDatasource extends DataSource<any> {
 
@@ -17,31 +18,15 @@ export class CustomerDatasource extends DataSource<any> {
   private destroy = new Subject<boolean>();
   private _page: Observable<Page<Customer>>;
   private _search: CustomerSearchQuery;
-  private _length = 0;
+  private _pageSnapshot = new Page<Customer>();
 
   constructor(private service: CustomerService, private paginator: MatPaginator, private sort: MatSort) {
     super();
   }
 
   connect(): Observable<Customer[]> {
-    const displayDataChanges = [
-      this.searchChanges,
-      this.sort.sortChange,
-      this.paginator.page
-    ];
-
-    this._page = Observable.merge(...displayDataChanges)
-      .takeUntil(this.destroy)
-      .skipUntil(this.searchChanges)
-      .switchMap(change => this.service.pagedSearch(
-        this._search,
-        new Sort(this.sort.active, this.sort.direction),
-        new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
-      )).catch(err => {
-        NotificationService.error(err);
-        return Observable.of(new Page<Customer>());
-      }).do(page => this._length = page.totalElements);
-
+    this._page = this.pageChanges();
+    this.resetPageIndexOnSearchSortChange();
     return this.data;
   }
 
@@ -59,7 +44,37 @@ export class CustomerDatasource extends DataSource<any> {
     return this._page.map(page => page.content);
   }
 
-  get length(): number {
-    return this._length;
+  get pageSnapshot(): Page<Customer> {
+    return this._pageSnapshot;
+  }
+
+  private pageChanges(): Observable<Page<Customer>> {
+    const displayDataChanges = [
+      this.searchChanges,
+      this.sort.sortChange,
+      this.paginator.page
+    ];
+
+    return Observable.merge(...displayDataChanges)
+      .takeUntil(this.destroy)
+      .skipUntil(this.searchChanges)
+      .switchMap(change => this.service.pagedSearch(
+        this._search,
+        new Sort(this.sort.active, this.sort.direction),
+        new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
+      )).catch(err => {
+        NotificationService.error(err);
+        return Observable.of(new Page<Customer>());
+      }).do(page => this._pageSnapshot = page);
+  }
+
+  private resetPageIndexOnSearchSortChange(): void {
+    const changes = [
+      this.searchChanges,
+      this.sort.sortChange,
+    ];
+    Observable.merge(...changes)
+      .takeUntil(this.destroy)
+      .subscribe(() => this.paginator.pageIndex = 0);
   }
 }

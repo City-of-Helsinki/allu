@@ -15,7 +15,7 @@ const initialState: SupervisionWorkqueueState = {
   tab: undefined,
   search: new SupervisionTaskSearchCriteria(),
   sort: new Sort(),
-  pageRequest: new PageRequest(),
+  pageRequest: new PageRequest(0, 25),
   page: new Page<SupervisionWorkItem>(),
   selectedItems: [],
   allSelected: false
@@ -42,11 +42,13 @@ export class SupervisionWorkItemStore {
   }
 
   public searchChange(search: SupervisionTaskSearchCriteria) {
-    this.update({search: search});
+    const pageRequest = {...this.store.getValue().pageRequest, page: 0}; // reset paging to first page
+    this.update({search, pageRequest});
   }
 
   public sortChange(sort: Sort) {
-    this.update({sort: sort});
+    const pageRequest = {...this.store.getValue().pageRequest, page: 0}; // reset paging to first page
+    this.update({sort, pageRequest});
   }
 
   public pageRequestChange(pageRequest: PageRequest) {

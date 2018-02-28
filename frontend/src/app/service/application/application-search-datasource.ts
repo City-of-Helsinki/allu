@@ -16,32 +16,16 @@ export class ApplicationSearchDatasource extends DataSource<any> {
   private searchChanges = new Subject<ApplicationSearchQuery>();
   private destroy = new Subject<boolean>();
   private _page: Observable<Page<Application>>;
+  private _pageSnapshot = new Page<Application>();
   private _search: ApplicationSearchQuery;
-  private _length = 0;
 
   constructor(private applicationService: ApplicationService, private paginator: MatPaginator, private sort: MatSort) {
     super();
   }
 
   connect(): Observable<Application[]> {
-    const displayDataChanges = [
-      this.searchChanges,
-      this.sort.sortChange,
-      this.paginator.page
-    ];
-
-    this._page = Observable.merge(...displayDataChanges)
-      .takeUntil(this.destroy)
-      .skipUntil(this.searchChanges)
-      .switchMap(change => this.applicationService.pagedSearch(
-        this._search,
-        new Sort(this.sort.active, this.sort.direction),
-        new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
-      )).catch(err => {
-        NotificationService.error(err);
-        return Observable.of(new Page<Application>());
-      }).do(page => this._length = page.totalElements);
-
+    this._page = this.pageChanges();
+    this.resetPageIndexOnSearchSortChange();
     return this.data;
   }
 
@@ -59,7 +43,37 @@ export class ApplicationSearchDatasource extends DataSource<any> {
     return this._page.map(page => page.content);
   }
 
-  get length(): number {
-    return this._length;
+  get pageSnapshot(): Page<Application> {
+    return this._pageSnapshot;
+  }
+
+  private pageChanges(): Observable<Page<Application>> {
+    const displayDataChanges = [
+      this.searchChanges,
+      this.sort.sortChange,
+      this.paginator.page
+    ];
+
+    return Observable.merge(...displayDataChanges)
+      .takeUntil(this.destroy)
+      .skipUntil(this.searchChanges)
+      .switchMap(change => this.applicationService.pagedSearch(
+        this._search,
+        new Sort(this.sort.active, this.sort.direction),
+        new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
+      )).catch(err => {
+      NotificationService.error(err);
+      return Observable.of(new Page<Application>());
+    }).do(page => this._pageSnapshot = page);
+  }
+
+  private resetPageIndexOnSearchSortChange(): void {
+    const changes = [
+      this.searchChanges,
+      this.sort.sortChange,
+    ];
+    Observable.merge(...changes)
+      .takeUntil(this.destroy)
+      .subscribe(() => this.paginator.pageIndex = 0);
   }
 }

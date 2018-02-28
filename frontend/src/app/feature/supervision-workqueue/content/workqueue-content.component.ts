@@ -1,12 +1,10 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SupervisionWorkItemStore} from '../supervision-work-item-store';
 import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
-import {Subscription} from 'rxjs/Subscription';
 import {Sort} from '../../../model/common/sort';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
-import {Some} from '../../../util/option';
 import {EventUtil} from '../../../../../test/util/event-util';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {WorkQueueTab} from '../../workqueue/workqueue-tab';

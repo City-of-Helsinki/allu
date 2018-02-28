@@ -10,6 +10,7 @@ import {PageRequest} from '../../../model/common/page-request';
 
 export class SupervisionWorkItemDatasource extends DataSource<any> {
 
+  private _pageSnapshot = new Page<SupervisionWorkItem>();
   private destroy = new Subject<boolean>();
 
   constructor(private store: SupervisionWorkItemStore, private paginator: MatPaginator, private sort: MatSort) {
@@ -39,7 +40,12 @@ export class SupervisionWorkItemDatasource extends DataSource<any> {
   public get page(): Observable<Page<SupervisionWorkItem>> {
     return this.store.changes
       .takeUntil(this.destroy)
-      .map(state => state.page).distinctUntilChanged();
+      .map(state => state.page).distinctUntilChanged()
+      .do(page => this._pageSnapshot = page);
+  }
+
+  public get pageSnapshot(): Page<SupervisionWorkItem> {
+    return this._pageSnapshot;
   }
 
   public get data(): Observable<SupervisionWorkItem[]> {

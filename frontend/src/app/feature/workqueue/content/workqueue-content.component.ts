@@ -15,6 +15,7 @@ import {Some} from '../../../util/option';
 import {WorkQueueTab} from '../workqueue-tab';
 import {CityDistrictService} from '../../../service/map/city-district.service';
 import {MapStore} from '../../../service/map/map-store';
+import {Page} from '../../../model/common/page';
 
 @Component({
   selector: 'workqueue-content',

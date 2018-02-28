@@ -43,11 +43,13 @@ export class ApplicationWorkItemStore {
   }
 
   public searchChange(search: ApplicationSearchQuery) {
-    this.store.next({ ...this.store.getValue(), search });
+    const pageRequest = {...this.store.getValue().pageRequest, page: 0}; // reset paging to first page
+    this.store.next({ ...this.store.getValue(), search, pageRequest });
   }
 
   public sortChange(sort: Sort) {
-    this.store.next({ ...this.store.getValue(), sort });
+    const pageRequest = {...this.store.getValue().pageRequest, page: 0}; // reset paging to first page
+    this.store.next({ ...this.store.getValue(), sort, pageRequest });
   }
 
   public pageRequestChange(pageRequest: PageRequest) {
