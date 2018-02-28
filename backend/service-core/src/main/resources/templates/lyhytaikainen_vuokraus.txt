@@ -1,6 +1,6 @@
 Hei,
 
-viestin liitteenä on hakemaanne alueenkäyttöön liittyvä sopimus ${applicationId} liitteineen. Tutustukaa sopimuksen sisältöön huolellisesti ja ottakaa yhteyttä, mikäli teillä on kysyttävää tai huomautettavaa siihen liittyen.
+Viestin liitteenä on hakemaanne alueenkäyttöön liittyvä vuokrauspäätös ${applicationId} liitteineen. Tutustukaa päätöksen sisältöön huolellisesti ja ottakaa yhteyttä, mikäli teillä on kysyttävää tai huomautettavaa siihen liittyen.
 
 ${accompanyingMessage}
 
@@ -18,5 +18,5 @@ Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut
 Alueidenkäyttö
 Puh. 09 310 22111
-hkr.ulkoilma@hel.fi
+ulkoilma@hel.fi
 www.hel.fi/luvat/yleisetalueet
