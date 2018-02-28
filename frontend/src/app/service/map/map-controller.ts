@@ -261,6 +261,12 @@ export class MapController {
 
     this.focusedItems = L.featureGroup();
     this.focusedItems.addTo(this.map);
+
+    this.mapLayerService.restrictedOverlays.subscribe(restricted => {
+      Object.keys(restricted).forEach(key => {
+        groupedControl.addOverlay(restricted[key], key, 'Karttatasot');
+      });
+    });
   }
 
   private setLocalizations(): void {

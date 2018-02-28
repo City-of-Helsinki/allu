@@ -13,6 +13,7 @@ import 'leaflet.markercluster.layersupport';
 import '../../js/leaflet/wms-authentication';
 import 'leaflet-wfst';
 import TimeoutOptions = L.TimeoutOptions;
+import {Observable} from 'rxjs/Observable';
 
 const timeout: TimeoutOptions = {
   response: 10000,
@@ -38,7 +39,10 @@ export class MapLayerService {
     zoomToBoundsOnClick: true
   });
 
+  private readonly token: string;
+
   constructor(private authService: AuthService, private config: ConfigService, private mapUtil: MapUtil) {
+    this.token = this.authService.token;
     this.overlays = this.createOverlays();
     this.defaultOverlay = this.overlays[DEFAULT_OVERLAY];
 
@@ -74,27 +78,25 @@ export class MapLayerService {
       .concat(this.contentLayerArray);
   }
 
-  private createOverlays(): L.Control.LayersObject {
-    const token = this.authService.token;
-    let overlays = {
-      'Karttasarja': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Kantakartta': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kantakartta', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Ajantasa-asemakaava': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ajantasa_asemakaava', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Kiinteistökartta': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Ortoilmakuva': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: token, timeout: timeout})
-    };
-
-    this.config.isProduction()
+  get restrictedOverlays(): Observable<L.Control.LayersObject> {
+    return this.config.isProduction()
       .filter(isProd => isProd)
-      .subscribe(isProd => {
-        overlays = {...overlays, ...this.initRestrictedOverlays(token) };
-    });
-    return overlays;
+      .map(() => this.initRestrictedOverlays(this.token));
+  }
+
+  private createOverlays(): L.Control.LayersObject {
+    return {
+      'Karttasarja': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+      'Kantakartta': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_kantakartta', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+      'Ajantasa-asemakaava': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_ajantasa_asemakaava', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+      'Kiinteistökartta': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+      'Ortoilmakuva': L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: this.token, timeout: timeout})
+    };
   }
 
   private initRestrictedOverlays(token: string): L.Control.LayersObject {
