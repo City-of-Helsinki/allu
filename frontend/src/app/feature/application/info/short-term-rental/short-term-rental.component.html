@@ -47,7 +47,8 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="startTime" required
                          [placeholder]="'application.common.startTime' | translation"
-                         [matDatepicker]="startTimePicker"/>
+                         [matDatepicker]="startTimePicker"
+                         [max]="applicationForm.get('rentalTimes.endTime').value"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #startTimePicker></mat-datepicker>
@@ -65,7 +66,8 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="endTime" required
                          [placeholder]="'application.common.endTime' | translation"
-                         [matDatepicker]="endTimePicker"/>
+                         [matDatepicker]="endTimePicker"
+                         [min]="applicationForm.get('rentalTimes.startTime').value"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
                   <mat-hint>

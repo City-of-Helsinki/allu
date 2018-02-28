@@ -35,7 +35,8 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="startTime" required
                          [placeholder]="'application.event.startTime' | translation"
-                         [matDatepicker]="startTimePicker"/>
+                         [matDatepicker]="startTimePicker"
+                         [max]="maxEventStartTime"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #startTimePicker></mat-datepicker>
@@ -53,7 +54,8 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="endTime" required
                          [placeholder]="'application.event.endTime' | translation"
-                         [matDatepicker]="endTimePicker"/>
+                         [matDatepicker]="endTimePicker"
+                         [min]="minEventEndTime"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
                   <mat-hint>
@@ -160,7 +162,8 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="startTime"
                          [placeholder]="'application.event.structureStartTime' | translation"
-                         [matDatepicker]="structureStartTimePicker"/>
+                         [matDatepicker]="structureStartTimePicker"
+                         [max]="maxBuildStart"/>
                   <mat-datepicker-toggle matSuffix [for]="structureStartTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #structureStartTimePicker></mat-datepicker>
@@ -169,16 +172,23 @@
                       {{'application.event.field.startBeforeEnd' | translation}}
                     </field-error>
                   </mat-hint>
+                  <mat-error *ngIf="applicationForm.get('structureTimes.startTime').hasError('after')">
+                    {{'application.event.field.buildBeforeEventStart' | translation}}
+                  </mat-error>
                 </mat-form-field>
               </div>
               <div fxFlex="0 0 calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="endTime"
                          [placeholder]="'application.event.structureEndTime' | translation"
-                         [matDatepicker]="structureEndTimePicker"/>
+                         [matDatepicker]="structureEndTimePicker"
+                         [min]="minTeardownEnd"/>
                   <mat-datepicker-toggle matSuffix [for]="structureEndTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #structureEndTimePicker></mat-datepicker>
+                  <mat-error *ngIf="applicationForm.get('structureTimes.endTime').hasError('before')">
+                    {{'application.event.field.teardownAfterEventEnd' | translation}}
+                  </mat-error>
                 </mat-form-field>
               </div>
             </ng-container>

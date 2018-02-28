@@ -92,6 +92,10 @@ export class TimeUtil {
     return moment(baseDate).add(amount, unit).toDate();
   }
 
+  public static subract(baseDate: Date = new Date(), amount: number, unit: UnitOfTime): Date {
+    return moment(baseDate).subtract(amount, unit).toDate();
+  }
+
   /**
    * Returns end of given day i.e. any date 1.1.2001 would be converted to 1.1.2001 23:59.
    *
@@ -113,6 +117,10 @@ export class TimeUtil {
     } else {
       return true;
     }
+  }
+
+  public static isAfter(first: Date, second: Date): boolean {
+    return this.isBefore(second, first);
   }
 
   public static isBetweenInclusive(date: Date, start: Date, end: Date): boolean {

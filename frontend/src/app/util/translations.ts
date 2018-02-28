@@ -320,7 +320,9 @@ export const translations = {
         startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää',
         attendeesGreaterThanOrEqual: 'Yleisömäärä ei voi olla negatiivinen',
         eventEntryFeeThanOrEqual: 'Osallistumismaksu ei voi negatiivinen',
-        structureAreaGreaterThanOrEqual: 'Rakenteiden kokonaisneliömäärä ei voi olla negatiivinen'
+        structureAreaGreaterThanOrEqual: 'Rakenteiden kokonaisneliömäärä ei voi olla negatiivinen',
+        buildBeforeEventStart: 'Rakennuspäivien tulee olla ennen tapahtumaa',
+        teardownAfterEventEnd: 'Purkupäivien tulee olla tapahtuman jälkeen'
       }
     },
     shortTermRental: {

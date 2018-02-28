@@ -11,6 +11,8 @@ import {ApplicationKind} from '../../../../model/application/type/application-ki
 import {EventNature} from '../../../../model/application/event/event-nature';
 import {ProjectHub} from '../../../../service/project/project-hub';
 import {TimeUtil} from '../../../../util/time.util';
+import {ComplexValidator} from '../../../../util/complex-validator';
+import {UnitOfTime} from 'moment';
 
 
 @Component({
@@ -33,6 +35,24 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     super.ngOnInit();
   }
 
+  get maxEventStartTime(): Date {
+    return this.applicationForm.get('eventTimes.endTime').value;
+  }
+
+  get minEventEndTime(): Date {
+    return this.applicationForm.get('eventTimes.startTime').value;
+  }
+
+  get maxBuildStart(): Date {
+    const eventStart =  this.applicationForm.get('eventTimes.startTime').value;
+    return TimeUtil.subract(eventStart, 1, 'day');
+  }
+
+  get minTeardownEnd(): Date {
+    const eventEnd =  this.applicationForm.get('eventTimes.endTime').value;
+    return TimeUtil.add(eventEnd, 1, 'day');
+  }
+
   protected initForm() {
     const snapshot = this.applicationStore.snapshot;
 
@@ -47,6 +67,8 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     this.applicationForm = snapshot.draft
       ? this.fb.group(this.draftFormStructure)
       : this.fb.group(this.completeFormStructure);
+
+    this.setStructureTimeValidation();
   }
 
   protected onApplicationChange(application: Application): void {
@@ -81,5 +103,15 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     }
 
     return event;
+  }
+
+  private setStructureTimeValidation(): void {
+    const eventStart = this.applicationForm.get('eventTimes.startTime');
+    const eventEnd = this.applicationForm.get('eventTimes.endTime');
+    const buildStart = this.applicationForm.get('structureTimes.startTime');
+    const teardownEnd = this.applicationForm.get('structureTimes.endTime');
+
+    buildStart.setValidators(ComplexValidator.after(eventStart));
+    teardownEnd.setValidators(ComplexValidator.before(eventEnd));
   }
 }
