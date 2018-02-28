@@ -61,7 +61,8 @@ public class DecisionService {
   private final Locale locale;
   private final DateTimeFormatter dateTimeFormatter;
   private final DateTimeFormatter timeStampFormatter;
-  private final DecimalFormat decimalFormatter;
+  private final DecimalFormat decimalFormat;
+  private final NumberFormat currencyFormat;
 
   static {
     BAD_LOCATION = new FixedLocationJson();
@@ -102,7 +103,8 @@ public class DecisionService {
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
     timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
-    decimalFormatter = new DecimalFormat("0.##");
+    decimalFormat = new DecimalFormat("0.##");
+    currencyFormat = NumberFormat.getCurrencyInstance(locale);
   }
 
   /*
@@ -247,8 +249,7 @@ public class DecisionService {
     decisionJson.setNotBillableReason(application.getNotBillableReason());
     Integer priceInCents = application.getCalculatedPrice();
     if (priceInCents != null) {
-      NumberFormat decimalFormat = NumberFormat.getCurrencyInstance(locale);
-      decisionJson.setTotalRent(decimalFormat.format(priceInCents / 100.0));
+      decisionJson.setTotalRent(currencyFormat.format(priceInCents / 100.0));
       decisionJson.setSeparateBill(priceInCents > 0);
     }
     fillCargeBasisInfo(decisionJson, application);
@@ -289,7 +290,7 @@ public class DecisionService {
     if (ChargeBasisUnit.PERCENT.equals(e.getUnit())) {
       return null;
     } else {
-      return decimalFormatter.format(e.getQuantity()) + unitString(e.getUnit());
+      return decimalFormat.format(e.getQuantity()) + unitString(e.getUnit());
     }
   }
 
@@ -326,7 +327,7 @@ public class DecisionService {
     if (ChargeBasisUnit.PERCENT.equals(e.getUnit())) {
       return null;
     } else {
-      return "à " + decimalFormatter.format(e.getUnitPrice() * 0.01) + " €";
+      return "à " + currencyFormat.format(e.getUnitPrice() * 0.01);
     }
   }
 
@@ -337,7 +338,7 @@ public class DecisionService {
     if (ChargeBasisUnit.PERCENT.equals(e.getUnit())) {
       return e.getQuantity() + " %";
     } else {
-      return decimalFormatter.format(e.getNetPrice() * 0.01) + " €";
+      return currencyFormat.format(e.getNetPrice() * 0.01);
     }
   }
 
