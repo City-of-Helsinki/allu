@@ -11,7 +11,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <xsl:attribute name="href">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
-    </xsl:element>  
+    </xsl:element>
     <link rel="stylesheet" href="new-style.css" />
     <xsl:if test="data/draft = 'true'">
       <link rel="stylesheet" href="watermark.css" />
@@ -128,7 +128,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <p class="space-above">
               <!-- Käytetään, jos Tapahtuma-ajan poikkeukset –kenttä täytetty -->
               <!-- [Tapahtuma-ajan poikkeukset] -->
-              <xsl:value-of select="data/reservationTimeExceptions"/>
+              Tapahtuma-ajan poikkeukset: <xsl:value-of select="data/reservationTimeExceptions"/>
             </p>
           </xsl:if>
         </section>
@@ -153,11 +153,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               </xsl:element>
             </xsl:if>
           </p>
-          <p class="space-above">
-            <!-- Ulkoilmatapahtuma/Avoin = Yleisölle pääsymaksuton tapahtuma; Ulkoilmatapahtuma/Maksullinen = Yleisölle pääsymaksullinen tapahtuma; Ulkoilmatapahtuma/Suljettu = Kutsuvierastilaisuus tai muu vastaava suljettu tapahtuma; Promootio = Promootiotapahtuma; Vaalit = Vaalit -->
-            <!-- [Tapahtuman luonne] -->
-            <xsl:value-of select="data/eventNature"/>
-          </p>
+          <xsl:if test="data/eventNature != ''">
+            <p class="space-above">
+              <!-- Ulkoilmatapahtuma/Avoin = Yleisölle pääsymaksuton tapahtuma; Ulkoilmatapahtuma/Maksullinen = Yleisölle pääsymaksullinen tapahtuma; Ulkoilmatapahtuma/Suljettu = Kutsuvierastilaisuus tai muu vastaava suljettu tapahtuma; Promootio = Promootiotapahtuma; Vaalit = Vaalit -->
+              <!-- [Tapahtuman luonne] -->
+              <xsl:value-of select="data/eventNature"/>
+            </p>
+          </xsl:if>
           <xsl:if test="data/structureArea > 0">
             <!-- Käytetään, jos tapahtuma sisältää rakenteita. -->
             <p class="space-above">
@@ -255,7 +257,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <xsl:if test="data/additionalConditions">
           <!-- Käytetään, jos Alluun on kirjoitettu vapaaseen
                tekstikenttään lisäehtoja. -->
-          <p class="space-above">
+          <p class="space-above space-below">
             Lisäksi on noudatettava seuraavia ehtoja:
           </p>
           <xsl:for-each select="data/additionalConditions">
@@ -306,8 +308,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           </p>
         </section>
       </div>
-
-      <section class="unboxed">
+      <section>
         <h2>Liitteet</h2>
         <p>
           <!--  [Lista liitteiden nimistä] -->
@@ -316,7 +317,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           </xsl:for-each>
         </p>
       </section>
-
     </div>
   </body>
 </html>

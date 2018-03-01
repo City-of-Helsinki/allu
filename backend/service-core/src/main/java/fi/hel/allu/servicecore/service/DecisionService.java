@@ -664,7 +664,7 @@ public class DecisionService {
     case PUBLIC_NONFREE:
       return "Yleisölle pääsymaksullinen tapahtuma";
     default:
-      return "***TUNTEMATON TAPAHTUMALUONNE***";
+      return "";
     }
   }
 
