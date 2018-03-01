@@ -1,16 +1,23 @@
 export const styleByApplicationType = {
-  EXCAVATION_ANNOUNCEMENT: {color: '#6db6ff', opacity: 1, fillOpacity: 0.4},
-  AREA_RENTAL: {color: '#006ddb', opacity: 1, fillOpacity: 0.4},
-  TEMPORARY_TRAFFIC_ARRANGEMENTS: {color: '#db6d00', opacity: 1, fillOpacity: 0.4},
-  CABLE_REPORT: {color: '#009292', opacity: 1, fillOpacity: 0.4},
-  PLACEMENT_CONTRACT: {color: '#ff6db6', opacity: 1, fillOpacity: 0.4},
+  EXCAVATION_ANNOUNCEMENT: {color: '#930000', opacity: 1, fillOpacity: 0.4},
+  AREA_RENTAL: {color: '#4A0096', opacity: 1, fillOpacity: 0.4},
+  TEMPORARY_TRAFFIC_ARRANGEMENTS: {color: '#F46D43', opacity: 1, fillOpacity: 0.4},
+  CABLE_REPORT: {color: '#B87333', opacity: 1, fillOpacity: 0.4},
+  PLACEMENT_CONTRACT: {color: '#5AB4AC', opacity: 1, fillOpacity: 0.4},
   EVENT: {color: '#920000', opacity: 1, fillOpacity: 0.4},
-  SHORT_TERM_RENTAL: {color: '#490092', opacity: 1, fillOpacity: 0.4},
-  NOTE: {color: '#24ff24', opacity: 1, fillOpacity: 0.4}
+  SHORT_TERM_RENTAL: {color: '#006DE0', opacity: 1, fillOpacity: 0.4},
+  NOTE: {color: '#00EF00', opacity: 1, fillOpacity: 0.4}
 };
 
+export const winkki = {
+  EVENT:  {color: '#FF6CB8', opacity: 1, fillOpacity: 0.4},
+  ROAD_WORKS:  {color: '#FEB24C', opacity: 1, fillOpacity: 0.4},
+};
+
+export const CITY_DISTRICTS = {color: '000000', dashArray: '10,5', opacity: 1, fillOpacity: 0.4};
+
 export const pathStyle = {
-  DEFAULT: {color: '#F23555', opacity: 1, fillOpacity: 0.4},
-  DEFAULT_DRAW: {color: '#F23555', dashArray: '8,6', opacity: 1, fillOpacity: 0.4},
-  DEFAULT_EDIT: {color: '#F23555', dashArray: '8,6', moveMarkers: false, opacity: 1, fillOpacity: 0.4}
+  DEFAULT: {color: '#F43352', opacity: 1, fillOpacity: 0.4},
+  DEFAULT_DRAW: {color: '#F43352', dashArray: '8,6', opacity: 1, fillOpacity: 0.4},
+  DEFAULT_EDIT: {color: '#F43352', dashArray: '8,6', moveMarkers: false, opacity: 1, fillOpacity: 0.4}
 };

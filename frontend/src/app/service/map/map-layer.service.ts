@@ -5,7 +5,7 @@ import {AuthService} from '../authorization/auth.service';
 import {Injectable} from '@angular/core';
 import {ConfigService} from '../config/config.service';
 import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
-import {pathStyle} from './map-draw-styles';
+import {CITY_DISTRICTS, pathStyle, winkki} from './map-draw-styles';
 import {MapUtil} from './map.util';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
@@ -14,6 +14,7 @@ import '../../js/leaflet/wms-authentication';
 import 'leaflet-wfst';
 import TimeoutOptions = L.TimeoutOptions;
 import {Observable} from 'rxjs/Observable';
+import {PathOptions} from 'leaflet';
 
 const timeout: TimeoutOptions = {
   response: 10000,
@@ -53,13 +54,13 @@ export class MapLayerService {
     this.contentLayers = contentLayers;
 
     this.winkkiRoadWorks = {
-      'Tulevat': this.createWinkkiLayer('winkki_works', STATUS_PLAN),
-      'Aktiiviset': this.createWinkkiLayer('winkki_works', STATUS_ACTIVE)
+      'Tulevat': this.createWinkkiLayer('winkki_works', STATUS_PLAN, winkki.ROAD_WORKS),
+      'Aktiiviset': this.createWinkkiLayer('winkki_works', STATUS_ACTIVE, winkki.ROAD_WORKS)
     };
 
     this.winkkiEvents = {
-      'Tulevat': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN),
-      'Aktiiviset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE)
+      'Tulevat': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN, winkki.EVENT),
+      'Aktiiviset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE, winkki.EVENT)
     };
 
     this.clickableLayers = []
@@ -128,21 +129,21 @@ export class MapLayerService {
     };
   }
 
-  private createWinkkiLayer(layerName: string, status: string): L.FeatureGroup {
+  private createWinkkiLayer(layerName: string, status: string, style: PathOptions = pathStyle.DEFAULT): L.FeatureGroup {
     const statusFilter = L.Filter.eq('licence_status', status);
-    return this.winkkiWFS(layerName, statusFilter);
+    return this.winkkiWFS(layerName, statusFilter, style);
   }
 
-  private winkkiWFS(layerName: string, filter: L.Filter): L.FeatureGroup {
+  private winkkiWFS(layerName: string, filter: L.Filter, style: PathOptions): L.FeatureGroup {
     return L.wfs({
       url: '/geoserver/hkr/ows',
       typeNS: 'hkr',
       typeName: layerName,
       geometryField: 'wkb_geometry',
       crs: this.mapUtil.EPSG3879,
-      style: pathStyle.DEFAULT,
-      opacity: pathStyle.DEFAULT.opacity,
-      fillOpacity: pathStyle.DEFAULT.fillOpacity,
+      style: style,
+      opacity: style.opacity,
+      fillOpacity: style.fillOpacity,
       showExisting: true,
       filter: filter
     });
@@ -155,9 +156,9 @@ export class MapLayerService {
       typeName: 'Kaupunginosajako',
       geometryField: 'geom',
       crs: this.mapUtil.EPSG3879,
-      style: pathStyle.DEFAULT,
-      opacity: pathStyle.DEFAULT.opacity,
-      fillOpacity: pathStyle.DEFAULT.fillOpacity,
+      style: CITY_DISTRICTS,
+      opacity: CITY_DISTRICTS.opacity,
+      fillOpacity: CITY_DISTRICTS.fillOpacity,
       showExisting: true
     });
   }
