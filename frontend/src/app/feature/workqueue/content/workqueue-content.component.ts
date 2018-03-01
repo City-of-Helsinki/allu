@@ -32,6 +32,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   allSelected = false;
   selectedTags: Array<string> = [];
   hoveredRowIndex: number;
+  length = 0;
+  pageIndex = 0;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -49,6 +51,13 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dataSource = new ApplicationWorkItemDatasource(this.store, this.paginator, this.sort);
+
+    this.dataSource.page
+      .takeUntil(this.destroy)
+      .subscribe(page => {
+        this.length = page.totalElements;
+        this.pageIndex = page.pageNumber;
+      });
 
     this.route.data
       .map(data => data.tab)

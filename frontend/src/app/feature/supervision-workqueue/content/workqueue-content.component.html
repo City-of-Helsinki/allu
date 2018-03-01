@@ -53,8 +53,8 @@
   </mat-table>
 
   <mat-paginator #paginator
-                 [length]="dataSource.pageSnapshot.totalElements"
-                 [pageIndex]="dataSource.pageSnapshot.pageNumber"
+                 [length]="length"
+                 [pageIndex]="pageIndex"
                  [pageSize]="25"
                  [pageSizeOptions]="[5, 10, 25, 100]">
   </mat-paginator>

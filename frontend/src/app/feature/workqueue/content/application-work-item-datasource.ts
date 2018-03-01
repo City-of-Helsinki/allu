@@ -17,8 +17,6 @@ export interface ApplicationWorkItemRow {
 }
 
 export class ApplicationWorkItemDatasource extends DataSource<any> {
-
-  private _pageSnapshot = new Page<Application>();
   private destroy = new Subject<boolean>();
 
   constructor(private store: ApplicationWorkItemStore, private paginator: MatPaginator, private sort: MatSort) {
@@ -53,15 +51,10 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
     return this.store.changes
       .takeUntil(this.destroy)
       .map(state => state.page).distinctUntilChanged()
-      .do(page => this._pageSnapshot = page)
       .catch(err => {
         NotificationService.error(err);
         return Observable.of(new Page<Application>());
       });
-  }
-
-  public get pageSnapshot(): Page<Application> {
-    return this._pageSnapshot;
   }
 
   public get data(): Observable<ApplicationWorkItemRow[]> {
