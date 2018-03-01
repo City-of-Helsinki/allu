@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import inside from '@turf/inside';
+import inside from '@turf/boolean-point-in-polygon';
 
 export class MapEventHandler {
   static clickIntersects(event: L.LeafletMouseEvent, map: L.Map, layers: any): L.Layer[] {

@@ -64,9 +64,9 @@ export class MapLayerService {
     };
 
     this.clickableLayers = []
-      .concat(Object.values(this.contentLayers))
-      .concat(Object.values(this.winkkiRoadWorks))
-      .concat(Object.values(this.winkkiEvents));
+      .concat(this.toArray(this.contentLayers))
+      .concat(this.toArray(this.winkkiRoadWorks))
+      .concat(this.toArray(this.winkkiEvents));
   }
 
   get contentLayerArray(): Array<L.FeatureGroup> {
@@ -161,5 +161,9 @@ export class MapLayerService {
       fillOpacity: CITY_DISTRICTS.fillOpacity,
       showExisting: true
     });
+  }
+
+  private toArray(layers: L.Control.LayersObject): L.Layer[] {
+    return Object.keys(layers).map(key => layers[key]);
   }
 }
