@@ -8,6 +8,7 @@ import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.pricing.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -184,13 +188,21 @@ public class PricingService {
     int buildDays = CalendarUtil.daysBetween(application.getStartTime(), event.getEventStartTime());
     buildDays += CalendarUtil.daysBetween(event.getEventEndTime(), application.getEndTime());
 
+    InfoTexts infoTexts = new InfoTexts();
+    infoTexts.locationAddress = Printable.forPostalAddress(location.getPostalAddress());
+    infoTexts.eventPeriod = Printable.forDayPeriod(event.getEventStartTime(), event.getEventEndTime());
+    infoTexts.buildPeriods = buildDayPeriod(application.getStartTime(), event.getEventStartTime(),
+        event.getEventEndTime(), application.getEndTime());
+
     double structureArea = event.getStructureArea();
     double area = location.getEffectiveArea();
 
     for(PricingConfiguration pricingConfig : pricingConfigs) {
+      infoTexts.fixedLocation = Optional.ofNullable(pricingConfig.getFixedLocationId())
+          .flatMap(id -> locationDao.findFixedLocation(id)).map(Printable::forFixedLocation).orElse(null);
       // Calculate price per location...
       pricing.accumulatePrice(pricingConfig, eventDays, buildDays, structureArea,
-          area);
+          area, infoTexts);
     }
 
     // ... apply discounts...
@@ -199,6 +211,17 @@ public class PricingService {
     return pricing.getPriceInCents();
   }
 
+  private String buildDayPeriod(ZonedDateTime buildStart, ZonedDateTime eventStart, ZonedDateTime eventEnd,
+      ZonedDateTime teardownEnd) {
+    List<String> periods = new ArrayList<>();
+    if (buildStart != null && eventStart != null && ChronoUnit.DAYS.between(buildStart, eventStart) != 0) {
+      periods.add(Printable.forDayPeriod(buildStart, eventStart.minusDays(1)));
+    }
+    if (teardownEnd != null && eventEnd != null && ChronoUnit.DAYS.between(eventEnd, teardownEnd) != 0) {
+      periods.add(Printable.forDayPeriod(eventEnd.plusDays(1), teardownEnd));
+    }
+    return String.join("; ", periods);
+  }
   /*
    * Get event pricings for given location and nature.
    * May return multiple pricings if location consists of fixed locations.

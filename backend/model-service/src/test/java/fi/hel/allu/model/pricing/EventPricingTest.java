@@ -11,9 +11,15 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class EventPricingTest {
+  InfoTexts infoTexts;
 
   @Before
   public void setUp() throws Exception {
+    infoTexts = new InfoTexts();
+    infoTexts.locationAddress = "location";
+    infoTexts.fixedLocation = "fixedLocation";
+    infoTexts.eventPeriod = "eventPeriod";
+    infoTexts.buildPeriods = "buildPeriods";
   }
 
   @Test
@@ -22,7 +28,7 @@ public class EventPricingTest {
     PricingConfiguration bc = new PricingConfiguration(6000000L, 50, 50, 14, null, null, null, null);
     EventPricing bill = new EventPricing();
     // Calculate a bill for 5-day event with two build days and some structures + area:
-    bill.accumulatePrice(bc, 5, 2, 30.5, 300);
+    bill.accumulatePrice(bc, 5, 2, 30.5, 300, infoTexts);
     assertEquals(360000, bill.getPriceInCents()); // The price should be 3600
                                                   // EUR
     // Verify that EcoCompass gives 30% discount
@@ -40,7 +46,7 @@ public class EventPricingTest {
     // Calculate price for 20-day event with four build days and a 5000 sq.m.
     // area (i.e., 14 days with base price, 6 days with discount price and 4
     // days with build price)
-    bill.accumulatePrice(bc, 20, 4, 20, 5000.0);
+    bill.accumulatePrice(bc, 20, 4, 20, 5000.0, infoTexts);
     assertEquals(3562500L, bill.getPriceInCents()); // The price should be 35625
                                                   // EUR
     verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
@@ -55,7 +61,7 @@ public class EventPricingTest {
     EventPricing bill = new EventPricing();
     // Price for 25-day event with three build days, 455 sqm structures and 1000
     // sqm area:
-    bill.accumulatePrice(bc, 25, 3, 455.0, 1000.0);
+    bill.accumulatePrice(bc, 25, 3, 455.0, 1000.0, infoTexts);
     assertEquals(997500, bill.getPriceInCents()); // The price should be 9975
                                                   // EUR
     verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());

@@ -2,10 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.sql.SQLExpressions;
@@ -218,14 +215,37 @@ public class LocationDao {
     return findByApplication(applicationId);
   }
 
+  /**
+   * Get the list of all active fixed locations
+   */
   @Transactional(readOnly = true)
   public List<FixedLocation> getFixedLocationList() {
+    return findFixedLocations(Collections.emptyList());
+  }
+
+  /**
+   * Find a fixed location by ID
+   * @param id
+   */
+  @Transactional(readOnly = true)
+  public Optional<FixedLocation> findFixedLocation(int id) {
+    return findFixedLocations(Collections.singletonList(id)).stream().findFirst();
+  }
+
+  /*
+   *  Find fixed locations: either by ids or all active
+   */
+  private List<FixedLocation> findFixedLocations(List<Integer> ids)
+  {
+    final Predicate locationPredicate =
+        (ids.isEmpty()) ? fixedLocation.isActive.eq(true)
+            : fixedLocation.id.in(ids);
 
     List<FixedLocation> fxs = queryFactory
         .select(bean(FixedLocation.class, fixedLocation.id, locationArea.name.as("area"), fixedLocation.section,
             fixedLocation.applicationKind, fixedLocation.geometry))
         .from(fixedLocation).innerJoin(locationArea).on(fixedLocation.areaId.eq(locationArea.id))
-        .where(fixedLocation.isActive.eq(true))
+        .where(locationPredicate)
         .fetch();
 
     return fxs.stream()

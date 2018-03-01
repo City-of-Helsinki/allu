@@ -5,14 +5,15 @@ import java.util.Arrays;
 public class PricingConfiguration {
 
 
-  long baseCharge;
-  int buildDiscountPercent;
-  int durationDiscountPercent;
-  int durationDiscountLimit;
-  Long[] structureExtraCharges;
-  Double[] structureExtraChargeLimits;
-  Long[] areaExtraCharges;
-  Double[] areaExtraChargeLimits;
+  private long baseCharge;
+  private int buildDiscountPercent;
+  private int durationDiscountPercent;
+  private int durationDiscountLimit;
+  private Long[] structureExtraCharges;
+  private Double[] structureExtraChargeLimits;
+  private Long[] areaExtraCharges;
+  private Double[] areaExtraChargeLimits;
+  private Integer fixedLocationId;
 
   public PricingConfiguration() {
     // for beans
@@ -155,6 +156,14 @@ public class PricingConfiguration {
   public void setAreaExtraChargeLimits(Double[] areaExtraChargeLimits) {
     this.areaExtraChargeLimits = areaExtraChargeLimits;
     validateAreaExtraCharges();
+  }
+
+  public Integer getFixedLocationId() {
+    return fixedLocationId;
+  }
+
+  public void setFixedLocationId(Integer fixedLocationId) {
+    this.fixedLocationId = fixedLocationId;
   }
 
   private void validateAreaExtraCharges() {

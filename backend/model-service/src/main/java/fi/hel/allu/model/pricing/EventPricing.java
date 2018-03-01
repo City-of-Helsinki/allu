@@ -5,7 +5,9 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class EventPricing extends Pricing {
 
@@ -33,8 +35,11 @@ public class EventPricing extends Pricing {
    * @param area
    */
   public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
-      double area) {
+      double area, InfoTexts infoTexts) {
     List<String> explanation = new ArrayList<>();
+    final String address = Optional.ofNullable(infoTexts.fixedLocation).orElse(infoTexts.locationAddress);
+    // Add place and event time as one explanation line:
+    explanation.add(address + " (" + infoTexts.eventPeriod + ")");
     // daily charge is in euros:
     BigDecimal dailyCharge = BigDecimal.valueOf(pricingConfig.getBaseCharge(), 4);
     explanation.add(String.format(BASE_FEE_TEXT, dailyCharge.doubleValue()));
@@ -71,7 +76,7 @@ public class EventPricing extends Pricing {
       totalCharge = totalCharge.add(buildFees);
       addChargeBasisEntry(ChargeBasisTag.EventBuildDayFee(), ChargeBasisUnit.DAY, buildDays, priceInCents(dailyBuildFee),
           BUILD_DAY_FEE_TEXT,
-          priceInCents(buildFees));
+          priceInCents(buildFees), Collections.singletonList(address + " (" + infoTexts.buildPeriods + ")"));
     }
 
     fullPrice = fullPrice.add(totalCharge);
