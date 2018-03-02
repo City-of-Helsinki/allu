@@ -47,6 +47,8 @@ export class MapController {
   private focusedItems: L.FeatureGroup;
   private editedItems: L.FeatureGroup;
   private shapes$ = new Subject<ShapeAdded>();
+  private editing = false;
+  private deleting = false;
 
   constructor(private mapUtil: MapUtil,
               private mapStore: MapStore,
@@ -127,6 +129,7 @@ export class MapController {
     if (geometry) {
       this.drawGeometryToLayer(geometry, this.editedItems, style);
       this.showMeasurements(this.editedItems);
+      this.editedItems.bringToFront();
     }
   }
 
@@ -216,6 +219,20 @@ export class MapController {
     this.map.on('draw:edited', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
     this.map.on('draw:deleted', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
 
+    this.map.on('draw:editstart', () => {
+      this.editing = true;
+      self.editedItems.bringToFront();
+    });
+
+    this.map.on('draw:editstop', () => self.editing = false);
+
+    this.map.on('draw:deletestart', () => {
+      self.deleting = true;
+      self.editedItems.bringToFront();
+    });
+
+    this.map.on('draw:deletestop', () => self.deleting = false);
+
     this.map.on('moveend', (e: any) => {
       if (!self.config.showOnlyApplicationArea) {
         self.mapStore.mapViewChange(this.map.getBounds());
@@ -227,13 +244,8 @@ export class MapController {
     });
 
     this.map.on('click', (e: L.LeafletMouseEvent) => {
-      const intersecting = MapEventHandler.clickIntersects(e, self.map, self.mapLayerService.clickableLayers);
-      if (intersecting.length) {
-        const features = intersecting.map((l: any) => l.feature);
-        L.popup({className: 'allu-map-popup'})
-          .setLatLng(e.latlng)
-          .setContent(MapPopup.create(features, this.router))
-          .openOn(this.map);
+      if (!(this.editing || this.deleting)) {
+        self.showTooltipOnClick(e);
       }
     });
   }
@@ -289,5 +301,16 @@ export class MapController {
         l.showMeasurements(translations.map.measure);
       }
     });
+  }
+
+  private showTooltipOnClick(e: L.LeafletMouseEvent): void {
+    const intersecting = MapEventHandler.clickIntersects(e, this.map, this.mapLayerService.clickableLayers);
+    if (intersecting.length) {
+      const features = intersecting.map((l: any) => l.feature);
+      L.popup({className: 'allu-map-popup'})
+        .setLatLng(e.latlng)
+        .setContent(MapPopup.create(features, this.router))
+        .openOn(this.map);
+    }
   }
 }
