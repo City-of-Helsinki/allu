@@ -10,6 +10,7 @@ import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery'
 import {Application} from '../../model/application/application';
 import '../../rxjs-extensions';
 import {ApplicationService} from '../../service/application/application.service';
+import {NotificationService} from '../../service/notification/notification.service';
 
 const initialState: ApplicationWorkqueueState = {
   tab: undefined,
@@ -18,7 +19,8 @@ const initialState: ApplicationWorkqueueState = {
   pageRequest: new PageRequest(0, 25),
   page: new Page<Application>(),
   selectedItems: [],
-  allSelected: false
+  allSelected: false,
+  loading: false
 };
 
 @Injectable()
@@ -30,7 +32,8 @@ export class ApplicationWorkItemStore {
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
       this.changes.map(state => state.pageRequest).distinctUntilChanged()
-    ).switchMap(() => this.pagedSearch())
+    ).debounceTime(100) // Need a small delay here so changes in multiple observables do only on refresh
+      .switchMap(() => this.pagedSearch())
       .subscribe(page => this.pageChange(page));
   }
 
@@ -65,7 +68,8 @@ export class ApplicationWorkItemStore {
     this.store.next({
       ...this.store.getValue(),
       page: page,
-      allSelected: this.allSelected(itemIds, selected)
+      allSelected: this.allSelected(itemIds, selected),
+      loading: false
     });
   }
 
@@ -110,12 +114,18 @@ export class ApplicationWorkItemStore {
   }
 
   private pagedSearch(): Observable<Page<Application>> {
+    this.store.next({...this.store.getValue(), loading: true});
     const state = this.store.getValue();
+    let result: Observable<Page<Application>>;
+
     if (state.tab === WorkQueueTab.COMMON) {
-      return this.service.pagedSearchSharedByGroup(state.search, state.sort, state.pageRequest);
+      result = this.service.pagedSearchSharedByGroup(state.search, state.sort, state.pageRequest);
     } else {
-      return this.service.pagedSearch(state.search, state.sort, state.pageRequest);
+      result = this.service.pagedSearch(state.search, state.sort, state.pageRequest);
     }
+
+    return result
+      .catch(err => NotificationService.errorCatch(err, new Page<Application>()));
   }
 
   private allSelected(items: Array<number>, selected: Array<number>): boolean {
@@ -136,4 +146,5 @@ export interface ApplicationWorkqueueState {
   page?: Page<Application>;
   selectedItems?: Array<number>;
   allSelected?: boolean;
+  loading?: boolean;
 }

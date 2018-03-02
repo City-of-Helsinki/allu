@@ -23,6 +23,7 @@ export class DecisionComponent implements OnInit, OnDestroy {
   pdfUrl: SafeResourceUrl;
   pdfDownloadUrl: SafeUrl;
   pdfLoaded: boolean;
+  processing = false;
 
   private destroy = new Subject<boolean>();
 
@@ -44,6 +45,10 @@ export class DecisionComponent implements OnInit, OnDestroy {
         this.decisionHub.fetch(app.id)
           .subscribe(decision => this.providePdf(decision));
     });
+
+    this.applicationStore.changes.map(change => change.processing)
+      .takeUntil(this.destroy)
+      .subscribe(processing => this.processing = processing);
   }
 
   ngOnDestroy(): void {

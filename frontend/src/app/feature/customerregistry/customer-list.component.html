@@ -35,7 +35,11 @@
   </div>
   <div fxLayout="row">
     <div fxFlex>
-      <div class="mat-elevation-z8">
+      <div class="mat-elevation-z8 data-table">
+        <div class="loading-shade" *ngIf="customerSource.loading">
+          <mat-spinner></mat-spinner>
+        </div>
+
         <mat-table #table [dataSource]="customerSource" matSort [trackBy]="trackById">
           <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef mat-sort-header>{{'customer.nameLabel' | translation}}</mat-header-cell>

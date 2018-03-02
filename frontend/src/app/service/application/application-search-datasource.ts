@@ -13,6 +13,8 @@ import '../../rxjs-extensions';
 
 export class ApplicationSearchDatasource extends DataSource<any> {
 
+  public loading = false;
+
   private searchChanges = new Subject<ApplicationSearchQuery>();
   private destroy = new Subject<boolean>();
   private _page: Observable<Page<Application>>;
@@ -57,14 +59,23 @@ export class ApplicationSearchDatasource extends DataSource<any> {
     return Observable.merge(...displayDataChanges)
       .takeUntil(this.destroy)
       .skipUntil(this.searchChanges)
-      .switchMap(change => this.applicationService.pagedSearch(
-        this._search,
-        new Sort(this.sort.active, this.sort.direction),
-        new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
-      )).catch(err => {
+      .switchMap(() => this.load())
+      .do(page => {
+        this._pageSnapshot = page;
+        this.loading = false;
+      });
+  }
+
+  private load(): Observable<Page<Application>> {
+    this.loading = true;
+    return this.applicationService.pagedSearch(
+      this._search,
+      new Sort(this.sort.active, this.sort.direction),
+      new PageRequest(this.paginator.pageIndex, this.paginator.pageSize))
+    .catch(err => {
       NotificationService.error(err);
       return Observable.of(new Page<Application>());
-    }).do(page => this._pageSnapshot = page);
+    });
   }
 
   private resetPageIndexOnSearchSortChange(): void {

@@ -34,6 +34,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   hoveredRowIndex: number;
   length = 0;
   pageIndex = 0;
+  loading = false;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -78,6 +79,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
        .distinctUntilChanged()
        .takeUntil(this.destroy)
        .subscribe(query => this.selectedTags = query.tags);
+
+    this.store.changes.map(state => state.loading)
+      .distinctUntilChanged()
+      .takeUntil(this.destroy)
+      .subscribe(loading => this.loading = loading);
   }
 
   ngOnDestroy(): void {

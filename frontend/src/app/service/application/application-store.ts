@@ -31,6 +31,7 @@ export interface ApplicationState {
   relatedProject?: number;
   deposit?: Deposit;
   draft?: boolean;
+  processing?: boolean;
 }
 
 export const initialState: ApplicationState = {
@@ -42,7 +43,8 @@ export const initialState: ApplicationState = {
   tab: 'BASIC_INFO',
   relatedProject: undefined,
   deposit: undefined,
-  draft: false
+  draft: false,
+  processing: false
 };
 
 @Injectable()
@@ -79,7 +81,8 @@ export class ApplicationStore {
   applicationChange(application: Application) {
     this.store.next({
       ...this.current,
-      application: application
+      application: application,
+      processing: false
     });
   }
 
@@ -216,8 +219,13 @@ export class ApplicationStore {
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     const appId = id || this.snapshot.application.id;
+    this.store.next({...this.current, processing: true});
     return this.applicationService.changeStatus(appId, status, changeInfo)
-      .do(application => this.applicationChange(application));
+      .do(application => this.applicationChange(application))
+      .catch(err => {
+        this.store.next({...this.current, processing: false});
+        return Observable.throw(err);
+      });
   }
 
   changeRelatedProject(projectId: number) {

@@ -18,7 +18,8 @@ import {
   MatSelectModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatProgressSpinnerModule,
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MaterializeModule} from 'angular2-materialize';
@@ -77,6 +78,7 @@ import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
     MatProgressBarModule,
     MatTooltipModule,
     MatListModule,
+    MatProgressSpinnerModule,
     FlexLayoutModule,
     MaterializeModule,
     AutoCompletionDirective,

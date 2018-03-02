@@ -15,7 +15,6 @@ import {ApplicationStore} from '../../service/application/application-store';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {Some} from '../../util/option';
 import {DecisionDetails} from '../../model/decision/decision-details';
-import {DistributionType} from '../../model/common/distribution-type';
 
 
 @Component({

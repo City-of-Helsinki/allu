@@ -1,4 +1,8 @@
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 data-table">
+  <div class="loading-shade" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
   <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
     <ng-container matColumnDef="selected">
       <mat-header-cell *matHeaderCellDef>

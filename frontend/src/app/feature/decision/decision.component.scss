@@ -2,13 +2,6 @@
   height: 75%;
   padding: 0 0.75rem;
 }
-.content-pdf {
-  height: 100%;
-
-  object {
-    border: 1px solid #dcdcdc;
-  }
-}
 
 .pdf-header {
   background: white;
@@ -29,4 +22,9 @@
     height: auto;
     width: 100%;
   }
+}
+
+.pdf-content {
+  height: 100%;
+  position: relative;
 }

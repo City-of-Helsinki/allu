@@ -14,6 +14,8 @@ import {Application} from '../../model/application/application';
 
 export class CustomerDatasource extends DataSource<any> {
 
+  public loading = false;
+
   private searchChanges = new Subject<CustomerSearchQuery>();
   private destroy = new Subject<boolean>();
   private _page: Observable<Page<Customer>>;
@@ -58,14 +60,23 @@ export class CustomerDatasource extends DataSource<any> {
     return Observable.merge(...displayDataChanges)
       .takeUntil(this.destroy)
       .skipUntil(this.searchChanges)
-      .switchMap(change => this.service.pagedSearch(
-        this._search,
-        new Sort(this.sort.active, this.sort.direction),
-        new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
-      )).catch(err => {
-        NotificationService.error(err);
-        return Observable.of(new Page<Customer>());
-      }).do(page => this._pageSnapshot = page);
+      .switchMap(() => this.load())
+      .do(page => {
+        this._pageSnapshot = page;
+        this.loading = false;
+      });
+  }
+
+  private load(): Observable<Page<Customer>> {
+    this.loading = true;
+    return this.service.pagedSearch(
+      this._search,
+      new Sort(this.sort.active, this.sort.direction),
+      new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
+    ).catch(err => {
+      NotificationService.error(err);
+      return Observable.of(new Page<Customer>());
+    });
   }
 
   private resetPageIndexOnSearchSortChange(): void {

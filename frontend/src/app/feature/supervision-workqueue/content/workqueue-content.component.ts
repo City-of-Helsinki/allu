@@ -23,6 +23,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   allSelected = false;
   length = 0;
   pageIndex = 0;
+  loading = false;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -59,6 +60,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(allSelected => this.allSelected = allSelected);
+
+    this.store.changes.map(state => state.loading)
+      .distinctUntilChanged()
+      .takeUntil(this.destroy)
+      .subscribe(loading => this.loading = loading);
   }
 
   ngOnDestroy(): void {

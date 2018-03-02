@@ -1,4 +1,4 @@
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {SupervisionTaskSearchCriteria} from '../../../src/app/model/application/supervision/supervision-task-search-criteria';
 import {Observable} from 'rxjs/Observable';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
@@ -7,6 +7,8 @@ import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-wor
 import {SupervisionTaskService} from '../../../src/app/service/supervision/supervision-task.service';
 import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
 import {Page} from '../../../src/app/model/common/page';
+
+const STORE_DEBOUNCE_MS = 150;
 
 class SupervisionTaskServiceMock {
   search(searchCriteria: SupervisionTaskSearchCriteria): Observable<Page<SupervisionWorkItem>> {
@@ -45,12 +47,11 @@ describe('supervision-work-item-store', () => {
     expect(result).toEqual(WorkQueueTab.COMMON);
   }));
 
-  it('should notify search change', fakeAsync(() => {
+  it('should notify search change', async(() => {
     let result;
     const search = new SupervisionTaskSearchCriteria([], 'testId');
     store.searchChange(search);
     store.changes.map(state => state.search).subscribe(change => result = change);
-    tick();
     expect(result).toEqual(search);
   }));
 
@@ -103,20 +104,22 @@ describe('supervision-work-item-store', () => {
     tick();
 
     store.toggleSingle(page.content[0].id, false);
-    tick();
+    tick(STORE_DEBOUNCE_MS);
     expect(selected.length).toEqual(1);
     expect(allSelected).toEqual(false);
   }));
 
-  it('should remove selections when search changes', fakeAsync(() => {
+  it('should remove selections when search changes', async(() => {
     let selected;
-    store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
+    const page = new Page([new SupervisionWorkItem(1), new SupervisionWorkItem(2)]);
+    store.pageChange(page);
+    store.changes.map(state => state.selectedItems)
+      .subscribe(change => selected = change);
     store.toggleAll(true);
-    tick();
 
     store.searchChange(new SupervisionTaskSearchCriteria([], 'testId'));
-    tick();
-    expect(selected.length).toEqual(0);
+    // A bit ugly setTimeout usage to advance time enough that store emits change event
+    setTimeout(() => expect(selected.length).toEqual(0), STORE_DEBOUNCE_MS);
   }));
 
   it('should change handler for selected', fakeAsync(() => {

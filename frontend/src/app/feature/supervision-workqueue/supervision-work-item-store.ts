@@ -10,6 +10,7 @@ import {ArrayUtil} from '../../util/array-util';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
+import {NotificationService} from '../../service/notification/notification.service';
 
 const initialState: SupervisionWorkqueueState = {
   tab: undefined,
@@ -18,7 +19,8 @@ const initialState: SupervisionWorkqueueState = {
   pageRequest: new PageRequest(0, 25),
   page: new Page<SupervisionWorkItem>(),
   selectedItems: [],
-  allSelected: false
+  allSelected: false,
+  loading: false
 };
 
 @Injectable()
@@ -30,7 +32,8 @@ export class SupervisionWorkItemStore {
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
       this.changes.map(state => state.pageRequest).distinctUntilChanged()
-    ).subscribe(() => this.refresh());
+    ).debounceTime(100) // Need a small delay here so changes in multiple observables do only on refresh
+     .subscribe(() => this.refresh());
   }
 
   get changes(): Observable<SupervisionWorkqueueState> {
@@ -60,7 +63,8 @@ export class SupervisionWorkItemStore {
     const itemIds = this.itemIds(page);
     this.update({
       page: page,
-      allSelected: this.allSelected(itemIds, selected)
+      allSelected: this.allSelected(itemIds, selected),
+      loading: false
     });
   }
 
@@ -109,8 +113,14 @@ export class SupervisionWorkItemStore {
   private refresh(): void {
     const state = this.store.getValue();
     this.selectedItems([]);
+    this.update({loading: true});
     this.service.search(state.search, state.sort, state.pageRequest)
-      .subscribe(page => this.pageChange(page));
+      .subscribe(
+        page => this.pageChange(page),
+        err => {
+          NotificationService.error(err);
+          this.update({loading: false});
+        });
   }
 
   private allSelected(items: Array<number>, selected: Array<number>): boolean {
@@ -131,4 +141,5 @@ export interface SupervisionWorkqueueState {
   page?: Page<SupervisionWorkItem>;
   selectedItems?: Array<number>;
   allSelected?: boolean;
+  loading?: boolean;
 }
