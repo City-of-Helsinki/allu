@@ -12,8 +12,8 @@ import {EnvironmentType} from '../../model/config/environment-type';
 })
 export class AlluComponent implements OnInit, OnDestroy {
 
+  toolbarClass: string;
   private routeEventSub: Subscription;
-  private toolbarClass: string;
 
   constructor(private router: Router, private config: ConfigService) {
   }
