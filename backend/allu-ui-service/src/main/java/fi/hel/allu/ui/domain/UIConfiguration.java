@@ -1,22 +1,24 @@
 package fi.hel.allu.ui.domain;
 
+import fi.hel.allu.ui.config.Environment;
+
 /**
  * Configuration information used by Allu UI.
  */
 public class UIConfiguration {
-  public Boolean production;
+  public Environment environment;
   public String oauth2AuthorizationEndpointUrl;
   public String versionNumber;
 
   /**
-   * @return true, if executing in production system.
+   * @return Current environment
    */
-  public Boolean getProduction() {
-    return production;
+  public Environment getEnvironment() {
+    return environment;
   }
 
-  public void setProduction(Boolean production) {
-    this.production = production;
+  public void setEnvironment(Environment environment) {
+    this.environment = environment;
   }
 
   /**

@@ -2,7 +2,7 @@
   <div fxFlex="250px" fxFlexAlign="center" class="logo">
     <div>
       <a [routerLink]="['/home']" routerLinkActive="active">
-        <img src="assets/svg/allu-logo.svg" [alt]="'nav.home' | translation">
+        <img *ngIf="logo" [src]="logo" [alt]="'nav.home' | translation">
       </a>
     </div>
     <div class="version">{{version | async}}</div>

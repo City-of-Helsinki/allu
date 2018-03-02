@@ -9,12 +9,12 @@ export class CanActivateLogin implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.configService.getConfiguration()
-      .map(config => {
-        if (config.production) {
+    return this.configService.isStagingOrProduction()
+      .map(isStagOrProd => {
+        if (isStagOrProd) {
           this.router.navigate(['/home']);
         }
-        return !config.production;
+        return !isStagOrProd;
       });
   }
 }

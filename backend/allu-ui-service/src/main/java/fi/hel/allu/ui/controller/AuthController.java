@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.config.Environment;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class AuthController {
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<String> login(@RequestBody TempLogin user) {
-    if (applicationProperties.isProduction()) {
+    if (applicationProperties.getEnvironment() != Environment.DEV) {
       return new ResponseEntity<>("Login forbidden.", HttpStatus.FORBIDDEN);
     }
     UserJson userJson = userService.findUserByUserName(user.userName);

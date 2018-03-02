@@ -19,12 +19,12 @@ import java.net.URLEncoder;
 @RequestMapping("/uiconfig")
 public class ConfigController {
 
-  private UIConfiguration uiConfiguration;
+  private final UIConfiguration uiConfiguration;
 
   @Autowired
   public ConfigController(ApplicationProperties applicationProperties) {
     uiConfiguration = new UIConfiguration();
-    uiConfiguration.setProduction(applicationProperties.isProduction());
+    uiConfiguration.setEnvironment(applicationProperties.getEnvironment());
     uiConfiguration.setOauth2AuthorizationEndpointUrl(createOAuthAuthorizationEndpointUrl(applicationProperties));
     uiConfiguration.setVersionNumber(applicationProperties.getVersionNumber());
   }

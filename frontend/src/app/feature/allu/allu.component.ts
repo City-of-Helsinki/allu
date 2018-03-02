@@ -1,6 +1,8 @@
 import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
+import {ConfigService} from '../../service/config/config.service';
+import {EnvironmentType} from '../../model/config/environment-type';
 
 @Component({
   selector: 'allu',
@@ -11,8 +13,9 @@ import {Subscription} from 'rxjs/Subscription';
 export class AlluComponent implements OnInit, OnDestroy {
 
   private routeEventSub: Subscription;
+  private toolbarClass: string;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private config: ConfigService) {
   }
 
   ngOnInit(): void {
@@ -20,6 +23,11 @@ export class AlluComponent implements OnInit, OnDestroy {
       if (evt instanceof NavigationEnd) {
         window.scrollTo(0, 0);
       }
+    });
+    this.config.getConfiguration().subscribe(config => {
+      return config.environment === EnvironmentType.PRODUCTION
+        ? this.toolbarClass = undefined
+        : this.toolbarClass = 'stripes';
     });
   }
 

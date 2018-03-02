@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class ApplicationProperties {
 
-  private final boolean production;
+  private final Environment environment;
   private final String versionNumber;
   private final String geocodeUrl;
   private final String geocodeUrlWithLetter;
@@ -29,7 +29,7 @@ public class ApplicationProperties {
   private final List<String> anonymousAccessPaths;
 
   @Autowired
-  public ApplicationProperties(@Value("${production}") boolean production,
+  public ApplicationProperties(@Value("${environment}") String environment,
                                @Value("${version.number}") String versionNumber,
                                @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
                                @Value("${wfs.template.street.geocode.with.letter}") @NotEmpty String geocodeUrlWithLetter,
@@ -45,7 +45,7 @@ public class ApplicationProperties {
                                @Value("${oauth2.redirect.uri}") @NotEmpty String oauth2RedirectUri,
                                @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate,
                                @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
-    this.production = production;
+    this.environment = Environment.valueOf(environment);
     this.versionNumber = versionNumber;
     this.geocodeUrl = geocodeUrl;
     this.geocodeUrlWithLetter = geocodeUrlWithLetter;
@@ -64,10 +64,10 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return  true, if system is running in production.
+   * @return Current environment
    */
-  public boolean isProduction() {
-    return production;
+  public Environment getEnvironment() {
+    return environment;
   }
 
   /**

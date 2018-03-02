@@ -80,8 +80,8 @@ export class MapLayerService {
   }
 
   get restrictedOverlays(): Observable<L.Control.LayersObject> {
-    return this.config.isProduction()
-      .filter(isProd => isProd)
+    return this.config.isStagingOrProduction()
+      .filter(isStagOrProd => isStagOrProd)
       .map(() => this.initRestrictedOverlays(this.token));
   }
 
