@@ -30,7 +30,8 @@ public class AuthController {
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<String> login(@RequestBody TempLogin user) {
-    if (applicationProperties.getEnvironment() != Environment.DEV) {
+    if (!(applicationProperties.getEnvironment() == Environment.DEV ||
+          applicationProperties.getEnvironment() == Environment.TEST)) {
       return new ResponseEntity<>("Login forbidden.", HttpStatus.FORBIDDEN);
     }
     UserJson userJson = userService.findUserByUserName(user.userName);
