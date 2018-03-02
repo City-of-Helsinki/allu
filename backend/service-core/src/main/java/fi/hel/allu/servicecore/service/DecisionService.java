@@ -560,9 +560,22 @@ public class DecisionService {
     cwcOpt.ifPresent(cwc ->
       contactLines.addAll(
           cwc.getContacts().stream()
-            .flatMap(c -> Stream.of(c.getName(), String.format("%s, %s", c.getEmail(), c.getPhone())))
+            .flatMap(c -> Stream.of(c.getName(), customerEmailAndPhone(c)))
             .collect(Collectors.toList())));
     return contactLines;
+  }
+
+  private String customerEmailAndPhone(ContactJson contact) {
+    if (contact.getEmail() == null && contact.getPhone() == null) {
+      return "";
+    }
+    if (contact.getEmail() == null) {
+      return contact.getPhone();
+    }
+    if (contact.getPhone() == null) {
+      return contact.getEmail();
+    }
+    return String.format("%s, %s", contact.getEmail(), contact.getPhone());
   }
 
   private String siteAddressLine(ApplicationJson application) {

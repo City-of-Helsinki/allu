@@ -115,8 +115,7 @@ hr {
   width: 25%; }
 .body .charge-info {
   margin-top: 10pt;
-  margin-left: 5pt;
-  font-size: 8pt;
+  font-size: 10pt;
   width: 95%;
   display: table; }
   .body .charge-info .row {
@@ -126,6 +125,8 @@ hr {
   .body .charge-info .c1 {
     width: 50%; }
     .body .charge-info .c1 .explanation {
+      margin-left: 5pt;
+      font-size: 8pt;
       float: none; }
     .body .charge-info .c1 .up-arrow {
       display: block;
