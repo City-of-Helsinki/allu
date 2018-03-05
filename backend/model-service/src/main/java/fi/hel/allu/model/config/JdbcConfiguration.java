@@ -63,6 +63,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToSupervisionTaskStatusType());
     configuration.register(new StringToChargeBasisType());
     configuration.register(new StringToDepositStatusType());
+    configuration.register(new StringToConfigurationType());
     return configuration;
   }
 

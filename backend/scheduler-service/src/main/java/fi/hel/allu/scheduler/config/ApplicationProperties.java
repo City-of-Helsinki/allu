@@ -1,5 +1,6 @@
 package fi.hel.allu.scheduler.config;
 
+import fi.hel.allu.model.domain.ConfigurationType;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,18 +34,17 @@ public class ApplicationProperties {
   private final String sapFtpCustomerDirectory;
   private final String sapFtpCustomerArchive;
   private final String serviceAuth;
-  private final String customerNotificationReceiverEmail;
   private final String customerNotificationSubject;
   private final String uiBaseUrl;
-  private final String invoiceNotificationReceiverEmails;
   private final String invoiceNotificationSubject;
   private final int searchSyncStartupDelay;
 
   @Autowired
-  public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
-                               @Value("${model.service.port}") @NotEmpty String modelServicePort,
-                               @Value("${ext.service.host}") @NotEmpty String extServiceHost,
-                               @Value("${ext.service.port}") @NotEmpty String extServicePort,
+  public ApplicationProperties(
+      @Value("${model.service.host}") @NotEmpty String modelServiceHost,
+      @Value("${model.service.port}") @NotEmpty String modelServicePort,
+      @Value("${ext.service.host}") @NotEmpty String extServiceHost,
+      @Value("${ext.service.port}") @NotEmpty String extServicePort,
       @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
       @Value("${invoice.archivedir}") @NotEmpty String invoiceArchiveDir,
@@ -64,9 +64,7 @@ public class ApplicationProperties {
       @Value("${sap.ftp.customer.directory}") @NotEmpty String sapFtpCustomerDirectory,
       @Value("${sap.ftp.customer.archive}") @NotEmpty String sapFtpCustomerArchive,
       @Value("${service.authkey}") @NotEmpty String serviceAuth,
-      @Value("${customer.notification.receiveremail}") String customerNotificationReceiverEmail,
       @Value("${customer.notification.subject}") @NotEmpty String customerNotificationSubject,
-      @Value("${invoice.notification.receiveremails}") String invoiceNotificationReceiverEmails,
       @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl,
       @Value("${search.sync.startup.delay}") int searchSyncStartupDelay) {
@@ -93,9 +91,7 @@ public class ApplicationProperties {
     this.sapFtpCustomerDirectory = sapFtpCustomerDirectory;
     this.sapFtpCustomerArchive = sapFtpCustomerArchive;
     this.serviceAuth = serviceAuth;
-    this.customerNotificationReceiverEmail = customerNotificationReceiverEmail;
     this.customerNotificationSubject = customerNotificationSubject;
-    this.invoiceNotificationReceiverEmails = invoiceNotificationReceiverEmails;
     this.invoiceNotificationSubject = invoiceNotificationSubject;
     this.uiBaseUrl = uiBaseUrl;
     this.searchSyncStartupDelay = searchSyncStartupDelay;
@@ -304,10 +300,10 @@ public class ApplicationProperties {
   }
 
   /**
-   * Get receiver email for SAP customer notifications
+   * Url for receiver emails for SAP customer notifications
    */
-  public String getCustomerNotificationReceiverEmail() {
-    return customerNotificationReceiverEmail;
+  public String getCustomerNotificationReceiverEmailsUrl() {
+    return getModelServiceUrl("/configuration/" + ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL);
   }
 
   /**
@@ -339,10 +335,10 @@ public class ApplicationProperties {
   }
 
   /**
-  * Get receiver email for SAP invoice notifications
+  * @return url for receiver email for SAP invoice notifications
   */
-  public String getInvoiceNotificationReceiverEmails() {
-    return invoiceNotificationReceiverEmails;
+  public String getInvoiceNotificationReceiverEmailsUrl() {
+    return getModelServiceUrl("/configuration/" + ConfigurationType.INVOICE_NOTIFICATION_RECEIVER_EMAIL);
   }
 
   /**

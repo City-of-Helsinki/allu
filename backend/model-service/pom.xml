@@ -466,6 +466,12 @@
                             <column>status</column>
                             <type>fi.hel.allu.model.querydsl.StringToDepositStatusType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>configuration</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToConfigurationType</type>
+                        </typeMapping>
+
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

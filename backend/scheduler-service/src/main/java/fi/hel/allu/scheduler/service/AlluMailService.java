@@ -25,8 +25,8 @@ public class AlluMailService {
 
   private static final Logger logger = LoggerFactory.getLogger(AlluMailService.class);
 
-  private ApplicationProperties applicationProperties;
-  private MailService mailService;
+  private final ApplicationProperties applicationProperties;
+  private final MailService mailService;
   private Pattern emailAcceptPattern = null;
 
   @Autowired
@@ -58,7 +58,7 @@ public class AlluMailService {
     if (emailAcceptPattern != null) {
       List<String> forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
           .collect(Collectors.toList());
-      if (forbidden.size() != 0) {
+      if (!forbidden.isEmpty()) {
         throw new IllegalArgumentException("Forbidden recipient addresses: " + String.join(", ", forbidden));
       }
     }

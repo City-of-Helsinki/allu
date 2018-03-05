@@ -2,6 +2,7 @@ package fi.hel.allu.scheduler.service;
 
 import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.sap.mapper.AlluMapper;
@@ -10,11 +11,12 @@ import fi.hel.allu.sap.model.SalesOrder;
 import fi.hel.allu.sap.model.SalesOrderContainer;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestTemplate;
@@ -29,10 +31,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service for sending invoices
@@ -144,19 +151,16 @@ public class InvoicingService {
   }
 
   private void sendNotificationEmail(List<String> applicationIds) {
-    String receiverEmails = applicationProperties.getInvoiceNotificationReceiverEmails();
-    if (StringUtils.isEmpty(receiverEmails)) {
+    List<String> receiverEmails = getInvoiceNotificationReceiverEmails();
+    if (receiverEmails.isEmpty()) {
       return;
     }
 
     String subject = applicationProperties.getInvoiceNotificationSubject();
-    String mailTemplate = null;
     try {
-      mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
+      String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
       String body = StrSubstitutor.replace(mailTemplate, mailVariables(applicationIds));
-      Arrays.stream(receiverEmails.split(","))
-          .map(receiver -> receiver.trim())
-          .forEach(receiver -> alluMailService.sendEmail(Collections.singletonList(receiver), subject, body));
+      alluMailService.sendEmail(receiverEmails, subject, body);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
@@ -170,4 +174,12 @@ public class InvoicingService {
     return result;
   }
 
+  private List<String> getInvoiceNotificationReceiverEmails() {
+    final List<Configuration> emails = restTemplate.exchange(
+        applicationProperties.getInvoiceNotificationReceiverEmailsUrl(),
+        HttpMethod.GET,
+        null,
+        new ParameterizedTypeReference<List<Configuration>>() {}).getBody();
+    return emails.stream().map(c -> c.getValue()).collect(Collectors.toList());
+  }
 }

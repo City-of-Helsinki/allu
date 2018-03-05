@@ -1,32 +1,34 @@
 package fi.hel.allu.scheduler.service;
 
 import fi.hel.allu.common.util.ResourceUtil;
+import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.eclipse.jetty.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SapCustomerNotificationService {
 
   private static final Logger logger = LoggerFactory.getLogger(SapCustomerNotificationService.class);
 
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private AlluMailService alluMailService;
-  private AuthenticationService authenticationService;
+  private final RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final AlluMailService alluMailService;
+  private final AuthenticationService authenticationService;
 
   private static final String MAIL_TEMPLATE = "/templates/customer-notification-mail-template.txt";
 
@@ -43,26 +45,26 @@ public class SapCustomerNotificationService {
    * Sends notification emails about customers waiting SAP customer number
    */
   public void sendSapCustomerNotificationEmails() {
-    if (!StringUtil.isBlank(applicationProperties.getCustomerNotificationReceiverEmail())) {
+    final List<String> customerNotificationReceiverEmails = getCustomerNotificationReceiverEmails();
+    if (!customerNotificationReceiverEmails.isEmpty()) {
       Integer numberOfCustomersWaitingSapNumber = getNumberOfCustomersWaitingSapNumber();
-      if (numberOfCustomersWaitingSapNumber != null && numberOfCustomersWaitingSapNumber.intValue() > 0) {
-        sendMail(numberOfCustomersWaitingSapNumber);
+      if (numberOfCustomersWaitingSapNumber != null && numberOfCustomersWaitingSapNumber > 0) {
+        sendMail(numberOfCustomersWaitingSapNumber, customerNotificationReceiverEmails);
       }
     }
   }
 
   private Integer getNumberOfCustomersWaitingSapNumber() {
     return restTemplate.exchange(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl(), HttpMethod.GET,
-        new HttpEntity<String>(authenticationService.createAuthenticationHeader()), Integer.class).getBody();
+        new HttpEntity<>(authenticationService.createAuthenticationHeader()), Integer.class).getBody();
   }
 
-  private void sendMail(Integer numberOfCustomersWaitingSapNumber) {
+  private void sendMail(Integer numberOfCustomersWaitingSapNumber, List<String> receiverEmails) {
     String subject = String.format(applicationProperties.getCustomerNotificationMailSubject());
-    String mailTemplate = null;
     try {
-      mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
+      String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
       String body = StrSubstitutor.replace(mailTemplate, mailVariables(numberOfCustomersWaitingSapNumber));
-      alluMailService.sendEmail(Collections.singletonList(applicationProperties.getCustomerNotificationReceiverEmail()), subject, body);
+      alluMailService.sendEmail(receiverEmails, subject, body);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
@@ -75,4 +77,12 @@ public class SapCustomerNotificationService {
     return result;
   }
 
+  private List<String> getCustomerNotificationReceiverEmails() {
+    final List<Configuration> emails = restTemplate.exchange(
+        applicationProperties.getCustomerNotificationReceiverEmailsUrl(),
+        HttpMethod.GET,
+        null,
+        new ParameterizedTypeReference<List<Configuration>>() {}).getBody();
+    return emails.stream().map(c -> c.getValue()).collect(Collectors.toList());
+  }
 }
