@@ -26,6 +26,7 @@ export interface MapState {
   shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
   selectedSections: Array<number>;
   drawingAllowed: boolean;
+  hasFixedGeometry: boolean;
 }
 
 const initialState: MapState = {
@@ -39,7 +40,8 @@ const initialState: MapState = {
   locationsToDraw: [],
   shape: undefined,
   selectedSections: [],
-  drawingAllowed: true
+  drawingAllowed: true,
+  hasFixedGeometry: false
 };
 
 @Injectable()
@@ -62,6 +64,11 @@ export class MapStore {
 
   reset(): void {
     this.store.next(ObjectUtil.clone(initialState));
+  }
+
+  get changes(): Observable<MapState> {
+    return this.store.asObservable()
+      .distinctUntilChanged();
   }
 
   get snapshot(): MapState {
@@ -111,6 +118,10 @@ export class MapStore {
 
   get drawingAllowed(): Observable<boolean> {
     return this.store.map(state => state.drawingAllowed).distinctUntilChanged();
+  }
+
+  get hasFixedGeometry(): Observable<boolean> {
+    return this.changes.map(state => state.hasFixedGeometry).distinctUntilChanged();
   }
 
   get matchingAddresses(): Observable<PostalAddress[]> {
@@ -168,6 +179,10 @@ export class MapStore {
   addressSearchChange(searchTerm: string): void {
     this.locationService.search(searchTerm)
       .subscribe(result => this.store.next({...this.store.getValue(), matchingAddresses: result}));
+  }
+
+  hasFixedGeometryChange(hasFixedGeometry: boolean): void {
+    this.store.next({...this.store.getValue(), hasFixedGeometry});
   }
 
   private fetchMapDataByFilter(filter: MapSearchFilter): void {

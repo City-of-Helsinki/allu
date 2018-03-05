@@ -218,7 +218,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const isAllowedForKind = Some(this.application.kinds)
       .map(kinds => kinds.every(kind => drawingAllowedForKind(kind)))
       .orElse(true);
-    this.mapStore.drawingAllowedChange(isAllowedForKind && (this.sectionsCtrl.value.length === 0));
+    this.mapStore.drawingAllowedChange(isAllowedForKind);
   }
 
   get submitAllowed(): boolean {
@@ -266,8 +266,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
     Some(this.application.firstLocation)
-      .filter(location => location.fixedLocationIds.length > 0)
-      .do(location => this.sectionsCtrl.patchValue(location.fixedLocationIds));
+      .map(location => location.fixedLocationIds)
+      .filter(ids => ids.length > 0)
+      .do(ids => {
+        this.sectionsCtrl.patchValue(ids);
+        this.mapStore.selectedSectionsChange(ids);
+      });
   }
 
   private onAreaChange(id: number): void {

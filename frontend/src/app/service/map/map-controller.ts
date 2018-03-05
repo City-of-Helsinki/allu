@@ -49,6 +49,7 @@ export class MapController {
   private shapes$ = new Subject<ShapeAdded>();
   private editing = false;
   private deleting = false;
+  private destroy = new Subject<boolean>();
 
   constructor(private mapUtil: MapUtil,
               private mapStore: MapStore,
@@ -56,6 +57,12 @@ export class MapController {
               private router: Router,
               private config: MapControllerConfig) {
     this.initMap();
+    this.handleDrawingAllowedChanges();
+  }
+
+  onDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   public clearDrawn() {
@@ -187,7 +194,7 @@ export class MapController {
     }).addTo(this.map);
     L.control.scale().addTo(this.map);
     L.Icon.Default['imagePath'] = '/assets/images/';
-    this.setDynamicControls(true, editedItems);
+    this.setDynamicControls(this.mapStore.snapshot.drawingAllowed, editedItems);
   }
 
   private createMap(): L.Map {
@@ -312,5 +319,19 @@ export class MapController {
         .setContent(MapPopup.create(features, this.router))
         .openOn(this.map);
     }
+  }
+
+  private handleDrawingAllowedChanges(): void {
+    const drawingAllowed = (drawing: boolean, sections: number[]) => {
+      const noSelectedSections = sections === undefined || sections.length === 0;
+      return drawing && noSelectedSections;
+    };
+
+    Observable.combineLatest(
+      this.mapStore.drawingAllowed,
+      this.mapStore.selectedSections,
+      drawingAllowed
+    ).takeUntil(this.destroy)
+      .subscribe(allowed => this.setDynamicControls(allowed));
   }
 }

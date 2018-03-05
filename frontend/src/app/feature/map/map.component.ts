@@ -56,6 +56,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+    this.mapController.onDestroy();
   }
 
   applicationSelected(application: Application) {
@@ -120,9 +121,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateMapControls(locations: Array<Location>) {
-    if (locations.some(loc => loc.hasFixedGeometry())) {
-      this.mapController.setDynamicControls(false);
-    } else {
+    if (!locations.some(loc => loc.hasFixedGeometry())) {
       const geometryCount = locations.reduce((cur, acc) => cur + acc.geometryCount(), 0);
       this.editedItemCountChanged.emit(geometryCount);
     }
@@ -136,9 +135,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.mapController.drawFixedLocations(geometries);
       this.mapController.fitEditedToView();
     }
-
-    // Disable editing map with draw controls when we have fixed locations
-    this.mapController.setDynamicControls(fixedLocations.length === 0);
   }
 
   private addShape(shapeAdded: ShapeAdded) {
@@ -194,13 +190,5 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.locationsToDraw
       .takeUntil(this.destroy)
       .subscribe(locs => this.drawFocusedLocations(locs));
-
-    this.mapStore.drawingAllowed
-      .takeUntil(this.destroy)
-      .subscribe(allowed => this.drawingAllowed(allowed));
-  }
-
-  private drawingAllowed(allowed: boolean) {
-    this.mapController.setDynamicControls(allowed);
   }
 }
