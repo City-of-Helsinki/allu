@@ -4,7 +4,7 @@ import {By} from '@angular/platform-browser';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
-import {availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
+import {availableToDirectiveMockMeta, CityDistrictServiceMock, CurrentUserMock} from '../../mocks';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
@@ -13,6 +13,7 @@ import {WorkQueueFilterComponent} from '../../../src/app/feature/supervision-wor
 import {findTranslation} from '../../../src/app/util/translations';
 import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
 import {Page} from '../../../src/app/model/common/page';
+import {CityDistrictService} from '../../../src/app/service/map/city-district.service';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -38,7 +39,8 @@ describe('SupervisionWorkqueueFilterComponent', () => {
       providers: [
         FormBuilder,
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
-        {provide: CurrentUser, useValue: currentUserMock}
+        {provide: CurrentUser, useValue: currentUserMock},
+        {provide: CityDistrictService, useClass: CityDistrictServiceMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))

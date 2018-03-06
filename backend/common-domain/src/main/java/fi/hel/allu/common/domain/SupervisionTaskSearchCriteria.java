@@ -15,6 +15,7 @@ public class SupervisionTaskSearchCriteria {
   private List<ApplicationType> applicationTypes;
   private List<StatusType> applicationStatus;
   private Integer handlerId;
+  private List<Integer> cityDistrictIds;
 
   public List<SupervisionTaskType> getTaskTypes() {
     return taskTypes;
@@ -70,5 +71,13 @@ public class SupervisionTaskSearchCriteria {
 
   public void setHandlerId(Integer handlerId) {
     this.handlerId = handlerId;
+  }
+
+  public List<Integer> getCityDistrictIds() {
+    return cityDistrictIds;
+  }
+
+  public void setCityDistrictIds(List<Integer> cityDistrictIds) {
+    this.cityDistrictIds = cityDistrictIds;
   }
 }

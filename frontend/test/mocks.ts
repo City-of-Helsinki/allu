@@ -17,6 +17,7 @@ import {CurrentUser} from '../src/app/service/user/current-user';
 import {ApplicationState} from '../src/app/service/application/application-store';
 import {Comment} from '../src/app/model/application/comment/comment';
 import {ApplicationType} from '../src/app/model/application/type/application-type';
+import {CityDistrict} from '../src/app/model/common/city-district';
 
 /**
  * Mock for application state
@@ -185,6 +186,17 @@ export class InvoiceHubMock {
 
   get chargeBasisEntries(): Observable<Array<ChargeBasisEntry>> {
     return Observable.empty();
+  }
+}
+
+export class CityDistrictServiceMock {
+  private districts = [
+    new CityDistrict(1, 1, 'First'),
+    new CityDistrict(2, 2, 'Second')
+  ];
+
+  public get(): Observable<CityDistrict[]> {
+    return Observable.of(this.districts);
   }
 }
 

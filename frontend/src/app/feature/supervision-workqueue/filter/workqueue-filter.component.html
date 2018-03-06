@@ -40,6 +40,14 @@
       </div>
       <div fxFlex="10">
         <mat-form-field class="input-full-width">
+          <mat-select formControlName="cityDistrictIds" [multiple]="true" class="input-full-width"
+                      [placeholder]="'supervisionWorkqueue.filter.cityDistrict' | translation">
+            <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxFlex="10">
+        <mat-form-field class="input-full-width">
           <input matInput type="text" formControlName="after"
                  [placeholder]="'supervisionWorkqueue.filter.after' | translation"
                  [matDatepicker]="afterPicker"/>

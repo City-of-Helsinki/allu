@@ -956,6 +956,7 @@ export const translations = {
       applicationId: 'Hakemustunnus',
       applicationStatus: 'Hakemuksen tila',
       applicationType: 'Hakemustyyppi',
+      cityDistrict: 'Kaupunginosa',
       after: 'Jälkeen',
       before: 'Ennen'
     },

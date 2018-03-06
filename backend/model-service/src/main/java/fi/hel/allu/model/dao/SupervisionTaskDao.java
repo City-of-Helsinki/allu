@@ -199,7 +199,8 @@ public class SupervisionTaskDao {
         Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTask.plannedFinishingTime::loe),
         Optional.ofNullable(searchCriteria.getApplicationId()).map(application.applicationId::startsWith),
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
-        values(searchCriteria.getApplicationStatus()).map(application.status::in)
+        values(searchCriteria.getApplicationStatus()).map(application.status::in),
+        values(searchCriteria.getCityDistrictIds()).map(location.cityDistrictId::in)
     ).filter(opt -> opt.isPresent())
      .map(opt -> opt.get());
   }

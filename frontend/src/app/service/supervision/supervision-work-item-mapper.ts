@@ -37,7 +37,8 @@ export class SupervisionSearchMapper {
         before: TimeUtil.dateToBackend(searchCriteria.before),
         applicationTypes: Some(searchCriteria.applicationTypes).map(types => types.map(type => ApplicationType[type])).orElse([]),
         applicationStatus: Some(searchCriteria.applicationStatus).map(status => status.map(s => ApplicationStatus[s])).orElse([]),
-        handlerId: searchCriteria.handlerId
+        handlerId: searchCriteria.handlerId,
+        cityDistrictIds: Some(searchCriteria.cityDistrictIds).orElse([])
       } : undefined;
   }
 }

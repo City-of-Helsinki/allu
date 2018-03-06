@@ -10,7 +10,8 @@ export class SupervisionTaskSearchCriteria {
     public before?: Date,
     public applicationTypes?: Array<ApplicationType>,
     public applicationStatus?: Array<ApplicationStatus>,
-    public handlerId?: number
+    public handlerId?: number,
+    public cityDistrictIds?: Array<number>
   ) {}
 }
 
@@ -22,4 +23,5 @@ export interface BackendSupervisionTaskSearchCriteria {
   applicationTypes: Array<string>;
   applicationStatus: Array<string>;
   handlerId: number;
+  cityDistrictIds: Array<number>;
 }

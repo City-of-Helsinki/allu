@@ -10,6 +10,9 @@ import {ApplicationStatus} from '../../../model/application/application-status';
 import {WorkQueueTab} from '../../workqueue/workqueue-tab';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Subscription} from 'rxjs/Subscription';
+import {CityDistrict} from '../../../model/common/city-district';
+import {Observable} from 'rxjs/Observable';
+import {CityDistrictService} from '../../../service/map/city-district.service';
 
 interface SupervisionTaskSearchCriteriaForm {
   taskTypes: Array<string>;
@@ -19,6 +22,7 @@ interface SupervisionTaskSearchCriteriaForm {
   applicationTypes: Array<string>;
   applicationStatus: Array<string>;
   handlerId: number;
+  cityDistrictIds: Array<number>;
 }
 
 @Component({
@@ -33,6 +37,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   taskTypes = EnumUtil.enumValues(SupervisionTaskType);
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
+  districts: Observable<Array<CityDistrict>>;
 
   private changeSubscription: Subscription;
   private formSubscription: Subscription;
@@ -40,7 +45,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: SupervisionWorkItemStore,
-    private currentUser: CurrentUser) {
+    private currentUser: CurrentUser,
+    private cityDistrictService: CityDistrictService) {
     this.queryForm = this.fb.group({
       taskTypes: [[]],
       applicationId: [undefined],
@@ -48,7 +54,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       before: [undefined],
       applicationTypes: [[]],
       applicationStatus: [[]],
-      handlerId: [undefined]
+      handlerId: [undefined],
+      cityDistrictIds: [[]]
     });
   }
 
@@ -62,6 +69,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       .distinctUntilChanged()
       .debounceTime(300)
       .subscribe(values => this.search(values));
+
+    this.districts = this.cityDistrictService.get();
   }
 
   ngOnDestroy(): void {
@@ -78,6 +87,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     criteria.applicationTypes = form.applicationTypes.map(type => ApplicationType[type]);
     criteria.applicationStatus = form.applicationStatus.map(s => ApplicationStatus[s]);
     criteria.handlerId = form.handlerId;
+    criteria.cityDistrictIds = form.cityDistrictIds;
     this.store.searchChange(criteria);
   }
 
