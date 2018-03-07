@@ -544,9 +544,9 @@ public class DecisionService {
     cwcOpt.ifPresent(cwc -> {
       addressLines.addAll(
           Arrays.asList(
-              String.format("%s, %s", cwc.getCustomer().getName(), cwc.getCustomer().getRegistryKey()),
+              combinePossibleBlankStrings(cwc.getCustomer().getName(), cwc.getCustomer().getRegistryKey()),
               postalAddress(cwc.getCustomer().getPostalAddress()),
-              String.format("%s, %s", cwc.getCustomer().getEmail(), cwc.getCustomer().getPhone())));
+              combinePossibleBlankStrings(cwc.getCustomer().getEmail(), cwc.getCustomer().getPhone())));
     });
     return addressLines;
   }
@@ -560,22 +560,22 @@ public class DecisionService {
     cwcOpt.ifPresent(cwc ->
       contactLines.addAll(
           cwc.getContacts().stream()
-            .flatMap(c -> Stream.of(c.getName(), customerEmailAndPhone(c)))
+            .flatMap(c -> Stream.of(c.getName(), combinePossibleBlankStrings(c.getEmail(), c.getPhone())))
             .collect(Collectors.toList())));
     return contactLines;
   }
 
-  private String customerEmailAndPhone(ContactJson contact) {
-    if (contact.getEmail() == null && contact.getPhone() == null) {
+  private String combinePossibleBlankStrings(String first, String second) {
+    if (StringUtils.isBlank(first) && StringUtils.isBlank(second)) {
       return "";
     }
-    if (contact.getEmail() == null) {
-      return contact.getPhone();
+    if (StringUtils.isBlank(first)) {
+      return second;
     }
-    if (contact.getPhone() == null) {
-      return contact.getEmail();
+    if (StringUtils.isBlank(second)) {
+      return first;
     }
-    return String.format("%s, %s", contact.getEmail(), contact.getPhone());
+    return String.format("%s, %s", first, second);
   }
 
   private String siteAddressLine(ApplicationJson application) {
