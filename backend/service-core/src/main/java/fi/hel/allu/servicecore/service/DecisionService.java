@@ -7,6 +7,7 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
 import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
@@ -436,9 +437,8 @@ public class DecisionService {
       decisionJson.setTeardownStartDate(formatDateWithDelta(ej.getEventEndTime(), 1));
       decisionJson.setTeardownEndDate(formatDateWithDelta(buildTearDate(application.getEndTime(), ej.getEventEndTime()), 0));
 
-      decisionJson.setNumBuildAndTeardownDays(
-          daysBetween(application.getStartTime(), ej.getEventStartTime())
-          + daysBetween(ej.getEventEndTime(), application.getEndTime()));
+      decisionJson.setNumBuildAndTeardownDays(EventDayUtil.buildDays(ej.getEventStartTime(), ej.getEventEndTime(),
+          application.getStartTime(), application.getEndTime()));
       decisionJson.setReservationTimeExceptions(ej.getTimeExceptions());
       decisionJson.setEventDescription(ej.getDescription());
       decisionJson.setStructureArea(String.format("%.0f", ej.getStructureArea()));
@@ -452,7 +452,7 @@ public class DecisionService {
   private ZonedDateTime buildTearDate(ZonedDateTime applicationDate, ZonedDateTime eventDate) {
     if (applicationDate != null && eventDate != null) {
       // build and tear dates exist when application's date differs from event's date
-      return applicationDate.equals(eventDate) ? null : applicationDate;
+      return applicationDate.isEqual(eventDate) ? null : applicationDate;
     }
     return null;
   }

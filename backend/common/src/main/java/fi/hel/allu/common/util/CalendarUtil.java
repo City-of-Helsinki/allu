@@ -1,4 +1,4 @@
-package fi.hel.allu.model.pricing;
+package fi.hel.allu.common.util;
 
 import java.time.DayOfWeek;
 import java.time.ZonedDateTime;

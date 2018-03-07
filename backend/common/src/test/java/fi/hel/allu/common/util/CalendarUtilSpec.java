@@ -1,4 +1,4 @@
-package fi.hel.allu.model.pricing;
+package fi.hel.allu.common.util;
 
 import com.greghaskins.spectrum.Spectrum;
 
@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.context;
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 import static org.junit.Assert.assertEquals;

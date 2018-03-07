@@ -8,6 +8,7 @@ import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.pricing.*;
 
@@ -184,9 +185,9 @@ public class PricingService {
 
     List<PricingConfiguration> pricingConfigs = getEventPricing(location, nature);
 
-    int eventDays = CalendarUtil.daysBetween(event.getEventStartTime(), event.getEventEndTime());
-    int buildDays = CalendarUtil.daysBetween(application.getStartTime(), event.getEventStartTime());
-    buildDays += CalendarUtil.daysBetween(event.getEventEndTime(), application.getEndTime());
+    final int eventDays = EventDayUtil.eventDays(event.getEventStartTime(), event.getEventEndTime());
+    final int buildDays = EventDayUtil.buildDays(event.getEventStartTime(), event.getEventEndTime(),
+        application.getStartTime(), application.getEndTime());
 
     InfoTexts infoTexts = new InfoTexts();
     infoTexts.locationAddress = Printable.forPostalAddress(location.getPostalAddress());

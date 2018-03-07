@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Application;
 
