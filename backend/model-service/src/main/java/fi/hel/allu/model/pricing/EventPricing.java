@@ -55,7 +55,7 @@ public class EventPricing extends Pricing {
     dailyCharge = dailyCharge.add(structureExtras.add(areaExtras));
 
     BigDecimal totalCharge = dailyCharge.multiply(BigDecimal.valueOf(eventDays));
-    addChargeBasisEntry(ChargeBasisTag.EventMultipleDayFee(), ChargeBasisUnit.DAY, eventDays, priceInCents(dailyCharge),
+    addChargeBasisEntry(ChargeBasisTag.EventMultipleDayFee(pricingConfig.getFixedLocationId()), ChargeBasisUnit.DAY, eventDays, priceInCents(dailyCharge),
         String.format(MULTIPLE_DAY_FEE_TEXT, eventDays, dailyCharge.doubleValue()), priceInCents(totalCharge),
         explanation);
 
@@ -64,7 +64,7 @@ public class EventPricing extends Pricing {
       BigDecimal dailyDiscount = dailyCharge
           .multiply(BigDecimal.valueOf(pricingConfig.getDurationDiscountPercent(), 2));
       BigDecimal discount = dailyDiscount.multiply(BigDecimal.valueOf(discountDays));
-      addChargeBasisEntry(ChargeBasisTag.EventLongEventDiscount(), ChargeBasisUnit.DAY, discountDays, -priceInCents(dailyDiscount),
+      addChargeBasisEntry(ChargeBasisTag.EventLongEventDiscount(pricingConfig.getFixedLocationId()), ChargeBasisUnit.DAY, discountDays, -priceInCents(dailyDiscount),
           String.format(LONG_EVENT_DISCOUNT_TEXT, pricingConfig.getDurationDiscountLimit()),
           -priceInCents(discount));
       totalCharge = totalCharge.subtract(discount);
@@ -74,7 +74,7 @@ public class EventPricing extends Pricing {
           .multiply(BigDecimal.valueOf(100 - pricingConfig.getBuildDiscountPercent(), 2));
       BigDecimal buildFees = BigDecimal.valueOf(buildDays).multiply(dailyBuildFee);
       totalCharge = totalCharge.add(buildFees);
-      addChargeBasisEntry(ChargeBasisTag.EventBuildDayFee(), ChargeBasisUnit.DAY, buildDays, priceInCents(dailyBuildFee),
+      addChargeBasisEntry(ChargeBasisTag.EventBuildDayFee(pricingConfig.getFixedLocationId()), ChargeBasisUnit.DAY, buildDays, priceInCents(dailyBuildFee),
           BUILD_DAY_FEE_TEXT,
           priceInCents(buildFees), Collections.singletonList(address + " (" + infoTexts.buildPeriods + ")"));
     }

@@ -5,7 +5,6 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling;
@@ -16,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplicationComment.applicationComment;
+import static com.querydsl.sql.SQLExpressions.select;
 import static fi.hel.allu.QChargeBasis.chargeBasis;
 
 @Repository
@@ -53,6 +51,10 @@ public class ChargeBasisDao {
   public void setChargeBasis(int applicationId, List<ChargeBasisEntry> entries, boolean manuallySet) {
     queryFactory.delete(chargeBasis)
         .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.manuallySet.eq(manuallySet))).execute();
+    // Delete possible dangling referred tags left by above delete
+    queryFactory.delete(chargeBasis)
+        .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.referredTag.notIn(
+            select(chargeBasis.tag).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.tag.isNotNull()))))).execute();
     if (!entries.isEmpty()) {
       SQLInsertClause insert = queryFactory.insert(chargeBasis);
       for (int entry = 0; entry < entries.size(); ++entry) {

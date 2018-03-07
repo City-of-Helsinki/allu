@@ -19,15 +19,24 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.EvtDF);
   }
 
-  public static ChargeBasisTag EventMultipleDayFee() {
+  public static ChargeBasisTag EventMultipleDayFee(Integer locationId) {
+    if (locationId != null) {
+      return new ChargeBasisTag(TagText.EvtMDF, locationId.toString());
+    }
     return new ChargeBasisTag(TagText.EvtMDF);
   }
 
-  public static ChargeBasisTag EventLongEventDiscount() {
+  public static ChargeBasisTag EventLongEventDiscount(Integer locationId) {
+    if (locationId != null) {
+      return new ChargeBasisTag(TagText.EvtLED, locationId.toString());
+    }
     return new ChargeBasisTag(TagText.EvtLED);
   }
 
-  public static ChargeBasisTag EventBuildDayFee() {
+  public static ChargeBasisTag EventBuildDayFee(Integer locationId) {
+    if (locationId != null) {
+      return new ChargeBasisTag(TagText.EvtBDF, locationId.toString());
+    }
     return new ChargeBasisTag(TagText.EvtBDF);
   }
 

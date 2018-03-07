@@ -51,7 +51,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
         describe("setChargeBasis", () -> {
           it("should throw error", () -> {
             assertThrows(RuntimeException.class)
-                .when(() -> chargeBasisDao.setChargeBasis(123, generateTestEntries(12, "Fail"), true));
+                .when(() -> chargeBasisDao.setChargeBasis(123, generateTestEntries(12, "Fail", null), true));
           });
         });
 
@@ -61,7 +61,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
 
           describe("setChargeBasis", () -> {
             it("shouldn't throw error with valid entries",
-                () -> chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(15, "test"), true));
+                () -> chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(15, "test", null), true));
 
             it("shouldn't throw error with empty list",
                     () -> chargeBasisDao.setChargeBasis(appId2.get(), Collections.emptyList(), false));
@@ -71,8 +71,8 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
             final int NUM_1ST_ENTRIES = 12;
             final int NUM_2ND_ENTRIES = 23;
             beforeEach(() -> {
-              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(NUM_1ST_ENTRIES, "First entries"), true);
-              chargeBasisDao.setChargeBasis(appId2.get(), generateTestEntries(NUM_2ND_ENTRIES, "Second entries"), true);
+              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(NUM_1ST_ENTRIES, "First entries", null), true);
+              chargeBasisDao.setChargeBasis(appId2.get(), generateTestEntries(NUM_2ND_ENTRIES, "Second entries", null), true);
             });
 
             describe("getChargeBasis", () -> {
@@ -99,10 +99,10 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
             final String CALCULATED_ENTRY_PREFIX = "Calculated entries";
 
             beforeEach(() -> {
-              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(NUM_MANUAL_ENTRIES, MANUAL_ENTRY_PREFIX),
+              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(NUM_MANUAL_ENTRIES, MANUAL_ENTRY_PREFIX, null),
                   true);
               chargeBasisDao.setChargeBasis(appId1.get(),
-                  generateTestEntries(NUM_CALCULATED_ENTRIES, CALCULATED_ENTRY_PREFIX),
+                  generateTestEntries(NUM_CALCULATED_ENTRIES, CALCULATED_ENTRY_PREFIX, null),
                       false);
             });
 
@@ -137,19 +137,45 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
               });
             });
 
+          context("when setting both manual and calculated entries", () -> {
+
+            beforeEach(() -> {
+              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(1, "auto", null), false);
+              List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
+              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(1, "man", entries.get(0).getTag()), true);
+
+              chargeBasisDao.setChargeBasis(appId2.get(), generateTestEntries(1, "auto", null), false);
+              entries = chargeBasisDao.getChargeBasis(appId2.get());
+              chargeBasisDao.setChargeBasis(appId2.get(), generateTestEntries(1, "man", entries.get(0).getTag()), true);
+
+            });
+
+              context("when clearing calculated entries", () -> {
+                it("should remove dangling manual entries for correct application", () -> {
+                  chargeBasisDao.setChargeBasis(appId1.get(), Collections.emptyList(), false);
+                  List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
+                  assertEquals(0, entries.size());
+                  entries = chargeBasisDao.getChargeBasis(appId2.get());
+                  assertEquals(2, entries.size());
+                });
+              });
+            });
+
           });
         });
       });
     });
   }
 
-  private List<ChargeBasisEntry> generateTestEntries(int numEntries, String text) {
+  private List<ChargeBasisEntry> generateTestEntries(int numEntries, String text, String referredTag) {
     List<ChargeBasisEntry> entries = new ArrayList<>();
     for (int r = 1; r <= numEntries; ++r) {
       ChargeBasisEntry entry = new ChargeBasisEntry();
       entry.setText(String.format("%s (%d)", text, r));
-      entry.setTag(String.format("tag-%d", r));
-      entry.setReferredTag(String.format("ref-%d", r));
+      entry.setTag(String.format("%s-tag-%d", text, r));
+      if (referredTag != null) {
+        entry.setReferredTag(referredTag);
+      }
       entry.setUnitPrice(r * 100);
       entry.setNetPrice(r * 200);
       entry.setType(ChargeBasisType.CALCULATED);
@@ -164,8 +190,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
     int r = 1;
     for (ChargeBasisEntry entry : entries) {
       assertTrue(entry.getText().startsWith(text));
-      assertEquals(String.format("tag-%d", r), entry.getTag());
-      assertEquals(String.format("ref-%d", r), entry.getReferredTag());
+      assertEquals(String.format("%s-tag-%d", text, r), entry.getTag());
       assertEquals(r * 100, entry.getUnitPrice());
       assertEquals(r * 200, entry.getNetPrice());
       assertEquals(ChargeBasisUnit.SQUARE_METER, entry.getUnit());
