@@ -53,6 +53,10 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     return TimeUtil.add(eventEnd, 1, 'day');
   }
 
+  onStructureTimeRequiredChanged(): void {
+    this.applicationForm.patchValue({structureTimes: {startTime: undefined, endTime: undefined}});
+  }
+
   protected initForm() {
     const snapshot = this.applicationStore.snapshot;
 

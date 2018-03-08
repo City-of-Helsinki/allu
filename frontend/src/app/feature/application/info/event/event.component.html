@@ -152,7 +152,8 @@
           <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
             <div fxFlex="0 0 calc(25% - 18px)">
               <mat-checkbox #structureTimes [disabled]="readonly" class="input-field-checkbox"
-                            [checked]="applicationForm.get('structureTimes').value.startTime || applicationForm.get('structureTimes').value.endTime">
+                            [checked]="applicationForm.get('structureTimes').value.startTime || applicationForm.get('structureTimes').value.endTime"
+                            (change)="onStructureTimeRequiredChanged()">
                 {{'application.event.structureTimeRequired' | translation}}
               </mat-checkbox>
             </div>
