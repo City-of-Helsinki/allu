@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.Optional;
 
 /**
@@ -186,7 +188,7 @@ public class SapCustomerService {
     customer.setId(getAlluId(sapCustomerData));
     customer.setSapCustomerNumber(sapCustomerData.getKunnr());
     customer.setRegistryKey(getRegistryKey(sapCustomerData));
-    customer.setName(sapCustomerData.getName1());
+    customer.setName(getName(sapCustomerData));
     customer.setInvoicingProhibited(isInvoicingProhibited(sapCustomerData));
     customer.setOvt(sapCustomerData.getStcd3());
     customer.setInvoicingOperator(sapCustomerData.getStcd4());
@@ -214,4 +216,10 @@ public class SapCustomerService {
     // Business ID in stcd1, personal identification number in stcd2
     return basicInformation.getStcd1() != null ? basicInformation.getStcd1() : basicInformation.getStcd2();
   }
+
+  private static String getName(E1KNA1M customerData) {
+    return Stream.of(customerData.getName1(), customerData.getName2(), customerData.getName3())
+        .filter(StringUtils::isNotBlank).collect(Collectors.joining("; "));
+  }
+
 }

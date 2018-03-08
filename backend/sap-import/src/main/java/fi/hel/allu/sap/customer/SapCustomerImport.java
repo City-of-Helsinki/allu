@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -81,7 +83,7 @@ public class SapCustomerImport implements CommandLineRunner {
     PostalAddress postalAddress = new PostalAddress(customerData.getStras(), customerData.getPstlz(),
         customerData.getOrt01());
     customerModel.setType(customerData.getStcd1() != null ? CustomerType.COMPANY : CustomerType.PERSON);
-    customerModel.setName(customerData.getName1());
+    customerModel.setName(getName(customerData));
     customerModel.setRegistryKey(customerData.getStcd1() != null ? customerData.getStcd1() : customerData.getStcd2());
     customerModel.setOvt(customerData.getStcd3());
     customerModel.setInvoicingOperator(customerData.getStcd4());
@@ -91,6 +93,11 @@ public class SapCustomerImport implements CommandLineRunner {
     customerModel.setInvoicingProhibited("X".equals(customerData.getSperr()));
     CustomerChange customerChange = new CustomerChange(userId, customerModel);
     restTemplate.postForObject(modelServiceUrl, customerChange, Customer.class);
+  }
+
+  private String getName(E1KNA1M customerData) {
+    return Stream.of(customerData.getName1(), customerData.getName2(), customerData.getName3())
+        .filter(StringUtils::isNotBlank).collect(Collectors.joining("; "));
   }
 
   private void archiveCustomerFile(File customerFile) {

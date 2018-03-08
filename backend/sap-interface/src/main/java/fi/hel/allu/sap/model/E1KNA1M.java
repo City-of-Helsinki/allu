@@ -19,6 +19,8 @@ public class E1KNA1M {
   private String ktokd;
   private String land1;
   private String name1;
+  private String name2;
+  private String name3;
   private String ort01;
   private String pstlz;
   private String stras;
@@ -135,6 +137,31 @@ public class E1KNA1M {
   public void setName1(String name1) {
     this.name1 = name1;
   }
+
+  /**
+   * Name 2
+   */
+  @XmlElement(name = "NAME2")
+  public String getName2() {
+    return name2;
+  }
+
+  public void setName2(String name2) {
+    this.name2 = name2;
+  }
+
+  /**
+   * Name 3
+   */
+  @XmlElement(name = "NAME3")
+  public String getName3() {
+    return name3;
+  }
+
+  public void setName3(String name3) {
+    this.name3 = name3;
+  }
+
 
   /**
    * City
