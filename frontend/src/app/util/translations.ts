@@ -669,6 +669,15 @@ export const translations = {
     }
   },
   location: {
+    title: 'Sijainti',
+    postalAddress: 'Osoite',
+    additionalInfo: 'Lisätietoja paikasta',
+    fixedArea: 'Alue',
+    sections: 'Lohkot',
+    area: 'Alueen pinta-ala',
+    areaOverride: 'Käsittelijän syöttämä pinta-ala',
+    cityDistrict: 'Kaupunginosa',
+    cityDistrictOverride: 'Käsittelijän valitsema kaupunginosa',
     underpass: 'Altakuljettava'
   },
   common: {

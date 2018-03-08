@@ -1,9 +1,6 @@
 package fi.hel.allu.common.controller.handler;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.exception.NonUniqueException;
-import fi.hel.allu.common.exception.NotImplementedException;
-import fi.hel.allu.common.exception.SearchException;
+import fi.hel.allu.common.exception.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,4 +51,9 @@ public class ControllerExceptionHandler {
     }
   }
 
+  @ExceptionHandler
+  public void handleIllegalOperation(IllegalOperationException e, HttpServletResponse response) throws IOException {
+    logger.error(e.getMessage(), e);
+    response.sendError(HttpStatus.FORBIDDEN.value(), e.getMessage());
+  }
 }

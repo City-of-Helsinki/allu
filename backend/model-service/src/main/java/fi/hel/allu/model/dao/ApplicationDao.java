@@ -735,6 +735,16 @@ public class ApplicationDao {
   @Transactional
   public void markInvoiced(List<Integer> applicationIds) {
     queryFactory.update(application).set(application.invoiced, true).where(application.id.in(applicationIds)).execute();
+  }
 
+  /**
+   * Fetches status of specified application
+   */
+  public StatusType getStatus(int applicationId) {
+    return queryFactory
+        .select(application.status)
+        .from(application)
+        .where(application.id.eq(applicationId))
+        .fetchOne();
   }
 }

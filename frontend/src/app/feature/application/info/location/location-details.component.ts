@@ -9,6 +9,7 @@ import {ApplicationType} from '../../../../model/application/type/application-ty
 import {LocationState} from '../../../../service/application/location-state';
 import {FixedLocationService} from '../../../../service/map/fixed-location.service';
 import {CityDistrictService} from '../../../../service/map/city-district.service';
+import {applicationCanBeEdited} from '../../../../model/application/application-status';
 
 @Component({
   selector: 'location-details',
@@ -24,6 +25,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   area: string;
   sections: string;
   multipleLocations = false;
+  canBeEdited = true;
 
   constructor(private mapStore: MapStore,
               private locationState: LocationState,
@@ -33,6 +35,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit(): void {
     this.location = this.application.firstLocation;
+    this.canBeEdited = applicationCanBeEdited(this.application.statusEnum);
     this.locationState.initLocations(this.application.locations);
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     // Sections can be selected only from single area so we can

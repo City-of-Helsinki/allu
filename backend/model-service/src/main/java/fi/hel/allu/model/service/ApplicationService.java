@@ -3,6 +3,7 @@ package fi.hel.allu.model.service;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
@@ -134,6 +135,7 @@ public class ApplicationService {
    */
   @Transactional
   public Application update(int id, Application application) {
+    verifyApplicationIsUpdatable(id);
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
@@ -212,6 +214,7 @@ public class ApplicationService {
    */
   @Transactional
   public Application changeApplicationStatus(int applicationId, StatusType statusType, Integer userId) {
+    verifyApplicationIsUpdatable(applicationId);
     switch (statusType) {
       case DECISION:
         createInvoiceIfNeeded(applicationId, userId);
@@ -356,4 +359,10 @@ public class ApplicationService {
     }
   }
 
+  private void verifyApplicationIsUpdatable(Integer id) throws IllegalOperationException {
+    StatusType status = applicationDao.getStatus(id);
+    if (StatusType.CANCELLED.equals(status)) {
+      throw new IllegalOperationException("Tried to update cancelled application " + id);
+    }
+  }
 }

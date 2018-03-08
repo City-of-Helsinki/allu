@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-title>Sijainti</mat-card-title>
+  <mat-card-title>{{'location.title' | translation}}</mat-card-title>
   <mat-card-content>
     <div class="row">
       <div class="col m8">
@@ -7,23 +7,25 @@
           <div class="col m3">
             <mat-form-field class="input-full-width">
               <input matInput type="text" [ngModel]="location.postalAddress.streetAddress" [disabled]="readonly"
-                     placeholder="Osoite"/>
+                     [placeholder]="'location.postalAddress' | translation"/>
             </mat-form-field>
           </div>
           <div class="col m9">
             <mat-form-field class="input-full-width">
               <input matInput type="text" [ngModel]="location.info" [disabled]="readonly"
-                     placeholder="Lisätietoja paikasta"/>
+                     [placeholder]="'location.additionalInfo' | translation"/>
             </mat-form-field>
           </div>
           <div class="col m10" *ngIf="area">
             <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="area" [disabled]="readonly" placeholder="Alue"/>
+              <input matInput type="text" [ngModel]="area" [disabled]="readonly"
+                     [placeholder]="'location.fixedArea' | translation"/>
             </mat-form-field>
           </div>
           <div class="col m2" *ngIf="area">
             <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="sections" [disabled]="readonly" placeholder="Lohko(t)"/>
+              <input matInput type="text" [ngModel]="sections" [disabled]="readonly"
+                     [placeholder]="'location.sections' | translation"/>
             </mat-form-field>
           </div>
         </div>
@@ -31,32 +33,33 @@
           <div class="col m3">
             <mat-form-field class="input-full-width">
               <input matInput type="text" [ngModel]="location.uiArea" [disabled]="readonly"
-                     placeholder="Alueen pinta-ala"/>
+                     [placeholder]="'location.area' | translation"/>
             </mat-form-field>
           </div>
           <div class="col m3">
             <mat-form-field class="input-full-width">
               <input matInput type="text" [ngModel]="location.areaOverride" [disabled]="readonly"
-                     placeholder="Käsittelijän syöttämä pinta-ala"/>
+                     [placeholder]="'location.areaOverride' | translation"/>
             </mat-form-field>
           </div>
           <div class="col m3">
             <mat-form-field class="input-full-width">
               <input matInput type="text" [ngModel]="districtName(location.cityDistrictId) | async"
-                     [disabled]="readonly" placeholder="Kaupunginosa"/>
+                     [disabled]="readonly" [placeholder]="'location.cityDistrict' | translation"/>
             </mat-form-field>
           </div>
           <div class="col m3">
             <mat-form-field class="input-full-width">
               <input matInput type="text" [ngModel]="districtName(location.cityDistrictIdOverride) | async"
-                     [disabled]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
+                     [disabled]="readonly" [placeholder]="'location.cityDistrictOverride' | translation"/>
             </mat-form-field>
           </div>
         </div>
       </div>
-      <div class="col m2 offset-m2">
+      <div class="col m2 offset-m2" *ngIf="canBeEdited">
         <button mat-raised-button type="button" color="primary"
-                [routerLink]="['/applications', application.id, 'location']">MUOKKAA
+                [routerLink]="['/applications', application.id, 'location']">
+          {{'common.button.edit' | translation}}
         </button>
       </div>
       <div class="col m12">

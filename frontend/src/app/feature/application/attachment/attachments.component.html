@@ -46,6 +46,7 @@
           <div class="card-item-align-right">
             <mat-slide-toggle
               [ngModel]="attachment.decisionAttachment"
+              [disabled]="!applicationCanBeEdited"
               (change)="decisionAttachmentToggle(attachment, $event)"
               labelPosition="before">
               {{'attachment.decisionAttachment' | translation}}

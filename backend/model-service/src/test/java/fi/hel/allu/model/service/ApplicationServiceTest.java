@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.Application;
@@ -190,4 +191,19 @@ public class ApplicationServiceTest {
     Mockito.verify(applicationDao).updateStatus(REPLACED_APP_ID, StatusType.REPLACED);
   }
 
+  @Test(expected = IllegalOperationException.class)
+  public void shouldThrowWhenTryingToUpdateCancelledApplication() {
+    final int APP_ID = 123;
+    final Application application = new Application();
+    application.setId(APP_ID);
+    Mockito.when(applicationDao.getStatus(APP_ID)).thenReturn(StatusType.CANCELLED);
+    applicationService.update(APP_ID, application);
+  }
+
+  @Test(expected = IllegalOperationException.class)
+  public void shouldThrowWhenTryingToUpdateCancelledApplicationsStatus() {
+    final int APP_ID = 123;
+    Mockito.when(applicationDao.getStatus(APP_ID)).thenReturn(StatusType.CANCELLED);
+    applicationService.changeApplicationStatus(APP_ID, StatusType.HANDLING, 1);
+  }
 }
