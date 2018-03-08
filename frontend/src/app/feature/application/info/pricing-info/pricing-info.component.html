@@ -1,4 +1,4 @@
-<form [formGroup]="form">
+<form *ngIf="kind==='OUTDOOREVENT' || kind==='PROMOTION_OR_SALES'" [formGroup]="form">
   <mat-card>
     <mat-card-title>
       {{'application.pricingBasis' | translation}}
