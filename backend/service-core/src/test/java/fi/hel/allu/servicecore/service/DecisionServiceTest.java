@@ -165,6 +165,33 @@ public class DecisionServiceTest {
   }
 
   @Test
+  public void testAreaGeneration() throws IOException {
+    setupRestMocks();
+
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
+    applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
+    applicationJson.setId(123);
+
+    LocationJson loc = new LocationJson();
+    loc.setArea(500.0);
+    loc.setAreaOverride(1000.0);
+    applicationJson.setLocations(Collections.singletonList(loc));
+    // Call the method under test
+    decisionService.getDecisionPreview(applicationJson);
+
+    // - PDF creation was executed with the right stylesheet name :
+    final ArgumentCaptor<DecisionJson> jsonCaptor = ArgumentCaptor.forClass(DecisionJson.class);
+    Mockito.verify(restTemplate).postForObject(Matchers.eq(GENERATE_PDF_URL), jsonCaptor.capture(),
+        Matchers.eq(byte[].class), Matchers.eq("SHORT_TERM_RENTAL"));
+    // - Sent JSON object contains chargeInfoEntries:
+    DecisionJson decisionJson = jsonCaptor.getValue();
+    String siteArea = decisionJson.getSiteArea();
+
+    Assert.assertEquals(String.format("%.0f", loc.getAreaOverride()), siteArea);
+  }
+
+  @Test
   public void testGenerateCableReport() throws IOException {
     final int MAP_EXCTRACT_COUNT = 93;
 

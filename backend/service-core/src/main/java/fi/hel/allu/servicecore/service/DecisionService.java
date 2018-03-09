@@ -199,9 +199,8 @@ public class DecisionService {
     decisionJson.setCustomerAddressLines(customerAddressLines(application));
     decisionJson.setCustomerContactLines(customerContactLines(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
-    if (application.getLocations() != null) {
-      decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocations().stream().mapToDouble(l -> l.getArea()).sum())));
-    }
+    getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
+
     if (application.getType() == null) {
       throw new IllegalArgumentException("Application type is required");
     }
@@ -256,6 +255,18 @@ public class DecisionService {
       decisionJson.setSeparateBill(priceInCents > 0);
     }
     fillCargeBasisInfo(decisionJson, application);
+  }
+
+  private Optional<String> getSiteArea(List<LocationJson> locations) {
+    return Optional.ofNullable(locations)
+        .map(locs -> locs.stream().mapToDouble(this::getEffectiveArea).sum())
+        .map(totalArea -> Math.ceil(totalArea))
+        .map(totalArea -> String.format("%.0f", totalArea));
+  }
+
+  private Double getEffectiveArea(LocationJson location) {
+    return Optional.ofNullable(location.getAreaOverride())
+      .orElse(location.getArea());
   }
 
   /*
