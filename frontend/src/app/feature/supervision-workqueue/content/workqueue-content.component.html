@@ -18,7 +18,7 @@
     <ng-container matColumnDef="type">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.taskType' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary', 'supervision']">
+        <a class="row-details-link" [routerLink]="['/applications', row.applicationId, 'summary', 'supervision']">
           {{['supervision.task.type', row.uiType] | translation}}
         </a>
       </mat-cell>
