@@ -1,5 +1,25 @@
 package fi.hel.allu.ui.controller;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
@@ -7,21 +27,6 @@ import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.ProjectService;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Controller for managing projects.
@@ -40,7 +45,8 @@ public class ProjectController {
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<ProjectJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
-      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort = "creationTime", direction = Direction.DESC)
+      Pageable pageRequest) {
     return new ResponseEntity<>(projectServiceComposer.search(queryParameters, pageRequest), HttpStatus.OK);
   }
 
