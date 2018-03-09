@@ -1,9 +1,8 @@
-import {AfterContentInit, AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../util/enum.util';
 import {CustomerType} from '../../model/customer/customer-type';
-import {Sort} from '../../model/common/sort';
 import {Customer} from '../../model/customer/customer';
 import {CustomerService} from '../../service/customer/customer.service';
 import {MatPaginator, MatSort} from '@angular/material';
@@ -46,10 +45,6 @@ export class CustomerListComponent implements OnInit, AfterViewInit {
 
   newCustomer(): void {
     this.router.navigate(['customers/new']);
-  }
-
-  onSelect(id: number): void {
-    this.router.navigate(['customers', id]);
   }
 
   search(): void {

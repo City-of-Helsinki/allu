@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {MatCheckboxChange, MatDialog, MatPaginator, MatSort} from '@angular/material';
 
@@ -8,14 +8,12 @@ import {CommentsModalComponent} from '../../application/comment/comments-modal.c
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {Subject} from 'rxjs/Subject';
 import {ApplicationWorkItemStore} from '../application-work-item-store';
-import {EventUtil} from '../../../../../test/util/event-util';
 import {ApplicationWorkItemDatasource, ApplicationWorkItemRow} from './application-work-item-datasource';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {Some} from '../../../util/option';
 import {WorkQueueTab} from '../workqueue-tab';
 import {CityDistrictService} from '../../../service/map/city-district.service';
 import {MapStore} from '../../../service/map/map-store';
-import {Page} from '../../../model/common/page';
 
 @Component({
   selector: 'workqueue-content',
@@ -42,8 +40,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private selectedItems: Array<number> = [];
   private destroy = new Subject<boolean>();
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private mapStore: MapStore,
               private cityDistrictService: CityDistrictService,
               private dialog: MatDialog,
@@ -101,12 +98,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   checkSingle(change: MatCheckboxChange, taskId: number) {
     this.store.toggleSingle(taskId, change.checked);
-  }
-
-  toApplication(application: Application, event: any): void {
-    if (EventUtil.targetHasClass(event, 'checkbox')) {
-      this.router.navigate(this.getNavigation(application));
-    }
   }
 
   showComments(applicationId: number): void {

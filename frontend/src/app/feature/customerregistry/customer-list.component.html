@@ -43,7 +43,11 @@
         <mat-table #table [dataSource]="customerSource" matSort [trackBy]="trackById">
           <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef mat-sort-header>{{'customer.nameLabel' | translation}}</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+            <mat-cell *matCellDef="let row">
+              <a class="row-details-link" [routerLink]="['/customers', row.id]">
+                {{row.name}}
+              </a>
+            </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="type">
@@ -72,9 +76,7 @@
           </ng-container>
 
           <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;"
-                   class="row-highlight clickable"
-                   (click)="onSelect(row.id)"></mat-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
         </mat-table>
 
         <mat-paginator #paginator

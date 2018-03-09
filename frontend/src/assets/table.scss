@@ -10,6 +10,10 @@
   .allu-table-header.mat-header-row .mat-header-cell {
     color: mat-color($primary, 500);
   }
+
+  .row-details-link {
+    color: mat-color($primary, 500);
+  }
 }
 
 .allu-table-header .mat-sort-header-container {
@@ -41,4 +45,9 @@ mat-cell, .mat-cell, .mat-header-cell {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+.row-details-link {
+  font-weight: bold;
 }

@@ -22,7 +22,11 @@
 
     <ng-container matColumnDef="applicationId">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.applicationId}}</mat-cell>
+      <mat-cell *matCellDef="let row">
+        <a class="row-details-link" [routerLink]="['/applications', row.content.id, 'summary']">
+          {{row.content.applicationId}}
+        </a>
+      </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="type">
@@ -98,13 +102,12 @@
     <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
 
     <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;"
-             class="clickable" [class.row-highlight]="highlight(i, row)"
+             [class.row-highlight]="highlight(i, row)"
              [class.multi-row-upper-part]="hasTagRow(i, row)"
-             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)"
-             (click)="toApplication(row.content, $event)"></mat-row>
+             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)"></mat-row>
 
     <mat-row *matRowDef="let row; columns: ['tags']; when: isTagRow; let i = index;"
-             class="bottom-row clickable" [class.row-highlight]="highlight(i, row)"
+             class="bottom-row" [class.row-highlight]="highlight(i, row)"
              (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)"></mat-row>
   </mat-table>
 

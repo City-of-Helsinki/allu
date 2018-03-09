@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
@@ -23,8 +22,9 @@ import {CityDistrictService} from '../../service/map/city-district.service';
 export class SearchComponent implements OnInit {
 
   displayedColumns = [
-    'owner.realName', 'name', 'type', 'status', 'project.name', 'customers.applicant.customer.name',
-    'locations.streetAddress', 'locations.cityDistrictId', 'creationTime', 'startTime'
+    'owner.realName', 'applicationId', 'name', 'type', 'status', 'project.name',
+    'customers.applicant.customer.name', 'locations.streetAddress', 'locations.cityDistrictId',
+    'creationTime', 'startTime'
   ];
 
   queryForm: FormGroup;
@@ -41,7 +41,6 @@ export class SearchComponent implements OnInit {
   constructor(private applicationService: ApplicationService,
               private userHub: UserHub,
               private cityDistrictService: CityDistrictService,
-              private router: Router,
               private fb: FormBuilder) {
     this.queryForm = this.fb.group({
       applicationId: undefined,
@@ -62,10 +61,6 @@ export class SearchComponent implements OnInit {
     this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.paginator, this.sort);
     this.owners = this.userHub.getActiveUsers();
     this.districts = this.cityDistrictService.get();
-  }
-
-  toSummary(applicationId: number): void {
-    this.router.navigate(['applications', applicationId, 'summary']);
   }
 
   search(): void {

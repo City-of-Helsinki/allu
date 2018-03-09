@@ -110,6 +110,15 @@
           <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
         </ng-container>
 
+        <ng-container matColumnDef="applicationId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
+              {{row.applicationId}}
+            </a>
+          </mat-cell>
+        </ng-container>
+
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.name' | translation}}</mat-header-cell>
           <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
@@ -160,8 +169,7 @@
 
         <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"
-                 class="row-highlight clickable"
-                 (click)="toSummary(row.id)"></mat-row>
+                 class="row-highlight"></mat-row>
       </mat-table>
 
       <mat-paginator #paginator

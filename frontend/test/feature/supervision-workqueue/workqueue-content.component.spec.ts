@@ -4,16 +4,17 @@ import {By} from '@angular/platform-browser';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
-import {ActivatedRouteMock, availableToDirectiveMockMeta, CurrentUserMock, RouterMock} from '../../mocks';
+import {ActivatedRouteMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '../../../src/app/feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '../../../src/app/model/common/page';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 import '../../../src/app/rxjs-extensions';
+import {RouterTestingModule} from '@angular/router/testing';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -32,6 +33,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
       imports: [
         ReactiveFormsModule,
         AlluCommonModule,
+        RouterTestingModule.withRoutes([]),
         MatTableModule,
         MatSortModule,
         MatPaginatorModule
@@ -43,7 +45,6 @@ describe('SupervisionWorkqueueContentComponent', () => {
         FormBuilder,
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
-        {provide: Router, useClass: RouterMock},
         {provide: ActivatedRoute, useValue: new ActivatedRouteMock()}
       ]
     })
@@ -63,7 +64,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
   });
 
   it('should show content', fakeAsync(() => {
-    expect(de.queryAll(By.css('mat-row.clickable')).length).toEqual(defaultItems.content.length);
+    expect(de.queryAll(By.css('mat-row')).length).toEqual(defaultItems.content.length);
   }));
 
   it('should check all selected checkbox based on state', fakeAsync(() => {

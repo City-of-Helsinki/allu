@@ -17,7 +17,11 @@
 
     <ng-container matColumnDef="type">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.taskType' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{['supervision.task.type', row.uiType] | translation}}</mat-cell>
+      <mat-cell *matCellDef="let row">
+        <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary', 'supervision']">
+          {{['supervision.task.type', row.uiType] | translation}}
+        </a>
+      </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="application.applicationId">
@@ -51,9 +55,7 @@
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"
-             class="row-highlight clickable"
-             (click)="toApplicationTaskView(row.applicationId, $event)"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
   </mat-table>
 
   <mat-paginator #paginator
