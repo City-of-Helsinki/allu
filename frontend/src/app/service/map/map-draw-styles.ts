@@ -14,7 +14,7 @@ export const winkki = {
   ROAD_WORKS:  {color: '#FEB24C', opacity: 1, fillOpacity: 0.4},
 };
 
-export const CITY_DISTRICTS = {color: '000000', dashArray: '10,5', opacity: 1, fillOpacity: 0.4};
+export const CITY_DISTRICTS = {color: '#000000', weight: 2, dashArray: '10, 10', opacity: 1, fillOpacity: 0};
 
 export const pathStyle = {
   DEFAULT: {color: '#F43352', opacity: 1, fillOpacity: 0.4},

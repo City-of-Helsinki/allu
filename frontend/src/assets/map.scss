@@ -67,5 +67,19 @@ img.leaflet-marker-icon {
   border-bottom: 1px solid #ddd;
 }
 
+.allu-simple-label {
+  background: $white-87-opacity;
+  font-weight: bold;
+  border-radius: 12px;
+  padding: 5px 16px;
+  overflow-wrap: normal;
+  width: max-content !important;
+  height: max-content !important;
+  min-width: 100px;
+  max-width: 150px;
+  left: -65px !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
 
 

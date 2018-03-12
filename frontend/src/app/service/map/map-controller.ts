@@ -255,6 +255,8 @@ export class MapController {
         self.showTooltipOnClick(e);
       }
     });
+
+    this.mapLayerService.cityDistricts.on('load', (e: any) => this.addCityDistrictLabels(e.layers));
   }
 
   private setupLayerControls(): void {
@@ -263,7 +265,7 @@ export class MapController {
       'Hakemustyypit': this.mapLayerService.contentLayers,
       'Winkin katutyöt': this.mapLayerService.winkkiRoadWorks,
       'Winkin vuokraukset ja tapahtumat': this.mapLayerService.winkkiEvents,
-      'Muut': this.mapLayerService.cityDistricts
+      'Muut': this.mapLayerService.other
     };
     const groupedControl = L.control.groupedLayers(undefined, groupedOverlays);
 
@@ -319,6 +321,16 @@ export class MapController {
         .setContent(MapPopup.create(features, this.router))
         .openOn(this.map);
     }
+  }
+
+  private addCityDistrictLabels(layers: any) {
+    layers.eachLayer(layer => {
+      const props = layer.feature.properties;
+      const text = `${props.tunnus} ${props.nimi_fi}`;
+      const center = layer.getBounds().getCenter();
+      const myIcon = L.divIcon({html: text, className: 'allu-simple-label', iconAnchor: center});
+      L.marker(center, {icon: myIcon}).addTo(this.mapLayerService.cityDistricts);
+    });
   }
 
   private handleDrawingAllowedChanges(): void {

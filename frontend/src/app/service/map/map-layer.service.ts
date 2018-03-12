@@ -11,6 +11,7 @@ import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.layersupport';
 import '../../js/leaflet/wms-authentication';
+import '../../js/leaflet/wfs-geojson';
 import 'leaflet-wfst';
 import TimeoutOptions = L.TimeoutOptions;
 import {Observable} from 'rxjs/Observable';
@@ -32,7 +33,8 @@ export class MapLayerService {
   public readonly defaultOverlay: L.Layer;
   public readonly winkkiRoadWorks: L.Control.LayersObject;
   public readonly winkkiEvents: L.Control.LayersObject;
-  public readonly cityDistricts: L.Control.LayersObject;
+  public readonly other: L.Control.LayersObject;
+  public readonly cityDistricts: L.FeatureGroup;
   public readonly clickableLayers = [];
   public readonly markerSupport = L.markerClusterGroup.layerSupport({
     spiderfyOnMaxZoom: true,
@@ -61,6 +63,11 @@ export class MapLayerService {
     this.winkkiEvents = {
       'Tulevat': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN, winkki.EVENT),
       'Aktiiviset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE, winkki.EVENT)
+    };
+
+    this.cityDistricts = this.createCityDistrictLayer();
+    this.other = {
+      'Kaupunginosat': this.cityDistricts
     };
 
     this.clickableLayers = []
@@ -150,16 +157,11 @@ export class MapLayerService {
   }
 
   private createCityDistrictLayer(): L.FeatureGroup {
-    return L.wfs({
+    return L.wfsGeoJSON({
       url: 'https://kartta.hel.fi/ws/geoserver/avoindata/wfs',
-      typeNS: 'avoindata',
-      typeName: 'Kaupunginosajako',
-      geometryField: 'geom',
+      typeName: 'avoindata:Kaupunginosajako',
       crs: this.mapUtil.EPSG3879,
-      style: CITY_DISTRICTS,
-      opacity: CITY_DISTRICTS.opacity,
-      fillOpacity: CITY_DISTRICTS.fillOpacity,
-      showExisting: true
+      style: CITY_DISTRICTS
     });
   }
 
