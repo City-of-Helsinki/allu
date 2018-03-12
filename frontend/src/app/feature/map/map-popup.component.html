@@ -1,0 +1,9 @@
+<h1 class="popup-header">{{header}}</h1>
+<ul class="popup-content">
+  <li *ngFor="let row of contentRows" [ngClass]="row.class">
+    <a [routerLink]="row.link" *ngIf="row.link; else normalContent">{{row.content}}</a>
+    <ng-template #normalContent>
+      <div>{{row.content}}</div>
+    </ng-template>
+  </li>
+</ul>

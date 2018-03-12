@@ -13,7 +13,6 @@ import {MapUtil} from './map.util';
 import {Some} from '../../util/option';
 import {translations} from '../../util/translations';
 import {Geocoordinates} from '../../model/common/geocoordinates';
-import {MapPopup} from './map-popup';
 import {MapLayerService} from './map-layer.service';
 import {NotificationService} from '../notification/notification.service';
 import {drawOptions, editOptions} from './map-config';
@@ -21,7 +20,7 @@ import {MapStore} from './map-store';
 import GeoJSONOptions = L.GeoJSONOptions;
 import {MapEventHandler} from './map-event-handler';
 import {MapFeatureInfo} from './map-feature-info';
-import {Router} from '@angular/router';
+import {MapPopupService} from './map-popup.service';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -54,7 +53,7 @@ export class MapController {
   constructor(private mapUtil: MapUtil,
               private mapStore: MapStore,
               private mapLayerService: MapLayerService,
-              private router: Router,
+              private popupService: MapPopupService,
               private config: MapControllerConfig) {
     this.initMap();
     this.handleDrawingAllowedChanges();
@@ -164,7 +163,7 @@ export class MapController {
       style = style || {};
       const featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection, featureInfo);
       style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
-        .bindPopup((layer: any) => MapPopup.create([layer.feature], this.router), {className: 'allu-map-popup'});
+        .bindPopup((layer: any) => this.popupService.create([layer.feature]), {className: 'allu-map-popup'});
       const geoJSON = L.geoJSON(featureCollection, style);
       this.drawGeoJSON(geoJSON, drawLayer);
     }
@@ -318,7 +317,7 @@ export class MapController {
       const features = intersecting.map((l: any) => l.feature);
       L.popup({className: 'allu-map-popup'})
         .setLatLng(e.latlng)
-        .setContent(MapPopup.create(features, this.router))
+        .setContent(this.popupService.create(features))
         .openOn(this.map);
     }
   }

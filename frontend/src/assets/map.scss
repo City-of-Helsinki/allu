@@ -26,24 +26,8 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
 
   .leaflet-popup-content {
     margin: 0;
-  }
-}
-
-.allu-map-popup .leaflet-popup-content {
-  h1.popup-header {
-    font-size: 15px;
-    line-height: 20px;
-    color: mat-contrast($allu-primary, 500);
-    background: mat-color($allu-primary, 500);
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    padding: 5px 16px;
-    font-weight: bold;
-    margin: -1px;
-  }
-
-  .popup-content {
-    margin: 13px 19px;
+    min-width: 170px;
+    width: auto !important;
   }
 }
 

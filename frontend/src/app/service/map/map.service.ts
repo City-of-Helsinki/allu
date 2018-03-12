@@ -5,6 +5,7 @@ import {MapLayerService} from './map-layer.service';
 import {MapController, MapControllerConfig} from './map-controller';
 import {MapStore} from './map-store';
 import {Router} from '@angular/router';
+import {MapPopupService} from './map-popup.service';
 
 @Injectable()
 export class MapService {
@@ -12,7 +13,7 @@ export class MapService {
   constructor(private mapUtil: MapUtil,
               private mapStore: MapStore,
               private mapLayerService: MapLayerService,
-              private router: Router) {}
+              private mapPopupService: MapPopupService) {}
 
   public create(
     draw: boolean = false,
@@ -28,6 +29,6 @@ export class MapService {
       selection: selection,
       showOnlyApplicationArea: showOnlyApplicationArea
     };
-    return new MapController(this.mapUtil, this.mapStore, this.mapLayerService, this.router, config);
+    return new MapController(this.mapUtil, this.mapStore, this.mapLayerService, this.mapPopupService, config);
   }
 }

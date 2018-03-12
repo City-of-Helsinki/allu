@@ -7,13 +7,20 @@ import {MapLayerService} from '../../service/map/map-layer.service';
 import {FixedLocationService} from '../../service/map/fixed-location.service';
 import {CityDistrictService} from '../../service/map/city-district.service';
 import {MapDataService} from '../../service/map/map-data-service';
+import {MapPopupService} from '../../service/map/map-popup.service';
+import {MapPopupComponent} from './map-popup.component';
+import {RouterModule} from '@angular/router';
+import {AlluCommonModule} from '../common/allu-common.module';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule,
+    AlluCommonModule
   ],
   declarations: [
-    MapComponent
+    MapComponent,
+    MapPopupComponent
   ],
   exports: [
     MapComponent
@@ -22,9 +29,13 @@ import {MapDataService} from '../../service/map/map-data-service';
     MapUtil,
     MapService,
     MapLayerService,
+    MapPopupService,
     MapDataService,
     FixedLocationService,
     CityDistrictService
+  ],
+  entryComponents: [
+    MapPopupComponent
   ]
 })
 export class MapModule {}
