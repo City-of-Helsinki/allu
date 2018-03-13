@@ -936,17 +936,17 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return url to update handler of supervision task.
+   * @return url to update owner of supervision task.
    */
-  public String getSupervisionTaskHandlerUpdateUrl() {
-    return getModelServiceUrl("/supervisiontask/handler/{handlerId}");
+  public String getSupervisionTaskOwnerUpdateUrl() {
+    return getModelServiceUrl("/supervisiontask/owner/{ownerId}");
   }
 
   /**
-   * @return url to remove handler of supervision task.
+   * @return url to remove owner of supervision task.
    */
-  public String getSupervisionTaskHandlerRemoveUrl() {
-    return getModelServiceUrl("/supervisiontask/handler/remove");
+  public String getSupervisionTaskOwnerRemoveUrl() {
+    return getModelServiceUrl("/supervisiontask/owner/remove");
   }
 
   /**

@@ -146,7 +146,7 @@ public class ApplicationReplacementServiceTest {
     Application application = replaceApplication();
     SupervisionTask original = supervisionTaskDao.findByApplicationId(originalApplication.getId()).get(0);
     SupervisionTask replacing = supervisionTaskDao.findByApplicationId(application.getId()).get(0);
-    assertEquals(original.getHandlerId(), replacing.getHandlerId());
+    assertEquals(original.getOwnerId(), replacing.getOwnerId());
     assertEquals(original.getStatus(), replacing.getStatus());
     assertEquals(original.getDescription(), replacing.getDescription());
   }
@@ -179,7 +179,7 @@ public class ApplicationReplacementServiceTest {
 
   private void insertSupervisionTask() {
     SupervisionTask supervisionTask = new SupervisionTask();
-    supervisionTask.setHandlerId(testCommon.insertUser("supervision").getId());
+    supervisionTask.setOwnerId(testCommon.insertUser("supervision").getId());
     supervisionTask.setDescription("Description");
     supervisionTask.setStatus(SupervisionTaskStatusType.OPEN);
     supervisionTask.setApplicationId(originalApplication.getId());

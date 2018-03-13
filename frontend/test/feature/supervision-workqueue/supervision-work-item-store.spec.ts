@@ -15,11 +15,11 @@ class SupervisionTaskServiceMock {
     return Observable.of(new Page<SupervisionWorkItem>());
   }
 
-  changeHandler(handlerId: number, taskIds: Array<number>): Observable<HttpResponse> {
+  changeOwner(ownerId: number, taskIds: Array<number>): Observable<HttpResponse> {
     return Observable.of(new HttpResponse(HttpStatus.OK));
   }
 
-  removeHandler(taskIds: Array<number>): Observable<HttpResponse> {
+  removeOwner(taskIds: Array<number>): Observable<HttpResponse> {
     return Observable.of(new HttpResponse(HttpStatus.OK));
   }
 }
@@ -122,29 +122,29 @@ describe('supervision-work-item-store', () => {
     setTimeout(() => expect(selected.length).toEqual(0), STORE_DEBOUNCE_MS);
   }));
 
-  it('should change handler for selected', fakeAsync(() => {
+  it('should change owner for selected', fakeAsync(() => {
     let selected;
     store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
     store.toggleAll(true);
     tick();
 
     const handlerId = 1;
-    spyOn(taskService, 'changeHandler').and.callThrough();
+    spyOn(taskService, 'changeOwner').and.callThrough();
     store.changeHandlerForSelected(handlerId).subscribe();
     tick();
-    expect(taskService.changeHandler).toHaveBeenCalledWith(handlerId, selected);
+    expect(taskService.changeOwner).toHaveBeenCalledWith(handlerId, selected);
   }));
 
-  it('should remove handler for selected', fakeAsync(() => {
+  it('should remove owner for selected', fakeAsync(() => {
     let selected;
     store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
     store.toggleAll(true);
     tick();
 
-    spyOn(taskService, 'removeHandler').and.callThrough();
+    spyOn(taskService, 'removeOwner').and.callThrough();
     store.removeHandlerFromSelected().subscribe();
     tick();
-    expect(taskService.removeHandler).toHaveBeenCalledWith(selected);
+    expect(taskService.removeOwner).toHaveBeenCalledWith(selected);
   }));
 
   function initWithItems(): Page<SupervisionWorkItem> {

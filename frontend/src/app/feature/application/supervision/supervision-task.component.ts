@@ -63,7 +63,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
         .filter(type => !isAutomaticSupervisionTaskType(SupervisionTaskType[type]));
     }
     this.currentUserCanEdit(formValue.creatorId);
-    this.currentUserCanApprove(formValue.handlerId, formValue.status);
+    this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
   }
 
@@ -166,9 +166,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     }
   }
 
-  private currentUserCanApprove(handlerId: number, statusName: string): void {
+  private currentUserCanApprove(ownerId: number, statusName: string): void {
     const status = SupervisionTaskStatusType[statusName];
-    this.currentUser.isCurrentUser(handlerId).subscribe(isCurrent => {
+    this.currentUser.isCurrentUser(ownerId).subscribe(isCurrent => {
       this.canApprove = isCurrent && SupervisionTaskStatusType.OPEN === status;
     });
   }
@@ -182,6 +182,6 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
     this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))
       .filter(preferred => !!preferred)
-      .subscribe(preferred => this.form.patchValue({handlerId: preferred.id}));
+      .subscribe(preferred => this.form.patchValue({ownerId: preferred.id}));
   }
 }

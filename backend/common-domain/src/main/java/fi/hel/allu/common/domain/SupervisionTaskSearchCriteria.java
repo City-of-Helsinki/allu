@@ -14,7 +14,7 @@ public class SupervisionTaskSearchCriteria {
   private ZonedDateTime before;
   private List<ApplicationType> applicationTypes;
   private List<StatusType> applicationStatus;
-  private Integer handlerId;
+  private Integer ownerId;
   private List<Integer> cityDistrictIds;
 
   public List<SupervisionTaskType> getTaskTypes() {
@@ -65,12 +65,12 @@ public class SupervisionTaskSearchCriteria {
     this.applicationStatus = applicationStatus;
   }
 
-  public Integer getHandlerId() {
-    return handlerId;
+  public Integer getOwnerId() {
+    return ownerId;
   }
 
-  public void setHandlerId(Integer handlerId) {
-    this.handlerId = handlerId;
+  public void setOwnerId(Integer ownerId) {
+    this.ownerId = ownerId;
   }
 
   public List<Integer> getCityDistrictIds() {

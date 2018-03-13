@@ -12,6 +12,7 @@ import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.QAttributeMeta;
 import fi.hel.allu.QStructureMeta;
+import fi.hel.allu.QUser;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -38,7 +39,6 @@ import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.QProject.project;
 import static fi.hel.allu.QSupervisionTask.supervisionTask;
-import static fi.hel.allu.QUser.user;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
@@ -53,6 +53,8 @@ public class SupervisionTaskDao {
   final static QAttributeMeta applTypeAttribute = new QAttributeMeta("applTypeAttribute");
   final static QStructureMeta applStatusStructure = new QStructureMeta("applStatusStructure");
   final static QAttributeMeta applStatusAttribute = new QAttributeMeta("applStatusAttribute");
+  final static QUser creator = new QUser("creator");
+  final static QUser owner = new QUser("owner");
 
   final static Map<String, Path<?>> COLUMNS = orderByColumns();
 
@@ -103,19 +105,19 @@ public class SupervisionTaskDao {
   }
 
   @Transactional
-  public int updateHandler(int handler, List<Integer> tasks) {
+  public int updateOwner(int owner, List<Integer> tasks) {
     return (int) queryFactory
         .update(supervisionTask)
-        .set(supervisionTask.handlerId, handler)
+        .set(supervisionTask.ownerId, owner)
         .where(supervisionTask.id.in(tasks))
         .execute();
   }
 
   @Transactional
-  public int removeHandler(List<Integer> tasks) {
+  public int removeOwner(List<Integer> tasks) {
     return (int) queryFactory
         .update(supervisionTask)
-        .setNull(supervisionTask.handlerId)
+        .setNull(supervisionTask.ownerId)
         .where(supervisionTask.id.in(tasks))
         .execute();
   }
@@ -137,7 +139,8 @@ public class SupervisionTaskDao {
         .leftJoin(location).on(location.applicationId.eq(application.id))
         .leftJoin(postalAddress).on(location.postalAddressId.eq(postalAddress.id))
         .leftJoin(project).on(application.projectId.eq(project.id))
-        .leftJoin(user).on(supervisionTask.creatorId.eq(user.id))
+        .leftJoin(creator).on(supervisionTask.creatorId.eq(creator.id))
+        .leftJoin(owner).on(supervisionTask.ownerId.eq(owner.id))
         .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
         .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
             .and(typeAttribute.name.eq(supervisionTask.type.stringValue())))
@@ -194,7 +197,7 @@ public class SupervisionTaskDao {
     return Stream.of(
         Optional.of(supervisionTask.status.eq(SupervisionTaskStatusType.OPEN)),
         values(searchCriteria.getTaskTypes()).map(supervisionTask.type::in),
-        Optional.ofNullable(searchCriteria.getHandlerId()).map(supervisionTask.handlerId::eq),
+        Optional.ofNullable(searchCriteria.getOwnerId()).map(supervisionTask.ownerId::eq),
         Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTask.plannedFinishingTime::goe),
         Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTask.plannedFinishingTime::loe),
         Optional.ofNullable(searchCriteria.getApplicationId()).map(application.applicationId::startsWith),
@@ -221,7 +224,8 @@ public class SupervisionTaskDao {
     cols.put(PathUtil.pathNameWithParent(application.status), applStatusAttribute.uiName);
     cols.put(PathUtil.pathNameWithParent(application.applicationId), application.applicationId);
     cols.put(PathUtil.pathNameWithParent(project.name), project.name);
-    cols.put(PathUtil.pathNameWithParent(user.realName), user.realName);
+    cols.put(PathUtil.pathNameWithParent(creator.realName), creator.realName);
+    cols.put(PathUtil.pathNameWithParent(owner.realName), owner.realName);
     cols.put(PathUtil.pathName(postalAddress.streetAddress), postalAddress.streetAddress);
     return cols;
   }

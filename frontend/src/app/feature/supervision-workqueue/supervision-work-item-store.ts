@@ -87,13 +87,13 @@ export class SupervisionWorkItemStore {
 
   public changeHandlerForSelected(handlerId: number): Observable<HttpResponse> {
     const selected = this.store.getValue().selectedItems;
-    return this.service.changeHandler(handlerId, selected)
+    return this.service.changeOwner(handlerId, selected)
       .do(search => this.refresh());
   }
 
   public removeHandlerFromSelected(): Observable<HttpResponse> {
     const selected = this.store.getValue().selectedItems;
-    return this.service.removeHandler(selected)
+    return this.service.removeOwner(selected)
       .do(search => this.refresh());
   }
 

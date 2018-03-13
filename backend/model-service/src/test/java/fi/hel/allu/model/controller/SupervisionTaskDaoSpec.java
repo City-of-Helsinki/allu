@@ -304,7 +304,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
     assertEquals(expected.getApplicationId(), actual.getApplicationId());
     assertEquals(expected.getType(), actual.getType());
     assertEquals(expected.getCreatorId(), actual.getCreatorId());
-    assertEquals(expected.getHandlerId(), actual.getHandlerId());
+    assertEquals(expected.getOwnerId(), actual.getOwnerId());
     assertEquals(expected.getCreationTime(), actual.getCreationTime());
     assertEquals(expected.getPlannedFinishingTime(), actual.getPlannedFinishingTime());
     assertEquals(expected.getActualFinishingTime(), actual.getActualFinishingTime());
@@ -318,13 +318,13 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
-  private SupervisionTask createTask(Integer appId, SupervisionTaskType type, Integer handlerId) {
+  private SupervisionTask createTask(Integer appId, SupervisionTaskType type, Integer ownerId) {
     return new SupervisionTask(
         null,
         appId,
         type,
         null,
-        handlerId,
+        ownerId,
         testTime,
         testTime.plusDays(1),
         null,

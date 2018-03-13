@@ -30,8 +30,8 @@
             </div>
             <div fxFlex>
               <mat-form-field class="input-full-width">
-                <mat-select [placeholder]="'supervision.task.handler' | translation" class="input-full-width"
-                            formControlName="handlerId" required>
+                <mat-select [placeholder]="'supervision.task.owner' | translation" class="input-full-width"
+                            formControlName="ownerId" required>
                   <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
                     {{supervisor.realName}}
                   </mat-option>

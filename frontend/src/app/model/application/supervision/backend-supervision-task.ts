@@ -5,7 +5,7 @@ export interface BackendSupervisionTask {
   applicationId: number;
   type: string;
   creator: BackendUser;
-  handler: BackendUser;
+  owner: BackendUser;
   creationTime: string;
   plannedFinishingTime: string;
   actualFinishingTime: string;

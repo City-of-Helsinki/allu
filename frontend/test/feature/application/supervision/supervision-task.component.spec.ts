@@ -31,8 +31,8 @@ const taskForm = {
   type: [undefined, Validators.required],
   creatorId: [undefined],
   creatorName: [undefined],
-  handlerId: [undefined, Validators.required],
-  handlerName: [undefined],
+  ownerId: [undefined, Validators.required],
+  ownerName: [undefined],
   creationTime: [undefined],
   plannedFinishingTime: [undefined, [Validators.required, ComplexValidator.inThePast]],
   actualFinishingTime: [undefined],
@@ -45,7 +45,7 @@ const validTask = {
   type: SupervisionTaskType[SupervisionTaskType.SUPERVISION],
   status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN],
   creatorId: undefined,
-  handlerId: supervisor.id,
+  ownerId: supervisor.id,
   plannedFinishingTime: new Date(),
   description: 'some description here'
 };
@@ -245,7 +245,7 @@ describe('SupervisionTaskComponent', () => {
     const preferredSupervisor = new User(52);
     spyOn(userHub, 'searchUsers').and.returnValue(Observable.of([preferredSupervisor]));
     patchValueAndInit({});
-    expect(comp.form.value.handlerId).toEqual(preferredSupervisor.id);
+    expect(comp.form.value.ownerId).toEqual(preferredSupervisor.id);
   }));
 
   it('should display task result when available', fakeAsync(() => {
@@ -254,13 +254,13 @@ describe('SupervisionTaskComponent', () => {
     expect(resultInput.value).toEqual('TestResult');
   }));
 
-  it('should show approval buttons only for handler which the task is assigned to', fakeAsync(() => {
+  it('should show approval buttons only for owner which the task is assigned to', fakeAsync(() => {
     patchValueAndInit({status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     expect(de.query(By.css('#approve'))).toBeDefined();
     expect(de.query(By.css('#reject'))).toBeDefined();
 
     spyOn(currentUserMock, 'isCurrentUser').and.returnValue(Observable.of(false));
-    patchValueAndInit({handlerId: 1});
+    patchValueAndInit({ownerId: 1});
     expect(de.query(By.css('#approve'))).toBeNull();
     expect(de.query(By.css('#reject'))).toBeNull();
   }));

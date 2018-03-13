@@ -21,7 +21,7 @@ interface SupervisionTaskSearchCriteriaForm {
   before: string;
   applicationTypes: Array<string>;
   applicationStatus: Array<string>;
-  handlerId: number;
+  ownerId: number;
   cityDistrictIds: Array<number>;
 }
 
@@ -54,7 +54,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       before: [undefined],
       applicationTypes: [[]],
       applicationStatus: [[]],
-      handlerId: [undefined],
+      ownerId: [undefined],
       cityDistrictIds: [[]]
     });
   }
@@ -86,17 +86,16 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     criteria.before = TimeUtil.getDateFromUi(form.before);
     criteria.applicationTypes = form.applicationTypes.map(type => ApplicationType[type]);
     criteria.applicationStatus = form.applicationStatus.map(s => ApplicationStatus[s]);
-    criteria.handlerId = form.handlerId;
+    criteria.ownerId = form.ownerId;
     criteria.cityDistrictIds = form.cityDistrictIds;
     this.store.searchChange(criteria);
   }
 
   private onTabChange(tab: WorkQueueTab): void {
     if (WorkQueueTab.OWN === tab) {
-      this.currentUser.user.subscribe(user => this.queryForm.patchValue({handlerId: user.id}));
+      this.currentUser.user.subscribe(user => this.queryForm.patchValue({ownerId: user.id}));
     } else {
-      this.queryForm.patchValue({handlerId: undefined});
+      this.queryForm.patchValue({ownerId: undefined});
     }
-
   }
 }

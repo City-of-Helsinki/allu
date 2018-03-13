@@ -17,7 +17,7 @@ public class SupervisionWorkItemJson {
   private ZonedDateTime plannedFinishingTime;
   private PostalAddressJson address;
   private String projectName;
-  private UserJson handler;
+  private UserJson owner;
 
   public Integer getId() {
     return id;
@@ -91,11 +91,11 @@ public class SupervisionWorkItemJson {
     this.projectName = projectName;
   }
 
-  public UserJson getHandler() {
-    return handler;
+  public UserJson getOwner() {
+    return owner;
   }
 
-  public void setHandler(UserJson handler) {
-    this.handler = handler;
+  public void setOwner(UserJson owner) {
+    this.owner = owner;
   }
 }

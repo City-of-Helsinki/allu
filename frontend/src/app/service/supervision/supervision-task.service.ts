@@ -20,7 +20,7 @@ import {PageRequest} from '../../model/common/page-request';
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
 const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';
 const SUPERVISION_TASK_APP_URL = SUPERVISION_TASK_URL + '/application/:appId';
-const SUPERVISION_TASK_HANDLER_URL = SUPERVISION_TASK_URL + '/handler';
+const SUPERVISION_TASK_OWNER_URL = SUPERVISION_TASK_URL + '/owner';
 const SUPERVISION_TASK_APPROVE_URL =  SUPERVISION_TASK_URL + '/:id/approve';
 const SUPERVISION_TASK_REJECT_URL =  SUPERVISION_TASK_URL + '/:id/reject';
 
@@ -68,14 +68,14 @@ export class SupervisionTaskService {
       .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.fetch')));
   }
 
-  changeHandler(handlerId: number, taskIds: Array<number>): Observable<HttpResponse> {
-    const url = SUPERVISION_TASK_HANDLER_URL + '/' + handlerId;
+  changeOwner(ownerId: number, taskIds: Array<number>): Observable<HttpResponse> {
+    const url = SUPERVISION_TASK_OWNER_URL + '/' + ownerId;
     return this.authHttp.put(url, JSON.stringify(taskIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
-  removeHandler(taskIds: Array<number>): Observable<HttpResponse> {
-    const url = SUPERVISION_TASK_HANDLER_URL + '/remove';
+  removeOwner(taskIds: Array<number>): Observable<HttpResponse> {
+    const url = SUPERVISION_TASK_OWNER_URL + '/remove';
     return this.authHttp.put(url, JSON.stringify(taskIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }

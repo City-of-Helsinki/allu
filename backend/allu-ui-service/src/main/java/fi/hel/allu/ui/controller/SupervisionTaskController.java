@@ -12,13 +12,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
@@ -69,17 +67,17 @@ public class SupervisionTaskController {
     return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/handler/{id}", method = RequestMethod.PUT)
+  @RequestMapping(value = "/owner/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE')")
-  public ResponseEntity<Void> updateHandler(@PathVariable int id, @RequestBody(required = true) List<Integer> taskIds) {
-    supervisionTaskService.updateHandler(id, taskIds);
+  public ResponseEntity<Void> updateOwner(@PathVariable int id, @RequestBody(required = true) List<Integer> taskIds) {
+    supervisionTaskService.updateOwner(id, taskIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
+  @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE')")
-  public ResponseEntity<Void> removeHandler(@RequestBody(required = true) List<Integer> taskIds) {
-    supervisionTaskService.removeHandler(taskIds);
+  public ResponseEntity<Void> removeOwner(@RequestBody(required = true) List<Integer> taskIds) {
+    supervisionTaskService.removeOwner(taskIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

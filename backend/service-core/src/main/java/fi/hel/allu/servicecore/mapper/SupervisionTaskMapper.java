@@ -25,7 +25,7 @@ public class SupervisionTaskMapper {
         supervisionTask.getApplicationId(),
         supervisionTask.getType(),
         idToUser.get(supervisionTask.getCreatorId()),
-        idToUser.get(supervisionTask.getHandlerId()),
+        idToUser.get(supervisionTask.getOwnerId()),
         supervisionTask.getCreationTime(),
         supervisionTask.getPlannedFinishingTime(),
         supervisionTask.getActualFinishingTime(),
@@ -39,8 +39,8 @@ public class SupervisionTaskMapper {
         supervisionTaskJson.getId(),
         supervisionTaskJson.getApplicationId(),
         supervisionTaskJson.getType(),
-        supervisionTaskJson.getCreator() == null ? null : supervisionTaskJson.getCreator().getId(),
-        supervisionTaskJson.getHandler() == null ? null : supervisionTaskJson.getHandler().getId(),
+        Optional.ofNullable(supervisionTaskJson.getCreator()).map(UserJson::getId).orElse(null),
+        Optional.ofNullable(supervisionTaskJson.getOwner()).map(UserJson::getId).orElse(null),
         supervisionTaskJson.getCreationTime(),
         supervisionTaskJson.getPlannedFinishingTime(),
         supervisionTaskJson.getActualFinishingTime(),
@@ -51,7 +51,7 @@ public class SupervisionTaskMapper {
   }
 
   public static SupervisionWorkItemJson mapToWorkItem(SupervisionTask task, ApplicationJson application,
-                                                      UserJson creator, UserJson handler) {
+                                                      UserJson creator, UserJson owner) {
     SupervisionWorkItemJson workItem = new SupervisionWorkItemJson();
     workItem.setId(task.getId());
     workItem.setType(task.getType());
@@ -64,7 +64,7 @@ public class SupervisionTaskMapper {
         .ifPresent(loc -> workItem.setAddress(loc.getPostalAddress()));
     Optional.ofNullable(application.getProject())
         .ifPresent(project -> workItem.setProjectName(project.getName()));
-    workItem.setHandler(handler);
+    workItem.setOwner(owner);
     return workItem;
   }
 }

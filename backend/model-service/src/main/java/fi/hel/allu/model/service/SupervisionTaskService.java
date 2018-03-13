@@ -94,13 +94,13 @@ public class SupervisionTaskService {
   }
 
   @Transactional
-  public int updateHandler(int handlerId, List<Integer> tasks) {
-    return supervisionTaskDao.updateHandler(handlerId, tasks);
+  public int updateOwner(int ownerId, List<Integer> tasks) {
+    return supervisionTaskDao.updateOwner(ownerId, tasks);
   }
 
   @Transactional
-  public int removeHandler(List<Integer> tasks) {
-    return supervisionTaskDao.removeHandler(tasks);
+  public int removeOwner(List<Integer> tasks) {
+    return supervisionTaskDao.removeOwner(tasks);
   }
 
   private SupervisionTask rejectedToNewTask(SupervisionTask rejected, ZonedDateTime newDate) {
@@ -108,8 +108,8 @@ public class SupervisionTaskService {
         null,
         rejected.getApplicationId(),
         rejected.getType(),
-        rejected.getHandlerId(),
-        rejected.getHandlerId(),
+        rejected.getOwnerId(),
+        rejected.getOwnerId(),
         ZonedDateTime.now(),
         newDate,
         null,

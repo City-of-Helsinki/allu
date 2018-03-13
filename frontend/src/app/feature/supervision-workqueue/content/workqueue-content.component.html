@@ -15,6 +15,11 @@
       </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="owner.realName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.owner' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="type">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.taskType' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
@@ -49,9 +54,9 @@
       <mat-cell *matCellDef="let row">{{row.projectName}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="user.realName">
+    <ng-container matColumnDef="creator.realName">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.creator' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.handler?.realName}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.creator?.realName}}</mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>

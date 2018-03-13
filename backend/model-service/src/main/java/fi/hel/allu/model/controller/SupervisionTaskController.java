@@ -63,15 +63,15 @@ public class SupervisionTaskController {
     return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
-  public ResponseEntity<Void> updateHandler(@PathVariable int handlerId, @RequestBody List<Integer> tasks) {
-    supervisionTaskService.updateHandler(handlerId, tasks);
+  @RequestMapping(value = "/owner/{ownerId}", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestBody List<Integer> tasks) {
+    supervisionTaskService.updateOwner(ownerId, tasks);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
-  public ResponseEntity<Void> removeHandler(@RequestBody List<Integer> tasks) {
-    supervisionTaskService.removeHandler(tasks);
+  @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
+  public ResponseEntity<Void> removeOwner(@RequestBody List<Integer> tasks) {
+    supervisionTaskService.removeOwner(tasks);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

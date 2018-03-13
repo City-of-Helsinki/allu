@@ -13,7 +13,7 @@ public class SupervisionTask {
   private Integer applicationId;
   private SupervisionTaskType type;
   private Integer creatorId;
-  private Integer handlerId;
+  private Integer ownerId;
   private ZonedDateTime creationTime;
   private ZonedDateTime plannedFinishingTime;
   private ZonedDateTime actualFinishingTime;
@@ -30,7 +30,7 @@ public class SupervisionTask {
       Integer applicationId,
       SupervisionTaskType type,
       Integer creatorId,
-      Integer handlerId,
+      Integer ownerId,
       ZonedDateTime creationTime,
       ZonedDateTime plannedFinishingTime,
       ZonedDateTime actualFinishingTime,
@@ -41,7 +41,7 @@ public class SupervisionTask {
     this.applicationId = applicationId;
     this.type = type;
     this.creatorId = creatorId;
-    this.handlerId = handlerId;
+    this.ownerId = ownerId;
     this.creationTime = creationTime;
     this.plannedFinishingTime = plannedFinishingTime;
     this.actualFinishingTime = actualFinishingTime;
@@ -103,16 +103,16 @@ public class SupervisionTask {
   }
 
   /**
-   * Handler (supervisor person) of the task.
+   * Owner (supervisor person) of the task.
    *
-   * @return  Handler (supervisor person) of the task.
+   * @return  Owner (supervisor person) of the task.
    */
-  public Integer getHandlerId() {
-    return handlerId;
+  public Integer getOwnerId() {
+    return ownerId;
   }
 
-  public void setHandlerId(Integer handlerId) {
-    this.handlerId = handlerId;
+  public void setOwnerId(Integer ownerId) {
+    this.ownerId = ownerId;
   }
 
   /**
@@ -181,9 +181,9 @@ public class SupervisionTask {
   }
 
   /**
-   * Result of the task. Written by the task handler.
+   * Result of the task. Written by the task owner.
    *
-   * @return  Result of the task. Written by the task handler.
+   * @return  Result of the task. Written by the task owner.
    */
   public String getResult() {
     return result;

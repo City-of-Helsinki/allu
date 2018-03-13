@@ -15,7 +15,7 @@ export class SupervisionWorkItem {
     public plannedFinishingTime?: Date,
     public address?: PostalAddress,
     public projectName?: string,
-    public handler?: User
+    public owner?: User
   ) {}
 
   get uiType(): string {
@@ -37,5 +37,5 @@ export interface BackendSupervisionWorkItem {
    plannedFinishingTime: string;
    address: PostalAddress;
    projectName: string;
-   handler: BackendUser;
+   owner: BackendUser;
 }

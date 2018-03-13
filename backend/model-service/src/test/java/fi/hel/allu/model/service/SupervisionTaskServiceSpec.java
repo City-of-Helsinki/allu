@@ -130,7 +130,7 @@ public class SupervisionTaskServiceSpec {
     task.setApplicationId(1);
     task.setType(SupervisionTaskType.SUPERVISION);
     task.setCreatorId(1);
-    task.setHandlerId(1);
+    task.setOwnerId(1);
     task.setStatus(SupervisionTaskStatusType.OPEN);
     task.setPlannedFinishingTime(ZonedDateTime.now());
     task.setDescription("description");

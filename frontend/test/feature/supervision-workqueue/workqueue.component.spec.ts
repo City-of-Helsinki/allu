@@ -85,13 +85,13 @@ describe('SupervisionWorkqueueComponent', () => {
     comp.ngOnDestroy();
   });
 
-  it('should disable handler change buttons when no item is selected', fakeAsync(() => {
+  it('should disable owner change buttons when no item is selected', fakeAsync(() => {
     de.queryAll(By.css('.mat-raised-button'))
       .map(btn => btn.nativeElement)
       .forEach(btn => expect(btn.disabled).toEqual(true));
   }));
 
-  it('should enable handler change buttons when item is selected', fakeAsync(() => {
+  it('should enable owner change buttons when item is selected', fakeAsync(() => {
     store.changeSubject.next({...store.changeSubject.getValue(), selectedItems: [defaultItems[0].id]});
     fixture.detectChanges();
     tick();
@@ -115,7 +115,7 @@ describe('SupervisionWorkqueueComponent', () => {
     expect(store.changeHandlerForSelected).toHaveBeenCalledWith(myself.id);
   }));
 
-  it('should open handler modal', fakeAsync(() => {
+  it('should open owner modal', fakeAsync(() => {
     store.changeSubject.next({...store.changeSubject.getValue(), selectedItems: [defaultItems[0].id]});
     fixture.detectChanges();
     tick();

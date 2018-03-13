@@ -1,18 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
-import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
-import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
-import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
-import fi.hel.allu.servicecore.util.PageRequestBuilder;
-import fi.hel.allu.servicecore.util.RestResponsePage;
-
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,15 +18,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
+import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
+import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 
 @Service
 public class SupervisionTaskService {
@@ -146,22 +142,22 @@ public class SupervisionTaskService {
   }
 
   /**
-   * Updates handler for given supervision tasks.
+   * Updates owner for given supervision tasks.
    *
-   * @param updatedHandler Handler to be set.
+   * @param updatedOwner owner to be set.
    * @param taskIds Supervision tasks to be updated.
    */
-  public void updateHandler(int updatedHandler, List<Integer> taskIds) {
-    restTemplate.put(applicationProperties.getSupervisionTaskHandlerUpdateUrl(), taskIds, updatedHandler);
+  public void updateOwner(int updatedOwner, List<Integer> taskIds) {
+    restTemplate.put(applicationProperties.getSupervisionTaskOwnerUpdateUrl(), taskIds, updatedOwner);
   }
 
   /**
-   * Removes handler from given supervision tasks.
+   * Removes owner from given supervision tasks.
    *
    * @param taskIds Supervision tasks to be updated.
    */
-  public void removeHandler(List<Integer> taskIds) {
-    restTemplate.put(applicationProperties.getSupervisionTaskHandlerRemoveUrl(), taskIds);
+  public void removeOwner(List<Integer> taskIds) {
+    restTemplate.put(applicationProperties.getSupervisionTaskOwnerRemoveUrl(), taskIds);
   }
 
   private List<SupervisionTaskJson> getFullyPopulatedJson(List<SupervisionTask> supervisionTasks) {
@@ -176,13 +172,13 @@ public class SupervisionTaskService {
             task,
             applicationById.get(task.getApplicationId()),
             userById.get(task.getCreatorId()),
-            userById.get(task.getHandlerId()))
+            userById.get(task.getOwnerId()))
     ).collect(Collectors.toList());
   }
 
   private Map<Integer, UserJson> idToUser(List<SupervisionTask> supervisionTasks) {
     return supervisionTasks.stream()
-        .flatMap(st -> Stream.of(st.getCreatorId(), st.getHandlerId()))
+        .flatMap(st -> Stream.of(st.getCreatorId(), st.getOwnerId()))
         .filter(number -> number != null)
         .distinct()
         .collect(Collectors.toMap(id -> id, id -> userService.findUserById(id)));

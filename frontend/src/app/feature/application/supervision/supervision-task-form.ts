@@ -10,8 +10,8 @@ export class SupervisionTaskForm {
     public type?: string,
     public creatorId?: number,
     public creatorName?: string,
-    public handlerId?: number,
-    public handlerName?: string,
+    public ownerId?: number,
+    public ownerName?: string,
     public creationTime?: Date,
     public plannedFinishingTime?: Date,
     public actualFinishingTime?: Date,
@@ -30,9 +30,9 @@ export class SupervisionTaskForm {
       form.creatorId = creator.id;
       form.creatorName = creator.realName;
     });
-    Some(task.handler).do(handler => {
-      form.handlerId = handler.id;
-      form.handlerName = handler.realName;
+    Some(task.owner).do(owner => {
+      form.ownerId = owner.id;
+      form.ownerName = owner.realName;
     });
     form.creationTime = task.creationTime;
     form.plannedFinishingTime = task.plannedFinishingTime;
@@ -50,7 +50,7 @@ export class SupervisionTaskForm {
     task.applicationId = form.applicationId;
     task.uiType = form.type;
     task.creator = Some(form.creatorId).map(id => new User(id)).orElse(undefined);
-    task.handler = Some(form.handlerId).map(id => new User(id)).orElse(undefined);
+    task.owner = Some(form.ownerId).map(id => new User(id)).orElse(undefined);
     task.creationTime = form.creationTime;
     task.plannedFinishingTime = form.plannedFinishingTime;
     task.actualFinishingTime = form.actualFinishingTime;

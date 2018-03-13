@@ -11,7 +11,7 @@ public class SupervisionTaskJson {
   private Integer applicationId;
   private SupervisionTaskType type;
   private UserJson creator;
-  private UserJson handler;
+  private UserJson owner;
   private ZonedDateTime creationTime;
   private ZonedDateTime plannedFinishingTime;
   private ZonedDateTime actualFinishingTime;
@@ -28,7 +28,7 @@ public class SupervisionTaskJson {
       Integer applicationId,
       SupervisionTaskType type,
       UserJson creator,
-      UserJson handler,
+      UserJson owner,
       ZonedDateTime creationTime,
       ZonedDateTime plannedFinishingTime,
       ZonedDateTime actualFinishingTime,
@@ -39,7 +39,7 @@ public class SupervisionTaskJson {
     this.applicationId = applicationId;
     this.type = type;
     this.creator = creator;
-    this.handler = handler;
+    this.owner = owner;
     this.creationTime = creationTime;
     this.plannedFinishingTime = plannedFinishingTime;
     this.actualFinishingTime = actualFinishingTime;
@@ -101,16 +101,16 @@ public class SupervisionTaskJson {
   }
 
   /**
-   * Handler (supervisor person) of the task.
+   * Owner (supervisor person) of the task.
    *
-   * @return  Handler (supervisor person) of the task.
+   * @return  Owner (supervisor person) of the task.
    */
-  public UserJson getHandler() {
-    return handler;
+  public UserJson getOwner() {
+    return owner;
   }
 
-  public void setHandler(UserJson handler) {
-    this.handler = handler;
+  public void setOwner(UserJson owner) {
+    this.owner = owner;
   }
 
   /**

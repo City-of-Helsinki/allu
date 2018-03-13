@@ -8,7 +8,7 @@ export class SupervisionTask {
     public applicationId?: number,
     public type: SupervisionTaskType = SupervisionTaskType.PRELIMINARY_SUPERVISION,
     public creator?: User,
-    public handler?: User,
+    public owner?: User,
     public creationTime?: Date,
     public plannedFinishingTime?: Date,
     public actualFinishingTime?: Date,

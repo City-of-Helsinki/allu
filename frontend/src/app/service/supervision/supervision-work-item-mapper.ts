@@ -24,7 +24,7 @@ export class SupervisionSearchMapper {
     workItem.plannedFinishingTime = TimeUtil.dateFromBackend(backendWorkItem.plannedFinishingTime);
     workItem.address = Some(backendWorkItem.address).map(address => PostalAddress.fromBackend(address)).orElse(new PostalAddress());
     workItem.projectName = backendWorkItem.projectName;
-    workItem.handler = UserMapper.mapBackend(backendWorkItem.handler);
+    workItem.owner = UserMapper.mapBackend(backendWorkItem.owner);
     return workItem;
   }
 
@@ -37,7 +37,7 @@ export class SupervisionSearchMapper {
         before: TimeUtil.dateToBackend(searchCriteria.before),
         applicationTypes: Some(searchCriteria.applicationTypes).map(types => types.map(type => ApplicationType[type])).orElse([]),
         applicationStatus: Some(searchCriteria.applicationStatus).map(status => status.map(s => ApplicationStatus[s])).orElse([]),
-        handlerId: searchCriteria.handlerId,
+        ownerId: searchCriteria.ownerId,
         cityDistrictIds: Some(searchCriteria.cityDistrictIds).orElse([])
       } : undefined;
   }

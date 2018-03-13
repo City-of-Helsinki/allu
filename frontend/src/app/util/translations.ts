@@ -930,7 +930,7 @@ export const translations = {
         APPROVED: 'Hyväksytty',
         REJECTED: 'Hylätty'
       },
-      handler: 'Valvoja',
+      owner: 'Valvoja',
       plannedFinishingTime: 'Ajankohta',
       actualFinishingTime: 'Valmistunut',
       action: {
@@ -973,6 +973,7 @@ export const translations = {
       taskType: 'Toimenpide',
       applicationId: 'Hakemustunnus',
       applicationStatus: 'Hakemuksen tila',
+      owner: 'Valvoja',
       creator: 'Valvontapyynnön jättäjä',
       plannedFinishingTime: 'Ajankohta',
       address: 'Osoite',
