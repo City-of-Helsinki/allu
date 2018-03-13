@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -218,9 +219,8 @@ public class ApplicationServiceComposer {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
 
-    if (info != null) {
-      changeOwnerOnStatusChange(application, info.getOwner());
-    }
+    Integer owner = Optional.ofNullable(info).map(i -> i.getOwner()).orElse(null);
+    changeOwnerOnStatusChange(application, owner);
 
     // Get application again so that updated owner is included
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(
