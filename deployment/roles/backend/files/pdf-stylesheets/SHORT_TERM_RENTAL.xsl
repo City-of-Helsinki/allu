@@ -185,6 +185,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <p>
               <!-- [Ehtokentän teksti]  -->
               <xsl:value-of select="."/>
+              <xsl:if test=". = ''">
+                <br/>
+              </xsl:if>
             </p>
           </xsl:for-each>
         </xsl:if>
