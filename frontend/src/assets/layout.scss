@@ -9,3 +9,7 @@
 [fxFlex].loose {
   padding: 0 0.75rem;
 }
+
+[fxFlex] button.mat-raised-button:not(:first-of-type) {
+  margin-left: 8px;
+}
