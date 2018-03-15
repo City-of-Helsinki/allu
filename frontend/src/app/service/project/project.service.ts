@@ -13,7 +13,10 @@ import {ProjectQueryParametersMapper} from '../mapper/query/project-query-parame
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
-import { PageMapper } from '../common/page-mapper';
+import {PageMapper} from '../common/page-mapper';
+import {PageRequest} from '../../model/common/page-request';
+import {Page} from '../../model/common/page';
+import {Sort} from '../../model/common/sort';
 
 @Injectable()
 export class ProjectService {
@@ -24,6 +27,20 @@ export class ProjectService {
   static PARENTS = 'parents';
 
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {}
+
+  /**
+   * Fetches projects based on given search query
+   */
+  public pagedSearch(searchQuery: ProjectSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Page<Project>> {
+    const searchUrl = ProjectService.PROJECT_URL + ProjectService.SEARCH;
+
+    return this.authHttp.post(
+      searchUrl,
+      JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)),
+      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
+      .map(response => PageMapper.mapBackend(response.json(), ProjectMapper.mapBackend))
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
+  }
 
   public searchProjects(searchQuery: ProjectSearchQuery): Observable<Array<Project>> {
     const searchUrl = ProjectService.PROJECT_URL + ProjectService.SEARCH;

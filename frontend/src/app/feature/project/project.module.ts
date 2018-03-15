@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatCardModule} from '@angular/material';
+import {MatCardModule, MatTableModule, MatSortModule, MatPaginatorModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -26,7 +26,10 @@ import {ProjectState} from '../../service/project/project-state';
     ReactiveFormsModule,
     MatCardModule,
     MapModule,
-    SidebarModule
+    SidebarModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule
   ],
   declarations: [
     ProjectComponent,

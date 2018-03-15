@@ -1,31 +1,38 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {MatPaginator, MatSort} from '@angular/material';
 
 import {Project} from '../../../model/project/project';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
-import {ProjectHub} from '../../../service/project/project-hub';
-import {Sort} from '../../../model/common/sort';
 import {CityDistrict} from '../../../model/common/city-district';
 import {ProjectState} from '../../../service/project/project-state';
 import {CityDistrictService} from '../../../service/map/city-district.service';
-
+import {ProjectService} from '../../../service/project/project.service';
+import {ProjectSearchDatasource} from '../../../service/project/project-search-datasource';
 
 @Component({
   selector: 'project-search',
   templateUrl: './project-search.component.html'
 })
 export class ProjectSearchComponent implements OnInit {
-  sort: Sort = new Sort(undefined, undefined);
+
+  displayedColumns = [
+      'id', 'ownerName', 'active',
+      'cityDistricts', 'startTime', 'endTime'
+  ];
+
   projects: Array<Project> = [];
   queryForm: FormGroup;
   districts: Observable<Array<CityDistrict>>;
+  dataSource: ProjectSearchDatasource;
 
-  constructor(private projectHub: ProjectHub,
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  constructor(private projectService: ProjectService,
               private projectState: ProjectState,
               private cityDistrictService: CityDistrictService,
-              private router: Router,
               fb: FormBuilder) {
     this.queryForm = fb.group({
       id: undefined,
@@ -39,26 +46,20 @@ export class ProjectSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSource = new ProjectSearchDatasource(this.projectService, this.paginator, this.sort);
     this.districts = this.cityDistrictService.get();
   }
 
-  goToSummary(project: Project): void {
-    this.router.navigate(['projects', project.id]);
-  }
-
-  sortBy(sort: Sort) {
-    this.sort = sort;
-    this.search();
-  }
-
   search(): void {
-    const query = ProjectSearchQuery.fromForm(this.queryForm.value, this.sort);
-    this.projectHub.searchProjects(query).subscribe(projects => {
-      this.projects = projects;
-    });
+    const query = ProjectSearchQuery.fromForm(this.queryForm.value);
+    this.dataSource.searchChange(query);
   }
 
   districtNames(ids: Array<number>): Observable<Array<string>> {
     return this.projectState.districtNames(ids);
+  }
+
+  trackById(index: number, item: Project) {
+    return item.id;
   }
 }

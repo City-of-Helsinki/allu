@@ -411,6 +411,16 @@ export const translations = {
       contactNameMissing: 'Hankkeen yhteyshenkilö puuttuu',
       customerReferenceMissing: 'Asiakkaan viite/työnumero puuttuu'
     },
+    id: 'Tunnus',
+    ownerName: 'Omistaja',
+    state: 'Tila',
+    active: {
+      false: 'INAKTIIVINEN',
+      true: 'AKTIIVINEN'
+    },
+    startTime: 'Alku',
+    endTime: 'Loppu',
+    cityDistricts: 'Kaupunginosa',
     error: {
       saveFailed: 'Projektin tallentaminen epäonnistui',
       searchFailed: 'Projektien hakeminen epäonnistui',

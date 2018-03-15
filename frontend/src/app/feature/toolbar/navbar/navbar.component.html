@@ -3,7 +3,7 @@
   <a [routerLink]="['/workqueue']" routerLinkActive="active">{{'nav.workqueue' | translation}}</a>
   <a [routerLink]="['/supervision-tasks']" routerLinkActive="active">{{'nav.supervisionTasks' | translation}}</a>
   <a [routerLink]="['/applications']" routerLinkActive="active">{{'nav.applications' | translation}}</a>
-  <a *ngIf="false" [routerLink]="['/projects']" routerLinkActive="active">{{'nav.projects' | translation}}</a>
+  <a [routerLink]="['/projects']" routerLinkActive="active">{{'nav.projects' | translation}}</a>
   <a [routerLink]="['/customers']" routerLinkActive="active"
      *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_INVOICING']">
     {{'nav.customers' | translation}}
