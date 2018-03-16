@@ -7,7 +7,7 @@
       <input type="text" formControlName="address"
              inputBoxInput
              class="input-addon-field last-item"
-             placeholder="Hae osoitteella"
+             [placeholder]="'searchbar.address' | translation"
              (keyup.enter)="addressSelected(searchForm.value.address)"
              [matAutocomplete]="addressSearch"/>
       <mat-autocomplete #addressSearch="matAutocomplete">
@@ -19,11 +19,12 @@
     </input-box>
   </div>
 
-  <div *ngIf="barType === 'BAR'" class="row">
-    <div class="col s8">
+  <div *ngIf="barType === 'BAR'" fxLayout="row" fxLayoutGap="18px" class="row-indent">
+    <div fxFlex="1 1 70%">
       <input-box class="input-raised">
         <input type="text" formControlName="address"
-               inputBoxInput placeholder="Hae osoitteella"
+               inputBoxInput
+               [placeholder]="'searchbar.address' | translation"
                (keyup.enter)="addressSelected(searchForm.value.address)"
                [matAutocomplete]="addressSearch"/>
       </input-box>
@@ -34,9 +35,10 @@
         </mat-option>
       </mat-autocomplete>
     </div>
-    <div class="col s2">
+    <div fxFlex="1 1 15%">
       <input-box class="input-raised">
-        <input inputBoxInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
+        <input inputBoxInput type="text" formControlName="startDate"
+               [placeholder]="'applicationSearch.startTime' | translation"
                [matDatepicker]="startDatePicker"
                [max]="searchForm.get('endDate').value"/>
         <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
@@ -46,9 +48,10 @@
         </field-error>
       </input-box>
     </div>
-    <div class="col s2">
+    <div fxFlex="1 1 15%">
       <input-box class="input-raised">
-        <input inputBoxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
+        <input inputBoxInput type="text" formControlName="endDate"
+               [placeholder]="'applicationSearch.endTime' | translation"
                [matDatepicker]="endDatePicker"
                [min]="searchForm.get('startDate').value"/>
         <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
@@ -61,44 +64,58 @@
   </div>
 
   <div *ngIf="barType === 'ADVANCED'">
-    <div class="col s12">
-      <mat-form-field class="input-full-width">
-        <input matInput type="text" formControlName="address"
-               placeholder="Hae osoitteella"
-               (keyup.enter)="addressSelected(searchForm.value.address)"
-               [matAutocomplete]="addressSearch"/>
-        <mat-autocomplete #addressSearch="matAutocomplete">
-          <mat-option *ngFor="let address of matchingAddresses | async"
-                      [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
-            {{ address.uiStreetAddress }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="address"
+                 [placeholder]="'searchbar.address' | translation"
+                 (keyup.enter)="addressSelected(searchForm.value.address)"
+                 [matAutocomplete]="addressSearch"/>
+          <mat-autocomplete #addressSearch="matAutocomplete">
+            <mat-option *ngFor="let address of matchingAddresses | async"
+                        [value]="address.uiStreetAddress"
+                        (click)="addressSelected(address.uiStreetAddress)">
+              {{ address.uiStreetAddress }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
     </div>
 
-    <div class="input-field col s6">
-      <mat-form-field class="input-full-width">
-        <input matInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
-               [matDatepicker]="startDatePicker"/>
-        <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
-        <mat-datepicker #startDatePicker></mat-datepicker>
-      </mat-form-field>
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex="calc(50% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="startDate"
+                 [placeholder]="'applicationSearch.startTime' | translation"
+                 [matDatepicker]="startDatePicker"
+                 [max]="searchForm.get('endDate').value"/>
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div fxFlex="calc(50% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="endDate"
+                 [placeholder]="'applicationSearch.endTime' | translation"
+                 [matDatepicker]="endDatePicker"
+                 [min]="searchForm.get('startDate').value"/>
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
     </div>
-    <div class="input-field col s6">
-      <mat-form-field class="input-full-width">
-        <input matInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
-               [matDatepicker]="endDatePicker"/>
-        <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
-        <mat-datepicker #endDatePicker></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <div class="col s12">
-      <selection-group formControlName="statusTypes">
-        <span class="label-small">Tilat</span>
-        <selection-item *ngFor="let status of statusTypes" [item]="status">
-          {{['application.status', status] | translation}}
-        </selection-item>
-      </selection-group>
+
+    <div fxLayout="row">
+      <div fxFlex>
+        <selection-group formControlName="statuses">
+          <selection-item *ngFor="let status of statuses"
+                          [item]="status"
+                          selectType="CHIP"
+                          class="btn-chip-50">
+            {{['searchbar.status', status] | translation}}
+          </selection-item>
+        </selection-group>
+      </div>
     </div>
   </div>
 </form>

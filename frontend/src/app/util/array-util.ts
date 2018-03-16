@@ -55,6 +55,18 @@ export class ArrayUtil {
     return self.indexOf(value) === index;
   }
 
+  static flatten(array: Array<any>): Array<any> {
+    if (!Array.isArray(array)) {
+      throw new Error(`Not an array ${ array}`);
+    }
+
+    if (array.length && array.every(entry => Array.isArray(entry))) {
+      return array.reduce((prev, cur) => prev.concat(this.flatten(cur)));
+    } else {
+      return array;
+    }
+  }
+
   private static compareNumeric(left: Array<number>, right: Array<number>): number {
     while (left.length && right.length) {
       const leftHead = left.shift();

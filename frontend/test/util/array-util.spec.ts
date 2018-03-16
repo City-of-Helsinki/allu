@@ -1,6 +1,6 @@
 import {ArrayUtil} from '../../src/app/util/array-util';
 
-describe('Array util', () => {
+fdescribe('Array util', () => {
   it('should sort alphabetical values', () => {
     const array = ['b', 'c', 'a'];
     expect(array.sort(ArrayUtil.naturalSort((item: string) => item))).toEqual(['a', 'b', 'c']);
@@ -30,5 +30,10 @@ describe('Array util', () => {
     const array = [{key: 'b'}, {key: 'c'}, {key: 'a'}];
     expect(array.sort(ArrayUtil.naturalSort((item: {key: string} ) => item.key)))
       .toEqual([{key: 'a'}, {key: 'b'}, {key: 'c'}]);
+  });
+
+  it('should flatten array with 2 levels deep', () => {
+    const array = [[1, 2], [3, 4]];
+    expect(ArrayUtil.flatten(array)).toEqual([1, 2, 3, 4]);
   });
 });

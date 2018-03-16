@@ -1,4 +1,4 @@
-<mat-list>
+<mat-list class="search-results">
   <ng-container *ngFor="let application of applications | async">
     <mat-divider></mat-divider>
     <mat-list-item (click)="jobClick(application)">
@@ -9,4 +9,3 @@
     </mat-list-item>
   </ng-container>
 </mat-list>
-

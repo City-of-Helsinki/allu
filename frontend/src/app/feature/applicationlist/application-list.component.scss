@@ -2,10 +2,10 @@
 
 :host {
   background-color: $allu-background;
+}
 
-  .searchresults {
-    overflow-y: auto;
-  }
+.search-results.mat-list {
+  padding-top: 0px;
 }
 
 .mat-list .mat-list-item .mat-list-text > h1.mat-line {

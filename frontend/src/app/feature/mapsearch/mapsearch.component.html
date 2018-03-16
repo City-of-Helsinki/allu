@@ -1,19 +1,28 @@
 <mat-sidenav-container>
-  <mat-sidenav mode="over" [opened]="sidenavOpen">
-    <div class="sidenav-header flex-container">
-      <h1 class="flex-item">Tarkennettu haku</h1>
-      <button type="button" class="btn-right" (click)="hideAdvancedSearch()">
-        <mat-icon>clear</mat-icon>
-      </button>
-    </div>
-    <div class="row">
-      <div class="col m12">
-        <searchbar *ngIf="sidenavOpen" barType="ADVANCED"></searchbar>
+  <mat-sidenav mode="over" [opened]="sidenavOpen" class="no-scroll">
+    <div class="sidenav-search">
+      <div class="sidenav-header flex-container">
+        <h1 class="flex-item">{{'mapsearch.advanced' | translation}}</h1>
+        <button type="button" class="btn-right" (click)="hideAdvancedSearch()">
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
-
-      <div class="col m12"><h1>Hakutulokset</h1></div>
-      <div class="col m12">
-        <application-list>Ladataan hakemuksia</application-list>
+      <div fxLayout="row" class="sidenav-centered-content">
+        <div fxFlex="100%">
+          <searchbar *ngIf="sidenavOpen" barType="ADVANCED"></searchbar>
+        </div>
+      </div>
+    </div>
+    <div class="sidenav-search-results">
+      <div fxLayout="row" class="sidenav-centered-content">
+        <div fxFlex>
+          <h1>{{'mapsearch.results' | translation}}</h1>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex>
+          <application-list>{{'mapsearch.loading' | translation}}</application-list>
+        </div>
       </div>
     </div>
   </mat-sidenav>
@@ -21,9 +30,10 @@
     <div *ngIf="!sidenavOpen" class="map-overlay">
       <searchbar barType="SIMPLE" (onShowAdvanced)="showAdvancedSearch()"></searchbar>
     </div>
-    <map [zoom]="true" [draw]="true" [selection]="true">Ladataan karttaa</map>
+    <map [zoom]="true" [draw]="true" [selection]="true"></map>
     <div class="map-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-      <button mat-fab color="accent" (click)="newApplication()" matTooltip="Uusi hakemus" matTooltipPosition="above">
+      <button mat-fab color="accent" (click)="newApplication()"
+              [matTooltip]="'mapsearch.newApplication' | translation" matTooltipPosition="above">
         <mat-icon>filter_none</mat-icon>
       </button>
     </div>

@@ -7,9 +7,10 @@ import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../service/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {StringUtil} from '../../util/string.util';
-import {ApplicationStatus, searchable} from '../../model/application/application-status';
+import {ApplicationStatusGroup} from '../../model/application/application-status';
 import {MapSearchFilter} from '../../service/map-search-filter';
 import {Subject} from 'rxjs/Subject';
+import {EnumUtil} from '../../util/enum.util';
 
 enum BarType {
   SIMPLE,
@@ -31,7 +32,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   addressControl: FormControl;
   matchingAddresses: Observable<Array<PostalAddress>>;
-  statusTypes = searchable.map(status => ApplicationStatus[status]);
+  statuses = EnumUtil.enumValues(ApplicationStatusGroup);
 
   private destroy = new Subject<boolean>();
 
@@ -41,7 +42,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
       address: this.addressControl,
       startDate: this.datesRequired ? [undefined, Validators.required] : undefined,
       endDate: this.datesRequired ? [undefined, Validators.required] : undefined,
-      statusTypes: [[]]
+      statuses: [[]]
     });
   }
 

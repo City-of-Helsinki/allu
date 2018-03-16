@@ -379,6 +379,7 @@ export const translations = {
     }
   },
   applicationSearch: {
+    title: 'Hakemukset',
     applicationId: 'Hakemuksen tunnus',
     type: 'Hakemuksen tyyppi',
     status: 'Hakemuksen tila',
@@ -849,6 +850,22 @@ export const translations = {
       titleMultipleFeatures: '{{count}} hakemusta'
     }
   },
+  mapsearch: {
+    advanced: 'Tarkennettu haku',
+    results: 'Hakutulokset',
+    loading: 'Ladataan hakemuksia',
+    newApplication: 'Uusi hakemus'
+  },
+  searchbar: {
+    address: 'Kirjoita osoite',
+    types: 'Valitse tyypit',
+    status: {
+      PRELIMINARY: 'Alustava',
+      HANDLING: 'Käsittelyssä',
+      DECISION: 'Päätetty',
+      HISTORY: 'Historia'
+    }
+  },
   attachments: 'Liitteet',
   attachment: {
     title: 'Liite',
@@ -969,7 +986,7 @@ export const translations = {
     }
   },
   supervisionWorkqueue: {
-    title: 'VALVONTATEHTÄVÄT',
+    title: 'Valvontatehtävät',
     filter: {
       taskTypes: 'Toimenpide',
       applicationId: 'Hakemustunnus',
