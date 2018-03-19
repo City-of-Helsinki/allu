@@ -78,8 +78,11 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
       });
 
       it("Find pending invoices", () -> {
+        final Customer customer = new Customer();
+        customer.setType(CustomerType.COMPANY);
+        customer.setName("The Company");
         final int INVOICE_RECIPIENT_ID = 33;
-        final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(CustomerType.COMPANY, "The Company");
+        final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
         final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(new InvoiceRow());
         Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID);
         List<Invoice> pendingInvoices = Collections.singletonList(invoice);

@@ -21,13 +21,25 @@ public class InvoiceRecipient {
   private String streetAddress;
   private String postalCode;
   private String city;
+  private String invoicingOperator;
 
   public InvoiceRecipient() {
   }
 
-  public InvoiceRecipient(CustomerType type, String name) {
-    this.type = type;
-    this.name = name;
+  public InvoiceRecipient(Customer customer) {
+    this.type = customer.getType();
+    this.name = customer.getName();
+    this.email = customer.getEmail();
+    this.phone = customer.getPhone();
+    this.registryKey = customer.getRegistryKey();
+    this.ovt = customer.getOvt();
+    final PostalAddress postalAddress = customer.getPostalAddress();
+    if (postalAddress != null) {
+      this.streetAddress = postalAddress.getStreetAddress();
+      this.postalCode = postalAddress.getPostalCode();
+      this.city = postalAddress.getCity();
+    }
+    this.invoicingOperator = customer.getInvoicingOperator();
   }
 
   public Integer getId() {
@@ -142,5 +154,13 @@ public class InvoiceRecipient {
 
   public void setCity(String city) {
     this.city = city;
+  }
+
+  public String getInvoicingOperator() {
+    return invoicingOperator;
+  }
+
+  public void setInvoicingOperator(String invoicingOperator) {
+    this.invoicingOperator = invoicingOperator;
   }
 }

@@ -20,6 +20,7 @@ import static com.greghaskins.spectrum.Spectrum.beforeEach;
 import static com.greghaskins.spectrum.Spectrum.describe;
 import static com.greghaskins.spectrum.Spectrum.it;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -155,7 +156,10 @@ public class SapSpec {
   }
 
   private InvoiceRecipient dummyInvoiceRecipient() {
-    InvoiceRecipient invoiceRecipient = new InvoiceRecipient(CustomerType.COMPANY, "Dummy Company");
+    final Customer customer = new Customer();
+    customer.setName("Dummy Company");
+    customer.setType(CustomerType.COMPANY);
+    InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
     invoiceRecipient.setStreetAddress("DummyStreet 12 A");
     invoiceRecipient.setPostalCode("01230");
     invoiceRecipient.setCity("Dumville");
