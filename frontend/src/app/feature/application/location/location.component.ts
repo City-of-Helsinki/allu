@@ -223,7 +223,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get submitAllowed(): boolean {
     // Nothing is currently edited or location is edited but its values are valid
-    return this.locationState.editIndex === undefined || this.locationForm.valid;
+    return this.locationState.editIndex === undefined
+        || (this.locationForm.valid && !!this.locationForm.value['geometry']);
   }
 
   private editLocation(loc: Location): void {
