@@ -25,6 +25,7 @@ import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.*;
 
@@ -199,10 +200,9 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
   }
 
   private Invoice testInvoice() {
-    InvoiceRecipient customer = new InvoiceRecipient(CustomerType.COMPANY, "the company");
-    int customerId = invoiceRecipientDao.insert(customer);
-    Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-15T08:00:00+02:00[Europe/Helsinki]"), false,
-        false, null, customerId);
+    int recipientId = invoiceRecipientDao.insert(invoiceRecipient());
+    final Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-15T08:00:00+02:00[Europe/Helsinki]"), false,
+        false, null, recipientId);
     invoice.setRows(Arrays.asList(
         new InvoiceRow(ChargeBasisUnit.PIECE, 3.141, "One Pie", new String[] { "A pie", "With Apples" }, 12300, -99999),
         new InvoiceRow(ChargeBasisUnit.DAY, 14, "A Forthnight", new String[] { "Two weeks", "Fourteen nights" }, 300,
@@ -211,10 +211,9 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
   }
 
   private Invoice otherInvoice() {
-    InvoiceRecipient customer = new InvoiceRecipient(CustomerType.COMPANY, "the company");
-    int customerId = invoiceRecipientDao.insert(customer);
-    Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-07T08:00:00+02:00[Europe/Helsinki]"), true,
-        false, null, customerId);
+    int recipientId = invoiceRecipientDao.insert(invoiceRecipient());
+    final Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-07T08:00:00+02:00[Europe/Helsinki]"), true,
+        false, null, recipientId);
     invoice.setRows(Arrays.asList(
         new InvoiceRow(ChargeBasisUnit.MONTH, 12, "A Whole year", new String[] { "A calendar year", "About 365 days" },
             12000, 144000),
@@ -223,5 +222,13 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
         new InvoiceRow(ChargeBasisUnit.DAY, 14, "A Forthnight", new String[] { "Unit of time", "14 days" }, 300,
             4200)));
     return invoice;
+  }
+
+  private InvoiceRecipient invoiceRecipient() {
+    final Customer customer = new Customer();
+    customer.setName("The Company");
+    customer.setType(CustomerType.COMPANY);
+    final InvoiceRecipient recipient = new InvoiceRecipient(customer);
+    return recipient;
   }
 }

@@ -66,7 +66,7 @@ public class InvoiceService {
       throw new NoSuchEntityException("Unable to create invoice as customer is not found");
     }
     final Customer customer = customerOpt.get();
-    final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer.getType(), customer.getName());
+    final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
     final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
     Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId);
     invoiceDao.deleteByApplication(applicationId);
