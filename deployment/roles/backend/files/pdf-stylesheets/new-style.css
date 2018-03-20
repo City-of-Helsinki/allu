@@ -94,11 +94,12 @@ hr {
 .body .half-left {
   display: inline-block;
   vertical-align: top;
-  width: 47%; }
+  width: 46%; }
 .body .half-right {
   display: inline-block;
   vertical-align: top;
-  width: 47%; }
+  width: 47%;
+  margin-left: 5pt; }
 .body .threecols-left {
   display: inline-block;
   vertical-align: top;
