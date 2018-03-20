@@ -64,7 +64,7 @@ export class CustomerForm {
       detailsId: undefined,
       name: ['', [Validators.required, Validators.minLength(2)]],
       registryKey: ['', [Validators.required, Validators.minLength(2)]],
-      ovt: ['', [Validators.minLength(12), Validators.maxLength(17)]],
+      ovt: ['', [Validators.minLength(12), Validators.maxLength(18)]],
       invoicingOperator: [''],
       country: ['Suomi'],
       postalAddress: fb.group({
