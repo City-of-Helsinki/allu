@@ -36,7 +36,7 @@ sap_ftp_customer_directory: /
 sap_ftp_customer_arch_directory: /arch
 
 # Customer update configuration
-customer_update_enabled: false
+customer_update_enabled: true
 customer_update_cronstring: "0 0/30 * * * ?"
 customer_update_sourcedir: /home/allu/scheduler-service/sap/customer-process
 customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
@@ -50,4 +50,4 @@ invoice_notification_email: talpa.kympmyyntikp@hel.fi
 ui_baseurl: https://allu.kaupunkiymparisto.fi
 
 ssh_tunnel_server_address: 10.138.10.86
-allu_ssh_key_file: /home/allu/allu_keys/allu_id_rsa
+allu_ssh_key_file: /servicehome/allu_keys/allu_id_rsa

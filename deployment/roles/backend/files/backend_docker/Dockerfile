@@ -4,7 +4,7 @@ ARG CUSTOM_UID
 ARG CUSTOM_GID
 
 RUN apt-get update \
-    && apt-get install -y wget xz-utils supervisor python-pip openjdk-8-jre tzdata \
+    && apt-get install -y wget xz-utils supervisor python-pip openjdk-8-jre tzdata autossh \
     && rm -rf /var/lib/apt/lists/*
 
 
