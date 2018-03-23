@@ -3,5 +3,4 @@
 - include: create_directories.yml
 - include: copy_files.yml
 - include: copy_stylesheets.yml
-- include: auto_ssh_tunnel.yml
 - include: docker.yml
