@@ -53,7 +53,7 @@ public class ChargeBasisDao {
         .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.manuallySet.eq(manuallySet))).execute();
     // Delete possible dangling referred tags left by above delete
     queryFactory.delete(chargeBasis)
-        .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.referredTag.notIn(
+        .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.referredTag.isNotNull()).and(chargeBasis.referredTag.notIn(
             select(chargeBasis.tag).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.tag.isNotNull()))))).execute();
     if (!entries.isEmpty()) {
       SQLInsertClause insert = queryFactory.insert(chargeBasis);
