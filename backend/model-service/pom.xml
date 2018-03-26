@@ -471,7 +471,11 @@
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToConfigurationType</type>
                         </typeMapping>
-
+                        <typeMapping>
+                            <table>stored_filter</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToStoredFilterType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>
