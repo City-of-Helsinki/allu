@@ -1121,4 +1121,20 @@ public class ApplicationProperties {
   public String getFinishedApplicationsUrl() {
      return getModelServiceUrl("/applications/finished");
   }
+
+  public String getStoredFilterUrl() {
+    return getModelServiceUrl("/stored-filter/{id}");
+  }
+
+  public String getStoredFilterCreateUrl() {
+    return getModelServiceUrl("/stored-filter");
+  }
+
+  public String getStoredFilterFindByUserAndTypeUrl() {
+    return getModelServiceUrl("/user/{userId}/stored-filter/{type}");
+  }
+
+  public String getStoredFilterSetAsDefaultUrl() {
+    return getModelServiceUrl("/stored-filter/{id}/set-default");
+  }
 }
