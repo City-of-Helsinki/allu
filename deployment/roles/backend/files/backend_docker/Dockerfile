@@ -27,6 +27,7 @@ RUN addgroup --gid $CUSTOM_GID allu && \
 
 # general setup
 RUN mkdir -p /var/log/supervisor
+RUN mkdir -p /home/allu/.ssh
 
 # project setup
 RUN mkdir -p /home/allu/allu-ui-service
@@ -36,7 +37,6 @@ RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
 RUN mkdir -p /home/allu/external-service
 RUN mkdir -p /home/allu/scheduler-service/sap
-
 
 ######################################################################################
 # Expose ports
@@ -98,6 +98,7 @@ COPY wkhtmltox-0.12.3_linux-generic-amd64.tar.xz /tmp/wkhtmltox.tar.xz
 RUN tar xf /tmp/wkhtmltox.tar.xz -C /usr/local && rm /tmp/wkhtmltox.tar.xz
 # supervisord
 COPY supervisord.conf /etc/supervisord.conf
+COPY known_hosts /home/allu/.ssh/known_hosts
 
 ######################################################################################
 # Changes that should not be cached
@@ -106,5 +107,5 @@ COPY supervisord.conf /etc/supervisord.conf
 ARG CACHEBUST=1
 
 # JAR files
-RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\n"`; \
+RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' -printf "%f\n"`; \
   do wget http://185.26.51.92:8081/artifactory/libs-snapshot-local/fi/hel/allu/${service}/1.0-SNAPSHOT/${service}-1.0-SNAPSHOT.jar --output-document /home/allu/${service}/${service}.jar; done
