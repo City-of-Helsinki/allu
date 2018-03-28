@@ -4,3 +4,5 @@ ansible-playbook -i test.inventory --private-key=$HOME/allu_keys/allu_id_rsa dat
 ansible-playbook -i test.inventory --private-key=$HOME/allu_keys/allu_id_rsa elasticsearch.yml --vault-password-file ~/allu_keys/vault_secret
 ansible-playbook -i test.inventory --private-key=$HOME/allu_keys/allu_id_rsa backend.yml --vault-password-file ~/allu_keys/vault_secret
 ansible-playbook -i test.inventory --private-key=$HOME/allu_keys/allu_id_rsa sftpserver.yml --vault-password-file ~/allu_keys/vault_secret
+ansible-playbook -i test.inventory --private-key=$HOME/allu_keys/allu_id_rsa reporting_database.yml --vault-password-file ~/allu_keys/vault_secret
+ansible-playbook -i test.inventory --private-key=$HOME/allu_keys/allu_id_rsa etl.yml --vault-password-file ~/allu_keys/vault_secret
