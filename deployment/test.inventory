@@ -13,6 +13,9 @@
 [sftpserver]
 185.26.48.184
 
+[reporting_dbserver]
+185.26.48.184
+
 
 [test:children]
 webservers
@@ -20,3 +23,4 @@ dbservers
 backendservers
 searchservers
 sftpserver
+reporting_dbserver

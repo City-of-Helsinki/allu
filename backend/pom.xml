@@ -46,6 +46,7 @@
         <module>external-service</module>
         <module>external-domain</module>
         <module>sap-import</module>
+        <module>allu-etl</module>
     </modules>
 
     <build>

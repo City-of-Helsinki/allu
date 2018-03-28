@@ -1,0 +1,5 @@
+- name: install Allu reporting database
+  hosts: reporting_dbserver
+  remote_user: allu
+  roles:
+    - reporting_database
