@@ -74,7 +74,7 @@ public class AlluMailServiceSpec {
           alluMailService.newMailTo(Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"))
               .withSubject("iPhone 5 only $1!!").withDecision("image.jpg.exe", 123).withBody("BUY NOW!")
               .withAttachments(
-                  Arrays.asList(new Attachment("eka", "EKA".getBytes()), new Attachment("toka", "TOKA".getBytes())))
+                  Arrays.asList(new Attachment("eka", "text/plain", "EKA".getBytes()), new Attachment("toka", "text/plain", "TOKA".getBytes())))
               .send();
           ArgumentCaptor<Multipart> contentCaptor = ArgumentCaptor.forClass(Multipart.class);
           Mockito.verify(mockMimeMessage.get()).setContent(contentCaptor.capture());

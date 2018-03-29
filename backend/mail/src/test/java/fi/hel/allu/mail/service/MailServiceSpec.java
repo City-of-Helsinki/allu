@@ -133,14 +133,16 @@ public class MailServiceSpec {
         describe("with Attachments in email", () -> {
           it("should handle attachments correctly", () -> {
             mailMessage.setAttachments(
-                Collections.singletonList(new MailMessage.Attachment("somename", "somebytes".getBytes())));
+                Collections.singletonList(new MailMessage.Attachment("somename", "application/pdf", "somebytes".getBytes())));
             mailService.send(mailMessage);
             ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<InputStreamSource> issCaptor = ArgumentCaptor.forClass(InputStreamSource.class);
-            Mockito.verify(mockMimeMessageHelper).addAttachment(stringCaptor.capture(), issCaptor.capture());
+            ArgumentCaptor<String> mimeTypeCaptor = ArgumentCaptor.forClass(String.class);
+            Mockito.verify(mockMimeMessageHelper).addAttachment(stringCaptor.capture(), issCaptor.capture(), mimeTypeCaptor.capture());
             Assert.assertEquals("somename", stringCaptor.getValue());
             Assert.assertEquals("somebytes",
                 StreamUtils.copyToString(issCaptor.getValue().getInputStream(), Charset.forName("UTF-8")));
+            Assert.assertEquals("application/pdf", mimeTypeCaptor.getValue());
           });
         });
         describe("with inline resources in email", () -> {
@@ -213,7 +215,7 @@ public class MailServiceSpec {
     });
     it("should send email with attachment", () -> {
       mailMessage.setAttachments(Collections
-          .singletonList(new MailMessage.Attachment("liitetiedost.txt", "liitetiedoston sisältö".getBytes())));
+          .singletonList(new MailMessage.Attachment("liitetiedost.txt", "text/plain", "liitetiedoston sisältö".getBytes())));
       mailService.send(mailMessage);
     });
     it("should send HTML mail with inline resource", () -> {

@@ -123,24 +123,24 @@ public class MailMessage {
    * Email attachment bytes and the related metadata.
    */
   public static class Attachment {
-    private String filename;
-    private byte[] bytes;
+    private final String filename;
+    private final String mimeType;
+    private final byte[] bytes;
 
-    public Attachment(String filename, byte[] bytes) {
+    public Attachment(String filename, String mimeType, byte[] bytes) {
       this.filename = filename;
+      this.mimeType = mimeType;
       this.bytes = bytes;
     }
 
-    /**
-     * @return  the filename of the attachment.
-     */
     public String getFilename() {
       return filename;
     }
 
-    /**
-     * @return  the bytes of the attachment.
-     */
+    public String getMimeType() {
+      return mimeType;
+    }
+
     public byte[] getBytes() {
       return bytes;
     }
