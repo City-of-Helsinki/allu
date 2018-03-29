@@ -31,7 +31,7 @@ public class MailService {
   static class MessageHelperMaker {
     public MimeMessageHelper createMimeMessageHelper(MimeMessage mimeMessage, boolean multipart, String encoding)
         throws MessagingException {
-      return new MimeMessageHelper(mimeMessage, multipart, encoding);
+      return new AlluMimeMessageHelper(mimeMessage, multipart, encoding);
     }
   }
 
