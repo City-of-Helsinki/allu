@@ -12,12 +12,11 @@ import fi.hel.allu.servicecore.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -204,9 +203,14 @@ public class ApplicationController {
   @RequestMapping(value = "/attachments/{attachmentId}/data", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getAttachmentData(@PathVariable int attachmentId) {
+    AttachmentInfoJson info = attachmentService.getAttachment(attachmentId);
     byte[] bytes = attachmentService.getAttachmentData(attachmentId);
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType("application/octet-stream"));
+    try {
+      httpHeaders.setContentType(MediaType.parseMediaType(info.getMimeType()));
+    } catch (InvalidMediaTypeException e) {
+      httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    }
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
   }
 

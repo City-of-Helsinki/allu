@@ -60,8 +60,8 @@ public class MailComposerService {
 
   private static final Logger logger = LoggerFactory.getLogger(MailComposerService.class);
 
-  private AlluMailService alluMailService;
-  private AttachmentService attachmentService;
+  private final AlluMailService alluMailService;
+  private final AttachmentService attachmentService;
 
   @Autowired
   public MailComposerService(AlluMailService alluMailService, AttachmentService attachmentService) {
@@ -77,7 +77,7 @@ public class MailComposerService {
     if (!emailRecipients.isEmpty()) {
       List<Attachment> attachments = applicationJson.getAttachmentList().stream()
           .filter(ai -> ai.isDecisionAttachment())
-          .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())))
+          .map(ai -> new Attachment(ai.getName(), ai.getMimeType(), attachmentService.getAttachmentData(ai.getId())))
           .collect(Collectors.toList());
 
       List<InlineResource> inlineResources = inlineResources();

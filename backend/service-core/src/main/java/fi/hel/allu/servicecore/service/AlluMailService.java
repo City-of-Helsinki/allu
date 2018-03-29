@@ -50,7 +50,7 @@ public class AlluMailService {
   }
 
   public class MailBuilder {
-    private MailMessage mailMessage = new MailMessage();
+    private final MailMessage mailMessage = new MailMessage();
     private Map<String, Object> model = null;
     private Attachment decisionAttachment = null;
     private List<Attachment> otherAttachments = Collections.emptyList();
@@ -59,7 +59,7 @@ public class AlluMailService {
       if (emailAcceptPattern != null) {
         List<String> forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
             .collect(Collectors.toList());
-        if (forbidden.size() != 0) {
+        if (!forbidden.isEmpty()) {
           throw new IllegalArgumentException("Forbidden recipient addresses: " + String.join(", ", forbidden));
         }
       }
@@ -83,7 +83,7 @@ public class AlluMailService {
     }
 
     public MailBuilder withDecision(String decisionPdfName, int applicationId) {
-      decisionAttachment = new Attachment(decisionPdfName, decisionService.getDecision(applicationId));
+      decisionAttachment = new Attachment(decisionPdfName, "application/pdf", decisionService.getDecision(applicationId));
       return this;
     }
 

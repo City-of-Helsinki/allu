@@ -65,7 +65,10 @@ public class MailService {
       mimeMessageHelper.addInline(inline.getContentId(), inline);
     }
     for (MailMessage.Attachment attachment : mailMessage.getAttachments()) {
-      mimeMessageHelper.addAttachment(attachment.getFilename(), new ByteArrayResource(attachment.getBytes()));
+      mimeMessageHelper.addAttachment(
+          attachment.getFilename(),
+          new ByteArrayResource(attachment.getBytes()),
+          attachment.getMimeType());
     }
 
     mailSender.send(mimeMessage);
