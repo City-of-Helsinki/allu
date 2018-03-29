@@ -11,7 +11,7 @@
       CACHEBUST: "{{ 9999999 |random }}"
 
 - name: remove existing docker image to avoid Ansible task caching
-  local_action: file path=/tmp/allu_backend.tar state=absent
+  local_action: file path=/tmp/allu_etl.tar state=absent
 
 # This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
@@ -47,14 +47,14 @@
 
 - name: remove existing container from Docker
   docker_image:
-    name=allu_etl_container
+    name=allu_etl
     state=absent
     force=true
   become: yes
 
 - name: add container to Docker
   docker_image:
-    name=allu_etl_container
+    name=allu_etl
     state=present
     load_path=/tmp/allu_etl.tar
   become: yes
