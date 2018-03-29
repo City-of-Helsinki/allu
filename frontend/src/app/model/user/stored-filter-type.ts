@@ -1,0 +1,7 @@
+export enum StoredFilterType {
+  MAP,
+  WORKQUEUE,
+  SUPERVISION_WORKQUEUE,
+  APPLICATION_SEARCH,
+  PROJECT_SEARCH
+}

@@ -1,22 +1,24 @@
 <form [formGroup]="searchForm">
-  <div *ngIf="barType === 'SIMPLE'" class="search-box">
-    <input-box class="input-raised">
-      <button type="button" mat-raised-button matPrefix class="toggle-sidebar fill" (click)="showMore()" inputBoxPrefix>
-        <mat-icon>subject</mat-icon>
-      </button>
-      <input type="text" formControlName="address"
-             inputBoxInput
-             class="input-addon-field last-item"
-             [placeholder]="'searchbar.address' | translation"
-             (keyup.enter)="addressSelected(searchForm.value.address)"
-             [matAutocomplete]="addressSearch"/>
-      <mat-autocomplete #addressSearch="matAutocomplete">
-        <mat-option *ngFor="let address of matchingAddresses | async"
-                    [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
-          {{ address.uiStreetAddress }}
-        </mat-option>
-      </mat-autocomplete>
-    </input-box>
+  <div *ngIf="barType === 'SIMPLE'" class="search-box" fxLayout="row" fxLayoutGap="18px">
+    <div fxFlex="0 1 calc(65% - 18px)">
+      <input-box class="input-raised">
+        <button type="button" mat-raised-button matPrefix class="toggle-sidebar fill" (click)="showMore()" inputBoxPrefix>
+          <mat-icon>subject</mat-icon>
+        </button>
+        <input type="text" formControlName="address"
+               inputBoxInput
+               class="input-addon-field last-item"
+               [placeholder]="'searchbar.address' | translation"
+               (keyup.enter)="addressSelected(searchForm.value.address)"
+               [matAutocomplete]="addressSearch"/>
+        <mat-autocomplete #addressSearch="matAutocomplete">
+          <mat-option *ngFor="let address of matchingAddresses | async"
+                      [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
+            {{ address.uiStreetAddress }}
+          </mat-option>
+        </mat-autocomplete>
+      </input-box>
+    </div>
   </div>
 
   <div *ngIf="barType === 'BAR'" fxLayout="row" fxLayoutGap="18px" class="row-indent">

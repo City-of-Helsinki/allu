@@ -11,6 +11,7 @@ import {ApplicationStatusGroup} from '../../model/application/application-status
 import {MapSearchFilter} from '../../service/map-search-filter';
 import {Subject} from 'rxjs/Subject';
 import {EnumUtil} from '../../util/enum.util';
+import {StoredFilterType} from '../../model/user/stored-filter-type';
 
 enum BarType {
   SIMPLE,
@@ -33,6 +34,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   addressControl: FormControl;
   matchingAddresses: Observable<Array<PostalAddress>>;
   statuses = EnumUtil.enumValues(ApplicationStatusGroup);
+  MAP_FILTER = StoredFilterType.MAP;
 
   private destroy = new Subject<boolean>();
 

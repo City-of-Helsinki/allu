@@ -1,0 +1,31 @@
+<input-box class="input-raised">
+  <button inputBoxInput [matMenuTriggerFor]="storedFilterMenu" class="input-box-content allu-icon-button">
+    <div *ngIf="selectedFilter">{{selectedFilter.name}}</div>
+    <div *ngIf="!selectedFilter">{{'storedFilter.selectPlaceholder' | translation}}</div>
+    <mat-icon class="icon-suffix">keyboard_arrow_down</mat-icon>
+  </button>
+</input-box>
+
+<mat-menu #storedFilterMenu="matMenu" overlapTrigger="false" class="allu-menu-panel">
+  <div *ngFor="let filter of availableFilters | async">
+    <div class="allu-menu-item">
+      <button mat-menu-item (click)="selectFilter(filter)">
+        <span class="menu-item-text">
+          {{filter.name}}
+          <mat-icon *ngIf="filter.defaultFilter" color="primary" class="mat-icon-18">home</mat-icon>
+        </span>
+      </button>
+      <button mat-icon-button disableRipple="true" (click)="removeFilter(filter.id)">
+        <mat-icon color="primary" class="icon-suffix mat-icon-18">clear</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="allu-menu-item">
+    <button mat-menu-item (click)="addNewFilter()">
+        <mat-icon color="accent" class="icon-prefix">add_circle</mat-icon>
+        <span class="menu-item-text">{{'storedFilter.addCurrent' | translation}}</span>
+    </button>
+  </div>
+</mat-menu>
+
+

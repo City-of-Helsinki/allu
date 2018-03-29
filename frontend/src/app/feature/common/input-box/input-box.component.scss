@@ -36,10 +36,6 @@ select {
   }
 }
 
-.input-box-content.button {
-  border: none;
-}
-
 .input-raised > .input-box-content {
   box-shadow: 0 2px 4px 0 #757575;
 }
@@ -47,6 +43,7 @@ select {
 .input-box-content-item,
 .input-box-content > input,
 .input-box-content > select,
+.input-box-content > button,
 .input-box-content > .select-wrapper input.select-dropdown {
   flex: 1;
   margin: 0;
@@ -71,4 +68,11 @@ select {
   @extend .input-box-content-item;
   flex: 0;
   min-width: 47px;
+  width: 100%;
+}
+
+.input-box-content > button:only-child {
+  border: none;
+  background: transparent;
+  min-width: 100%;
 }

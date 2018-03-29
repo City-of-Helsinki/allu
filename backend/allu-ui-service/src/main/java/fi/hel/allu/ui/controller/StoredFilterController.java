@@ -22,7 +22,7 @@ public class StoredFilterController {
     return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/user/{userId}/stored-filter/{type}", method = RequestMethod.GET)
+  @RequestMapping(value = "/users/{userId}/stored-filter/{type}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<StoredFilterJson>> findByUserAndType(
     @PathVariable int userId, @PathVariable StoredFilterType type) {

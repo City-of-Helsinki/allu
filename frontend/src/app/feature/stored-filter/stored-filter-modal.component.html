@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>{{'storedFilterModal.title' | translation}}</h1>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div>{{['storedFilterModal.description', typeName] | translation}}</div>
+
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width" floatLabel="false">
+          <input matInput type="text" formControlName="name"
+                 [placeholder]="'storedFilterModal.namePlaceholder' | translation"/>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-checkbox class="input-field-checkbox" formControlName="defaultFilter" labelPosition='after'>
+          {{'storedFilterModal.saveAsDefault' | translation}}
+        </mat-checkbox>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <div mat-dialog-actions>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid">
+      {{'common.button.add' | translation | uppercase}}
+    </button>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">
+      {{'common.button.cancel' | translation}}
+    </button>
+  </div>
+</form>

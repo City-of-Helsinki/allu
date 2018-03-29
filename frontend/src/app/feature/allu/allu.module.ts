@@ -45,7 +45,6 @@ import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
 
-
 @NgModule({
   imports: [
     BrowserModule,

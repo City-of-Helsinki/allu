@@ -1,6 +1,6 @@
 import {ArrayUtil} from '../../src/app/util/array-util';
 
-fdescribe('Array util', () => {
+describe('Array util', () => {
   it('should sort alphabetical values', () => {
     const array = ['b', 'c', 'a'];
     expect(array.sort(ArrayUtil.naturalSort((item: string) => item))).toEqual(['a', 'b', 'c']);

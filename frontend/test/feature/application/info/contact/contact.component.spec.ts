@@ -10,7 +10,7 @@ import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-r
 import {CustomerWithContactsForm} from '../../../../../src/app/feature/customerregistry/customer/customer-with-contacts.form';
 import {DebugElement} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
-import {getMdIconButton} from '../../../../selector-helpers';
+import {getMatIconButton} from '../../../../selector-helpers';
 import {ApplicationType} from '../../../../../src/app/model/application/type/application-type';
 import {Application} from '../../../../../src/app/model/application/application';
 import {OrdererIdForm} from '../../../../../src/app/feature/application/info/cable-report/cable-report.form';
@@ -107,7 +107,7 @@ describe('ContactComponent', () => {
   }));
 
   it('should remove contact when remove is clicked', fakeAsync(() => {
-    const removeBtn = getMdIconButton(page.contacts[0], 'clear');
+    const removeBtn = getMatIconButton(page.contacts[0], 'clear');
     removeBtn.click();
     detectChangesAndUpdate();
     expect(page.contacts.length).toEqual(CONTACTS_ALL.length - 1);
@@ -115,21 +115,21 @@ describe('ContactComponent', () => {
 
   it('should not allow to remove last contact when contact is required', fakeAsync(() => {
     comp.contactRequired = true;
-    getMdIconButton(page.contacts[1], 'clear').click();
+    getMatIconButton(page.contacts[1], 'clear').click();
     detectChangesAndUpdate();
     expect(page.contacts.length).toEqual(1);
     // Last one can't be removed
-    expect(getMdIconButton(page.contacts[0], 'clear')).toBeUndefined();
+    expect(getMatIconButton(page.contacts[0], 'clear')).toBeUndefined();
   }));
 
   it('should show edit button always', fakeAsync(() => {
     comp.readonly = false;
     detectChangesAndUpdate();
-    expect(getMdIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
+    expect(getMatIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
 
     comp.readonly = false;
     detectChangesAndUpdate();
-    expect(getMdIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
+    expect(getMatIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
   }));
 
   it('should clear other fields when name is edited', fakeAsync(() => {

@@ -5,6 +5,7 @@
 @import 'map';
 @import "inputs";
 @import "buttons";
+@import "menu";
 @import "icons";
 @import "nav/nav";
 @import "radio-buttons";
@@ -15,7 +16,7 @@
 @import '../app/feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
-
+@import '../app/feature/stored-filter/stored-filter.component.theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
 
 // Theme components
@@ -25,6 +26,7 @@
 @include checkbox-theme($allu-theme);
 @include nav-theme($allu-theme);
 @include input-box-theme($allu-theme);
+@include stored-filter-theme($allu-theme);
 @include button-toggle-theme($allu-theme);
 @include modal-theme($allu-theme);
 @include card-theme($allu-theme);

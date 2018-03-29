@@ -4,6 +4,7 @@ import {MatToolbarModule, MatInputModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {SearchbarComponent} from './searchbar.component';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
+import {StoredFilterModule} from '../stored-filter/stored-filter.module';
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import {SelectionGroupModule} from '../common/selection-group/selection-group.mo
     AlluCommonModule,
     MatToolbarModule,
     MatInputModule,
-    SelectionGroupModule
+    SelectionGroupModule,
+    StoredFilterModule
   ],
   declarations: [
     SearchbarComponent

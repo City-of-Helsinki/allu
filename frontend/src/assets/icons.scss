@@ -3,3 +3,17 @@
   height: 36px;
   width: 36px;
 }
+
+.mat-icon.mat-icon-18 {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.mat-icon-button .mat-icon.mat-icon-18 {
+  line-height: 18px;
+}
+
+.mat-menu-item .mat-icon.icon-prefix {
+  margin-right: 2px;
+}

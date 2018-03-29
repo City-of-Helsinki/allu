@@ -655,6 +655,33 @@ export const translations = {
       'Uusi avain on toimitettava asiakkaalle kirjautumista varten.'
     }
   },
+  storedFilter: {
+    selectPlaceholder: 'Pikavalinnat',
+    addCurrent: 'Lisää nykyinen näkymä',
+    action: {
+      save: 'Suodatin tallennettu',
+      remove: 'Suodatin poistettu',
+    },
+    error: {
+      fetch: 'Suodattimien hakeminen epäonnistui',
+      create: 'Suodattimen luonti epäonnistui',
+      update: 'Suodattimen päivitys epäonnistui',
+      remove: 'Suodattimen poistaminen epäonnistui',
+      setDefault: 'Oletussuodattimen asettaminen epäonnistui'
+    }
+  },
+  storedFilterModal: {
+    title: 'Lisää pikavalinta',
+    description: {
+      MAP: 'Pikanvalintaan tallentuu nykyinen karttataso, tehty haku ja käytetyt suodattimet.',
+      WORKQUEUE: 'Pikanvalintaan tallentuu nykyinen suodatus',
+      SUPERVISION_WORKQUEUE: 'Pikanvalintaan tallentuu nykyinen suodatus',
+      APPLICATION_SEARCH: 'Pikanvalintaan tallentuu nykyinen suodatus',
+      PROJECT_SEARCH: 'Pikanvalintaan tallentuu nykyinen suodatus'
+    },
+    namePlaceholder: 'Erottuva nimi pikavalinnalle',
+    saveAsDefault: 'Tallenna oletusnäkymäksi'
+  },
   defaultText: {
     actions: {
       saved: 'Vakiotekstit tallennettu'
@@ -713,6 +740,7 @@ export const translations = {
       remove: 'POISTA',
       edit: 'MUOKKAA',
       home: 'Etusivulle',
+      add: 'Lisää',
       show: 'Näytä',
       search: 'Hae',
       toSelf: 'Omaksi',

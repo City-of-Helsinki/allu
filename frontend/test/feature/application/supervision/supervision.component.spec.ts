@@ -13,7 +13,7 @@ import {SupervisionTask} from '../../../../src/app/model/application/supervision
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {findTranslation} from '../../../../src/app/util/translations';
-import {getMdIconButton} from '../../../selector-helpers';
+import {getButtonWithMatIcon} from '../../../selector-helpers';
 
 const firstTask = new SupervisionTask(1);
 
@@ -84,7 +84,7 @@ describe('SupervisionComponent', () => {
   });
 
   it('should add new tas to the list when pressing button', fakeAsync(() => {
-    const btn = getMdIconButton(de, 'search');
+    const btn = getButtonWithMatIcon(de, 'search');
     btn.click();
     fixture.detectChanges();
     tick();

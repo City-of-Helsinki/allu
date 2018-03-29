@@ -144,6 +144,15 @@ export class UserHubMock {
 }
 
 /**
+ * Mock for user service
+ */
+export class UserServiceMock {
+  public getCurrentUser(): Observable<User> {
+    return Observable.of(new User(1));
+  }
+}
+
+/**
  * Mock for angular's router
  */
 export class RouterMock {

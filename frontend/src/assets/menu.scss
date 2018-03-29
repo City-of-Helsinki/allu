@@ -1,0 +1,20 @@
+.mat-menu-panel.allu-menu-panel {
+  margin-top: 3px;
+  border-radius: 6px;
+  min-width: 220px;
+}
+
+.allu-menu-panel .allu-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.allu-menu-panel .allu-menu-item .menu-item-text {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.allu-menu-panel .allu-menu-item .menu-item-text .mat-icon {
+  vertical-align: text-bottom;
+}

@@ -23,3 +23,22 @@
 .mat-icon-button.align-with-text {
   top: -4px;
 }
+
+
+
+button.allu-icon-button {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mat-icon-button.mat-icon-button-18 {
+  width: 18px;
+  height: 40px;
+
+  .mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    line-height: 18px;
+  }
+}

@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: 'input[inputBoxInput], select[inputBoxInput]'
+  selector: 'input[inputBoxInput], select[inputBoxInput], mat-select[inputBoxInput], button[inputBoxInput]'
 })
 export class InputBoxInputDirective {
   focused = false;
