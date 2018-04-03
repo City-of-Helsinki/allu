@@ -19,6 +19,7 @@ import {DepositStatusType} from '../../../../model/application/invoice/deposit-s
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {CustomerService} from '../../../../service/customer/customer.service';
+import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 
 @Component({
   selector: 'invoicing-info',
@@ -31,6 +32,8 @@ export class InvoicingInfoComponent implements OnInit {
 
   @Input() form: FormGroup;
   @Input() reset: Observable<boolean>;
+
+  MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
   recipientForm: FormGroup;
 

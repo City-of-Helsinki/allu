@@ -14,7 +14,8 @@ import {ApplicationStore} from '../../../../service/application/application-stor
 import {Subject} from 'rxjs/Subject';
 import {Application} from '../../../../model/application/application';
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
-
+import {CurrentUser} from '../../../../service/user/current-user';
+import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 
 @Component({
   selector: 'charge-basis',
@@ -24,10 +25,12 @@ import {applicationCanBeEdited} from '../../../../model/application/application-
   ]
 })
 export class ChargeBasisComponent implements OnInit, OnDestroy {
+
   form: FormGroup;
   chargeBasisEntries: FormArray;
   calculatedPrice: number;
   canBeEdited = true;
+  modifyRole = false;
 
   private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
   private destroy = new Subject<boolean>();
@@ -35,7 +38,8 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
               private invoiceHub: InvoiceHub,
-              private applicationStore: ApplicationStore) {
+              private applicationStore: ApplicationStore,
+              private currentUser: CurrentUser) {
     this.chargeBasisEntries = fb.array([]);
     this.form = this.fb.group({
       chargeBasisEntries: this.chargeBasisEntries
@@ -50,6 +54,9 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.invoiceHub.chargeBasisEntries
       .takeUntil(this.destroy)
       .subscribe(entries => this.entriesUpdated(entries));
+
+    this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
+      .subscribe(hasRequiredRole => this.modifyRole = hasRequiredRole);
   }
 
   ngOnDestroy(): void {
@@ -91,7 +98,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   private onApplicationChange(app: Application): void {
     this.calculatedPrice = app.calculatedPriceEuro;
-    this.canBeEdited = applicationCanBeEdited(app.statusEnum);
+    this.canBeEdited = applicationCanBeEdited(app.statusEnum) && this.modifyRole;
 
     this.invoiceHub.loadChargeBasisEntries(app.id)
       .takeUntil(this.destroy)

@@ -22,7 +22,7 @@
           </mat-chip>
         </mat-chip-list>
       </div>
-      <div fxFlex="initial">
+      <div *availableTo="MODIFY_ROLES" fxFlex="initial">
         <mat-chip class="slim-chip chip-outline" color="primary" selected="true">
           Lisää tunniste
           <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>

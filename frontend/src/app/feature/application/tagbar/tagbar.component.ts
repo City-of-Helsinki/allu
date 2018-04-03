@@ -5,6 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Application} from '../../../model/application/application';
+import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
 
 @Component({
   selector: 'tagbar',
@@ -15,6 +16,8 @@ import {Application} from '../../../model/application/application';
 })
 export class TagBarComponent implements OnInit {
   @Input() readonly: boolean;
+
+  MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
   application: Observable<Application>;
   tags: Observable<Array<ApplicationTag>>;

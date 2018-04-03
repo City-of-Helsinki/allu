@@ -99,7 +99,7 @@
                       *ngIf="canChangeDepositStatus" (click)="nextDepositStatus()">
                 {{['deposit.changeStatus', form.getRawValue().depositStatus] | translation}}
               </button>
-              <button type="button" mat-raised-button color="primary" (click)="editDeposit()">
+              <button *availableTo="MODIFY_ROLES" type="button" mat-raised-button color="primary" (click)="editDeposit()">
                 <span *ngIf="!hasDeposit">{{'deposit.add' | translation}}</span>
                 <span *ngIf="hasDeposit">{{'deposit.edit' | translation}}</span>
               </button>
