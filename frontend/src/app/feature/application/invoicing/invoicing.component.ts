@@ -14,6 +14,8 @@ import {CanComponentDeactivate} from '../../../service/common/can-deactivate-gua
 import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
 import {CustomerService} from '../../../service/customer/customer.service';
+import {CurrentUser} from '../../../service/user/current-user';
+import {RoleType, MODIFY_ROLES} from '../../../model/user/role-type';
 
 @Component({
   selector: 'invoicing',
@@ -33,7 +35,8 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
   constructor(private applicationStore: ApplicationStore,
               private fb: FormBuilder,
               private customerService: CustomerService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private currentUser: CurrentUser) {
   }
 
   ngOnInit(): void {
@@ -41,6 +44,14 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.infoForm = InvoicingInfoForm.initialForm(this.fb);
     this.recipientForm = <FormGroup>this.infoForm.get('invoiceRecipient');
     this.notBillableCtrl = <FormControl>this.infoForm.get('notBillable');
+    this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
+        .subscribe(hasRequiredRole => {
+          if (hasRequiredRole) {
+            this.infoForm.enable();
+          } else {
+            this.infoForm.disable();
+          }
+        });
   }
 
   ngOnDestroy(): void {
