@@ -13,8 +13,7 @@ import {MapStore} from '../../service/map/map-store';
   ],
   encapsulation: ViewEncapsulation.None
 })
-
-export class ApplicationListComponent implements OnInit, OnDestroy {
+export class ApplicationListComponent implements OnInit {
 
   applications: Observable<Array<Application>>;
 
@@ -23,10 +22,6 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.applications = this.mapStore.applications;
-  }
-
-  ngOnDestroy() {
-    this.mapStore.reset();
   }
 
   jobClick(application: Application) {

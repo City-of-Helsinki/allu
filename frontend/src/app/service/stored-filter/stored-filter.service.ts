@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Optional} from '@angular/core';
 import {ErrorHandler} from '../error/error-handler.service';
 import {AuthHttp} from 'angular2-jwt';
 import {Observable} from 'rxjs/Observable';
@@ -8,12 +8,16 @@ import {findTranslation} from '../../util/translations';
 import {StoredFilterMapper} from '../mapper/stored-filter-mapper';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {HttpUtil} from '../../util/http.util';
+import {CurrentUser} from '../user/current-user';
+import {ArrayUtil} from '../../util/array-util';
 
 const STORED_FILTER_URL = '/api/stored-filter';
 
 @Injectable()
 export class StoredFilterService {
-  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
+  constructor(private authHttp: AuthHttp,
+              private currentUser: CurrentUser,
+              private errorHandler: ErrorHandler) {
   }
 
   findByUserAndType(userId: number, type: StoredFilterType): Observable<StoredFilter[]> {
@@ -25,7 +29,20 @@ export class StoredFilterService {
       .catch(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.fetch')));
   }
 
-  save(filter: StoredFilter): Observable<StoredFilter[]> {
+  findForCurrentUserByType(type: StoredFilterType): Observable<StoredFilter[]> {
+    return this.currentUser.user
+      .switchMap(user => this.findByUserAndType(user.id, type))
+      .catch(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.fetch')));
+  }
+
+  // TODO: fix to fetch all for current user
+  findForCurrentUser(): Observable<StoredFilter[]> {
+    return this.currentUser.user
+      .switchMap(user => this.findByUserAndType(user.id, StoredFilterType.MAP))
+      .catch(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.fetch')));
+  }
+
+  save(filter: StoredFilter): Observable<StoredFilter> {
     if (filter.id) {
       const url = `${STORED_FILTER_URL}/${filter.id}`;
       return this.authHttp.put(url,

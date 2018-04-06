@@ -1,13 +1,17 @@
 <input-box class="input-raised">
-  <button inputBoxInput [matMenuTriggerFor]="storedFilterMenu" class="input-box-content allu-icon-button">
-    <div *ngIf="selectedFilter">{{selectedFilter.name}}</div>
-    <div *ngIf="!selectedFilter">{{'storedFilter.selectPlaceholder' | translation}}</div>
+  <button inputBoxInput [matMenuTriggerFor]="storedFilterMenu" class="allu-icon-button">
+    <div *ngIf="selectedFilter !== undefined" class="button-content-clipped">
+      {{selectedFilter.name}}
+    </div>
+    <div *ngIf="selectedFilter === undefined" class="button-content-clipped">
+      {{'storedFilter.selectPlaceholder' | translation}}
+    </div>
     <mat-icon class="icon-suffix">keyboard_arrow_down</mat-icon>
   </button>
 </input-box>
 
 <mat-menu #storedFilterMenu="matMenu" overlapTrigger="false" class="allu-menu-panel">
-  <div *ngFor="let filter of availableFilters | async">
+  <div *ngFor="let filter of availableFilters">
     <div class="allu-menu-item">
       <button mat-menu-item (click)="selectFilter(filter)">
         <span class="menu-item-text">

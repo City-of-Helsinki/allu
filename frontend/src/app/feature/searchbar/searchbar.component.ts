@@ -12,11 +12,13 @@ import {MapSearchFilter} from '../../service/map-search-filter';
 import {Subject} from 'rxjs/Subject';
 import {EnumUtil} from '../../util/enum.util';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
+import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
+import {StoredFilter} from '../../model/user/stored-filter';
 
 enum BarType {
-  SIMPLE,
-  BAR,
-  ADVANCED
+  SIMPLE, // Front page
+  BAR, // Location
+  ADVANCED // Front page
 }
 
 @Component({
@@ -35,10 +37,16 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   matchingAddresses: Observable<Array<PostalAddress>>;
   statuses = EnumUtil.enumValues(ApplicationStatusGroup);
   MAP_FILTER = StoredFilterType.MAP;
+  mapFilter: Observable<MapSearchFilter>;
+  selectedFilter: Observable<StoredFilter>;
+  defaultFilter: Observable<StoredFilter>;
+  availableFilters: Observable<StoredFilter[]>;
 
   private destroy = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder, private mapStore: MapStore) {
+  constructor(private fb: FormBuilder,
+              private mapStore: MapStore,
+              private storedFilterStore: StoredFilterStore) {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
@@ -69,6 +77,14 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.matchingAddresses = this.mapStore.matchingAddresses
       .takeUntil(this.destroy)
       .map(matching => matching.sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress)));
+
+    this.mapFilter = this.mapStore.mapSearchFilter.takeUntil(this.destroy);
+
+    this.handleSearchChanges();
+
+    this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.MAP);
+    this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
+    this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
   }
 
   ngOnDestroy(): void {
@@ -77,7 +93,11 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   public notifySearchUpdated(filter: MapSearchFilter): void {
-    this.mapStore.searchFilterChange(filter);
+    if (this.useLocationSearch) {
+      this.mapStore.locationSearchFilterChange(filter);
+    } else {
+      this.mapStore.mapSearchFilterChange(filter);
+    }
   }
 
   public addressSelected(streetAddress: string) {
@@ -87,5 +107,20 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   public showMore() {
     this.onShowAdvanced.emit(true);
+  }
+
+  public selectFilter(filter: StoredFilter) {
+    this.storedFilterStore.currentChange(filter);
+  }
+
+  private handleSearchChanges(): void {
+    const searchFilter = this.useLocationSearch ? this.mapStore.locationSearchFilter : this.mapStore.mapSearchFilter;
+    searchFilter
+      .takeUntil(this.destroy)
+      .subscribe(filter => this.searchForm.patchValue(filter, {emitEvent: false}));
+  }
+
+  private get useLocationSearch(): boolean {
+    return BarType.BAR === BarType[this.barType];
   }
 }

@@ -12,66 +12,55 @@ import {UserService} from '../../../src/app/service/user/user-service';
 import {StoredFilterModule} from '../../../src/app/feature/stored-filter/stored-filter.module';
 import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
+import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
+
+const filters = [
+  new StoredFilter(1, StoredFilterType.MAP, 'map-filter-1', false, '{field1: "value1"}', 1),
+  new StoredFilter(2, StoredFilterType.MAP, 'map-filter-2', false, '{field1: "value2"}', 1),
+  new StoredFilter(3, StoredFilterType.MAP, 'map-filter-other-user', false, '{field1: "value2"}', 2),
+  new StoredFilter(4, StoredFilterType.APPLICATION_SEARCH, 'app-filter-2', false, '{field1: "value2"}', 1)
+];
 
 @Component({
   selector: 'parent-component',
-  template: '<stored-filter [type]="type" [filter]="filter" (filterSelected)="filterSelected($event)"></stored-filter>'
+  template: `<stored-filter [type]="type"
+                            [filter]="filter"
+                            [selectedFilter]="selectedFilter"
+                            [availableFilters]="availableFilters">
+             </stored-filter>`
 })
 class ParentComponent {
   type = StoredFilterType.MAP;
   filter = new Subject<any>();
   selectedFilter: StoredFilter;
+  availableFilters = filters;
 
   @ViewChild(StoredFilterComponent)
   public storedFilterComponent: StoredFilterComponent;
-
-  filterSelected(filter: StoredFilter): void {
-    this.selectedFilter = filter;
-  }
 
   onDestroy(): void {
     this.storedFilterComponent.ngOnDestroy();
   }
 }
 
-class StoredFilterServiceMock {
-  filters = [
-    new StoredFilter(1, StoredFilterType.MAP, 'map-filter-1', false, '{field1: "value1"}', 1),
-    new StoredFilter(2, StoredFilterType.MAP, 'map-filter-2', false, '{field1: "value2"}', 1),
-    new StoredFilter(3, StoredFilterType.MAP, 'map-filter-other-user', false, '{field1: "value2"}', 2),
-    new StoredFilter(4, StoredFilterType.APPLICATION_SEARCH, 'app-filter-2', false, '{field1: "value2"}', 1)
-  ];
-
-  findByUserAndType(userId: number, type: StoredFilterType): Observable<StoredFilter[]> {
-    return Observable.of(this.findByUserAndTypeImmediate(userId, type));
-  }
-
-  findByUserAndTypeImmediate(userId: number, type: StoredFilterType): StoredFilter[] {
-    return this.filters.filter(f => f.userId === userId && f.type === type);
-  }
-
-  save(filter: StoredFilter): Observable<StoredFilter[]> {
-    this.filters.push(filter);
-    return Observable.of(this.filters);
+class StoredFilterStoreMock {
+  save(filter: StoredFilter): Observable<StoredFilter> {
+    return Observable.of(filter);
   }
 
   remove(id: number): Observable<HttpResponse> {
-    this.filters = this.filters.filter(f => f.id !== id);
     return Observable.of(new HttpResponse(HttpStatus.OK));
   }
 
-  setAsDefault(id: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  currentChange(filter: StoredFilter): void {
   }
 }
-
-const userId = 1;
 
 describe('StoredFilterComponent', () => {
   let parentComp: ParentComponent;
   let parentFixture: ComponentFixture<ParentComponent>;
   let filterComp: StoredFilterComponent;
-  let filterService: StoredFilterServiceMock;
+  let filterStore: StoredFilterStoreMock;
   let de: DebugElement;
   let userService: UserServiceMock;
 
@@ -85,13 +74,13 @@ describe('StoredFilterComponent', () => {
       ],
       providers: [
         {provide: UserService, useClass: UserServiceMock},
-        {provide: StoredFilterService, useClass: StoredFilterServiceMock}
+        {provide: StoredFilterStore, useClass: StoredFilterStoreMock}
       ]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    filterService = TestBed.get(StoredFilterService) as StoredFilterServiceMock;
+    filterStore = TestBed.get(StoredFilterStore) as StoredFilterStoreMock;
     userService = TestBed.get(UserService) as UserServiceMock;
     parentFixture = TestBed.createComponent(ParentComponent);
     parentComp = parentFixture.componentInstance;
@@ -99,16 +88,6 @@ describe('StoredFilterComponent', () => {
     parentFixture.detectChanges();
     filterComp = parentComp.storedFilterComponent;
   });
-
-  it('loads filters on init', fakeAsync(() => {
-    expect(filterComp).toBeTruthy();
-
-    const expectedFilters = filterService.findByUserAndTypeImmediate(userId, StoredFilterType.MAP);
-
-    filterComp.availableFilters.subscribe(filters => {
-      expect(filters.length).toEqual(expectedFilters.length);
-    });
-  }));
 
   it('throws when init without type', fakeAsync(() => {
     const initFn = () => {
@@ -123,21 +102,15 @@ describe('StoredFilterComponent', () => {
     expect(initFn).toThrow();
   }));
 
-  it('selects default filter on init', fakeAsync(() => {
-    filterService.filters[0].defaultFilter = true;
-    recreateParent();
-    tick();
-    expect(filterComp.selectedFilter).toEqual(filterService.filters[0]);
-  }));
-
   it('shows available filters', fakeAsync(() => {
     openFilterMenu();
     const actual = de.queryAll(By.css('.allu-menu-item .icon-suffix'));
-    const expected = filterService.findByUserAndTypeImmediate(userId, StoredFilterType.MAP);
+    const expected = filters;
     expect(actual.length).toEqual(expected.length);
   }));
 
   it('selects clicked filter and emits event', fakeAsync(() => {
+    spyOn(filterStore, 'currentChange');
     openFilterMenu();
     const options = de.queryAll(By.css('.allu-menu-item button.mat-menu-item'));
 
@@ -145,20 +118,19 @@ describe('StoredFilterComponent', () => {
     parentFixture.detectChanges();
     flush();
 
-    const expected = filterService.filters[0];
-    expect(filterComp.selectedFilter).toEqual(expected);
-    expect(parentComp.selectedFilter).toEqual(expected);
+    const expected = filters[0];
+    expect(filterStore.currentChange).toHaveBeenCalledWith(expected);
   }));
 
   it('removes filter when remove is clicked', fakeAsync(() => {
-    spyOn(filterService, 'remove').and.callThrough();
+    spyOn(filterStore, 'remove').and.callThrough();
     openFilterMenu();
     const btn = getMatIconButton(de, 'clear');
     btn.click();
     parentFixture.detectChanges();
     flush(500);
 
-    expect(filterService.remove).toHaveBeenCalledTimes(1);
+    expect(filterStore.remove).toHaveBeenCalledTimes(1);
     discardPeriodicTasks();
   }));
 
@@ -167,12 +139,5 @@ describe('StoredFilterComponent', () => {
     selectElem.nativeElement.click();
     parentFixture.detectChanges();
     flush();
-  }
-
-  function recreateParent(): void {
-    parentFixture = TestBed.createComponent(ParentComponent);
-    parentComp = parentFixture.componentInstance;
-    filterComp = parentComp.storedFilterComponent;
-    parentFixture.detectChanges();
   }
 });

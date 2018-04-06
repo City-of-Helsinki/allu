@@ -1,6 +1,20 @@
 <form [formGroup]="searchForm">
-  <div *ngIf="barType === 'SIMPLE'" class="search-box" fxLayout="row" fxLayoutGap="18px">
-    <div fxFlex="0 1 calc(65% - 18px)">
+  <div *ngIf="barType === 'SIMPLE'" class="search-box"
+       fxLayout="row" fxLayoutGap="18px"
+       fxLayout.lt-md="column" fxLayoutGap.lt-md="5px">
+
+    <div fxFlex="none" *ngIf="defaultFilter | async as filter">
+      <input-box class="input-raised input-box-icon-button">
+        <button inputBoxInput
+                class="input-box-content allu-icon-button"
+                (click)="selectFilter(filter)">
+          <mat-icon color="primary" class="mat-icon-36">home</mat-icon>
+        </button>
+      </input-box>
+    </div>
+
+    <div fxFlex="1 1 340px"
+         fxFlex.lt-md="100%">
       <input-box class="input-raised">
         <button type="button" mat-raised-button matPrefix class="toggle-sidebar fill" (click)="showMore()" inputBoxPrefix>
           <mat-icon>subject</mat-icon>
@@ -19,10 +33,20 @@
         </mat-autocomplete>
       </input-box>
     </div>
+    <div fxFlex="0 0 220px"
+         fxFlex.lt-md="100%">
+      <stored-filter [type]="MAP_FILTER"
+                     [selectedFilter]="selectedFilter | async"
+                     [availableFilters]="availableFilters | async"
+                     [filter]="mapFilter | async"></stored-filter>
+    </div>
   </div>
 
-  <div *ngIf="barType === 'BAR'" fxLayout="row" fxLayoutGap="18px" class="row-indent">
-    <div fxFlex="1 1 70%">
+  <div *ngIf="barType === 'BAR'" class="row-indent"
+       fxLayout="row" fxLayoutGap="18px"
+       fxLayout.lt-md="column" fxLayoutGap.lt-md="5px">
+    <div fxFlex="1 1 340px"
+         fxFlex.lt-md="100%">
       <input-box class="input-raised">
         <input type="text" formControlName="address"
                inputBoxInput
@@ -37,7 +61,8 @@
         </mat-option>
       </mat-autocomplete>
     </div>
-    <div fxFlex="1 1 15%">
+    <div fxFlex="1 1 200px"
+         fxFlex.lt-md="100%">
       <input-box class="input-raised">
         <input inputBoxInput type="text" formControlName="startDate"
                [placeholder]="'applicationSearch.startTime' | translation"
@@ -50,7 +75,8 @@
         </field-error>
       </input-box>
     </div>
-    <div fxFlex="1 1 15%">
+    <div fxFlex="1 1 200px"
+         fxFlex.lt-md="100%">
       <input-box class="input-raised">
         <input inputBoxInput type="text" formControlName="endDate"
                [placeholder]="'applicationSearch.endTime' | translation"

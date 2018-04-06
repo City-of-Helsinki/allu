@@ -40,6 +40,10 @@ select {
   box-shadow: 0 2px 4px 0 #757575;
 }
 
+.input-box-icon-button .input-box-content {
+  width: 56px;
+}
+
 .input-box-content-item,
 .input-box-content > input,
 .input-box-content > select,
@@ -69,6 +73,8 @@ select {
   flex: 0;
   min-width: 47px;
   width: 100%;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .input-box-content > button:only-child {

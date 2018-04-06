@@ -5,6 +5,7 @@ import {StoredFilterService} from '../../service/stored-filter/stored-filter.ser
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {NotificationService} from '../../service/notification/notification.service';
+import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
 
 export const STORED_FILTER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};
 
@@ -25,7 +26,6 @@ export class StoredFilterModalComponent implements OnInit {
   private filter: any;
 
   constructor(private dialogRef: MatDialogRef<StoredFilterModalComponent>,
-              private storedFilterService: StoredFilterService,
               @Inject(MAT_DIALOG_DATA) public data: StoredFilterModalData,
               private fb: FormBuilder) {
   }
@@ -53,13 +53,7 @@ export class StoredFilterModalComponent implements OnInit {
       this.userId
     );
 
-    this.storedFilterService.save(filter)
-      .subscribe(
-        saved => {
-          NotificationService.translateMessage('storedFilter.action.save');
-          this.dialogRef.close(saved);
-        },
-        err => NotificationService.error(err));
+    this.dialogRef.close(filter);
   }
 
   cancel(): void {

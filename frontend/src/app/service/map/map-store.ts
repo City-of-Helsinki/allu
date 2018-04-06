@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 
 import {Application} from '../../model/application/application';
-import {Option} from '../../util/option';
+import {Option, Some} from '../../util/option';
 import {LocationService} from '../location.service';
 import {Location} from '../../model/common/location';
 import {NotificationService} from '../notification/notification.service';
@@ -13,11 +13,17 @@ import {PostalAddress} from '../../model/common/postal-address';
 import {MapDataService} from './map-data-service';
 import {LatLngBounds} from 'leaflet';
 import {ObjectUtil} from '../../util/object.util';
+import {StoredFilter} from '../../model/user/stored-filter';
+import {StoredFilterService} from '../stored-filter/stored-filter.service';
+import {StoredFilterType} from '../../model/user/stored-filter-type';
+import {TimeUtil} from '../../util/time.util';
+import {StoredFilterStore} from '../stored-filter/stored-filter-store';
 
 export interface MapState {
   coordinates: Option<Geocoordinates>;
   coordinateSearch: string;
   mapSearchFilter: MapSearchFilter;
+  locationSearchFilter: MapSearchFilter;
   matchingAddresses: PostalAddress[];
   selectedApplication: Application;
   visibleApplications: Array<Application>;
@@ -33,6 +39,7 @@ const initialState: MapState = {
   coordinates: undefined,
   coordinateSearch: undefined,
   mapSearchFilter: defaultFilter,
+  locationSearchFilter: defaultFilter,
   matchingAddresses: [],
   selectedApplication: undefined,
   visibleApplications: [],
@@ -48,8 +55,12 @@ const initialState: MapState = {
 export class MapStore {
   private store = new BehaviorSubject<MapState>(initialState);
 
-  constructor(private mapDataService: MapDataService, private locationService: LocationService) {
-    this.searchFilter
+  constructor(private mapDataService: MapDataService,
+              private locationService: LocationService,
+              private storedFilterStore: StoredFilterStore) {
+
+    // Search when either of filters change
+    Observable.merge(this.mapSearchFilter, this.locationSearchFilter)
       .debounceTime(300)
       .filter(filter => !!filter.geometry)
       .subscribe(filter => this.fetchMapDataByFilter(filter));
@@ -60,10 +71,17 @@ export class MapStore {
       .debounceTime(300)
       .distinctUntilChanged()
       .subscribe(term => this.fetchCoordinates(term));
+
+    this.storedFilterStore.getCurrent(StoredFilterType.MAP)
+      .subscribe(sf => this.storedFilterChange(sf));
   }
 
   reset(): void {
-    this.store.next(ObjectUtil.clone(initialState));
+    const next = {
+      ...ObjectUtil.clone(initialState),
+      mapSearchFilter: this.snapshot.mapSearchFilter
+    };
+    this.store.next(next);
   }
 
   get changes(): Observable<MapState> {
@@ -103,8 +121,12 @@ export class MapStore {
     return this.store.map(state => state.locationsToDraw).distinctUntilChanged();
   }
 
-  get searchFilter(): Observable<MapSearchFilter> {
+  get mapSearchFilter(): Observable<MapSearchFilter> {
     return this.store.map(state => state.mapSearchFilter).distinctUntilChanged();
+  }
+
+  get locationSearchFilter(): Observable<MapSearchFilter> {
+    return this.store.map(state => state.locationSearchFilter).distinctUntilChanged();
   }
 
   get shape(): Observable<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>> {
@@ -152,16 +174,24 @@ export class MapStore {
     this.store.next({...this.store.getValue(), locationsToDraw: locations});
   }
 
-  searchFilterChange(filter: MapSearchFilter): void {
-    const current = this.snapshot.mapSearchFilter;
-    const next = {...current, ...filter};
-    this.store.next({...this.store.getValue(), mapSearchFilter: next});
+  mapSearchFilterChange(filter: MapSearchFilter): void {
+    this.store.next({
+      ...this.store.getValue(),
+      mapSearchFilter: { ...this.snapshot.mapSearchFilter, ...filter }
+    });
+  }
+
+  locationSearchFilterChange(filter: MapSearchFilter): void {
+    this.store.next({
+      ...this.store.getValue(),
+      locationSearchFilter: { ...this.snapshot.locationSearchFilter, ...filter }
+    });
   }
 
   mapViewChange(bounds: LatLngBounds): void {
-    const current = this.snapshot.mapSearchFilter;
-    const next = {...current, geometry: bounds};
-    this.store.next({...this.store.getValue(), mapSearchFilter: next});
+    const mapSearchFilter = {...this.snapshot.mapSearchFilter, geometry: bounds};
+    const locationSearchFilter = {...this.snapshot.locationSearchFilter, geometry: bounds};
+    this.store.next({...this.store.getValue(), mapSearchFilter, locationSearchFilter });
   }
 
   shapeChange(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>): void {
@@ -183,6 +213,23 @@ export class MapStore {
 
   hasFixedGeometryChange(hasFixedGeometry: boolean): void {
     this.store.next({...this.store.getValue(), hasFixedGeometry});
+  }
+
+  storedFilterChange(storedFilter: StoredFilter): void {
+    const mapSearchFilter = Some(storedFilter)
+      .map(sf => sf.filter)
+      .map(filter => ({
+        address: filter.address,
+        startDate: TimeUtil.dateFromBackend(filter.startDate),
+        endDate: TimeUtil.dateFromBackend(filter.endDate),
+        statuses: filter.statuses
+      }))
+      .orElseGet(() => defaultFilter);
+
+    this.store.next({
+      ...this.store.getValue(),
+      mapSearchFilter: {...this.snapshot.mapSearchFilter, ...mapSearchFilter }
+    });
   }
 
   private fetchMapDataByFilter(filter: MapSearchFilter): void {

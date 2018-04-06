@@ -5,6 +5,7 @@ import {StoredFilterService} from '../../service/stored-filter/stored-filter.ser
 import {MatMenuModule} from '@angular/material';
 import {StoredFilterModalComponent} from './stored-filter-modal.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     StoredFilterComponent
   ],
   providers: [
-    StoredFilterService
+    StoredFilterService,
+    StoredFilterStore
   ],
   entryComponents: [
     StoredFilterModalComponent

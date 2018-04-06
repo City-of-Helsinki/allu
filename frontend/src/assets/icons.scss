@@ -1,3 +1,9 @@
+.mat-icon.mat-icon-48 {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+}
+
 .mat-icon.mat-icon-36 {
   font-size: 36px;
   height: 36px;
@@ -12,6 +18,10 @@
 
 .mat-icon-button .mat-icon.mat-icon-18 {
   line-height: 18px;
+}
+
+.mat-icon-button .mat-icon.mat-icon-48 {
+  line-height: 48px;
 }
 
 .mat-menu-item .mat-icon.icon-prefix {

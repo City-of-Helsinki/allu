@@ -95,12 +95,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.mapStore.searchFilterChange(defaultFilter);
+    this.mapStore.locationSearchFilterChange(defaultFilter);
 
     this.router.events
       .takeUntil(this.destroy)
       .filter(e => e instanceof NavigationStart)
-      .subscribe(() => this.mapStore.searchFilterChange(defaultFilter));
+      .subscribe(() => this.mapStore.locationSearchFilterChange(defaultFilter));
 
     this.application = this.applicationStore.snapshot.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
@@ -108,7 +108,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadFixedLocations();
 
     this.progressStep = ProgressStep.LOCATION;
-    this.mapStore.searchFilter
+    this.mapStore.locationSearchFilter
       .takeUntil(this.destroy)
       .subscribe(filter => this.searchUpdated(filter));
 
@@ -230,7 +230,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private editLocation(loc: Location): void {
     if (!!loc) {
       this.locationForm.patchValue(LocationForm.from(loc));
-      this.mapStore.searchFilterChange(this.createFilter(loc));
+      this.mapStore.locationSearchFilterChange(this.createFilter(loc));
     }
   }
 
@@ -301,7 +301,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       const formValues = LocationForm.from(this.application.firstLocation);
       this.locationForm.patchValue(formValues);
       this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
-      this.mapStore.searchFilterChange(this.createFilter(this.application.firstLocation));
+      this.mapStore.locationSearchFilterChange(this.createFilter(this.application.firstLocation));
     }
   }
 
@@ -347,7 +347,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private resetForm(): void {
     this.locationForm.reset(LocationForm.from(new Location()));
-    this.mapStore.searchFilterChange({address: undefined, startDate: undefined, endDate: undefined});
+    this.mapStore.locationSearchFilterChange({address: undefined, startDate: undefined, endDate: undefined});
   }
 
   private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {

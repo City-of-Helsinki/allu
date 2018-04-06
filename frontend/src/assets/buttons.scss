@@ -25,10 +25,15 @@
 }
 
 
-
 button.allu-icon-button {
   display: flex;
   justify-content: space-between;
+}
+
+button > .button-content-clipped {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .mat-icon-button.mat-icon-button-18 {

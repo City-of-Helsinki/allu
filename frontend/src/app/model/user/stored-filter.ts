@@ -9,4 +9,8 @@ export class StoredFilter {
     public filter?: any,
     public userId?: number) {
   }
+
+  get typeName(): string {
+    return StoredFilterType[this.type];
+  }
 }
