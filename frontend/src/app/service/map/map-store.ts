@@ -14,12 +14,13 @@ import {MapDataService} from './map-data-service';
 import {LatLngBounds} from 'leaflet';
 import {ObjectUtil} from '../../util/object.util';
 import {StoredFilter} from '../../model/user/stored-filter';
-import {StoredFilterService} from '../stored-filter/stored-filter.service';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
-import {TimeUtil} from '../../util/time.util';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
 
+export type MapRole = 'SEARCH' | 'LOCATION';
+
 export interface MapState {
+  role: MapRole;
   coordinates: Option<Geocoordinates>;
   coordinateSearch: string;
   mapSearchFilter: MapSearchFilter;
@@ -36,6 +37,7 @@ export interface MapState {
 }
 
 const initialState: MapState = {
+  role: undefined,
   coordinates: undefined,
   coordinateSearch: undefined,
   mapSearchFilter: defaultFilter,
@@ -150,6 +152,10 @@ export class MapStore {
     return this.store.map(state => state.matchingAddresses).distinctUntilChanged();
   }
 
+  get role(): Observable<MapRole> {
+    return this.store.map(state => state.role).distinctUntilChanged();
+  }
+
   coordinateSearchChange(term: string): void {
     this.store.next({...this.store.getValue(), coordinateSearch: term});
   }
@@ -189,9 +195,14 @@ export class MapStore {
   }
 
   mapViewChange(bounds: LatLngBounds): void {
-    const mapSearchFilter = {...this.snapshot.mapSearchFilter, geometry: bounds};
-    const locationSearchFilter = {...this.snapshot.locationSearchFilter, geometry: bounds};
-    this.store.next({...this.store.getValue(), mapSearchFilter, locationSearchFilter });
+    const role = this.snapshot.role;
+    if ('LOCATION' === role) {
+      const locationSearchFilter = {...this.snapshot.locationSearchFilter, geometry: bounds};
+      this.store.next({...this.store.getValue(), locationSearchFilter });
+    } else {
+      const mapSearchFilter = {...this.snapshot.mapSearchFilter, geometry: bounds};
+      this.store.next({...this.store.getValue(), mapSearchFilter });
+    }
   }
 
   shapeChange(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>): void {
@@ -224,6 +235,10 @@ export class MapStore {
       ...this.store.getValue(),
       mapSearchFilter: {...this.snapshot.mapSearchFilter, ...mapSearchFilter }
     });
+  }
+
+  roleChange(role: MapRole): void {
+    this.store.next({...this.snapshot, role});
   }
 
   private fetchMapDataByFilter(filter: MapSearchFilter): void {

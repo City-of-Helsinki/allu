@@ -14,7 +14,9 @@
                 <searchbar [datesRequired]="true">Loading searchbar</searchbar>
               </div>
               <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
-                   [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
+                   [applicationId]="application.id"
+                   role="LOCATION"
+                   (editedItemCountChanged)="editedItemCountChanged($event)"></map>
             </div>
           </div>
           <div class="row form-group">

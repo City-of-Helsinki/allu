@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
-import {MapStore} from '../../service/map/map-store';
+import {MapRole, MapStore} from '../../service/map/map-store';
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
@@ -27,6 +27,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() applicationId: number;
   @Input() projectId: number;
   @Input() showOnlyApplicationArea = false;
+  @Input() role: MapRole = 'SEARCH';
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
@@ -40,6 +41,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     private projectHub: ProjectHub) {}
 
   ngOnInit() {
+    this.mapStore.roleChange(this.role);
   }
 
   /**
