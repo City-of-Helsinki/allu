@@ -114,7 +114,7 @@ public class LocationService {
   }
 
   private Application findApplication(int applicationId) {
-    List<Application> applications = applicationService.findByIds(Collections.singletonList(applicationId));
+    List<Application> applications = applicationService.findByIds(Collections.singletonList(applicationId), false);
     if (applications.size() != 1) {
       throw new NoSuchEntityException("Location referenced to non-existent application", Integer.toString(applicationId));
     }

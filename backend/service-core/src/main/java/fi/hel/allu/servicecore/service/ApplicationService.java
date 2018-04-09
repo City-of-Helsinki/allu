@@ -30,6 +30,7 @@ public class ApplicationService {
   private final LocationService locationService;
   private final ApplicationMapper applicationMapper;
   private final UserService userService;
+  private final PersonAuditLogService personAuditLogService;
 
   @Autowired
   public ApplicationService(
@@ -37,12 +38,14 @@ public class ApplicationService {
       RestTemplate restTemplate,
       LocationService locationService,
       ApplicationMapper applicationMapper,
-      UserService userService) {
+      UserService userService,
+      PersonAuditLogService personAuditLogService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
     this.applicationMapper = applicationMapper;
     this.userService = userService;
+    this.personAuditLogService = personAuditLogService;
   }
 
 
@@ -57,8 +60,8 @@ public class ApplicationService {
    * @return Application details or empty application list in DTO
    */
   public Application findApplicationById(int applicationId) {
-    Application applicationModel = restTemplate.getForObject(applicationProperties
-        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
+    Application applicationModel = findApplicationByIdWithoutPersonAuditLogging(applicationId);
+    applicationModel.getCustomersWithContacts().forEach(c -> personAuditLogService.log(c, "ApplicationService"));
     return applicationModel;
   }
 
@@ -282,7 +285,7 @@ public class ApplicationService {
   }
 
   public List<ApplicationIdentifierJson> replacementHistory(int id) {
-    Application application = findApplicationById(id);
+    Application application = findApplicationByIdWithoutPersonAuditLogging(id);
     String baseApplicationId = ApplicationIdUtil.getBaseApplicationId(application.getApplicationId());
 
     URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationIdentifierUrl())
@@ -304,6 +307,11 @@ public class ApplicationService {
     ParameterizedTypeReference<List<Integer>> typeRef = new ParameterizedTypeReference<List<Integer>>() {};
     return restTemplate.exchange(applicationProperties.getFinishedApplicationsUrl(),
         HttpMethod.POST, new HttpEntity<>(statuses), typeRef).getBody();
+  }
+
+  private Application findApplicationByIdWithoutPersonAuditLogging(int applicationId) {
+    return restTemplate.getForObject(applicationProperties
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
   }
 }
 

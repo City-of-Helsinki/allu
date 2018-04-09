@@ -1,7 +1,6 @@
 package fi.hel.allu.model.controller;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -9,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,24 +27,18 @@ import fi.hel.allu.model.service.ApplicationReplacementService;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
 
-
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
 
-  private ApplicationService applicationService;
+  private final ApplicationService applicationService;
+  private final AttachmentDao attachmentDao;
+  private final DecisionDao decisionDao;
+  private final HistoryDao historyDao;
+  private final DistributionEntryDao distributionEntryDao;
+  private final ApplicationReplacementService applicationReplacementService;
+  private final InvoiceService invoiceService;
 
-  private AttachmentDao attachmentDao;
-
-  private DecisionDao decisionDao;
-
-  private HistoryDao historyDao;
-
-  private DistributionEntryDao distributionEntryDao;
-
-  private ApplicationReplacementService applicationReplacementService;
-
-  private InvoiceService invoiceService;
   @Autowired
   public ApplicationController(
       ApplicationService applicationService,
@@ -84,7 +76,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/find", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByIds(@RequestBody List<Integer> ids) {
-    return new ResponseEntity<>(applicationService.findByIds(ids), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.findByIds(ids, true), HttpStatus.OK);
   }
 
   /**

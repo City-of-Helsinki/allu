@@ -19,6 +19,7 @@ import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+import fi.hel.allu.model.domain.util.CustomerAnonymizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,6 @@ import static fi.hel.allu.QApplicationKind.applicationKind;
 import static fi.hel.allu.QApplicationReminder.applicationReminder;
 import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QContact.contact;
-import static fi.hel.allu.QInvoice.invoice;
 import static fi.hel.allu.QKindSpecifier.kindSpecifier;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
@@ -95,22 +95,22 @@ public class ApplicationDao {
   @Transactional
   public Application findById(int id) {
     Application app = queryFactory.select(applicationBean).from(application).where(application.id.eq(id)).fetchOne();
-    Optional.ofNullable(app).ifPresent(a -> populateDependencies(Collections.singletonList(a)));
+    Optional.ofNullable(app).ifPresent(a -> populateDependencies(Collections.singletonList(a), false));
     return app;
   }
 
   @Transactional(readOnly = true)
-  public List<Application> findByIds(List<Integer> ids) {
+  public List<Application> findByIds(List<Integer> ids, boolean anonymizePersons) {
     List<Application> appl = queryFactory.select(applicationBean).from(application)
         .where(application.id.in(ids).and(APPLICATION_NOT_REPLACED)).fetch();
-    return populateDependencies(appl);
+    return populateDependencies(appl, anonymizePersons);
   }
 
   @Transactional(readOnly = true)
   public List<Application> findByProject(int projectId) {
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(application.projectId.eq(projectId)).fetch();
-    return populateDependencies(applications);
+    return populateDependencies(applications, false);
   }
 
   @Transactional(readOnly = true)
@@ -137,7 +137,7 @@ public class ApplicationDao {
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(condition).fetch();
 
-    return populateDependencies(applications);
+    return populateDependencies(applications, false);
   }
 
   private BooleanExpression strictStartEndTimeCondition(LocationSearchCriteria lsc) {
@@ -185,7 +185,7 @@ public class ApplicationDao {
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     QueryResults<Application> queryResults = queryFactory.select(applicationBean).from(application)
         .orderBy(application.id.asc()).offset(offset).limit(count).fetchResults();
-    return new PageImpl<>(populateDependencies(queryResults.getResults()), pageRequest, queryResults.getTotal());
+    return new PageImpl<>(populateDependencies(queryResults.getResults(), false), pageRequest, queryResults.getTotal());
   }
 
   /**
@@ -325,7 +325,7 @@ public class ApplicationDao {
     insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
-    Application application = findByIds(Collections.singletonList(id)).get(0);
+    Application application = findByIds(Collections.singletonList(id), false).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
     return populateTags(application);
@@ -411,7 +411,7 @@ public class ApplicationDao {
     if (updated != 1) {
       throw new NoSuchEntityException("Attempted to update decision status of non-existent application", Integer.toString(applicationId));
     }
-    return findByIds(Collections.singletonList(applicationId)).get(0);
+    return findByIds(Collections.singletonList(applicationId), false).get(0);
   }
 
   /**
@@ -434,7 +434,7 @@ public class ApplicationDao {
     if (updated != 1) {
       throw new NoSuchEntityException("Attempted to update decision status of non-existent application", Integer.toString(applicationId));
     }
-    return findByIds(Collections.singletonList(applicationId)).get(0);
+    return findByIds(Collections.singletonList(applicationId), false).get(0);
   }
 
   /**
@@ -496,7 +496,7 @@ public class ApplicationDao {
     insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
-    Application application = findByIds(Collections.singletonList(id)).get(0);
+    Application application = findByIds(Collections.singletonList(id), false).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
     return populateTags(application);
@@ -567,10 +567,15 @@ public class ApplicationDao {
     }
   }
 
-  private List<Application> populateDependencies(List<Application> applications) {
+  private List<Application> populateDependencies(List<Application> applications, boolean anonymizePersons) {
     applications.forEach(a -> a.setDecisionDistributionList(distributionEntryDao.findByApplicationId(a.getId())));
     applications.forEach(a -> populateTags(a));
-    applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
+    if (anonymizePersons) {
+      applications.forEach(a -> a.setCustomersWithContacts(
+          CustomerAnonymizer.anonymize(customerDao.findByApplicationWithContacts(a.getId()))));
+    } else {
+      applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
+    }
     applications.forEach(a -> a.setKindsWithSpecifiers(findKindsAndSpecifiers(a.getId())));
     return applications;
   }

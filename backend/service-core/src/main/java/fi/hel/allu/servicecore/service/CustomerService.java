@@ -26,12 +26,13 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerService {
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private CustomerMapper customerMapper;
-  private SearchService searchService;
-  private ContactService contactService;
-  private UserService userService;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final CustomerMapper customerMapper;
+  private final SearchService searchService;
+  private final ContactService contactService;
+  private final UserService userService;
+  private final PersonAuditLogService personAuditLogService;
 
   @Autowired
   public CustomerService(
@@ -40,13 +41,15 @@ public class CustomerService {
       CustomerMapper customerMapper,
       SearchService searchService,
       ContactService contactService,
-      UserService userService) {
+      UserService userService,
+      PersonAuditLogService personAuditLogService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.customerMapper = customerMapper;
     this.searchService = searchService;
     this.contactService = contactService;
     this.userService = userService;
+    this.personAuditLogService = personAuditLogService;
   }
 
 
@@ -178,6 +181,7 @@ public class CustomerService {
   public CustomerJson findCustomerById(int customerId) {
     ResponseEntity<Customer> customerResult =
         restTemplate.getForEntity(applicationProperties.getCustomerByIdUrl(), Customer.class, customerId);
+    personAuditLogService.log(customerResult.getBody(), "CustomerService");
     return customerMapper.createCustomerJson(customerResult.getBody());
   }
 
@@ -196,8 +200,10 @@ public class CustomerService {
    * @return List of found application with details
    */
   public Page<CustomerJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    return searchService.searchCustomer(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
+    Page<CustomerJson> customers = searchService.searchCustomer(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
         ids -> getCustomersById(ids));
+    customers.forEach(c -> personAuditLogService.log(c, "CustomerService"));
+    return customers;
   }
 
   public List<CustomerJson> getCustomersById(List<Integer> customerIds) {

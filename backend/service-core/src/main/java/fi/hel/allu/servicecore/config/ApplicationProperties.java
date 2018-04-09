@@ -6,15 +6,15 @@ import java.util.List;
 
 public class ApplicationProperties {
 
-  private String modelServiceHost;
-  private String modelServicePort;
-  private String searchServiceHost;
-  private String searchServicePort;
-  private String pdfServiceHost;
-  private String pdfServicePort;
-  private List<String> emailAllowedAddresses;
-  private String emailSenderAddress;
-  private List<String> anonymousAccessPaths;
+  private final String modelServiceHost;
+  private final String modelServicePort;
+  private final String searchServiceHost;
+  private final String searchServicePort;
+  private final String pdfServiceHost;
+  private final String pdfServicePort;
+  private final List<String> emailAllowedAddresses;
+  private final String emailSenderAddress;
+  private final List<String> anonymousAccessPaths;
 
   public ApplicationProperties(
       String modelServiceHost,
@@ -1136,5 +1136,9 @@ public class ApplicationProperties {
 
   public String getStoredFilterSetAsDefaultUrl() {
     return getModelServiceUrl("/stored-filter/{id}/set-default");
+  }
+
+  public String getPersonAuditLogUrl() {
+    return getModelServiceUrl("/personauditlog/log");
   }
 }

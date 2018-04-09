@@ -143,7 +143,7 @@ public class ProjectService {
   @Transactional
   public Project updateProjectApplications(int id, List<Integer> applicationIds) {
     // find out project ids of applications that will be added to given project
-    List<Application> updatedApplications = applicationDao.findByIds(applicationIds);
+    List<Application> updatedApplications = applicationDao.findByIds(applicationIds, false);
     List<Integer> existingRelatedProjects = updatedApplications.stream()
         .map(Application::getProjectId).filter(projectId -> projectId != null && projectId != id).distinct().collect(Collectors.toList());
     // find out applications that are linked to the given project, but not included in the currently changed applications

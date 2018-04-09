@@ -28,11 +28,12 @@ import java.util.stream.Collectors;
 @Service
 public class ContactService {
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private CustomerMapper customerMapper;
-  private SearchService searchService;
-  private UserService userService;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final CustomerMapper customerMapper;
+  private final SearchService searchService;
+  private final UserService userService;
+  private final PersonAuditLogService personAuditLogService;
 
   @Autowired
   public ContactService(
@@ -40,12 +41,14 @@ public class ContactService {
       RestTemplate restTemplate,
       CustomerMapper customerMapper,
       SearchService searchService,
-      UserService userService) {
+      UserService userService,
+      PersonAuditLogService personAuditLogService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.customerMapper = customerMapper;
     this.searchService = searchService;
     this.userService = userService;
+    this.personAuditLogService = personAuditLogService;
   }
 
   public ContactJson findById(int id) {
@@ -63,6 +66,7 @@ public class ContactService {
         customerId);
     List<ContactJson> results =
         Arrays.stream(contactResult.getBody()).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
+    results.forEach(c -> personAuditLogService.log(c, "ContactService"));
     return results;
   }
 

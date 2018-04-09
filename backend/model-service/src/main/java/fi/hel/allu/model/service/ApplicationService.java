@@ -17,11 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  *
@@ -68,8 +66,8 @@ public class ApplicationService {
    * @return  found applications
    */
   @Transactional(readOnly = true)
-  public List<Application> findByIds(List<Integer> ids) {
-    return applicationDao.findByIds(ids);
+  public List<Application> findByIds(List<Integer> ids, boolean anonymizePersons) {
+    return applicationDao.findByIds(ids, anonymizePersons);
   }
 
   /**
@@ -279,7 +277,7 @@ public class ApplicationService {
     List<Integer> candidates = applicationDao.findByEndTime(checkParams.getEndsAfter(), checkParams.getEndsBefore(),
         checkParams.getTypeSelector(), checkParams.getStatusSelector());
     candidates = applicationDao.excludeSentReminders(candidates);
-    return findByIds(candidates);
+    return findByIds(candidates, false);
   }
 
   /**
@@ -336,7 +334,7 @@ public class ApplicationService {
    * Create invoice for the given application if it's needed
    */
   private void createInvoiceIfNeeded(int applicationId, int userId) {
-    List<Application> applications = applicationDao.findByIds(Collections.singletonList(applicationId));
+    List<Application> applications = applicationDao.findByIds(Collections.singletonList(applicationId), false);
     if (applications.isEmpty()) {
       throw new NoSuchEntityException("No application found with ID " + applicationId);
     }

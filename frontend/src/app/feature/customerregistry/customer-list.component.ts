@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../util/enum.util';
@@ -15,7 +15,7 @@ import {CustomerDatasource} from '../../service/customer/customer-datasource';
     './customer-list.component.scss'
   ]
 })
-export class CustomerListComponent implements OnInit, AfterViewInit {
+export class CustomerListComponent implements OnInit {
 
   displayedColumns = ['name', 'type', 'registryKey', 'email', 'phone', 'postalAddress'];
 
@@ -37,10 +37,6 @@ export class CustomerListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.customerSource = new CustomerDatasource(this.customerService, this.paginator, this.sort);
-  }
-
-  ngAfterViewInit(): void {
-    this.search();
   }
 
   newCustomer(): void {
