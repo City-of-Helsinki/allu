@@ -6,6 +6,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
@@ -210,13 +211,19 @@ public class CustomerDao {
   private List<Integer> findInvoiceRecipientIdsWithoutSapNumber() {
     QApplicationTag tag = QApplicationTag.applicationTag;
     QApplication application = QApplication.application;
-    List<Integer> customerIds = queryFactory
+    QApplication replacingApplication = new QApplication("replacingApplication");
+    return queryFactory
         .select(application.invoiceRecipientId)
+        .distinct()
         .from(application)
         .join(tag).on(tag.applicationId.eq(application.id))
-        .where(application.status.ne(StatusType.REPLACED).and(tag.type.eq(ApplicationTagType.SAP_ID_MISSING))).
-        fetch();
-    return customerIds;
+        .where(application.status.ne(StatusType.REPLACED).and(tag.type.eq(ApplicationTagType.SAP_ID_MISSING))
+        .and(
+              SQLExpressions.select(replacingApplication.id)
+              .from(replacingApplication)
+              .where(replacingApplication.id.eq(application.replacedByApplicationId)
+                  .and(replacingApplication.status.ne(StatusType.CANCELLED))).notExists())
+        ).fetch();
   }
 
   @Transactional(readOnly = true)

@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
@@ -27,6 +29,9 @@ import fi.hel.allu.model.domain.*;
 public class ApplicationReplacementService {
   private static final Set<CommentType> COMMENT_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(CommentType.PROPOSE_APPROVAL,
       CommentType.PROPOSE_REJECT));
+
+  private static final Set<ApplicationTagType> TAG_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(ApplicationTagType.SAP_ID_MISSING));
+
 
   private final ApplicationService applicationService;
   private final ApplicationDao applicationDao;
@@ -127,7 +132,8 @@ public class ApplicationReplacementService {
     application.setInvoicingDate(applicationToReplace.getInvoicingDate());
 
     // Application DAO will automatically create copies of following
-    application.setApplicationTags(applicationToReplace.getApplicationTags());
+    application.setApplicationTags(applicationToReplace.getApplicationTags().stream()
+        .filter(t -> !TAG_TYPES_NOT_COPIED.contains(t.getType())).collect(Collectors.toList()));
     application.getApplicationTags().forEach(t -> t.setCreationTime(ZonedDateTime.now()));
     application.setDecisionDistributionList(applicationToReplace.getDecisionDistributionList());
     application.setKindsWithSpecifiers(applicationToReplace.getKindsWithSpecifiers());

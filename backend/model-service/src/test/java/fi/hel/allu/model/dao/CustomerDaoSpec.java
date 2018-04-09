@@ -5,6 +5,7 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
@@ -164,6 +165,18 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertEquals(1, customers.size());
           assertEquals(insertedCustomer.getId(), customers.get(0).getId());
       });
+      it("should not return invoice recipients of replaced applications", () -> {
+        Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+        application.setInvoiceRecipientId(insertedCustomer.getId());
+        Application replacingApplication = testCommon.dummyOutdoorApplication("Replacing Test Application", "Test Handler 2");
+        replacingApplication = applicationDao.insert(replacingApplication);
+        application.setReplacedByApplicationId(replacingApplication.getId());
+        insertedApplication = applicationDao.insert(application);
+        applicationDao.addTag(insertedApplication.getId(), testCommon.dummyTag(ApplicationTagType.SAP_ID_MISSING));
+        List<Customer> customers = customerDao.findInvoiceRecipientsWithoutSapNumber();
+        assertEquals(0, customers.size());
+    });
+
     });
 
     describe("CustomerDao.findAll", () -> {
