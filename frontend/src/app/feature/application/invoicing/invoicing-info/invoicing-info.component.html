@@ -1,7 +1,7 @@
 <form [formGroup]="form" novalidate>
   <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
     <div fxFlex *ngIf="billable">
-      <mat-card>
+      <allu-card>
         <mat-card-title>
           <div fxLayout="row" fxFlexAlign="space-between">
             <div fxFlex>
@@ -23,10 +23,10 @@
           <customer-info [form]="recipientForm" [allowSearch]="true" [showInvoicingInfo]="true" [excludeInvoicingOnlyCustomers]="false"
                          (customerChange)="invoiceRecipientChange($event)"></customer-info>
         </mat-card-content>
-      </mat-card>
+      </allu-card>
     </div>
     <div fxFlex>
-      <mat-card>
+      <allu-card>
         <mat-card-title>
           {{'invoice.info.depositAndOthers' | translation}}
         </mat-card-title>
@@ -106,7 +106,7 @@
             </div>
           </div>
         </mat-card-content>
-      </mat-card>
+      </allu-card>
     </div>
   </div>
 </form>

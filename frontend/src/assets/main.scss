@@ -9,13 +9,13 @@
 @import "icons";
 @import "nav/nav";
 @import "radio-buttons";
-@import "card";
 @import "table";
 @import "accordion";
 @import "notification/oval";
 @import '../app/feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
+@import '../app/feature/common/card/allu-card.component.theme';
 @import '../app/feature/stored-filter/stored-filter.component.theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
 
@@ -29,7 +29,7 @@
 @include stored-filter-theme($allu-theme);
 @include button-toggle-theme($allu-theme);
 @include modal-theme($allu-theme);
-@include card-theme($allu-theme);
+@include allu-card-theme($allu-theme);
 @include table-theme($allu-theme);
 @include oval-theme($allu-theme);
 @include bottom-bar-theme($allu-theme);
@@ -244,42 +244,6 @@ ul.card-list {
 
   li {
     margin: 0 0 20px 0;
-  }
-}
-
-.slim-card {
-  display: flex;
-  flex-direction: row;
-  min-height: 3rem;
-  line-height: 3rem;
-  padding: 0 1rem;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-
-  .card-content {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-
-    & > div {
-      padding: 0 10px;
-      white-space: nowrap;
-    }
-  }
-
-  i {
-    width: 2rem;
-    font-size: 1.6rem;
-    line-height: 3rem;
-    display: block;
-    float: left;
-    text-align: center;
-    margin-right: 1rem;
-  }
-
-  .card-item-align-right {
-    margin-left: auto;
   }
 }
 

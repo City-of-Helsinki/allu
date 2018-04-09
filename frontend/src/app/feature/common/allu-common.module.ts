@@ -36,12 +36,14 @@ import {InputBoxComponent, InputBoxInputDirective} from './input-box/input-box.c
 import {InputWarningDirective} from './validation/input-warning.directive';
 import {AvailableToDirective} from '../../service/authorization/available-to.directive';
 import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
+import {AlluCardComponent} from './card/allu-card.component';
 
 @NgModule({
   imports: [
     CommonModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCardModule
   ],
   declarations: [
     AutoCompletionDirective,
@@ -57,7 +59,8 @@ import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
     InputBoxInputDirective,
     InputWarningDirective,
     AvailableToDirective,
-    BottomBarComponent
+    BottomBarComponent,
+    AlluCardComponent
   ],
   exports: [
     CommonModule,
@@ -94,7 +97,8 @@ import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
     InputBoxInputDirective,
     InputWarningDirective,
     AvailableToDirective,
-    BottomBarComponent
+    BottomBarComponent,
+    AlluCardComponent
   ],
   entryComponents: [
     AutoCompletionListComponent,

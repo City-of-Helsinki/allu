@@ -1,0 +1,18 @@
+@mixin allu-card-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  allu-card mat-card {
+    background: $allu-card-background;
+
+    .mat-card-title,
+    .mat-card-subtitle {
+      color: mat-color($primary, 500);
+    }
+
+    mat-card-content label.info-label {
+        color: $allu-text-black;
+    }
+  }
+}
+
+

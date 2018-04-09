@@ -2,12 +2,12 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
     <div class="row" formGroupName="customer">
       <div class="col m6">
-        <mat-card>
+        <allu-card>
           <mat-card-title>Asiakastiedot</mat-card-title>
           <mat-card-content>
             <customer-info [form]="customerForm" [showInvoicingOnly]="true" [showInvoicingInfo]="true"></customer-info>
           </mat-card-content>
-        </mat-card>
+        </allu-card>
       </div>
     </div>
     <div class="row">
@@ -15,7 +15,7 @@
     </div>
     <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
       <div class="col m12">
-        <mat-card>
+        <allu-card>
           <div class="row">
             <div class="col m4">
               <button type="submit" mat-raised-button color="primary" [disabled]="!validWithChanges()">{{'common.button.save' | translation}}</button>
@@ -29,7 +29,7 @@
               </button>
             </div>
           </div>
-        </mat-card>
+        </allu-card>
       </div>
     </div>
   </form>

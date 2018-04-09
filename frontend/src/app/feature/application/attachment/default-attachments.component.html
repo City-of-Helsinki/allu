@@ -1,4 +1,4 @@
-<mat-card *ngIf="defaultAttachments?.length > 0">
+<allu-card *ngIf="defaultAttachments?.length > 0">
   <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
   <mat-card-content>
     <div *ngIf="isAllowedToEdit">
@@ -24,4 +24,4 @@
       </div>
     </div>
   </mat-card-content>
-</mat-card>
+</allu-card>

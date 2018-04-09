@@ -2,7 +2,7 @@
   <div formArrayName="contacts">
     <div *ngFor="let contact of contacts.controls; let index=index" class="col m6 contact-card">
       <div [formGroupName]="index" class="no-border">
-        <mat-card>
+        <allu-card>
           <mat-card-title>
             {{['contact.role', customerRoleType, 'title'] | translation}}
             <button mat-icon-button type="button" class="align-with-text"
@@ -90,7 +90,7 @@
               </div>
             </div>
           </mat-card-content>
-        </mat-card>
+        </allu-card>
       </div>
     </div>
   </div>

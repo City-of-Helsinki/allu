@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-  <mat-card>
+  <allu-card>
     <mat-card-title>
       <div fxLayout="row">
         <div fxFlex="70">
@@ -17,7 +17,7 @@
       <div formArrayName="chargeBasisEntries">
         <ul>
           <li *ngFor="let entry of chargeBasisEntries.controls; let i=index;">
-            <mat-card class="slim-card" [class.indented]="entry.value.referredTag">
+            <allu-card class="slim-card" [class.indented]="entry.value.referredTag">
               <mat-card-content>
                 <div fxLayout="row" fxLayout.sm="column" fxLayoutWrap>
                   <div fxFlex="100px">
@@ -49,10 +49,10 @@
                   </div>
                 </div>
               </mat-card-content>
-            </mat-card>
+            </allu-card>
           </li>
         </ul>
       </div>
     </mat-card-content>
-  </mat-card>
+  </allu-card>
 </form>

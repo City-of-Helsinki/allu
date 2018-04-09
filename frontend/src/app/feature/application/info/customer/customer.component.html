@@ -1,6 +1,6 @@
 <form [formGroup]="customerForm">
   <div class="col m6">
-    <mat-card class="customer-card">
+    <allu-card>
       <mat-card-title>
         {{['customer.role', customerWithContacts.uiRoleType, 'title'] | translation}}
         <button mat-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()" class="align-with-text">
@@ -28,7 +28,7 @@
           </div>
         </div>
       </mat-card-content>
-    </mat-card>
+    </allu-card>
   </div>
 </form>
 <contact #contacts [parentForm]="parentForm" [customerRoleType]="customerWithContacts.uiRoleType"

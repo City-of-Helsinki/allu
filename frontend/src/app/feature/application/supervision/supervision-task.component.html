@@ -1,5 +1,5 @@
 <form [formGroup]="form" (ngSubmit)="save()">
-  <mat-card>
+  <allu-card>
     <mat-card-title>
       <div *ngIf="form.value.id">
         <span>{{['supervision.task.type', form.getRawValue().type] | translation}} - {{['supervision.task.status', form.value.status] | translation}}</span>
@@ -109,5 +109,5 @@
         </div>
       </div>
     </mat-card-content>
-  </mat-card>
+  </allu-card>
 </form>

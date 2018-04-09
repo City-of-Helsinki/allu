@@ -1,6 +1,6 @@
 <ul>
   <li *ngFor="let proposal of proposals | async">
-    <mat-card>
+    <allu-card>
       <mat-card-title>
         {{['comment.type', proposal.type] | translation}}
       </mat-card-title>
@@ -19,6 +19,6 @@
           </div>
         </div>
       </mat-card-content>
-    </mat-card>
+    </allu-card>
   </li>
 </ul>

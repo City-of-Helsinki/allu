@@ -1,0 +1,56 @@
+:host mat-card {
+  border-radius: 6px;
+
+  mat-card-content {
+    label.info-label {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 500;
+      padding-top: 9px;
+    }
+
+    .info-field {
+      padding-top: 3px;
+    }
+
+    .col.info-field-group {
+      padding-left: 0;
+    }
+
+    .input-field-info-text {
+      height: 3rem;
+    }
+  }
+}
+
+:host(.slim-card) ::ng-deep {
+  mat-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 3rem;
+    line-height: 3rem;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+
+    mat-card-content {
+      width: 100%;
+    }
+
+    mat-card-content.card-content {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      
+      & > div {
+        padding: 0 10px;
+        white-space: nowrap;
+      }
+    }
+
+    .card-item-align-right {
+      margin-left: auto;
+    }
+  }
+}

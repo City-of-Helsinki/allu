@@ -19,16 +19,17 @@
     </li>
 
     <li *ngFor="let attachment of commonAttachments; let i = index;">
-      <mat-card class="slim-card">
-        <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-          <div class="clickable" *ngIf="canEdit(attachment)"
-               (click)="remove(attachment)"><i class="material-icons">clear</i></div>
-        </div>
-        <div *ngIf="attachment.id !== undefined">
-          <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
-        </div>
+      <allu-card class="slim-card">
+        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+          <button mat-icon-button *ngIf="canEdit(attachment)" (click)="remove(attachment)">
+            <mat-icon>clear</mat-icon>
+           </button>
+        </ng-container>
+        <button mat-icon-button="" *ngIf="attachment.id !== undefined" (click)="download(attachment)">
+          <mat-icon>file_download</mat-icon>
+        </button>
         <mat-card-content class="card-content">
-          <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+          <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px" class="inner-row">
             <div fxFlex>
               <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
             </div>
@@ -53,7 +54,7 @@
             </mat-slide-toggle>
           </div>
         </mat-card-content>
-      </mat-card>
+      </allu-card>
     </li>
     <li>
       <default-attachments [selectedAttachments]="defaultAttachments"
