@@ -1,15 +1,13 @@
-import {Injectable, Optional} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ErrorHandler} from '../error/error-handler.service';
 import {AuthHttp} from 'angular2-jwt';
 import {Observable} from 'rxjs/Observable';
 import {HttpResponse} from '../../util/http-response';
-import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {findTranslation} from '../../util/translations';
 import {StoredFilterMapper} from '../mapper/stored-filter-mapper';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {HttpUtil} from '../../util/http.util';
 import {CurrentUser} from '../user/current-user';
-import {ArrayUtil} from '../../util/array-util';
 
 const STORED_FILTER_URL = '/api/stored-filter';
 
@@ -20,25 +18,12 @@ export class StoredFilterService {
               private errorHandler: ErrorHandler) {
   }
 
-  findByUserAndType(userId: number, type: StoredFilterType): Observable<StoredFilter[]> {
-    const typeName = StoredFilterType[type];
-    const url = `/api/users/${userId}/stored-filter/${typeName}`;
-    return this.authHttp.get(url)
-      .map(response => response.json())
-      .map(tasks => StoredFilterMapper.mapBackendList(tasks))
-      .catch(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.fetch')));
-  }
-
-  findForCurrentUserByType(type: StoredFilterType): Observable<StoredFilter[]> {
-    return this.currentUser.user
-      .switchMap(user => this.findByUserAndType(user.id, type))
-      .catch(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.fetch')));
-  }
-
-  // TODO: fix to fetch all for current user
   findForCurrentUser(): Observable<StoredFilter[]> {
     return this.currentUser.user
-      .switchMap(user => this.findByUserAndType(user.id, StoredFilterType.MAP))
+      .map(user => `/api/users/${user.id}/stored-filter`)
+      .switchMap(url => this.authHttp.get(url))
+      .map(response => response.json())
+      .map(tasks => StoredFilterMapper.mapBackendList(tasks))
       .catch(error => this.errorHandler.handle(error, findTranslation('storedFilter.error.fetch')));
   }
 

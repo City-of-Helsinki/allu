@@ -25,6 +25,7 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
   @Input() filter: any;
   @Input() selectedFilter: StoredFilter;
   @Input() availableFilters: StoredFilter[];
+  @Input() classNames: string[];
 
   private currentUser: User;
   private destroy = new Subject<boolean>();

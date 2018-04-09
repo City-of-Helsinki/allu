@@ -14,7 +14,7 @@ export class Sort {
 
   public static toMatSortable(sort: Sort): MatSortable {
     const direction = sort.direction ? sort.direction : undefined;
-    return direction
+    return sort.field && direction
       ? {id: sort.field, start: direction, disableClear: false}
       : {id: undefined, start: undefined, disableClear: false};
   }

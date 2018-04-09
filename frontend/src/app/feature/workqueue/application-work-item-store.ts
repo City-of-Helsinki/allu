@@ -43,12 +43,16 @@ export class ApplicationWorkItemStore {
       .subscribe(user => this.currentUser = user);
   }
 
+  get snapshot(): ApplicationWorkqueueState {
+    return this.store.getValue();
+  }
+
   get changes(): Observable<ApplicationWorkqueueState> {
     return this.store.asObservable().distinctUntilChanged();
   }
 
-  get snapshot(): ApplicationWorkqueueState {
-    return this.store.getValue();
+  public change(state: ApplicationWorkqueueState): void {
+    this.store.next({...this.snapshot, ...state});
   }
 
   public tabChange(tab: WorkQueueTab) {

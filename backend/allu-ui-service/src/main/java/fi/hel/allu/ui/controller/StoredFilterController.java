@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import fi.hel.allu.common.domain.types.StoredFilterType;
 import fi.hel.allu.servicecore.domain.StoredFilterJson;
 import fi.hel.allu.servicecore.service.StoredFilterService;
 
@@ -22,11 +21,10 @@ public class StoredFilterController {
     return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/users/{userId}/stored-filter/{type}", method = RequestMethod.GET)
+  @RequestMapping(value = "/users/{userId}/stored-filter", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<StoredFilterJson>> findByUserAndType(
-    @PathVariable int userId, @PathVariable StoredFilterType type) {
-    return new ResponseEntity<>(service.findByUserAndType(userId, type), HttpStatus.OK);
+  public ResponseEntity<List<StoredFilterJson>> findByUser(@PathVariable int userId) {
+    return new ResponseEntity<>(service.findByUser(userId), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/stored-filter", method = RequestMethod.POST)

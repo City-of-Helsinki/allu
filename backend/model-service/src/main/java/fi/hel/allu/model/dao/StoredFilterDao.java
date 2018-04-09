@@ -44,12 +44,11 @@ public class StoredFilterDao {
   }
 
   @Transactional
-  public List<StoredFilter> findByUserAndType(int userId, StoredFilterType type) {
+  public List<StoredFilter> findByUser(int userId) {
     return queryFactory
         .select(storedFilterBean)
         .from(storedFilter)
-        .where(storedFilter.userId.eq(userId)
-            .and(storedFilter.type.eq(type)))
+        .where(storedFilter.userId.eq(userId))
         .fetch();
   }
 

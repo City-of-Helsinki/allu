@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import fi.hel.allu.common.domain.types.StoredFilterType;
 import fi.hel.allu.model.domain.StoredFilter;
 import fi.hel.allu.model.service.StoredFilterService;
 
@@ -21,10 +20,9 @@ public class StoredFilterController {
     return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/user/{userId}/stored-filter/{type}", method = RequestMethod.GET)
-  public ResponseEntity<List<StoredFilter>> findByUserAndType(
-    @PathVariable int userId, @PathVariable StoredFilterType type) {
-    return new ResponseEntity<>(service.findByUserAndType(userId, type), HttpStatus.OK);
+  @RequestMapping(value = "/user/{userId}/stored-filter", method = RequestMethod.GET)
+  public ResponseEntity<List<StoredFilter>> findByUser(@PathVariable int userId) {
+    return new ResponseEntity<>(service.findByUser(userId), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/stored-filter", method = RequestMethod.POST)

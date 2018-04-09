@@ -1,4 +1,4 @@
-<input-box class="input-raised">
+<input-box [ngClass]="classNames">
   <button inputBoxInput [matMenuTriggerFor]="storedFilterMenu" class="allu-icon-button">
     <div *ngIf="selectedFilter !== undefined" class="button-content-clipped">
       {{selectedFilter.name}}

@@ -12,6 +12,15 @@ import {WorkQueueTab} from '../workqueue-tab';
 import {ApplicationWorkItemStore} from '../application-work-item-store';
 import {Subject} from 'rxjs/Subject';
 import {CityDistrictService} from '../../../service/map/city-district.service';
+import {StoredFilter} from '../../../model/user/stored-filter';
+import {StoredFilterType} from '../../../model/user/stored-filter-type';
+import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
+import {Sort} from '../../../model/common/sort';
+
+interface ApplicationSearchFilter {
+  search?: ApplicationSearchQuery;
+  sort?: Sort;
+}
 
 @Component({
   selector: 'workqueue-filter',
@@ -31,11 +40,18 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
   tab: Observable<string>;
 
+  WORKQUEUE_FILTER = StoredFilterType.WORKQUEUE;
+  applicationFilter: Observable<ApplicationSearchFilter>;
+  selectedFilter: Observable<StoredFilter>;
+  defaultFilter: Observable<StoredFilter>;
+  availableFilters: Observable<StoredFilter[]>;
+
   private destroy = new Subject<boolean>();
 
   constructor(fb: FormBuilder,
               private cityDistrictService: CityDistrictService,
-              private store: ApplicationWorkItemStore) {
+              private store: ApplicationWorkItemStore,
+              private storedFilterStore: StoredFilterStore) {
     this.queryForm = fb.group({
       type: undefined,
       owner: undefined,
@@ -48,6 +64,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.queryForm.patchValue(this.store.snapshot.search, {emitEvent: false});
+
     this.queryForm.valueChanges
       .takeUntil(this.destroy)
       .distinctUntilChanged()
@@ -60,11 +78,28 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       .map(state => state.tab)
       .map(tab => WorkQueueTab[tab]);
 
-    this.queryForm.patchValue(this.store.snapshot.search, {emitEvent: false});
+    this.applicationFilter = this.store.changes
+      .map(state => ({ search: state.search, sort: state.sort }));
+
+    this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.WORKQUEUE);
+    this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.WORKQUEUE);
+    this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.WORKQUEUE);
+
+    this.selectedFilter
+      .takeUntil(this.destroy)
+      .filter(current => !!current)
+      .map(current => current.filter.search)
+      .subscribe(search => this.queryForm.patchValue(search));
   }
 
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
   }
+
+  selectFilter(filter: StoredFilter) {
+    this.storedFilterStore.currentChange(filter);
+  }
+
+
 }

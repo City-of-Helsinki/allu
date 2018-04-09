@@ -1,5 +1,30 @@
 <div class="search-bar">
-  <h1>{{'workqueue.title' | translation | uppercase }}</h1>
+  <div fxLayout="row" fxFlexAlign="space-between center" class="header-row">
+    <div fxFlex>
+      <h1>{{'workqueue.title' | translation | uppercase }}</h1>
+    </div>
+    <div fxFlex="0 1 auto">
+      <div fxLayout="row" fxLayoutGap="18px">
+          <div fxFlex="none" *ngIf="defaultFilter | async as filter">
+            <input-box class="input-box-icon-button">
+              <button inputBoxInput
+                      class="input-box-content allu-icon-button"
+                      (click)="selectFilter(filter)">
+                <mat-icon color="primary" class="mat-icon-36">home</mat-icon>
+              </button>
+            </input-box>
+          </div>
+        <div fxFlex="0 0 220px"
+             fxFlex.lt-md="100%">
+          <stored-filter [type]="WORKQUEUE_FILTER"
+                         [selectedFilter]="selectedFilter | async"
+                         [availableFilters]="availableFilters | async"
+                         [filter]="applicationFilter | async"></stored-filter>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <form [formGroup]="queryForm">
     <div class="row row-slim">
       <div class="col s2">

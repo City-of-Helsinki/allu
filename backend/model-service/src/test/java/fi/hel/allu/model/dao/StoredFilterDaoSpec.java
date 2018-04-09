@@ -54,7 +54,7 @@ public class StoredFilterDaoSpec extends SpeccyTestBase {
           assertFalse(filter.isPresent());
         });
 
-        it("Find by type and user", () -> {
+        it("Find by user", () -> {
           // for user1
           dao.insert(createFilter(StoredFilterType.MAP, "MapFilter", true, "{}", user1.getId()));
           dao.insert(createFilter(StoredFilterType.APPLICATION_SEARCH, "SearchFilter", false, "{}", user1.getId()));
@@ -63,30 +63,17 @@ public class StoredFilterDaoSpec extends SpeccyTestBase {
           dao.insert(createFilter(StoredFilterType.MAP, "MapFilter", true, "{}", user2.getId()));
           dao.insert(createFilter(StoredFilterType.SUPERVISION_WORKQUEUE, "SupervisionWorkqueue", false, "{}", user2.getId()));
 
-          List<StoredFilter> user1MapFilters = dao.findByUserAndType(user1.getId(), StoredFilterType.MAP);
-          assertEquals(2, user1MapFilters.size());
-          assertTrue(user1MapFilters.stream()
-              .allMatch(f -> StoredFilterType.MAP.equals(f.getType())));
+          List<StoredFilter> user1MapFilters = dao.findByUser(user1.getId());
+          assertEquals(3, user1MapFilters.size());
 
-          List<StoredFilter> user1ApplicationSearchFilters = dao.findByUserAndType(user1.getId(), StoredFilterType.APPLICATION_SEARCH);
-          assertEquals(1, user1ApplicationSearchFilters.size());
-          assertTrue(user1ApplicationSearchFilters.stream()
-              .allMatch(f -> StoredFilterType.APPLICATION_SEARCH.equals(f.getType())));
-
-
-          List<StoredFilter> user2MapFilters = dao.findByUserAndType(user2.getId(), StoredFilterType.MAP);
-          assertEquals(1, user2MapFilters.size());
-          assertEquals(StoredFilterType.MAP, user2MapFilters.get(0).getType());
-
-          List<StoredFilter> user2SupervisionFilters = dao.findByUserAndType(user2.getId(), StoredFilterType.SUPERVISION_WORKQUEUE);
-          assertEquals(1, user2SupervisionFilters.size());
-          assertEquals(StoredFilterType.SUPERVISION_WORKQUEUE, user2SupervisionFilters.get(0).getType());
+          List<StoredFilter> user2MapFilters = dao.findByUser(user2.getId());
+          assertEquals(2, user2MapFilters.size());
         });
 
 
-        it("Find by type and user with no filters", () -> {
+        it("Find user with no filters", () -> {
           dao.insert(createFilter(StoredFilterType.APPLICATION_SEARCH, "SearchFilter", false, "{}", user1.getId()));
-          assertEquals(0, dao.findByUserAndType(user1.getId(), StoredFilterType.WORKQUEUE).size());
+          assertEquals(0, dao.findByUser(user2.getId()).size());
         });
       });
 

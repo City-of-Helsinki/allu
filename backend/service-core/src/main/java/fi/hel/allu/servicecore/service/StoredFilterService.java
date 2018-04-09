@@ -9,7 +9,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import fi.hel.allu.common.domain.types.StoredFilterType;
 import fi.hel.allu.model.domain.StoredFilter;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.StoredFilterJson;
@@ -35,10 +34,10 @@ public class StoredFilterService {
     return StoredFilterMapper.toJson(result.getBody());
   }
 
-  public List<StoredFilterJson> findByUserAndType(int userId, StoredFilterType type) {
+  public List<StoredFilterJson> findByUser(int userId) {
     ResponseEntity<StoredFilter[]> result = restTemplate.getForEntity(
-      applicationProperties.getStoredFilterFindByUserAndTypeUrl(),
-      StoredFilter[].class, userId, type);
+      applicationProperties.getStoredFilterFindByUserUrl(),
+      StoredFilter[].class, userId);
 
     return Stream.of(result.getBody())
       .map(StoredFilterMapper::toJson)

@@ -16,6 +16,7 @@ import {CommentsModalComponent} from '../application/comment/comments-modal.comp
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 import {ApplicationWorkItemStore} from './application-work-item-store';
 import {RouterModule} from '@angular/router';
+import {StoredFilterModule} from '../stored-filter/stored-filter.module';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import {RouterModule} from '@angular/router';
     MatPaginatorModule,
     MatChipsModule,
     SelectionGroupModule,
-    OwnerModalModule
+    OwnerModalModule,
+    StoredFilterModule
   ],
   declarations: [
     WorkQueueComponent,

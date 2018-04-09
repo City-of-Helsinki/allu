@@ -1130,8 +1130,8 @@ public class ApplicationProperties {
     return getModelServiceUrl("/stored-filter");
   }
 
-  public String getStoredFilterFindByUserAndTypeUrl() {
-    return getModelServiceUrl("/user/{userId}/stored-filter/{type}");
+  public String getStoredFilterFindByUserUrl() {
+    return getModelServiceUrl("/user/{userId}/stored-filter");
   }
 
   public String getStoredFilterSetAsDefaultUrl() {

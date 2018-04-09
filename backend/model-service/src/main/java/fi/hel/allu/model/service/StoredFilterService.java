@@ -24,8 +24,8 @@ public class StoredFilterService {
   }
 
   @Transactional
-  public List<StoredFilter> findByUserAndType(int userId, StoredFilterType type) {
-    return dao.findByUserAndType(userId, type);
+  public List<StoredFilter> findByUser(int userId) {
+    return dao.findByUser(userId);
   }
 
   @Transactional

@@ -218,12 +218,6 @@ export class MapStore {
   storedFilterChange(storedFilter: StoredFilter): void {
     const mapSearchFilter = Some(storedFilter)
       .map(sf => sf.filter)
-      .map(filter => ({
-        address: filter.address,
-        startDate: TimeUtil.dateFromBackend(filter.startDate),
-        endDate: TimeUtil.dateFromBackend(filter.endDate),
-        statuses: filter.statuses
-      }))
       .orElseGet(() => defaultFilter);
 
     this.store.next({

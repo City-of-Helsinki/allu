@@ -15,6 +15,8 @@ import {WorkQueueTab} from '../workqueue-tab';
 import {CityDistrictService} from '../../../service/map/city-district.service';
 import {MapStore} from '../../../service/map/map-store';
 import {Sort} from '../../../model/common/sort';
+import {StoredFilterType} from '../../../model/user/stored-filter-type';
+import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
 
 @Component({
   selector: 'workqueue-content',
@@ -45,7 +47,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
               private mapStore: MapStore,
               private cityDistrictService: CityDistrictService,
               private dialog: MatDialog,
-              private store: ApplicationWorkItemStore) {
+              private store: ApplicationWorkItemStore,
+              private storedFilterStore: StoredFilterStore) {
   }
 
   ngOnInit(): void {
@@ -84,6 +87,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(loading => this.loading = loading);
+
+    this.storedFilterStore.getCurrentFilter(StoredFilterType.WORKQUEUE)
+      .takeUntil(this.destroy)
+      .map(filter => Sort.toMatSortable(filter.sort))
+      .subscribe(sort => this.sort.sort(sort));
   }
 
   ngOnDestroy(): void {

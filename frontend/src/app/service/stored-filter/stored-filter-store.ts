@@ -5,7 +5,6 @@ import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {NotificationService} from '../notification/notification.service';
 import {Observable} from 'rxjs/Observable';
-import {init} from 'protractor/built/launcher';
 import {HttpResponse} from '../../util/http-response';
 import {ArrayUtil} from '../../util/array-util';
 
@@ -15,13 +14,13 @@ export interface StoredFilterTypeState {
 
 export interface StoredFilterState {
   MAP: StoredFilterTypeState;
+  WORKQUEUE: StoredFilterTypeState;
   available: StoredFilter[];
 }
 
 export const initialState: StoredFilterState = {
-  MAP: {
-    current: undefined
-  },
+  MAP: { current: undefined },
+  WORKQUEUE: { current: undefined },
   available: []
 };
 
@@ -50,6 +49,12 @@ export class StoredFilterStore {
       .map(state => state.current)
       .switchMap(current => this.byId(current))
       .distinctUntilChanged();
+  }
+
+  getCurrentFilter(type: StoredFilterType): Observable<any> {
+    return this.getCurrent(type)
+      .filter(current => !!current)
+      .map(storedFilter => storedFilter.filter);
   }
 
   getDefault(type: StoredFilterType): Observable<StoredFilter> {
