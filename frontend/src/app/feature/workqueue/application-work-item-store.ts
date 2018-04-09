@@ -11,6 +11,8 @@ import {Application} from '../../model/application/application';
 import '../../rxjs-extensions';
 import {ApplicationService} from '../../service/application/application.service';
 import {NotificationService} from '../../service/notification/notification.service';
+import {CurrentUser} from '../../service/user/current-user';
+import {User} from '../../model/user/user';
 
 const initialState: ApplicationWorkqueueState = {
   tab: undefined,
@@ -26,8 +28,9 @@ const initialState: ApplicationWorkqueueState = {
 @Injectable()
 export class ApplicationWorkItemStore {
   private store = new BehaviorSubject<ApplicationWorkqueueState>(initialState);
+  private currentUser: User;
 
-  constructor(private service: ApplicationService) {
+  constructor(private service: ApplicationService, private currentUserService: CurrentUser) {
     Observable.combineLatest(
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
@@ -35,10 +38,17 @@ export class ApplicationWorkItemStore {
     ).debounceTime(100) // Need a small delay here so changes in multiple observables do only on refresh
       .switchMap(() => this.pagedSearch())
       .subscribe(page => this.pageChange(page));
+
+    this.currentUserService.user.take(1)
+      .subscribe(user => this.currentUser = user);
   }
 
   get changes(): Observable<ApplicationWorkqueueState> {
     return this.store.asObservable().distinctUntilChanged();
+  }
+
+  get snapshot(): ApplicationWorkqueueState {
+    return this.store.getValue();
   }
 
   public tabChange(tab: WorkQueueTab) {
@@ -114,17 +124,15 @@ export class ApplicationWorkItemStore {
   }
 
   private pagedSearch(): Observable<Page<Application>> {
-    this.store.next({...this.store.getValue(), loading: true});
-    const state = this.store.getValue();
-    let result: Observable<Page<Application>>;
+    this.store.next({...this.snapshot, loading: true});
+    const state = this.snapshot;
 
-    if (state.tab === WorkQueueTab.COMMON) {
-      result = this.service.pagedSearchSharedByGroup(state.search, state.sort, state.pageRequest);
-    } else {
-      result = this.service.pagedSearch(state.search, state.sort, state.pageRequest);
+    const search = state.search.copy();
+    if (WorkQueueTab.OWN === state.tab) {
+      search.owner = [this.currentUser.userName];
     }
 
-    return result
+    return this.service.pagedSearch(search, state.sort, state.pageRequest)
       .catch(err => NotificationService.errorCatch(err, new Page<Application>()));
   }
 

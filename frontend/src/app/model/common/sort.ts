@@ -1,4 +1,4 @@
-import {Sort as MatSort} from '@angular/material';
+import {MatSortable, Sort as MatSort} from '@angular/material';
 
 export type SortDirection = 'asc' | 'desc' | '';
 
@@ -10,6 +10,13 @@ export class Sort {
 
   public static fromMatSort(matSort: MatSort): Sort {
     return new Sort(matSort.active, matSort.direction);
+  }
+
+  public static toMatSortable(sort: Sort): MatSortable {
+    const direction = sort.direction ? sort.direction : undefined;
+    return direction
+      ? {id: sort.field, start: direction, disableClear: false}
+      : {id: undefined, start: undefined, disableClear: false};
   }
 
   public byDirection<T>(original: Array<T>, sorted: Array<T>): Array<T> {

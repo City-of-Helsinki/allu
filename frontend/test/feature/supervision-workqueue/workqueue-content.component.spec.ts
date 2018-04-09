@@ -44,7 +44,6 @@ describe('SupervisionWorkqueueContentComponent', () => {
       providers: [
         FormBuilder,
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
-        {provide: CurrentUser, useValue: currentUserMock},
         {provide: ActivatedRoute, useValue: new ActivatedRouteMock()}
       ]
     })

@@ -5,15 +5,14 @@
       <div class="col s2">
         <mat-form-field class="input-full-width">
           <mat-select formControlName="type" [multiple]="true" class="input-full-width"
-                      [placeholder]="'applicationSearch.type' | translation" selected="1">
+                      [placeholder]="'applicationSearch.type' | translation">
             <mat-option *ngFor="let type of applicationTypes" [value]="type">
               {{['application.type', type] | translation}}
             </mat-option>
-            <mat-option *ngIf="tab==='COMMON'" value="common">{{'workqueue.commonTypes' | translation}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="col s2" [hidden]="tab==='OWN'">
+      <div class="col s2" [hidden]="(tab | async)==='OWN'">
         <mat-form-field class="input-full-width">
           <mat-select formControlName="owner" [multiple]="true" class="input-full-width"
                       [placeholder]="'applicationSearch.owner' | translation">
@@ -28,7 +27,6 @@
             <mat-option *ngFor="let status of applicationStatuses" [value]="status">
               {{['application.status', status] | translation}}
             </mat-option>
-            <mat-option *ngIf="tab==='COMMON'" value="common">{{'workqueue.commonStatuses' | translation}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -58,7 +56,7 @@
           <mat-datepicker #endTimePicker></mat-datepicker>
         </mat-form-field>
       </div>
-      <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
+      <div class="col s12 item-bar">
         <div class="item-bar-content">
           <span>{{'application.tags' | translation}}:</span>
           <selection-group formControlName="tags">

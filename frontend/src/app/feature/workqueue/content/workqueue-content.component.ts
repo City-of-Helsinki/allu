@@ -14,6 +14,7 @@ import {Some} from '../../../util/option';
 import {WorkQueueTab} from '../workqueue-tab';
 import {CityDistrictService} from '../../../service/map/city-district.service';
 import {MapStore} from '../../../service/map/map-store';
+import {Sort} from '../../../model/common/sort';
 
 @Component({
   selector: 'workqueue-content',
@@ -48,6 +49,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.sort.sort(Sort.toMatSortable(this.store.snapshot.sort));
+
     this.dataSource = new ApplicationWorkItemDatasource(this.store, this.paginator, this.sort);
 
     this.dataSource.page

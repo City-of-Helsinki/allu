@@ -20,14 +20,12 @@ export const rootRoutes: Routes = [
     { path: '', redirectTo: 'own', pathMatch: 'full'},
     { path: 'owner', component: OwnerModalComponent, canActivate: [AuthGuard] },
     { path: 'own', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'OWN'}},
-    { path: 'common', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'COMMON'}},
-    { path: 'waiting', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'WAITING'}}
+    { path: 'common', component: WorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'COMMON'}}
   ]},
   { path: 'supervision-tasks', component: SupervisionWorkqueueComponent, canActivate: [AuthGuard], children: [
     { path: '', redirectTo: 'own', pathMatch: 'full'},
     { path: 'own', component: SupervisionWorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'OWN'}},
     { path: 'common', component: SupervisionWorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'COMMON'}},
-    { path: 'waiting', component: SupervisionWorkQueueContentComponent, canActivate: [AuthGuard], data: {tab: 'WAITING'}},
     { path: 'owner', component: OwnerModalComponent, canActivate: [AuthGuard] },
   ]},
   { path: 'login', component: LoginComponent, canActivate: [CanActivateLogin] },

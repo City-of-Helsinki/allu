@@ -7,18 +7,18 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {SupervisionWorkItemStore} from '../supervision-work-item-store';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
-import {WorkQueueTab} from '../../workqueue/workqueue-tab';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Subscription} from 'rxjs/Subscription';
 import {CityDistrict} from '../../../model/common/city-district';
 import {Observable} from 'rxjs/Observable';
 import {CityDistrictService} from '../../../service/map/city-district.service';
+import {ArrayUtil} from '../../../util/array-util';
 
 interface SupervisionTaskSearchCriteriaForm {
   taskTypes: Array<string>;
   applicationId: string;
-  after: string;
-  before: string;
+  after: Date;
+  before: Date;
   applicationTypes: Array<string>;
   applicationStatus: Array<string>;
   ownerId: number;
@@ -39,7 +39,6 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
   districts: Observable<Array<CityDistrict>>;
 
-  private changeSubscription: Subscription;
   private formSubscription: Subscription;
 
   constructor(
@@ -60,42 +59,43 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.changeSubscription = this.store.changes
-      .map(change => change.tab)
-      .distinctUntilChanged()
-      .subscribe(tab => this.onTabChange(tab));
-
     this.formSubscription = this.queryForm.valueChanges
       .distinctUntilChanged()
       .debounceTime(300)
       .subscribe(values => this.search(values));
 
     this.districts = this.cityDistrictService.get();
+
+    this.queryForm.patchValue(this.formValues(this.store.snapshot.search), {emitEvent: false});
   }
 
   ngOnDestroy(): void {
     this.formSubscription.unsubscribe();
-    this.changeSubscription.unsubscribe();
   }
 
   search(form: SupervisionTaskSearchCriteriaForm): void {
     const criteria = new SupervisionTaskSearchCriteria();
-    criteria.taskTypes = form.taskTypes.map(type => SupervisionTaskType[type]);
+    criteria.taskTypes = ArrayUtil.map(form.taskTypes, type => SupervisionTaskType[type]);
     criteria.applicationId = form.applicationId;
-    criteria.after = TimeUtil.getDateFromUi(form.after);
-    criteria.before = TimeUtil.getDateFromUi(form.before);
-    criteria.applicationTypes = form.applicationTypes.map(type => ApplicationType[type]);
-    criteria.applicationStatus = form.applicationStatus.map(s => ApplicationStatus[s]);
+    criteria.after = form.after;
+    criteria.before = form.before;
+    criteria.applicationTypes = ArrayUtil.map(form.applicationTypes, type => ApplicationType[type]);
+    criteria.applicationStatus = ArrayUtil.map(form.applicationStatus, s => ApplicationStatus[s]);
     criteria.ownerId = form.ownerId;
     criteria.cityDistrictIds = form.cityDistrictIds;
     this.store.searchChange(criteria);
   }
 
-  private onTabChange(tab: WorkQueueTab): void {
-    if (WorkQueueTab.OWN === tab) {
-      this.currentUser.user.subscribe(user => this.queryForm.patchValue({ownerId: user.id}));
-    } else {
-      this.queryForm.patchValue({ownerId: undefined});
-    }
+  private formValues(criteria: SupervisionTaskSearchCriteria): SupervisionTaskSearchCriteriaForm {
+    return {
+      taskTypes: ArrayUtil.map(criteria.taskTypes, type => SupervisionTaskType[type]),
+      applicationId: criteria.applicationId,
+      after: criteria.after,
+      before: criteria.before,
+      applicationTypes: ArrayUtil.map(criteria.applicationTypes, type => ApplicationType[type]),
+      applicationStatus: ArrayUtil.map(criteria.applicationStatus, s => ApplicationStatus[s]),
+      ownerId: criteria.ownerId,
+      cityDistrictIds: criteria.cityDistrictIds
+    };
   }
 }

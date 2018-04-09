@@ -65,11 +65,4 @@ describe('SupervisionWorkqueueFilterComponent', () => {
   it('should show title', () => {
     expect(de.query(By.css('h1')).nativeElement.textContent).toEqual(findTranslation('supervisionWorkqueue.title'));
   });
-
-  it('should change owner id based on tab', () => {
-    store.changeSubject.next({...store.changeSubject.getValue(), tab: WorkQueueTab.COMMON});
-    expect(comp.queryForm.value.ownerId).toBeUndefined();
-    store.changeSubject.next({...store.changeSubject.getValue(), tab: WorkQueueTab.OWN});
-    expect(comp.queryForm.value.ownerId).toEqual(1);
-  });
 });

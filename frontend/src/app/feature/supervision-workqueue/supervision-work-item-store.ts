@@ -11,6 +11,8 @@ import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {NotificationService} from '../../service/notification/notification.service';
+import {CurrentUser} from '../../service/user/current-user';
+import {User} from '../../model/user/user';
 
 const initialState: SupervisionWorkqueueState = {
   tab: undefined,
@@ -26,18 +28,26 @@ const initialState: SupervisionWorkqueueState = {
 @Injectable()
 export class SupervisionWorkItemStore {
   private store = new BehaviorSubject<SupervisionWorkqueueState>(initialState);
+  private currentUser: User;
 
-  constructor(private service: SupervisionTaskService) {
+  constructor(private service: SupervisionTaskService, private currentUserService: CurrentUser) {
     Observable.combineLatest(
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
       this.changes.map(state => state.pageRequest).distinctUntilChanged()
     ).debounceTime(100) // Need a small delay here so changes in multiple observables do only on refresh
      .subscribe(() => this.refresh());
+
+    this.currentUserService.user.take(1)
+      .subscribe(user => this.currentUser = user);
   }
 
   get changes(): Observable<SupervisionWorkqueueState> {
     return this.store.asObservable().distinctUntilChanged();
+  }
+
+  get snapshot(): SupervisionWorkqueueState {
+    return {...this.store.getValue()};
   }
 
   public tabChange(tab: WorkQueueTab) {
@@ -114,7 +124,13 @@ export class SupervisionWorkItemStore {
     const state = this.store.getValue();
     this.selectedItems([]);
     this.update({loading: true});
-    this.service.search(state.search, state.sort, state.pageRequest)
+
+    const search = {...state.search};
+    if (WorkQueueTab.OWN === state.tab) {
+      search.ownerId = this.currentUser.id;
+    }
+
+    this.service.search(search, state.sort, state.pageRequest)
       .subscribe(
         page => this.pageChange(page),
         err => {

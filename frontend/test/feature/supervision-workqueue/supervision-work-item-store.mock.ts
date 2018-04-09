@@ -26,6 +26,10 @@ export class SupervisionWorkItemStoreMock {
     return this.changeSubject.asObservable().distinctUntilChanged();
   }
 
+  get snapshot(): SupervisionWorkqueueState {
+    return this.changeSubject.getValue();
+  }
+
   public tabChange(tab: WorkQueueTab) {
   }
 

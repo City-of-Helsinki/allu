@@ -6,6 +6,7 @@ import {Subject} from 'rxjs/Subject';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {WorkQueueTab} from '../../workqueue/workqueue-tab';
+import {Sort} from '../../../model/common/sort';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -35,6 +36,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.sort.sort(Sort.toMatSortable(this.store.snapshot.sort));
+
     this.dataSource = new SupervisionWorkItemDatasource(this.store, this.paginator, this.sort);
 
     this.dataSource.page

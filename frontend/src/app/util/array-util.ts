@@ -67,6 +67,10 @@ export class ArrayUtil {
     }
   }
 
+  static map<T, R>(array: Array<T>, mapFn: (val: T) => R): Array<R> {
+    return array ? array.map(mapFn) : undefined;
+  }
+
   private static compareNumeric(left: Array<number>, right: Array<number>): number {
     while (left.length && right.length) {
       const leftHead = left.shift();

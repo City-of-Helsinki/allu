@@ -1187,8 +1187,7 @@ export const translations = {
     title: 'Työjono',
     tab: {
       OWN: 'Omat',
-      COMMON:  'Yhteiset',
-      WAITING: 'Odottaa'
+      COMMON:  'Yhteiset'
     },
     commonTypes: 'Yhteiset hakemustyypit',
     commonStatuses: 'Yhteiset tilat',
