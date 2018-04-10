@@ -100,6 +100,4 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   selectFilter(filter: StoredFilter) {
     this.storedFilterStore.currentChange(filter);
   }
-
-
 }

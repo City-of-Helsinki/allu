@@ -15,6 +15,8 @@ import {ActivatedRoute} from '@angular/router';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 import '../../../src/app/rxjs-extensions';
 import {RouterTestingModule} from '@angular/router/testing';
+import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
+import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -44,7 +46,8 @@ describe('SupervisionWorkqueueContentComponent', () => {
       providers: [
         FormBuilder,
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
-        {provide: ActivatedRoute, useValue: new ActivatedRouteMock()}
+        {provide: ActivatedRoute, useValue: new ActivatedRouteMock()},
+        {provide: StoredFilterStore, useClass: StoredFilterStoreMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))

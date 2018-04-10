@@ -1,5 +1,8 @@
 import {SupervisionTaskType} from '../../model/application/supervision/supervision-task-type';
-import {BackendSupervisionWorkItem, SupervisionWorkItem} from '../../model/application/supervision/supervision-work-item';
+import {
+  BackendSupervisionWorkItem,
+  SupervisionWorkItem
+} from '../../model/application/supervision/supervision-work-item';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {UserMapper} from '../mapper/user-mapper';
 import {TimeUtil} from '../../util/time.util';
@@ -9,7 +12,6 @@ import {
   BackendSupervisionTaskSearchCriteria,
   SupervisionTaskSearchCriteria
 } from '../../model/application/supervision/supervision-task-search-criteria';
-import {ApplicationType} from '../../model/application/type/application-type';
 
 export class SupervisionSearchMapper {
   static mapWorkItem(backendWorkItem: BackendSupervisionWorkItem): SupervisionWorkItem {
@@ -31,12 +33,12 @@ export class SupervisionSearchMapper {
   static mapSearchCriteria(searchCriteria: SupervisionTaskSearchCriteria): BackendSupervisionTaskSearchCriteria {
     return (searchCriteria) ?
       {
-        taskTypes: Some(searchCriteria.taskTypes).map(types => types.map(type => SupervisionTaskType[type])).orElse([]),
+        taskTypes: Some(searchCriteria.taskTypes).orElse([]),
         applicationId: searchCriteria.applicationId,
         after: TimeUtil.dateToBackend(searchCriteria.after),
         before: TimeUtil.dateToBackend(searchCriteria.before),
-        applicationTypes: Some(searchCriteria.applicationTypes).map(types => types.map(type => ApplicationType[type])).orElse([]),
-        applicationStatus: Some(searchCriteria.applicationStatus).map(status => status.map(s => ApplicationStatus[s])).orElse([]),
+        applicationTypes: Some(searchCriteria.applicationTypes).orElse([]),
+        applicationStatus: Some(searchCriteria.applicationStatus).orElse([]),
         ownerId: searchCriteria.ownerId,
         cityDistrictIds: Some(searchCriteria.cityDistrictIds).orElse([])
       } : undefined;

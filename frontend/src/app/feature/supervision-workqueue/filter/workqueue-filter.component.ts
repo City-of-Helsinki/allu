@@ -1,28 +1,23 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {SupervisionTaskSearchCriteria} from '../../../model/application/supervision/supervision-task-search-criteria';
 import {SupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
-import {TimeUtil} from '../../../util/time.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {SupervisionWorkItemStore} from '../supervision-work-item-store';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
-import {CurrentUser} from '../../../service/user/current-user';
-import {Subscription} from 'rxjs/Subscription';
 import {CityDistrict} from '../../../model/common/city-district';
 import {Observable} from 'rxjs/Observable';
 import {CityDistrictService} from '../../../service/map/city-district.service';
-import {ArrayUtil} from '../../../util/array-util';
+import {Sort} from '../../../model/common/sort';
+import {SupervisionTaskSearchCriteria} from '../../../model/application/supervision/supervision-task-search-criteria';
+import {StoredFilter} from '../../../model/user/stored-filter';
+import {StoredFilterType} from '../../../model/user/stored-filter-type';
+import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
+import {Subject} from 'rxjs/Subject';
 
-interface SupervisionTaskSearchCriteriaForm {
-  taskTypes: Array<string>;
-  applicationId: string;
-  after: Date;
-  before: Date;
-  applicationTypes: Array<string>;
-  applicationStatus: Array<string>;
-  ownerId: number;
-  cityDistrictIds: Array<number>;
+interface TaskSearchFilter {
+  search?: SupervisionTaskSearchCriteria;
+  sort?: Sort;
 }
 
 @Component({
@@ -39,13 +34,19 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
   districts: Observable<Array<CityDistrict>>;
 
-  private formSubscription: Subscription;
+  SUPERVISION_WORKQUEUE_FILTER = StoredFilterType.SUPERVISION_WORKQUEUE;
+  taskFilter: Observable<TaskSearchFilter>;
+  selectedFilter: Observable<StoredFilter>;
+  defaultFilter: Observable<StoredFilter>;
+  availableFilters: Observable<StoredFilter[]>;
+
+  private destroy = new Subject<boolean>();
 
   constructor(
     private fb: FormBuilder,
     private store: SupervisionWorkItemStore,
-    private currentUser: CurrentUser,
-    private cityDistrictService: CityDistrictService) {
+    private cityDistrictService: CityDistrictService,
+    private storedFilterStore: StoredFilterStore) {
     this.queryForm = this.fb.group({
       taskTypes: [[]],
       applicationId: [undefined],
@@ -59,43 +60,36 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.formSubscription = this.queryForm.valueChanges
+    this.queryForm.patchValue(this.store.snapshot.search, {emitEvent: false});
+
+    this.queryForm.valueChanges
+      .takeUntil(this.destroy)
       .distinctUntilChanged()
       .debounceTime(300)
-      .subscribe(values => this.search(values));
+      .subscribe(search => this.store.searchChange(search));
 
     this.districts = this.cityDistrictService.get();
 
-    this.queryForm.patchValue(this.formValues(this.store.snapshot.search), {emitEvent: false});
+    this.taskFilter = this.store.changes
+      .map(state => ({ search: state.search, sort: state.sort }));
+
+    this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.SUPERVISION_WORKQUEUE);
+    this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.SUPERVISION_WORKQUEUE);
+    this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.SUPERVISION_WORKQUEUE);
+
+    this.storedFilterStore.getCurrentFilter(StoredFilterType.SUPERVISION_WORKQUEUE)
+      .takeUntil(this.destroy)
+      .filter(filter => !!filter)
+      .map(filter => filter.search)
+      .subscribe(search => this.queryForm.patchValue(search));
   }
 
   ngOnDestroy(): void {
-    this.formSubscription.unsubscribe();
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
-  search(form: SupervisionTaskSearchCriteriaForm): void {
-    const criteria = new SupervisionTaskSearchCriteria();
-    criteria.taskTypes = ArrayUtil.map(form.taskTypes, type => SupervisionTaskType[type]);
-    criteria.applicationId = form.applicationId;
-    criteria.after = form.after;
-    criteria.before = form.before;
-    criteria.applicationTypes = ArrayUtil.map(form.applicationTypes, type => ApplicationType[type]);
-    criteria.applicationStatus = ArrayUtil.map(form.applicationStatus, s => ApplicationStatus[s]);
-    criteria.ownerId = form.ownerId;
-    criteria.cityDistrictIds = form.cityDistrictIds;
-    this.store.searchChange(criteria);
-  }
-
-  private formValues(criteria: SupervisionTaskSearchCriteria): SupervisionTaskSearchCriteriaForm {
-    return {
-      taskTypes: ArrayUtil.map(criteria.taskTypes, type => SupervisionTaskType[type]),
-      applicationId: criteria.applicationId,
-      after: criteria.after,
-      before: criteria.before,
-      applicationTypes: ArrayUtil.map(criteria.applicationTypes, type => ApplicationType[type]),
-      applicationStatus: ArrayUtil.map(criteria.applicationStatus, s => ApplicationStatus[s]),
-      ownerId: criteria.ownerId,
-      cityDistrictIds: criteria.cityDistrictIds
-    };
+  selectFilter(filter: StoredFilter) {
+    this.storedFilterStore.currentChange(filter);
   }
 }

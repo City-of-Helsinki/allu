@@ -42,6 +42,8 @@ export class StoredFilterMapper {
         return StoredFilterMapper.mapBackendMap(filter);
       case StoredFilterType.WORKQUEUE:
         return StoredFilterMapper.mapBackendWorkqueue(filter);
+      case StoredFilterType.SUPERVISION_WORKQUEUE:
+        return StoredFilterMapper.mapBackendSupervisionWorkqueue(filter);
       default:
         throw new Error('No mapper for filter ' + StoredFilterType[type]);
     }
@@ -67,6 +69,23 @@ export class StoredFilterMapper {
       status: search.status,
       districts: ArrayUtil.map(search.districts, val => Number(val)),
       owner: search.owner
+    };
+
+    return {
+      search: mappedSearch,
+      sort: filter.sort
+    };
+  }
+
+  private static mapBackendSupervisionWorkqueue(filter: any): any {
+    const search = filter.search;
+
+    const mappedSearch = {
+      ...search,
+      after: TimeUtil.dateFromBackend(search.after),
+      before: TimeUtil.dateFromBackend(search.before),
+      districts: ArrayUtil.map(search.districts, val => Number(val)),
+      ownerId: Some(search.ownerId).map(id => Number(id)).orElse(undefined)
     };
 
     return {

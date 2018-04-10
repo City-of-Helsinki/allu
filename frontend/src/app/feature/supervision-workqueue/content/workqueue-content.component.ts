@@ -7,6 +7,8 @@ import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource'
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {WorkQueueTab} from '../../workqueue/workqueue-tab';
 import {Sort} from '../../../model/common/sort';
+import {StoredFilterType} from '../../../model/user/stored-filter-type';
+import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -32,7 +34,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   constructor(private store: SupervisionWorkItemStore,
               private router: Router,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private storedFilterStore: StoredFilterStore) {
   }
 
   ngOnInit(): void {
@@ -66,6 +69,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(loading => this.loading = loading);
+
+    this.storedFilterStore.getCurrentFilter(StoredFilterType.SUPERVISION_WORKQUEUE)
+      .takeUntil(this.destroy)
+      .map(filter => Sort.toMatSortable(filter.sort))
+      .subscribe(sort => this.sort.sort(sort));
   }
 
   ngOnDestroy(): void {

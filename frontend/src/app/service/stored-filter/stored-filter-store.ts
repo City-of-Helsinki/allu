@@ -15,12 +15,14 @@ export interface StoredFilterTypeState {
 export interface StoredFilterState {
   MAP: StoredFilterTypeState;
   WORKQUEUE: StoredFilterTypeState;
+  SUPERVISION_WORKQUEUE: StoredFilterTypeState;
   available: StoredFilter[];
 }
 
 export const initialState: StoredFilterState = {
   MAP: { current: undefined },
   WORKQUEUE: { current: undefined },
+  SUPERVISION_WORKQUEUE: { current: undefined },
   available: []
 };
 

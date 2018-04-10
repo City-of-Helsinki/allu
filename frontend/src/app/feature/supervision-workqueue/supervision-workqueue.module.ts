@@ -12,6 +12,7 @@ import {SupervisionTaskService} from '../../service/supervision/supervision-task
 import {SupervisionWorkItemStore} from './supervision-work-item-store';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 import {RouterModule} from '@angular/router';
+import {StoredFilterModule} from '../stored-filter/stored-filter.module';
 
 @NgModule({
   imports: [
@@ -24,7 +25,8 @@ import {RouterModule} from '@angular/router';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    OwnerModalModule
+    OwnerModalModule,
+    StoredFilterModule
   ],
   declarations: [
     WorkQueueComponent,
