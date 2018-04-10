@@ -3,9 +3,10 @@ import {ApplicationExtension} from '../type/application-extension';
 
 export class PlacementContract extends ApplicationExtension {
   constructor(
-    public diaryNumber?: string,
+    public identificationNumber?: string,
+    public propertyIdentificationNumber?: string,
     public additionalInfo?: string,
-    public generalTerms?: string,
+    public contractText?: string,
     public terms?: string
   ) {
     super(ApplicationType[ApplicationType.PLACEMENT_CONTRACT], terms);

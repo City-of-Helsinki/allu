@@ -163,9 +163,9 @@ describe('Placement contract application', () => {
         ],
         'extension': {
           'applicationType': 'PLACEMENT_CONTRACT',
-          'diaryNumber': '290117/AB',
+          'identificationNumber': '290117/AB',
           'additionalInfo': 'Lisätietoja ei juuri ole, mutta sijoitettava on',
-          'generalTerms': 'Ei saa rikkoa puistoa!'
+          'contractText': 'Ei saa rikkoa puistoa!'
         },
         'applicationTags': [
         ],

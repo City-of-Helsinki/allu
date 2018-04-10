@@ -93,9 +93,10 @@ export class ApplicationExtensionMapper {
         );
       case ApplicationType.PLACEMENT_CONTRACT:
         return new PlacementContract(
-          backendExtension.diaryNumber,
+          backendExtension.identificationNumber,
+          backendExtension.propertyIdentificationNumber,
           backendExtension.additionalInfo,
-          backendExtension.generalTerms,
+          backendExtension.contractText,
           backendExtension.terms
         );
       case ApplicationType.AREA_RENTAL:
@@ -242,9 +243,10 @@ export class ApplicationExtensionMapper {
   private static mapFrontendPlacementContract(placementContract: PlacementContract): any {
     return {
       applicationType: placementContract.applicationType,
-      diaryNumber: placementContract.diaryNumber,
+      identificationNumber: placementContract.identificationNumber,
+      propertyIdentificationNumber: placementContract.propertyIdentificationNumber,
       additionalInfo: placementContract.additionalInfo,
-      generalTerms: placementContract.generalTerms,
+      contractText: placementContract.contractText,
       terms: placementContract.terms
     };
   }

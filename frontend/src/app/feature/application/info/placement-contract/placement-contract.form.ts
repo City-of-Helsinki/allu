@@ -6,18 +6,20 @@ import {ApplicationForm} from '../application-form';
 export class PlacementContractForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
-    public diaryNumber?: string,
+    public identificationNumber?: string,
+    public propertyIdentificationNumber?: string,
     public calculatedPrice?: number,
     public additionalInfo?: string,
-    public generalTerms?: string,
+    public contractText?: string,
     public terms?: string
   ) {}
 
   static to(form: PlacementContractForm): PlacementContract {
     const placementContract = new PlacementContract();
-    placementContract.diaryNumber = form.diaryNumber;
+    placementContract.identificationNumber = form.identificationNumber;
+    placementContract.propertyIdentificationNumber = form.propertyIdentificationNumber,
     placementContract.additionalInfo = form.additionalInfo;
-    placementContract.generalTerms = form.generalTerms;
+    placementContract.contractText = form.contractText;
     placementContract.terms = form.terms;
     return placementContract;
   }
@@ -25,10 +27,11 @@ export class PlacementContractForm implements ApplicationForm {
   static from(application: Application, contract: PlacementContract) {
     return new PlacementContractForm(
       new TimePeriod(application.startTime, application.endTime),
-      contract.diaryNumber,
+      contract.identificationNumber,
+      contract.propertyIdentificationNumber,
       application.calculatedPriceEuro,
       contract.additionalInfo,
-      contract.generalTerms,
+      contract.contractText,
       contract.terms);
   }
 }

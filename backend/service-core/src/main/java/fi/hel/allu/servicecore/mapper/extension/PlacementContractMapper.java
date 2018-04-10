@@ -6,17 +6,19 @@ import fi.hel.allu.servicecore.domain.PlacementContractJson;
 public class PlacementContractMapper {
   public static PlacementContractJson modelToJson(PlacementContract placementContract) {
     PlacementContractJson placementContractJson = new PlacementContractJson();
-    placementContractJson.setDiaryNumber(placementContract.getDiaryNumber());
+    placementContractJson.setIdentificationNumber(placementContract.getIdentificationNumber());
+    placementContractJson.setPropertyIdentificationNumber(placementContract.getPropertyIdentificationNumber());
     placementContractJson.setAdditionalInfo(placementContract.getAdditionalInfo());
-    placementContractJson.setGeneralTerms(placementContract.getGeneralTerms());
+    placementContractJson.setContractText(placementContract.getContractText());
     return ApplicationExtensionMapper.modelToJson(placementContract, placementContractJson);
   }
 
   public static PlacementContract jsonToModel(PlacementContractJson json) {
     PlacementContract placementContract = new PlacementContract();
-    placementContract.setDiaryNumber(json.getDiaryNumber());
+    placementContract.setIdentificationNumber(json.getIdentificationNumber());
+    placementContract.setPropertyIdentificationNumber(json.getPropertyIdentificationNumber());
     placementContract.setAdditionalInfo(json.getAdditionalInfo());
-    placementContract.setGeneralTerms(json.getGeneralTerms());
+    placementContract.setContractText(json.getContractText());
     return ApplicationExtensionMapper.jsonToModel(json, placementContract);
   }
 }

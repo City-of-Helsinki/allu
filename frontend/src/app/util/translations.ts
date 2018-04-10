@@ -365,6 +365,11 @@ export const translations = {
         validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
       }
     },
+    placementContract: {
+      identificationNumber: 'Asiointitunnus',
+      contractText: 'Sopimusteksti',
+      propertyIdentificationNumber: 'Kiinteistötunnus'
+    },
     button: {
       copy: 'Kopioi uudeksi',
       replace: 'Korvaava päätös',

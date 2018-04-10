@@ -8,16 +8,18 @@ public class PlacementContractExtMapper {
   public static PlacementContractJson extToJson(PlacementContractExt placementContractExt) {
     PlacementContractJson placementContractJson = new PlacementContractJson();
     placementContractJson.setAdditionalInfo(placementContractExt.getAdditionalInfo());
-    placementContractJson.setDiaryNumber(placementContractExt.getDiaryNumber());
-    placementContractJson.setGeneralTerms(placementContractExt.getGeneralTerms());
+    placementContractJson.setIdentificationNumber(placementContractExt.getIdentificationNumber());
+    placementContractJson.setPropertyIdentificationNumber(placementContractExt.getPropertyIdentificationNumber());
+    placementContractJson.setContractText(placementContractExt.getContractText());
     return ApplicationExtensionExtMapper.modelToJson(placementContractExt, placementContractJson);
   }
 
   public static PlacementContractExt jsonToExt(PlacementContractJson placementContractJson) {
     PlacementContractExt placementContractExt = new PlacementContractExt();
     placementContractExt.setAdditionalInfo(placementContractJson.getAdditionalInfo());
-    placementContractExt.setDiaryNumber(placementContractJson.getDiaryNumber());
-    placementContractExt.setGeneralTerms(placementContractJson.getGeneralTerms());
+    placementContractExt.setIdentificationNumber(placementContractJson.getIdentificationNumber());
+    placementContractExt.setPropertyIdentificationNumber(placementContractJson.getPropertyIdentificationNumber());
+    placementContractExt.setContractText(placementContractJson.getContractText());
     return ApplicationExtensionExtMapper.jsonToModel(placementContractJson, placementContractExt);
   }
 }

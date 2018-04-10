@@ -808,14 +808,17 @@ definitions:
       - $ref: '#/definitions/ApplicationExtensionExt'
       - type: object
         properties:
-          diaryNumber:
-            description: Diary number
+          identificationNumber:
+            description: Identification number
+            type: string
+          propertyIdentificationNumber:
+            description: Property identification number
             type: string
           additionalInfo:
             description: Additional information
             type: string
-          generalTerms:
-            description: General terms
+          contractText:
+            description: Text of the contract
             type: string
   ApplicationProgressReportExt:
     description: Object for reporting application progress

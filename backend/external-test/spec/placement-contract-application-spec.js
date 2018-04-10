@@ -44,9 +44,10 @@ describe('PlacementContractApplication', () => {
 	      extension = {
 	          'terms': 'Application terms',
 	          'applicationType': 'PLACEMENT_CONTRACT',
-	          'diaryNumber': '12312/AB',
+	          'identificationNumber': '12312/AB',
+	          'propertyIdentificationNumber': 'prop1232',
 	          'additionalInfo': 'Placement contract additional information',
-	          'generalTerms': 'Placement contract general terms'
+	          'contractText': 'Placement contract general terms'
 	      };
 	      customerWithContactsExt = {
 	          'customer': null,
@@ -183,9 +184,10 @@ describe('PlacementContractApplication', () => {
 	      .then(client => client.apis.applications.applicationsCreate({body: placementContractExtNew}))
 	      .then(application =>  {
 	        placementContractExtUpdated = application.obj;
-	        placementContractExtUpdated.extension.diaryNumber = '99999/AB';
+	        placementContractExtUpdated.extension.identificationNumber = '99999/AB';
+	        placementContractExtUpdated.extension.propertyIdentificationNumber = 'prop999';
 	        placementContractExtUpdated.extension.additionalInfo = 'Updated additional information';
-	        placementContractExtUpdated.extension.generalTerms = 'Updated terms',
+	        placementContractExtUpdated.extension.contractText = 'Updated terms',
 	        applicationId = application.obj.id;
 	      })
 	      .then(done)
