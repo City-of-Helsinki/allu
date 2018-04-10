@@ -24,6 +24,7 @@ import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 
 @Service
 public class AttachmentService {
@@ -31,9 +32,9 @@ public class AttachmentService {
   @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(AttachmentService.class);
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private UserService userService;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final UserService userService;
 
   @Autowired
   public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService) {
@@ -278,7 +279,7 @@ public class AttachmentService {
   private DefaultAttachmentInfoJson toAttachmentInfoJson(AttachmentInfo attachmentInfo) {
     DefaultAttachmentInfoJson result = new DefaultAttachmentInfoJson();
     result.setId(attachmentInfo.getId());
-    result.setHandlerName(userService.getCurrentUser().getRealName());
+    result.setHandlerName(getUserName(attachmentInfo.getUserId()));
     result.setType(attachmentInfo.getType());
     result.setMimeType(attachmentInfo.getMimeType());
     result.setName(attachmentInfo.getName());
@@ -293,5 +294,15 @@ public class AttachmentService {
       result.setFixedLocationId(defaultAttachmentInfo.getFixedLocationAreaId());
     }
     return result;
+  }
+
+  private String getUserName(Integer id) {
+    if (id != null) {
+      final UserJson user = userService.findUserById(id);
+      if (user != null) {
+        return user.getRealName();
+      }
+    }
+    return null;
   }
 }
