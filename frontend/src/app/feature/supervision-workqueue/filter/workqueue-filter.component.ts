@@ -39,7 +39,6 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
   districts: Observable<Array<CityDistrict>>;
 
-  private changeSubscription: Subscription;
   private formSubscription: Subscription;
 
   constructor(
@@ -60,11 +59,6 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.changeSubscription = this.store.changes
-      .map(change => change.tab)
-      .distinctUntilChanged()
-      .subscribe(tab => this.onTabChange(tab));
-
     this.formSubscription = this.queryForm.valueChanges
       .distinctUntilChanged()
       .debounceTime(300)
@@ -75,7 +69,6 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.formSubscription.unsubscribe();
-    this.changeSubscription.unsubscribe();
   }
 
   search(form: SupervisionTaskSearchCriteriaForm): void {
@@ -89,13 +82,5 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     criteria.ownerId = form.ownerId;
     criteria.cityDistrictIds = form.cityDistrictIds;
     this.store.searchChange(criteria);
-  }
-
-  private onTabChange(tab: WorkQueueTab): void {
-    if (WorkQueueTab.OWN === tab) {
-      this.currentUser.user.subscribe(user => this.queryForm.patchValue({ownerId: user.id}));
-    } else {
-      this.queryForm.patchValue({ownerId: undefined});
-    }
   }
 }

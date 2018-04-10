@@ -7,6 +7,8 @@ import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-wor
 import {SupervisionTaskService} from '../../../src/app/service/supervision/supervision-task.service';
 import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
 import {Page} from '../../../src/app/model/common/page';
+import {CurrentUser} from '../../../src/app/service/user/current-user';
+import {CurrentUserMock} from '../../mocks';
 
 const STORE_DEBOUNCE_MS = 150;
 
@@ -27,12 +29,14 @@ class SupervisionTaskServiceMock {
 describe('supervision-work-item-store', () => {
   let store: SupervisionWorkItemStore;
   let taskService: SupervisionTaskServiceMock;
+  const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(() => {
     const tb = TestBed.configureTestingModule({
       providers: [
         { provide: SupervisionTaskService, useClass: SupervisionTaskServiceMock},
-        SupervisionWorkItemStore
+        SupervisionWorkItemStore,
+        {provide: CurrentUser, useValue: currentUserMock},
       ]
     });
     store = tb.get(SupervisionWorkItemStore);
