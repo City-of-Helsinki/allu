@@ -34,11 +34,11 @@ import fi.hel.allu.servicecore.util.RestResponsePage;
 @Service
 public class SupervisionTaskService {
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private UserService userService;
-  private ApplicationServiceComposer applicationServiceComposer;
-  private ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final UserService userService;
+  private final ApplicationServiceComposer applicationServiceComposer;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
   @Autowired
   public SupervisionTaskService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
@@ -54,7 +54,7 @@ public class SupervisionTaskService {
 
   public SupervisionTaskJson findById(int id) {
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.getForEntity(
-        applicationProperties.getSupervisionTaskByIdUrl(), SupervisionTask.class);
+        applicationProperties.getSupervisionTaskByIdUrl(), SupervisionTask.class, id);
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
