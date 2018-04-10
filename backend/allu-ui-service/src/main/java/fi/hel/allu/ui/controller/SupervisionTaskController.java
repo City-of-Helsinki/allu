@@ -41,7 +41,7 @@ public class SupervisionTaskController {
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<SupervisionTaskJson> update(@PathVariable int id, @Valid @RequestBody SupervisionTaskJson supervisionTask) {
     supervisionTask.setId(id);
     return new ResponseEntity<>(supervisionTaskService.update(supervisionTask), HttpStatus.OK);
