@@ -57,7 +57,7 @@
         </div>
       </div>
       <div class="col m2 offset-m2" *ngIf="canBeEdited">
-        <button mat-raised-button type="button" color="primary"
+        <button *availableTo="MODIFY_ROLES" mat-raised-button type="button" color="primary"
                 [routerLink]="['/applications', application.id, 'location']">
           {{'common.button.edit' | translation}}
         </button>

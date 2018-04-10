@@ -10,6 +10,7 @@ import {LocationState} from '../../../../service/application/location-state';
 import {FixedLocationService} from '../../../../service/map/fixed-location.service';
 import {CityDistrictService} from '../../../../service/map/city-district.service';
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
+import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 
 @Component({
   selector: 'location-details',
@@ -20,8 +21,10 @@ import {applicationCanBeEdited} from '../../../../model/application/application-
 export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() application: Application;
   @Input() readonly: boolean;
-  location: Location;
 
+  MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
+
+  location: Location;
   area: string;
   sections: string;
   multipleLocations = false;
