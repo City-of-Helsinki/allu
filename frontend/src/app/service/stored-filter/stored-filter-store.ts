@@ -77,6 +77,12 @@ export class StoredFilterStore {
     this.store.next(next);
   }
 
+  resetCurrent(type: StoredFilterType): void {
+    const next = {...this.snapshot};
+    next[StoredFilterType[type]].current = undefined;
+    this.store.next(next);
+  }
+
   save(filter: StoredFilter): Observable<StoredFilter> {
     return this.storedFilterService.save(filter)
       .do(saved => this.loadAndSetCurrent(saved));

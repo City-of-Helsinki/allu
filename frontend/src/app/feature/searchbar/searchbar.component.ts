@@ -96,6 +96,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     if (this.useLocationSearch) {
       this.mapStore.locationSearchFilterChange(filter);
     } else {
+      this.storedFilterStore.resetCurrent(StoredFilterType.MAP);
       this.mapStore.mapSearchFilterChange(filter);
     }
   }

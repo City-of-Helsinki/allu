@@ -35,7 +35,6 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private dialog: MatDialog) {}
 
-
   ngOnInit(): void {
     if (this.type === undefined) {
       throw new Error('Type is required for stored filter component');

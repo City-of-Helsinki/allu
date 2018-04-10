@@ -13,6 +13,7 @@ import {ApplicationService} from '../../service/application/application.service'
 import {NotificationService} from '../../service/notification/notification.service';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
+import {ObjectUtil} from '../../util/object.util';
 
 const initialState: ApplicationWorkqueueState = {
   tab: undefined,
@@ -131,7 +132,7 @@ export class ApplicationWorkItemStore {
     this.store.next({...this.snapshot, loading: true});
     const state = this.snapshot;
 
-    const search = state.search.copy();
+    const search = ObjectUtil.clone(state.search);
     if (WorkQueueTab.OWN === state.tab) {
       search.owner = [this.currentUser.userName];
     }
