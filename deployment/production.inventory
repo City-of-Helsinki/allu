@@ -13,13 +13,18 @@ backendEndpoint ansible_host=10.138.10.93
 # searchEndpoint is used to configure the location of ElasticSearch server in search-service.yml. Just leave it when changing IP address
 searchEndpoint ansible_host=10.138.10.93
 
+[reporting_dbserver]
+reportingDbEndpoint ansible_host=10.138.10.94
+
 [production:children]
 webservers
 dbservers
 backendservers
 searchservers
+reporting_dbserver
 
 [jumphosts:children]
 dbservers
 backendservers
 searchservers
+reporting_dbserver
