@@ -13,6 +13,7 @@ import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
+import fi.hel.allu.model.coordinates.CoordinateTransformation;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
@@ -46,10 +47,14 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 public class LocationDao {
   private static final Logger logger = LoggerFactory.getLogger(LocationDao.class);
 
+  public static final Integer ALLU_SRID = Integer.valueOf(3879);
+
   @Autowired
   private SQLQueryFactory queryFactory;
   @Autowired
   PostalAddressDao postalAddressDao;
+  @Autowired
+  private CoordinateTransformation coordinateTransformation;
 
   final QBean<Location> locationBean = bean(Location.class, location.all());
   final QBean<PostalAddress> postalAddressBean = bean(PostalAddress.class, postalAddress.all());
@@ -77,8 +82,17 @@ public class LocationDao {
 
   @Transactional(readOnly = true)
   public List<Location> findByApplication(int applicationId) {
+    return findByApplication(applicationId, ALLU_SRID);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Location> findByApplication(int applicationId, Integer srid) {
     List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
-    return locationIds.stream().map(id -> findById(id).get()).collect(Collectors.toList());
+    List<Location> locations = locationIds.stream()
+        .map(id -> findById(id).get())
+        .collect(Collectors.toList());
+    locations.forEach(l -> transformCoordinates(l, srid));
+    return locations;
   }
 
   @Transactional(readOnly = true)
@@ -88,6 +102,7 @@ public class LocationDao {
 
   @Transactional
   public Location insert(Location locationData) {
+    transformCoordinates(locationData, ALLU_SRID);
     locationData.setId(null);
     Integer maxLocationKey = queryFactory.select(SQLExpressions.max(location.locationKey))
         .from(location).where(location.applicationId.eq(locationData.getApplicationId())).fetchOne();
@@ -105,6 +120,7 @@ public class LocationDao {
   }
 
   private Location update(Location locationData) {
+    transformCoordinates(locationData, ALLU_SRID);
     int id = locationData.getId();
     Optional<Location> currentLocationOpt = findById(id);
     if (!currentLocationOpt.isPresent()) {
@@ -265,7 +281,7 @@ public class LocationDao {
    * @return list of FixedLocationAreas
    */
   @Transactional(readOnly = true)
-  public List<FixedLocationArea> getFixedLocationAreas() {
+  public List<FixedLocationArea> getFixedLocationAreas(Integer srid) {
 
     List<FixedLocationArea> areas = queryFactory.from(locationArea, fixedLocation)
         .where(fixedLocation.areaId.eq(locationArea.id).and(fixedLocation.isActive.eq(true)))
@@ -278,6 +294,8 @@ public class LocationDao {
     areas.forEach(fla -> fla.getSections().forEach(fls -> fls.setGeometry(Optional.ofNullable(fls.getGeometry())
                 .map(geometry -> toGeometryCollectionIfNeeded(geometry))
         .orElse(GeometryCollection.createEmpty()))));
+    areas.forEach(a -> transformCoordinates(a, srid));
+
     return areas;
   }
 
@@ -454,5 +472,13 @@ public class LocationDao {
                 .where(locationGeometry.locationId.eq(id))))
         .orderBy(paymentClass1.paymentClass.asc()).fetchFirst();
     return Optional.ofNullable(paymentClass).orElse(3); // Payment class undefined -> default to lowest
+  }
+
+  private void transformCoordinates(Location locationData, Integer targetSrId) {
+    locationData.setGeometry(coordinateTransformation.transformCoordinates(locationData.getGeometry(), targetSrId));
+  }
+
+  private void transformCoordinates(FixedLocationArea area, Integer targetSrId) {
+    area.getSections().forEach(s -> s.setGeometry(coordinateTransformation.transformCoordinates(s.getGeometry(), targetSrId)));
   }
 }

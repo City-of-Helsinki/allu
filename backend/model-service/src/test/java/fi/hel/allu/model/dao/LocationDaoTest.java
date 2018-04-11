@@ -318,7 +318,7 @@ public class LocationDaoTest {
     assertEquals(5, insertCount);
 
     // Test: read them back
-    List<FixedLocationArea> areas = locationDao.getFixedLocationAreas();
+    List<FixedLocationArea> areas = locationDao.getFixedLocationAreas(null);
     // Only two areas should be there (third only contains passive sections)
     assertEquals(2, areas.size());
     // Kauppatori should have two sections

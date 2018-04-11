@@ -37,11 +37,17 @@ public class LocationController {
    * Finds locations of given application.
    *
    * @param   applicationId   Id of the application whose locations should be returned.
+   * @param   srid  SRID of geometry (spatial reference system)
    * @return  List of locations of application. Never <code>null</code>.
    */
   @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
-  public ResponseEntity<List<Location>> findByApplication(@PathVariable int applicationId) {
-    List<Location> locations = locationDao.findByApplication(applicationId);
+  public ResponseEntity<List<Location>> findByApplication(@PathVariable int applicationId, @RequestParam(value="srid", required=false) Integer srid) {
+    List<Location> locations;
+    if (srid != null) {
+      locations = locationDao.findByApplication(applicationId, srid);
+    } else {
+      locations = locationDao.findByApplication(applicationId);
+    }
     return new ResponseEntity<>(locations, HttpStatus.OK);
   }
 
@@ -100,10 +106,18 @@ public class LocationController {
     return new ResponseEntity<>(locationDao.getFixedLocationList(), HttpStatus.OK);
   }
 
+  /**
+   * Get all fixed location areas
+   *
+   * @param   srid  SRID of geometry (spatial reference system)
+   * @return  List of fixed location areas.
+   */
+
   @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
-  public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas() {
-    return new ResponseEntity<>(locationDao.getFixedLocationAreas(), HttpStatus.OK);
+  public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas(@RequestParam(value="srid", required=false) Integer srid) {
+    return new ResponseEntity<>(locationDao.getFixedLocationAreas(srid), HttpStatus.OK);
   }
+
   /**
    * Get the list of known city districts.
    *
