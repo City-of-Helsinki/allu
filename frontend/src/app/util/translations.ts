@@ -411,6 +411,16 @@ export const translations = {
   },
   project: {
     title: 'Hanke',
+    info: {
+      title: 'Hankkeen perustiedot',
+      owner: 'Hankkeen omistaja',
+      contact: 'Yhteyshenkilö',
+      email: 'Sähköposti',
+      phone: 'Puhelinnumero',
+      name: 'Hankkeen nimi',
+      customerReference: 'Asiakkaan viite/työnumero',
+      additionalInfo: 'Lisätietoja'
+    },
     field: {
       nameMissing: 'Hankkeen nimi puuttuu',
       ownerNameMissing: 'Hankkeen omistaja puuttu',

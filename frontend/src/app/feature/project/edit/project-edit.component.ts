@@ -21,14 +21,10 @@ import {ApplicationService} from '../../../service/application/application.servi
 })
 export class ProjectEditComponent {
   projectInfoForm: FormGroup;
-  applications = new Array<Application>();
-  applicationSearch = new Subject<string>();
-  matchingApplications: Observable<Array<Application>>;
 
   private parentProject: number;
 
   constructor(private router: Router, private route: ActivatedRoute,
-              private applicationService: ApplicationService,
               private projectState: ProjectState,
               private fb: FormBuilder) {
     this.initForm();
@@ -36,26 +32,10 @@ export class ProjectEditComponent {
     const project = this.projectState.project;
     this.projectInfoForm.patchValue(project);
 
-    this.projectState.applications.subscribe(apps => this.applications = apps);
 
     this.route.queryParams
       .map((params: {parentProject: number}) => params.parentProject)
       .subscribe(parentProject => this.parentProject = parentProject);
-
-    this.matchingApplications = this.applicationSearch.asObservable()
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
-      .switchMap(search => this.applicationService.search(search))
-      .catch(err => NotificationService.errorCatch(err, []));
-  }
-
-  add(application: Application) {
-    this.applications.push(application);
-  }
-
-  remove(applicationId: number) {
-    this.applications = this.applications.filter(app => applicationId !== app.id);
   }
 
   onSubmit(form: ProjectForm) {
@@ -63,12 +43,7 @@ export class ProjectEditComponent {
     project.parentId = this.parentProject || project.parentId;
 
     this.projectState.save(project)
-      .switchMap(p => this.projectState.updateApplications(this.applications.map(app => app.id)))
       .subscribe(p => this.navigateAfterSubmit(p, this.parentProject));
-  }
-
-  public onIdentifierSearchChange(identifier: string) {
-    this.applicationSearch.next(identifier);
   }
 
   private initForm() {
