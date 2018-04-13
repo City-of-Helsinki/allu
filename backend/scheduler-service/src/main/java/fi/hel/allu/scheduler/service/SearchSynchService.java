@@ -14,9 +14,9 @@ import org.springframework.web.client.RestTemplate;
 public class SearchSynchService {
   private static final Logger logger = LoggerFactory.getLogger(SearchSynchService.class);
 
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private AuthenticationService authenticationService;
+  private final RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final AuthenticationService authenticationService;
 
   @Autowired
   public SearchSynchService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
@@ -30,8 +30,9 @@ public class SearchSynchService {
    * Start syncing data from model service to search service
    */
   public void startSearchSync() {
+    logger.info("Start Search sync");
     restTemplate.exchange(applicationProperties.getStartSearchSyncUrl(), HttpMethod.POST,
-        new HttpEntity<String>(authenticationService.createAuthenticationHeader()), Void.class);
+        new HttpEntity<>(authenticationService.createAuthenticationHeader()), Void.class);
   }
 
 }
