@@ -125,7 +125,6 @@ public class ApplicationMapper {
     return applicationES;
   }
 
-
   /**
    * Transfer the information from the given model-domain object to given ui-domain object. Does not handle references to other objects like
    * customer.
@@ -168,6 +167,11 @@ public class ApplicationMapper {
     applicationJson.setInvoicingDate(application.getInvoicingDate());
     applicationJson.setInvoiced(application.getInvoiced());
     applicationJson.setSkipPriceCalculation(application.getSkipPriceCalculation());
+    if (application.getProjectId() != null) {
+      ProjectJson project = new ProjectJson();
+      project.setId(application.getProjectId());
+      applicationJson.setProject(project);
+    }
     return applicationJson;
   }
 
