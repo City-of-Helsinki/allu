@@ -1,17 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
-import {Application} from '../../../model/application/application';
-import {Project} from '../../../model/project/project';
-import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
-import {ContentRow} from '../../../model/common/content-row';
-import {Sort} from '../../../model/common/sort';
-import {UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
+import {Component, Input, OnInit} from '@angular/core';
+import {SearchChange} from './project-application-list.component';
+import * as fromProject from '../reducers';
+import * as application from '../actions/application-actions';
+import {Store} from '@ngrx/store';
 import {ProjectState} from '../../../service/project/project-state';
-import {NotificationService} from '../../../service/notification/notification.service';
-import {ApplicationService} from '../../../service/application/application.service';
-
+import {Application} from '../../../model/application/application';
+import {Observable} from 'rxjs/Observable';
+import {Search} from '../actions/application-search-actions';
+import {Some} from '../../../util/option';
+import {Page} from '../../../model/common/page';
 
 @Component({
   selector: 'project-applications',
@@ -19,89 +16,45 @@ import {ApplicationService} from '../../../service/application/application.servi
   styleUrls: []
 })
 export class ProjectApplicationsComponent implements OnInit {
+  @Input() projectId: number;
 
-  project: Project;
-  applicationRows: Array<ContentRow<Application>> = [];
-  applicationSearch = new Subject<string>();
-  matchingApplications: Observable<Array<Application>>;
-  allSelected = false;
-  sort: Sort = new Sort(undefined, undefined);
-  dateFormat = UI_PIPE_DATE_FORMAT;
+  applications: Observable<Page<Application>>;
+  applicationsLoading: Observable<boolean>;
+  matchingApplications: Observable<Application[]>;
 
-  constructor(private router: Router,
-              private applicationService: ApplicationService,
-              private projectState: ProjectState) {}
+  constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
 
   ngOnInit(): void {
-    this.project = this.projectState.project;
-    this.getProjectApplications()
-      .subscribe(rows => this.applicationRows = rows);
-
-    this.matchingApplications = this.applicationSearch.asObservable()
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
-      .switchMap(search => this.applicationService.search(search))
-      .catch(err => NotificationService.errorCatch(err, []));
+    this.applications = this.store.select(fromProject.getApplications);
+    this.applicationsLoading = this.store.select(fromProject.getApplicationsLoading);
   }
 
-  checkAll() {
-    const selection = !this.allSelected;
-    this.applicationRows.forEach(row => row.selected = selection);
+  searchChange(change: SearchChange): void {
+    this.store.dispatch(new application.Load(change.sort, change.pageRequest));
   }
 
-  checkSingle(row: ContentRow<Application>) {
-    row.selected = !row.selected;
-    this.updateAllSelected();
+  applicationSelectSearchChange(term: string): void {
+    this.store.dispatch(new Search(term));
+    this.matchingApplications = this.store.select(fromProject.getMatchingApplications)
+      .map(applications => this.filterAlreadyIncludedApplications(applications));
   }
 
-  goToSummary(col: number, row: ContentRow<Application>): void {
-    // undefined and 0 should not trigger navigation
-    if (col) {
-      this.router.navigate(['applications', row.id, 'summary']);
-    }
+  applicationSelected(id: number): void {
+    this.store.dispatch(new application.Add(id));
   }
 
-  add(application: Application) {
-    const rows = this.applicationRows.concat(new ContentRow(application));
-    this.updateApplications(rows);
+  removeApplication(id: number): void {
+    this.store.dispatch(new application.Remove(id));
   }
 
-  remove() {
-    const rows = this.applicationRows.filter(row => !row.selected);
-    this.updateApplications(rows);
+  private filterAlreadyIncludedApplications(applications: Application[]): Application[] {
+    return applications.filter((app) => !this.includedInProject(app));
   }
 
-  onIdentifierSearchChange(identifier: string) {
-    this.applicationSearch.next(identifier);
-  }
-
-  sortBy(sort: Sort) {
-    this.sort = sort;
-    this.applicationRows = this.sortRows(this.sort, this.applicationRows);
-  }
-
-  private getProjectApplications(): Observable<Array<ContentRow<Application>>> {
-    return this.projectState.applications
-      .map(applications => applications.map(app => new ContentRow(app)));
-  }
-
-  private updateApplications(rows: Array<ContentRow<Application>>): void {
-    this.projectState.updateApplications(rows.map(app => app.id))
-      .subscribe(p => this.project = p);
-  }
-
-  private updateAllSelected(): void {
-    this.allSelected = this.applicationRows.every(row => row.selected);
-  }
-
-  private sortRows(sort: Sort, rows: Array<ContentRow<Application>>): Array<ContentRow<Application>> {
-    const original = rows;
-    const sorted =  rows
-      .map(row => row.content)
-      .sort(sort.sortFn())
-      .map(app => new ContentRow(app));
-
-    return sort.byDirection(original, sorted);
+  private includedInProject(app: Application): boolean {
+    return Some(app.project)
+      .map(p => p.id)
+      .map(id => id === this.projectId)
+      .orElse(false);
   }
 }

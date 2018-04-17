@@ -438,12 +438,23 @@ export const translations = {
     endTime: 'Loppu',
     cityDistricts: 'Kaupunginosa',
     error: {
-      saveFailed: 'Projektin tallentaminen epäonnistui',
-      searchFailed: 'Projektien hakeminen epäonnistui',
-      fetchFailed: 'Projektin hakeminen epäonnistui',
-      applicationFetchFailed: 'Projektin hakemusten hakeminen epäonnistui',
+      saveFailed: 'Hankkeen tallentaminen epäonnistui',
+      searchFailed: 'Hankkeiden hakeminen epäonnistui',
+      fetchFailed: 'Hankkeen hakeminen epäonnistui',
+      applicationFetchFailed: 'Hankkeen hakemusten hakeminen epäonnistui',
+      applicationAddFailed: 'Hakemuksen lisääminen hankkeelle epäonnistui',
+      applicationRemoveFailed: 'Hakemuksen poistaminen hankkeelta epäonnistui',
       updateParentFailed: 'Projektin päivitys epäonnistui',
       removeParentFailed: 'Projektin poistaminen epäonnistui'
+    },
+    applications: {
+      title: 'Hakemukset',
+      removeFromProject: 'Poista hankkeesta',
+      searchAndAdd: 'Etsi ja lisää hakemuksia',
+      moveFromAnother: 'Hakemus kuuluu hankkeeseen {{project}} ja siirretään uuteen hankkeeseen'
+    },
+    button: {
+      addApplication: 'Lisää hakemus'
     }
   },
   customer: {
@@ -909,6 +920,19 @@ export const translations = {
       HISTORY: 'Historia'
     }
   },
+  sidebar: {
+    title:  {
+      BASIC_INFO: 'Perustiedot',
+      ATTACHMENTS: 'Liitteet',
+      INVOICING: 'Laskutus',
+      COMMENTS: 'Kommentit',
+      EMAIL: 'Sähköposti',
+      HISTORY: 'Historia',
+      SUPERVISION: 'Valvonta',
+      PROJECTS: 'Hankkeet',
+      DECISION: 'Päätös'
+    }
+  },
   attachments: 'Liitteet',
   attachment: {
     title: 'Liite',
@@ -1277,7 +1301,7 @@ const toKey = (path: string | Array<string>): Option<Array<string>> => {
 };
 
 type Path = string | Array<string>;
-interface Params { [key: string]: string; }
+export interface Params { [key: string]: string; }
 
 /**
  * Replaces parameters in string with matching key's value

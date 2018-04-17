@@ -94,4 +94,10 @@ export class ApplicationSearchQuery implements SearchQuery {
   }
 }
 
+export function forProject(id: number): ApplicationSearchQuery {
+  const searchQuery = new ApplicationSearchQuery();
+  searchQuery.projectId = id;
+  return searchQuery;
+}
+
 

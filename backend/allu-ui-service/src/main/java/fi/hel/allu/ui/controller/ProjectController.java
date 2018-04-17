@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
@@ -122,18 +123,21 @@ public class ProjectController {
     return new ResponseEntity<>(applications, HttpStatus.OK);
   }
 
-  /**
-   * Updates applications of given project to the given set of applications.
-   *
-   * @param id              Id of the project.
-   * @param applicationIds  Application ids to be attached to the given project. Use empty list to clear all references to the given project.
-   */
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<ProjectJson> updateProjectApplications(
-      @PathVariable int id, @Valid @RequestBody(required = true) List<Integer> applicationIds) {
-    return new ResponseEntity<>(projectServiceComposer.updateProjectApplications(id, applicationIds), HttpStatus.OK);
+  public ResponseEntity<List<ApplicationJson>> addApplications(
+      @PathVariable int id,
+      @Valid @RequestBody(required = true) List<Integer> applicationIds) {
+    return new ResponseEntity<>(projectServiceComposer.addApplications(id, applicationIds), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/applications/{id}", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> removeApplication(@PathVariable int id) {
+    projectServiceComposer.removeApplication(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 
   /**
    * Update parent of the given project.

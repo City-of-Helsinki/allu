@@ -14,7 +14,6 @@ export type SidebarItemType =
   'EMAIL' |
   'HISTORY' |
   'SUPERVISION' |
-  'APPLICATIONS' |
   'PROJECTS' |
   'DECISION';
 
@@ -22,7 +21,7 @@ interface ApplicationTypeVisibleItems {
   [applicationType: string]: Array<SidebarItemType>;
 }
 
-const visibleForAll: Array<SidebarItemType> = ['BASIC_INFO', 'ATTACHMENTS', 'COMMENTS', 'EMAIL', 'HISTORY', 'APPLICATIONS', 'PROJECTS'];
+const visibleForAll: Array<SidebarItemType> = ['BASIC_INFO', 'ATTACHMENTS', 'COMMENTS', 'EMAIL', 'HISTORY', 'PROJECTS'];
 
 export const visibleItemsByApplicationType: ApplicationTypeVisibleItems = {
   'EXCAVATION_ANNOUNCEMENT': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
@@ -51,7 +50,6 @@ export const itemPaths: ItemToPath = {
   'EMAIL': ['email'],
   'HISTORY': ['history'],
   'SUPERVISION': ['supervision'],
-  'APPLICATIONS': ['applications'],
   'PROJECTS': ['projects'],
   'DECISION': ['decision-preview']
 };

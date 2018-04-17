@@ -262,11 +262,12 @@ public class ApplicationProperties {
     return getModelServiceUrl("/projects/{id}/applications");
   }
 
-  /**
-   * @return  url to request update to applications of given project.
-   */
-  public String getApplicationProjectUpdateUrl() {
+  public String getProjectApplicationsAddUrl() {
     return getModelServiceUrl("/projects/{id}/applications");
+  }
+
+  public String getProjectApplicationRemoveUrl() {
+    return getModelServiceUrl("/projects/applications/{id}");
   }
 
   /**

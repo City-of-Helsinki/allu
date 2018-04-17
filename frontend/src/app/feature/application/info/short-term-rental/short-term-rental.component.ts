@@ -1,17 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {FormBuilder, FormControl} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ShortTermRentalForm} from './short-term-rental.form';
-import {ComplexValidator} from '../../../../util/complex-validator';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {ProjectHub} from '../../../../service/project/project-hub';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {TimeUtil} from '../../../../util/time.util';
-import {EventForm} from '../event/event.form';
+import {ProjectService} from '../../../../service/project/project.service';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -34,8 +32,8 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
     router: Router,
-    projectHub: ProjectHub) {
-    super(fb, route, applicationStore, router, projectHub);
+    projectService: ProjectService) {
+    super(fb, route, applicationStore, router, projectService);
   }
 
   ngOnInit(): any {

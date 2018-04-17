@@ -6,6 +6,10 @@ import {AuthConfig, AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import '../../rxjs-extensions';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'environments/environment';
 
 import {ApplicationModule} from '../application/application.module';
 import {ApplicationService} from '../../service/application/application.service';
@@ -44,6 +48,7 @@ import {DownloadModule} from '../download/download.module';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
+import {RootErrorNotificationService} from './effects/root-error-notification.service';
 
 @NgModule({
   imports: [
@@ -52,6 +57,12 @@ import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
     FormsModule,
     RouterModule.forRoot(rootRoutes),
     BrowserAnimationsModule,
+    StoreModule.forRoot([]),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production // Restrict extension to log-only mode
+    }),
     // App modules
     ApplicationModule,
     ProjectModule,
@@ -90,6 +101,7 @@ import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
     DefaultTextService,
     CurrentUser,
     ConfigService,
+    RootErrorNotificationService,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({

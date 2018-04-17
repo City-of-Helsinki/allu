@@ -127,17 +127,15 @@ public class ProjectService {
     return projectMapper.mapProjectToJson(response.getBody());
   }
 
-  /**
-   * Updates applications of given project to the given set of applications.
-   *
-   * @param id              Id of the project.
-   * @param applicationIds  Application ids to be attached to the given project. Use empty list to clear all references to the given project.
-   */
-  ProjectJson updateProjectApplications(int id, List<Integer> applicationIds) {
+  List<Integer> addApplications(int id, List<Integer> applicationIds) {
     HttpEntity<List<Integer>> requestEntity = new HttpEntity<>(applicationIds);
-    ResponseEntity<Project> updatedProjectResult = restTemplate.exchange(
-        applicationProperties.getApplicationProjectUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, id);
-    return projectMapper.mapProjectToJson(updatedProjectResult.getBody());
+    ResponseEntity<Integer[]> result = restTemplate.exchange(
+        applicationProperties.getProjectApplicationsAddUrl(), HttpMethod.PUT, requestEntity, Integer[].class, id);
+    return Arrays.asList(result.getBody());
+  }
+
+  void removeApplication(int id) {
+    restTemplate.delete(applicationProperties.getProjectApplicationRemoveUrl(), id);
   }
 
   /**

@@ -28,6 +28,12 @@ export class CityDistrictService {
       .filter(d => !!d);
   }
 
+  public name(id: number): Observable<string> {
+    return id !== undefined
+      ? this.byId(id).map(d => d.name)
+      : Observable.empty();
+  }
+
   byIds(ids: number[]): Observable<CityDistrict[]> {
     return this.cityDistricts$
       .map(ds => ds.filter(d => ids.indexOf(d.id) >= 0));

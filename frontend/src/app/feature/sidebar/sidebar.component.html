@@ -39,10 +39,6 @@
         <mat-icon class="mat-icon-36">search</mat-icon>
         <div>Valvonta ({{item.count | async}})</div>
       </div>
-      <div *ngSwitchCase="'APPLICATIONS'">
-        <mat-icon class="mat-icon-36">filter_none</mat-icon>
-        <div>Hakemukset ({{item.count | async}})</div>
-      </div>
       <div *ngSwitchCase="'PROJECTS'">
         <mat-icon class="mat-icon-36">line_style</mat-icon>
         <div>Hankkeet ({{item.count | async }})</div>

@@ -31,9 +31,7 @@ import java.util.List;
 import static org.geolatte.geom.builder.DSL.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -148,7 +146,7 @@ public class ProjectControllerTest {
     Project parentProject = createDummyProject();
     Project addedParent = addProjectGetResult(parentProject);
     addedProject.setParentId(addedParent.getId());
-    Project updatedProject = updateProjectGetResult(addedProject);
+    updateProjectParentGetResult(addedProject.getId(), addedParent.getId());
     List<Project> children = getProjectChildren(addedParent.getId());
     assertEquals(1, children.size());
   }
@@ -175,7 +173,7 @@ public class ProjectControllerTest {
     Customer customer = addPersonCustomerToDatabase("nimi", "nimi@foo.fi");
     ZonedDateTime startTime = ZonedDateTime.parse("2016-11-11T08:00:00+02:00[Europe/Helsinki]");
     ZonedDateTime endTime = ZonedDateTime.parse("2016-11-20T08:00:00+02:00[Europe/Helsinki]");
-    // TODO: fix this test
+
     Application newApplication = createApplication(customer);
     Application addedApplication = addApplicationToDatabase(newApplication);
     addCityDistrictToApplication(addedApplication, KLUUVI_CITY_DISTRICT_ID, startTime, endTime);
@@ -184,25 +182,25 @@ public class ProjectControllerTest {
     project1 = addProjectGetResult(project1);
     Project project2 = createDummyProject();
     project2 = addProjectGetResult(project2);
+
     // add application to the project
-    ResultActions resultActions = wtc.perform(
-        put("/projects/" + project1.getId() + "/applications"),
-        Collections.singletonList(addedApplication.getId())).andExpect(status().isOk());
-    Project updatedProject1 = wtc.parseObjectFromResult(resultActions, Project.class);
+    List<Integer> addedApplications = addApplicationsGetResult(project1.getId(), Arrays.asList(addedApplication.getId()));
+    assertEquals(1, addedApplications.size());
+
+    Project updatedProject1 = getProject(project1.getId());
     assertEquals(startTime, updatedProject1.getStartTime().withZoneSameInstant(zoneId));
     assertEquals(endTime, updatedProject1.getEndTime().withZoneSameInstant(zoneId));
+
     // add application to another project
-    resultActions = wtc.perform(
-        put("/projects/" + project2.getId() + "/applications"),
-        Collections.singletonList(addedApplication.getId())).andExpect(status().isOk());
-    Project updatedProject2 = wtc.parseObjectFromResult(resultActions, Project.class);
+    addApplicationsGetResult(project2.getId(), Arrays.asList(addedApplication.getId()));
+
+    Project updatedProject2 = getProject(project2.getId());
     assertEquals(startTime, updatedProject2.getStartTime().withZoneSameInstant(zoneId));
     assertEquals(endTime, updatedProject2.getEndTime().withZoneSameInstant(zoneId));
     // remove application from the other project
-    resultActions = wtc.perform(
-        put("/projects/" + project2.getId() + "/applications"),
-        Collections.emptyList()).andExpect(status().isOk());
-    updatedProject2 = wtc.parseObjectFromResult(resultActions, Project.class);
+    removeApplicationFromProject(addedApplication.getId());
+
+    updatedProject2 = getProject(updatedProject2.getId());
     Application applicationIdDb = getApplication(addedApplication.getId());
     updatedProject1 = getProject(updatedProject1.getId());
     assertNull(applicationIdDb.getProjectId());
@@ -225,9 +223,10 @@ public class ProjectControllerTest {
     Project project = createDummyProject();
     project = addProjectGetResult(project);
 
-    ResultActions resultActions = wtc.perform(
-        put("/projects/" + project.getId() + "/applications"),
-        Collections.singletonList(addedApplication1.getId())).andExpect(status().isOk());
+    List<Integer> addedApplications = addApplicationsGetResult(project.getId(), Arrays.asList(addedApplication1.getId()));
+    assertEquals(1, addedApplications.size());
+
+    ResultActions resultActions = wtc.perform(get("/projects/" + project.getId()));
     Project updatedProject = wtc.parseObjectFromResult(resultActions, Project.class);
     assertEquals(startTime, updatedProject.getStartTime().withZoneSameInstant(zoneId));
     assertEquals(endTime, updatedProject.getEndTime().withZoneSameInstant(zoneId));
@@ -330,9 +329,26 @@ public class ProjectControllerTest {
     return wtc.parseObjectFromResult(resultActions, Project.class);
   }
 
+  private Project updateProjectParentGetResult(Integer projectId, Integer parentId) throws Exception {
+    String url = String.format("/projects/%d/parentProject/%d", projectId, parentId);
+    ResultActions resultActions = wtc.perform(put(url)).andExpect(status().isOk());
+    return wtc.parseObjectFromResult(resultActions, Project.class);
+  }
+
   private List<Project> getProjectChildren(int projectId) throws Exception {
     ResultActions resultActions = wtc.perform(get("/projects/" + projectId + "/children")).andExpect(status().isOk());;
     return Arrays.asList(wtc.parseObjectFromResult(resultActions, Project[].class));
+  }
+
+  private List<Integer> addApplicationsGetResult(Integer id, List<Integer> applicationIds) throws Exception {
+    ResultActions resultActions = wtc.perform(
+        put("/projects/" + id + "/applications"),
+        applicationIds).andExpect(status().isOk());
+    return wtc.parseObjectFromResult(resultActions, List.class);
+  }
+
+  private void removeApplicationFromProject(Integer id) throws Exception {
+    wtc.perform(delete("/projects/applications/" + id)).andExpect(status().isOk());
   }
 
   private Project createProject(Integer projectID, String projectName, ZonedDateTime startDate) {

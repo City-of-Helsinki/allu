@@ -3,13 +3,13 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
-import {ProjectHub} from '../../../service/project/project-hub';
 import {Project} from '../../../model/project/project';
 import {Some} from '../../../util/option';
 import {ContentRow} from '../../../model/common/content-row';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {Sort} from '../../../model/common/sort';
 import {ProjectState} from '../../../service/project/project-state';
+import {ProjectService} from '../../../service/project/project.service';
 
 
 @Component({
@@ -30,7 +30,7 @@ export class ProjectProjectsComponent implements OnInit {
 
   constructor(private router: Router,
               private route: ActivatedRoute,
-              private projectHub: ProjectHub,
+              private projectService: ProjectService,
               private projectState: ProjectState) {}
 
   ngOnInit(): void {
@@ -46,7 +46,7 @@ export class ProjectProjectsComponent implements OnInit {
       .debounceTime(300)
       .distinctUntilChanged()
       .map(id => ProjectSearchQuery.fromProjectId(id))
-      .switchMap(search => this.projectHub.searchProjects(search));
+      .switchMap(search => this.projectService.searchProjects(search));
   }
 
   add(project: Project) {

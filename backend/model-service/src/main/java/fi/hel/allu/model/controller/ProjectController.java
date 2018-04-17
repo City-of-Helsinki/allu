@@ -113,17 +113,16 @@ public class ProjectController {
     return new ResponseEntity<>(projectService.findApplicationsByProject(id), HttpStatus.OK);
   }
 
-  /**
-   * Updates applications of given project to the given set of applications.
-   *
-   * @param id             Id of the project.
-   * @param applicationIds Application ids to be attached to the given project.
-   * @return Nothing.
-   */
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
-  public ResponseEntity<Project> updateProjectApplications(
+  public ResponseEntity<List<Integer>> addApplications(
       @PathVariable int id, @Valid @RequestBody(required = true) List<Integer> applicationIds) {
-    return new ResponseEntity<>(projectService.updateProjectApplications(id, applicationIds), HttpStatus.OK);
+    return new ResponseEntity<>(projectService.addApplications(id, applicationIds), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/applications/{appId}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> removeApplication(@PathVariable int appId) {
+    projectService.removeApplication(appId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

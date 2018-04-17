@@ -8,7 +8,7 @@ import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR, TimeUtil} from '../../../../util/time.util';
 import {Application} from '../../../../model/application/application';
-import {ProjectHub} from '../../../../service/project/project-hub';
+import {ProjectService} from '../../../../service/project/project.service';
 
 @Component({
   selector: 'note',
@@ -23,8 +23,8 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
     router: Router,
-    projectHub: ProjectHub) {
-    super(fb, route, applicationStore, router, projectHub);
+    projectService: ProjectService) {
+    super(fb, route, applicationStore, router, projectService);
   }
 
   ngOnInit(): any {

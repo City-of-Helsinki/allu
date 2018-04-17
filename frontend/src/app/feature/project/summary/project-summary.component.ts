@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
+import {Store} from '@ngrx/store';
 
 import {Project} from '../../../model/project/project';
-import {Application} from '../../../model/application/application';
 import {TimeUtil} from '../../../util/time.util';
-import {ApplicationStatus} from '../../../model/application/application-status';
 import {ProjectState} from '../../../service/project/project-state';
+import * as fromProject from '../reducers';
+import * as project from '../actions/project-actions';
 
 @Component({
   selector: 'project-summary',
@@ -14,29 +15,21 @@ import {ProjectState} from '../../../service/project/project-state';
 })
 export class ProjectSummaryComponent implements OnInit {
   project: Project = new Project();
-  activeApplications: Array<Application> = [];
-  decidedApplications: Array<Application> = [];
   parentProjects: Array<Project> = [];
   childProjects: Array<Project> = [];
   history: Observable<Array<string>>; // TODO: history
   isActive: boolean;
   districts: Observable<Array<string>>;
 
-  constructor(private projectState: ProjectState) {}
+  constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
 
   ngOnInit(): void {
     this.project = this.projectState.project;
+    this.store.dispatch(new project.LoadSuccess(this.project));
+
     this.districts = this.projectState.districtNames();
     this.isActive = TimeUtil.isBetweenInclusive(new Date(), this.project.startTime, this.project.endTime);
-    this.fetchApplications();
     this.fetchRelatedProjects();
-  }
-
-  private fetchApplications(): void {
-    this.projectState.applications.subscribe(applications => {
-      this.activeApplications = applications.filter(app => ApplicationStatus[app.status] < ApplicationStatus.DECISION);
-      this.decidedApplications = applications.filter(app => ApplicationStatus[app.status] === ApplicationStatus.DECISION);
-    });
   }
 
   private fetchRelatedProjects(): void {

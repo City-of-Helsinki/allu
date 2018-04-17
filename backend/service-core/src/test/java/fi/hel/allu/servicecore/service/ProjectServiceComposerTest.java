@@ -3,7 +3,6 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
-import fi.hel.allu.servicecore.service.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +23,7 @@ public class ProjectServiceComposerTest {
   private ProjectServiceComposer projectServiceComposer;
   private static final int projectId1 = 1;
   private static final int projectId2 = 2;
+  private static final int projectParentId = 3;
 
   @Before
   public void init() {
@@ -35,43 +35,151 @@ public class ProjectServiceComposerTest {
   }
 
   @Test
-  public void testUpdateProjectApplications() {
-    Application application1 = Mockito.mock(Application.class);
-    Mockito.when(application1.getId()).thenReturn(1);
-    Mockito.when(application1.getProjectId()).thenReturn(projectId1);
-    Application application2 = Mockito.mock(Application.class);
-    Mockito.when(application2.getId()).thenReturn(2);
-    Mockito.when(application2.getProjectId()).thenReturn(projectId2);
-    Application application3 = Mockito.mock(Application.class);
-    Mockito.when(application3.getId()).thenReturn(3);
+  public void testAddProjectApplicationsAddsGivenApplications() {
+    Application application1 = createApplication(1);
+    Application application2 = createApplication(1, projectId2);
 
-    ApplicationJson applicationJson1 = Mockito.mock(ApplicationJson.class);
-    ApplicationJson applicationJson2 = Mockito.mock(ApplicationJson.class);
-    ApplicationJson applicationJson3 = Mockito.mock(ApplicationJson.class);
-
-    ProjectJson projectJson = Mockito.mock(ProjectJson.class);
-    ProjectJson projectJsonParent = Mockito.mock(ProjectJson.class);
-
-    List<Application> applications = Arrays.asList(application1, application2, application3);
+    List<Application> applications = Arrays.asList(application1, application2);
     List<Integer> applicationIds = applications.stream().map(Application::getId).collect(Collectors.toList());
 
+    ApplicationJson applicationJson1 = new ApplicationJson();
+    ApplicationJson applicationJson2 = new ApplicationJson();
+
     Mockito.when(applicationService.findApplicationsById(applicationIds)).thenReturn(applications);
-    Mockito.when(projectService.findProjectParents(projectId2)).thenReturn(Collections.singletonList(projectJsonParent));
-    Mockito.when(projectService.updateProjectApplications(projectId1, applicationIds)).thenReturn(projectJson);
-    Mockito.when(projectService.findApplicationsByProject(projectId1)).thenReturn(Collections.singletonList(application3));
+    Mockito.when(projectService.addApplications(projectId1, applicationIds)).thenReturn(applicationIds);
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(application1)).thenReturn(applicationJson1);
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(application2)).thenReturn(applicationJson2);
-    Mockito.when(applicationJsonService.getFullyPopulatedApplication(application3)).thenReturn(applicationJson3);
 
-    Assert.assertEquals(projectJson, projectServiceComposer.updateProjectApplications(projectId1, applicationIds));
+    Assert.assertEquals(
+        Arrays.asList(applicationJson1, applicationJson2),
+        projectServiceComposer.addApplications(projectId1, applicationIds));
+  }
 
+  @Test
+  public void testAddProjectApplicationsUpdatesTargetProjectAndParent() {
+    Application application = createApplication(1, projectId1);
+
+    List<Application> applications = Arrays.asList(application);
+    List<Integer> applicationIds = Arrays.asList(application.getId());
+
+    ProjectJson projectJson = createProjectJson(projectId1);
+    ProjectJson projectParentJson = createProjectJson(projectParentId);
+
+    Mockito.when(applicationService.findApplicationsById(applicationIds)).thenReturn(applications);
+    Mockito.when(projectService.findByIds(Arrays.asList(projectId1)))
+        .thenReturn(Arrays.asList(projectJson));
+    Mockito.when(projectService.findProjectParents(projectId1)).thenReturn(Collections.singletonList(projectParentJson));
+    Mockito.when(projectService.addApplications(projectId1, applicationIds)).thenReturn(applicationIds);
+
+    projectServiceComposer.addApplications(projectId1, applicationIds);
+
+    Mockito.verify(searchService).updateProjects(Arrays.asList(projectJson, projectParentJson));
+  }
+
+  @Test
+  public void testAddProjectApplicationsUpdatesProjectWithRemovedApplications() {
+    Application application = createApplication(1, projectId2);
+    List<Application> applications = Arrays.asList(application);
+    List<Integer> applicationIds = Arrays.asList(application.getId());
+
+    ProjectJson project1Json = createProjectJson(projectId1);
+    ProjectJson project2Json = createProjectJson(projectId2);
+    ProjectJson project2ParentJson = createProjectJson(projectParentId);
+
+    Mockito.when(applicationService.findApplicationsById(applicationIds)).thenReturn(applications);
+    Mockito.when(projectService.findByIds(Arrays.asList(projectId1, projectId2)))
+        .thenReturn(Arrays.asList(project1Json, project2Json));
+    Mockito.when(projectService.findProjectParents(projectId2)).thenReturn(Collections.singletonList(project2ParentJson));
+    Mockito.when(projectService.addApplications(projectId1, applicationIds)).thenReturn(applicationIds);
+
+    projectServiceComposer.addApplications(projectId1, applicationIds);
+    Mockito.verify(searchService).updateProjects(Arrays.asList(project1Json, project2Json, project2ParentJson));
+  }
+
+  @Test
+  public void testAddProjectApplicationsUpdatesApplicationsToSearch() {
+    Application application1 = createApplication(1);
+    Application application2 = createApplication(2);
+    List<Application> applications = Arrays.asList(application1, application2);
+    List<Integer> applicationIds = Arrays.asList(application1.getId(), application2.getId());
+
+    Mockito.when(applicationService.findApplicationsById(applicationIds)).thenReturn(applications);
+    Mockito.when(projectService.addApplications(projectId1, applicationIds)).thenReturn(applicationIds);
+
+    ApplicationJson applicationJson1 = new ApplicationJson();
+    ApplicationJson applicationJson2 = new ApplicationJson();
+
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(application1)).thenReturn(applicationJson1);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(application2)).thenReturn(applicationJson2);
+
+    projectServiceComposer.addApplications(projectId1, applicationIds);
+
+    verifyApplicationSearchUpdate(Arrays.asList(applicationJson1, applicationJson2));
+  }
+
+  @Test
+  public void testRemoveApplicationRemovesGivenApplication() {
+    projectServiceComposer.removeApplication(1);
+    Mockito.verify(projectService, Mockito.times(1)).removeApplication(1);
+  }
+
+  @Test
+  public void testRemoveApplicationUpdatesRelatedProjectsToSearch() {
+    Application app = createApplication(1, projectId1);
+    List<Application> applications = Arrays.asList(app);
+    List<Integer> applicationIds = Arrays.asList(app.getId());
+
+    ProjectJson projectJson = createProjectJson(projectId1);
+    ProjectJson projectParentJson = createProjectJson(projectParentId);
+
+    Mockito.when(applicationService.findApplicationsById(applicationIds)).thenReturn(applications);
+    Mockito.when(projectService.findByIds(Arrays.asList(projectId1)))
+        .thenReturn(Arrays.asList(projectJson));
+    Mockito.when(projectService.findProjectParents(projectId1)).thenReturn(Collections.singletonList(projectParentJson));
+
+    projectServiceComposer.removeApplication(app.getId());
+    Mockito.verify(searchService).updateProjects(Arrays.asList(projectJson, projectParentJson));
+  }
+
+  @Test
+  public void testRemoveApplicationUpdatesApplicationSearch() {
+    Application app = createApplication(1);
+    List<Application> applications = Arrays.asList(app);
+    List<Integer> applicationIds = Arrays.asList(app.getId());
+
+    Mockito.when(applicationService.findApplicationsById(applicationIds)).thenReturn(applications);
+
+    ApplicationJson appJson = new ApplicationJson();
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(app)).thenReturn(appJson);
+
+    projectServiceComposer.removeApplication(app.getId());
+
+    verifyApplicationSearchUpdate(Arrays.asList(appJson));
+  }
+
+  private ProjectJson createProjectJson(Integer id) {
+    ProjectJson project = new ProjectJson();
+    project.setId(id);
+    return project;
+  }
+
+  private Application createApplication(Integer id) {
+    Application app = new Application();
+    app.setId(id);
+    return app;
+  }
+
+  private Application createApplication(Integer id, Integer projectId) {
+    Application app = createApplication(id);
+    app.setProjectId(projectId);
+    return app;
+  }
+
+  private void verifyApplicationSearchUpdate(List<ApplicationJson> applicationJsons) {
     ArgumentCaptor<List> applicationListArgumentCaptor = ArgumentCaptor.forClass(List.class);
-
-    Mockito.verify(searchService).updateProjects(Arrays.asList(projectJson, projectJsonParent));
-    // have to use argument captor, because tested code uses Set, which may change the order of given list in random way
     Mockito.verify(searchService).updateApplications(applicationListArgumentCaptor.capture());
     List<ApplicationJson> searchUpdateApplication = applicationListArgumentCaptor.getValue();
-    List<ApplicationJson> expectedSearchUpdateApplications = Arrays.asList(applicationJson1, applicationJson2, applicationJson3);
+    List<ApplicationJson> expectedSearchUpdateApplications = applicationJsons;
     Assert.assertEquals(expectedSearchUpdateApplications.size(), searchUpdateApplication.size());
     Assert.assertTrue(searchUpdateApplication.containsAll(expectedSearchUpdateApplications));
   }

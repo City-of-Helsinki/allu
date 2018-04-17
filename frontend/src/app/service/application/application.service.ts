@@ -72,6 +72,12 @@ export class ApplicationService {
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
   }
 
+  public byProject(projectId: number, sort?: Sort, pageRequest?: PageRequest): Observable<Page<Application>> {
+    const search = new ApplicationSearchQuery();
+    search.projectId = projectId;
+    return this.pagedSearch(search, sort, pageRequest);
+  }
+
   /**
    * Helper search function to return only content without page
    */
@@ -81,16 +87,12 @@ export class ApplicationService {
   }
 
   /**
-   * Fetches applications based on given search query and those shared by current users group
+   * Free text search for applications
    */
-  public pagedSearchSharedByGroup(searchQuery: ApplicationSearchQuery, sort?: Sort, pageRequest?: PageRequest):
-    Observable<Page<Application>> {
-    return this.authHttp.post(
-      WORK_QUEUE_URL,
-      JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
-      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
-      .map(response => PageMapper.mapBackend(response.json(), ApplicationMapper.mapBackend))
-      .catch(err => this.errorHandler.handle(err, findTranslation('workqueue.error.searchFailed')));
+  public freeTextSearch(term: string): Observable<Application[]> {
+    const searchQuery = new ApplicationSearchQuery();
+    searchQuery.freeText = term;
+    return this.search(searchQuery);
   }
 
   /**

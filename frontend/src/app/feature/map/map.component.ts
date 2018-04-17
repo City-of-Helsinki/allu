@@ -4,7 +4,6 @@ import {MapRole, MapStore} from '../../service/map/map-store';
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
-import {ProjectHub} from '../../service/project/project-hub';
 import {pathStyle, styleByApplicationType} from '../../service/map/map-draw-styles';
 import {MapService} from '../../service/map/map.service';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
@@ -13,6 +12,7 @@ import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '../../service/map/map-controller';
 import {Subject} from 'rxjs/Subject';
 import {FixedLocationService} from '../../service/map/fixed-location.service';
+import {ProjectService} from '../../service/project/project.service';
 
 @Component({
   selector: 'map',
@@ -38,7 +38,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapService: MapService,
     private mapStore: MapStore,
     private fixedLocationService: FixedLocationService,
-    private projectHub: ProjectHub) {}
+    private projectService: ProjectService) {}
 
   ngOnInit() {
     this.mapStore.roleChange(this.role);
@@ -72,7 +72,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private drawProject(id: number) {
-    this.projectHub.getProjectApplications(id).subscribe(apps => {
+    this.projectService.getProjectApplications(id).subscribe(apps => {
       this.drawApplications(apps);
       this.mapController.centerAndZoomOnDrawn();
     });

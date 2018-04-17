@@ -15,8 +15,8 @@ import {CustomerWithContacts} from '../../../model/customer/customer-with-contac
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
-import {ProjectHub} from '../../../service/project/project-hub';
 import {FormUtil} from '../../../util/form.util';
+import {ProjectService} from '../../../service/project/project.service';
 
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
@@ -42,7 +42,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
               protected route: ActivatedRoute,
               protected applicationStore: ApplicationStore,
               private router: Router,
-              private projectHub: ProjectHub) {}
+              private projectService: ProjectService) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -178,8 +178,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
     // We had related project so navigate back to project page
     Some(this.applicationStore.snapshot.relatedProject)
-      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id)
-        .subscribe(project => this.router.navigate(['/projects', project.id])));
+      .do(projectId => this.projectService.addProjectApplication(projectId, application.id)
+        .subscribe(() => this.router.navigate(['/projects', projectId])));
 
     this.router.navigate(['applications', application.id, 'summary']);
   }

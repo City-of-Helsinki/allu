@@ -16,8 +16,8 @@ import {NumberUtil} from '../../../../util/number.util';
 import {TimeUtil} from '../../../../util/time.util';
 import {Some} from '../../../../util/option';
 import {IconConfig} from '../../../common/icon-config';
-import {ProjectHub} from '../../../../service/project/project-hub';
 import {ApplicationService} from '../../../../service/application/application.service';
+import {ProjectService} from '../../../../service/project/project.service';
 
 @Component({
   selector: 'excavation-announcement',
@@ -40,8 +40,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
     router: Router,
-    projectHub: ProjectHub) {
-    super(fb, route, applicationStore, router, projectHub);
+    projectService: ProjectService) {
+    super(fb, route, applicationStore, router, projectService);
   }
 
   ngOnInit(): any {

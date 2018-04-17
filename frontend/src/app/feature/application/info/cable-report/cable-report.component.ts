@@ -9,8 +9,8 @@ import {ApplicationStore} from '../../../../service/application/application-stor
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {ApplicationStatus} from '../../../../model/application/application-status';
-import {ProjectHub} from '../../../../service/project/project-hub';
 import {TimeUtil} from '../../../../util/time.util';
+import {ProjectService} from '../../../../service/project/project.service';
 
 @Component({
   selector: 'cable-report',
@@ -27,8 +27,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
     router: Router,
-    projectHub: ProjectHub) {
-    super(fb, route, applicationStore, router, projectHub);
+    projectService: ProjectService) {
+    super(fb, route, applicationStore, router, projectService);
   }
 
   ngOnInit(): any {

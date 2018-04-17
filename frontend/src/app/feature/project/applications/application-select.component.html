@@ -1,0 +1,23 @@
+<form>
+  <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="18px">
+    <div fxFlex="initial">
+      <mat-form-field class="search-field">
+        <input matInput type="text" [formControl]="searchControl"
+               [placeholder]="'project.applications.searchAndAdd' | translation"
+               [matAutocomplete]="applicationSearch"/>
+        <mat-autocomplete #applicationSearch="matAutocomplete"
+                          [displayWith]="displayName"
+                          (optionSelected)="add($event.option)">
+          <mat-option *ngFor="let application of matchingApplications | async"
+                      [value]="application">
+            {{ displayName(application) }}
+            <mat-icon *ngIf="application.project as project"
+                      [matTooltip]="'project.applications.moveFromAnother' | translation:{project: project.name}"
+                      color="accent"
+                      class="icon-sub">warning</mat-icon>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  </div>
+</form>

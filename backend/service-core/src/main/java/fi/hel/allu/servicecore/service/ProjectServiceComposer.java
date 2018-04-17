@@ -11,11 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for composing different project related services together. The main purpose of this class is to avoid circular references
@@ -79,46 +77,24 @@ public class ProjectServiceComposer {
     return updatedProject;
   }
 
-  /**
-   * Updates applications of given project to the given set of applications.
-   *
-   * @param id              Id of the project.
-   * @param applicationIds  Application ids to be attached to the given project. Use empty list to clear all references to the given project.
-   */
-  public ProjectJson updateProjectApplications(int id, List<Integer> applicationIds) {
-    // find applications with (possibly) existing linked projects
-    List<Application> updatedApplications = applicationService.findApplicationsById(applicationIds);
-    // project ids whose applications are changed
-    List<Integer> updatedApplicationProjectIds = updatedApplications.stream()
-        .filter(a -> a.getProjectId() != null && a.getProjectId() != id)
-        .map(Application::getProjectId)
-        .distinct()
-        .collect(Collectors.toList());
-    // find the applications previously linked to the given project (in case applications are removed from the project)
-    Set<Integer> updatedApplicationIds =
-        projectService.findApplicationsByProject(id).stream().map(a -> a.getId()).collect(Collectors.toSet());
-    // link applications to the given project
-    ProjectJson updatedProject = projectService.updateProjectApplications(id, applicationIds);
-    updatedApplicationIds.addAll(applicationIds);
-    List<Application> applicationsWithUpdatedProjectId = applicationService.findApplicationsById(new ArrayList<>(updatedApplicationIds));
-    // find which projects are affected by the project change of the given applications
-    List<ProjectJson> changedProjects = new ArrayList<>();
-    changedProjects.add(updatedProject);
-    if (!updatedApplicationProjectIds.isEmpty()) {
-      // find projects that were previously linked to the updated applications
-      List<ProjectJson> updatedApplicationProjectParents = updatedApplicationProjectIds.stream()
-          .map(uId -> projectService.findProjectParents(uId).stream()).flatMap(p -> p).distinct().collect(Collectors.toList());
-      changedProjects.addAll(updatedApplicationProjectParents);
-    }
-    // update search index with the changed projects
-    searchService.updateProjects(changedProjects);
-    // update search index with the changed applications
-    List<ApplicationJson> applicationJsons = applicationsWithUpdatedProjectId.stream()
-        .map(a -> applicationJsonService.getFullyPopulatedApplication(a))
-        .collect(Collectors.toList());
-    searchService.updateApplications(applicationJsons);
+  public List<ApplicationJson> addApplications(int id, List<Integer> applicationIds) {
+    Set<Integer> relatedProjects = getRelatedProjects(id, applicationIds);
+    List<Integer> addedApplicationIds = projectService.addApplications(id, applicationIds);
 
-    return updatedProject;
+    updateProjectSearch(new ArrayList<>(relatedProjects));
+
+    List<ApplicationJson> added = getFullyPopulatedApplications(addedApplicationIds);
+    searchService.updateApplications(added);
+    return added;
+  }
+
+  public void removeApplication(int id) {
+    Set<Integer> relatedProjects = getProjectsByApplications(Collections.singletonList(id));
+    projectService.removeApplication(id);
+    updateProjectSearch(new ArrayList<>(relatedProjects));
+
+    List<ApplicationJson> added = getFullyPopulatedApplications(Arrays.asList(id));
+    searchService.updateApplications(added);
   }
 
   /**
@@ -140,5 +116,37 @@ public class ProjectServiceComposer {
 
   public void updateParentForProjects(Integer parentProject, List<Integer> ids) {
     ids.forEach(id -> updateProjectParent(id, parentProject));
+  }
+
+  private Set<Integer> getRelatedProjects(int id, List<Integer> applicationIds) {
+    Set<Integer> related = getProjectsByApplications(applicationIds);
+    related.add(id);
+    return related;
+  }
+
+  private Set<Integer> getProjectsByApplications(List<Integer> applicationIds) {
+    return applicationService.findApplicationsById(applicationIds).stream()
+        .map(Application::getProjectId)
+        .filter(id -> id != null)
+        .collect(Collectors.toSet());
+  }
+
+  /**
+   * Update search index with the changed projects
+   */
+  private void updateProjectSearch(List<Integer> projectIds) {
+    List<ProjectJson> updated = projectService.findByIds(projectIds).stream()
+        .flatMap(project -> Stream.concat(
+            Stream.of(project),
+            projectService.findProjectParents(project.getId()).stream())
+        ).collect(Collectors.toList());
+
+    searchService.updateProjects(updated);
+  }
+
+  private List<ApplicationJson> getFullyPopulatedApplications(List<Integer> applicationIds) {
+    return applicationService.findApplicationsById(new ArrayList<>(applicationIds)).stream()
+        .map(a -> applicationJsonService.getFullyPopulatedApplication(a))
+        .collect(Collectors.toList());
   }
 }

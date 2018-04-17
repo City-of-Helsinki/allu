@@ -1,0 +1,71 @@
+<div class="mat-elevation-z8 data-table data-table-with-paging">
+  <div class="loading-shade" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <mat-table #table [dataSource]="page.content" matSort>
+    <ng-container matColumnDef="controls">
+      <mat-header-cell *matHeaderCellDef>{{'project.applications.removeFromProject' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <button mat-icon-button (click)="applicationRemove.emit(row.id)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="owner.realName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="applicationId">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
+          {{row.applicationId}}
+        </a>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.type.title' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{['application.type', row.type] | translation}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.status.title' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{['application.status', row.status] | translation}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="customers.applicant.customer.name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.applicant.customer.name}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="locations.cityDistrictId">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{districtName(row.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="creationTime">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.creationTime' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.creationTime | date:'shortDate'}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="startTime">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.startTime' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.startTime | date:'shortDate'}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
+  </mat-table>
+
+  <mat-paginator #paginator
+                 [length]="page.totalElements"
+                 [pageIndex]="page.pageNumber"
+                 [pageSize]="25"
+                 [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>
+

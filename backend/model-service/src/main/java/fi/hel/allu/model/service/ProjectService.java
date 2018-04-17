@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -133,36 +130,23 @@ public class ProjectService {
     return applicationDao.findByProject(id);
   }
 
-
-  /**
-   * Update applications of a given project. This method also updates the projects, which were previously linked to the given applications.
-   *
-   * @param id              Project whose applications will be updated.
-   * @param applicationIds  Applications to be added to the project.
-   */
   @Transactional
-  public Project updateProjectApplications(int id, List<Integer> applicationIds) {
-    // find out project ids of applications that will be added to given project
-    List<Application> updatedApplications = applicationDao.findByIds(applicationIds, false);
-    List<Integer> existingRelatedProjects = updatedApplications.stream()
-        .map(Application::getProjectId).filter(projectId -> projectId != null && projectId != id).distinct().collect(Collectors.toList());
-    // find out applications that are linked to the given project, but not included in the currently changed applications
-    List<Application> existingRelatedApplications = applicationDao.findByProject(id);
-    List<Integer> relatedApplicationsNotUpdated = existingRelatedApplications.stream().map(a -> a.getId())
-        .filter(relatedId -> !applicationIds.contains(relatedId)).collect(Collectors.toList());
-    if (!relatedApplicationsNotUpdated.isEmpty()) {
-      // update applications that are linked to given project, but not included in the currently
-      // changed applications, to have null project reference
-      applicationDao.updateProject(null, relatedApplicationsNotUpdated);
-    }
-    applicationDao.updateProject(id, applicationIds);
-
-    // update projects according to the changes
-    List<Integer> changedProjects = new ArrayList<>();
+  public List<Integer> addApplications(int id, List<Integer> applicationIds) {
+    Set<Integer> changedProjects = new HashSet<>();
     changedProjects.add(id);
-    changedProjects.addAll(existingRelatedProjects);
-    updateProjectInformation(changedProjects);
-    return projectDao.findById(id).get();
+    changedProjects.addAll(getRelatedProjects(applicationIds));
+
+    applicationDao.updateProject(id, applicationIds);
+    updateProjectInformation(new ArrayList<>(changedProjects));
+
+    return applicationIds;
+  }
+
+  @Transactional
+  public void removeApplication(int applicationId) {
+    Application app = applicationDao.findById(applicationId);
+    applicationDao.updateProject(null, Collections.singletonList(applicationId));
+    updateProjectInformation(Collections.singletonList(app.getProjectId()));
   }
 
   /**
@@ -324,5 +308,12 @@ public class ProjectService {
     ZonedDateTime maxEndTime;
     HashSet<Integer> districts = new HashSet<>();
     List<Project> updatedProjects = new ArrayList<>();
+  }
+
+  private Set<Integer> getRelatedProjects(List<Integer> applicationIds) {
+    return applicationDao.findByIds(applicationIds, false).stream()
+        .map(app -> app.getProjectId())
+        .filter(id -> id != null)
+        .collect(Collectors.toSet());
   }
 }

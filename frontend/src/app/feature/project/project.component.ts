@@ -23,7 +23,6 @@ export class ProjectComponent implements OnInit {
   sidebar(): Array<SidebarItem> {
     return [
       this.sidebarItem('BASIC_INFO'),
-      this.sidebarItem('APPLICATIONS', this.applicationCount),
       this.sidebarItem('PROJECTS', this.projectCount)
     ];
   }
@@ -33,11 +32,6 @@ export class ProjectComponent implements OnInit {
       this.projectState.childProjects,
       this.projectState.parentProjects,
       (childs, parents) => childs.length + parents.length);
-  }
-
-  private get applicationCount(): Observable<number> {
-    return this.projectState.applications
-      .map(applications => applications.length);
   }
 
   private sidebarItem(type: SidebarItemType, count?: Observable<number>): SidebarItem {

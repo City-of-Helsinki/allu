@@ -7,8 +7,8 @@ import {ApplicationStore} from '../../../../service/application/application-stor
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {ProjectHub} from '../../../../service/project/project-hub';
 import {TimeUtil} from '../../../../util/time.util';
+import {ProjectService} from '../../../../service/project/project.service';
 
 
 @Component({
@@ -24,8 +24,8 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
     router: Router,
-    projectHub: ProjectHub) {
-    super(fb, route, applicationStore, router, projectHub);
+    projectService: ProjectService) {
+    super(fb, route, applicationStore, router, projectService);
   }
 
   ngOnInit(): any {

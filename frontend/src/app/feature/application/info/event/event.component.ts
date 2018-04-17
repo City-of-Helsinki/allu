@@ -9,10 +9,9 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {Event} from '../../../../model/application/event/event';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {EventNature} from '../../../../model/application/event/event-nature';
-import {ProjectHub} from '../../../../service/project/project-hub';
 import {TimeUtil} from '../../../../util/time.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {UnitOfTime} from 'moment';
+import {ProjectService} from '../../../../service/project/project.service';
 
 
 @Component({
@@ -27,8 +26,8 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
               route: ActivatedRoute,
               applicationStore: ApplicationStore,
               router: Router,
-              projectHub: ProjectHub) {
-    super(fb, route, applicationStore, router, projectHub);
+              projectService: ProjectService) {
+    super(fb, route, applicationStore, router, projectService);
   }
 
   ngOnInit(): any {

@@ -34,19 +34,22 @@ mat-cell, .mat-cell, .mat-header-cell {
   position: relative;
 }
 
+.data-table.data-table-with-paging .loading-shade {
+  bottom: 56px;
+}
+
 .loading-shade {
   position: absolute;
   top: 57px;
   left: 0;
-  bottom: 56px;
   right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.15);
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 
 .row-details-link {
   font-weight: bold;

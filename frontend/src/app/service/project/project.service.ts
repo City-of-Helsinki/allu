@@ -81,23 +81,30 @@ export class ProjectService {
     return Observable.of(new HttpResponse(HttpStatus.OK, 'Project removed ' + id));
   }
 
-  public updateProjectApplications(id: number, applicationIds: Array<number>): Observable<Project> {
-    const url = ProjectService.PROJECT_URL + '/' + id + '/applications';
+  public addProjectApplications(id: number, applicationIds: number[]): Observable<Application[]> {
+    const url = `${ProjectService.PROJECT_URL}/${id}/applications`;
     return this.authHttp.put(url, JSON.stringify(applicationIds))
-      .map(response => ProjectMapper.mapBackend(response.json()))
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')));
+      .map(response => response.json())
+      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationAddFailed')));
   }
 
-  public addProjectApplication(id: number, applicationId: number): Observable<Project> {
-    return this.getProjectApplications(id)
-      .map(applications => applications.map(app => app.id))
-      .map(appIds => appIds.concat(applicationId))
-      .switchMap(appIds => this.updateProjectApplications(id, appIds));
+  public addProjectApplication(id: number, applicationId: number): Observable<Application[]> {
+    return this.addProjectApplications(id, [applicationId]);
   }
 
-  public getProjectApplications(id: number): Observable<Array<Application>> {
+  public removeApplication(appId: number): Observable<HttpResponse> {
+    const url = `${ProjectService.PROJECT_URL}/applications/${appId}`;
+    return this.authHttp.delete(url)
+      .map(response => HttpUtil.extractHttpResponse(response))
+      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationRemoveFailed')));
+  }
+
+  public getProjectApplications(id: number, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Application>> {
     const url = ProjectService.PROJECT_URL + '/' + id + '/applications';
-    return this.authHttp.get(url)
+    return this.authHttp.get(
+      url,
+      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationFetchFailed')));
