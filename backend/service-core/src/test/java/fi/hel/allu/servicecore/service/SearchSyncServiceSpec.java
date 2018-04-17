@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 
@@ -25,12 +26,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.beans.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.times;
 
 @SuppressWarnings("unchecked")
@@ -45,6 +50,8 @@ public class SearchSyncServiceSpec {
   private ApplicationMapper applicationMapper;
   @Mock
   private ProjectMapper projectMapper;
+  @Mock
+  private LocationService locationService;
 
   private SearchSyncService searchSyncService;
 
@@ -53,8 +60,11 @@ public class SearchSyncServiceSpec {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
         searchSyncService = new SearchSyncService(restTemplate, applicationProperties, applicationMapper,
-            projectMapper);
+            projectMapper, locationService);
         setupApplicationProperties();
+
+        Mockito.when(applicationMapper.mapApplicationToJson(any(Application.class))).thenReturn(new ApplicationJson());
+        Mockito.when(locationService.findLocationsByApplication(any(Integer.class))).thenReturn(Collections.EMPTY_LIST);
       });
       it("Successfully syncs", () -> {
         setupRestTemplate(2, 2, 2, 2);
@@ -170,7 +180,7 @@ public class SearchSyncServiceSpec {
   // is in numPages. If the request is for non-existing page, return
   // HttpStatus.NOT_FOUND, otherwise generate a page and return it.
   private <T> ResponseEntity<Page<T>> generatePage(InvocationOnMock invocation, int numPages, Class<T> clazz)
-      throws InstantiationException, IllegalAccessException {
+      throws InstantiationException, IllegalAccessException, Exception {
     int pageNum = invocation.getArgumentAt(4, Integer.class);
     int pageSize = invocation.getArgumentAt(5, Integer.class);
     if (pageNum >= numPages) {
@@ -178,7 +188,9 @@ public class SearchSyncServiceSpec {
     }
     List<T> elems = new ArrayList<>();
     for (int i = 0; i < pageSize; ++i) {
-      elems.add(clazz.newInstance());
+      T instance = clazz.newInstance();
+      new Statement(instance, "setId", new Integer[] {i}).execute();
+      elems.add(instance);
     }
     PageImpl<T> page = new PageImpl<>(elems, new PageRequest(pageNum, pageSize), pageSize * numPages);
     return new ResponseEntity<>(page, HttpStatus.OK);

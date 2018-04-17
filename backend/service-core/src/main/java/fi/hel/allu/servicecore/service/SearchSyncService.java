@@ -9,6 +9,7 @@ import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import fi.hel.allu.servicecore.util.RestResponsePage;
@@ -45,14 +46,16 @@ public class SearchSyncService {
   private ApplicationProperties applicationProperties;
   private ApplicationMapper applicationMapper;
   private ProjectMapper projectMapper;
+  private LocationService locationService;
 
   @Autowired
   public SearchSyncService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
-      ApplicationMapper applicationMapper, ProjectMapper projectMapper) {
+      ApplicationMapper applicationMapper, ProjectMapper projectMapper, LocationService locationService) {
     this.restTemplate = restTemplate;
     this.applicationProperties = applicationProperties;
     this.applicationMapper = applicationMapper;
     this.projectMapper = projectMapper;
+    this.locationService = locationService;
   }
 
   /**
@@ -207,7 +210,10 @@ public class SearchSyncService {
   }
 
   ApplicationES mapToES(Application application) {
-    return applicationMapper.createApplicationESModel(applicationMapper.mapApplicationToJson(application));
+    ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(application);
+    applicationJson.setLocations(locationService.findLocationsByApplication(application.getId()));
+    return applicationMapper.createApplicationESModel(applicationJson);
+
   }
 
   ProjectES mapToES(Project project) {

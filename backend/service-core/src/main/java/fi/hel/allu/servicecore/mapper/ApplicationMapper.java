@@ -122,6 +122,7 @@ public class ApplicationMapper {
     if (applicationJson.getProject() != null) {
       applicationES.setProjectId(applicationJson.getProject().getId());
     }
+
     return applicationES;
   }
 
@@ -321,17 +322,23 @@ public class ApplicationMapper {
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {
     if (locationJsons != null) {
       return locationJsons.stream()
-          .filter(l -> l.getPostalAddress() != null)
-          .map(json -> new LocationES(
-              json.getPostalAddress().getStreetAddress(),
-              json.getPostalAddress().getPostalCode(),
-              json.getPostalAddress().getCity(),
-              getCityDistrictId(json),
-              json.getAdditionalInfo()))
+          .map(json -> this.createLocationES(json))
           .collect(Collectors.toList());
     } else {
       return null;
     }
+  }
+
+  private LocationES createLocationES(LocationJson json) {
+    LocationES locationEs = new LocationES();
+    Optional.ofNullable(json.getPostalAddress()).ifPresent(address -> {
+      locationEs.setStreetAddress(address.getStreetAddress());
+      locationEs.setPostalCode(address.getPostalCode());
+      locationEs.setCity(address.getCity());
+    });
+    locationEs.setCityDistrictId(getCityDistrictId(json));
+    locationEs.setAdditionalInfo(json.getAdditionalInfo());
+    return locationEs;
   }
 
   private Integer getCityDistrictId(LocationJson locationJson) {
