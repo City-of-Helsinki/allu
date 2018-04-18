@@ -7,12 +7,6 @@
           {{'decision.proposal.type.PROPOSE_APPROVAL' | translation}}
         </button>
       </div>
-      <div class="action-item">
-        <button mat-raised-button type="button" color="primary" class="modal-trigger"
-                (click)="decisionProposal('PROPOSE_REJECT')">
-          {{'decision.proposal.type.PROPOSE_REJECT' | translation}}
-        </button>
-      </div>
     </ng-container>
   </ng-container>
   <ng-container *ngIf="showDecision">
@@ -20,7 +14,7 @@
       <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
         <div class="action-item">
           <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">
-            Hyväksy
+            {{'decision.type.DECISION.confirmText' | translation}}
           </button>
         </div>
       </ng-container>
@@ -29,17 +23,13 @@
       <ng-container *availableTo="['ROLE_DECISION']">
         <div class="action-item">
           <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">
-            Hyväksy
+            {{'decision.type.DECISION.confirmText' | translation}}
           </button>
         </div>
         <div class="action-item">
           <button mat-raised-button type="button" color="primary" class="modal-trigger"
-                  (click)="decision('RETURNED_TO_PREPARATION')">Palauta
-          </button>
-        </div>
-        <div class="action-item">
-          <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('REJECTED')">
-            Hylkää
+                  (click)="decision('RETURNED_TO_PREPARATION')">
+            {{'decision.type.RETURNED_TO_PREPARATION.confirmText' | translation}}
           </button>
         </div>
       </ng-container>

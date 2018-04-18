@@ -25,6 +25,10 @@ public class ApplicationTag {
     // JSON serialization
   }
 
+  public ApplicationTag(Integer addedBy, ApplicationTagType type) {
+    this(addedBy, type, ZonedDateTime.now());
+  }
+
   public ApplicationTag(Integer addedBy, ApplicationTagType type, ZonedDateTime creationTime) {
     this.addedBy = addedBy;
     this.type = type;

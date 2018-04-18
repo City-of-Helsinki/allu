@@ -116,4 +116,9 @@ public class InvoiceService {
     invoiceDao.releasePendingInvoice(id);
   }
 
+  @Transactional(readOnly = true)
+  public boolean applicationHasInvoiced(int applicationId) {
+    return findByApplication(applicationId).stream()
+        .anyMatch(invoice -> invoice.isInvoiced());
+  }
 }

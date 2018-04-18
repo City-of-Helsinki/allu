@@ -225,8 +225,17 @@ public class ApplicationService {
         return applicationDao.updateDecision(applicationId, statusType, userId, application.getHandler());
       case DECISIONMAKING:
         return applicationDao.startDecisionMaking(applicationId, statusType, userId);
+      case CANCELLED:
+        addCompensationClarificationForInvoiced(applicationId, userId);
+        applicationDao.updateStatus(applicationId, statusType);
       default:
         return applicationDao.updateStatus(applicationId, statusType);
+    }
+  }
+
+  private void addCompensationClarificationForInvoiced(int id, Integer userId) {
+    if (invoiceService.applicationHasInvoiced(id)) {
+      addTag(id, new ApplicationTag(userId, ApplicationTagType.COMPENSATION_CLARIFICATION));
     }
   }
 

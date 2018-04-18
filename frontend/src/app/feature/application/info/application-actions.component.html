@@ -28,9 +28,9 @@
       </button>
     </div>
     <div *ngIf="readonly">
-      <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+      <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
         <button *ngIf="showCancel" mat-raised-button type="button" color="primary" (click)="cancel()">
-          {{'common.button.cancel' | translation | uppercase}}
+          {{'application.button.cancel' | translation | uppercase}}
         </button>
         <button *ngIf="showConvertToApplication" mat-raised-button type="button" color="primary" (click)="convertToApplication()">
           {{'application.button.convertToApplication' | translation | uppercase}}

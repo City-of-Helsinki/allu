@@ -374,6 +374,7 @@ export const translations = {
       copy: 'Kopioi uudeksi',
       replace: 'Korvaava päätös',
       toHandling: 'Käsittelyyn',
+      cancel: 'Peru hakemus',
       convertToApplication: 'Vahvista varaus',
       toDecision: 'Päättämiseen'
     },

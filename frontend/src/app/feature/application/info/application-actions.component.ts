@@ -60,7 +60,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.decisionDisabled = !this.validForDecision(app);
       this.showHandling = (status === ApplicationStatus.PENDING) && (app.typeEnum !== ApplicationType.NOTE);
       this.showDelete = (app.typeEnum === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
-      this.showCancel = status < ApplicationStatus.DECISION;
+      this.showCancel = status <= ApplicationStatus.DECISION;
       this.showEdit = status < ApplicationStatus.DECISION;
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
@@ -137,7 +137,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   cancel(): void {
-    if (this.applicationStore.snapshot.application.statusEnum < ApplicationStatus.DECISION) {
+    if (this.applicationStore.snapshot.application.statusEnum <= ApplicationStatus.DECISION) {
       const data = {
         title: findTranslation('application.confirmCancel.title'),
         confirmText: findTranslation('application.confirmCancel.confirmText'),
