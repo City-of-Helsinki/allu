@@ -4,6 +4,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {LocationService} from '../location.service';
 import {ArrayUtil} from '../../util/array-util';
 import {Observable} from 'rxjs/Observable';
+import {Some} from '../../util/option';
 
 @Injectable()
 export class CityDistrictService {
@@ -32,6 +33,13 @@ export class CityDistrictService {
     return id !== undefined
       ? this.byId(id).map(d => d.name)
       : Observable.empty();
+  }
+
+  public nameImmediate(id: number): string {
+    const districts = this.cityDistricts$.getValue();
+    return Some(districts.find(d => d.id === id))
+      .map(district => district.name)
+      .orElse(undefined);
   }
 
   byIds(ids: number[]): Observable<CityDistrict[]> {

@@ -45,7 +45,7 @@ export const getProjectApplicationsState = createSelector(
 
 export const getApplications = createSelector(
   getProjectApplicationsState,
-  fromApplications.getPage
+  fromApplications.getApplications
 );
 
 export const getApplicationsLoading = createSelector(

@@ -1,40 +1,44 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
-import {Sort} from '../../../model/common/sort';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import {CityDistrictService} from '../../../service/map/city-district.service';
-import {PageRequest} from '../../../model/common/page-request';
 import {Subject} from 'rxjs/Subject';
-import {Page} from '../../../model/common/page';
-
-export interface SearchChange {
-  sort?: Sort;
-  pageRequest: PageRequest;
-}
+import {Some} from '../../../util/option';
 
 @Component({
   selector: 'project-application-list',
   templateUrl: './project-application-list.component.html',
-  styleUrls: []
+  styleUrls: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy {
 
   @Input() loading: boolean;
-  @Input() page: Page<Application>;
 
   @Output() applicationAdd = new EventEmitter<number>();
   @Output() applicationRemove = new EventEmitter<number>();
-  @Output() searchChange = new EventEmitter<SearchChange>(true);
+
+  dataSource = new MatTableDataSource<ApplicationElement>([]);
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   displayedColumns = [
     'controls',
-    'owner.realName', 'applicationId', 'type', 'status',
-    'customers.applicant.customer.name', 'locations.cityDistrictId',
+    'ownerName', 'applicationId', 'type', 'status',
+    'customerName', 'cityDistrict',
     'creationTime', 'startTime'
   ];
 
@@ -44,7 +48,8 @@ export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy
               private cityDistrictService: CityDistrictService) {}
 
   ngAfterViewInit(): void {
-    this.searchParameterChanges();
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   ngOnDestroy(): void {
@@ -52,20 +57,37 @@ export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy
     this.destroy.unsubscribe();
   }
 
-  districtName(id: number): Observable<string> {
-    return this.cityDistrictService.name(id);
+  @Input() set applications(applications: Application[]) {
+    this.dataSource.data = applications.map(app => this.toApplicationElement(app));
   }
 
-  private searchParameterChanges(): void {
-    const displayChanges = [
-      this.sort.sortChange.startWith({active: this.sort.active, direction: this.sort.direction}),
-      this.paginator.page.startWith({pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize})
-    ];
+  private toApplicationElement(application: Application): ApplicationElement {
+    const cityDistrict = Some(application.firstLocation)
+      .map(l => l.effectiveCityDistrictId)
+      .map(id => this.cityDistrictService.nameImmediate(id));
 
-    Observable.combineLatest(displayChanges)
-      .map(([sort, page]) => ({
-        sort: Sort.fromMatSort(sort),
-        pageRequest: new PageRequest(page.pageIndex, page.pageSize)
-    })).subscribe(search => this.searchChange.emit(search));
+    return {
+      id: application.id,
+      ownerName: Some(application.owner).map(owner => owner.realName).orElse(undefined),
+      applicationId: application.applicationId,
+      type: application.type,
+      status: application.status,
+      customerName: Some(application.applicant.customer).map(c => c.name).orElse(undefined),
+      cityDistrict: cityDistrict.orElse(undefined),
+      creationTime: application.creationTime,
+      startTime: application.startTime,
+    };
   }
+}
+
+interface ApplicationElement {
+  id: number;
+  ownerName: string;
+  applicationId: string;
+  type: string;
+  status: string;
+  customerName: string;
+  cityDistrict: string;
+  creationTime: Date;
+  startTime: Date;
 }

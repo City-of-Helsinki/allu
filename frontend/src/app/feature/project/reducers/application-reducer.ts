@@ -1,20 +1,16 @@
 import {ApplicationActions, ApplicationActionTypes} from '../actions/application-actions';
 import {Application} from '../../../model/application/application';
-import {Sort} from '../../../model/common/sort';
-import {PageRequest} from '../../../model/common/page-request';
-import {Page, add as addToPage, remove as removeFromPage} from '../../../model/common/page';
+import {Page} from '../../../model/common/page';
 
 export interface State {
-  sort: Sort;
-  pageRequest: PageRequest;
   loading: boolean;
+  applications: Application[];
   page: Page<Application>;
 }
 
 const initialState: State = {
-  sort: undefined,
-  pageRequest: undefined,
   loading: false,
+  applications: [],
   page: new Page<Application>()
 };
 
@@ -23,9 +19,7 @@ export function reducer(state: State = initialState, action: ApplicationActions)
     case ApplicationActionTypes.Load: {
       return {
         ...state,
-        loading: true,
-        sort: action.payload.sort,
-        pageRequest: action.payload.pageRequest
+        loading: true
       };
     }
 
@@ -33,7 +27,7 @@ export function reducer(state: State = initialState, action: ApplicationActions)
       return {
         ...state,
         loading: false,
-        page: action.payload
+        applications: action.payload
       };
     }
 
@@ -41,25 +35,21 @@ export function reducer(state: State = initialState, action: ApplicationActions)
       return {
         ...state,
         loading: false,
-        page: new Page<Application>()
+        applications: []
       };
     }
 
     case ApplicationActionTypes.AddSuccess: {
       return {
         ...state,
-        page: addToPage(state.page, action.payload),
-        sort: undefined,
-        pageRequest: undefined
+        applications: state.applications.concat(action.payload)
       };
     }
 
     case ApplicationActionTypes.RemoveSuccess: {
       return {
         ...state,
-        page: removeFromPage(state.page, action.payload),
-        sort: undefined,
-        pageRequest: undefined
+        applications: state.applications.filter(app => app.id !== action.payload)
       };
     }
 
@@ -69,5 +59,7 @@ export function reducer(state: State = initialState, action: ApplicationActions)
 }
 
 export const getLoading = (state: State) => state.loading;
+
+export const getApplications = (state: State) => state.applications;
 
 export const getPage = (state: State) => state.page;

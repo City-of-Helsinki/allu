@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SearchChange} from './project-application-list.component';
 import * as fromProject from '../reducers';
 import * as application from '../actions/application-actions';
 import {Store} from '@ngrx/store';
@@ -8,7 +7,6 @@ import {Application} from '../../../model/application/application';
 import {Observable} from 'rxjs/Observable';
 import {Search} from '../actions/application-search-actions';
 import {Some} from '../../../util/option';
-import {Page} from '../../../model/common/page';
 
 @Component({
   selector: 'project-applications',
@@ -18,19 +16,16 @@ import {Page} from '../../../model/common/page';
 export class ProjectApplicationsComponent implements OnInit {
   @Input() projectId: number;
 
-  applications: Observable<Page<Application>>;
+  applications: Observable<Application[]>;
   applicationsLoading: Observable<boolean>;
   matchingApplications: Observable<Application[]>;
 
   constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
 
   ngOnInit(): void {
+    this.store.dispatch(new application.Load());
     this.applications = this.store.select(fromProject.getApplications);
     this.applicationsLoading = this.store.select(fromProject.getApplicationsLoading);
-  }
-
-  searchChange(change: SearchChange): void {
-    this.store.dispatch(new application.Load(change.sort, change.pageRequest));
   }
 
   applicationSelectSearchChange(term: string): void {

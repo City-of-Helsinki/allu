@@ -12,8 +12,7 @@
 </div>
 
 <project-application-list
-  [page]="applications | async"
+  [applications]="applications | async"
   [loading]="applicationsLoading | async"
-  (searchChange)="searchChange($event)"
   (applicationRemove)="removeApplication($event)">
 </project-application-list>

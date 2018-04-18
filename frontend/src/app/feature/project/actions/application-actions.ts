@@ -2,7 +2,6 @@ import {Action} from '@ngrx/store';
 import {Application} from '../../../model/application/application';
 import {Sort} from '../../../model/common/sort';
 import {PageRequest} from '../../../model/common/page-request';
-import {Page} from '../../../model/common/page';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ErrorInfo} from '../../../service/ui-state/error-info';
 
@@ -10,6 +9,7 @@ export enum ApplicationActionTypes {
   Load = '[Project] Load applications',
   LoadSuccess = '[Project] Load applications success',
   LoadFailed = '[Project] Load applications failed',
+  Paged = '[Project] Get paged applications',
   Add = '[Project] Add application',
   AddSuccess = '[Project] Add application success',
   AddFailed = '[Project] Add application failed',
@@ -20,23 +20,27 @@ export enum ApplicationActionTypes {
 
 export class Load implements Action {
   readonly type = ApplicationActionTypes.Load;
-  public payload: { sort?: Sort, pageRequest?: PageRequest };
-
-  constructor(public sort?: Sort, public pageRequest?: PageRequest) {
-    this.payload = {sort, pageRequest};
-  }
 }
 
 export class LoadSuccess implements Action {
   readonly type = ApplicationActionTypes.LoadSuccess;
 
-  constructor(public payload: Page<Application>) {}
+  constructor(public payload: Application[]) {}
 }
 
 export class LoadFailed implements ActionWithPayload<ErrorInfo> {
   readonly type = ApplicationActionTypes.LoadFailed;
 
   constructor(public payload: ErrorInfo) {}
+}
+
+export class Paged implements Action {
+  readonly type = ApplicationActionTypes.Paged;
+  public payload: { sort?: Sort, pageRequest?: PageRequest };
+
+  constructor(public sort?: Sort, public pageRequest?: PageRequest) {
+    this.payload = {sort, pageRequest};
+  }
 }
 
 export class Add implements Action {
@@ -80,6 +84,7 @@ export type ApplicationActions =
   | Load
   | LoadSuccess
   | LoadFailed
+  | Paged
   | Add
   | AddSuccess
   | AddFailed

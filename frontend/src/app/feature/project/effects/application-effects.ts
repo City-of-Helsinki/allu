@@ -25,12 +25,11 @@ export class ApplicationEffects {
   @Effect()
   loadApplications: Observable<Action> = this.actions.pipe(
     ofType<Load>(ApplicationActionTypes.Load),
-    map(action => action.payload),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
-    switchMap(([payload, project]) =>
-      this.applicationService.byProject(project.id, payload.sort, payload.pageRequest)
+    switchMap(([action, project]) =>
+      this.projectService.getProjectApplications(project.id)
         .pipe(
-          map(page => new LoadSuccess(page)),
+          map(applications => new LoadSuccess(applications)),
           catchError(error => of(new LoadFailed(error)))
         )
     )

@@ -3,7 +3,7 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <mat-table #table [dataSource]="page.content" matSort>
+  <mat-table #table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="controls">
       <mat-header-cell *matHeaderCellDef>{{'project.applications.removeFromProject' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
@@ -13,9 +13,9 @@
       </mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="owner.realName">
+    <ng-container matColumnDef="ownerName">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.ownerName}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="applicationId">
@@ -37,14 +37,14 @@
       <mat-cell *matCellDef="let row">{{['application.status', row.status] | translation}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="customers.applicant.customer.name">
+    <ng-container matColumnDef="customerName">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.applicant.customer.name}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.customerName}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="locations.cityDistrictId">
+    <ng-container matColumnDef="cityDistrict">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{districtName(row.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.cityDistrict}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="creationTime">
@@ -62,8 +62,6 @@
   </mat-table>
 
   <mat-paginator #paginator
-                 [length]="page.totalElements"
-                 [pageIndex]="page.pageNumber"
                  [pageSize]="25"
                  [pageSizeOptions]="[5, 10, 25, 100]">
   </mat-paginator>
