@@ -3,6 +3,7 @@ package fi.hel.allu.model.testUtils;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.CodeSetDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.dao.UserDao;
@@ -12,6 +13,8 @@ import fi.hel.allu.model.service.LocationService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.geolatte.geom.Geometry;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +30,7 @@ import java.util.Collections;
  */
 @Component
 public class TestCommon {
-
+  private static final Logger logger = LoggerFactory.getLogger(TestCommon.class);
   @Autowired
   private SqlRunner sqlRunner;
   @Autowired
@@ -40,6 +43,8 @@ public class TestCommon {
   private ProjectDao projectDao;
   @Autowired
   private UserDao userDao;
+  @Autowired
+  private CodeSetDao codeSetDao;
 
   public void deleteAllData() throws SQLException {
     sqlRunner.runSql(DELETE_ALL_DATA);
@@ -196,6 +201,7 @@ public class TestCommon {
     personCustomer.setType(CustomerType.PERSON);
     personCustomer.setRegistryKey("121212-xxxx");
     personCustomer.setEmail("pena@dev.null");
+    personCustomer.setCountryId(getCountryIdOfFinland());
     Customer insertedPerson = customerDao.insert(personCustomer);
     return insertedPerson;
   }
@@ -226,6 +232,11 @@ public class TestCommon {
     user.setTitle("title");
     user.setUserName(StringUtils.lowerCase(userName));
     return userDao.insert(user);
+  }
+
+  public Integer getCountryIdOfFinland() {
+    CodeSet codeSet = codeSetDao.findByTypeAndCode(CodeSetType.Country, "FI").get();
+    return codeSet.getId();
   }
 
   private static final String[] DELETE_ALL_DATA = new String[] {
@@ -259,6 +270,6 @@ public class TestCommon {
       "delete from allu.user_city_district",
       "delete from allu.user",
       "delete from allu.default_text",
-      "delete from allu.default_recipient",
+      "delete from allu.default_recipient"
    };
 }

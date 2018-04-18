@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import fi.hel.allu.model.testUtils.TestCommon;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -30,6 +31,8 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
   private ExternalUserDao externalUserDao;
   @Autowired
   private CustomerDao customerDao;
+  @Autowired
+  private TestCommon testCommon;
   private ExternalUser testUser;
   private ExternalUser insertedUser;
   private Customer insertedCustomer1;
@@ -42,6 +45,7 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
       testCustomer.setType(CustomerType.COMPANY);
       testCustomer.setName("Testiyritysasiakas");
       testCustomer.setActive(true);
+      testCustomer.setCountryId(testCommon.getCountryIdOfFinland());
       testUser = new ExternalUser(
           null,
           "uuusername",

@@ -38,7 +38,8 @@ describe('Short term rental application', () => {
         },
         'email': 'lasse.liikennejarjestelija@liikennejarjestely.com',
         'phone': '040098765',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [applicantNew]
     };

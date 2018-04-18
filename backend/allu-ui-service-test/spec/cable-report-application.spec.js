@@ -51,7 +51,8 @@ describe('Cable report application', () => {
         'registryKey': '123',
         'representative': null,
         'type': 'COMPANY',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [applicantContactNew]
     };
@@ -71,7 +72,8 @@ describe('Cable report application', () => {
         },
         'email': '',
         'name': 'Ollin Ojitus',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [propertyDeveloperContactNew]
     };

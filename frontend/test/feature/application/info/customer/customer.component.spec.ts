@@ -2,6 +2,7 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
 
 import {CustomerComponent} from '../../../../../src/app/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
@@ -14,8 +15,16 @@ import {Contact} from '../../../../../src/app/model/customer/contact';
 import {CustomerServiceMock} from '../../../../mocks';
 import {Application} from '../../../../../src/app/model/application/application';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
+import {CodeSetService} from '../../../../../src/app/service/codeset/codeset.service';
+import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
 
 const headerText = 'Hakija';
+
+class CodeSetServiceMock {
+  public getCountries(): Observable<Array<CodeSet>> {
+    return Observable.of([{code: 'FI', type: 'Country', description: 'Suomi'}]);
+  }
+}
 
 @Component({
   selector: 'contact',
@@ -37,7 +46,6 @@ describe('CustomerComponent', () => {
   let fixture: ComponentFixture<CustomerComponent>;
   let page: CustomerPage;
   let parentForm: FormGroup;
-  const application = new Application();
 
   class CustomerPage {
     cardTitle: HTMLElement;
@@ -71,7 +79,8 @@ describe('CustomerComponent', () => {
       declarations: [CustomerComponent, MockContactComponent, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerService, useClass: CustomerServiceMock}
+        {provide: CustomerService, useClass: CustomerServiceMock},
+        {provide: CodeSetService, useClass: CodeSetServiceMock}
       ]
     }).compileComponents();
   }));

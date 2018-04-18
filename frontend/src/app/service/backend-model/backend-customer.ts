@@ -14,4 +14,5 @@ export interface BackendCustomer {
   sapCustomerNumber?: string;
   invoicingProhibited?: boolean;
   invoicingOnly: boolean;
+  country: string;
 }

@@ -18,7 +18,9 @@
         <div fxFlex="0 1 calc(25% - 18px)">
           <mat-form-field class="input-full-width">
             <mat-select class="input-full-width" formControlName="country" placeholder="Maa">
-              <mat-option value="Suomi">Suomi</mat-option>
+              <mat-option *ngFor="let country of countries | async" [value]="country.code">
+                {{country.description}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>

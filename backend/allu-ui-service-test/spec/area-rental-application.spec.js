@@ -54,7 +54,8 @@ describe('Area rental application', () => {
         },
         'email': 'reima.remontoija@reimanremontit.net',
         'phone': '02213412',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [applicantContactNew]
     };
@@ -74,7 +75,8 @@ describe('Area rental application', () => {
         },
         'email': 'suorittaja@bulvaaniremontit.com',
         'phone': '0421431234',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [contractorContactNew]
     };

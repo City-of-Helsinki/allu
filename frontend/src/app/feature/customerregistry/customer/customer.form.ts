@@ -18,7 +18,7 @@ export class CustomerForm {
     public active = true,
     public readonly sapCustomerNumber?: string,
     public readonly invoicingProhibited = false,
-    public invoicingOnly = false
+    public invoicingOnly = false,
   ) {}
 
   static fromCustomer(customer: Customer): CustomerForm {
@@ -29,7 +29,7 @@ export class CustomerForm {
       customer.registryKey,
       customer.ovt,
       customer.invoicingOperator,
-      'Suomi',
+      customer.country,
       customer.postalAddress || new PostalAddress(),
       customer.email,
       customer.phone,
@@ -53,6 +53,7 @@ export class CustomerForm {
     customer.phone = form.phone;
     customer.active = form.active;
     customer.invoicingOnly = form.invoicingOnly;
+    customer.country = form.country;
     return customer;
   }
 
@@ -66,7 +67,7 @@ export class CustomerForm {
       registryKey: ['', [Validators.required, Validators.minLength(2)]],
       ovt: ['', [Validators.minLength(12), Validators.maxLength(18)]],
       invoicingOperator: [''],
-      country: ['Suomi'],
+      country: ['FI'],
       postalAddress: fb.group({
         streetAddress: [''],
         postalCode: ['', postalCodeValidator],

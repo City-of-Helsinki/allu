@@ -38,7 +38,8 @@ describe('Note application', () => {
         },
         'id': null,
         'name': 'Nuukailun Puolesta Ry',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [pekkaContactNew]
     };

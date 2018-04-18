@@ -9,6 +9,7 @@ import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.pricing.ChargeBasisCalc;
+import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Before;
@@ -49,7 +50,8 @@ public class PricingServiceTest {
 
   @Autowired
   private CustomerDao customerDao;
-
+  @Autowired
+  TestCommon testCommon;
 
   private Map<Triple<ApplicationKind, String, String>, FixedLocation> knownFixedLocations;
 
@@ -360,8 +362,8 @@ public class PricingServiceTest {
    Customer customer = new Customer();
    customer.setName("Hakija");
    customer.setType(customerType);
+   customer.setCountryId(testCommon.getCountryIdOfFinland());
    application.setCustomersWithContacts(
        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customerDao.insert(customer), Collections.emptyList())));
  }
 }
-

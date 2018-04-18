@@ -2,15 +2,23 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
 
 import {CustomerInfoComponent} from '../../../../src/app/feature/customerregistry/customer/customer-info.component';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
 import {CustomerType} from '../../../../src/app/model/customer/customer-type';
 import {DebugElement} from '@angular/core';
 import {CustomerService} from '../../../../src/app/service/customer/customer.service';
+import {CodeSetService} from '../../../../src/app/service/codeset/codeset.service';
+import {CodeSet} from '../../../../src/app/model/codeset/codeset';
 
 class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}
+}
+class CodeSetServiceMock {
+  public getCountries(): Observable<Array<CodeSet>> {
+    return Observable.of([{code: 'FI', type: 'Country', description: 'Suomi'}]);
+  }
 }
 
 describe('CustomerInfoComponent', () => {
@@ -52,8 +60,8 @@ describe('CustomerInfoComponent', () => {
       imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
       declarations: [CustomerInfoComponent],
       providers: [
-        {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerService, useClass: CustomerHubMock}
+        {provide: CustomerService, useClass: CustomerHubMock},
+        {provide: CodeSetService, useClass: CodeSetServiceMock}
       ]
     }).compileComponents();
   }));
@@ -69,7 +77,7 @@ describe('CustomerInfoComponent', () => {
       registryKey: ['12345'],
       ovt: ['003712345'],
       invoicingOperator: ['IO123'],
-      country: undefined,
+      country: 'FI',
       postalAddress: fb.group({
         streetAddress: ['streetAddressTest'],
         postalCode: ['postalCodeTest'],

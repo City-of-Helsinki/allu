@@ -55,12 +55,14 @@ public class ContactControllerTest {
     customer.setType(CustomerType.PERSON);
     customer.setName("Test person 1");
     customer.setRegistryKey("12345676-89");
+    customer.setCountryId(testCommon.getCountryIdOfFinland());
     customer = customerDao.insert(customer);
     customerId1 = customer.getId();
     customer = new Customer();
     customer.setType(CustomerType.PERSON);
     customer.setName("Test person 2");
     customer.setRegistryKey("99999999-999");
+    customer.setCountryId(testCommon.getCountryIdOfFinland());
     customer = customerDao.insert(customer);
     customerId2 = customer.getId();
   }

@@ -10,6 +10,7 @@ import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerChange;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.junit.Assert;
 import org.junit.runner.RunWith;
@@ -32,6 +33,8 @@ public class ApplicationStatusControllerSpec extends SpeccyTestBase {
 
   @Autowired
   WebTestCommon wtc;
+  @Autowired
+  TestCommon tc;
 
   Application testApplication;
 
@@ -77,6 +80,7 @@ public class ApplicationStatusControllerSpec extends SpeccyTestBase {
     customer.setName(customerName);
     customer.setSapCustomerNumber(sapId);
     customer.setType(CustomerType.PERSON);
+    customer.setCountryId(tc.getCountryIdOfFinland());
     CustomerChange customerChange = new CustomerChange(userId, customer);
     ResultActions resultActions = wtc.perform(post("/customers"), customerChange).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Customer.class);

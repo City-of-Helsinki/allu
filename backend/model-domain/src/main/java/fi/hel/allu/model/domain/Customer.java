@@ -26,6 +26,8 @@ public class Customer implements PostalAddressItem {
   private boolean invoicingProhibited = false;
   private String invoicingOperator;
   private boolean invoicingOnly;
+  @NotNull
+  private Integer countryId;
 
   public Integer getId() {
     return id;
@@ -185,6 +187,14 @@ public class Customer implements PostalAddressItem {
 
   public void setInvoicingOnly(boolean invoicingOnly) {
     this.invoicingOnly = invoicingOnly;
+  }
+
+  public Integer getCountryId() {
+    return countryId;
+  }
+
+  public void setCountryId(Integer countryId) {
+    this.countryId = countryId;
   }
 
   @Override

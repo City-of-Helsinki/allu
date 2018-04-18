@@ -374,6 +374,7 @@ public class ProjectControllerTest {
     customer.setName(name);
     customer.setType(CustomerType.PERSON);
     customer.setEmail(email);
+    customer.setCountryId(testCommon.getCountryIdOfFinland());
     CustomerChange customerChange = new CustomerChange(userId, customer);
     ResultActions resultActions = wtc.perform(post("/customers"), customerChange).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Customer.class);

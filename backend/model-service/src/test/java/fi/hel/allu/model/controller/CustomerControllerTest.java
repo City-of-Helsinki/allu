@@ -45,21 +45,21 @@ public class CustomerControllerTest {
   @Test
   public void addPersonCustomer() throws Exception {
     // Add person without id. Should succeed:
-    ControllerHelper.addPersonCustomer(wtc, "Pekka Pekkala", "pekka@pekkalat.net", null, userId)
+    ControllerHelper.addPersonCustomer(wtc, "Pekka Pekkala", "pekka@pekkalat.net", null, userId, tc.getCountryIdOfFinland())
         .andExpect(status().isOk());
   }
 
   @Test
   public void addPersonWithId() throws Exception {
     // add person with id. Should not fail, ignores id and creates new customer:
-    ControllerHelper.addPersonCustomer(wtc, "Paavo Ruotsalainen", "ei-oo", 239, userId).andExpect(status().isOk());
+    ControllerHelper.addPersonCustomer(wtc, "Paavo Ruotsalainen", "ei-oo", 239, userId, tc.getCountryIdOfFinland()).andExpect(status().isOk());
   }
 
   @Test
   public void getPerson() throws Exception {
     // Setup: add person
     Customer result = ControllerHelper.addCustomerAndGetResult(wtc, "Jaakko Jokkela", "jaska193@mbnet.fi", null,
-        userId);
+        userId, tc.getCountryIdOfFinland());
 
     // Now check Jaakko got there.
     wtc.perform(get(String.format("/customers/%d", result.getId()))).andExpect(status().isOk())
@@ -70,7 +70,7 @@ public class CustomerControllerTest {
   public void getPersons() throws Exception {
     // Setup: add person
     Customer result = ControllerHelper.addCustomerAndGetResult(wtc, "Jaakko Jokkela", "jaska193@mbnet.fi", null,
-        userId);
+        userId, tc.getCountryIdOfFinland());
 
     // Now check Jaakko got there.
     wtc.perform(get("/customers/" + result.getId())).andExpect(status().isOk())
@@ -86,12 +86,13 @@ public class CustomerControllerTest {
   public void updatePerson() throws Exception {
     // Setup: add person
     Customer result = ControllerHelper.addCustomerAndGetResult(wtc, "Timofei Tsurunenko", "timofei@tsurunen.org", null,
-        userId);
+        userId, tc.getCountryIdOfFinland());
 
     Customer newPerson = new Customer();
     newPerson.setPostalAddress(new PostalAddress(null, null, "Imatra"));
     newPerson.setName("Timpe");
     newPerson.setType(CustomerType.PERSON);
+    newPerson.setCountryId(tc.getCountryIdOfFinland());
     CustomerChange customerChange = new CustomerChange(userId, newPerson);
     wtc.perform(put(String.format("/customers/%d", result.getId())), customerChange).andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.postalAddress.city", is("Imatra")));
@@ -104,6 +105,7 @@ public class CustomerControllerTest {
     person.setPostalAddress(new PostalAddress(null, null, "Imatra"));
     person.setName("Timpe");
     person.setType(CustomerType.PERSON);
+    person.setCountryId(tc.getCountryIdOfFinland());
     CustomerChange customerChange = new CustomerChange(userId, person);
     wtc.perform(put(String.format("/customers/27312")), customerChange).andExpect(status().isNotFound());
   }

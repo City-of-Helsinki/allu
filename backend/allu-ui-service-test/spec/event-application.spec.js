@@ -45,7 +45,8 @@ describe('Event application', () => {
         },
         'email': 'hernari@hernerokka.fi',
         'phone': '03-1234567',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [herneContactNew]
     };
@@ -77,7 +78,8 @@ describe('Event application', () => {
         },
         'email': 'info@tervaajat.fi',
         'phone': '09-1234567',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [tervaContactNew]
     };

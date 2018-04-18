@@ -24,6 +24,8 @@ public class CustomerJson {
   private boolean invoicingProhibited;
   private String invoicingOperator;
   private boolean invoicingOnly;
+  @NotBlank(message = "{customer.country}")
+  private String country;
 
   /**
    * in Finnish: Tietokantatunniste
@@ -167,4 +169,11 @@ public class CustomerJson {
     this.invoicingOnly = invoicingOnly;
   }
 
+  public String getCountry() {
+    return country;
+  }
+
+  public void setCountry(String country) {
+    this.country = country;
+  }
 }

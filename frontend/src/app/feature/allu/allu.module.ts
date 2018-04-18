@@ -49,6 +49,7 @@ import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
 import {RootErrorNotificationService} from './effects/root-error-notification.service';
+import {CodeSetService} from '../../service/codeset/codeset.service';
 
 @NgModule({
   imports: [
@@ -102,6 +103,7 @@ import {RootErrorNotificationService} from './effects/root-error-notification.se
     CurrentUser,
     ConfigService,
     RootErrorNotificationService,
+    CodeSetService,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({

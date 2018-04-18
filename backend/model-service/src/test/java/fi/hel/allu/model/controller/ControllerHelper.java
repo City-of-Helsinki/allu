@@ -21,12 +21,13 @@ public class ControllerHelper {
    * Helper for adding a person customer.
    */
   public static ResultActions addPersonCustomer(WebTestCommon wtc, String name, String email, Integer id,
-      Integer userId) throws Exception {
+      Integer userId, Integer countryId) throws Exception {
     Customer customer = new Customer();
     customer.setName(name);
     customer.setType(CustomerType.PERSON);
     customer.setEmail(email);
     customer.setId(id);
+    customer.setCountryId(countryId);
     CustomerChange customerChange = new CustomerChange(userId, customer);
     return wtc.perform(post("/customers"), customerChange);
   }
@@ -35,14 +36,14 @@ public class ControllerHelper {
    * Add person, read response as Person
    */
   public static Customer addCustomerAndGetResult(WebTestCommon wtc, String name, String email, Integer id,
-      Integer userId) throws Exception {
-    ResultActions resultActions = ControllerHelper.addPersonCustomer(wtc, name, email, id, userId)
+      Integer userId, Integer countryId) throws Exception {
+    ResultActions resultActions = ControllerHelper.addPersonCustomer(wtc, name, email, id, userId, countryId)
         .andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Customer.class);
   }
 
-  public static void addDummyCustomer(WebTestCommon wtc, Application application, Integer userId) throws Exception {
-    Customer customer = ControllerHelper.addCustomerAndGetResult(wtc, "teppo turma", "hiidensurma@fi", 1, userId);
+  public static void addDummyCustomer(WebTestCommon wtc, Application application, Integer userId, Integer countryId) throws Exception {
+    Customer customer = ControllerHelper.addCustomerAndGetResult(wtc, "teppo turma", "hiidensurma@fi", 1, userId, countryId);
     application.setCustomersWithContacts(
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
   }

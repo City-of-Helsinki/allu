@@ -51,7 +51,8 @@ describe('Temporary traffic announcement application', () => {
         },
         'email': 'lasse.liikennejarjestelija@liikennejarjestely.com',
         'phone': '040098765',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [lasseContactNew]
     };
@@ -71,7 +72,8 @@ describe('Temporary traffic announcement application', () => {
         },
         'email': 'suorittaja@liikennejarjestelyt.com',
         'phone': '0421431234',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [vainoContactNew]
     };

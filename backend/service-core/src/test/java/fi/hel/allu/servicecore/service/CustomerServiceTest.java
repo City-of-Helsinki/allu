@@ -1,5 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.CodeSetType;
+import fi.hel.allu.model.domain.CodeSet;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
@@ -26,6 +28,8 @@ public class CustomerServiceTest extends MockServices {
 
   @Mock
   private UserService userService;
+  @Mock
+  private CodeSetService codeSetService;
 
   protected CustomerService customerService;
 
@@ -41,9 +45,13 @@ public class CustomerServiceTest extends MockServices {
     initSaveMocks();
     initSearchMocks();
     customerService = new CustomerService(
-        props, restTemplate, new CustomerMapper(userService), Mockito.mock(SearchService.class),
+        props, restTemplate, new CustomerMapper(userService, codeSetService), Mockito.mock(SearchService.class),
         Mockito.mock(ContactService.class), userService, Mockito.mock(PersonAuditLogService.class));
     when(userService.getCurrentUser()).thenReturn(new UserJson());
+    when(codeSetService.findByTypeAndCode(Mockito.eq(CodeSetType.Country), Mockito.anyString()))
+        .thenReturn(new CodeSet(CodeSetType.Country, "FI", "Suomi", null));
+    when(codeSetService.findById(Mockito.anyInt()))
+        .thenReturn(new CodeSet(CodeSetType.Country, "FI", "Suomi", null));
   }
 
   @Test

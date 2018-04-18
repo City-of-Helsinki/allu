@@ -10,6 +10,9 @@ import {ComplexValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {CustomerSearchQuery} from '../../../service/customer/customer-search-query';
+import {CodeSetService} from '../../../service/codeset/codeset.service';
+import {CodeSet} from '../../../model/codeset/codeset';
+import {postalCodeValidator} from '../../../util/complex-validator';
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
@@ -32,19 +35,25 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
 
   matchingNameCustomers: Observable<Array<Customer>>;
   matchingRegistryKeyCustomers: Observable<Array<Customer>>;
+  countries: Observable<Array<CodeSet>>;
   customerTypes = EnumUtil.enumValues(CustomerType);
   typeSubscription: Subscription;
   registryKeyControl: FormControl;
+  countrySubscription: Subscription;
 
   private nameControl: FormControl;
   private typeControl: FormControl;
+  private countryControl: FormControl;
+  private postalCodeControl: FormControl;
 
-  constructor(private customerService: CustomerService) {}
+  constructor(private customerService: CustomerService, private codeSetService: CodeSetService) {}
 
   ngOnInit() {
     this.nameControl = <FormControl>this.form.get('name');
     this.typeControl = <FormControl>this.form.get('type');
     this.registryKeyControl = <FormControl>this.form.get('registryKey');
+    this.countryControl = <FormControl>this.form.get('country');
+    this.postalCodeControl = <FormControl> this.form.get('postalAddress').get('postalCode');
 
     this.matchingNameCustomers = this.nameControl.valueChanges
       .debounceTime(DEBOUNCE_TIME_MS)
@@ -57,10 +66,16 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.typeSubscription = this.typeControl.valueChanges
       .map((type: string) => CustomerType[type])
       .subscribe(type => this.updateRegistryKeyValidators(type));
+
+    this.countrySubscription = this.countryControl.valueChanges
+      .subscribe(country => this.updatePostalAddressValidator(country));
+
+    this.countries = this.codeSetService.getCountries();
   }
 
   ngOnDestroy(): void {
     this.typeSubscription.unsubscribe();
+    this.countrySubscription.unsubscribe();
   }
 
   onSearchChange(terms: CustomerSearchQuery): Observable<Array<Customer>> {
@@ -98,6 +113,15 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
 
   get existingCustomer(): boolean {
     return NumberUtil.isDefined(this.form.value.id);
+  }
+
+  private updatePostalAddressValidator(country: string): void {
+    if (country === 'FI') {
+      this.postalCodeControl.setValidators(postalCodeValidator);
+    } else {
+      this.postalCodeControl.setValidators([]);
+    }
+    this.postalCodeControl.updateValueAndValidity();
   }
 
   private updateRegistryKeyValidators(type: CustomerType): void {

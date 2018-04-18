@@ -1142,4 +1142,16 @@ public class ApplicationProperties {
   public String getPersonAuditLogUrl() {
     return getModelServiceUrl("/personauditlog/log");
   }
+
+  public String getCodeSetFindByIdUrl() {
+    return getModelServiceUrl("/codesets/{id}");
+  }
+
+  public String getCodeSetFindByTypeUrl() {
+    return getModelServiceUrl("/codesets/search?type={type}");
+  }
+
+  public String getCodeSetFindByTypeAndCodeUrl() {
+    return getModelServiceUrl("/codesets/find?type={type}&code={code}");
+  }
 }

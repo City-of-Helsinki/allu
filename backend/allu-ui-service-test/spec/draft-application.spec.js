@@ -19,7 +19,8 @@ describe('Application draft', () => {
 			'city' : 'Ankkalinna',
 			'email' : 'aku@ankka.fi',
 			'phone' : '03-13131313',
-			'active' : true
+			'active' : true,
+			'country': 'FI'
 		};
 
 		const applicantCustomerWithContactsNew = {
@@ -37,7 +38,8 @@ describe('Application draft', () => {
 				},
 				'email' : 'katti@vaara.fi',
 				'phone' : '13-131313',
-				'active' : true
+				'active' : true,
+				'country': 'FI'
 			},
 			'contacts' : [ applicantContactNew ]
 		};

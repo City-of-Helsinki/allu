@@ -1,6 +1,9 @@
 package fi.hel.allu.servicecore.mapper;
 
+import fi.hel.allu.common.domain.types.CodeSetType;
+
 import java.util.Collections;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,12 +12,15 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.model.domain.CodeSet;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.CodeSetService;
 import fi.hel.allu.servicecore.service.UserService;
 
 
+import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -22,12 +28,16 @@ public class CustomerMapperTest {
 
   @Mock
   private UserService userService;
+  @Mock
+  private CodeSetService codeSetService;
 
   private CustomerMapper customerMapper;
 
   @Before
   public void setup() {
-    customerMapper = new CustomerMapper(userService);
+    customerMapper = new CustomerMapper(userService, codeSetService);
+    when(codeSetService.findById(Mockito.anyInt()))
+        .thenReturn(new CodeSet(CodeSetType.Country, "FI", "Suomi", null));
   }
 
   @Test

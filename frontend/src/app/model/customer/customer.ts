@@ -11,6 +11,7 @@ export class Customer {
     public postalAddress?: PostalAddress,
     public email?: string,
     public phone?: string,
+    public country?: string,
     public active = true,
     public sapCustomerNumber?: string,
     public invoicingProhibited = false,

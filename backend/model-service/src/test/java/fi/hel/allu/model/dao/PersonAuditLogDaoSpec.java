@@ -15,6 +15,7 @@ import fi.hel.allu.model.domain.PersonAuditLogLog;
 import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import fi.hel.allu.model.testUtils.TestCommon;
 import static org.junit.Assert.assertEquals;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +33,15 @@ import java.util.Optional;
 public class PersonAuditLogDaoSpec extends SpeccyTestBase {
 
   @Autowired
-  PersonAuditLogDao personAuditLogDao;
+  private PersonAuditLogDao personAuditLogDao;
   @Autowired
-  CustomerDao customerDao;
+  private CustomerDao customerDao;
   @Autowired
-  ContactDao contactDao;
+  private ContactDao contactDao;
   @Autowired
   private UserDao userDao;
-
+  @Autowired
+  private TestCommon testCommon;
 
   private Customer testCustomer;
   private Contact testContact;
@@ -58,6 +60,7 @@ public class PersonAuditLogDaoSpec extends SpeccyTestBase {
       testCustomer.setRegistryKey("111111-1111");
       testCustomer.setPhone("12345");
       testCustomer.setPostalAddress(testPostalAddress);
+      testCustomer.setCountryId(testCommon.getCountryIdOfFinland());
 
       testContact = new Contact();
       testContact.setCustomerId(null);

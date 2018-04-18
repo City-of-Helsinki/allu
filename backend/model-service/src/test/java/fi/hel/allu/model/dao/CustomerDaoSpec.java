@@ -5,7 +5,6 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
@@ -24,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import fi.hel.allu.model.testUtils.TestCommon;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -37,6 +37,8 @@ public class CustomerDaoSpec extends SpeccyTestBase {
   ApplicationDao applicationDao;
   @Autowired
   ContactDao contactDao;
+  @Autowired
+  TestCommon testCommon;
 
   private Customer testCustomer;
   private Contact testContact = new Contact();
@@ -56,6 +58,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
       testCustomer.setRegistryKey("111111-1111");
       testCustomer.setPhone("12345");
       testCustomer.setPostalAddress(testPostalAddress);
+      testCustomer.setCountryId(testCommon.getCountryIdOfFinland());
 
       testContact.setCustomerId(null);
       testContact.setEmail("test@email.fi");
@@ -209,6 +212,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
     customer.setRegistryKey("Registry " + i);
     customer.setPhone("Phone " + i);
     customer.setPostalAddress(new PostalAddress("Street " + i, "Postal code " + i, "City " + i));
+    customer.setCountryId(testCommon.getCountryIdOfFinland());
     return customer;
   }
 }

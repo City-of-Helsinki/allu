@@ -51,7 +51,8 @@ describe('Placement contract application', () => {
         },
         'email': 'seppo.sijoittaja@sijoitussopimus.com',
         'phone': '040095634',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [applicantContactNew]
     };
@@ -71,7 +72,8 @@ describe('Placement contract application', () => {
         },
         'email': 'sijoittaja@sijoitusfirmaoyab.com',
         'phone': '0421457564',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [representativeContactNew]
     };

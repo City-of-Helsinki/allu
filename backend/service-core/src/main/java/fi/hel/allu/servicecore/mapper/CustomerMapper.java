@@ -1,7 +1,10 @@
 package fi.hel.allu.servicecore.mapper;
 
+import fi.hel.allu.common.domain.types.CodeSetType;
+
 import java.util.*;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.RoleType;
@@ -13,20 +16,23 @@ import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.CodeSetService;
 import fi.hel.allu.servicecore.service.UserService;
 
 @Component
 public class CustomerMapper {
 
-  private UserService userService;
+  private final UserService userService;
+  private final CodeSetService codeSetService;
 
   private static final Set<RoleType> canSeeSsn = new HashSet<>(Arrays.asList(
       RoleType.ROLE_CREATE_APPLICATION,
       RoleType.ROLE_PROCESS_APPLICATION,
       RoleType.ROLE_INVOICING));
 
-  public CustomerMapper(UserService userService) {
+  public CustomerMapper(UserService userService, CodeSetService codeSetService) {
     this.userService = userService;
+    this.codeSetService = codeSetService;
   }
 
   public CustomerJson createCustomerJson(Customer customer) {
@@ -44,6 +50,7 @@ public class CustomerMapper {
     customerJson.setInvoicingProhibited(customer.isInvoicingProhibited());
     customerJson.setInvoicingOperator(customer.getInvoicingOperator());
     customerJson.setInvoicingOnly(customer.isInvoicingOnly());
+    customerJson.setCountry(codeSetService.findById(customer.getCountryId()).getCode());
     return customerJson;
   }
 
@@ -62,6 +69,7 @@ public class CustomerMapper {
     customerModel.setInvoicingProhibited(customerJson.isInvoicingProhibited());
     customerModel.setInvoicingOperator(customerJson.getInvoicingOperator());
     customerModel.setInvoicingOnly(customerJson.isInvoicingOnly());
+    customerModel.setCountryId(codeSetService.findByTypeAndCode(CodeSetType.Country, customerJson.getCountry()).getId());
     return customerModel;
   }
 

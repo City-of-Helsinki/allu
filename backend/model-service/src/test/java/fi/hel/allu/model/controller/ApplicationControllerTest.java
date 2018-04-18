@@ -505,7 +505,7 @@ public class ApplicationControllerTest {
   // Helper to insert an application. Returns the result application.
   private Application insertApplication(Application appIn) throws Exception {
     Integer userId = testCommon.insertUser("dummyUser" + System.currentTimeMillis()).getId();
-    ControllerHelper.addDummyCustomer(wtc, appIn, userId);
+    ControllerHelper.addDummyCustomer(wtc, appIn, userId, testCommon.getCountryIdOfFinland());
     ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }

@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.service;
 
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.model.domain.*;
@@ -125,6 +124,7 @@ public abstract class MockServices {
     customerJson.setType(CustomerType.COMPANY);
     customerJson.setName("noname");
     customerJson.setRegistryKey("444444");
+    customerJson.setCountry("FI");
     return customerJson;
   }
 

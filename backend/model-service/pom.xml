@@ -481,6 +481,11 @@
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToStoredFilterType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>codeset</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToCodeSetType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

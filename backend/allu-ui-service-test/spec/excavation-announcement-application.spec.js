@@ -56,7 +56,8 @@ describe('Excavation announcement application', () => {
         },
         'email': 'pena@puhallus.fi',
         'phone': '0441212121',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [applicantContactNew]
     };
@@ -74,7 +75,8 @@ describe('Excavation announcement application', () => {
           'postalCode': '00100',
           'city': 'Helsinki'
         },
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [contractorContactNew]
     };
