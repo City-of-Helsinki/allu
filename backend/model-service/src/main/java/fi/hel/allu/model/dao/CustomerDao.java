@@ -217,7 +217,8 @@ public class CustomerDao {
         .distinct()
         .from(application)
         .join(tag).on(tag.applicationId.eq(application.id))
-        .where(application.status.ne(StatusType.REPLACED).and(tag.type.eq(ApplicationTagType.SAP_ID_MISSING))
+        .where(application.status.notIn(StatusType.REPLACED, StatusType.CANCELLED)
+        .and(tag.type.eq(ApplicationTagType.SAP_ID_MISSING))
         .and(
               SQLExpressions.select(replacingApplication.id)
               .from(replacingApplication)

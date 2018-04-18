@@ -4,6 +4,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
+import fi.hel.allu.QApplication;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Invoice;
@@ -143,9 +144,13 @@ public class InvoiceDao {
    */
   @Transactional(readOnly = true)
   public List<Invoice> findPending() {
+    QApplication application =  QApplication.application;
     return queryFactory.select(invoice.id).from(invoice)
-        .where(invoice.invoicableTime.before(ZonedDateTime.now()).and(invoice.invoiced.ne(true))
-            .and(invoice.sapIdPending.isFalse()))
+        .join(application).on(application.id.eq(invoice.applicationId))
+        .where(invoice.invoicableTime.before(ZonedDateTime.now())
+            .and(invoice.invoiced.ne(true))
+            .and(invoice.sapIdPending.isFalse())
+            .and(application.status.ne(StatusType.CANCELLED)))
         .fetch().stream()
         .map(id -> find(id)).filter(Optional::isPresent).map(Optional::get)
           .filter(i -> isNotReplaced(i.getApplicationId()))
