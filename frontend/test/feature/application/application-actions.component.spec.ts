@@ -206,14 +206,14 @@ describe('ApplicationActionsComponent', () => {
     expect(getButtonWithText(de, findTranslation('common.button.save').toUpperCase())).toBeUndefined();
   });
 
-  it('should show cancel button when status is before decision', () => {
-    applicationStore.updateStatus(ApplicationStatus.DECISIONMAKING);
-    setAndInit(true);
-    expect(getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase())).toBeDefined();
-
+  it('should show cancel button when status is decision or before', () => {
     applicationStore.updateStatus(ApplicationStatus.DECISION);
     setAndInit(true);
-    expect(getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase())).toBeUndefined();
+    expect(getButtonWithText(de, findTranslation('application.button.cancel').toUpperCase())).toBeDefined();
+
+    applicationStore.updateStatus(ApplicationStatus.FINISHED);
+    setAndInit(true);
+    expect(getButtonWithText(de, findTranslation('application.button.cancel').toUpperCase())).toBeUndefined();
   });
 
   it('should change application as canceled on approve', fakeAsync(() => {
@@ -227,7 +227,7 @@ describe('ApplicationActionsComponent', () => {
     spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(true));
     spyOn(dialog, 'open').and.returnValue(dialogRef);
 
-    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase());
+    const cancelBtn = getButtonWithText(de, findTranslation('application.button.cancel').toUpperCase());
     cancelBtn.click();
     tickAndDetect();
 
@@ -247,7 +247,7 @@ describe('ApplicationActionsComponent', () => {
     spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(false));
     spyOn(dialog, 'open').and.returnValue(dialogRef);
 
-    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase());
+    const cancelBtn = getButtonWithText(de, findTranslation('application.button.cancel').toUpperCase());
     cancelBtn.click();
     tickAndDetect();
 
