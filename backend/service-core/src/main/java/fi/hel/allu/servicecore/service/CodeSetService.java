@@ -37,7 +37,6 @@ public class CodeSetService {
   public CodeSet findByTypeAndCode(CodeSetType type, String code) {
     final ResponseEntity<CodeSet> result = restTemplate
         .getForEntity(applicationProperties.getCodeSetFindByTypeAndCodeUrl(), CodeSet.class, type, code);
-    CodeSet c = result.getBody();
     return result.getBody();
   }
 }

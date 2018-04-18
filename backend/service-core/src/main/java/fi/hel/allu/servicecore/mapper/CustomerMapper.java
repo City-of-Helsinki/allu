@@ -50,7 +50,9 @@ public class CustomerMapper {
     customerJson.setInvoicingProhibited(customer.isInvoicingProhibited());
     customerJson.setInvoicingOperator(customer.getInvoicingOperator());
     customerJson.setInvoicingOnly(customer.isInvoicingOnly());
-    customerJson.setCountry(codeSetService.findById(customer.getCountryId()).getCode());
+    if (customer.getCountryId() != null) {
+      customerJson.setCountry(codeSetService.findById(customer.getCountryId()).getCode());
+    }
     return customerJson;
   }
 
@@ -69,7 +71,9 @@ public class CustomerMapper {
     customerModel.setInvoicingProhibited(customerJson.isInvoicingProhibited());
     customerModel.setInvoicingOperator(customerJson.getInvoicingOperator());
     customerModel.setInvoicingOnly(customerJson.isInvoicingOnly());
-    customerModel.setCountryId(codeSetService.findByTypeAndCode(CodeSetType.Country, customerJson.getCountry()).getId());
+    if (customerJson.getCountry() != null) {
+      customerModel.setCountryId(codeSetService.findByTypeAndCode(CodeSetType.Country, customerJson.getCountry()).getId());
+    }
     return customerModel;
   }
 
