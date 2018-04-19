@@ -6,11 +6,15 @@ import {
 import * as fromApplications from './application-reducer';
 import * as fromProject from './project-reducer';
 import * as fromSearch from './application-search-reducer';
+import * as fromParentProjects from './parent-project-reducer';
+import * as fromChildProjects from './child-project-reducer';
 
 export interface ProjectState {
   project: fromProject.State;
   applications: fromApplications.State;
   search: fromSearch.State;
+  parents: fromParentProjects.State;
+  children: fromChildProjects.State;
 }
 
 export interface State {
@@ -20,7 +24,9 @@ export interface State {
 export const reducers: ActionReducerMap<ProjectState> = {
   project: fromProject.reducer,
   applications: fromApplications.reducer,
-  search: fromSearch.reducer
+  search: fromSearch.reducer,
+  parents: fromParentProjects.reducer,
+  children: fromChildProjects.reducer
 };
 
 export const getProjectState = createFeatureSelector<ProjectState>('project');
@@ -35,7 +41,6 @@ export const getCurrentProject = createSelector(
   getProjectEntitiesState,
   fromProject.getCurrent
 );
-
 
 // Application selectors
 export const getProjectApplicationsState = createSelector(
@@ -62,4 +67,32 @@ export const getSearchState = createSelector(
 export const getMatchingApplications = createSelector(
   getSearchState,
   fromSearch.getMatchingApplications
+);
+
+// Parent selectors
+export const getParentsState = createSelector(
+  getProjectState,
+  (state: ProjectState) => state.parents
+);
+
+export const getParentProjects = createSelector(
+  getParentsState,
+  fromParentProjects.getProjects
+);
+
+// Child selectors
+export const getChildrenState = createSelector(
+  getProjectState,
+  (state: ProjectState) => state.children
+);
+
+export const getChildProjects = createSelector(
+  getChildrenState,
+  fromChildProjects.getProjects
+);
+
+export const getRelatedProjects = createSelector(
+  getParentProjects,
+  getChildProjects,
+  (parents, children) => [].concat(parents, children)
 );

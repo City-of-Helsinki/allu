@@ -45,6 +45,13 @@ export const workqueue_searchable = [
   ApplicationStatus.CANCELLED
 ];
 
+export const decided = [
+  ApplicationStatus.DECISION,
+  ApplicationStatus.REJECTED,
+  ApplicationStatus.FINISHED,
+  ApplicationStatus.ARCHIVED
+];
+
 export enum ApplicationStatusGroup {
   PRELIMINARY,
   HANDLING,

@@ -23,6 +23,9 @@ import {ApplicationEffects} from './effects/application-effects';
 import {ApplicationSelectComponent} from './applications/application-select.component';
 import {SearchEffects} from './effects/search-effects';
 import {ProjectApplicationsComponent} from './applications/project-applications.component';
+import {ProjectHeaderComponent} from './header/project-header.component';
+import {ParentProjectEffects} from './effects/parent-project-effects';
+import {ChildProjectEffects} from './effects/child-project-effects';
 
 @NgModule({
   imports: [
@@ -41,11 +44,14 @@ import {ProjectApplicationsComponent} from './applications/project-applications.
     StoreModule.forFeature('project', reducers),
     EffectsModule.forFeature([
       ApplicationEffects,
-      SearchEffects
+      SearchEffects,
+      ParentProjectEffects,
+      ChildProjectEffects
     ]),
   ],
   declarations: [
     ProjectComponent,
+    ProjectHeaderComponent,
     ProjectEditComponent,
     ProjectSearchComponent,
     ProjectSummaryComponent,

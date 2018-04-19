@@ -17,6 +17,7 @@
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
 @import '../app/feature/common/card/allu-card.component.theme';
 @import '../app/feature/stored-filter/stored-filter.component.theme';
+@import '../app/feature/project/header/project-header.component.theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
 
 // Theme components
@@ -33,6 +34,7 @@
 @include table-theme($allu-theme);
 @include oval-theme($allu-theme);
 @include bottom-bar-theme($allu-theme);
+@include project-header-theme($allu-theme);
 
 // Reset
 html,

@@ -7,12 +7,16 @@ import {
   ApplicationActionTypes as ProjectApplicationActionType
 } from '../../project/actions/application-actions';
 import {ActionWithPayload} from '../../common/action-with-payload';
+import {ParentProjectActionType} from '../../project/actions/parent-project-actions';
+import {ChildProjectActionType} from '../../project/actions/child-project-actions';
 
 const handledActions = [
   ProjectActionTypes.LoadFailed,
   ProjectApplicationActionType.LoadFailed,
   ProjectApplicationActionType.AddFailed,
-  ProjectApplicationActionType.RemoveFailed
+  ProjectApplicationActionType.RemoveFailed,
+  ParentProjectActionType.LoadFailed,
+  ChildProjectActionType.LoadFailed
 ];
 
 @Injectable()

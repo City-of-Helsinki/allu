@@ -1,17 +1,14 @@
-<div class="row search-bar">
-  <h1>
-        <span *ngIf="project">
-            <span>HANKE {{project.id}}: {{project.name}} -</span>
-            <span *ngIf="project.active">AKTIIVINEN</span>
-            <span *ngIf="!project.active">INAKTIIVINEN</span>
-        </span>
-  </h1>
+<div class="page-header">
+  <project-header [project]="project$ | async"
+                  [applications]="applications$ | async"
+                  [relatedProjects]="relatedProjectCount$ | async">
+  </project-header>
 </div>
-<div class="row">
-  <div class="col m1">
+<div fxLayout="row">
+  <div fxFlex="0 1 auto">
     <sidebar [items]="sidebarItems"></sidebar>
   </div>
-  <div class="col m11">
+  <div fxFlex="90">
     <router-outlet></router-outlet>
   </div>
 </div>

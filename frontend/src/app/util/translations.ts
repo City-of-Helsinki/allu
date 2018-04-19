@@ -412,6 +412,9 @@ export const translations = {
   },
   project: {
     title: 'Hanke',
+    activeApplications: 'Aktiivista hakemusta',
+    decidedApplications: 'Päätettyä hakemusta',
+    relatedProjects: 'Liittyvää hanketta',
     info: {
       title: 'Hankkeen perustiedot',
       owner: 'Hankkeen omistaja',
@@ -432,8 +435,8 @@ export const translations = {
     ownerName: 'Omistaja',
     state: 'Tila',
     active: {
-      false: 'INAKTIIVINEN',
-      true: 'AKTIIVINEN'
+      false: 'Inaktiivinen',
+      true: 'Aktiivinen'
     },
     startTime: 'Alku',
     endTime: 'Loppu',

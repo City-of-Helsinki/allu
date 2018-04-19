@@ -1,0 +1,35 @@
+:host ::ng-deep mat-card {
+  padding: 0 24px;
+
+  h1 {
+    margin: 18px 0;
+  }
+}
+
+.project-header-item {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+@mixin project-header-item-content {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.item-count {
+  @include project-header-item-content;
+  font-size: 50px;
+  font-weight: normal;
+}
+
+.item-description {
+  @include project-header-item-content;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: start;
+  max-width: 100px;
+  -ms-word-break: break-word;
+  word-break: break-word;
+  padding-left: 12px;
+}
