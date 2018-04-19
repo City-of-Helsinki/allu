@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.model.pricing.PricingExplanator;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerType;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
 /**
  *
  * The service class for price calculations
@@ -35,9 +35,10 @@ import java.util.stream.Collectors;
 @Service
 public class PricingService {
 
-  private PricingDao pricingDao;
-  private LocationDao locationDao;
-  private CustomerDao customerDao;
+  private final PricingDao pricingDao;
+  private final LocationDao locationDao;
+  private final CustomerDao customerDao;
+  private final PricingExplanator pricingExplanator;
 
   private static final Location EMPTY_LOCATION;
 
@@ -51,6 +52,7 @@ public class PricingService {
     this.pricingDao = pricingDao;
     this.locationDao = locationDao;
     this.customerDao = customerDao;
+    this.pricingExplanator = new PricingExplanator(locationDao);
   }
 
   /**
@@ -128,7 +130,8 @@ public class PricingService {
     // items? This works anyway as long as only area rentals have multiple
     // locations
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
-    ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, applicationArea, isCompany(application));
+    ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, pricingExplanator,
+        applicationArea, isCompany(application));
     pricing.calculatePrice();
     return pricing.getChargeBasisEntries();
   }

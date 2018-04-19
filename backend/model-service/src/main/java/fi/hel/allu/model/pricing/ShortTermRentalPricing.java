@@ -12,6 +12,7 @@ import java.util.Optional;
 public class ShortTermRentalPricing extends Pricing {
 
   private final Application application;
+  private final PricingExplanator explanationService;
   private final double applicationArea;
   private final boolean customerIsCompany;
 
@@ -66,11 +67,12 @@ public class ShortTermRentalPricing extends Pricing {
     static final String CIRCUS = "Sirkukset ja tivolit";
   }
 
-  public ShortTermRentalPricing(Application application, double applicationArea, boolean customerIsCompany) {
+  public ShortTermRentalPricing(Application application, PricingExplanator explanationService, double applicationArea, boolean customerIsCompany) {
     super();
     this.application = application;
     this.applicationArea = applicationArea;
     this.customerIsCompany = customerIsCompany;
+    this.explanationService = explanationService;
   }
 
 
@@ -86,12 +88,14 @@ public class ShortTermRentalPricing extends Pricing {
     case ART:
       // Free event
       setPriceInCents(0);
-      addChargeBasisEntry(ChargeBasisTag.ShortTermRentalArt(), ChargeBasisUnit.PIECE, 1.0, 0, InvoiceLines.ART, 0);
+      addChargeBasisEntry(ChargeBasisTag.ShortTermRentalArt(), ChargeBasisUnit.PIECE, 1.0, 0,
+          InvoiceLines.ART, 0, explanationService.getExplanation(application));
       break;
     case SMALL_ART_AND_CULTURE:
       // Free event
       setPriceInCents(0);
-      addChargeBasisEntry(ChargeBasisTag.ShortTermRentalSmallArtAndCulture(), ChargeBasisUnit.PIECE, 1.0, 0, InvoiceLines.SMALL_ART_AND_CULTURE, 0);
+      addChargeBasisEntry(ChargeBasisTag.ShortTermRentalSmallArtAndCulture(), ChargeBasisUnit.PIECE, 1.0, 0,
+          InvoiceLines.SMALL_ART_AND_CULTURE, 0, explanationService.getExplanation(application));
       break;
     case BENJI:
       // 320 EUR/day
@@ -121,12 +125,12 @@ public class ShortTermRentalPricing extends Pricing {
         setPriceInCents(DOG_TRAINING_EVENT_COMPANY_PRICE);
           addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
               DOG_TRAINING_EVENT_COMPANY_PRICE, InvoiceLines.DOG_TRAINING_EVENT_COM,
-            DOG_TRAINING_EVENT_COMPANY_PRICE);
+            DOG_TRAINING_EVENT_COMPANY_PRICE, explanationService.getExplanation(application));
       } else {
         setPriceInCents(DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
           addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
               DOG_TRAINING_EVENT_ASSOCIATION_PRICE, InvoiceLines.DOG_TRAINING_EVENT_ORG,
-            DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
+            DOG_TRAINING_EVENT_ASSOCIATION_PRICE, explanationService.getExplanation(application));
       }
       break;
     case DOG_TRAINING_FIELD:
@@ -161,7 +165,7 @@ public class ShortTermRentalPricing extends Pricing {
       } else {
         // free of charge
           addChargeBasisEntry(ChargeBasisTag.ShortTermRentalPromotionOrSales(), ChargeBasisUnit.PIECE, 1, 0,
-              InvoiceLines.PROMOTION_OR_SALES_SMALL, 0);
+              InvoiceLines.PROMOTION_OR_SALES_SMALL, 0, explanationService.getExplanation(application));
         setPriceInCents(0);
       }
       break;
@@ -202,7 +206,7 @@ public class ShortTermRentalPricing extends Pricing {
         chronoUnit);
     int priceInCents = centsPerUnit * units;
     addChargeBasisEntry(chargeBasisTag, toChargeBasisUnit(chronoUnit), units, centsPerUnit, chargeBasisText,
-        priceInCents);
+        priceInCents, explanationService.getExplanation(application));
     setPriceInCents(priceInCents);
   }
 
@@ -241,7 +245,7 @@ public class ShortTermRentalPricing extends Pricing {
     int fullPriceUnits = longTermDiscount ? Math.min(numTimeUnits, LONG_TERM_DISCOUNT_LIMIT) : numTimeUnits;
     long price = numAreaUnits * fullPriceUnits * priceInCents;
     addChargeBasisEntry(chargeBasisTag, toChargeBasisUnit(pricePeriod), fullPriceUnits, numAreaUnits * priceInCents,
-        chargeBasisText, (int) price);
+        chargeBasisText, (int) price,  explanationService.getExplanation(application));
 
     if (longTermDiscount == true && numTimeUnits > LONG_TERM_DISCOUNT_LIMIT) {
       // 50% discount for extra days
@@ -249,7 +253,7 @@ public class ShortTermRentalPricing extends Pricing {
       long discountPrice = numAreaUnits * numDiscountUnits * priceInCents / 2;
       addChargeBasisEntry(chargeBasisTagLongTerm, toChargeBasisUnit(pricePeriod), numDiscountUnits,
           numAreaUnits * priceInCents / 2,
-          chargeBasisTextLongTerm, (int) discountPrice);
+          chargeBasisTextLongTerm, (int) discountPrice, explanationService.getExplanation(application));
       price += discountPrice;
     }
     setPriceInCents((int) price);
@@ -267,7 +271,7 @@ public class ShortTermRentalPricing extends Pricing {
 
     addChargeBasisEntry(ChargeBasisTag.ShortTermRentalUrbanFarming(), ChargeBasisUnit.SQUARE_METER, billableArea,
         URBAN_FARMING_TERM_PRICE * numTerms,
-        InvoiceLines.URBAN_FARMING, netPrice);
+        InvoiceLines.URBAN_FARMING, netPrice, explanationService.getExplanation(application));
     setPriceInCents(netPrice);
   }
 

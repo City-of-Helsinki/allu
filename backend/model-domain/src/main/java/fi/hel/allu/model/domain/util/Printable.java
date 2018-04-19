@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -60,13 +61,30 @@ public class Printable {
   }
 
   public static String forFixedLocation(FixedLocation fixedLocation) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder builder = new StringBuilder();
     if (fixedLocation != null) {
-      buffer.append(fixedLocation.getArea());
+      builder.append(fixedLocation.getArea());
       if (fixedLocation.getSection() != null) {
-        buffer.append(", lohko " + fixedLocation.getSection());
+        builder.append(", lohko ");
+        builder.append(fixedLocation.getSection());
       }
     }
-    return buffer.toString();
+    return builder.toString();
+  }
+
+  public static String forFixedLocations(List<FixedLocation> fixedLocations) {
+    final StringBuilder builder = new StringBuilder();
+    for (FixedLocation fixedLocation : fixedLocations) {
+      if (fixedLocation != null) {
+        if (builder.length() == 0) {
+          builder.append(fixedLocation.getArea());
+        }
+        if (fixedLocation.getSection() != null) {
+          builder.append(", lohko ");
+          builder.append(fixedLocation.getSection());
+        }
+      }
+    }
+    return builder.toString();
   }
 }
