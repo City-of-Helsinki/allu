@@ -292,7 +292,7 @@ public class ApplicationReplacementServiceTest {
     originalApplication.setName("Application name");
     originalApplication.setNotBillable(false);
     originalApplication.setNotBillableReason("Not billable reason");
-    originalApplication.setProjectId(testCommon.insertProject());
+    originalApplication.setProjectId(testCommon.insertProject("orig"));
     originalApplication.setRecurringEndTime(ZonedDateTime.now().plusDays(22));
     originalApplication.setStartTime(STARTTIME);
     originalApplication.setType(ApplicationType.EVENT);

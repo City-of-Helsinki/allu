@@ -35,7 +35,7 @@ export class ProjectSearchComponent implements OnInit {
               private cityDistrictService: CityDistrictService,
               fb: FormBuilder) {
     this.queryForm = fb.group({
-      id: undefined,
+      identifier: undefined,
       startTime: undefined,
       endTime: undefined,
       ownerName: undefined,
@@ -52,6 +52,7 @@ export class ProjectSearchComponent implements OnInit {
 
   search(): void {
     const query = ProjectSearchQuery.fromForm(this.queryForm.value);
+    console.log(query);
     this.dataSource.searchChange(query);
   }
 

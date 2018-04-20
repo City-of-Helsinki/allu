@@ -4,7 +4,7 @@
       <div fxFlex="50%">
         <h1>
           <span>{{'project.title' | translation | uppercase}} {{project.id}}: {{project.name}} -</span>
-          <span *ngIf="project.active">{{['project.active', project.active] | translation}}</span>
+          <span>{{['project.active', project.active] | translation}}</span>
         </h1>
       </div>
       <div fxFlex class="project-header-item">

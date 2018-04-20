@@ -7,20 +7,25 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.util.Collections;
 import java.util.Set;
 
 public class ProjectServiceTest extends MockServices {
   private static Validator validator;
   protected ProjectService projectService;
+  @Mock
+  private CustomerService customerService;
+  @Mock
+  private ContactService contactService;
 
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -33,11 +38,13 @@ public class ProjectServiceTest extends MockServices {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
-    ProjectMapper projectMapper = new ProjectMapper();
+
+    ProjectMapper projectMapper = new ProjectMapper(customerService, contactService);
     projectService = new ProjectService(props, restTemplate, projectMapper);
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(), Mockito.eq(Project[].class)))
-        .thenAnswer((Answer<Project[]>) invocation -> new Project[] {createMockProjectModel()});
+        .thenAnswer(invocation -> new Project[] {createMockProjectModel()});
+    Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer(invocation -> createCustomerJson(103));
   }
 
   @Test

@@ -13,12 +13,11 @@ public class Project {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private Integer[] cityDistricts;
-  private String ownerName;
-  private String contactName;
-  private String email;
-  private String phone;
   private String customerReference;
   private String additionalInfo;
+  private Integer customerId;
+  private Integer contactId;
+  private String identifier;
 
   /**
    * Id of the project.
@@ -89,50 +88,6 @@ public class Project {
   }
 
   /**
-   * Owner of the project. Usually the company that owns the project.
-   */
-  public String getOwnerName() {
-    return ownerName;
-  }
-
-  public void setOwnerName(String ownerName) {
-    this.ownerName = ownerName;
-  }
-
-  /**
-   * Contact for the project. Usually the name of the person who acts as the contact for the project.
-   */
-  public String getContactName() {
-    return contactName;
-  }
-
-  public void setContactName(String contactName) {
-    this.contactName = contactName;
-  }
-
-  /**
-   * The email address of the project (contact).
-   */
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  /**
-   * The phone number of the project (contact).
-   */
-  public String getPhone() {
-    return phone;
-  }
-
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
-
-  /**
    * Reference for the customer. May be a work number (työnumero) or some other customer specific reference.
    */
   public String getCustomerReference() {
@@ -152,6 +107,30 @@ public class Project {
 
   public void setAdditionalInfo(String additionalInfo) {
     this.additionalInfo = additionalInfo;
+  }
+
+  public Integer getCustomerId() {
+    return customerId;
+  }
+
+  public void setCustomerId(Integer customerId) {
+    this.customerId = customerId;
+  }
+
+  public Integer getContactId() {
+    return contactId;
+  }
+
+  public void setContactId(Integer contactId) {
+    this.contactId = contactId;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   @Override

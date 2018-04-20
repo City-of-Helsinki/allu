@@ -50,6 +50,8 @@ import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
 import {RootErrorNotificationService} from './effects/root-error-notification.service';
 import {CodeSetService} from '../../service/codeset/codeset.service';
+import {CityDistrictEffects} from './effects/city-district-effects';
+import {reducers} from './reducers';
 
 @NgModule({
   imports: [
@@ -58,8 +60,10 @@ import {CodeSetService} from '../../service/codeset/codeset.service';
     FormsModule,
     RouterModule.forRoot(rootRoutes),
     BrowserAnimationsModule,
-    StoreModule.forRoot([]),
-    EffectsModule.forRoot([]),
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([
+      CityDistrictEffects
+    ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production // Restrict extension to log-only mode

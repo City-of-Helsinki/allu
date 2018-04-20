@@ -10,7 +10,7 @@
         </div>
         <div class="col m2">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="id" placeholder="Hankkeen tunnus"/>
+            <input matInput type="text" formControlName="identifier" placeholder="Hankkeen tunnus"/>
           </mat-form-field>
         </div>
         <div class="col m2">
@@ -64,14 +64,14 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.id' | translation}}</mat-header-cell>
           <mat-cell *matCellDef="let row">
             <a class="row-details-link" [routerLink]="['/projects', row.id]">
-              {{row.id}}
+              {{row.identifier}}
             </a>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="ownerName">
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.ownerName' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.ownerName}}</mat-cell>
+          <mat-cell *matCellDef="let row">{{row.customer.name}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="active">

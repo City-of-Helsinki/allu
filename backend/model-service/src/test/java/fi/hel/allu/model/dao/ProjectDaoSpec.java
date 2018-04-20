@@ -28,8 +28,10 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 public class ProjectDaoSpec extends SpeccyTestBase {
+  private static int projectNbr = 0;
+
   @Autowired
-  ProjectDao projectDao;
+  private ProjectDao projectDao;
 
   {
     describe("ProjectDao.findAll", () -> {
@@ -59,8 +61,10 @@ public class ProjectDaoSpec extends SpeccyTestBase {
   private Project dummyProject(int i) {
     Project project = new Project();
     project.setName("Project " + i);
-    project.setOwnerName("Owner " + i);
     project.setAdditionalInfo("AdditionalInfo " + i);
+    project.setCustomerId(testCommon.insertPerson().getId());
+    project.setContactId(testCommon.insertContact(project.getCustomerId()).getId());
+    project.setIdentifier("DaoSpecProject" + (projectNbr++));
     return project;
   }
 

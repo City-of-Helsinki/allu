@@ -28,7 +28,7 @@ export class ProjectComponent implements OnInit {
     this.store.dispatch(new parentProjects.Load());
     this.store.dispatch(new childProjects.Load());
 
-    this.project$ = this.store.select(fromProject.getCurrentProject).take(1);
+    this.project$ = this.store.select(fromProject.getCurrentProject);
     this.applications$ = this.store.select(fromProject.getApplications);
     this.relatedProjectCount$ = this.store.select(fromProject.getRelatedProjects).map(projects => projects.length);
     this.sidebarItems = this.sidebar();

@@ -4,6 +4,7 @@ import {Sort} from '../common/sort';
 
 export class ProjectSearchQuery implements SearchQuery {
   public id: number;
+  public identifier: string;
   public startTime: Date;
   public endTime: Date;
   public ownerName: string;
@@ -31,6 +32,7 @@ export class ProjectSearchQuery implements SearchQuery {
   static fromForm(form: ProjectSearchQueryForm, sort?: Sort): ProjectSearchQuery {
     const query = new ProjectSearchQuery();
     query.id = form.id;
+    query.identifier = form.identifier;
     query.startTime = form.startTime;
     query.endTime = form.endTime;
     query.ownerName = form.ownerName;
@@ -50,6 +52,7 @@ export class ProjectSearchQuery implements SearchQuery {
 
 interface ProjectSearchQueryForm {
   id: number;
+  identifier: string;
   startTime: Date;
   endTime: Date;
   ownerName: string;

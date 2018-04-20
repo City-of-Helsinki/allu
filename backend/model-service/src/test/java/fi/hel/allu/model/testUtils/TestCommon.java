@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CodeSetDao;
+import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.dao.UserDao;
@@ -31,6 +32,9 @@ import java.util.Collections;
 @Component
 public class TestCommon {
   private static final Logger logger = LoggerFactory.getLogger(TestCommon.class);
+
+  private static int projectNbr = 0;
+
   @Autowired
   private SqlRunner sqlRunner;
   @Autowired
@@ -45,6 +49,8 @@ public class TestCommon {
   private UserDao userDao;
   @Autowired
   private CodeSetDao codeSetDao;
+  @Autowired
+  private ContactDao contactDao;
 
   public void deleteAllData() throws SQLException {
     sqlRunner.runSql(DELETE_ALL_DATA);
@@ -52,7 +58,7 @@ public class TestCommon {
 
   private Application dummyBasicApplication(String name, String owner) {
     Customer person = insertPerson();
-    Integer projectId = insertProject();
+    Integer projectId = insertProject("dummyProject" + (projectNbr++));
     User user = insertUser(owner);
     Application app = new Application();
     app.setCustomersWithContacts(
@@ -206,18 +212,26 @@ public class TestCommon {
     return insertedPerson;
   }
 
+  public Contact insertContact(Integer customerId) {
+    Contact contact = new Contact();
+    contact.setName("Kontti Kontakti");
+    contact.setCustomerId(customerId);
+    Contact insertedContact = contactDao.insert(Arrays.asList(contact)).get(0);
+    return insertedContact;
+  }
   /**
    * Insert a dummy project into database.
    *
    * @return Inserted project's ID
    * @throws Exception
    */
-  public Integer insertProject() {
+  public Integer insertProject(String identifier) {
     Project project = new Project();
     project.setName("Viemärityö");
-    project.setOwnerName("hankkeen omistaja");
-    project.setContactName("hankkeen kontakti");
+    project.setCustomerId(insertPerson().getId());
+    project.setContactId(insertContact(project.getCustomerId()).getId());
     project.setStartTime(ZonedDateTime.now());
+    project.setIdentifier(identifier);
     Project insertedProject = projectDao.insert(project);
     return insertedProject.getId();
   }

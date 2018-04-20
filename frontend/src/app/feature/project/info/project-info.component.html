@@ -1,0 +1,43 @@
+<allu-card>
+  <mat-card-title>{{'project.info.title' | translation}}</mat-card-title>
+  <mat-card-content>
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex>
+        <div fxLayout="column">
+          <div fxFlex class="info-group-title">{{'project.info.contactInfo' | translation}}</div>
+          <div fxFlex>{{project.contact.name}}</div>
+          <div fxFlex>{{project.contact.phone}}</div>
+          <div fxFlex><a href="mailto:{{project.contact.email}}">{{project.contact.email}}</a></div>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxLayout="column">
+          <div fxFlex class="info-group-title">{{'project.info.customerReference' | translation}}</div>
+          <div fxFlex>{{project.customerReference}}</div>
+        </div>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex>
+        <div fxLayout="column">
+          <div fxFlex="none" class="info-group-title">{{'project.info.additionalInfo' | translation}}</div>
+          <div fxFlex="auto" class="additional-info">{{project.additionalInfo}}</div>
+        </div>
+      </div>
+      <div fxFlex>
+        <div fxLayout="column">
+          <div fxFlex="none" class="info-group-title">{{'project.info.cityDistricts' | translation}}</div>
+          <div fxFlex="auto">{{districtNames | commaSeparated}}</div>
+        </div>
+      </div>
+    </div>
+    <div fxLayout="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+      <div fxFlex>
+        <button mat-raised-button type="button" color="primary"
+                [routerLink]="['/projects', project.id, 'edit']">
+          {{'common.button.edit' | translation | uppercase}}
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</allu-card>

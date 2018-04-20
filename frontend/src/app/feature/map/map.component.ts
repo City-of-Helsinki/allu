@@ -71,10 +71,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  public centerAndZoomOnDrawn() {
+    this.mapController.centerAndZoomOnDrawn();
+  }
+
   private drawProject(id: number) {
     this.projectService.getProjectApplications(id).subscribe(apps => {
       this.drawApplications(apps);
-      this.mapController.centerAndZoomOnDrawn();
+      this.centerAndZoomOnDrawn();
     });
   }
 

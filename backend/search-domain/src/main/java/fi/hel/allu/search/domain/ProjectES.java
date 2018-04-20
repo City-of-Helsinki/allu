@@ -10,11 +10,10 @@ public class ProjectES {
   private List<Integer> cityDistricts;
   private String ownerName;
   private String contactName;
-  private String email;
-  private String phone;
   private String customerReference;
   private String additionalInfo;
   private Integer parentId;
+  private String identifier;
 
   public Integer getId() {
     return id;
@@ -72,22 +71,6 @@ public class ProjectES {
     this.contactName = contactName;
   }
 
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getPhone() {
-    return phone;
-  }
-
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
-
   public String getCustomerReference() {
     return customerReference;
   }
@@ -110,5 +93,13 @@ public class ProjectES {
 
   public void setParentId(Integer parentId) {
     this.parentId = parentId;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 }

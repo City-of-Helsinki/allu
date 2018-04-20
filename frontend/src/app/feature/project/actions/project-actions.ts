@@ -6,7 +6,7 @@ import {ErrorInfo} from '../../../service/ui-state/error-info';
 export enum ProjectActionTypes {
   Load = '[Project] Load project',
   LoadSuccess = '[Project] Load project success',
-  LoadFailed = '[Project] Load project failed'
+  LoadFailed = '[Project] Load project failed',
 }
 
 export class Load implements Action {

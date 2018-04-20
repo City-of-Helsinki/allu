@@ -24,9 +24,9 @@ public class ProjectService {
   @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private ProjectMapper projectMapper;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final ProjectMapper projectMapper;
 
   @Autowired
   public ProjectService(

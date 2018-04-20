@@ -63,12 +63,6 @@ describe('Short term rental application', () => {
 
     const shortTermRentalApplication = {
         'id': null,
-        'project': {
-          'id': null,
-          'name': 'Mock Project',
-          'type': null,
-          'information': null
-        },
         'handler': null,
         'status': null,
         'type': 'SHORT_TERM_RENTAL',

@@ -8,6 +8,7 @@ import * as fromProject from './project-reducer';
 import * as fromSearch from './application-search-reducer';
 import * as fromParentProjects from './parent-project-reducer';
 import * as fromChildProjects from './child-project-reducer';
+import * as fromRoot from '../../allu/reducers/index';
 
 export interface ProjectState {
   project: fromProject.State;
@@ -17,7 +18,7 @@ export interface ProjectState {
   children: fromChildProjects.State;
 }
 
-export interface State {
+export interface State extends fromRoot.State {
   project: ProjectState;
 }
 
@@ -40,6 +41,12 @@ export const getProjectEntitiesState = createSelector(
 export const getCurrentProject = createSelector(
   getProjectEntitiesState,
   fromProject.getCurrent
+);
+
+export const getProjectDistricts = createSelector(
+  getCurrentProject,
+  fromRoot.getAllCityDistricts,
+  (project, districts) => project.cityDistricts.map(id => districts.get(id))
 );
 
 // Application selectors

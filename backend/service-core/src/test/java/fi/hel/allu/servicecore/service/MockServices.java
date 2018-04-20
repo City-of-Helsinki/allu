@@ -140,6 +140,9 @@ public abstract class MockServices {
     ProjectJson project = new ProjectJson();
     project.setId(id);
     project.setName("Hanke1, Json");
+    project.setCustomer(createCustomerJson(id));
+    project.setContact(createContactList().get(0));
+    project.setIdentifier("project" + id);
     return project;
   }
 

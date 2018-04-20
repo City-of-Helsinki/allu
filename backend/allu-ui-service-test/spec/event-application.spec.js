@@ -249,12 +249,6 @@ describe('Event application', () => {
 
       const tervasaari = {
         'id': null,
-        'project': {
-          'id': null,
-          'name': 'Mock Project',
-          'type': null,
-          'information': null
-        },
         'handler': null,
         'status': null,
         'type': 'EVENT',

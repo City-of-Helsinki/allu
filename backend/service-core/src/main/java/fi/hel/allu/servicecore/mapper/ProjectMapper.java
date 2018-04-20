@@ -4,6 +4,10 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -13,6 +17,16 @@ import java.util.Arrays;
  */
 @Component
 public class ProjectMapper {
+
+  private final CustomerService customerService;
+  private final ContactService contactService;
+
+  @Autowired
+  public ProjectMapper(@Lazy CustomerService customerService, @Lazy ContactService contactService) {
+    this.customerService = customerService;
+    this.contactService = contactService;
+  }
+
   public Project createProjectModel(ProjectJson projectJson) {
     Project projectDomain = new Project();
     projectDomain.setId(projectJson.getId());
@@ -22,13 +36,16 @@ public class ProjectMapper {
     if (projectJson.getCityDistricts() != null) {
       projectDomain.setCityDistricts(projectJson.getCityDistricts().toArray(new Integer[0]));
     }
-    projectDomain.setOwnerName(projectJson.getOwnerName());
-    projectDomain.setContactName(projectJson.getContactName());
-    projectDomain.setEmail(projectJson.getEmail());
-    projectDomain.setPhone(projectJson.getPhone());
     projectDomain.setCustomerReference(projectJson.getCustomerReference());
     projectDomain.setAdditionalInfo(projectJson.getAdditionalInfo());
     projectDomain.setParentId(projectJson.getParentId());
+    if (projectJson.getCustomer() != null) {
+      projectDomain.setCustomerId(projectJson.getCustomer().getId());
+    }
+    if (projectJson.getContact() != null) {
+      projectDomain.setContactId(projectJson.getContact().getId());
+    }
+    projectDomain.setIdentifier(projectJson.getIdentifier());
     return projectDomain;
   }
 
@@ -41,13 +58,16 @@ public class ProjectMapper {
     if (projectDomain.getCityDistricts() != null) {
       projectJson.setCityDistricts(Arrays.asList(projectDomain.getCityDistricts()));
     }
-    projectJson.setOwnerName(projectDomain.getOwnerName());
-    projectJson.setContactName(projectDomain.getContactName());
-    projectJson.setEmail(projectDomain.getEmail());
-    projectJson.setPhone(projectDomain.getPhone());
     projectJson.setCustomerReference(projectDomain.getCustomerReference());
     projectJson.setAdditionalInfo(projectDomain.getAdditionalInfo());
     projectJson.setParentId(projectDomain.getParentId());
+    if (projectDomain.getCustomerId() != null) {
+      projectJson.setCustomer(customerService.findCustomerById(projectDomain.getCustomerId()));
+    }
+    if (projectDomain.getContactId() != null) {
+      projectJson.setContact(contactService.findById(projectDomain.getContactId()));
+    }
+    projectJson.setIdentifier(projectDomain.getIdentifier());
     return projectJson;
   }
 
@@ -58,14 +78,12 @@ public class ProjectMapper {
     projectES.setStartTime(TimeUtil.dateToMillis(projectJson.getStartTime()));
     projectES.setEndTime(TimeUtil.dateToMillis(projectJson.getEndTime()));
     projectES.setCityDistricts(projectJson.getCityDistricts());
-    projectES.setOwnerName(projectJson.getOwnerName());
-    projectES.setContactName(projectJson.getContactName());
-    projectES.setEmail(projectJson.getEmail());
-    projectES.setPhone(projectJson.getPhone());
+    projectES.setOwnerName(projectJson.getCustomer().getName());
+    projectES.setContactName(projectJson.getContact().getName());
     projectES.setCustomerReference(projectJson.getCustomerReference());
     projectES.setAdditionalInfo(projectJson.getAdditionalInfo());
     projectES.setParentId(projectJson.getParentId());
-
+    projectES.setIdentifier(projectJson.getIdentifier());
     return projectES;
   }
 }

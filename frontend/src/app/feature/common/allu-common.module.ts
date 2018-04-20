@@ -14,12 +14,12 @@ import {
   MatListModule,
   MatNativeDateModule,
   MatProgressBarModule,
+  MatProgressSpinnerModule,
   MatRadioModule,
   MatSelectModule,
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatProgressSpinnerModule,
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MaterializeModule} from 'angular2-materialize';

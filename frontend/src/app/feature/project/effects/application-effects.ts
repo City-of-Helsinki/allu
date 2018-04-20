@@ -7,12 +7,13 @@ import {
   ApplicationActionTypes,
   Load,
   LoadSuccess,
-  LoadFailed, AddSuccess, AddFailed, Add, RemoveSuccess, RemoveFailed
+  LoadFailed, AddSuccess, AddFailed, Add, RemoveSuccess, RemoveFailed, Remove
 } from '../actions/application-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import * as fromProject from '../reducers';
 import {ApplicationService} from '../../../service/application/application.service';
 import {ProjectService} from '../../../service/project/project.service';
+import * as projectActions from '../actions/project-actions';
 
 @Injectable()
 export class ApplicationEffects {
@@ -51,7 +52,7 @@ export class ApplicationEffects {
 
   @Effect()
   removeApplication: Observable<Action> = this.actions.pipe(
-    ofType<Add>(ApplicationActionTypes.Remove),
+    ofType<Remove>(ApplicationActionTypes.Remove),
     map(action => action.payload),
     switchMap(payload =>
       this.projectService.removeApplication(payload).pipe(
@@ -59,5 +60,12 @@ export class ApplicationEffects {
         catchError(error => of(new RemoveFailed(error)))
       )
     )
+  );
+
+  @Effect()
+  projectUpdate: Observable<Action> = this.actions.pipe(
+    ofType(ApplicationActionTypes.AddSuccess, ApplicationActionTypes.RemoveSuccess),
+    withLatestFrom(this.store.select(fromProject.getCurrentProject)),
+    map(([payload, project]) => new projectActions.Load(project.id))
   );
 }

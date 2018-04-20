@@ -1,5 +1,7 @@
 import {BackendProject} from '../backend-model/backend-project';
 import {Project} from '../../model/project/project';
+import {CustomerMapper} from './customer-mapper';
+import {ContactMapper} from './contact-mapper';
 import {Some} from '../../util/option';
 
 export class ProjectMapper {
@@ -9,13 +11,12 @@ export class ProjectMapper {
       new Project(
         backendProject.id,
         backendProject.name,
+        backendProject.identifier,
         Some(backendProject.startTime).map(start => new Date(start)).orElse(undefined),
         Some(backendProject.endTime).map(end => new Date(end)).orElse(undefined),
         backendProject.cityDistricts,
-        backendProject.ownerName,
-        backendProject.contactName,
-        backendProject.email,
-        backendProject.phone,
+        CustomerMapper.mapBackend(backendProject.customer),
+        ContactMapper.mapBackend(backendProject.contact),
         backendProject.customerReference,
         backendProject.additionalInfo,
         backendProject.parentId
@@ -26,13 +27,12 @@ export class ProjectMapper {
     return (project) ? {
       id: project.id,
       name: project.name,
+      identifier: project.identifier,
       startTime: (project.startTime) ? project.startTime.toISOString() : undefined,
       endTime: (project.endTime) ? project.endTime.toISOString() : undefined,
       cityDistricts: project.cityDistricts,
-      ownerName: project.ownerName,
-      contactName: project.contactName,
-      email: project.email,
-      phone: project.phone,
+      customer: CustomerMapper.mapFrontend(project.customer),
+      contact: ContactMapper.mapFrontend(project.contact),
       customerReference: project.customerReference,
       additionalInfo: project.additionalInfo,
       parentId: project.parentId

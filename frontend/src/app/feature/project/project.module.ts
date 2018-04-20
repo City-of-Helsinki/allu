@@ -26,6 +26,8 @@ import {ProjectApplicationsComponent} from './applications/project-applications.
 import {ProjectHeaderComponent} from './header/project-header.component';
 import {ParentProjectEffects} from './effects/parent-project-effects';
 import {ChildProjectEffects} from './effects/child-project-effects';
+import {ProjectInfoComponent} from 'app/feature/project/info/project-info.component';
+import {ProjectEffects} from './effects/project-effects';
 
 @NgModule({
   imports: [
@@ -43,6 +45,7 @@ import {ChildProjectEffects} from './effects/child-project-effects';
     MatPaginatorModule,
     StoreModule.forFeature('project', reducers),
     EffectsModule.forFeature([
+      ProjectEffects,
       ApplicationEffects,
       SearchEffects,
       ParentProjectEffects,
@@ -55,6 +58,7 @@ import {ChildProjectEffects} from './effects/child-project-effects';
     ProjectEditComponent,
     ProjectSearchComponent,
     ProjectSummaryComponent,
+    ProjectInfoComponent,
     ProjectApplicationsComponent,
     ProjectApplicationListComponent,
     ProjectProjectsComponent,

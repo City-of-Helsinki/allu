@@ -3,6 +3,8 @@ package fi.hel.allu.servicecore.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * in Finnish: Hanke
  */
@@ -12,13 +14,16 @@ public class ProjectJson {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private List<Integer> cityDistricts;
-  private String ownerName;
-  private String contactName;
-  private String email;
-  private String phone;
   private String customerReference;
   private String additionalInfo;
   private Integer parentId;
+  @NotNull
+  private CustomerJson customer;
+  @NotNull
+  private ContactJson contact;
+  @NotNull
+  private String identifier;
+
   /**
    * in Finnish: Hankkeen tunniste
    */
@@ -75,50 +80,6 @@ public class ProjectJson {
   }
 
   /**
-   * in Finnish: hankkeen omistajan nimi. Yleensä yrityksen nimi.
-   */
-  public String getOwnerName() {
-    return ownerName;
-  }
-
-  public void setOwnerName(String ownerName) {
-    this.ownerName = ownerName;
-  }
-
-  /**
-   * in Finnish: hankkeen kontaktin nimi. Yleensä ihmisen nimi.
-   */
-  public String getContactName() {
-    return contactName;
-  }
-
-  public void setContactName(String contactName) {
-    this.contactName = contactName;
-  }
-
-  /**
-   * in Finnish: hankkeen sähköpostiosoite eli yleensä kontakti-ihmisen sähköpostiosoite.
-   */
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  /**
-   * in Finnish: hankkeen puhelinnumero eli yleensä kontakti-ihmisen puhelinnumero.
-   */
-  public String getPhone() {
-    return phone;
-  }
-
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
-
-  /**
    * in Finnish: asiakkaan viite tai työnumero.
    */
   public String getCustomerReference() {
@@ -151,6 +112,30 @@ public class ProjectJson {
 
   public void setParentId(Integer parentId) {
     this.parentId = parentId;
+  }
+
+  public CustomerJson getCustomer() {
+    return customer;
+  }
+
+  public void setCustomer(CustomerJson customer) {
+    this.customer = customer;
+  }
+
+  public ContactJson getContact() {
+    return contact;
+  }
+
+  public void setContact(ContactJson contact) {
+    this.contact = contact;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   @Override

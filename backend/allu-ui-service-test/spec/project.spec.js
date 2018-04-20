@@ -5,21 +5,70 @@ TestUtil.assertEnv();
 
 describe('Project', () => {
 
+  function createCustomers() {
+    const applicantContactNew = {
+      'email': null,
+      'name': 'Kalle',
+      'applicantId': null,
+      'id': null,
+      'postalCode': null,
+      'streetAddress': null,
+      'city': null,
+      'phone': '040-1234567',
+      'email': 'kalle.kaivuri@kallenkaivuri.fi',
+      'active': true
+    };
+
+    const applicantCustomerWithContactsNew = {
+      'roleType': 'APPLICANT',
+      'customer': {
+        'postalAddress': {
+          'streetAddress': '',
+          'city': '',
+          'postalCode': ''
+        },
+        'id': null,
+        'name': 'Kallen Kaivuri',
+        'email': '',
+        'phone': '',
+        'registryKey': '123',
+        'representative': null,
+        'type': 'COMPANY',
+        'active': true,
+        'country': 'FI'
+      },
+      'contacts': [applicantContactNew]
+    };
+
+    let applicantOptions = TestUtil.getPostOptions('/api/customers/withcontacts', applicantCustomerWithContactsNew);
+    return TestUtil.login('kasittelija')
+      .then(token => {
+        TestUtil.addAuthorization(applicantOptions, token);
+      })
+      .then(() => rp(applicantOptions))
+      .then(cwc => applicantCustomersWithContactsCreated = cwc)
+  }
 
   beforeAll(done => {
-    TestUtil.tryRetryPromise(TestUtil.tryToCreateUsers, 10, 10000).then(done, done.fail);
+    TestUtil.beforeAll(createCustomers)
+    .then(done)
+    .catch(err => done.fail(err));
+  });
+
+  beforeAll(done => {
+    TestUtil.beforeAll(createCustomers)
+    .then(() => TestUtil.tryRetryPromise(TestUtil.tryToCreateUsers, 10, 10000).then(done, done.fail));
   });
 
   it('Create', done => {
 
     const project = {
       'name':'projekti esimerkki',
-      'ownerName':'omistaja esimerkki',
-      'contactName':'kontakti esimerkki',
-      'email':'projekti-esimerkki@esimerkki.fi',
-      'phone':'010 1234567',
+      'customer':applicantCustomersWithContactsCreated,
+      'contact':applicantCustomersWithContactsCreated.contacts[0],
       'customerReference':'asiakkaan viite esimerkki',
-      'additionalInfo':'Lisätieto esimerkki'
+      'additionalInfo':'Lisätieto esimerkki',
+      'identifier': 'KAIVURI1'
     };
 
 

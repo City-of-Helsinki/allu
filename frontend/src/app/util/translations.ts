@@ -416,9 +416,11 @@ export const translations = {
     decidedApplications: 'Päätettyä hakemusta',
     relatedProjects: 'Liittyvää hanketta',
     info: {
-      title: 'Hankkeen perustiedot',
+      title: 'Perustiedot',
       owner: 'Hankkeen omistaja',
       contact: 'Yhteyshenkilö',
+      contactInfo: 'Yhteystiedot',
+      cityDistricts: 'Kaupunginosa(t)',
       email: 'Sähköposti',
       phone: 'Puhelinnumero',
       name: 'Hankkeen nimi',
@@ -435,8 +437,8 @@ export const translations = {
     ownerName: 'Omistaja',
     state: 'Tila',
     active: {
-      false: 'Inaktiivinen',
-      true: 'Aktiivinen'
+      'false': 'Inaktiivinen',
+      'true': 'Aktiivinen'
     },
     startTime: 'Alku',
     endTime: 'Loppu',

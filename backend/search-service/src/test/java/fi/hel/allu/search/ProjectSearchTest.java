@@ -91,9 +91,6 @@ public class ProjectSearchTest {
     projectES.setOwnerName("owner");
     projectES.setAdditionalInfo("Additional info");
     projectES.setCustomerReference("Customer reference");
-    projectES.setPhone("03012345");
-    projectES.setContactName("Concact name");
-    projectES.setEmail("email@email.fi");
     projectES.setStartTime(ZonedDateTime.parse("2016-07-05T06:23:04.000Z").toInstant().toEpochMilli());
     projectES.setEndTime(ZonedDateTime.parse("2016-07-06T06:23:04.000Z").toInstant().toEpochMilli());
     return projectES;

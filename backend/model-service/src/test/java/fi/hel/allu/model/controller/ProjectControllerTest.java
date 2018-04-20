@@ -44,8 +44,11 @@ public class ProjectControllerTest {
   private final int KRUUNUNHAKA_CITY_DISTRICT_ID = 2;
   private final int KLUUVI_CITY_DISTRICT_ID = 3;
   private final int HERTTONIEMI_CITY_DISTRICT_ID = 44;
+  private static int projectNbr = 0;
 
   private ZoneId zoneId = ZoneId.of( "Europe/Helsinki" );
+  private Customer testCustomer;
+  private Contact testContact;
 
   @Autowired
   WebTestCommon wtc;
@@ -56,6 +59,8 @@ public class ProjectControllerTest {
   @Before
   public void setup() throws Exception {
     wtc.setup();
+    testCustomer = testCommon.insertPerson();
+    testContact = testCommon.insertContact(testCustomer.getId());
   }
 
   @Test
@@ -92,14 +97,14 @@ public class ProjectControllerTest {
     // Setup: add some applications for one project:
     final int NUM_FIRST = 5;
     final int NUM_SECOND = 7;
-    int projectId1 = testCommon.insertProject();
+    int projectId1 = testCommon.insertProject("p1");
     Application app1 = testCommon.dummyOutdoorApplication("TestAppOne", "Sinikka");
     app1.setProjectId(projectId1);
     for (int i = 0; i < NUM_FIRST; ++i) {
       wtc.perform(post("/applications"), app1).andExpect(status().isOk());
     }
     // Now prepare another application -- will get another project ID:
-    int projectId2 = testCommon.insertProject();
+    int projectId2 = testCommon.insertProject("p2");
     Application app2 = testCommon.dummyOutdoorApplication("TestAppTwo", "Keijo");
     app2.setProjectId(projectId2);
     assertNotEquals(app1.getProjectId(), app2.getProjectId());
@@ -356,14 +361,19 @@ public class ProjectControllerTest {
     p.setId(projectID);
     p.setName(projectName);
     p.setStartTime(startDate);
+    p.setCustomerId(testCustomer.getId());
+    p.setContactId(testContact.getId());
+    p.setIdentifier("project" + (projectNbr++));
     return p;
   }
 
   private Project createDummyProject() {
     Project project = new Project();
-    project.setContactName("kontakti");
+    project.setCustomerId(testCustomer.getId());
+    project.setContactId(testContact.getId());
     project.setAdditionalInfo("lisätietoja");
     project.setName("das projekt");
+    project.setIdentifier("project" +  + (projectNbr++));
     return project;
   }
 
