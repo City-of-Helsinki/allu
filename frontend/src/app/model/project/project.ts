@@ -11,12 +11,13 @@ export class Project {
     public identifier?: string,
     public startTime?: Date,
     public endTime?: Date,
-    public cityDistricts: Array<number> = [],
+    public cityDistricts?: Array<number>,
     public customer?: Customer,
     public contact?: Contact,
     public customerReference?: string,
     public additionalInfo?: string,
     public parentId?: number) {
+    this.cityDistricts = this.cityDistricts || [];
     this.active = !!startTime && !!endTime && TimeUtil.isBetweenInclusive(new Date(), this.startTime, this.endTime);
   }
 }
