@@ -97,7 +97,8 @@ export class ApplicationExtensionMapper {
           backendExtension.propertyIdentificationNumber,
           backendExtension.additionalInfo,
           backendExtension.contractText,
-          backendExtension.terms
+          backendExtension.terms,
+          backendExtension.terminationDate
         );
       case ApplicationType.AREA_RENTAL:
         return new AreaRental(
@@ -247,7 +248,8 @@ export class ApplicationExtensionMapper {
       propertyIdentificationNumber: placementContract.propertyIdentificationNumber,
       additionalInfo: placementContract.additionalInfo,
       contractText: placementContract.contractText,
-      terms: placementContract.terms
+      terms: placementContract.terms,
+      terminationDate: placementContract.terminationDate
     };
   }
 

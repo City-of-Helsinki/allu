@@ -62,6 +62,17 @@
                 </mat-form-field>
               </div>
             </div>
+            <div class="col m3">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="terminationDate"
+                       [placeholder]="'application.placementContract.terminationDate' | translation"
+                       [matDatepicker]="terminationDatePicker"/>
+                <mat-datepicker-toggle matSuffix [for]="terminationDatePicker"
+                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #terminationDatePicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
           </div>
           <div class="row form-group">
             <div class="col m12">

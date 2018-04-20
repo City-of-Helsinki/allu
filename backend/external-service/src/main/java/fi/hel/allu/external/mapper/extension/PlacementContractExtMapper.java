@@ -11,6 +11,7 @@ public class PlacementContractExtMapper {
     placementContractJson.setIdentificationNumber(placementContractExt.getIdentificationNumber());
     placementContractJson.setPropertyIdentificationNumber(placementContractExt.getPropertyIdentificationNumber());
     placementContractJson.setContractText(placementContractExt.getContractText());
+    placementContractJson.setTerminationDate(placementContractExt.getTerminationDate());
     return ApplicationExtensionExtMapper.modelToJson(placementContractExt, placementContractJson);
   }
 
@@ -20,6 +21,7 @@ public class PlacementContractExtMapper {
     placementContractExt.setIdentificationNumber(placementContractJson.getIdentificationNumber());
     placementContractExt.setPropertyIdentificationNumber(placementContractJson.getPropertyIdentificationNumber());
     placementContractExt.setContractText(placementContractJson.getContractText());
+    placementContractExt.setTerminationDate(placementContractJson.getTerminationDate());
     return ApplicationExtensionExtMapper.jsonToModel(placementContractJson, placementContractExt);
   }
 }

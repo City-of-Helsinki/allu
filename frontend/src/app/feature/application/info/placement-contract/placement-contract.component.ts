@@ -39,6 +39,7 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
       }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
+      terminationDate: [undefined],
       identificationNumber: [''],
       propertyIdentificationNumber: [''],
       calculatedPrice: [0],

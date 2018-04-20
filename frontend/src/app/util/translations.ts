@@ -368,7 +368,8 @@ export const translations = {
     placementContract: {
       identificationNumber: 'Asiointitunnus',
       contractText: 'Sopimusteksti',
-      propertyIdentificationNumber: 'Kiinteistötunnus'
+      propertyIdentificationNumber: 'Kiinteistötunnus',
+      terminationDate: 'Irtisanomispäivä'
     },
     button: {
       copy: 'Kopioi uudeksi',

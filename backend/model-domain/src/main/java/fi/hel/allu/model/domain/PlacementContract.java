@@ -2,6 +2,8 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 
+import java.time.ZonedDateTime;
+
 /**
  * Placement contract (sijoitussopimus) specific data.
  */
@@ -10,6 +12,7 @@ public class PlacementContract extends ApplicationExtension {
   private String propertyIdentificationNumber;
   private String additionalInfo;
   private String contractText;
+  private ZonedDateTime terminationDate;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -60,5 +63,13 @@ public class PlacementContract extends ApplicationExtension {
 
   public void setContractText(String contractText) {
     this.contractText = contractText;
+  }
+
+  public ZonedDateTime getTerminationDate() {
+    return terminationDate;
+  }
+
+  public void setTerminationDate(ZonedDateTime terminationDate) {
+    this.terminationDate = terminationDate;
   }
 }

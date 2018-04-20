@@ -11,7 +11,8 @@ export class PlacementContractForm implements ApplicationForm {
     public calculatedPrice?: number,
     public additionalInfo?: string,
     public contractText?: string,
-    public terms?: string
+    public terms?: string,
+    public terminationDate?: Date
   ) {}
 
   static to(form: PlacementContractForm): PlacementContract {
@@ -21,6 +22,7 @@ export class PlacementContractForm implements ApplicationForm {
     placementContract.additionalInfo = form.additionalInfo;
     placementContract.contractText = form.contractText;
     placementContract.terms = form.terms;
+    placementContract.terminationDate = form.terminationDate;
     return placementContract;
   }
 
@@ -32,6 +34,7 @@ export class PlacementContractForm implements ApplicationForm {
       application.calculatedPriceEuro,
       contract.additionalInfo,
       contract.contractText,
-      contract.terms);
+      contract.terms,
+      contract.terminationDate);
   }
 }

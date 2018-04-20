@@ -7,7 +7,8 @@ export class PlacementContract extends ApplicationExtension {
     public propertyIdentificationNumber?: string,
     public additionalInfo?: string,
     public contractText?: string,
-    public terms?: string
+    public terms?: string,
+    public terminationDate?: Date,
   ) {
     super(ApplicationType[ApplicationType.PLACEMENT_CONTRACT], terms);
   }
