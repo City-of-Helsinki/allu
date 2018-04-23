@@ -12,7 +12,7 @@
                       [value]="application">
             {{ displayName(application) }}
             <mat-icon *ngIf="application.project as project"
-                      [matTooltip]="'project.applications.moveFromAnother' | translation:{project: project.name}"
+                      [matTooltip]="'project.applications.moveFromAnother' | translation:{project: project.identifier}"
                       color="accent"
                       class="icon-sub">warning</mat-icon>
           </mat-option>
