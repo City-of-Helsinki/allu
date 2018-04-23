@@ -1,5 +1,5 @@
 import {Application} from '../../../model/application/application';
-import {SearchActions, SearchActionType} from '../actions/application-search-actions';
+import {SearchActions, ApplicationSearchActionType} from '../actions/application-search-actions';
 
 export interface State {
   term: string;
@@ -15,7 +15,7 @@ const initialState: State = {
 
 export function reducer(state: State = initialState, action: SearchActions) {
   switch (action.type) {
-    case SearchActionType.Search: {
+    case ApplicationSearchActionType.Search: {
       return {
         ...state,
         term: action.payload,
@@ -24,7 +24,7 @@ export function reducer(state: State = initialState, action: SearchActions) {
       };
     }
 
-    case SearchActionType.SearchSuccess: {
+    case ApplicationSearchActionType.SearchSuccess: {
       return {
         ...state,
         matchingApplications: action.payload,
@@ -32,7 +32,7 @@ export function reducer(state: State = initialState, action: SearchActions) {
       };
     }
 
-    case SearchActionType.SearchFailed: {
+    case ApplicationSearchActionType.SearchFailed: {
       return {
         ...state,
         matchingApplications: [],

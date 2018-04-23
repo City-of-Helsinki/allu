@@ -1,4 +1,4 @@
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Injectable} from '@angular/core';
 import * as fromProject from '../reducers';
@@ -6,14 +6,24 @@ import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import {Action, Store} from '@ngrx/store';
 import {ProjectService} from '../../../service/project/project.service';
-import {Load, LoadFailed, LoadSuccess, ProjectActionTypes} from '../actions/project-actions';
+import {
+  Load,
+  LoadFailed,
+  LoadSuccess,
+  ProjectActionTypes,
+  Save,
+  SaveFailed,
+  SaveSuccess
+} from '../actions/project-actions';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class ProjectEffects {
 
   constructor(private actions: Actions,
               private store: Store<fromProject.State>,
-              private projectService: ProjectService) {
+              private projectService: ProjectService,
+              private router: Router) {
   }
 
   @Effect()
@@ -27,5 +37,24 @@ export class ProjectEffects {
           catchError(error => of(new LoadFailed(error)))
         )
     )
+  );
+
+  @Effect()
+  save: Observable<Action> = this.actions.pipe(
+    ofType<Save>(ProjectActionTypes.Save),
+    map(action => action.payload),
+    switchMap(project =>
+      this.projectService.save(project).pipe(
+        map(saved => new SaveSuccess(saved)),
+        catchError(error => of(new SaveFailed(error)))
+      )
+    )
+  );
+
+  @Effect({dispatch: false})
+  navigateAfterSave = this.actions.pipe(
+    ofType<SaveSuccess>(ProjectActionTypes.SaveSuccess),
+    map(action => action.payload),
+    tap(project => this.router.navigate(['/projects', project.id]))
   );
 }

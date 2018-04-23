@@ -9,11 +9,12 @@ import {
   LoadSuccess,
   LoadFailed, AddSuccess, AddFailed, Add, RemoveSuccess, RemoveFailed, Remove
 } from '../actions/application-actions';
-import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import * as fromProject from '../reducers';
 import {ApplicationService} from '../../../service/application/application.service';
 import {ProjectService} from '../../../service/project/project.service';
 import * as projectActions from '../actions/project-actions';
+import {NumberUtil} from '../../../util/number.util';
 
 @Injectable()
 export class ApplicationEffects {

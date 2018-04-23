@@ -1,18 +1,19 @@
 import {Component} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ProjectForm} from './project.form';
+import * as fromProject from '../reducers';
+import * as customerSearch from '../actions/customer-search-actions';
+import {Store} from '@ngrx/store';
+import {Save} from '../actions/project-actions';
+import {EnumUtil} from '../../../util/enum.util';
+import {CustomerType} from '../../../model/customer/customer-type';
+import {Customer} from '../../../model/customer/customer';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-
-import {Application} from '../../../model/application/application';
-import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
-import {ProjectForm} from './project.form';
-import {Project} from '../../../model/project/project';
-import {emailValidator} from '../../../util/complex-validator';
-import {ProjectState} from '../../../service/project/project-state';
-import {NotificationService} from '../../../service/notification/notification.service';
-import {ApplicationService} from '../../../service/application/application.service';
-
+import {MatOption} from '@angular/material';
+import {ComplexValidator} from '../../../util/complex-validator';
+import {Contact} from '../../../model/customer/contact';
 
 @Component({
   selector: 'project-edit',
@@ -20,50 +21,105 @@ import {ApplicationService} from '../../../service/application/application.servi
   styleUrls: ['./project-edit.component.scss']
 })
 export class ProjectEditComponent {
-  projectInfoForm: FormGroup;
+  form: FormGroup;
+  customerTypes = EnumUtil.enumValues(CustomerType);
 
-  private parentProject: number;
+  matchingCustomers$: Observable<Customer[]>;
+  matchingContacts$: Observable<Contact[]>;
+
+  private customerTypeCtrl: FormControl;
+  private customerCtrl: FormControl;
+  private contactCtrl: FormControl;
+
+  private destroy = new Subject<boolean>();
 
   constructor(private router: Router, private route: ActivatedRoute,
-              private projectState: ProjectState,
+              private store: Store<fromProject.State>,
               private fb: FormBuilder) {
     this.initForm();
 
-    const project = this.projectState.project;
-    this.projectInfoForm.patchValue(project);
+    this.initCustomerSearch();
+    this.initContactSearch();
 
+    this.store.select(fromProject.getCurrentProject).take(1)
+      .map(project => ProjectForm.fromProject(project))
+      .subscribe(project => this.form.patchValue(project));
+  }
 
-    this.route.queryParams
-      .map((params: {parentProject: number}) => params.parentProject)
-      .subscribe(parentProject => this.parentProject = parentProject);
+  selectCustomer(option: MatOption): void {
+    this.contactCtrl.reset();
+    this.form.get('contactPhone').reset();
+    this.form.get('contactEmail').reset();
+  }
+
+  selectContact(option: MatOption): void {
+    const contact = option.value;
+    this.form.patchValue({
+      contactPhone: contact.phone,
+      contactEmail: contact.email
+    });
   }
 
   onSubmit(form: ProjectForm) {
     const project = ProjectForm.toProject(form);
-    project.parentId = this.parentProject || project.parentId;
+    this.store.dispatch(new Save(project));
+  }
 
-    this.projectState.save(project)
-      .subscribe(p => this.navigateAfterSubmit(p, this.parentProject));
+  customerName(customer?: Customer): string | undefined {
+    return customer ? customer.name : undefined;
+  }
+
+  contactName(contact?: Contact): string | undefined {
+    return contact ? contact.name : undefined;
   }
 
   private initForm() {
-    this.projectInfoForm = this.fb.group({
+    this.customerTypeCtrl = this.fb.control('', Validators.required);
+    this.customerCtrl = this.fb.control(undefined, ComplexValidator.idRequired);
+    this.contactCtrl = this.fb.control(undefined, ComplexValidator.idRequired);
+
+    this.form = this.fb.group({
       id: [undefined],
-      name: ['', Validators.required],
-      ownerName: ['', Validators.required],
-      contactName: ['', Validators.required],
-      email: ['', emailValidator],
-      phone: [''],
+      identifier: ['', Validators.required],
+      name: [''],
+      customerType: this.customerTypeCtrl,
+      customer: this.customerCtrl,
+      contact: this.contactCtrl,
+      contactPhone: [{value: undefined, disabled: true}],
+      contactEmail: [{value: undefined, disabled: true}],
       customerReference: [''],
       additionalInfo: ['']
     });
   }
 
-  private navigateAfterSubmit(project: Project, relatedProjectId: number): void {
-    if (relatedProjectId) {
-      this.router.navigate(['/projects', relatedProjectId, 'projects']);
-    } else {
-      this.router.navigate(['/projects', project.id]);
-    }
+  private initCustomerSearch(): void {
+    this.matchingCustomers$ = this.store.select(fromProject.getMatchingCustomers);
+
+    Observable.combineLatest(
+      this.customerTypeCtrl.valueChanges,
+      this.customerCtrl.valueChanges.filter(customer => typeof customer === 'string')
+    ).takeUntil(this.destroy)
+      .debounceTime(300)
+      .subscribe(([type, name]) => this.store.dispatch(new customerSearch.Search(type, name)));
+
+    this.customerTypeCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .subscribe(() => this.customerCtrl.reset());
+  }
+
+  private initContactSearch(): void {
+    this.matchingContacts$ = this.store.select(fromProject.getMatchingContacts);
+
+    this.contactCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .debounceTime(300)
+      .filter(contact => typeof contact === 'string')
+      .subscribe(name => this.store.dispatch(new customerSearch.SearchContacts(name)));
+
+    this.customerCtrl.valueChanges
+      .takeUntil(this.destroy)
+      .debounceTime(300)
+      .filter(customer => customer instanceof Customer)
+      .subscribe(customer => this.store.dispatch(new customerSearch.LoadContacts(customer.id)));
   }
 }

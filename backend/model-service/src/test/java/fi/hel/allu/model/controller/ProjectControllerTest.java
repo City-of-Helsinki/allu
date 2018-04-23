@@ -125,7 +125,7 @@ public class ProjectControllerTest {
   }
 
   @Test
-  public void testUpdateExisting() throws Exception {
+  public void testUpdateExistingPreservesDates() throws Exception {
     Project originalProject = createDummyProject();
     originalProject.setStartTime(ZonedDateTime.parse("2016-11-11T08:00:00+02:00[Europe/Helsinki]"));
     Project addedProject = addProjectGetResult(originalProject);
@@ -133,7 +133,7 @@ public class ProjectControllerTest {
     ZonedDateTime updatedStartTime = ZonedDateTime.parse("2001-11-11T08:00:00+02:00[Europe/Helsinki]");
     addedProject.setStartTime(updatedStartTime);
     Project updatedProject = updateProjectGetResult(addedProject);
-    assertEquals(updatedStartTime, updatedProject.getStartTime().withZoneSameInstant(zoneId));
+    assertEquals(originalProject.getStartTime(), updatedProject.getStartTime().withZoneSameInstant(zoneId));
   }
 
   @Test
@@ -158,11 +158,11 @@ public class ProjectControllerTest {
 
   @Test
   public void testUpdateProjectInformation() throws Exception {
-    Project originalProject = createDummyProject();
-    Project addedProject = addProjectGetResult(originalProject);
     Project parentProject = createDummyProject();
     Project addedParent = addProjectGetResult(parentProject);
-    addedProject.setParentId(addedParent.getId());
+    Project originalProject = createDummyProject();
+    originalProject.setParentId(addedParent.getId());
+    Project addedProject = addProjectGetResult(originalProject);
     Project updatedProject = updateProjectGetResult(addedProject);
     ResultActions resultActions = wtc.perform(
         put("/projects/update"), Collections.singletonList(updatedProject.getId())).andExpect(status().isOk());
@@ -300,14 +300,16 @@ public class ProjectControllerTest {
 
   @Test
   public void testCircularReference() throws Exception {
-    Project originalProject = createDummyProject();
-    Project addedProject = addProjectGetResult(originalProject);
     Project parentProject = createDummyProject();
     Project addedParent = addProjectGetResult(parentProject);
-    addedProject.setParentId(addedParent.getId());
-    addedParent.setParentId(addedProject.getId());
-    updateProjectGetResult(addedProject);
-    wtc.perform(put("/projects/" + addedParent.getId()), addedParent).andExpect(status().is4xxClientError());
+
+    Project originalProject = createDummyProject();
+    originalProject.setParentId(addedParent.getId());
+    Project addedProject = addProjectGetResult(originalProject);
+
+
+    String url = String.format("/projects/%d/parentProject/%d", addedParent.getId(), addedProject.getId());
+    wtc.perform(put(url)).andExpect(status().is4xxClientError());
   }
 
   private ResultActions addProject(Project project) throws Exception {

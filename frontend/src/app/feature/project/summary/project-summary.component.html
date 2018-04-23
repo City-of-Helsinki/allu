@@ -2,7 +2,7 @@
   <div fxLayout="row">
     <div fxFlex>
       <h2 class="allu-header">
-        <span>{{project.customer.name}}</span>
+        <span>{{project.customer?.name}}</span>
         <span *ngIf="project.startTime">{{project.startTime | date:'shortDate'}}</span>
         <span *ngIf="project.endTime"> - {{project.endTime | date:'shortDate'}}</span>
       </h2>

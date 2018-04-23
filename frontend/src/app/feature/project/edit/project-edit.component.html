@@ -1,96 +1,125 @@
 <div class="main-content">
-  <form [formGroup]="projectInfoForm" id="projectInfoForm" (ngSubmit)="onSubmit(projectInfoForm.value)">
-    <div class="row">
-      <div class="col m6">
+  <form [formGroup]="form" id="form" (ngSubmit)="onSubmit(form.getRawValue())">
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex="50%">
         <allu-card>
           <mat-card-title>{{'project.info.title' | translation}}</mat-card-title>
           <mat-card-content>
-            <div class="row form-group">
-              <div class="col m6">
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="ownerName"
-                         [placeholder]="'project.info.owner' | translation"/>
-                  <mat-hint>
-                    <field-error [form]="projectInfoForm" field="ownerName" hasError="required">
-                      {{'project.field.ownerNameMissing' | translation}}
-                    </field-error>
-                  </mat-hint>
+                  <mat-select class="input-full-width" formControlName="customerType" required
+                              [placeholder]="'project.info.ownerType' | translation">
+                    <mat-option *ngFor="let type of customerTypes" [value]="type">
+                      {{['customer.type', type, 'name'] | translation}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('customerType').hasError('required')">
+                    {{'customer.field.typeMissing' | translation}}
+                  </mat-error>
                 </mat-form-field>
+              </div>
+              <div fxFlex="calc(75% - 18px)">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="customer" required
+                         [matAutocomplete]="customerSearch"
+                         [placeholder]="'project.info.ownerName' | translation"/>
 
-              </div>
-              <div class="col m6">
-                <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="contactName"
-                         [placeholder]="'project.info.contact' | translation"/>
-                  <mat-hint>
-                    <field-error [form]="projectInfoForm" field="contactName" hasError="required">
-                      {{'project.field.contactNameMissing' | translation}}
-                    </field-error>
-                  </mat-hint>
+                  <mat-autocomplete #customerSearch="matAutocomplete"
+                                    [displayWith]="customerName"
+                                    (optionSelected)="selectCustomer($event.option)">
+                    <mat-option *ngFor="let customer of matchingCustomers$ | async"
+                                [value]="customer">
+                      {{ customer.name }}
+                    </mat-option>
+                  </mat-autocomplete>
+
+                  <mat-error *ngIf="form.get('customer').hasError('idRequired')">
+                    {{'project.field.ownerMissing' | translation}}
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
-            <div class="row form-group">
-              <div class="col m6">
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="email"
-                         [placeholder]="'project.info.email' | translation"/>
-                  <mat-hint>
-                    <field-error [form]="projectInfoForm" field="email" hasError="required">
-                      {{'common.field.emailInvalid' | translation}}
-                    </field-error>
-                  </mat-hint>
+                  <input matInput type="text" formControlName="contact" required
+                         [matAutocomplete]="contactSearch"
+                         [placeholder]="'project.info.contactName' | translation"/>
+
+                  <mat-autocomplete #contactSearch="matAutocomplete"
+                                    [displayWith]="contactName"
+                                    (optionSelected)="selectContact($event.option)">
+                    <mat-option *ngFor="let contact of matchingContacts$ | async"
+                                [value]="contact">
+                      {{ contact.name }}
+                    </mat-option>
+                  </mat-autocomplete>
+
+                  <mat-error *ngIf="form.get('contact').hasError('idRequired')">
+                    {{'project.field.contactMissing' | translation}}
+                  </mat-error>
                 </mat-form-field>
               </div>
-              <div class="col m6">
+              <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="phone"
-                         [placeholder]="'project.info.phone' | translation"/>
+                  <input matInput type="text" formControlName="contactPhone"
+                         [placeholder]="'project.info.contactPhone' | translation"/>
+                </mat-form-field>
+              </div>
+              <div fxFlex>
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="contactEmail"
+                         [placeholder]="'project.info.contactEmail' | translation"/>
                 </mat-form-field>
               </div>
             </div>
-            <div class="row form-group">
-              <div class="col m6">
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div fxFlex>
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="name"
+                  <input matInput type="text" formControlName="identifier" required
+                         [placeholder]="'project.info.identifier' | translation"/>
+                  <mat-error *ngIf="form.get('identifier').hasError('required')">
+                    {{'project.field.identifierMissing' | translation}}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex>
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="name" required
                          [placeholder]="'project.info.name' | translation"/>
-                  <mat-hint>
-                    <field-error [form]="projectInfoForm" field="name" hasError="required">
-                      {{'project.field.nameMissing' | translation}}
-                    </field-error>
-                  </mat-hint>
                 </mat-form-field>
               </div>
-              <div class="col m6">
+              <div fxFlex>
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="customerReference"
                          [placeholder]="'project.info.customerReference' | translation"/>
                 </mat-form-field>
               </div>
             </div>
-            <div class="row form-group">
-              <div class="col m12">
+            <div fxLayout="row">
+              <div fxFlex>
                 <mat-form-field class="input-full-width">
                   <textarea matInput matTextareaAutosize formControlName="additionalInfo"
                             [placeholder]="'project.info.additionalInfo' | translation"></textarea>
                 </mat-form-field>
               </div>
             </div>
-            <div class="row">
-              <div class="col m2">
-                <button type="submit" form="projectInfoForm" [disabled]="!projectInfoForm.valid"
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div fxFlex="none">
+                <button type="submit" form="form" [disabled]="!form.valid"
                         mat-raised-button color="primary">
                   {{'common.button.save' | translation | uppercase}}
                 </button>
               </div>
-              <div class="col m2">
-                <button *ngIf="!projectInfoForm.value.id" mat-raised-button type="button" color="primary"
+              <div fxFlex="none">
+                <button *ngIf="!form.value.id" mat-raised-button type="button" color="primary"
                         [routerLink]="['/projectSearch']">
                   {{'common.button.cancel' | translation | uppercase}}
                 </button>
 
-                <button *ngIf="projectInfoForm.value.id" mat-raised-button type="button" color="primary"
-                        [routerLink]="['/projects', projectInfoForm.value.id]">
+                <button *ngIf="form.value.id" mat-raised-button type="button" color="primary"
+                        [routerLink]="['/projects', form.value.id]">
                   {{'common.button.cancel' | translation | uppercase}}
                 </button>
               </div>

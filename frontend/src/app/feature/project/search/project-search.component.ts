@@ -52,7 +52,6 @@ export class ProjectSearchComponent implements OnInit {
 
   search(): void {
     const query = ProjectSearchQuery.fromForm(this.queryForm.value);
-    console.log(query);
     this.dataSource.searchChange(query);
   }
 

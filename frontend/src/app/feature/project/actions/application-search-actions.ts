@@ -3,26 +3,26 @@ import {Application} from '../../../model/application/application';
 import {ErrorInfo} from '../../../service/ui-state/error-info';
 import {ActionWithPayload} from '../../common/action-with-payload';
 
-export enum SearchActionType {
+export enum ApplicationSearchActionType {
   Search = '[Search] Search applications',
   SearchSuccess = '[Search] Search applications success',
   SearchFailed = '[Search] Search applications failed'
 }
 
 export class Search implements Action {
-  readonly type = SearchActionType.Search;
+  readonly type = ApplicationSearchActionType.Search;
 
   constructor(public payload: string) {}
 }
 
 export class SearchSuccess implements Action {
-  readonly type = SearchActionType.SearchSuccess;
+  readonly type = ApplicationSearchActionType.SearchSuccess;
 
   constructor(public payload: Application[]) {}
 }
 
 export class SearchFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = SearchActionType.SearchFailed;
+  readonly type = ApplicationSearchActionType.SearchFailed;
 
   constructor(public payload: ErrorInfo) {}
 }

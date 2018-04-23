@@ -36,16 +36,8 @@ export class ProjectComponent implements OnInit {
 
   sidebar(): Array<SidebarItem> {
     return [
-      this.sidebarItem('BASIC_INFO'),
-      this.sidebarItem('PROJECTS', this.relatedProjects)
+      this.sidebarItem('BASIC_INFO')
     ];
-  }
-
-  get relatedProjects(): Observable<number> {
-    return Observable.combineLatest(
-      this.projectState.childProjects,
-      this.projectState.parentProjects,
-      (childs, parents) => childs.length + parents.length);
   }
 
   private sidebarItem(type: SidebarItemType, count?: Observable<number>): SidebarItem {

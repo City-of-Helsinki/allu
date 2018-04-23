@@ -15,9 +15,9 @@ export class ComplexValidator {
       // Need to use dirty here since input[type="number"] does not set touched unless arrows are clicked
       if (fc.dirty) {
         if (Number(fc.value) < value) {
-          return { greaterThanOrEqual: true };
-          }
+          return {greaterThanOrEqual: true};
         }
+      }
       return undefined;
     };
 
@@ -73,7 +73,7 @@ export class ComplexValidator {
         const valid = !TimeUtil.isBefore(end, start);
 
         // undefined means valid field
-        return valid  ? undefined : { startBeforeEnd: true };
+        return valid ? undefined : {startBeforeEnd: true};
       }
       return undefined;
     };
@@ -86,7 +86,7 @@ export class ComplexValidator {
 
       if (first && second) {
         const invalid = !TimeUtil.isBefore(first, second);
-        return invalid  ? { after: `${first} not after ${second}`} : undefined;
+        return invalid ? {after: `${first} not after ${second}`} : undefined;
       }
       return undefined;
     };
@@ -99,17 +99,24 @@ export class ComplexValidator {
 
       if (first && second) {
         const invalid = !TimeUtil.isAfter(first, second);
-        return invalid  ?  { before: `${first} not before ${second}`} : undefined;
+        return invalid ? {before: `${first} not before ${second}`} : undefined;
       }
       return undefined;
     };
   }
 
   static inThePast(fc: AbstractControl): ValidationErrors {
-    const now =  new Date();
+    const now = new Date();
     now.setHours(0, 0, 0, 0); // start of the day
     const inThePast = fc.value && TimeUtil.isBefore(fc.value, now);
-    return inThePast ? { inThePast: fc.value } : undefined;
+    return inThePast ? {inThePast: fc.value} : undefined;
+  }
+
+  static idRequired(control: AbstractControl): ValidationErrors | undefined {
+    const id = control.value ? control.value.id : undefined;
+    return NumberUtil.isDefined(id)
+      ? undefined
+      : {'idRequired': {value: control.value}};
   }
 
   private static fieldValue(group: FormGroup, fieldName: string) {

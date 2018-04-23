@@ -113,10 +113,18 @@ public class ProjectService {
         .orElseThrow(() -> new NoSuchEntityException("Tried to update non-existent project", Integer.toString(project.getId())));
     if (currentProject.getParentId() != project.getParentId()) {
       updateProjectParent(project.getId(), project.getParentId());
-      return projectDao.update(id, project);
-    } else {
-      return projectDao.update(id, project);
     }
+
+    // These values are updated from current project since
+    // they should be updated when related applications / projects change
+    // TODO: refactor project updating logic to handle this better
+    project.setStartTime(currentProject.getStartTime());
+    project.setEndTime(currentProject.getEndTime());
+    project.setCityDistricts(currentProject.getCityDistricts());
+    project.setParentId(currentProject.getParentId());
+    projectDao.update(id, project);
+
+    return find(id);
   }
 
   /**

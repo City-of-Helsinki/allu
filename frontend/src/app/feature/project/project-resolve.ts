@@ -8,6 +8,8 @@ import {ProjectState} from '../../service/project/project-state';
 import {Store} from '@ngrx/store';
 import * as fromProject from './reducers';
 import * as projectActions from './actions/project-actions';
+import {NumberUtil} from '../../util/number.util';
+import 'rxjs/add/operator/skipWhile';
 
 @Injectable()
 export class ProjectResolve implements Resolve<Project> {
@@ -15,20 +17,22 @@ export class ProjectResolve implements Resolve<Project> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<Project> {
     const projectId = Some(route.params['id']).orElse(route.parent.params['id']);
-
-    return Some(projectId)
-      .map(id => Number(id))
-      .map(id => this.projectState.load(id)
-        .do(project => {
-          this.store.dispatch(new projectActions.LoadSuccess(project));
-          this.loadRelated(id);
-        }))
-      .orElse(this.projectState.createNew());
+    this.initProject(projectId);
+    return this.waitForProject();
   }
 
-  private loadRelated(id: number) {
-    // Need to subscribe because otherwise data is not loaded
-    this.projectState.loadRelatedProjects(id).subscribe(related => {});
-    this.projectState.loadApplications(id).subscribe(apps => {});
+  private initProject(projectId: number): void {
+    if (NumberUtil.isDefined(projectId)) {
+      this.store.dispatch(new projectActions.Load(projectId));
+    } else {
+      this.store.dispatch(new projectActions.LoadSuccess(new Project()));
+    }
+  }
+
+  private waitForProject(): Observable<Project> {
+    return this.store.select(fromProject.getProjectLoaded)
+      .filter(loaded => loaded)
+      .switchMap(() => this.store.select(fromProject.getCurrentProject))
+      .take(1);
   }
 }

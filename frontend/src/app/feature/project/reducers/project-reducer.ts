@@ -2,11 +2,13 @@ import {Project} from '../../../model/project/project';
 import {ProjectActions, ProjectActionTypes} from '../actions/project-actions';
 
 export interface State {
+  loaded: boolean;
   loading: boolean;
   current: Project;
 }
 
 const initialState: State = {
+  loaded: false,
   loading: false,
   current: undefined
 };
@@ -16,7 +18,8 @@ export function reducer(state: State = initialState, action: ProjectActions) {
     case ProjectActionTypes.Load: {
       return {
         ...state,
-        loading: true
+        loading: true,
+        loaded: false
       };
     }
 
@@ -24,6 +27,7 @@ export function reducer(state: State = initialState, action: ProjectActions) {
       return {
         ...state,
         loading: false,
+        loaded: true,
         current: action.payload
       };
     }
@@ -31,7 +35,8 @@ export function reducer(state: State = initialState, action: ProjectActions) {
     case ProjectActionTypes.LoadFailed: {
       return {
         ...state,
-        loading: false
+        loading: false,
+        loaded: true
       };
     }
 
@@ -41,4 +46,6 @@ export function reducer(state: State = initialState, action: ProjectActions) {
 }
 
 export const getCurrent = (state: State) => state.current;
+
+export const getLoaded = (state: State) => state.loaded;
 

@@ -418,8 +418,12 @@ export const translations = {
     relatedProjects: 'Liittyvää hanketta',
     info: {
       title: 'Perustiedot',
-      owner: 'Hankkeen omistaja',
-      contact: 'Yhteyshenkilö',
+      identifier: 'Hanketunnus',
+      ownerType: 'Omistajan tyyppi',
+      ownerName: 'Hankkeen omistaja',
+      contactName: 'Yhteyshenkilön nimi',
+      contactPhone: 'Puhelin',
+      contactEmail: 'Sähköpostiosoite',
       contactInfo: 'Yhteystiedot',
       cityDistricts: 'Kaupunginosa(t)',
       email: 'Sähköposti',
@@ -429,9 +433,9 @@ export const translations = {
       additionalInfo: 'Lisätietoja'
     },
     field: {
-      nameMissing: 'Hankkeen nimi puuttuu',
-      ownerNameMissing: 'Hankkeen omistaja puuttu',
-      contactNameMissing: 'Hankkeen yhteyshenkilö puuttuu',
+      identifierMissing: 'Hanketunnus puuttuu',
+      ownerMissing: 'Hankkeen omistaja puuttu',
+      contactMissing: 'Hankkeen yhteyshenkilö puuttuu',
       customerReferenceMissing: 'Asiakkaan viite/työnumero puuttuu'
     },
     id: 'Tunnus',

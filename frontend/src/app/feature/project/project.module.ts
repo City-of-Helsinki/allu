@@ -16,7 +16,6 @@ import {ProjectSummaryComponent} from './summary/project-summary.component';
 import {ProjectComponent} from './project.component';
 import {ProjectApplicationListComponent} from './applications/project-application-list.component';
 import {ProjectResolve} from './project-resolve';
-import {ProjectProjectsComponent} from './projects/project-projects.component';
 import {ProjectState} from '../../service/project/project-state';
 import {reducers} from './reducers';
 import {ApplicationEffects} from './effects/application-effects';
@@ -49,7 +48,7 @@ import {ProjectEffects} from './effects/project-effects';
       ApplicationEffects,
       SearchEffects,
       ParentProjectEffects,
-      ChildProjectEffects
+      ChildProjectEffects,
     ]),
   ],
   declarations: [
@@ -61,7 +60,6 @@ import {ProjectEffects} from './effects/project-effects';
     ProjectInfoComponent,
     ProjectApplicationsComponent,
     ProjectApplicationListComponent,
-    ProjectProjectsComponent,
     ApplicationSelectComponent
   ],
   providers: [
