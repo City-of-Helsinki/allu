@@ -206,7 +206,5 @@ export const creatableTypes = [
   ApplicationType.EVENT,
   ApplicationType.SHORT_TERM_RENTAL,
   ApplicationType.NOTE,
-  ApplicationType.PLACEMENT_CONTRACT,
-  ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS
 ];
 
