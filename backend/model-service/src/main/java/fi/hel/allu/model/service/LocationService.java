@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 @Service
 public class LocationService {
 
-  private LocationDao locationDao;
-  private ApplicationService applicationService;
-  private ProjectService projectService;
-  private UserDao userDao;
+  private final LocationDao locationDao;
+  private final ApplicationService applicationService;
+  private final ProjectService projectService;
+  private final UserDao userDao;
 
   @Autowired
   public LocationService(
@@ -42,7 +42,7 @@ public class LocationService {
   }
 
   @Transactional
-  public List<Location> insert(List<Location> locations) {
+  public List<Location> insert(List<Location> locations, int userId) {
     List<Location> newLocations = new ArrayList<>();
     locations.forEach(l -> newLocations.add(locationDao.insert(l)));
     int applicationId = getApplicationId(newLocations);
@@ -55,22 +55,22 @@ public class LocationService {
         applicationService.updateOwner(application.getOwner(), Collections.singletonList(application.getId()));
       }
     }
-    updateApplicationAndProject(application);
+    updateApplicationAndProject(application, userId);
     return newLocations;
   }
 
   @Transactional
-  public List<Location> updateApplicationLocations(int applicationId, List<Location> locations) {
+  public List<Location> updateApplicationLocations(int applicationId, List<Location> locations, int userId) {
     List<Location> newLocations = locationDao.updateApplicationLocations(applicationId, locations);
-    updateApplicationAndProject(getApplicationId(newLocations));
+    updateApplicationAndProject(getApplicationId(newLocations), userId);
     return newLocations;
   }
 
   @Transactional
-  public void delete(List<Integer> locationIds) {
+  public void delete(List<Integer> locationIds, int userId) {
     int applicationId = locationDao.findApplicationId(locationIds);
     locationIds.forEach(id -> locationDao.deleteById(id));
-    updateApplicationAndProject(applicationId);
+    updateApplicationAndProject(applicationId, userId);
   }
 
   @Transactional(readOnly = true)
@@ -102,13 +102,13 @@ public class LocationService {
     }
   }
 
-  private void updateApplicationAndProject(int applicationId) {
+  private void updateApplicationAndProject(int applicationId, int userId) {
     Application application = findApplication(applicationId);
-    updateApplicationAndProject(application);
+    updateApplicationAndProject(application, userId);
   }
 
-  private void updateApplicationAndProject(Application application) {
-    updateProject(application.getId());
+  private void updateApplicationAndProject(Application application, int userId) {
+    updateProject(application.getId(), userId);
     // update application to get the price calculations done
     applicationService.update(application.getId(), application);
   }
@@ -121,10 +121,10 @@ public class LocationService {
     return applications.get(0);
   }
 
-  private void updateProject(int applicationId) {
+  private void updateProject(int applicationId, int userId) {
     Application application = applicationService.findById(applicationId);
     if (application.getProjectId() != null) {
-      projectService.updateProjectInformation(Collections.singletonList(application.getProjectId()));
+      projectService.updateProjectInformation(Collections.singletonList(application.getProjectId()), userId);
     }
   }
 
@@ -147,9 +147,9 @@ public class LocationService {
    * Copy application locations from application to another application
    */
   @Transactional
-  public void copyApplicationLocations(Integer copyFromApplicationId, Integer copyToApplicationId) {
+  public void copyApplicationLocations(Integer copyFromApplicationId, Integer copyToApplicationId, int userId) {
     List<Location> locations = findByApplicationId(copyFromApplicationId);
     locations.forEach(l -> l.setApplicationId(copyToApplicationId));
-    insert(locations);
+    insert(locations, userId);
   }
 }

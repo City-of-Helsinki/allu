@@ -19,6 +19,23 @@ public class Project {
   private Integer contactId;
   private String identifier;
 
+  public Project() {
+  }
+
+  public Project(Project other) {
+    id = other.id;
+    parentId = other.parentId;
+    name = other.name;
+    startTime = other.startTime;
+    endTime = other.endTime;
+    cityDistricts = other.cityDistricts;
+    customerReference = other.customerReference;
+    additionalInfo = other.additionalInfo;
+    customerId = other.customerId;
+    contactId = other.contactId;
+    identifier = other.identifier;
+  }
+
   /**
    * Id of the project.
    */

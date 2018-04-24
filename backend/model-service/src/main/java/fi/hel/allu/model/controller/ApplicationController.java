@@ -171,8 +171,8 @@ public class ApplicationController {
    * @return Id of the replacing application
    */
   @RequestMapping(value = "/{id}/replace", method = RequestMethod.POST)
-  public ResponseEntity<Integer> replace(@PathVariable int id) {
-    return new ResponseEntity<>(applicationReplacementService.replaceApplication(id), HttpStatus.OK);
+  public ResponseEntity<Integer> replace(@PathVariable int id, @RequestParam(required = true) int userId) {
+    return new ResponseEntity<>(applicationReplacementService.replaceApplication(id, userId), HttpStatus.OK);
   }
 
 

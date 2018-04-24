@@ -61,8 +61,8 @@ public class LocationController {
    */
   @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.PUT)
   public ResponseEntity<List<Location>> updateApplicationLocations(@PathVariable int applicationId,
-      @Valid @RequestBody List<Location> locations) {
-    return new ResponseEntity<>(locationService.updateApplicationLocations(applicationId, locations), HttpStatus.OK);
+      @RequestParam(required = true) int userId, @Valid @RequestBody List<Location> locations) {
+    return new ResponseEntity<>(locationService.updateApplicationLocations(applicationId, locations, userId), HttpStatus.OK);
   }
 
   /**
@@ -72,8 +72,9 @@ public class LocationController {
    * @return  Added locations.
    */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<List<Location>> insert(@Valid @RequestBody List<Location> locations) {
-    return new ResponseEntity<>(locationService.insert(locations), HttpStatus.OK);
+  public ResponseEntity<List<Location>> insert(@RequestParam(required = true) int userId,
+      @Valid @RequestBody List<Location> locations) {
+    return new ResponseEntity<>(locationService.insert(locations, userId), HttpStatus.OK);
   }
 
   /**
@@ -96,8 +97,9 @@ public class LocationController {
    * @return  Void.
    */
   @RequestMapping(value = "/delete", method = RequestMethod.POST)
-  public ResponseEntity<Void> deleteLocations(@RequestBody List<Integer> locations) {
-    locationService.delete(locations);
+  public ResponseEntity<Void> deleteLocations(@RequestParam(required = true) int userId,
+      @RequestBody List<Integer> locations) {
+    locationService.delete(locations, userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

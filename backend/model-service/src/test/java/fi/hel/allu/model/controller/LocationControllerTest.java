@@ -4,6 +4,7 @@ import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PostalAddress;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.geolatte.geom.Geometry;
@@ -39,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LocationControllerTest {
 
   Application application;
+  User testUser;
 
   @Autowired
   private WebTestCommon wtc;
@@ -52,6 +54,7 @@ public class LocationControllerTest {
     application = testCommon.dummyAreaRentalApplication("Test Application", "Handlaaja");
     ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(resultActions, Application.class);
+    testUser = testCommon.insertUser("testUser");
   }
 
   @Test
@@ -109,7 +112,7 @@ public class LocationControllerTest {
     newLocation.setUnderpass(false);
     newLocation.setStartTime(ZonedDateTime.now());
     newLocation.setEndTime(ZonedDateTime.now());
-    wtc.perform(put(String.format("/locations/application/%d", application.getId())),
+    wtc.perform(put(String.format("/locations/application/%d?userId=%d", application.getId(), testUser.getId())),
         Collections.singletonList(newLocation)).andExpect(status().isOk())
         .andExpect(jsonPath("$.[0].id", is(result.getId()))).andExpect(jsonPath("$.[0].postalAddress.city", is("Hellsing")));
   }
@@ -122,7 +125,7 @@ public class LocationControllerTest {
     Location updatedLocation = locations.get(0);
     updatedLocation.getPostalAddress().setPostalCode("updated");
     Set<String> expectedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
-    wtc.perform(put(String.format("/locations/application/%d", application.getId())), locations)
+    wtc.perform(put(String.format("/locations/application/%d?userId=%d", application.getId(), testUser.getId())), locations)
         .andExpect(status().isOk());
     List<Location> updatedLocations = getLocationsByApplicationId(application.getId());
     Set<String> updatedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
@@ -136,7 +139,7 @@ public class LocationControllerTest {
     List<Integer> locations = Arrays.asList(result1.getId(), result2.getId());
     List<Location> addedLocations = getLocationsByApplicationId(application.getId());
     Assert.assertEquals(2, addedLocations.size());
-    wtc.perform(post(String.format("/locations/delete")), locations).andExpect(status().isOk());
+    wtc.perform(post(String.format("/locations/delete?userId=%d", testUser.getId())), locations).andExpect(status().isOk());
     List<Location> deletedLocations = getLocationsByApplicationId(application.getId());
     Assert.assertEquals(0, deletedLocations.size());
   }
@@ -154,7 +157,7 @@ public class LocationControllerTest {
 
   private ResultActions addLocations(List<Location> locations)
       throws Exception {
-    return wtc.perform(post("/locations"), locations);
+    return wtc.perform(post("/locations?userId=" + testUser.getId()), locations);
   }
 
   private List<Location> addLocationsAndGetResult(List<Location> locations)

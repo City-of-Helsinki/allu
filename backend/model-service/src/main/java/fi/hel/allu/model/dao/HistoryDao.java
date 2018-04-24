@@ -78,6 +78,11 @@ public class HistoryDao {
     return getChangeHistory(changeHistory.customerId.eq(customerId));
   }
 
+  @Transactional(readOnly = true)
+  public List<ChangeHistoryItem> getProjectHistory(int projectId) {
+    return getChangeHistory(changeHistory.projectId.eq(projectId));
+  }
+
   /*
    * Get the change history items that match the given condition.
    */
@@ -120,6 +125,11 @@ public class HistoryDao {
   @Transactional
   public void addCustomerChange(int customerId, ChangeHistoryItem change) {
     addChangeWithKey(changeHistory.customerId, customerId, change);
+  }
+
+  @Transactional
+  public void addProjectChange(int projectId, ChangeHistoryItem change) {
+    addChangeWithKey(changeHistory.projectId, projectId, change);
   }
 
   /*

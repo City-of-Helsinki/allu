@@ -75,12 +75,12 @@ public class ApplicationReplacementService {
    * @return ID of the replacing application.
    */
   @Transactional
-  public int replaceApplication(int applicationId) {
+  public int replaceApplication(int applicationId, int userId) {
     // Copy application
     Application applicationToReplace = applicationService.findById(applicationId);
     Application replacingApplication = addReplacingApplication(applicationToReplace);
 
-    copyApplicationRelatedData(applicationId, replacingApplication);
+    copyApplicationRelatedData(applicationId, replacingApplication, userId);
 
     // Update application status
     applicationDao.updateStatus(replacingApplication.getId(), StatusType.HANDLING);
@@ -91,12 +91,12 @@ public class ApplicationReplacementService {
     return replacingApplication.getId();
   }
 
-  private void copyApplicationRelatedData(int applicationId, Application replacingApplication) {
+  private void copyApplicationRelatedData(int applicationId, Application replacingApplication, int userId) {
     commentDao.copyApplicationComments(applicationId, replacingApplication.getId(), COMMENT_TYPES_NOT_COPIED);
     applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
     supervisionTaskDao.copySupervisionTasks(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
-    locationService.copyApplicationLocations(applicationId, replacingApplication.getId());
+    locationService.copyApplicationLocations(applicationId, replacingApplication.getId(), userId);
   }
 
   private Application addReplacingApplication(Application applicationToReplace) {

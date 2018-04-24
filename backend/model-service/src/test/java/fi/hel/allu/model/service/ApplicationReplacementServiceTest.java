@@ -62,10 +62,12 @@ public class ApplicationReplacementServiceTest {
   private ApplicationReplacementService applicationReplacementService;
 
   private Application originalApplication;
+  private User testUser;
 
   @Before
   public void setup() throws Exception {
     testCommon.deleteAllData();
+    testUser = testCommon.insertUser("testUser");
     insertOriginalApplication();
   }
 
@@ -165,7 +167,7 @@ public class ApplicationReplacementServiceTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldNotReplaceInInvalidState() {
-    applicationReplacementService.replaceApplication(originalApplication.getId());
+    applicationReplacementService.replaceApplication(originalApplication.getId(), testUser.getId());
   }
 
   private void insertAttachment() {
@@ -211,7 +213,7 @@ public class ApplicationReplacementServiceTest {
 
   private Application replaceApplication() {
     setToDecisionState(originalApplication.getId());
-    int applicationId = applicationReplacementService.replaceApplication(originalApplication.getId());
+    int applicationId = applicationReplacementService.replaceApplication(originalApplication.getId(), testUser.getId());
     Application application = applicationService.findById(applicationId);
     return application;
   }
@@ -308,7 +310,7 @@ public class ApplicationReplacementServiceTest {
     location.setEndTime(ENDTIME);
     location.setGeometry(geometrycollection(3879, polygon(ring(c(5, 5), c(5, 7), c(7, 7), c(7, 5), c(5, 5)))));
     location.setStartTime(STARTTIME);
-    locationService.insert(Collections.singletonList(location));
+    locationService.insert(Collections.singletonList(location), testUser.getId());
   }
 
   private Map<ApplicationKind, List<ApplicationSpecifier>> createKindsWithSpecifiers() {

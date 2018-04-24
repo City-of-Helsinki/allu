@@ -70,7 +70,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
               .changeApplicationStatus(eq(app.getId()), eq(StatusType.DECISION), eq(app.getOwner()));
 
           Mockito.verify(locationService, Mockito.never())
-              .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)));
+              .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
         });
 
         it("Should change status and update placement contracts locations end date to decision date + 3 years", () -> {
@@ -81,7 +81,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
               .changeApplicationStatus(eq(app.getId()), eq(StatusType.DECISION), eq(app.getOwner()));
 
           Mockito.verify(locationService, Mockito.times(1))
-              .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)));
+              .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
 
           assertEquals(location.getEndTime(), mockApp.getDecisionTime().plusYears(3));
         });

@@ -2,7 +2,9 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.domain.ProjectChange;
 import fi.hel.allu.model.service.ProjectService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,8 +89,9 @@ public class ProjectController {
    * @return Inserted project.
    */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Project> insert(@Valid @RequestBody(required = true) Project project) {
-    return new ResponseEntity<>(projectService.insert(project), HttpStatus.OK);
+  public ResponseEntity<Project> insert(@Valid @RequestBody(required = true) ProjectChange projectChange) {
+    return new ResponseEntity<>(projectService.insert(
+        projectChange.getProject(), projectChange.getUserId()), HttpStatus.OK);
   }
 
   /**
@@ -98,8 +101,14 @@ public class ProjectController {
    * @return Updated project.
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Project> update(@PathVariable int id, @Valid @RequestBody(required = true) Project project) {
-    return new ResponseEntity<>(projectService.update(id, project), HttpStatus.OK);
+  public ResponseEntity<Project> update(@PathVariable int id, @Valid @RequestBody(required = true) ProjectChange projectChange) {
+    return new ResponseEntity<>(projectService.update(
+        id, projectChange.getProject(), projectChange.getUserId()), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
+  public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
+    return new ResponseEntity<>(projectService.getProjectChanges(id), HttpStatus.OK);
   }
 
   /**
@@ -115,13 +124,14 @@ public class ProjectController {
 
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
   public ResponseEntity<List<Integer>> addApplications(
-      @PathVariable int id, @Valid @RequestBody(required = true) List<Integer> applicationIds) {
-    return new ResponseEntity<>(projectService.addApplications(id, applicationIds), HttpStatus.OK);
+      @PathVariable int id, @RequestParam(required = true) int userId,
+      @Valid @RequestBody(required = true) List<Integer> applicationIds) {
+    return new ResponseEntity<>(projectService.addApplications(id, applicationIds, userId), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/applications/{appId}", method = RequestMethod.DELETE)
-  public ResponseEntity<Void> removeApplication(@PathVariable int appId) {
-    projectService.removeApplication(appId);
+  public ResponseEntity<Void> removeApplication(@PathVariable int appId, @RequestParam(required = true) int userId) {
+    projectService.removeApplication(appId, userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -134,10 +144,9 @@ public class ProjectController {
    */
   @RequestMapping(value = {"/{id}/parentProject/{parentProject}", "/{id}/parentProject"}, method = RequestMethod.PUT)
   public ResponseEntity<Project> updateProjectParent(
-      @PathVariable int id, @PathVariable Optional<Integer> parentProject) {
-    return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject.orElse(null)), HttpStatus.OK);
+      @PathVariable int id, @PathVariable Optional<Integer> parentProject, @RequestParam(required = true) int userId) {
+    return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject.orElse(null), userId), HttpStatus.OK);
   }
-
 
   /**
    * Updates the information of given projects by going through the project / application hierarchy to find the up-to-date values. Updates
@@ -147,7 +156,7 @@ public class ProjectController {
    * @return Projects that have been updated. May contain more projects than in the list provided as a parameter.
    */
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
-  public ResponseEntity<List<Project>> updateProjectInformation(@Valid @RequestBody(required = true) List<Integer> projectIds) {
-    return new ResponseEntity<>(projectService.updateProjectInformation(projectIds), HttpStatus.OK);
+  public ResponseEntity<List<Project>> updateProjectInformation(@RequestParam(required = true) int userId, @Valid @RequestBody(required = true) List<Integer> projectIds) {
+    return new ResponseEntity<>(projectService.updateProjectInformation(projectIds, userId), HttpStatus.OK);
   }
 }

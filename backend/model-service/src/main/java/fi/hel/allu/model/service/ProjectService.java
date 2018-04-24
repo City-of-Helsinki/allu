@@ -1,12 +1,19 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,17 +31,29 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
 
+  private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
+
+  private final ProjectDao projectDao;
+  private final ApplicationDao applicationDao;
+  private final LocationDao locationDao;
+  private final HistoryDao historyDao;
+  private final ObjectComparer objectComparer;
+
   @Autowired
-  private ProjectDao projectDao;
-  @Autowired
-  private ApplicationDao applicationDao;
-  @Autowired
-  private LocationDao locationDao;
+  public ProjectService(ProjectDao projectDao,
+      ApplicationDao applicationDao,
+      LocationDao locationDao,
+      HistoryDao historyDao) {
+    this.projectDao = projectDao;
+    this.applicationDao = applicationDao;
+    this.locationDao = locationDao;
+    this.historyDao = historyDao;
+    this.objectComparer = new ObjectComparer();
+  }
 
   @Transactional(readOnly = true)
   public Project find(int id) {
-    Optional<Project> project = projectDao.findById(id);
-    return project.orElseThrow(() -> new NoSuchEntityException("Project not found", Integer.toString(id)));
+      return findProject(id, "Project not found");
   }
 
   /**
@@ -73,8 +92,7 @@ public class ProjectService {
   @Transactional(readOnly = true)
   public List<Project> findProjectParents(Integer projectId) {
     ArrayList<Project> resolvedProjects = new ArrayList<>();
-    Project currentProject = projectDao.findById(projectId)
-        .orElseThrow(() -> new NoSuchEntityException("Project not found", projectId.toString())); // should never happen
+    Project currentProject = findProject(projectId, "Project not found");
     resolvedProjects.add(currentProject);
     if (currentProject.getParentId() == null) {
       return resolvedProjects;
@@ -91,11 +109,12 @@ public class ProjectService {
    * @return  Inserted project.
    */
   @Transactional
-  public Project insert(Project project) {
+  public Project insert(Project project, int userId) {
     if (project.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
-    Project insertedProject = projectDao.insert(project);
+    final Project insertedProject = projectDao.insert(project);
+    addChangeItem(insertedProject.getId(), userId, null, insertedProject, ChangeType.CREATED);
     return insertedProject;
   }
 
@@ -107,12 +126,12 @@ public class ProjectService {
    * @return  Updated project.
    */
   @Transactional
-  public Project update(int id, Project project) {
+  public Project update(int id, Project project, int userId) {
     project.setId(id);
-    Project currentProject = projectDao.findById(project.getId())
-        .orElseThrow(() -> new NoSuchEntityException("Tried to update non-existent project", Integer.toString(project.getId())));
-    if (currentProject.getParentId() != project.getParentId()) {
-      updateProjectParent(project.getId(), project.getParentId());
+    final Project currentProject = findProject(id, "Tried to update non-existent project");
+
+    if (!Objects.equals(currentProject.getParentId(), project.getParentId())) {
+      updateProjectParent(project.getId(), project.getParentId(), userId);
     }
 
     // These values are updated from current project since
@@ -122,9 +141,9 @@ public class ProjectService {
     project.setEndTime(currentProject.getEndTime());
     project.setCityDistricts(currentProject.getCityDistricts());
     project.setParentId(currentProject.getParentId());
-    projectDao.update(id, project);
-
-    return find(id);
+    final Project updatedProject = projectDao.update(id, project);
+    addChangeItem(id, userId, currentProject, updatedProject, ChangeType.CONTENTS_CHANGED);
+    return updatedProject;
   }
 
   /**
@@ -139,22 +158,29 @@ public class ProjectService {
   }
 
   @Transactional
-  public List<Integer> addApplications(int id, List<Integer> applicationIds) {
+  public List<Integer> addApplications(int id, List<Integer> applicationIds, int userId) {
     Set<Integer> changedProjects = new HashSet<>();
     changedProjects.add(id);
     changedProjects.addAll(getRelatedProjects(applicationIds));
 
     applicationDao.updateProject(id, applicationIds);
-    updateProjectInformation(new ArrayList<>(changedProjects));
+    updateProjectInformation(new ArrayList<>(changedProjects), userId);
+    applicationIds.forEach((appId) -> {
+      final Application application = applicationDao.findById(appId);
+      if (application != null) {
+        addChangeItem(id, userId, null, new ApplicationChange(application.getName()), ChangeType.APPLICATION_ADDED);
+      }
+    });
 
     return applicationIds;
   }
 
   @Transactional
-  public void removeApplication(int applicationId) {
-    Application app = applicationDao.findById(applicationId);
+  public void removeApplication(int applicationId, int userId) {
+    final Application app = applicationDao.findById(applicationId);
     applicationDao.updateProject(null, Collections.singletonList(applicationId));
-    updateProjectInformation(Collections.singletonList(app.getProjectId()));
+    updateProjectInformation(Collections.singletonList(app.getProjectId()), userId);
+    addChangeItem(app.getProjectId(), userId, new ApplicationChange(app.getName()), null, ChangeType.APPLICATION_REMOVED);
   }
 
   /**
@@ -164,9 +190,9 @@ public class ProjectService {
    * @param parentProject   Parent to be set. Use <code>null</code> to clear existing parent.
    */
   @Transactional
-  public Project updateProjectParent(int id, Integer parentProject) {
-    Project currentProject = projectDao.findById(id)
-        .orElseThrow(() -> new NoSuchEntityException("Tried to update parent of non-existent project", Integer.toString(id)));
+  public Project updateProjectParent(int id, Integer parentProject, int userId) {
+    final Project currentProject = findProject(id, "Tried to update parent of non-existent project");
+    final Project originalProject = new Project(currentProject);
 
     ArrayList<Integer> changedProjects = new ArrayList<>();
     if (parentProject != null) {
@@ -181,9 +207,11 @@ public class ProjectService {
     if (currentProject.getParentId() != null) {
       changedProjects.add(currentProject.getParentId());
     }
+
     currentProject.setParentId(parentProject);
     projectDao.update(currentProject.getId(), currentProject);
-    updateProjectInformation(changedProjects);
+    addChangeItem(id, userId, originalProject, currentProject, ChangeType.APPLICATION_REMOVED);
+    updateProjectInformation(changedProjects, userId);
 
     return projectDao.findById(id).get();
   }
@@ -196,8 +224,8 @@ public class ProjectService {
    * @param projectIds
    */
   @Transactional
-  public List<Project> updateProjectInformation(List<Integer> projectIds) {
-
+  public List<Project> updateProjectInformation(List<Integer> projectIds, Integer userId) {
+    logger.info("updateProjectInformation " + Arrays.toString(projectIds.toArray()));
     List<Integer> rootParentIds = new ArrayList<>();
     HashSet<Integer> resolvedProjectIds = new HashSet<>();
     for (Integer projectId : projectIds) {
@@ -212,10 +240,15 @@ public class ProjectService {
 
     HashSet<Project> updatedProjects = new HashSet<>();
     rootParentIds.forEach(pId -> {
-      ProjectSummary ps = calculateSummaryAndUpdate(pId);
+      ProjectSummary ps = calculateSummaryAndUpdate(pId, userId);
       updatedProjects.addAll(ps.updatedProjects);
     });
     return new ArrayList<>(updatedProjects);
+  }
+
+  @Transactional(readOnly = true)
+  public List<ChangeHistoryItem> getProjectChanges(Integer projectId) {
+    return historyDao.getProjectHistory(projectId);
   }
 
   /**
@@ -236,14 +269,14 @@ public class ProjectService {
    * @param   projectId   Project whose summary information is calculated.
    * @return  Summary of the data calculated from applications in the project or its children.
    */
-  private ProjectSummary calculateSummaryAndUpdate(int projectId) {
-    Project project = projectDao.findById(projectId)
-        .orElseThrow(() -> new NoSuchEntityException("Project not found", Integer.toString(projectId))); // should never happen
+  private ProjectSummary calculateSummaryAndUpdate(int projectId, Integer userId) {
+    Project project = findProject(projectId, "Project not found");
+    final Project origProject = new Project(project);
     ProjectSummary summary = new ProjectSummary();
     List<Project> children = projectDao.findProjectChildren(project.getId());
 
     for (Project child : children) {
-      ProjectSummary tmpSummary = calculateSummaryAndUpdate(child.getId());
+      ProjectSummary tmpSummary = calculateSummaryAndUpdate(child.getId(), userId);
       summary = mergeSummaries(summary, tmpSummary);
     }
 
@@ -256,6 +289,9 @@ public class ProjectService {
     project.setEndTime(summary.maxEndTime);
     project.setCityDistricts(summary.districts.toArray(new Integer[0]));
     project = projectDao.update(project.getId(), project);
+    if (userId != null) {
+      addChangeItem(projectId, userId, origProject, project, ChangeType.CONTENTS_CHANGED);
+    }
     summary.updatedProjects.add(project);
 
     return summary;
@@ -323,5 +359,34 @@ public class ProjectService {
         .map(app -> app.getProjectId())
         .filter(id -> id != null)
         .collect(Collectors.toSet());
+  }
+
+  private Project findProject(final Integer projectId, final String errorText) {
+    return projectDao.findById(projectId).orElseThrow(() -> new NoSuchEntityException(errorText, projectId));
+  }
+
+  /*
+   * Add a change item to given user's change history. Compare oldData with
+   * newData and log all differences between them.
+   */
+  private void addChangeItem(int projectId, int userId, Object oldData, Object newData, ChangeType changeType) {
+    final List<FieldChange> fieldChanges = objectComparer.compare(oldData, newData).stream()
+        .map(d -> new FieldChange(d.keyName, d.oldValue, d.newValue)).collect(Collectors.toList());
+    if (!fieldChanges.isEmpty()) {
+      final ChangeHistoryItem change = new ChangeHistoryItem(userId, changeType, null, ZonedDateTime.now(), fieldChanges);
+      historyDao.addProjectChange(projectId, change);
+    }
+  }
+
+  /** Helper class for saving application adding/removing into project history. */
+  private class ApplicationChange {
+    private final String applicationName;
+    public ApplicationChange(String name) {
+      this.applicationName = name;
+    }
+
+    public String getApplicationName() {
+      return applicationName;
+    }
   }
 }

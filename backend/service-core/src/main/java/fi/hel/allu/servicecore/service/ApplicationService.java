@@ -281,7 +281,7 @@ public class ApplicationService {
   public int replaceApplication(int applicationId) {
     return restTemplate.exchange(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_REPLACE), HttpMethod.POST,
-        null, Integer.class, applicationId).getBody();
+        null, Integer.class, applicationId, userService.getCurrentUser().getId()).getBody();
   }
 
   public List<ApplicationIdentifierJson> replacementHistory(int id) {

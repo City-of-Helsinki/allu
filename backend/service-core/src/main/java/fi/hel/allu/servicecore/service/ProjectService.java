@@ -1,10 +1,13 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.domain.ProjectChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +30,18 @@ public class ProjectService {
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final ProjectMapper projectMapper;
+  private final UserService userService;
 
   @Autowired
   public ProjectService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
-      ProjectMapper projectMapper) {
+      ProjectMapper projectMapper,
+      UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.projectMapper = projectMapper;
+    this.userService = userService;
   }
 
   /**
@@ -82,7 +88,7 @@ public class ProjectService {
   public ProjectJson insert(ProjectJson projectJson) {
     Project projectModel = restTemplate.postForObject(
         applicationProperties.getProjectCreateUrl(),
-        projectMapper.createProjectModel(projectJson),
+        new ProjectChange(userService.getCurrentUser().getId(), projectMapper.createProjectModel(projectJson)),
         Project.class);
     return projectMapper.mapProjectToJson(projectModel);
   }
@@ -95,7 +101,6 @@ public class ProjectService {
    * @return  Applications of the given project. Never <code>null</code>.
    */
   public List<Application> findApplicationsByProject(int id) {
-    ApplicationJson applicationJson = new ApplicationJson();
     ResponseEntity<Application[]> responseEntity =
         restTemplate.getForEntity(applicationProperties.getApplicationsByProjectUrl(), Application[].class, id);
     return Arrays.asList(responseEntity.getBody());
@@ -111,7 +116,8 @@ public class ProjectService {
   public List<ProjectJson> updateProjectInformation(List<Integer> projectIds) {
     HttpEntity<List<Integer>> requestEntity = new HttpEntity<>(projectIds);
     ResponseEntity<Project[]> updatedProjectResult = restTemplate.exchange(
-        applicationProperties.getProjectInformationUpdateUrl(), HttpMethod.PUT, requestEntity, Project[].class);
+        applicationProperties.getProjectInformationUpdateUrl(), HttpMethod.PUT, requestEntity,
+        Project[].class, userService.getCurrentUser().getId());
     return Arrays.asList(updatedProjectResult.getBody()).stream().map(p -> projectMapper.mapProjectToJson(p)).collect(Collectors.toList());
   }
 
@@ -121,7 +127,8 @@ public class ProjectService {
    * @param projectJson Project that is going to be updated
    */
   ProjectJson update(int projectId, ProjectJson projectJson) {
-    HttpEntity<Project> requestEntity = new HttpEntity<>(projectMapper.createProjectModel(projectJson));
+    HttpEntity<ProjectChange> requestEntity = new HttpEntity<>(new ProjectChange(
+        userService.getCurrentUser().getId(), projectMapper.createProjectModel(projectJson)));
     ResponseEntity<Project> response = restTemplate.exchange(
         applicationProperties.getProjectUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, projectId);
     return projectMapper.mapProjectToJson(response.getBody());
@@ -130,12 +137,13 @@ public class ProjectService {
   List<Integer> addApplications(int id, List<Integer> applicationIds) {
     HttpEntity<List<Integer>> requestEntity = new HttpEntity<>(applicationIds);
     ResponseEntity<Integer[]> result = restTemplate.exchange(
-        applicationProperties.getProjectApplicationsAddUrl(), HttpMethod.PUT, requestEntity, Integer[].class, id);
+        applicationProperties.getProjectApplicationsAddUrl(), HttpMethod.PUT, requestEntity,
+        Integer[].class, id, userService.getCurrentUser().getId());
     return Arrays.asList(result.getBody());
   }
 
   void removeApplication(int id) {
-    restTemplate.delete(applicationProperties.getProjectApplicationRemoveUrl(), id);
+    restTemplate.delete(applicationProperties.getProjectApplicationRemoveUrl(), id, userService.getCurrentUser().getId());
   }
 
   /**
@@ -148,7 +156,15 @@ public class ProjectService {
   ProjectJson updateProjectParent(int id, Integer parentProject) {
     HttpEntity<String> requestEntity = new HttpEntity<>("empty");
     ResponseEntity<Project> updatedProjectResult = restTemplate.exchange(
-        applicationProperties.getProjectParentUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, id, parentProject);
+        applicationProperties.getProjectParentUpdateUrl(), HttpMethod.PUT, requestEntity,
+        Project.class, id, parentProject, userService.getCurrentUser().getId());
     return projectMapper.mapProjectToJson(updatedProjectResult.getBody());
+  }
+
+  public List<ChangeHistoryItemJson> getChanges(Integer projectId) {
+    return Arrays.stream(
+        restTemplate.getForObject(applicationProperties.getProjectHistoryUrl(), ChangeHistoryItem[].class, projectId))
+        .map(c -> ChangeHistoryMapper.mapToJson(c))
+        .collect(Collectors.toList());
   }
 }

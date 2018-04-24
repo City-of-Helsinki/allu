@@ -62,7 +62,7 @@ public class ApplicationProperties {
   /**
    * Model-service path to create a new location
    */
-  public static final String PATH_MODEL_LOCATION_CREATE = "/locations";
+  public static final String PATH_MODEL_LOCATION_CREATE = "/locations?userId={userId}";
 
   /**
    * Model-service path to find contact by identifier
@@ -92,7 +92,7 @@ public class ApplicationProperties {
   /**
    * Model-service path to create a new application
    */
-  public static final String PATH_MODEL_APPLICATION_REPLACE = "/applications/{id}/replace";
+  public static final String PATH_MODEL_APPLICATION_REPLACE = "/applications/{id}/replace?userId={userId}";
 
   /**
    * Create absolute url to model-service. Host and port values are read from
@@ -263,11 +263,15 @@ public class ApplicationProperties {
   }
 
   public String getProjectApplicationsAddUrl() {
-    return getModelServiceUrl("/projects/{id}/applications");
+    return getModelServiceUrl("/projects/{id}/applications?userId={userId}");
   }
 
   public String getProjectApplicationRemoveUrl() {
-    return getModelServiceUrl("/projects/applications/{id}");
+    return getModelServiceUrl("/projects/applications/{id}?userId={userId}");
+  }
+
+  public String getProjectHistoryUrl() {
+    return getModelServiceUrl("/projects/{id}/history");
   }
 
   /**
@@ -399,21 +403,21 @@ public class ApplicationProperties {
    * @return url for creating locations.
    */
   public String getLocationsCreateUrl() {
-    return getModelServiceUrl("/locations");
+    return getModelServiceUrl("/locations?userId={userId}");
   }
 
   /**
    * @return url for updating application's locations.
    */
   public String getUpdateApplicationLocationsUrl() {
-    return getModelServiceUrl("/locations/application/{applicationId}");
+    return getModelServiceUrl("/locations/application/{applicationId}?userId={userId}");
   }
 
   /**
    * @return url for deleting locations.
    */
   public String getLocationsDeleteUrl() {
-    return getModelServiceUrl("/locations/delete");
+    return getModelServiceUrl("/locations/delete?userId={userId}");
   }
 
   /**
@@ -491,14 +495,14 @@ public class ApplicationProperties {
    * @return  url for updating parent of existing project.
    */
   public String getProjectParentUpdateUrl() {
-    return getModelServiceUrl("/projects/{id}/parentProject/{parentProject}");
+    return getModelServiceUrl("/projects/{id}/parentProject/{parentProject}?userId={userId}");
   }
 
   /**
    * @return  url for updating project information of given projects.
    */
   public String getProjectInformationUpdateUrl() {
-    return getModelServiceUrl("/projects/update");
+    return getModelServiceUrl("/projects/update?userId={userId}");
   }
 
   /**

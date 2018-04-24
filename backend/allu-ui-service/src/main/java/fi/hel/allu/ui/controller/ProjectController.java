@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
@@ -138,7 +138,6 @@ public class ProjectController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-
   /**
    * Update parent of the given project.
    *
@@ -163,5 +162,11 @@ public class ProjectController {
   public ResponseEntity<ProjectJson> removeParent(@Valid @RequestBody(required = true) List<Integer> projectIds) {
     projectServiceComposer.updateParentForProjects(null, projectIds);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ChangeHistoryItemJson>> getChanges(@PathVariable int id) {
+    return new ResponseEntity<>(projectService.getChanges(id), HttpStatus.OK);
   }
 }

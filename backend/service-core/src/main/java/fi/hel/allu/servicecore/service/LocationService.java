@@ -23,16 +23,18 @@ public class LocationService {
   @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(LocationService.class);
 
-  private ApplicationProperties applicationProperties;
-
-  private RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final UserService userService;
 
   @Autowired
-  public LocationService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
+  public LocationService(ApplicationProperties applicationProperties,
+      RestTemplate restTemplate,
+      UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.userService = userService;
   }
-
 
   /**
    * Create new locations.
@@ -45,7 +47,8 @@ public class LocationService {
       locationJsons.stream().forEach(l -> l.setId(null));
       Location[] createdLocations = restTemplate.postForObject(applicationProperties.getModelServiceUrl(
           ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(applicationId, locationJsons),
-          Location[].class);
+          Location[].class,
+          userService.getCurrentUser().getId());
       return mapToLocationJsons(createdLocations);
     } else {
       return Collections.emptyList();
@@ -73,9 +76,11 @@ public class LocationService {
     HttpEntity<List<Location>> requestEntity = new HttpEntity<>(createLocationModel(applicationId, locations));
     ResponseEntity<Location[]> responseEntity = restTemplate.exchange(
         applicationProperties.getUpdateApplicationLocationsUrl(),
-            HttpMethod.PUT,
-            requestEntity,
-        Location[].class, applicationId);
+        HttpMethod.PUT,
+        requestEntity,
+        Location[].class,
+        applicationId,
+        userService.getCurrentUser().getId());
     return mapToLocationJsons(responseEntity.getBody());
   }
 
@@ -84,11 +89,13 @@ public class LocationService {
         restTemplate.postForObject(
             applicationProperties.getLocationsCreateUrl(),
             createLocationModel(applicationId, locations),
-            Location[].class));
+            Location[].class,
+            userService.getCurrentUser().getId()));
   }
 
   public void delete(List<Integer> locations) {
-    restTemplate.postForObject(applicationProperties.getLocationsDeleteUrl(), locations, Void.class);
+    restTemplate.postForObject(applicationProperties.getLocationsDeleteUrl(), locations, Void.class,
+      userService.getCurrentUser().getId());
   }
 
   /**

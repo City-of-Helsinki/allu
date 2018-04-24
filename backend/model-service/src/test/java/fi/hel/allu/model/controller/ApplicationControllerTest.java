@@ -44,6 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class ApplicationControllerTest {
 
+  private User testUser;
+
   @Autowired
   WebTestCommon wtc;
 
@@ -56,6 +58,7 @@ public class ApplicationControllerTest {
   @Before
   public void setup() throws Exception {
     wtc.setupNoDelete();
+    testUser = testCommon.insertUser("testUser");
   }
 
   @Test
@@ -183,6 +186,7 @@ public class ApplicationControllerTest {
   @Test
   public void testFindIntersecting() throws Exception {
     testCommon.deleteAllData();
+    testUser = testCommon.insertUser("testUser");
     createLocationTestApplications();
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     lsc.setIntersects(bigArea);
@@ -529,7 +533,7 @@ public class ApplicationControllerTest {
       ZonedDateTime endTime)
       throws Exception {
     Application insertedApp = insertApplication(application);
-    testCommon.insertLocation(streetAddress, geometryCollection, insertedApp.getId(), startTime, endTime);
+    testCommon.insertLocation(streetAddress, geometryCollection, insertedApp.getId(), startTime, endTime, testUser.getId());
     return insertedApp;
   }
 

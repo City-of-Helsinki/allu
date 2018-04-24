@@ -39,23 +39,23 @@ public class ApplicationStatusService {
   @Transactional
   public Application changeApplicationStatus(int applicationId, StatusType statusType, Integer userId) {
     Application application = applicationService.changeApplicationStatus(applicationId, statusType, userId);
-    return updateApplicationByNewStatus(application);
+    return updateApplicationByNewStatus(application, userId);
   }
 
-  private Application updateApplicationByNewStatus(Application application) {
+  private Application updateApplicationByNewStatus(Application application, Integer userId) {
     if (application.getStatus() == StatusType.DECISION) {
-      return updateDecisionApplication(application);
+      return updateDecisionApplication(application, userId);
     } else {
       return application;
     }
   }
 
-  private Application updateDecisionApplication(Application application) {
+  private Application updateDecisionApplication(Application application, int userId) {
     if (application.getType() == ApplicationType.PLACEMENT_CONTRACT) {
       Location location = locationService.findSingleByApplicationId(application.getId());
       ZonedDateTime newEndTime = application.getDecisionTime().plusYears(PLACEMENT_CONTRACT_END_DATE_YEAR_OFFSET);
       location.setEndTime(newEndTime);
-      locationService.updateApplicationLocations(application.getId(), Collections.singletonList(location));
+      locationService.updateApplicationLocations(application.getId(), Collections.singletonList(location), userId);
       return applicationService.findById(application.getId());
     } else {
         return application;

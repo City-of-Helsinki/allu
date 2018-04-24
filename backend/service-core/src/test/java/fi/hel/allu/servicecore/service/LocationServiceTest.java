@@ -5,6 +5,7 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
 import fi.hel.allu.servicecore.domain.FixedLocationJson;
 import fi.hel.allu.servicecore.domain.LocationJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,17 +22,23 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import static org.geolatte.geom.builder.DSL.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 
 public class LocationServiceTest {
   private static Validator validator;
   protected LocationService locationService;
   protected RestTemplate restTemplate;
+  protected UserService userService;
+  private UserJson testUser;
 
   private static final int APPLICATION_ID = 12345;
 
@@ -44,29 +51,32 @@ public class LocationServiceTest {
   @Before
   public void setUp() {
     restTemplate = Mockito.mock(RestTemplate.class);
-    locationService = new LocationService(Mockito.mock(ApplicationProperties.class), restTemplate);
+    userService = Mockito.mock(UserService.class);
+    locationService = new LocationService(Mockito.mock(ApplicationProperties.class), restTemplate, userService);
 
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(), Mockito.eq(Location[].class)))
-        .thenAnswer(
-            (Answer<Location[]>) invocation -> {
-              // Use given parameter to create a response
-              Location location = (Location) invocation.getArgumentAt(1, List.class).get(0);
-              location.setId(102);
-              return new Location[] { location };
-            });
+    testUser = new UserJson();
+    testUser.setId(1);
+    Mockito.when(userService.getCurrentUser()).thenReturn(testUser);
 
-    Mockito.when(restTemplate.exchange(Mockito.any(String.class), Mockito.anyObject(), Mockito.anyObject(), Mockito.eq(Location[].class)))
-        .thenAnswer(
-            (Answer<ResponseEntity>) invocation -> {
-              // Use given parameter to create a response
-              HttpEntity<List<Location>> httpEntity = invocation.getArgumentAt(2, HttpEntity.class);
-              ResponseEntity<Location[]> responseEntity = Mockito.mock(ResponseEntity.class);
-              Mockito.when(responseEntity.getBody()).thenReturn(((List<Location>) httpEntity.getBody()).toArray(new Location[0]));
-              return responseEntity;
-            });
+    Mockito.when(restTemplate.postForObject(any(String.class), anyObject(), eq(Location[].class), eq(testUser.getId())))
+        .thenAnswer(invocation -> {
+          // Use given parameter to create a response
+          Location location = (Location) invocation.getArgumentAt(1, List.class).get(0);
+          location.setId(102);
+          return new Location[] { location };
+        });
+
+    Mockito.when(restTemplate.exchange(any(String.class), anyObject(), anyObject(), eq(Location[].class)))
+        .thenAnswer(invocation -> {
+          // Use given parameter to create a response
+          HttpEntity<List<Location>> httpEntity = invocation.getArgumentAt(2, HttpEntity.class);
+          ResponseEntity<Location[]> responseEntity = Mockito.mock(ResponseEntity.class);
+          Mockito.when(responseEntity.getBody()).thenReturn(((List<Location>) httpEntity.getBody()).toArray(new Location[0]));
+          return responseEntity;
+        });
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse(null));
+        .thenAnswer(invocation -> createMockLocationResponse(null));
   }
 
   @Test

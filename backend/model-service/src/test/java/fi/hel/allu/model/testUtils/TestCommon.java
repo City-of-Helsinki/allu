@@ -185,7 +185,8 @@ public class TestCommon {
       Geometry geometry,
       int applicationId,
       ZonedDateTime startTime,
-      ZonedDateTime endTime) {
+      ZonedDateTime endTime,
+      int userId) {
     Location location = new Location();
     location.setGeometry(geometry);
     location.setPostalAddress(new PostalAddress(streetAddress, null, null));
@@ -193,7 +194,7 @@ public class TestCommon {
     location.setUnderpass(false);
     location.setStartTime(startTime);
     location.setEndTime(endTime);
-    return locationService.insert(Collections.singletonList(location)).get(0).getId();
+    return locationService.insert(Collections.singletonList(location), userId).get(0).getId();
   }
 
   /**

@@ -6,6 +6,7 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 
@@ -46,9 +47,10 @@ public class ProjectControllerTest {
   private final int HERTTONIEMI_CITY_DISTRICT_ID = 44;
   private static int projectNbr = 0;
 
-  private ZoneId zoneId = ZoneId.of( "Europe/Helsinki" );
+  private final ZoneId zoneId = ZoneId.of( "Europe/Helsinki" );
   private Customer testCustomer;
   private Contact testContact;
+  private User testUser;
 
   @Autowired
   WebTestCommon wtc;
@@ -61,6 +63,7 @@ public class ProjectControllerTest {
     wtc.setup();
     testCustomer = testCommon.insertPerson();
     testContact = testCommon.insertContact(testCustomer.getId());
+    testUser = testCommon.insertUser("Project User");
   }
 
   @Test
@@ -165,7 +168,7 @@ public class ProjectControllerTest {
     Project addedProject = addProjectGetResult(originalProject);
     Project updatedProject = updateProjectGetResult(addedProject);
     ResultActions resultActions = wtc.perform(
-        put("/projects/update"), Collections.singletonList(updatedProject.getId())).andExpect(status().isOk());
+        put("/projects/update?userId=" + testUser.getId()), Collections.singletonList(updatedProject.getId())).andExpect(status().isOk());
     Project[] updatedProjects = wtc.parseObjectFromResult(resultActions, Project[].class);
     Assert.assertEquals(2, updatedProjects.length);
     HashSet<Project> updatedProjectsSet = new HashSet<>(Arrays.asList(updatedProjects));
@@ -240,7 +243,8 @@ public class ProjectControllerTest {
     Project projectParent = createDummyProject();
     projectParent = addProjectGetResult(projectParent);
     wtc.perform(
-        put("/projects/" + project.getId() + "/parentProject/" + projectParent.getId())).andExpect(status().isOk());
+      put("/projects/" + project.getId() + "/parentProject/" + projectParent.getId() + "?userId=" + testUser.getId()))
+        .andExpect(status().isOk());
 
     Project updatedParentProject = wtc.parseObjectFromResult(resultActions, Project.class);
     assertEquals(startTime, updatedParentProject.getStartTime().withZoneSameInstant(zoneId));
@@ -255,8 +259,8 @@ public class ProjectControllerTest {
             c(25502767.204117525368929, 6675095.857257002033293), c(25502393.421108055859804, 6675101.196953509002924),
             c(25502404.097045037895441, 6675352.16425826959312)));
     addCityDistrictToApplication(addedParentApplication, herttoniemi_polygon, startTime.minusDays(1), endTime.plusDays(1));
-    resultActions = wtc.perform(
-        put("/projects/" + projectParent.getId() + "/applications"),
+    wtc.perform(
+        put("/projects/" + projectParent.getId() + "/applications?userId=" + testUser.getId()),
         Collections.singletonList(addedParentApplication.getId())).andExpect(status().isOk());
 
     // check that both parent and child have been updated correctly
@@ -273,7 +277,7 @@ public class ProjectControllerTest {
     Application addedApplication2 = addApplicationToDatabase(newApplication2);
     addCityDistrictToApplication(addedApplication2, KRUUNUNHAKA_CITY_DISTRICT_ID, startTime.minusDays(2), endTime.minusDays(1));
     wtc.perform(
-        put("/projects/" + project.getId() + "/applications"),
+        put("/projects/" + project.getId() + "/applications?userId=" + testUser.getId()),
         Arrays.asList(addedApplication1.getId(), addedApplication2.getId())).andExpect(status().isOk());
 
     // check that both parent and child have been updated correctly
@@ -313,7 +317,8 @@ public class ProjectControllerTest {
   }
 
   private ResultActions addProject(Project project) throws Exception {
-    return wtc.perform(post("/projects"), project);
+    ProjectChange pc = new ProjectChange(testUser.getId(), project);
+    return wtc.perform(post("/projects"), pc);
   }
 
   private Project getProject(int projectId) throws Exception {
@@ -332,30 +337,31 @@ public class ProjectControllerTest {
   }
 
   private Project updateProjectGetResult(Project project) throws Exception {
-    ResultActions resultActions = wtc.perform(put("/projects/" + project.getId()), project).andExpect(status().isOk());
+    ProjectChange pc = new ProjectChange(testUser.getId(), project);
+    ResultActions resultActions = wtc.perform(put("/projects/" + project.getId()), pc).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Project.class);
   }
 
   private Project updateProjectParentGetResult(Integer projectId, Integer parentId) throws Exception {
-    String url = String.format("/projects/%d/parentProject/%d", projectId, parentId);
+    String url = String.format("/projects/%d/parentProject/%d?userId=%d", projectId, parentId, testUser.getId());
     ResultActions resultActions = wtc.perform(put(url)).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Project.class);
   }
 
   private List<Project> getProjectChildren(int projectId) throws Exception {
-    ResultActions resultActions = wtc.perform(get("/projects/" + projectId + "/children")).andExpect(status().isOk());;
+    ResultActions resultActions = wtc.perform(get("/projects/" + projectId + "/children")).andExpect(status().isOk());
     return Arrays.asList(wtc.parseObjectFromResult(resultActions, Project[].class));
   }
 
   private List<Integer> addApplicationsGetResult(Integer id, List<Integer> applicationIds) throws Exception {
     ResultActions resultActions = wtc.perform(
-        put("/projects/" + id + "/applications"),
+        put("/projects/" + id + "/applications?userId=" + testUser.getId()),
         applicationIds).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, List.class);
   }
 
   private void removeApplicationFromProject(Integer id) throws Exception {
-    wtc.perform(delete("/projects/applications/" + id)).andExpect(status().isOk());
+    wtc.perform(delete("/projects/applications/" + id + "?userId=" + testUser.getId())).andExpect(status().isOk());
   }
 
   private Project createProject(Integer projectID, String projectName, ZonedDateTime startDate) {
@@ -423,7 +429,7 @@ public class ProjectControllerTest {
     Location location = newLocationWithDefaults(startTime, endTime);
     location.setApplicationId(application.getId());
     location.setGeometry(geometrycollection(3879, polygon));
-    wtc.perform(post("/locations"), Collections.singletonList(location)).andExpect(status().isOk());
+    wtc.perform(post("/locations?userId=" + testUser.getId()), Collections.singletonList(location)).andExpect(status().isOk());
   }
 
   private void addCityDistrictToApplication(
@@ -434,7 +440,7 @@ public class ProjectControllerTest {
     Location location = newLocationWithDefaults(startTime, endTime);
     location.setApplicationId(application.getId());
     location.setCityDistrictIdOverride(districtOverride);
-    wtc.perform(post("/locations"), Collections.singletonList(location)).andExpect(status().isOk());
+    wtc.perform(post("/locations?userId=" + testUser.getId()), Collections.singletonList(location)).andExpect(status().isOk());
   }
 
   private Location newLocationWithDefaults(ZonedDateTime startTime, ZonedDateTime endTime) {

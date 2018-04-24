@@ -61,7 +61,7 @@ public class LocationServiceSpec {
           Mockito
               .when(userDao.findMatching(Mockito.eq(RoleType.ROLE_PROCESS_APPLICATION), Mockito.any(), Mockito.any()))
               .thenReturn(Collections.singletonList(dummyUser()));
-          locationService.insert(Collections.singletonList(dummyLocation()));
+          locationService.insert(Collections.singletonList(dummyLocation()), TEST_USER_ID);
         });
 
         it("should set application owner", () -> {
@@ -73,7 +73,7 @@ public class LocationServiceSpec {
         });
 
         it("should update application's project", () -> {
-          Mockito.verify(projectService).updateProjectInformation(Collections.singletonList(TEST_PROJECT_ID));
+          Mockito.verify(projectService).updateProjectInformation(Collections.singletonList(TEST_PROJECT_ID), TEST_USER_ID);
         });
       });
 
