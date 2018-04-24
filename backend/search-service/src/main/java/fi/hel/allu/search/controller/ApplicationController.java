@@ -71,8 +71,9 @@ public class ApplicationController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<Page<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
-      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
-    return new ResponseEntity<>(applicationSearchService.findByField(queryParameters, pageRequest), HttpStatus.OK);
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest,
+      @RequestParam(defaultValue = "false") Boolean matchAny) {
+    return new ResponseEntity<>(applicationSearchService.findByField(queryParameters, pageRequest, matchAny), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/sync/start", method = RequestMethod.POST)

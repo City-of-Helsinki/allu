@@ -78,7 +78,7 @@ public class WorkQueueService {
             otherParameters,
             Arrays.asList(applicationTypeParameter, statusParameter)));
 
-    return applicationServiceComposer.search(queryParametersJson, pageRequest);
+    return applicationServiceComposer.search(queryParametersJson, pageRequest, false);
   }
 
   private Map<Boolean, List<QueryParameterJson>> partitionByField(List<QueryParameterJson> queryParameters, String fieldName) {

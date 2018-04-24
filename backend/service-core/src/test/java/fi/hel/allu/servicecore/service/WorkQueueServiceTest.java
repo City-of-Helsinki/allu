@@ -50,7 +50,7 @@ public class WorkQueueServiceTest {
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
     userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
-    Mockito.when(applicationServiceComposer.search(Mockito.any(QueryParametersJson.class), Mockito.any(Pageable.class)))
+    Mockito.when(applicationServiceComposer.search(Mockito.any(QueryParametersJson.class), Mockito.any(Pageable.class), Mockito.eq(false)))
         .thenReturn(new PageImpl<>(emptyList));
   }
 
@@ -61,7 +61,7 @@ public class WorkQueueServiceTest {
 
     List<ApplicationJson> result = workQueueService.searchSharedByGroup(new QueryParametersJson(), null).getContent();
 
-    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any());
+    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any(), Mockito.eq(false));
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);
@@ -93,7 +93,7 @@ public class WorkQueueServiceTest {
     queryParametersJson.setQueryParameters(new ArrayList<>(Arrays.asList(dummyParameter, typeParameter)));
     List<ApplicationJson> result = workQueueService.searchSharedByGroup(queryParametersJson, null).getContent();
 
-    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any());
+    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any(), Mockito.eq(false));
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);

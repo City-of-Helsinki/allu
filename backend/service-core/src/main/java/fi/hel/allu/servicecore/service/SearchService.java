@@ -196,9 +196,9 @@ public class SearchService {
    *          applications.
    * @return List of found applications.
    */
-  public Page<ApplicationJson> searchApplication(QueryParameters queryParameters, Pageable pageRequest,
+  public Page<ApplicationJson> searchApplication(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny,
       Function<List<Integer>, List<ApplicationJson>> mapper) {
-    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, mapper);
+    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, mapper);
   }
 
   /**
@@ -212,7 +212,7 @@ public class SearchService {
    */
   public Page<ProjectJson> searchProject(QueryParameters queryParameters, Pageable pageRequest,
       Function<List<Integer>, List<ProjectJson>> mapper) {
-    return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest, mapper);
+    return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest, false, mapper);
   }
 
   /**
@@ -226,7 +226,7 @@ public class SearchService {
    */
   public Page<CustomerJson> searchCustomer(QueryParameters queryParameters, Pageable pageRequest,
       Function<List<Integer>, List<CustomerJson>> mapper) {
-    return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest, mapper);
+    return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest, false, mapper);
   }
 
   /**
@@ -240,7 +240,7 @@ public class SearchService {
    */
   public Page<ContactJson> searchContact(QueryParameters queryParameters, Pageable pageRequest,
       Function<List<Integer>, List<ContactJson>> mapper) {
-    return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, mapper);
+    return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, false, mapper);
   }
 
   public void updateCustomerOfApplications(
@@ -275,12 +275,12 @@ public class SearchService {
   }
 
 
-  private <T> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest,
+  private <T> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny,
       Function<List<Integer>, List<T>> mapper) {
     ParameterizedTypeReference<RestResponsePage<Integer>> typeref = new ParameterizedTypeReference<RestResponsePage<Integer>>() {
     };
 
-    URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest);
+    URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest, matchAny);
     ResponseEntity<RestResponsePage<Integer>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
         new HttpEntity<>(queryParameters), typeref);
 

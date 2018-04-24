@@ -1,5 +1,6 @@
 export interface ApplicationSearchQueryForm {
   applicationId?: string;
+  name?: string;
   type?: Array<string>;
   status?: Array<string>;
   owner?: Array<string>;

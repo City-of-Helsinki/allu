@@ -23,7 +23,7 @@ export class SearchEffects {
     map(action => action.payload),
     filter(term => term && term.length > 2),
     switchMap(searchTerm =>
-      this.applicationService.freeTextSearch(searchTerm).pipe(
+      this.applicationService.nameOrApplicationIdSearch(searchTerm).pipe(
         map(applications => new application.SearchSuccess(applications)),
         catchError(error => of(new application.SearchFailed(error)))
       )

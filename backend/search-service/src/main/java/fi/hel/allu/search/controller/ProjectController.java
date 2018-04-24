@@ -59,7 +59,7 @@ public class ProjectController {
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<Page<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
-    return new ResponseEntity<>(projectSearchService.findByField(queryParameters, pageRequest), HttpStatus.OK);
+    return new ResponseEntity<>(projectSearchService.findByField(queryParameters, pageRequest, false), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/sync/data", method = RequestMethod.POST)

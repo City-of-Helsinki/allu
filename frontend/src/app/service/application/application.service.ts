@@ -61,13 +61,14 @@ export class ApplicationService {
   /**
    * Fetches applications based on given search query
    */
-  public pagedSearch(searchQuery: ApplicationSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Page<Application>> {
+  public pagedSearch(searchQuery: ApplicationSearchQuery, sort?: Sort,
+      pageRequest?: PageRequest, matchAny?: boolean): Observable<Page<Application>> {
     const searchUrl = APPLICATIONS_URL + SEARCH;
 
     return this.authHttp.post(
       searchUrl,
       JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
-      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
+      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort, matchAny))
       .map(response => PageMapper.mapBackend(response.json(), ApplicationMapper.mapBackend))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
   }
@@ -81,8 +82,9 @@ export class ApplicationService {
   /**
    * Helper search function to return only content without page
    */
-  public search(searchQuery: ApplicationSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Application>> {
-    return this.pagedSearch(searchQuery, sort, pageRequest)
+  public search(searchQuery: ApplicationSearchQuery, sort?: Sort,
+      pageRequest?: PageRequest, matchAny?: boolean): Observable<Array<Application>> {
+    return this.pagedSearch(searchQuery, sort, pageRequest, matchAny)
       .map(page => page.content);
   }
 
@@ -93,6 +95,13 @@ export class ApplicationService {
     const searchQuery = new ApplicationSearchQuery();
     searchQuery.freeText = term;
     return this.search(searchQuery);
+  }
+
+  public nameOrApplicationIdSearch(term: string): Observable<Application[]> {
+    const searchQuery = new ApplicationSearchQuery();
+    searchQuery.name = term;
+    searchQuery.applicationId = term;
+    return this.search(searchQuery, undefined, undefined, true);
   }
 
   /**

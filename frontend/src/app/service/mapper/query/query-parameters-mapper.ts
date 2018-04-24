@@ -29,11 +29,12 @@ export class QueryParametersMapper {
     return QueryParametersMapper.toRequestOptions(params);
   }
 
-  public static pageRequestToQueryParameters(pageRequest: PageRequest, sort: Sort): RequestOptionsArgs {
+  public static pageRequestToQueryParameters(pageRequest: PageRequest, sort: Sort, matchAny?: boolean): RequestOptionsArgs {
     let params = new HttpParams();
     params = Some(pageRequest).map(pr => pr.page).map(page => params.append('page', page.toString())).orElse(params);
     params = Some(pageRequest).map(pr => pr.size).map(size => params.append('size', size.toString())).orElse(params);
     params = Some(sort).map(s => QueryParametersMapper.sortToSortParams(s)).map(sp => params.append('sort', sp)).orElse(params);
+    params = Some(matchAny).map(m => params.append('matchAny', String(m))).orElse(params);
     return QueryParametersMapper.toRequestOptions(params);
   }
 

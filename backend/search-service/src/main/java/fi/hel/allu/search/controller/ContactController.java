@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/contacts")
 public class ContactController {
-  private ContactSearchService contactSearchService;
-  private ApplicationSearchService applicationSearchService;
+  private final ContactSearchService contactSearchService;
+  private final ApplicationSearchService applicationSearchService;
 
   @Autowired
   public ContactController(ContactSearchService contactSearchService,
@@ -73,7 +73,7 @@ public class ContactController {
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<Page<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
-    return new ResponseEntity<>(contactSearchService.findByField(queryParameters, pageRequest), HttpStatus.OK);
+    return new ResponseEntity<>(contactSearchService.findByField(queryParameters, pageRequest, false), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
