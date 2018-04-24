@@ -3,8 +3,9 @@
     <div fxLayout="row" fxLayoutAlign="flex-start">
       <div fxFlex="50%">
         <h1>
-          <span>{{'project.title' | translation | uppercase}} {{project.identifier}} -</span>
-          <span>{{['project.active', project.active] | translation}}</span>
+          <span>{{'project.title' | translation | uppercase}} {{project.identifier}}</span>
+          <span *ngIf="project.name" class="project-header-details">({{project.name}})</span>
+          <span class="project-header-details"> - {{['project.active', project.active] | translation}}</span>
         </h1>
       </div>
       <div fxFlex class="project-header-item">
