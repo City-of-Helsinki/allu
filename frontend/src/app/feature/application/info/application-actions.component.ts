@@ -91,6 +91,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       : ApplicationStatus.PENDING;
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
+    application.project = undefined;
     this.findDefaultRegionalOwner(application).subscribe(owner => {
       application.owner = owner;
       this.applicationStore.applicationCopyChange(application);
