@@ -6,6 +6,7 @@ import {Some} from '../../util/option';
 
 export class ApplicationSearchQuery implements SearchQuery {
   public applicationId: string;
+  public name: string;
   public type: Array<string>;
   public status: Array<string>;
   public districts: Array<string>;
@@ -39,6 +40,7 @@ export class ApplicationSearchQuery implements SearchQuery {
   public static from(queryForm: ApplicationSearchQueryForm, sort?: Sort) {
     const query = new ApplicationSearchQuery();
     query.applicationId = queryForm.applicationId;
+    query.name = queryForm.name;
     query.type = queryForm.type;
     query.status = queryForm.status;
     query.districts = Some(queryForm.districts)

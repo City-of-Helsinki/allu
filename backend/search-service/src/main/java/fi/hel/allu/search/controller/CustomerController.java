@@ -79,7 +79,7 @@ public class CustomerController {
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<Page<Integer>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
-    return new ResponseEntity<>(customerSearchService.findByField(queryParameters, pageRequest), HttpStatus.OK);
+    return new ResponseEntity<>(customerSearchService.findByField(queryParameters, pageRequest, false), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/sync/data", method = RequestMethod.POST)

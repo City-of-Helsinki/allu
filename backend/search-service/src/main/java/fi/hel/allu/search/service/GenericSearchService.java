@@ -294,7 +294,7 @@ public class GenericSearchService<T> {
    * @return A page of matching application IDs. Results are ordered as
    *         specified by the query parameters.
    */
-  public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {
+  public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
     if (pageRequest == null) {
       pageRequest = DEFAULT_PAGEREQUEST;
     }
@@ -302,7 +302,11 @@ public class GenericSearchService<T> {
       BoolQueryBuilder qb = QueryBuilders.boolQuery();
 
       for (QueryParameter param : queryParameters.getQueryParameters()) {
-        qb.must(createQueryBuilder(param));
+        if (matchAny) {
+          qb.should(createQueryBuilder(param));
+        } else {
+          qb.must(createQueryBuilder(param));
+        }
       }
 
       SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
@@ -329,6 +333,10 @@ public class GenericSearchService<T> {
     } catch (IOException e) {
       throw new SearchException(e);
     }
+  }
+
+  public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {
+    return findByField(queryParameters, pageRequest, false);
   }
 
   /**

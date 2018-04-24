@@ -187,10 +187,11 @@ public class ApplicationServiceComposer {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public Page<ApplicationJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
+  public Page<ApplicationJson> search(QueryParametersJson queryParameters, Pageable pageRequest, Boolean matchAny) {
     return searchService.searchApplication(
         QueryParameterMapper.mapToQueryParameters(queryParameters),
         pageRequest,
+        matchAny,
         (idlist) -> {
           List<ApplicationJson> resultList = getFullyPopulatedApplications(idlist);
           SearchService.orderByIdList(idlist, resultList, (applicationJson) -> applicationJson.getId());

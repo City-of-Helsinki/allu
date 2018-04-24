@@ -71,6 +71,7 @@ public class SearchServiceSpec {
 
         Page<ApplicationJson> applicationJsons = searchService.searchApplication(queryParameters,
             new PageRequest(0, 100),
+            false,
             ids -> mapApplications(ids));
         assertEquals(3, applicationJsons.getNumberOfElements());
       });

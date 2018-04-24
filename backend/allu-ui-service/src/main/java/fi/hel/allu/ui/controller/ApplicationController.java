@@ -98,8 +98,9 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort = "creationTime", direction = Direction.DESC)
-      Pageable pageRequest) {
-    return new ResponseEntity<>(applicationServiceComposer.search(queryParameters, pageRequest), HttpStatus.OK);
+      Pageable pageRequest,
+      @RequestParam(defaultValue = "false") Boolean matchAny) {
+    return new ResponseEntity<>(applicationServiceComposer.search(queryParameters, pageRequest, matchAny), HttpStatus.OK);
   }
 
   /**

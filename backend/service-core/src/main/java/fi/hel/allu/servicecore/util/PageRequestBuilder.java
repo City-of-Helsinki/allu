@@ -23,4 +23,17 @@ public class PageRequestBuilder {
 
     return builder.build().toUri();
   }
+
+  public static URI fromUriString(String uri, Pageable pageRequest, Boolean matchAny) {
+    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri);
+
+    builder.queryParam("page", pageRequest.getPageNumber());
+    builder.queryParam("size", pageRequest.getPageSize());
+    Optional.ofNullable(pageRequest.getSort()).ifPresent(sort -> sort.forEach(s ->
+        builder.queryParam("sort", s.getProperty() + (s.isDescending() ? ",desc" : ",asc"))));
+    builder.queryParam("matchAny", matchAny);
+
+    return builder.build().toUri();
+  }
+
 }
