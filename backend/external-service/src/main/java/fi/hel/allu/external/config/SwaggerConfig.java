@@ -1,24 +1,74 @@
 package fi.hel.allu.external.config;
 
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.Contact;
+import springfox.documentation.service.SecurityScheme;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Configuration of Swagger i.e. the REST documentation tool.
  */
 @Configuration
-public class SwaggerConfig {
+@EnableSwagger2
+public class SwaggerConfig extends WebMvcConfigurationSupport {
 
   @Bean
-  WebMvcConfigurer configurer () {
-    return new WebMvcConfigurerAdapter() {
-      @Override
-      public void addResourceHandlers (ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/swagger-ui/**").addResourceLocations("classpath:/swagger-ui/");
-      }
-    };
+  public Docket api() {
+      List<SecurityScheme> schemeList = Collections.singletonList(new ApiKey("api_key", "Authorization", "Bearer"));
+
+      return new Docket(DocumentationType.SWAGGER_2)
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("fi.hel.allu.external.api"))
+        .paths(PathSelectors.any())
+        .build()
+        .securitySchemes(schemeList)
+        .apiInfo(apiInfo());
+  }
+
+  private ApiInfo apiInfo() {
+    return new ApiInfo(
+        "Allu REST API",
+        "Allu public interface.",
+        "1.0.0",
+        "TODO",
+        new Contact("TODO", "TODO", "TODO"),
+        "License (MIT)", "https://bitbucket.org/vincit/allu/raw/HEAD/LICENSE",
+        Collections.emptyList());
+  }
+
+  @Override
+  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+    builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
+  }
+
+  @Override
+  protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+      registry.addResourceHandler("/swagger-ui.html")
+              .addResourceLocations("classpath:/META-INF/resources/");
+
+      registry.addResourceHandler("/webjars/**")
+              .addResourceLocations("classpath:/META-INF/resources/webjars/");
   }
 }

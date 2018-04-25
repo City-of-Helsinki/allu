@@ -1,4 +1,4 @@
-package fi.hel.allu.external.controller;
+package fi.hel.allu.external.maintenance.controller;
 
 import fi.hel.allu.servicecore.service.SearchSyncService;
 

@@ -152,26 +152,37 @@ public class CustomerMapper {
     List<CustomerWithContactsJson> customerWithContactsJsons = new ArrayList<>();
 
     customersWithContacts.forEach(cwc -> {
-      CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
-      customerWithContactsJson.setContacts(cwc.getContacts().stream()
-          .map(c -> createContactJson(c))
-          .collect(Collectors.toList()));
-      customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer()));
-      customerWithContactsJson.setRoleType(cwc.getRoleType());
+      CustomerWithContactsJson customerWithContactsJson = createWithContactsJson(cwc);
       customerWithContactsJsons.add(customerWithContactsJson);
     });
     return customerWithContactsJsons;
   }
 
+  public CustomerWithContactsJson createWithContactsJson(CustomerWithContacts cwc) {
+    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
+    customerWithContactsJson.setContacts(cwc.getContacts().stream()
+        .map(c -> createContactJson(c))
+        .collect(Collectors.toList()));
+    customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer()));
+    customerWithContactsJson.setRoleType(cwc.getRoleType());
+    return customerWithContactsJson;
+  }
+
   public List<CustomerWithContacts> createWithContactsModel(List<CustomerWithContactsJson> customersWithContactsJson) {
     List<CustomerWithContacts> customerWithContacts = new ArrayList<>();
-    customersWithContactsJson.forEach(cwcJson -> {
-      customerWithContacts.add(new CustomerWithContacts(
-          cwcJson.getRoleType(),
-          createCustomerModel(cwcJson.getCustomer()),
-          cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList())));
-    });
+    if (customersWithContactsJson != null) {
+      customersWithContactsJson.forEach(cwcJson -> {
+        customerWithContacts.add(createSingleCustomerWithContactsModel(cwcJson));
+      });
+    }
     return customerWithContacts;
+  }
+
+  public CustomerWithContacts createSingleCustomerWithContactsModel(CustomerWithContactsJson cwcJson) {
+    return new CustomerWithContacts(
+        cwcJson.getRoleType(),
+        createCustomerModel(cwcJson.getCustomer()),
+        cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList()));
   }
 
 

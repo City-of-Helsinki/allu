@@ -5,6 +5,8 @@ package fi.hel.allu.common.domain.types;
  * make sure it's added after status that precedes the new status in application processing.
  */
 public enum StatusType {
+  PENDING_CLIENT, // Vireillä asiakassovelluksessa
+
   PRE_RESERVED, // Alustava varaus
   PENDING, // Vireillä
   HANDLING, // Käsittelyssä

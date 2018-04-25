@@ -98,7 +98,7 @@ public class ApplicationServiceComposer {
     return createApplication(applicationDraftJson, StatusType.PRE_RESERVED);
   }
 
-  private ApplicationJson createApplication(ApplicationJson applicationJson, StatusType status) {
+  public  ApplicationJson createApplication(ApplicationJson applicationJson, StatusType status) {
     applicationJson.setStatus(status);
     Application createdApplication = applicationService.createApplication(applicationJson);
     ApplicationJson createdApplicationJson = applicationJsonService.getFullyPopulatedApplication(createdApplication);

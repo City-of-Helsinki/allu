@@ -2,24 +2,19 @@ package fi.hel.allu.external.domain;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-/**
- * in Finnish: Yhteyshenkilö
- */
+
+@ApiModel(value = "Contact of application customer")
 public class ContactExt {
   private Integer id;
-  @NotNull
-  private Integer customerId;
   @NotBlank(message = "{contact.name.notblank}")
   private String name;
   private PostalAddressExt postalAddress;
   private String email;
   private String phone;
 
-  /**
-   * in Finnish: Yhteyshenkilön tunniste
-   */
   public Integer getId() {
     return id;
   }
@@ -28,20 +23,7 @@ public class ContactExt {
     this.id = id;
   }
 
-  /**
-   * in Finnish: Yhteyshenkilön hakijan tunniste
-   */
-  public Integer getCustomerId() {
-    return customerId;
-  }
-
-  public void setCustomerId(Integer customerId) {
-    this.customerId = customerId;
-  }
-
-  /**
-   * in Finnish: Yhteyshenkilön nimi
-   */
+  @ApiModelProperty(value = "Name of the contact")
   public String getName() {
     return name;
   }
@@ -50,6 +32,7 @@ public class ContactExt {
     this.name = name;
   }
 
+  @ApiModelProperty(value = "Postal address of the contact")
   public PostalAddressExt getPostalAddress() {
     return postalAddress;
   }
@@ -58,9 +41,7 @@ public class ContactExt {
     this.postalAddress = postalAddress;
   }
 
-  /**
-   * in Finnish: Sähköpostiosoite
-   */
+  @ApiModelProperty(value = "Email of the contact")
   public String getEmail() {
     return email;
   }
@@ -69,9 +50,7 @@ public class ContactExt {
     this.email = email;
   }
 
-  /**
-   * in Finnish: Puhelinnumero
-   */
+  @ApiModelProperty(value = "Phone number of the contact")
   public String getPhone() {
     return phone;
   }

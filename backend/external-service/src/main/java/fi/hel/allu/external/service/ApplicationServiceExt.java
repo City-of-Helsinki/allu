@@ -1,27 +1,27 @@
 package fi.hel.allu.external.service;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.external.domain.ApplicationProgressReportExt;
-import fi.hel.allu.external.domain.ApplicationProgressStatusExt;
-import fi.hel.allu.external.domain.InspectionStatus;
-import fi.hel.allu.external.domain.InspectionStatus.State;
-import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.external.domain.ApplicationHistoryEventExt;
+import fi.hel.allu.external.domain.ApplicationHistoryExt;
+import fi.hel.allu.external.domain.ApplicationHistorySearchExt;
+import fi.hel.allu.external.domain.PlacementContractExt;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.InvoiceJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.CommentService;
+import fi.hel.allu.servicecore.service.ExternalUserService;
 import fi.hel.allu.servicecore.service.InvoiceService;
-import fi.hel.allu.servicecore.service.UserService;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
  * Service class for application-related operations that are only needed in
@@ -33,109 +33,16 @@ public class ApplicationServiceExt {
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
   @Autowired
-  private UserService userService;
-  @Autowired
-  private CommentService commentService;
+  private ApplicationHistoryService applicationHistoryService;
   @Autowired
   private InvoiceService invoiceService;
-
-  public void reportProgress(int applicationId, ApplicationProgressReportExt applicationProgressReportExt) {
-    Optional<ZonedDateTime> workFinished = Optional.ofNullable(applicationProgressReportExt.getWorkFinished());
-    Optional<ZonedDateTime> winterTimeOperation = Optional.ofNullable(applicationProgressReportExt.getWinterTimeOperation());
-    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
-    ApplicationType applicationType = applicationJson.getType();
-    switch (applicationType) {
-      case EXCAVATION_ANNOUNCEMENT:
-        ExcavationAnnouncementJson excAnn = (ExcavationAnnouncementJson) applicationJson.getExtension();
-        winterTimeOperation.ifPresent(o -> excAnn.setWinterTimeOperation(o));
-        workFinished.ifPresent(o -> excAnn.setWorkFinished(o));
-        break;
-      case AREA_RENTAL:
-        throwIfPresent(winterTimeOperation, "Winter time operation", applicationType);
-        AreaRentalJson areaRental = (AreaRentalJson) applicationJson.getExtension();
-        workFinished.ifPresent(o -> areaRental.setWorkFinished(o));
-        break;
-      case TEMPORARY_TRAFFIC_ARRANGEMENTS:
-        throwIfPresent(winterTimeOperation, "Winter time operation", applicationType);
-        TrafficArrangementJson trafficArrangement = (TrafficArrangementJson) applicationJson.getExtension();
-        workFinished.ifPresent(o -> trafficArrangement.setWorkFinished(o));
-        break;
-      default:
-        throw new IllegalArgumentException("Unsupported application type " + applicationType);
-    }
-    int userId = userService.getCurrentUser().getId();
-    List<ApplicationTagJson> tags = Optional.ofNullable(applicationJson.getApplicationTags())
-        .orElseGet(() -> new ArrayList<>());
-    if (workFinished.isPresent()) {
-      addTagIfNotPresent(tags,
-          new ApplicationTagJson(userId, ApplicationTagType.FINAL_SUPERVISION_REQUESTED, ZonedDateTime.now()));
-    }
-    if (winterTimeOperation.isPresent()) {
-      addTagIfNotPresent(tags,
-          new ApplicationTagJson(userId, ApplicationTagType.OPERATIONAL_CONDITION_REPORTED, ZonedDateTime.now()));
-    }
-    applicationJson.setApplicationTags(tags);
-    applicationServiceComposer.updateApplication(applicationId, applicationJson);
-  }
-
-  public ApplicationProgressStatusExt getProgressStatus(int id) {
-    ApplicationProgressStatusExt applicationProgressStatusExt = new ApplicationProgressStatusExt(
-        new InspectionStatus(State.NOT_INSPECTED, ""), new InspectionStatus(State.NOT_INSPECTED, ""));
-    final ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(id);
-    final List<CommentJson> comments = commentService.findByApplicationId(id);
-    final List<ApplicationTagJson> tags = applicationJson.getApplicationTags();
-    if (tags != null) {
-      for (ApplicationTagJson tag : tags) {
-        switch (tag.getType()) {
-          case OPERATIONAL_CONDITION_ACCEPTED:
-            applicationProgressStatusExt.getWinterTimeOperationStatus().setState(State.ACCEPTED);
-            applicationProgressStatusExt.getWinterTimeOperationStatus()
-                .setComment(findNewestComment(CommentType.OPERATIONAL_CONDITION_ACCEPTED, comments));
-            break;
-          case OPERATIONAL_CONDITION_REJECTED:
-            applicationProgressStatusExt.getWinterTimeOperationStatus().setState(State.REJECTED);
-            applicationProgressStatusExt.getWinterTimeOperationStatus()
-                .setComment(findNewestComment(CommentType.OPERATIONAL_CONDITION_REJECTED, comments));
-            break;
-          case FINAL_SUPERVISION_ACCEPTED:
-            applicationProgressStatusExt.getWorkFinishedStatus().setState(State.ACCEPTED);
-            applicationProgressStatusExt.getWinterTimeOperationStatus()
-                .setComment(findNewestComment(CommentType.FINAL_SUPERVISION_ACCEPTED, comments));
-            break;
-          case FINAL_SUPERVISION_REJECTED:
-            applicationProgressStatusExt.getWorkFinishedStatus().setState(State.REJECTED);
-            applicationProgressStatusExt.getWinterTimeOperationStatus()
-                .setComment(findNewestComment(CommentType.FINAL_SUPERVISION_REJECTED, comments));
-            break;
-          default:
-            break;
-        }
-      }
-    }
-    return applicationProgressStatusExt;
-  }
-
-  private String findNewestComment(CommentType commentType, List<CommentJson> comments) {
-    return comments.stream().filter(c -> commentType.equals(c.getType()))
-        .sorted((c1, c2) -> c2.getCreateTime().compareTo(c1.getCreateTime())).map(c -> c.getText()).findFirst()
-        .orElse(null);
-  }
-
-  private void throwIfPresent(Optional<ZonedDateTime> optional, String describe, ApplicationType applicationType) {
-    if (optional.isPresent()) {
-      throw new IllegalArgumentException(describe + " not applicable for " + applicationType);
-    }
-  }
-
-  private void addTagIfNotPresent(Collection<ApplicationTagJson> dest, ApplicationTagJson tag) {
-    if (dest.stream().noneMatch(t -> t.getType().equals(tag.getType()))) {
-      dest.add(tag);
-    }
-  }
+  @Autowired
+  private ExternalUserService externalUserService;
 
   public void releaseCustomersInvoices(Integer customerId) {
     List<Integer> applicationIds = applicationServiceComposer.findApplicationIdsByInvoiceRecipientId(customerId);
-    applicationIds.forEach(id -> applicationServiceComposer.removeTagFromApplication(id, ApplicationTagType.SAP_ID_MISSING));
+    applicationIds
+        .forEach(id -> applicationServiceComposer.removeTagFromApplication(id, ApplicationTagType.SAP_ID_MISSING));
     applicationIds.forEach(id -> releaseInvoicesOfApplication(id));
   }
 
@@ -148,6 +55,31 @@ public class ApplicationServiceExt {
     if (invoice.isSapIdPending()) {
       invoiceService.releasePendingInvoice(invoice.getId());
     }
+  }
+
+  public Integer createPlacementContract(PlacementContractExt placementContract) {
+    ApplicationJson applicationJson = ApplicationFactory.fromPlacementContractExt(placementContract);
+    StatusType status = placementContract.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
+    applicationJson.setExternalOwnerId(getExternalUserId());
+    return applicationServiceComposer.createApplication(applicationJson, status).getId();
+  }
+
+  private Integer getExternalUserId() {
+    User alluUser = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    String username = alluUser.getUsername();
+    return externalUserService.findUserByUserName(username).getId();
+  }
+
+  public List<ApplicationHistoryExt> searchApplicationHistory(ApplicationHistorySearchExt searchParameters) {
+    Map<Integer, List<ChangeHistoryItem>> changeHistory = applicationHistoryService.getExternalOwnerApplicationHistory(getExternalUserId(),
+        searchParameters.getEventsAfter(), searchParameters.getApplicationIds());
+    return changeHistory.entrySet().stream().map(e -> new ApplicationHistoryExt(e.getKey(), toHistoryEvents(e.getValue()))).collect(Collectors.toList());
+
+  }
+
+  private List<ApplicationHistoryEventExt> toHistoryEvents(List<ChangeHistoryItem> items) {
+    return items.stream().map(i ->
+    new ApplicationHistoryEventExt(i.getChangeTime(), i.getNewStatus())).collect(Collectors.toList());
   }
 
 }

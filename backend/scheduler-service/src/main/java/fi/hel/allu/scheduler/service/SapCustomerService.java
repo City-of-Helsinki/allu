@@ -1,25 +1,5 @@
 package fi.hel.allu.scheduler.service;
 
-import fi.hel.allu.external.domain.CustomerExt;
-import fi.hel.allu.external.domain.PostalAddressExt;
-import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
-import fi.hel.allu.sap.model.DEBMAS06;
-import fi.hel.allu.sap.model.E1KNA1M;
-import fi.hel.allu.sap.model.E1KNVVM;
-import fi.hel.allu.scheduler.config.ApplicationProperties;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import javax.xml.bind.JAXBException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,9 +13,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.Optional;
+
+import javax.xml.bind.JAXBException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import fi.hel.allu.external.domain.CustomerExt;
+import fi.hel.allu.external.domain.InvoicingCustomerExt;
+import fi.hel.allu.external.domain.PostalAddressExt;
+import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
+import fi.hel.allu.sap.model.DEBMAS06;
+import fi.hel.allu.sap.model.E1KNA1M;
+import fi.hel.allu.sap.model.E1KNVVM;
+import fi.hel.allu.scheduler.config.ApplicationProperties;
 
 /**
  * Service for updating customer with data from SAP.
@@ -184,7 +185,7 @@ public class SapCustomerService {
 
 
   private CustomerExt mapCustomerExt(E1KNA1M sapCustomerData) {
-    CustomerExt customer = new CustomerExt();
+    InvoicingCustomerExt customer = new InvoicingCustomerExt();
     customer.setId(getAlluId(sapCustomerData));
     customer.setSapCustomerNumber(sapCustomerData.getKunnr());
     customer.setRegistryKey(getRegistryKey(sapCustomerData));

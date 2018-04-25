@@ -1,4 +1,4 @@
-package fi.hel.allu.external.controller;
+package fi.hel.allu.external.maintenance.controller;
 
 import fi.hel.allu.external.config.ApplicationProperties;
 import fi.hel.allu.external.service.ServerTokenAuthenticationService;

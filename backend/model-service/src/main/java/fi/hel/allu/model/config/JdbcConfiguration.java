@@ -66,6 +66,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToConfigurationType());
     configuration.register(new StringToStoredFilterType());
     configuration.register(new StringToCodeSetType());
+    configuration.register(new StringToClientApplicationData());
     return configuration;
   }
 

@@ -57,7 +57,7 @@ public class PricingServiceTest {
 
   @Before
   public void setUp() throws Exception {
-    knownFixedLocations = locationDao.getFixedLocationList().stream()
+    knownFixedLocations = locationDao.getFixedLocationList(null, null).stream()
         .collect(Collectors
             .toMap(fl -> Triple.of(fl.getApplicationKind(), fl.getArea(), fl.getSection()), Function.identity()));
   }

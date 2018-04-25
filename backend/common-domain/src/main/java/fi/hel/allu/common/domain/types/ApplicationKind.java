@@ -2,6 +2,7 @@ package fi.hel.allu.common.domain.types;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Application kind specifies the subtype of application.
@@ -72,5 +73,9 @@ public enum ApplicationKind {
 
   private ApplicationKind(ApplicationType... types) {
     this.types = Arrays.asList(types);
+  }
+
+  public static List<ApplicationKind> forApplicationType(ApplicationType type) {
+    return Arrays.stream(ApplicationKind.values()).filter(k -> k.types.contains(type)).collect(Collectors.toList());
   }
 }
