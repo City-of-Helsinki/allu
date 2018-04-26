@@ -41,4 +41,12 @@ public class TimeUtil {
   public static ZonedDateTime homeTime(ZonedDateTime zonedDateTime) {
     return zonedDateTime == null ? null : zonedDateTime.withZoneSameInstant(HelsinkiZoneId);
   }
+
+  public static ZonedDateTime startOfDay(ZonedDateTime time) {
+    return time.toLocalDate().atStartOfDay(HelsinkiZoneId);
+  }
+
+  public static ZonedDateTime endOfDay(ZonedDateTime time) {
+    return startOfDay(time).plusDays(1).minusNanos(1);
+  }
 }

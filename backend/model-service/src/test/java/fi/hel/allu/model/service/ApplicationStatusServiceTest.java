@@ -3,6 +3,7 @@ package fi.hel.allu.model.service;
 import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import fi.hel.allu.common.util.TimeUtil;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -76,7 +77,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
               .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
         });
 
-        it("Should change status and update placement contracts locations end date to decision date + 3 years", () -> {
+        it("Should change status and update placement contracts locations end date to decision date + 1 years", () -> {
           mockApp.setType(ApplicationType.PLACEMENT_CONTRACT);
           applicationStatusService.changeApplicationStatus(app.getId(), StatusType.DECISION, app.getOwner());
 
@@ -86,7 +87,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
           Mockito.verify(locationService, Mockito.times(1))
               .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
 
-          assertEquals(location.getEndTime(), mockApp.getDecisionTime().plusYears(3));
+          assertEquals(TimeUtil.endOfDay(mockApp.getDecisionTime()).plusYears(1), location.getEndTime());
         });
 
       });

@@ -148,6 +148,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.application.type = ApplicationType[type];
     this.application.extension = this.createExtension(type);
     this.multipleLocations = type === ApplicationType.AREA_RENTAL;
+    this.setInitialDates();
   }
 
   onKindSpecifierChange(kindsWithSpecifiers: KindsWithSpecifiers) {
@@ -273,6 +274,19 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         this.sectionsCtrl.patchValue(ids);
         this.mapStore.selectedSectionsChange(ids);
       });
+  }
+
+  private setInitialDates() {
+    if (!this.application.firstLocation) {
+      if (this.application.type === ApplicationType[ApplicationType.PLACEMENT_CONTRACT]) {
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setFullYear(endDate.getFullYear() + 1);
+        this.mapStore.locationSearchFilterChange({startDate: startDate, endDate: endDate});
+      } else {
+        this.mapStore.locationSearchFilterChange({startDate: undefined, endDate: undefined});
+      }
+    }
   }
 
   private onAreaChange(id: number): void {

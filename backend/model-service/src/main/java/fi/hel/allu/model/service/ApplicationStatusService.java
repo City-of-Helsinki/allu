@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
@@ -19,11 +20,11 @@ import fi.hel.allu.model.domain.Location;
 @Service
 public class ApplicationStatusService {
 
-  private ApplicationService applicationService;
-  private LocationService locationService;
-  private ApplicationDao applicationDao;
+  private final ApplicationService applicationService;
+  private final LocationService locationService;
+  private final ApplicationDao applicationDao;
 
-  private static int PLACEMENT_CONTRACT_END_DATE_YEAR_OFFSET = 3;
+  private static final int PLACEMENT_CONTRACT_END_DATE_YEAR_OFFSET = 1;
 
   @Autowired
   public ApplicationStatusService(ApplicationService applicationService, LocationService locationService, ApplicationDao applicationDao) {
@@ -57,8 +58,10 @@ public class ApplicationStatusService {
   private Application updateDecisionApplication(Application application, int userId) {
     if (application.getType() == ApplicationType.PLACEMENT_CONTRACT) {
       Location location = locationService.findSingleByApplicationId(application.getId());
-      ZonedDateTime newEndTime = application.getDecisionTime().plusYears(PLACEMENT_CONTRACT_END_DATE_YEAR_OFFSET);
-      location.setEndTime(newEndTime);
+      final ZonedDateTime startTime = TimeUtil.startOfDay(TimeUtil.homeTime(ZonedDateTime.now()));
+      location.setStartTime(startTime);
+      final ZonedDateTime endTime = TimeUtil.endOfDay(startTime.plusYears(PLACEMENT_CONTRACT_END_DATE_YEAR_OFFSET));
+      location.setEndTime(endTime);
       locationService.updateApplicationLocations(application.getId(), Collections.singletonList(location), userId);
       return applicationService.findById(application.getId());
     } else {
