@@ -23,7 +23,7 @@ export class ApplicationQueryParametersMapper {
     QueryParametersMapper.mapParameter(queryParameters, 'applicationId', QueryParametersMapper.removeExtraWhitespace(query.applicationId));
     QueryParametersMapper.mapParameter(queryParameters, 'name', QueryParametersMapper.removeExtraWhitespace(query.name));
     QueryParametersMapper.mapArrayParameter(queryParameters, 'status', query.status);
-    QueryParametersMapper.mapArrayParameter(queryParameters, 'locations.cityDistrictId', query.districts);
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'locations.cityDistrictId', query.districts.map(id => id.toString()));
     QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationTags', query.tags);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'type', query.type);
     QueryParametersMapper.mapParameter(queryParameters, '_all', query.freeText);
