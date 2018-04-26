@@ -3,7 +3,7 @@
     hour: 23
     minute: 30
     user: postgres
-    job: "pg_dump -h localhost -p 5432 -d model_service > /home/allu/database/dumps/db-dump.sql; chmod 0400 /home/allu/database/dumps/db-dump.sql"
+    job: "chmod 0600 /home/allu/database/dumps/db-dump.sql; pg_dump -h localhost -p 5432 -d model_service > /home/allu/database/dumps/db-dump.sql && chmod 0400 /home/allu/database/dumps/db-dump.sql"
     cron_file: allu_database-backup
   when: "'production' in group_names"
   become: yes
