@@ -329,4 +329,8 @@ public class ApplicationService {
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
   }
 
+  public StatusType getApplicationStatus(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationStatusUrl(), StatusType.class, applicationId);
+  }
+
 }

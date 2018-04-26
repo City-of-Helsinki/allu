@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.external.domain.ApplicationHistoryEventExt;
 import fi.hel.allu.external.domain.ApplicationHistoryExt;
 import fi.hel.allu.external.domain.ApplicationHistorySearchExt;
@@ -82,4 +83,18 @@ public class ApplicationServiceExt {
     new ApplicationHistoryEventExt(i.getChangeTime(), i.getNewStatus())).collect(Collectors.toList());
   }
 
+  public Integer updatePlacementContract(Integer id, PlacementContractExt placementContract) {
+    ApplicationJson applicationJson = ApplicationFactory.fromPlacementContractExt(placementContract);
+    ApplicationJson application = applicationServiceComposer.updateApplication(id, applicationJson);
+    StatusType status = placementContract.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
+    applicationServiceComposer.changeStatus(id, status);
+    return application.getId();
+  }
+
+  public void validateFullUpdateAllowed(Integer applicationId) {
+    StatusType status = applicationServiceComposer.getApplicationStatus(applicationId);
+    if (status != StatusType.PENDING_CLIENT) {
+      throw new IllegalOperationException("Update of an application with status " + status + " is not allowed");
+    }
+  }
 }

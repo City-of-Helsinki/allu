@@ -69,4 +69,9 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.ARCHIVED, null), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/status", method = RequestMethod.GET)
+  public ResponseEntity<StatusType> getApplicationStatus(@PathVariable int id) {
+    return new ResponseEntity<>(applicationStatusService.getApplicationStatus(id), HttpStatus.OK);
+  }
+
 }

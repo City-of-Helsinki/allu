@@ -379,4 +379,8 @@ public class ApplicationServiceComposer {
   public List<Integer> findFinishedApplications(List<StatusType> statuses) {
     return applicationService.findFinishedApplications(statuses);
   }
+
+  public StatusType getApplicationStatus(Integer applicationId) {
+    return applicationService.getApplicationStatus(applicationId);
+  }
 }

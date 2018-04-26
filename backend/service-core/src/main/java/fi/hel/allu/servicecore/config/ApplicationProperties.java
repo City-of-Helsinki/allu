@@ -299,6 +299,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/status/" + statusType.toString().toLowerCase());
   }
 
+  public String getApplicationStatusUrl() {
+    return getModelServiceUrl("/applications/{id}/status");
+  }
+
   /**
    * @return url to replace distribution list of application.
    */

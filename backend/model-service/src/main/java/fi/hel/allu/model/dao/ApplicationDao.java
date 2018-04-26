@@ -1,37 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.QueryException;
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.SubQueryExpression;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.sql.SQLExpressions;
-import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.SQLInsertClause;
-
-import fi.hel.allu.QApplication;
-import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.util.RecurringApplication;
-import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.querydsl.ExcludingMapper;
-import fi.hel.allu.model.domain.util.CustomerAnonymizer;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
@@ -51,6 +19,59 @@ import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.QRecurringPeriod.recurringPeriod;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.QueryException;
+import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.SQLInsertClause;
+
+import fi.hel.allu.QApplication;
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationSpecifier;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.RecurringApplication;
+import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationIdentifier;
+import fi.hel.allu.model.domain.ApplicationTag;
+import fi.hel.allu.model.domain.ApplicationWithContacts;
+import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.CustomerWithContacts;
+import fi.hel.allu.model.domain.DistributionEntry;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.PostalAddress;
+import fi.hel.allu.model.domain.RecurringPeriod;
+import fi.hel.allu.model.domain.util.CustomerAnonymizer;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 @Repository
 public class ApplicationDao {
 
@@ -58,7 +79,7 @@ public class ApplicationDao {
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
           application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
-          application.invoiced, application.clientApplicationData);
+          application.invoiced, application.clientApplicationData, application.applicationId);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
@@ -745,6 +766,7 @@ public class ApplicationDao {
   /**
    * Fetches status of specified application
    */
+  @Transactional(readOnly = true)
   public StatusType getStatus(int applicationId) {
     return queryFactory
         .select(application.status)
@@ -752,4 +774,5 @@ public class ApplicationDao {
         .where(application.id.eq(applicationId))
         .fetchOne();
   }
+
 }

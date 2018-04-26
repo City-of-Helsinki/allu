@@ -1,23 +1,26 @@
 package fi.hel.allu.model.service;
 
-import com.greghaskins.spectrum.Spectrum;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.testUtils.SpeccyTestBase;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
 import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
+
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 @RunWith(Spectrum.class)
 public class ApplicationStatusServiceTest extends SpeccyTestBase {
@@ -30,7 +33,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
     beforeEach(() -> {
       applicationService = Mockito.mock(ApplicationService.class);
       locationService = Mockito.mock(LocationService.class);
-      applicationStatusService = new ApplicationStatusService(applicationService, locationService);
+      applicationStatusService = new ApplicationStatusService(applicationService, locationService, Mockito.mock(ApplicationDao.class));
     });
 
     describe("Status change operations", () -> {

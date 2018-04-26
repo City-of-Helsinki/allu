@@ -1,15 +1,17 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Location;
 
 /**
  * Service class for application status specific operations
@@ -19,13 +21,15 @@ public class ApplicationStatusService {
 
   private ApplicationService applicationService;
   private LocationService locationService;
+  private ApplicationDao applicationDao;
 
   private static int PLACEMENT_CONTRACT_END_DATE_YEAR_OFFSET = 3;
 
   @Autowired
-  public ApplicationStatusService(ApplicationService applicationService, LocationService locationService) {
+  public ApplicationStatusService(ApplicationService applicationService, LocationService locationService, ApplicationDao applicationDao) {
     this.applicationService = applicationService;
     this.locationService = locationService;
+    this.applicationDao = applicationDao;
   }
 
   /**
@@ -60,5 +64,9 @@ public class ApplicationStatusService {
     } else {
         return application;
     }
+  }
+
+  public StatusType getApplicationStatus(int id) {
+    return applicationDao.getStatus(id);
   }
 }
