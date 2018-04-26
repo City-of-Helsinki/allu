@@ -17,7 +17,7 @@ public class ApplicationGroupSequenceProvider implements DefaultGroupSequencePro
   public List<Class<?>> getValidationGroups(Application application) {
     List<Class<?>> result = new ArrayList<>();
     result.add(Application.class);
-    if (application != null && StatusType.PRE_RESERVED != application.getStatus()) {
+    if (application != null && StatusType.PRE_RESERVED != application.getStatus() && application.getExternalOwnerId() != null) {
      result.add(Application.Complete.class);
     }
     return result;

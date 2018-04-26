@@ -7,10 +7,10 @@ import {Some} from '../../util/option';
 export class ApplicationSearchQuery implements SearchQuery {
   public applicationId: string;
   public name: string;
-  public type: Array<string>;
-  public status: Array<string>;
-  public districts: Array<string>;
-  public owner: Array<string>;
+  public type: Array<string> = [];
+  public status: Array<string> = [];
+  public districts: Array<number> = [];
+  public owner: Array<string> = [];
   public address: string;
   public applicant: string;
   public contact: string;
@@ -19,7 +19,7 @@ export class ApplicationSearchQuery implements SearchQuery {
   public endTime: Date;
   public projectId: number;
   public sort: Sort;
-  public tags: Array<string>;
+  public tags: Array<string> = [];
 
   public get uiStartTime(): string {
     return TimeUtil.getUiDateString(this.startTime);
@@ -43,10 +43,7 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.name = queryForm.name;
     query.type = queryForm.type;
     query.status = queryForm.status;
-    query.districts = Some(queryForm.districts)
-      .map(ds => ds
-        .map(d => d.toString()))
-      .orElse([]);
+    query.districts = Some(queryForm.districts).orElse([]);
     query.owner = queryForm.owner;
     query.address = queryForm.address;
     query.applicant = queryForm.applicant;
@@ -56,12 +53,6 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.endTime = queryForm.endTime;
     query.tags = queryForm.tags;
     query.sort = sort;
-    return query;
-  }
-
-  public static forApplicationId(id: string): ApplicationSearchQuery {
-    const query = new ApplicationSearchQuery();
-    query.applicationId = id;
     return query;
   }
 
@@ -88,18 +79,6 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.tags = this.tags;
     return query;
   }
-
-  public withSort(sort: Sort): ApplicationSearchQuery {
-    const newQuery = this.copy();
-    newQuery.sort = sort;
-    return newQuery;
-  }
-}
-
-export function forProject(id: number): ApplicationSearchQuery {
-  const searchQuery = new ApplicationSearchQuery();
-  searchQuery.projectId = id;
-  return searchQuery;
 }
 
 

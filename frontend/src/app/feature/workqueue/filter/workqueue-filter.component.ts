@@ -64,10 +64,10 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.queryForm.patchValue(this.store.snapshot.search, {emitEvent: false});
+    this.districts = this.cityDistrictService.get();
 
     this.store.changes.map(state => state.search)
-      .takeUntil(this.destroy)
+      .take(1)
       .subscribe(search => this.queryForm.patchValue(search, {emitEvent: false}));
 
     this.queryForm.valueChanges
@@ -78,8 +78,6 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
         this.storedFilterStore.resetCurrent(StoredFilterType.WORKQUEUE);
         this.store.searchChange(ApplicationSearchQuery.from(query));
       });
-
-    this.districts = this.cityDistrictService.get();
 
     this.tab = this.store.changes
       .map(state => state.tab)

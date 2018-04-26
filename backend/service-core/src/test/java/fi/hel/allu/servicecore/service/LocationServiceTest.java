@@ -23,6 +23,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,12 +52,14 @@ public class LocationServiceTest {
   @Before
   public void setUp() {
     restTemplate = Mockito.mock(RestTemplate.class);
+    ApplicationProperties properties = Mockito.mock(ApplicationProperties.class);
     userService = Mockito.mock(UserService.class);
-    locationService = new LocationService(Mockito.mock(ApplicationProperties.class), restTemplate, userService);
+    locationService = new LocationService(properties, restTemplate, userService);
 
     testUser = new UserJson();
     testUser.setId(1);
     Mockito.when(userService.getCurrentUser()).thenReturn(testUser);
+    Mockito.when(properties.getFixedLocationUrl()).thenReturn("http://fixedlocations");
 
     Mockito.when(restTemplate.postForObject(any(String.class), anyObject(), eq(Location[].class), eq(testUser.getId())))
         .thenAnswer(invocation -> {
@@ -74,7 +77,6 @@ public class LocationServiceTest {
           Mockito.when(responseEntity.getBody()).thenReturn(((List<Location>) httpEntity.getBody()).toArray(new Location[0]));
           return responseEntity;
         });
-
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
         .thenAnswer(invocation -> createMockLocationResponse(null));
   }
@@ -167,7 +169,7 @@ public class LocationServiceTest {
 
   @Test
   public void testGetFixedLocationList() {
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(FixedLocation[].class)))
+    Mockito.when(restTemplate.getForEntity(Mockito.any(URI.class), Mockito.eq(FixedLocation[].class)))
         .then(invocation -> createMockFixedLocationList());
 
     List<FixedLocationJson> fixedLocationList = locationService.getFixedLocationList();

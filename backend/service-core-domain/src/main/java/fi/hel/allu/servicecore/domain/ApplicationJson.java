@@ -19,6 +19,7 @@ import javax.validation.groups.Default;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +80,7 @@ public class ApplicationJson {
   private Boolean notBillable;
   private String notBillableReason;
   @NotEmpty
-  private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
+  private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers = new HashMap<>();
   private Integer invoiceRecipientId;
 
   private Integer replacesApplicationId;
@@ -90,6 +91,13 @@ public class ApplicationJson {
   private Boolean invoiced;
 
   private boolean skipPriceCalculation = false;
+
+  private ClientApplicationDataJson clientApplicationData;
+
+  /**
+   * Id of the external owner (external_user.id)
+   */
+  private Integer externalOwnerId;
 
   /**
   /**
@@ -546,6 +554,22 @@ public class ApplicationJson {
 
   public void setSkipPriceCalculation(boolean skipPriceCalculation) {
     this.skipPriceCalculation = skipPriceCalculation;
+  }
+
+  public Integer getExternalOwnerId() {
+    return externalOwnerId;
+  }
+
+  public void setExternalOwnerId(Integer externalOwnerId) {
+    this.externalOwnerId = externalOwnerId;
+  }
+
+  public ClientApplicationDataJson getClientApplicationData() {
+    return clientApplicationData;
+  }
+
+  public void setClientApplicationData(ClientApplicationDataJson clientApplicationData) {
+    this.clientApplicationData = clientApplicationData;
   }
 
 }

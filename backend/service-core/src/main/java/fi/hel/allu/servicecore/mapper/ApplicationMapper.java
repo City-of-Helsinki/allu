@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -84,6 +85,8 @@ public class ApplicationMapper {
     applicationDomain.setCustomerReference(applicationJson.getCustomerReference());
     applicationDomain.setInvoicingDate(applicationJson.getInvoicingDate());
     applicationDomain.setSkipPriceCalculation(applicationJson.getSkipPriceCalculation());
+    applicationDomain.setExternalOwnerId(applicationJson.getExternalOwnerId());
+    applicationDomain.setClientApplicationData(createClientApplicationDataModel(applicationJson.getClientApplicationData()));
     return applicationDomain;
   }
 
@@ -173,6 +176,8 @@ public class ApplicationMapper {
       project.setId(application.getProjectId());
       applicationJson.setProject(project);
     }
+    applicationJson.setExternalOwnerId(application.getExternalOwnerId());
+    applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData()));
     return applicationJson;
   }
 
@@ -360,4 +365,29 @@ public class ApplicationMapper {
     }
     return userService.findUserById(userId);
   }
+
+  private ClientApplicationData createClientApplicationDataModel(ClientApplicationDataJson clientApplicationDataJson) {
+    ClientApplicationData data = null;
+    if (clientApplicationDataJson != null) {
+      CustomerWithContacts customerWithContacts = Optional.ofNullable(clientApplicationDataJson.getCustomer())
+          .map(c -> customerMapper.createSingleCustomerWithContactsModel(c)).orElse(null);
+      Customer invoicingCustomer = Optional.ofNullable(clientApplicationDataJson.getInvoicingCustomer())
+          .map(c -> customerMapper.createCustomerModel(c)).orElse(null);
+      data = new ClientApplicationData(customerWithContacts, invoicingCustomer, clientApplicationDataJson.getClientApplicationKind());
+    }
+    return data;
+  }
+
+  private ClientApplicationDataJson createClientApplicationDataJson(ClientApplicationData clientApplicationData) {
+    ClientApplicationDataJson result = null;
+    if (clientApplicationData != null) {
+      CustomerWithContactsJson customerWithContacts = Optional.ofNullable(clientApplicationData.getCustomer())
+          .map(c -> customerMapper.createWithContactsJson(c)).orElse(null);
+      CustomerJson invoicingCustomer = Optional.ofNullable(clientApplicationData.getInvoicingCustomer())
+          .map(c -> customerMapper.createCustomerJson(c)).orElse(null);
+      result = new ClientApplicationDataJson(customerWithContacts, invoicingCustomer, clientApplicationData.getClientApplicationKind());
+    }
+    return result;
+  }
+
 }

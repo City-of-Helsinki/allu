@@ -80,7 +80,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
     this.mapFilter = this.mapStore.mapSearchFilter.takeUntil(this.destroy);
 
-    this.handleSearchChanges();
+    this.initSearch();
 
     this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.MAP);
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
@@ -114,10 +114,9 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.storedFilterStore.currentChange(filter);
   }
 
-  private handleSearchChanges(): void {
+  private initSearch(): void {
     const searchFilter = this.useLocationSearch ? this.mapStore.locationSearchFilter : this.mapStore.mapSearchFilter;
-    searchFilter
-      .takeUntil(this.destroy)
+    searchFilter.take(1)
       .subscribe(filter => this.searchForm.patchValue(filter, {emitEvent: false}));
   }
 

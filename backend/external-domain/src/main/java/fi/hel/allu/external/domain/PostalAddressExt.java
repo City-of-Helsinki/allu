@@ -1,8 +1,9 @@
 package fi.hel.allu.external.domain;
 
-/**
- * Allu application location, which is exposed to external users.
- */
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel("Postal address")
 public class PostalAddressExt {
   private String streetAddress;
   private String postalCode;
@@ -18,6 +19,7 @@ public class PostalAddressExt {
     this.city = city;
   }
 
+  @ApiModelProperty("Street address")
   public String getStreetAddress() {
     return streetAddress;
   }
@@ -26,6 +28,7 @@ public class PostalAddressExt {
     this.streetAddress = streetAddress;
   }
 
+  @ApiModelProperty("Postal code")
   public String getPostalCode() {
     return postalCode;
   }
@@ -34,6 +37,7 @@ public class PostalAddressExt {
     this.postalCode = postalCode;
   }
 
+  @ApiModelProperty("City")
   public String getCity() {
     return city;
   }

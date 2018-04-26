@@ -8,7 +8,6 @@ public class ContactExtMapper {
   public static ContactJson mapContactJson(ContactExt contactExt) {
     ContactJson contactJson = new ContactJson();
     contactJson.setId(contactExt.getId());
-    contactJson.setCustomerId(contactExt.getCustomerId());
     contactJson.setName(contactExt.getName());
     if (contactExt.getPostalAddress() != null) {
       contactJson.setStreetAddress(contactExt.getPostalAddress().getStreetAddress());
@@ -24,7 +23,6 @@ public class ContactExtMapper {
   public static ContactExt mapContactExt(ContactJson contactJson) {
     ContactExt contactExt = new ContactExt();
     contactExt.setId(contactJson.getId());
-    contactExt.setCustomerId(contactJson.getCustomerId());
     contactExt.setName(contactJson.getName());
     contactExt.setPostalAddress(new PostalAddressExt(contactJson.getStreetAddress(), contactJson.getPostalCode(), contactJson.getCity()));
     contactExt.setEmail(contactJson.getEmail());

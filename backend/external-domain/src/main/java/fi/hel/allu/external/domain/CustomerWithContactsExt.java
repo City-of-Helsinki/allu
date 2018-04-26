@@ -1,38 +1,29 @@
 package fi.hel.allu.external.domain;
 
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Allu application customer with its related contacts exposed to external users.
- */
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "Application customer and related contacts")
 public class CustomerWithContactsExt {
-  CustomerRoleType roleType;
-  private Integer customer;
-  List<Integer> contacts;
+  private CustomerExt customer;
+  private List<ContactExt> contacts = new ArrayList<>();
 
-  public CustomerRoleType getRoleType() {
-    return roleType;
-  }
-
-  public void setRoleType(CustomerRoleType roleType) {
-    this.roleType = roleType;
-  }
-
-  public Integer getCustomer() {
+  public CustomerExt getCustomer() {
     return customer;
   }
 
-  public void setCustomer(Integer customer) {
+  public void setCustomer(CustomerExt customer) {
     this.customer = customer;
   }
 
-  public List<Integer> getContacts() {
+  public List<ContactExt> getContacts() {
     return contacts;
   }
 
-  public void setContacts(List<Integer> contacts) {
+  public void setContacts(List<ContactExt> contacts) {
     this.contacts = contacts;
   }
+
 }

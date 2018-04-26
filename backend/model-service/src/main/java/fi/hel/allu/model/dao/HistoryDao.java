@@ -1,13 +1,23 @@
 package fi.hel.allu.model.dao;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QChangeHistory.changeHistory;
+import static fi.hel.allu.QFieldChange.fieldChange;
+
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Path;
@@ -15,13 +25,9 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.QApplication;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
-
-import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QChangeHistory.changeHistory;
-import static fi.hel.allu.QFieldChange.fieldChange;
 
 /**
  * The DAO class for handling application history
@@ -33,6 +39,8 @@ public class HistoryDao {
 
   private final QBean<FieldChange> fieldChangeBean = bean(FieldChange.class,
       fieldChange.all());
+  private final QBean<ChangeHistoryItem> changeHistoryBean = bean(ChangeHistoryItem.class, changeHistory.all());
+
 
   /**
    * Get application's change history
@@ -153,6 +161,29 @@ public class HistoryDao {
         }
       }
     }
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Integer, List<ChangeHistoryItem>> getApplicationStatusChangesForExternalOwner(Integer externalOwnerId, ZonedDateTime eventsAfter,
+      List<Integer> includedApplicationIds) {
+    QApplication application = QApplication.application;
+    BooleanBuilder builder = new BooleanBuilder();
+    builder.and(application.externalOwnerId.eq(externalOwnerId));
+    builder.and(changeHistory.newStatus.isNotNull());
+    if (eventsAfter != null) {
+      builder.and(changeHistory.changeTime.after(eventsAfter));
+    }
+    if (!includedApplicationIds.isEmpty()) {
+      builder.and(application.id.in(includedApplicationIds));
+    }
+    Map<Integer, List<ChangeHistoryItem>> result = queryFactory.select(changeHistory.all())
+        .from(changeHistory)
+        .join(application).on(application.id.eq(changeHistory.applicationId))
+        .where(builder)
+        .transform(groupBy(changeHistory.applicationId).as(list(changeHistoryBean)));
+    return result;
+
+
   }
 
 }

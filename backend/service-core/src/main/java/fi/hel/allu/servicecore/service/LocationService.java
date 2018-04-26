@@ -1,8 +1,10 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +14,22 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.model.domain.CityDistrictInfo;
+import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.FixedLocationArea;
+import fi.hel.allu.model.domain.FixedLocationSection;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.PostalAddress;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
+import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
+import fi.hel.allu.servicecore.domain.FixedLocationJson;
+import fi.hel.allu.servicecore.domain.FixedLocationSectionJson;
+import fi.hel.allu.servicecore.domain.LocationJson;
+import fi.hel.allu.servicecore.domain.PostalAddressJson;
 
 @Service
 public class LocationService {
@@ -127,12 +140,21 @@ public class LocationService {
    * @return list of FixedLocation locations
    */
   public List<FixedLocationJson> getFixedLocationList() {
+    return getFixedLocationList(null, null);
+  }
+
+  public List<FixedLocationJson> getFixedLocationList(ApplicationKind applicationKind, Integer srId) {
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getFixedLocationUrl())
+        .queryParam("applicationkind", applicationKind)
+        .queryParam("srid", srId)
+        .buildAndExpand().toUri();
     ResponseEntity<FixedLocation[]> queryResult =
-        restTemplate.getForEntity(applicationProperties.getFixedLocationUrl(), FixedLocation[].class);
+        restTemplate.getForEntity(uri, FixedLocation[].class);
     List<FixedLocationJson> resultList = Arrays.stream(queryResult.getBody()).map(fl -> mapToFixedLocationJson(fl))
         .collect(Collectors.toList());
     return resultList;
   }
+
 
   /**
    * Retrieve the list of defined city districts

@@ -1,101 +1,35 @@
 package fi.hel.allu.external.domain;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationSpecifier;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
+
+import org.geolatte.geom.Geometry;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
+import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Allu application, which is exposed to external users.
+ * Abstract base class for applications in external API
+ *
  */
-public class ApplicationExt {
+public abstract class ApplicationExt {
 
-  private Integer id;
-  private Integer projectId;
-  @NotEmpty // TODO: add validation: CustomerRoleType.APPLICANT always is required (this could be also added to Application model or ApplicationJson
-  private List<CustomerWithContactsExt> customersWithContacts;
-  @NotEmpty
-  private List<LocationExt> locations;
-  @NotNull
-  private StatusType status;
-  private ApplicationType type;
-  private List<ApplicationTagExt> applicationTags;
   private String name;
-  private ZonedDateTime creationTime;
+  private CustomerWithContactsExt customerWithContacts;
+  private CustomerExt invoicingCustomer;
+  @JsonSerialize(using = GeometrySerializerProxy.class)
+  @JsonDeserialize(using = GeometryDeserializerProxy.class)
+  private Geometry geometry;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
-  @NotNull
-  @Valid
-  private ApplicationExtensionExt extension;
-  private ZonedDateTime decisionTime;
-  @NotEmpty
-  private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
+  private boolean pendingOnClient;
 
-  public Integer getId() {
-    return id;
-  }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public Integer getProjectId() {
-    return projectId;
-  }
-
-  public void setProjectId(Integer projectId) {
-    this.projectId = projectId;
-  }
-
-  public List<CustomerWithContactsExt> getCustomersWithContacts() {
-    return customersWithContacts;
-  }
-
-  public void setCustomersWithContacts(List<CustomerWithContactsExt> customersWithContacts) {
-    this.customersWithContacts = customersWithContacts;
-  }
-
-  public List<LocationExt> getLocations() {
-    return locations;
-  }
-
-  public void setLocations(List<LocationExt> locations) {
-    this.locations = locations;
-  }
-
-  public StatusType getStatus() {
-    return status;
-  }
-
-  public void setStatus(StatusType status) {
-    this.status = status;
-  }
-
-  public ApplicationType getType() {
-    return type;
-  }
-
-  public void setType(ApplicationType type) {
-    this.type = type;
-  }
-
-  public List<ApplicationTagExt> getApplicationTags() {
-    return applicationTags;
-  }
-
-  public void setApplicationTags(List<ApplicationTagExt> applicationTags) {
-    this.applicationTags = applicationTags;
-  }
-
+  @ApiModelProperty(value="Name for the application")
   public String getName() {
     return name;
   }
@@ -104,14 +38,34 @@ public class ApplicationExt {
     this.name = name;
   }
 
-  public ZonedDateTime getCreationTime() {
-    return creationTime;
+  @ApiModelProperty(value="Applicant of the application")
+  public CustomerWithContactsExt getCustomerWithContacts() {
+    return customerWithContacts;
   }
 
-  public void setCreationTime(ZonedDateTime creationTime) {
-    this.creationTime = creationTime;
+  public void setCustomerWithContacts(CustomerWithContactsExt customerWithContacts) {
+    this.customerWithContacts = customerWithContacts;
   }
 
+  @ApiModelProperty(value="Recipient of the invoice", allowEmptyValue = true)
+  public CustomerExt getInvoicingCustomer() {
+    return invoicingCustomer;
+  }
+
+  public void setInvoicingCustomer(CustomerExt invoicingCustomer) {
+    this.invoicingCustomer = invoicingCustomer;
+  }
+
+  @ApiModelProperty(value = "Application location geometry")
+  public Geometry getGeometry() {
+    return geometry;
+  }
+
+  public void setGeometry(Geometry geometry) {
+    this.geometry = geometry;
+  }
+
+  @ApiModelProperty(value = "Start time of the application i.e. the starting time certain land area is reserved by application.")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -120,6 +74,7 @@ public class ApplicationExt {
     this.startTime = startTime;
   }
 
+  @ApiModelProperty(value = "End time of the application i.e. the time certain land area stops being reserved by the application")
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -128,33 +83,12 @@ public class ApplicationExt {
     this.endTime = endTime;
   }
 
-  public ApplicationExtensionExt getExtension() {
-    return extension;
+  @ApiModelProperty(value = "Value indicating whether application is still pending on client side (and not yet ready to be handled in Allu")
+  public boolean isPendingOnClient() {
+    return pendingOnClient;
   }
 
-  public void setExtension(ApplicationExtensionExt extension) {
-    this.extension = extension;
-  }
-
-  public ZonedDateTime getDecisionTime() {
-    return decisionTime;
-  }
-
-  public void setDecisionTime(ZonedDateTime decisionTime) {
-    this.decisionTime = decisionTime;
-  }
-
-  /**
-   * @return the kindsWithSpecifiers
-   */
-  public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
-    return kindsWithSpecifiers;
-  }
-
-  /**
-   * @param kindsWithSpecifiers the kindsWithSpecifiers to set
-   */
-  public void setKindsWithSpecifiers(Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
-    this.kindsWithSpecifiers = kindsWithSpecifiers;
+  public void setPendingOnClient(boolean pendingOnClient) {
+    this.pendingOnClient = pendingOnClient;
   }
 }

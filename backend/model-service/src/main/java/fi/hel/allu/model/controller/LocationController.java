@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
@@ -104,8 +105,8 @@ public class LocationController {
   }
 
   @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
-  public ResponseEntity<List<FixedLocation>> getFixedLocationList() {
-    return new ResponseEntity<>(locationDao.getFixedLocationList(), HttpStatus.OK);
+  public ResponseEntity<List<FixedLocation>> getFixedLocationList(@RequestParam(value = "applicationkind", required=false) ApplicationKind applicationKind, @RequestParam(value="srid", required=false) Integer srId) {
+    return new ResponseEntity<>(locationDao.getFixedLocationList(applicationKind, srId), HttpStatus.OK);
   }
 
   /**
@@ -116,8 +117,8 @@ public class LocationController {
    */
 
   @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
-  public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas(@RequestParam(value="srid", required=false) Integer srid) {
-    return new ResponseEntity<>(locationDao.getFixedLocationAreas(srid), HttpStatus.OK);
+  public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas(@RequestParam(value="srid", required=false) Integer srId) {
+    return new ResponseEntity<>(locationDao.getFixedLocationAreas(srId), HttpStatus.OK);
   }
 
   /**

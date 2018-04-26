@@ -1,7 +1,9 @@
 package fi.hel.allu.model.controller;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -12,7 +14,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,7 +29,15 @@ import fi.hel.allu.model.dao.AttachmentDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.dao.DistributionEntryDao;
 import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationIdentifier;
+import fi.hel.allu.model.domain.ApplicationTag;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.DeadlineCheckParams;
+import fi.hel.allu.model.domain.DistributionEntry;
+import fi.hel.allu.model.domain.Invoice;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.model.service.ApplicationReplacementService;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
@@ -34,7 +49,6 @@ public class ApplicationController {
   private final ApplicationService applicationService;
   private final AttachmentDao attachmentDao;
   private final DecisionDao decisionDao;
-  private final HistoryDao historyDao;
   private final DistributionEntryDao distributionEntryDao;
   private final ApplicationReplacementService applicationReplacementService;
   private final InvoiceService invoiceService;
@@ -44,14 +58,12 @@ public class ApplicationController {
       ApplicationService applicationService,
       AttachmentDao attachmentDao,
       DecisionDao decisionDao,
-      HistoryDao historyDao,
       DistributionEntryDao distributionEntryDao,
       InvoiceService invoiceService,
       ApplicationReplacementService applicationReplacementService) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
-    this.historyDao = historyDao;
     this.distributionEntryDao = distributionEntryDao;
     this.invoiceService = invoiceService;
     this.applicationReplacementService = applicationReplacementService;
@@ -278,28 +290,6 @@ public class ApplicationController {
     return new ResponseEntity<>(bytes, HttpStatus.OK);
   }
 
-  /**
-   * Get application history
-   *
-   * @param id the application's database ID
-   * @return list of changes for the application
-   */
-  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
-  public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
-    return new ResponseEntity<>(historyDao.getApplicationHistory(id), HttpStatus.OK);
-  }
-
-  /**
-   * Add an application history entry
-   * @param id The application's database ID
-   * @param change the change item to add
-   */
-  @RequestMapping(value = "/{id}/history", method = RequestMethod.POST)
-  public ResponseEntity<Void> addChange(@PathVariable int id, @RequestBody ChangeHistoryItem change) {
-    historyDao.addApplicationChange(id, change);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
   @RequestMapping(value = "/{id}/decision-distribution-list", method = RequestMethod.POST)
   public ResponseEntity<Void> replaceDecisionDistributionList(
       @PathVariable int id,
@@ -374,4 +364,5 @@ public class ApplicationController {
   public ResponseEntity<List<Integer>> findFinishedApplications(@RequestBody List<StatusType> statuses) {
     return new ResponseEntity<>(applicationService.findFinishedApplications(statuses), HttpStatus.OK);
   }
+
 }

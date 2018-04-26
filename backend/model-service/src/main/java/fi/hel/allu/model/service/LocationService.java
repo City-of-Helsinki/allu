@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,16 +45,27 @@ public class LocationService {
     locations.forEach(l -> newLocations.add(locationDao.insert(l)));
     int applicationId = getApplicationId(newLocations);
     Application application = findApplication(applicationId);
-    if (application.getOwner() == null) {
-      // TODO: area rental with multiple locations will get more or less "random" location
-      newLocations.forEach(insertedLocation -> tryToAssignOwner(application, insertedLocation));
-      if (application.getOwner() != null) {
-        // New owner was assigned, set it
-        applicationService.updateOwner(application.getOwner(), Collections.singletonList(application.getId()));
-      }
-    }
+    assignOwner(application, newLocations, userId);
     updateApplicationAndProject(application, userId);
     return newLocations;
+  }
+
+  private void assignOwner(Application application, List<Location> locations, int userId) {
+    if (application.getOwner() == null) {
+      Optional<Integer> owner = Optional.ofNullable(userId);
+
+      if (!ApplicationType.NOTE.equals(application.getType())) {
+        // TODO: area rental with multiple locations will get more or less "random" location
+        owner = locations.stream()
+            .findFirst()
+            .flatMap(location -> ownerFromLocations(application.getType(), location));
+      }
+
+      owner.ifPresent(id -> {
+        application.setOwner(id);
+        applicationService.updateOwner(id, Arrays.asList(application.getId()));
+      });
+    }
   }
 
   @Transactional
@@ -129,18 +138,18 @@ public class LocationService {
   }
 
   /*
-   * Try to find a user that matches the given application and location and
-   * assign the application to him/her.
+   * Try to find a user that matches the given application and location
    */
-  private void tryToAssignOwner(Application application, Location location) {
+  private Optional<Integer> ownerFromLocations(ApplicationType type, Location location) {
     Integer cityDistrictId = location.getEffectiveCityDistrictId();
-    ApplicationType applicationType = application.getType();
-    if (cityDistrictId != null && applicationType != null) {
-      List<User> users = userDao.findMatching(RoleType.ROLE_PROCESS_APPLICATION, applicationType, cityDistrictId);
-      if (!users.isEmpty()) {
-        application.setOwner(users.get(0).getId());
-      }
-    }
+    return Optional.ofNullable(cityDistrictId)
+        .flatMap(cityDistrict -> findOwner(type, cityDistrictId))
+        .map(user -> user.getId());
+  }
+
+  private Optional<User> findOwner(ApplicationType type, Integer cityDistrictId) {
+    return userDao.findMatching(RoleType.ROLE_PROCESS_APPLICATION, type, cityDistrictId).stream()
+        .findFirst();
   }
 
   /**

@@ -1,34 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.QueryException;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.*;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.sql.SQLExpressions;
-import com.querydsl.sql.SQLQuery;
-import com.querydsl.sql.SQLQueryFactory;
-
-import fi.hel.allu.QCityDistrict;
-import fi.hel.allu.QLocationGeometry;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.common.PostalAddressUtil;
-import fi.hel.allu.model.coordinates.CoordinateTransformation;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.querydsl.ExcludingMapper;
-
-import org.geolatte.geom.Geometry;
-import org.geolatte.geom.GeometryCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
@@ -42,6 +13,54 @@ import static fi.hel.allu.QLocationGeometry.locationGeometry;
 import static fi.hel.allu.QPaymentClass.paymentClass1;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.QueryException;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.SQLQuery;
+import com.querydsl.sql.SQLQueryFactory;
+
+import fi.hel.allu.QCityDistrict;
+import fi.hel.allu.QLocationGeometry;
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.common.PostalAddressUtil;
+import fi.hel.allu.model.coordinates.CoordinateTransformation;
+import fi.hel.allu.model.domain.CityDistrict;
+import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.FixedLocationArea;
+import fi.hel.allu.model.domain.FixedLocationSection;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.PostalAddress;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
 
 @Repository
 public class LocationDao {
@@ -86,12 +105,12 @@ public class LocationDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Location> findByApplication(int applicationId, Integer srid) {
+  public List<Location> findByApplication(int applicationId, Integer srId) {
     List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
     List<Location> locations = locationIds.stream()
         .map(id -> findById(id).get())
         .collect(Collectors.toList());
-    locations.forEach(l -> transformCoordinates(l, srid));
+    locations.forEach(l -> transformCoordinates(l, srId));
     return locations;
   }
 
@@ -235,8 +254,11 @@ public class LocationDao {
    * Get the list of all active fixed locations
    */
   @Transactional(readOnly = true)
-  public List<FixedLocation> getFixedLocationList() {
-    return findFixedLocations(Collections.emptyList());
+  public List<FixedLocation> getFixedLocationList(ApplicationKind kind, Integer srId) {
+    List<FixedLocation> fixedLocations = findFixedLocations(Collections.emptyList(), kind);
+    transformCoordinates(fixedLocations, srId);
+    return fixedLocations;
+
   }
 
   /**
@@ -245,16 +267,17 @@ public class LocationDao {
    */
   @Transactional(readOnly = true)
   public Optional<FixedLocation> findFixedLocation(int id) {
-    return findFixedLocations(Collections.singletonList(id)).stream().findFirst();
+    return findFixedLocations(Collections.singletonList(id), null).stream().findFirst();
   }
 
   /*
    *  Find fixed locations: either by ids or all active
    */
-  private List<FixedLocation> findFixedLocations(List<Integer> ids)
+  private List<FixedLocation> findFixedLocations(List<Integer> ids, ApplicationKind kind)
   {
     final Predicate locationPredicate =
-        (ids.isEmpty()) ? fixedLocation.isActive.eq(true)
+        (ids.isEmpty()) ?
+            (kind != null ? activeFixedLocationWithKind(kind) : activeFixedLocation())
             : fixedLocation.id.in(ids);
 
     List<FixedLocation> fxs = queryFactory
@@ -275,16 +298,24 @@ public class LocationDao {
             }).collect(Collectors.toList());
   }
 
+  private BooleanExpression activeFixedLocationWithKind(ApplicationKind kind) {
+    return activeFixedLocation().and(fixedLocation.applicationKind.eq(kind));
+  }
+
+  private BooleanExpression activeFixedLocation() {
+    return fixedLocation.isActive.eq(true);
+  }
+
   /**
    * Get all defined fixed location areas as a list
    *
    * @return list of FixedLocationAreas
    */
   @Transactional(readOnly = true)
-  public List<FixedLocationArea> getFixedLocationAreas(Integer srid) {
+  public List<FixedLocationArea> getFixedLocationAreas(Integer srId) {
 
     List<FixedLocationArea> areas = queryFactory.from(locationArea, fixedLocation)
-        .where(fixedLocation.areaId.eq(locationArea.id).and(fixedLocation.isActive.eq(true)))
+        .where(fixedLocation.areaId.eq(locationArea.id).and(activeFixedLocation()))
         .transform(groupBy(locationArea.id).as(
             Projections.constructor(FixedLocationArea.class, locationArea.id, locationArea.name,
                 list(bean(FixedLocationSection.class, fixedLocation.all())))))
@@ -294,7 +325,7 @@ public class LocationDao {
     areas.forEach(fla -> fla.getSections().forEach(fls -> fls.setGeometry(Optional.ofNullable(fls.getGeometry())
                 .map(geometry -> toGeometryCollectionIfNeeded(geometry))
         .orElse(GeometryCollection.createEmpty()))));
-    areas.forEach(a -> transformCoordinates(a, srid));
+    areas.forEach(a -> transformCoordinates(a, srId));
 
     return areas;
   }
@@ -481,4 +512,9 @@ public class LocationDao {
   private void transformCoordinates(FixedLocationArea area, Integer targetSrId) {
     area.getSections().forEach(s -> s.setGeometry(coordinateTransformation.transformCoordinates(s.getGeometry(), targetSrId)));
   }
+
+  private void transformCoordinates(List<FixedLocation> fixedLocations, Integer targetSrId) {
+    fixedLocations.forEach(f -> f.setGeometry(coordinateTransformation.transformCoordinates(f.getGeometry(), targetSrId)));
+  }
+
 }

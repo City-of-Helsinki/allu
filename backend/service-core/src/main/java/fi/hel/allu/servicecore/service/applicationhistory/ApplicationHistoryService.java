@@ -11,11 +11,16 @@ import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 
 import fi.hel.allu.servicecore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
@@ -167,4 +172,16 @@ public class ApplicationHistoryService {
     change.setUserId(userService.getCurrentUser().getId());
     restTemplate.postForObject(applicationProperties.getAddApplicationHistoryUrl(), change, Void.class, applicationId);
   }
+
+  public Map<Integer, List<ChangeHistoryItem>> getExternalOwnerApplicationHistory(Integer externalOwnerId, ZonedDateTime eventsAfter,
+      List<Integer> includedApplicationIds) {
+    Map<String, Integer> uriParams = new HashMap<>();
+    uriParams.put("externalownerid", externalOwnerId);
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getExternalOwnerApplicationHistoryUrl())
+        .queryParam("eventsafter", eventsAfter)
+        .buildAndExpand(uriParams).toUri();
+    ParameterizedTypeReference<Map<Integer, List<ChangeHistoryItem>>> typeRef = new ParameterizedTypeReference<Map<Integer, List<ChangeHistoryItem>>>() {};
+    return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(includedApplicationIds), typeRef).getBody();
+  }
+
 }

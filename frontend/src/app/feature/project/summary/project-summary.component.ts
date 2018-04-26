@@ -24,8 +24,8 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   constructor(private store: Store<fromProject.State>, private mapStore: MapStore) {}
 
   ngOnInit(): void {
-    this.project$ = this.store.select(fromProject.getCurrentProject);
     this.districts$ = this.store.select(fromProject.getProjectDistricts);
+    this.project$ = this.store.select(fromProject.getCurrentProject);
   }
 
   ngAfterViewInit(): void {

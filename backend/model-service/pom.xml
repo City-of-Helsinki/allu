@@ -486,6 +486,11 @@
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToCodeSetType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
+                            <column>client_application_data</column>
+                            <type>fi.hel.allu.model.querydsl.StringToClientApplicationData</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

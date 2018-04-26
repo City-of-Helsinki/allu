@@ -1,14 +1,19 @@
 package fi.hel.allu.external.domain;
 
-import fi.hel.allu.common.domain.types.CustomerType;
-import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import fi.hel.allu.common.domain.types.CustomerType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * in Finnish: Asiakas (esimerkiksi Hakija, Rakennuttaja, Työn suorittaja ja Asiamies).
  *
  * <p>A customer is either person, organization or a company.
  */
+@ApiModel(value="Application customer information")
 public class CustomerExt {
   private Integer id;
   @NotNull
@@ -20,8 +25,6 @@ public class CustomerExt {
   private String phone;
   private String registryKey;
   private String ovt;
-  private String sapCustomerNumber;
-  private Boolean invoicingProhibited;
   private String invoicingOperator;
 
   public Integer getId() {
@@ -32,11 +35,7 @@ public class CustomerExt {
     this.id = id;
   }
 
-  /**
-   * Type of the application.
-   *
-   * @return  Type of the application.
-   */
+  @ApiModelProperty(value="Customer type", allowableValues = "PERSON, COMPANY, ASSOCIATION, OTHER")
   public CustomerType getType() {
     return type;
   }
@@ -45,11 +44,7 @@ public class CustomerExt {
     this.type = type;
   }
 
-  /**
-   * The name of the customer person, company or organization.
-   *
-   * @return  The name of the customer person, company or organization.
-   */
+  @ApiModelProperty(value = "The name of the customer person, company or organization.")
   public String getName() {
     return name;
   }
@@ -58,11 +53,7 @@ public class CustomerExt {
     this.name = name;
   }
 
-  /**
-   * Returns the postal address of the customer.
-   *
-   * @return  the postal address of the customer.
-   */
+  @ApiModelProperty(value = "The postal address of the customer")
   public PostalAddressExt getPostalAddress() {
     return postalAddress;
   }
@@ -71,11 +62,7 @@ public class CustomerExt {
     this.postalAddress = postalAddress;
   }
 
-  /**
-   * Email of the customer person, company or organization.
-   *
-   * @return Email of the customer person, company or organization.
-   */
+   @ApiModelProperty(value = "Email of the customer person, company or organization.")
   public String getEmail() {
     return email;
   }
@@ -84,11 +71,7 @@ public class CustomerExt {
     this.email = email;
   }
 
-  /**
-   * Phone number of the customer person, company or organization.
-   *
-   * @return  Phone number of the customer person, company or organization.
-   */
+  @ApiModelProperty(value = "Phone number of the customer person, company or organization.")
   public String getPhone() {
     return phone;
   }
@@ -97,11 +80,7 @@ public class CustomerExt {
     this.phone = phone;
   }
 
-  /**
-   * The registry key (social security number or business id i.e. Y-tunnus) of the customer person, company or organization.
-   *
-   * @return  The registry key (social security number or business id i.e. Y-tunnus) of the customer person, company or organization.
-   */
+  @ApiModelProperty(value = "The registry key (social security number or business id i.e. Y-tunnus) of the customer person, company or organization.")
   public String getRegistryKey() {
     return registryKey;
   }
@@ -110,9 +89,7 @@ public class CustomerExt {
     this.registryKey = registryKey;
   }
 
-  /**
-   * E-invoice identifier of the customer (OVT-tunnus).
-   */
+  @ApiModelProperty(value = "E-invoice identifier of the customer (OVT-tunnus).")
   public String getOvt() {
     return ovt;
   }
@@ -121,33 +98,7 @@ public class CustomerExt {
     this.ovt = ovt;
   }
 
-  /**
-   * SAP Customer Number (KUNNR)
-   */
-  public String getSapCustomerNumber() {
-    return sapCustomerNumber;
-  }
-
-  public void setSapCustomerNumber(String sapCustomerNumber) {
-    this.sapCustomerNumber = sapCustomerNumber;
-  }
-
-  /**
-   * SAP invoicing prohibited (SAP laskutuskielto)
-   *
-   * @return
-   */
-  public Boolean getInvoicingProhibited() {
-    return invoicingProhibited;
-  }
-
-  public void setInvoicingProhibited(Boolean invoicingProhibited) {
-    this.invoicingProhibited = invoicingProhibited;
-  }
-
-  /**
-   * E-invoicing operator code.
-   */
+  @ApiModelProperty(value = "E-invoicing operator code.")
   public String getInvoicingOperator() {
     return invoicingOperator;
   }

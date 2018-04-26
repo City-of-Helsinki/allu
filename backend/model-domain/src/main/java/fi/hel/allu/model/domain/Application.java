@@ -1,5 +1,17 @@
 package fi.hel.allu.model.domain;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.group.GroupSequenceProvider;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -8,19 +20,6 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.util.TimeUtil;
-
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.group.GroupSequenceProvider;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * In Finnish: hakemus
@@ -38,7 +37,7 @@ public class Application {
   private Integer projectId;
   private Integer owner;
   private Integer handler;
-  @NotEmpty
+  @NotNull(groups = Application.Complete.class)
   private List<CustomerWithContacts> customersWithContacts;
   private StatusType status;
   @NotNull
@@ -69,6 +68,9 @@ public class Application {
   private ZonedDateTime invoicingDate;
   private Boolean invoiced;
   private boolean skipPriceCalculation = false;
+  private Integer externalOwnerId;
+
+  private ClientApplicationData clientApplicationData;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -480,4 +482,22 @@ public class Application {
     this.skipPriceCalculation = skipPriceCalculation;
   }
 
+  /**
+   * Id of the external owner (external user)
+   */
+  public Integer getExternalOwnerId() {
+    return externalOwnerId;
+  }
+
+  public void setExternalOwnerId(Integer externalOwnerId) {
+    this.externalOwnerId = externalOwnerId;
+  }
+
+  public ClientApplicationData getClientApplicationData() {
+    return clientApplicationData;
+  }
+
+  public void setClientApplicationData(ClientApplicationData clientApplicationData) {
+    this.clientApplicationData = clientApplicationData;
+  }
 }

@@ -625,6 +625,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{applicationId}/history");
   }
 
+  public String getExternalOwnerApplicationHistoryUrl() {
+    return getModelServiceUrl("/{externalownerid}/applications/history");
+  }
+
+
   /**
    * @return URL for getting an customer by id.
    */
