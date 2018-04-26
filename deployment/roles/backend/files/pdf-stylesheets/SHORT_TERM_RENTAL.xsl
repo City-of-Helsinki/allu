@@ -60,7 +60,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </p>
           </xsl:if>
           <!-- Ei tarvita, jos banderolli: -->
-          <xsl:if test="data/siteArea != ''">
+          <xsl:if test="data/siteArea != '' and data/siteArea != 0">
             <p class="space-above">
                Pinta-ala: <xsl:value-of select="data/siteArea" /> m<sup>2</sup><!-- [Alueen pinta-ala] -->
             </p>

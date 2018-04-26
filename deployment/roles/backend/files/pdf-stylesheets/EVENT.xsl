@@ -59,9 +59,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               <xsl:value-of select="data/siteAdditionalInfo"/>
             </p>
           </xsl:if>
-          <p class="space-above">
-             Pinta-ala: <xsl:value-of select="data/siteArea" /> m<sup>2</sup><!-- [Alueen pinta-ala] -->
-          </p>
+          <xsl:if test="data/siteArea != '' and data/siteArea != 0">
+            <p class="space-above">
+               Pinta-ala: <xsl:value-of select="data/siteArea" /> m<sup>2</sup><!-- [Alueen pinta-ala] -->
+            </p>
+          </xsl:if>
         </section>
 
         <section class="half-right">
