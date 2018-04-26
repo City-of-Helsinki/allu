@@ -52,6 +52,7 @@ import {RootErrorNotificationService} from './effects/root-error-notification.se
 import {CodeSetService} from '../../service/codeset/codeset.service';
 import {CityDistrictEffects} from './effects/city-district-effects';
 import {reducers} from './reducers';
+import {AuthModule} from '../auth/auth.module';
 
 @NgModule({
   imports: [
@@ -72,6 +73,7 @@ import {reducers} from './reducers';
     ApplicationModule,
     ProjectModule,
     LoginModule,
+    AuthModule,
     ToolbarModule,
     MapSearchModule,
     LocationModule.forRoot(),

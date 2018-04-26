@@ -8,7 +8,8 @@ import {REDIRECT_URL} from '../../../util/local-storage';
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-  constructor(private authService: AuthService, private configService: ConfigService) {
+  constructor(private authService: AuthService,
+              private configService: ConfigService) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
