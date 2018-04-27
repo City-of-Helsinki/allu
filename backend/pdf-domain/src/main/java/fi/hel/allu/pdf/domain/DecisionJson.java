@@ -78,6 +78,7 @@ public class DecisionJson {
 
   private List<ChargeInfoTexts> chargeInfoEntries;
   private Integer sectionNumber;
+  private List<KindWithSpecifiers> kinds;
 
   public boolean isDraft() {
     return isDraft;
@@ -481,5 +482,13 @@ public class DecisionJson {
 
   public void setSectionNumber(Integer sectionNumber) {
     this.sectionNumber = sectionNumber;
+  }
+
+  public List<KindWithSpecifiers> getKinds() {
+    return kinds;
+  }
+
+  public void setKinds(List<KindWithSpecifiers> kinds) {
+    this.kinds = kinds;
   }
 }

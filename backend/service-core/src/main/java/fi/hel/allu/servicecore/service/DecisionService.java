@@ -1,7 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import static fi.hel.allu.common.domain.types.ApplicationType.CABLE_REPORT;
+import static fi.hel.allu.common.domain.types.ApplicationType.EVENT;
+import static fi.hel.allu.common.domain.types.ApplicationType.PLACEMENT_CONTRACT;
+import static fi.hel.allu.common.domain.types.ApplicationType.SHORT_TERM_RENTAL;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.DefaultTextType;
@@ -11,6 +16,7 @@ import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
 import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
+import fi.hel.allu.pdf.domain.KindWithSpecifiers;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
@@ -127,6 +133,14 @@ public class DecisionService {
     translations.put(ApplicationKind.CIRCUS, "Sirkus/tivolivierailu");
     translations.put(ApplicationKind.ART, "Taideteos");
     translations.put(ApplicationKind.STORAGE_AREA, "Varastoalue");
+    translations.put(ApplicationKind.STREET_AND_GREEN, "Katu- ja vihertyöt");
+    translations.put(ApplicationKind.WATER_AND_SEWAGE, "Vesi ja viemäri");
+    translations.put(ApplicationKind.ELECTRICITY, "Sähkö");
+    translations.put(ApplicationKind.DATA_TRANSFER, "Tiedonsiirto");
+    translations.put(ApplicationKind.HEATING_COOLING, "Lämmitys/viilennys");
+    translations.put(ApplicationKind.CONSTRUCTION, "Rakennus");
+    translations.put(ApplicationKind.YARD, "Piha");
+    translations.put(ApplicationKind.GEOLOGICAL_SURVEY, "Pohjatutkimus");
     translations.put(ApplicationKind.OTHER, "Muu");
     return translations;
   }
@@ -199,6 +213,18 @@ public class DecisionService {
     decisionJson.setCustomerAddressLines(customerAddressLines(application));
     decisionJson.setCustomerContactLines(customerContactLines(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
+    final Map<ApplicationKind, List<ApplicationSpecifier>> applicationsKindsWithSpecifiers = application.getKindsWithSpecifiers();
+    final List<KindWithSpecifiers> kindsWithSpecifiers = new ArrayList<>();
+    applicationsKindsWithSpecifiers.keySet().forEach((kind) -> {
+      final List<String> specifiers = new ArrayList<>();
+      applicationsKindsWithSpecifiers.get(kind).forEach(s -> specifiers.add(translateSpecifier(s)));
+      KindWithSpecifiers k = new KindWithSpecifiers();
+      k.setKind(translateKind(kind));
+      k.setSpecifiers(specifiers);
+      kindsWithSpecifiers.add(k);
+    });
+    decisionJson.setKinds(kindsWithSpecifiers);
+
     getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
 
     if (application.getType() == null) {
@@ -710,15 +736,25 @@ public class DecisionService {
 
   // Get the stylesheet name to use for given application.
   private String styleSheetName(ApplicationJson application) {
-    /*
-     * FIXME: only EVENT, SHORT_TERM_RENTAL, and CABLE_REPORT are supported. For
-     * others, use "DUMMY"
-     */
-    if (application.getType() == ApplicationType.EVENT
-        || application.getType() == ApplicationType.SHORT_TERM_RENTAL
-        || application.getType() == ApplicationType.CABLE_REPORT) {
+    final List<ApplicationType> implementedTypes = Arrays.asList(
+        EVENT,
+        SHORT_TERM_RENTAL,
+        CABLE_REPORT,
+        PLACEMENT_CONTRACT);
+    if (implementedTypes.contains(application.getType())) {
       return application.getType().name();
     }
     return "DUMMY";
+  }
+
+  private String translateKind(ApplicationKind kind) {
+    return applicationKindTranslations.get(kind);
+  }
+
+  private String translateSpecifier(ApplicationSpecifier specifier) {
+    Map<ApplicationSpecifier, String> translations = new HashMap<>();
+    translations.put(ApplicationSpecifier.INDUCTION_LOOP, "Induktiosilmukka");
+    translations.put(ApplicationSpecifier.COVER_STRUCTURE, "Kansisto");
+    return translations.get(specifier);
   }
 }
