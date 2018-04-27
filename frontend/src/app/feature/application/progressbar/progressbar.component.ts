@@ -70,7 +70,8 @@ export class ProgressbarComponent implements OnChanges {
 
   private updateReplacementHistory(application: Application): void {
     if (NumberUtil.isDefined(application.id)) {
-      const defaultReplacements = [new ApplicationIdentifier(application.id, application.applicationId)];
+      const defaultReplacements = [
+          new ApplicationIdentifier(application.id, application.applicationId, application.identificationNumber)];
 
       this.service.getReplacementHistory(application.id)
         .startWith(defaultReplacements)

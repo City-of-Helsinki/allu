@@ -15,7 +15,6 @@ import fi.hel.allu.servicecore.domain.ClientApplicationDataJson;
 import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.domain.PlacementContractJson;
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 public class ApplicationFactory {
 
@@ -34,7 +33,6 @@ public class ApplicationFactory {
 
     PlacementContractJson extension = new PlacementContractJson();
     extension.setPropertyIdentificationNumber(placementContract.getPropertyIdentificationNumber());
-    extension.setIdentificationNumber(placementContract.getIdentificationNumber());
     extension.setAdditionalInfo(placementContract.getWorkDescription());
     applicationJson.setExtension(extension);
 
@@ -49,6 +47,7 @@ public class ApplicationFactory {
     applicationJson.setName(applicationExt.getName());
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
     applicationJson.setNotBillable(Boolean.FALSE);
+    applicationJson.setIdentificationNumber(applicationExt.getIdentificationNumber());
   }
 
   private static LocationJson createLocation(ApplicationExt application, Geometry geometry, PostalAddressExt postalAddress) {

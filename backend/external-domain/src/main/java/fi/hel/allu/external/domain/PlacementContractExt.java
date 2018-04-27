@@ -10,7 +10,6 @@ public class PlacementContractExt extends ApplicationExt {
   private String clientApplicationKind;
   private String workDescription;
   private String propertyIdentificationNumber;
-  private String identificationNumber;
 
   @ApiModelProperty(value = "Postal address")
   public PostalAddressExt getPostalAddress() {
@@ -47,14 +46,4 @@ public class PlacementContractExt extends ApplicationExt {
   public void setPropertyIdentificationNumber(String propertyIdentificationNumber) {
     this.propertyIdentificationNumber = propertyIdentificationNumber;
   }
-
-  @ApiModelProperty(value = "Identification number (in Finnish: asiointunnus)")
-  public String getIdentificationNumber() {
-    return identificationNumber;
-  }
-
-  public void setIdentificationNumber(String identificationNumber) {
-    this.identificationNumber = identificationNumber;
-  }
-
 }

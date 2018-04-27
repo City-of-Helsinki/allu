@@ -202,7 +202,8 @@ export class ApplicationService {
     const url = `${APPLICATIONS_URL}/${id}/replacementHistory`;
     return this.authHttp.get(url)
       .map(response => response.json())
-      .map(json => json.map(identifier => new ApplicationIdentifier(identifier.id, identifier.applicationId)))
+      .map(json => json.map(identifier => new ApplicationIdentifier(
+          identifier.id, identifier.applicationId, identifier.identificationNumber)))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replacementHistory')));
   }
 }

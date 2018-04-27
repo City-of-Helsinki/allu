@@ -6,13 +6,15 @@ package fi.hel.allu.servicecore.domain;
 public class ApplicationIdentifierJson {
   private int id;
   private String applicationId;
+  private String identificationNumber;
 
   public ApplicationIdentifierJson() {
   }
 
-  public ApplicationIdentifierJson(int id, String applicationId) {
+  public ApplicationIdentifierJson(int id, String applicationId, String identificationNumber) {
     this.id = id;
     this.applicationId = applicationId;
+    this.identificationNumber = identificationNumber;
   }
 
   public int getId() {
@@ -29,5 +31,13 @@ public class ApplicationIdentifierJson {
 
   public void setApplicationId(String applicationId) {
     this.applicationId = applicationId;
+  }
+
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
   }
 }

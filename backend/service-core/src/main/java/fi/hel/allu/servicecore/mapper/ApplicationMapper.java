@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -87,6 +86,7 @@ public class ApplicationMapper {
     applicationDomain.setSkipPriceCalculation(applicationJson.getSkipPriceCalculation());
     applicationDomain.setExternalOwnerId(applicationJson.getExternalOwnerId());
     applicationDomain.setClientApplicationData(createClientApplicationDataModel(applicationJson.getClientApplicationData()));
+    applicationDomain.setIdentificationNumber(applicationJson.getIdentificationNumber());
     return applicationDomain;
   }
 
@@ -178,6 +178,7 @@ public class ApplicationMapper {
     }
     applicationJson.setExternalOwnerId(application.getExternalOwnerId());
     applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData()));
+    applicationJson.setIdentificationNumber(application.getIdentificationNumber());
     return applicationJson;
   }
 
@@ -321,7 +322,9 @@ public class ApplicationMapper {
   }
 
   public ApplicationIdentifierJson mapApplicationIdentifierToJson(ApplicationIdentifier applicationIdentifier) {
-    return new ApplicationIdentifierJson(applicationIdentifier.getId(), applicationIdentifier.getApplicationId());
+    return new ApplicationIdentifierJson(applicationIdentifier.getId(),
+                                         applicationIdentifier.getApplicationId(),
+                                         applicationIdentifier.getIdentificationNumber());
   }
 
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {

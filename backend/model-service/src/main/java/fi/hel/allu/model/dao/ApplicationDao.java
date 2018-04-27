@@ -92,7 +92,8 @@ public class ApplicationDao {
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
-  final QBean<ApplicationIdentifier> applicationIdentifierBean = bean(ApplicationIdentifier.class, application.id, application.applicationId);
+  final QBean<ApplicationIdentifier> applicationIdentifierBean = bean(ApplicationIdentifier.class,
+      application.id, application.applicationId, application.identificationNumber);
 
   @Autowired
   public ApplicationDao(

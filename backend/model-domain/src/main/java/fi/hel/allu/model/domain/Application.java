@@ -69,6 +69,7 @@ public class Application {
   private Boolean invoiced;
   private boolean skipPriceCalculation = false;
   private Integer externalOwnerId;
+  private String identificationNumber;
 
   private ClientApplicationData clientApplicationData;
 
@@ -499,5 +500,13 @@ public class Application {
 
   public void setClientApplicationData(ClientApplicationData clientApplicationData) {
     this.clientApplicationData = clientApplicationData;
+  }
+
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
   }
 }

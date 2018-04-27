@@ -41,5 +41,6 @@ export interface BackendApplication {
   replacedByApplicationId?: number;
   customerReference?: string;
   invoicingDate?: Date;
+  identificationNumber?: string;
   skipPriceCalculation: boolean;
 }

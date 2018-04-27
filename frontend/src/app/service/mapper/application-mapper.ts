@@ -50,6 +50,7 @@ export class ApplicationMapper {
     application.replacedByApplicationId = backendApplication.replacedByApplicationId;
     application.customerReference = backendApplication.customerReference;
     application.invoicingDate = backendApplication.invoicingDate;
+    application.identificationNumber = backendApplication.identificationNumber;
     application.skipPriceCalculation = backendApplication.skipPriceCalculation;
     return application;
   }
@@ -87,6 +88,7 @@ export class ApplicationMapper {
       replacesApplicationId: application.replacesApplicationId,
       customerReference: application.customerReference,
       invoicingDate: application.invoicingDate,
+      identificationNumber: application.identificationNumber,
       skipPriceCalculation: application.skipPriceCalculation
     };
   }

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
-import fi.hel.allu.common.domain.types.ApplicationKind;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -27,7 +26,7 @@ public abstract class ApplicationExt {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private boolean pendingOnClient;
-
+  private String identificationNumber;
 
   @ApiModelProperty(value="Name for the application")
   public String getName() {
@@ -90,5 +89,14 @@ public abstract class ApplicationExt {
 
   public void setPendingOnClient(boolean pendingOnClient) {
     this.pendingOnClient = pendingOnClient;
+  }
+
+  @ApiModelProperty(value = "Identification number (in Finnish: asiointunnus)")
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
   }
 }

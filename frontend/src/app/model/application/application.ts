@@ -53,6 +53,7 @@ export class Application {
     public replacedByApplicationId?: number,
     public customerReference?: string,
     public invoicingDate?: Date,
+    public identificationNumber?: string,
     public skipPriceCalculation: boolean = false) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
