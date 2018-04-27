@@ -52,6 +52,7 @@ public class PlacementContractController {
                                         @ApiParam(value = "Placement contract data")
                                         @Valid @RequestBody PlacementContractExt placementContract) {
     applicationService.validateFullUpdateAllowed(id);
+    applicationService.validateOwnedByExternalUser(id);
     return new ResponseEntity<>(applicationService.updatePlacementContract(id, placementContract), HttpStatus.OK);
   }
 

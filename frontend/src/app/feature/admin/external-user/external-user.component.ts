@@ -77,7 +77,7 @@ export class ExternalUserComponent implements OnInit {
   }
 
   save(): void {
-    const user = ExternalUserForm.to(this.userForm.value);
+    const user = ExternalUserForm.to(this.userForm.getRawValue());
     this.submitted = true;
     const currentCustomerToken = this.userForm.getRawValue().token;
     this.userHub.saveUser(user)

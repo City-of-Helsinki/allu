@@ -383,4 +383,8 @@ public class ApplicationServiceComposer {
   public StatusType getApplicationStatus(Integer applicationId) {
     return applicationService.getApplicationStatus(applicationId);
   }
+
+  public Integer getApplicationExternalOwner(Integer applicationId) {
+    return applicationService.getApplicationExternalOwner(applicationId);
+  }
 }

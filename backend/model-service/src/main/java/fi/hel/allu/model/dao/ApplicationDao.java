@@ -776,4 +776,13 @@ public class ApplicationDao {
         .fetchOne();
   }
 
+  @Transactional(readOnly = true)
+  public Integer getApplicationExternalOwner(Integer applicationId) {
+    return queryFactory
+        .select(application.externalOwnerId)
+        .from(application)
+        .where(application.id.eq(applicationId))
+        .fetchOne();
+  }
+
 }

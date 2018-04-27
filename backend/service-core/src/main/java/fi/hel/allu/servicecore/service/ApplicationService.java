@@ -333,4 +333,9 @@ public class ApplicationService {
     return restTemplate.getForObject(applicationProperties.getApplicationStatusUrl(), StatusType.class, applicationId);
   }
 
+
+  public Integer getApplicationExternalOwner(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationExternalOwnerUrl(), Integer.class, applicationId);
+  }
+
 }

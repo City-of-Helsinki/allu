@@ -18,11 +18,11 @@ import fi.hel.allu.servicecore.domain.PostalAddressJson;
 
 public class ApplicationFactory {
 
-  public static ApplicationJson fromPlacementContractExt(PlacementContractExt placementContract) {
+  public static ApplicationJson fromPlacementContractExt(PlacementContractExt placementContract, Integer externalOwnerId) {
 
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setType(ApplicationType.PLACEMENT_CONTRACT);
-    setCommonApplicationFields(placementContract, applicationJson);
+    setCommonApplicationFields(placementContract, externalOwnerId, applicationJson);
     applicationJson.setLocations(Collections.singletonList(createLocation(placementContract, placementContract.getGeometry(), placementContract.getPostalAddress())));
 
     ClientApplicationDataJson clientApplicationData = new ClientApplicationDataJson();
@@ -39,7 +39,8 @@ public class ApplicationFactory {
     return applicationJson;
   }
 
-  private static <T extends ApplicationExt> void setCommonApplicationFields(T applicationExt,
+
+  private static <T extends ApplicationExt> void setCommonApplicationFields(T applicationExt, Integer externalOwnerId,
       ApplicationJson applicationJson) {
     applicationJson.setName(applicationExt.getName());
     applicationJson.setStartTime(applicationExt.getStartTime());
@@ -48,6 +49,7 @@ public class ApplicationFactory {
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
     applicationJson.setNotBillable(Boolean.FALSE);
     applicationJson.setIdentificationNumber(applicationExt.getIdentificationNumber());
+    applicationJson.setExternalOwnerId(externalOwnerId);
   }
 
   private static LocationJson createLocation(ApplicationExt application, Geometry geometry, PostalAddressExt postalAddress) {

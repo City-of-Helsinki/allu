@@ -303,6 +303,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/status");
   }
 
+  public String getApplicationExternalOwnerUrl() {
+    return getModelServiceUrl("/applications/{id}/externalowner");
+  }
+
+
   /**
    * @return url to replace distribution list of application.
    */

@@ -180,7 +180,7 @@ public class AttachmentService {
    * @throws IOException
    * @throws RestClientException
    */
-  private AttachmentInfoJson addAttachment(int applicationId, AttachmentInfoJson info, MultipartFile data)
+  public AttachmentInfoJson addAttachment(int applicationId, AttachmentInfoJson info, MultipartFile data)
       throws IOException {
     // Create the attachment info for model-service:
     AttachmentInfo toModel = toAttachmentInfo(info);

@@ -365,4 +365,13 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.findFinishedApplications(statuses), HttpStatus.OK);
   }
 
+  /**
+   * Finds id of the external owner (user) of the application.
+   */
+  @RequestMapping(value = "/{id}/externalowner", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getApplicationExternalOwner(@PathVariable Integer id) {
+    return new ResponseEntity<>(applicationService.getApplicationExternalOwner(id), HttpStatus.OK);
+  }
+
+
 }

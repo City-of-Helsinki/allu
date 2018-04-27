@@ -374,4 +374,8 @@ public class ApplicationService {
       throw new IllegalOperationException("Tried to update cancelled application " + id);
     }
   }
+
+  public Integer getApplicationExternalOwner(Integer id) {
+    return applicationDao.getApplicationExternalOwner(id);
+  }
 }

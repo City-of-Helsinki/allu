@@ -29,6 +29,12 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.PENDING, null), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/status/pending_client", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToPendingClient(@PathVariable int id) {
+    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.PENDING_CLIENT, null), HttpStatus.OK);
+  }
+
+
   @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
   public ResponseEntity<Application> changeStatusToHandling(@PathVariable int id) {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.HANDLING, null), HttpStatus.OK);
