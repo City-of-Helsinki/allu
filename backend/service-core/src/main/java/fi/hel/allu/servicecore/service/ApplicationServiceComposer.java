@@ -67,6 +67,12 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
+  public List<ApplicationJson> findApplicationsByIds(List<Integer> ids) {
+    return applicationService.findApplicationsById(ids).stream()
+        .map(app -> applicationJsonService.getCompactPopulatedApplication(app))
+        .collect(Collectors.toList());
+  }
+
   /**
    * Find applications using given location query.
    *

@@ -60,7 +60,7 @@ public class ApplicationJsonServiceTest {
     Mockito.when(application.getType()).thenReturn(ApplicationType.SHORT_TERM_RENTAL);
     Mockito.when(application.getMetadataVersion()).thenReturn(1);
 
-    Mockito.when(projectService.findByIds(Collections.singletonList(projectId))).thenReturn(Collections.singletonList(projectJson));
+    Mockito.when(projectService.findById(projectId)).thenReturn(projectJson);
     Mockito.when(userService.findUserById(userId)).thenReturn(userJson);
     Mockito.when(locationService.findLocationsByApplication(applicationId)).thenReturn(Collections.singletonList(locationJson));
     Mockito.when(attachmentService.findAttachmentsForApplication(applicationId)).thenReturn(Collections.emptyList());

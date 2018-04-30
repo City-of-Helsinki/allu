@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Project;
@@ -42,6 +43,12 @@ public class ProjectService {
     this.restTemplate = restTemplate;
     this.projectMapper = projectMapper;
     this.userService = userService;
+  }
+
+  public ProjectJson findById(int id) {
+    return findByIds(Arrays.asList(id)).stream()
+        .findFirst()
+        .orElseThrow(() -> new NoSuchEntityException("No project found", id));
   }
 
   /**

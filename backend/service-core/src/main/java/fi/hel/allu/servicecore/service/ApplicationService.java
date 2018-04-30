@@ -3,14 +3,9 @@ package fi.hel.allu.servicecore.service;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.security.auth.callback.CallbackHandler;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -19,23 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationIdentifier;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.DistributionEntry;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationIdentifierJson;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ApplicationTagJson;
-import fi.hel.allu.servicecore.domain.DistributionEntryJson;
-import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.domain.LocationQueryJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 
 @Service

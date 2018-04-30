@@ -56,6 +56,12 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationServiceComposer.updateApplication(id, applicationJson), HttpStatus.OK);
   }
 
+  @RequestMapping(method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<ApplicationJson>> fetch(@RequestParam("ids") final List<Integer> ids) {
+    return new ResponseEntity<>(applicationServiceComposer.findApplicationsByIds(ids), HttpStatus.OK);
+  }
+
   /**
    * Delete a note from database.
    *
