@@ -12,7 +12,10 @@ import {NotificationService} from '../../service/notification/notification.servi
 import {findTranslation} from '../../util/translations';
 import {Subject} from 'rxjs/Subject';
 import {ApplicationWorkItemStore} from './application-work-item-store';
-import {ActivatedRoute} from '@angular/router';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '../allu/reducers';
+import * as fromProject from '../project/reducers';
+import {AddMultiple} from '../project/actions/application-basket-actions';
 
 @Component({
   selector: 'workqueue',
@@ -28,16 +31,17 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   private destroy = new Subject<boolean>();
 
-  constructor(private store: ApplicationWorkItemStore,
+  constructor(private itemStore: ApplicationWorkItemStore,
               private dialog: MatDialog,
               private userHub: UserHub,
-              private currentUser: CurrentUser) {
+              private currentUser: CurrentUser,
+              private store: Store<fromRoot.State>) {
   }
 
   ngOnInit() {
     this.userHub.getActiveUsers().subscribe(users => this.owners = users);
 
-    this.store.changes.map(state => state.selectedItems)
+    this.itemStore.changes.map(state => state.selectedItems)
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(items => this.noneSelected = (items.length === 0));
@@ -52,6 +56,12 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     this.currentUser.user
       .takeUntil(this.destroy)
       .subscribe(u => this.changeOwner(u));
+  }
+
+  addToBasket(): void {
+    const selected = this.itemStore.snapshot.selectedItems;
+    this.store.dispatch(new AddMultiple(selected));
+    this.itemStore.selectedItemsChange([]);
   }
 
   openHandlerModal() {
@@ -77,13 +87,13 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   private changeOwner(owner: User): void {
-    this.store.changeOwnerForSelected(owner.id).subscribe(
+    this.itemStore.changeOwnerForSelected(owner.id).subscribe(
       () => NotificationService.message(findTranslation('workqueue.notifications.ownerChanged')),
       () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerChangeFailed')));
   }
 
   private removeOwner(): void {
-    this.store.removeOwnerFromSelected().subscribe(
+    this.itemStore.removeOwnerFromSelected().subscribe(
       () => NotificationService.message(findTranslation('workqueue.notifications.ownerRemoved')),
       () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerRemoveFailed')));
   }

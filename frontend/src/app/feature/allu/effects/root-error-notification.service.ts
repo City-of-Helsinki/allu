@@ -9,6 +9,7 @@ import {
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ParentProjectActionType} from '../../project/actions/parent-project-actions';
 import {ChildProjectActionType} from '../../project/actions/child-project-actions';
+import {ApplicationBasketActionType} from '../../project/actions/application-basket-actions';
 
 const handledActions = [
   ProjectActionTypes.LoadFailed,
@@ -16,7 +17,8 @@ const handledActions = [
   ProjectApplicationActionType.AddFailed,
   ProjectApplicationActionType.RemoveFailed,
   ParentProjectActionType.LoadFailed,
-  ChildProjectActionType.LoadFailed
+  ChildProjectActionType.LoadFailed,
+  ApplicationBasketActionType.LoadFailed
 ];
 
 @Injectable()

@@ -1,20 +1,26 @@
 import {Injectable} from '@angular/core';
-import { Action, Store } from '@ngrx/store';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import {Action, Store} from '@ngrx/store';
+import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import {
+  Add,
+  AddFailed,
+  AddMultiple,
+  AddSuccess,
   ApplicationActionTypes,
   Load,
+  LoadFailed,
   LoadSuccess,
-  LoadFailed, AddSuccess, AddFailed, Add, RemoveSuccess, RemoveFailed, Remove
+  Remove,
+  RemoveFailed,
+  RemoveSuccess
 } from '../actions/application-actions';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import * as fromProject from '../reducers';
 import {ApplicationService} from '../../../service/application/application.service';
 import {ProjectService} from '../../../service/project/project.service';
 import * as projectActions from '../actions/project-actions';
-import {NumberUtil} from '../../../util/number.util';
 
 @Injectable()
 export class ApplicationEffects {
@@ -42,13 +48,15 @@ export class ApplicationEffects {
     ofType<Add>(ApplicationActionTypes.Add),
     map(action => action.payload),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
-    switchMap(([payload, project]) =>
-      this.projectService.addProjectApplication(project.id, payload)
-        .pipe(
-          map((applications) => new AddSuccess(applications)),
-          catchError(error => of(new AddFailed(error)))
-        )
-    )
+    switchMap(([payload, project]) => this.addProjectApplications(project.id, [payload]))
+  );
+
+  @Effect()
+  addApplications: Observable<Action> = this.actions.pipe(
+    ofType<AddMultiple>(ApplicationActionTypes.AddMultiple),
+    map(action => action.payload),
+    withLatestFrom(this.store.select(fromProject.getCurrentProject)),
+    switchMap(([payload, project]) => this.addProjectApplications(project.id, payload))
   );
 
   @Effect()
@@ -69,4 +77,12 @@ export class ApplicationEffects {
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     map(([payload, project]) => new projectActions.Load(project.id))
   );
+
+  private addProjectApplications(projectId: number, applicationIds: number[]): Observable<Action> {
+    return this.projectService.addProjectApplications(projectId, applicationIds)
+      .pipe(
+        map((applications) => new AddSuccess(applications)),
+        catchError(error => of(new AddFailed(error)))
+      );
+  }
 }

@@ -405,6 +405,16 @@ export const translations = {
     location: 'Sijainti',
     handler: 'Käsittelijä'
   },
+  applicationBasket: {
+    createNewProject: 'Tee uusi hanke',
+    addToExistingProject: 'Lisää hankkeeseen',
+    clear: 'Tyhjennä kori',
+    empty: 'Hakemuskori on tyhjä',
+    addTo: 'Lisää koriin',
+    applicationAdded: 'Hakemus lisätty koriin',
+    applicationsAdded: 'Hakemukset lisätty koriin',
+    applicationRemoved: 'Hakemus poistettu korista'
+  },
   terms: {
     title: 'Ehdot',
     selectTerm: 'Valitse ehto',
@@ -461,7 +471,8 @@ export const translations = {
       title: 'Hakemukset',
       removeFromProject: 'Poista hankkeesta',
       searchAndAdd: 'Etsi ja lisää hakemuksia',
-      moveFromAnother: 'Hakemus kuuluu hankkeeseen {{project}} ja siirretään uuteen hankkeeseen'
+      moveFromAnother: 'Hakemus kuuluu hankkeeseen {{project}} ja siirretään uuteen hankkeeseen',
+      fromBasket: 'Tuo korista'
     },
     button: {
       addApplication: 'Lisää hakemus'

@@ -51,6 +51,12 @@ export class ArrayUtil {
     }
   }
 
+  static uniqueItem(valueFn?: (item) => any): (value: any, index: number, self: any[]) => boolean {
+    return (value, index, self) => self
+      .map(item => valueFn(item))
+      .indexOf(valueFn(value)) === index;
+  }
+
   static unique(value: any, index: number, self: any[]): boolean {
     return self.indexOf(value) === index;
   }

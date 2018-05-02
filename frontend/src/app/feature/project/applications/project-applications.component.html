@@ -1,8 +1,17 @@
-<div fxLayout="row" fxLayoutAlign="space-between center">
-  <div fxFlex>
+<div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="18px">
+  <div fxFlex="auto">
     <h1>{{'project.applications.title' | translation}}</h1>
   </div>
-  <div fxFlex>
+  <div fxFlex="none">
+    <button *ngIf="applicationsInBasket | async as itemCount"
+            mat-raised-button color="primary"
+            (click)="addFromBasket()">
+      <mat-icon>playlist_add</mat-icon>
+      <span>{{'project.applications.fromBasket' | translation}}</span>
+      <span>({{itemCount}})</span>
+    </button>
+  </div>
+  <div fxFlex="none">
     <application-select
       [matchingApplications]="matchingApplications"
       (searchChange)="applicationSelectSearchChange($event)"

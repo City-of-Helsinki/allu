@@ -11,6 +11,7 @@ export enum ApplicationActionTypes {
   LoadFailed = '[Project] Load applications failed',
   Paged = '[Project] Get paged applications',
   Add = '[Project] Add application',
+  AddMultiple = '[Project] Add multiple applications',
   AddSuccess = '[Project] Add application success',
   AddFailed = '[Project] Add application failed',
   Remove = '[Project] Remove application',
@@ -47,6 +48,12 @@ export class Add implements Action {
   readonly type = ApplicationActionTypes.Add;
 
   constructor(public payload: number) {}
+}
+
+export class AddMultiple implements Action {
+  readonly type = ApplicationActionTypes.AddMultiple;
+
+  constructor(public payload: number[]) {}
 }
 
 export class AddSuccess implements Action {
@@ -86,6 +93,7 @@ export type ApplicationActions =
   | LoadFailed
   | Paged
   | Add
+  | AddMultiple
   | AddSuccess
   | AddFailed
   | Remove

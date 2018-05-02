@@ -27,6 +27,7 @@ import {ParentProjectEffects} from './effects/parent-project-effects';
 import {ChildProjectEffects} from './effects/child-project-effects';
 import {ProjectInfoComponent} from 'app/feature/project/info/project-info.component';
 import {ProjectEffects} from './effects/project-effects';
+import {ApplicationBasketEffects} from './effects/application-basket-effects';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import {ProjectEffects} from './effects/project-effects';
       SearchEffects,
       ParentProjectEffects,
       ChildProjectEffects,
+      ApplicationBasketEffects
     ]),
   ],
   declarations: [
@@ -60,7 +62,7 @@ import {ProjectEffects} from './effects/project-effects';
     ProjectInfoComponent,
     ProjectApplicationsComponent,
     ProjectApplicationListComponent,
-    ApplicationSelectComponent
+    ApplicationSelectComponent,
   ],
   providers: [
     ProjectService,

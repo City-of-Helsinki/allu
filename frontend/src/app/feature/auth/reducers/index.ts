@@ -3,7 +3,7 @@ import * as fromAuth from './auth-reducer';
 import * as fromRoot from '../../allu/reducers';
 
 export interface AuthState {
-  auth: fromAuth.State;
+  status: fromAuth.State;
 }
 
 export interface State extends fromRoot.State {
@@ -11,12 +11,22 @@ export interface State extends fromRoot.State {
 }
 
 export const reducers: ActionReducerMap<AuthState> = {
-  auth: fromAuth.reducer
+  status: fromAuth.reducer
 };
 
-export const getAuthState = createFeatureSelector<fromAuth.State>('auth');
+export const getAuthState = createFeatureSelector<AuthState>('auth');
+
+export const getAuthStatusState = createSelector(
+  getAuthState,
+  (state: AuthState) => state.status
+);
 
 export const getUser = createSelector(
-  getAuthState,
+  getAuthStatusState,
   fromAuth.getUser
+);
+
+export const getLoggedIn = createSelector(
+  getAuthStatusState,
+  fromAuth.getLoggedIn
 );

@@ -14,6 +14,12 @@ import {Some} from '../../util/option';
 
 export class ApplicationMapper {
 
+  public static mapBackendList(backendApplications: BackendApplication[]): Application[] {
+    return backendApplications
+      ? backendApplications.map(app => ApplicationMapper.mapBackend(app))
+      : [];
+  }
+
   public static mapBackend(backendApplication: BackendApplication): Application {
     const application = new Application();
     application.id = backendApplication.id;

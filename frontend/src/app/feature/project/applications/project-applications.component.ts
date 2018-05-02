@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import * as fromProject from '../reducers';
 import * as application from '../actions/application-actions';
+import * as basket from '../actions/application-basket-actions';
 import {Store} from '@ngrx/store';
 import {ProjectState} from '../../../service/project/project-state';
 import {Application} from '../../../model/application/application';
@@ -18,6 +19,7 @@ export class ProjectApplicationsComponent implements OnInit {
 
   applications: Observable<Application[]>;
   applicationsLoading: Observable<boolean>;
+  applicationsInBasket: Observable<number>;
   matchingApplications: Observable<Application[]>;
 
   constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
@@ -26,6 +28,7 @@ export class ProjectApplicationsComponent implements OnInit {
     this.store.dispatch(new application.Load());
     this.applications = this.store.select(fromProject.getApplications);
     this.applicationsLoading = this.store.select(fromProject.getApplicationsLoading);
+    this.applicationsInBasket = this.store.select(fromProject.getApplicationCountInBasket);
   }
 
   applicationSelectSearchChange(term: string): void {
@@ -40,6 +43,15 @@ export class ProjectApplicationsComponent implements OnInit {
 
   removeApplication(id: number): void {
     this.store.dispatch(new application.Remove(id));
+  }
+
+  addFromBasket(): void {
+    this.store.select(fromProject.getApplicationIdsInBasket)
+      .take(1)
+      .subscribe((ids: number[]) => {
+        this.store.dispatch(new application.AddMultiple(ids));
+        this.store.dispatch(new basket.Clear());
+      });
   }
 
   private filterAlreadyIncludedApplications(applications: Application[]): Application[] {

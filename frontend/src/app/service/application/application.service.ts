@@ -58,6 +58,15 @@ export class ApplicationService {
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')));
   }
 
+  public byIds(ids: number[]): Observable<Application[]> {
+    const idsParam = ids.join(',');
+    const url = `${APPLICATIONS_URL}?ids=${idsParam}`;
+    return this.authHttp.get(url)
+      .map(response => response.json())
+      .map(apps => ApplicationMapper.mapBackendList(apps))
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')));
+  }
+
   /**
    * Fetches applications based on given search query
    */

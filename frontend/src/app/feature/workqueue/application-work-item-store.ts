@@ -91,9 +91,9 @@ export class ApplicationWorkItemStore {
   public toggleAll(checked: boolean) {
     if (checked) {
       const itemIds = this.itemIds(this.store.getValue().page);
-      this.selectedItems(itemIds);
+      this.selectedItemsChange(itemIds);
     } else {
-      this.selectedItems([]);
+      this.selectedItemsChange([]);
     }
   }
 
@@ -102,7 +102,7 @@ export class ApplicationWorkItemStore {
     const selected = checked
       ? current.concat(taskId)
       : current.filter(id => id !== taskId);
-    this.selectedItems(selected);
+    this.selectedItemsChange(selected);
   }
 
   public changeOwnerForSelected(ownerId: number): Observable<Page<Application>> {
@@ -119,7 +119,7 @@ export class ApplicationWorkItemStore {
       .do(result => this.pageChange(result));
   }
 
-  private selectedItems(selected: Array<number>) {
+  public selectedItemsChange(selected: Array<number>) {
     const itemIds = this.itemIds(this.store.getValue().page);
     this.store.next({
       ...this.store.getValue(),
