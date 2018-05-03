@@ -53,6 +53,12 @@ public class MetaService {
     return mapStructureMeta(structureMetaResult.getBody());
   }
 
+  public String findTranslation(String type, String text) {
+    ResponseEntity<String> result = restTemplate.getForEntity(
+        applicationProperties.getMetadataTranslationUrl(), String.class, type, text);
+    return result.getBody();
+  }
+
   private StructureMetaJson mapStructureMeta(StructureMeta structureMeta) {
     StructureMetaJson structureMetaJson = new StructureMetaJson();
     structureMetaJson.setTypeName(structureMeta.getTypeName());

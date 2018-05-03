@@ -52,6 +52,8 @@ public class DecisionServiceTest {
   private ContactService contactService;
   @Mock
   private ChargeBasisService chargeBasisService;
+  @Mock
+  private MetaService metaService;
 
   private DecisionService decisionService;
 
@@ -64,7 +66,7 @@ public class DecisionServiceTest {
     Mockito.when(applicationProperties.getDecisionUrl()).thenReturn(DECISION_URL);
 
     decisionService = new DecisionService(applicationProperties, restTemplate, locationService,
-        applicationServiceComposer, customerService, contactService, chargeBasisService);
+        applicationServiceComposer, customerService, contactService, chargeBasisService, metaService);
   }
 
   @Test(expected = IllegalArgumentException.class)

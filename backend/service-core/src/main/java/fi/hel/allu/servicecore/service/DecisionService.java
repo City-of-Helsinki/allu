@@ -53,7 +53,6 @@ public class DecisionService {
   private static final FixedLocationJson BAD_LOCATION;
   private static final String ADDRESS_LINE_SEPARATOR = "; ";
   private static final Map<DefaultTextType, String> defaultTextTypeTranslations;
-  private static final Map<ApplicationKind, String> applicationKindTranslations;
 
   private static final String UNKNOWN_ADDRESS = "[Osoite ei tiedossa]";
 
@@ -62,6 +61,7 @@ public class DecisionService {
   private final LocationService locationService;
   private final CustomerService customerService;
   private final ContactService contactService;
+  private final MetaService metaService;
   private final ApplicationServiceComposer applicationServiceComposer;
   private final ChargeBasisService chargeBasisService;
   private final ZoneId zoneId;
@@ -88,7 +88,6 @@ public class DecisionService {
     tempMap.put(DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, "Geotekninen tarkkailupiste");
     tempMap.put(DefaultTextType.OTHER, "Yleisesti/muut");
     defaultTextTypeTranslations = Collections.unmodifiableMap(tempMap);
-    applicationKindTranslations = Collections.unmodifiableMap(createApplicationKindTranslations());
   }
 
   @Autowired
@@ -98,7 +97,9 @@ public class DecisionService {
       LocationService locationService,
       ApplicationServiceComposer applicationServiceComposer,
       CustomerService customerService,
-      ContactService contactService, ChargeBasisService chargeBasisService) {
+      ContactService contactService,
+      ChargeBasisService chargeBasisService,
+      MetaService metaService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -106,43 +107,13 @@ public class DecisionService {
     this.customerService = customerService;
     this.contactService = contactService;
     this.chargeBasisService = chargeBasisService;
+    this.metaService = metaService;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
     timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
     decimalFormat = new DecimalFormat("0.##");
     currencyFormat = NumberFormat.getCurrencyInstance(locale);
-  }
-
-  /*
-   * Set up translations for application kinds (FIXME: get them from MetaService
-   * instead)
-   */
-  private static Map<ApplicationKind, String> createApplicationKindTranslations() {
-    Map<ApplicationKind, String> translations = new HashMap<>();
-    translations.put(ApplicationKind.BRIDGE_BANNER, "Banderollit silloissa");
-    translations.put(ApplicationKind.BENJI, "Benji-hyppylaite");
-    translations.put(ApplicationKind.PROMOTION_OR_SALES, "Esittely- tai myyntitila liikkeen edustalla");
-    translations.put(ApplicationKind.URBAN_FARMING, "Kaupunkiviljelypaikka");
-    translations.put(ApplicationKind.KESKUSKATU_SALES, "Keskuskadun myyntipaikka");
-    translations.put(ApplicationKind.SUMMER_THEATER, "Kesäteatterit");
-    translations.put(ApplicationKind.DOG_TRAINING_FIELD, "Koirakoulutuskentät");
-    translations.put(ApplicationKind.DOG_TRAINING_EVENT, "Koirakoulutustapahtuma");
-    translations.put(ApplicationKind.SMALL_ART_AND_CULTURE, "Pienimuotoinen taide- ja kulttuuritoiminta");
-    translations.put(ApplicationKind.SEASON_SALE, "Sesonkimyynti");
-    translations.put(ApplicationKind.CIRCUS, "Sirkus/tivolivierailu");
-    translations.put(ApplicationKind.ART, "Taideteos");
-    translations.put(ApplicationKind.STORAGE_AREA, "Varastoalue");
-    translations.put(ApplicationKind.STREET_AND_GREEN, "Katu- ja vihertyöt");
-    translations.put(ApplicationKind.WATER_AND_SEWAGE, "Vesi ja viemäri");
-    translations.put(ApplicationKind.ELECTRICITY, "Sähkö");
-    translations.put(ApplicationKind.DATA_TRANSFER, "Tiedonsiirto");
-    translations.put(ApplicationKind.HEATING_COOLING, "Lämmitys/viilennys");
-    translations.put(ApplicationKind.CONSTRUCTION, "Rakennus");
-    translations.put(ApplicationKind.YARD, "Piha");
-    translations.put(ApplicationKind.GEOLOGICAL_SURVEY, "Pohjatutkimus");
-    translations.put(ApplicationKind.OTHER, "Muu");
-    return translations;
   }
 
   /**
@@ -217,9 +188,9 @@ public class DecisionService {
     final List<KindWithSpecifiers> kindsWithSpecifiers = new ArrayList<>();
     applicationsKindsWithSpecifiers.keySet().forEach((kind) -> {
       final List<String> specifiers = new ArrayList<>();
-      applicationsKindsWithSpecifiers.get(kind).forEach(s -> specifiers.add(translateSpecifier(s)));
+      applicationsKindsWithSpecifiers.get(kind).forEach(s -> specifiers.add(translate(s)));
       KindWithSpecifiers k = new KindWithSpecifiers();
-      k.setKind(translateKind(kind));
+      k.setKind(translate(kind));
       k.setSpecifiers(specifiers);
       kindsWithSpecifiers.add(k);
     });
@@ -417,7 +388,7 @@ public class DecisionService {
     ShortTermRentalJson strj = (ShortTermRentalJson) application.getExtension();
     if (strj != null) {
       decisionJson
-          .setEventNature("Lyhytaikainen maanvuokraus, " + applicationKindTranslations.get(application.getKind()));
+          .setEventNature("Lyhytaikainen maanvuokraus, " + translate(application.getKind()));
       decisionJson.setEventDescription(strj.getDescription());
       decisionJson.setPriceBasisText(shortTermPriceBasis(application.getKind()));
     }
@@ -747,14 +718,11 @@ public class DecisionService {
     return "DUMMY";
   }
 
-  private String translateKind(ApplicationKind kind) {
-    return applicationKindTranslations.get(kind);
+  private String translate(ApplicationKind kind) {
+    return metaService.findTranslation("ApplicationKind", kind.name());
   }
 
-  private String translateSpecifier(ApplicationSpecifier specifier) {
-    Map<ApplicationSpecifier, String> translations = new HashMap<>();
-    translations.put(ApplicationSpecifier.INDUCTION_LOOP, "Induktiosilmukka");
-    translations.put(ApplicationSpecifier.COVER_STRUCTURE, "Kansisto");
-    return translations.get(specifier);
+  private String translate(ApplicationSpecifier specifier) {
+    return metaService.findTranslation("ApplicationSpecifier", specifier.name());
   }
 }
