@@ -12,6 +12,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
   private String additionalInfo;
   private String contractText;
   private ZonedDateTime terminationDate;
+  private Integer sectionNumber;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -58,5 +59,13 @@ public class PlacementContractJson extends ApplicationExtensionJson {
 
   public void setTerminationDate(ZonedDateTime terminationDate) {
     this.terminationDate = terminationDate;
+  }
+
+  public Integer getSectionNumber() {
+    return sectionNumber;
+  }
+
+  public void setSectionNumber(Integer sectionNumber) {
+    this.sectionNumber = sectionNumber;
   }
 }

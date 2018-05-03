@@ -209,10 +209,13 @@ public class DecisionService {
       fillEventSpecifics(decisionJson, application);
       break;
     case SHORT_TERM_RENTAL:
-        fillShortTermRentalSpecifics(decisionJson, application);
+      fillShortTermRentalSpecifics(decisionJson, application);
       break;
     case CABLE_REPORT:
       fillCableReportSpecifics(decisionJson, application);
+      break;
+    case PLACEMENT_CONTRACT:
+      fillPlacementContractSpecifics(decisionJson, application);
       break;
     default:
       break;
@@ -489,6 +492,12 @@ public class DecisionService {
     decisionJson.setCustomerAddressLines(cableReportAddressLines(applicationJson));
   }
 
+  private void fillPlacementContractSpecifics(DecisionJson decisionJson, ApplicationJson applicationJson) {
+    PlacementContractJson placementContract = (PlacementContractJson)applicationJson.getExtension();
+    if (placementContract != null) {
+      decisionJson.setSectionNumber(placementContract.getSectionNumber());
+    }
+  }
   /*
    * Helper to create streams for possibly null collections
    */
