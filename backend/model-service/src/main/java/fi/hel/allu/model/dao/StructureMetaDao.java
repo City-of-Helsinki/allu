@@ -100,6 +100,14 @@ public class StructureMetaDao {
     return findCompleteInternal(typeName, getLatestMetadataVersion(), typeOverrides);
   }
 
+  @Transactional(readOnly = true)
+  public String findTranslation(String type, String name) {
+    final Optional<StructureMeta> meta = findStructure(type, getLatestMetadataVersion());
+    return meta.map(s -> queryFactory.select(attributeMeta.uiName).from(attributeMeta)
+        .where(attributeMeta.name.eq(name)
+            .and(attributeMeta.structureMetaId.eq(s.getId()))).fetchFirst()).orElse(null);
+  }
+
   /*
    * FindCompleteByApplicationType's implementation without the checks.
    */

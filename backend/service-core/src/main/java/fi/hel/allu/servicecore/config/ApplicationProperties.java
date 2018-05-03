@@ -156,6 +156,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/meta/{applicationType}");
   }
 
+  public String getMetadataTranslationUrl() {
+    return getModelServiceUrl("/meta/translation/{type}/{text}");
+  }
+
   /**
    * @return url to request metadata from model service.
    */

@@ -12,6 +12,7 @@ public class PlacementContract extends ApplicationExtension {
   private String additionalInfo;
   private String contractText;
   private ZonedDateTime terminationDate;
+  private Integer sectionNumber;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -58,5 +59,16 @@ public class PlacementContract extends ApplicationExtension {
 
   public void setTerminationDate(ZonedDateTime terminationDate) {
     this.terminationDate = terminationDate;
+  }
+
+  /**
+   * In Finnish: Pykälänumero
+   */
+  public Integer getSectionNumber() {
+    return sectionNumber;
+  }
+
+  public void setSectionNumber(Integer sectionNumber) {
+    this.sectionNumber = sectionNumber;
   }
 }

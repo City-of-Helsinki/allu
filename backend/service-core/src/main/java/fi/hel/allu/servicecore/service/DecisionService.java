@@ -1,7 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import static fi.hel.allu.common.domain.types.ApplicationType.CABLE_REPORT;
+import static fi.hel.allu.common.domain.types.ApplicationType.EVENT;
+import static fi.hel.allu.common.domain.types.ApplicationType.PLACEMENT_CONTRACT;
+import static fi.hel.allu.common.domain.types.ApplicationType.SHORT_TERM_RENTAL;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.DefaultTextType;
@@ -11,6 +16,7 @@ import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
 import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
+import fi.hel.allu.pdf.domain.KindWithSpecifiers;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
@@ -47,7 +53,6 @@ public class DecisionService {
   private static final FixedLocationJson BAD_LOCATION;
   private static final String ADDRESS_LINE_SEPARATOR = "; ";
   private static final Map<DefaultTextType, String> defaultTextTypeTranslations;
-  private static final Map<ApplicationKind, String> applicationKindTranslations;
 
   private static final String UNKNOWN_ADDRESS = "[Osoite ei tiedossa]";
 
@@ -56,6 +61,7 @@ public class DecisionService {
   private final LocationService locationService;
   private final CustomerService customerService;
   private final ContactService contactService;
+  private final MetaService metaService;
   private final ApplicationServiceComposer applicationServiceComposer;
   private final ChargeBasisService chargeBasisService;
   private final ZoneId zoneId;
@@ -82,7 +88,6 @@ public class DecisionService {
     tempMap.put(DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, "Geotekninen tarkkailupiste");
     tempMap.put(DefaultTextType.OTHER, "Yleisesti/muut");
     defaultTextTypeTranslations = Collections.unmodifiableMap(tempMap);
-    applicationKindTranslations = Collections.unmodifiableMap(createApplicationKindTranslations());
   }
 
   @Autowired
@@ -92,7 +97,9 @@ public class DecisionService {
       LocationService locationService,
       ApplicationServiceComposer applicationServiceComposer,
       CustomerService customerService,
-      ContactService contactService, ChargeBasisService chargeBasisService) {
+      ContactService contactService,
+      ChargeBasisService chargeBasisService,
+      MetaService metaService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -100,35 +107,13 @@ public class DecisionService {
     this.customerService = customerService;
     this.contactService = contactService;
     this.chargeBasisService = chargeBasisService;
+    this.metaService = metaService;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
     timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
     decimalFormat = new DecimalFormat("0.##");
     currencyFormat = NumberFormat.getCurrencyInstance(locale);
-  }
-
-  /*
-   * Set up translations for application kinds (FIXME: get them from MetaService
-   * instead)
-   */
-  private static Map<ApplicationKind, String> createApplicationKindTranslations() {
-    Map<ApplicationKind, String> translations = new HashMap<>();
-    translations.put(ApplicationKind.BRIDGE_BANNER, "Banderollit silloissa");
-    translations.put(ApplicationKind.BENJI, "Benji-hyppylaite");
-    translations.put(ApplicationKind.PROMOTION_OR_SALES, "Esittely- tai myyntitila liikkeen edustalla");
-    translations.put(ApplicationKind.URBAN_FARMING, "Kaupunkiviljelypaikka");
-    translations.put(ApplicationKind.KESKUSKATU_SALES, "Keskuskadun myyntipaikka");
-    translations.put(ApplicationKind.SUMMER_THEATER, "Kesäteatterit");
-    translations.put(ApplicationKind.DOG_TRAINING_FIELD, "Koirakoulutuskentät");
-    translations.put(ApplicationKind.DOG_TRAINING_EVENT, "Koirakoulutustapahtuma");
-    translations.put(ApplicationKind.SMALL_ART_AND_CULTURE, "Pienimuotoinen taide- ja kulttuuritoiminta");
-    translations.put(ApplicationKind.SEASON_SALE, "Sesonkimyynti");
-    translations.put(ApplicationKind.CIRCUS, "Sirkus/tivolivierailu");
-    translations.put(ApplicationKind.ART, "Taideteos");
-    translations.put(ApplicationKind.STORAGE_AREA, "Varastoalue");
-    translations.put(ApplicationKind.OTHER, "Muu");
-    return translations;
   }
 
   /**
@@ -199,6 +184,18 @@ public class DecisionService {
     decisionJson.setCustomerAddressLines(customerAddressLines(application));
     decisionJson.setCustomerContactLines(customerContactLines(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
+    final Map<ApplicationKind, List<ApplicationSpecifier>> applicationsKindsWithSpecifiers = application.getKindsWithSpecifiers();
+    final List<KindWithSpecifiers> kindsWithSpecifiers = new ArrayList<>();
+    applicationsKindsWithSpecifiers.keySet().forEach((kind) -> {
+      final List<String> specifiers = new ArrayList<>();
+      applicationsKindsWithSpecifiers.get(kind).forEach(s -> specifiers.add(translate(s)));
+      KindWithSpecifiers k = new KindWithSpecifiers();
+      k.setKind(translate(kind));
+      k.setSpecifiers(specifiers);
+      kindsWithSpecifiers.add(k);
+    });
+    decisionJson.setKinds(kindsWithSpecifiers);
+
     getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
 
     if (application.getType() == null) {
@@ -209,10 +206,13 @@ public class DecisionService {
       fillEventSpecifics(decisionJson, application);
       break;
     case SHORT_TERM_RENTAL:
-        fillShortTermRentalSpecifics(decisionJson, application);
+      fillShortTermRentalSpecifics(decisionJson, application);
       break;
     case CABLE_REPORT:
       fillCableReportSpecifics(decisionJson, application);
+      break;
+    case PLACEMENT_CONTRACT:
+      fillPlacementContractSpecifics(decisionJson, application);
       break;
     default:
       break;
@@ -388,7 +388,7 @@ public class DecisionService {
     ShortTermRentalJson strj = (ShortTermRentalJson) application.getExtension();
     if (strj != null) {
       decisionJson
-          .setEventNature("Lyhytaikainen maanvuokraus, " + applicationKindTranslations.get(application.getKind()));
+          .setEventNature("Lyhytaikainen maanvuokraus, " + translate(application.getKind()));
       decisionJson.setEventDescription(strj.getDescription());
       decisionJson.setPriceBasisText(shortTermPriceBasis(application.getKind()));
     }
@@ -489,6 +489,12 @@ public class DecisionService {
     decisionJson.setCustomerAddressLines(cableReportAddressLines(applicationJson));
   }
 
+  private void fillPlacementContractSpecifics(DecisionJson decisionJson, ApplicationJson applicationJson) {
+    PlacementContractJson placementContract = (PlacementContractJson)applicationJson.getExtension();
+    if (placementContract != null) {
+      decisionJson.setSectionNumber(placementContract.getSectionNumber());
+    }
+  }
   /*
    * Helper to create streams for possibly null collections
    */
@@ -701,15 +707,22 @@ public class DecisionService {
 
   // Get the stylesheet name to use for given application.
   private String styleSheetName(ApplicationJson application) {
-    /*
-     * FIXME: only EVENT, SHORT_TERM_RENTAL, and CABLE_REPORT are supported. For
-     * others, use "DUMMY"
-     */
-    if (application.getType() == ApplicationType.EVENT
-        || application.getType() == ApplicationType.SHORT_TERM_RENTAL
-        || application.getType() == ApplicationType.CABLE_REPORT) {
+    final List<ApplicationType> implementedTypes = Arrays.asList(
+        EVENT,
+        SHORT_TERM_RENTAL,
+        CABLE_REPORT,
+        PLACEMENT_CONTRACT);
+    if (implementedTypes.contains(application.getType())) {
       return application.getType().name();
     }
     return "DUMMY";
+  }
+
+  private String translate(ApplicationKind kind) {
+    return metaService.findTranslation("ApplicationKind", kind.name());
+  }
+
+  private String translate(ApplicationSpecifier specifier) {
+    return metaService.findTranslation("ApplicationSpecifier", specifier.name());
   }
 }

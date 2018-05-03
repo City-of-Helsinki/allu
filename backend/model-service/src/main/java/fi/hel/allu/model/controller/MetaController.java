@@ -46,4 +46,13 @@ public class MetaController {
         .orElseThrow(() -> new NoSuchEntityException("Metadata not found for application type", applicationType));
     return new ResponseEntity<>(structureMeta, HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/translation/{type}/{text}", method = RequestMethod.GET)
+  public ResponseEntity<String> findTranslation(@PathVariable String type, @PathVariable String text) {
+    final String translation = structureMetaDao.findTranslation(type, text);
+    if (translation == null) {
+      throw new NoSuchEntityException("Translation not found for text", text);
+    }
+    return new ResponseEntity<>(translation, HttpStatus.OK);
+  }
 }
