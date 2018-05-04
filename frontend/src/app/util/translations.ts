@@ -492,6 +492,7 @@ export const translations = {
     sapCustomerNumber: 'Sap-numero',
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
     invoicingOnly: 'Vain laskutusasiakas',
+    projectIdentifierPrefix: 'Projektitunnuksen alkuosa',
     type: {
       title: 'Tyyppi',
       COMPANY: {

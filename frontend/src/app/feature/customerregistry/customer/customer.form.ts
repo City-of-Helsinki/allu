@@ -19,6 +19,7 @@ export class CustomerForm {
     public readonly sapCustomerNumber?: string,
     public readonly invoicingProhibited = false,
     public invoicingOnly = false,
+    public projectIdentifierPrefix?: string
   ) {}
 
   static fromCustomer(customer: Customer): CustomerForm {
@@ -36,7 +37,8 @@ export class CustomerForm {
       customer.active,
       customer.sapCustomerNumber,
       customer.invoicingProhibited,
-      customer.invoicingOnly
+      customer.invoicingOnly,
+      customer.projectIdentifierPrefix
     );
   }
 
@@ -54,6 +56,7 @@ export class CustomerForm {
     customer.active = form.active;
     customer.invoicingOnly = form.invoicingOnly;
     customer.country = form.country;
+    customer.projectIdentifierPrefix = form.projectIdentifierPrefix;
     return customer;
   }
 
@@ -78,7 +81,8 @@ export class CustomerForm {
       active: [true],
       sapCustomerNumber: [{value: '', disabled: true}],
       invoicingProhibited: [{value: false, disabled: true}],
-      invoicingOnly: [false]
+      invoicingOnly: [false],
+      projectIdentifierPrefix: undefined
     });
   }
 }

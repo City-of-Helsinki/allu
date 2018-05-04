@@ -26,6 +26,7 @@ public class CustomerJson {
   private boolean invoicingOnly;
   @NotBlank(message = "{customer.country}")
   private String country;
+  private String projectIdentifierPrefix;
 
   /**
    * in Finnish: Tietokantatunniste
@@ -175,5 +176,13 @@ public class CustomerJson {
 
   public void setCountry(String country) {
     this.country = country;
+  }
+
+  public String getProjectIdentifierPrefix() {
+    return projectIdentifierPrefix;
+  }
+
+  public void setProjectIdentifierPrefix(String projectIdentifierPrefix) {
+    this.projectIdentifierPrefix = projectIdentifierPrefix;
   }
 }
