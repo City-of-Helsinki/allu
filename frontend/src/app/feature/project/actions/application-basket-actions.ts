@@ -11,8 +11,7 @@ export enum ApplicationBasketActionType {
   Add = '[ApplicationBasket] Add application',
   AddMultiple = '[ApplicationBasket] Add multiple application',
   Remove = '[ApplicationBasket] Remove application',
-  CreateProject = '[ApplicationBasket] Create project with baskets content',
-  AddToExistingProject = '[ApplicationBasket] Add basket contents to existing project',
+  CreateProject = '[ApplicationBasket] Create project with baskets content'
 }
 
 export class Load implements Action {
@@ -59,10 +58,6 @@ export class CreateProject implements Action {
   readonly type = ApplicationBasketActionType.CreateProject;
 }
 
-export class AddToExistingProject implements Action {
-  readonly type = ApplicationBasketActionType.AddToExistingProject;
-}
-
 export type ApplicationBasketActions =
   | Load
   | LoadSuccess
@@ -71,7 +66,6 @@ export type ApplicationBasketActions =
   | Add
   | AddMultiple
   | Remove
-  | CreateProject
-  | AddToExistingProject;
+  | CreateProject;
 
 

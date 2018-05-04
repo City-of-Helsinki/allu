@@ -4,6 +4,7 @@ import {ApplicationBasketActions, ApplicationBasketActionType} from '../actions/
 
 export interface State extends EntityState<Application> {
   selectedId: number;
+  pending: number[];
 }
 
 export const adapter: EntityAdapter<Application> = createEntityAdapter<Application>({
@@ -11,7 +12,8 @@ export const adapter: EntityAdapter<Application> = createEntityAdapter<Applicati
 });
 
 export const initialState: State = adapter.getInitialState({
-  selectedId: undefined
+  selectedId: undefined,
+  pending: []
 });
 
 export function reducer(state: State = initialState, action: ApplicationBasketActions) {
@@ -26,22 +28,24 @@ export function reducer(state: State = initialState, action: ApplicationBasketAc
     case ApplicationBasketActionType.Remove: {
       return adapter.removeOne(action.payload, {
         ...state,
-        selectedId: state.selectedId
+        selectedId: state.selectedId,
+        pending: state.pending.filter(id => id !== action.payload)
       });
     }
 
     case ApplicationBasketActionType.Clear: {
       return adapter.removeAll({
         ...state,
+        pending: [],
         selectedId: state.selectedId
       });
     }
 
-    case ApplicationBasketActionType.Remove: {
-      return adapter.removeOne(action.payload, {
+    case ApplicationBasketActionType.CreateProject: {
+      return {
         ...state,
-        selectedId: state.selectedId
-      });
+        pending: state.ids
+      };
     }
 
     default: {

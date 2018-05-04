@@ -11,6 +11,7 @@ import * as fromCustomerSearch from './customer-search-reducer';
 import * as fromChildProjects from './child-project-reducer';
 import * as fromApplicationBasket from './application-basket-reducer';
 import * as fromRoot from '../../allu/reducers/index';
+import {Project} from '../../../model/project/project';
 
 export interface ProjectState {
   project: fromProject.State;
@@ -47,6 +48,11 @@ export const getProjectEntitiesState = createSelector(
 export const getCurrentProject = createSelector(
   getProjectEntitiesState,
   fromProject.getCurrent
+);
+
+export const getIsNewProject = createSelector(
+  getCurrentProject,
+  (project: Project) => project ? project.id === undefined : true
 );
 
 export const getProjectLoaded = createSelector(
@@ -143,3 +149,14 @@ export const {
   selectAll: getAllApplicationsInBasket,
   selectTotal: getApplicationCountInBasket
 } = fromApplicationBasket.adapter.getSelectors(getApplicationBasketEntitiesState);
+
+export const getPendingApplicationIds = createSelector(
+  getApplicationBasketEntitiesState,
+  (state: fromApplicationBasket.State) => state.pending
+);
+
+export const getPendingApplications = createSelector(
+  getPendingApplicationIds,
+  getApplicationEntitiesInBasket,
+  (ids, entities) => ids.map(id => entities[id])
+);

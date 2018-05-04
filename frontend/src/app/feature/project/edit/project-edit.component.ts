@@ -14,6 +14,7 @@ import {Subject} from 'rxjs/Subject';
 import {MatOption} from '@angular/material';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {Contact} from '../../../model/customer/contact';
+import {Application} from '../../../model/application/application';
 
 @Component({
   selector: 'project-edit',
@@ -26,6 +27,7 @@ export class ProjectEditComponent {
 
   matchingCustomers$: Observable<Customer[]>;
   matchingContacts$: Observable<Contact[]>;
+  applications$: Observable<Application[]>;
 
   private customerTypeCtrl: FormControl;
   private customerCtrl: FormControl;
@@ -44,6 +46,10 @@ export class ProjectEditComponent {
     this.store.select(fromProject.getCurrentProject).take(1)
       .map(project => ProjectForm.fromProject(project))
       .subscribe(project => this.form.patchValue(project));
+
+    this.applications$ = this.store.select(fromProject.getIsNewProject).take(1)
+      .filter(newProject => newProject)
+      .switchMap(() => this.store.select(fromProject.getPendingApplications));
   }
 
   selectCustomer(option: MatOption): void {

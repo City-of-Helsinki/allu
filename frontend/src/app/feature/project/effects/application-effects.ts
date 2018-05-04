@@ -6,7 +6,7 @@ import {of} from 'rxjs/observable/of';
 import {
   Add,
   AddFailed,
-  AddMultiple,
+  AddMultiple, AddPending,
   AddSuccess,
   ApplicationActionTypes,
   Load,
@@ -16,11 +16,14 @@ import {
   RemoveFailed,
   RemoveSuccess
 } from '../actions/application-actions';
-import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import * as fromProject from '../reducers';
 import {ApplicationService} from '../../../service/application/application.service';
 import {ProjectService} from '../../../service/project/project.service';
 import * as projectActions from '../actions/project-actions';
+import {ProjectActionTypes, Save} from '../actions/project-actions';
+import {SaveSuccess} from '../actions/project-actions';
+import {Clear} from '../actions/application-basket-actions';
 
 @Injectable()
 export class ApplicationEffects {
@@ -76,6 +79,26 @@ export class ApplicationEffects {
     ofType(ApplicationActionTypes.AddSuccess, ApplicationActionTypes.RemoveSuccess),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     map(([payload, project]) => new projectActions.Load(project.id))
+  );
+
+  @Effect()
+  projectSaved: Observable<Action> = this.actions.pipe(
+    ofType<SaveSuccess>(ProjectActionTypes.SaveSuccess),
+    withLatestFrom(this.store.select(fromProject.getPendingApplicationIds)),
+    map(([payload, ids]) => ids),
+    filter(applications => applications.length >= 0),
+    map(ids => new AddPending(ids))
+  );
+
+  @Effect()
+  savePending: Observable<Action> = this.actions.pipe(
+    ofType<AddPending>(ApplicationActionTypes.AddPending),
+    map(action => action.payload),
+    withLatestFrom(this.store.select(fromProject.getCurrentProject)),
+    switchMap(([payload, project]) => this.projectService.addProjectApplications(project.id, payload).pipe(
+      switchMap((applications) => [new AddSuccess(applications), new Clear()]),
+      catchError(error => of(new AddFailed(error)))
+    ))
   );
 
   private addProjectApplications(projectId: number, applicationIds: number[]): Observable<Action> {

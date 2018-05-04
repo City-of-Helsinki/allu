@@ -23,5 +23,6 @@
 <project-application-list
   [applications]="applications | async"
   [loading]="applicationsLoading | async"
+  [controls]="true"
   (applicationRemove)="removeApplication($event)">
 </project-application-list>

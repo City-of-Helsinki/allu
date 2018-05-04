@@ -12,7 +12,6 @@ import {
 import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
 import {CityDistrictService} from '../../../service/map/city-district.service';
 import {Subject} from 'rxjs/Subject';
 import {Some} from '../../../util/option';
@@ -23,9 +22,10 @@ import {Some} from '../../../util/option';
   styleUrls: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy {
+export class ProjectApplicationListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @Input() loading: boolean;
+  @Input() controls = false;
+  @Input() loading = false;
 
   @Output() applicationAdd = new EventEmitter<number>();
   @Output() applicationRemove = new EventEmitter<number>();
@@ -36,7 +36,6 @@ export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   displayedColumns = [
-    'controls',
     'ownerName', 'applicationId', 'type', 'status',
     'customerName', 'cityDistrict',
     'creationTime', 'startTime'
@@ -46,6 +45,12 @@ export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy
 
   constructor(private router: Router,
               private cityDistrictService: CityDistrictService) {}
+
+  ngOnInit(): void {
+    this.displayedColumns = this.controls
+      ? ['controls'].concat(this.displayedColumns)
+      : this.displayedColumns;
+  }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;

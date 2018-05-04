@@ -25,12 +25,13 @@
     </mat-list-item>
     <mat-list-item>
       <div fxLayout="row" fxFill fxLayoutAlign="space-between center" fxLayoutGap="8px">
-        <a fxFlex [routerLink]="['/projects']" mat-raised-button color="primary">
+        <a  [routerLink]="['/projects']" fxFlex mat-raised-button color="primary">
           {{'applicationBasket.addToExistingProject' | translation}}
         </a>
-        <a fxFlex [routerLink]="['/projects/edit']" mat-raised-button color="primary">
+        <button fxFlex mat-raised-button color="primary" (click)="createNew()">
+          <mat-icon color="primary">add</mat-icon>
           {{'applicationBasket.createNewProject' | translation}}
-        </a>
+        </button>
       </div>
     </mat-list-item>
     <mat-list-item>

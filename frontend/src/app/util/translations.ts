@@ -406,8 +406,8 @@ export const translations = {
     handler: 'Käsittelijä'
   },
   applicationBasket: {
-    createNewProject: 'Tee uusi hanke',
-    addToExistingProject: 'Lisää hankkeeseen',
+    createNewProject: 'Luo uusi hanke',
+    addToExistingProject: 'Hae kohdehanke',
     clear: 'Tyhjennä kori',
     empty: 'Hakemuskori on tyhjä',
     addTo: 'Lisää koriin',

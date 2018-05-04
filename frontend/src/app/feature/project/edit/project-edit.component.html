@@ -129,4 +129,17 @@
       </div>
     </div>
   </form>
+
+  <div *ngIf="applications$ | async as applications">
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="18px">
+      <div fxFlex="auto">
+        <h1>{{'project.applications.title' | translation}}</h1>
+      </div>
+    </div>
+
+    <project-application-list *ngIf="applications.length"
+      [applications]="applications"
+      [controls]="false">
+    </project-application-list>
+  </div>
 </div>
