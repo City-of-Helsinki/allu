@@ -6,7 +6,7 @@
     <button *ngIf="applicationsInBasket | async as itemCount"
             mat-raised-button color="primary"
             (click)="addFromBasket()">
-      <mat-icon>playlist_add</mat-icon>
+      <mat-icon svgIcon="bring_from_basket"></mat-icon>
       <span>{{'project.applications.fromBasket' | translation}}</span>
       <span>({{itemCount}})</span>
     </button>

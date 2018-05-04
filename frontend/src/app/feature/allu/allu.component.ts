@@ -3,6 +3,7 @@ import {NavigationEnd, Router} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
 import {ConfigService} from '../../service/config/config.service';
 import {EnvironmentType} from '../../model/config/environment-type';
+import {CustomIconRegistry} from '../../service/common/custom-icon-registry';
 
 @Component({
   selector: 'allu',
@@ -15,7 +16,9 @@ export class AlluComponent implements OnInit, OnDestroy {
   toolbarClass: string;
   private routeEventSub: Subscription;
 
-  constructor(private router: Router, private config: ConfigService) {
+  constructor(private router: Router,
+              private config: ConfigService,
+              private iconRegistry: CustomIconRegistry) {
   }
 
   ngOnInit(): void {

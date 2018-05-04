@@ -53,11 +53,14 @@ import {CodeSetService} from '../../service/codeset/codeset.service';
 import {CityDistrictEffects} from './effects/city-district-effects';
 import {reducers} from './reducers';
 import {AuthModule} from '../auth/auth.module';
+import {CustomIconRegistry} from '../../service/common/custom-icon-registry';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   imports: [
     BrowserModule,
     HttpModule,
+    HttpClientModule,
     FormsModule,
     RouterModule.forRoot(rootRoutes),
     BrowserAnimationsModule,
@@ -110,6 +113,7 @@ import {AuthModule} from '../auth/auth.module';
     ConfigService,
     RootErrorNotificationService,
     CodeSetService,
+    CustomIconRegistry,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({
