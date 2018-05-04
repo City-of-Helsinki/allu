@@ -1176,4 +1176,8 @@ public class ApplicationProperties {
   public String getCodeSetFindByTypeAndCodeUrl() {
     return getModelServiceUrl("/codesets/find?type={type}&code={code}");
   }
+
+  public String getExternalApplicationCreateUrl() {
+    return getModelServiceUrl("/applications/{id}/originalapplication");
+  }
 }

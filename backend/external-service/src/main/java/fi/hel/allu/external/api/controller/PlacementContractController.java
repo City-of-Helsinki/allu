@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import io.swagger.annotations.Api;
@@ -37,7 +38,7 @@ public class PlacementContractController {
       authorizations=@Authorization(value ="api_key"))
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Integer> create(@ApiParam(value = "Placement contract data") @Valid @RequestBody PlacementContractExt placementContract) {
+  public ResponseEntity<Integer> create(@ApiParam(value = "Placement contract data") @Valid @RequestBody PlacementContractExt placementContract) throws JsonProcessingException {
     return new ResponseEntity<>(applicationService.createPlacementContract(placementContract), HttpStatus.OK);
   }
 
@@ -50,7 +51,7 @@ public class PlacementContractController {
   public ResponseEntity<Integer> update(@ApiParam(value = "Id of the placement contract application to update.")
                                         @PathVariable Integer id,
                                         @ApiParam(value = "Placement contract data")
-                                        @Valid @RequestBody PlacementContractExt placementContract) {
+                                        @Valid @RequestBody PlacementContractExt placementContract) throws JsonProcessingException {
     applicationService.validateFullUpdateAllowed(id);
     applicationService.validateOwnedByExternalUser(id);
     return new ResponseEntity<>(applicationService.updatePlacementContract(id, placementContract), HttpStatus.OK);
