@@ -61,7 +61,6 @@ export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccess
       this.recurringTypeCtrl.patchValue('none');
     } else if (endYear === MAX_YEAR) {
       this.recurringTypeCtrl.patchValue('forNow');
-      this.endYearCtrl.patchValue(undefined); // To hide value in form
     } else {
       this.recurringTypeCtrl.patchValue('until');
       this.endYearCtrl.patchValue(endYear);
