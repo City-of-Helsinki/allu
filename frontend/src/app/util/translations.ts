@@ -490,7 +490,7 @@ export const translations = {
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
     sapCustomerNumber: 'Sap-numero',
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
-    invoicingOnly: 'Laskutusasiakas',
+    invoicingOnly: 'Vain laskutusasiakas',
     type: {
       title: 'Tyyppi',
       COMPANY: {
