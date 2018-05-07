@@ -28,7 +28,8 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     private store: SupervisionWorkItemStore,
     private currentUser: CurrentUser,
     private userHub: UserHub,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog,
+    private notification: NotificationService) {}
 
   ngOnInit() {
     this.userHub.getByRole(RoleType.ROLE_SUPERVISE)
@@ -73,15 +74,15 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private changeOwner(owner: User): void {
     this.store.changeHandlerForSelected(owner.id)
       .subscribe(
-        () => NotificationService.translateMessage('supervision.task.action.handlerChanged'),
-        () => NotificationService.translateErrorMessage('supervision.task.error.handlerChange')
+        () => this.notification.translateSuccess('supervision.task.action.handlerChanged'),
+        () => this.notification.translateErrorMessage('supervision.task.error.handlerChange')
       );
   }
 
   private removeOwner(): void {
     this.store.removeHandlerFromSelected().subscribe(
-      () => NotificationService.translateMessage('supervision.task.action.handlerRemoved'),
-      () => NotificationService.translateErrorMessage('supervision.task.error.handlerRemove')
+      () => this.notification.translateSuccess('supervision.task.action.handlerRemoved'),
+      () => this.notification.translateErrorMessage('supervision.task.error.handlerRemove')
     );
   }
 }

@@ -1,7 +1,7 @@
 import {Action} from '@ngrx/store';
 import {Project} from '../../../model/project/project';
 import {ActionWithPayload} from '../../common/action-with-payload';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 
 export enum ProjectActionTypes {
   Load = '[Project] Load project',

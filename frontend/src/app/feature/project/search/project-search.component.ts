@@ -7,9 +7,11 @@ import {Project} from '../../../model/project/project';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {CityDistrict} from '../../../model/common/city-district';
 import {ProjectState} from '../../../service/project/project-state';
-import {CityDistrictService} from '../../../service/map/city-district.service';
 import {ProjectService} from '../../../service/project/project.service';
 import {ProjectSearchDatasource} from '../../../service/project/project-search-datasource';
+import {NotificationService} from '../../../service/notification/notification.service';
+import * as fromRoot from '../../allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'project-search',
@@ -32,7 +34,8 @@ export class ProjectSearchComponent implements OnInit {
 
   constructor(private projectService: ProjectService,
               private projectState: ProjectState,
-              private cityDistrictService: CityDistrictService,
+              private store: Store<fromRoot.State>,
+              private notification: NotificationService,
               fb: FormBuilder) {
     this.queryForm = fb.group({
       identifier: undefined,
@@ -46,8 +49,8 @@ export class ProjectSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataSource = new ProjectSearchDatasource(this.projectService, this.paginator, this.sort);
-    this.districts = this.cityDistrictService.get();
+    this.dataSource = new ProjectSearchDatasource(this.projectService, this.notification, this.paginator, this.sort);
+    this.districts = this.store.select(fromRoot.getAllCityDistricts);
   }
 
   search(): void {

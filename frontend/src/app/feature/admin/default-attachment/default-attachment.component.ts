@@ -13,7 +13,8 @@ import {MaterializeUtil} from '../../../util/materialize.util';
 import {ArrayUtil} from '../../../util/array-util';
 import {FixedLocationArea} from '../../../model/common/fixed-location-area';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
-import {CityDistrictService} from '../../../service/map/city-district.service';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '../../allu/reducers';
 
 @Component({
   selector: 'default-attachment',
@@ -36,7 +37,7 @@ export class DefaultAttachmentComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private fixedLocationService: FixedLocationService,
-              private cityDistrictService: CityDistrictService,
+              private store: Store<fromRoot.State>,
               private attachmentHub: AttachmentHub) {
 
     this.attachmentForm = this.fb.group({
@@ -53,7 +54,7 @@ export class DefaultAttachmentComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.districts = this.cityDistrictService.get();
+    this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
     this.route.params
       .map(params => params['id'])

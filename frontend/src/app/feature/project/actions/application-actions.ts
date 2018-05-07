@@ -3,7 +3,7 @@ import {Application} from '../../../model/application/application';
 import {Sort} from '../../../model/common/sort';
 import {PageRequest} from '../../../model/common/page-request';
 import {ActionWithPayload} from '../../common/action-with-payload';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 
 export enum ApplicationActionTypes {
   Load = '[Project] Load applications',

@@ -1,18 +1,32 @@
-import {Effect} from '@ngrx/effects';
-import {Action} from '@ngrx/store';
+import {Actions, Effect} from '@ngrx/effects';
+import {Action, Store} from '@ngrx/store';
 import {Injectable} from '@angular/core';
-import {CityDistrictService} from '../../../service/map/city-district.service';
 import {Observable} from 'rxjs/Observable';
-import {LoadSuccess} from '../actions/city-district-actions';
-import {map} from 'rxjs/operators';
+import {LoadFailed, LoadSuccess} from '../actions/city-district-actions';
+import {catchError, filter, map, switchMap} from 'rxjs/operators';
+import * as fromAuth from '../../auth/reducers';
+import {of} from 'rxjs/observable/of';
+import {LocationService} from '../../../service/location.service';
+import {ArrayUtil} from '../../../util/array-util';
+import {CityDistrict} from '../../../model/common/city-district';
 import {defer} from 'rxjs/observable/defer';
 
 @Injectable()
 export class CityDistrictEffects {
-  constructor(private cityDistrictService: CityDistrictService) {}
+  constructor(private actions: Actions, private store: Store<fromAuth.State>, private locationService: LocationService) {}
 
   @Effect()
-  init: Observable<Action> = defer(() => this.cityDistrictService.get()).pipe(
-    map(districts => new LoadSuccess(districts))
+  init: Observable<Action> = defer(() => this.store.select(fromAuth.getLoggedIn).pipe(
+    filter(loggedIn => loggedIn),
+    switchMap(() => this.locationService.districts().pipe(
+      map(districts => this.sort(districts)),
+      map(districts => new LoadSuccess(districts)),
+      catchError(error => of(new LoadFailed(error))))
+    ))
   );
+
+  private sort(districts: CityDistrict[]): CityDistrict[] {
+    return districts.filter(d => d.districtId !== 0) // Ignore 0 Aluemeri
+      .sort(ArrayUtil.naturalSort((district: CityDistrict) => district.name));
+  }
 }

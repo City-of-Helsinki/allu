@@ -30,7 +30,8 @@ export class DefaultTextModalComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<DefaultTextModalComponent>,
               private fb: FormBuilder,
-              private defaultTextService: DefaultTextService) {
+              private defaultTextService: DefaultTextService,
+              private notification: NotificationService) {
     this.defaultTexts = fb.array([]);
     this.defaultTextform = fb.group({
       defaultTexts: this.defaultTexts
@@ -42,7 +43,7 @@ export class DefaultTextModalComponent implements OnInit {
       .map(texts => texts.filter(text => text.type === this.type))
       .subscribe(
         texts => texts.forEach(text => this.add(text)),
-        error => NotificationService.error(error));
+        error => this.notification.errorInfo(error));
 
     this.typeName = DefaultTextType[this.type];
   }
@@ -57,7 +58,7 @@ export class DefaultTextModalComponent implements OnInit {
       this.defaultTextService.remove(text.id)
         .subscribe(
           result => this.defaultTexts.removeAt(index),
-          error => NotificationService.error(error)
+          error => this.notification.errorInfo(error)
         );
     } else {
       this.defaultTexts.removeAt(index);

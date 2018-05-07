@@ -764,7 +764,12 @@ export const translations = {
     areaOverride: 'Käsittelijän syöttämä pinta-ala',
     cityDistrict: 'Kaupunginosa',
     cityDistrictOverride: 'Käsittelijän valitsema kaupunginosa',
-    underpass: 'Altakuljettava'
+    underpass: 'Altakuljettava',
+    error: {
+      fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
+      fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',
+      addressSearch: 'Osoitehaku epäonnistui'
+    }
   },
   common: {
     freeTextSearch: 'Vapaa tekstihaku',
@@ -1312,6 +1317,13 @@ export const translations = {
     error: {
       fetch: 'Sovelluksen asetusten hakeminen epäonnistui'
     }
+  },
+  httpStatus: {
+    BAD_REQUEST: 'Toiminto epäonnistui',
+    UNAUTHORIZED: 'Et ole kirjautunut',
+    FORBIDDEN: 'Oikeutesi eivät riitä',
+    INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
+    UNKNOWN: 'Tuntematon virhe'
   }
 };
 

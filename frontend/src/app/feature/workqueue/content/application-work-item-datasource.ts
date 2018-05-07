@@ -19,7 +19,10 @@ export interface ApplicationWorkItemRow {
 export class ApplicationWorkItemDatasource extends DataSource<any> {
   private destroy = new Subject<boolean>();
 
-  constructor(private store: ApplicationWorkItemStore, private paginator: MatPaginator, private sort: MatSort) {
+  constructor(private store: ApplicationWorkItemStore,
+              private notification: NotificationService,
+              private paginator: MatPaginator,
+              private sort: MatSort) {
     super();
 
     // Initial paging
@@ -52,7 +55,7 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
       .takeUntil(this.destroy)
       .map(state => state.page).distinctUntilChanged()
       .catch(err => {
-        NotificationService.error(err);
+        this.notification.errorInfo(err);
         return Observable.of(new Page<Application>());
       });
   }

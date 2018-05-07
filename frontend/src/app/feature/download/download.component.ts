@@ -13,7 +13,9 @@ import {NotificationService} from '../../service/notification/notification.servi
 })
 export class DownloadComponent implements OnInit {
 
-  constructor(private router: Router, private downloadService: DownloadService) { }
+  constructor(private router: Router,
+              private downloadService: DownloadService,
+              private notification: NotificationService) { }
 
   ngOnInit() {
     const url = this.router.routerState.snapshot.url;
@@ -23,6 +25,6 @@ export class DownloadComponent implements OnInit {
       .subscribe(file => {
         filesaver.saveAs(file.content, file.name);
         this.router.navigate(['home']);
-      }, err => NotificationService.error(err));
+      }, err => this.notification.errorInfo(err));
   }
 }

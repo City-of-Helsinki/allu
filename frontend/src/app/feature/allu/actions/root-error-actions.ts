@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 
 export enum RootErrorActionType {
   NotifyError = '[RootError] Notify error'

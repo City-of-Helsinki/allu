@@ -7,6 +7,7 @@ import {Customer} from '../../model/customer/customer';
 import {CustomerService} from '../../service/customer/customer.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {CustomerDatasource} from '../../service/customer/customer-datasource';
+import {NotificationService} from '../../service/notification/notification.service';
 
 @Component({
   selector: 'customer-list',
@@ -26,7 +27,10 @@ export class CustomerListComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private router: Router, private customerService: CustomerService, private fb: FormBuilder) {
+  constructor(private router: Router,
+              private customerService: CustomerService,
+              private fb: FormBuilder,
+              private notification: NotificationService) {
     this.searchForm = this.fb.group({
       name: [''],
       registryKey: [''],
@@ -36,7 +40,7 @@ export class CustomerListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.customerSource = new CustomerDatasource(this.customerService, this.paginator, this.sort);
+    this.customerSource = new CustomerDatasource(this.customerService, this.notification, this.paginator, this.sort);
   }
 
   newCustomer(): void {

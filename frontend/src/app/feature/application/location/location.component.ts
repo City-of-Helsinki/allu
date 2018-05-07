@@ -31,9 +31,10 @@ import {LocationState} from '../../../service/application/location-state';
 import {Location} from '../../../model/common/location';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 import {defaultFilter, MapSearchFilter} from '../../../service/map-search-filter';
-import {CityDistrictService} from '../../../service/map/city-district.service';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import {Subject} from 'rxjs/Subject';
+import * as fromRoot from '../../allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'type',
@@ -65,9 +66,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapService: MapUtil,
     private router: Router,
     private mapStore: MapStore,
-    private cityDistrictService: CityDistrictService,
+    private store: Store<fromRoot.State>,
     private fixedLocationService: FixedLocationService,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private notification: NotificationService) {
 
     this.areaCtrl = this.fb.control(undefined);
     this.sectionsCtrl = this.fb.control([]);
@@ -116,7 +118,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .takeUntil(this.destroy)
       .subscribe(shape => this.shapeAdded(shape));
 
-    this.districts = this.cityDistrictService.get();
+    this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
     this.initForm();
 
@@ -167,7 +169,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }, {emitEvent: false});
   }
 
-  store(form: LocationForm): void {
+  storeLocation(form: LocationForm): void {
     this.locationState.storeLocation(LocationForm.to(form));
     this.resetForm();
   }
@@ -192,10 +194,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.applicationStore.save(this.application)
         .subscribe(
           app => {
-            NotificationService.message(findTranslation('application.action.saved'));
+            this.notification.success(findTranslation('application.action.saved'));
             this.router.navigate(['/applications', String(app.id), 'summary']);
           },
-          err => NotificationService.error(err));
+          err => this.notification.errorInfo(err));
     } else {
       this.applicationStore.applicationChange(this.application);
       this.router.navigate(['/applications/edit']);
@@ -212,7 +214,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   districtName(id: number): Observable<string> {
-    return this.cityDistrictService.byId(id).map(d => d.name);
+    return this.store.select(fromRoot.getCityDistrictName(id));
   }
 
   notifyEditingAllowed(): void {

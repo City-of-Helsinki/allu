@@ -39,7 +39,8 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private invoiceHub: InvoiceHub,
               private applicationStore: ApplicationStore,
-              private currentUser: CurrentUser) {
+              private currentUser: CurrentUser,
+              private notification: NotificationService) {
     this.chargeBasisEntries = fb.array([]);
     this.form = this.fb.group({
       chargeBasisEntries: this.chargeBasisEntries
@@ -68,8 +69,8 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.openModal()
       .switchMap(entry => this.addEntry(entry))
       .subscribe(
-        saved => NotificationService.translateMessage('chargeBasis.action.save'),
-        error => NotificationService.error(error)
+        saved => this.notification.translateSuccess('chargeBasis.action.save'),
+        error => this.notification.errorInfo(error)
       );
   }
 
@@ -78,16 +79,16 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.openModal(ChargeBasisEntryForm.toChargeBasisEntry(entryForm.getRawValue()))
       .switchMap(updatedEntry => this.updateEntry(updatedEntry, index))
       .subscribe(
-          saved => NotificationService.translateMessage('chargeBasis.action.save'),
-          error => NotificationService.error(error)
+          saved => this.notification.translateSuccess('chargeBasis.action.save'),
+          error => this.notification.errorInfo(error)
         );
   }
 
   removeEntry(index: number): void {
     this.chargeBasisEntries.removeAt(index);
     this.saveEntries().subscribe(
-      saved => NotificationService.translateMessage('chargeBasis.action.save'),
-      error => NotificationService.error(error)
+      saved => this.notification.translateSuccess('chargeBasis.action.save'),
+      error => this.notification.errorInfo(error)
     );
   }
 
@@ -102,7 +103,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
     this.invoiceHub.loadChargeBasisEntries(app.id)
       .takeUntil(this.destroy)
-      .subscribe(() => {}, error => NotificationService.error(error));
+      .subscribe(() => {}, error => this.notification.errorInfo(error));
   }
 
   private entriesUpdated(entries: Array<ChargeBasisEntry>): void {

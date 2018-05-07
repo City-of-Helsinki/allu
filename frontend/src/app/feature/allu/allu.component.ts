@@ -4,6 +4,9 @@ import {Subscription} from 'rxjs/Subscription';
 import {ConfigService} from '../../service/config/config.service';
 import {EnvironmentType} from '../../model/config/environment-type';
 import {CustomIconRegistry} from '../../service/common/custom-icon-registry';
+import {NotificationService} from '../../service/notification/notification.service';
+import {ToastyConfig} from 'ng2-toasty';
+import {RootErrorNotificationService} from './effects/root-error-notification.service';
 
 @Component({
   selector: 'allu',
@@ -18,7 +21,12 @@ export class AlluComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router,
               private config: ConfigService,
-              private iconRegistry: CustomIconRegistry) {
+              private iconRegistry: CustomIconRegistry,
+              private notification: NotificationService,
+              private toastyConfig: ToastyConfig,
+              private rootErrorNotification: RootErrorNotificationService) {
+    this.toastyConfig.theme = 'material';
+    this.toastyConfig.position = 'top-right';
   }
 
   ngOnInit(): void {

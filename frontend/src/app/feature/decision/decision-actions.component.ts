@@ -32,7 +32,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   constructor(private applicationStore: ApplicationStore,
               private decisionHub: DecisionHub,
               private router: Router,
-              private dialog: MatDialog) {}
+              private dialog: MatDialog,
+              private notification: NotificationService) {}
 
   ngOnInit(): void {
   }
@@ -68,7 +69,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
         .switchMap(app => this.sendDecision(app.id, confirmation))
         .subscribe(
           result => this.router.navigateByUrl('/workqueue'),
-          error => NotificationService.error(error));
+          error => this.notification.errorInfo(error));
     }
   }
 
@@ -77,10 +78,10 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(app => {
           this.applicationStore.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
-          NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
+          this.notification.success(findTranslation('application.statusChange.DECISIONMAKING'));
           this.applicationStore.applicationChange(app);
           this.onDecisionConfirm.emit(changeInfo);
-        }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
+        }, err => this.notification.error(findTranslation('application.error.toDecisionmaking')));
     }
   }
 
@@ -92,7 +93,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   private statusChanged(application: Application): void {
     this.application = application;
-    NotificationService.message(findTranslation(['decision.type', this.application.status, 'confirmation']));
+    this.notification.success(findTranslation(['decision.type', this.application.status, 'confirmation']));
   }
 
   private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<HttpResponse> {

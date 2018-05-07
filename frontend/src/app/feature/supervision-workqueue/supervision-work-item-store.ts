@@ -30,7 +30,9 @@ export class SupervisionWorkItemStore {
   private store = new BehaviorSubject<SupervisionWorkqueueState>(initialState);
   private currentUser: User;
 
-  constructor(private service: SupervisionTaskService, private currentUserService: CurrentUser) {
+  constructor(private service: SupervisionTaskService,
+              private currentUserService: CurrentUser,
+              private notification: NotificationService) {
     Observable.combineLatest(
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
@@ -134,7 +136,7 @@ export class SupervisionWorkItemStore {
       .subscribe(
         page => this.pageChange(page),
         err => {
-          NotificationService.error(err);
+          this.notification.errorInfo(err);
           this.update({loading: false});
         });
   }

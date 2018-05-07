@@ -37,6 +37,7 @@ import {InputWarningDirective} from './validation/input-warning.directive';
 import {AvailableToDirective} from '../../service/authorization/available-to.directive';
 import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 import {AlluCardComponent} from './card/allu-card.component';
+import {NotificationService} from '../../service/notification/notification.service';
 
 @NgModule({
   imports: [
@@ -61,6 +62,9 @@ import {AlluCardComponent} from './card/allu-card.component';
     AvailableToDirective,
     BottomBarComponent,
     AlluCardComponent
+  ],
+  providers: [
+    NotificationService
   ],
   exports: [
     CommonModule,

@@ -45,7 +45,8 @@ export class ApplicationComponent implements OnInit, OnDestroy {
               private attachmentHub: AttachmentHub,
               private fixedLocationService: FixedLocationService,
               private supervisionTaskStore: SupervisionTaskStore,
-              private defaultRecipientHub: DefaultRecipientHub) {
+              private defaultRecipientHub: DefaultRecipientHub,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -131,7 +132,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
       .takeUntil(this.destroy)
       .subscribe(
         attachments => attachments.forEach(a => this.applicationStore.saveAttachment(a)),
-        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
+        err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
   }
 
   private initDistribution(application: Application): void {
@@ -142,7 +143,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
       .subscribe(distributionEntries => {
         application.decisionDistributionList = distributionEntries;
         this.applicationStore.applicationChange(application);
-      }, err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
+      }, err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
   }
 
   private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {

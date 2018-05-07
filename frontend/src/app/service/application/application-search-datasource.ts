@@ -21,7 +21,10 @@ export class ApplicationSearchDatasource extends DataSource<any> {
   private _pageSnapshot = new Page<Application>();
   private _search: ApplicationSearchQuery;
 
-  constructor(private applicationService: ApplicationService, private paginator: MatPaginator, private sort: MatSort) {
+  constructor(private applicationService: ApplicationService,
+              private notification: NotificationService,
+              private paginator: MatPaginator,
+              private sort: MatSort) {
     super();
   }
 
@@ -73,7 +76,7 @@ export class ApplicationSearchDatasource extends DataSource<any> {
       new Sort(this.sort.active, this.sort.direction),
       new PageRequest(this.paginator.pageIndex, this.paginator.pageSize))
     .catch(err => {
-      NotificationService.error(err);
+      this.notification.errorInfo(err);
       return Observable.of(new Page<Application>());
     });
   }

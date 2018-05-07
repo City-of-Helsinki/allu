@@ -1,18 +1,22 @@
 import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/core';
-import {FormArray, FormGroup, FormBuilder, FormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
 import {CommentsComponent} from '../../../../src/app/feature/application/comment/comments.component';
-import {CommentForm} from '../../../../src/app/feature/application/comment/comment-form';
 import {ApplicationStore} from '../../../../src/app/service/application/application-store';
 import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
 import {Comment} from '../../../../src/app/model/application/comment/comment';
-import {ErrorInfo} from '../../../../src/app/service/ui-state/error-info';
+import {ErrorInfo} from '../../../../src/app/service/error/error-info';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
 import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
-import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {
+  ApplicationStoreMock,
+  availableToDirectiveMockMeta,
+  CurrentUserMock,
+  NotificationServiceMock
+} from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
 
 
@@ -44,6 +48,7 @@ describe('CommentsComponent', () => {
   let comp: CommentsComponent;
   let fixture: ComponentFixture<CommentsComponent>;
   let applicationStore: ApplicationStoreMock;
+  let notification: NotificationServiceMock;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
 
@@ -56,7 +61,8 @@ describe('CommentsComponent', () => {
       ],
       providers: [
         FormBuilder,
-        { provide: ApplicationStore, useClass: ApplicationStoreMock }
+        { provide: ApplicationStore, useClass: ApplicationStoreMock },
+        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     })
     .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
@@ -65,6 +71,7 @@ describe('CommentsComponent', () => {
 
   beforeEach(() => {
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
+    notification = TestBed.get(NotificationService) as NotificationServiceMock;
     fixture = TestBed.createComponent(CommentsComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
@@ -92,9 +99,9 @@ describe('CommentsComponent', () => {
   }));
 
   it('should handle comment loading errors', fakeAsync(() => {
-    spyOn(NotificationService, 'error');
-    applicationStore.comments$.error(ErrorInfo.of(undefined, 'testMessage'));
-    expect(NotificationService.error).toHaveBeenCalled();
+    spyOn(notification, 'errorInfo');
+    applicationStore.comments$.error(new ErrorInfo('testMessage'));
+    expect(notification.errorInfo).toHaveBeenCalled();
   }));
 
   it('should handle adding new comment', fakeAsync(() => {
@@ -108,37 +115,37 @@ describe('CommentsComponent', () => {
 
   it('should save comment', fakeAsync(() => {
     spyOn(applicationStore, 'saveComment').and.returnValue(Observable.of(COMMENT_ONE));
-    spyOn(NotificationService, 'message');
+    spyOn(notification, 'success');
 
     fixture.detectChanges();
     fixture.whenStable().then(val => {
       const commentEl = de.query(By.css('comment'));
       commentEl.triggerEventHandler('onSave', COMMENT_ONE);
       expect(applicationStore.saveComment).toHaveBeenCalledWith(applicationStore.snapshot.application.id, COMMENT_ONE);
-      expect(NotificationService.message).toHaveBeenCalled();
+      expect(notification.success).toHaveBeenCalled();
       expect(de.queryAll(By.css('li')).length).toEqual(2, 'Was expecting 2 comments');
     });
   }));
 
   it('should handle save comment error', fakeAsync(() => {
-    spyOn(applicationStore, 'saveComment').and.returnValue(Observable.throw(ErrorInfo.of(undefined, 'Error!')));
-    spyOn(NotificationService, 'errorMessage');
+    spyOn(applicationStore, 'saveComment').and.returnValue(Observable.throw(new ErrorInfo('Error!')));
+    spyOn(notification, 'error');
     comp.save(0, COMMENT_ONE);
     fixture.detectChanges();
     fixture.whenStable().then(val => {
-      expect(NotificationService.errorMessage).toHaveBeenCalled();
+      expect(notification.error).toHaveBeenCalled();
     });
   }));
 
   it('should remove comment', fakeAsync(() => {
     spyOn(applicationStore, 'removeComment').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK, 'Good job')));
-    spyOn(NotificationService, 'message');
+    spyOn(notification, 'success');
     fixture.detectChanges();
     fixture.whenStable().then(val => {
       const commentEl = de.query(By.css('comment'));
       commentEl.triggerEventHandler('onRemove', COMMENT_ONE);
       expect(applicationStore.removeComment).toHaveBeenCalledWith(COMMENT_ONE.id);
-      expect(NotificationService.message).toHaveBeenCalledTimes(1);
+      expect(notification.success).toHaveBeenCalledTimes(1);
     });
 
     tick();
@@ -149,12 +156,12 @@ describe('CommentsComponent', () => {
   }));
 
   it('should handle remove comment error', fakeAsync(() => {
-    spyOn(applicationStore, 'removeComment').and.returnValue(Observable.throw(ErrorInfo.of(undefined, 'Error!')));
-    spyOn(NotificationService, 'errorMessage');
+    spyOn(applicationStore, 'removeComment').and.returnValue(Observable.throw(new ErrorInfo('Error!')));
+    spyOn(notification, 'error');
     comp.remove(0, COMMENT_ONE);
     fixture.detectChanges();
     fixture.whenStable().then(val => {
-      expect(NotificationService.errorMessage).toHaveBeenCalled();
+      expect(notification.error).toHaveBeenCalled();
       expect(de.queryAll(By.css('li')).length).toEqual(2, 'Was expecting 2 comments');
     });
   }));

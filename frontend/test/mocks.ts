@@ -18,6 +18,10 @@ import {ApplicationState} from '../src/app/service/application/application-store
 import {Comment} from '../src/app/model/application/comment/comment';
 import {ApplicationType} from '../src/app/model/application/type/application-type';
 import {CityDistrict} from '../src/app/model/common/city-district';
+import {findTranslation} from '../src/app/util/translations';
+import {ErrorInfo} from '../src/app/service/error/error-info';
+import {MaterializeUtil} from '../src/app/util/materialize.util';
+import {Some} from '../src/app/util/option';
 
 /**
  * Mock for application state
@@ -207,6 +211,26 @@ export class CityDistrictServiceMock {
   public get(): Observable<CityDistrict[]> {
     return Observable.of(this.districts);
   }
+}
+
+export class NotificationServiceMock {
+  translateSuccess(key: string): void {}
+
+  success(title: string, message?: string): void {}
+
+  info(title: string, message?: string): void  {}
+
+  error(title: string, message?: string): void {}
+
+  errorInfo(errorInfo: ErrorInfo): void {}
+
+  errorCatch<T>(errorInfo: ErrorInfo, returnValue?: T): Observable<T> {
+    return returnValue ? Observable.of(returnValue) : Observable.empty();
+  }
+
+  translateError(errorInfo: ErrorInfo): void {}
+
+  translateErrorMessage(key: string): void {}
 }
 
 /**

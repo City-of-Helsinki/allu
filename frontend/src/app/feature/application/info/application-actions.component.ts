@@ -50,7 +50,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   constructor(private router: Router,
               private applicationStore: ApplicationStore,
               private dialog: MatDialog,
-              private userHub: UserHub) {
+              private userHub: UserHub,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -103,10 +104,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     this.applicationStore.replace()
       .subscribe(
         (application) => {
-          NotificationService.translateMessage('application.action.replaced');
+          this.notification.translateSuccess('application.action.replaced');
           this.router.navigate(['/applications', application.id, 'summary']);
         },
-        (error) => NotificationService.translateMessage(error));
+        (error) => this.notification.translateSuccess(error));
   }
 
   convertToApplication(): void {
@@ -117,11 +118,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   moveToHandling(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.HANDLING)
       .subscribe(app => {
-          NotificationService.translateMessage('application.statusChange.HANDLING');
+          this.notification.translateSuccess('application.statusChange.HANDLING');
           this.applicationStore.applicationChange(app);
           this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
         },
-        err => NotificationService.translateErrorMessage('application.error.toHandling'));
+        err => this.notification.translateErrorMessage('application.error.toHandling'));
   }
 
   toDecisionmaking(): void {
@@ -131,10 +132,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   delete(): void {
     Some(this.applicationStore.snapshot.application.id).do(id => this.applicationStore.delete(id).subscribe(
       response => {
-        NotificationService.translateMessage('application.action.deleted');
+        this.notification.translateSuccess('application.action.deleted');
         this.router.navigate(['/']);
       },
-      error => NotificationService.error(error)));
+      error => this.notification.errorInfo(error)));
   }
 
   cancel(): void {
@@ -155,22 +156,22 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   private cancelApplication(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.CANCELLED)
       .subscribe(app => {
-          NotificationService.translateMessage('application.statusChange.CANCELLED');
+          this.notification.translateSuccess('application.statusChange.CANCELLED');
           this.applicationStore.applicationChange(app);
           this.router.navigate(['/workqueue']);
         },
-        err => NotificationService.translateErrorMessage('application.error.cancel'));
+        err => this.notification.translateErrorMessage('application.error.cancel'));
   }
 
   private moveToDecisionMaking(): Observable<Application> {
     if (this.shouldMoveToDecisionMaking()) {
       return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING)
         .map(app => {
-            NotificationService.translateMessage('application.statusChange.DECISIONMAKING');
+            this.notification.translateSuccess('application.statusChange.DECISIONMAKING');
             this.applicationStore.applicationChange(app);
             return app;
           },
-          err => NotificationService.translateErrorMessage('application.error.toDecisionmaking'));
+          err => this.notification.translateErrorMessage('application.error.toDecisionmaking'));
     } else {
       return Observable.of(this.applicationStore.snapshot.application);
     }

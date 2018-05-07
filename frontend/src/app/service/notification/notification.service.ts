@@ -1,37 +1,56 @@
 import {Observable} from 'rxjs/Observable';
-import {ErrorInfo} from '../ui-state/error-info';
-import {MaterializeUtil} from '../../util/materialize.util';
-import {Some} from '../../util/option'; import {findTranslation} from '../../util/translations';
+import {ErrorInfo} from '../error/error-info';
+import {Some} from '../../util/option';
+import {findTranslation} from '../../util/translations';
+import {Injectable} from '@angular/core';
+import {ToastyService} from 'ng2-toasty';
 
+@Injectable()
 export class NotificationService {
-  static translateMessage(key: string, timeVisible?: number): void {
-    NotificationService.message(findTranslation(key), timeVisible);
+
+  constructor(private toasty: ToastyService) {}
+
+  translateSuccess(key: string): void {
+    this.success(findTranslation(key));
   }
 
-  static message(message: string, timeVisible?: number): void {
-    MaterializeUtil.toast(message, timeVisible);
+  success(title: string, message?: string): void {
+    this.toasty.success({
+      title: title,
+      msg: message
+    });
   }
 
-  static error(errorInfo: ErrorInfo, timeVisible?: number): void {
-    MaterializeUtil.toast(errorInfo.message, timeVisible);
+  info(title: string, message?: string): void  {
+    this.toasty.info({
+      title: title,
+      msg: message
+    });
   }
 
-  static errorCatch<T>(errorInfo: ErrorInfo, returnValue?: T, timeVisible?: number): Observable<T> {
-    this.error(errorInfo, timeVisible);
+  error(title: string, message?: string): void {
+    this.toasty.error({
+      title: title,
+      msg: message
+    });
+  }
+
+  errorInfo(errorInfo: ErrorInfo): void {
+    this.error(errorInfo.title, errorInfo.message);
+  }
+
+  errorCatch<T>(errorInfo: ErrorInfo, returnValue?: T): Observable<T> {
+    this.errorInfo(errorInfo);
     return Some(returnValue)
       .map(val => Observable.of(val))
       .orElse(Observable.empty());
   }
 
-  static translateError(errorInfo: ErrorInfo, timeVisible?: number): void {
-    NotificationService.errorMessage(findTranslation(errorInfo.message), timeVisible);
+  translateError(errorInfo: ErrorInfo): void {
+    this.error(findTranslation(errorInfo.message));
   }
 
-  static translateErrorMessage(key: string, timeVisible?: number): void {
-    NotificationService.errorMessage(findTranslation(key), timeVisible);
-  }
-
-  static errorMessage(message: string, timeVisible?: number): void {
-    MaterializeUtil.toast(message, timeVisible);
+  translateErrorMessage(key: string): void {
+    this.error(findTranslation(key));
   }
 }

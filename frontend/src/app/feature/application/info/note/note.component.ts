@@ -10,6 +10,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR, TimeUtil} from '../../../../util/time.util';
 import {Application} from '../../../../model/application/application';
 import {ProjectService} from '../../../../service/project/project.service';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 @Component({
   selector: 'note',
@@ -26,9 +27,10 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
+    notification: NotificationService,
     router: Router,
     projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {

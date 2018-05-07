@@ -41,6 +41,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   constructor(protected fb: FormBuilder,
               protected route: ActivatedRoute,
               protected applicationStore: ApplicationStore,
+              protected notification: NotificationService,
               private router: Router,
               private projectService: ProjectService) {}
 
@@ -167,13 +168,13 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
           this.formDirty.emit(false);
         },
         err => {
-          NotificationService.error(err);
+          this.notification.errorInfo(err);
           this.submitPending = false;
         });
   }
 
   private applicationSaved(application: Application): void {
-    NotificationService.message(findTranslation('application.action.saved'));
+    this.notification.success(findTranslation('application.action.saved'));
     this.submitPending = false;
 
     // We had related project so navigate back to project page

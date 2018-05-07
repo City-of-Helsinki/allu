@@ -39,9 +39,10 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
+    notification: NotificationService,
     router: Router,
     projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {
@@ -52,7 +53,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       .distinctUntilChanged()
       .map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]]))
       .switchMap(search => this.applicationService.search(search))
-      .catch(err => NotificationService.errorCatch(err, []));
+      .catch(err => this.notification.errorCatch(err, []));
   }
 
   setCableReport(application: Application) {

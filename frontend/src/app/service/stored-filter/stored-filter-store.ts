@@ -31,7 +31,7 @@ export class StoredFilterStore {
 
   private store = new BehaviorSubject<StoredFilterState>(initialState);
 
-  constructor(private storedFilterService: StoredFilterService) {
+  constructor(private storedFilterService: StoredFilterService, private notification: NotificationService) {
     this.loadAvailable()
       .map(filters => this.createState(filters))
       .subscribe(state => this.store.next(state));
@@ -138,6 +138,6 @@ export class StoredFilterStore {
 
   private loadAvailable(): Observable<StoredFilter[]> {
     return this.storedFilterService.findForCurrentUser()
-      .catch(err => NotificationService.errorCatch(err, []));
+      .catch(err => this.notification.errorCatch(err, []));
   }
 }

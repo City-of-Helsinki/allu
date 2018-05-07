@@ -32,6 +32,7 @@ export class ApplicationHistoryComponent implements OnInit {
               private historyHub: HistoryHub,
               private userHub: UserHub,
               private dialog: MatDialog,
+              private notification: NotificationService,
               protected formatter: ApplicationHistoryFormatter) {}
 
   ngOnInit(): void {
@@ -41,7 +42,7 @@ export class ApplicationHistoryComponent implements OnInit {
       this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id)
         .do(changes => this.fetchUsersForChanges(changes));
     },
-    err => NotificationService.errorMessage(findTranslation('history.error.metadata')));
+    err => this.notification.error(findTranslation('history.error.metadata')));
   }
 
   showDetails(change: ApplicationChange) {

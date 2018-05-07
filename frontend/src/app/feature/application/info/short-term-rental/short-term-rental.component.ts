@@ -10,6 +10,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {TimeUtil} from '../../../../util/time.util';
 import {ProjectService} from '../../../../service/project/project.service';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -31,9 +32,10 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
+    notification: NotificationService,
     router: Router,
     projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {

@@ -5,7 +5,6 @@ import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
 import {pathStyle, styleByApplicationType} from '../../service/map/map-draw-styles';
-import {MapService} from '../../service/map/map.service';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Location} from '../../model/common/location';
 import * as L from 'leaflet';
@@ -31,14 +30,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
-  private mapController: MapController;
   private destroy = new Subject<boolean>();
 
   constructor(
-    private mapService: MapService,
     private mapStore: MapStore,
     private fixedLocationService: FixedLocationService,
-    private projectService: ProjectService) {}
+    private projectService: ProjectService,
+    private mapController: MapController) {}
 
   ngOnInit() {
     this.mapStore.roleChange(this.role);
@@ -49,7 +47,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
    * since map div might not be available during ngOnInit
    */
   ngAfterViewInit(): void {
-    this.mapController = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
+    this.mapController.init({
+      draw: this.draw,
+      edit: this.edit,
+      zoom: this.zoom,
+      selection: this.selection,
+      showOnlyApplicationArea: this.showOnlyApplicationArea
+    });
     this.initSubscriptions();
     Some(this.projectId).do(id => this.drawProject(id));
     this.mapController.selectDefaultLayer();
@@ -58,7 +62,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.destroy.next(true);
     this.destroy.unsubscribe();
-    this.mapController.onDestroy();
   }
 
   applicationSelected(application: Application) {

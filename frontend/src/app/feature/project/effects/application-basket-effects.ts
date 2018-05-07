@@ -25,7 +25,8 @@ const BASKET = 'applicationBasket';
 export class ApplicationBasketEffects {
   constructor(private actions: Actions,
               private store: Store<fromProject.State>,
-              private applicationService: ApplicationService) {}
+              private applicationService: ApplicationService,
+              private notification: NotificationService) {}
 
   @Effect()
   load: Observable<Action> = this.actions.pipe(
@@ -42,7 +43,7 @@ export class ApplicationBasketEffects {
     map(action => action.payload),
     tap(id => {
       LocalStorageUtil.addItemsToArray(BASKET, [id]);
-      NotificationService.translateMessage('applicationBasket.applicationAdded');
+      this.notification.translateSuccess('applicationBasket.applicationAdded');
     }),
     map(id => new Load([id]))
   );
@@ -53,7 +54,7 @@ export class ApplicationBasketEffects {
     map(action => action.payload),
     tap(ids => {
       LocalStorageUtil.addItemsToArray(BASKET, ids);
-      NotificationService.translateMessage('applicationBasket.applicationsAdded');
+      this.notification.translateSuccess('applicationBasket.applicationsAdded');
     }),
     map(ids => new Load(ids))
   );
@@ -64,7 +65,7 @@ export class ApplicationBasketEffects {
     map(action => action.payload),
     tap(id => {
       LocalStorageUtil.removeItemFromArray(BASKET, id);
-      NotificationService.translateMessage('applicationBasket.applicationRemoved');
+      this.notification.translateSuccess('applicationBasket.applicationRemoved');
     })
   );
 

@@ -38,7 +38,8 @@ export class ExternalUserComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private userHub: ExternalUserHub,
               private customerService: CustomerService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private notification: NotificationService) {
 
     this.connectedCustomersCtrl = this.fb.control([]);
 
@@ -90,7 +91,7 @@ export class ExternalUserComponent implements OnInit {
         if (currentCustomerToken !== savedUser.token) {
           message += '<br>' + translations.externalUser.actions.customerTokenGenerated;
         }
-        NotificationService.message(message);
+        this.notification.success(message);
     });
   }
 

@@ -36,7 +36,8 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
               private fb: FormBuilder,
               private customerService: CustomerService,
               private dialog: MatDialog,
-              private currentUser: CurrentUser) {
+              private currentUser: CurrentUser,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -62,7 +63,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.saveApplicationInfo()
       .subscribe(
         () => this.saved(),
-        error => NotificationService.errorMessage(error));
+        error => this.notification.error(error));
   }
 
   cancel(): void {
@@ -101,7 +102,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
   }
 
   private saved(): void {
-    NotificationService.translateMessage('invoice.action.save');
+    this.notification.translateSuccess('invoice.action.save');
     this.infoForm.markAsPristine();
   }
 
@@ -134,10 +135,10 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     if (save) {
       return this.saveApplicationInfo()
         .map(() => {
-          NotificationService.translateMessage('invoice.action.save');
+          this.notification.translateSuccess('invoice.action.save');
           return true;
         }).catch(error => {
-          NotificationService.errorMessage(error);
+          this.notification.error(error);
           return Observable.of(false);
         });
     } else {

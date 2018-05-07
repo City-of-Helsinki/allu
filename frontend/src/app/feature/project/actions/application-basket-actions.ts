@@ -1,7 +1,7 @@
 import {Action} from '@ngrx/store';
 import {Application} from '../../../model/application/application';
 import {ActionWithPayload} from '../../common/action-with-payload';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 
 export enum ApplicationBasketActionType {
   Load = '[ApplicationBasket] Load basket',

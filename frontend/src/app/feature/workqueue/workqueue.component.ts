@@ -35,6 +35,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private userHub: UserHub,
               private currentUser: CurrentUser,
+              private notification: NotificationService,
               private store: Store<fromRoot.State>) {
   }
 
@@ -88,13 +89,13 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   private changeOwner(owner: User): void {
     this.itemStore.changeOwnerForSelected(owner.id).subscribe(
-      () => NotificationService.message(findTranslation('workqueue.notifications.ownerChanged')),
-      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerChangeFailed')));
+      () => this.notification.success(findTranslation('workqueue.notifications.ownerChanged')),
+      () => this.notification.error(findTranslation('workqueue.notifications.ownerChangeFailed')));
   }
 
   private removeOwner(): void {
     this.itemStore.removeOwnerFromSelected().subscribe(
-      () => NotificationService.message(findTranslation('workqueue.notifications.ownerRemoved')),
-      () => NotificationService.errorMessage(findTranslation('workqueue.notifications.ownerRemoveFailed')));
+      () => this.notification.success(findTranslation('workqueue.notifications.ownerRemoved')),
+      () => this.notification.error(findTranslation('workqueue.notifications.ownerRemoveFailed')));
   }
 }

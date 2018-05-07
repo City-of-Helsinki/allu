@@ -46,7 +46,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder,
               private mapStore: MapStore,
-              private storedFilterStore: StoredFilterStore) {
+              private storedFilterStore: StoredFilterStore,
+              private notification: NotificationService) {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
@@ -62,7 +63,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.mapStore.coordinates
       .takeUntil(this.destroy)
       .filter(coords => !coords.isDefined())
-      .subscribe(() => NotificationService.message('Osoitetta ei löytynyt', 4000));
+      .subscribe(() => this.notification.success('Osoitetta ei löytynyt'));
 
     this.searchForm.valueChanges
       .takeUntil(this.destroy)

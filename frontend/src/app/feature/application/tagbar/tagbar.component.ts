@@ -23,7 +23,7 @@ export class TagBarComponent implements OnInit {
   tags: Observable<Array<ApplicationTag>>;
   manualTagTypes = manualTagTypes.map(type => ApplicationTagType[type]);
 
-  constructor(private applicationStore: ApplicationStore) {}
+  constructor(private applicationStore: ApplicationStore, private notification: NotificationService) {}
 
   ngOnInit() {
     this.application = this.applicationStore.application;
@@ -53,7 +53,7 @@ export class TagBarComponent implements OnInit {
       this.applicationStore.saveTags(tags)
         .subscribe(
           app => {}, // Nothing to do with updated app
-          error => NotificationService.error(error)
+          error => this.notification.errorInfo(error)
         );
     } else {
       this.applicationStore.changeTags(tags);

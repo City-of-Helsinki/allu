@@ -24,7 +24,10 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   private contactSubscription: Subscription;
   private customerId: number;
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private customerService: CustomerService) {}
+  constructor(private route: ActivatedRoute,
+              private fb: FormBuilder,
+              private customerService: CustomerService,
+              private notification: NotificationService) {}
 
   ngOnInit(): void {
     this.contacts = <FormArray>this.parentForm.get('contacts');
@@ -47,8 +50,8 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
       this.contacts.at(index).patchValue({active: false});
       this.customerService.saveContactsForCustomer(this.customerId, this.contacts.value)
         .subscribe(
-          result => NotificationService.translateMessage('customers.notifications.contactRemoved'),
-          error => NotificationService.translateErrorMessage('customers.notifications.contactRemoveFailed'));
+          result => this.notification.translateSuccess('customers.notifications.contactRemoved'),
+          error => this.notification.translateErrorMessage('customers.notifications.contactRemoveFailed'));
     } else {
       this.contacts.removeAt(index);
     }

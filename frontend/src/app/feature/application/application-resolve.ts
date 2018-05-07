@@ -9,7 +9,9 @@ import {NotificationService} from '../../service/notification/notification.servi
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
-  constructor(private applicationStore: ApplicationStore, private router: Router) {}
+  constructor(private applicationStore: ApplicationStore,
+              private router: Router,
+              private notification: NotificationService) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Application> {
     Some(route.queryParams)
@@ -32,7 +34,7 @@ export class ApplicationResolve implements Resolve<Application> {
   }
 
   private handleError(err: any): Observable<Application> {
-    NotificationService.error(err);
+    this.notification.errorInfo(err);
     this.router.navigate(['/applications']);
     return Observable.of(new Application());
   }

@@ -24,7 +24,9 @@ export class ProgressbarComponent implements OnChanges {
   replacements: Array<ApplicationIdentifier>;
   selectedApplication: number;
 
-  constructor(private router: Router, private service: ApplicationService) {
+  constructor(private router: Router,
+              private service: ApplicationService,
+              private notification: NotificationService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,7 +79,7 @@ export class ProgressbarComponent implements OnChanges {
         .startWith(defaultReplacements)
         .subscribe(
           (replacements) => this.replacements = replacements,
-          (err) => NotificationService.error(err));
+          (err) => this.notification.errorInfo(err));
     } else {
       this.replacements = [];
     }

@@ -8,7 +8,8 @@ import {SupervisionTaskService} from '../../../src/app/service/supervision/super
 import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
 import {Page} from '../../../src/app/model/common/page';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
-import {CurrentUserMock} from '../../mocks';
+import {CurrentUserMock, NotificationServiceMock} from '../../mocks';
+import {NotificationService} from '../../../src/app/service/notification/notification.service';
 
 const STORE_DEBOUNCE_MS = 150;
 
@@ -37,6 +38,7 @@ describe('supervision-work-item-store', () => {
         { provide: SupervisionTaskService, useClass: SupervisionTaskServiceMock},
         SupervisionWorkItemStore,
         {provide: CurrentUser, useValue: currentUserMock},
+        {provide: NotificationService, useClass: NotificationServiceMock},
       ]
     });
     store = tb.get(SupervisionWorkItemStore);

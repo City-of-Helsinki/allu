@@ -8,7 +8,8 @@ import {findTranslation} from '../../util/translations';
 import {Some} from '../../util/option';
 import {StringUtil} from '../../util/string.util';
 import {CityDistrict} from '../../model/common/city-district';
-import {CityDistrictService} from '../map/city-district.service';
+import * as fromRoot from '../../feature/allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Injectable()
 export class ApplicationHistoryFormatter {
@@ -16,10 +17,9 @@ export class ApplicationHistoryFormatter {
   private meta: StructureMeta;
   private cityDistricts: Array<CityDistrict> = [];
 
-  constructor(private cityDistrictService: CityDistrictService) {
-    this.cityDistrictService.get()
-    .subscribe(districts => this.cityDistricts = districts)
-    .unsubscribe();
+  constructor(private store: Store<fromRoot.State>) {
+    this.store.select(fromRoot.getAllCityDistricts).take(1)
+      .subscribe(districts => this.cityDistricts = districts);
   }
 
   public setMeta(meta: StructureMeta) {

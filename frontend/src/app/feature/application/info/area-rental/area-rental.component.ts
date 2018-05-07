@@ -10,6 +10,7 @@ import {AreaRental} from '../../../../model/application/area-rental/area-rental'
 import {AreaRentalForm} from './area-rental.form';
 import {TimeUtil} from '../../../../util/time.util';
 import {ProjectService} from '../../../../service/project/project.service';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 @Component({
   selector: 'area-rental',
@@ -23,9 +24,10 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
+    notification: NotificationService,
     router: Router,
     projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {

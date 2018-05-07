@@ -12,9 +12,12 @@ import {
 import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {CityDistrictService} from '../../../service/map/city-district.service';
 import {Subject} from 'rxjs/Subject';
 import {Some} from '../../../util/option';
+import * as fromRoot from '../../allu/reducers';
+import {Store} from '@ngrx/store';
+import {Dictionary} from '@ngrx/entity/src/models';
+import {CityDistrict} from '../../../model/common/city-district';
 
 @Component({
   selector: 'project-application-list',
@@ -42,14 +45,18 @@ export class ProjectApplicationListComponent implements OnInit, AfterViewInit, O
   ];
 
   private destroy = new Subject<boolean>();
+  private districts: Dictionary<CityDistrict>;
 
   constructor(private router: Router,
-              private cityDistrictService: CityDistrictService) {}
+              private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
     this.displayedColumns = this.controls
       ? ['controls'].concat(this.displayedColumns)
       : this.displayedColumns;
+
+    this.store.select(fromRoot.getCityDistrictEntities).take(1)
+      .subscribe(districts => this.districts = districts);
   }
 
   ngAfterViewInit(): void {
@@ -69,7 +76,8 @@ export class ProjectApplicationListComponent implements OnInit, AfterViewInit, O
   private toApplicationElement(application: Application): ApplicationElement {
     const cityDistrict = Some(application.firstLocation)
       .map(l => l.effectiveCityDistrictId)
-      .map(id => this.cityDistrictService.nameImmediate(id));
+      .map(id => this.districts[id])
+      .map(district => district.name);
 
     return {
       id: application.id,

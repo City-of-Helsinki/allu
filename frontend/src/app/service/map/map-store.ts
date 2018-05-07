@@ -59,7 +59,8 @@ export class MapStore {
 
   constructor(private mapDataService: MapDataService,
               private locationService: LocationService,
-              private storedFilterStore: StoredFilterStore) {
+              private storedFilterStore: StoredFilterStore,
+              private notification: NotificationService) {
 
     // Search when either of filters change
     Observable.merge(this.mapSearchFilter, this.locationSearchFilter)
@@ -219,7 +220,9 @@ export class MapStore {
 
   addressSearchChange(searchTerm: string): void {
     this.locationService.search(searchTerm)
-      .subscribe(result => this.store.next({...this.store.getValue(), matchingAddresses: result}));
+      .subscribe(
+        result => this.store.next({...this.store.getValue(), matchingAddresses: result}),
+        err => this.store.next({...this.store.getValue(), matchingAddresses: []}));
   }
 
   hasFixedGeometryChange(hasFixedGeometry: boolean): void {
@@ -250,7 +253,7 @@ export class MapStore {
     this.locationService.geocode(term)
       .subscribe(
         coordinates => this.coordinateChange(coordinates),
-        err => NotificationService.error(err)
+        err => this.notification.errorInfo(err)
       );
   }
 }

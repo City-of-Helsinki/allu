@@ -62,8 +62,8 @@ export const getProjectLoaded = createSelector(
 
 export const getProjectDistricts = createSelector(
   getCurrentProject,
-  fromRoot.getAllCityDistricts,
-  (project, districts) => project.cityDistricts.map(id => districts.get(id))
+  fromRoot.getCityDistrictEntities,
+  (project, districts) => project.cityDistricts.map(id => districts[id])
 );
 
 // Application selectors

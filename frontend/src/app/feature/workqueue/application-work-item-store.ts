@@ -31,7 +31,9 @@ export class ApplicationWorkItemStore {
   private store = new BehaviorSubject<ApplicationWorkqueueState>(initialState);
   private currentUser: User;
 
-  constructor(private service: ApplicationService, private currentUserService: CurrentUser) {
+  constructor(private service: ApplicationService,
+              private currentUserService: CurrentUser,
+              private notification: NotificationService) {
     Observable.combineLatest(
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
@@ -138,7 +140,7 @@ export class ApplicationWorkItemStore {
     }
 
     return this.service.pagedSearch(search, state.sort, state.pageRequest)
-      .catch(err => NotificationService.errorCatch(err, new Page<Application>()));
+      .catch(err => this.notification.errorCatch(err, new Page<Application>()));
   }
 
   private allSelected(items: Array<number>, selected: Array<number>): boolean {

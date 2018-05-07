@@ -12,6 +12,7 @@
 @import "table";
 @import "accordion";
 @import "notification/oval";
+@import "toast";
 @import '../app/feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
@@ -32,9 +33,9 @@
 @include modal-theme($allu-theme);
 @include allu-card-theme($allu-theme);
 @include table-theme($allu-theme);
-@include oval-theme($allu-theme);
 @include bottom-bar-theme($allu-theme);
 @include project-header-theme($allu-theme);
+@include oval-theme($allu-theme);
 
 // Reset
 html,

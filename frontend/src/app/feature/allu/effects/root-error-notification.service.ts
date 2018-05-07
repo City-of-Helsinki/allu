@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Actions} from '@ngrx/effects';
 import {ProjectActionTypes} from '../../project/actions/project-actions';
@@ -13,6 +13,7 @@ import {ApplicationBasketActionType} from '../../project/actions/application-bas
 
 const handledActions = [
   ProjectActionTypes.LoadFailed,
+  ProjectActionTypes.SaveFailed,
   ProjectApplicationActionType.LoadFailed,
   ProjectApplicationActionType.AddFailed,
   ProjectApplicationActionType.RemoveFailed,
@@ -23,7 +24,7 @@ const handledActions = [
 
 @Injectable()
 export class RootErrorNotificationService {
-  constructor(private actions: Actions) {
+  constructor(private actions: Actions, private notification: NotificationService) {
     this.actions
       .ofType(...handledActions)
       .map((action: ActionWithPayload<ErrorInfo>) => action.payload)
@@ -31,6 +32,6 @@ export class RootErrorNotificationService {
   }
 
   private handle(error: ErrorInfo): void {
-    NotificationService.error(error);
+    this.notification.errorInfo(error);
   }
 }
