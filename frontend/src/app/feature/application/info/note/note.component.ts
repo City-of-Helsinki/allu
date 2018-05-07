@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicationStore} from '../../../../service/application/application-store';
@@ -16,7 +17,10 @@ import {ProjectService} from '../../../../service/project/project.service';
   templateUrl: './note.component.html',
   styleUrls: []
 })
-export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit {
+export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit, OnDestroy {
+
+  private validityTimesControl: FormControl;
+  private recurringEndYearSubscription: Subscription;
 
   constructor(
     fb: FormBuilder,
@@ -31,6 +35,10 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     super.ngOnInit();
   }
 
+  ngOnDestroy(): void {
+    this.recurringEndYearSubscription.unsubscribe();
+  }
+
   protected initForm() {
     this.applicationForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -41,6 +49,9 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
       description: [''],
       recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
     });
+    this.validityTimesControl = <FormControl>this.applicationForm.controls['validityTimes'];
+    this.recurringEndYearSubscription = this.applicationForm.controls['recurringEndYear'].valueChanges
+        .subscribe(val => this.onRecurringEndYearChanged(val));
   }
 
   protected onApplicationChange(application: Application): void {
@@ -60,5 +71,16 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.singleLocation.endTime = application.endTime;
 
     return application;
+  }
+
+  private onRecurringEndYearChanged(val: number) {
+    if (val) {
+      this.validityTimesControl.setValidators(
+          [ComplexValidator.durationAtMax('startTime', 'endTime', 364),
+           ComplexValidator.startBeforeEnd('startTime', 'endTime')]);
+    } else {
+      this.validityTimesControl.setValidators(ComplexValidator.startBeforeEnd('startTime', 'endTime'));
+    }
+    this.validityTimesControl.updateValueAndValidity();
   }
 }

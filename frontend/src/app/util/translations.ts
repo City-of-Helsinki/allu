@@ -355,7 +355,8 @@ export const translations = {
     note: {
       field: {
         validityStartTimeMissing: 'Alkupäivämäärä puuttuu',
-        validityEndTimeMissing: 'Loppupäivämäärä puuttuu'
+        validityEndTimeMissing: 'Loppupäivämäärä puuttuu',
+        validityDurationAtMax: 'Vuosittain toistuvan muistiinpanon keston täytyy olla alle vuosi'
       }
     },
     trafficArrangement: {

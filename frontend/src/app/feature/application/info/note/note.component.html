@@ -52,6 +52,9 @@
                     <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                       {{'application.note.field.validityEndTimeMissing' | translation}}
                     </field-error>
+                    <field-error [form]="applicationForm" field="validityTimes" hasError="durationAtMax">
+                      {{'application.note.field.validityDurationAtMax' | translation}}
+                    </field-error>
                   </mat-hint>
                 </mat-form-field>
               </div>
