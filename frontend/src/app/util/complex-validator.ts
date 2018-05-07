@@ -85,7 +85,7 @@ export class ComplexValidator {
       const end = this.fieldValue(fg, endField);
 
       if (start && end) {
-        let maxEnd = new Date(start);
+        const maxEnd = new Date(start);
         maxEnd.setDate(maxEnd.getDate() + maxDurationAtDays);
 
         const valid = TimeUtil.isBefore(end, maxEnd);
