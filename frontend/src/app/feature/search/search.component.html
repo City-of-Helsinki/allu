@@ -144,7 +144,7 @@
 
         <ng-container matColumnDef="customers.applicant.customer.name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.applicant.customer.name}}</mat-cell>
+          <mat-cell *matCellDef="let row">{{row.applicant.customer?.name}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="locations.streetAddress">
