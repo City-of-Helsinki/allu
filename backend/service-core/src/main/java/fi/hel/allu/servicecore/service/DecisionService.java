@@ -183,6 +183,7 @@ public class DecisionService {
     decisionJson.setDecisionId(application.getApplicationId());
     decisionJson.setCustomerAddressLines(customerAddressLines(application));
     decisionJson.setCustomerContactLines(customerContactLines(application));
+    decisionJson.setApplicantName(applicantName(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
     final Map<ApplicationKind, List<ApplicationSpecifier>> applicationsKindsWithSpecifiers = application.getKindsWithSpecifiers();
     final List<KindWithSpecifiers> kindsWithSpecifiers = new ArrayList<>();
@@ -493,6 +494,7 @@ public class DecisionService {
     PlacementContractJson placementContract = (PlacementContractJson)applicationJson.getExtension();
     if (placementContract != null) {
       decisionJson.setSectionNumber(placementContract.getSectionNumber());
+      decisionJson.setContractText(placementContract.getContractText());
     }
   }
   /*
@@ -580,6 +582,12 @@ public class DecisionService {
             .flatMap(c -> Stream.of(c.getName(), combinePossibleBlankStrings(c.getEmail(), c.getPhone())))
             .collect(Collectors.toList())));
     return contactLines;
+  }
+
+  private String applicantName(ApplicationJson applicationJson) {
+    Optional<CustomerWithContactsJson> cwcOpt =
+        applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
+    return cwcOpt.map(cwc -> cwc.getCustomer().getName()).orElse(null);
   }
 
   private String combinePossibleBlankStrings(String first, String second) {

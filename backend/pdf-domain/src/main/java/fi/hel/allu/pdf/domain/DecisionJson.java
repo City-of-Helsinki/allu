@@ -79,6 +79,8 @@ public class DecisionJson {
   private List<ChargeInfoTexts> chargeInfoEntries;
   private Integer sectionNumber;
   private List<KindWithSpecifiers> kinds;
+  private String contractText;
+  private String applicantName;
 
   public boolean isDraft() {
     return isDraft;
@@ -490,5 +492,21 @@ public class DecisionJson {
 
   public void setKinds(List<KindWithSpecifiers> kinds) {
     this.kinds = kinds;
+  }
+
+  public String getContractText() {
+    return contractText;
+  }
+
+  public void setContractText(String contractText) {
+    this.contractText = contractText;
+  }
+
+  public String getApplicantName() {
+    return applicantName;
+  }
+
+  public void setApplicantName(String applicantName) {
+    this.applicantName = applicantName;
   }
 }
