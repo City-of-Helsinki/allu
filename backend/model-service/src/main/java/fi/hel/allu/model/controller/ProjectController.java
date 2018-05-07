@@ -1,6 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Project;
@@ -24,8 +23,6 @@ import java.util.Optional;
 @RequestMapping("/projects")
 public class ProjectController {
 
-  @Autowired
-  private ApplicationDao applicationDao;
   @Autowired
   private ProjectService projectService;
 
@@ -158,5 +155,10 @@ public class ProjectController {
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<List<Project>> updateProjectInformation(@RequestParam(required = true) int userId, @Valid @RequestBody(required = true) List<Integer> projectIds) {
     return new ResponseEntity<>(projectService.updateProjectInformation(projectIds, userId), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/nextProjectNumber", method = RequestMethod.POST)
+  public ResponseEntity<Integer> getNextProjectNumber() {
+    return new ResponseEntity<>(projectService.getNextProjectNumber(), HttpStatus.OK);
   }
 }

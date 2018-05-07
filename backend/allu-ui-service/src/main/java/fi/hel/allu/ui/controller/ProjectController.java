@@ -169,4 +169,10 @@ public class ProjectController {
   public ResponseEntity<List<ChangeHistoryItemJson>> getChanges(@PathVariable int id) {
     return new ResponseEntity<>(projectService.getChanges(id), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/nextProjectNumber", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Integer> getNextProjectNumber() {
+    return new ResponseEntity<>(projectService.getNextProjectNumber(), HttpStatus.OK);
+  }
 }

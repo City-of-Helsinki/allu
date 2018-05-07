@@ -135,6 +135,13 @@ export class ProjectService {
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.removeParentFailed')));
   }
 
+  public getNextProjectNumber(): Observable<number> {
+    const url = [ProjectService.PROJECT_URL, 'nextProjectNumber'].join('/');
+    return this.authHttp.post(url, null)
+      .map(response => response.json())
+      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.nextProjectNumberFailed')));
+  }
+
   private getProjects(url: string): Observable<Array<Project>> {
     return this.authHttp.get(url)
       .map(response => response.json())

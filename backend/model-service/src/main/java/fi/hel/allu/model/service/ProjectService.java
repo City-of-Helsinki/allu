@@ -251,6 +251,11 @@ public class ProjectService {
     return historyDao.getProjectHistory(projectId);
   }
 
+  @Transactional
+  public int getNextProjectNumber() {
+    return projectDao.getNextProjectNumber();
+  }
+
   /**
    * Resolve parent and grandparent ids of the given project.
    *
