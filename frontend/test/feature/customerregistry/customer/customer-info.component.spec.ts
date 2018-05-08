@@ -85,7 +85,8 @@ describe('CustomerInfoComponent', () => {
       }),
       phone: ['phoneTest'],
       email: ['emailTest'],
-      invoicingOnly: [true]
+      invoicingOnly: [true],
+      projectIdentifierPrefix: []
     });
 
     comp.form = customerForm;
