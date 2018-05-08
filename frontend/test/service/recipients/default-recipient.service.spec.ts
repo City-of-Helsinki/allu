@@ -1,27 +1,13 @@
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {AuthHttp} from 'angular2-jwt';
-import {
-  BaseRequestOptions,
-  ConnectionBackend,
-  Http,
-  HttpModule,
-  RequestMethod,
-  RequestOptions,
-  Response,
-  ResponseOptions,
-  ResponseType
-} from '@angular/http';
-import {MockBackend} from '@angular/http/testing';
+
 import {DefaultRecipient} from '../../../src/app/model/common/default-recipient';
 import {DefaultRecipientService} from '../../../src/app/service/recipients/default-recipient.service';
 import {ErrorHandler} from '../../../src/app/service/error/error-handler.service';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {RECIPIENT_NEW, RECIPIENT_ONE, RECIPIENT_TWO} from './default-recipient-mock-values';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpClient} from '@angular/common/http';
 
-const ERROR_RESPONSE = new Response(new ResponseOptions({
-  type: ResponseType.Error,
-  status: 404
-}));
+const API_URL = '/api/default-recipients';
 
 class ErrorHandlerMock {
   handle(error: any, message?: string) {}
@@ -29,38 +15,30 @@ class ErrorHandlerMock {
 
 describe('DefaultRecipientService', () => {
   let service: DefaultRecipientService;
-  let backend: MockBackend;
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
   let errorHandler: ErrorHandlerMock;
-  let lastConnection: any;
-  let authHttp: AuthHttp;
+
 
   beforeEach(() => {
     const tb = TestBed.configureTestingModule({
-      imports: [HttpModule],
+      imports: [HttpClientTestingModule],
       providers: [
-        MockBackend,
-        BaseRequestOptions,
-        { provide: ConnectionBackend, useClass: MockBackend },
-        { provide: RequestOptions, useClass: BaseRequestOptions },
-        Http,
-        { provide: AuthHttp, useExisting: Http, deps: [Http] },
         { provide: ErrorHandler, useClass: ErrorHandlerMock},
         DefaultRecipientService
       ]
     });
     service = tb.get(DefaultRecipientService);
-    backend = tb.get(ConnectionBackend) as MockBackend;
-    backend.connections.subscribe((connection: any) => lastConnection = connection);
+    httpClient = tb.get(HttpClient);
+    httpTestingController = tb.get(HttpTestingController);
     errorHandler = tb.get(ErrorHandler) as ErrorHandlerMock;
-    authHttp = tb.get(AuthHttp);
   });
 
   it('getComments() should return queried comments', fakeAsync(() => {
     let result: Array<DefaultRecipient>;
     service.getDefaultRecipients().subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      body: JSON.stringify([RECIPIENT_ONE, RECIPIENT_TWO])
-    })));
+    const req = httpTestingController.expectOne(API_URL);
+    req.flush([RECIPIENT_ONE, RECIPIENT_TWO]);
     tick();
     expect(result[0]).toEqual(RECIPIENT_ONE, ' RECIPIENT_ONE should be the first recipient');
     expect(result[1]).toEqual(RECIPIENT_TWO, ' RECIPIENT_TWO should be the second recipient');
@@ -70,7 +48,8 @@ describe('DefaultRecipientService', () => {
     let result: Array<DefaultRecipient>;
     spyOn(errorHandler, 'handle');
     service.getDefaultRecipients().subscribe(r => result = r, error => {});
-    lastConnection.mockError(ERROR_RESPONSE);
+    const req = httpTestingController.expectOne(API_URL);
+    req.error(new ErrorEvent('Expected'));
     tick();
     expect(result).toBeUndefined();
     expect(errorHandler.handle).toHaveBeenCalledTimes(1);
@@ -82,62 +61,57 @@ describe('DefaultRecipientService', () => {
     updatedRecipient.id = 10;
 
     service.saveDefaultRecipient(RECIPIENT_NEW).subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      body: JSON.stringify(updatedRecipient)
-    })));
+    const req = httpTestingController.expectOne(API_URL);
+    req.flush(updatedRecipient);
+
     tick();
-    expect(lastConnection.request.method).toEqual(RequestMethod.Post);
+    expect(req.request.method).toEqual('POST');
     expect(result).toEqual(updatedRecipient, 'Recipient was not saved');
   }));
+
 
   it('save() recipient with id should update', fakeAsync(() => {
     let result: DefaultRecipient;
     service.saveDefaultRecipient(RECIPIENT_ONE).subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      body: JSON.stringify(RECIPIENT_ONE)
-    })));
+    const req = httpTestingController.expectOne(`${API_URL}/${RECIPIENT_ONE.id}`);
+    req.flush(RECIPIENT_ONE);
     tick();
-    expect(lastConnection.request.method).toEqual(RequestMethod.Put);
+    expect(req.request.method).toEqual('PUT');
     expect(result).toEqual(RECIPIENT_ONE, 'RECIPIENT was not saved');
   }));
 
-  it('save() comment should handle errors', fakeAsync(() => {
+
+  it('save() recipien should handle errors', fakeAsync(() => {
     let result: DefaultRecipient;
     spyOn(errorHandler, 'handle');
     service.saveDefaultRecipient(RECIPIENT_ONE).subscribe(r => result = r, error => {});
-    lastConnection.mockError(ERROR_RESPONSE);
+    const req = httpTestingController.expectOne(`${API_URL}/${RECIPIENT_ONE.id}`);
+    req.error(new ErrorEvent('Expected'));
     tick();
     expect(result).toBeUndefined();
     expect(errorHandler.handle).toHaveBeenCalledTimes(1);
   }));
 
-  it('remove() should remove comment with matching id', fakeAsync(() => {
-    let result: HttpResponse;
-    service.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      status: 200
-    })));
+
+  it('remove() should remove recipient with matching id', fakeAsync(() => {
+    service.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(() => {});
+    const req = httpTestingController.expectOne(`${API_URL}/${RECIPIENT_ONE.id}`);
     tick();
-    expect(lastConnection.request.method).toEqual(RequestMethod.Delete);
-    expect(result.status).toEqual(HttpStatus.OK);
+    expect(req.request.method).toEqual('DELETE');
   }));
 
-  it('remove() comment should handle errors', fakeAsync(() => {
-    let result: HttpResponse;
+  it('remove() recipient should handle errors', fakeAsync(() => {
     spyOn(errorHandler, 'handle');
-    service.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(r => result = r, error => {});
-    lastConnection.mockError(ERROR_RESPONSE);
+    service.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(() => {}, err => {});
+    const req = httpTestingController.expectOne(`${API_URL}/${RECIPIENT_ONE.id}`);
+    req.error(new ErrorEvent('Expected'));
     tick();
-    expect(result).toBeUndefined();
     expect(errorHandler.handle).toHaveBeenCalledTimes(1);
   }));
 
   it('remove() should do nothing when no id is passed', fakeAsync(() => {
-    let result: HttpResponse;
-    spyOn(authHttp, 'delete');
-    service.removeDefaultRecipient(undefined).subscribe(r => result = r);
+    service.removeDefaultRecipient(undefined).subscribe(r => {});
+    const req = httpTestingController.expectNone(`${API_URL}/${RECIPIENT_ONE.id}`);
     tick();
-    expect(result.status).toEqual(HttpStatus.OK);
-    expect(authHttp.delete).not.toHaveBeenCalled();
   }));
 });

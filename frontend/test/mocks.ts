@@ -3,7 +3,6 @@ import {MetadataOverride} from '@angular/core/testing';
 import {Observable} from 'rxjs/Observable';
 import {Application} from '../src/app/model/application/application';
 import {Location} from '../src/app/model/common/location';
-import {HttpResponse, HttpStatus} from '../src/app/util/http-response';
 import {ApplicationStatus} from '../src/app/model/application/application-status';
 import {StatusChangeInfo} from '../src/app/model/application/status-change-info';
 import {Subject} from 'rxjs/Subject';
@@ -18,10 +17,7 @@ import {ApplicationState} from '../src/app/service/application/application-store
 import {Comment} from '../src/app/model/application/comment/comment';
 import {ApplicationType} from '../src/app/model/application/type/application-type';
 import {CityDistrict} from '../src/app/model/common/city-district';
-import {findTranslation} from '../src/app/util/translations';
 import {ErrorInfo} from '../src/app/service/error/error-info';
-import {MaterializeUtil} from '../src/app/util/materialize.util';
-import {Some} from '../src/app/util/option';
 
 /**
  * Mock for application state
@@ -60,8 +56,8 @@ export class ApplicationStoreMock {
     this.applicationCopy$.next(app);
   }
 
-  delete(id: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  delete(id: number): Observable<{}> {
+    return Observable.of({});
   }
 
   replace(): Observable<Application> {

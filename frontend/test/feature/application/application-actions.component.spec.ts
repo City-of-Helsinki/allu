@@ -1,5 +1,5 @@
-import {Component, DebugElement, ViewChild} from '@angular/core';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {Component, DebugElement} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
@@ -21,7 +21,6 @@ import {AttachmentInfo} from '../../../src/app/model/application/attachment/atta
 import {Location} from '../../../src/app/model/common/location';
 import {ApplicationType} from '../../../src/app/model/application/type/application-type';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {ApplicationStatus} from '../../../src/app/model/application/application-status';
 import {MatDialog} from '@angular/material';
@@ -190,7 +189,7 @@ describe('ApplicationActionsComponent', () => {
     applicationStore.updateType(ApplicationType.NOTE);
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'delete').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
+    spyOn(applicationStore, 'delete').and.returnValue(Observable.of({}));
     spyOn(notification, 'translateSuccess');
 
     const removeBtn = getButtonWithText(de, findTranslation('common.button.remove').toUpperCase());

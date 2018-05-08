@@ -8,7 +8,6 @@ import {ApplicationStatus, inHandling} from '../../model/application/application
 import {findTranslation} from '../../util/translations';
 import {NotificationService} from '../../service/notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
-import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
 import {ApplicationStore} from '../../service/application/application-store';
@@ -68,7 +67,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       this.changeStatus(confirmation)
         .switchMap(app => this.sendDecision(app.id, confirmation))
         .subscribe(
-          result => this.router.navigateByUrl('/workqueue'),
+          () => this.router.navigateByUrl('/workqueue'),
           error => this.notification.errorInfo(error));
     }
   }
@@ -96,11 +95,11 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     this.notification.success(findTranslation(['decision.type', this.application.status, 'confirmation']));
   }
 
-  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<HttpResponse> {
+  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<{}> {
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
       .map(details => this.decisionHub.sendDecision(appId, details))
-      .orElse(Observable.of(new HttpResponse(HttpStatus.OK)));
+      .orElseGet(() => Observable.of({}));
   }
 }

@@ -5,7 +5,6 @@ import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {NotificationService} from '../notification/notification.service';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse} from '../../util/http-response';
 import {ArrayUtil} from '../../util/array-util';
 
 export interface StoredFilterTypeState {
@@ -88,7 +87,7 @@ export class StoredFilterStore {
       .do(saved => this.loadAndSetCurrent(saved));
   }
 
-  remove(id: number): Observable<HttpResponse> {
+  remove(id: number): Observable<{}> {
     return this.storedFilterService.remove(id)
       .do(() => this.loadAndClearCurrent(id));
   }

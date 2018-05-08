@@ -22,7 +22,6 @@ import {User} from '../../../../src/app/model/user/user';
 import {SupervisionTaskType} from '../../../../src/app/model/application/supervision/supervision-task-type';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
 import {ErrorInfo} from '../../../../src/app/service/error/error-info';
-import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
 import {findTranslation} from '../../../../src/app/util/translations';
 import {UserHub} from '../../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../../src/app/model/user/user-search-criteria';
@@ -70,8 +69,8 @@ class SupervisionTaskStoreMock {
     return Observable.of(task);
   }
 
-  removeTask(applicationId: number, taskId: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  removeTask(applicationId: number, taskId: number): Observable<{}> {
+    return Observable.of({});
   }
 }
 
@@ -196,7 +195,7 @@ describe('SupervisionTaskComponent', () => {
     const onRemove = comp.onRemove;
     spyOn(onRemove, 'emit');
     spyOn(notification, 'translateSuccess');
-    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
+    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.of({}));
 
     patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     const removeBtn = de.query(By.css('#remove')).nativeElement;

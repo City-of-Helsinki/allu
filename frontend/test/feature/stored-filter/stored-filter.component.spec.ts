@@ -5,9 +5,7 @@ import {StoredFilter} from '../../../src/app/model/user/stored-filter';
 import {async, ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick} from '@angular/core/testing';
 import {NotificationServiceMock, UserServiceMock} from '../../mocks';
 import {StoredFilterComponent} from '../../../src/app/feature/stored-filter/stored-filter.component';
-import {StoredFilterService} from '../../../src/app/service/stored-filter/stored-filter.service';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {UserService} from '../../../src/app/service/user/user-service';
 import {StoredFilterModule} from '../../../src/app/feature/stored-filter/stored-filter.module';
 import {By} from '@angular/platform-browser';
@@ -49,8 +47,8 @@ class StoredFilterStoreMock {
     return Observable.of(filter);
   }
 
-  remove(id: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  remove(id: number): Observable<{}> {
+    return Observable.of({});
   }
 
   currentChange(filter: StoredFilter): void {

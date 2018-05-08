@@ -2,7 +2,6 @@ import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {SupervisionTaskSearchCriteria} from '../../../src/app/model/application/supervision/supervision-task-search-criteria';
 import {Observable} from 'rxjs/Observable';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {SupervisionTaskService} from '../../../src/app/service/supervision/supervision-task.service';
 import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
@@ -18,12 +17,12 @@ class SupervisionTaskServiceMock {
     return Observable.of(new Page<SupervisionWorkItem>());
   }
 
-  changeOwner(ownerId: number, taskIds: Array<number>): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  changeOwner(ownerId: number, taskIds: Array<number>): Observable<{}> {
+    return Observable.of({});
   }
 
-  removeOwner(taskIds: Array<number>): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  removeOwner(taskIds: Array<number>): Observable<{}> {
+    return Observable.of({});
   }
 }
 

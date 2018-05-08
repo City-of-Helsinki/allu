@@ -6,7 +6,6 @@ import {Page} from '../../../src/app/model/common/page';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {Sort} from '../../../src/app/model/common/sort';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {PageRequest} from '../../../src/app/model/common/page-request';
 
 
@@ -48,11 +47,11 @@ export class SupervisionWorkItemStoreMock {
   public toggleSingle(taskId: number, checked: boolean) {
   }
 
-  public changeHandlerForSelected(handlerId: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  public changeHandlerForSelected(handlerId: number): Observable<{}> {
+    return Observable.of({});
   }
 
-  public removeHandlerFromSelected(): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  public removeHandlerFromSelected(): Observable<{}> {
+    return Observable.of({});
   }
 }

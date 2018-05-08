@@ -52,7 +52,3 @@ export enum HttpStatus {
   UNSUPPORTED_MEDIA_TYPE = 415,
   USE_PROXY = 305
 }
-
-export class HttpResponse {
-  constructor(public status: HttpStatus, public message?: string) {}
-}

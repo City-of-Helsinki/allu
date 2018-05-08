@@ -10,7 +10,6 @@ import {CommentType} from '../../../../src/app/model/application/comment/comment
 import {Comment} from '../../../../src/app/model/application/comment/comment';
 import {ErrorInfo} from '../../../../src/app/service/error/error-info';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
-import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
 import {
   ApplicationStoreMock,
   availableToDirectiveMockMeta,
@@ -138,7 +137,7 @@ describe('CommentsComponent', () => {
   }));
 
   it('should remove comment', fakeAsync(() => {
-    spyOn(applicationStore, 'removeComment').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK, 'Good job')));
+    spyOn(applicationStore, 'removeComment').and.returnValue(Observable.of({}));
     spyOn(notification, 'success');
     fixture.detectChanges();
     fixture.whenStable().then(val => {

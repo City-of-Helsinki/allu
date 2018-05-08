@@ -5,7 +5,6 @@ import {SupervisionWorkItem} from '../../model/application/supervision/supervisi
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {SupervisionTaskService} from '../../service/supervision/supervision-task.service';
-import {HttpResponse} from '../../util/http-response';
 import {ArrayUtil} from '../../util/array-util';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
@@ -97,13 +96,13 @@ export class SupervisionWorkItemStore {
     this.selectedItems(selected);
   }
 
-  public changeHandlerForSelected(handlerId: number): Observable<HttpResponse> {
+  public changeHandlerForSelected(handlerId: number): Observable<{}> {
     const selected = this.store.getValue().selectedItems;
     return this.service.changeOwner(handlerId, selected)
       .do(search => this.refresh());
   }
 
-  public removeHandlerFromSelected(): Observable<HttpResponse> {
+  public removeHandlerFromSelected(): Observable<{}> {
     const selected = this.store.getValue().selectedItems;
     return this.service.removeOwner(selected)
       .do(search => this.refresh());
