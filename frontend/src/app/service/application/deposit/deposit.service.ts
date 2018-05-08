@@ -21,6 +21,7 @@ export class DepositService {
   fetchByApplication(applicationId: number): Observable<Deposit> {
     const url = APPLICATION_DEPOSIT_URL.replace(':appId', String(applicationId));
     return this.http.get<BackendDeposit>(url)
+      .filter(deposit => !!deposit)
       .map(deposit => DepositMapper.mapBackend(deposit))
       .catch(error => this.errorHandler.handle(error, findTranslation('deposit.error.fetch')));
   }
