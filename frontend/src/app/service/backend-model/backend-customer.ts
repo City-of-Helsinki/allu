@@ -15,4 +15,5 @@ export interface BackendCustomer {
   invoicingProhibited?: boolean;
   invoicingOnly: boolean;
   country: string;
+  projectIdentifierPrefix?: string;
 }

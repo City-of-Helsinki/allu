@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
+import com.querydsl.sql.SQLExpressions;
 import static fi.hel.allu.QProject.project;
 
 @Repository
@@ -75,5 +76,10 @@ public class ProjectDao {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
     return findById(id).get();
+  }
+
+  @Transactional
+  public int getNextProjectNumber() {
+    return queryFactory.select(SQLExpressions.nextval(Integer.class, "allu.project_identifier_prefix_seq")).fetchOne();
   }
 }

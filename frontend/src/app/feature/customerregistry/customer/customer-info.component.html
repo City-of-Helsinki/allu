@@ -208,8 +208,15 @@
     </div>
   </div>
 
-  <div fxLayout="row">
-    <div fxFlex *ngIf="showInvoicingOnly">
+  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+    <div fxFlex="calc(50% - 18px)">
+      <mat-form-field class="input-full-width">
+        <input matInput type="text" formControlName="projectIdentifierPrefix"
+            [placeholder]="'customer.projectIdentifierPrefix' | translation"/>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex="calc(50% - 18px)" *ngIf="showInvoicingOnly">
         <mat-checkbox class="input-field-checkbox" formControlName="invoicingOnly" labelPosition='after'>
           {{'customer.invoicingOnly' | translation}}
         </mat-checkbox>

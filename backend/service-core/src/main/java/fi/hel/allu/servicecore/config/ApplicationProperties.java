@@ -278,6 +278,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/projects/{id}/history");
   }
 
+  public String getProjectNextProjectNumberUrl() {
+    return getModelServiceUrl("/projects/nextProjectNumber");
+  }
+
   /**
    * @return url to find possibly multiple applications by given identifiers.
    */

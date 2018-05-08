@@ -174,4 +174,8 @@ public class ProjectService {
         .map(c -> ChangeHistoryMapper.mapToJson(c))
         .collect(Collectors.toList());
   }
+
+  public Integer getNextProjectNumber() {
+    return restTemplate.postForObject(applicationProperties.getProjectNextProjectNumberUrl(), null, Integer.class);
+  }
 }

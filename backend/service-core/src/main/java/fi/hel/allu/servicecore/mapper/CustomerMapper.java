@@ -53,6 +53,7 @@ public class CustomerMapper {
     if (customer.getCountryId() != null) {
       customerJson.setCountry(codeSetService.findById(customer.getCountryId()).getCode());
     }
+    customerJson.setProjectIdentifierPrefix(customer.getProjectIdentifierPrefix());
     return customerJson;
   }
 
@@ -74,6 +75,7 @@ public class CustomerMapper {
     if (customerJson.getCountry() != null) {
       customerModel.setCountryId(codeSetService.findByTypeAndCode(CodeSetType.Country, customerJson.getCountry()).getId());
     }
+    customerModel.setProjectIdentifierPrefix(customerJson.getProjectIdentifierPrefix());
     return customerModel;
   }
 

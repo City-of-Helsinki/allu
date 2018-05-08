@@ -15,7 +15,8 @@ export class Customer {
     public active = true,
     public sapCustomerNumber?: string,
     public invoicingProhibited = false,
-    public invoicingOnly = false) {
+    public invoicingOnly = false,
+    public projectIdentifierPrefix?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
   }
 }

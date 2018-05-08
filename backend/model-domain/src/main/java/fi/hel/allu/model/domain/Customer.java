@@ -28,6 +28,7 @@ public class Customer implements PostalAddressItem {
   private boolean invoicingOnly;
   @NotNull
   private Integer countryId;
+  private String projectIdentifierPrefix;
 
   public Integer getId() {
     return id;
@@ -197,6 +198,14 @@ public class Customer implements PostalAddressItem {
     this.countryId = countryId;
   }
 
+  public String getProjectIdentifierPrefix() {
+    return projectIdentifierPrefix;
+  }
+
+  public void setProjectIdentifierPrefix(String projectIdentifierPrefix) {
+    this.projectIdentifierPrefix = projectIdentifierPrefix;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -211,5 +220,4 @@ public class Customer implements PostalAddressItem {
   public int hashCode() {
     return id != null ? id.hashCode() : 0;
   }
-
 }
