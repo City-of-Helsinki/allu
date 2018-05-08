@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 
 import {Project} from '../../model/project/project';
 import {ProjectMapper} from '../mapper/project-mapper';
-import {HttpUtil} from '../../util/http.util';
 import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
 import {ProjectSearchQuery} from '../../model/project/project-search-query';
@@ -116,8 +115,7 @@ export class ProjectService {
 
   public getNextProjectNumber(): Observable<number> {
     const url = [ProjectService.PROJECT_URL, 'nextProjectNumber'].join('/');
-    return this.authHttp.post(url, null)
-      .map(response => response.json())
+    return this.http.post<number>(url, null)
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.nextProjectNumberFailed')));
   }
 
