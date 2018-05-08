@@ -14,6 +14,7 @@ import {EnumUtil} from '../../util/enum.util';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
 import {StoredFilter} from '../../model/user/stored-filter';
+import {TimeUtil} from '../../util/time.util';
 
 enum BarType {
   SIMPLE, // Front page
@@ -94,6 +95,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   public notifySearchUpdated(filter: MapSearchFilter): void {
+    this.adjustStartAndStopDates(filter);
     if (this.useLocationSearch) {
       this.mapStore.locationSearchFilterChange(filter);
     } else {
@@ -123,5 +125,14 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   private get useLocationSearch(): boolean {
     return BarType.BAR === BarType[this.barType];
+  }
+
+  private adjustStartAndStopDates(filter: MapSearchFilter): void {
+    if (filter.startDate) {
+      filter.startDate = TimeUtil.toStartDate(filter.startDate);
+    }
+    if (filter.endDate) {
+      filter.endDate = TimeUtil.toEndDate(filter.endDate);
+    }
   }
 }
