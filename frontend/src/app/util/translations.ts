@@ -1238,6 +1238,7 @@ export const translations = {
     field: {
       rowTextMissing: 'Laskuperuste puuttuu',
       quantityMissing: 'Määrä puuttuu',
+      unitMissing: 'Yksikkö puuttuu',
       unitPriceMissing: 'Yksikköhinta puuttuu',
       discountMissing: 'Alennus puuttuu',
       discountPercentageMissing: 'Alennusprosentti puuttuu'
