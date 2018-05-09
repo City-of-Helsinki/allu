@@ -53,7 +53,7 @@ public class AreaUsageTagTest {
     ChargeBasisEntry e1 = new ChargeBasisEntry("ArUs1", null, true, ChargeBasisType.AREA_USAGE_FEE,
         ChargeBasisUnit.PIECE, 1, "Entry 1", new String[] { "One entry", "Item" }, 1, 1);
     ChargeBasisEntry e2 = new ChargeBasisEntry(null, "ArUs1", true, ChargeBasisType.DISCOUNT,
-        ChargeBasisUnit.PIECE, 1, "Entry 1", new String[] { "Discount entry", "Discount" }, 1, 1);
+        ChargeBasisUnit.PIECE, 1, "Entry 2", new String[] { "Discount entry", "Discount" }, 1, 1);
 
     List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
     chargeBasisService.setManualChargeBasis(1, entries);
@@ -64,7 +64,28 @@ public class AreaUsageTagTest {
     final ChargeBasisEntry entry1 = savedEntries.get(0);
     assertEquals("ArUs1", entry1.getTag());
     final ChargeBasisEntry entry2 = savedEntries.get(1);
-    assertEquals("ArUs2", entry2.getTag());
+    assertEquals(null, entry2.getTag());
     assertEquals("ArUs1", entry2.getReferredTag());
+  }
+
+  @Test
+  public void addSecondAreaUsageFee() {
+    ChargeBasisEntry e1 = new ChargeBasisEntry("ArUs1", null, true, ChargeBasisType.AREA_USAGE_FEE,
+        ChargeBasisUnit.PIECE, 1, "Entry 1", new String[] { "One entry", "Item" }, 1, 1);
+    ChargeBasisEntry e2 = new ChargeBasisEntry(null, null, true, ChargeBasisType.AREA_USAGE_FEE,
+        ChargeBasisUnit.PIECE, 1, "Entry 2", new String[] { "One entry", "Item" }, 1, 1);
+
+    List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
+    chargeBasisService.setManualChargeBasis(1, entries);
+    Mockito.verify(chargeBasisDao).setChargeBasis(Mockito.eq(1), captor.capture(), Mockito.eq(true));
+
+    final List<ChargeBasisEntry> savedEntries = captor.getValue();
+    assertEquals(2, savedEntries.size());
+    final ChargeBasisEntry entry1 = savedEntries.get(0);
+    assertEquals("ArUs1", entry1.getTag());
+    assertEquals(null, entry1.getReferredTag());
+    final ChargeBasisEntry entry2 = savedEntries.get(1);
+    assertEquals("ArUs2", entry2.getTag());
+    assertEquals(null, entry2.getReferredTag());
   }
 }
