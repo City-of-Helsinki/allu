@@ -18,7 +18,7 @@
     <charge-basis-negligence-fee [form]="chargeBasisEntryForm"
                                  *ngIf="chargeBasisEntryForm.value.type === 'NEGLIGENCE_FEE'"></charge-basis-negligence-fee>
     <charge-basis-additional-fee [form]="chargeBasisEntryForm"
-                                 *ngIf="chargeBasisEntryForm.value.type === 'ADDITIONAL_FEE'"></charge-basis-additional-fee>
+                                 *ngIf="chargeBasisEntryForm.value.type === 'ADDITIONAL_FEE' || chargeBasisEntryForm.value.type === 'AREA_USAGE_FEE'"></charge-basis-additional-fee>
   </div>
   <div mat-dialog-actions>
     <button type="submit" mat-raised-button color="primary" [disabled]="!chargeBasisEntryForm.valid">
