@@ -29,8 +29,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   form: FormGroup;
   chargeBasisEntries: FormArray;
   calculatedPrice: number;
-  canBeEdited = true;
-  modifyRole = false;
+  canBeEdited = false;
 
   private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
   private destroy = new Subject<boolean>();
@@ -56,8 +55,10 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
       .takeUntil(this.destroy)
       .subscribe(entries => this.entriesUpdated(entries));
 
-    this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
-      .subscribe(hasRequiredRole => this.modifyRole = hasRequiredRole);
+    Observable.combineLatest(
+      this.applicationStore.application,
+      this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role])),
+      (app, role) => applicationCanBeEdited(app.statusEnum) && role).subscribe(e => this.canBeEdited = e);
   }
 
   ngOnDestroy(): void {
@@ -99,7 +100,6 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   private onApplicationChange(app: Application): void {
     this.calculatedPrice = app.calculatedPriceEuro;
-    this.canBeEdited = applicationCanBeEdited(app.statusEnum) && this.modifyRole;
 
     this.invoiceHub.loadChargeBasisEntries(app.id)
       .takeUntil(this.destroy)
