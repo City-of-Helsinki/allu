@@ -128,6 +128,10 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.STRUF);
   }
 
+  public static ChargeBasisTag AreaUsageTag() {
+    return new ChargeBasisTag(TagText.ArUs);
+  }
+
   @Override
   public String toString() {
     return asString;
@@ -188,7 +192,9 @@ private enum TagText {
     // Short term rental, Summer theater
     STRST,
     // Short term rental, Urban farming
-    STRUF
+    STRUF,
+    // Area Usage
+    ArUs
   }
 
 }

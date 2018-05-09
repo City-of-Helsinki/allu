@@ -1199,6 +1199,10 @@ export const translations = {
         title: 'Laskettu',
         basis: 'Peruste'
       },
+      AREA_USAGE_FEE: {
+        title: 'Alueenkäyttömaksu',
+        basis: 'Alueenkäyttömaksun peruste'
+      },
       NEGLIGENCE_FEE: {
         title: 'Laiminlyöntimaksu',
         basis: 'Laiminlyöntimaksun peruste'
