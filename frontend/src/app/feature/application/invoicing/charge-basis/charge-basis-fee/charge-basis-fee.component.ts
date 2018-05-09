@@ -4,11 +4,11 @@ import {EnumUtil} from '../../../../../util/enum.util';
 import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-basis-unit';
 
 @Component({
-  selector: 'charge-basis-additional-fee',
-  templateUrl: './charge-basis-additional-fee.component.html',
+  selector: 'charge-basis-fee',
+  templateUrl: './charge-basis-fee.component.html',
   styleUrls: []
 })
-export class ChargeBasisAdditionalFeeComponent {
+export class ChargeBasisFeeComponent {
 
   @Input() form: FormGroup;
   unitTypes = EnumUtil.enumValues(ChargeBasisUnit);
