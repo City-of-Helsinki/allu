@@ -769,11 +769,15 @@ public class ApplicationDao {
    */
   @Transactional(readOnly = true)
   public StatusType getStatus(int applicationId) {
-    return queryFactory
+    StatusType status = queryFactory
         .select(application.status)
         .from(application)
         .where(application.id.eq(applicationId))
         .fetchOne();
+    if (status == null) {
+      throw new NoSuchEntityException("No application status found for ID {}", applicationId);
+    }
+    return status;
   }
 
   @Transactional(readOnly = true)
@@ -783,6 +787,10 @@ public class ApplicationDao {
         .from(application)
         .where(application.id.eq(applicationId))
         .fetchOne();
+  }
+
+  public void updateCalculatedPrice(Integer id, Integer calculatedPrice) {
+    queryFactory.update(application).set(application.calculatedPrice, calculatedPrice).where(application.id.eq(id)).execute();
   }
 
 }

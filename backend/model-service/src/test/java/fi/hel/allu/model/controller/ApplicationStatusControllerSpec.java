@@ -1,5 +1,12 @@
 package fi.hel.allu.model.controller;
 
+import org.junit.Assert;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.ResultActions;
+
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.CustomerType;
@@ -8,20 +15,12 @@ import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerChange;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
-import fi.hel.allu.model.testUtils.WebTestCommon;
 import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
-import org.junit.Assert;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.ResultActions;
-
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,11 +41,12 @@ public class ApplicationStatusControllerSpec extends SpeccyTestBase {
 
     beforeEach(() -> {
       wtc.setup();
+      User testUser = tc.insertUser("testuser");
 
       Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Owner");
       final Customer newCustomer = insertCustomer("TestCustomer", "SAP_ID", newApplication.getOwner());
       newApplication.setInvoiceRecipientId(newCustomer.getId());
-      ResultActions resultActions = wtc.perform(post("/applications"), newApplication).andExpect(status().isOk());
+      ResultActions resultActions = wtc.perform(post("/applications?userId=" + testUser.getId()), newApplication).andExpect(status().isOk());
       testApplication = wtc.parseObjectFromResult(resultActions, Application.class);
     });
 

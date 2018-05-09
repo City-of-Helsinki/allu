@@ -78,7 +78,7 @@ public class ApplicationReplacementService {
   public int replaceApplication(int applicationId, int userId) {
     // Copy application
     Application applicationToReplace = applicationService.findById(applicationId);
-    Application replacingApplication = addReplacingApplication(applicationToReplace);
+    Application replacingApplication = addReplacingApplication(applicationToReplace, userId);
 
     copyApplicationRelatedData(applicationId, replacingApplication, userId);
 
@@ -96,13 +96,12 @@ public class ApplicationReplacementService {
     applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
     supervisionTaskDao.copySupervisionTasks(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
-    locationService.copyApplicationLocations(applicationId, replacingApplication.getId(), userId);
   }
 
-  private Application addReplacingApplication(Application applicationToReplace) {
+  private Application addReplacingApplication(Application applicationToReplace, int userId) {
     validateReplacementAllowed(applicationToReplace);
     Application replacingApplication = createReplacingApplication(applicationToReplace);
-    replacingApplication = applicationService.insert(replacingApplication);
+    replacingApplication = applicationService.insert(replacingApplication, userId);
     return replacingApplication;
   }
 
@@ -131,7 +130,7 @@ public class ApplicationReplacementService {
     application.setCustomerReference(applicationToReplace.getCustomerReference());
     application.setInvoicingDate(applicationToReplace.getInvoicingDate());
     application.setIdentificationNumber(applicationToReplace.getIdentificationNumber());
-
+    setApplicationLocations(applicationToReplace, application);
     // Application DAO will automatically create copies of following
     application.setApplicationTags(applicationToReplace.getApplicationTags().stream()
         .filter(t -> !TAG_TYPES_NOT_COPIED.contains(t.getType())).collect(Collectors.toList()));
@@ -140,6 +139,17 @@ public class ApplicationReplacementService {
     application.setKindsWithSpecifiers(applicationToReplace.getKindsWithSpecifiers());
     application.setReplacesApplicationId(applicationToReplace.getId());
     return application;
+  }
+
+  public void setApplicationLocations(Application applicationToReplace, Application application) {
+    List<Location> locations = locationService.findByApplicationId(applicationToReplace.getId());
+    locations.forEach(l -> clearIds(l));
+    application.setLocations(locations);
+  }
+
+  private void clearIds(Location location) {
+    location.setId(null);
+    location.setApplicationId(null);
   }
 
   private String generateReplacingApplicationId(Application applicationToReplace) {

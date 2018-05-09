@@ -64,21 +64,21 @@ public class ApplicationControllerTest {
   @Test
   public void testAddApplication() throws Exception {
     Application app = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
-    wtc.perform(post("/applications"), app).andExpect(status().isOk());
+    wtc.perform(post("/applications?userId=" + testUser.getId()), app).andExpect(status().isOk());
   }
 
   @Test
   public void testAddApplicationWithId() throws Exception {
     Application app = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
     app.setId(123);
-    wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
+    wtc.perform(post("/applications?userId=\" + testUser.getId()"), app).andExpect(status().isBadRequest());
   }
 
   @Test
   public void testAddApplicationWithBadProject() throws Exception {
     Application app = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
     app.setProjectId(app.getProjectId() + 1);
-    wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
+    wtc.perform(post("/applications?userId=\" + testUser.getId()"), app).andExpect(status().isBadRequest());
   }
 
   @Test
@@ -128,7 +128,7 @@ public class ApplicationControllerTest {
     // Test: try to update the application
     appInResult.setStatus(StatusType.HANDLING);
     appInResult.setName("updatedname");
-    ResultActions resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
+    ResultActions resultActions = wtc.perform(put(String.format("/applications/%d?userId=" + testUser.getId() , appInResult.getId())), appInResult)
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
     assertEquals(StatusType.PENDING, updateResult.getStatus());
@@ -180,7 +180,7 @@ public class ApplicationControllerTest {
   @Test
   public void updateNonexistent() throws Exception {
     Application app = testCommon.dummyOutdoorApplication("Test Application", "Hanskaaja");
-    wtc.perform(put("/applications/314159"), app).andExpect(status().isNotFound());
+    wtc.perform(put("/applications/314159?userId=" + testUser.getId()), app).andExpect(status().isNotFound());
   }
 
   @Test
@@ -275,26 +275,6 @@ public class ApplicationControllerTest {
         .andExpect(status().isOk());
     AttachmentInfo[] results = wtc.parseObjectFromResult(resultActions, AttachmentInfo[].class);
     assertEquals(0, results.length);
-  }
-
-  /**
-   * Test that location can be deleted from application
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testDeleteApplicationLocation() throws Exception {
-    // Setup: create application with location
-    Application app = createLocationTestApplication(testAppParams[0], "Syrjäkuja 5", "Hämärähomma", 1);
-    ResultActions ra = wtc.perform(get(String.format("/locations/application/%d", app.getId()))).andExpect(status().isOk());
-    Location[] locations = wtc.parseObjectFromResult(ra, Location[].class);
-    assertEquals(1, locations.length);
-    // Test: delete the application's location and verify that it gets deleted.
-    Integer appId = app.getId();
-    wtc.perform(delete(String.format("/locations/application/%d", appId))).andExpect(status().isOk());
-    ra = wtc.perform(get(String.format("/locations/application/%d", app.getId()))).andExpect(status().isOk());
-    locations = wtc.parseObjectFromResult(ra, Location[].class);
-    assertEquals(0, locations.length);
   }
 
   /**
@@ -510,7 +490,7 @@ public class ApplicationControllerTest {
   private Application insertApplication(Application appIn) throws Exception {
     Integer userId = testCommon.insertUser("dummyUser" + System.currentTimeMillis()).getId();
     ControllerHelper.addDummyCustomer(wtc, appIn, userId, testCommon.getCountryIdOfFinland());
-    ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(post("/applications?userId=" + testUser.getId()), appIn).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
@@ -532,8 +512,8 @@ public class ApplicationControllerTest {
       ZonedDateTime startTime,
       ZonedDateTime endTime)
       throws Exception {
+    application.setLocations(Collections.singletonList(testCommon.createLocation(streetAddress, geometryCollection, startTime, endTime)));
     Application insertedApp = insertApplication(application);
-    testCommon.insertLocation(streetAddress, geometryCollection, insertedApp.getId(), startTime, endTime, testUser.getId());
     return insertedApp;
   }
 

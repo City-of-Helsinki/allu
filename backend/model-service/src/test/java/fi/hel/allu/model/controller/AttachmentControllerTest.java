@@ -7,6 +7,7 @@ import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.junit.Assert;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AttachmentControllerTest {
 
   private Application application;
-
+  private User user;
   @Autowired
   WebTestCommon wtc;
 
@@ -48,12 +49,15 @@ public class AttachmentControllerTest {
   @Autowired
   TestCommon testCommon;
 
+
+
   @Before
   public void setup() throws Exception {
     wtc.setup();
+    user = testCommon.insertUser("testuser");
 
     application = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
-    ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(post("/applications?userId=" + user.getId()), application).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(resultActions, Application.class);
   }
 

@@ -73,6 +73,8 @@ public class Application {
 
   private ClientApplicationData clientApplicationData;
 
+  private List<Location> locations;
+
   /**
    * in Finnish: Hakemuksen tunniste
    * <p>This is the database id.
@@ -508,5 +510,13 @@ public class Application {
 
   public void setIdentificationNumber(String identificationNumber) {
     this.identificationNumber = identificationNumber;
+  }
+
+  public List<Location> getLocations() {
+    return locations;
+  }
+
+  public void setLocations(List<Location> locations) {
+    this.locations = locations;
   }
 }

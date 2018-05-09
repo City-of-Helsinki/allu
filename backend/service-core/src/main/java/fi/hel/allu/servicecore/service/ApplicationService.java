@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.model.domain.*;
@@ -25,7 +27,6 @@ import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 public class ApplicationService {
   private ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
-  private final LocationService locationService;
   private final ApplicationMapper applicationMapper;
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
@@ -34,13 +35,11 @@ public class ApplicationService {
   public ApplicationService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
-      LocationService locationService,
       ApplicationMapper applicationMapper,
       UserService userService,
       PersonAuditLogService personAuditLogService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
-    this.locationService = locationService;
     this.applicationMapper = applicationMapper;
     this.userService = userService;
     this.personAuditLogService = personAuditLogService;
@@ -164,14 +163,10 @@ public class ApplicationService {
   Application createApplication(ApplicationJson newApplication) {
     newApplication.setApplicationTags(tagsWithUserInfo(newApplication.getApplicationTags()));
     Application applicationModel = restTemplate.postForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION),
+        applicationProperties.getApplicationCreateUrl(),
         applicationMapper.createApplicationModel(newApplication),
-        Application.class);
-
-    if (newApplication.getLocations() != null) {
-      locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
-    }
-
+        Application.class,
+        userService.getCurrentUser().getId());
     // need to fetch fresh Application from model, because at least setting location may change both handler and application start and end times
     return findApplicationById(applicationModel.getId());
   }
@@ -183,18 +178,10 @@ public class ApplicationService {
    * @return Updated application
    */
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
-    if (applicationJson.getLocations() != null) {
-      List<LocationJson> locationJsons = locationService.updateApplicationLocations(applicationId,
-          applicationJson.getLocations());
-      applicationJson.setLocations(locationJsons);
-    } else {
-      locationService.deleteApplicationLocation(applicationId);
-    }
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
-        HttpMethod.PUT, requestEntity, Application.class, applicationId);
-
+        HttpMethod.PUT, requestEntity, Application.class, applicationId, userService.getCurrentUser().getId());
     return responseEntity.getBody();
   }
 

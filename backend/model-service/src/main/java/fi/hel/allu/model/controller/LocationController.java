@@ -78,32 +78,6 @@ public class LocationController {
     return new ResponseEntity<>(locationService.insert(locations, userId), HttpStatus.OK);
   }
 
-  /**
-   * Delete a locations of given application.
-   *
-   * @param applicationId   id of the application.
-   */
-  // TODO: remove when locations are removed from the application class
-  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.DELETE)
-  public ResponseEntity<Void> deleteLocation(@PathVariable int applicationId) {
-    locationDao.deleteByApplication(applicationId);
-    // TODO: if this method is not removed completely, change it to make required updates to application and project too
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  /**
-   * Deletes given locations. All deleted locations must have the same application.
-   *
-   * @param   locations Locations to be deleted.
-   * @return  Void.
-   */
-  @RequestMapping(value = "/delete", method = RequestMethod.POST)
-  public ResponseEntity<Void> deleteLocations(@RequestParam(required = true) int userId,
-      @RequestBody List<Integer> locations) {
-    locationService.delete(locations, userId);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
   @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
   public ResponseEntity<List<FixedLocation>> getFixedLocationList(@RequestParam(value = "applicationkind", required=false) ApplicationKind applicationKind, @RequestParam(value="srid", required=false) Integer srId) {
     return new ResponseEntity<>(locationDao.getFixedLocationList(applicationKind, srId), HttpStatus.OK);

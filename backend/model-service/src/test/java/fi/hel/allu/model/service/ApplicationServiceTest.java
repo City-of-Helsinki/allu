@@ -1,14 +1,10 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.exception.IllegalOperationException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.domain.Customer;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,10 +13,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.domain.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
@@ -37,6 +35,9 @@ public class ApplicationServiceTest {
   private InvoiceService invoiceService;
   @Mock
   private CustomerDao customerDao;
+  @Mock
+  private LocationService locationService;
+
 
   private ApplicationService applicationService;
 
@@ -44,7 +45,7 @@ public class ApplicationServiceTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisService, invoiceService,
-        customerDao);
+        customerDao, locationService);
   }
 
   @Test
@@ -54,9 +55,10 @@ public class ApplicationServiceTest {
     Mockito.when(applicationDao.insert(Mockito.any(Application.class))).thenReturn(inserted);
 
     Application newApp = new Application();
+    newApp.setLocations(Collections.singletonList(new Location()));
     newApp.setName("Foo");
-    applicationService.insert(newApp);
-    Mockito.verify(pricingService).calculateChargeBasis(Mockito.eq(newApp));
+    applicationService.insert(newApp, 1);
+    Mockito.verify(pricingService).calculateChargeBasis(Mockito.eq(inserted));
     Mockito.verify(applicationDao).insert(Mockito.eq(newApp));
     Mockito.verify(chargeBasisService).setCalculatedChargeBasis(Mockito.eq(112), Mockito.anyListOf(ChargeBasisEntry.class));
   }
@@ -69,7 +71,7 @@ public class ApplicationServiceTest {
 
     Application application = new Application();
     application.setName("Foo");
-    applicationService.update(123, application);
+    applicationService.update(123, application, 1);
     Mockito.verify(pricingService).calculateChargeBasis(Mockito.eq(application));
     Mockito.verify(applicationDao).update(Mockito.eq(123), Mockito.eq(application));
     Mockito.verify(chargeBasisService).setCalculatedChargeBasis(Mockito.eq(123), Mockito.anyListOf(ChargeBasisEntry.class));
@@ -197,7 +199,7 @@ public class ApplicationServiceTest {
     final Application application = new Application();
     application.setId(APP_ID);
     Mockito.when(applicationDao.getStatus(APP_ID)).thenReturn(StatusType.CANCELLED);
-    applicationService.update(APP_ID, application);
+    applicationService.update(APP_ID, application, 1);
   }
 
   @Test(expected = IllegalOperationException.class)

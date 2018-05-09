@@ -44,8 +44,6 @@ import static org.junit.Assert.assertNotNull;
 public class ApplicationServiceTest extends MockServices {
   private static Validator validator;
   @Mock
-  protected LocationService locationService;
-  @Mock
   protected CustomerService customerService;
   @Autowired
   protected ApplicationMapper applicationMapper;
@@ -77,20 +75,16 @@ public class ApplicationServiceTest extends MockServices {
     initSearchMocks();
     userService = Mockito.mock(UserService.class);
 
-    Mockito.when(locationService.createLocations(Mockito.anyInt(), Mockito.anyObject())).thenAnswer((Answer<List<LocationJson>>) invocation ->
-        Collections.singletonList(createLocationJson(102)));
     Mockito.when(customerService.createCustomer(Mockito.anyObject())).thenAnswer((Answer<CustomerJson>) invocation ->
         createCustomerJson(103));
 
-    Mockito.when(locationService.findLocationById(Mockito.anyInt())).thenAnswer((Answer<LocationJson>) invocation ->
-        createLocationJson(102));
     Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer((Answer<CustomerJson>) invocation ->
         createCustomerJson(103));
 
     userJson = new UserJson(USER_ID, null, null, null, null, true, null, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
-    applicationService = new ApplicationService(props, restTemplate, locationService, applicationMapper, userService, personAuditLogService);
+    applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService, personAuditLogService);
   }
 
   @Test
@@ -129,7 +123,7 @@ public class ApplicationServiceTest extends MockServices {
   @Test
   public void testUpdateApplication() {
     Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(HttpEntity.class),
-        Mockito.eq(Application.class), Mockito.anyInt())).thenAnswer(
+        Mockito.eq(Application.class), Mockito.anyInt(), Mockito.anyInt())).thenAnswer(
             (Answer<ResponseEntity<Application>>) invocation -> new ResponseEntity<>(createMockApplicationModel(),
                 HttpStatus.CREATED));
 
@@ -156,7 +150,7 @@ public class ApplicationServiceTest extends MockServices {
     ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
 
     Mockito.verify(restTemplate, Mockito.times(1))
-        .postForObject(Mockito.anyString(), applicationArgumentCaptor.capture(), Mockito.eq(Application.class));
+        .postForObject(Mockito.anyString(), applicationArgumentCaptor.capture(), Mockito.eq(Application.class), Mockito.anyInt());
     Application application = applicationArgumentCaptor.getValue();
     assertEquals(1, application.getApplicationTags().size());
     assertEquals(USER_ID, (int) application.getApplicationTags().get(0).getAddedBy());
@@ -173,7 +167,7 @@ public class ApplicationServiceTest extends MockServices {
     ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
 
     Mockito.verify(restTemplate, Mockito.times(1))
-        .postForObject(Mockito.anyString(), applicationArgumentCaptor.capture(), Mockito.eq(Application.class));
+        .postForObject(Mockito.anyString(), applicationArgumentCaptor.capture(), Mockito.eq(Application.class), Mockito.anyInt());
     Application application = applicationArgumentCaptor.getValue();
     assertEquals(2, application.getApplicationTags().size());
     assertEquals(USER_ID, (int) application.getApplicationTags().get(0).getAddedBy());

@@ -64,7 +64,7 @@ public class ApplicationStatusService {
     if (application.getType() == ApplicationType.PLACEMENT_CONTRACT) {
       PlacementContract pc = (PlacementContract)application.getExtension();
       pc.setSectionNumber(decisionDao.getPlacementContractSectionNumber());
-      applicationService.update(application.getId(), application);
+      applicationService.update(application.getId(), application, userId);
 
       Location location = locationService.findSingleByApplicationId(application.getId());
       final ZonedDateTime startTime = TimeUtil.startOfDay(TimeUtil.homeTime(ZonedDateTime.now()));
