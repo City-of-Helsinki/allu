@@ -73,8 +73,6 @@ public class ApplicationJsonService {
         .map(owner -> userService.findUserById(owner))
         .ifPresent(owner -> json.setOwner(owner));
 
-    json.setLocations(locationService.findLocationsByApplication(model.getId()));
-
     return json;
   }
 }

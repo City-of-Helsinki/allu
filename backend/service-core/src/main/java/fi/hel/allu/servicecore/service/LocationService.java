@@ -38,17 +38,6 @@ public class LocationService {
     this.restTemplate = restTemplate;
   }
 
-  /**
-   * Find given location details by related application.
-   *
-   * @param applicationId   Id of the application whose locations should be returned.
-   * @return List of related locations or empty list.
-   */
-  public List<LocationJson> findLocationsByApplication(int applicationId) {
-    ResponseEntity<Location[]> locationResult = restTemplate.getForEntity(
-        applicationProperties.getLocationsByApplicationIdUrl(), Location[].class, applicationId);
-    return LocationMapper.mapToLocationJsons(locationResult.getBody());
-  }
 
   /**
    * Retrieve the list of defined fixed-locations

@@ -182,6 +182,7 @@ public class ApplicationMapper {
     applicationJson.setExternalOwnerId(application.getExternalOwnerId());
     applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData()));
     applicationJson.setIdentificationNumber(application.getIdentificationNumber());
+    applicationJson.setLocations(LocationMapper.mapToLocationJsons(application.getLocations()));
     return applicationJson;
   }
 

@@ -167,8 +167,8 @@ public class ApplicationService {
         applicationMapper.createApplicationModel(newApplication),
         Application.class,
         userService.getCurrentUser().getId());
-    // need to fetch fresh Application from model, because at least setting location may change both handler and application start and end times
-    return findApplicationById(applicationModel.getId());
+    return applicationModel;
+
   }
 
   /**

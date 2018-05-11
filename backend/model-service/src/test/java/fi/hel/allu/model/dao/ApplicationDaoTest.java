@@ -114,7 +114,8 @@ public class ApplicationDaoTest {
         distributionEntryDao,
         structureMetaDaoMock,
         Mockito.mock(CustomerDao.class),
-        Mockito.mock(AttachmentDao.class));
+        Mockito.mock(AttachmentDao.class),
+        Mockito.mock(LocationDao.class));
     Assert.assertEquals("TP1600001", applicationDao.createApplicationId(ApplicationType.EVENT));
   }
 

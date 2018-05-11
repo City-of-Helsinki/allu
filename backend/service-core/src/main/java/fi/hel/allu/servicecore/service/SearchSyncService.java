@@ -211,9 +211,7 @@ public class SearchSyncService {
 
   ApplicationES mapToES(Application application) {
     ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(application);
-    applicationJson.setLocations(locationService.findLocationsByApplication(application.getId()));
     return applicationMapper.createApplicationESModel(applicationJson);
-
   }
 
   ProjectES mapToES(Project project) {

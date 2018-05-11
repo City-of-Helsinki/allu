@@ -41,8 +41,8 @@ public class LocationMapper {
     return location;
   }
 
-  public static List<LocationJson> mapToLocationJsons(Location[] locations) {
-    return Arrays.stream(locations).map(l -> mapToLocationJson(l)).collect(Collectors.toList());
+  public static List<LocationJson> mapToLocationJsons(List<Location> locations) {
+    return locations.stream().map(l -> mapToLocationJson(l)).collect(Collectors.toList());
   }
 
   private static LocationJson mapToLocationJson(Location location) {

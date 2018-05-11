@@ -59,16 +59,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationIdentifier;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.ApplicationWithContacts;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.CustomerWithContacts;
-import fi.hel.allu.model.domain.DistributionEntry;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.model.domain.PostalAddress;
-import fi.hel.allu.model.domain.RecurringPeriod;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.CustomerAnonymizer;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
@@ -89,6 +80,7 @@ public class ApplicationDao {
   private final DistributionEntryDao distributionEntryDao;
   private final CustomerDao customerDao;
   private final AttachmentDao attachmentDao;
+  private final LocationDao locationDao;
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
@@ -102,13 +94,15 @@ public class ApplicationDao {
       DistributionEntryDao distributionEntryDao,
       StructureMetaDao structureMetaDao,
       CustomerDao customerDao,
-      AttachmentDao attachmentDao) {
+      AttachmentDao attachmentDao,
+      LocationDao locationDao) {
     this.queryFactory = queryFactory;
     this.applicationSequenceDao = applicationSequenceDao;
     this.distributionEntryDao = distributionEntryDao;
     this.structureMetaDao = structureMetaDao;
     this.customerDao = customerDao;
     this.attachmentDao = attachmentDao;
+    this.locationDao = locationDao;
   }
 
   /**
@@ -599,7 +593,12 @@ public class ApplicationDao {
       applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
     }
     applications.forEach(a -> a.setKindsWithSpecifiers(findKindsAndSpecifiers(a.getId())));
+    applications.forEach(a -> a.setLocations(findApplicationLocations(a.getId())));
     return applications;
+  }
+
+  private List<Location> findApplicationLocations(Integer applicationId) {
+    return locationDao.findByApplication(applicationId);
   }
 
   private Application populateTags(Application application) {
