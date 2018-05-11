@@ -814,6 +814,7 @@ export const translations = {
     zoomIn: 'Lähennä',
     zoomOut: 'Loitonna',
     areasIntersect: 'Alue leikkaa toisen alueen',
+    areaIntersects: 'Alue leikkaa itsensä',
     draw: {
       toolbar: {
         actions: {

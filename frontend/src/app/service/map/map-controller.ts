@@ -98,11 +98,7 @@ export class MapController {
       position: 'topright',
       draw: drawOptions(controlsEnabled),
       intersectLayers: this.mapLayerService.contentLayerArray,
-      edit: {
-        featureGroup: items,
-        edit: editOptions(controlsEnabled),
-        remove: controlsEnabled
-      }
+      edit: editOptions(items, controlsEnabled)
     });
     this.setLocalizations();
 
@@ -254,6 +250,15 @@ export class MapController {
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       if (!(this.editing || this.deleting)) {
         self.showTooltipOnClick(e);
+      }
+    });
+
+    this.map.on('draw:editvertex ', (e: any) => {
+      if (e.poly.intersects()) {
+        this.mapStore.invalidGeometryChange(true);
+        this.notification.error(translations.map.areaIntersects);
+      } else {
+        this.mapStore.invalidGeometryChange(false);
       }
     });
 

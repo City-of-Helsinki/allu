@@ -34,6 +34,7 @@ export interface MapState {
   selectedSections: Array<number>;
   drawingAllowed: boolean;
   hasFixedGeometry: boolean;
+  invalidGeometry: boolean;
 }
 
 const initialState: MapState = {
@@ -50,7 +51,8 @@ const initialState: MapState = {
   shape: undefined,
   selectedSections: [],
   drawingAllowed: true,
-  hasFixedGeometry: false
+  hasFixedGeometry: false,
+  invalidGeometry: false
 };
 
 @Injectable()
@@ -157,6 +159,10 @@ export class MapStore {
     return this.store.map(state => state.role).distinctUntilChanged();
   }
 
+  get invalidGeometry(): Observable<boolean> {
+    return this.store.map(state => state.invalidGeometry).distinctUntilChanged();
+  }
+
   coordinateSearchChange(term: string): void {
     this.store.next({...this.store.getValue(), coordinateSearch: term});
   }
@@ -242,6 +248,10 @@ export class MapStore {
 
   roleChange(role: MapRole): void {
     this.store.next({...this.snapshot, role});
+  }
+
+  invalidGeometryChange(invalidGeometry: boolean): void {
+    this.store.next({...this.snapshot, invalidGeometry});
   }
 
   private fetchMapDataByFilter(filter: MapSearchFilter): void {

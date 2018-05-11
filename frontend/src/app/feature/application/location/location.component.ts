@@ -57,6 +57,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   kindsSelected = false;
   districts: Observable<Array<CityDistrict>>;
   multipleLocations = false;
+  invalidGeometry = false;
 
   private destroy = new Subject<boolean>();
 
@@ -134,6 +135,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .takeUntil(this.destroy)
       .distinctUntilChanged(ArrayUtil.numberArrayEqual)
       .subscribe(ids => this.onSectionsChange(ids));
+
+    this.mapStore.invalidGeometry
+      .takeUntil(this.destroy)
+      .subscribe(invalid => this.invalidGeometry = invalid);
   }
 
   ngOnDestroy() {
@@ -226,8 +231,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get submitAllowed(): boolean {
     // Nothing is currently edited or location is edited but its values are valid
-    return this.locationState.editIndex === undefined
-        || (this.locationForm.valid && !!this.locationForm.value['geometry']);
+    const nothingEdited = this.locationState.editIndex === undefined;
+    const formValid = (this.locationForm.valid && !!this.locationForm.value['geometry']);
+    const validGeometry = !this.invalidGeometry;
+
+    return nothingEdited || (formValid && validGeometry);
   }
 
   private editLocation(loc: Location): void {
