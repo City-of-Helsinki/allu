@@ -24,7 +24,7 @@ import {Store} from '@ngrx/store';
 export class SearchComponent implements OnInit {
 
   displayedColumns = [
-    'owner.realName', 'applicationId', 'name', 'type', 'status', 'project.name',
+    'owner.realName', 'applicationId', 'name', 'type', 'status', 'project.identifier',
     'customers.applicant.customer.name', 'locations.streetAddress', 'locations.cityDistrictId',
     'creationTime', 'startTime'
   ];

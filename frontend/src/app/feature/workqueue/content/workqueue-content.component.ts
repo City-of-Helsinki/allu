@@ -12,7 +12,6 @@ import {ApplicationWorkItemDatasource, ApplicationWorkItemRow} from './applicati
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {Some} from '../../../util/option';
 import {WorkQueueTab} from '../workqueue-tab';
-import {MapStore} from '../../../service/map/map-store';
 import {Sort} from '../../../model/common/sort';
 import {StoredFilterType} from '../../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
@@ -27,7 +26,7 @@ import {Store} from '@ngrx/store';
 })
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
-    'selected', 'owner.userName', 'applicationId', 'type', 'status', 'project.name',
+    'selected', 'owner.userName', 'applicationId', 'type', 'status', 'project.identifier',
     'customers.applicant.customer.name', 'locations.streetAddress', 'locations.cityDistrictId',
     'creationTime', 'startTime', 'comments'
   ];
@@ -46,7 +45,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private destroy = new Subject<boolean>();
 
   constructor(private route: ActivatedRoute,
-              private mapStore: MapStore,
               private store: Store<fromRoot.State>,
               private dialog: MatDialog,
               private itemStore: ApplicationWorkItemStore,

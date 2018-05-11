@@ -18,7 +18,7 @@ import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-st
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
     'selected', 'owner.realName', 'type', 'application.applicationId', 'streetAddress',
-    'plannedFinishingTime', 'application.status', 'project.name', 'creator.realName'
+    'plannedFinishingTime', 'application.status', 'creator.realName'
   ];
   dataSource: SupervisionWorkItemDatasource;
   allSelected = false;

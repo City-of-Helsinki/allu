@@ -49,11 +49,6 @@
       <mat-cell *matCellDef="let row">{{['application.status', row.uiApplicationStatus] | translation}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="project.name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.project' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.projectName}}</mat-cell>
-    </ng-container>
-
     <ng-container matColumnDef="creator.realName">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.creator' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">{{row.creator?.realName}}</mat-cell>
