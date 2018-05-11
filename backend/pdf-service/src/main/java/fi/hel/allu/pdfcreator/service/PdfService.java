@@ -1,6 +1,7 @@
 package fi.hel.allu.pdfcreator.service;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -31,10 +32,10 @@ public class PdfService {
   private static final String HEADER_ARG = "--header-html";
   private static final String FOOTER_ARG = "--footer-html";
 
-  private ApplicationProperties applicationProperties;
-  private FileSysAccessor fileSysAccessor;
-  private Executioner executioner;
-  private JsonConverter jsonConverter;
+  private final ApplicationProperties applicationProperties;
+  private final FileSysAccessor fileSysAccessor;
+  private final Executioner executioner;
+  private final JsonConverter jsonConverter;
 
   private final Path tempDir;
   private final Path stylesheetDir;
@@ -83,7 +84,7 @@ public class PdfService {
 
     // Write HTML to temporary file
     Path htmlPath = fileSysAccessor.createTempFile(tempDir, "pdfsource-", ".html");
-    fileSysAccessor.write(htmlPath, html.getBytes());
+    fileSysAccessor.write(htmlPath, html.getBytes(Charset.forName("UTF-8")));
     return htmlPath;
   }
 
