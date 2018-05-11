@@ -24,7 +24,7 @@ public class ApplicationES {
   private Long startTime;
   private Long endTime;
   private List<ESFlatValue> applicationTypeData;
-  private Integer projectId;
+  private CompactProjectES project;
   private Long decisionTime;
   private List<LocationES> locations;
   private RoleTypedCustomerES customers;
@@ -118,12 +118,12 @@ public class ApplicationES {
     this.applicationTypeData = applicationTypeData;
   }
 
-  public Integer getProjectId() {
-    return projectId;
+  public CompactProjectES getProject() {
+    return project;
   }
 
-  public void setProjectId(Integer projectId) {
-    this.projectId = projectId;
+  public void setProject(CompactProjectES project) {
+    this.project = project;
   }
 
   public Long getDecisionTime() {

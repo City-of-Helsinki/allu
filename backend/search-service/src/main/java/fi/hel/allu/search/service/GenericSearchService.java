@@ -78,7 +78,8 @@ public class GenericSearchService<T> {
       "ownerName",
       "owner.userName",
       "owner.realName",
-      "registryKey"
+      "registryKey",
+      "project.identifier"
       };
 
   /* Fields that should be sorted ordinally */

@@ -124,7 +124,9 @@ public class ApplicationMapper {
         .collect(Collectors.toMap(cwc -> cwc.getRoleType(), cwc -> customerMapper.createWithContactsES(cwc)));
     applicationES.setCustomers(new RoleTypedCustomerES(roleToCwcES));
     if (applicationJson.getProject() != null) {
-      applicationES.setProjectId(applicationJson.getProject().getId());
+      CompactProjectES project = new CompactProjectES();
+      project.setIdentifier(applicationJson.getProject().getIdentifier());
+      applicationES.setProject(project);
     }
 
     return applicationES;
