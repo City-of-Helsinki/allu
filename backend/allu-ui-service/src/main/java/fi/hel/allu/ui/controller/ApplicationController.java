@@ -1,6 +1,22 @@
 package fi.hel.allu.ui.controller;
 
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.servicecore.domain.*;
@@ -8,25 +24,7 @@ import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
 import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.InvoiceService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.InvalidMediaTypeException;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-
-import java.io.IOException;
-import java.util.List;
+import fi.hel.allu.servicecore.validation.ApplicationGeometryValidator;
 
 @RestController
 @RequestMapping("/applications")
@@ -42,6 +40,15 @@ public class ApplicationController {
 
   @Autowired
   private InvoiceService invoiceService;
+
+  @Autowired
+  private ApplicationGeometryValidator geometryValidator;
+
+
+  @InitBinder("applicationJson")
+  protected void initBinder(WebDataBinder binder) {
+    binder.addValidators(geometryValidator);
+  }
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")

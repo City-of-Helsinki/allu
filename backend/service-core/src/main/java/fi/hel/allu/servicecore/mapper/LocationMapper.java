@@ -13,7 +13,7 @@ public class LocationMapper {
     return locationJsons.stream().map(locationJson -> createLocationModel(applicationId, locationJson)).collect(Collectors.toList());
   }
 
-  private static Location createLocationModel(Integer applicationId, LocationJson locationJson) {
+  public static Location createLocationModel(Integer applicationId, LocationJson locationJson) {
     if (locationJson == null) { throw new NullPointerException("LocationJson should not be null"); }
     Location location = new Location();
     location.setId(locationJson.getId());

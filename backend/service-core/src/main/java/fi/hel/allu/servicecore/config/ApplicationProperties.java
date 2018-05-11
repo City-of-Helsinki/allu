@@ -417,6 +417,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for checking whether geometry is valid.
+   */
+  public String getIsValidGeometryUrl() {
+    return getModelServiceUrl("/locations/geometry/isvalid");
+  }
+
+  /**
    * @return url for fetching fixed locations (such as Narinkka) for given application type.
    */
   public String getFixedLocationUrl() {

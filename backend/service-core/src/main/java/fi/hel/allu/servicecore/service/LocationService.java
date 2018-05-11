@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,10 @@ public class LocationService {
     List<FixedLocationAreaJson> resultList = Arrays.stream(queryResult.getBody())
         .map(fla -> LocationMapper.mapToFixedLocationAreaJson(fla)).collect(Collectors.toList());
     return resultList;
+  }
+
+  public boolean hasValidGeometry(Location location) {
+    return restTemplate.postForObject(applicationProperties.getIsValidGeometryUrl(), location, Boolean.class);
   }
 
 }

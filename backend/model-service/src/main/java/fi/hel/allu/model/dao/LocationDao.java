@@ -138,6 +138,13 @@ public class LocationDao {
     return findById(id).get();
   }
 
+  @Transactional(readOnly = true)
+  public boolean isValidGeometry(Geometry geometry) {
+    return queryFactory
+        .select(Expressions.simpleTemplate(Boolean.class, "st_isvalid({0})", geometry))
+        .fetchFirst();
+  }
+
   private Location update(Location locationData) {
     transformCoordinates(locationData, ALLU_SRID);
     int id = locationData.getId();

@@ -107,6 +107,11 @@ public class LocationController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/geometry/isvalid", method = RequestMethod.POST)
+  public ResponseEntity<Boolean> hasValidGeometry(@RequestBody Location location) {
+    return new ResponseEntity<>(locationDao.isValidGeometry(location.getGeometry()), HttpStatus.OK);
+  }
+
   // Make a stripped-down view of a city district: only the district ID + name.
   private static CityDistrictInfo mapToInfo(CityDistrict cityDistrict) {
     CityDistrictInfo result = new CityDistrictInfo();
