@@ -1,5 +1,11 @@
 @import '../../../assets/colors';
 
+$toolbar-height: 50px;
+
+.toolbar {
+  line-height: $toolbar-height;
+}
+
 :host {
   background: mat-color($allu-primary, 500);
   color: mat-contrast($allu-primary, 500);
@@ -44,4 +50,20 @@ h1 {
   font-weight: normal;
   letter-spacing: .1px;
   margin: 0;
+}
+
+.toolbar-section {
+  padding: 0 5px;
+  border-left: 2px solid mat-color($allu-primary, 300);
+}
+
+.pill {
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  background: mat-color($allu-accent, A700);
+  color: mat-contrast($allu-accent, 900);
 }

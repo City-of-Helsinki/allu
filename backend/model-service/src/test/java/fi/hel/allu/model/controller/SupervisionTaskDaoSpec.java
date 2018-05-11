@@ -1,5 +1,23 @@
 package fi.hel.allu.model.controller;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.ResultActions;
+
 import com.greghaskins.spectrum.Spectrum;
 import com.greghaskins.spectrum.Variable;
 import com.querydsl.core.types.OrderSpecifier;
@@ -15,34 +33,14 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.ResultActions;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import static com.greghaskins.spectrum.Spectrum.it;
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.context;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,7 +55,10 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
   private ApplicationDao applicationDao;
   @Autowired
   private SupervisionTaskDao supervisionTaskDao;
+  @Autowired
+  private TestCommon testCommon;
 
+  private User testUser;
   private SupervisionTask existingSupervisionTask;
   private Application outdoorApp;
   private Application shortTermApp;
@@ -66,6 +67,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
   {
     beforeEach(() -> {
       wtc.setup();
+      testUser = testCommon.insertUser("testuser");
       outdoorApp = insertApplication(testCommon.dummyOutdoorApplication("existing", "Handlaaja"));
       existingSupervisionTask = supervisionTaskDao.insert(
           createTask(outdoorApp.getId(), SupervisionTaskType.SUPERVISION, outdoorApp.getOwner()));
@@ -314,7 +316,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
   }
 
   private Application insertApplication(Application application) throws Exception {
-    ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(post("/applications?userId=" + testUser.getId()), application).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 

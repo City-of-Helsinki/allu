@@ -1,23 +1,22 @@
 package fi.hel.allu.model.service;
 
+import java.util.Collections;
+
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.user.User;
 
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-
-import java.util.Collections;
-
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.mock;
 public class LocationServiceSpec {
 
   private LocationDao locationDao;
-  private ApplicationService applicationService;
+  private ApplicationDao applicationDao;
   private ProjectService projectService;
   private UserDao userDao;
   private LocationService locationService;
@@ -43,10 +42,10 @@ public class LocationServiceSpec {
 
       beforeEach(() -> {
         locationDao = mock(LocationDao.class);
-        applicationService = mock(ApplicationService.class);
+        applicationDao = mock(ApplicationDao.class);
         projectService = mock(ProjectService.class);
         userDao = mock(UserDao.class);
-        locationService = new LocationService(locationDao, applicationService, projectService, userDao);
+        locationService = new LocationService(locationDao, applicationDao, projectService, userDao);
       });
 
       describe("Insert", () -> {
@@ -54,9 +53,9 @@ public class LocationServiceSpec {
         beforeEach(() -> {
           insertedLocation = dummyLocation();
           testApplication = dummyApplication();
-          Mockito.when(applicationService.findByIds(Mockito.any(), Mockito.eq(false)))
+          Mockito.when(applicationDao.findByIds(Mockito.any(), Mockito.eq(false)))
               .thenReturn(Collections.singletonList(testApplication));
-          Mockito.when(applicationService.findById(Mockito.anyInt())).thenReturn(testApplication);
+          Mockito.when(applicationDao.findById(Mockito.anyInt())).thenReturn(testApplication);
           Mockito.when(locationDao.insert(Mockito.any())).thenReturn(insertedLocation);
           Mockito
               .when(userDao.findMatching(Mockito.eq(RoleType.ROLE_PROCESS_APPLICATION), Mockito.any(), Mockito.any()))
@@ -67,11 +66,6 @@ public class LocationServiceSpec {
         it("should set application owner", () -> {
           assertEquals(TEST_USER_ID, testApplication.getOwner().intValue());
         });
-
-        it("should update the application in database", () -> {
-          Mockito.verify(applicationService).update(TEST_APPLICATION_ID, testApplication);
-        });
-
         it("should update application's project", () -> {
           Mockito.verify(projectService).updateProjectInformation(Collections.singletonList(TEST_PROJECT_ID), TEST_USER_ID);
         });

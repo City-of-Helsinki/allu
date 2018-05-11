@@ -1,10 +1,16 @@
-import {Component, DebugElement, ViewChild} from '@angular/core';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {Component, DebugElement} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
 import {ApplicationActionsComponent} from '../../../src/app/feature/application/info/application-actions.component';
-import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock, RouterMock} from '../../mocks';
+import {
+  ApplicationStoreMock,
+  availableToDirectiveMockMeta,
+  CurrentUserMock,
+  NotificationServiceMock,
+  RouterMock
+} from '../../mocks';
 import {ApplicationStore} from '../../../src/app/service/application/application-store';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
@@ -15,7 +21,6 @@ import {AttachmentInfo} from '../../../src/app/model/application/attachment/atta
 import {Location} from '../../../src/app/model/common/location';
 import {ApplicationType} from '../../../src/app/model/application/type/application-type';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {ApplicationStatus} from '../../../src/app/model/application/application-status';
 import {MatDialog} from '@angular/material';
@@ -63,6 +68,7 @@ describe('ApplicationActionsComponent', () => {
   let applicationStore: ApplicationStoreMock;
   let dialog: MatDialogMock;
   let userHub: UserHubMock;
+  let notification: NotificationServiceMock;
   const currentUserMock = CurrentUserMock.create(true, true);
   const applicationId = 15;
 
@@ -82,6 +88,7 @@ describe('ApplicationActionsComponent', () => {
         {provide: Router, useClass: RouterMock},
         {provide: ActivatedRoute},
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
+        {provide: NotificationService, useClass: NotificationServiceMock},
         {provide: MatDialog, useClass: MatDialogMock},
         {provide: UserHub, useClass: UserHubMock}
       ]
@@ -97,6 +104,7 @@ describe('ApplicationActionsComponent', () => {
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
     dialog = TestBed.get(MatDialog) as MatDialogMock;
     userHub = TestBed.get(UserHub) as UserHubMock;
+    notification = TestBed.get(NotificationService) as NotificationServiceMock;
 
     const app = applicationStore.snapshot.application;
     app.id  = applicationId;
@@ -140,14 +148,14 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'replace').and.returnValue(applicationStore.application);
-    spyOn(NotificationService, 'translateMessage');
+    spyOn(notification, 'translateSuccess');
 
     const replaceBtn = getButtonWithText(de, findTranslation('application.button.replace').toUpperCase());
     replaceBtn.click();
     tickAndDetect();
 
     expect(applicationStore.replace).toHaveBeenCalled();
-    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationId, 'summary']);
   }));
 
@@ -181,15 +189,15 @@ describe('ApplicationActionsComponent', () => {
     applicationStore.updateType(ApplicationType.NOTE);
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'delete').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
-    spyOn(NotificationService, 'translateMessage');
+    spyOn(applicationStore, 'delete').and.returnValue(Observable.of({}));
+    spyOn(notification, 'translateSuccess');
 
     const removeBtn = getButtonWithText(de, findTranslation('common.button.remove').toUpperCase());
     removeBtn.click();
     tickAndDetect();
 
     expect(applicationStore.delete).toHaveBeenCalledWith(applicationId);
-    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   }));
 
@@ -221,7 +229,7 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.callThrough();
-    spyOn(NotificationService, 'translateMessage');
+    spyOn(notification, 'translateSuccess');
 
     const dialogRef = new MatDialogRefMock();
     spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(true));
@@ -232,7 +240,7 @@ describe('ApplicationActionsComponent', () => {
     tickAndDetect();
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.CANCELLED);
-    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/workqueue']);
   }));
 
@@ -241,7 +249,7 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
-    spyOn(NotificationService, 'translateMessage');
+    spyOn(notification, 'translateSuccess');
 
     const dialogRef = new MatDialogRefMock();
     spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(false));
@@ -252,7 +260,7 @@ describe('ApplicationActionsComponent', () => {
     tickAndDetect();
 
     expect(applicationStore.changeStatus).not.toHaveBeenCalled();
-    expect(NotificationService.translateMessage).not.toHaveBeenCalled();
+    expect(notification.translateSuccess).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   }));
 
@@ -271,14 +279,14 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.callThrough();
-    spyOn(NotificationService, 'translateMessage');
+    spyOn(notification, 'translateSuccess');
 
     const toHandlingBtn = getButtonWithText(de, findTranslation('application.button.toHandling').toUpperCase());
     toHandlingBtn.click();
     tickAndDetect();
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.HANDLING);
-    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationId, 'edit']);
   }));
 
@@ -349,14 +357,14 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.callThrough();
-    spyOn(NotificationService, 'translateMessage');
+    spyOn(notification, 'translateSuccess');
 
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
     decisionBtn.click();
     tickAndDetect();
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.DECISIONMAKING);
-    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'decision']);
   }));
 

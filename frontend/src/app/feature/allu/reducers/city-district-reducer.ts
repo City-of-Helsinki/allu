@@ -1,24 +1,26 @@
 import {CityDistrict} from '../../../model/common/city-district';
 import {CityDistrictActions, CityDistrictActionType} from '../actions/city-district-actions';
+import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 
-export interface State {
-  cityDistricts: Map<number, CityDistrict>;
+export interface State extends EntityState<CityDistrict> {
+  selectedId: number;
 }
 
-const initialState: State = {
-  cityDistricts: new Map<number, CityDistrict>()
-};
+export const adapter: EntityAdapter<CityDistrict> = createEntityAdapter<CityDistrict>({
+  selectId: (cityDistrict: CityDistrict) => cityDistrict.id
+});
+
+const initialState: State = adapter.getInitialState({
+  selectedId: undefined
+});
 
 export function reducer(state: State = initialState, action: CityDistrictActions) {
   switch (action.type) {
     case CityDistrictActionType.LoadSuccess: {
-      const districts = new Map<number, CityDistrict>();
-      action.payload.forEach(d => districts.set(d.id, d));
-
-      return {
+      return adapter.addAll(action.payload, {
         ...state,
-        cityDistricts: districts
-      };
+        selectedId: state.selectedId
+      });
     }
 
     default: {
@@ -26,5 +28,3 @@ export function reducer(state: State = initialState, action: CityDistrictActions
     }
   }
 }
-
-export const getAllCityDistricts = (state: State) => state.cityDistricts;

@@ -1,0 +1,57 @@
+<mat-list *ngIf="applications$ | async as applications">
+  <ng-container *ngIf="applications.length > 0; else empty">
+    <mat-list-item *ngFor="let application of applications">
+      <div fxLayout="row" fxFill fxLayoutAlign="start center" fxLayoutGap="8px" class="basket-row">
+        <div fxFlex="none" class="basket-row-header">
+          <a [routerLink]="['/applications', application.id]">{{application.applicationId}}</a>
+        </div>
+        <div fxFlex>
+          <span>{{application.applicant.customer?.name}}</span>
+          <span>{{application.startTime | date:'shortDate'}}</span>
+          <span *ngIf="application.endTime"> - {{application.endTime | date:'shortDate'}}</span>
+          <span>
+            <mat-icon *ngIf="application.project as project"
+                      [matTooltip]="'project.applications.moveFromAnother' | translation:{project: project.identifier}"
+                      color="accent"
+                      class="icon-sub">warning</mat-icon>
+          </span>
+        </div>
+        <div fxFlex="none">
+          <button mat-icon-button color="primary" (click)="removeFromBasket(application.id)">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div fxLayout="row" fxFill fxLayoutAlign="space-between center" fxLayoutGap="8px">
+        <a  [routerLink]="['/projects']" fxFlex mat-raised-button color="primary">
+          {{'applicationBasket.addToExistingProject' | translation}}
+        </a>
+        <button fxFlex mat-raised-button color="primary" (click)="createNew()">
+          <mat-icon color="primary">add</mat-icon>
+          {{'applicationBasket.createNewProject' | translation}}
+        </button>
+      </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="basket-row">
+        <button mat-button [disableRipple]="true"
+                color="primary"
+                (click)="clearBasket($event)"
+                class="basket-row-header">
+          {{'applicationBasket.clear' | translation}}
+        </button>
+      </div>
+    </mat-list-item>
+  </ng-container>
+  <ng-template #empty>
+    <mat-list-item>
+      <div class="basket-row centered">
+        <div class="basket-row-header">
+          {{'applicationBasket.empty' | translation}}
+        </div>
+      </div>
+    </mat-list-item>
+  </ng-template>
+</mat-list>

@@ -29,6 +29,12 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.PENDING, null), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/status/pending_client", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToPendingClient(@PathVariable int id) {
+    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.PENDING_CLIENT, null), HttpStatus.OK);
+  }
+
+
   @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
   public ResponseEntity<Application> changeStatusToHandling(@PathVariable int id) {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.HANDLING, null), HttpStatus.OK);
@@ -67,6 +73,11 @@ public class ApplicationStatusController {
   @RequestMapping(value = "/{id}/status/archived", method = RequestMethod.PUT)
   public ResponseEntity<Application> changeStatusToArchived(@PathVariable int id) {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.ARCHIVED, null), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/status", method = RequestMethod.GET)
+  public ResponseEntity<StatusType> getApplicationStatus(@PathVariable int id) {
+    return new ResponseEntity<>(applicationStatusService.getApplicationStatus(id), HttpStatus.OK);
   }
 
 }

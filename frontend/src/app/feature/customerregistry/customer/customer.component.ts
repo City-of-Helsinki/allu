@@ -31,7 +31,8 @@ export class CustomerComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private customerService: CustomerService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private notification: NotificationService) {
     this.form = CustomerWithContactsForm.initialForm(this.fb);
     this.customerForm = <FormGroup>this.form.get('customer');
   }
@@ -53,14 +54,14 @@ export class CustomerComponent implements OnInit {
     customer.active = false;
     this.save(customer, this.contactChanges()).subscribe(
       c => this.notifyAndNavigateToCustomers(findTranslation('customer.action.removeFromRegistry')),
-      error => NotificationService.error(error)
+      error => this.notification.errorInfo(error)
     );
   }
 
   onSubmit(formValues: CustomerWithContactsForm): void {
     this.save(this.customerChanges(), this.contactChanges()).subscribe(
         customer => this.notifyAndNavigateToCustomers(findTranslation('customer.action.save')),
-        error => NotificationService.error(error)
+        error => this.notification.errorInfo(error)
     );
   }
 
@@ -74,7 +75,7 @@ export class CustomerComponent implements OnInit {
   }
 
   private notifyAndNavigateToCustomers(message: string): void {
-    NotificationService.message(message);
+    this.notification.success(message);
     this.router.navigate(['/customers']);
   }
 

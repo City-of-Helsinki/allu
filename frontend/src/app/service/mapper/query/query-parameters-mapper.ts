@@ -14,28 +14,28 @@ export const START_TIME_FIELD = 'startTime';
 export const END_TIME_FIELD = 'endTime';
 
 export class QueryParametersMapper {
-  public static mapSortToSearchServiceQuery(sort: Sort): RequestOptionsArgs {
+  public static mapSortToSearchServiceQuery(sort: Sort): HttpParams {
     if (sort) {
       return QueryParametersMapper.mapSortToQueryParameters(
         new Sort(sort.field, sort.direction)
       );
     }
-    return {};
+    return new HttpParams();
   }
-  public static mapSortToQueryParameters(sort: Sort): RequestOptionsArgs {
+  public static mapSortToQueryParameters(sort: Sort): HttpParams {
     const sortParams = QueryParametersMapper.sortToSortParams(sort);
     let params = new HttpParams();
     params = Some(sortParams).map(sp => params.append('sort', sp)).orElse(new HttpParams());
-    return QueryParametersMapper.toRequestOptions(params);
+    return params;
   }
 
-  public static pageRequestToQueryParameters(pageRequest: PageRequest, sort: Sort, matchAny?: boolean): RequestOptionsArgs {
+  public static mapPageRequest(pageRequest: PageRequest, sort: Sort, matchAny?: boolean): HttpParams {
     let params = new HttpParams();
     params = Some(pageRequest).map(pr => pr.page).map(page => params.append('page', page.toString())).orElse(params);
     params = Some(pageRequest).map(pr => pr.size).map(size => params.append('size', size.toString())).orElse(params);
     params = Some(sort).map(s => QueryParametersMapper.sortToSortParams(s)).map(sp => params.append('sort', sp)).orElse(params);
     params = Some(matchAny).map(m => params.append('matchAny', String(m))).orElse(params);
-    return QueryParametersMapper.toRequestOptions(params);
+    return params;
   }
 
   public static mapParameter(
@@ -168,15 +168,5 @@ export class QueryParametersMapper {
       sortParam = Some(sort.direction).map(dir => sortParam.concat(dir)).orElse(sortParam);
     }
     return sortParam.join(',');
-  }
-
-  // Helper method to convert HttpParams -> RequestOptionsArgs until new angular http-client is used
-  // TODO: fix to use HttpParams after new client is used
-  private static toRequestOptions(httpParams: HttpParams): RequestOptionsArgs {
-    const params = {};
-    httpParams.keys().forEach(key => {
-      params[key] = httpParams.get(key);
-    });
-    return { params };
   }
 }

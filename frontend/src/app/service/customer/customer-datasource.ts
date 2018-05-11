@@ -22,7 +22,10 @@ export class CustomerDatasource extends DataSource<any> {
   private _search: CustomerSearchQuery;
   private _pageSnapshot = new Page<Customer>();
 
-  constructor(private service: CustomerService, private paginator: MatPaginator, private sort: MatSort) {
+  constructor(private service: CustomerService,
+              private notification: NotificationService,
+              private paginator: MatPaginator,
+              private sort: MatSort) {
     super();
   }
 
@@ -74,7 +77,7 @@ export class CustomerDatasource extends DataSource<any> {
       new Sort(this.sort.active, this.sort.direction),
       new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
     ).catch(err => {
-      NotificationService.error(err);
+      this.notification.errorInfo(err);
       return Observable.of(new Page<Customer>());
     });
   }

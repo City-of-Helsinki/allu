@@ -9,7 +9,6 @@ import {Comment} from '../../model/application/comment/comment';
 import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
-import {HttpResponse} from '../../util/http-response';
 import {NumberUtil} from '../../util/number.util';
 import {ObjectUtil} from '../../util/object.util';
 import {ApplicationStatus} from '../../model/application/application-status';
@@ -163,7 +162,7 @@ export class ApplicationStore {
     }
   }
 
-  removeAttachment(attachmentId: number): Observable<HttpResponse> {
+  removeAttachment(attachmentId: number): Observable<{}> {
     const appId = this.snapshot.application.id;
     return this.attachmentHub.remove(appId, attachmentId)
       .do(response => this.loadAttachments(appId).subscribe());
@@ -179,7 +178,7 @@ export class ApplicationStore {
       .do(c => this.loadComments(this.current.application.id).subscribe());
   }
 
-  removeComment(commentId: number): Observable<HttpResponse> {
+  removeComment(commentId: number): Observable<{}> {
     return this.commentHub.removeComment(commentId)
       .do(c => this.loadComments(this.current.application.id).subscribe());
   }
@@ -209,7 +208,7 @@ export class ApplicationStore {
       .do(app => this.saved(app));
   }
 
-  delete(id: number): Observable<HttpResponse> {
+  delete(id: number): Observable<{}> {
     const response = this.snapshot.draft
       ? this.applicationDraftService.remove(id)
       : this.applicationService.remove(id);

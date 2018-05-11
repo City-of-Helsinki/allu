@@ -6,7 +6,6 @@ import {ApplicationForm} from '../application-form';
 export class PlacementContractForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
-    public identificationNumber?: string,
     public propertyIdentificationNumber?: string,
     public calculatedPrice?: number,
     public additionalInfo?: string,
@@ -17,7 +16,6 @@ export class PlacementContractForm implements ApplicationForm {
 
   static to(form: PlacementContractForm): PlacementContract {
     const placementContract = new PlacementContract();
-    placementContract.identificationNumber = form.identificationNumber;
     placementContract.propertyIdentificationNumber = form.propertyIdentificationNumber,
     placementContract.additionalInfo = form.additionalInfo;
     placementContract.contractText = form.contractText;
@@ -29,7 +27,6 @@ export class PlacementContractForm implements ApplicationForm {
   static from(application: Application, contract: PlacementContract) {
     return new PlacementContractForm(
       new TimePeriod(application.startTime, application.endTime),
-      contract.identificationNumber,
       contract.propertyIdentificationNumber,
       application.calculatedPriceEuro,
       contract.additionalInfo,

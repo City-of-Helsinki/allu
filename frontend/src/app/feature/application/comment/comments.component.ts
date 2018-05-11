@@ -27,7 +27,8 @@ export class CommentsComponent implements OnInit, OnDestroy, CanComponentDeactiv
 
   constructor(private applicationStore: ApplicationStore,
               private dialog: MatDialog,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private notification: NotificationService) {
     this.comments = this.fb.array([]);
   }
 
@@ -38,7 +39,7 @@ export class CommentsComponent implements OnInit, OnDestroy, CanComponentDeactiv
       .subscribe(comments => {
         FormUtil.clearArray(this.comments);
         comments.forEach(comment => this.addNew(comment));
-      }, err => NotificationService.error(err));
+      }, err => this.notification.errorInfo(err));
   }
 
   ngOnDestroy(): void {
@@ -65,9 +66,9 @@ export class CommentsComponent implements OnInit, OnDestroy, CanComponentDeactiv
 
   save(index: number, comment: Comment): void {
     this.applicationStore.saveComment(this.application.id, comment).subscribe(c => {
-        NotificationService.message(this.translateType(c.type) + ' tallennettu');
+        this.notification.success(this.translateType(c.type) + ' tallennettu');
       },
-      error => NotificationService.errorMessage(this.translateType(comment.type) + ' tallentaminen epäonnistui'));
+      error => this.notification.error(this.translateType(comment.type) + ' tallentaminen epäonnistui'));
   }
 
   remove(index: number, comment: Comment): void {
@@ -76,10 +77,10 @@ export class CommentsComponent implements OnInit, OnDestroy, CanComponentDeactiv
     } else {
       this.applicationStore.removeComment(comment.id)
         .subscribe(status => {
-            NotificationService.message(this.translateType(comment.type) + ' poistettu');
+            this.notification.success(this.translateType(comment.type) + ' poistettu');
             this.comments.removeAt(index);
           },
-          error => NotificationService.errorMessage(this.translateType(comment.type) + ' poistaminen epäonnistui'));
+          error => this.notification.error(this.translateType(comment.type) + ' poistaminen epäonnistui'));
     }
   }
 

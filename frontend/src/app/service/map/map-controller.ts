@@ -17,10 +17,11 @@ import {MapLayerService} from './map-layer.service';
 import {NotificationService} from '../notification/notification.service';
 import {drawOptions, editOptions} from './map-config';
 import {MapStore} from './map-store';
-import GeoJSONOptions = L.GeoJSONOptions;
 import {MapEventHandler} from './map-event-handler';
 import {MapFeatureInfo} from './map-feature-info';
 import {MapPopupService} from './map-popup.service';
+import {Injectable} from '@angular/core';
+import GeoJSONOptions = L.GeoJSONOptions;
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -40,6 +41,7 @@ export interface MapControllerConfig {
   showOnlyApplicationArea;
 }
 
+@Injectable()
 export class MapController {
   private map: L.Map;
   private drawControl: L.Control.Draw;
@@ -49,19 +51,19 @@ export class MapController {
   private editing = false;
   private deleting = false;
   private destroy = new Subject<boolean>();
+  private config: MapControllerConfig;
 
   constructor(private mapUtil: MapUtil,
               private mapStore: MapStore,
               private mapLayerService: MapLayerService,
               private popupService: MapPopupService,
-              private config: MapControllerConfig) {
-    this.initMap();
-    this.handleDrawingAllowedChanges();
+              private notification: NotificationService) {
   }
 
-  onDestroy(): void {
-    this.destroy.next(true);
-    this.destroy.unsubscribe();
+  init(config: MapControllerConfig) {
+    this.config = config;
+    this.initMap();
+    this.handleDrawingAllowedChanges();
   }
 
   public clearDrawn() {
@@ -96,11 +98,7 @@ export class MapController {
       position: 'topright',
       draw: drawOptions(controlsEnabled),
       intersectLayers: this.mapLayerService.contentLayerArray,
-      edit: {
-        featureGroup: items,
-        edit: editOptions(controlsEnabled),
-        remove: controlsEnabled
-      }
+      edit: editOptions(items, controlsEnabled)
     });
     this.setLocalizations();
 
@@ -246,12 +244,21 @@ export class MapController {
     });
 
     this.map.on(L.Draw.Event.INTERSECTS, (e: any) => {
-      NotificationService.errorMessage(translations.map.areasIntersect, 2000);
+      this.notification.error(translations.map.areasIntersect);
     });
 
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       if (!(this.editing || this.deleting)) {
         self.showTooltipOnClick(e);
+      }
+    });
+
+    this.map.on('draw:editvertex ', (e: any) => {
+      if (e.poly.intersects()) {
+        this.mapStore.invalidGeometryChange(true);
+        this.notification.error(translations.map.areaIntersects);
+      } else {
+        this.mapStore.invalidGeometryChange(false);
       }
     });
 

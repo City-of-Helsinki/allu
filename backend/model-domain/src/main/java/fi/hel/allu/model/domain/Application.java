@@ -69,8 +69,11 @@ public class Application {
   private Boolean invoiced;
   private boolean skipPriceCalculation = false;
   private Integer externalOwnerId;
+  private String identificationNumber;
 
   private ClientApplicationData clientApplicationData;
+
+  private List<Location> locations;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -499,5 +502,21 @@ public class Application {
 
   public void setClientApplicationData(ClientApplicationData clientApplicationData) {
     this.clientApplicationData = clientApplicationData;
+  }
+
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
+  }
+
+  public List<Location> getLocations() {
+    return locations;
+  }
+
+  public void setLocations(List<Location> locations) {
+    this.locations = locations;
   }
 }

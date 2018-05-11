@@ -1,25 +1,24 @@
 import {Injectable} from '@angular/core';
-import {AuthHttp} from 'angular2-jwt';
 import {Observable} from 'rxjs/Observable';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {DefaultRecipient} from '../../model/common/default-recipient';
 import {NumberUtil} from '../../util/number.util';
-import {HttpResponse, HttpStatus} from '../../util/http-response';
-import {HttpUtil} from '../../util/http.util';
 import {DefaultRecipientMapper} from '../mapper/default-recipient-mapper';
+import {HttpClient, HttpResponse} from '@angular/common/http';
+import {HttpStatus} from '../../util/http-status';
+import {BackendDefaultRecipient} from '../backend-model/backend-default-recipient';
 
 const DEFAULT_RECIPIENTS_URL = '/api/default-recipients';
 const DEFAULT_RECIPIENTS_ID_URL = '/api/default-recipients/:id';
 
 @Injectable()
 export class DefaultRecipientService {
-  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
+  constructor(private http: HttpClient, private errorHandler: ErrorHandler) {
   }
 
   getDefaultRecipients(): Observable<Array<DefaultRecipient>> {
-    return this.authHttp.get(DEFAULT_RECIPIENTS_URL)
-      .map(response => response.json())
+    return this.http.get<BackendDefaultRecipient[]>(DEFAULT_RECIPIENTS_URL)
       .map(recipients => recipients.map(r => DefaultRecipientMapper.mapBackend(r)))
       .catch(error => this.errorHandler.handle(error, findTranslation('recipient.error.fetchAll')));
   }
@@ -32,26 +31,26 @@ export class DefaultRecipientService {
     }
   }
 
-  removeDefaultRecipient(id: number): Observable<HttpResponse> {
+  removeDefaultRecipient(id: number): Observable<{}> {
     if (NumberUtil.isDefined(id)) {
-      return this.authHttp.delete(DEFAULT_RECIPIENTS_ID_URL.replace(':id', String(id)))
-        .map(response => HttpUtil.extractHttpResponse(response))
+      return this.http.delete<{}>(DEFAULT_RECIPIENTS_ID_URL.replace(':id', String(id)))
         .catch(error => this.errorHandler.handle(error, findTranslation('recipient.error.remove')));
     } else {
-      return Observable.of(new HttpResponse(HttpStatus.OK));
+      return Observable.of(new HttpResponse({status: HttpStatus.OK}));
     }
   }
 
   private createRecipient(recipient: DefaultRecipient): Observable<DefaultRecipient> {
-    return this.authHttp.post(DEFAULT_RECIPIENTS_URL, JSON.stringify(DefaultRecipientMapper.mapFrontend(recipient)))
-      .map(response => DefaultRecipientMapper.mapBackend(response.json()))
+    return this.http.post<BackendDefaultRecipient>(DEFAULT_RECIPIENTS_URL,
+      JSON.stringify(DefaultRecipientMapper.mapFrontend(recipient)))
+      .map(saved => DefaultRecipientMapper.mapBackend(saved))
       .catch(error => this.errorHandler.handle(error, findTranslation('recipient.error.save')));
   }
 
   private updateRecipient(recipient: DefaultRecipient): Observable<DefaultRecipient> {
     const url = DEFAULT_RECIPIENTS_ID_URL.replace(':id', String(recipient.id));
-    return this.authHttp.put(url, JSON.stringify(DefaultRecipientMapper.mapFrontend(recipient)))
-      .map(response => DefaultRecipientMapper.mapBackend(response.json()))
+    return this.http.put<BackendDefaultRecipient>(url, JSON.stringify(DefaultRecipientMapper.mapFrontend(recipient)))
+      .map(saved => DefaultRecipientMapper.mapBackend(saved))
       .catch(error => this.errorHandler.handle(error, findTranslation('recipient.error.save')));
   }
 }

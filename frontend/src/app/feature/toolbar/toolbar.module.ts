@@ -3,11 +3,15 @@ import {RouterModule} from '@angular/router';
 import {ToolbarComponent} from './toolbar.component';
 import {NavbarComponent} from './navbar/navbar.component';
 import {AlluCommonModule} from '../common/allu-common.module';
+import {ApplicationBasketModule} from '../project/application-basket/application-basket.module';
+import {MatChipsModule} from '@angular/material';
 
 @NgModule({
   imports: [
     RouterModule.forChild([]),
-    AlluCommonModule
+    AlluCommonModule,
+    MatChipsModule,
+    ApplicationBasketModule
   ],
   declarations: [
     ToolbarComponent,

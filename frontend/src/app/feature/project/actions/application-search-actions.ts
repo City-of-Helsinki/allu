@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
 import {Application} from '../../../model/application/application';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 import {ActionWithPayload} from '../../common/action-with-payload';
 
 export enum ApplicationSearchActionType {

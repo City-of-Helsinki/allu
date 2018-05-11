@@ -1,4 +1,3 @@
-import {HttpResponse} from './http-response';
 export class HttpUtil {
   static extractMessage(responseObject: any) {
     if (responseObject.body && responseObject.body !== '') {
@@ -7,15 +6,5 @@ export class HttpUtil {
     } else {
       return responseObject.status + ' : ' + responseObject.statusText;
     }
-  }
-
-  static extractHttpResponse(responseObject: any): HttpResponse {
-    let response;
-    if (responseObject.body && responseObject.body !== '') {
-      response = responseObject.json();
-    } else {
-      response = responseObject;
-    }
-    return new HttpResponse(response.status, response.message);
   }
 }

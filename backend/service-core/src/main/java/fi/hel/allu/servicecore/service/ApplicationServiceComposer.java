@@ -67,6 +67,12 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
+  public List<ApplicationJson> findApplicationsByIds(List<Integer> ids) {
+    return applicationService.findApplicationsById(ids).stream()
+        .map(app -> applicationJsonService.getCompactPopulatedApplication(app))
+        .collect(Collectors.toList());
+  }
+
   /**
    * Find applications using given location query.
    *
@@ -378,5 +384,13 @@ public class ApplicationServiceComposer {
    */
   public List<Integer> findFinishedApplications(List<StatusType> statuses) {
     return applicationService.findFinishedApplications(statuses);
+  }
+
+  public StatusType getApplicationStatus(Integer applicationId) {
+    return applicationService.getApplicationStatus(applicationId);
+  }
+
+  public Integer getApplicationExternalOwner(Integer applicationId) {
+    return applicationService.getApplicationExternalOwner(applicationId);
   }
 }

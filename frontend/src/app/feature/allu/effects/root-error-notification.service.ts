@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Actions} from '@ngrx/effects';
 import {ProjectActionTypes} from '../../project/actions/project-actions';
@@ -9,19 +9,22 @@ import {
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ParentProjectActionType} from '../../project/actions/parent-project-actions';
 import {ChildProjectActionType} from '../../project/actions/child-project-actions';
+import {ApplicationBasketActionType} from '../../project/actions/application-basket-actions';
 
 const handledActions = [
   ProjectActionTypes.LoadFailed,
+  ProjectActionTypes.SaveFailed,
   ProjectApplicationActionType.LoadFailed,
   ProjectApplicationActionType.AddFailed,
   ProjectApplicationActionType.RemoveFailed,
   ParentProjectActionType.LoadFailed,
-  ChildProjectActionType.LoadFailed
+  ChildProjectActionType.LoadFailed,
+  ApplicationBasketActionType.LoadFailed
 ];
 
 @Injectable()
 export class RootErrorNotificationService {
-  constructor(private actions: Actions) {
+  constructor(private actions: Actions, private notification: NotificationService) {
     this.actions
       .ofType(...handledActions)
       .map((action: ActionWithPayload<ErrorInfo>) => action.payload)
@@ -29,6 +32,6 @@ export class RootErrorNotificationService {
   }
 
   private handle(error: ErrorInfo): void {
-    NotificationService.error(error);
+    this.notification.errorInfo(error);
   }
 }

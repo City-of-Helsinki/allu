@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {SupervisionTask} from '../../model/application/supervision/supervision-task';
-import {HttpResponse} from '../../util/http-response';
 import {SupervisionTaskService} from './supervision-task.service';
 import {ApplicationStore} from '../application/application-store';
 
@@ -30,7 +29,7 @@ export class SupervisionTaskStore {
       .do(() => this.applicationStore.load(applicationId).subscribe());
   }
 
-  removeTask(applicationId: number, taskId: number): Observable<HttpResponse> {
+  removeTask(applicationId: number, taskId: number): Observable<{}> {
     return this.supervisionTaskService.remove(taskId)
       .do(() => this.loadTasks(applicationId))
       .do(() => this.applicationStore.load(applicationId).subscribe());

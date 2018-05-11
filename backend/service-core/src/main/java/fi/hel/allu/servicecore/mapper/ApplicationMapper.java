@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -87,6 +86,8 @@ public class ApplicationMapper {
     applicationDomain.setSkipPriceCalculation(applicationJson.getSkipPriceCalculation());
     applicationDomain.setExternalOwnerId(applicationJson.getExternalOwnerId());
     applicationDomain.setClientApplicationData(createClientApplicationDataModel(applicationJson.getClientApplicationData()));
+    applicationDomain.setIdentificationNumber(applicationJson.getIdentificationNumber());
+    applicationDomain.setLocations(LocationMapper.createLocationModel(applicationJson.getId(), applicationJson.getLocations()));
     return applicationDomain;
   }
 
@@ -123,7 +124,9 @@ public class ApplicationMapper {
         .collect(Collectors.toMap(cwc -> cwc.getRoleType(), cwc -> customerMapper.createWithContactsES(cwc)));
     applicationES.setCustomers(new RoleTypedCustomerES(roleToCwcES));
     if (applicationJson.getProject() != null) {
-      applicationES.setProjectId(applicationJson.getProject().getId());
+      CompactProjectES project = new CompactProjectES();
+      project.setIdentifier(applicationJson.getProject().getIdentifier());
+      applicationES.setProject(project);
     }
 
     return applicationES;
@@ -178,6 +181,8 @@ public class ApplicationMapper {
     }
     applicationJson.setExternalOwnerId(application.getExternalOwnerId());
     applicationJson.setClientApplicationData(createClientApplicationDataJson(application.getClientApplicationData()));
+    applicationJson.setIdentificationNumber(application.getIdentificationNumber());
+    applicationJson.setLocations(LocationMapper.mapToLocationJsons(application.getLocations()));
     return applicationJson;
   }
 
@@ -321,7 +326,9 @@ public class ApplicationMapper {
   }
 
   public ApplicationIdentifierJson mapApplicationIdentifierToJson(ApplicationIdentifier applicationIdentifier) {
-    return new ApplicationIdentifierJson(applicationIdentifier.getId(), applicationIdentifier.getApplicationId());
+    return new ApplicationIdentifierJson(applicationIdentifier.getId(),
+                                         applicationIdentifier.getApplicationId(),
+                                         applicationIdentifier.getIdentificationNumber());
   }
 
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {

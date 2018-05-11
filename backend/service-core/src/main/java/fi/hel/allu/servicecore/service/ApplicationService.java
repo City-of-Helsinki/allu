@@ -3,13 +3,9 @@ package fi.hel.allu.servicecore.service;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.security.auth.callback.CallbackHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,27 +18,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationIdentifier;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.DistributionEntry;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationIdentifierJson;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ApplicationTagJson;
-import fi.hel.allu.servicecore.domain.DistributionEntryJson;
-import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.domain.LocationQueryJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 
 @Service
 public class ApplicationService {
   private ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
-  private final LocationService locationService;
   private final ApplicationMapper applicationMapper;
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
@@ -51,13 +35,11 @@ public class ApplicationService {
   public ApplicationService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
-      LocationService locationService,
       ApplicationMapper applicationMapper,
       UserService userService,
       PersonAuditLogService personAuditLogService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
-    this.locationService = locationService;
     this.applicationMapper = applicationMapper;
     this.userService = userService;
     this.personAuditLogService = personAuditLogService;
@@ -181,16 +163,12 @@ public class ApplicationService {
   Application createApplication(ApplicationJson newApplication) {
     newApplication.setApplicationTags(tagsWithUserInfo(newApplication.getApplicationTags()));
     Application applicationModel = restTemplate.postForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION),
+        applicationProperties.getApplicationCreateUrl(),
         applicationMapper.createApplicationModel(newApplication),
-        Application.class);
+        Application.class,
+        userService.getCurrentUser().getId());
+    return applicationModel;
 
-    if (newApplication.getLocations() != null) {
-      locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
-    }
-
-    // need to fetch fresh Application from model, because at least setting location may change both handler and application start and end times
-    return findApplicationById(applicationModel.getId());
   }
 
   /**
@@ -200,18 +178,10 @@ public class ApplicationService {
    * @return Updated application
    */
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
-    if (applicationJson.getLocations() != null) {
-      List<LocationJson> locationJsons = locationService.updateApplicationLocations(applicationId,
-          applicationJson.getLocations());
-      applicationJson.setLocations(locationJsons);
-    } else {
-      locationService.deleteApplicationLocation(applicationId);
-    }
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
-        HttpMethod.PUT, requestEntity, Application.class, applicationId);
-
+        HttpMethod.PUT, requestEntity, Application.class, applicationId, userService.getCurrentUser().getId());
     return responseEntity.getBody();
   }
 
@@ -327,6 +297,15 @@ public class ApplicationService {
   private Application findApplicationByIdWithoutPersonAuditLogging(int applicationId) {
     return restTemplate.getForObject(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
+  }
+
+  public StatusType getApplicationStatus(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationStatusUrl(), StatusType.class, applicationId);
+  }
+
+
+  public Integer getApplicationExternalOwner(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationExternalOwnerUrl(), Integer.class, applicationId);
   }
 
 }

@@ -134,17 +134,18 @@
           <mat-cell *matCellDef="let row">{{ ['application.status', row.status] | translation }}</mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="project.name">
-          <mat-header-cell *matHeaderCellDef>{{'project.title' | translation}}</mat-header-cell>
+        <ng-container matColumnDef="project.identifier">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.title' | translation}}</mat-header-cell>
           <mat-cell *matCellDef="let row">
-            {{row.project?.name}} <br>
-            <span>{{row.project?.id}}</span>
+            <a *ngIf="row.project" class="row-details-link" [routerLink]="['/projects', row.project.id]">
+              {{row.project.identifier}}
+            </a>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="customers.applicant.customer.name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.applicant.customer.name}}</mat-cell>
+          <mat-cell *matCellDef="let row">{{row.applicant.customer?.name}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="locations.streetAddress">

@@ -12,6 +12,7 @@ import {EventNature} from '../../../../model/application/event/event-nature';
 import {TimeUtil} from '../../../../util/time.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ProjectService} from '../../../../service/project/project.service';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 
 @Component({
@@ -25,9 +26,10 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   constructor(fb: FormBuilder,
               route: ActivatedRoute,
               applicationStore: ApplicationStore,
+              notification: NotificationService,
               router: Router,
               projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {

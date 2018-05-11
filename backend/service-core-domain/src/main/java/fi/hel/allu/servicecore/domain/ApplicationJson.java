@@ -93,6 +93,7 @@ public class ApplicationJson {
   private boolean skipPriceCalculation = false;
 
   private ClientApplicationDataJson clientApplicationData;
+  private String identificationNumber;
 
   /**
    * Id of the external owner (external_user.id)
@@ -572,4 +573,11 @@ public class ApplicationJson {
     this.clientApplicationData = clientApplicationData;
   }
 
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
+  }
 }

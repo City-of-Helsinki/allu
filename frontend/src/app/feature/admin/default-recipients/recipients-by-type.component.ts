@@ -21,7 +21,9 @@ export class RecipientsByTypeComponent implements OnInit {
   form: FormGroup;
   recipientRows: FormArray;
 
-  constructor(private fb: FormBuilder, private recipientHub: DefaultRecipientHub) {
+  constructor(private fb: FormBuilder,
+              private recipientHub: DefaultRecipientHub,
+              private notification: NotificationService) {
     this.recipientRows = fb.array([]);
     this.form = fb.group({
       recipientRows: this.recipientRows
@@ -49,7 +51,7 @@ export class RecipientsByTypeComponent implements OnInit {
     this.recipientHub.saveDefaultRecipient(recipient)
       .subscribe(
         saved => { control.disable(); },
-        error => NotificationService.error(error));
+        error => this.notification.errorInfo(error));
   }
 
   remove(index: number): void {
@@ -57,7 +59,7 @@ export class RecipientsByTypeComponent implements OnInit {
     this.recipientHub.removeDefaultRecipient(recipient.id)
       .subscribe(
         status => {},
-        error => NotificationService.error(error));
+        error => this.notification.errorInfo(error));
     this.onItemCountChanged.emit(this.recipientRows.length);
   }
 

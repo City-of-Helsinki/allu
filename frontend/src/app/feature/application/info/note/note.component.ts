@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicationStore} from '../../../../service/application/application-store';
@@ -9,6 +10,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR, TimeUtil} from '../../../../util/time.util';
 import {Application} from '../../../../model/application/application';
 import {ProjectService} from '../../../../service/project/project.service';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 @Component({
   selector: 'note',
@@ -16,19 +18,27 @@ import {ProjectService} from '../../../../service/project/project.service';
   templateUrl: './note.component.html',
   styleUrls: []
 })
-export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit {
+export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit, OnDestroy {
+
+  private validityTimesControl: FormControl;
+  private recurringEndYearSubscription: Subscription;
 
   constructor(
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
+    notification: NotificationService,
     router: Router,
     projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {
     super.ngOnInit();
+  }
+
+  ngOnDestroy(): void {
+    this.recurringEndYearSubscription.unsubscribe();
   }
 
   protected initForm() {
@@ -41,6 +51,9 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
       description: [''],
       recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
     });
+    this.validityTimesControl = <FormControl>this.applicationForm.controls['validityTimes'];
+    this.recurringEndYearSubscription = this.applicationForm.controls['recurringEndYear'].valueChanges
+        .subscribe(val => this.onRecurringEndYearChanged(val));
   }
 
   protected onApplicationChange(application: Application): void {
@@ -60,5 +73,16 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.singleLocation.endTime = application.endTime;
 
     return application;
+  }
+
+  private onRecurringEndYearChanged(val: number) {
+    if (val) {
+      this.validityTimesControl.setValidators(
+          [ComplexValidator.durationAtMax('startTime', 'endTime', 364),
+           ComplexValidator.startBeforeEnd('startTime', 'endTime')]);
+    } else {
+      this.validityTimesControl.setValidators(ComplexValidator.startBeforeEnd('startTime', 'endTime'));
+    }
+    this.validityTimesControl.updateValueAndValidity();
   }
 }

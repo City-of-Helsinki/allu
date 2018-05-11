@@ -8,7 +8,6 @@ import {ApplicationStatus, inHandling} from '../../model/application/application
 import {findTranslation} from '../../util/translations';
 import {NotificationService} from '../../service/notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
-import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
 import {ApplicationStore} from '../../service/application/application-store';
@@ -32,7 +31,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   constructor(private applicationStore: ApplicationStore,
               private decisionHub: DecisionHub,
               private router: Router,
-              private dialog: MatDialog) {}
+              private dialog: MatDialog,
+              private notification: NotificationService) {}
 
   ngOnInit(): void {
   }
@@ -67,8 +67,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       this.changeStatus(confirmation)
         .switchMap(app => this.sendDecision(app.id, confirmation))
         .subscribe(
-          result => this.router.navigateByUrl('/workqueue'),
-          error => NotificationService.error(error));
+          () => this.router.navigateByUrl('/workqueue'),
+          error => this.notification.errorInfo(error));
     }
   }
 
@@ -77,10 +77,10 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(app => {
           this.applicationStore.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
-          NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
+          this.notification.success(findTranslation('application.statusChange.DECISIONMAKING'));
           this.applicationStore.applicationChange(app);
           this.onDecisionConfirm.emit(changeInfo);
-        }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
+        }, err => this.notification.error(findTranslation('application.error.toDecisionmaking')));
     }
   }
 
@@ -92,14 +92,14 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   private statusChanged(application: Application): void {
     this.application = application;
-    NotificationService.message(findTranslation(['decision.type', this.application.status, 'confirmation']));
+    this.notification.success(findTranslation(['decision.type', this.application.status, 'confirmation']));
   }
 
-  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<HttpResponse> {
+  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<{}> {
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
       .map(details => this.decisionHub.sendDecision(appId, details))
-      .orElse(Observable.of(new HttpResponse(HttpStatus.OK)));
+      .orElseGet(() => Observable.of({}));
   }
 }

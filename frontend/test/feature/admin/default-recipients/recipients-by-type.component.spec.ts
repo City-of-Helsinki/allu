@@ -9,8 +9,9 @@ import {ApplicationType} from '../../../../src/app/model/application/type/applic
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {DefaultRecipient} from '../../../../src/app/model/common/default-recipient';
 import {RECIPIENT_ONE, RECIPIENT_TWO} from '../../../service/recipients/default-recipient-mock-values';
-import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
 import {Observable} from 'rxjs/Observable';
+import {NotificationService} from '../../../../src/app/service/notification/notification.service';
+import {NotificationServiceMock} from '../../../mocks';
 
 class DefaultRecipientHubMock {
   recipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);
@@ -62,7 +63,8 @@ describe('RecipientsByTypeComponent', () => {
       ],
       providers: [
         FormBuilder,
-        { provide: DefaultRecipientHub, useClass: DefaultRecipientHubMock }
+        { provide: DefaultRecipientHub, useClass: DefaultRecipientHubMock },
+        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     }).compileComponents();
   }));
@@ -97,7 +99,7 @@ describe('RecipientsByTypeComponent', () => {
   }));
 
   it('should delete row on delete button click', fakeAsync(() => {
-    spyOn(hub, 'removeDefaultRecipient').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
+    spyOn(hub, 'removeDefaultRecipient').and.returnValue(Observable.of({}));
     const deleteBtn = page.getButtonFromRow(0, 'clear');
     deleteBtn.click();
     detectChangesAndUpdate();

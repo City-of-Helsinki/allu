@@ -1,14 +1,12 @@
-import {AuthHttp} from 'angular2-jwt';
 import {ErrorHandler} from '../../error/error-handler.service';
 import {Injectable} from '@angular/core';
 import {Deposit} from '../../../model/application/invoice/deposit';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse} from '../../../util/http-response';
 import {DepositMapper} from './deposit-mapper';
 import {findTranslation} from '../../../util/translations';
-import {HttpUtil} from '../../../util/http.util';
 import {NumberUtil} from '../../../util/number.util';
-import {StringUtil} from '../../../util/string.util';
+import {BackendDeposit} from './backend-deposit';
+import {HttpClient} from '@angular/common/http';
 
 const DEPOSIT_URL = '/api/deposit';
 const DEPOSIT_UPDATE_URL = '/api/deposit/:id';
@@ -17,14 +15,13 @@ const APPLICATION_DEPOSIT_URL = '/api/applications/:appId/deposit';
 
 @Injectable()
 export class DepositService {
-  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
+  constructor(private http: HttpClient, private errorHandler: ErrorHandler) {
   }
 
   fetchByApplication(applicationId: number): Observable<Deposit> {
     const url = APPLICATION_DEPOSIT_URL.replace(':appId', String(applicationId));
-    return this.authHttp.get(url)
-      .filter(response => !StringUtil.isEmpty(response.text()))
-      .map(response => response.json())
+    return this.http.get<BackendDeposit>(url)
+      .filter(deposit => !!deposit)
       .map(deposit => DepositMapper.mapBackend(deposit))
       .catch(error => this.errorHandler.handle(error, findTranslation('deposit.error.fetch')));
   }
@@ -32,22 +29,21 @@ export class DepositService {
   save(deposit: Deposit): Observable<Deposit> {
     if (NumberUtil.isDefined(deposit.id)) {
       const url = DEPOSIT_UPDATE_URL.replace(':id', String(deposit.id));
-      return this.authHttp.put(url,
+      return this.http.put<BackendDeposit>(url,
         JSON.stringify(DepositMapper.mapFrontend(deposit)))
-        .map(response => DepositMapper.mapBackend(response.json()))
+        .map(saved => DepositMapper.mapBackend(saved))
         .catch(error => this.errorHandler.handle(error, findTranslation('deposit.error.save')));
     } else {
-      return this.authHttp.post(DEPOSIT_URL,
+      return this.http.post<BackendDeposit>(DEPOSIT_URL,
         JSON.stringify(DepositMapper.mapFrontend(deposit)))
-        .map(response => DepositMapper.mapBackend(response.json()))
+        .map(saved => DepositMapper.mapBackend(saved))
         .catch(error => this.errorHandler.handle(error, findTranslation('deposit.error.save')));
     }
   }
 
-  remove(id: number): Observable<HttpResponse> {
+  remove(id: number): Observable<{}> {
     const url = DEPOSIT_REMOVE_URL.replace(':id', String(id));
-    return this.authHttp.delete(url)
-      .map(response => HttpUtil.extractHttpResponse(response))
+    return this.http.delete(url)
       .catch(error => this.errorHandler.handle(error, findTranslation('deposit.error.remove')));
   }
 }

@@ -1,21 +1,23 @@
 package fi.hel.allu.servicecore.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class ApplicationJsonServiceTest {
 
@@ -37,7 +39,6 @@ public class ApplicationJsonServiceTest {
   private ContactJson contactJson = Mockito.mock(ContactJson.class);
   private List<ContactJson> contactJsons = Collections.singletonList(contactJson);
   private UserJson userJson = Mockito.mock(UserJson.class);
-  private LocationJson locationJson = Mockito.mock(LocationJson.class);
   private List<CommentJson> comments = new ArrayList<>();
   private UserJson currentUser = Mockito.mock(UserJson.class);
 
@@ -60,9 +61,8 @@ public class ApplicationJsonServiceTest {
     Mockito.when(application.getType()).thenReturn(ApplicationType.SHORT_TERM_RENTAL);
     Mockito.when(application.getMetadataVersion()).thenReturn(1);
 
-    Mockito.when(projectService.findByIds(Collections.singletonList(projectId))).thenReturn(Collections.singletonList(projectJson));
+    Mockito.when(projectService.findById(projectId)).thenReturn(projectJson);
     Mockito.when(userService.findUserById(userId)).thenReturn(userJson);
-    Mockito.when(locationService.findLocationsByApplication(applicationId)).thenReturn(Collections.singletonList(locationJson));
     Mockito.when(attachmentService.findAttachmentsForApplication(applicationId)).thenReturn(Collections.emptyList());
 
     comments.add(Mockito.mock(CommentJson.class));
@@ -87,7 +87,6 @@ public class ApplicationJsonServiceTest {
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     Assert.assertEquals(projectJson, applicationJson.getProject());
     Assert.assertEquals(userJson, applicationJson.getOwner());
-    Assert.assertEquals(locationJson, applicationJson.getLocations().get(0));
     Assert.assertEquals(0, applicationJson.getAttachmentList().size());
     Assert.assertEquals(2, applicationJson.getComments().size());
   }

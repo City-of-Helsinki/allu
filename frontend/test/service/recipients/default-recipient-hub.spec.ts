@@ -4,7 +4,6 @@ import {DefaultRecipientService} from '../../../src/app/service/recipients/defau
 import {DefaultRecipient} from '../../../src/app/model/common/default-recipient';
 import {ApplicationType} from '../../../src/app/model/application/type/application-type';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {RECIPIENT_ONE, RECIPIENT_TWO, RECIPIENT_NEW, RECIPIENTS_ALL} from './default-recipient-mock-values';
 
 class DefaultRecipientServiceMock {
@@ -77,8 +76,8 @@ describe('DefaultRecipientHub', () => {
     hub.loadDefaultRecipients();
     tick();
 
-    spyOn(defaultRecipientService, 'removeDefaultRecipient').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
-    hub.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(response => expect(response.status).toEqual(HttpStatus.OK));
+    spyOn(defaultRecipientService, 'removeDefaultRecipient').and.returnValue(Observable.of({}));
+    hub.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(response => expect(response).toEqual({}));
     tick();
 
     hub.defaultRecipients.last().subscribe(recipients => {

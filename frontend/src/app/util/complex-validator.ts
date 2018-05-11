@@ -79,6 +79,24 @@ export class ComplexValidator {
     };
   }
 
+  static durationAtMax(startField: string, endField: string, maxDurationAtDays: number): ValidatorFn {
+    return (fg: FormGroup) => {
+      const start = this.fieldValue(fg, startField);
+      const end = this.fieldValue(fg, endField);
+
+      if (start && end) {
+        const maxEnd = new Date(start);
+        maxEnd.setDate(maxEnd.getDate() + maxDurationAtDays);
+
+        const valid = TimeUtil.isBefore(end, maxEnd);
+
+        // undefined means valid field
+        return valid ? undefined : {durationAtMax: true};
+      }
+      return undefined;
+    };
+  }
+
   static after(dateCtrl: AbstractControl): ValidatorFn {
     return (fg: AbstractControl) => {
       const first = fg.value;

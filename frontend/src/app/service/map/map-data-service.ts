@@ -5,12 +5,13 @@ import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {Observable} from 'rxjs/Observable';
-import {AuthHttp} from 'angular2-jwt';
 import {ErrorHandler} from '../error/error-handler.service';
 import {MapUtil} from './map.util';
 import {MapSearchFilter} from '../map-search-filter';
 import {ApplicationStatus, ApplicationStatusGroup} from '../../model/application/application-status';
 import {ArrayUtil} from '../../util/array-util';
+import {HttpClient} from '@angular/common/http';
+import {BackendApplication} from '../backend-model/backend-application';
 
 const APPLICATION_SEARCH_URL = '/api/applications/search_location';
 
@@ -18,7 +19,7 @@ const APPLICATION_SEARCH_URL = '/api/applications/search_location';
 export class MapDataService {
   private groupedStatuses = new Map<ApplicationStatusGroup, ApplicationStatus[]>();
 
-  constructor(private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
               private errorHandler: ErrorHandler,
               private mapUtil: MapUtil) {
     this.groupedStatuses.set(ApplicationStatusGroup.PRELIMINARY, [
@@ -44,11 +45,10 @@ export class MapDataService {
   applicationsByLocation(filter: MapSearchFilter): Observable<Array<Application>> {
     if (filter.statuses && filter.statuses.length) {
       const query = this.toApplicationLocationQuery(filter);
-      return this.authHttp.post(
+      return this.http.post<BackendApplication[]>(
         APPLICATION_SEARCH_URL,
         JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query)))
-        .map(response => response.json())
-        .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+        .map(applications => applications.map(app => ApplicationMapper.mapBackend(app)))
         .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
     } else {
       return Observable.of([]);

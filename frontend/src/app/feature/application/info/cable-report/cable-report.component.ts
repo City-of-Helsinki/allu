@@ -11,6 +11,7 @@ import {CableReport} from '../../../../model/application/cable-report/cable-repo
 import {ApplicationStatus} from '../../../../model/application/application-status';
 import {TimeUtil} from '../../../../util/time.util';
 import {ProjectService} from '../../../../service/project/project.service';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 @Component({
   selector: 'cable-report',
@@ -26,9 +27,10 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
+    notification: NotificationService,
     router: Router,
     projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {

@@ -5,13 +5,17 @@ import {Observable} from 'rxjs/Observable';
 import '../../rxjs-extensions';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {LocationService} from '../location.service';
+import {NotificationService} from '../notification/notification.service';
 
 @Injectable()
 export class FixedLocationService {
   private fixedLocations$ = new BehaviorSubject<FixedLocationArea[]>([]);
 
-  constructor(private service: LocationService) {
-    this.service.getFixedLocations().subscribe(fxs => this.fixedLocations$.next(fxs));
+  constructor(private service: LocationService, private notification: NotificationService) {
+    this.service.getFixedLocations().subscribe(
+      fxs => this.fixedLocations$.next(fxs),
+      err => this.notification.errorInfo(err)
+    );
 
   }
 

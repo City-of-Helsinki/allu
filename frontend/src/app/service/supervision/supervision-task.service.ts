@@ -1,13 +1,14 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {AuthHttp} from 'angular2-jwt/angular2-jwt';
+import {HttpClient} from '@angular/common/http';
 import {SupervisionTask} from '../../model/application/supervision/supervision-task';
 import {SupervisionTaskMapper} from './supervision-task-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
-import {HttpResponse} from '../../util/http-response';
-import {HttpUtil} from '../../util/http.util';
-import {SupervisionWorkItem} from '../../model/application/supervision/supervision-work-item';
+import {
+  BackendSupervisionWorkItem,
+  SupervisionWorkItem
+} from '../../model/application/supervision/supervision-work-item';
 import {SupervisionSearchMapper} from './supervision-work-item-mapper';
 import {SupervisionTaskSearchCriteria} from '../../model/application/supervision/supervision-task-search-criteria';
 import {PageMapper} from '../common/page-mapper';
@@ -16,6 +17,8 @@ import {Sort} from '../../model/common/sort';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 import {TimeUtil} from '../../util/time.util';
 import {PageRequest} from '../../model/common/page-request';
+import {BackendSupervisionTask} from '../../model/application/supervision/backend-supervision-task';
+import {BackendPage} from '../backend-model/backend-page';
 
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
 const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';
@@ -27,13 +30,12 @@ const SUPERVISION_TASK_REJECT_URL =  SUPERVISION_TASK_URL + '/:id/reject';
 @Injectable()
 export class SupervisionTaskService {
 
-  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
+  constructor(private http: HttpClient, private errorHandler: ErrorHandler) {
   }
 
   findTasksByApplicationId(applicationId: number): Observable<Array<SupervisionTask>> {
     const url = SUPERVISION_TASK_APP_URL.replace(':appId', String(applicationId));
-    return this.authHttp.get(url)
-      .map(response => response.json())
+    return this.http.get<BackendSupervisionTask[]>(url)
       .map(tasks => SupervisionTaskMapper.mapBackendList(tasks))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.fetch')));
   }
@@ -41,50 +43,49 @@ export class SupervisionTaskService {
   save(task: SupervisionTask): Observable<SupervisionTask> {
     if (task.id) {
       const url = SUPERVISION_TASK_URL + '/' + task.id;
-      return this.authHttp.put(url,
+      return this.http.put<BackendSupervisionTask>(url,
         JSON.stringify(SupervisionTaskMapper.mapFrontend(task)))
-        .map(response => SupervisionTaskMapper.mapBackend(response.json()))
+        .map(saved => SupervisionTaskMapper.mapBackend(saved))
         .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.save')));
     } else {
-      return this.authHttp.post(SUPERVISION_TASK_URL,
+      return this.http.post<BackendSupervisionTask>(SUPERVISION_TASK_URL,
         JSON.stringify(SupervisionTaskMapper.mapFrontend(task)))
-        .map(response => SupervisionTaskMapper.mapBackend(response.json()))
+        .map(saved => SupervisionTaskMapper.mapBackend(saved))
         .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.save')));
     }
   }
 
-  remove(id: number): Observable<HttpResponse> {
+  remove(id: number): Observable<{}> {
     const url = SUPERVISION_TASK_URL + '/' + id;
-    return this.authHttp.delete(url)
-      .map(response => HttpUtil.extractHttpResponse(response))
+    return this.http.delete(url)
       .catch(error => this.errorHandler.handle(error, findTranslation('supervisiontask.error.remove')));
   }
 
   search(searchCriteria: SupervisionTaskSearchCriteria, sort?: Sort, pageRequest?: PageRequest): Observable<Page<SupervisionWorkItem>> {
-    return this.authHttp.post(SUPERVISION_TASK_SEARCH_URL,
+    return this.http.post<BackendPage<BackendSupervisionWorkItem>>(SUPERVISION_TASK_SEARCH_URL,
       JSON.stringify(SupervisionSearchMapper.mapSearchCriteria(searchCriteria)),
-      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
-      .map(response => PageMapper.mapBackend(response.json(), SupervisionSearchMapper.mapWorkItem))
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)})
+      .map(items => PageMapper.mapBackend(items, SupervisionSearchMapper.mapWorkItem))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.fetch')));
   }
 
-  changeOwner(ownerId: number, taskIds: Array<number>): Observable<HttpResponse> {
+  changeOwner(ownerId: number, taskIds: Array<number>): Observable<{}> {
     const url = SUPERVISION_TASK_OWNER_URL + '/' + ownerId;
-    return this.authHttp.put(url, JSON.stringify(taskIds))
+    return this.http.put(url, JSON.stringify(taskIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
-  removeOwner(taskIds: Array<number>): Observable<HttpResponse> {
+  removeOwner(taskIds: Array<number>): Observable<{}> {
     const url = SUPERVISION_TASK_OWNER_URL + '/remove';
-    return this.authHttp.put(url, JSON.stringify(taskIds))
+    return this.http.put(url, JSON.stringify(taskIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
   approve(task: SupervisionTask): Observable<SupervisionTask> {
     const url = SUPERVISION_TASK_APPROVE_URL.replace(':id', String(task.id));
 
-    return this.authHttp.put(url, JSON.stringify(SupervisionTaskMapper.mapFrontend(task)))
-      .map(response => SupervisionTaskMapper.mapBackend(response.json()))
+    return this.http.put<BackendSupervisionTask>(url, JSON.stringify(SupervisionTaskMapper.mapFrontend(task)))
+      .map(approved => SupervisionTaskMapper.mapBackend(approved))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.approve')));
   }
 
@@ -92,8 +93,8 @@ export class SupervisionTaskService {
     const url = SUPERVISION_TASK_REJECT_URL.replace(':id', String(task.id));
     const options = {params: {'newDate': TimeUtil.dateToBackend(newSupervisionDate)}};
 
-    return this.authHttp.put(url, JSON.stringify(SupervisionTaskMapper.mapFrontend(task)), options)
-      .map(response => SupervisionTaskMapper.mapBackend(response.json()))
+    return this.http.put<BackendSupervisionTask>(url, JSON.stringify(SupervisionTaskMapper.mapFrontend(task)), options)
+      .map(rejected => SupervisionTaskMapper.mapBackend(rejected))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.reject')));
   }
 }

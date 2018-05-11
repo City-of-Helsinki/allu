@@ -45,7 +45,8 @@ export class InvoicingInfoComponent implements OnInit {
 
   constructor(private applicationStore: ApplicationStore,
               private customerService: CustomerService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -81,8 +82,8 @@ export class InvoicingInfoComponent implements OnInit {
       .filter(result => !!result)
       .switchMap(result => this.applicationStore.saveDeposit(result))
       .subscribe(
-        result => NotificationService.translateMessage('deposit.action.save'),
-        error => NotificationService.error(error));
+        result => this.notification.translateSuccess('deposit.action.save'),
+        error => this.notification.errorInfo(error));
   }
 
   nextDepositStatus(): void {
@@ -90,8 +91,8 @@ export class InvoicingInfoComponent implements OnInit {
     deposit.status = deposit.status + 1;
     this.applicationStore.saveDeposit(deposit)
       .subscribe(
-        result => NotificationService.translateMessage('deposit.action.save'),
-        error => NotificationService.error(error));
+        result => this.notification.translateSuccess('deposit.action.save'),
+        error => this.notification.errorInfo(error));
   }
 
   get hasDeposit(): boolean {

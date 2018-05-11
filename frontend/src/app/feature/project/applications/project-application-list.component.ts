@@ -12,10 +12,12 @@ import {
 import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
-import {CityDistrictService} from '../../../service/map/city-district.service';
 import {Subject} from 'rxjs/Subject';
 import {Some} from '../../../util/option';
+import * as fromRoot from '../../allu/reducers';
+import {Store} from '@ngrx/store';
+import {Dictionary} from '@ngrx/entity/src/models';
+import {CityDistrict} from '../../../model/common/city-district';
 
 @Component({
   selector: 'project-application-list',
@@ -23,9 +25,10 @@ import {Some} from '../../../util/option';
   styleUrls: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy {
+export class ProjectApplicationListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @Input() loading: boolean;
+  @Input() controls = false;
+  @Input() loading = false;
 
   @Output() applicationAdd = new EventEmitter<number>();
   @Output() applicationRemove = new EventEmitter<number>();
@@ -36,16 +39,25 @@ export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   displayedColumns = [
-    'controls',
     'ownerName', 'applicationId', 'type', 'status',
     'customerName', 'cityDistrict',
     'creationTime', 'startTime'
   ];
 
   private destroy = new Subject<boolean>();
+  private districts: Dictionary<CityDistrict>;
 
   constructor(private router: Router,
-              private cityDistrictService: CityDistrictService) {}
+              private store: Store<fromRoot.State>) {}
+
+  ngOnInit(): void {
+    this.displayedColumns = this.controls
+      ? ['controls'].concat(this.displayedColumns)
+      : this.displayedColumns;
+
+    this.store.select(fromRoot.getCityDistrictEntities).take(1)
+      .subscribe(districts => this.districts = districts);
+  }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
@@ -64,7 +76,8 @@ export class ProjectApplicationListComponent implements AfterViewInit, OnDestroy
   private toApplicationElement(application: Application): ApplicationElement {
     const cityDistrict = Some(application.firstLocation)
       .map(l => l.effectiveCityDistrictId)
-      .map(id => this.cityDistrictService.nameImmediate(id));
+      .map(id => this.districts[id])
+      .map(district => district.name);
 
     return {
       id: application.id,

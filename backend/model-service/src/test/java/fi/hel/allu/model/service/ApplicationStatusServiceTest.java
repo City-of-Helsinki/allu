@@ -1,23 +1,29 @@
 package fi.hel.allu.model.service;
 
-import com.greghaskins.spectrum.Spectrum;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.testUtils.SpeccyTestBase;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
+import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
+import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import fi.hel.allu.common.util.TimeUtil;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.PlacementContract;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 @RunWith(Spectrum.class)
 public class ApplicationStatusServiceTest extends SpeccyTestBase {
@@ -25,12 +31,15 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
   private ApplicationStatusService applicationStatusService;
   private ApplicationService applicationService;
   private LocationService locationService;
+  private DecisionDao decisionDao;
 
   {
     beforeEach(() -> {
       applicationService = Mockito.mock(ApplicationService.class);
+      decisionDao = Mockito.mock(DecisionDao.class);
       locationService = Mockito.mock(LocationService.class);
-      applicationStatusService = new ApplicationStatusService(applicationService, locationService);
+      applicationStatusService = new ApplicationStatusService(applicationService, locationService,
+          Mockito.mock(ApplicationDao.class), decisionDao);
     });
 
     describe("Status change operations", () -> {
@@ -73,8 +82,10 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
               .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
         });
 
-        it("Should change status and update placement contracts locations end date to decision date + 3 years", () -> {
+        it("Should change status and update placement contracts locations end date to decision date + 1 years", () -> {
+          when(decisionDao.getPlacementContractSectionNumber()).thenReturn(1);
           mockApp.setType(ApplicationType.PLACEMENT_CONTRACT);
+          mockApp.setExtension(new PlacementContract());
           applicationStatusService.changeApplicationStatus(app.getId(), StatusType.DECISION, app.getOwner());
 
           Mockito.verify(applicationService, Mockito.times(1))
@@ -83,7 +94,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
           Mockito.verify(locationService, Mockito.times(1))
               .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
 
-          assertEquals(location.getEndTime(), mockApp.getDecisionTime().plusYears(3));
+          assertEquals(TimeUtil.endOfDay(mockApp.getDecisionTime()).plusYears(1), location.getEndTime());
         });
 
       });

@@ -2,7 +2,8 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {LocationState} from '../../../service/application/location-state';
 import {Location} from '../../../model/common/location';
-import {CityDistrictService} from '../../../service/map/city-district.service';
+import * as fromRoot from '../../allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'stored-locations',
@@ -18,7 +19,7 @@ export class StoredLocationsComponent implements OnInit, OnDestroy {
 
   locations: Observable<Array<Location>>;
 
-  constructor(private cityDistrictService: CityDistrictService,
+  constructor(private store: Store<fromRoot.State>,
               private locationState: LocationState) {
   }
 
@@ -30,8 +31,7 @@ export class StoredLocationsComponent implements OnInit, OnDestroy {
   }
 
   districtName(id: number): Observable<string> {
-    return this.cityDistrictService.byId(id)
-      .map(d => d.name);
+    return this.store.select(fromRoot.getCityDistrictName(id));
   }
 
   editLocation(index: number): void {

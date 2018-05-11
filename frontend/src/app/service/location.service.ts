@@ -1,22 +1,23 @@
 import {Injectable} from '@angular/core';
-import {AuthHttp} from 'angular2-jwt/angular2-jwt';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 
 import {Geocoordinates} from '../model/common/geocoordinates';
 import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
 import {DEFAULT_STREET_AREA_NUMBER, StreetAddress} from '../model/common/street-address';
 import {MapUtil} from './map/map.util';
-import {UIStateHub} from './ui-state/ui-state-hub';
-import {HttpUtil} from './../util/http.util';
-import {ErrorInfo} from './ui-state/error-info';
-import {ErrorType} from './ui-state/error-type';
 import {None, Option, Some} from '../util/option';
 import {FixedLocationMapper} from './mapper/fixed-location-mapper';
 import {PostalAddress} from '../model/common/postal-address';
 import {CityDistrict} from '../model/common/city-district';
-import {CityDistrictMapper} from './mapper/city-district-mapper';
-import {HttpStatus} from '../util/http-response';
+import {BackendCityDistrict, CityDistrictMapper} from './mapper/city-district-mapper';
 import {FixedLocationArea} from '../model/common/fixed-location-area';
+import {ErrorHandler} from './error/error-handler.service';
+import {findTranslation} from '../util/translations';
+import {BackendGeocoordinates} from './backend-model/backend-geocoordinates';
+import {BackendFixedLocationArea} from './backend-model/backend-fixed-location-area';
+import {BackendPostalAddress} from './backend-model/backend-postal-address';
+import {HttpStatus} from '../util/http-status';
 
 const ADDRESS_URL = '/api/address';
 const GEOCODE_URL = '/geocode/helsinki';
@@ -28,39 +29,35 @@ const SEARCH_URL = '/search';
 export class LocationService {
 
   constructor(
-    private authHttp: AuthHttp,
+    private http: HttpClient,
     private mapService: MapUtil,
-    private uiState: UIStateHub) {}
+    private errorHandler: ErrorHandler) {}
 
   public geocode(address: string): Observable<Option<Geocoordinates>> {
-    return this.authHttp.get(this.geocodeUrl(address))
+    return this.http.get<BackendGeocoordinates>(this.geocodeUrl(address))
       .catch(error => this.handleNotFound(error, address))
-      .map(response => response.json())
       .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService))
       .map(coordinates => Some(coordinates))
       .catch(err => this.handleGeocodeError(err));
   }
 
   public getFixedLocations(): Observable<Array<FixedLocationArea>> {
-    return this.authHttp.get(FIXED_LOCATION_URL)
-      .map(response => response.json())
+    return this.http.get<BackendFixedLocationArea[]>(FIXED_LOCATION_URL)
       .map(json => json.map(ss => FixedLocationMapper.mapBackend(ss)))
-      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+      .catch(err => this.errorHandler.handle(err, findTranslation('location.error.fetchFixedLocations')));
   }
 
   public districts(): Observable<Array<CityDistrict>> {
-    return this.authHttp.get(CITY_DISTRICT_URL)
-      .map(response => response.json())
-      .map(json => json.map(district => CityDistrictMapper.mapBackend(district)))
-      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+    return this.http.get<BackendCityDistrict[]>(CITY_DISTRICT_URL)
+      .map(districts => districts.map(district => CityDistrictMapper.mapBackend(district)))
+      .catch(err => this.errorHandler.handle(err, findTranslation('location.error.fetchCityDistricts')));
   }
 
   public search(searchTerm: string): Observable<Array<PostalAddress>> {
     const searchUrl = ADDRESS_URL + SEARCH_URL + '/' + searchTerm;
-    return this.authHttp.get(searchUrl)
-      .map(response => response.json())
-      .map(json => json.map(address => PostalAddress.fromBackend(address)))
-      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+    return this.http.get<BackendPostalAddress[]>(searchUrl)
+      .map(addressses => addressses.map(address => PostalAddress.fromBackend(address)))
+      .catch(err => this.errorHandler.handle(err, findTranslation('location.error.addressSearch')));
   }
 
   private geocodeUrl(address: string, defaultStreetNumber?: number) {
@@ -78,17 +75,15 @@ export class LocationService {
     }
   }
 
-  private handleNotFound(error: any, address: string): Observable<any> {
-    const httpError = HttpUtil.extractHttpResponse(error);
-    return httpError.status === HttpStatus.NOT_FOUND
-      ? this.authHttp.get(this.geocodeUrl(address, DEFAULT_STREET_AREA_NUMBER))
-      : error;
+  private handleNotFound(error: HttpErrorResponse, address: string): Observable<BackendGeocoordinates> {
+    return error.status === HttpStatus.NOT_FOUND
+      ? this.http.get<BackendGeocoordinates>(this.geocodeUrl(address, DEFAULT_STREET_AREA_NUMBER))
+      : Observable.throw(error);
   }
 
-  private handleGeocodeError(errorResponse: any): Observable<Option<Geocoordinates>> {
-    const httpError = HttpUtil.extractHttpResponse(errorResponse);
-    return httpError.status === HttpStatus.NOT_FOUND
+  private handleGeocodeError(errorResponse: HttpErrorResponse): Observable<Option<Geocoordinates>> {
+    return errorResponse.status === HttpStatus.NOT_FOUND
       ? Observable.of(None())
-      : Observable.throw(new ErrorInfo(ErrorType.GEOLOCATION_SEARCH_FAILED, httpError.message));
+      : this.errorHandler.handle(errorResponse, findTranslation('geolocation.error.searchFailed'));
   }
 }

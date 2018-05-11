@@ -30,7 +30,8 @@ export class CustomerMapper {
         backendCustomer.active,
         backendCustomer.sapCustomerNumber,
         backendCustomer.invoicingProhibited,
-        backendCustomer.invoicingOnly);
+        backendCustomer.invoicingOnly,
+        backendCustomer.projectIdentifierPrefix);
     } else {
       return undefined;
     }
@@ -53,7 +54,8 @@ export class CustomerMapper {
       phone: customer.phone,
       active: customer.active,
       invoicingOnly: customer.invoicingOnly,
-      country: customer.country
+      country: customer.country,
+      projectIdentifierPrefix: customer.projectIdentifierPrefix
     } : undefined;
 
   }

@@ -8,9 +8,10 @@ import {ArrayUtil} from '../../../../util/array-util';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {LocationState} from '../../../../service/application/location-state';
 import {FixedLocationService} from '../../../../service/map/fixed-location.service';
-import {CityDistrictService} from '../../../../service/map/city-district.service';
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
+import * as fromRoot from '../../../allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'location-details',
@@ -33,7 +34,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   constructor(private mapStore: MapStore,
               private locationState: LocationState,
               private fixedLocationService: FixedLocationService,
-              private cityDistrictService: CityDistrictService) {
+              private store: Store<fromRoot.State>) {
   }
 
   ngOnInit(): void {
@@ -64,7 +65,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   districtName(id: number): Observable<string> {
-    return this.cityDistrictService.byId(id).map(d => d.name);
+    return this.store.select(fromRoot.getCityDistrictName(id));
   }
 
   private editLocation(loc: Location): void {

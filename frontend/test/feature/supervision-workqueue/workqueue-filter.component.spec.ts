@@ -4,7 +4,7 @@ import {By} from '@angular/platform-browser';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
-import {availableToDirectiveMockMeta, CityDistrictServiceMock, CurrentUserMock, UserServiceMock} from '../../mocks';
+import {availableToDirectiveMockMeta, CurrentUserMock, NotificationServiceMock, UserServiceMock} from '../../mocks';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
@@ -12,11 +12,13 @@ import {WorkQueueFilterComponent} from '../../../src/app/feature/supervision-wor
 import {findTranslation} from '../../../src/app/util/translations';
 
 import {Page} from '../../../src/app/model/common/page';
-import {CityDistrictService} from '../../../src/app/service/map/city-district.service';
 import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
 import {StoredFilterModule} from '../../../src/app/feature/stored-filter/stored-filter.module';
 import {UserService} from '../../../src/app/service/user/user-service';
+import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {StoreModule} from '@ngrx/store';
+import * as fromRoot from '../../../src/app/feature/allu/reducers';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -35,7 +37,10 @@ describe('SupervisionWorkqueueFilterComponent', () => {
       imports: [
         ReactiveFormsModule,
         AlluCommonModule,
-        StoredFilterModule
+        StoredFilterModule,
+        StoreModule.forRoot({
+          ...fromRoot.reducers
+        }),
       ],
       declarations: [
         WorkQueueFilterComponent
@@ -43,9 +48,9 @@ describe('SupervisionWorkqueueFilterComponent', () => {
       providers: [
         FormBuilder,
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
-        {provide: CityDistrictService, useClass: CityDistrictServiceMock},
         {provide: StoredFilterStore, useClass: StoredFilterStoreMock},
-        {provide: UserService, useClass: UserServiceMock}
+        {provide: UserService, useClass: UserServiceMock},
+        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))

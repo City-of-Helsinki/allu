@@ -9,6 +9,7 @@ import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {TimeUtil} from '../../../../util/time.util';
 import {ProjectService} from '../../../../service/project/project.service';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 
 @Component({
@@ -23,9 +24,10 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
+    notification: NotificationService,
     router: Router,
     projectService: ProjectService) {
-    super(fb, route, applicationStore, router, projectService);
+    super(fb, route, applicationStore, notification, router, projectService);
   }
 
   ngOnInit(): any {

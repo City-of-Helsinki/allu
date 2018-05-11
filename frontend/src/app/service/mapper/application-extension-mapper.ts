@@ -93,7 +93,6 @@ export class ApplicationExtensionMapper {
         );
       case ApplicationType.PLACEMENT_CONTRACT:
         return new PlacementContract(
-          backendExtension.identificationNumber,
           backendExtension.propertyIdentificationNumber,
           backendExtension.additionalInfo,
           backendExtension.contractText,
@@ -244,7 +243,6 @@ export class ApplicationExtensionMapper {
   private static mapFrontendPlacementContract(placementContract: PlacementContract): any {
     return {
       applicationType: placementContract.applicationType,
-      identificationNumber: placementContract.identificationNumber,
       propertyIdentificationNumber: placementContract.propertyIdentificationNumber,
       additionalInfo: placementContract.additionalInfo,
       contractText: placementContract.contractText,

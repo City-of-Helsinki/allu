@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.core.types.dsl.Expressions;
 import static fi.hel.allu.QDecision.decision;
 
 import java.time.ZonedDateTime;
@@ -48,5 +49,10 @@ public class DecisionDao {
     byte[] data = queryFactory.select(decision.data).from(decision).where(decision.applicationId.eq(applicationId))
         .fetchOne();
     return Optional.ofNullable(data);
+  }
+
+  @Transactional
+  public int getPlacementContractSectionNumber() {
+    return queryFactory.select(Expressions.simpleTemplate(Integer.class, "allu.get_placement_contract_section_number()")).fetchOne();
   }
 }

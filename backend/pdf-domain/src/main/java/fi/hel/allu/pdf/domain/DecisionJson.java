@@ -77,6 +77,10 @@ public class DecisionJson {
   private String cableReportOrderer;
 
   private List<ChargeInfoTexts> chargeInfoEntries;
+  private Integer sectionNumber;
+  private List<KindWithSpecifiers> kinds;
+  private String contractText;
+  private String applicantName;
 
   public boolean isDraft() {
     return isDraft;
@@ -474,4 +478,35 @@ public class DecisionJson {
     this.chargeInfoEntries = chargeInfoEntries;
   }
 
+  public Integer getSectionNumber() {
+    return sectionNumber;
+  }
+
+  public void setSectionNumber(Integer sectionNumber) {
+    this.sectionNumber = sectionNumber;
+  }
+
+  public List<KindWithSpecifiers> getKinds() {
+    return kinds;
+  }
+
+  public void setKinds(List<KindWithSpecifiers> kinds) {
+    this.kinds = kinds;
+  }
+
+  public String getContractText() {
+    return contractText;
+  }
+
+  public void setContractText(String contractText) {
+    this.contractText = contractText;
+  }
+
+  public String getApplicantName() {
+    return applicantName;
+  }
+
+  public void setApplicantName(String applicantName) {
+    this.applicantName = applicantName;
+  }
 }

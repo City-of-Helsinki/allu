@@ -104,7 +104,7 @@ public class ProjectControllerTest {
     Application app1 = testCommon.dummyOutdoorApplication("TestAppOne", "Sinikka");
     app1.setProjectId(projectId1);
     for (int i = 0; i < NUM_FIRST; ++i) {
-      wtc.perform(post("/applications"), app1).andExpect(status().isOk());
+      wtc.perform(post("/applications?userId=" + testUser.getId()), app1).andExpect(status().isOk());
     }
     // Now prepare another application -- will get another project ID:
     int projectId2 = testCommon.insertProject("p2");
@@ -112,7 +112,7 @@ public class ProjectControllerTest {
     app2.setProjectId(projectId2);
     assertNotEquals(app1.getProjectId(), app2.getProjectId());
     for (int i = 0; i < NUM_SECOND; ++i) {
-      wtc.perform(post("/applications"), app2).andExpect(status().isOk());
+      wtc.perform(post("/applications?userId=" + testUser.getId()), app2).andExpect(status().isOk());
     }
     // Now get applications for the first project:
     ResultActions resultActions = wtc.perform(
@@ -183,8 +183,8 @@ public class ProjectControllerTest {
     ZonedDateTime endTime = ZonedDateTime.parse("2016-11-20T08:00:00+02:00[Europe/Helsinki]");
 
     Application newApplication = createApplication(customer);
+    addCityDistrictToApplication(newApplication, KLUUVI_CITY_DISTRICT_ID, startTime, endTime);
     Application addedApplication = addApplicationToDatabase(newApplication);
-    addCityDistrictToApplication(addedApplication, KLUUVI_CITY_DISTRICT_ID, startTime, endTime);
 
     Project project1 = createDummyProject();
     project1 = addProjectGetResult(project1);
@@ -225,8 +225,8 @@ public class ProjectControllerTest {
     ZonedDateTime startTime = ZonedDateTime.parse("2016-11-11T08:00:00+02:00[Europe/Helsinki]");
     ZonedDateTime endTime = ZonedDateTime.parse("2016-11-20T08:00:00+02:00[Europe/Helsinki]");
     Application newApplication1 = createApplication(customer);
+    addCityDistrictToApplication(newApplication1, KLUUVI_CITY_DISTRICT_ID, startTime, endTime);
     Application addedApplication1 = addApplicationToDatabase(newApplication1);
-    addCityDistrictToApplication(addedApplication1, KLUUVI_CITY_DISTRICT_ID, startTime, endTime);
 
     Project project = createDummyProject();
     project = addProjectGetResult(project);
@@ -252,13 +252,14 @@ public class ProjectControllerTest {
 
     // add application to the parent project
     Application parentApplication = createApplication(customer);
-    Application addedParentApplication = addApplicationToDatabase(parentApplication);
     // Polygon that's mostly in Herttoniemi:
     DSL.Polygon2DToken herttoniemi_polygon = polygon(
         ring(c(25502404.097045037895441, 6675352.16425826959312), c(25502772.543876249343157, 6675370.854831204749644),
             c(25502767.204117525368929, 6675095.857257002033293), c(25502393.421108055859804, 6675101.196953509002924),
             c(25502404.097045037895441, 6675352.16425826959312)));
-    addCityDistrictToApplication(addedParentApplication, herttoniemi_polygon, startTime.minusDays(1), endTime.plusDays(1));
+    addCityDistrictToApplication(parentApplication, herttoniemi_polygon, startTime.minusDays(1), endTime.plusDays(1));
+    Application addedParentApplication = addApplicationToDatabase(parentApplication);
+
     wtc.perform(
         put("/projects/" + projectParent.getId() + "/applications?userId=" + testUser.getId()),
         Collections.singletonList(addedParentApplication.getId())).andExpect(status().isOk());
@@ -274,8 +275,9 @@ public class ProjectControllerTest {
 
     // add another application to child
     Application newApplication2 = createApplication(customer);
+    addCityDistrictToApplication(newApplication2, KRUUNUNHAKA_CITY_DISTRICT_ID, startTime.minusDays(2), endTime.minusDays(1));
     Application addedApplication2 = addApplicationToDatabase(newApplication2);
-    addCityDistrictToApplication(addedApplication2, KRUUNUNHAKA_CITY_DISTRICT_ID, startTime.minusDays(2), endTime.minusDays(1));
+
     wtc.perform(
         put("/projects/" + project.getId() + "/applications?userId=" + testUser.getId()),
         Arrays.asList(addedApplication1.getId(), addedApplication2.getId())).andExpect(status().isOk());
@@ -417,7 +419,7 @@ public class ProjectControllerTest {
   }
 
   private Application addApplicationToDatabase(Application application) throws Exception {
-    ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(post("/applications?userId=" + testUser.getId()), application).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
@@ -429,7 +431,7 @@ public class ProjectControllerTest {
     Location location = newLocationWithDefaults(startTime, endTime);
     location.setApplicationId(application.getId());
     location.setGeometry(geometrycollection(3879, polygon));
-    wtc.perform(post("/locations?userId=" + testUser.getId()), Collections.singletonList(location)).andExpect(status().isOk());
+    application.setLocations(Collections.singletonList(location));
   }
 
   private void addCityDistrictToApplication(
@@ -440,7 +442,7 @@ public class ProjectControllerTest {
     Location location = newLocationWithDefaults(startTime, endTime);
     location.setApplicationId(application.getId());
     location.setCityDistrictIdOverride(districtOverride);
-    wtc.perform(post("/locations?userId=" + testUser.getId()), Collections.singletonList(location)).andExpect(status().isOk());
+    application.setLocations(Collections.singletonList(location));
   }
 
   private Location newLocationWithDefaults(ZonedDateTime startTime, ZonedDateTime endTime) {

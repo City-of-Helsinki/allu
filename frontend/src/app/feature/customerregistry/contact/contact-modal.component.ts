@@ -21,6 +21,7 @@ export class ContactModalComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<ContactModalComponent>,
               private customerService: CustomerService,
+              private notification: NotificationService,
               fb: FormBuilder) {
     this.contactForm = Contact.formGroup(fb);
   }
@@ -34,9 +35,9 @@ export class ContactModalComponent implements OnInit {
     this.customerService.saveContactsForCustomer(contact.customerId, [contact])
       .subscribe(
         saved => {
-          NotificationService.message(findTranslation('contact.action.save'));
+          this.notification.success(findTranslation('contact.action.save'));
           this.dialogRef.close(ArrayUtil.first(saved.contacts));
-        }, error => NotificationService.error(error));
+        }, error => this.notification.errorInfo(error));
   }
 
   cancel() {

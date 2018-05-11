@@ -13,7 +13,9 @@ import {CityDistrict} from '../../model/common/city-district';
 import {ApplicationService} from '../../service/application/application.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {ApplicationSearchDatasource} from '../../service/application/application-search-datasource';
-import {CityDistrictService} from '../../service/map/city-district.service';
+import {NotificationService} from '../../service/notification/notification.service';
+import * as fromRoot from '../allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'search',
@@ -22,7 +24,7 @@ import {CityDistrictService} from '../../service/map/city-district.service';
 export class SearchComponent implements OnInit {
 
   displayedColumns = [
-    'owner.realName', 'applicationId', 'name', 'type', 'status', 'project.name',
+    'owner.realName', 'applicationId', 'name', 'type', 'status', 'project.identifier',
     'customers.applicant.customer.name', 'locations.streetAddress', 'locations.cityDistrictId',
     'creationTime', 'startTime'
   ];
@@ -40,8 +42,9 @@ export class SearchComponent implements OnInit {
 
   constructor(private applicationService: ApplicationService,
               private userHub: UserHub,
-              private cityDistrictService: CityDistrictService,
-              private fb: FormBuilder) {
+              private store: Store<fromRoot.State>,
+              private fb: FormBuilder,
+              private notification: NotificationService) {
     this.queryForm = this.fb.group({
       applicationId: undefined,
       type: undefined,
@@ -58,9 +61,9 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.paginator, this.sort);
+    this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.notification, this.paginator, this.sort);
     this.owners = this.userHub.getActiveUsers();
-    this.districts = this.cityDistrictService.get();
+    this.districts = this.store.select(fromRoot.getAllCityDistricts);
   }
 
   search(): void {
@@ -69,7 +72,7 @@ export class SearchComponent implements OnInit {
   }
 
   districtName(id: number): Observable<string> {
-    return id !== undefined ? this.cityDistrictService.byId(id).map(d => d.name) : Observable.empty();
+    return this.store.select(fromRoot.getCityDistrictName(id));
   }
 
   trackById(index: number, item: Application) {

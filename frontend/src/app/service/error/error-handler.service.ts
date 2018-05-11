@@ -1,21 +1,35 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {ErrorInfo} from '../ui-state/error-info';
-import {HttpUtil} from '../../util/http.util';
+import {ErrorInfo} from './error-info';
 import {Router} from '@angular/router';
-import {HttpStatus} from '../../util/http-response';
+import {findTranslation} from '../../util/translations';
+import {HttpErrorResponse} from '@angular/common/http';
+import {HttpStatus} from '../../util/http-status';
 
 @Injectable()
 export class ErrorHandler {
   constructor(private router: Router) {}
 
-  handle(error: any, message?: string): Observable<any> {
-    const response = HttpUtil.extractHttpResponse(error);
-    console.error('Status:', response.status, 'original message:', response.message);
+  handle(error: HttpErrorResponse, message?: string): Observable<any> {
+    console.error('Status:', error.statusText, 'original message:', error.message);
 
-    if (HttpStatus.UNAUTHORIZED === response.status) {
+    const title = this.mapStatusToTitle(error);
+
+    if (HttpStatus.UNAUTHORIZED === error.status) {
       this.router.navigate(['/home']);
     }
-    return Observable.throw(ErrorInfo.of(response, message));
+    return Observable.throw(new ErrorInfo(title, message));
+  }
+
+  private mapStatusToTitle(error: HttpErrorResponse): string {
+    switch (error.status) {
+      case HttpStatus.BAD_REQUEST:
+      case HttpStatus.UNAUTHORIZED:
+      case HttpStatus.FORBIDDEN:
+      case HttpStatus.INTERNAL_SERVER_ERROR:
+        return findTranslation(['httpStatus', HttpStatus[error.status]]);
+      default:
+        return findTranslation('httpStatus.UNKNOWN');
+    }
   }
 }

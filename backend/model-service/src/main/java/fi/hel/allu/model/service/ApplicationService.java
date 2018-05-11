@@ -33,15 +33,17 @@ public class ApplicationService {
   private final ChargeBasisService chargeBasisService;
   private final InvoiceService invoiceService;
   private final CustomerDao customerDao;
+  private final LocationService locationService;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-    ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao) {
+    ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao, LocationService locationService) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
     this.invoiceService = invoiceService;
     this.customerDao = customerDao;
+    this.locationService = locationService;
   }
 
   /**
@@ -131,15 +133,18 @@ public class ApplicationService {
    *
    * @param id
    * @param application
+   * @param userId
    * @return the updated application
    */
   @Transactional
-  public Application update(int id, Application application) {
+  public Application update(int id, Application application, int userId) {
     verifyApplicationIsUpdatable(id);
+    List<Location> locations = locationService.updateApplicationLocations(id, application.getLocations(), userId);
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
     Application result = applicationDao.update(id, application);
+    result.setLocations(locations);
     return result;
   }
 
@@ -168,18 +173,28 @@ public class ApplicationService {
    * Create new application
    *
    * @param   application  The application data
+   * @param userId
    * @return  The created application
    */
   @Transactional
-  public Application insert(Application application) {
+  public Application insert(Application application, int userId) {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
+    Application result = applicationDao.insert(application);
+    application.getLocations().forEach(l -> l.setApplicationId(result.getId()));
+    List<Location> locations = locationService.insert(application.getLocations(), userId);
+    // Calculate application price. This must be done after locations have been inserted.
+    calculateApplicationPrice(result);
+    result.setLocations(locations);
+    return result;
+  }
+
+  private void calculateApplicationPrice(Application application) {
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisEntries));
-    Application result = applicationDao.insert(application);
-    chargeBasisService.setCalculatedChargeBasis(result.getId(), chargeBasisEntries);
-    return result;
+    chargeBasisService.setCalculatedChargeBasis(application.getId(), chargeBasisEntries);
+    applicationDao.updateCalculatedPrice(application.getId(), application.getCalculatedPrice());
   }
 
   /**
@@ -373,5 +388,9 @@ public class ApplicationService {
     if (StatusType.CANCELLED.equals(status)) {
       throw new IllegalOperationException("Tried to update cancelled application " + id);
     }
+  }
+
+  public Integer getApplicationExternalOwner(Integer id) {
+    return applicationDao.getApplicationExternalOwner(id);
   }
 }

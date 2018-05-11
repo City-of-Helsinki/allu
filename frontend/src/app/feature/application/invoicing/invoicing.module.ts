@@ -12,7 +12,7 @@ import {ChargeBasisComponent} from './charge-basis/charge-basis.component';
 import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
 import {ChargeBasisDiscountComponent} from './charge-basis/discount/charge-basis-discount.component';
 import {ChargeBasisNegligenceFeeComponent} from './charge-basis/negligence-fee/charge-basis-negligence-fee.component';
-import {ChargeBasisAdditionalFeeComponent} from './charge-basis/additional-fee/charge-basis-additional-fee.component';
+import {ChargeBasisFeeComponent} from './charge-basis/charge-basis-fee/charge-basis-fee.component';
 import {DepositModalComponent} from './deposit/deposit-modal.component';
 import {DepositService} from '../../../service/application/deposit/deposit.service';
 
@@ -31,7 +31,7 @@ import {DepositService} from '../../../service/application/deposit/deposit.servi
     ChargeBasisEntryModalComponent,
     ChargeBasisDiscountComponent,
     ChargeBasisNegligenceFeeComponent,
-    ChargeBasisAdditionalFeeComponent,
+    ChargeBasisFeeComponent,
     DepositModalComponent
   ],
   providers: [

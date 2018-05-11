@@ -4,7 +4,12 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {SupervisionTaskStore} from '../../../../src/app/service/supervision/supervision-task-store';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {
+  ApplicationStoreMock,
+  availableToDirectiveMockMeta,
+  CurrentUserMock,
+  NotificationServiceMock
+} from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
 import {SupervisionTask} from '../../../../src/app/model/application/supervision/supervision-task';
 import {Observable} from 'rxjs/Observable';
@@ -16,8 +21,7 @@ import {ComplexValidator} from '../../../../src/app/util/complex-validator';
 import {User} from '../../../../src/app/model/user/user';
 import {SupervisionTaskType} from '../../../../src/app/model/application/supervision/supervision-task-type';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
-import {ErrorInfo} from '../../../../src/app/service/ui-state/error-info';
-import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
+import {ErrorInfo} from '../../../../src/app/service/error/error-info';
 import {findTranslation} from '../../../../src/app/util/translations';
 import {UserHub} from '../../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../../src/app/model/user/user-search-criteria';
@@ -65,8 +69,8 @@ class SupervisionTaskStoreMock {
     return Observable.of(task);
   }
 
-  removeTask(applicationId: number, taskId: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  removeTask(applicationId: number, taskId: number): Observable<{}> {
+    return Observable.of({});
   }
 }
 
@@ -74,6 +78,7 @@ describe('SupervisionTaskComponent', () => {
   let comp: SupervisionTaskComponent;
   let fixture: ComponentFixture<SupervisionTaskComponent>;
   let supervisionTaskStore: SupervisionTaskStoreMock;
+  let notification: NotificationServiceMock;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
   let userHub: UserHubMock;
@@ -92,7 +97,8 @@ describe('SupervisionTaskComponent', () => {
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: SupervisionTaskStore, useClass: SupervisionTaskStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
-        {provide: UserHub, useClass: UserHubMock}
+        {provide: UserHub, useClass: UserHubMock},
+        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
@@ -101,6 +107,7 @@ describe('SupervisionTaskComponent', () => {
 
   beforeEach(() => {
     supervisionTaskStore = TestBed.get(SupervisionTaskStore) as SupervisionTaskStoreMock;
+    notification = TestBed.get(NotificationService) as NotificationServiceMock;
     userHub = TestBed.get(UserHub) as UserHubMock;
     fixture = TestBed.createComponent(SupervisionTaskComponent);
     comp = fixture.componentInstance;
@@ -127,27 +134,27 @@ describe('SupervisionTaskComponent', () => {
 
   it('should save valid task', fakeAsync(() => {
     spyOn(supervisionTaskStore, 'saveTask').and.callThrough();
-    spyOn(NotificationService, 'translateMessage');
+    spyOn(notification, 'translateSuccess');
 
     patchValueAndInit(validTask);
     const saveBtn = de.query(By.css('#save')).nativeElement;
     saveBtn.click();
     detectAndTick();
     expect(supervisionTaskStore.saveTask).toHaveBeenCalled();
-    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(notification.translateSuccess).toHaveBeenCalled();
   }));
 
   it('should handle save error', fakeAsync(() => {
-    const errorInfo = ErrorInfo.of(new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR), 'expected');
+    const errorInfo = new ErrorInfo('expected');
     spyOn(supervisionTaskStore, 'saveTask').and.returnValue(Observable.throw(errorInfo));
-    spyOn(NotificationService, 'translateError');
+    spyOn(notification, 'translateError');
 
     patchValueAndInit(validTask);
     const saveBtn = de.query(By.css('#save')).nativeElement;
     saveBtn.click();
     detectAndTick();
     expect(supervisionTaskStore.saveTask).toHaveBeenCalled();
-    expect(NotificationService.translateError).toHaveBeenCalled();
+    expect(notification.translateError).toHaveBeenCalled();
   }));
 
   it('should change to edit mode', fakeAsync(() => {
@@ -187,8 +194,8 @@ describe('SupervisionTaskComponent', () => {
   it('should remove existing', fakeAsync(() => {
     const onRemove = comp.onRemove;
     spyOn(onRemove, 'emit');
-    spyOn(NotificationService, 'translateMessage');
-    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
+    spyOn(notification, 'translateSuccess');
+    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.of({}));
 
     patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     const removeBtn = de.query(By.css('#remove')).nativeElement;
@@ -196,14 +203,14 @@ describe('SupervisionTaskComponent', () => {
     detectAndTick();
 
     expect(supervisionTaskStore.removeTask).toHaveBeenCalled();
-    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(onRemove.emit).toHaveBeenCalled();
   }));
 
   it('should handle remove failure', fakeAsync(() => {
-    const errorInfo = ErrorInfo.of(new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR), 'expected');
+    const errorInfo = new ErrorInfo('expected');
     const onRemove = comp.onRemove;
-    spyOn(NotificationService, 'translateError');
+    spyOn(notification, 'translateError');
     spyOn(onRemove, 'emit');
     spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.throw(errorInfo));
 
@@ -213,7 +220,7 @@ describe('SupervisionTaskComponent', () => {
     detectAndTick();
 
     expect(supervisionTaskStore.removeTask).toHaveBeenCalled();
-    expect(NotificationService.translateError).toHaveBeenCalled();
+    expect(notification.translateError).toHaveBeenCalled();
     expect(onRemove.emit).not.toHaveBeenCalled();
   }));
 

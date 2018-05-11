@@ -7,12 +7,24 @@
     </div>
     <div class="version">{{version | async}}</div>
   </div>
-  <div fxFlex>
+  <div fxFlex="auto">
     <navbar *ngIf="authenticated"></navbar>
   </div>
-  <div fxflex fxFlexAlign="center" class="nav-controls" *ngIf="authenticated">
+  <div fxFlex="none" class="toolbar-section">
+    <button mat-icon-button [matMenuTriggerFor]="applicationBasket">
+      <mat-icon>shopping_basket</mat-icon>
+    </button>
+    <span class="pill">{{applicationBasketSize$ | async}}</span>
+  </div>
+  <div fxFlex="none" fxFlexAlign="center" class="nav-controls toolbar-section" *ngIf="authenticated">
     <a [routerLink]="['/logout']">KIRJAUDU ULOS</a>
   </div>
 </div>
+
+<mat-menu #applicationBasket="matMenu" [overlapTrigger]="false" class="allu-application-basket">
+  <div (click)="$event.stopPropagation()">
+    <application-basket></application-basket>
+  </div>
+</mat-menu>
 
 

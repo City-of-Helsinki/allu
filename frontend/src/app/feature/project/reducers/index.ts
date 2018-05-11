@@ -9,7 +9,9 @@ import * as fromSearch from './application-search-reducer';
 import * as fromParentProjects from './parent-project-reducer';
 import * as fromCustomerSearch from './customer-search-reducer';
 import * as fromChildProjects from './child-project-reducer';
+import * as fromApplicationBasket from './application-basket-reducer';
 import * as fromRoot from '../../allu/reducers/index';
+import {Project} from '../../../model/project/project';
 
 export interface ProjectState {
   project: fromProject.State;
@@ -18,6 +20,7 @@ export interface ProjectState {
   parents: fromParentProjects.State;
   children: fromChildProjects.State;
   customerSearch: fromCustomerSearch.State;
+  applicationBasket: fromApplicationBasket.State;
 }
 
 export interface State extends fromRoot.State {
@@ -30,7 +33,8 @@ export const reducers: ActionReducerMap<ProjectState> = {
   applicationSearch: fromSearch.reducer,
   parents: fromParentProjects.reducer,
   children: fromChildProjects.reducer,
-  customerSearch: fromCustomerSearch.reducer
+  customerSearch: fromCustomerSearch.reducer,
+  applicationBasket: fromApplicationBasket.reducer
 };
 
 export const getProjectState = createFeatureSelector<ProjectState>('project');
@@ -46,6 +50,11 @@ export const getCurrentProject = createSelector(
   fromProject.getCurrent
 );
 
+export const getIsNewProject = createSelector(
+  getCurrentProject,
+  (project: Project) => project ? project.id === undefined : true
+);
+
 export const getProjectLoaded = createSelector(
   getProjectEntitiesState,
   fromProject.getLoaded
@@ -53,8 +62,8 @@ export const getProjectLoaded = createSelector(
 
 export const getProjectDistricts = createSelector(
   getCurrentProject,
-  fromRoot.getAllCityDistricts,
-  (project, districts) => project.cityDistricts.map(id => districts.get(id))
+  fromRoot.getCityDistrictEntities,
+  (project, districts) => project.cityDistricts.map(id => districts[id])
 );
 
 // Application selectors
@@ -126,4 +135,28 @@ export const getRelatedProjects = createSelector(
   getParentProjects,
   getChildProjects,
   (parents, children) => [].concat(parents, children)
+);
+
+// Application basket reducers
+export const getApplicationBasketEntitiesState = createSelector(
+  getProjectState,
+  (state: ProjectState) => state.applicationBasket
+);
+
+export const {
+  selectIds: getApplicationIdsInBasket,
+  selectEntities: getApplicationEntitiesInBasket,
+  selectAll: getAllApplicationsInBasket,
+  selectTotal: getApplicationCountInBasket
+} = fromApplicationBasket.adapter.getSelectors(getApplicationBasketEntitiesState);
+
+export const getPendingApplicationIds = createSelector(
+  getApplicationBasketEntitiesState,
+  (state: fromApplicationBasket.State) => state.pending
+);
+
+export const getPendingApplications = createSelector(
+  getPendingApplicationIds,
+  getApplicationEntitiesInBasket,
+  (ids, entities) => ids.map(id => entities[id])
 );

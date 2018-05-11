@@ -1,7 +1,7 @@
 import {Action} from '@ngrx/store';
 import {Customer} from '../../../model/customer/customer';
 import {ActionWithPayload} from '../../common/action-with-payload';
-import {ErrorInfo} from '../../../service/ui-state/error-info';
+import {ErrorInfo} from '../../../service/error/error-info';
 import {CustomerSearchQuery} from '../../../service/customer/customer-search-query';
 import {Contact} from '../../../model/customer/contact';
 

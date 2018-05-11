@@ -17,13 +17,14 @@ export class CommentsModalComponent implements OnInit {
   comments: Observable<Array<Comment>>;
 
   constructor(public dialogRef: MatDialogRef<CommentsModalComponent>,
-              private commentHub: CommentHub) {
+              private commentHub: CommentHub,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
     this.comments = this.commentHub.getComments(this.applicationId)
       .catch(err => {
-        NotificationService.error(err);
+        this.notification.errorInfo(err);
         return Observable.of([]);
       });
   }

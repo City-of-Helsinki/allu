@@ -51,10 +51,11 @@ public class LocationControllerTest {
   @Before
   public void setup() throws Exception {
     wtc.setup();
-    application = testCommon.dummyAreaRentalApplication("Test Application", "Handlaaja");
-    ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
-    application = wtc.parseObjectFromResult(resultActions, Application.class);
     testUser = testCommon.insertUser("testUser");
+    application = testCommon.dummyAreaRentalApplication("Test Application", "Handlaaja");
+    ResultActions resultActions = wtc.perform(post("/applications?userId=" + testUser.getId()), application).andExpect(status().isOk());
+    application = wtc.parseObjectFromResult(resultActions, Application.class);
+
   }
 
   @Test
@@ -130,18 +131,6 @@ public class LocationControllerTest {
     List<Location> updatedLocations = getLocationsByApplicationId(application.getId());
     Set<String> updatedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
     Assert.assertTrue(updatedPostalCodes.containsAll(expectedPostalCodes));
-  }
-
-  @Test
-  public void deleteLocation() throws Exception {
-    Location result1 = addLocationAndGetResult("Kuoppakuja 2", "06660", "Hellsinki", makeGeometry(), null);
-    Location result2 = addLocationAndGetResult("Kuoppakuja 3", "04440", "Helllsinki", makeGeometry(), null);
-    List<Integer> locations = Arrays.asList(result1.getId(), result2.getId());
-    List<Location> addedLocations = getLocationsByApplicationId(application.getId());
-    Assert.assertEquals(2, addedLocations.size());
-    wtc.perform(post(String.format("/locations/delete?userId=%d", testUser.getId())), locations).andExpect(status().isOk());
-    List<Location> deletedLocations = getLocationsByApplicationId(application.getId());
-    Assert.assertEquals(0, deletedLocations.size());
   }
 
   private Geometry makeGeometry() {

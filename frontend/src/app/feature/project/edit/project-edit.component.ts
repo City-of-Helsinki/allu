@@ -14,6 +14,9 @@ import {Subject} from 'rxjs/Subject';
 import {MatOption} from '@angular/material';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {Contact} from '../../../model/customer/contact';
+import {Application} from '../../../model/application/application';
+import {ProjectService} from '../../../service/project/project.service';
+import {NumberUtil} from '../../../util/number.util';
 
 @Component({
   selector: 'project-edit',
@@ -26,6 +29,7 @@ export class ProjectEditComponent {
 
   matchingCustomers$: Observable<Customer[]>;
   matchingContacts$: Observable<Contact[]>;
+  applications$: Observable<Application[]>;
 
   private customerTypeCtrl: FormControl;
   private customerCtrl: FormControl;
@@ -33,9 +37,9 @@ export class ProjectEditComponent {
 
   private destroy = new Subject<boolean>();
 
-  constructor(private router: Router, private route: ActivatedRoute,
-              private store: Store<fromProject.State>,
-              private fb: FormBuilder) {
+  constructor(private store: Store<fromProject.State>,
+              private fb: FormBuilder,
+              private projectService: ProjectService) {
     this.initForm();
 
     this.initCustomerSearch();
@@ -44,6 +48,12 @@ export class ProjectEditComponent {
     this.store.select(fromProject.getCurrentProject).take(1)
       .map(project => ProjectForm.fromProject(project))
       .subscribe(project => this.form.patchValue(project));
+
+    this.applications$ = this.store.select(fromProject.getIsNewProject).take(1)
+      .filter(newProject => newProject)
+      .switchMap(() => this.store.select(fromProject.getPendingApplications));
+
+    this.form.controls['customer'].valueChanges.subscribe(c => this.customerSelected(c));
   }
 
   selectCustomer(option: MatOption): void {
@@ -121,5 +131,17 @@ export class ProjectEditComponent {
       .debounceTime(300)
       .filter(customer => customer instanceof Customer)
       .subscribe(customer => this.store.dispatch(new customerSearch.LoadContacts(customer.id)));
+  }
+
+  private customerSelected(customer: Customer): void {
+    if (customer && NumberUtil.isDefined(customer.id)) {
+      if (customer.projectIdentifierPrefix) {
+        this.projectService.getNextProjectNumber().subscribe(nbr => {
+          this.form.patchValue({identifier: customer.projectIdentifierPrefix + nbr});
+        });
+      } else {
+        this.form.patchValue({identifier: undefined});
+      }
+    }
   }
 }

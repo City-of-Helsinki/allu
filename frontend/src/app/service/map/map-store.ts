@@ -34,6 +34,7 @@ export interface MapState {
   selectedSections: Array<number>;
   drawingAllowed: boolean;
   hasFixedGeometry: boolean;
+  invalidGeometry: boolean;
 }
 
 const initialState: MapState = {
@@ -50,7 +51,8 @@ const initialState: MapState = {
   shape: undefined,
   selectedSections: [],
   drawingAllowed: true,
-  hasFixedGeometry: false
+  hasFixedGeometry: false,
+  invalidGeometry: false
 };
 
 @Injectable()
@@ -59,7 +61,8 @@ export class MapStore {
 
   constructor(private mapDataService: MapDataService,
               private locationService: LocationService,
-              private storedFilterStore: StoredFilterStore) {
+              private storedFilterStore: StoredFilterStore,
+              private notification: NotificationService) {
 
     // Search when either of filters change
     Observable.merge(this.mapSearchFilter, this.locationSearchFilter)
@@ -156,6 +159,10 @@ export class MapStore {
     return this.store.map(state => state.role).distinctUntilChanged();
   }
 
+  get invalidGeometry(): Observable<boolean> {
+    return this.store.map(state => state.invalidGeometry).distinctUntilChanged();
+  }
+
   coordinateSearchChange(term: string): void {
     this.store.next({...this.store.getValue(), coordinateSearch: term});
   }
@@ -219,7 +226,9 @@ export class MapStore {
 
   addressSearchChange(searchTerm: string): void {
     this.locationService.search(searchTerm)
-      .subscribe(result => this.store.next({...this.store.getValue(), matchingAddresses: result}));
+      .subscribe(
+        result => this.store.next({...this.store.getValue(), matchingAddresses: result}),
+        err => this.store.next({...this.store.getValue(), matchingAddresses: []}));
   }
 
   hasFixedGeometryChange(hasFixedGeometry: boolean): void {
@@ -241,6 +250,10 @@ export class MapStore {
     this.store.next({...this.snapshot, role});
   }
 
+  invalidGeometryChange(invalidGeometry: boolean): void {
+    this.store.next({...this.snapshot, invalidGeometry});
+  }
+
   private fetchMapDataByFilter(filter: MapSearchFilter): void {
     this.mapDataService.applicationsByLocation(filter)
       .subscribe(applications => this.applicationsChange(applications));
@@ -250,7 +263,7 @@ export class MapStore {
     this.locationService.geocode(term)
       .subscribe(
         coordinates => this.coordinateChange(coordinates),
-        err => NotificationService.error(err)
+        err => this.notification.errorInfo(err)
       );
   }
 }

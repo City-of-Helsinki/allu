@@ -5,7 +5,7 @@ import {Component, DebugElement} from '@angular/core';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
-import {availableToDirectiveMockMeta, CurrentUserMock, UserHubMock} from '../../mocks';
+import {availableToDirectiveMockMeta, CurrentUserMock, NotificationServiceMock, UserHubMock} from '../../mocks';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {UserHub} from '../../../src/app/service/user/user-hub';
 import {MatDialog} from '@angular/material';
@@ -41,6 +41,7 @@ describe('SupervisionWorkqueueComponent', () => {
   let comp: WorkQueueComponent;
   let fixture: ComponentFixture<WorkQueueComponent>;
   let store: SupervisionWorkItemStoreMock;
+  let notification: NotificationServiceMock;
   let dialog: MatDialog;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
@@ -62,6 +63,7 @@ describe('SupervisionWorkqueueComponent', () => {
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
         {provide: UserHub, useClass: UserHubMock},
+        {provide: NotificationService, useClass: NotificationServiceMock},
         MatDialog
       ]
     })
@@ -72,6 +74,7 @@ describe('SupervisionWorkqueueComponent', () => {
   beforeEach(() => {
     store = TestBed.get(SupervisionWorkItemStore) as SupervisionWorkItemStoreMock;
     dialog = TestBed.get(MatDialog);
+    notification = TestBed.get(NotificationService) as NotificationServiceMock;
     fixture = TestBed.createComponent(WorkQueueComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
@@ -102,7 +105,7 @@ describe('SupervisionWorkqueueComponent', () => {
 
   it('should react changing items to self', fakeAsync(() => {
     spyOn(store, 'changeHandlerForSelected').and.callThrough();
-    spyOn(NotificationService, 'translateMessage').and.stub();
+    spyOn(notification, 'translateSuccess').and.stub();
     store.changeSubject.next({...store.changeSubject.getValue(), selectedItems: [defaultItems[0].id]});
     fixture.detectChanges();
     tick();

@@ -3,16 +3,15 @@ import {StoredFilterType} from '../../../src/app/model/user/stored-filter-type';
 import {Subject} from 'rxjs/Subject';
 import {StoredFilter} from '../../../src/app/model/user/stored-filter';
 import {async, ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick} from '@angular/core/testing';
-import {UserServiceMock} from '../../mocks';
+import {NotificationServiceMock, UserServiceMock} from '../../mocks';
 import {StoredFilterComponent} from '../../../src/app/feature/stored-filter/stored-filter.component';
-import {StoredFilterService} from '../../../src/app/service/stored-filter/stored-filter.service';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {UserService} from '../../../src/app/service/user/user-service';
 import {StoredFilterModule} from '../../../src/app/feature/stored-filter/stored-filter.module';
 import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
 import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
+import {NotificationService} from '../../../src/app/service/notification/notification.service';
 
 const filters = [
   new StoredFilter(1, StoredFilterType.MAP, 'map-filter-1', false, '{field1: "value1"}', 1),
@@ -48,8 +47,8 @@ class StoredFilterStoreMock {
     return Observable.of(filter);
   }
 
-  remove(id: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  remove(id: number): Observable<{}> {
+    return Observable.of({});
   }
 
   currentChange(filter: StoredFilter): void {
@@ -74,7 +73,8 @@ describe('StoredFilterComponent', () => {
       ],
       providers: [
         {provide: UserService, useClass: UserServiceMock},
-        {provide: StoredFilterStore, useClass: StoredFilterStoreMock}
+        {provide: StoredFilterStore, useClass: StoredFilterStoreMock},
+        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     }).compileComponents();
   }));

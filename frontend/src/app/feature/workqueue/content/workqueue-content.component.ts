@@ -12,11 +12,12 @@ import {ApplicationWorkItemDatasource, ApplicationWorkItemRow} from './applicati
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {Some} from '../../../util/option';
 import {WorkQueueTab} from '../workqueue-tab';
-import {CityDistrictService} from '../../../service/map/city-district.service';
-import {MapStore} from '../../../service/map/map-store';
 import {Sort} from '../../../model/common/sort';
 import {StoredFilterType} from '../../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
+import {NotificationService} from '../../../service/notification/notification.service';
+import * as fromRoot from '../../allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'workqueue-content',
@@ -25,7 +26,7 @@ import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-st
 })
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
-    'selected', 'owner.userName', 'applicationId', 'type', 'status', 'project.name',
+    'selected', 'owner.userName', 'applicationId', 'type', 'status', 'project.identifier',
     'customers.applicant.customer.name', 'locations.streetAddress', 'locations.cityDistrictId',
     'creationTime', 'startTime', 'comments'
   ];
@@ -44,17 +45,17 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private destroy = new Subject<boolean>();
 
   constructor(private route: ActivatedRoute,
-              private mapStore: MapStore,
-              private cityDistrictService: CityDistrictService,
+              private store: Store<fromRoot.State>,
               private dialog: MatDialog,
-              private store: ApplicationWorkItemStore,
-              private storedFilterStore: StoredFilterStore) {
+              private itemStore: ApplicationWorkItemStore,
+              private storedFilterStore: StoredFilterStore,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
-    this.sort.sort(Sort.toMatSortable(this.store.snapshot.sort));
+    this.sort.sort(Sort.toMatSortable(this.itemStore.snapshot.sort));
 
-    this.dataSource = new ApplicationWorkItemDatasource(this.store, this.paginator, this.sort);
+    this.dataSource = new ApplicationWorkItemDatasource(this.itemStore, this.notification, this.paginator, this.sort);
 
     this.dataSource.page
       .takeUntil(this.destroy)
@@ -66,24 +67,24 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.route.data
       .map(data => data.tab)
       .takeUntil(this.destroy)
-      .subscribe((tab: string) => this.store.tabChange(WorkQueueTab[tab]));
+      .subscribe((tab: string) => this.itemStore.tabChange(WorkQueueTab[tab]));
 
-    this.store.changes.map(state => state.selectedItems)
+    this.itemStore.changes.map(state => state.selectedItems)
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(selected => this.selectedItems = selected);
 
-    this.store.changes.map(state => state.allSelected)
+    this.itemStore.changes.map(state => state.allSelected)
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(allSelected => this.allSelected = allSelected);
 
-     this.store.changes.map(state => state.search)
+     this.itemStore.changes.map(state => state.search)
        .distinctUntilChanged()
        .takeUntil(this.destroy)
        .subscribe(query => this.selectedTags = query.tags);
 
-    this.store.changes.map(state => state.loading)
+    this.itemStore.changes.map(state => state.loading)
       .distinctUntilChanged()
       .takeUntil(this.destroy)
       .subscribe(loading => this.loading = loading);
@@ -104,11 +105,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   checkAll(change: MatCheckboxChange): void {
-    this.store.toggleAll(change.checked);
+    this.itemStore.toggleAll(change.checked);
   }
 
   checkSingle(change: MatCheckboxChange, taskId: number) {
-    this.store.toggleSingle(taskId, change.checked);
+    this.itemStore.toggleSingle(taskId, change.checked);
   }
 
   showComments(applicationId: number): void {
@@ -119,7 +120,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   districtName(id: number): Observable<string> {
-    return id !== undefined ? this.cityDistrictService.byId(id).map(d => d.name) : Observable.empty();
+    return this.store.select(fromRoot.getCityDistrictName(id));
   }
 
   trackById(index: number, item: SupervisionWorkItem) {

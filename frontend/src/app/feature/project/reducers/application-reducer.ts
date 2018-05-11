@@ -1,6 +1,7 @@
 import {ApplicationActions, ApplicationActionTypes} from '../actions/application-actions';
 import {Application} from '../../../model/application/application';
 import {Page} from '../../../model/common/page';
+import {ArrayUtil} from '../../../util/array-util';
 
 export interface State {
   loading: boolean;
@@ -40,9 +41,13 @@ export function reducer(state: State = initialState, action: ApplicationActions)
     }
 
     case ApplicationActionTypes.AddSuccess: {
+      const applications = state.applications
+        .concat(action.payload)
+        .filter(ArrayUtil.uniqueItem(item => item.id));
+
       return {
         ...state,
-        applications: state.applications.concat(action.payload)
+        applications: applications
       };
     }
 

@@ -40,11 +40,6 @@ public class ApplicationProperties {
   public static final String PATH_PREFIX = "http://";
 
   /**
-   * Model-service path to fetch / create a new application
-   */
-  public static final String PATH_MODEL_APPLICATION = "/applications";
-
-  /**
    * Model-service path to find application by identifier
    */
   public static final String PATH_MODEL_APPLICATION_FIND_BY_ID = "/applications/{applicationId}";
@@ -58,16 +53,6 @@ public class ApplicationProperties {
    * Model-service path to find attachments by application
    */
   public static final String PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION = "/applications/{applicationId}/attachments";
-
-  /**
-   * Model-service path to create a new location
-   */
-  public static final String PATH_MODEL_LOCATION_CREATE = "/locations?userId={userId}";
-
-  /**
-   * Model-service path to find contact by identifier
-   */
-  public static final String PATH_MODEL_LOCATION_FIND_BY_ID = "/locations/{locationId}";
 
   /**
    * Model-service path to create attachment
@@ -156,6 +141,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/meta/{applicationType}");
   }
 
+  public String getMetadataTranslationUrl() {
+    return getModelServiceUrl("/meta/translation/{type}/{text}");
+  }
+
   /**
    * @return url to request metadata from model service.
    */
@@ -164,10 +153,17 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to create an application in model service.
+   */
+  public String getApplicationCreateUrl() {
+    return getModelServiceUrl("/applications?userId={userId}");
+  }
+
+  /**
    * @return url to update an application in model service.
    */
   public String getApplicationUpdateUrl() {
-    return getModelServiceUrl("/applications/{applicationId}");
+    return getModelServiceUrl("/applications/{applicationId}?userId={userId}");
   }
 
   /**
@@ -274,6 +270,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/projects/{id}/history");
   }
 
+  public String getProjectNextProjectNumberUrl() {
+    return getModelServiceUrl("/projects/nextProjectNumber");
+  }
+
   /**
    * @return url to find possibly multiple applications by given identifiers.
    */
@@ -298,6 +298,15 @@ public class ApplicationProperties {
   public String getApplicationStatusUpdateUrl(StatusType statusType) {
     return getModelServiceUrl("/applications/{id}/status/" + statusType.toString().toLowerCase());
   }
+
+  public String getApplicationStatusUrl() {
+    return getModelServiceUrl("/applications/{id}/status");
+  }
+
+  public String getApplicationExternalOwnerUrl() {
+    return getModelServiceUrl("/applications/{id}/externalowner");
+  }
+
 
   /**
    * @return url to replace distribution list of application.
@@ -399,26 +408,6 @@ public class ApplicationProperties {
     return getModelServiceUrl("/comments/{commentId}");
   }
 
-  /**
-   * @return url for creating locations.
-   */
-  public String getLocationsCreateUrl() {
-    return getModelServiceUrl("/locations?userId={userId}");
-  }
-
-  /**
-   * @return url for updating application's locations.
-   */
-  public String getUpdateApplicationLocationsUrl() {
-    return getModelServiceUrl("/locations/application/{applicationId}?userId={userId}");
-  }
-
-  /**
-   * @return url for deleting locations.
-   */
-  public String getLocationsDeleteUrl() {
-    return getModelServiceUrl("/locations/delete?userId={userId}");
-  }
 
   /**
    * @return url for fetching locations by their application.
@@ -428,11 +417,10 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return url for deleting locations by their application.
+   * @return url for checking whether geometry is valid.
    */
-  // TODO: remove when locations are removed from the application class
-  public String getDeleteLocationsByApplicationIdUrl() {
-    return getModelServiceUrl("/locations/application/{applicationId}");
+  public String getIsValidGeometryUrl() {
+    return getModelServiceUrl("/locations/geometry/isvalid");
   }
 
   /**
@@ -1162,5 +1150,9 @@ public class ApplicationProperties {
 
   public String getCodeSetFindByTypeAndCodeUrl() {
     return getModelServiceUrl("/codesets/find?type={type}&code={code}");
+  }
+
+  public String getExternalApplicationCreateUrl() {
+    return getModelServiceUrl("/applications/{id}/originalapplication");
   }
 }

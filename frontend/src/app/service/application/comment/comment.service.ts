@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {AuthHttp} from 'angular2-jwt/angular2-jwt';
+import {HttpClient} from '@angular/common/http';
 
 import {Comment} from '../../../model/application/comment/comment';
-import {HttpUtil} from '../../../util/http.util';
-import {CommentMapper} from './comment-mapper';
-import {HttpResponse} from '../../../util/http-response';
+import {BackendComment, CommentMapper} from './comment-mapper';
 import {ErrorHandler} from '../../error/error-handler.service';
 import {findTranslation} from '../../../util/translations';
 
@@ -15,12 +13,11 @@ const COMMENTS_APP_URL = COMMENTS_URL + '/applications/:appId';
 @Injectable()
 export class CommentService {
 
-  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {}
+  constructor(private http: HttpClient, private errorHandler: ErrorHandler) {}
 
   getComments(applicationId: number): Observable<Array<Comment>> {
     const url = COMMENTS_APP_URL.replace(':appId', String(applicationId));
-    return this.authHttp.get(url)
-      .map(response => response.json())
+    return this.http.get<BackendComment[]>(url)
       .map(comments => comments.map(comment => CommentMapper.mapBackend(comment)))
       .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.fetch')));
   }
@@ -28,23 +25,22 @@ export class CommentService {
   save(applicationId: number, comment: Comment): Observable<Comment> {
     if (comment.id) {
       const url = COMMENTS_URL + '/' + comment.id;
-      return this.authHttp.put(url,
+      return this.http.put<BackendComment>(url,
         JSON.stringify(CommentMapper.mapFrontend(comment)))
-        .map(response => CommentMapper.mapBackend(response.json()))
+        .map(saved => CommentMapper.mapBackend(saved))
         .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.save')));
     } else {
       const url = COMMENTS_APP_URL.replace(':appId', String(applicationId));
-      return this.authHttp.post(url,
+      return this.http.post<BackendComment>(url,
         JSON.stringify(CommentMapper.mapFrontend(comment)))
-        .map(response => CommentMapper.mapBackend(response.json()))
+        .map(saved => CommentMapper.mapBackend(saved))
         .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.save')));
     }
   }
 
-  remove(id: number): Observable<HttpResponse> {
+  remove(id: number): Observable<{}> {
     const url = COMMENTS_URL + '/' + id;
-    return this.authHttp.delete(url)
-      .map(response => HttpUtil.extractHttpResponse(response))
+    return this.http.delete(url)
       .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')));
   }
 }

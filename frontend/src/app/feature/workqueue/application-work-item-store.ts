@@ -31,7 +31,9 @@ export class ApplicationWorkItemStore {
   private store = new BehaviorSubject<ApplicationWorkqueueState>(initialState);
   private currentUser: User;
 
-  constructor(private service: ApplicationService, private currentUserService: CurrentUser) {
+  constructor(private service: ApplicationService,
+              private currentUserService: CurrentUser,
+              private notification: NotificationService) {
     Observable.combineLatest(
       this.changes.map(state => state.search).distinctUntilChanged(),
       this.changes.map(state => state.sort).distinctUntilChanged(),
@@ -91,9 +93,9 @@ export class ApplicationWorkItemStore {
   public toggleAll(checked: boolean) {
     if (checked) {
       const itemIds = this.itemIds(this.store.getValue().page);
-      this.selectedItems(itemIds);
+      this.selectedItemsChange(itemIds);
     } else {
-      this.selectedItems([]);
+      this.selectedItemsChange([]);
     }
   }
 
@@ -102,7 +104,7 @@ export class ApplicationWorkItemStore {
     const selected = checked
       ? current.concat(taskId)
       : current.filter(id => id !== taskId);
-    this.selectedItems(selected);
+    this.selectedItemsChange(selected);
   }
 
   public changeOwnerForSelected(ownerId: number): Observable<Page<Application>> {
@@ -119,7 +121,7 @@ export class ApplicationWorkItemStore {
       .do(result => this.pageChange(result));
   }
 
-  private selectedItems(selected: Array<number>) {
+  public selectedItemsChange(selected: Array<number>) {
     const itemIds = this.itemIds(this.store.getValue().page);
     this.store.next({
       ...this.store.getValue(),
@@ -138,7 +140,7 @@ export class ApplicationWorkItemStore {
     }
 
     return this.service.pagedSearch(search, state.sort, state.pageRequest)
-      .catch(err => NotificationService.errorCatch(err, new Page<Application>()));
+      .catch(err => this.notification.errorCatch(err, new Page<Application>()));
   }
 
   private allSelected(items: Array<number>, selected: Array<number>): boolean {

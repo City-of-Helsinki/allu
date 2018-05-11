@@ -32,6 +32,15 @@ export function reducer(state: State = initialState, action: ProjectActions) {
       };
     }
 
+    case ProjectActionTypes.SaveSuccess: {
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        current: action.payload
+      };
+    }
+
     case ProjectActionTypes.LoadFailed: {
       return {
         ...state,

@@ -33,7 +33,8 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
   constructor(
     private store: StoredFilterStore,
     private userService: UserService,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog,
+    private notification: NotificationService) {}
 
   ngOnInit(): void {
     if (this.type === undefined) {
@@ -61,8 +62,8 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed()
       .switchMap(added => this.store.save(added))
       .subscribe(
-        () => NotificationService.translateMessage('storedFilter.action.save'),
-        err => NotificationService.error(err));
+        () => this.notification.translateSuccess('storedFilter.action.save'),
+        err => this.notification.errorInfo(err));
   }
 
   selectFilter(filter: StoredFilter): void {
@@ -72,13 +73,13 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
   removeFilter(id: number): void {
     this.store.remove(id)
       .subscribe(
-        () => NotificationService.translateMessage('storedFilter.action.remove'),
-        (err) => NotificationService.translateError(err));
+        () => this.notification.translateSuccess('storedFilter.action.remove'),
+        (err) => this.notification.translateError(err));
   }
 
   private loadCurrentUser(): Observable<User> {
     return this.userService.getCurrentUser()
       .takeUntil(this.destroy)
-      .catch(err => NotificationService.errorCatch(err, undefined));
+      .catch(err => this.notification.errorCatch(err, undefined));
   }
 }

@@ -5,7 +5,6 @@ import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {NotificationService} from '../notification/notification.service';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse} from '../../util/http-response';
 import {ArrayUtil} from '../../util/array-util';
 
 export interface StoredFilterTypeState {
@@ -31,7 +30,7 @@ export class StoredFilterStore {
 
   private store = new BehaviorSubject<StoredFilterState>(initialState);
 
-  constructor(private storedFilterService: StoredFilterService) {
+  constructor(private storedFilterService: StoredFilterService, private notification: NotificationService) {
     this.loadAvailable()
       .map(filters => this.createState(filters))
       .subscribe(state => this.store.next(state));
@@ -88,7 +87,7 @@ export class StoredFilterStore {
       .do(saved => this.loadAndSetCurrent(saved));
   }
 
-  remove(id: number): Observable<HttpResponse> {
+  remove(id: number): Observable<{}> {
     return this.storedFilterService.remove(id)
       .do(() => this.loadAndClearCurrent(id));
   }
@@ -138,6 +137,6 @@ export class StoredFilterStore {
 
   private loadAvailable(): Observable<StoredFilter[]> {
     return this.storedFilterService.findForCurrentUser()
-      .catch(err => NotificationService.errorCatch(err, []));
+      .catch(err => this.notification.errorCatch(err, []));
   }
 }

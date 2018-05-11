@@ -33,7 +33,8 @@ export class CableInfoComponent implements OnInit {
 
   constructor(private defaultTextService: DefaultTextService,
               private fb: FormBuilder,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -70,9 +71,9 @@ export class CableInfoComponent implements OnInit {
         .subscribe(
           texts => {
             this.setDefaultTexts(texts);
-            NotificationService.message(findTranslation('defaultText.actions.saved'));
+            this.notification.success(findTranslation('defaultText.actions.saved'));
           },
-          err => NotificationService.error(err));
+          err => this.notification.errorInfo(err));
     });
   }
 

@@ -1,14 +1,12 @@
 import {Injectable} from '@angular/core';
-import {AuthHttp} from 'angular2-jwt/angular2-jwt';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 
 import {Project} from '../../model/project/project';
 import {ProjectMapper} from '../mapper/project-mapper';
-import {HttpUtil} from '../../util/http.util';
 import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
 import {ProjectSearchQuery} from '../../model/project/project-search-query';
-import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {ProjectQueryParametersMapper} from '../mapper/query/project-query-parameters-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
@@ -17,6 +15,9 @@ import {PageMapper} from '../common/page-mapper';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
+import {BackendPage} from '../backend-model/backend-page';
+import {BackendProject} from '../backend-model/backend-project';
+import {BackendApplication} from '../backend-model/backend-application';
 
 @Injectable()
 export class ProjectService {
@@ -26,7 +27,7 @@ export class ProjectService {
   static CHILDREN = 'children';
   static PARENTS = 'parents';
 
-  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {}
+  constructor(private http: HttpClient, private errorHandler: ErrorHandler) {}
 
   /**
    * Fetches projects based on given search query
@@ -34,29 +35,16 @@ export class ProjectService {
   public pagedSearch(searchQuery: ProjectSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Page<Project>> {
     const searchUrl = ProjectService.PROJECT_URL + ProjectService.SEARCH;
 
-    return this.authHttp.post(
+    return this.http.post<BackendPage<BackendProject>>(
       searchUrl,
       JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)),
-      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
-      .map(response => PageMapper.mapBackend(response.json(), ProjectMapper.mapBackend))
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)})
+      .map(page => PageMapper.mapBackend(page, ProjectMapper.mapBackend))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
   }
 
-  public searchProjects(searchQuery: ProjectSearchQuery): Observable<Array<Project>> {
-    const searchUrl = ProjectService.PROJECT_URL + ProjectService.SEARCH;
-
-    return this.authHttp.post(
-      searchUrl,
-      JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)),
-      QueryParametersMapper.mapSortToSearchServiceQuery(searchQuery.sort))
-      .map(response => PageMapper.mapBackend(response.json(), ProjectMapper.mapBackend))
-      .map(page => page.content)
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.searchFailed')));
-  }
-
   public getProject(id: number): Observable<Project> {
-    return this.authHttp.get(ProjectService.PROJECT_URL + '/' + id)
-      .map(response => response.json())
+    return this.http.get<BackendProject>(ProjectService.PROJECT_URL + '/' + id)
       .map(project => ProjectMapper.mapBackend(project))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.fetchFailed')));
   }
@@ -65,27 +53,22 @@ export class ProjectService {
     if (project.id) {
       const url = ProjectService.PROJECT_URL + '/' + project.id;
 
-      return this.authHttp.put(url,
+      return this.http.put<BackendProject>(url,
         JSON.stringify(ProjectMapper.mapFrontend(project)))
-        .map(response => ProjectMapper.mapBackend(response.json()))
+        .map(saved => ProjectMapper.mapBackend(saved))
         .catch(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')));
     } else {
-      return this.authHttp.post(ProjectService.PROJECT_URL,
+      return this.http.post<BackendProject>(ProjectService.PROJECT_URL,
         JSON.stringify(ProjectMapper.mapFrontend(project)))
-        .map(response => ProjectMapper.mapBackend(response.json()))
+        .map(saved => ProjectMapper.mapBackend(saved))
         .catch(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')));
     }
   }
 
-  public remove(id: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK, 'Project removed ' + id));
-  }
-
   public addProjectApplications(id: number, applicationIds: number[]): Observable<Application[]> {
     const url = `${ProjectService.PROJECT_URL}/${id}/applications`;
-    return this.authHttp.put(url, JSON.stringify(applicationIds))
-      .map(response => response.json())
-      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+    return this.http.put<BackendApplication[]>(url, JSON.stringify(applicationIds))
+      .map(applications => applications.map(app => ApplicationMapper.mapBackend(app)))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationAddFailed')));
   }
 
@@ -93,20 +76,17 @@ export class ProjectService {
     return this.addProjectApplications(id, [applicationId]);
   }
 
-  public removeApplication(appId: number): Observable<HttpResponse> {
+  public removeApplication(appId: number): Observable<{}> {
     const url = `${ProjectService.PROJECT_URL}/applications/${appId}`;
-    return this.authHttp.delete(url)
-      .map(response => HttpUtil.extractHttpResponse(response))
+    return this.http.delete(url)
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationRemoveFailed')));
   }
 
   public getProjectApplications(id: number, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Application>> {
     const url = ProjectService.PROJECT_URL + '/' + id + '/applications';
-    return this.authHttp.get(
-      url,
-      QueryParametersMapper.pageRequestToQueryParameters(pageRequest, sort))
-      .map(response => response.json())
-      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+    return this.http.get<BackendApplication[]>(url,
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)})
+      .map(applications => applications.map(app => ApplicationMapper.mapBackend(app)))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationFetchFailed')));
   }
 
@@ -122,23 +102,26 @@ export class ProjectService {
 
   public updateParent(id: number, parentId: number): Observable<Project> {
     const url = [ProjectService.PROJECT_URL, id, 'parentProject', parentId].join('/');
-    return this.authHttp.put(url, '')
-      .map(response => response.json())
+    return this.http.put<BackendProject>(url, '')
       .map(project => ProjectMapper.mapBackend(project))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.updateParentFailed')));
   }
 
-  public removeParent(ids: Array<number>): Observable<HttpResponse> {
+  public removeParent(ids: Array<number>): Observable<{}> {
     const url = [ProjectService.PROJECT_URL, 'parent', 'remove'].join('/');
-    return this.authHttp.put(url, JSON.stringify(ids))
-      .map(response => HttpUtil.extractHttpResponse(response))
+    return this.http.put(url, JSON.stringify(ids))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.removeParentFailed')));
   }
 
+  public getNextProjectNumber(): Observable<number> {
+    const url = [ProjectService.PROJECT_URL, 'nextProjectNumber'].join('/');
+    return this.http.post<number>(url, null)
+      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.nextProjectNumberFailed')));
+  }
+
   private getProjects(url: string): Observable<Array<Project>> {
-    return this.authHttp.get(url)
-      .map(response => response.json())
-      .map(json => json.map(project => ProjectMapper.mapBackend(project)))
+    return this.http.get<BackendProject[]>(url)
+      .map(projects => projects.map(project => ProjectMapper.mapBackend(project)))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.searchFailed')));
   }
 }

@@ -10,7 +10,8 @@ import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {CityDistrict} from '../../../model/common/city-district';
 import {User} from '../../../model/user/user';
-import {CityDistrictService} from '../../../service/map/city-district.service';
+import * as fromRoot from '../../allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'user',
@@ -35,7 +36,7 @@ export class UserComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private userHub: UserHub,
-              private cityDistrictService: CityDistrictService,
+              private store: Store<fromRoot.State>,
               private fb: FormBuilder,
               private router: Router,
               private currentUser: CurrentUser) {
@@ -61,7 +62,7 @@ export class UserComponent implements OnInit {
       });
     });
 
-    this.districts = this.cityDistrictService.get();
+    this.districts = this.store.select(fromRoot.getAllCityDistricts);
   }
 
   save(user: User): void {

@@ -3,7 +3,6 @@ import {MetadataOverride} from '@angular/core/testing';
 import {Observable} from 'rxjs/Observable';
 import {Application} from '../src/app/model/application/application';
 import {Location} from '../src/app/model/common/location';
-import {HttpResponse, HttpStatus} from '../src/app/util/http-response';
 import {ApplicationStatus} from '../src/app/model/application/application-status';
 import {StatusChangeInfo} from '../src/app/model/application/status-change-info';
 import {Subject} from 'rxjs/Subject';
@@ -18,6 +17,7 @@ import {ApplicationState} from '../src/app/service/application/application-store
 import {Comment} from '../src/app/model/application/comment/comment';
 import {ApplicationType} from '../src/app/model/application/type/application-type';
 import {CityDistrict} from '../src/app/model/common/city-district';
+import {ErrorInfo} from '../src/app/service/error/error-info';
 
 /**
  * Mock for application state
@@ -56,8 +56,8 @@ export class ApplicationStoreMock {
     this.applicationCopy$.next(app);
   }
 
-  delete(id: number): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK));
+  delete(id: number): Observable<{}> {
+    return Observable.of({});
   }
 
   replace(): Observable<Application> {
@@ -207,6 +207,26 @@ export class CityDistrictServiceMock {
   public get(): Observable<CityDistrict[]> {
     return Observable.of(this.districts);
   }
+}
+
+export class NotificationServiceMock {
+  translateSuccess(key: string): void {}
+
+  success(title: string, message?: string): void {}
+
+  info(title: string, message?: string): void  {}
+
+  error(title: string, message?: string): void {}
+
+  errorInfo(errorInfo: ErrorInfo): void {}
+
+  errorCatch<T>(errorInfo: ErrorInfo, returnValue?: T): Observable<T> {
+    return returnValue ? Observable.of(returnValue) : Observable.empty();
+  }
+
+  translateError(errorInfo: ErrorInfo): void {}
+
+  translateErrorMessage(key: string): void {}
 }
 
 /**

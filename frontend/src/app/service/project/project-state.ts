@@ -3,8 +3,9 @@ import {Observable} from 'rxjs/Observable';
 import {Project} from '../../model/project/project';
 import {Application} from '../../model/application/application';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {CityDistrictService} from '../map/city-district.service';
 import {ProjectService} from './project.service';
+import * as fromRoot from '../../feature/allu/reducers';
+import {Store} from '@ngrx/store';
 
 @Injectable()
 export class ProjectState {
@@ -14,7 +15,7 @@ export class ProjectState {
   private applications$ = new BehaviorSubject<Array<Application>>([]);
 
   constructor(private projectService: ProjectService,
-              private cityDistrictService: CityDistrictService) {}
+              private store: Store<fromRoot.State>) {}
 
   createNew(): Observable<Project> {
     this._project = new Project();
@@ -100,7 +101,7 @@ export class ProjectState {
   districtNames(ids?: Array<number>): Observable<Array<string>> {
     const districtIds = ids || this._project.cityDistricts;
 
-    return this.cityDistrictService.byIds(districtIds)
+    return this.store.select(fromRoot.getCityDistrictsByIds(districtIds))
       .map(ds => ds.map(d => d.name));
   }
 }

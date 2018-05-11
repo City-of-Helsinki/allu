@@ -134,9 +134,9 @@ public class ApplicationController {
    * @return the updated application
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Application> update(@PathVariable int id,
+  public ResponseEntity<Application> update(@PathVariable int id, @RequestParam(required = true) int userId,
       @Valid @RequestBody(required = true) Application application) {
-    return new ResponseEntity<>(applicationService.update(id, application), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.update(id, application, userId), HttpStatus.OK);
   }
 
   /**
@@ -171,8 +171,8 @@ public class ApplicationController {
    * @return The created application
    */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Application> insert(@Valid @RequestBody(required = true) Application application) {
-    return new ResponseEntity<>(applicationService.insert(application), HttpStatus.OK);
+  public ResponseEntity<Application> insert(@RequestParam(required = true) int userId, @Valid @RequestBody(required = true) Application application) {
+    return new ResponseEntity<>(applicationService.insert(application, userId), HttpStatus.OK);
   }
 
   /**
@@ -364,5 +364,14 @@ public class ApplicationController {
   public ResponseEntity<List<Integer>> findFinishedApplications(@RequestBody List<StatusType> statuses) {
     return new ResponseEntity<>(applicationService.findFinishedApplications(statuses), HttpStatus.OK);
   }
+
+  /**
+   * Finds id of the external owner (user) of the application.
+   */
+  @RequestMapping(value = "/{id}/externalowner", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getApplicationExternalOwner(@PathVariable Integer id) {
+    return new ResponseEntity<>(applicationService.getApplicationExternalOwner(id), HttpStatus.OK);
+  }
+
 
 }

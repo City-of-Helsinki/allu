@@ -1,21 +1,18 @@
-import {NgModule, LOCALE_ID} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {APP_BASE_HREF} from '@angular/common';
-import {Http, HttpModule} from '@angular/http';
-import {AuthConfig, AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import '../../rxjs-extensions';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { environment } from 'environments/environment';
+import {StoreModule} from '@ngrx/store';
+import {EffectsModule} from '@ngrx/effects';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {environment} from 'environments/environment';
 
 import {ApplicationModule} from '../application/application.module';
 import {ApplicationService} from '../../service/application/application.service';
 import {LocationService} from '../../service/location.service';
 import {MapStore} from '../../service/map/map-store';
-import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {AlluComponent} from './allu.component';
 import {rootRoutes} from './allu.routing';
@@ -41,7 +38,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter, MatPaginatorIntl} from '@angular/material';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
-import {ConfigService} from '../../service/config/config.service';
+import {CONFIG_URL, ConfigService} from '../../service/config/config.service';
 import {SupervisionWorkqueueModule} from '../supervision-workqueue/supervision-workqueue.module';
 import {UserService} from '../../service/user/user-service';
 import {DownloadModule} from '../download/download.module';
@@ -52,11 +49,21 @@ import {RootErrorNotificationService} from './effects/root-error-notification.se
 import {CodeSetService} from '../../service/codeset/codeset.service';
 import {CityDistrictEffects} from './effects/city-district-effects';
 import {reducers} from './reducers';
+import {AuthModule} from '../auth/auth.module';
+import {CustomIconRegistry} from '../../service/common/custom-icon-registry';
+import {HttpClientModule} from '@angular/common/http';
+import {ToastyModule} from 'ng2-toasty';
+import {JwtModule} from '@auth0/angular-jwt';
+import {httpInterceptorProviders} from '../../http-interceptors';
+
+export function tokenGetter() {
+  return localStorage.getItem('jwt');
+}
 
 @NgModule({
   imports: [
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     FormsModule,
     RouterModule.forRoot(rootRoutes),
     BrowserAnimationsModule,
@@ -68,10 +75,12 @@ import {reducers} from './reducers';
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production // Restrict extension to log-only mode
     }),
+    ToastyModule.forRoot(),
     // App modules
     ApplicationModule,
     ProjectModule,
     LoginModule,
+    AuthModule,
     ToolbarModule,
     MapSearchModule,
     LocationModule.forRoot(),
@@ -90,13 +99,13 @@ import {reducers} from './reducers';
   ],
   bootstrap: [AlluComponent],
   providers: [
+    httpInterceptorProviders,
     ApplicationService,
     UserService,
     LocationService,
     CustomerService,
     UserHub,
     MapStore,
-    UIStateHub,
     AuthGuard,
     CanDeactivateGuard,
     CanActivateLogin,
@@ -108,20 +117,8 @@ import {reducers} from './reducers';
     ConfigService,
     RootErrorNotificationService,
     CodeSetService,
+    CustomIconRegistry,
     { provide: APP_BASE_HREF,  useValue: '/' },
-    { provide: AuthHttp, useFactory: (http) => {
-      return new AuthHttp(new AuthConfig({
-        headerName: 'Authorization',
-        headerPrefix: 'Bearer',
-        tokenName: 'jwt',
-        tokenGetter: (() => localStorage.getItem('jwt')),
-        globalHeaders: [{'Content-Type': 'application/json'}],
-        noJwtError: true,
-        noTokenScheme: false
-      }), http);
-    },
-      deps: [Http]
-    },
     { provide: DateAdapter, useClass: AlluDateAdapter },
     { provide: LOCALE_ID, useValue: 'fi-FI' },
     { provide: MatPaginatorIntl, useClass: AlluPaginatorIntl }

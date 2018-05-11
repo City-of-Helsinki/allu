@@ -1,20 +1,21 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.dao.UserDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.user.User;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.UserDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.user.User;
 
 /**
  * Service for handling location changes.
@@ -23,18 +24,19 @@ import java.util.stream.Collectors;
 public class LocationService {
 
   private final LocationDao locationDao;
-  private final ApplicationService applicationService;
+  private final ApplicationDao applicationDao;
+
   private final ProjectService projectService;
   private final UserDao userDao;
 
   @Autowired
   public LocationService(
       LocationDao locationDao,
-      ApplicationService applicationService,
+      ApplicationDao applicationDao,
       ProjectService projectService,
       UserDao userDao) {
     this.locationDao = locationDao;
-    this.applicationService = applicationService;
+    this.applicationDao = applicationDao;
     this.projectService = projectService;
     this.userDao = userDao;
   }
@@ -46,7 +48,7 @@ public class LocationService {
     int applicationId = getApplicationId(newLocations);
     Application application = findApplication(applicationId);
     assignOwner(application, newLocations, userId);
-    updateApplicationAndProject(application, userId);
+    updateProject(application, userId);
     return newLocations;
   }
 
@@ -63,7 +65,7 @@ public class LocationService {
 
       owner.ifPresent(id -> {
         application.setOwner(id);
-        applicationService.updateOwner(id, Arrays.asList(application.getId()));
+        applicationDao.updateOwner(id, Arrays.asList(application.getId()));
       });
     }
   }
@@ -113,25 +115,18 @@ public class LocationService {
 
   private void updateApplicationAndProject(int applicationId, int userId) {
     Application application = findApplication(applicationId);
-    updateApplicationAndProject(application, userId);
-  }
-
-  private void updateApplicationAndProject(Application application, int userId) {
-    updateProject(application.getId(), userId);
-    // update application to get the price calculations done
-    applicationService.update(application.getId(), application);
+    updateProject(application, userId);
   }
 
   private Application findApplication(int applicationId) {
-    List<Application> applications = applicationService.findByIds(Collections.singletonList(applicationId), false);
+    List<Application> applications = applicationDao.findByIds(Collections.singletonList(applicationId), false);
     if (applications.size() != 1) {
       throw new NoSuchEntityException("Location referenced to non-existent application", Integer.toString(applicationId));
     }
     return applications.get(0);
   }
 
-  private void updateProject(int applicationId, int userId) {
-    Application application = applicationService.findById(applicationId);
+  private void updateProject(Application application, int userId) {
     if (application.getProjectId() != null) {
       projectService.updateProjectInformation(Collections.singletonList(application.getProjectId()), userId);
     }

@@ -49,8 +49,8 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.applicant = queryForm.applicant;
     query.contact = queryForm.contact;
     query.freeText = queryForm.freeText;
-    query.startTime = queryForm.startTime;
-    query.endTime = queryForm.endTime;
+    query.startTime = TimeUtil.toStartDate(queryForm.startTime);
+    query.endTime = TimeUtil.toEndDate(queryForm.endTime);
     query.tags = queryForm.tags;
     query.sort = sort;
     return query;

@@ -5,6 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {ChargeBasisEntry} from '../../../../../model/application/invoice/charge-basis-entry';
 import {Subject} from 'rxjs/Subject';
 import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-basis-unit';
+import {ChargeBasisType} from '../../../../../model/application/invoice/charge-basis-type';
 
 const discountSumValidators = {
   unitPrice: [Validators.required]
@@ -30,12 +31,16 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
   unitCtrl: FormControl;
 
   private destroy = new Subject<boolean>();
+  private readonly discountableChargeBasisTypes =  [
+    ChargeBasisType.AREA_USAGE_FEE,
+    ChargeBasisType.CALCULATED
+];
 
   constructor(private invoiceHub: InvoiceHub) {}
 
   ngOnInit(): void {
     this.referableEntries = this.invoiceHub.chargeBasisEntries
-      .map(entries => entries.filter(entry => !!entry.tag));
+      .map(entries => entries.filter(entry => this.discountableChargeBasisTypes.includes(entry.type)));
 
     this.unitCtrl = <FormControl>this.form.get('unit');
     this.unitCtrl.valueChanges

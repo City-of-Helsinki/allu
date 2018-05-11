@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for populating <code>ApplicationJson</code>s.
@@ -48,22 +49,30 @@ public class ApplicationJsonService {
    * @return  fully populated application json.
    */
   public ApplicationJson getFullyPopulatedApplication(Application applicationModel) {
-    ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
+    ApplicationJson applicationJson = populateCommon(applicationModel);
 
-    if (applicationModel.getProjectId() != null) {
-      List<ProjectJson> projects = projectService.findByIds(Collections.singletonList(applicationModel.getProjectId()));
-      if (projects.size() != 1) {
-        throw new NoSuchEntityException("Project linked to application not found!", applicationModel.getProjectId().toString());
-      }
-      applicationJson.setProject(projects.get(0));
-    }
-    applicationJson.setOwner(applicationModel.getOwner() != null ? userService.findUserById(applicationModel.getOwner()) : null);
     applicationJson.setHandler(applicationModel.getHandler() != null ? userService.findUserById(applicationModel.getHandler()) : null);
-
-    applicationJson.setLocations(locationService.findLocationsByApplication(applicationModel.getId()));
     applicationJson.setAttachmentList(attachmentService.findAttachmentsForApplication(applicationModel.getId()));
     applicationJson.setComments(commentService.findByApplicationId(applicationModel.getId()));
 
     return applicationJson;
+  }
+
+  public ApplicationJson getCompactPopulatedApplication(Application model) {
+    return populateCommon(model);
+  }
+
+  public ApplicationJson populateCommon(Application model) {
+    ApplicationJson json = applicationMapper.mapApplicationToJson(model);
+
+    Optional.ofNullable(model.getProjectId())
+        .map(id -> projectService.findById(id))
+        .ifPresent(project -> json.setProject(project));
+
+    Optional.ofNullable(model.getOwner())
+        .map(owner -> userService.findUserById(owner))
+        .ifPresent(owner -> json.setOwner(owner));
+
+    return json;
   }
 }

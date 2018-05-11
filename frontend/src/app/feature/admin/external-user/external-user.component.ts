@@ -38,7 +38,8 @@ export class ExternalUserComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private userHub: ExternalUserHub,
               private customerService: CustomerService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private notification: NotificationService) {
 
     this.connectedCustomersCtrl = this.fb.control([]);
 
@@ -77,7 +78,7 @@ export class ExternalUserComponent implements OnInit {
   }
 
   save(): void {
-    const user = ExternalUserForm.to(this.userForm.value);
+    const user = ExternalUserForm.to(this.userForm.getRawValue());
     this.submitted = true;
     const currentCustomerToken = this.userForm.getRawValue().token;
     this.userHub.saveUser(user)
@@ -90,7 +91,7 @@ export class ExternalUserComponent implements OnInit {
         if (currentCustomerToken !== savedUser.token) {
           message += '<br>' + translations.externalUser.actions.customerTokenGenerated;
         }
-        NotificationService.message(message);
+        this.notification.success(message);
     });
   }
 

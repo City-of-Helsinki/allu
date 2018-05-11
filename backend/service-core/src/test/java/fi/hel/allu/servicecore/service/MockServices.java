@@ -44,7 +44,7 @@ public abstract class MockServices {
 
   public void initSaveMocks() {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Application.class)))
+        Mockito.eq(Application.class), Mockito.anyInt()))
         .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),

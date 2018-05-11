@@ -17,8 +17,6 @@ import {NotificationService} from '../../../service/notification/notification.se
 import {findTranslation} from '../../../util/translations';
 import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
 
-const toastTime = 4000;
-
 @Component({
   selector: 'attachments',
   templateUrl: './attachments.component.html',
@@ -39,7 +37,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
 
   constructor(private attachmentHub: AttachmentHub,
               private applicationStore: ApplicationStore,
-              private dialog: MatDialog) {}
+              private dialog: MatDialog,
+              private notification: NotificationService) {}
 
   ngOnInit() {
     this.application = this.applicationStore.snapshot.application;
@@ -71,10 +70,10 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   save(attachment: AttachmentInfo, index?: number) {
     this.applicationStore.saveAttachment(attachment).subscribe(
       saved => {
-        NotificationService.message(findTranslation('attachment.action.added', {name: saved.name}), toastTime);
+        this.notification.success(findTranslation('attachment.action.added', {name: saved.name}));
         Some(index).do(i => this.editableAttachments.splice(i, 1));
       },
-      error => NotificationService.errorMessage(findTranslation('attachment.error.addFailed', {name: attachment.name}), toastTime)
+      error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
     );
   }
 
@@ -112,7 +111,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
     attachment.decisionAttachment = change.checked;
     this.applicationStore.saveAttachment(attachment).subscribe(
       saved => {},
-      error => NotificationService.errorMessage(findTranslation('attachment.error.addFailed', {name: attachment.name}), toastTime)
+      error => this.notification.error(findTranslation('attachment.error.addFailed', {name: attachment.name}))
     );
   }
 
@@ -136,8 +135,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   private onRemoveConfirm(attachment: AttachmentInfo) {
     this.applicationStore.removeAttachment(attachment.id)
       .subscribe(
-        status => NotificationService.message(findTranslation('attachment.action.deleted', {name: attachment.name}), toastTime),
-        error => NotificationService.errorMessage(findTranslation('attachment.error.deleteFailed', {name: attachment.name}), toastTime));
+        status => this.notification.success(findTranslation('attachment.action.deleted', {name: attachment.name})),
+        error => this.notification.error(findTranslation('attachment.error.deleteFailed', {name: attachment.name})));
   }
 
   private setAttachments(attachments: Array<AttachmentInfo>): void {

@@ -6,13 +6,15 @@ package fi.hel.allu.model.domain;
 public class ApplicationIdentifier {
   private int id;
   private String applicationId;
+  private String identificationNumber;
 
   public ApplicationIdentifier() {
   }
 
-  public ApplicationIdentifier(int id, String applicationId) {
+  public ApplicationIdentifier(int id, String applicationId, String identificationNumber) {
     this.id = id;
     this.applicationId = applicationId;
+    this.identificationNumber = identificationNumber;
   }
 
   public int getId() {
@@ -29,5 +31,13 @@ public class ApplicationIdentifier {
 
   public void setApplicationId(String applicationId) {
     this.applicationId = applicationId;
+  }
+
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
   }
 }

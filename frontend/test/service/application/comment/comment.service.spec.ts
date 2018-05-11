@@ -1,27 +1,16 @@
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {AuthHttp} from 'angular2-jwt';
-import {
-  BaseRequestOptions,
-  ConnectionBackend,
-  Http,
-  HttpModule,
-  RequestMethod,
-  RequestOptions,
-  Response,
-  ResponseOptions,
-  ResponseType
-} from '@angular/http';
-import {MockBackend} from '@angular/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import {CommentService} from '../../../../src/app/service/application/comment/comment.service';
 import {Comment} from '../../../../src/app/model/application/comment/comment';
 import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
-import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
 import {ErrorHandler} from '../../../../src/app/service/error/error-handler.service';
-
-const COMMENTS_URL = '/api/comments';
-const COMMENTS_APP_URL = COMMENTS_URL + '/applications/:appId';
+import {HttpClient} from '@angular/common/http';
 
 const APP_ID = 1;
+const COMMENTS_URL = '/api/comments';
+const COMMENTS_APP_URL = `/api/comments/applications/${APP_ID}`;
+
+
 const COMMENT_ONE = new Comment(
   1,
   CommentType[CommentType.INTERNAL],
@@ -42,53 +31,47 @@ const COMMENT_NEW = new Comment(
   'New comment'
 );
 
-const ERROR_RESPONSE = new Response(new ResponseOptions({
-  type: ResponseType.Error,
-  status: 404
-}));
-
 class ErrorHandlerMock {
   handle(error: any, message?: string) {}
 }
 
 describe('CommentService', () => {
   let commentService: CommentService;
-  let backend: MockBackend;
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
   let errorHandler: ErrorHandlerMock;
-  let lastConnection: any;
 
   beforeEach(() => {
     const tb = TestBed.configureTestingModule({
-      imports: [HttpModule],
+      imports: [HttpClientTestingModule],
       providers: [
-        MockBackend,
-        BaseRequestOptions,
-        { provide: ConnectionBackend, useClass: MockBackend },
-        { provide: RequestOptions, useClass: BaseRequestOptions },
-        Http,
-        { provide: AuthHttp, useExisting: Http, deps: [Http] },
         { provide: ErrorHandler, useClass: ErrorHandlerMock},
         CommentService
       ]
     });
     commentService = tb.get(CommentService);
-    backend = tb.get(ConnectionBackend) as MockBackend;
-    backend.connections.subscribe((connection: any) => lastConnection = connection);
+    httpClient = tb.get(HttpClient);
+    httpTestingController = tb.get(HttpTestingController);
     errorHandler = tb.get(ErrorHandler) as ErrorHandlerMock;
   });
 
+  afterEach(() => {
+    httpTestingController.verify();
+  });
+
   it('getComments() should query rest api with application id', () => {
-    commentService.getComments(APP_ID);
-    expect(lastConnection).toBeDefined('No service');
-    expect(lastConnection.request.url).toMatch(COMMENTS_APP_URL.replace(':appId', String(APP_ID)));
+    commentService.getComments(APP_ID).subscribe();
+    const req = httpTestingController.expectOne(COMMENTS_APP_URL);
+    expect(req.request.method).toEqual('GET');
   });
 
   it('getComments() should return queried comments', fakeAsync(() => {
     let result: Array<Comment>;
     commentService.getComments(APP_ID).subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      body: JSON.stringify([COMMENT_ONE, COMMENT_TWO])
-    })));
+    const req = httpTestingController.expectOne(COMMENTS_APP_URL);
+
+    req.flush([COMMENT_ONE, COMMENT_TWO]);
+
     tick();
     expect(result[0]).toEqual(COMMENT_ONE, ' COMMENT_ONE should be the first comment');
     expect(result[1]).toEqual(COMMENT_TWO, ' COMMENT_TWO should be the second comment');
@@ -98,7 +81,10 @@ describe('CommentService', () => {
     let result: Array<Comment>;
     spyOn(errorHandler, 'handle');
     commentService.getComments(APP_ID).subscribe(r => result = r, error => {});
-    lastConnection.mockError(ERROR_RESPONSE);
+
+    const req = httpTestingController.expectOne(COMMENTS_APP_URL);
+    req.error(new ErrorEvent('Expected error'));
+
     tick();
     expect(result).toBeUndefined();
     expect(errorHandler.handle).toHaveBeenCalledTimes(1);
@@ -110,22 +96,25 @@ describe('CommentService', () => {
     updatedComment.id = 10;
 
     commentService.save(APP_ID, COMMENT_NEW).subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      body: JSON.stringify(updatedComment)
-    })));
+
+    const req = httpTestingController.expectOne(COMMENTS_APP_URL);
+    req.flush(updatedComment);
+
     tick();
-    expect(lastConnection.request.method).toEqual(RequestMethod.Post);
+    expect(req.request.method).toEqual('POST');
     expect(result).toEqual(updatedComment, 'COMMENT_ONE was not saved');
   }));
+
 
   it('save() comment with id should update', fakeAsync(() => {
     let result: Comment;
     commentService.save(APP_ID, COMMENT_ONE).subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      body: JSON.stringify(COMMENT_ONE)
-    })));
+
+    const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
+    req.flush(COMMENT_ONE);
+
     tick();
-    expect(lastConnection.request.method).toEqual(RequestMethod.Put);
+    expect(req.request.method).toEqual('PUT');
     expect(result).toEqual(COMMENT_ONE, 'COMMENT_ONE was not saved');
   }));
 
@@ -133,30 +122,28 @@ describe('CommentService', () => {
     let result: Comment;
     spyOn(errorHandler, 'handle');
     commentService.save(APP_ID, COMMENT_ONE).subscribe(r => result = r, error => {});
-    lastConnection.mockError(ERROR_RESPONSE);
+    const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
+    req.error(new ErrorEvent('Expected'));
+
     tick();
     expect(result).toBeUndefined();
     expect(errorHandler.handle).toHaveBeenCalledTimes(1);
   }));
 
+
   it('remove() should remove comment with matching id', fakeAsync(() => {
-    let result: HttpResponse;
-    commentService.remove(COMMENT_ONE.id).subscribe(r => result = r);
-    lastConnection.mockRespond(new Response(new ResponseOptions({
-      status: 200
-    })));
+    commentService.remove(COMMENT_ONE.id).subscribe();
+    const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
     tick();
-    expect(lastConnection.request.method).toEqual(RequestMethod.Delete);
-    expect(result.status).toEqual(HttpStatus.OK);
+    expect(req.request.method).toEqual('DELETE');
   }));
 
   it('remove() comment should handle errors', fakeAsync(() => {
-    let result: HttpResponse;
     spyOn(errorHandler, 'handle');
-    commentService.remove(COMMENT_ONE.id).subscribe(r => result = r, error => {});
-    lastConnection.mockError(ERROR_RESPONSE);
+    commentService.remove(COMMENT_ONE.id).subscribe(() => {}, error => {});
+    const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
+    req.error(new ErrorEvent('Expected'));
     tick();
-    expect(result).toBeUndefined();
     expect(errorHandler.handle).toHaveBeenCalledTimes(1);
   }));
 });

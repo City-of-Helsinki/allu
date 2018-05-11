@@ -64,7 +64,6 @@ public class SearchSyncServiceSpec {
         setupApplicationProperties();
 
         Mockito.when(applicationMapper.mapApplicationToJson(any(Application.class))).thenReturn(new ApplicationJson());
-        Mockito.when(locationService.findLocationsByApplication(any(Integer.class))).thenReturn(Collections.EMPTY_LIST);
       });
       it("Successfully syncs", () -> {
         setupRestTemplate(2, 2, 2, 2);

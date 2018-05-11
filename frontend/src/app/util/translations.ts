@@ -355,7 +355,8 @@ export const translations = {
     note: {
       field: {
         validityStartTimeMissing: 'Alkupäivämäärä puuttuu',
-        validityEndTimeMissing: 'Loppupäivämäärä puuttuu'
+        validityEndTimeMissing: 'Loppupäivämäärä puuttuu',
+        validityDurationAtMax: 'Vuosittain toistuvan muistiinpanon keston täytyy olla alle vuosi'
       }
     },
     trafficArrangement: {
@@ -366,7 +367,6 @@ export const translations = {
       }
     },
     placementContract: {
-      identificationNumber: 'Asiointitunnus',
       contractText: 'Sopimusteksti',
       propertyIdentificationNumber: 'Kiinteistötunnus',
       terminationDate: 'Irtisanomispäivä'
@@ -405,6 +405,16 @@ export const translations = {
     name: 'Hakemuksen nimi',
     location: 'Sijainti',
     handler: 'Käsittelijä'
+  },
+  applicationBasket: {
+    createNewProject: 'Luo uusi hanke',
+    addToExistingProject: 'Hae kohdehanke',
+    clear: 'Tyhjennä kori',
+    empty: 'Hakemuskori on tyhjä',
+    addTo: 'Lisää koriin',
+    applicationAdded: 'Hakemus lisätty koriin',
+    applicationsAdded: 'Hakemukset lisätty koriin',
+    applicationRemoved: 'Hakemus poistettu korista'
   },
   terms: {
     title: 'Ehdot',
@@ -462,7 +472,8 @@ export const translations = {
       title: 'Hakemukset',
       removeFromProject: 'Poista hankkeesta',
       searchAndAdd: 'Etsi ja lisää hakemuksia',
-      moveFromAnother: 'Hakemus kuuluu hankkeeseen {{project}} ja siirretään uuteen hankkeeseen'
+      moveFromAnother: 'Hakemus kuuluu hankkeeseen {{project}} ja siirretään uuteen hankkeeseen',
+      fromBasket: 'Tuo korista'
     },
     button: {
       addApplication: 'Lisää hakemus'
@@ -480,7 +491,8 @@ export const translations = {
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
     sapCustomerNumber: 'Sap-numero',
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
-    invoicingOnly: 'Laskutusasiakas',
+    invoicingOnly: 'Vain laskutusasiakas',
+    projectIdentifierPrefix: 'Projektitunnuksen alkuosa',
     type: {
       title: 'Tyyppi',
       COMPANY: {
@@ -753,7 +765,12 @@ export const translations = {
     areaOverride: 'Käsittelijän syöttämä pinta-ala',
     cityDistrict: 'Kaupunginosa',
     cityDistrictOverride: 'Käsittelijän valitsema kaupunginosa',
-    underpass: 'Altakuljettava'
+    underpass: 'Altakuljettava',
+    error: {
+      fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
+      fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',
+      addressSearch: 'Osoitehaku epäonnistui'
+    }
   },
   common: {
     freeTextSearch: 'Vapaa tekstihaku',
@@ -797,6 +814,7 @@ export const translations = {
     zoomIn: 'Lähennä',
     zoomOut: 'Loitonna',
     areasIntersect: 'Alue leikkaa toisen alueen',
+    areaIntersects: 'Alue leikkaa itsensä',
     draw: {
       toolbar: {
         actions: {
@@ -1182,6 +1200,10 @@ export const translations = {
         title: 'Laskettu',
         basis: 'Peruste'
       },
+      AREA_USAGE_FEE: {
+        title: 'Alueenkäyttömaksu',
+        basis: 'Alueenkäyttömaksun peruste'
+      },
       NEGLIGENCE_FEE: {
         title: 'Laiminlyöntimaksu',
         basis: 'Laiminlyöntimaksun peruste'
@@ -1221,6 +1243,7 @@ export const translations = {
     field: {
       rowTextMissing: 'Laskuperuste puuttuu',
       quantityMissing: 'Määrä puuttuu',
+      unitMissing: 'Yksikkö puuttuu',
       unitPriceMissing: 'Yksikköhinta puuttuu',
       discountMissing: 'Alennus puuttuu',
       discountPercentageMissing: 'Alennusprosentti puuttuu'
@@ -1301,6 +1324,13 @@ export const translations = {
     error: {
       fetch: 'Sovelluksen asetusten hakeminen epäonnistui'
     }
+  },
+  httpStatus: {
+    BAD_REQUEST: 'Toiminto epäonnistui',
+    UNAUTHORIZED: 'Et ole kirjautunut',
+    FORBIDDEN: 'Oikeutesi eivät riitä',
+    INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
+    UNKNOWN: 'Tuntematon virhe'
   }
 };
 

@@ -1,28 +1,27 @@
 package fi.hel.allu.model.testUtils;
 
+import java.sql.SQLException;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.apache.commons.lang3.StringUtils;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.builder.DSL.Polygon2DToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CodeSetDao;
-import fi.hel.allu.model.dao.ContactDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.dao.UserDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.LocationService;
 
-import org.apache.commons.lang3.StringUtils;
-import org.geolatte.geom.Geometry;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.sql.SQLException;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
+import static org.geolatte.geom.builder.DSL.*;
 
 /**
  * Helper class for routines shared between all tests
@@ -34,6 +33,7 @@ public class TestCommon {
   private static final Logger logger = LoggerFactory.getLogger(TestCommon.class);
 
   private static int projectNbr = 0;
+  private static final Polygon2DToken Sq_0_0 = polygon(ring(c(0, 0), c(0, 2), c(2, 2), c(2, 0), c(0, 0)));
 
   @Autowired
   private SqlRunner sqlRunner;
@@ -74,7 +74,16 @@ public class TestCommon {
     app.setName(name);
     app.setOwner(user.getId());
     app.setNotBillable(false);
+    addLocation(app);
     return app;
+  }
+
+  public void addLocation(Application app) {
+    Location location = new Location();
+    location.setUnderpass(false);
+    location.setStartTime(app.getStartTime());
+    location.setEndTime(app.getEndTime());
+    app.setLocations(Collections.singletonList(location));
   }
 
   /**
@@ -174,27 +183,20 @@ public class TestCommon {
   }
 
   /**
-   * Insert a location with given street address and geometry.
+   * Create a location with given street address and geometry.
    *
    * @param streetAddress
    * @param geometry
-   * @return inserted location's ID
    */
-  public Integer insertLocation(
-      String streetAddress,
-      Geometry geometry,
-      int applicationId,
-      ZonedDateTime startTime,
-      ZonedDateTime endTime,
-      int userId) {
+  public Location createLocation(String streetAddress, Geometry geometry, ZonedDateTime startTime,
+      ZonedDateTime endTime) {
     Location location = new Location();
     location.setGeometry(geometry);
     location.setPostalAddress(new PostalAddress(streetAddress, null, null));
-    location.setApplicationId(applicationId);
     location.setUnderpass(false);
     location.setStartTime(startTime);
     location.setEndTime(endTime);
-    return locationService.insert(Collections.singletonList(location), userId).get(0).getId();
+    return location;
   }
 
   /**

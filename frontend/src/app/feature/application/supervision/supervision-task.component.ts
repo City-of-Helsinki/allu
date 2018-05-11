@@ -46,7 +46,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
               private store: SupervisionTaskStore,
               private currentUser: CurrentUser,
               private userHub: UserHub,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -77,9 +78,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
         .subscribe(
           status => {
             this.onRemove.emit();
-            NotificationService.translateMessage('supervision.task.action.remove');
+            this.notification.translateSuccess('supervision.task.action.remove');
           },
-          error => NotificationService.translateError(error));
+          error => this.notification.translateError(error));
     } else {
       this.onRemove.emit();
     }
@@ -90,10 +91,10 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.form.disable();
     this.store.saveTask(this.applicationStore.snapshot.application.id, SupervisionTaskForm.to(formValue))
       .subscribe(
-        c => NotificationService.translateMessage('supervision.task.action.save'),
+        c => this.notification.translateSuccess('supervision.task.action.save'),
         error => {
           this.form.enable();
-          NotificationService.translateError(error);
+          this.notification.translateError(error);
         });
   }
 
@@ -123,8 +124,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       .map(result => this.taskWithResult(SupervisionTaskStatusType.APPROVED, result))
       .switchMap(task => this.store.approve(task))
       .subscribe(
-        saved => NotificationService.translateMessage('supervision.task.action.approve'),
-        err => NotificationService.translateMessage('supervision.task.error.approve'));
+        saved => this.notification.translateSuccess('supervision.task.action.approve'),
+        err => this.notification.translateSuccess('supervision.task.error.approve'));
   }
 
   reject(): void {
@@ -134,8 +135,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
         this.taskWithResult(SupervisionTaskStatusType.REJECTED, result),
         result.newSupervisionDate))
       .subscribe(
-        saved => NotificationService.translateMessage('supervision.task.action.reject'),
-        err => NotificationService.translateMessage('supervision.task.error.reject'));
+        saved => this.notification.translateSuccess('supervision.task.action.reject'),
+        err => this.notification.translateSuccess('supervision.task.error.reject'));
   }
 
   private taskWithResult(status: SupervisionTaskStatusType, result: SupervisionApprovalResult): SupervisionTask {

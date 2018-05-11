@@ -3,6 +3,9 @@ import {AuthService} from '../../service/authorization/auth.service';
 import {ConfigService} from '../../service/config/config.service';
 import {Observable} from 'rxjs/Observable';
 import {EnvironmentType} from '../../model/config/environment-type';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '../allu/reducers';
+import * as fromProject from '../project/reducers';
 
 @Component({
   selector: 'toolbar',
@@ -15,7 +18,11 @@ export class ToolbarComponent implements OnInit {
   version: Observable<string>;
   logo: string;
 
-  constructor(private authService: AuthService, private config: ConfigService) {
+  applicationBasketSize$: Observable<number>;
+
+  constructor(private authService: AuthService,
+              private config: ConfigService,
+              private store: Store<fromRoot.State>) {
   }
 
   ngOnInit(): void {
@@ -26,6 +33,8 @@ export class ToolbarComponent implements OnInit {
       this.logo = config.environment === EnvironmentType.PRODUCTION
         ? 'assets/svg/allu-logo.svg'
         : 'assets/svg/allu-testi-logo.svg');
+
+    this.applicationBasketSize$ = this.store.select(fromProject.getApplicationCountInBasket);
   }
 
   get authenticated() {

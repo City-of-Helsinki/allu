@@ -29,8 +29,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   form: FormGroup;
   chargeBasisEntries: FormArray;
   calculatedPrice: number;
-  canBeEdited = true;
-  modifyRole = false;
+  canBeEdited = false;
 
   private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
   private destroy = new Subject<boolean>();
@@ -39,7 +38,8 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private invoiceHub: InvoiceHub,
               private applicationStore: ApplicationStore,
-              private currentUser: CurrentUser) {
+              private currentUser: CurrentUser,
+              private notification: NotificationService) {
     this.chargeBasisEntries = fb.array([]);
     this.form = this.fb.group({
       chargeBasisEntries: this.chargeBasisEntries
@@ -55,8 +55,10 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
       .takeUntil(this.destroy)
       .subscribe(entries => this.entriesUpdated(entries));
 
-    this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
-      .subscribe(hasRequiredRole => this.modifyRole = hasRequiredRole);
+    Observable.combineLatest(
+      this.applicationStore.application,
+      this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role])),
+      (app, role) => applicationCanBeEdited(app.statusEnum) && role).subscribe(e => this.canBeEdited = e);
   }
 
   ngOnDestroy(): void {
@@ -68,8 +70,8 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.openModal()
       .switchMap(entry => this.addEntry(entry))
       .subscribe(
-        saved => NotificationService.translateMessage('chargeBasis.action.save'),
-        error => NotificationService.error(error)
+        saved => this.notification.translateSuccess('chargeBasis.action.save'),
+        error => this.notification.errorInfo(error)
       );
   }
 
@@ -78,16 +80,16 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.openModal(ChargeBasisEntryForm.toChargeBasisEntry(entryForm.getRawValue()))
       .switchMap(updatedEntry => this.updateEntry(updatedEntry, index))
       .subscribe(
-          saved => NotificationService.translateMessage('chargeBasis.action.save'),
-          error => NotificationService.error(error)
+          saved => this.notification.translateSuccess('chargeBasis.action.save'),
+          error => this.notification.errorInfo(error)
         );
   }
 
   removeEntry(index: number): void {
     this.chargeBasisEntries.removeAt(index);
     this.saveEntries().subscribe(
-      saved => NotificationService.translateMessage('chargeBasis.action.save'),
-      error => NotificationService.error(error)
+      saved => this.notification.translateSuccess('chargeBasis.action.save'),
+      error => this.notification.errorInfo(error)
     );
   }
 
@@ -98,11 +100,10 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   private onApplicationChange(app: Application): void {
     this.calculatedPrice = app.calculatedPriceEuro;
-    this.canBeEdited = applicationCanBeEdited(app.statusEnum) && this.modifyRole;
 
     this.invoiceHub.loadChargeBasisEntries(app.id)
       .takeUntil(this.destroy)
-      .subscribe(() => {}, error => NotificationService.error(error));
+      .subscribe(() => {}, error => this.notification.errorInfo(error));
   }
 
   private entriesUpdated(entries: Array<ChargeBasisEntry>): void {

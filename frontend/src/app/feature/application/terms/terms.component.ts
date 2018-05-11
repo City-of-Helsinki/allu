@@ -30,14 +30,15 @@ export class TermsComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
-              private defaultTextService: DefaultTextService) {}
+              private defaultTextService: DefaultTextService,
+              private notification: NotificationService) {}
 
   ngOnInit(): void {
     this.termsControl = this.fb.control({value: this.terms, disabled: this.readonly});
     this.form.addControl('terms', this.termsControl);
     this.defaultTextService.load(this.applicationType).subscribe(
       dts => this.defaultTexts = dts,
-      err => NotificationService.error(err)
+      err => this.notification.errorInfo(err)
     );
   }
 
@@ -61,9 +62,9 @@ export class TermsComponent implements OnInit {
         .subscribe(
           texts => {
             this.defaultTexts = texts;
-            NotificationService.message(findTranslation('defaultText.actions.saved'));
+            this.notification.success(findTranslation('defaultText.actions.saved'));
           },
-          err => NotificationService.error(err));
+          err => this.notification.errorInfo(err));
     });
   }
 }
