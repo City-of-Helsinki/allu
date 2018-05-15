@@ -25,7 +25,7 @@ public class ExternalApplicationDao {
 
   @Transactional
   public void save(ExternalApplication externalApp) {
-    removeExisting(externalApp.getApplicationId());
+    removeExisting(externalApp.getApplicationId(), externalApp.getInformationRequestId());
     queryFactory.insert(externalApplication).populate(externalApp).executeWithKey(externalApplication);
   }
 
@@ -34,8 +34,11 @@ public class ExternalApplicationDao {
     return queryFactory.select(externalApplicationBean).where(externalApplication.applicationId.eq(applicationId)).fetchOne();
   }
 
-  private void removeExisting(Integer applicationId) {
-    queryFactory.delete(externalApplication).where(externalApplication.applicationId.eq(applicationId)).execute();
+  private void removeExisting(Integer applicationId, Integer informationRequestId) {
+    BooleanExpression informationRequestExpression = informationRequestId != null
+        ? externalApplication.informationRequestId.eq(informationRequestId)
+        : externalApplication.informationRequestId.isNull();
+    queryFactory.delete(externalApplication).where(externalApplication.applicationId.eq(applicationId), informationRequestExpression).execute();
   }
 
 

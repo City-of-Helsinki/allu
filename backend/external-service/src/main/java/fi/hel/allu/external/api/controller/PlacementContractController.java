@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import io.swagger.annotations.Api;
@@ -55,6 +57,19 @@ public class PlacementContractController {
     applicationService.validateFullUpdateAllowed(id);
     applicationService.validateOwnedByExternalUser(id);
     return new ResponseEntity<>(applicationService.updatePlacementContract(id, placementContract), HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "Send response for information request specified by ID parameter. Only fields listed in response are processed in Allu. "
+      + "Also data sent through some separate API (e.g. application attachments) should be included in field list of response.",
+      produces = "application/json",
+      authorizations=@Authorization(value ="api_key"))
+  @RequestMapping(value = "{applicationid}/informationrequests/{requestid}/response", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<Void> addResponse(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,
+                                          @ApiParam(value = "Id of the information request") @PathVariable("requestid") Integer requestId,
+                                          @ApiParam(value = "Content of the response") @RequestBody InformationRequestResponseExt<PlacementContractExt> response) throws JsonProcessingException {
+    applicationService.addInformationRequestResponse(applicationId, requestId, response);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 

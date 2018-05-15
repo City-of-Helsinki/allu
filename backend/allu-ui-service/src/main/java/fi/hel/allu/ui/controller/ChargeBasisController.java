@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.controller;
 
+import fi.hel.allu.common.validator.ValidList;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.service.ChargeBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/applications/{id}")
@@ -43,7 +43,7 @@ public class ChargeBasisController {
   @RequestMapping(value = "/charge-basis", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ChargeBasisEntry>> setChargeBasis(@PathVariable int id,
-                                                               @Valid @RequestBody List<ChargeBasisEntry> chargeBasisEntries) {
+                                                               @Valid @RequestBody ValidList<ChargeBasisEntry> chargeBasisEntries) {
     return new ResponseEntity<>(chargeBasisService.setChargeBasis(id, chargeBasisEntries), HttpStatus.OK);
   }
 }

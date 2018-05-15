@@ -42,20 +42,20 @@ public class SearchSyncService {
   private static final Logger logger = LoggerFactory.getLogger(SearchSyncService.class);
   private static final int PAGE_SIZE = 100;
 
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private ApplicationMapper applicationMapper;
-  private ProjectMapper projectMapper;
-  private LocationService locationService;
+  private final RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final ApplicationMapper applicationMapper;
+  private final ProjectMapper projectMapper;
+  private final ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
   public SearchSyncService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
-      ApplicationMapper applicationMapper, ProjectMapper projectMapper, LocationService locationService) {
+      ApplicationMapper applicationMapper, ProjectMapper projectMapper, ApplicationServiceComposer applicationServiceComposer) {
     this.restTemplate = restTemplate;
     this.applicationProperties = applicationProperties;
     this.applicationMapper = applicationMapper;
     this.projectMapper = projectMapper;
-    this.locationService = locationService;
+    this.applicationServiceComposer = applicationServiceComposer;
   }
 
   /**
@@ -210,7 +210,7 @@ public class SearchSyncService {
   }
 
   ApplicationES mapToES(Application application) {
-    ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(application);
+    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(application.getId());
     return applicationMapper.createApplicationESModel(applicationJson);
   }
 

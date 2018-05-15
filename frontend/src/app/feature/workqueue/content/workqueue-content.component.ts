@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {MatCheckboxChange, MatDialog, MatPaginator, MatSort} from '@angular/material';
 
 import {Application} from '../../../model/application/application';
-import {CommentsModalComponent} from '../../application/comment/comments-modal.component';
+import {CommentsModalComponent} from '../../comment/comments-modal.component';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {Subject} from 'rxjs/Subject';
 import {ApplicationWorkItemStore} from '../application-work-item-store';

@@ -1,5 +1,5 @@
-import {User} from '../../../model/user/user';
-import {Comment} from '../../../model/application/comment/comment';
+import {User} from '../../model/user/user';
+import {Comment} from '../../model/application/comment/comment';
 
 export class CommentForm {
   constructor(
@@ -14,7 +14,7 @@ export class CommentForm {
   static from(comment: Comment): CommentForm {
     const form = new CommentForm();
     form.id = comment.id;
-    form.type = comment.type;
+    form.type = comment.type || 'INTERNAL';
     form.text = comment.text;
     form.createTime = comment.createTime;
     form.updateTime = comment.updateTime;

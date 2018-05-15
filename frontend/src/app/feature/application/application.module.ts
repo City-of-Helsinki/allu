@@ -25,7 +25,7 @@ import {CableInfoComponent} from './info/cable-report/cable-info.component';
 import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
 import {NoteComponent} from './info/note/note.component';
 import {ApplicationInfoComponent} from './info/application-info.component';
-import {CommentModule} from './comment/comment.module';
+import {CommentModule} from '../comment/comment.module';
 import {TagBarModule} from './tagbar/tagbar.module';
 import {AttachmentModule} from './attachment/attachment.module';
 import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-arrangement.component';
@@ -41,11 +41,15 @@ import {RecurringComponent} from './info/recurring/recurring.component';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {SupervisionModule} from './supervision/supervision.module';
 import {ApplicationDraftService} from '../../service/application/application-draft.service';
+import {ApplicationCommentsComponent} from './comment/application-comments.component';
+import {StoreModule} from '@ngrx/store';
+import {reducers} from './reducers';
 
 @NgModule({
   imports: [
     AlluCommonModule,
     RouterModule.forChild(applicationRoutes),
+    StoreModule.forFeature('application', reducers),
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
@@ -87,7 +91,8 @@ import {ApplicationDraftService} from '../../service/application/application-dra
     AreaRentalComponent,
     DecisionPreviewComponent,
     PricingInfoComponent,
-    RecurringComponent
+    RecurringComponent,
+    ApplicationCommentsComponent
   ],
   providers: [
     ApplicationResolve,

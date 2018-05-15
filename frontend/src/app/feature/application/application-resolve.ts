@@ -6,10 +6,15 @@ import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {ApplicationStore} from '../../service/application/application-store';
 import {NotificationService} from '../../service/notification/notification.service';
+import {Store} from '@ngrx/store';
+import * as fromApplication from './reducers';
+import {LoadSuccess} from './actions/application-actions';
+import {CommentTargetType, Load} from '../comment/actions/comment-actions';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
   constructor(private applicationStore: ApplicationStore,
+              private store: Store<fromApplication.State>,
               private router: Router,
               private notification: NotificationService) {}
 
@@ -21,16 +26,14 @@ export class ApplicationResolve implements Resolve<Application> {
     return Some(route.params['id'])
       .map(id => Number(id))
       .map(id => this.applicationStore.load(id)
-        .do(app => this.loadComments(id))
+        .do(app => this.store.dispatch(new LoadSuccess(app)))
+        .do(() => this.loadComments(id))
         .catch(err => this.handleError(err)))
       .orElseGet(() => Observable.of(this.applicationStore.currentOrCopy()));
   }
 
   private loadComments(id: number) {
-    this.applicationStore.loadComments(id).subscribe(
-      comments => {},
-      err => console.error('Failed to load comments for application', id, '.')
-    );
+    this.store.dispatch(new Load(CommentTargetType.Application));
   }
 
   private handleError(err: any): Observable<Application> {

@@ -1,0 +1,7 @@
+@mixin comments-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  li {
+    border-bottom-color: mat-color($primary, 200);
+  }
+}

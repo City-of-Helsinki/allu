@@ -10,7 +10,7 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {WorkQueueFilterComponent} from './filter/workqueue-filter.component';
 import {WorkQueueContentComponent} from './content/workqueue-content.component';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
-import {CommentsModalComponent} from '../application/comment/comments-modal.component';
+import {CommentsModalComponent} from '../comment/comments-modal.component';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 import {ApplicationWorkItemStore} from './application-work-item-store';
 import {RouterModule} from '@angular/router';

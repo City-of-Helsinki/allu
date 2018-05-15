@@ -28,14 +28,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.beans.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.times;
 
 @SuppressWarnings("unchecked")
@@ -51,7 +49,7 @@ public class SearchSyncServiceSpec {
   @Mock
   private ProjectMapper projectMapper;
   @Mock
-  private LocationService locationService;
+  private ApplicationServiceComposer applicationServiceComposer;
 
   private SearchSyncService searchSyncService;
 
@@ -60,7 +58,7 @@ public class SearchSyncServiceSpec {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
         searchSyncService = new SearchSyncService(restTemplate, applicationProperties, applicationMapper,
-            projectMapper, locationService);
+            projectMapper, applicationServiceComposer);
         setupApplicationProperties();
 
         Mockito.when(applicationMapper.mapApplicationToJson(any(Application.class))).thenReturn(new ApplicationJson());
