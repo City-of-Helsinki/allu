@@ -5,7 +5,7 @@ import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import * as fromApplication from '../../application/reducers';
-import * as fromComment from '../reducers/comment-reducers';
+import * as fromComment from '../reducers/comment-reducer';
 import {
   CommentActionType,
   CommentTargetType,

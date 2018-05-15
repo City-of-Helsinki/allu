@@ -1,14 +1,14 @@
 import {
   createSelector,
   createFeatureSelector,
-  ActionReducerMap,
+  ActionReducerMap
 } from '@ngrx/store';
 
 import * as fromApplication from './application-reducer';
-import * as fromComments from '../../comment/reducers/comment-reducers';
+import * as fromComments from '../../comment/reducers/comment-reducer';
+import * as fromApplicationComments from '../../comment/reducers/comment-reducer';
 import * as fromRoot from '../../allu/reducers/index';
 import {Application} from '../../../model/application/application';
-import {CommentTargetType} from '../../comment/actions/comment-actions';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -21,7 +21,7 @@ export interface State extends fromRoot.State {
 
 export const reducers: ActionReducerMap<ApplicationState> = {
   application: fromApplication.reducer,
-  comments: fromComments.reducerFor(CommentTargetType.Application)
+  comments: fromApplicationComments.reducer
 };
 
 export const getApplicationState = createFeatureSelector<ApplicationState>('application');
