@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.types.ChargeBasisType;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ChargeBasisEntry {
   private String tag;
@@ -13,7 +14,9 @@ public class ChargeBasisEntry {
   private ChargeBasisType type;
   private ChargeBasisUnit unit;
   private double quantity;
+  @Size(max = 70)
   private String text;
+  @Size(max = 5)
   private String[] explanation;
   private int unitPrice;
   private int netPrice;

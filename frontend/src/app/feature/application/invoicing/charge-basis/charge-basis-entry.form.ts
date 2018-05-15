@@ -1,8 +1,9 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
-import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
+import {ChargeBasisType, manualChargeBasisTypes} from '../../../../model/application/invoice/charge-basis-type';
 import {StringUtil} from '../../../../util/string.util';
+import {ComplexValidator} from '../../../../util/complex-validator';
 
 const EMPTY = '';
 
@@ -17,7 +18,8 @@ export class ChargeBasisEntryForm {
     public manuallySet?: boolean,
     public tag?: string,
     public referredTag: string = EMPTY,
-    public explanation: string[] = []
+    public explanation: string[] = [],
+    public manualExplanation: string = EMPTY
   ) {
     this.referredTag = referredTag || EMPTY;
   }
@@ -28,13 +30,14 @@ export class ChargeBasisEntryForm {
       type: [formValue.type, Validators.required],
       unit: [formValue.unit, Validators.required],
       quantity: [formValue.quantity, Validators.required],
-      text: [formValue.text, Validators.required],
+      text: [formValue.text, [Validators.required, Validators.maxLength(70)]],
       unitPrice: [formValue.unitPrice, Validators.required],
       netPrice: [{value: formValue.netPrice, disabled: true}],
       manuallySet: [formValue.manuallySet],
       tag: [formValue.tag],
       referredTag: [formValue.referredTag],
-      explanation: [formValue.explanation]
+      explanation: [formValue.explanation],
+      manualExplanation: [formValue.manualExplanation, [ComplexValidator.maxRows(5), ComplexValidator.maxRowLength(70)]]
     });
   }
 
@@ -48,7 +51,11 @@ export class ChargeBasisEntryForm {
     entry.text = form.text;
     entry.unitPriceEuro = form.unitPrice;
     entry.manuallySet = form.manuallySet;
-    entry.explanation = form.explanation;
+    if (manualChargeBasisTypes.includes(ChargeBasisType[form.type])) {
+      entry.explanation = this.splitExplanation(form.manualExplanation);
+    } else {
+      entry.explanation = form.explanation;
+    }
     entry.tag = form.tag;
     entry.referredTag = StringUtil.isEmpty(form.referredTag) ? undefined : form.referredTag;
     return entry;
@@ -65,7 +72,12 @@ export class ChargeBasisEntryForm {
       entry.manuallySet,
       entry.tag,
       entry.referredTag,
-      entry.explanation
+      entry.explanation,
+      entry.explanation ? entry.explanation.join('\n') : undefined
     );
+  }
+
+  private static splitExplanation(explanation: string): string[] {
+    return explanation.split('\n');
   }
 }

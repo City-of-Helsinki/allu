@@ -13,6 +13,26 @@
         <mat-error *ngIf="form.get('text').hasError('required')">
           {{'chargeBasis.field.rowTextMissing' | translation}}
         </mat-error>
+        <mat-error *ngIf="form.get('text').hasError('maxlength')">
+          {{'chargeBasis.field.textMaxLength' | translation}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+    <div fxFlex>
+      <mat-form-field class="input-full-width">
+        <textarea matInput type="text" formControlName="manualExplanation"
+                  placeholder="{{'chargeBasis.explanation' | translation}}"
+                  matAutosizeMaxRows="5" matTextareaAutosize wrap="hard"
+                  maxRows="5" maxlength="354">
+        </textarea>
+        <mat-error *ngIf="form.get('manualExplanation').hasError('tooManyRows')">
+          {{'chargeBasis.field.tooManyRows' | translation}}
+        </mat-error>
+        <mat-error *ngIf="form.get('manualExplanation').hasError('tooLongRows')">
+          {{'chargeBasis.field.tooLongRows' | translation}}
+        </mat-error>
       </mat-form-field>
     </div>
   </div>

@@ -1240,6 +1240,7 @@ export const translations = {
     unitPrice: 'Yksikköhinta',
     discount: 'Alennus',
     netPrice: 'Kokonaishinta',
+    explanation: 'Selite',
     discountFor: {
       placeholder: 'Alennuksen kohde',
       wholeInvoice: 'Koko lasku'
@@ -1250,7 +1251,10 @@ export const translations = {
       unitMissing: 'Yksikkö puuttuu',
       unitPriceMissing: 'Yksikköhinta puuttuu',
       discountMissing: 'Alennus puuttuu',
-      discountPercentageMissing: 'Alennusprosentti puuttuu'
+      discountPercentageMissing: 'Alennusprosentti puuttuu',
+      tooManyRows: 'Selitteessä voi olla korkeintaan 5 riviä',
+      tooLongRows: 'Selitteen maksimirivipituus on 70 merkkiä',
+      textMaxLength: 'Maksimipituus on 70 merkkiä'
     },
     action: {
       save: 'Laskuperusteet tallennettu'

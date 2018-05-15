@@ -97,6 +97,31 @@ export class ComplexValidator {
     };
   }
 
+  static maxRows(maxRows: number): ValidatorFn {
+    return (fc: AbstractControl) => {
+      const texts = fc.value;
+      if (texts) {
+        const rows = texts.split('\n');
+        const valid = rows.length <= maxRows;
+        return valid ? undefined : {tooManyRows: true};
+      }
+      return undefined;
+    };
+  }
+
+  static maxRowLength(maxLength: number): ValidatorFn {
+    return (fc: AbstractControl) => {
+      const texts = fc.value;
+      if (texts) {
+        const rows = texts.split('\n');
+        const valid = rows.reduce(
+            (validity: boolean, text: string) => text.length <= maxLength && validity, true);
+        return valid ? undefined : {tooLongRows: true};
+      }
+      return undefined;
+    };
+  }
+
   static after(dateCtrl: AbstractControl): ValidatorFn {
     return (fg: AbstractControl) => {
       const first = fg.value;
