@@ -1,10 +1,23 @@
 .basket-row {
   font-size: 12px;
-  line-height: 4;
+  padding-bottom: 5px;
 }
 
 .basket-row .basket-row-header {
   font-weight: bold;
+}
+
+.basket-row .row-details {
+  overflow-wrap: break-word;
+}
+
+.basket-row .basket-row-content {
+  display: flex;
+  align-items: center;
+}
+
+.content-item:not(:first-of-type) {
+  padding-left: 8px;
 }
 
 .centered {

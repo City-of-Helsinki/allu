@@ -3,21 +3,21 @@
     <mat-list-item *ngFor="let application of applications">
       <div fxLayout="row" fxFill fxLayoutAlign="start center" fxLayoutGap="8px" class="basket-row">
         <div fxFlex="none" class="basket-row-header">
-          <a [routerLink]="['/applications', application.id]">{{application.applicationId}}</a>
+          <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
         </div>
-        <div fxFlex>
-          <span>{{application.applicant.customer?.name}}</span>
-          <span>{{application.startTime | date:'shortDate'}}</span>
-          <span *ngIf="application.endTime"> - {{application.endTime | date:'shortDate'}}</span>
-          <span>
-            <mat-icon *ngIf="application.project as project"
-                      [matTooltip]="'project.applications.moveFromAnother' | translation:{project: project.identifier}"
-                      color="accent"
-                      class="icon-sub">warning</mat-icon>
-          </span>
+        <div fxFlex="80%" class="basket-row-content">
+          <div class="content-item row-details">{{application.applicant.customer?.name}}</div>
+          <div class="content-item no-wrap">
+            <span>{{application.startTime | date:'shortDate'}}</span>
+            <span *ngIf="application.endTime"> - {{application.endTime | date:'shortDate'}}</span>
+          </div>
+          <mat-icon class="content-item" *ngIf="application.project as project"
+                    [matTooltip]="'project.applications.moveFromAnother' | translation:{project: project.identifier}"
+                    color="accent"
+                    class="icon-sub">warning</mat-icon>
         </div>
         <div fxFlex="none">
-          <button mat-icon-button color="primary" (click)="removeFromBasket(application.id)">
+          <button mat-icon-button color="primary" class="mat-icon-button-18" (click)="removeFromBasket(application.id)">
             <mat-icon>clear</mat-icon>
           </button>
         </div>
