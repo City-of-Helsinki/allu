@@ -2,6 +2,7 @@ package fi.hel.allu.common.domain;
 
 public class ExternalApplication {
   Integer applicationId;
+  Integer informationRequestId;
   String applicationData;
 
   public Integer getApplicationId() {
@@ -18,6 +19,14 @@ public class ExternalApplication {
 
   public void setApplicationData(String applicationData) {
     this.applicationData = applicationData;
+  }
+
+  public Integer getInformationRequestId() {
+    return informationRequestId;
+  }
+
+  public void setInformationRequestId(Integer informationRequestId) {
+    this.informationRequestId = informationRequestId;
   }
 
 }

@@ -1155,4 +1155,22 @@ public class ApplicationProperties {
   public String getExternalApplicationCreateUrl() {
     return getModelServiceUrl("/applications/{id}/originalapplication");
   }
+
+  public String getInformationRequestCreateUrl() {
+    return getModelServiceUrl("applications/{id}/informationrequest");
+  }
+
+  public String getApplicationOpenInformationRequestFindUrl() {
+    return getModelServiceUrl("applications/{id}/informationrequest");
+  }
+
+  public String getInformationRequestUrl() {
+    return getModelServiceUrl("/informationrequests/{id}");
+  }
+
+  public String getInformationRequestResponseUrl() {
+    return getModelServiceUrl("/informationrequests/{id}/response");
+  }
+
+
 }

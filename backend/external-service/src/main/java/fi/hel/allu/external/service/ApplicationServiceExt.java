@@ -13,24 +13,20 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.external.domain.*;
+import fi.hel.allu.external.mapper.ApplicationJsonMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.InvoiceJson;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.AttachmentService;
-import fi.hel.allu.servicecore.service.ExternalUserService;
-import fi.hel.allu.servicecore.service.InvoiceService;
+import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
@@ -54,6 +50,9 @@ public class ApplicationServiceExt {
   private ApplicationProperties applicationProperties;
   @Autowired
   private RestTemplate restTemplate;
+  @Autowired
+  private InformationRequestService informationRequestService;
+
 
 
   public void releaseCustomersInvoices(Integer customerId) {
@@ -79,9 +78,8 @@ public class ApplicationServiceExt {
     StatusType status = placementContract.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     applicationJson.setExternalOwnerId(getExternalUserId());
     Integer applicationId = applicationServiceComposer.createApplication(applicationJson, status).getId();
-    saveOriginalApplication(applicationId, applicationJson);
+    saveOriginalApplication(applicationId, null, applicationJson);
     return applicationId;
-
   }
 
   private Integer getExternalUserId() {
@@ -107,7 +105,7 @@ public class ApplicationServiceExt {
     ApplicationJson application = applicationServiceComposer.updateApplication(id, applicationJson);
     StatusType status = placementContract.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     applicationServiceComposer.changeStatus(id, status);
-    saveOriginalApplication(id, application);
+    saveOriginalApplication(id, null, application);
     return application.getId();
   }
 
@@ -130,22 +128,36 @@ public class ApplicationServiceExt {
    attachmentService.addAttachment(applicationId, AttachmentMapper.toAttachmentInfoJson(metadata), file);
   }
 
-  public  void saveOriginalApplication(Integer id, ApplicationJson originalApplication) throws JsonProcessingException {
-    String json = getApplicationAsJson(originalApplication);
-    ExternalApplication externalApplication = new ExternalApplication();
-    externalApplication.setApplicationId(id);
-    externalApplication.setApplicationData(json);
+  public void saveOriginalApplication(Integer id, Integer informationRequestId, ApplicationJson originalApplication) throws JsonProcessingException {
+    ExternalApplication externalApplication = createExternalApplication(id, informationRequestId, originalApplication);
     restTemplate.postForObject(
         applicationProperties.getExternalApplicationCreateUrl(),
         externalApplication, Void.class, id);
   }
 
-  public String getApplicationAsJson(ApplicationJson originalApplication) throws JsonProcessingException {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    String json = mapper.writeValueAsString(originalApplication);
-    return json;
+  public ExternalApplication createExternalApplication(Integer id, Integer informationRequestId, ApplicationJson originalApplication)
+      throws JsonProcessingException {
+    ExternalApplication externalApplication = new ExternalApplication();
+    externalApplication.setApplicationId(id);
+    externalApplication.setInformationRequestId(informationRequestId);
+    externalApplication.setApplicationData(ApplicationJsonMapper.getApplicationAsJson(originalApplication));
+    return externalApplication;
+  }
+
+  public void addInformationRequestResponse(Integer applicationId, Integer requestId,
+      InformationRequestResponseExt<PlacementContractExt> response) throws JsonProcessingException {
+    validateOwnedByExternalUser(applicationId);
+    validateInformationRequestOpen(requestId);
+    ApplicationJson applicationJson = ApplicationFactory.fromPlacementContractExt(response.getApplicationData(), getExternalUserId());
+    ExternalApplication extApp = createExternalApplication(applicationId, requestId, applicationJson);
+    informationRequestService.addResponse(requestId, extApp, response.getUpdatedFields());
+  }
+
+  private void validateInformationRequestOpen(Integer requestId) {
+    InformationRequest request =  informationRequestService.findById(requestId);
+    if (!request.isOpen()) {
+      throw new IllegalOperationException("Information request with id " + requestId + "  is not open.");
+    }
   }
 
 }

@@ -309,6 +309,12 @@
                             <column>creation_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>information_request</table>
+                            <column>creation_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+
                         <!-- Map enumeration types -->
                         <!-- NOTE that if you add new kind of typeMapping type, you have to configure it in JdbcConfiguration class! -->
                         <typeMapping>
@@ -490,6 +496,16 @@
                             <table>application</table>
                             <column>client_application_data</column>
                             <type>fi.hel.allu.model.querydsl.StringToClientApplicationData</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>information_request_field</table>
+                            <column>field_key</column>
+                            <type>fi.hel.allu.model.querydsl.StringToInformationRequestFieldKey</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>information_request_field</table>
+                            <column>field_key</column>
+                            <type>fi.hel.allu.model.querydsl.StringToInformationRequestFieldKey</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
