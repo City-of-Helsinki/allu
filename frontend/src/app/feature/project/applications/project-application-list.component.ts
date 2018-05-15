@@ -13,7 +13,7 @@ import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Subject} from 'rxjs/Subject';
-import {Some} from '../../../util/option';
+import {Option, Some} from '../../../util/option';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {Dictionary} from '@ngrx/entity/src/models';
@@ -48,15 +48,15 @@ export class ProjectApplicationListComponent implements OnInit, AfterViewInit, O
   private districts: Dictionary<CityDistrict>;
 
   constructor(private router: Router,
-              private store: Store<fromRoot.State>) {}
+              private store: Store<fromRoot.State>) {
+    this.store.select(fromRoot.getCityDistrictEntities).take(1)
+      .subscribe(districts => this.districts = districts);
+  }
 
   ngOnInit(): void {
     this.displayedColumns = this.controls
       ? ['controls'].concat(this.displayedColumns)
       : this.displayedColumns;
-
-    this.store.select(fromRoot.getCityDistrictEntities).take(1)
-      .subscribe(districts => this.districts = districts);
   }
 
   ngAfterViewInit(): void {
@@ -74,11 +74,6 @@ export class ProjectApplicationListComponent implements OnInit, AfterViewInit, O
   }
 
   private toApplicationElement(application: Application): ApplicationElement {
-    const cityDistrict = Some(application.firstLocation)
-      .map(l => l.effectiveCityDistrictId)
-      .map(id => this.districts[id])
-      .map(district => district.name);
-
     return {
       id: application.id,
       ownerName: Some(application.owner).map(owner => owner.realName).orElse(undefined),
@@ -86,10 +81,16 @@ export class ProjectApplicationListComponent implements OnInit, AfterViewInit, O
       type: application.type,
       status: application.status,
       customerName: Some(application.applicant.customer).map(c => c.name).orElse(undefined),
-      cityDistrict: cityDistrict.orElse(undefined),
+      cityDistrict: this.cityDistrict(application).map(cd => cd.name).orElse(undefined),
       creationTime: application.creationTime,
       startTime: application.startTime,
     };
+  }
+
+  private cityDistrict(application: Application): Option<CityDistrict> {
+    return Some(application.firstLocation)
+      .map(l => l.effectiveCityDistrictId)
+      .map(id => this.districts[id]);
   }
 }
 
