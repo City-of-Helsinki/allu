@@ -1002,6 +1002,7 @@ export const translations = {
     }
   },
   comment: {
+    title: 'Kommentit',
     type: {
       INTERNAL: 'Sisäinen kommentti',
       INVOICING: 'Laskutuksen kommentti',
@@ -1015,7 +1016,7 @@ export const translations = {
     addComment: 'LISÄÄ KOMMENTTI',
     newComment: 'Uusi kommentti',
     commentType: 'Kommentin tyyppi',
-    comments: 'Kommentit',
+    myComment: 'Oma kommenttini on...',
     updated: 'Päivitetty',
     error: {
       fetch: 'Kommenttien hakeminen epäonnistui',
@@ -1027,6 +1028,9 @@ export const translations = {
       description: 'Sinulla on keskeneräisiä muutoksia. Hylätäänkö muutokset?',
       confirmText: 'Hylkää',
       cancelText: 'Palaa muokkaamaan'
+    },
+    field: {
+      emptyText: 'Kommentti ei voi olla tyhjä'
     }
   },
   supervision: {

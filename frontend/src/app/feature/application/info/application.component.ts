@@ -22,6 +22,8 @@ import {DefaultRecipient} from '../../../model/common/default-recipient';
 import {DistributionEntry} from '../../../model/common/distribution-entry';
 import {DistributionType} from '../../../model/common/distribution-type';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
+import * as fromApplication from '../reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'application',
@@ -41,6 +43,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
+              private store: Store<fromApplication.State>,
               private applicationStore: ApplicationStore,
               private attachmentHub: AttachmentHub,
               private fixedLocationService: FixedLocationService,
@@ -104,7 +107,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private get commentCount(): Observable<number> {
-    return this.applicationStore.comments.map(comments => comments.length);
+    return this.store.select(fromApplication.getCommentCount);
   }
 
   private get taskCount(): Observable<number> {

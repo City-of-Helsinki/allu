@@ -1,0 +1,12 @@
+<allu-card>
+  <mat-card-content>
+    <ul>
+      <li *ngFor="let comment of comments">
+        <comment #commentRef
+                 [comment]="comment"
+                 (save)="save($event)"
+                 (remove)="remove($event)"></comment>
+      </li>
+    </ul>
+  </mat-card-content>
+</allu-card>

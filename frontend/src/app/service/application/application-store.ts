@@ -6,7 +6,6 @@ import {AttachmentHub} from '../../feature/application/attachment/attachment-hub
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Comment} from '../../model/application/comment/comment';
-import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
 import {NumberUtil} from '../../util/number.util';
@@ -19,13 +18,13 @@ import {ApplicationService} from './application.service';
 import {isCommon} from '../../model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
+import {CommentService} from './comment/comment.service';
 
 export interface ApplicationState {
   application?: Application;
   applicationCopy?: Application;
   tags?: Array<ApplicationTag>;
   attachments?: Array<AttachmentInfo>;
-  comments?: Array<Comment>;
   tab?: SidebarItemType;
   relatedProject?: number;
   deposit?: Deposit;
@@ -38,7 +37,6 @@ export const initialState: ApplicationState = {
   applicationCopy: undefined,
   tags: [],
   attachments: [],
-  comments: [],
   tab: 'BASIC_INFO',
   relatedProject: undefined,
   deposit: undefined,
@@ -54,7 +52,6 @@ export class ApplicationStore {
               private applicationDraftService: ApplicationDraftService,
               private customerService: CustomerService,
               private attachmentHub: AttachmentHub,
-              private commentHub: CommentHub,
               private depositService: DepositService) {
   }
 
@@ -134,10 +131,6 @@ export class ApplicationStore {
     this.store.next({...this.current, draft});
   }
 
-  get comments(): Observable<Array<Comment>> {
-    return this.store.map(state => state.comments).distinctUntilChanged();
-  }
-
   get tab(): Observable<SidebarItemType> {
     return this.store.map(state => state.tab)
       .skip(1)
@@ -173,21 +166,6 @@ export class ApplicationStore {
       .do(attachments => this.store.next({...this.current, attachments}));
   }
 
-  saveComment(applicationId: number, comment: Comment): Observable<Comment> {
-    return this.commentHub.saveComment(applicationId, comment)
-      .do(c => this.loadComments(this.current.application.id).subscribe());
-  }
-
-  removeComment(commentId: number): Observable<{}> {
-    return this.commentHub.removeComment(commentId)
-      .do(c => this.loadComments(this.current.application.id).subscribe());
-  }
-
-  loadComments(id: number): Observable<Array<Comment>> {
-    return this.commentHub.getComments(id)
-      .do(comments => this.store.next({...this.current, comments}));
-  }
-
   load(id: number): Observable<Application> {
     return this.applicationService.get(id)
       .do(application => {
@@ -196,7 +174,6 @@ export class ApplicationStore {
           application,
           attachments: application.attachmentList,
           tags: application.applicationTags,
-          comments: application.comments,
           draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
         });
       });

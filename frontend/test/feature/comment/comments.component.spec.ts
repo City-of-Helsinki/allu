@@ -1,22 +1,18 @@
-import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/core';
+import {Component, DebugElement, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {Observable} from 'rxjs/Observable';
-import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {CommentsComponent} from '../../../../src/app/feature/application/comment/comments.component';
-import {ApplicationStore} from '../../../../src/app/service/application/application-store';
-import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
-import {Comment} from '../../../../src/app/model/application/comment/comment';
-import {ErrorInfo} from '../../../../src/app/service/error/error-info';
-import {NotificationService} from '../../../../src/app/service/notification/notification.service';
-import {
-  ApplicationStoreMock,
-  availableToDirectiveMockMeta,
-  CurrentUserMock,
-  NotificationServiceMock
-} from '../../../mocks';
-import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
+import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
+import {CommentsComponent} from '../../../src/app/feature/comment/comments.component';
+import {ApplicationStore} from '../../../src/app/service/application/application-store';
+import {CommentType} from '../../../src/app/model/application/comment/comment-type';
+import {Comment} from '../../../src/app/model/application/comment/comment';
+import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock, NotificationServiceMock} from '../../mocks';
+import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
+import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {CommentComponent} from '../../../src/app/feature/comment/comment.component';
 
 
 const COMMENT_ONE = new Comment(
@@ -34,68 +30,95 @@ const COMMENT_TWO = new Comment(
 );
 
 @Component({
+  selector: 'parent',
+  template: `<comments [comments]="comments$.asObservable() | async"
+                       (save)="save($event)"
+                       (remove)="remove($event)"></comments>`
+})
+class MockParentComponent {
+  comments$ = new BehaviorSubject<Comment[]>([]);
+
+  @ViewChild(CommentsComponent) commentsComponent: CommentsComponent;
+
+  save(comment: Comment): void {}
+  remove(comment: Comment): void {}
+}
+
+@Component({
   selector: 'comment',
   template: ''
 })
 class MockCommentComponent {
-  @Input() form: FormGroup;
-  @Output() onRemove = new EventEmitter<Comment>();
-  @Output() onSave = new EventEmitter<Comment>();
+  @Input() comment: Comment = new Comment();
+  @Output('save') onSave = new EventEmitter<Comment>();
+  @Output('remove') onRemove = new EventEmitter<Comment>();
+
+  form = new FormGroup({});
 }
 
 describe('CommentsComponent', () => {
+  let parentComp: MockParentComponent;
+  let fixture: ComponentFixture<MockParentComponent>;
   let comp: CommentsComponent;
-  let fixture: ComponentFixture<CommentsComponent>;
-  let applicationStore: ApplicationStoreMock;
-  let notification: NotificationServiceMock;
   let de: DebugElement;
-  const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, FormsModule],
       declarations: [
+        MockParentComponent,
         CommentsComponent,
         MockCommentComponent
-      ],
-      providers: [
-        FormBuilder,
-        { provide: ApplicationStore, useClass: ApplicationStoreMock },
-        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     })
-    .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
     .compileComponents();
   }));
 
   beforeEach(() => {
-    applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
-    notification = TestBed.get(NotificationService) as NotificationServiceMock;
-    fixture = TestBed.createComponent(CommentsComponent);
-    comp = fixture.componentInstance;
+    fixture = TestBed.createComponent(MockParentComponent);
+    parentComp = fixture.componentInstance;
+    comp = parentComp.commentsComponent;
     de = fixture.debugElement;
 
-    comp.ngOnInit();
-    applicationStore.comments$.next([COMMENT_ONE, COMMENT_TWO]);
+    parentComp.comments$.next([COMMENT_ONE, COMMENT_TWO]);
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    comp.ngOnDestroy();
-  });
-
-  it('should show header', () => {
-    const title = fixture.debugElement.query(By.css('h1.content-header')).nativeElement;
-    expect(title.textContent).toEqual('Kommentit');
-  });
-
-  it('should show comments', fakeAsync(() => {
-    applicationStore.comments$.next([COMMENT_ONE, COMMENT_TWO]);
+  it('should show comments', () => {
+    parentComp.comments$.next([COMMENT_ONE, COMMENT_TWO]);
     fixture.detectChanges();
     fixture.whenStable().then(val => {
       expect(de.queryAll(By.css('li')).length).toEqual(2, 'Unexpected amount of comments');
     });
+  });
+
+  it('should re-emit save', fakeAsync(() => {
+    spyOn(parentComp, 'save');
+    const commentComp = comp.children.first;
+    const comment = new Comment(1);
+    commentComp.onSave.emit(new Comment(1));
+    expect(parentComp.save).toHaveBeenCalledWith(comment);
   }));
+
+  it('should re-emit remove', () => {
+    spyOn(parentComp, 'remove');
+    const commentComp = comp.children.first;
+    const comment = new Comment(1);
+    commentComp.onRemove.emit(new Comment(1));
+    expect(parentComp.remove).toHaveBeenCalledWith(comment);
+  });
+
+  it('should tell if any of the comments are marked as dirty', () => {
+    const commentComp = comp.children.first;
+    commentComp.form.markAsDirty();
+    expect(comp.dirty).toEqual(true);
+  });
+
+  /*
+  it('should show header', () => {
+    const title = fixture.debugElement.query(By.css('h1.content-header')).nativeElement;
+    expect(title.textContent).toEqual('Kommentit');
+  });
 
   it('should handle comment loading errors', fakeAsync(() => {
     spyOn(notification, 'errorInfo');
@@ -129,7 +152,7 @@ describe('CommentsComponent', () => {
   it('should handle save comment error', fakeAsync(() => {
     spyOn(applicationStore, 'saveComment').and.returnValue(Observable.throw(new ErrorInfo('Error!')));
     spyOn(notification, 'error');
-    comp.save(0, COMMENT_ONE);
+    comp.save(COMMENT_ONE);
     fixture.detectChanges();
     fixture.whenStable().then(val => {
       expect(notification.error).toHaveBeenCalled();
@@ -157,11 +180,11 @@ describe('CommentsComponent', () => {
   it('should handle remove comment error', fakeAsync(() => {
     spyOn(applicationStore, 'removeComment').and.returnValue(Observable.throw(new ErrorInfo('Error!')));
     spyOn(notification, 'error');
-    comp.remove(0, COMMENT_ONE);
+    comp.remove(COMMENT_ONE);
     fixture.detectChanges();
     fixture.whenStable().then(val => {
       expect(notification.error).toHaveBeenCalled();
       expect(de.queryAll(By.css('li')).length).toEqual(2, 'Was expecting 2 comments');
     });
-  }));
+  }));*/
 });

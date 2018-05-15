@@ -10,6 +10,7 @@ import {ActionWithPayload} from '../../common/action-with-payload';
 import {ParentProjectActionType} from '../../project/actions/parent-project-actions';
 import {ChildProjectActionType} from '../../project/actions/child-project-actions';
 import {ApplicationBasketActionType} from '../../project/actions/application-basket-actions';
+import {CommentActionType} from '../../comment/actions/comment-actions';
 
 const handledActions = [
   ProjectActionTypes.LoadFailed,
@@ -19,7 +20,10 @@ const handledActions = [
   ProjectApplicationActionType.RemoveFailed,
   ParentProjectActionType.LoadFailed,
   ChildProjectActionType.LoadFailed,
-  ApplicationBasketActionType.LoadFailed
+  ApplicationBasketActionType.LoadFailed,
+  CommentActionType.LoadFailed,
+  CommentActionType.SaveFailed,
+  CommentActionType.RemoveFailed,
 ];
 
 @Injectable()

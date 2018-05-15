@@ -106,9 +106,9 @@ export class CustomerServiceMock {
  * Mock for Current user service
  */
 export class CurrentUserMock {
-  public allowHasRole = true;
-  public allowHasType = true;
   public user$ = new BehaviorSubject(new User(1));
+
+  constructor(public allowHasRole = true, public allowHasType = true) {}
 
   public static create(allowHasRole: boolean, allowHasType: boolean) {
     const mock = new CurrentUserMock();
@@ -235,7 +235,7 @@ export class NotificationServiceMock {
  * @param mock mocked CurrentUser-service to allow controlling access rights
  * @returns MetadataOverride<Directive> override metadata
  */
-export function availableToDirectiveMockMeta(mock: CurrentUserMock = new CurrentUserMock()): MetadataOverride<Directive> {
+export function availableToDirectiveMockMeta(mock: CurrentUserMock = new CurrentUserMock(true, true)): MetadataOverride<Directive> {
   return {
     set: {
       providers: [

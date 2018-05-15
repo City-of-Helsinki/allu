@@ -7,19 +7,19 @@ import {ApplicationResolve} from './application-resolve';
 import {ApplicationInfoComponent} from './info/application-info.component';
 import {SearchComponent} from '../search/search.component';
 import {AttachmentsComponent} from './attachment/attachments.component';
-import {CommentsComponent} from './comment/comments.component';
 import {ApplicationHistoryComponent} from './history/application-history.component';
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
 import {InvoicingComponent} from './invoicing/invoicing.component';
 import {DecisionComponent} from '../decision/decision.component';
 import {SupervisionComponent} from './supervision/supervision.component';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
+import {ApplicationCommentsComponent} from './comment/application-comments.component';
 
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
   { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
-  { path: 'comments', component: CommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
+  { path: 'comments', component: ApplicationCommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
   { path: 'decision-preview', component: DecisionPreviewComponent, canActivate: [AuthGuard] },
   { path: 'supervision', component: SupervisionComponent, canActivate: [AuthGuard] },

@@ -2,9 +2,9 @@ import {Component, OnInit, Input} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
-import {CommentHub} from '../../../service/application/comment/comment-hub';
-import {Comment} from '../../../model/application/comment/comment';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {Comment} from '../../model/application/comment/comment';
+import {NotificationService} from '../../service/notification/notification.service';
+import {CommentService} from '../../service/application/comment/comment.service';
 
 @Component({
   selector: 'comments-modal',
@@ -17,12 +17,12 @@ export class CommentsModalComponent implements OnInit {
   comments: Observable<Array<Comment>>;
 
   constructor(public dialogRef: MatDialogRef<CommentsModalComponent>,
-              private commentHub: CommentHub,
+              private commentService: CommentService,
               private notification: NotificationService) {
   }
 
   ngOnInit(): void {
-    this.comments = this.commentHub.getComments(this.applicationId)
+    this.comments = this.commentService.getComments(this.applicationId)
       .catch(err => {
         this.notification.errorInfo(err);
         return Observable.of([]);

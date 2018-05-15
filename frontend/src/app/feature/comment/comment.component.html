@@ -1,0 +1,65 @@
+<form [formGroup]="form" (ngSubmit)="save()">
+  <h1 class="comment-header">
+    <div fxLayout="row" fxLayoutGap="6px" class="slim">
+      <div fxFlex="none" *ngIf="isNew">
+        {{'comment.newComment' | translation}}
+      </div>
+
+      <div fxFlex="none" *ngIf="!isNew">
+        {{form.value.user.realName}} {{form.value.updateTime | date:'short'}}
+      </div>
+
+      <div fxFlex="none" *ngIf="!form.enabled">
+        {{['comment.type', comment.type] | translation}}
+      </div>
+
+      <div fxFlex="auto" class="align-right" *ngIf="form.disabled">
+        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+          <button mat-icon-button type="button" color="primary" (click)="edit()">
+            <mat-icon class="mat-icon-18">edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" color="primary" (click)="remove()">
+            <mat-icon class="mat-icon-18">clear</mat-icon>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </h1>
+
+  <div fxLayout="row" *ngIf="form.enabled">
+    <div fxFlex="200px">
+      <mat-form-field>
+        <mat-select formControlName="type" [value]="'INTERNAL'">
+          <mat-option *ngFor="let type of commentTypes" [value]="type">
+            {{['comment.type', type] | translation}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div fxLayout="row">
+    <div fxFlex>
+      <mat-form-field  *ngIf="form.enabled" class="input-full-width">
+        <textarea matInput matTextareaAutosize
+                  formControlName="text" id="commentText"
+                  [placeholder]="'comment.myComment' | translation"></textarea>
+        <mat-error *ngIf="form.get('text').hasError('required')">
+          {{'comment.field.emptyText' | translation}}
+        </mat-error>
+      </mat-form-field>
+
+      <div *ngIf="form.disabled" class="text-multiline">{{form.value.text}}</div>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayoutGap="18px" *ngIf="form.enabled">
+    <button [disabled]="!formValid" (click)="save()"
+        mat-raised-button type="button" color="primary">
+      {{'common.button.save' | translation}}
+    </button>
+    <button *ngIf="!isNew" (click)="cancel()"
+            mat-raised-button type="button" color="primary">
+      {{'common.button.cancel' | translation}}
+    </button>
+  </div>
+</form>

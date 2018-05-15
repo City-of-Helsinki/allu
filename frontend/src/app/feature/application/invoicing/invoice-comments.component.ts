@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CommentHub} from '../../../service/application/comment/comment-hub';
 import {Observable} from 'rxjs/Observable';
 import {CommentType} from '../../../model/application/comment/comment-type';
 import {Comment} from '../../../model/application/comment/comment';
+import {CommentService} from '../../../service/application/comment/comment.service';
 
 @Component({
   selector: 'invoice-comments',
@@ -15,7 +15,7 @@ export class InvoiceCommentsComponent implements OnInit {
   @Input() applicationId: number;
   comments: Observable<Array<Comment>>;
 
-  constructor(private commentHub: CommentHub) {
+  constructor(private commentService: CommentService) {
   }
 
   ngOnInit(): void {
@@ -23,7 +23,7 @@ export class InvoiceCommentsComponent implements OnInit {
   }
 
   private getInvoicingComments(): Observable<Array<Comment>> {
-    return this.commentHub.getComments(this.applicationId)
+    return this.commentService.getComments(this.applicationId)
       .map(comments => comments.filter(c => CommentType[c.type] === CommentType.INVOICING));
   }
 }

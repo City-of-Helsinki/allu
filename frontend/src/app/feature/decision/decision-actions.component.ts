@@ -14,6 +14,9 @@ import {ApplicationStore} from '../../service/application/application-store';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {Some} from '../../util/option';
 import {DecisionDetails} from '../../model/decision/decision-details';
+import * as fromApplication from '../application/reducers';
+import {Store} from '@ngrx/store';
+import {CommentTargetType, Load} from '../comment/actions/comment-actions';
 
 
 @Component({
@@ -29,6 +32,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   showDecision = false;
 
   constructor(private applicationStore: ApplicationStore,
+              private store: Store<fromApplication.State>,
               private decisionHub: DecisionHub,
               private router: Router,
               private dialog: MatDialog,
@@ -76,7 +80,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     if (changeInfo) {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(app => {
-          this.applicationStore.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
+          this.store.dispatch(new Load(CommentTargetType.Application));
           this.notification.success(findTranslation('application.statusChange.DECISIONMAKING'));
           this.applicationStore.applicationChange(app);
           this.onDecisionConfirm.emit(changeInfo);
