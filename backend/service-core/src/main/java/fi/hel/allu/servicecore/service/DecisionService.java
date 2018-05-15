@@ -9,6 +9,7 @@ import static fi.hel.allu.common.domain.types.ApplicationType.PLACEMENT_CONTRACT
 import static fi.hel.allu.common.domain.types.ApplicationType.SHORT_TERM_RENTAL;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
@@ -563,7 +564,7 @@ public class DecisionService {
     cwcOpt.ifPresent(cwc -> {
       addressLines.addAll(
           Arrays.asList(
-              combinePossibleBlankStrings(cwc.getCustomer().getName(), cwc.getCustomer().getRegistryKey()),
+              combinePossibleBlankStrings(cwc.getCustomer().getName(), getCustomerRegistryKey(cwc.getCustomer())),
               postalAddress(cwc.getCustomer().getPostalAddress()),
               combinePossibleBlankStrings(cwc.getCustomer().getEmail(), cwc.getCustomer().getPhone())));
     });
@@ -601,6 +602,14 @@ public class DecisionService {
       return first;
     }
     return String.format("%s, %s", first, second);
+  }
+
+  private String getCustomerRegistryKey(CustomerJson customer) {
+    // Social security number (hetu) must never be shown on a decision
+    if (customer.getType() == CustomerType.PERSON) {
+      return null;
+    }
+    return customer.getRegistryKey();
   }
 
   private String siteAddressLine(ApplicationJson application) {
