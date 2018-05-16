@@ -13,7 +13,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/comments")
 public class CommentController {
 
   private CommentDao commentDao;
@@ -29,9 +28,14 @@ public class CommentController {
    * @param applicationId the application ID
    * @return list of comments for the application
    */
-  @RequestMapping(value = "/applications/{applicationId}", method = RequestMethod.GET)
+  @RequestMapping(value = "/applications/{applicationId}/comments", method = RequestMethod.GET)
   public ResponseEntity<List<Comment>> findByApplicationId(@PathVariable int applicationId) {
     return new ResponseEntity<>(commentDao.findByApplicationId(applicationId), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/projects/{projectId}/comments", method = RequestMethod.GET)
+  public ResponseEntity<List<Comment>> findByProjectId(@PathVariable int projectId) {
+    return new ResponseEntity<>(commentDao.findByProjectId(projectId), HttpStatus.OK);
   }
 
   /**
@@ -41,10 +45,16 @@ public class CommentController {
    * @param comment The comment data
    * @return The created comment
    */
-  @RequestMapping(value = "/applications/{applicationId}", method = RequestMethod.POST)
-  public ResponseEntity<Comment> insert(@PathVariable int applicationId,
+  @RequestMapping(value = "/applications/{applicationId}/comments", method = RequestMethod.POST)
+  public ResponseEntity<Comment> insertForApplication(@PathVariable int applicationId,
       @Valid @RequestBody(required = true) Comment comment) {
-    return new ResponseEntity<>(commentDao.insert(comment, applicationId), HttpStatus.OK);
+    return new ResponseEntity<>(commentDao.insertForApplication(comment, applicationId), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/projects/{projectId}/comments", method = RequestMethod.POST)
+  public ResponseEntity<Comment> insertForProject(@PathVariable int projectId,
+      @Valid @RequestBody(required = true) Comment comment) {
+    return new ResponseEntity<>(commentDao.insertForProject(comment, projectId), HttpStatus.OK);
   }
 
   /**
@@ -54,7 +64,7 @@ public class CommentController {
    * @param comment comment's data
    * @return the updated comment
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @RequestMapping(value = "/comments/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Comment> update(@PathVariable int id, @Valid @RequestBody(required = true) Comment comment) {
     return new ResponseEntity<>(commentDao.update(id, comment), HttpStatus.OK);
   }
@@ -64,7 +74,7 @@ public class CommentController {
    *
    * @param id comment's ID
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/comments/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> delete(@PathVariable int id) {
     commentDao.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);

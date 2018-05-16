@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/applications")
@@ -69,7 +68,7 @@ public class ApplicationStatusController {
     @PreAuthorize("hasAnyRole('ROLE_DECISION')")
     public ResponseEntity<ApplicationJson> changeStatusToRejected(
         @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
-        commentService.addRejectComment(id, info.getComment());
+        commentService.addApplicationRejectComment(id, info.getComment());
         return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.REJECTED, info), HttpStatus.OK);
     }
 

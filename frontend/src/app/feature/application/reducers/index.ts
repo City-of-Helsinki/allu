@@ -6,7 +6,7 @@ import {
 
 import * as fromApplication from './application-reducer';
 import * as fromComments from '../../comment/reducers/comment-reducer';
-import * as fromApplicationComments from '../../comment/reducers/comment-reducer';
+import * as fromApplicationComments from '../../application/reducers/application-comments-reducer';
 import * as fromRoot from '../../allu/reducers/index';
 import {Application} from '../../../model/application/application';
 

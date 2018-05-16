@@ -4,11 +4,11 @@ import {CommentsComponent} from '../../comment/comments.component';
 import {Observable} from 'rxjs/Observable';
 
 @Component({
-  selector: 'application-comments',
-  template: '<comments targetType="Application"></comments>',
+  selector: 'project-comments',
+  template: '<comments targetType="Project"></comments>',
   styleUrls: []
 })
-export class ApplicationCommentsComponent implements CanComponentDeactivate {
+export class ProjectCommentsComponent implements CanComponentDeactivate {
   @ViewChild(CommentsComponent) commentsComponent;
 
   canDeactivate(): Observable<boolean> | boolean {

@@ -5,10 +5,11 @@ import {Comment} from '../../../../src/app/model/application/comment/comment';
 import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
 import {ErrorHandler} from '../../../../src/app/service/error/error-handler.service';
 import {HttpClient} from '@angular/common/http';
+import {CommentTargetType} from '../../../../src/app/model/application/comment/comment-target-type';
 
 const APP_ID = 1;
 const COMMENTS_URL = '/api/comments';
-const COMMENTS_APP_URL = `/api/comments/applications/${APP_ID}`;
+const COMMENTS_APP_URL = `/api/applications/${APP_ID}/comments`;
 
 
 const COMMENT_ONE = new Comment(
@@ -59,15 +60,15 @@ describe('CommentService', () => {
     httpTestingController.verify();
   });
 
-  it('getComments() should query rest api with application id', () => {
-    commentService.getComments(APP_ID).subscribe();
+  it('getCommentsFor() should query rest api with matching target type', () => {
+    commentService.getCommentsFor(CommentTargetType.Application, APP_ID).subscribe();
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
     expect(req.request.method).toEqual('GET');
   });
 
-  it('getComments() should return queried comments', fakeAsync(() => {
+  it('getCommentsFor() should return queried comments', fakeAsync(() => {
     let result: Array<Comment>;
-    commentService.getComments(APP_ID).subscribe(r => result = r);
+    commentService.getCommentsFor(CommentTargetType.Application, APP_ID).subscribe(r => result = r);
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
 
     req.flush([COMMENT_ONE, COMMENT_TWO]);
@@ -77,10 +78,10 @@ describe('CommentService', () => {
     expect(result[1]).toEqual(COMMENT_TWO, ' COMMENT_TWO should be the second comment');
   }));
 
-  it('getComments() should handle errors', fakeAsync(() => {
+  it('getCommentsFor() should handle errors', fakeAsync(() => {
     let result: Array<Comment>;
     spyOn(errorHandler, 'handle');
-    commentService.getComments(APP_ID).subscribe(r => result = r, error => {});
+    commentService.getCommentsFor(CommentTargetType.Application, APP_ID).subscribe(r => result = r, error => {});
 
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
     req.error(new ErrorEvent('Expected error'));
@@ -90,12 +91,12 @@ describe('CommentService', () => {
     expect(errorHandler.handle).toHaveBeenCalledTimes(1);
   }));
 
-  it('save() comment without id should create new', fakeAsync(() => {
+  it('saveComment() comment without id should create new', fakeAsync(() => {
     let result: Comment;
     const updatedComment = COMMENT_NEW.copy();
     updatedComment.id = 10;
 
-    commentService.save(APP_ID, COMMENT_NEW).subscribe(r => result = r);
+    commentService.saveComment(CommentTargetType.Application, APP_ID, COMMENT_NEW).subscribe(r => result = r);
 
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
     req.flush(updatedComment);
@@ -106,9 +107,9 @@ describe('CommentService', () => {
   }));
 
 
-  it('save() comment with id should update', fakeAsync(() => {
+  it('saveComment() comment with id should update', fakeAsync(() => {
     let result: Comment;
-    commentService.save(APP_ID, COMMENT_ONE).subscribe(r => result = r);
+    commentService.saveComment(CommentTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r);
 
     const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
     req.flush(COMMENT_ONE);
@@ -118,10 +119,10 @@ describe('CommentService', () => {
     expect(result).toEqual(COMMENT_ONE, 'COMMENT_ONE was not saved');
   }));
 
-  it('save() comment should handle errors', fakeAsync(() => {
+  it('saveComment() comment should handle errors', fakeAsync(() => {
     let result: Comment;
     spyOn(errorHandler, 'handle');
-    commentService.save(APP_ID, COMMENT_ONE).subscribe(r => result = r, error => {});
+    commentService.saveComment(CommentTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r, error => {});
     const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
     req.error(new ErrorEvent('Expected'));
 

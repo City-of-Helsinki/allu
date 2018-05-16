@@ -11,6 +11,8 @@ import * as fromCustomerSearch from './customer-search-reducer';
 import * as fromChildProjects from './child-project-reducer';
 import * as fromApplicationBasket from './application-basket-reducer';
 import * as fromRoot from '../../allu/reducers/index';
+import * as fromComments from '../../comment/reducers/comment-reducer';
+import * as fromProjectComments from './project-comments-reducer';
 import {Project} from '../../../model/project/project';
 
 export interface ProjectState {
@@ -21,6 +23,7 @@ export interface ProjectState {
   children: fromChildProjects.State;
   customerSearch: fromCustomerSearch.State;
   applicationBasket: fromApplicationBasket.State;
+  comments: fromComments.State;
 }
 
 export interface State extends fromRoot.State {
@@ -34,7 +37,8 @@ export const reducers: ActionReducerMap<ProjectState> = {
   parents: fromParentProjects.reducer,
   children: fromChildProjects.reducer,
   customerSearch: fromCustomerSearch.reducer,
-  applicationBasket: fromApplicationBasket.reducer
+  applicationBasket: fromApplicationBasket.reducer,
+  comments: fromProjectComments.reducer
 };
 
 export const getProjectState = createFeatureSelector<ProjectState>('project');
@@ -160,3 +164,16 @@ export const getPendingApplications = createSelector(
   getApplicationEntitiesInBasket,
   (ids, entities) => ids.map(id => entities[id])
 );
+
+// Comment selectors
+export const getCommentsEntitiesState = createSelector(
+  getProjectState,
+  (state: ProjectState) => state.comments
+);
+
+export const {
+  selectIds: getCommentIds,
+  selectEntities: getCommentEntities,
+  selectAll: getAllComments,
+  selectTotal: getCommentCount
+} = fromComments.adapter.getSelectors(getCommentsEntitiesState);

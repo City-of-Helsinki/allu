@@ -2,6 +2,7 @@ import {Action} from '@ngrx/store';
 import {ErrorInfo} from '../../../service/error/error-info';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {Comment} from '../../../model/application/comment/comment';
+import {CommentTargetType} from '../../../model/application/comment/comment-target-type';
 
 export enum CommentActionType {
   Load = '[Comment] Load comments',
@@ -13,11 +14,6 @@ export enum CommentActionType {
   Remove = '[Comment] Remove comment',
   RemoveSuccess = '[Comment] Remove comment success',
   RemoveFailed = '[Comment] Remove comment failed',
-}
-
-export enum CommentTargetType {
-  Application = 'Application',
-  Project = 'Project'
 }
 
 export interface CommentAction extends Action {

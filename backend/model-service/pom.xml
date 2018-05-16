@@ -245,12 +245,12 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>application_comment</table>
+                            <table>comment</table>
                             <column>create_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>application_comment</table>
+                            <table>comment</table>
                             <column>update_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
@@ -418,7 +418,7 @@
                             <type>fi.hel.allu.model.querydsl.StringToApplicationTagType</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>application_comment</table>
+                            <table>comment</table>
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToCommentType</type>
                         </typeMapping>

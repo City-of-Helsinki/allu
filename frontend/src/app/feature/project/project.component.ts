@@ -9,6 +9,7 @@ import {Application} from '../../model/application/application';
 import * as parentProjects from './actions/parent-project-actions';
 import * as childProjects from './actions/child-project-actions';
 import * as application from './actions/application-actions';
+import * as fromApplication from '../application/reducers';
 
 @Component({
   selector: 'project',
@@ -36,11 +37,8 @@ export class ProjectComponent implements OnInit {
 
   sidebar(): Array<SidebarItem> {
     return [
-      this.sidebarItem('BASIC_INFO')
+      {type: 'BASIC_INFO'},
+      {type: 'COMMENTS', count: this.store.select(fromProject.getCommentCount)}
     ];
-  }
-
-  private sidebarItem(type: SidebarItemType, count?: Observable<number>): SidebarItem {
-    return {type: type, count: count};
   }
 }
