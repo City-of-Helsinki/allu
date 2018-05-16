@@ -177,3 +177,15 @@ export const {
   selectAll: getAllComments,
   selectTotal: getCommentCount
 } = fromComments.adapter.getSelectors(getCommentsEntitiesState);
+
+export const getDirection = createSelector(
+  getCommentsEntitiesState,
+  fromComments.getDirection
+);
+
+export const getSortedComments = createSelector(
+  getAllComments,
+  getDirection,
+  (comments, direction) => comments.slice().sort(fromComments.sort(direction))
+);
+

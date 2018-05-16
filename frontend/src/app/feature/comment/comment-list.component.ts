@@ -1,5 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
-import {TimeUtil} from '../../util/time.util';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
 import {Comment} from '../../model/application/comment/comment';
 import {CommentComponent} from './comment.component';
 
@@ -9,7 +8,7 @@ import {CommentComponent} from './comment.component';
   styleUrls: ['./comment-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommentListComponent implements OnInit {
+export class CommentListComponent {
   @Input() comments: Comment[];
   @Output('save') onSave: EventEmitter<Comment> = new EventEmitter<Comment>();
   @Output('remove') onRemove: EventEmitter<Comment> = new EventEmitter<Comment>();
@@ -17,10 +16,6 @@ export class CommentListComponent implements OnInit {
   @ViewChildren('commentRef') children: QueryList<CommentComponent>;
 
   constructor() {
-  }
-
-  ngOnInit() {
-    this.comments.sort((l, r) => TimeUtil.compareTo(r.createTime, l.createTime)); // sort latest first
   }
 
   save(comment: Comment): void {

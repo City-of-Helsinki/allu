@@ -27,7 +27,6 @@ import {AutoCompletionDirective} from './auto-completion/auto-completion.directi
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component';
 import {FieldErrorComponent} from './field-error/field-error.component';
 import {TranslationPipe} from '../../pipe/translation.pipe';
-import {SortByDirective} from './sort/sort-by.directive';
 import {FileDropDirective} from './file-drop/file-drop.directive';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
@@ -49,7 +48,6 @@ import {NotificationService} from '../../service/notification/notification.servi
   declarations: [
     AutoCompletionDirective,
     AutoCompletionListComponent,
-    SortByDirective,
     FieldErrorComponent,
     TranslationPipe,
     FileSelectDirective,
@@ -91,7 +89,6 @@ import {NotificationService} from '../../service/notification/notification.servi
     MaterializeModule,
     AutoCompletionDirective,
     AutoCompletionListComponent,
-    SortByDirective,
     FieldErrorComponent,
     TranslationPipe,
     FileSelectDirective,

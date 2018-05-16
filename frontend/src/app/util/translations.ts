@@ -1339,6 +1339,12 @@ export const translations = {
     FORBIDDEN: 'Oikeutesi eivät riitä',
     INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
     UNKNOWN: 'Tuntematon virhe'
+  },
+  sort: {
+    time: {
+      asc: 'Vanhimmat ensin',
+      desc: 'Uusimmat ensin'
+    }
   }
 };
 

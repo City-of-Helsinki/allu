@@ -8,6 +8,16 @@
   </allu-card>
 </div>
 
-<comment-list [comments]="comments$ | async"
-              (save)="save($event)"
-              (remove)="remove($event)"></comment-list>
+<ng-container *ngIf="comments$ | async as comments">
+  <div fxLayout="row" fxLayoutAlign="end" *ngIf="comments.length > 0">
+    <div fxFlex="none">
+      <button class="button-link" (click)="toggleDirection()">
+        {{['sort.time', direction$ | async] | translation}}
+      </button>
+    </div>
+  </div>
+
+  <comment-list [comments]="comments"
+                (save)="save($event)"
+                (remove)="remove($event)"></comment-list>
+</ng-container>

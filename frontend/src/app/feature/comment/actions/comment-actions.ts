@@ -14,6 +14,7 @@ export enum CommentActionType {
   Remove = '[Comment] Remove comment',
   RemoveSuccess = '[Comment] Remove comment success',
   RemoveFailed = '[Comment] Remove comment failed',
+  ToggleDirection = '[Comment] Toggle comment sorting'
 }
 
 export interface CommentAction extends Action {
@@ -74,6 +75,12 @@ export class RemoveFailed implements CommentAction, ActionWithPayload<ErrorInfo>
   constructor(public targetType: CommentTargetType, public payload: ErrorInfo) {}
 }
 
+export class ToggleDirection implements CommentAction {
+  readonly type = CommentActionType.ToggleDirection;
+
+  constructor(public targetType: CommentTargetType) {}
+}
+
 export type CommentActions =
   | Load
   | LoadSuccess
@@ -83,4 +90,5 @@ export type CommentActions =
   | SaveFailed
   | Remove
   | RemoveSuccess
-  | RemoveFailed;
+  | RemoveFailed
+  | ToggleDirection;

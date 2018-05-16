@@ -9,6 +9,9 @@ import * as fromComments from '../../comment/reducers/comment-reducer';
 import * as fromApplicationComments from '../../application/reducers/application-comments-reducer';
 import * as fromRoot from '../../allu/reducers/index';
 import {Application} from '../../../model/application/application';
+import {SortDirection} from '../../../model/common/sort';
+import {Comment} from '../../../model/application/comment/comment';
+import {TimeUtil} from '../../../util/time.util';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -58,3 +61,15 @@ export const {
   selectAll: getAllComments,
   selectTotal: getCommentCount
 } = fromComments.adapter.getSelectors(getCommentsEntitiesState);
+
+export const getDirection = createSelector(
+  getCommentsEntitiesState,
+  fromComments.getDirection
+);
+
+export const getSortedComments = createSelector(
+  getAllComments,
+  getDirection,
+  (comments, direction) => comments.slice().sort(fromComments.sort(direction))
+);
+
