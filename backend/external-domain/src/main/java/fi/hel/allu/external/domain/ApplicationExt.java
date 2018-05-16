@@ -27,6 +27,8 @@ public abstract class ApplicationExt {
   private ZonedDateTime endTime;
   private boolean pendingOnClient;
   private String identificationNumber;
+  private String customerReference;
+
 
   @ApiModelProperty(value="Name for the application")
   public String getName() {
@@ -98,5 +100,14 @@ public abstract class ApplicationExt {
 
   public void setIdentificationNumber(String identificationNumber) {
     this.identificationNumber = identificationNumber;
+  }
+
+  @ApiModelProperty(value = "Customer reference to the invoice")
+  public String getCustomerReference() {
+    return customerReference;
+  }
+
+  public void setCustomerReference(String customerReference) {
+    this.customerReference = customerReference;
   }
 }

@@ -50,6 +50,7 @@ public class ApplicationFactory {
     applicationJson.setNotBillable(Boolean.FALSE);
     applicationJson.setIdentificationNumber(applicationExt.getIdentificationNumber());
     applicationJson.setExternalOwnerId(externalOwnerId);
+    applicationJson.setCustomerReference(applicationExt.getCustomerReference());
   }
 
   private static LocationJson createLocation(ApplicationExt application, Geometry geometry, PostalAddressExt postalAddress) {
