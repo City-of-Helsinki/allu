@@ -1168,9 +1168,16 @@ public class ApplicationProperties {
     return getModelServiceUrl("/informationrequests/{id}");
   }
 
+  public String getInformationRequestCloseUrl() {
+    return getModelServiceUrl("/informationrequests/{id}/close");
+  }
+
   public String getInformationRequestResponseUrl() {
     return getModelServiceUrl("/informationrequests/{id}/response");
   }
 
+  public String getInformationRequestResponseFindUrl() {
+    return getModelServiceUrl("/applications/{id}/informationrequests/response");
+  }
 
 }

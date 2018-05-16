@@ -2,6 +2,8 @@ package fi.hel.allu.servicecore.domain;
 
 import java.util.List;
 
+import fi.hel.allu.common.domain.types.InformationRequestStatus;
+
 /**
  * Information request data.
  *
@@ -11,17 +13,17 @@ public class InformationRequestJson {
   private Integer id;
   private Integer applicationId;
   private List<InformationRequestFieldJson> fields;
-  private boolean open;
+  private InformationRequestStatus status;
 
   public InformationRequestJson() {
   }
 
-  public InformationRequestJson(Integer id, Integer applicationId,
-      List<InformationRequestFieldJson> fields, boolean open) {
+  public InformationRequestJson(Integer id, Integer applicationId, List<InformationRequestFieldJson> fields,
+      InformationRequestStatus status) {
     this.id = id;
     this.applicationId = applicationId;
     this.fields = fields;
-    this.open = open;
+    this.status = status;
   }
 
   public Integer getId() {
@@ -48,12 +50,12 @@ public class InformationRequestJson {
     this.fields = fields;
   }
 
-  public boolean isOpen() {
-    return open;
+  public InformationRequestStatus getStatus() {
+    return status;
   }
 
-  public void setOpen(boolean open) {
-    this.open = open;
+  public void setStatus(InformationRequestStatus status) {
+    this.status = status;
   }
 
 }

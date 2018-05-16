@@ -16,16 +16,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.external.domain.*;
-import fi.hel.allu.external.mapper.ApplicationJsonMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.InvoiceJson;
+import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
 import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
@@ -155,7 +156,7 @@ public class ApplicationServiceExt {
 
   private void validateInformationRequestOpen(Integer requestId) {
     InformationRequest request =  informationRequestService.findById(requestId);
-    if (!request.isOpen()) {
+    if (request.getStatus() != InformationRequestStatus.OPEN) {
       throw new IllegalOperationException("Information request with id " + requestId + "  is not open.");
     }
   }

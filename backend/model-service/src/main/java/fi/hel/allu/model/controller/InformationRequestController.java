@@ -37,6 +37,11 @@ public class InformationRequestController {
     return new ResponseEntity<>(informationRequestDao.update(id, informationRequest), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/informationrequests/{id}/close", method = RequestMethod.PUT)
+  public ResponseEntity<InformationRequest> closeInformationRequest(@PathVariable Integer id) {
+    return new ResponseEntity<>(informationRequestDao.closeInformationRequest(id), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/informationrequests/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteInformationRequest(@PathVariable Integer id) {
     informationRequestDao.delete(id);
@@ -47,6 +52,11 @@ public class InformationRequestController {
   public ResponseEntity<Void> insertResponse(@PathVariable Integer id, @RequestBody InformationRequestResponse response) {
     informationRequestDao.insertResponse(id, response);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/applications/{id}/informationrequests/response", method = RequestMethod.GET)
+  public ResponseEntity<InformationRequestResponse> findResponseForApplication(@PathVariable Integer id) {
+    return new ResponseEntity<>(informationRequestDao.findResponseForApplicationId(id), HttpStatus.OK);
   }
 
   /**

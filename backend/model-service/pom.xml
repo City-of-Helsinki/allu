@@ -503,9 +503,14 @@
                             <type>fi.hel.allu.model.querydsl.StringToInformationRequestFieldKey</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>information_request_field</table>
+                            <table>information_request_response_field</table>
                             <column>field_key</column>
                             <type>fi.hel.allu.model.querydsl.StringToInformationRequestFieldKey</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>information_request</table>
+                            <column>status</column>
+                            <type>fi.hel.allu.model.querydsl.StringToInformationRequestStatus</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>

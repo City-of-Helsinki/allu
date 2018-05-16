@@ -3,22 +3,24 @@ package fi.hel.allu.model.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import fi.hel.allu.common.domain.types.InformationRequestStatus;
+
 public class InformationRequest {
   private Integer id;
   private Integer applicationId;
   private ZonedDateTime creationTime;
   private int creatorId;
-  private boolean open;
+  private InformationRequestStatus status;
   private List<InformationRequestField> fields;
 
   public InformationRequest() {
   }
 
-  public InformationRequest(Integer id, Integer applicationId, boolean open, List<InformationRequestField> fields) {
+  public InformationRequest(Integer id, Integer applicationId, InformationRequestStatus status, List<InformationRequestField> fields) {
     this.id = id;
     this.applicationId = applicationId;
-    this.open = open;
     this.fields = fields;
+    this.status = status;
   }
 
   public Integer getId() {
@@ -61,11 +63,11 @@ public class InformationRequest {
     this.fields = fields;
   }
 
-  public boolean isOpen() {
-    return open;
+  public InformationRequestStatus getStatus() {
+    return status;
   }
 
-  public void setOpen(boolean open) {
-    this.open = open;
+  public void setStatus(InformationRequestStatus status) {
+    this.status = status;
   }
 }
