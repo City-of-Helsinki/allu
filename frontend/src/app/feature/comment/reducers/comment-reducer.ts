@@ -1,18 +1,21 @@
 import {CommentActions, CommentActionType} from '../actions/comment-actions';
 import {Comment} from '../../../model/application/comment/comment';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import {SortDirection, toggle} from '../../../model/common/sort';
+import {TimeUtil} from '../../../util/time.util';
 
 export interface State extends EntityState<Comment> {
   loading: boolean;
+  direction: SortDirection;
 }
 
 export const adapter: EntityAdapter<Comment> = createEntityAdapter<Comment>({
   selectId: (comment: Comment) => comment.id
 });
 
-
 export const initialState: State = adapter.getInitialState({
-  loading: false
+  loading: false,
+  direction: <SortDirection>'desc'
 });
 
 export function reducer(state: State = initialState, action: CommentActions) {
@@ -39,6 +42,13 @@ export function reducer(state: State = initialState, action: CommentActions) {
       return adapter.removeOne(action.payload, {...state});
     }
 
+    case CommentActionType.ToggleDirection: {
+      return {
+        ...state,
+        direction: toggle(state.direction)
+      };
+    }
+
     default: {
       return {...state};
     }
@@ -46,3 +56,12 @@ export function reducer(state: State = initialState, action: CommentActions) {
 }
 
 export const getLoading = (state: State) => state.loading;
+
+export const getDirection = (state: State) => state.direction;
+
+export function sort(direction: SortDirection) {
+  return (left: Comment, right: Comment) => {
+    const result = TimeUtil.compareTo(left.updateTime, right.updateTime);
+    return direction === 'desc' ? -result : result;
+  };
+}

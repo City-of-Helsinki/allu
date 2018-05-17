@@ -56,7 +56,7 @@ public class ApplicationFactory {
   private static LocationJson createLocation(ApplicationExt application, Geometry geometry, PostalAddressExt postalAddress) {
     LocationJson location = new LocationJson();
     location.setGeometry(geometry);
-    location.setPostalAddress(postalAddress != null ? new PostalAddressJson(postalAddress.getStreetAddress(), postalAddress.getPostalCode(),postalAddress.getCity()) : null);
+    location.setPostalAddress(postalAddress != null ? new PostalAddressJson(postalAddress.getStreetAddressAsString(), postalAddress.getPostalCode(),postalAddress.getCity()) : null);
     location.setStartTime(application.getStartTime());
     location.setEndTime(application.getEndTime());
     return location;

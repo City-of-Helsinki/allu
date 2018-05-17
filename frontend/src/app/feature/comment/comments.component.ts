@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {MatDialog} from '@angular/material';
 import {Store} from '@ngrx/store';
-import {Load, Remove, Save} from './actions/comment-actions';
+import {Remove, Save, ToggleDirection} from './actions/comment-actions';
 import {CommentTargetType} from '../../model/application/comment/comment-target-type';
 import {CommentListComponent} from './comment-list.component';
 import {findTranslation} from '../../util/translations';
@@ -12,15 +12,17 @@ import * as fromApplication from '../application/reducers';
 import * as fromProject from '../project/reducers';
 import * as fromRoot from '../allu/reducers';
 import {of} from 'rxjs/observable/of';
+import {SortDirection} from '../../model/common/sort';
 
 @Component({
   selector: 'comments',
   templateUrl: './comments.component.html',
-  styleUrls: []
+  styleUrls: ['./comments.component.scss']
 })
 export class CommentsComponent implements OnInit {
   @Input() targetType: CommentTargetType;
   comments$: Observable<Comment[]>;
+  direction$: Observable<SortDirection>;
 
   @ViewChild(CommentListComponent) commentListComponent: CommentListComponent;
 
@@ -28,9 +30,12 @@ export class CommentsComponent implements OnInit {
               private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
-    this.comments$ = this.targetType === CommentTargetType.Application
-      ? this.store.select(fromApplication.getAllComments)
-      : this.store.select(fromProject.getAllComments);
+    const target = this.targetType === CommentTargetType.Application
+      ? fromApplication
+      : fromProject;
+
+    this.comments$ = this.store.select(target.getSortedComments);
+    this.direction$ = this.store.select(target.getDirection);
   }
 
   save(comment: Comment): void {
@@ -39,6 +44,10 @@ export class CommentsComponent implements OnInit {
 
   remove(comment: Comment): void {
     this.store.dispatch(new Remove(this.targetType, comment.id));
+  }
+
+  toggleDirection(): void {
+    this.store.dispatch(new ToggleDirection(this.targetType));
   }
 
   canDeactivate(): Observable<boolean> {

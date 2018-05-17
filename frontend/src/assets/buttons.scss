@@ -1,6 +1,6 @@
 @import '~@angular/material/theming';
 
-@mixin button-toggle-theme($theme) {
+@mixin buttons-theme($theme) {
   $primary: map-get($theme, primary);
 
   .mat-button-toggle-checked {
@@ -18,7 +18,12 @@
       color: mat-contrast($primary, 500);
     }
   }
+
+  button.button-link {
+    color: mat-color($primary, 300);
+  }
 }
+
 
 .mat-icon-button.align-with-text {
   top: -4px;
@@ -45,5 +50,16 @@ button > .button-content-clipped {
     height: 18px;
     width: 18px;
     line-height: 18px;
+  }
+}
+
+button.button-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  &:focus {
+    outline: 0;
   }
 }
