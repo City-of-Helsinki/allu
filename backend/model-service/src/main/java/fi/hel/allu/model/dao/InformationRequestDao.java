@@ -12,8 +12,10 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.InformationRequestResponse;
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
+import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.model.domain.InformationRequestField;
@@ -46,6 +48,7 @@ public class InformationRequestDao {
 
   @Transactional
   public InformationRequest insert(InformationRequest newInformationRequest) {
+    newInformationRequest.setStatus(InformationRequestStatus.OPEN);
     newInformationRequest.setCreationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(informationRequest).populate(newInformationRequest)
         .executeWithKey(informationRequest.id);
@@ -58,7 +61,7 @@ public class InformationRequestDao {
     requestData.setId(id);
     InformationRequest existing = findById(id);
     if (existing == null) {
-      throw new NoSuchEntityException("Attempted to update non-existent information request, id {}", id) ;
+      throw new NoSuchEntityException("Attempted to update non-existent information request", id) ;
     }
     queryFactory
         .update(informationRequest)
@@ -73,7 +76,7 @@ public class InformationRequestDao {
     InformationRequest request = queryFactory.select(informationRequestBean).from(informationRequest)
         .where(informationRequest.id.eq(id)).fetchOne();
     if (request == null) {
-      throw new NoSuchEntityException("No information request found with id {}", id);
+      throw new NoSuchEntityException("No information request response found for application", id);
     }
     request.setFields(getInformationRequestFields(id));
     return request;
@@ -82,11 +85,38 @@ public class InformationRequestDao {
   @Transactional(readOnly = true)
   public InformationRequest findOpenByApplicationId(Integer applicationId) {
     InformationRequest request = queryFactory.select(informationRequestBean).from(informationRequest)
-        .where(informationRequest.applicationId.eq(applicationId), informationRequest.open.isTrue()).fetchOne();
+        .where(informationRequest.applicationId.eq(applicationId), informationRequest.status.eq(InformationRequestStatus.OPEN)).fetchOne();
     if (request != null) {
       request.setFields(getInformationRequestFields(request.getId()));
     }
     return request;
+  }
+
+  @Transactional(readOnly = true)
+  public InformationRequestResponse findResponseForApplicationId(Integer applicationId) {
+    Integer informationRequestId = queryFactory.select(informationRequest.id).from(informationRequest)
+        .where(informationRequest.applicationId.eq(applicationId),
+            informationRequest.status.eq(InformationRequestStatus.RESPONSE_RECEIVED)).fetchOne();
+    if (informationRequestId == null) {
+      throw new NoSuchEntityException("No information request response found for application", applicationId);
+    }
+    ExternalApplication applicationData = externalApplicationDao.findByInformationRequestId(informationRequestId);
+    List<InformationRequestFieldKey> responseFields = getResponseFields(informationRequestId);
+    return new InformationRequestResponse(responseFields, applicationData);
+  }
+
+  public List<InformationRequestFieldKey> getResponseFields(Integer informationRequestId) {
+    List<InformationRequestFieldKey> responseFields =
+        queryFactory.select(informationRequestResponseField.fieldKey).from(informationRequestResponseField).
+        where(informationRequestResponseField.informationRequestId.eq(informationRequestId)).fetch();
+    return responseFields;
+  }
+
+  @Transactional
+  public InformationRequest closeInformationRequest(Integer informationRequestId) {
+    queryFactory.update(informationRequest).set(informationRequest.status, InformationRequestStatus.CLOSED)
+      .where(informationRequest.id.eq(informationRequestId)).execute();
+    return findById(informationRequestId);
   }
 
   @Transactional
@@ -102,7 +132,9 @@ public class InformationRequestDao {
     externalApplicationDao.save(response.getApplication());
     insertResponseFields(requestId, response.getResponseFields());
     // Close request after response
-    queryFactory.update(informationRequest).set(informationRequest.open, Boolean.FALSE).where(informationRequest.id.eq(requestId)).execute();
+    queryFactory.update(informationRequest)
+      .set(informationRequest.status, InformationRequestStatus.RESPONSE_RECEIVED)
+      .where(informationRequest.id.eq(requestId)).execute();
   }
 
   public void insertResponseFields(Integer requestId, List<InformationRequestFieldKey> responseFields) {

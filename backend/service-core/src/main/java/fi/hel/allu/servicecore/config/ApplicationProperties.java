@@ -378,7 +378,11 @@ public class ApplicationProperties {
    * @return the URL
    */
   public String getCommentsFindByApplicationUrl() {
-    return getModelServiceUrl("/comments/applications/{applicationId}");
+    return getModelServiceUrl("/applications/{applicationId}/comments");
+  }
+
+  public String getCommentsFindByProjectUrl() {
+    return getModelServiceUrl("/projects/{projectId}/comments");
   }
 
   /**
@@ -386,8 +390,12 @@ public class ApplicationProperties {
    *
    * @return the URL
    */
-  public String getCommentsCreateUrl() {
-    return getModelServiceUrl("/comments/applications/{applicationId}");
+  public String getApplicationCommentsCreateUrl() {
+    return getModelServiceUrl("/applications/{applicationId}/comments");
+  }
+
+  public String getProjectCommentsCreateUrl() {
+    return getModelServiceUrl("/projects/{projectId}/comments");
   }
 
   /**
@@ -1168,9 +1176,16 @@ public class ApplicationProperties {
     return getModelServiceUrl("/informationrequests/{id}");
   }
 
+  public String getInformationRequestCloseUrl() {
+    return getModelServiceUrl("/informationrequests/{id}/close");
+  }
+
   public String getInformationRequestResponseUrl() {
     return getModelServiceUrl("/informationrequests/{id}/response");
   }
 
+  public String getInformationRequestResponseFindUrl() {
+    return getModelServiceUrl("/applications/{id}/informationrequests/response");
+  }
 
 }

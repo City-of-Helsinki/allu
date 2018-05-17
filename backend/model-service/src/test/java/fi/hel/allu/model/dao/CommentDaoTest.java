@@ -41,7 +41,7 @@ public class CommentDaoTest {
     comment.setText("Kommentskij");
     comment.setType(CommentType.REJECT);
     comment.setUserId(testCommon.insertUser("Test User").getId());
-    Comment inserted = commentDao.insert(comment, applicationId);
+    Comment inserted = commentDao.insertForApplication(comment, applicationId);
     assertEquals(comment.getText(), inserted.getText());
     assertEquals(comment.getType(), inserted.getType());
     assertNotNull(inserted.getId());
@@ -54,7 +54,7 @@ public class CommentDaoTest {
     comment.setText("Kommentskij");
     comment.setType(CommentType.REJECT);
     comment.setUserId(testCommon.insertUser("Test User").getId());
-    Comment inserted = commentDao.insert(comment, applicationId);
+    Comment inserted = commentDao.insertForApplication(comment, applicationId);
     inserted.setText("Horoshij kommentskij");
     Comment updated = commentDao.update(inserted.getId(), inserted);
     assertEquals(inserted.getText(), updated.getText());
@@ -69,7 +69,7 @@ public class CommentDaoTest {
     comment.setText("Kommentskij");
     comment.setType(CommentType.REJECT);
     comment.setUserId(testCommon.insertUser("Test User").getId());
-    Comment inserted = commentDao.insert(comment, applicationId);
+    Comment inserted = commentDao.insertForApplication(comment, applicationId);
     commentDao.delete(inserted.getId());
     assertFalse(commentDao.findById(inserted.getId()).isPresent());
   }
@@ -81,13 +81,13 @@ public class CommentDaoTest {
     comment.setText("Pervij kommentskij");
     comment.setType(CommentType.REJECT);
     comment.setUserId(testCommon.insertUser("Test User").getId());
-    commentDao.insert(comment, applicationId);
+    commentDao.insertForApplication(comment, applicationId);
     comment.setText("Vtoroij kommentskij");
     comment.setType(CommentType.INTERNAL);
-    commentDao.insert(comment, applicationId);
+    commentDao.insertForApplication(comment, applicationId);
     comment.setText("Tretij kommentskij");
     comment.setType(CommentType.INVOICING);
-    commentDao.insert(comment, applicationId);
+    commentDao.insertForApplication(comment, applicationId);
     List<Comment> comments = commentDao.findByApplicationId(applicationId);
     assertEquals(3, comments.size());
     assertEquals(1, comments.stream()

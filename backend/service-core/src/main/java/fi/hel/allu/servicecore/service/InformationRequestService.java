@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,8 +17,11 @@ import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
 import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.model.domain.InformationRequestField;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.InformationRequestFieldJson;
 import fi.hel.allu.servicecore.domain.InformationRequestJson;
+import fi.hel.allu.servicecore.domain.informationrequest.InformationRequestResponseJson;
+import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
 
 @Service
 public class InformationRequestService {
@@ -58,7 +62,10 @@ public class InformationRequestService {
   }
 
   private InformationRequestJson toInformationRequestJson(InformationRequest request) {
-    return new InformationRequestJson(request.getId(), request.getApplicationId(), toInformationRequestJsonFields(request.getFields()), request.isOpen());
+    if (request == null) {
+      return null;
+    }
+    return new InformationRequestJson(request.getId(), request.getApplicationId(), toInformationRequestJsonFields(request.getFields()), request.getStatus());
   }
 
   private List<InformationRequestFieldJson> toInformationRequestJsonFields(List<InformationRequestField> fields) {
@@ -67,7 +74,7 @@ public class InformationRequestService {
 
   private InformationRequest toInformationRequestModel(InformationRequestJson informationRequest) {
     return new InformationRequest(informationRequest.getId(), informationRequest.getApplicationId(),
-        informationRequest.isOpen(),
+        informationRequest.getStatus(),
         toInformationRequestModelFields(informationRequest.getId(), informationRequest.getFields()));
   }
 
@@ -83,6 +90,30 @@ public class InformationRequestService {
 
   public InformationRequest findById(Integer id) {
     return restTemplate.getForObject(applicationProperties.getInformationRequestUrl(), InformationRequest.class, id);
+  }
+
+  public InformationRequestJson closeInformationRequest(Integer id) {
+    ResponseEntity<InformationRequest> responseEntity = restTemplate.exchange(
+        applicationProperties.getInformationRequestCloseUrl(),
+        HttpMethod.PUT,
+        new HttpEntity<>(null),
+        InformationRequest.class,
+        id);
+    return toInformationRequestJson(responseEntity.getBody());
+  }
+
+  public InformationRequestResponseJson findResponseForApplication(Integer applicationId) throws IOException {
+    InformationRequestResponse response = restTemplate.getForObject(
+        applicationProperties.getInformationRequestResponseFindUrl(), InformationRequestResponse.class, applicationId);
+    return toResponseJson(applicationId, response);
+  }
+
+  private static InformationRequestResponseJson toResponseJson(Integer applicationId,
+      InformationRequestResponse response) throws IOException {
+    ApplicationJson application =
+        ApplicationJsonMapper.getApplicationFromJson(response.getApplication().getApplicationData());
+    return new InformationRequestResponseJson(response.getInformationRequestId(), applicationId, application,
+        response.getResponseFields());
   }
 
 }

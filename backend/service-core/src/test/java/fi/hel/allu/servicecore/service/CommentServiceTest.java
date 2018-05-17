@@ -40,7 +40,7 @@ public class CommentServiceTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     Mockito.when(applicationProperties.getCommentsFindByApplicationUrl()).thenReturn(COMMENTS_FIND_BY_APP_URL);
-    Mockito.when(applicationProperties.getCommentsCreateUrl()).thenReturn(COMMENTS_CREATE_URL);
+    Mockito.when(applicationProperties.getApplicationCommentsCreateUrl()).thenReturn(COMMENTS_CREATE_URL);
     Mockito.when(applicationProperties.getCommentsUpdateUrl()).thenReturn(COMMENTS_UPDATE_URL);
     Mockito.when(applicationProperties.getCommentsDeleteUrl()).thenReturn(COMMENTS_DELETE_URL);
   }
@@ -75,7 +75,7 @@ public class CommentServiceTest {
     Mockito.when(userService.findUserById(Mockito.eq(USER_ID))).thenReturn(userJson);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
-    CommentJson result = commentService.addComment(APPLICATION_ID, commentJson);
+    CommentJson result = commentService.addApplicationComment(APPLICATION_ID, commentJson);
     Assert.assertEquals(comment.getText(), result.getText());
     Assert.assertEquals(USER_ID, result.getUser().getId().intValue());
   }

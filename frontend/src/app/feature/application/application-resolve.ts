@@ -9,7 +9,8 @@ import {NotificationService} from '../../service/notification/notification.servi
 import {Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
 import {LoadSuccess} from './actions/application-actions';
-import {CommentTargetType, Load} from '../comment/actions/comment-actions';
+import {Load} from '../comment/actions/comment-actions';
+import {CommentTargetType} from '../../model/application/comment/comment-target-type';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {

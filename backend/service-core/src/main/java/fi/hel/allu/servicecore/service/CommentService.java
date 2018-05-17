@@ -39,81 +39,42 @@ public class CommentService {
     this.userService = userService;
   }
 
-  /**
-   * Find comments by application ID
-   *
-   * @param applicationId
-   *          the application ID
-   * @return list of comments for the application
-   */
   public List<CommentJson> findByApplicationId(int applicationId) {
-    ResponseEntity<Comment[]> userResults = restTemplate
-        .getForEntity(applicationProperties.getCommentsFindByApplicationUrl(), Comment[].class, applicationId);
-    return Arrays.stream(userResults.getBody()).map(c -> mapToJson(c)).collect(Collectors.toList());
+    return findBy(applicationProperties.getCommentsFindByApplicationUrl(), applicationId);
   }
 
-  /**
-   * Create new comment for an application. Validates the comment type.
-   *
-   * @param applicationId
-   *          the application ID
-   * @param commentJson
-   *          The comment data
-   * @return The created comment
-   */
-  public CommentJson addComment(int applicationId, CommentJson commentJson) {
+  public List<CommentJson> findByProjectId(int projectId) {
+    return findBy(applicationProperties.getCommentsFindByProjectUrl(), projectId);
+  }
+
+  public CommentJson addApplicationComment(int applicationId, CommentJson commentJson) {
     validateCommentType(commentJson.getType());
-    return addCommentUnchecked(applicationId, commentJson);
+    return addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
   }
 
-  /**
-   * Add a "Rejected" comment to an application
-   *
-   * @param applicationId
-   *          the application's ID
-   * @param reason
-   *          Rejection reason
-   * @return the added comment
-   */
-  public CommentJson addRejectComment(int applicationId, String reason) {
-    return addCommentUnchecked(applicationId, newCommentJson(CommentType.REJECT, reason));
+  public CommentJson addProjectComment(int projectId, CommentJson commentJson) {
+    validateCommentType(commentJson.getType());
+    return addComment(applicationProperties.getProjectCommentsCreateUrl(), projectId, commentJson);
   }
 
-  /**
-   * Add a "Returned to preparation" comment to an application
-   *
-   * @param applicationId
-   *          the application's ID
-   * @param reason
-   *          Rejection reason
-   * @return the added comment
-   */
+  public CommentJson addApplicationRejectComment(int applicationId, String reason) {
+    return addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId,
+        newCommentJson(CommentType.REJECT, reason));
+  }
+
   public CommentJson addReturnComment(int applicationId, String reason) {
-    return addCommentUnchecked(applicationId, newCommentJson(CommentType.RETURN, reason));
+    return addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId,
+        newCommentJson(CommentType.RETURN, reason));
   }
 
   /**
    * Add a "Propose approval or Propose reject" comment to an application
-   *
-   * @param applicationId
-   *          the application's ID
-   * @param comment
-   *          comments for decision
-   * @return the added comment
    */
   public CommentJson addDecisionProposalComment(int applicationId, StatusChangeInfoJson comment) {
-    return addCommentUnchecked(applicationId, newCommentJson(comment.getType(), comment.getComment()));
+    return addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId,
+        newCommentJson(comment.getType(), comment.getComment()));
   }
 
-  /**
-   * Update existing comment. Validates the comment type.
-   *
-   * @param id
-   *          comment's ID
-   * @param commentJson
-   *          comment's data
-   * @return the updated comment
-   */
   public CommentJson updateComment(int id, CommentJson commentJson) {
     validateCommentType(commentJson.getType());
     Comment comment = mapToModel(commentJson);
@@ -124,14 +85,13 @@ public class CommentService {
     return mapToJson(result.getBody());
   }
 
-  /**
-   * Delete a comment
-   *
-   * @param id
-   *          comment's ID
-   */
   public void deleteComment(int id) {
     restTemplate.delete(applicationProperties.getCommentsDeleteUrl(), id);
+  }
+
+  private List<CommentJson> findBy(String url, int targetId) {
+    ResponseEntity<Comment[]> result = restTemplate.getForEntity(url, Comment[].class, targetId);
+    return Arrays.stream(result.getBody()).map(c -> mapToJson(c)).collect(Collectors.toList());
   }
 
   /*
@@ -180,14 +140,10 @@ public class CommentService {
     }
   }
 
-  /*
-   * Add comment to an application, don't validate type.
-   */
-  private CommentJson addCommentUnchecked(int applicationId, CommentJson commentJson) {
+  private CommentJson addComment(String url, int targetId, CommentJson commentJson) {
     Comment comment = mapToModel(commentJson);
     comment.setUserId(userService.getCurrentUser().getId());
-    ResponseEntity<Comment> result = restTemplate.postForEntity(applicationProperties.getCommentsCreateUrl(), comment,
-        Comment.class, applicationId);
+    ResponseEntity<Comment> result = restTemplate.postForEntity(url, comment, Comment.class, targetId);
     return mapToJson(result.getBody());
   }
 

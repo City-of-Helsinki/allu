@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
+import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.InformationRequest;
@@ -45,7 +46,7 @@ public class InformationRequestDaoSpec extends SpeccyTestBase {
       applicationId = testCommon.insertApplication("test application", "dummy owner");
       inputRequest.setApplicationId(applicationId);
       inputRequest.setCreatorId(testUser.getId());
-      inputRequest.setOpen(true);
+      inputRequest.setStatus(InformationRequestStatus.OPEN);
       inputRequest.setFields(createFields());
     });
 
@@ -81,9 +82,9 @@ public class InformationRequestDaoSpec extends SpeccyTestBase {
         it("should update object ", () -> {
           insertedRequest = informationRequestDao.insert(inputRequest);
           inputRequest.setId(insertedRequest.getId());
-          inputRequest.setOpen(false);
+          inputRequest.setStatus(InformationRequestStatus.RESPONSE_RECEIVED);
           insertedRequest = informationRequestDao.update(inputRequest.getId(), inputRequest);
-          assertEquals(inputRequest.isOpen(), insertedRequest.isOpen());
+          assertEquals(inputRequest.getStatus(), insertedRequest.getStatus());
         });
         it("should update fields", () -> {
           insertedRequest = informationRequestDao.insert(inputRequest);

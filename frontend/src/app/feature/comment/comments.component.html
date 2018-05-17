@@ -1,12 +1,13 @@
-<allu-card>
-  <mat-card-content>
-    <ul>
-      <li *ngFor="let comment of comments">
-        <comment #commentRef
-                 [comment]="comment"
-                 (save)="save($event)"
-                 (remove)="remove($event)"></comment>
-      </li>
-    </ul>
-  </mat-card-content>
-</allu-card>
+<h1 class="content-header">{{'comment.title' | translation}}</h1>
+
+<div class="add-new-control">
+  <allu-card>
+    <mat-card-content>
+      <comment (save)="save($event)"></comment>
+    </mat-card-content>
+  </allu-card>
+</div>
+
+<comment-list [comments]="comments$ | async"
+              (save)="save($event)"
+              (remove)="remove($event)"></comment-list>

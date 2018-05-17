@@ -208,7 +208,7 @@ public class ApplicationReplacementServiceTest {
     original.setText("Comment text");
     original.setType(CommentType.INTERNAL);
     original.setUserId(testCommon.insertUser("comment").getId());
-    commentDao.insert(original, originalApplication.getId());
+    commentDao.insertForApplication(original, originalApplication.getId());
   }
 
   private Application replaceApplication() {

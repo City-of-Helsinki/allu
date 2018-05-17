@@ -1,12 +1,13 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import {CommentsComponent} from './comments.component';
+import {CommentListComponent} from './comment-list.component';
 import {CommentComponent} from './comment.component';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {CommentService} from '../../service/application/comment/comment.service';
 import {EffectsModule} from '@ngrx/effects';
 import {CommentEffects} from './effects/comment-effects';
+import {CommentsComponent} from './comments.component';
 
 @NgModule({
   imports: [
@@ -16,15 +17,16 @@ import {CommentEffects} from './effects/comment-effects';
     EffectsModule.forFeature([CommentEffects])
   ],
   declarations: [
-    CommentsComponent,
-    CommentComponent
+    CommentListComponent,
+    CommentComponent,
+    CommentsComponent
   ],
   providers: [
     CommentService
   ],
   exports: [
-    CommentsComponent,
-    CommentComponent
+    CommentComponent,
+    CommentsComponent
   ]
 })
 export class CommentModule {}

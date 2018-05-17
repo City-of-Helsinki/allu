@@ -2,7 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {CommentType} from '../../../model/application/comment/comment-type';
 import {Comment} from '../../../model/application/comment/comment';
-import {CommentService} from '../../../service/application/comment/comment.service';
+import * as fromApplication from '../reducers';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'invoice-comments',
@@ -13,17 +14,13 @@ import {CommentService} from '../../../service/application/comment/comment.servi
 })
 export class InvoiceCommentsComponent implements OnInit {
   @Input() applicationId: number;
-  comments: Observable<Array<Comment>>;
+  comments$: Observable<Array<Comment>>;
 
-  constructor(private commentService: CommentService) {
+  constructor(private store: Store<fromApplication.State>) {
   }
 
   ngOnInit(): void {
-    this.comments = this.getInvoicingComments();
-  }
-
-  private getInvoicingComments(): Observable<Array<Comment>> {
-    return this.commentService.getComments(this.applicationId)
+    this.comments$ = this.store.select(fromApplication.getAllComments)
       .map(comments => comments.filter(c => CommentType[c.type] === CommentType.INVOICING));
   }
 }

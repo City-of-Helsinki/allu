@@ -16,7 +16,8 @@ import {Some} from '../../util/option';
 import {DecisionDetails} from '../../model/decision/decision-details';
 import * as fromApplication from '../application/reducers';
 import {Store} from '@ngrx/store';
-import {CommentTargetType, Load} from '../comment/actions/comment-actions';
+import {Load} from '../comment/actions/comment-actions';
+import {CommentTargetType} from '../../model/application/comment/comment-target-type';
 
 
 @Component({

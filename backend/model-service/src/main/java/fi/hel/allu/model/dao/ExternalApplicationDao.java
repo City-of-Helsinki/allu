@@ -9,10 +9,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.common.domain.ExternalApplication;
-import fi.hel.allu.model.domain.Deposit;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QDeposit.deposit;
 import static fi.hel.allu.QExternalApplication.externalApplication;
 
 @Repository
@@ -31,7 +29,9 @@ public class ExternalApplicationDao {
 
   @Transactional(readOnly = true)
   public ExternalApplication findByApplicationId(Integer applicationId) {
-    return queryFactory.select(externalApplicationBean).where(externalApplication.applicationId.eq(applicationId)).fetchOne();
+    return queryFactory.select(externalApplicationBean).from(externalApplication)
+        .where(externalApplication.applicationId.eq(applicationId))
+        .fetchOne();
   }
 
   private void removeExisting(Integer applicationId, Integer informationRequestId) {
@@ -39,6 +39,11 @@ public class ExternalApplicationDao {
         ? externalApplication.informationRequestId.eq(informationRequestId)
         : externalApplication.informationRequestId.isNull();
     queryFactory.delete(externalApplication).where(externalApplication.applicationId.eq(applicationId), informationRequestExpression).execute();
+  }
+
+  public ExternalApplication findByInformationRequestId(Integer informationRequestId) {
+    return queryFactory.select(externalApplicationBean).from(externalApplication).
+        where(externalApplication.informationRequestId.eq(informationRequestId)).fetchOne();
   }
 
 

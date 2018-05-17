@@ -28,6 +28,8 @@ import {ChildProjectEffects} from './effects/child-project-effects';
 import {ProjectInfoComponent} from 'app/feature/project/info/project-info.component';
 import {ProjectEffects} from './effects/project-effects';
 import {ApplicationBasketEffects} from './effects/application-basket-effects';
+import {ProjectCommentsComponent} from './comments/project-comments.component';
+import {CommentModule} from '../comment/comment.module';
 
 @NgModule({
   imports: [
@@ -52,6 +54,7 @@ import {ApplicationBasketEffects} from './effects/application-basket-effects';
       ChildProjectEffects,
       ApplicationBasketEffects
     ]),
+    CommentModule
   ],
   declarations: [
     ProjectComponent,
@@ -63,6 +66,7 @@ import {ApplicationBasketEffects} from './effects/application-basket-effects';
     ProjectApplicationsComponent,
     ProjectApplicationListComponent,
     ApplicationSelectComponent,
+    ProjectCommentsComponent
   ],
   providers: [
     ProjectService,
