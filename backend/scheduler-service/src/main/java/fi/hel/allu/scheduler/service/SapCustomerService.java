@@ -194,7 +194,7 @@ public class SapCustomerService {
     customer.setOvt(sapCustomerData.getStcd3());
     customer.setInvoicingOperator(sapCustomerData.getStcd4());
     PostalAddressExt postalAddress = new PostalAddressExt();
-    postalAddress.setStreetAddress(sapCustomerData.getStras());
+    postalAddress.setSimpleStreetAddress(sapCustomerData.getStras());
     postalAddress.setCity(sapCustomerData.getOrt01());
     postalAddress.setPostalCode(sapCustomerData.getPstlz());
     customer.setPostalAddress(postalAddress);

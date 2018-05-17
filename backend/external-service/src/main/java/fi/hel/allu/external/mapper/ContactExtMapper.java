@@ -1,7 +1,6 @@
 package fi.hel.allu.external.mapper;
 
 import fi.hel.allu.external.domain.ContactExt;
-import fi.hel.allu.external.domain.PostalAddressExt;
 import fi.hel.allu.servicecore.domain.ContactJson;
 
 public class ContactExtMapper {
@@ -10,7 +9,7 @@ public class ContactExtMapper {
     contactJson.setId(contactExt.getId());
     contactJson.setName(contactExt.getName());
     if (contactExt.getPostalAddress() != null) {
-      contactJson.setStreetAddress(contactExt.getPostalAddress().getStreetAddress());
+      contactJson.setStreetAddress(contactExt.getPostalAddress().getStreetAddressAsString());
       contactJson.setPostalCode(contactExt.getPostalAddress().getPostalCode());
       contactJson.setCity(contactExt.getPostalAddress().getCity());
     }
@@ -18,15 +17,5 @@ public class ContactExtMapper {
     contactJson.setPhone(contactExt.getPhone());
     contactJson.setActive(true);
     return contactJson;
-  }
-
-  public static ContactExt mapContactExt(ContactJson contactJson) {
-    ContactExt contactExt = new ContactExt();
-    contactExt.setId(contactJson.getId());
-    contactExt.setName(contactJson.getName());
-    contactExt.setPostalAddress(new PostalAddressExt(contactJson.getStreetAddress(), contactJson.getPostalCode(), contactJson.getCity()));
-    contactExt.setEmail(contactJson.getEmail());
-    contactExt.setPhone(contactJson.getPhone());
-    return contactExt;
   }
 }

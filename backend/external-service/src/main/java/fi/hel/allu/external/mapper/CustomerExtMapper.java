@@ -7,7 +7,6 @@ import fi.hel.allu.external.domain.ContactExt;
 import fi.hel.allu.external.domain.CustomerExt;
 import fi.hel.allu.external.domain.CustomerWithContactsExt;
 import fi.hel.allu.external.domain.InvoicingCustomerExt;
-import fi.hel.allu.external.domain.PostalAddressExt;
 import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
@@ -34,7 +33,7 @@ public class CustomerExtMapper {
      if (contactExt.getPostalAddress() != null) {
        contact.setCity(contactExt.getPostalAddress().getCity());
        contact.setPostalCode(contactExt.getPostalAddress().getPostalCode());
-       contact.setStreetAddress(contactExt.getPostalAddress().getStreetAddress());
+       contact.setStreetAddress(contactExt.getPostalAddress().getStreetAddressAsString());
      }
      return contact;
   }
@@ -51,31 +50,12 @@ public class CustomerExtMapper {
     customerJson.setInvoicingOperator(customerExt.getInvoicingOperator());
     if (customerExt.getPostalAddress() != null) {
       customerJson.setPostalAddress(new PostalAddressJson(
-          customerExt.getPostalAddress().getStreetAddress(),
+          customerExt.getPostalAddress().getStreetAddressAsString(),
           customerExt.getPostalAddress().getPostalCode(),
           customerExt.getPostalAddress().getCity()));
     }
     customerJson.setActive(true);
     return customerJson;
-  }
-
-  public static CustomerExt mapCustomerExt(CustomerJson customerJson) {
-    CustomerExt customerExt = new CustomerExt();
-    customerExt.setId(customerJson.getId());
-    customerExt.setName(customerJson.getName());
-    customerExt.setType(customerJson.getType());
-    customerExt.setRegistryKey(customerJson.getRegistryKey());
-    customerExt.setOvt(customerJson.getOvt());
-    customerExt.setEmail(customerJson.getEmail());
-    customerExt.setPhone(customerJson.getPhone());
-    customerExt.setInvoicingOperator(customerJson.getInvoicingOperator());
-    if (customerJson.getPostalAddress() != null) {
-      customerExt.setPostalAddress(new PostalAddressExt(
-          customerJson.getPostalAddress().getStreetAddress(),
-          customerJson.getPostalAddress().getPostalCode(),
-          customerJson.getPostalAddress().getCity()));
-    }
-    return customerExt;
   }
 
   /**
@@ -94,7 +74,7 @@ public class CustomerExtMapper {
     Optional.ofNullable(customerExt.getInvoicingOperator()).ifPresent(s -> currentCustomerJson.setInvoicingOperator(s));
     Optional.ofNullable(customerExt.getPostalAddress())
        .map(a -> new PostalAddressJson(
-          customerExt.getPostalAddress().getStreetAddress(),
+          customerExt.getPostalAddress().getStreetAddressAsString(),
           customerExt.getPostalAddress().getPostalCode(),
           customerExt.getPostalAddress().getCity()))
        .ifPresent(a -> currentCustomerJson.setPostalAddress(a));
