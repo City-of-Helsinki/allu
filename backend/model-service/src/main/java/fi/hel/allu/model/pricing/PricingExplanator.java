@@ -16,6 +16,8 @@ import java.util.Optional;
  * Helper class for generating pricing explanation lines based on location.
  */
 public class PricingExplanator {
+  private static final int EXPLANATION_MAX_LENGTH = 70;
+
   private final LocationDao locationDao;
 
   @Autowired
@@ -48,8 +50,33 @@ public class PricingExplanator {
 
     final String area = ((int)Math.ceil(location.getEffectiveArea())) + "m²";
 
-    final List<String> explanation = new ArrayList<>();
-    explanation.add(address + " (" + period + "), " + area);
-    return explanation;
+    final String explanation = address + " (" + period + "), " + area;
+    return limitExplanationRowLength(explanation);
+  }
+
+  private List<String> limitExplanationRowLength(String explanation) {
+    final List<String> explanations = new ArrayList<>();
+    if (explanation.length() > EXPLANATION_MAX_LENGTH) {
+      StringBuilder builder = new StringBuilder();
+      final String[] splits = explanation.split(" ");
+      for (String split : splits) {
+        if (builder.length() == 0) {
+          builder.append(split);
+        } else if (builder.length() + splits.length + 1 <= 70) {
+          builder.append(" ");
+          builder.append(split);
+        } else {
+          explanations.add(builder.toString());
+          builder = new StringBuilder();
+          builder.append(split);
+        }
+      }
+      if (builder.length() > 0) {
+        explanations.add(builder.toString());
+      }
+    } else {
+      explanations.add(explanation);
+    }
+    return explanations;
   }
 }
