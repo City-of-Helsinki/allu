@@ -34,16 +34,19 @@ public class ApplicationService {
   private final InvoiceService invoiceService;
   private final CustomerDao customerDao;
   private final LocationService locationService;
+  private final ApplicationDefaultValueService defaultValueService;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-    ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao, LocationService locationService) {
+    ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
+    LocationService locationService, ApplicationDefaultValueService defaultValueService) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
     this.invoiceService = invoiceService;
     this.customerDao = customerDao;
     this.locationService = locationService;
+    this.defaultValueService = defaultValueService;
   }
 
   /**
@@ -139,6 +142,7 @@ public class ApplicationService {
   @Transactional
   public Application update(int id, Application application, int userId) {
     verifyApplicationIsUpdatable(id);
+    defaultValueService.setByType(application);
     List<Location> locations = locationService.updateApplicationLocations(id, application.getLocations(), userId);
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
@@ -181,6 +185,8 @@ public class ApplicationService {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
+    defaultValueService.setByType(application);
+
     Application result = applicationDao.insert(application);
     application.getLocations().forEach(l -> l.setApplicationId(result.getId()));
     List<Location> locations = locationService.insert(application.getLocations(), userId);

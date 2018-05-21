@@ -37,6 +37,8 @@ public class ApplicationServiceTest {
   private CustomerDao customerDao;
   @Mock
   private LocationService locationService;
+  @Mock
+  private ApplicationDefaultValueService defaultValueService;
 
 
   private ApplicationService applicationService;
@@ -45,7 +47,7 @@ public class ApplicationServiceTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisService, invoiceService,
-        customerDao, locationService);
+        customerDao, locationService, defaultValueService);
   }
 
   @Test

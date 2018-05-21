@@ -26,7 +26,7 @@ const visibleForAll: Array<SidebarItemType> = ['BASIC_INFO', 'ATTACHMENTS', 'COM
 export const visibleItemsByApplicationType: ApplicationTypeVisibleItems = {
   'EXCAVATION_ANNOUNCEMENT': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
   'AREA_RENTAL': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
-  'TEMPORARY_TRAFFIC_ARRANGEMENTS': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
+  'TEMPORARY_TRAFFIC_ARRANGEMENTS': visibleForAll.concat('SUPERVISION', 'DECISION'),
   'CABLE_REPORT': visibleForAll.concat('SUPERVISION', 'DECISION'),
   'PLACEMENT_CONTRACT': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
   'EVENT': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
