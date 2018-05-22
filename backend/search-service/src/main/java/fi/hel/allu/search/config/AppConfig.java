@@ -1,5 +1,6 @@
 package fi.hel.allu.search.config;
 
+import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -30,5 +31,12 @@ public class AppConfig {
     Client client = new PreBuiltTransportClient(settings).addTransportAddress(
         new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
     return client;
+  }
+
+  @Bean
+  public ControllerExceptionHandlerConfig controllerExceptionHandlerConfig() {
+    ControllerExceptionHandlerConfig config = new ControllerExceptionHandlerConfig();
+    config.setTranslateErrorMessages(false);
+    return config;
   }
 }
