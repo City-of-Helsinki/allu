@@ -12,6 +12,9 @@ export class ErrorHandler {
 
   handle(error: HttpErrorResponse, message?: string): Observable<any> {
     console.error('Status:', error.statusText, 'original message:', error.message);
+    if (error.error && error.error[0] && error.error[0].errorMessage) {
+      message = error.error[0].errorMessage;
+    }
 
     const title = this.mapStatusToTitle(error);
 
