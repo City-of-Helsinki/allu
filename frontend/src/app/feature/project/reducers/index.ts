@@ -14,6 +14,7 @@ import * as fromRoot from '../../allu/reducers/index';
 import * as fromComments from '../../comment/reducers/comment-reducer';
 import * as fromProjectComments from './project-comments-reducer';
 import {Project} from '../../../model/project/project';
+import {SortDirection} from '../../../model/common/sort';
 
 export interface ProjectState {
   project: fromProject.State;
@@ -187,5 +188,10 @@ export const getSortedComments = createSelector(
   getAllComments,
   getDirection,
   (comments, direction) => comments.slice().sort(fromComments.sort(direction))
+);
+
+export const getLatestComments = (direction: SortDirection) => createSelector(
+  getAllComments,
+  comments => comments.slice().sort(fromComments.sort(direction))
 );
 

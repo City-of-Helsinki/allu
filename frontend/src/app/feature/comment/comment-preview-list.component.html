@@ -1,0 +1,36 @@
+<div *ngIf="!visibleComments.length">
+  {{'comment.noProjectComments' | translation}}
+</div>
+
+<div *ngIf="visibleComments.length">
+  <ul class="comment-list">
+    <li *ngFor="let comment of visibleComments">
+      <h1 class="comment-header">
+        <div fxLayout="row" fxLayoutGap="6px" fxLayoutWrap class="slim">
+          <div fxFlex="none">
+            {{comment.user.realName}} {{comment.updateTime | date:'short'}}
+          </div>
+
+          <div fxFlex="none">
+            {{['comment.type', comment.type] | translation}}
+          </div>
+        </div>
+      </h1>
+
+      <div fxLayout="row">
+        <div fxFlex="100%">
+          <div class="text-preview">{{comment.text}}</div>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <div fxLayout="row">
+    <div fxFlex class="comments-link">
+      <a [routerLink]="commentLink">{{'comment.showComments' | translation}}</a>
+    </div>
+  </div>
+</div>
+
+
+

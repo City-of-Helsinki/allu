@@ -1,0 +1,8 @@
+@mixin allu-common-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  h1, h2 {
+    color: mat-color($primary, 500);
+  }
+}

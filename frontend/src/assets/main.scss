@@ -13,6 +13,8 @@
 @import "accordion";
 @import "notification/oval";
 @import "toast";
+@import 'allu-common';
+@import 'allu-common-theme';
 @import '../app/feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
@@ -24,6 +26,7 @@
 
 // Theme components
 @include angular-material-theme($allu-theme);
+@include allu-common-theme($allu-theme);
 @include auto-completion-list-theme($allu-theme);
 @include placeholder-theme($allu-theme);
 @include checkbox-theme($allu-theme);
@@ -106,16 +109,6 @@ thead.mat-calendar-table-header {
 
 .main-content {
   margin: 0 24px;
-}
-
-h1 {
-  font-size: 24px;
-  color: mat-color($allu-primary, 500);
-}
-
-h2.allu-header {
-  font-size: 20px;
-  color: mat-color($allu-primary, 500);
 }
 
 .select-wrapper {

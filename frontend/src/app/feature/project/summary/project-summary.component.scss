@@ -3,6 +3,15 @@
   position: relative;
 }
 
-h2.allu-header {
-  margin-left: 12px;
+h2.preview-header {
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.preview-card {
+  padding: 0 50px 0 30px;
+}
+
+.preview-card:not(:last-of-type) {
+  border-right: solid 1px #e1e7e5;
 }

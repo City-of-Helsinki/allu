@@ -8,6 +8,7 @@ import {CityDistrict} from '../../../model/common/city-district';
 import {Subject} from 'rxjs/Subject';
 import {MapStore} from '../../../service/map/map-store';
 import {MapComponent} from '../../map/map.component';
+import {Comment} from '../../../model/application/comment/comment';
 
 @Component({
   selector: 'project-summary',
@@ -17,6 +18,7 @@ import {MapComponent} from '../../map/map.component';
 export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   project$: Observable<Project>;
   districts$: Observable<CityDistrict[]>;
+  comments$: Observable<Comment[]>;
 
   private destroy$ = new Subject<boolean>();
   @ViewChild(MapComponent) private map: MapComponent;
@@ -26,6 +28,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   ngOnInit(): void {
     this.districts$ = this.store.select(fromProject.getProjectDistricts);
     this.project$ = this.store.select(fromProject.getCurrentProject);
+    this.comments$ = this.store.select(fromProject.getLatestComments('desc'));
   }
 
   ngAfterViewInit(): void {

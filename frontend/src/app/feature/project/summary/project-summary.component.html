@@ -23,5 +23,26 @@
     </div>
   </div>
 
+  <div fxLayout="row">
+    <div fxFlex>
+      <allu-card>
+        <mat-card-content>
+          <div fxLayout="row">
+            <div fxFlex="0 0 50%" class="preview-card">
+              <h2 class="preview-header">
+                {{'comment.title' | translation}}
+              </h2>
+              <comment-preview-list
+                [comments]="comments$ | async"
+                [commentLink]="['/projects', project.id, 'comments']">
+              </comment-preview-list>
+            </div>
+            <div fxFlex="0 0 50%" class="preview-card"></div>
+          </div>
+        </mat-card-content>
+      </allu-card>
+    </div>
+  </div>
+
   <project-applications [projectId]="project.id"></project-applications>
 </div>
