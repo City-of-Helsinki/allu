@@ -11,8 +11,8 @@ import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
-import {ApplicationService} from '../../../service/application/application.service';
 import {ArrayUtil} from '../../../util/array-util';
+import {MetadataService} from '../../../service/meta/metadata.service';
 
 @Component({
   selector: 'application-history',
@@ -28,7 +28,7 @@ export class ApplicationHistoryComponent implements OnInit {
   users = new Map<number, string>();
 
   constructor(private applicationStore: ApplicationStore,
-              private applicationService: ApplicationService,
+              private metadataService: MetadataService,
               private historyHub: HistoryHub,
               private userHub: UserHub,
               private dialog: MatDialog,
@@ -36,7 +36,7 @@ export class ApplicationHistoryComponent implements OnInit {
               protected formatter: ApplicationHistoryFormatter) {}
 
   ngOnInit(): void {
-    this.applicationService.loadMetadata(this.applicationStore.snapshot.application.type).subscribe(meta => {
+    this.metadataService.loadByApplicationType(this.applicationStore.snapshot.application.type).subscribe(meta => {
       this.meta = meta;
       this.formatter.setMeta(meta);
       this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id)

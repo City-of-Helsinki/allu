@@ -3,7 +3,6 @@ import {Observable} from 'rxjs/Observable';
 import {MatDialog} from '@angular/material';
 import {Store} from '@ngrx/store';
 import {Remove, Save, ToggleDirection} from './actions/comment-actions';
-import {CommentTargetType} from '../../model/application/comment/comment-target-type';
 import {CommentListComponent} from './comment-list.component';
 import {findTranslation} from '../../util/translations';
 import {ConfirmDialogComponent} from '../common/confirm-dialog/confirm-dialog.component';
@@ -13,6 +12,7 @@ import * as fromProject from '../project/reducers';
 import * as fromRoot from '../allu/reducers';
 import {of} from 'rxjs/observable/of';
 import {SortDirection} from '../../model/common/sort';
+import {ActionTargetType} from '../allu/actions/action-target-type';
 
 @Component({
   selector: 'comments',
@@ -20,7 +20,7 @@ import {SortDirection} from '../../model/common/sort';
   styleUrls: ['./comments.component.scss']
 })
 export class CommentsComponent implements OnInit {
-  @Input() targetType: CommentTargetType;
+  @Input() targetType: ActionTargetType;
   comments$: Observable<Comment[]>;
   direction$: Observable<SortDirection>;
 
@@ -30,7 +30,7 @@ export class CommentsComponent implements OnInit {
               private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
-    const target = this.targetType === CommentTargetType.Application
+    const target = this.targetType === ActionTargetType.Application
       ? fromApplication
       : fromProject;
 

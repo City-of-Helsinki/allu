@@ -45,7 +45,7 @@ public class StructureMetaDao {
   }
 
   /**
-   * Parse the complete metadata tree for an application type. Recurses into
+   * Parse the complete metadata tree for a type. Recurses into
    * each STRUCTURE type attribute it can find and puts all their attributes
    * into the result set, too. All found attributes are returned as a flat list,
    * so to prevent name clashes, the attribute names consist also of the path
@@ -58,7 +58,7 @@ public class StructureMetaDao {
    *
    *
    * @param typeName
-   *          The name of the application type to parse
+   *          The name of the type to parse
    * @param version
    *          Metadata version to use
    * @param typeOverrides
@@ -66,38 +66,11 @@ public class StructureMetaDao {
    * @return Structure meta information
    */
   @Transactional(readOnly = true)
-  public Optional<StructureMeta> findCompleteByApplicationType(String typeName, int version,
-      Map<String, String> typeOverrides) {
+  public Optional<StructureMeta> findCompleteByType(String typeName, int version, Map<String, String> typeOverrides) {
     if (version > getLatestMetadataVersion()) {
       throw new NoSuchEntityException("No such metadata version");
     }
-    return findCompleteInternal(typeName, version, typeOverrides);
-  }
-
-  /**
-   * Parse the complete metadata tree for an application type. Recurses into
-   * each STRUCTURE type attribute it can find and puts all their attributes
-   * into the result set, too. All found attributes are returned as a flat list,
-   * so to prevent name clashes, the attribute names consist also of the path
-   * into the attribute, for example "/customer/postalAddress/streetAddress".
-   *
-   * The recursion can be guided by giving a set of path overrides that can used
-   * to, for example, recurse into "EVENT" while handling the attribute
-   * "/extension", instead of simply going into the statically defined
-   * "ApplicationExtension" type.
-   *
-   * This version uses the latest available version of the application type.
-   *
-   * @param typeName
-   *          The name of the application type to parse
-   * @param pathOverrides
-   *          Mapping of attributePath -> typeName to override the static types
-   * @return Structure meta information
-   */
-  @Transactional(readOnly = true)
-  public Optional<StructureMeta> findCompleteByApplicationType(String typeName,
-      Map<String, String> typeOverrides) {
-    return findCompleteInternal(typeName, getLatestMetadataVersion(), typeOverrides);
+    return findComplete(typeName, version, typeOverrides);
   }
 
   @Transactional(readOnly = true)
@@ -108,10 +81,7 @@ public class StructureMetaDao {
             .and(attributeMeta.structureMetaId.eq(s.getId()))).fetchFirst()).orElse(null);
   }
 
-  /*
-   * FindCompleteByApplicationType's implementation without the checks.
-   */
-  Optional<StructureMeta> findCompleteInternal(String typeName, int version,
+  private Optional<StructureMeta> findComplete(String typeName, int version,
       Map<String, String> typeOverrides) {
     Optional<StructureMeta> meta = findStructure(typeName, version);
     if (meta.isPresent()) {

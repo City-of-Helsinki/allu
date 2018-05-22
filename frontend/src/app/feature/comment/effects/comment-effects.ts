@@ -1,25 +1,29 @@
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
-import * as fromApplication from '../../application/reducers';
-import * as fromProject from '../../project/reducers';
+
 import * as fromComment from '../reducers/comment-reducer';
 import {
-  CommentAction,
   CommentActionType,
   Load,
   LoadFailed,
   LoadSuccess,
   Remove,
   RemoveFailed,
-  RemoveSuccess, Save, SaveFailed, SaveSuccess
+  RemoveSuccess,
+  Save,
+  SaveFailed,
+  SaveSuccess
 } from '../actions/comment-actions';
 import {CommentService} from '../../../service/application/comment/comment.service';
 import {Comment} from '../../../model/application/comment/comment';
-import {CommentTargetType} from '../../../model/application/comment/comment-target-type';
+import {ActionTargetType} from '../../allu/actions/action-target-type';
+import {ofTargetAndType} from '../../allu/actions/action-with-target';
+import * as fromProject from '../../project/reducers';
+import * as fromApplication from '../../application/reducers';
 
 @Injectable()
 export class CommentEffects {
@@ -29,25 +33,25 @@ export class CommentEffects {
 
   @Effect()
   loadApplicationComments: Observable<Action> = this.actions.pipe(
-    this.ofTargetAndType<Load>(CommentTargetType.Application, CommentActionType.Load),
+    ofTargetAndType<Load>(ActionTargetType.Application, this.currentApplication, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
   );
 
   @Effect()
   saveApplicationComment: Observable<Action> = this.actions.pipe(
-    this.ofTargetAndType<Save>(CommentTargetType.Application, CommentActionType.Save),
+    ofTargetAndType<Save>(ActionTargetType.Application, this.currentApplication, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
   );
 
   @Effect()
   loadProjectComments: Observable<Action> = this.actions.pipe(
-    this.ofTargetAndType<Load>(CommentTargetType.Project, CommentActionType.Load),
+    ofTargetAndType<Load>(ActionTargetType.Project, this.currentProject, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
   );
 
   @Effect()
   saveProjectComment: Observable<Action> = this.actions.pipe(
-    this.ofTargetAndType<Save>(CommentTargetType.Project, CommentActionType.Save),
+    ofTargetAndType<Save>(ActionTargetType.Project, this.currentProject, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
   );
 
@@ -60,31 +64,26 @@ export class CommentEffects {
     ))
   );
 
-  private loadByType(type: CommentTargetType, id): Observable<Action> {
+  private loadByType(type: ActionTargetType, id): Observable<Action> {
     return this.commentService.getCommentsFor(type, id).pipe(
       map(comments => new LoadSuccess(type, comments)),
       catchError(error => of(new LoadFailed(type, error)))
     );
   }
 
-  private saveByType(type: CommentTargetType, targetId: number, comment: Comment): Observable<Action> {
+  private saveByType(type: ActionTargetType, targetId: number, comment: Comment): Observable<Action> {
     return this.commentService.saveComment(type, targetId, comment).pipe(
       map(saved => new SaveSuccess(type, saved)),
       catchError(error => of(new SaveFailed(type, error)))
     );
   }
 
-  private ofTargetAndType<T extends CommentAction>(targetType: CommentTargetType, ...allowedTypes: string[]) {
-    const latestTarget = targetType === CommentTargetType.Application
-      ? this.store.select(fromApplication.getCurrentApplication)
-      : this.store.select(fromProject.getCurrentProject);
+  private get currentApplication() {
+    return this.store.select(fromApplication.getCurrentApplication);
+  }
 
-    return (source: Observable<CommentAction>) => source.pipe(
-      ofType<T>(...allowedTypes),
-      filter(action => targetType === action.targetType),
-      withLatestFrom(latestTarget),
-      filter(([action, target]) => target.id !== undefined)
-    );
+  private get currentProject() {
+    return this.store.select(fromProject.getCurrentProject);
   }
 }
 

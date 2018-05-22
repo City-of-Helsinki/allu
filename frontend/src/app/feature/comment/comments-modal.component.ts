@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {Comment} from '../../model/application/comment/comment';
 import {NotificationService} from '../../service/notification/notification.service';
 import {CommentService} from '../../service/application/comment/comment.service';
-import {CommentTargetType} from '../../model/application/comment/comment-target-type';
+import {ActionTargetType} from '../allu/actions/action-target-type';
 
 @Component({
   selector: 'comments-modal',
@@ -23,7 +23,7 @@ export class CommentsModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.comments = this.commentService.getCommentsFor(CommentTargetType.Application, this.applicationId)
+    this.comments = this.commentService.getCommentsFor(ActionTargetType.Application, this.applicationId)
       .catch(err => {
         this.notification.errorInfo(err);
         return Observable.of([]);

@@ -17,7 +17,7 @@ import {DecisionDetails} from '../../model/decision/decision-details';
 import * as fromApplication from '../application/reducers';
 import {Store} from '@ngrx/store';
 import {Load} from '../comment/actions/comment-actions';
-import {CommentTargetType} from '../../model/application/comment/comment-target-type';
+import {ActionTargetType} from '../allu/actions/action-target-type';
 
 
 @Component({
@@ -81,7 +81,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     if (changeInfo) {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(app => {
-          this.store.dispatch(new Load(CommentTargetType.Application));
+          this.store.dispatch(new Load(ActionTargetType.Application));
           this.notification.success(findTranslation('application.statusChange.DECISIONMAKING'));
           this.applicationStore.applicationChange(app);
           this.onDecisionConfirm.emit(changeInfo);

@@ -5,7 +5,7 @@ import {Comment} from '../../../../src/app/model/application/comment/comment';
 import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
 import {ErrorHandler} from '../../../../src/app/service/error/error-handler.service';
 import {HttpClient} from '@angular/common/http';
-import {CommentTargetType} from '../../../../src/app/model/application/comment/comment-target-type';
+import {ActionTargetType} from '../../../../src/app/feature/allu/actions/action-target-type';
 
 const APP_ID = 1;
 const COMMENTS_URL = '/api/comments';
@@ -61,14 +61,14 @@ describe('CommentService', () => {
   });
 
   it('getCommentsFor() should query rest api with matching target type', () => {
-    commentService.getCommentsFor(CommentTargetType.Application, APP_ID).subscribe();
+    commentService.getCommentsFor(ActionTargetType.Application, APP_ID).subscribe();
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
     expect(req.request.method).toEqual('GET');
   });
 
   it('getCommentsFor() should return queried comments', fakeAsync(() => {
     let result: Array<Comment>;
-    commentService.getCommentsFor(CommentTargetType.Application, APP_ID).subscribe(r => result = r);
+    commentService.getCommentsFor(ActionTargetType.Application, APP_ID).subscribe(r => result = r);
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
 
     req.flush([COMMENT_ONE, COMMENT_TWO]);
@@ -81,7 +81,7 @@ describe('CommentService', () => {
   it('getCommentsFor() should handle errors', fakeAsync(() => {
     let result: Array<Comment>;
     spyOn(errorHandler, 'handle');
-    commentService.getCommentsFor(CommentTargetType.Application, APP_ID).subscribe(r => result = r, error => {});
+    commentService.getCommentsFor(ActionTargetType.Application, APP_ID).subscribe(r => result = r, error => {});
 
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
     req.error(new ErrorEvent('Expected error'));
@@ -96,7 +96,7 @@ describe('CommentService', () => {
     const updatedComment = COMMENT_NEW.copy();
     updatedComment.id = 10;
 
-    commentService.saveComment(CommentTargetType.Application, APP_ID, COMMENT_NEW).subscribe(r => result = r);
+    commentService.saveComment(ActionTargetType.Application, APP_ID, COMMENT_NEW).subscribe(r => result = r);
 
     const req = httpTestingController.expectOne(COMMENTS_APP_URL);
     req.flush(updatedComment);
@@ -109,7 +109,7 @@ describe('CommentService', () => {
 
   it('saveComment() comment with id should update', fakeAsync(() => {
     let result: Comment;
-    commentService.saveComment(CommentTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r);
+    commentService.saveComment(ActionTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r);
 
     const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
     req.flush(COMMENT_ONE);
@@ -122,7 +122,7 @@ describe('CommentService', () => {
   it('saveComment() comment should handle errors', fakeAsync(() => {
     let result: Comment;
     spyOn(errorHandler, 'handle');
-    commentService.saveComment(CommentTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r, error => {});
+    commentService.saveComment(ActionTargetType.Application, APP_ID, COMMENT_ONE).subscribe(r => result = r, error => {});
     const req = httpTestingController.expectOne(`${COMMENTS_URL}/${COMMENT_ONE.id}`);
     req.error(new ErrorEvent('Expected'));
 

@@ -7,7 +7,7 @@ import {BackendComment, CommentMapper} from './comment-mapper';
 import {ErrorHandler} from '../../error/error-handler.service';
 import {findTranslation} from '../../../util/translations';
 import {NumberUtil} from '../../../util/number.util';
-import {CommentTargetType} from '../../../model/application/comment/comment-target-type';
+import {ActionTargetType} from '../../../feature/allu/actions/action-target-type';
 
 const COMMENTS_URL = '/api/comments';
 
@@ -16,17 +16,17 @@ export class CommentService {
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandler) {}
 
-  getCommentsFor(target: CommentTargetType, id: number): Observable<Array<Comment>> {
+  getCommentsFor(target: ActionTargetType, id: number): Observable<Array<Comment>> {
     const url = this.urlByTarget(target, id);
     return this.getComments(url);
   }
 
-  insertFor(target: CommentTargetType, id: number, comment: Comment): Observable<Comment> {
+  insertFor(target: ActionTargetType, id: number, comment: Comment): Observable<Comment> {
     const url = this.urlByTarget(target, id);
     return this.insertComment(url, comment);
   }
 
-  saveComment(target: CommentTargetType, id: number, comment: Comment): Observable<Comment> {
+  saveComment(target: ActionTargetType, id: number, comment: Comment): Observable<Comment> {
     return NumberUtil.isDefined(comment.id)
       ? this.updateComment(comment)
       : this.insertFor(target, id, comment);
@@ -59,8 +59,8 @@ export class CommentService {
       .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.save')));
   }
 
-  private urlByTarget(target: CommentTargetType, id: number): string {
-    return target === CommentTargetType.Application
+  private urlByTarget(target: ActionTargetType, id: number): string {
+    return target === ActionTargetType.Application
       ? this.applicationCommentsUrl(id)
       : this.projectCommentsUrl(id);
   }

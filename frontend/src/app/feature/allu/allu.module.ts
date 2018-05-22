@@ -55,6 +55,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {ToastyModule} from 'ng2-toasty';
 import {JwtModule} from '@auth0/angular-jwt';
 import {httpInterceptorProviders} from '../../http-interceptors';
+import {MetadataService} from '../../service/meta/metadata.service';
 
 export function tokenGetter() {
   return localStorage.getItem('jwt');
@@ -118,6 +119,7 @@ export function tokenGetter() {
     RootErrorNotificationService,
     CodeSetService,
     CustomIconRegistry,
+    MetadataService,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: DateAdapter, useClass: AlluDateAdapter },
     { provide: LOCALE_ID, useValue: 'fi-FI' },

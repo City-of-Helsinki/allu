@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +23,10 @@ public class MetaService {
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
+
+  private static final String APPLICATION = "Application";
+  private static final String PROJECT = "Project";
+  private static final String EXTENSION_PATH = "/extension";
 
   @Autowired
   public MetaService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
@@ -35,9 +41,8 @@ public class MetaService {
    * @return  the metadata for given application type.
    */
   public StructureMetaJson findMetadataForApplication(ApplicationType applicationType) {
-    ResponseEntity<StructureMeta> structureMetaResult = restTemplate.getForEntity(
-        applicationProperties.getMetadataUrl(), StructureMeta.class, applicationType);
-    return mapStructureMeta(structureMetaResult.getBody());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION_PATH, applicationType.name());
+    return findMetadataFor(APPLICATION, overrides);
   }
 
   /**
@@ -48,8 +53,23 @@ public class MetaService {
    * @return  the metadata for given application type.
    */
   public StructureMetaJson findMetadataForApplication(ApplicationType applicationType, int version) {
-    ResponseEntity<StructureMeta> structureMetaResult = restTemplate.getForEntity(
-        applicationProperties.getMetadataVersionedUrl(), StructureMeta.class, applicationType, version);
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION_PATH, applicationType.name());
+    return findMetadataFor(APPLICATION, version, overrides);
+  }
+
+  public StructureMetaJson findMetadataFor(String type) {
+    return findMetadataFor(type, Collections.EMPTY_MAP);
+  }
+
+  public StructureMetaJson findMetadataFor(String type, Map<String, String> pathOverrides) {
+    ResponseEntity<StructureMeta> structureMetaResult = restTemplate.postForEntity(
+        applicationProperties.getMetadataUrl(), pathOverrides, StructureMeta.class, type);
+    return mapStructureMeta(structureMetaResult.getBody());
+  }
+
+  public StructureMetaJson findMetadataFor(String type, Integer version, Map<String, String> pathOverrides) {
+    ResponseEntity<StructureMeta> structureMetaResult = restTemplate.postForEntity(
+        applicationProperties.getMetadataVersionedUrl(), pathOverrides, StructureMeta.class, type, version);
     return mapStructureMeta(structureMetaResult.getBody());
   }
 

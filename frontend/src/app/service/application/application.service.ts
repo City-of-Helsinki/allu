@@ -32,7 +32,6 @@ const STATUS_URL = '/api/applications/:appId/status/:statusPart';
 const TAGS_URL = '/api/applications/:appId/tags';
 const ATTACHMENTS_URL = '/api/applications/:appId/attachments';
 const SEARCH = '/search';
-const METADATA_URL = '/api/meta';
 
 @Injectable()
 export class ApplicationService {
@@ -132,15 +131,6 @@ export class ApplicationService {
     const url = APPLICATIONS_URL + '/note/' + id;
     return this.http.delete(url)
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')));
-  }
-
-  /**
-   * Loads metadata for given application type
-   */
-  public loadMetadata(applicationType: string): Observable<StructureMeta> {
-    return this.http.get<BackendStructureMeta>(METADATA_URL + '/' + applicationType)
-      .map(meta => StructureMetaMapper.mapBackend(meta))
-      .catch(error => this.errorHandler.handle(error, 'Loading metadata failed'));
   }
 
   /**

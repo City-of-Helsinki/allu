@@ -1,4 +1,4 @@
-export enum CommentTargetType {
+export enum ActionTargetType {
   Application = 'Application',
   Project = 'Project'
 }

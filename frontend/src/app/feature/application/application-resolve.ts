@@ -10,7 +10,7 @@ import {Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
 import {LoadSuccess} from './actions/application-actions';
 import {Load} from '../comment/actions/comment-actions';
-import {CommentTargetType} from '../../model/application/comment/comment-target-type';
+import {ActionTargetType} from '../allu/actions/action-target-type';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -34,7 +34,7 @@ export class ApplicationResolve implements Resolve<Application> {
   }
 
   private loadComments(id: number) {
-    this.store.dispatch(new Load(CommentTargetType.Application));
+    this.store.dispatch(new Load(ActionTargetType.Application));
   }
 
   private handleError(err: any): Observable<Application> {

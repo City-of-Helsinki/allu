@@ -7,12 +7,10 @@ import fi.hel.allu.model.domain.meta.StructureMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,26 +23,14 @@ public class MetaController {
   @Autowired
   private StructureMetaDao structureMetaDao;
 
-  private static final String APPLICATION = "Application";
-  private static final String EXTENSION = "/extension";
-
-  @RequestMapping(value = "/{applicationType}", method = RequestMethod.GET)
-  public ResponseEntity<StructureMeta> findByIdRecurse(@PathVariable String applicationType) {
-    Optional<StructureMeta> structureMetaOpt = structureMetaDao.findCompleteByApplicationType(APPLICATION,
-        Collections.singletonMap(EXTENSION, applicationType));
-    StructureMeta structureMeta = structureMetaOpt
-        .orElseThrow(() -> new NoSuchEntityException("Metadata not found for application type", applicationType));
-    return new ResponseEntity<>(structureMeta, HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{applicationType}/{version}", method = RequestMethod.GET)
-  public ResponseEntity<StructureMeta> findByIdRecurse(@PathVariable String applicationType,
-      @PathVariable int version) {
-    Optional<StructureMeta> structureMetaOpt = structureMetaDao.findCompleteByApplicationType(APPLICATION, version,
-        Collections.singletonMap(EXTENSION, applicationType));
-    StructureMeta structureMeta = structureMetaOpt
-        .orElseThrow(() -> new NoSuchEntityException("Metadata not found for application type", applicationType));
-    return new ResponseEntity<>(structureMeta, HttpStatus.OK);
+  @RequestMapping(value = {"/{type}", "/{type}/{version}"}, method = RequestMethod.POST)
+  public ResponseEntity<StructureMeta> findByType(@PathVariable String type,
+                                                  @PathVariable Optional<Integer> version,
+                                                  @RequestBody Map<String, String> pathOverride) {
+    Integer resolvedVersion = version.orElseGet(() -> structureMetaDao.getLatestMetadataVersion());
+    return structureMetaDao.findCompleteByType(type, resolvedVersion, pathOverride)
+        .map(meta -> new ResponseEntity<>(meta, HttpStatus.OK))
+        .orElseThrow(() -> new NoSuchEntityException("Metadata not found for type", type));
   }
 
   @RequestMapping(value = "/translation/{type}/{text}", method = RequestMethod.GET)

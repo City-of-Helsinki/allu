@@ -11,7 +11,7 @@ import * as projectActions from './actions/project-actions';
 import * as commentActions from '../comment/actions/comment-actions';
 import {NumberUtil} from '../../util/number.util';
 import 'rxjs/add/operator/skipWhile';
-import {CommentTargetType} from '../../model/application/comment/comment-target-type';
+import {ActionTargetType} from '../allu/actions/action-target-type';
 
 @Injectable()
 export class ProjectResolve implements Resolve<Project> {
@@ -35,7 +35,7 @@ export class ProjectResolve implements Resolve<Project> {
     return this.store.select(fromProject.getProjectLoaded)
       .filter(loaded => loaded)
       .switchMap(() => this.store.select(fromProject.getCurrentProject))
-      .do(() => this.store.dispatch(new commentActions.Load(CommentTargetType.Project)))
+      .do(() => this.store.dispatch(new commentActions.Load(ActionTargetType.Project)))
       .take(1);
   }
 }

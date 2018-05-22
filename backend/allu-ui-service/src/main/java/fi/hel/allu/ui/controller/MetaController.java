@@ -17,13 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for providing metadata.
  */
 @RestController
-@RequestMapping("/meta")
 public class MetaController {
 
   @Autowired
   MetaService metaService;
 
-  @RequestMapping(value = "/{applicationType}", method = RequestMethod.GET)
+  @RequestMapping(value = "/meta/{type}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<StructureMetaJson> findByType(@PathVariable final String type) {
+    return new ResponseEntity<>(metaService.findMetadataFor(type), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/applications/{applicationType}/meta", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<StructureMetaJson> findByApplicationType(@PathVariable final ApplicationType applicationType) {
     return new ResponseEntity<>(metaService.findMetadataForApplication(applicationType), HttpStatus.OK);

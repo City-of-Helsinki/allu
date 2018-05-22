@@ -1,6 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.StructureMetaDao;
 import fi.hel.allu.model.domain.AreaRental;
@@ -19,13 +18,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @Transactional
 public class MetaControllerTest {
+
+  private static final String EXTENSION = "/extension";
 
   @Autowired
   WebTestCommon wtc;
@@ -53,21 +53,24 @@ public class MetaControllerTest {
 
   @Test
   public void testLoadEventMeta() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/EVENT")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "EVENT");
+    ResultActions resultActions = wtc.perform(post("/meta/Application"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertEventAttributes(sMetaInResult);
   }
 
   @Test
   public void testLoadEventMetaWithVersion() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/EVENT/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "EVENT");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertEventAttributes(sMetaInResult);
   }
 
   @Test
   public void testCheckApplicationMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.EVENT + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "EVENT");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     List<String> applicationAttributes =
         Arrays.stream(ApplicationJson.class.getDeclaredFields()).map(df -> df.getName()).map(name -> "/" + name).collect(Collectors.toList());
@@ -79,56 +82,64 @@ public class MetaControllerTest {
 
   @Test
   public void testCheckExcavationAnnouncementMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.EXCAVATION_ANNOUNCEMENT + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "EXCAVATION_ANNOUNCEMENT");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(ExcavationAnnouncementJson.class, sMetaInResult);
   }
 
   @Test
   public void testCheckTemporaryTrafficArrangementMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "TEMPORARY_TRAFFIC_ARRANGEMENTS");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(TrafficArrangementJson.class, sMetaInResult);
   }
 
   @Test
   public void testCheckCableReportMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.CABLE_REPORT + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "CABLE_REPORT");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(CableReportJson.class, sMetaInResult);
   }
 
   @Test
   public void testCheckPlacementContractMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.PLACEMENT_CONTRACT + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "PLACEMENT_CONTRACT");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(PlacementContractJson.class, sMetaInResult);
   }
 
   @Test
   public void testCheckEventMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.EVENT + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "EVENT");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(EventJson.class, sMetaInResult);
   }
 
   @Test
   public void testCheckShortTermRentalMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.SHORT_TERM_RENTAL + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "SHORT_TERM_RENTAL");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(ShortTermRentalJson.class, sMetaInResult);
   }
 
   @Test
   public void testCheckAreaRentalAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.AREA_RENTAL + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "AREA_RENTAL");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(AreaRental.class, sMetaInResult);
   }
 
   @Test
   public void testCheckNoteMetaAgainstJsonClass() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.NOTE + "/1")).andExpect(status().isOk());
+    Map<String, String> overrides = Collections.singletonMap(EXTENSION, "NOTE");
+    ResultActions resultActions = wtc.perform(post("/meta/Application/1"), overrides).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(NoteJson.class, sMetaInResult);
   }
@@ -174,5 +185,4 @@ public class MetaControllerTest {
       return attribute.getName();
     }
   }
-
 }
