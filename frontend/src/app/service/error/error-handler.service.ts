@@ -26,6 +26,7 @@ export class ErrorHandler {
       case HttpStatus.BAD_REQUEST:
       case HttpStatus.UNAUTHORIZED:
       case HttpStatus.FORBIDDEN:
+      case HttpStatus.NOT_FOUND:
       case HttpStatus.INTERNAL_SERVER_ERROR:
         return findTranslation(['httpStatus', HttpStatus[error.status]]);
       default:
