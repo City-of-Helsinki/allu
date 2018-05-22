@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import java.util.Map;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.meta.StructureMeta;
@@ -27,12 +28,19 @@ public class MetaServiceTest extends MockServices {
   public void setUp() {
     metaService = new MetaService(props, restTemplate);
     Mockito
-        .when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class),
+        .when(restTemplate.postForEntity(
+            Mockito.any(String.class),
+            Mockito.anyMapOf(String.class, String.class),
+            Mockito.eq(StructureMeta.class),
             Mockito.any(ApplicationKind.class)))
         .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
     Mockito
-        .when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class),
-            Mockito.any(ApplicationKind.class), Mockito.anyInt()))
+        .when(restTemplate.postForEntity(
+            Mockito.any(String.class),
+            Mockito.anyMapOf(String.class, String.class),
+            Mockito.eq(StructureMeta.class),
+            Mockito.any(ApplicationKind.class),
+            Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
 
     initSearchMocks();
