@@ -81,7 +81,7 @@ public class ApplicationServiceTest extends MockServices {
     Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer((Answer<CustomerJson>) invocation ->
         createCustomerJson(103));
 
-    userJson = new UserJson(USER_ID, null, null, null, null, true, null, null, null, null);
+    userJson = new UserJson(USER_ID, null, null, null, null, null, true, null, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService, personAuditLogService);

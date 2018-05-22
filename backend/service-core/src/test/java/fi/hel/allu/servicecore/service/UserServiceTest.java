@@ -36,6 +36,7 @@ public class UserServiceTest {
         "username",
         "realname",
         "email@email",
+        "123-111",
         "title",
         true,
         null,

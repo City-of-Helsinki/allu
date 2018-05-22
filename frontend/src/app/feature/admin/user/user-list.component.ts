@@ -21,10 +21,10 @@ export class UserListComponent implements OnInit {
   }
 
   onSelect(user: User): void {
-    this.router.navigate(['/admin/user', user.userName]);
+    this.router.navigate(['/admin/users', user.id]);
   }
 
   newUser(): void {
-    this.router.navigate(['/admin/user']);
+    this.router.navigate(['/admin/users/new']);
   }
 }

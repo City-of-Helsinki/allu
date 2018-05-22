@@ -3,6 +3,7 @@ export interface BackendUser {
   userName: string;
   realName: string;
   emailAddress: string;
+  phone: string;
   title: string;
   active: boolean;
   lastLogin: string;

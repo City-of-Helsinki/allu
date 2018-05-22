@@ -12,6 +12,8 @@ import {CityDistrict} from '../../../model/common/city-district';
 import {User} from '../../../model/user/user';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
+import {NumberUtil} from '../../../util/number.util';
+import {UserService} from '../../../service/user/user-service';
 
 @Component({
   selector: 'user',
@@ -35,7 +37,7 @@ export class UserComponent implements OnInit {
   districts: Observable<Array<CityDistrict>>;
 
   constructor(private route: ActivatedRoute,
-              private userHub: UserHub,
+              private userService: UserService,
               private store: Store<fromRoot.State>,
               private fb: FormBuilder,
               private router: Router,
@@ -45,6 +47,7 @@ export class UserComponent implements OnInit {
       userName: ['', Validators.required],
       realName: ['', Validators.required],
       emailAddress: [''],
+      phone: [''],
       title: [''],
       isActive: [true],
       allowedApplicationTypes: [[]],
@@ -54,23 +57,21 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      Some(params['userName']).do(userName => {
-        this.userHub.getByUsername(userName).subscribe(user => {
-          this.userForm.patchValue(user);
-        });
-      });
-    });
+    this.route.params
+      .map(params => params['id'])
+      .filter(id => NumberUtil.isDefined(id))
+      .switchMap(id => this.userService.getById(id))
+      .subscribe(user => this.userForm.patchValue(user));
 
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
   }
 
   save(user: User): void {
     this.submitted = true;
-    this.userHub.saveUser(user).subscribe(savedUser => {
+    this.userService.save(user).subscribe(savedUser => {
       this.submitted = false;
       this.userForm.patchValue(savedUser);
-      this.router.navigate(['/admin/user-list']);
+      this.router.navigate(['/admin/users']);
     });
   }
 

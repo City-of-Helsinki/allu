@@ -676,6 +676,18 @@ export const translations = {
       ROLE_VIEW: 'Katselu',
       ROLE_ADMIN: 'Ylläpito'
     },
+    userInfo: 'Käyttäjän tiedot',
+    addNew: 'Lisää uusi käyttäjä',
+    username: 'Käyttäjänimi',
+    name: 'Nimi',
+    title: 'Tehtävänimike',
+    email: 'Sähköpostiosoite',
+    phone: 'Puhelinnumero',
+    active: 'Aktiivinen',
+    lastLogin: 'Viimeisin kirjautuminen',
+    roles: 'Roolit',
+    applicationTypes: 'Hakemustyypit',
+    cityDistricts: 'Kaupunginosat',
     error: {
       search: 'Käyttäjien etsiminen epäonnistui'
     }

@@ -28,6 +28,7 @@ public class WorkQueueServiceTest {
           TEST_USER,
           "foo bar",
           "foo@bar.fi",
+          "123-1231",
           "titteli",
           true,
           null,

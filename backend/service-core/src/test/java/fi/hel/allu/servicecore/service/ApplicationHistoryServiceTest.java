@@ -164,12 +164,12 @@ public class ApplicationHistoryServiceTest extends MockServices {
     setupChangeCapture(APPLICATION_ID);
 
     ApplicationJson oldApplication = createMockApplicationJson(APPLICATION_ID);
-    oldApplication.setOwner(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "perustaja", true, null,
+    oldApplication.setOwner(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "123-123", "perustaja", true, null,
         Collections.singletonList(ApplicationType.AREA_RENTAL), Collections.singletonList(RoleType.ROLE_DECISION),
         Collections.singletonList(1)));
     oldApplication.setName("Old application");
     ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
-    newApplication.setOwner(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "romuttaja", true, null,
+    newApplication.setOwner(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "321-312", "romuttaja", true, null,
         Collections.singletonList(ApplicationType.CABLE_REPORT),
         Collections.singletonList(RoleType.ROLE_CREATE_APPLICATION), Collections.singletonList(2)));
     newApplication.setName("New application");

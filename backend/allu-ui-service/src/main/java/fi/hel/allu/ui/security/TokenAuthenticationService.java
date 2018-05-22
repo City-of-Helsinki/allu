@@ -139,6 +139,7 @@ public class TokenAuthenticationService extends AuthenticationServiceInterface {
             username,
             tokenFields.uniqueName,
             tokenFields.email,
+            "", // phone
             "", // using empty value as title, because title is required. However, the correct title is unknown at this point
             true,
             null,

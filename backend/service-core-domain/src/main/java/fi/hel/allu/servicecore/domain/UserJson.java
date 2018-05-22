@@ -19,6 +19,7 @@ public class UserJson {
   @NotBlank(message = "{user.realName}")
   private String realName;
   private String emailAddress;
+  private String phone;
   @NotBlank(message = "{user.title}")
   private String title;
   @NotBlank(message = "{user.isActive}")
@@ -37,6 +38,7 @@ public class UserJson {
       String userName,
       String realName,
       String emailAddress,
+      String phone,
       String title,
       boolean isActive,
       ZonedDateTime lastLogin,
@@ -47,6 +49,7 @@ public class UserJson {
     this.userName = userName;
     this.realName = realName;
     this.emailAddress = emailAddress;
+    this.phone = phone;
     this.title = title;
     this.isActive = isActive;
     this.lastLogin = lastLogin;
@@ -100,6 +103,14 @@ public class UserJson {
 
   public void setEmailAddress(String emailAddress) {
     this.emailAddress = emailAddress;
+  }
+
+  public String getPhone() {
+    return phone;
+  }
+
+  public void setPhone(String phone) {
+    this.phone = phone;
   }
 
   /**

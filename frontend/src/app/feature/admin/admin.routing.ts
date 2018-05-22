@@ -17,10 +17,12 @@ const attachmentChildRoutes = [
 
 export const adminRoutes: Routes = [
   { path: 'admin', component: AdminComponent, children: [
-    { path: '', redirectTo: 'user-list', pathMatch: 'full'},
-    { path: 'user-list', component: UserListComponent },
-    { path: 'user', component: UserComponent },
-    { path: 'user/:userName', component: UserComponent },
+    { path: '', redirectTo: 'users', pathMatch: 'full'},
+    { path: 'users', children: [
+      { path: '', component: UserListComponent },
+      { path: 'new', component: UserComponent },
+      { path: ':id', component: UserComponent },
+    ]},
     { path: 'external-users', children: [
       { path: '', component: ExternalUserListComponent },
       { path: 'new', component: ExternalUserComponent },

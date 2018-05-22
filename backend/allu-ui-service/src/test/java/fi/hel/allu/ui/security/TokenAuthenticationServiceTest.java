@@ -81,6 +81,7 @@ public class TokenAuthenticationServiceTest {
         USER_NAME,
         "John Doe",
         "email",
+        "123-321",
         "Johtaja",
         true,
         null,
