@@ -1,6 +1,7 @@
 package fi.hel.allu.external.domain;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -16,9 +17,9 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="Application customer information")
 public class CustomerExt {
   private Integer id;
-  @NotNull
+  @NotNull(message = "{customer.type.notnull}")
   private CustomerType type;
-  @NotBlank
+  @NotBlank(message = "{customer.name}")
   private String name;
   private PostalAddressExt postalAddress;
   private String email;
@@ -26,6 +27,9 @@ public class CustomerExt {
   private String registryKey;
   private String ovt;
   private String invoicingOperator;
+  @NotBlank(message = "{customer.country}")
+  @Size(min = 2, max = 2, message = "{customer.country.format}" )
+  private String country;
 
   public Integer getId() {
     return id;
@@ -35,7 +39,7 @@ public class CustomerExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value="Customer type", allowableValues = "PERSON, COMPANY, ASSOCIATION, OTHER")
+  @ApiModelProperty(value="Customer type", required = true, allowableValues = "PERSON, COMPANY, ASSOCIATION, OTHER")
   public CustomerType getType() {
     return type;
   }
@@ -44,7 +48,7 @@ public class CustomerExt {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "The name of the customer person, company or organization.")
+  @ApiModelProperty(value = "The name of the customer person, company or organization.", required = true)
   public String getName() {
     return name;
   }
@@ -105,5 +109,14 @@ public class CustomerExt {
 
   public void setInvoicingOperator(String invoicingOperator) {
     this.invoicingOperator = invoicingOperator;
+  }
+
+  @ApiModelProperty(value = "Customer's country (ISO 3166-1 alpha-2 country code).", required = true)
+  public String getCountry() {
+    return country;
+  }
+
+  public void setCountry(String country) {
+    this.country = country;
   }
 }

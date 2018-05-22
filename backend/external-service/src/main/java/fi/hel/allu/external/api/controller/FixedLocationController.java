@@ -37,8 +37,8 @@ public class FixedLocationController {
       authorizations=@Authorization(value ="api_key"))
   @RequestMapping(method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<List<FixedLocationExt>> getAll(@ApiParam(value = "Application kind of the fixed locations to get")
-                                                       @RequestParam ApplicationKind applicationKind,
+  public ResponseEntity<List<FixedLocationExt>> getAll(@ApiParam(value = "Application kind of the fixed locations to get", required = true)
+                                                       @RequestParam(required = true) ApplicationKind applicationKind,
                                                        @ApiParam(value = "Spatial reference system ID of the geometry.", required = false, defaultValue = "3879")
                                                        @RequestParam(required = false) Integer srId) {
     return new ResponseEntity<>(FixedLocationMapper.mapToExt(locationService.getFixedLocationList(applicationKind, srId)), HttpStatus.OK);

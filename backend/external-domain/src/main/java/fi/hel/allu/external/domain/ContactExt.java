@@ -23,7 +23,7 @@ public class ContactExt {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Name of the contact")
+  @ApiModelProperty(value = "Name of the contact", required = true)
   public String getName() {
     return name;
   }

@@ -2,7 +2,11 @@ package fi.hel.allu.external.domain;
 
 import java.time.ZonedDateTime;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.geolatte.geom.Geometry;
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -18,14 +22,19 @@ import io.swagger.annotations.ApiModelProperty;
 public abstract class ApplicationExt {
 
   private String name;
+  @NotNull(message = "{application.customersWithContacts}")
+  @Valid
   private CustomerWithContactsExt customerWithContacts;
+  @Valid
   private CustomerExt invoicingCustomer;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
+  @NotNull(message = "{application.geometry.missing}")
   private Geometry geometry;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private boolean pendingOnClient;
+  @NotBlank(message = "{application.identificationNumber}")
   private String identificationNumber;
   private String customerReference;
 
@@ -39,7 +48,7 @@ public abstract class ApplicationExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value="Applicant of the application")
+  @ApiModelProperty(value="Applicant of the application", required = true)
   public CustomerWithContactsExt getCustomerWithContacts() {
     return customerWithContacts;
   }
@@ -48,7 +57,7 @@ public abstract class ApplicationExt {
     this.customerWithContacts = customerWithContacts;
   }
 
-  @ApiModelProperty(value="Recipient of the invoice", allowEmptyValue = true)
+  @ApiModelProperty(value="Recipient of the invoice")
   public CustomerExt getInvoicingCustomer() {
     return invoicingCustomer;
   }
@@ -57,7 +66,7 @@ public abstract class ApplicationExt {
     this.invoicingCustomer = invoicingCustomer;
   }
 
-  @ApiModelProperty(value = "Application location geometry")
+  @ApiModelProperty(value = "Application location geometry", required = true)
   public Geometry getGeometry() {
     return geometry;
   }
@@ -93,7 +102,7 @@ public abstract class ApplicationExt {
     this.pendingOnClient = pendingOnClient;
   }
 
-  @ApiModelProperty(value = "Identification number (in Finnish: asiointunnus)")
+  @ApiModelProperty(value = "Identification number (in Finnish: asiointunnus)", required = true)
   public String getIdentificationNumber() {
     return identificationNumber;
   }

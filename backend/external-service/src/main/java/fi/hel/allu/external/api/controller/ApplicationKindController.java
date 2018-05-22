@@ -29,7 +29,8 @@ public class ApplicationKindController {
       authorizations=@Authorization(value ="api_key"))
   @RequestMapping(method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<List<ApplicationKind>> getAll(@ApiParam(value = "Application type of the kinds to get") @RequestParam ApplicationType applicationType) {
+  public ResponseEntity<List<ApplicationKind>> getAll(@ApiParam(value = "Application type of the kinds to get", required = true)
+                                                      @RequestParam(required = true) ApplicationType applicationType) {
     return new ResponseEntity<>(ApplicationKind.forApplicationType(applicationType), HttpStatus.OK);
   }
 

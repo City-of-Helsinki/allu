@@ -1,5 +1,7 @@
 package fi.hel.allu.external.domain;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -7,6 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 public class PlacementContractExt extends ApplicationExt {
 
   private PostalAddressExt postalAddress;
+
+  @NotEmpty(message = "{application.clientApplicationKind}")
   private String clientApplicationKind;
   private String workDescription;
   private String propertyIdentificationNumber;
@@ -20,7 +24,7 @@ public class PlacementContractExt extends ApplicationExt {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value")
+  @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
   public String getClientApplicationKind() {
     return clientApplicationKind;
   }

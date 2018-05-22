@@ -5,8 +5,10 @@ import fi.hel.allu.servicecore.security.PreAuthorizeEnforcerInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -31,4 +33,12 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     restTemplate.setErrorHandler(new ServiceResponseErrorHandler());
     return restTemplate;
   }
+
+  @Bean
+  public MessageSource messageSource() {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    messageSource.setBasename("ValidationMessages");
+    return messageSource;
+  }
+
 }

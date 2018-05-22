@@ -2,6 +2,8 @@ package fi.hel.allu.external.domain;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,9 +12,10 @@ import io.swagger.annotations.ApiModelProperty;
 public class InformationRequestResponseExt<T extends ApplicationExt> {
 
   private T applicationData;
+  @NotEmpty(message = "{informationRequest.fields}")
   private List<InformationRequestFieldKey> updatedFields;
 
-  @ApiModelProperty(value = "Application data")
+  @ApiModelProperty(value = "Application data. Can be empty (e.g. if only attachment update requested)")
   public T getApplicationData() {
     return applicationData;
   }
@@ -21,7 +24,7 @@ public class InformationRequestResponseExt<T extends ApplicationExt> {
     this.applicationData = applicationData;
   }
 
-  @ApiModelProperty(value = "Keys of updated application fields")
+  @ApiModelProperty(value = "Keys of updated application fields", required = true)
   public List<InformationRequestFieldKey> getUpdatedFields() {
     return updatedFields;
   }

@@ -6,17 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -30,6 +28,13 @@ public class PlacementContractController {
   @Autowired
   private ApplicationServiceExt applicationService;
 
+  @Autowired
+  private ApplicationExtGeometryValidator geometryValidator;
+
+  @InitBinder("placementContractExt")
+  protected void initBinder(WebDataBinder binder) {
+    binder.addValidators(geometryValidator);
+  }
 
   @ApiOperation(value = "Create new placement contract application. "
       + "If application is still pending in client side, pendingOnClient should be set to true to prevent handling "
@@ -40,7 +45,8 @@ public class PlacementContractController {
       authorizations=@Authorization(value ="api_key"))
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<Integer> create(@ApiParam(value = "Placement contract data") @Valid @RequestBody PlacementContractExt placementContract) throws JsonProcessingException {
+  public ResponseEntity<Integer> create(@ApiParam(value = "Placement contract data", required = true)
+                                        @Valid @RequestBody PlacementContractExt placementContract) throws JsonProcessingException {
     return new ResponseEntity<>(applicationService.createPlacementContract(placementContract), HttpStatus.OK);
   }
 
@@ -52,7 +58,7 @@ public class PlacementContractController {
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> update(@ApiParam(value = "Id of the placement contract application to update.")
                                         @PathVariable Integer id,
-                                        @ApiParam(value = "Placement contract data")
+                                        @ApiParam(value = "Placement contract data", required = true)
                                         @Valid @RequestBody PlacementContractExt placementContract) throws JsonProcessingException {
     applicationService.validateFullUpdateAllowed(id);
     applicationService.validateOwnedByExternalUser(id);
@@ -67,7 +73,7 @@ public class PlacementContractController {
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> addResponse(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,
                                           @ApiParam(value = "Id of the information request") @PathVariable("requestid") Integer requestId,
-                                          @ApiParam(value = "Content of the response") @RequestBody InformationRequestResponseExt<PlacementContractExt> response) throws JsonProcessingException {
+                                          @ApiParam(value = "Content of the response") @RequestBody @Valid InformationRequestResponseExt<PlacementContractExt> response) throws JsonProcessingException {
     applicationService.addInformationRequestResponse(applicationId, requestId, response);
     return new ResponseEntity<>(HttpStatus.OK);
   }

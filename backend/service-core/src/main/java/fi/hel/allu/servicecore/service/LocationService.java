@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -86,8 +87,8 @@ public class LocationService {
     return resultList;
   }
 
-  public boolean hasValidGeometry(Location location) {
-    return restTemplate.postForObject(applicationProperties.getIsValidGeometryUrl(), location, Boolean.class);
+  public boolean isValidGeometry(Geometry geometry) {
+    return restTemplate.postForObject(applicationProperties.getIsValidGeometryUrl(), new GeometryWrapper(geometry), Boolean.class);
   }
 
 }

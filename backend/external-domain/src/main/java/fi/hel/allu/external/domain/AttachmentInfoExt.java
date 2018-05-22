@@ -1,16 +1,20 @@
 package fi.hel.allu.external.domain;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Attachment meta data")
 public class AttachmentInfoExt {
 
+  @NotBlank(message = "{attachment.mimeType}")
   private String mimeType;
+  @NotBlank(message = "{attachment.name}")
   private String name;
   private String description;
 
-  @ApiModelProperty(value = "Attachment mime type")
+  @ApiModelProperty(value = "Attachment mime type", required = true)
   public String getMimeType() {
     return mimeType;
   }
@@ -19,7 +23,7 @@ public class AttachmentInfoExt {
     this.mimeType = mimeType;
   }
 
-  @ApiModelProperty(value = "Attachment name")
+  @ApiModelProperty(value = "Attachment name", required = true)
   public String getName() {
     return name;
   }

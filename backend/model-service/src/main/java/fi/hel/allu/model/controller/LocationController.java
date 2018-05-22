@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import fi.hel.allu.common.domain.GeometryWrapper;
 import javax.validation.Valid;
 
 import java.util.List;
@@ -108,8 +109,8 @@ public class LocationController {
   }
 
   @RequestMapping(value = "/geometry/isvalid", method = RequestMethod.POST)
-  public ResponseEntity<Boolean> hasValidGeometry(@RequestBody Location location) {
-    return new ResponseEntity<>(locationDao.isValidGeometry(location.getGeometry()), HttpStatus.OK);
+  public ResponseEntity<Boolean> hasValidGeometry(@RequestBody GeometryWrapper geometryWrapper) {
+    return new ResponseEntity<>(locationDao.isValidGeometry(geometryWrapper.getGeometry()), HttpStatus.OK);
   }
 
   // Make a stripped-down view of a city district: only the district ID + name.

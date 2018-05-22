@@ -1,4 +1,4 @@
-package fi.hel.allu.servicecore.validation;
+package fi.hel.allu.external.validation;
 
 import java.util.Locale;
 
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.external.domain.ApplicationExt;
 import fi.hel.allu.servicecore.service.LocationService;
 
 @Component
-public class ApplicationGeometryValidator implements Validator {
+public class ApplicationExtGeometryValidator implements Validator {
 
   @Autowired
   private LocationService locationService;
@@ -30,21 +30,20 @@ public class ApplicationGeometryValidator implements Validator {
 
   @Override
   public boolean supports(Class<?> clazz) {
-    return ApplicationJson.class.isAssignableFrom(clazz);
+    return ApplicationExt.class.isAssignableFrom(clazz);
   }
 
   @PostConstruct
   private void init() {
-      accessor = new MessageSourceAccessor(messageSource, Locale.getDefault());
+      accessor = new MessageSourceAccessor(messageSource);
   }
 
   @Override
   public void validate(Object target, Errors errors) {
-    ApplicationJson application = (ApplicationJson) target;
-    for (int i = 0; i < application.getLocations().size(); i++)
-      if (!isValidGeometry(application.getLocations().get(i).getGeometry())) {
-        errors.rejectValue("locations[" + i + "].geometry", ERROR_CODE, accessor.getMessage(ERROR_CODE));
-      }
+    ApplicationExt application = (ApplicationExt) target;
+    if (!isValidGeometry(application.getGeometry())) {
+      errors.rejectValue("geometry", ERROR_CODE, accessor.getMessage(ERROR_CODE));
+    }
   }
 
   private boolean isValidGeometry(Geometry geometry) {
