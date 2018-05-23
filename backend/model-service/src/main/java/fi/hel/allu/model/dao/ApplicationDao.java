@@ -357,7 +357,7 @@ public class ApplicationDao {
     ApplicationType applicationType = queryFactory.select(application.type).from(application)
         .where(application.id.eq(id)).fetchOne();
     if (ApplicationType.NOTE != applicationType) {
-      throw new IllegalArgumentException("Trying to delete non-note application");
+      throw new IllegalArgumentException("application.delete.nonnote");
     }
     deleteApplication(id);
   }
@@ -372,7 +372,7 @@ public class ApplicationDao {
     StatusType status = queryFactory.select(application.status).from(application)
         .where(application.id.eq(id)).fetchOne();
     if (StatusType.PRE_RESERVED != status) {
-      throw new IllegalArgumentException("Trying to delete application which is not a draft");
+      throw new IllegalArgumentException("application.delete.nondraft");
     }
     deleteApplication(id);
   }
@@ -425,7 +425,7 @@ public class ApplicationDao {
         .where(application.id.eq(applicationId))
         .execute();
     if (updated != 1) {
-      throw new NoSuchEntityException("Attempted to update decision status of non-existent application", Integer.toString(applicationId));
+      throw new NoSuchEntityException("application.update.notFound", applicationId);
     }
     return findByIds(Collections.singletonList(applicationId), false).get(0);
   }
@@ -448,7 +448,7 @@ public class ApplicationDao {
         .where(application.id.eq(applicationId))
         .execute();
     if (updated != 1) {
-      throw new NoSuchEntityException("Attempted to update decision status of non-existent application", Integer.toString(applicationId));
+      throw new NoSuchEntityException("application.update.notFound", applicationId);
     }
     return findByIds(Collections.singletonList(applicationId), false).get(0);
   }
@@ -471,7 +471,7 @@ public class ApplicationDao {
         .where(application.id.eq(applicationId))
         .execute();
     if (updated != 1) {
-      throw new NoSuchEntityException("Attempted to update status of non-existent application", Integer.toString(applicationId));
+      throw new NoSuchEntityException("application.update.notFound", applicationId);
     }
     return findById(applicationId);
   }

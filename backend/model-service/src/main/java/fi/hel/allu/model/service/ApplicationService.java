@@ -59,7 +59,7 @@ public class ApplicationService {
   public Application findById(int id) {
     Application application = applicationDao.findById(id);
     if (application == null) {
-      throw new NoSuchEntityException("Application not found", Integer.toString(id));
+      throw new NoSuchEntityException("application.notFound", id);
     }
     return application;
   }
@@ -366,14 +366,14 @@ public class ApplicationService {
   private void createInvoiceIfNeeded(int applicationId, int userId) {
     List<Application> applications = applicationDao.findByIds(Collections.singletonList(applicationId), false);
     if (applications.isEmpty()) {
-      throw new NoSuchEntityException("No application found with ID " + applicationId);
+      throw new NoSuchEntityException("application.notFound", applicationId);
     }
     Application application = applications.get(0);
     if (application.getNotBillable() == true) {
       return;
     }
     Customer invoicee = customerDao.findById(application.getInvoiceRecipientId())
-        .orElseThrow(() -> new NoSuchEntityException("No customer exists"));
+        .orElseThrow(() -> new NoSuchEntityException("application.customer.notFound"));
     final boolean sapIdPending = StringUtils.isEmpty(invoicee.getSapCustomerNumber());
     invoiceService.createInvoices(applicationId, sapIdPending);
     if (sapIdPending) {
@@ -392,7 +392,7 @@ public class ApplicationService {
   private void verifyApplicationIsUpdatable(Integer id) throws IllegalOperationException {
     StatusType status = applicationDao.getStatus(id);
     if (StatusType.CANCELLED.equals(status)) {
-      throw new IllegalOperationException("Tried to update cancelled application " + id);
+      throw new IllegalOperationException("application.cancelled.updated");
     }
   }
 

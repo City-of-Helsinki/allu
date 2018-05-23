@@ -5,7 +5,6 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.AttachmentInfo;
@@ -214,7 +213,7 @@ public class AttachmentDao {
     Integer attachmentDataId = getAttachmentDataIdForAttachment(id);
     long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Deleting attachment failed", Integer.toString(id));
+      throw new NoSuchEntityException("attachment.delete.failed", id);
     }
     deleteAttachmentData(attachmentDataId);
   }
@@ -239,7 +238,7 @@ public class AttachmentDao {
       Integer attachmentDataId = getAttachmentDataIdForAttachment(id);
       long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
       if (changed == 0) {
-        throw new NoSuchEntityException("Deleting attachment failed", Integer.toString(id));
+        throw new NoSuchEntityException("attachment.delete.failed", id);
       }
       deleteAttachmentData(attachmentDataId);
     } else {
@@ -282,7 +281,7 @@ public class AttachmentDao {
         .where(attachment.id.eq(id))
         .execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+      throw new NoSuchEntityException("attachment.update.failed", id);
     }
     return findById(id).get();
   }
@@ -296,7 +295,7 @@ public class AttachmentDao {
         .where(defaultAttachment.attachmentId.eq(id))
         .execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+      throw new NoSuchEntityException("attachment.update.failed", id);
     }
     updateDefaultAttachmentApplicationTypes(info.getDefaultAttachmentId(), info.getApplicationTypes());
     return findDefaultById(id).get();
@@ -345,7 +344,7 @@ public class AttachmentDao {
         .where(applicationAttachment.attachmentId.eq(attachmentId).and(applicationAttachment.applicationId.eq(applicationId)))
         .execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to unlink default attachment from application", Integer.toString(applicationId));
+      throw new NoSuchEntityException("attachment.unlink.failed", applicationId);
     }
   }
 
@@ -361,7 +360,7 @@ public class AttachmentDao {
     Integer id = queryFactory.insert(attachment).populate(info)
         .executeWithKey(attachment.id);
     if (id == null) {
-      throw new QueryException("Failed to insert record");
+      throw new QueryException("attachment.insert.failed");
     }
     return id;
   }
@@ -372,7 +371,7 @@ public class AttachmentDao {
         .set(attachmentData.data, data)
         .set(attachmentData.size, size).executeWithKey(attachmentData.id);
     if (id == null) {
-      throw new QueryException("Failed to insert record");
+      throw new QueryException("attachment.insert.failed");
     }
     return id;
   }

@@ -56,7 +56,7 @@ public class ProjectController {
   public ResponseEntity<ProjectJson> findById(@PathVariable int id) {
     List<ProjectJson> projects = projectService.findByIds(Collections.singletonList(id));
     if (projects.size() != 1) {
-      throw new NoSuchEntityException("Project not found", Integer.toString(id));
+      throw new NoSuchEntityException("project.notFound", Integer.toString(id));
     }
     return new ResponseEntity<>(projects.get(0), HttpStatus.OK);
   }

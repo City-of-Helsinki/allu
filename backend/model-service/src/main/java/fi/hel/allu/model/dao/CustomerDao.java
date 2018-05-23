@@ -168,7 +168,7 @@ public class CustomerDao {
         .populate(customerData).set(customer.postalAddressId, postalAddressDao.insertIfNotNull(customerData))
         .executeWithKey(customer.id);
     if (id == null) {
-      throw new QueryException("Failed to insert record");
+      throw new QueryException("customer.insert.failed");
     }
     return findById(id).get();
   }
@@ -192,7 +192,7 @@ public class CustomerDao {
         .set(customer.postalAddressId, postalAddressId)
         .where(customer.id.eq(id)).execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+      throw new NoSuchEntityException("customer.update.failed", Integer.toString(id));
     }
 
     if (deletedPostalAddressId != null) {

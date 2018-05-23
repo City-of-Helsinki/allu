@@ -47,9 +47,7 @@ public class AttachmentController {
         attachmentDao.linkApplicationToAttachment(applicationId, attachmentInfo.getId());
         return new ResponseEntity<>(attachmentInfo, HttpStatus.CREATED);
       } else {
-        throw new NoSuchEntityException(
-            "Probably attempted to attach default attachment to application, but no such default attachment",
-            Integer.toString(attachmentInfo.getId()));
+        throw new NoSuchEntityException("attachment.attach.failed", attachmentInfo.getId());
       }
     } else if (data.isEmpty()) {
       // Empty attachments don't make sense, let's explicitly forbid them

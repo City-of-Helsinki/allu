@@ -104,7 +104,7 @@ public class CommentDao {
         .set(comment.updateTime, ZonedDateTime.now())
         .where(comment.id.eq(commentId)).execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the comment", Integer.toString(commentId));
+      throw new NoSuchEntityException("comment.update.failed", commentId);
     }
     return findById(commentId).get();
   }
@@ -117,7 +117,7 @@ public class CommentDao {
   public void delete(int commentId) {
     long count = queryFactory.delete(comment).where(comment.id.eq(commentId)).execute();
     if (count == 0) {
-      throw new NoSuchEntityException("Deleting comment failed", Integer.toString(commentId));
+      throw new NoSuchEntityException("comment.delete.failed", commentId);
     }
   }
 
