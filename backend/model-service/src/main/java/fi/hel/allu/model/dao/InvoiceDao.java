@@ -106,7 +106,7 @@ public class InvoiceDao {
     long changed = queryFactory.update(invoice).populate(updatedInvoice, EXCLUDE_IDS).where(invoice.id.eq(invoiceId))
         .execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(invoiceId));
+      throw new NoSuchEntityException("invoice.update.failed", Integer.toString(invoiceId));
     }
     deleteRows(invoiceId);
     insertRows(invoiceId, updatedInvoice.getRows());
@@ -122,7 +122,7 @@ public class InvoiceDao {
     deleteRows(invoiceId);
     long changed = queryFactory.delete(invoice).where(invoice.id.eq(invoiceId)).execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Deleting invoice failed", Integer.toString(invoiceId));
+      throw new NoSuchEntityException("invoice.delete.failed", Integer.toString(invoiceId));
     }
   }
 

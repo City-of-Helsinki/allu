@@ -10,13 +10,13 @@ public class ChargeBasisEntry {
   private String tag;
   private String referredTag;
   private boolean manuallySet;
-  @NotNull
+  @NotNull(message = "application.invoicing.chargebasis.type")
   private ChargeBasisType type;
   private ChargeBasisUnit unit;
   private double quantity;
-  @Size(max = 70)
+  @Size(max = 70, message = "application.invoicing.chargebasis.text")
   private String text;
-  @Size(max = 5)
+  @Size(max = 5, message = "application.invoicing.chargebasis.explanation.length")
   private String[] explanation;
   private int unitPrice;
   private int netPrice;

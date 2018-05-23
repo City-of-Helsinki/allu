@@ -123,7 +123,7 @@ public class ContactDao {
   private Contact update(int id, Contact contactData) {
     contactData.setId(id);
     Contact currentContact = findById(id).orElseThrow(
-        () -> new NoSuchEntityException("Attempted to update non-existent contact", Integer.toString(id)));
+        () -> new NoSuchEntityException("contact.update.notFound", id));
 
     Integer deletedPostalAddressId = postalAddressDao.mapAndUpdatePostalAddress(currentContact, contactData);
     Integer postalAddressId = Optional.ofNullable(currentContact.getPostalAddress()).map(pAddress -> pAddress.getId()).orElse(null);
@@ -138,7 +138,7 @@ public class ContactDao {
     }
     long changed = query.execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+      throw new NoSuchEntityException("contact.update.failed", id);
     }
     if (deletedPostalAddressId != null) {
       postalAddressDao.delete(Collections.singletonList(deletedPostalAddressId));

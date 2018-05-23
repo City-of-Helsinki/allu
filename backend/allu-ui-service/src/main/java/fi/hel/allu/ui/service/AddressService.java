@@ -75,7 +75,7 @@ public class AddressService {
 
     StreetAddressXml streetAddressXml = WfsUtil.unmarshalWfs(wfsXmlEntity.getBody(), StreetAddressXml.class);
     if (streetAddressXml.featureMember == null || streetAddressXml.featureMember.size() < 1) {
-      throw new NoSuchEntityException("Geocoded address not found");
+      throw new NoSuchEntityException("address.geocoded.notFound");
     } else {
       // assuming that any address geocoding query returns at most a single address
       return new CoordinateJson(

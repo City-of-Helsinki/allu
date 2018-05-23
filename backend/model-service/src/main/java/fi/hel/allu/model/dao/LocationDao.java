@@ -130,7 +130,7 @@ public class LocationDao {
     Integer id = queryFactory.insert(location)
         .populate(locationData).set(location.postalAddressId, postalAddressDao.insertIfNotNull(locationData)).executeWithKey(location.id);
     if (id == null) {
-      throw new QueryException("Failed to insert record");
+      throw new QueryException("location.insert.failed");
     }
     setGeometry(id, locationData.getGeometry());
     setFixedLocationIds(id, locationData.getFixedLocationIds());

@@ -3,12 +3,14 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/com
 import {Observable} from 'rxjs/Observable';
 
 @Injectable()
-export class ContentTypeInterceptor implements HttpInterceptor {
+export class CommonHeaderInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const reqWithContentType = req.clone({
-      setHeaders: { 'Content-Type': 'application/json' }
+    const headers = req.clone({
+      setHeaders: {
+        'Content-Type': 'application/json',
+        'Accept-Language': 'fi-FI' }
     });
 
-    return next.handle(reqWithContentType);
+    return next.handle(headers);
   }
 }

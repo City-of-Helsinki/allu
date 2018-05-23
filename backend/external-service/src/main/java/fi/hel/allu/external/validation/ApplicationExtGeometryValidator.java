@@ -1,9 +1,5 @@
 package fi.hel.allu.external.validation;
 
-import java.util.Locale;
-
-import javax.annotation.PostConstruct;
-
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -18,24 +14,22 @@ import fi.hel.allu.servicecore.service.LocationService;
 @Component
 public class ApplicationExtGeometryValidator implements Validator {
 
-  @Autowired
-  private LocationService locationService;
+  private final LocationService locationService;
+  private final MessageSourceAccessor accessor;
 
   @Autowired
-  private MessageSource messageSource;
-
-  private MessageSourceAccessor accessor;
+  ApplicationExtGeometryValidator(
+      LocationService locationService,
+      MessageSource validationMessageSource) {
+    this.locationService = locationService;
+    accessor = new MessageSourceAccessor(validationMessageSource);
+  }
 
   private static final String ERROR_CODE =  "application.locations.geometry.invalid";
 
   @Override
   public boolean supports(Class<?> clazz) {
     return ApplicationExt.class.isAssignableFrom(clazz);
-  }
-
-  @PostConstruct
-  private void init() {
-      accessor = new MessageSourceAccessor(messageSource);
   }
 
   @Override
@@ -49,5 +43,4 @@ public class ApplicationExtGeometryValidator implements Validator {
   private boolean isValidGeometry(Geometry geometry) {
     return locationService.isValidGeometry(geometry);
   }
-
 }

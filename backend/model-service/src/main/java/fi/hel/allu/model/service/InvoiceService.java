@@ -63,7 +63,7 @@ public class InvoiceService {
     Application application = applicationDao.findById(applicationId);
     final Optional<Customer> customerOpt = customerDao.findById(application.getInvoiceRecipientId());
     if (!customerOpt.isPresent()) {
-      throw new NoSuchEntityException("Unable to create invoice as customer is not found");
+      throw new NoSuchEntityException("invoice.create.customer.notFound");
     }
     final Customer customer = customerOpt.get();
     final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);

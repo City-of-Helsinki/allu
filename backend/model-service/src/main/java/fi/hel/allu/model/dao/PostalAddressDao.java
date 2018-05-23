@@ -45,7 +45,7 @@ public class PostalAddressDao {
             new ExcludingMapper(ExcludingMapper.NullHandling.WITH_NULL_BINDINGS, Collections.singletonList(postalAddress.id)))
         .executeWithKey(postalAddress.id);
     if (id == null) {
-      throw new QueryException("Failed to insert record");
+      throw new QueryException("postaladdress.insert.failed");
     }
     return findById(id).get();
   }

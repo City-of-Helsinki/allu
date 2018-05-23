@@ -1,5 +1,6 @@
 package fi.hel.allu.external.config;
 
+import fi.hel.allu.common.controller.handler.ControllerExceptionHandlerConfig;
 import fi.hel.allu.common.controller.handler.ServiceResponseErrorHandler;
 import fi.hel.allu.servicecore.security.PreAuthorizeEnforcerInterceptor;
 
@@ -35,10 +36,25 @@ public class AppConfig extends WebMvcConfigurerAdapter {
   }
 
   @Bean
-  public MessageSource messageSource() {
+  public MessageSource errorMessageSource() {
     ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-    messageSource.setBasename("ValidationMessages");
+    messageSource.setBasename("ErrorMessages");
+    messageSource.setDefaultEncoding("UTF-8");
     return messageSource;
   }
 
+  @Bean
+  public MessageSource validationMessageSource() {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    messageSource.setBasename("ValidationMessages");
+    messageSource.setDefaultEncoding("UTF-8");
+    return messageSource;
+  }
+
+  @Bean
+  public ControllerExceptionHandlerConfig controllerExceptionHandlerConfig() {
+    ControllerExceptionHandlerConfig config = new ControllerExceptionHandlerConfig();
+    config.setTranslateErrorMessages(true);
+    return config;
+  }
 }

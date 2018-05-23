@@ -120,7 +120,7 @@ public class UserDao {
     try {
       Integer id = queryFactory.insert(user).populate(userData).executeWithKey(user.id);
       if (id == null) {
-        throw new QueryException("Failed to insert record");
+        throw new QueryException("user.insert.failed");
       }
       insertRoles(id, userData);
       insertApplicationTypes(id, userData);
@@ -128,7 +128,7 @@ public class UserDao {
       return findById(id).get();
     } catch (DataIntegrityViolationException e) {
       if (ExceptionResolver.isUniqueConstraintViolation(e)) {
-        throw new NonUniqueException("Inserting user failed. Perhaps given user name collided with another: " + userData.getUserName());
+        throw new NonUniqueException("user.insert.nonunique");
       }
       throw e;
     }
@@ -139,7 +139,7 @@ public class UserDao {
     try {
       long changed = queryFactory.update(user).populate(userData).where(user.id.eq(userData.getId())).execute();
       if (changed == 0) {
-        throw new NoSuchEntityException("Failed to update user", Integer.toString(userData.getId()));
+        throw new NoSuchEntityException("user.update.failed", userData.getId());
       }
       queryFactory.delete(userRole).where(userRole.userId.eq(userData.getId())).execute();
       queryFactory.delete(userApplicationType).where(userApplicationType.userId.eq(userData.getId())).execute();
@@ -149,7 +149,7 @@ public class UserDao {
       insertCityDistricts(userData.getId(), userData);
     } catch (DataIntegrityViolationException e) {
       if (ExceptionResolver.isUniqueConstraintViolation(e)) {
-        throw new NonUniqueException("Updating user failed. Perhaps given user name collided with another: " + userData.getUserName());
+        throw new NonUniqueException("user.update.nonunique");
       }
       throw e;
     }

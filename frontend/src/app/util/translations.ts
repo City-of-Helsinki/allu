@@ -1352,6 +1352,7 @@ export const translations = {
     BAD_REQUEST: 'Toiminto epäonnistui',
     UNAUTHORIZED: 'Et ole kirjautunut',
     FORBIDDEN: 'Oikeutesi eivät riitä',
+    NOT_FOUND: 'Haku epäonnistui',
     INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
     UNKNOWN: 'Tuntematon virhe'
   },
