@@ -10,7 +10,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {TimeUtil} from '../../../../util/time.util';
 import {ProjectService} from '../../../../service/project/project.service';
 import {NotificationService} from '../../../../service/notification/notification.service';
-
+import {ApplicationStatus} from '../../../../model/application/application-status';
 
 @Component({
   selector: 'traffic-arrangement',
@@ -19,6 +19,8 @@ import {NotificationService} from '../../../../service/notification/notification
   styleUrls: []
 })
 export class TrafficArrangementComponent extends ApplicationInfoBaseComponent implements OnInit {
+
+  showImpedimentType = false;
 
   constructor(
     fb: FormBuilder,
@@ -66,5 +68,7 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
 
     const arrangement = <TrafficArrangement>application.extension || new TrafficArrangement();
     this.applicationForm.patchValue(TrafficArrangementForm.from(application, arrangement));
+
+    this.showImpedimentType = application.statusEnum >= ApplicationStatus.HANDLING;
   }
 }

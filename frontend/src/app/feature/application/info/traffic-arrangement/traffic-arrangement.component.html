@@ -82,7 +82,7 @@
               </mat-form-field>
             </div>
           </div>
-          <div class="row">
+          <div class="row" *ngIf="showImpedimentType">
             <div class="col m12">
               <mat-button-toggle-group formControlName="trafficArrangementImpedimentType">
                 <mat-button-toggle value="NO_IMPEDIMENT">
