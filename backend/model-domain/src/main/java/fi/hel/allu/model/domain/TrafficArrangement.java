@@ -8,7 +8,7 @@ import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
  */
 public class TrafficArrangement extends ApplicationExtension {
   private Boolean pksCard;
-  private String additionalInfo;
+  private String workPurpose;
   private String trafficArrangements;
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
@@ -30,14 +30,14 @@ public class TrafficArrangement extends ApplicationExtension {
   }
 
   /**
-   * In Finnish: lisätiedot.
+   * In Finnish: työn tarkoitus.
    */
-  public String getAdditionalInfo() {
-    return additionalInfo;
+  public String getWorkPurpose() {
+    return workPurpose;
   }
 
-  public void setAdditionalInfo(String additionalInfo) {
-    this.additionalInfo = additionalInfo;
+  public void setWorkPurpose(String workPurpose) {
+    this.workPurpose = workPurpose;
   }
 
   /**

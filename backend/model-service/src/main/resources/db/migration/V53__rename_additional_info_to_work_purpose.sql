@@ -1,0 +1,2 @@
+update allu.application set extension = extension::jsonb - 'additionalInfo' || jsonb_build_object('workPurpose', extension::jsonb->'additionalInfo') where type='TEMPORARY_TRAFFIC_ARRANGEMENTS';
+update allu.attribute_meta set name='workPurpose',ui_name='Työn tarkoitus' where name='additionalInfo' and structure_meta_id in (select id from structure_meta where type_name='TEMPORARY_TRAFFIC_ARRANGEMENTS');

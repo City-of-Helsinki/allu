@@ -7,7 +7,7 @@ export class TrafficArrangement extends ApplicationExtension {
     public pksCard?: boolean,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
-    public additionalInfo?: string,
+    public workPurpose?: string,
     public terms?: string
   ) {
     super(ApplicationType[ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS], terms);

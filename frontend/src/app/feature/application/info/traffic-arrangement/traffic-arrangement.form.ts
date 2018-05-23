@@ -10,7 +10,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     public calculatedPrice?: number,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
-    public additionalInfo?: string,
+    public workPurpose?: string,
     public terms?: string
   ) {}
 
@@ -19,7 +19,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     arrangement.pksCard = form.pksCard;
     arrangement.trafficArrangements = form.trafficArrangements;
     arrangement.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
-    arrangement.additionalInfo = form.additionalInfo;
+    arrangement.workPurpose = form.workPurpose;
     arrangement.terms = form.terms;
     return arrangement;
   }
@@ -31,7 +31,7 @@ export class TrafficArrangementForm implements ApplicationForm {
       application.calculatedPriceEuro,
       arrangement.trafficArrangements,
       arrangement.trafficArrangementImpedimentType,
-      arrangement.additionalInfo,
+      arrangement.workPurpose,
       arrangement.terms
     );
   }

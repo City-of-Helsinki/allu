@@ -87,7 +87,7 @@ export class ApplicationExtensionMapper {
           backendExtension.pksCard,
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,
-          backendExtension.additionalInfo,
+          backendExtension.workPurpose,
           backendExtension.terms
         );
       case ApplicationType.PLACEMENT_CONTRACT:
@@ -233,7 +233,7 @@ export class ApplicationExtensionMapper {
       pksCard: trafficArrangement.pksCard,
       trafficArrangements: trafficArrangement.trafficArrangements,
       trafficArrangementImpedimentType: trafficArrangement.trafficArrangementImpedimentType,
-      additionalInfo: trafficArrangement.additionalInfo,
+      workPurpose: trafficArrangement.workPurpose,
       terms: trafficArrangement.terms
     };
   }

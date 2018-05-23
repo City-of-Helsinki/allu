@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  */
 public class TrafficArrangementJson extends ApplicationExtensionJson {
   private Boolean pksCard;
-  private String additionalInfo;
+  private String workPurpose;
   private String trafficArrangements;
   @NotNull(message = "{application.trafficarrangements.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
@@ -33,14 +33,14 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
   }
 
   /**
-   * In Finnish: lisätiedot.
+   * In Finnish: työn tarkoitus.
    */
-  public String getAdditionalInfo() {
-    return additionalInfo;
+  public String getWorkPurpose() {
+    return workPurpose;
   }
 
-  public void setAdditionalInfo(String additionalInfo) {
-    this.additionalInfo = additionalInfo;
+  public void setWorkPurpose(String workPurpose) {
+    this.workPurpose = workPurpose;
   }
 
   /**
