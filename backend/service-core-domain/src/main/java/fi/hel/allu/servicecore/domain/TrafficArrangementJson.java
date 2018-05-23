@@ -4,14 +4,12 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
 
 /**
  * Traffic arrangement (väliaikainen liikennejärjestely) specific data.
  */
 public class TrafficArrangementJson extends ApplicationExtensionJson {
   private Boolean pksCard;
-  private ZonedDateTime workFinished;
   private String additionalInfo;
   private String trafficArrangements;
   @NotNull(message = "{application.trafficarrangements.trafficArrangementImpedimentType}")
@@ -32,17 +30,6 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
 
   public void setPksCard(Boolean pksCard) {
     this.pksCard = pksCard;
-  }
-
-  /**
-   * In Finnish: Työ valmis.
-   */
-  public ZonedDateTime getWorkFinished() {
-    return workFinished;
-  }
-
-  public void setWorkFinished(ZonedDateTime workFinished) {
-    this.workFinished = workFinished;
   }
 
   /**

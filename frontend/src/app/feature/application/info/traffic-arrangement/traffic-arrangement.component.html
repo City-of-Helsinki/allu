@@ -58,20 +58,6 @@
                 </mat-form-field>
               </div>
             </div>
-            <div class="col s3">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="workFinished" placeholder="Työ valmis"
-                       [matDatepicker]="workFinishedPicker"/>
-                <mat-datepicker-toggle matSuffix [for]="workFinishedPicker"
-                                       [disabled]="readonly"></mat-datepicker-toggle>
-                <mat-datepicker #workFinishedPicker></mat-datepicker>
-                <mat-hint>
-                  <field-error [form]="applicationForm" field="workFinished" hasError="required">
-                    {{'application.trafficArrangement.field.workFinished' | translation}}
-                  </field-error>
-                </mat-hint>
-              </mat-form-field>
-            </div>
           </div>
         </mat-card-content>
       </allu-card>

@@ -3,14 +3,11 @@ package fi.hel.allu.model.domain;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 
-import java.time.ZonedDateTime;
-
 /**
  * Traffic arrangement (väliaikainen liikennejärjestely) specific data.
  */
 public class TrafficArrangement extends ApplicationExtension {
   private Boolean pksCard;
-  private ZonedDateTime workFinished;
   private String additionalInfo;
   private String trafficArrangements;
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
@@ -30,17 +27,6 @@ public class TrafficArrangement extends ApplicationExtension {
 
   public void setPksCard(Boolean pksCard) {
     this.pksCard = pksCard;
-  }
-
-  /**
-   * In Finnish: Työ valmis.
-   */
-  public ZonedDateTime getWorkFinished() {
-    return workFinished;
-  }
-
-  public void setWorkFinished(ZonedDateTime workFinished) {
-    this.workFinished = workFinished;
   }
 
   /**

@@ -7,7 +7,6 @@ public class TrafficArrangementMapper {
   public static TrafficArrangementJson modelToJson(TrafficArrangement trafficArrangement) {
     TrafficArrangementJson trafficArrangementJson = new TrafficArrangementJson();
     trafficArrangementJson.setPksCard(trafficArrangement.getPksCard());
-    trafficArrangementJson.setWorkFinished(trafficArrangement.getWorkFinished());
     trafficArrangementJson.setAdditionalInfo(trafficArrangement.getAdditionalInfo());
     trafficArrangementJson.setTrafficArrangements(trafficArrangement.getTrafficArrangements());
     trafficArrangementJson.setTrafficArrangementImpedimentType(trafficArrangement.getTrafficArrangementImpedimentType());
@@ -17,7 +16,6 @@ public class TrafficArrangementMapper {
   public static TrafficArrangement jsonToModel(TrafficArrangementJson json) {
     TrafficArrangement trafficArrangement = new TrafficArrangement();
     trafficArrangement.setPksCard(json.getPksCard());
-    trafficArrangement.setWorkFinished(json.getWorkFinished());
     trafficArrangement.setAdditionalInfo(json.getAdditionalInfo());
     trafficArrangement.setTrafficArrangements(json.getTrafficArrangements());
     trafficArrangement.setTrafficArrangementImpedimentType(json.getTrafficArrangementImpedimentType());

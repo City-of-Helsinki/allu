@@ -85,7 +85,6 @@ export class ApplicationExtensionMapper {
       case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
         return new TrafficArrangement(
           backendExtension.pksCard,
-          TimeUtil.dateFromBackend(backendExtension.workFinished),
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,
           backendExtension.additionalInfo,
@@ -232,7 +231,6 @@ export class ApplicationExtensionMapper {
     return {
       applicationType: trafficArrangement.applicationType,
       pksCard: trafficArrangement.pksCard,
-      workFinished: TimeUtil.dateToBackend(trafficArrangement.workFinished),
       trafficArrangements: trafficArrangement.trafficArrangements,
       trafficArrangementImpedimentType: trafficArrangement.trafficArrangementImpedimentType,
       additionalInfo: trafficArrangement.additionalInfo,

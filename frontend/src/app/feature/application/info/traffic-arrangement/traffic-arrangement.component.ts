@@ -41,7 +41,6 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
         endTime: [undefined, Validators.required]
       }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       pksCard: [false],
-      workFinished: [undefined],
       calculatedPrice: [0],
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required],
