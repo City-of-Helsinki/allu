@@ -84,7 +84,6 @@ export class ApplicationExtensionMapper {
         return new Note(backendExtension.description);
       case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
         return new TrafficArrangement(
-          backendExtension.pksCard,
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,
           backendExtension.workPurpose,
@@ -230,7 +229,6 @@ export class ApplicationExtensionMapper {
   private static mapFrontendTrafficArrangement(trafficArrangement: TrafficArrangement): any {
     return {
       applicationType: trafficArrangement.applicationType,
-      pksCard: trafficArrangement.pksCard,
       trafficArrangements: trafficArrangement.trafficArrangements,
       trafficArrangementImpedimentType: trafficArrangement.trafficArrangementImpedimentType,
       workPurpose: trafficArrangement.workPurpose,

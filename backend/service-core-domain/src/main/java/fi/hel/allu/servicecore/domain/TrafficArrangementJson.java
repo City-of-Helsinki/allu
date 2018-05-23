@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
  * Traffic arrangement (väliaikainen liikennejärjestely) specific data.
  */
 public class TrafficArrangementJson extends ApplicationExtensionJson {
-  private Boolean pksCard;
   private String workPurpose;
   private String trafficArrangements;
   @NotNull(message = "{application.trafficarrangements.trafficArrangementImpedimentType}")
@@ -18,18 +17,6 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS;
-  }
-
-  /**
-   * In Finnish: PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
-   * True, if the contractor doing the actual work has PKS-card.
-   */
-  public Boolean getPksCard() {
-    return pksCard;
-  }
-
-  public void setPksCard(Boolean pksCard) {
-    this.pksCard = pksCard;
   }
 
   /**

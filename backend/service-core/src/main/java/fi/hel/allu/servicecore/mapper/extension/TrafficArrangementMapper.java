@@ -6,7 +6,6 @@ import fi.hel.allu.servicecore.domain.TrafficArrangementJson;
 public class TrafficArrangementMapper {
   public static TrafficArrangementJson modelToJson(TrafficArrangement trafficArrangement) {
     TrafficArrangementJson trafficArrangementJson = new TrafficArrangementJson();
-    trafficArrangementJson.setPksCard(trafficArrangement.getPksCard());
     trafficArrangementJson.setWorkPurpose(trafficArrangement.getWorkPurpose());
     trafficArrangementJson.setTrafficArrangements(trafficArrangement.getTrafficArrangements());
     trafficArrangementJson.setTrafficArrangementImpedimentType(trafficArrangement.getTrafficArrangementImpedimentType());
@@ -15,7 +14,6 @@ public class TrafficArrangementMapper {
 
   public static TrafficArrangement jsonToModel(TrafficArrangementJson json) {
     TrafficArrangement trafficArrangement = new TrafficArrangement();
-    trafficArrangement.setPksCard(json.getPksCard());
     trafficArrangement.setWorkPurpose(json.getWorkPurpose());
     trafficArrangement.setTrafficArrangements(json.getTrafficArrangements());
     trafficArrangement.setTrafficArrangementImpedimentType(json.getTrafficArrangementImpedimentType());

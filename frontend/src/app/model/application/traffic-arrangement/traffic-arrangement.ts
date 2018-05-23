@@ -4,7 +4,6 @@ import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impedimen
 
 export class TrafficArrangement extends ApplicationExtension {
   constructor(
-    public pksCard?: boolean,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public workPurpose?: string,
