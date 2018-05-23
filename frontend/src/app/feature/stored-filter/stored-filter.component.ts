@@ -60,6 +60,7 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open<StoredFilterModalComponent>(StoredFilterModalComponent, config);
     dialogRef.afterClosed()
+      .filter(result => !!result)
       .switchMap(added => this.store.save(added))
       .subscribe(
         () => this.notification.translateSuccess('storedFilter.action.save'),
