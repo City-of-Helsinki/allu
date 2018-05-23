@@ -143,17 +143,6 @@ public class ApplicationReplacementServiceTest {
   }
 
   @Test
-  public void shouldCopySupervisionTasks() {
-    insertSupervisionTask();
-    Application application = replaceApplication();
-    SupervisionTask original = supervisionTaskDao.findByApplicationId(originalApplication.getId()).get(0);
-    SupervisionTask replacing = supervisionTaskDao.findByApplicationId(application.getId()).get(0);
-    assertEquals(original.getOwnerId(), replacing.getOwnerId());
-    assertEquals(original.getStatus(), replacing.getStatus());
-    assertEquals(original.getDescription(), replacing.getDescription());
-  }
-
-  @Test
   public void shouldCopyAttachments() {
     insertAttachment();
     Application application = replaceApplication();

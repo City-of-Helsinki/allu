@@ -1,11 +1,7 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +18,8 @@ import fi.hel.allu.model.dao.DepositDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.*;
 
+import static fi.hel.allu.common.domain.types.ApplicationTagType.*;
+
 /**
  * Service for replacing application (korvaava päätös).
  */
@@ -30,24 +28,40 @@ public class ApplicationReplacementService {
   private static final Set<CommentType> COMMENT_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(CommentType.PROPOSE_APPROVAL,
       CommentType.PROPOSE_REJECT));
 
-  private static final Set<ApplicationTagType> TAG_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(ApplicationTagType.SAP_ID_MISSING));
+  private static final Set<ApplicationTagType> TAG_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(
+      // If SAP ID missing also from replacing application,
+      // this is generated when its' moved to decision state
+      SAP_ID_MISSING,
+      // Supervision tasks not copied to replacing application
+      // so don't copy supervision task related tags either.
+      PRELIMINARY_SUPERVISION_REQUESTED,
+      PRELIMINARY_SUPERVISION_REJECTED,
+      PRELIMINARY_SUPERVISION_DONE,
+      SUPERVISION_REQUESTED,
+      SUPERVISION_REJECTED,
+      SUPERVISION_DONE,
+      OPERATIONAL_CONDITION_REPORTED,
+      OPERATIONAL_CONDITION_REJECTED,
+      OPERATIONAL_CONDITION_ACCEPTED,
+      FINAL_SUPERVISION_REQUESTED,
+      FINAL_SUPERVISION_REJECTED,
+      FINAL_SUPERVISION_ACCEPTED
+  ));
 
 
   private final ApplicationService applicationService;
   private final ApplicationDao applicationDao;
   private final CommentDao commentDao;
   private final LocationService locationService;
-  private final SupervisionTaskDao supervisionTaskDao;
   private final DepositDao depositDao;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
-      LocationService locationService, SupervisionTaskDao supervisionTaskDao, DepositDao depositDao) {
+      LocationService locationService, DepositDao depositDao) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
     this.commentDao = commentDao;
-    this.supervisionTaskDao = supervisionTaskDao;
     this.depositDao = depositDao;
   }
 
@@ -94,7 +108,6 @@ public class ApplicationReplacementService {
   private void copyApplicationRelatedData(int applicationId, Application replacingApplication, int userId) {
     commentDao.copyApplicationComments(applicationId, replacingApplication.getId(), COMMENT_TYPES_NOT_COPIED);
     applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
-    supervisionTaskDao.copySupervisionTasks(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
   }
 

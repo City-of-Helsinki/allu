@@ -230,15 +230,11 @@ public class SupervisionTaskDao {
     return cols;
   }
 
-  @Transactional
-  public void copySupervisionTasks(Integer copyFromApplicationId, Integer copyToApplicationId) {
-    List<SupervisionTask> tasks = findByApplicationId(copyFromApplicationId);
-    tasks.forEach(t -> copyForApplication(t, copyToApplicationId));
-  }
-
-  private void copyForApplication(SupervisionTask task, Integer applicationId) {
-    task.setId(null);
-    task.setApplicationId(applicationId);
-    insert(task);
+  public void cancelOpenTasksOfApplication(Integer applicationId) {
+    queryFactory
+        .update(supervisionTask)
+        .set(supervisionTask.status, SupervisionTaskStatusType.CANCELLED)
+        .where(supervisionTask.applicationId.eq(applicationId), supervisionTask.status.eq(SupervisionTaskStatusType.OPEN))
+        .execute();
   }
 }

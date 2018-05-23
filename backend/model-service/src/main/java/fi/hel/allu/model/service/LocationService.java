@@ -143,7 +143,15 @@ public class LocationService {
   }
 
   private Optional<User> findOwner(ApplicationType type, Integer cityDistrictId) {
-    return userDao.findMatching(RoleType.ROLE_PROCESS_APPLICATION, type, cityDistrictId).stream()
+    return findOwner(type, cityDistrictId, RoleType.ROLE_PROCESS_APPLICATION);
+  }
+
+  public Optional<User> findSupervisionTaskOwner(ApplicationType type, Integer cityDistrictId) {
+    return findOwner(type, cityDistrictId, RoleType.ROLE_SUPERVISE);
+  }
+
+  private  Optional<User> findOwner(ApplicationType type, Integer cityDistrictId, RoleType roleType) {
+    return userDao.findMatching(roleType, type, cityDistrictId).stream()
         .findFirst();
   }
 

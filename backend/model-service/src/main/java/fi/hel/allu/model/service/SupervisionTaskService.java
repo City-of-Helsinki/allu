@@ -125,4 +125,9 @@ public class SupervisionTaskService {
     applicationDao.addTag(task.getApplicationId(), tag);
     tag.getType().getReplaces().forEach(type -> applicationDao.removeTagByType(task.getApplicationId(), type));
   }
+
+  @Transactional
+  public void cancelOpenTasksOfApplication(Integer applicationId) {
+    supervisionTaskDao.cancelOpenTasksOfApplication(applicationId);
+  }
 }

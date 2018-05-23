@@ -12,5 +12,10 @@ public enum SupervisionTaskStatusType {
   /**
    * Task state is open.
    */
-  OPEN
+  OPEN,
+
+  /**
+   * Task cancelled
+   */
+  CANCELLED
 }

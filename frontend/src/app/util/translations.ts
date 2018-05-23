@@ -1070,7 +1070,8 @@ export const translations = {
       status: {
         OPEN: 'Avoin',
         APPROVED: 'Hyväksytty',
-        REJECTED: 'Hylätty'
+        REJECTED: 'Hylätty',
+        CANCELLED: 'Peruttu'
       },
       owner: 'Valvoja',
       plannedFinishingTime: 'Ajankohta',

@@ -1,45 +1,39 @@
 package fi.hel.allu.model.service;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
-import fi.hel.allu.common.util.TimeUtil;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.context.ApplicationEventPublisher;
 
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PlacementContract;
+import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(Spectrum.class)
 public class ApplicationStatusServiceTest extends SpeccyTestBase {
 
+  private ApplicationEventPublisher statusChangeEventPublisher;
   private ApplicationStatusService applicationStatusService;
   private ApplicationService applicationService;
-  private LocationService locationService;
-  private DecisionDao decisionDao;
+
 
   {
     beforeEach(() -> {
       applicationService = Mockito.mock(ApplicationService.class);
-      decisionDao = Mockito.mock(DecisionDao.class);
-      locationService = Mockito.mock(LocationService.class);
-      applicationStatusService = new ApplicationStatusService(applicationService, locationService,
-          Mockito.mock(ApplicationDao.class), decisionDao);
+      statusChangeEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
+      applicationStatusService = new ApplicationStatusService(applicationService,
+          Mockito.mock(ApplicationDao.class), statusChangeEventPublisher);
     });
 
     describe("Status change operations", () -> {
@@ -47,7 +41,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
         final Application app = createMockApplication(1, StatusType.PENDING, ApplicationType.EVENT);
 
         beforeEach(() -> {
-          when(applicationService.changeApplicationStatus(app.getId(), StatusType.HANDLING, app.getOwner()))
+          when(applicationService.changeApplicationStatus(eq(app.getId()), any(StatusType.class), eq(app.getOwner())))
               .thenReturn(createMockApplication(app.getId(), StatusType.HANDLING, app.getType()));
         });
 
@@ -56,45 +50,14 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
           Mockito.verify(applicationService, Mockito.times(1))
               .changeApplicationStatus(eq(app.getId()), eq(StatusType.HANDLING), eq(app.getOwner()));
         });
-      });
-
-      describe("Change status to DECISION", () -> {
-        final Application app = createMockApplication(1, StatusType.HANDLING, ApplicationType.EVENT);
-        final Location location = new Location();
-
-        Application mockApp = createMockApplication(app.getId(), StatusType.DECISION, app.getType());
-        mockApp.setDecisionTime(ZonedDateTime.now());
-
-        beforeEach(() -> {
-          when(applicationService.changeApplicationStatus(app.getId(), StatusType.DECISION, app.getOwner()))
-              .thenReturn(mockApp);
-          when(locationService.findSingleByApplicationId(app.getId()))
-              .thenReturn(location);
-        });
-
-        it("should change status but not update location", () -> {
-          applicationStatusService.changeApplicationStatus(app.getId(), StatusType.DECISION, app.getOwner());
-
-          Mockito.verify(applicationService, Mockito.times(1))
-              .changeApplicationStatus(eq(app.getId()), eq(StatusType.DECISION), eq(app.getOwner()));
-
-          Mockito.verify(locationService, Mockito.never())
-              .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
-        });
-
-        it("Should change status and update placement contracts locations end date to decision date + 1 years", () -> {
-          when(decisionDao.getPlacementContractSectionNumber()).thenReturn(1);
-          mockApp.setType(ApplicationType.PLACEMENT_CONTRACT);
-          mockApp.setExtension(new PlacementContract());
-          applicationStatusService.changeApplicationStatus(app.getId(), StatusType.DECISION, app.getOwner());
-
-          Mockito.verify(applicationService, Mockito.times(1))
-              .changeApplicationStatus(eq(app.getId()), eq(StatusType.DECISION), eq(app.getOwner()));
-
-          Mockito.verify(locationService, Mockito.times(1))
-              .updateApplicationLocations(eq(app.getId()), eq(Collections.singletonList(location)), eq(app.getOwner()));
-
-          assertEquals(TimeUtil.endOfDay(mockApp.getDecisionTime()).plusYears(1), location.getEndTime());
+        it("Should publish status change event", () -> {
+          applicationStatusService.changeApplicationStatus(app.getId(), StatusType.DECISIONMAKING, app.getOwner());
+          ArgumentCaptor<ApplicationStatusChangeEvent> captor = ArgumentCaptor.forClass(ApplicationStatusChangeEvent.class);
+          Mockito.verify(statusChangeEventPublisher, Mockito.times(1))
+              .publishEvent(captor.capture());
+          assertEquals(app.getId(), captor.getValue().getApplication().getId());
+          assertEquals(StatusType.DECISIONMAKING, captor.getValue().getNewStatus());
+          assertEquals(app.getOwner(), captor.getValue().getUserId());
         });
 
       });

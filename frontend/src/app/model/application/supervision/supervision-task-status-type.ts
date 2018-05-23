@@ -10,5 +10,10 @@ export enum SupervisionTaskStatusType {
   /**
    * Task state is open.
    */
-  OPEN
+  OPEN,
+
+  /**
+   * Task is cancelled
+   */
+  CANCELLED
 }
