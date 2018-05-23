@@ -26,7 +26,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate 
   ngOnInit(): void {
     const application = this.applicationStore.snapshot.application;
     this.type = application.type;
-    this.showDraftSelection = this.applicationStore.isNew;
+    this.showDraftSelection = this.shouldShowDraftSelection();
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary');
     this.formDirty = false;
@@ -52,5 +52,10 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate 
       cancelText: findTranslation(['application.confirmDiscard.cancelText'])
     };
     return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
+  }
+
+  private shouldShowDraftSelection() {
+    return this.applicationStore.isNew &&
+        this.applicationStore.snapshot.application.type !== 'TEMPORARY_TRAFFIC_ARRANGEMENTS';
   }
 }
