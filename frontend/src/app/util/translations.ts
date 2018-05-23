@@ -360,6 +360,7 @@ export const translations = {
       }
     },
     trafficArrangement: {
+      workPurpose: 'Työn tarkoitus',
       field: {
         validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
         validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
