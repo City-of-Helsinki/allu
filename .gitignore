@@ -9,4 +9,4 @@ npm-debug.log
 .settings/
 target/
 coverage
-/frontend/nbproject/private/
+/frontend/nbproject
