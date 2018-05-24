@@ -269,6 +269,7 @@ public class DecisionService {
     }
     fillCargeBasisInfo(decisionJson, application);
     decisionJson.setIdentificationNumber(application.getIdentificationNumber());
+    decisionJson.setReplacingDecision(application.getReplacesApplicationId() != null);
   }
 
   private Optional<String> getSiteArea(List<LocationJson> locations) {

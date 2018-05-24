@@ -98,6 +98,7 @@ public class DecisionJson {
   private String identificationNumber;
   private String workPurpose;
   private String trafficArrangements;
+  private Boolean replacingDecision;
 
   public boolean isDraft() {
     return isDraft;
@@ -637,5 +638,13 @@ public class DecisionJson {
 
   public void setTrafficArrangements(String trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
+  }
+
+  public Boolean isReplacingDecision() {
+    return replacingDecision;
+  }
+
+  public void setReplacingDecision(Boolean replacingDecision) {
+    this.replacingDecision = replacingDecision;
   }
 }

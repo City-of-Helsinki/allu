@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output method="html" encoding="utf-8" indent="yes"/>
 <xsl:template match="/root">
 <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
@@ -27,7 +26,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       ]]>
     </script>
   </head>
-  <body style='height:34mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
+  <body style='height:40mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
     <div class="header">
       <div class="logo">
         <img src="helsinki-logo.png" />
@@ -38,7 +37,14 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <p>luvat@hel.fi</p>
       </div>
       <div class="half-right">
-        <h1>Päätös tilapäisestä liikennejärjestelystä</h1>
+        <xsl:choose>
+          <xsl:when test="data/replacingDecision = 'false'">
+            <h1>Päätös tilapäisestä liikennejärjestelystä</h1>
+          </xsl:when>
+          <xsl:otherwise>
+           <h1>Korvaava päätös tilapäisestä liikennejärjestelystä</h1>
+          </xsl:otherwise>
+        </xsl:choose>
         <p class="page">
           <span id="pdfkit_page_current" />/<span id="pdfkit_page_count" />
         </p>
