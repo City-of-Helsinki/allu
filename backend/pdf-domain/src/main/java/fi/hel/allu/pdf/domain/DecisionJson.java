@@ -15,8 +15,16 @@ public class DecisionJson {
   private String decisionId;
 
   private List<String> customerAddressLines;
-
   private List<String> customerContactLines;
+
+  private List<String> contractorAddressLines;
+  private List<String> contractorContactLines;
+
+  private List<String> propertyDeveloperAddressLines;
+  private List<String> propertyDeveloperContactLines;
+
+  private List<String> representativeAddressLines;
+  private List<String> representativeContactLines;
 
   private String siteAddressLine;
   private String siteAdditionalInfo;
@@ -61,6 +69,12 @@ public class DecisionJson {
 
   private String handlerTitle;
   private String handlerName;
+  private String handlerEmail;
+  private String handlerPhone;
+
+  private String supervisorName;
+  private String supervisorEmail;
+  private String supervisorPhone;
 
   private List<String> attachmentNames;
 
@@ -81,6 +95,9 @@ public class DecisionJson {
   private List<KindWithSpecifiers> kinds;
   private String contractText;
   private String applicantName;
+  private String identificationNumber;
+  private String workPurpose;
+  private String trafficArrangements;
 
   public boolean isDraft() {
     return isDraft;
@@ -120,6 +137,54 @@ public class DecisionJson {
 
   public void setCustomerContactLines(List<String> customerContactLines) {
     this.customerContactLines = customerContactLines;
+  }
+
+  public List<String> getContractorAddressLines() {
+    return contractorAddressLines;
+  }
+
+  public void setContractorAddressLines(List<String> contractorAddressLines) {
+    this.contractorAddressLines = contractorAddressLines;
+  }
+
+  public List<String> getContractorContactLines() {
+    return contractorContactLines;
+  }
+
+  public void setContractorContactLines(List<String> contractorContactLines) {
+    this.contractorContactLines = contractorContactLines;
+  }
+
+  public List<String> getPropertyDeveloperAddressLines() {
+    return propertyDeveloperAddressLines;
+  }
+
+  public void setPropertyDeveloperAddressLines(List<String> propertyDeveloperAddressLines) {
+    this.propertyDeveloperAddressLines = propertyDeveloperAddressLines;
+  }
+
+  public List<String> getPropertyDeveloperContactLines() {
+    return propertyDeveloperContactLines;
+  }
+
+  public void setPropertyDeveloperContactLines(List<String> propertyDeveloperContactLines) {
+    this.propertyDeveloperContactLines = propertyDeveloperContactLines;
+  }
+
+  public List<String> getRepresentativeAddressLines() {
+    return representativeAddressLines;
+  }
+
+  public void setRepresentativeAddressLines(List<String> representativeAddressLines) {
+    this.representativeAddressLines = representativeAddressLines;
+  }
+
+  public List<String> getRepresentativeContactLines() {
+    return representativeContactLines;
+  }
+
+  public void setRepresentativeContactLines(List<String> representativeContactLines) {
+    this.representativeContactLines = representativeContactLines;
   }
 
   public String getSiteAddressLine() {
@@ -404,6 +469,46 @@ public class DecisionJson {
     this.handlerName = handlerName;
   }
 
+  public String getHandlerEmail() {
+    return handlerEmail;
+  }
+
+  public void setHandlerEmail(String handlerEmail) {
+    this.handlerEmail = handlerEmail;
+  }
+
+  public String getHandlerPhone() {
+    return handlerPhone;
+  }
+
+  public void setHandlerPhone(String handlerPhone) {
+    this.handlerPhone = handlerPhone;
+  }
+
+  public String getSupervisorName() {
+    return supervisorName;
+  }
+
+  public void setSupervisorName(String supervisorName) {
+    this.supervisorName = supervisorName;
+  }
+
+  public String getSupervisorEmail() {
+    return supervisorEmail;
+  }
+
+  public void setSupervisorEmail(String supervisorEmail) {
+    this.supervisorEmail = supervisorEmail;
+  }
+
+  public String getSupervisorPhone() {
+    return supervisorPhone;
+  }
+
+  public void setSupervisorPhone(String supervisorPhone) {
+    this.supervisorPhone = supervisorPhone;
+  }
+
   public List<String> getAttachmentNames() {
     return attachmentNames;
   }
@@ -508,5 +613,29 @@ public class DecisionJson {
 
   public void setApplicantName(String applicantName) {
     this.applicantName = applicantName;
+  }
+
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
+  }
+
+  public String getWorkPurpose() {
+    return workPurpose;
+  }
+
+  public void setWorkPurpose(String workPurpose) {
+    this.workPurpose = workPurpose;
+  }
+
+  public String getTrafficArrangements() {
+    return trafficArrangements;
+  }
+
+  public void setTrafficArrangements(String trafficArrangements) {
+    this.trafficArrangements = trafficArrangements;
   }
 }

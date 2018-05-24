@@ -122,6 +122,9 @@ p.indented {
   display: block;
   vertical-align: top;
   margin-left: 50pt;}
+p.small {
+  font-size: 8pt;
+}
 div.indented {
   display: inline-block;
   vertical-align: top;

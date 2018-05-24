@@ -3,10 +3,7 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import static fi.hel.allu.common.domain.types.ApplicationType.CABLE_REPORT;
-import static fi.hel.allu.common.domain.types.ApplicationType.EVENT;
-import static fi.hel.allu.common.domain.types.ApplicationType.PLACEMENT_CONTRACT;
-import static fi.hel.allu.common.domain.types.ApplicationType.SHORT_TERM_RENTAL;
+import static fi.hel.allu.common.domain.types.ApplicationType.*;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
@@ -20,6 +17,7 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.pdf.domain.KindWithSpecifiers;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,6 +61,7 @@ public class DecisionService {
   private final CustomerService customerService;
   private final ContactService contactService;
   private final MetaService metaService;
+  private final SupervisionTaskService supervisionTaskService;
   private final ApplicationServiceComposer applicationServiceComposer;
   private final ChargeBasisService chargeBasisService;
   private final ZoneId zoneId;
@@ -100,7 +99,8 @@ public class DecisionService {
       CustomerService customerService,
       ContactService contactService,
       ChargeBasisService chargeBasisService,
-      MetaService metaService) {
+      MetaService metaService,
+      SupervisionTaskService supervisionTaskService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -109,6 +109,7 @@ public class DecisionService {
     this.contactService = contactService;
     this.chargeBasisService = chargeBasisService;
     this.metaService = metaService;
+    this.supervisionTaskService = supervisionTaskService;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
@@ -216,6 +217,8 @@ public class DecisionService {
     case PLACEMENT_CONTRACT:
       fillPlacementContractSpecifics(decisionJson, application);
       break;
+    case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+      fillTemporaryTrafficArrangementSpecifics(decisionJson, application);
     default:
       break;
     }
@@ -223,6 +226,14 @@ public class DecisionService {
     if (handler != null) {
       decisionJson.setHandlerTitle(handler.getTitle());
       decisionJson.setHandlerName(handler.getRealName());
+      decisionJson.setHandlerEmail(handler.getEmailAddress());
+      decisionJson.setHandlerPhone(handler.getPhone());
+    }
+    UserJson supervisor = findSupervisor(application);
+    if (supervisor != null) {
+      decisionJson.setSupervisorName(supervisor.getRealName());
+      decisionJson.setSupervisorEmail(supervisor.getEmailAddress());
+      decisionJson.setSupervisorPhone(supervisor.getPhone());
     }
     List<AttachmentInfoJson> attachments = application.getAttachmentList();
     if (attachments != null) {
@@ -257,6 +268,7 @@ public class DecisionService {
       decisionJson.setSeparateBill(priceInCents > 0);
     }
     fillCargeBasisInfo(decisionJson, application);
+    decisionJson.setIdentificationNumber(application.getIdentificationNumber());
   }
 
   private Optional<String> getSiteArea(List<LocationJson> locations) {
@@ -498,6 +510,19 @@ public class DecisionService {
       decisionJson.setContractText(placementContract.getContractText());
     }
   }
+
+  private void fillTemporaryTrafficArrangementSpecifics(DecisionJson decision, ApplicationJson application) {
+    TrafficArrangementJson trafficArrangement = (TrafficArrangementJson)application.getExtension();
+    decision.setContractorAddressLines(addressLines(application, CustomerRoleType.CONTRACTOR));
+    decision.setContractorContactLines(contactLines(application, CustomerRoleType.CONTRACTOR));
+    decision.setPropertyDeveloperAddressLines(addressLines(application, CustomerRoleType.PROPERTY_DEVELOPER));
+    decision.setPropertyDeveloperContactLines(contactLines(application, CustomerRoleType.PROPERTY_DEVELOPER));
+    decision.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
+    decision.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
+    decision.setWorkPurpose(trafficArrangement.getWorkPurpose());
+    decision.setTrafficArrangements(trafficArrangement.getTrafficArrangements());
+  }
+
   /*
    * Helper to create streams for possibly null collections
    */
@@ -553,12 +578,25 @@ public class DecisionService {
   }
 
   private List<String> customerAddressLines(ApplicationJson applicationJson) {
+    return addressLines(applicationJson, CustomerRoleType.APPLICANT);
+  }
+
+  private List<String> customerContactLines(ApplicationJson application) {
+    return contactLines(application, CustomerRoleType.APPLICANT);
+  }
+
+  private String applicantName(ApplicationJson applicationJson) {
+    Optional<CustomerWithContactsJson> cwcOpt =
+        applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
+    return cwcOpt.map(cwc -> cwc.getCustomer().getName()).orElse(null);
+  }
+
+  private List<String> addressLines(ApplicationJson application, CustomerRoleType roleType) {
     // return lines in format {"[Customer name], [SSID]", "[address, Postal
     // code + city]",
     // "[email, phone]"}
-    // TODO: perhaps this should work with other than APPLICANT roles too?
     Optional<CustomerWithContactsJson> cwcOpt =
-        applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
+        application.getCustomersWithContacts().stream().filter(cwc -> roleType.equals(cwc.getRoleType())).findFirst();
 
     final List<String> addressLines = new ArrayList<>();
     cwcOpt.ifPresent(cwc -> {
@@ -571,11 +609,11 @@ public class DecisionService {
     return addressLines;
   }
 
-  private List<String> customerContactLines(ApplicationJson application) {
+  private List<String> contactLines(ApplicationJson application, CustomerRoleType roleType) {
     // returns {"[Yhteyshenkilön nimi]", "[Sähköpostiosoite, puhelin]"}
 
     Optional<CustomerWithContactsJson> cwcOpt =
-        application.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
+        application.getCustomersWithContacts().stream().filter(cwc -> roleType.equals(cwc.getRoleType())).findFirst();
     final List<String> contactLines = new ArrayList<>();
     cwcOpt.ifPresent(cwc ->
       contactLines.addAll(
@@ -583,14 +621,8 @@ public class DecisionService {
             .flatMap(c -> Stream.of(c.getName(), combinePossibleBlankStrings(c.getEmail(), c.getPhone())))
             .collect(Collectors.toList())));
     return contactLines;
-  }
 
-  private String applicantName(ApplicationJson applicationJson) {
-    Optional<CustomerWithContactsJson> cwcOpt =
-        applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
-    return cwcOpt.map(cwc -> cwc.getCustomer().getName()).orElse(null);
   }
-
   private String combinePossibleBlankStrings(String first, String second) {
     if (StringUtils.isBlank(first) && StringUtils.isBlank(second)) {
       return "";
@@ -728,11 +760,22 @@ public class DecisionService {
         EVENT,
         SHORT_TERM_RENTAL,
         CABLE_REPORT,
-        PLACEMENT_CONTRACT);
+        PLACEMENT_CONTRACT,
+        TEMPORARY_TRAFFIC_ARRANGEMENTS);
     if (implementedTypes.contains(application.getType())) {
       return application.getType().name();
     }
     return "DUMMY";
+  }
+
+  private UserJson findSupervisor(ApplicationJson application) {
+    final List<SupervisionTaskJson> tasks = supervisionTaskService.findByApplicationId(application.getId());
+    if (!tasks.isEmpty()) {
+      // TODO: Take supervisor from a first task, is there a better way?
+      SupervisionTaskJson task = tasks.get(0);
+      return task.getOwner();
+    }
+    return null;
   }
 
   private String translate(ApplicationKind kind) {
