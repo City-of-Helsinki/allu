@@ -101,7 +101,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   entryValue(entry: ChargeBasisEntryForm): string {
     let prefix = '';
     let value = entry.unitPrice;
-    if (entry.unit == 'PERCENT') {
+    if (entry.unit === 'PERCENT') {
       value = entry.quantity;
     }
     if (ChargeBasisType[entry.type] === ChargeBasisType.DISCOUNT) {
