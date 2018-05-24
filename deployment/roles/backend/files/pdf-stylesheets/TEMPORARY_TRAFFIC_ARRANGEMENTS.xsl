@@ -166,6 +166,21 @@
         </p>
       </section>
 
+      <xsl:if test="data/additionalConditions">
+        <section class="unboxed">
+          <h2>Muut ehdot</h2>
+          <xsl:for-each select="data/additionalConditions">
+            <p>
+              <!-- [Ehtokentän teksti]  -->
+              <xsl:value-of select="."/>
+              <xsl:if test="not(normalize-space(.))">
+                <br/>
+              </xsl:if>
+            </p>
+          </xsl:for-each>
+        </section>
+      </xsl:if>
+
       <section class="unboxed">
         <h2>Päätös</h2>
         <p>
@@ -183,7 +198,7 @@
       </section>
 
       <section class="unboxed">
-        <h2 class="new-page">Liitteet</h2>
+        <h2>Liitteet</h2>
         <p>
           <!--  [Lista liitteiden nimistä] -->
           <xsl:for-each select="data/attachmentNames">

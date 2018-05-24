@@ -26,7 +26,23 @@
       ]]>
     </script>
   </head>
-  <body style='height:40mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
+
+  <!-- Set header height depending on header content -->
+  <xsl:variable name="bodyStyle">
+    <xsl:choose>
+      <xsl:when test="data/replacingDecision = 'true' and data/identificationNumber != ''">
+        <xsl:text>height:45mm;margin:0;padding:0;</xsl:text>
+      </xsl:when>
+      <xsl:when test="data/replacingDecision = 'true' or data/identificationNumber != ''">
+        <xsl:text>height:40mm;margin:0;padding:0;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+         <xsl:text>height:34mm;margin:0;padding:0;</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <body style='{$bodyStyle}' onLoad='getPdfInfo()'>
     <div class="header">
       <div class="logo">
         <img src="helsinki-logo.png" />
