@@ -33,8 +33,8 @@
                   <div fxFlex="40" class="row-header">{{entry.value.text}}</div>
                   <div fxFlex="15" fxFlexOffset="30" class="row-field-highlight"
                        *ngIf="showMinimal(entry.value); else normalEntry">
-                    <span *ngIf="entry.value.unit==='PERCENT'">{{entry.value.quantity}} %</span>
-                    <span *ngIf="entry.value.unit==='PIECE'">{{entry.value.unitPrice}} €</span>
+                    <span *ngIf="entry.value.unit==='PERCENT'">{{entryValue(entry.value)}} %</span>
+                    <span *ngIf="entry.value.unit==='PIECE'">{{entryValue(entry.value)}} €</span>
                   </div>
                   <ng-template #normalEntry>
                     <div fxFlex="15">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}
