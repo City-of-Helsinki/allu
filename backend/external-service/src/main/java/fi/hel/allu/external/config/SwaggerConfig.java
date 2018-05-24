@@ -1,15 +1,16 @@
 package fi.hel.allu.external.config;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -22,6 +23,7 @@ import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.Contact;
 import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -32,8 +34,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
 
+  @Value("${ext.api.basepath}")
+  private String apiBasePath;
+
   @Bean
-  public Docket api() {
+  public Docket api(ServletContext servletContext) {
       List<SecurityScheme> schemeList = Collections.singletonList(new ApiKey("api_key", "Authorization", "Bearer"));
 
       return new Docket(DocumentationType.SWAGGER_2)
@@ -41,6 +46,14 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         .apis(RequestHandlerSelectors.basePackage("fi.hel.allu.external.api"))
         .paths(PathSelectors.any())
         .build()
+        .pathProvider(
+            new RelativePathProvider(servletContext) {
+              @Override
+              public String getApplicationBasePath() {
+                return apiBasePath + super.getApplicationBasePath();
+              }
+            }
+        )
         .securitySchemes(schemeList)
         .apiInfo(apiInfo());
   }
