@@ -1,13 +1,10 @@
 import {Directive} from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
-import {Observable} from 'rxjs/Observable';
 import {Application} from '../src/app/model/application/application';
 import {Location} from '../src/app/model/common/location';
 import {ApplicationStatus} from '../src/app/model/application/application-status';
 import {StatusChangeInfo} from '../src/app/model/application/status-change-info';
-import {Subject} from 'rxjs/Subject';
 import {Contact} from '../src/app/model/customer/contact';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {User} from '../src/app/model/user/user';
 import {RoleType} from '../src/app/model/user/role-type';
 import {NavigationExtras, UrlTree} from '@angular/router';
@@ -18,7 +15,7 @@ import {Comment} from '../src/app/model/application/comment/comment';
 import {ApplicationType} from '../src/app/model/application/type/application-type';
 import {CityDistrict} from '../src/app/model/common/city-district';
 import {ErrorInfo} from '../src/app/service/error/error-info';
-import {EMPTY, of, throwError} from 'rxjs/index';
+import {BehaviorSubject, EMPTY, Observable, of, Subject, throwError} from 'rxjs/index';
 import {map} from 'rxjs/internal/operators';
 
 /**

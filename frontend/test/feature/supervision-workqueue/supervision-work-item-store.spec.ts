@@ -1,6 +1,5 @@
 import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {SupervisionTaskSearchCriteria} from '../../../src/app/model/application/supervision/supervision-task-search-criteria';
-import {Observable} from 'rxjs/Observable';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {SupervisionTaskService} from '../../../src/app/service/supervision/supervision-task.service';
@@ -9,7 +8,7 @@ import {Page} from '../../../src/app/model/common/page';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {CurrentUserMock, NotificationServiceMock} from '../../mocks';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
-import {of} from 'rxjs/index';
+import {Observable, of} from 'rxjs/index';
 import {map} from 'rxjs/internal/operators';
 
 const STORE_DEBOUNCE_MS = 150;

@@ -6,10 +6,10 @@ import {AttachmentHub} from '../../application/attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {translateArray} from '../../../util/translations';
 import {ContentRow} from '../../../model/common/content-row';
-import {MaterializeUtil} from '../../../util/materialize.util';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import {Some} from '../../../util/option';
 import {map} from 'rxjs/internal/operators';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 @Component({
   selector: 'default-attachments',
@@ -24,7 +24,8 @@ export class DefaultAttachmentsComponent implements OnInit {
   constructor(private router: Router,
               private route: ActivatedRoute,
               private attachmentHub: AttachmentHub,
-              private fixedLocationService: FixedLocationService) {
+              private fixedLocationService: FixedLocationService,
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -36,10 +37,10 @@ export class DefaultAttachmentsComponent implements OnInit {
     this.attachmentHub.removeDefaultAttachment(row.id)
       .subscribe(
         result => {
-          MaterializeUtil.toast('Liite ' + row.content.name + ' poistettu');
+          this.notification.success('Liite ' + row.content.name + ' poistettu');
           this.loadAttachmentInfos();
         },
-        error => MaterializeUtil.toast('Liitteen ' + row.content.name + ' poistaminen epäonnistui'));
+        error => this.notification.error('Liitteen ' + row.content.name + ' poistaminen epäonnistui'));
   }
 
   goToDetails(col: number, row: ContentRow<DefaultAttachmentInfo>): void {

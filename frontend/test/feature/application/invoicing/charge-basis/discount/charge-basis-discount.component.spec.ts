@@ -9,7 +9,6 @@ import {
 import {InvoiceHubMock} from '../../../../../mocks';
 import {InvoiceHub} from '../../../../../../src/app/service/application/invoice/invoice-hub';
 import {ChargeBasisEntryForm} from '../../../../../../src/app/feature/application/invoicing/charge-basis/charge-basis-entry.form';
-import {Observable} from 'rxjs/Observable';
 import {ChargeBasisEntry} from '../../../../../../src/app/model/application/invoice/charge-basis-entry';
 import {ChargeBasisType} from '../../../../../../src/app/model/application/invoice/charge-basis-type';
 import {ChargeBasisUnit} from '../../../../../../src/app/model/application/invoice/charge-basis-unit';

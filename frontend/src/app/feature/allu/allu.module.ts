@@ -37,7 +37,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter, MatPaginatorIntl} from '@angular/material';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
-import {CONFIG_URL, ConfigService} from '../../service/config/config.service';
+import {ConfigService} from '../../service/config/config.service';
 import {SupervisionWorkqueueModule} from '../supervision-workqueue/supervision-workqueue.module';
 import {UserService} from '../../service/user/user-service';
 import {DownloadModule} from '../download/download.module';
@@ -51,14 +51,9 @@ import {reducers} from './reducers';
 import {AuthModule} from '../auth/auth.module';
 import {CustomIconRegistry} from '../../service/common/custom-icon-registry';
 import {HttpClientModule} from '@angular/common/http';
-import {ToastyModule} from 'ng2-toasty';
-import {JwtModule} from '@auth0/angular-jwt';
 import {httpInterceptorProviders} from '../../http-interceptors';
 import {MetadataService} from '../../service/meta/metadata.service';
-
-export function tokenGetter() {
-  return localStorage.getItem('jwt');
-}
+import {ToastrModule} from 'ngx-toastr';
 
 @NgModule({
   imports: [
@@ -75,7 +70,7 @@ export function tokenGetter() {
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production // Restrict extension to log-only mode
     }),
-    ToastyModule.forRoot(),
+    ToastrModule.forRoot(),
     // App modules
     ApplicationModule,
     ProjectModule,

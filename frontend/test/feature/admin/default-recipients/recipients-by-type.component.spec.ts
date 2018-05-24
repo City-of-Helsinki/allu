@@ -6,13 +6,12 @@ import {RecipientsByTypeComponent} from '../../../../src/app/feature/admin/defau
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
 import {DefaultRecipientHub} from '../../../../src/app/service/recipients/default-recipient-hub';
 import {ApplicationType} from '../../../../src/app/model/application/type/application-type';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {DefaultRecipient} from '../../../../src/app/model/common/default-recipient';
 import {RECIPIENT_ONE, RECIPIENT_TWO} from '../../../service/recipients/default-recipient-mock-values';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
 import {NotificationServiceMock} from '../../../mocks';
 import {share} from 'rxjs/internal/operators';
-import {of} from 'rxjs/index';
+import {BehaviorSubject, of} from 'rxjs/index';
 
 class DefaultRecipientHubMock {
   recipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);

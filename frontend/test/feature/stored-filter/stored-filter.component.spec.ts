@@ -1,18 +1,16 @@
 import {Component, DebugElement, ViewChild} from '@angular/core';
 import {StoredFilterType} from '../../../src/app/model/user/stored-filter-type';
-import {Subject} from 'rxjs/Subject';
 import {StoredFilter} from '../../../src/app/model/user/stored-filter';
 import {async, ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick} from '@angular/core/testing';
 import {NotificationServiceMock, UserServiceMock} from '../../mocks';
 import {StoredFilterComponent} from '../../../src/app/feature/stored-filter/stored-filter.component';
-import {Observable} from 'rxjs/Observable';
 import {UserService} from '../../../src/app/service/user/user-service';
 import {StoredFilterModule} from '../../../src/app/feature/stored-filter/stored-filter.module';
 import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
 import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
-import {of} from 'rxjs/index';
+import {Observable, of, Subject} from 'rxjs/index';
 
 const filters = [
   new StoredFilter(1, StoredFilterType.MAP, 'map-filter-1', false, '{field1: "value1"}', 1),

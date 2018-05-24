@@ -29,7 +29,7 @@
               "node_modules/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css",
               "node_modules/leaflet-measure-path/leaflet-measure-path.css",
               "node_modules/leaflet.markercluster/dist/MarkerCluster.css",
-              "node_modules/ng2-toasty/style-material.css"
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -100,7 +100,7 @@
               "node_modules/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css",
               "node_modules/leaflet-measure-path/leaflet-measure-path.css",
               "node_modules/leaflet.markercluster/dist/MarkerCluster.css",
-              "node_modules/ng2-toasty/style-material.css"
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "assets": [
               "src/favicon.ico",

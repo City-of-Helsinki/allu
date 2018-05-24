@@ -12,7 +12,6 @@
 @import "table";
 @import "accordion";
 @import "notification/oval";
-@import "toast";
 @import 'allu-common';
 @import 'allu-common-theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
@@ -22,6 +21,7 @@
 @import '../app/feature/project/header/project-header.component.theme';
 @import '../app/feature/comment/comments.theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
+@import "~ngx-toastr/toastr.css";
 
 // Theme components
 @include angular-material-theme($allu-theme);

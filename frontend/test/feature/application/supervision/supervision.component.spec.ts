@@ -10,10 +10,9 @@ import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.m
 import {availableToDirectiveMockMeta, CurrentUserMock, UserHubMock} from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
 import {SupervisionTask} from '../../../../src/app/model/application/supervision/supervision-task';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
 import {findTranslation} from '../../../../src/app/util/translations';
 import {getButtonWithMatIcon} from '../../../selector-helpers';
+import {Observable, Subject} from 'rxjs/index';
 
 const firstTask = new SupervisionTask(1);
 

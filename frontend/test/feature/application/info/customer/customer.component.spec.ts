@@ -2,7 +2,6 @@ import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
 
 import {CustomerComponent} from '../../../../../src/app/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
@@ -16,7 +15,7 @@ import {CustomerServiceMock} from '../../../../mocks';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 import {CodeSetService} from '../../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
-import {of} from 'rxjs/index';
+import {Observable, of} from 'rxjs/index';
 
 const headerText = 'Hakija';
 

@@ -9,13 +9,13 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {CityDistrict} from '../../../model/common/city-district';
 import {AttachmentHub} from '../../application/attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
-import {MaterializeUtil} from '../../../util/materialize.util';
 import {ArrayUtil} from '../../../util/array-util';
 import {FixedLocationArea} from '../../../model/common/fixed-location-area';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../../allu/reducers';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 @Component({
   selector: 'default-attachment',
@@ -39,7 +39,8 @@ export class DefaultAttachmentComponent implements OnInit {
               private router: Router,
               private fixedLocationService: FixedLocationService,
               private store: Store<fromRoot.State>,
-              private attachmentHub: AttachmentHub) {
+              private attachmentHub: AttachmentHub,
+              private notification: NotificationService) {
 
     this.attachmentForm = this.fb.group({
       id: [undefined],
@@ -87,10 +88,10 @@ export class DefaultAttachmentComponent implements OnInit {
     attachmentInfo.mimeType = this.file.type;
     this.attachmentHub.saveDefaultAttachment(attachmentInfo).subscribe(
       attachment => {
-        MaterializeUtil.toast('Liite ' + attachment.name + ' tallennettu');
+        this.notification.success('Liite ' + attachment.name + ' tallennettu');
         this.router.navigate(['../'], { relativeTo: this.route });
       },
-      error => MaterializeUtil.toast('Liitteen ' + attachmentInfo.name + ' tallentaminen epäonnistui'));
+      error => this.notification.error('Liitteen ' + attachmentInfo.name + ' tallentaminen epäonnistui'));
   }
 
   remove(): void {

@@ -2,7 +2,6 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
 
 import {CustomerInfoComponent} from '../../../../src/app/feature/customerregistry/customer/customer-info.component';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
@@ -11,7 +10,7 @@ import {DebugElement} from '@angular/core';
 import {CustomerService} from '../../../../src/app/service/customer/customer.service';
 import {CodeSetService} from '../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../src/app/model/codeset/codeset';
-import {of} from 'rxjs/index';
+import {Observable, of} from 'rxjs/index';
 
 class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}

@@ -12,8 +12,6 @@ import {
 } from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
 import {SupervisionTask} from '../../../../src/app/model/application/supervision/supervision-task';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
 import {SupervisionTaskComponent} from '../../../../src/app/feature/application/supervision/supervision-task.component';
 import {ApplicationStore} from '../../../../src/app/service/application/application-store';
 import {CurrentUser} from '../../../../src/app/service/user/current-user';
@@ -26,7 +24,7 @@ import {findTranslation} from '../../../../src/app/util/translations';
 import {UserHub} from '../../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../../src/app/model/user/user-search-criteria';
 import {SupervisionTaskStatusType} from '../../../../src/app/model/application/supervision/supervision-task-status-type';
-import {of, throwError} from 'rxjs/index';
+import {Observable, of, Subject, throwError} from 'rxjs/index';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 

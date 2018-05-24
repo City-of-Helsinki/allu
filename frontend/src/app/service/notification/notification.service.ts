@@ -3,36 +3,27 @@ import {ErrorInfo} from '../error/error-info';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
 import {Injectable} from '@angular/core';
-import {ToastyService} from 'ng2-toasty';
+import {ToastrService} from 'ngx-toastr';
 
 @Injectable()
 export class NotificationService {
 
-  constructor(private toasty: ToastyService) {}
+  constructor(private toastService: ToastrService) {}
 
   translateSuccess(key: string): void {
     this.success(findTranslation(key));
   }
 
   success(title: string, message?: string): void {
-    this.toasty.success({
-      title: title,
-      msg: message
-    });
+    this.toastService.success(message, title);
   }
 
   info(title: string, message?: string): void  {
-    this.toasty.info({
-      title: title,
-      msg: message
-    });
+    this.toastService.info(message, title);
   }
 
   error(title: string, message?: string): void {
-    this.toasty.error({
-      title: title,
-      msg: message
-    });
+    this.toastService.error(message, title);
   }
 
   errorInfo(errorInfo: ErrorInfo): void {

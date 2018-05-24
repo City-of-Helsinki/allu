@@ -20,14 +20,13 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {AttachmentInfo} from '../../../src/app/model/application/attachment/attachment-info';
 import {Location} from '../../../src/app/model/common/location';
 import {ApplicationType} from '../../../src/app/model/application/type/application-type';
-import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {ApplicationStatus} from '../../../src/app/model/application/application-status';
 import {MatDialog} from '@angular/material';
 import {User} from '../../../src/app/model/user/user';
 import {UserHub} from '../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../src/app/model/user/user-search-criteria';
-import {EMPTY, of} from 'rxjs/index';
+import {EMPTY, Observable, of} from 'rxjs/index';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {

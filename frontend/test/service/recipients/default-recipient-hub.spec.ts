@@ -3,7 +3,6 @@ import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {DefaultRecipientService} from '../../../src/app/service/recipients/default-recipient.service';
 import {DefaultRecipient} from '../../../src/app/model/common/default-recipient';
 import {ApplicationType} from '../../../src/app/model/application/type/application-type';
-import {Observable} from 'rxjs/Observable';
 import {RECIPIENT_ONE, RECIPIENT_TWO, RECIPIENT_NEW, RECIPIENTS_ALL} from './default-recipient-mock-values';
 import {of} from 'rxjs/index';
 import {last} from 'rxjs/internal/operators';

@@ -1,14 +1,12 @@
-import {Observable} from 'rxjs/Observable';
 import {SupervisionWorkqueueState} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
 import {SupervisionTaskSearchCriteria} from '../../../src/app/model/application/supervision/supervision-task-search-criteria';
 import {Page} from '../../../src/app/model/common/page';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {Sort} from '../../../src/app/model/common/sort';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {PageRequest} from '../../../src/app/model/common/page-request';
 import {distinctUntilChanged} from 'rxjs/internal/operators';
-import {of} from 'rxjs/index';
+import {BehaviorSubject, Observable, of} from 'rxjs/index';
 
 
 const initialState: SupervisionWorkqueueState = {
