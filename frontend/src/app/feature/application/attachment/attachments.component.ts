@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import * as filesaver from 'file-saver';
 
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
@@ -11,11 +11,11 @@ import {MatDialog, MatSlideToggleChange} from '@angular/material';
 import {TimeUtil} from '../../../util/time.util';
 import {Some} from '../../../util/option';
 import {AttachmentType, isCommon} from '../../../model/application/attachment/attachment-type';
-import {Subject} from 'rxjs/Subject';
 import {applicationCanBeEdited} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
+import {filter, map, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'attachments',
@@ -43,10 +43,10 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   ngOnInit() {
     this.application = this.applicationStore.snapshot.application;
     this.applicationCanBeEdited = applicationCanBeEdited(this.application.statusEnum);
-    this.applicationStore.attachments
-      .takeUntil(this.destroy)
-      .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
-      .subscribe(sorted => this.setAttachments(sorted));
+    this.applicationStore.attachments.pipe(
+      takeUntil(this.destroy),
+      map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
+    ).subscribe(sorted => this.setAttachments(sorted));
   }
 
   ngOnDestroy(): void {
@@ -83,8 +83,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
         data: {title: findTranslation('attachment.action.confirmDelete'), description: attachment.name}
       });
       dialogRef.afterClosed()
-        .filter(result => result) // Ignore no answers
-        .subscribe(result => this.onRemoveConfirm(attachment));
+        .pipe(filter(result => result)) // Ignore no answers
+        .subscribe(() => this.onRemoveConfirm(attachment));
     } else {
       this.onRemoveConfirm(attachment);
     }

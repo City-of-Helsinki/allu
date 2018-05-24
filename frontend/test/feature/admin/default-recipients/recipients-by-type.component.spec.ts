@@ -9,15 +9,16 @@ import {ApplicationType} from '../../../../src/app/model/application/type/applic
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {DefaultRecipient} from '../../../../src/app/model/common/default-recipient';
 import {RECIPIENT_ONE, RECIPIENT_TWO} from '../../../service/recipients/default-recipient-mock-values';
-import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
 import {NotificationServiceMock} from '../../../mocks';
+import {share} from 'rxjs/internal/operators';
+import {of} from 'rxjs/index';
 
 class DefaultRecipientHubMock {
   recipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);
 
   defaultRecipientsByApplicationType(type: string) {
-    return this.recipients$.asObservable().share();
+    return this.recipients$.asObservable().pipe(share());
   }
   removeDefaultRecipient(id: number) {}
   saveDefaultRecipient(recipient: DefaultRecipient) {}
@@ -99,7 +100,7 @@ describe('RecipientsByTypeComponent', () => {
   }));
 
   it('should delete row on delete button click', fakeAsync(() => {
-    spyOn(hub, 'removeDefaultRecipient').and.returnValue(Observable.of({}));
+    spyOn(hub, 'removeDefaultRecipient').and.returnValue(of({}));
     const deleteBtn = page.getButtonFromRow(0, 'clear');
     deleteBtn.click();
     detectChangesAndUpdate();
@@ -116,7 +117,7 @@ describe('RecipientsByTypeComponent', () => {
 
   it('should save item on save button click', fakeAsync(() => {
     const updated = new DefaultRecipient(RECIPIENT_ONE.id, 'updated@email.fi', RECIPIENT_ONE.applicationType);
-    spyOn(hub, 'saveDefaultRecipient').and.returnValue(Observable.of(updated));
+    spyOn(hub, 'saveDefaultRecipient').and.returnValue(of(updated));
     const editBtn = page.getButtonFromRow(0, 'edit');
     editBtn.click();
     detectChangesAndUpdate();

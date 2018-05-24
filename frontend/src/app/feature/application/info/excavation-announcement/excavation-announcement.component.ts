@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {MatDatepicker} from '@angular/material';
 import {Application} from '../../../../model/application/application';
 import {AbstractControlWarn, ComplexValidator} from '../../../../util/complex-validator';
@@ -18,6 +18,7 @@ import {Some} from '../../../../util/option';
 import {IconConfig} from '../../../common/icon-config';
 import {ApplicationService} from '../../../../service/application/application.service';
 import {ProjectService} from '../../../../service/project/project.service';
+import {catchError, debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'excavation-announcement',
@@ -48,12 +49,13 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   ngOnInit(): any {
     super.ngOnInit();
 
-    this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]]))
-      .switchMap(search => this.applicationService.search(search))
-      .catch(err => this.notification.errorCatch(err, []));
+    this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]])),
+      switchMap(search => this.applicationService.search(search)),
+      catchError(err => this.notification.errorCatch(err, []))
+    );
   }
 
   setCableReport(application: Application) {

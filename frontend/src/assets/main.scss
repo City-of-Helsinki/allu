@@ -15,7 +15,6 @@
 @import "toast";
 @import 'allu-common';
 @import 'allu-common-theme';
-@import '../app/feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
 @import '../app/feature/common/card/allu-card.component.theme';
@@ -27,7 +26,6 @@
 // Theme components
 @include angular-material-theme($allu-theme);
 @include allu-common-theme($allu-theme);
-@include auto-completion-list-theme($allu-theme);
 @include placeholder-theme($allu-theme);
 @include checkbox-theme($allu-theme);
 @include nav-theme($allu-theme);
@@ -67,7 +65,7 @@ html, body{
 
 // Set up a default font and some padding to provide breathing room
 body {
-  font-family: $mat-font-family;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   font-size: $mat-body-font-size-base;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -191,7 +189,7 @@ input:-webkit-autofill:active {
   }
 }
 
-.error-overflow .mat-input-subscript-wrapper {
+.error-overflow .mat-form-field-subscript-wrapper {
   overflow: visible;
 }
 

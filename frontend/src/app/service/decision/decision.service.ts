@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Decision} from '../../model/decision/Decision';
 import {ErrorHandler} from '../error/error-handler.service';
 import {DecisionDetails} from '../../model/decision/decision-details';
 import {findTranslation} from '../../util/translations';
 import {DecisionDetailsMapper} from '../mapper/decision-details-mapper';
+import {catchError, map} from 'rxjs/internal/operators';
 
 const DECISION_URL = '/api/applications/:appId/decision';
 const DECISION_PREVIEW_URL = '/api/applications/:appId/decision-preview';
@@ -21,21 +22,24 @@ export class DecisionService {
     console.log('Fetching pdf for application ' + applicationId);
     const url = DECISION_URL.replace(':appId', String(applicationId));
 
-    return this.http.get(url, {responseType: 'blob'})
-      .map(pdf => new Decision(applicationId, pdf));
+    return this.http.get(url, {responseType: 'blob'}).pipe(
+      map(pdf => new Decision(applicationId, pdf))
+    );
   }
 
   public preview(applicationId: number): Observable<Decision> {
     console.log('Fetching pdf preview for application ' + applicationId);
     const url = DECISION_PREVIEW_URL.replace(':appId', String(applicationId));
 
-    return this.http.get(url, {responseType: 'blob'})
-      .map(pdf => new Decision(applicationId, pdf));
+    return this.http.get(url, {responseType: 'blob'}).pipe(
+      map(pdf => new Decision(applicationId, pdf))
+    );
   }
 
   public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = DECISION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
-    return this.http.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails)))
-      .catch(error => this.errorHandler.handle(error, findTranslation('decision.error.send')));
+    return this.http.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails))).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('decision.error.send')))
+    );
   }
 }

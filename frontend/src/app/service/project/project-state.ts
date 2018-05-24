@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, BehaviorSubject, of, combineLatest} from 'rxjs';
 import {Project} from '../../model/project/project';
 import {Application} from '../../model/application/application';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ProjectService} from './project.service';
 import * as fromRoot from '../../feature/allu/reducers';
 import {Store} from '@ngrx/store';
+import {map, switchMap, tap} from 'rxjs/internal/operators';
 
 @Injectable()
 export class ProjectState {
@@ -22,34 +22,30 @@ export class ProjectState {
     this.childProjects$.next([]);
     this.parentProjects$.next([]);
     this.applications$.next([]);
-    return Observable.of(this._project);
+    return of(this._project);
   }
 
   load(id: number): Observable<Project> {
-    return this.projectService.getProject(id)
-      .do(p => this._project = p);
+    return this.projectService.getProject(id).pipe(tap(p => this._project = p));
   }
 
   loadChildProjects(id: number): Observable<Array<Project>> {
-    return this.projectService.getChildProjects(id)
-      .do(children => this.childProjects$.next(children));
+    return this.projectService.getChildProjects(id).pipe(
+      tap(children => this.childProjects$.next(children))
+    );
   }
 
   loadParentProjects(id: number): Observable<Array<Project>> {
-    return this.projectService.getParentProjects(id)
-      .do(parents => this.parentProjects$.next(parents));
+    return this.projectService.getParentProjects(id).pipe(
+      tap(parents => this.parentProjects$.next(parents))
+    );
   }
 
   loadRelatedProjects(id: number): Observable<Array<Project>> {
-    return Observable.combineLatest(
+    return combineLatest(
       this.loadParentProjects(id),
       this.loadChildProjects(id)
-    ).map(projects => [].concat.apply([], projects)); // maps array[array, array] => array
-  }
-
-  loadApplications(id: number): Observable<Array<Application>> {
-    return this.projectService.getProjectApplications(id)
-      .do(applications => this.applications$.next(applications));
+    ).pipe(map(projects => [].concat.apply([], projects))); // maps array[array, array] => array
   }
 
   get project(): Project {
@@ -73,26 +69,29 @@ export class ProjectState {
   }
 
   get relatedProjects(): Observable<Array<Project>> {
-    return Observable.combineLatest(
+    return combineLatest(
       this.parentProjects,
       this.childProjects
-    ).map(projects => [].concat.apply([], projects));
+    ).pipe(map(projects => [].concat.apply([], projects)));
   }
 
   save(project: Project): Observable<Project> {
-    return this.projectService.save(project)
-      .do(p => this._project = p);
+    return this.projectService.save(project).pipe(
+      tap(p => this._project = p)
+    );
   }
 
   updateParentProject(project: Project): Observable<Array<Project>> {
-    return this.projectService.updateParent(project.id, this._project.id)
-      .switchMap(updated => this.loadRelatedProjects(this.project.id));
+    return this.projectService.updateParent(project.id, this._project.id).pipe(
+      switchMap(updated => this.loadRelatedProjects(this.project.id))
+    );
   }
 
   removeParentsFrom(projectIds: Array<number>): Observable<Array<Project>> {
     if (projectIds.length > 0) {
-      return this.projectService.removeParent(projectIds)
-        .switchMap(response => this.loadRelatedProjects(this.project.id));
+      return this.projectService.removeParent(projectIds).pipe(
+        switchMap(response => this.loadRelatedProjects(this.project.id))
+      );
     } else {
       return this.relatedProjects;
     }
@@ -101,7 +100,8 @@ export class ProjectState {
   districtNames(ids?: Array<number>): Observable<Array<string>> {
     const districtIds = ids || this._project.cityDistricts;
 
-    return this.store.select(fromRoot.getCityDistrictsByIds(districtIds))
-      .map(ds => ds.map(d => d.name));
+    return this.store.select(fromRoot.getCityDistrictsByIds(districtIds)).pipe(
+      map(ds => ds.map(d => d.name))
+    );
   }
 }

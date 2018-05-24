@@ -92,8 +92,7 @@ describe('AvailableToDirective', () => {
         const fixture = TestBed.createComponent(TestComponent);
         fixture.detectChanges();
         fail('No error thrown');
-      })
-      .catch(err => expect(err.message).toContain('Available to requires at least one role as parameter'));
+      }).catch(err => expect(err.message).toContain('Available to requires at least one role as parameter'));
   });
 });
 

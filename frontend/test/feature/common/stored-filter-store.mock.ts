@@ -3,6 +3,7 @@ import {initialState, StoredFilterState} from '../../../src/app/service/stored-f
 import {StoredFilter} from '../../../src/app/model/user/stored-filter';
 import {Observable} from 'rxjs/Observable';
 import {StoredFilterType} from '../../../src/app/model/user/stored-filter-type';
+import {EMPTY, of} from 'rxjs/index';
 
 export class StoredFilterStoreMock {
   public store = new BehaviorSubject<StoredFilterState>(initialState);
@@ -16,18 +17,18 @@ export class StoredFilterStoreMock {
   }
 
   getCurrent(type: StoredFilterType): Observable<StoredFilter> {
-    return Observable.of(new StoredFilter());
+    return of(new StoredFilter());
   }
 
   getCurrentFilter(type: StoredFilterType): Observable<any> {
-    return Observable.empty();
+    return EMPTY;
   }
 
   getDefault(type: StoredFilterType): Observable<StoredFilter> {
-    return Observable.of(new StoredFilter());
+    return of(new StoredFilter());
   }
 
   getAvailable(type: StoredFilterType): Observable<StoredFilter[]> {
-    return Observable.of([]);
+    return of([]);
   }
 }

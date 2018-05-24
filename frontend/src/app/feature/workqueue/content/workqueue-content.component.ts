@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {MatCheckboxChange, MatDialog, MatPaginator, MatSort} from '@angular/material';
 
 import {Application} from '../../../model/application/application';
 import {CommentsModalComponent} from '../../comment/comments-modal.component';
 import {ApplicationStatus} from '../../../model/application/application-status';
-import {Subject} from 'rxjs/Subject';
 import {ApplicationWorkItemStore} from '../application-work-item-store';
 import {ApplicationWorkItemDatasource, ApplicationWorkItemRow} from './application-work-item-datasource';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
@@ -18,6 +17,7 @@ import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-st
 import {NotificationService} from '../../../service/notification/notification.service';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'workqueue-content',
@@ -57,42 +57,45 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
     this.dataSource = new ApplicationWorkItemDatasource(this.itemStore, this.notification, this.paginator, this.sort);
 
-    this.dataSource.page
-      .takeUntil(this.destroy)
+    this.dataSource.page.pipe(takeUntil(this.destroy))
       .subscribe(page => {
         this.length = page.totalElements;
         this.pageIndex = page.pageNumber;
       });
 
-    this.route.data
-      .map(data => data.tab)
-      .takeUntil(this.destroy)
-      .subscribe((tab: string) => this.itemStore.tabChange(WorkQueueTab[tab]));
+    this.route.data.pipe(
+      map(data => data.tab),
+      takeUntil(this.destroy)
+    ).subscribe((tab: string) => this.itemStore.tabChange(WorkQueueTab[tab]));
 
-    this.itemStore.changes.map(state => state.selectedItems)
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(selected => this.selectedItems = selected);
+    this.itemStore.changes.pipe(
+      map(state => state.selectedItems),
+      distinctUntilChanged(),
+      takeUntil(this.destroy)
+    ).subscribe(selected => this.selectedItems = selected);
 
-    this.itemStore.changes.map(state => state.allSelected)
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(allSelected => this.allSelected = allSelected);
+    this.itemStore.changes.pipe(
+      map(state => state.allSelected),
+      distinctUntilChanged(),
+      takeUntil(this.destroy)
+    ).subscribe(allSelected => this.allSelected = allSelected);
 
-     this.itemStore.changes.map(state => state.search)
-       .distinctUntilChanged()
-       .takeUntil(this.destroy)
-       .subscribe(query => this.selectedTags = query.tags);
+     this.itemStore.changes.pipe(
+       map(state => state.search),
+       distinctUntilChanged(),
+       takeUntil(this.destroy)
+     ).subscribe(query => this.selectedTags = query.tags);
 
-    this.itemStore.changes.map(state => state.loading)
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(loading => this.loading = loading);
+    this.itemStore.changes.pipe(
+      map(state => state.loading),
+      distinctUntilChanged(),
+      takeUntil(this.destroy)
+    ).subscribe(loading => this.loading = loading);
 
-    this.storedFilterStore.getCurrentFilter(StoredFilterType.WORKQUEUE)
-      .takeUntil(this.destroy)
-      .map(filter => Sort.toMatSortable(filter.sort))
-      .subscribe(sort => this.sort.sort(sort));
+    this.storedFilterStore.getCurrentFilter(StoredFilterType.WORKQUEUE).pipe(
+      takeUntil(this.destroy),
+      map(filter => Sort.toMatSortable(filter.sort))
+    ).subscribe(sort => this.sort.sort(sort));
   }
 
   ngOnDestroy(): void {

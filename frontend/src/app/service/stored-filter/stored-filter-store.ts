@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {StoredFilterService} from './stored-filter.service';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {NotificationService} from '../notification/notification.service';
-import {Observable} from 'rxjs/Observable';
 import {ArrayUtil} from '../../util/array-util';
+import {catchError, distinctUntilChanged, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 
 export interface StoredFilterTypeState {
   current: number;
@@ -31,13 +31,13 @@ export class StoredFilterStore {
   private store = new BehaviorSubject<StoredFilterState>(initialState);
 
   constructor(private storedFilterService: StoredFilterService, private notification: NotificationService) {
-    this.loadAvailable()
-      .map(filters => this.createState(filters))
-      .subscribe(state => this.store.next(state));
+    this.loadAvailable().pipe(
+      map(filters => this.createState(filters))
+    ).subscribe(state => this.store.next(state));
   }
 
   get changes(): Observable<StoredFilterState> {
-    return this.store.asObservable().distinctUntilChanged();
+    return this.store.asObservable().pipe(distinctUntilChanged());
   }
 
   get snapshot(): StoredFilterState {
@@ -45,34 +45,39 @@ export class StoredFilterStore {
   }
 
   getCurrent(type: StoredFilterType): Observable<StoredFilter> {
-    return this.changes
-      .map(state => state[StoredFilterType[type]])
-      .map(state => state.current)
-      .switchMap(current => this.byId(current))
-      .distinctUntilChanged();
+    return this.changes.pipe(
+      map(state => state[StoredFilterType[type]]),
+      map(state => state.current),
+      switchMap(current => this.byId(current)),
+      distinctUntilChanged()
+    );
   }
 
   getCurrentFilter(type: StoredFilterType): Observable<any> {
-    return this.getCurrent(type)
-      .filter(current => !!current)
-      .map(storedFilter => storedFilter.filter);
+    return this.getCurrent(type).pipe(
+      filter(current => !!current),
+      map(storedFilter => storedFilter.filter)
+    );
   }
 
   getDefault(type: StoredFilterType): Observable<StoredFilter> {
-    return this.getAvailable(type)
-      .map(available => ArrayUtil.first(available, f => f.defaultFilter))
-      .distinctUntilChanged();
+    return this.getAvailable(type).pipe(
+      map(available => ArrayUtil.first(available, f => f.defaultFilter)),
+      distinctUntilChanged()
+    );
   }
 
   getAvailable(type: StoredFilterType): Observable<StoredFilter[]> {
-    return this.store.map(state => state.available)
-      .map(available => available.filter(f => f.type === type))
-      .distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.available),
+      map(available => available.filter(f => f.type === type)),
+      distinctUntilChanged()
+    );
   }
 
-  currentChange(filter: StoredFilter): void {
+  currentChange(storedFilter: StoredFilter): void {
     const next = {...this.snapshot};
-    next[filter.typeName].current = filter.id;
+    next[storedFilter.typeName].current = storedFilter.id;
     this.store.next(next);
   }
 
@@ -82,38 +87,41 @@ export class StoredFilterStore {
     this.store.next(next);
   }
 
-  save(filter: StoredFilter): Observable<StoredFilter> {
-    return this.storedFilterService.save(filter)
-      .do(saved => this.loadAndSetCurrent(saved));
+  save(storedFilter: StoredFilter): Observable<StoredFilter> {
+    return this.storedFilterService.save(storedFilter).pipe(
+      tap(saved => this.loadAndSetCurrent(saved))
+    );
   }
 
   remove(id: number): Observable<{}> {
-    return this.storedFilterService.remove(id)
-      .do(() => this.loadAndClearCurrent(id));
+    return this.storedFilterService.remove(id).pipe(
+      tap(() => this.loadAndClearCurrent(id))
+    );
   }
 
   private byId(id: number): Observable<StoredFilter> {
-    return this.changes
-      .map(state => state.available)
-      .map(available => available.find(filter => filter.id === id));
+    return this.changes.pipe(
+      map(state => state.available),
+      map(available => available.find(storedFilter => storedFilter.id === id))
+    );
   }
 
   private createState(filters: StoredFilter[]): StoredFilterState {
     const state = {...initialState};
-    filters.forEach(filter => {
-      if (filter.defaultFilter) {
-        state[filter.typeName].current = filter.id;
+    filters.forEach(storedFilter => {
+      if (storedFilter.defaultFilter) {
+        state[storedFilter.typeName].current = storedFilter.id;
       }
 
-      state.available.push(filter);
+      state.available.push(storedFilter);
     });
     return state;
   }
 
-  private loadAndSetCurrent(filter: StoredFilter): void {
+  private loadAndSetCurrent(storedFilter: StoredFilter): void {
     const state = {...this.snapshot};
     this.loadAvailable().subscribe(available => {
-      state[filter.typeName].current = filter.id;
+      state[storedFilter.typeName].current = storedFilter.id;
       state.available = available;
       this.store.next(state);
     });
@@ -121,7 +129,7 @@ export class StoredFilterStore {
 
   private loadAndClearCurrent(id: number): void {
     const state = {...this.snapshot};
-    const removed = state.available.find(filter => filter.id === id);
+    const removed = state.available.find(storedFilter => storedFilter.id === id);
     const typeState = state[removed.typeName];
 
     if (typeState.current === removed.id) {
@@ -136,7 +144,8 @@ export class StoredFilterStore {
   }
 
   private loadAvailable(): Observable<StoredFilter[]> {
-    return this.storedFilterService.findForCurrentUser()
-      .catch(err => this.notification.errorCatch(err, []));
+    return this.storedFilterService.findForCurrentUser().pipe(
+      catchError(err => this.notification.errorCatch(err, []))
+    );
   }
 }

@@ -3,7 +3,7 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
 import * as fromAuth from '../../auth/reducers';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of, defer} from 'rxjs';
 import {
   Add, AddMultiple,
   ApplicationBasketActionType, Clear,
@@ -14,9 +14,7 @@ import {
 } from '../actions/application-basket-actions';
 import {catchError, combineLatest, filter, map, switchMap, tap} from 'rxjs/operators';
 import {ApplicationService} from '../../../service/application/application.service';
-import {of} from 'rxjs/observable/of';
 import {LocalStorageUtil} from '../../../util/local-storage.util';
-import {defer} from 'rxjs/observable/defer';
 import {NotificationService} from '../../../service/notification/notification.service';
 
 const BASKET = 'applicationBasket';

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {EMPTY, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {AttachmentHub} from '../../application/attachment/attachment-hub';
@@ -9,6 +9,7 @@ import {ContentRow} from '../../../model/common/content-row';
 import {MaterializeUtil} from '../../../util/materialize.util';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import {Some} from '../../../util/option';
+import {map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'default-attachments',
@@ -50,15 +51,15 @@ export class DefaultAttachmentsComponent implements OnInit {
 
   areaName(areaId: number): Observable<string> {
     return Some(areaId)
-      .map(id => this.fixedLocationService.areaById(id).map(area => area.name))
-      .orElse(Observable.empty());
+      .map(id => this.fixedLocationService.areaById(id).pipe(map(area => area.name)))
+      .orElse(EMPTY);
   }
 
   private loadAttachmentInfos(): void {
-    this.attachmentHub.defaultAttachmentInfos()
-      .map(attachmentInfos => attachmentInfos
+    this.attachmentHub.defaultAttachmentInfos().pipe(
+      map(attachmentInfos => attachmentInfos
         .filter(ai => ai.type === this.attachmentType)
         .map(ai => new ContentRow(ai)))
-      .subscribe(rows => this.attachmentRows = rows);
+    ).subscribe(rows => this.attachmentRows = rows);
   }
 }

@@ -1,16 +1,14 @@
 import {DataSource} from '@angular/cdk/collections';
-import {Subject} from 'rxjs/Subject';
+import {merge, Observable, of, Subject} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
 import {NotificationService} from '../notification/notification.service';
-import '../../rxjs-extensions';
 import {CustomerService} from './customer.service';
 import {Customer} from '../../model/customer/customer';
 import {CustomerSearchQuery} from './customer-search-query';
-import {Application} from '../../model/application/application';
+import {catchError, map, skipUntil, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
 
 export class CustomerDatasource extends DataSource<any> {
 
@@ -46,7 +44,7 @@ export class CustomerDatasource extends DataSource<any> {
   }
 
   get data(): Observable<Customer[]> {
-    return this._page.map(page => page.content);
+    return this._page.pipe(map(page => page.content));
   }
 
   get pageSnapshot(): Page<Customer> {
@@ -60,14 +58,15 @@ export class CustomerDatasource extends DataSource<any> {
       this.paginator.page
     ];
 
-    return Observable.merge(...displayDataChanges)
-      .takeUntil(this.destroy)
-      .skipUntil(this.searchChanges)
-      .switchMap(() => this.load())
-      .do(page => {
+    return merge(...displayDataChanges).pipe(
+      takeUntil(this.destroy),
+      skipUntil(this.searchChanges),
+      switchMap(() => this.load()),
+      tap(page => {
         this._pageSnapshot = page;
         this.loading = false;
-      });
+      })
+    );
   }
 
   private load(): Observable<Page<Customer>> {
@@ -76,10 +75,11 @@ export class CustomerDatasource extends DataSource<any> {
       this._search,
       new Sort(this.sort.active, this.sort.direction),
       new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
-    ).catch(err => {
-      this.notification.errorInfo(err);
-      return Observable.of(new Page<Customer>());
-    });
+    ).pipe(
+      catchError(err => {
+        this.notification.errorInfo(err);
+        return of(new Page<Customer>());
+    }));
   }
 
   private resetPageIndexOnSearchSortChange(): void {
@@ -87,8 +87,8 @@ export class CustomerDatasource extends DataSource<any> {
       this.searchChanges,
       this.sort.sortChange,
     ];
-    Observable.merge(...changes)
-      .takeUntil(this.destroy)
-      .subscribe(() => this.paginator.pageIndex = 0);
+    merge(...changes).pipe(
+      takeUntil(this.destroy)
+    ).subscribe(() => this.paginator.pageIndex = 0);
   }
 }

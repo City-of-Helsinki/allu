@@ -18,7 +18,8 @@ import {
 import {EnumUtil} from '../../../util/enum.util';
 import {ArrayUtil} from '../../../util/array-util';
 import {ApplicationStatus} from '../../../model/application/application-status';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'application-type',
@@ -62,20 +63,16 @@ export class TypeComponent implements OnInit, OnDestroy {
       this.form.disable();
     }
 
-    this.typeCtrl.valueChanges
-      .takeUntil(this.destroy)
+    this.typeCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(type => this.typeSelection(type));
 
-    this.kindsCtrl.valueChanges
-      .takeUntil(this.destroy)
+    this.kindsCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(kinds => this.kindSelection(kinds));
 
-    this.specifiersCtrl.valueChanges
-      .takeUntil(this.destroy)
+    this.specifiersCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(specifiers => this.onSpecifierSelection(specifiers));
 
-    this.draftCtrl.valueChanges
-      .takeUntil(this.destroy)
+    this.draftCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(draft => this.applicationStore.changeDraft(draft));
   }
 

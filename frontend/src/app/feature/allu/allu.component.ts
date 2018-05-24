@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {ConfigService} from '../../service/config/config.service';
 import {EnvironmentType} from '../../model/config/environment-type';
 import {CustomIconRegistry} from '../../service/common/custom-icon-registry';

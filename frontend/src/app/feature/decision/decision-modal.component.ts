@@ -6,12 +6,13 @@ import {DistributionEntry} from '../../model/common/distribution-entry';
 import {DistributionEntryForm} from '../application/distribution/distribution-list/distribution-entry-form';
 import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/user/user';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {RoleType} from '../../model/user/role-type';
 import {ApplicationStore} from '../../service/application/application-store';
 import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 import {ArrayUtil} from '../../util/array-util';
 import {DistributionType} from '../../model/common/distribution-type';
+import {filter, map} from 'rxjs/internal/operators';
 
 interface DecisionModalData {
   status: ApplicationStatus;
@@ -105,7 +106,9 @@ export class DecisionModalComponent implements OnInit {
   private preferredOwner(): Observable<User> {
     const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
-    return this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))
-      .filter(preferred => !!preferred);
+    return this.userHub.searchUsers(criteria).pipe(
+      map(preferred => ArrayUtil.first(preferred)),
+      filter(preferred => !!preferred)
+    );
   }
 }

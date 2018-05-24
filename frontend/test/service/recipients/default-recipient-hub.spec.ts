@@ -5,10 +5,12 @@ import {DefaultRecipient} from '../../../src/app/model/common/default-recipient'
 import {ApplicationType} from '../../../src/app/model/application/type/application-type';
 import {Observable} from 'rxjs/Observable';
 import {RECIPIENT_ONE, RECIPIENT_TWO, RECIPIENT_NEW, RECIPIENTS_ALL} from './default-recipient-mock-values';
+import {of} from 'rxjs/index';
+import {last} from 'rxjs/internal/operators';
 
 class DefaultRecipientServiceMock {
   getDefaultRecipients() {
-    return Observable.of(RECIPIENTS_ALL);
+    return of(RECIPIENTS_ALL);
   }
   saveDefaultRecipient(recipient: DefaultRecipient) {}
   removeDefaultRecipient(id: number) {}
@@ -39,48 +41,48 @@ describe('DefaultRecipientHub', () => {
   }));
 
   it('should emit new values on save', fakeAsync(() => {
-    spyOn(defaultRecipientService, 'getDefaultRecipients').and.returnValue(Observable.of([]));
+    spyOn(defaultRecipientService, 'getDefaultRecipients').and.returnValue(of([]));
     hub.loadDefaultRecipients();
     tick();
 
-    spyOn(defaultRecipientService, 'saveDefaultRecipient').and.returnValue(Observable.of(RECIPIENT_ONE));
+    spyOn(defaultRecipientService, 'saveDefaultRecipient').and.returnValue(of(RECIPIENT_ONE));
     hub.saveDefaultRecipient(RECIPIENT_NEW).subscribe(recipient => {
       expect(recipient).toEqual(RECIPIENT_ONE);
     });
     tick();
 
-    hub.defaultRecipients.last().subscribe(recipients => {
+    hub.defaultRecipients.pipe(last()).subscribe(recipients => {
       expect(recipients.length).toEqual(1, 'Got unexpected number of recipients');
       expect(recipients[0]).toEqual(RECIPIENT_ONE);
     });
   }));
 
   it('should update and emit new values', fakeAsync(() => {
-    spyOn(defaultRecipientService, 'getDefaultRecipients').and.returnValue(Observable.of(RECIPIENTS_ALL));
+    spyOn(defaultRecipientService, 'getDefaultRecipients').and.returnValue(of(RECIPIENTS_ALL));
     hub.loadDefaultRecipients();
     tick();
 
     const updatedRecipient = new DefaultRecipient(RECIPIENT_ONE.id, 'newEmail', ApplicationType[ApplicationType.SHORT_TERM_RENTAL]);
-    spyOn(defaultRecipientService, 'saveDefaultRecipient').and.returnValue(Observable.of(updatedRecipient));
+    spyOn(defaultRecipientService, 'saveDefaultRecipient').and.returnValue(of(updatedRecipient));
     hub.saveDefaultRecipient(updatedRecipient).subscribe(recipient => expect(recipient).toEqual(updatedRecipient));
     tick();
 
-    hub.defaultRecipients.last().subscribe(recipients => {
+    hub.defaultRecipients.pipe(last()).subscribe(recipients => {
       expect(recipients.length).toEqual(2, 'Length should be same as before');
       expect(recipients.find((r) => r.id === updatedRecipient.id)).toEqual(updatedRecipient);
     });
   }));
 
   it('should remove and emit new values', fakeAsync(() => {
-    spyOn(defaultRecipientService, 'getDefaultRecipients').and.returnValue(Observable.of(RECIPIENTS_ALL));
+    spyOn(defaultRecipientService, 'getDefaultRecipients').and.returnValue(of(RECIPIENTS_ALL));
     hub.loadDefaultRecipients();
     tick();
 
-    spyOn(defaultRecipientService, 'removeDefaultRecipient').and.returnValue(Observable.of({}));
+    spyOn(defaultRecipientService, 'removeDefaultRecipient').and.returnValue(of({}));
     hub.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(response => expect(response).toEqual({}));
     tick();
 
-    hub.defaultRecipients.last().subscribe(recipients => {
+    hub.defaultRecipients.pipe(last()).subscribe(recipients => {
       expect(recipients.length).toEqual(1, 'Recipient was not deleted');
       expect(recipients.find(r => r.id === RECIPIENT_ONE.id)).not.toBeDefined();
       expect(recipients.find(r => r.id === RECIPIENT_TWO.id)).toBeDefined();

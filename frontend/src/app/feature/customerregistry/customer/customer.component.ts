@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
+import {Observable, Subject} from 'rxjs';
 import {NumberUtil} from '../../../util/number.util';
 import {CustomerType} from '../../../model/customer/customer-type';
 import {EnumUtil} from '../../../util/enum.util';
@@ -14,6 +13,7 @@ import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from './customer-with-contacts.form';
 import {CustomerService} from '../../../service/customer/customer.service';
+import {filter, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'customer',
@@ -38,11 +38,11 @@ export class CustomerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params
-      .map(p => p['id'])
-      .filter(id => NumberUtil.isDefined(id))
-      .switchMap(id => this.customerService.findCustomerById(id))
-      .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
+    this.route.params.pipe(
+      map(p => p['id']),
+      filter(id => NumberUtil.isDefined(id)),
+      switchMap(id => this.customerService.findCustomerById(id))
+    ).subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 
   newContact(): void {

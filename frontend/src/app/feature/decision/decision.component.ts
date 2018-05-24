@@ -6,10 +6,10 @@ import {Decision} from '../../model/decision/Decision';
 import {stepFrom} from '../application/progressbar/progress-step';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationStore} from '../../service/application/application-store';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {NumberUtil} from '../../util/number.util';
-import {Subject} from 'rxjs/Subject';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
+import {filter, map, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'decision',
@@ -34,21 +34,23 @@ export class DecisionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.applicationChanges = this.applicationStore.application;
-    this.decisionAttachments = this.applicationStore.attachments
-      .map(attachments => attachments.filter(a => a.decisionAttachment));
+    this.decisionAttachments = this.applicationStore.attachments.pipe(
+      map(attachments => attachments.filter(a => a.decisionAttachment))
+    );
 
-    this.applicationChanges
-      .takeUntil(this.destroy)
-      .filter(app => NumberUtil.isDefined(app.id))
-      .subscribe(app => {
+    this.applicationChanges.pipe(
+      takeUntil(this.destroy),
+      filter(app => NumberUtil.isDefined(app.id))
+    ).subscribe(app => {
         this.progressStep = stepFrom(ApplicationStatus[app.status]);
         this.decisionHub.fetch(app.id)
           .subscribe(decision => this.providePdf(decision));
     });
 
-    this.applicationStore.changes.map(change => change.processing)
-      .takeUntil(this.destroy)
-      .subscribe(processing => this.processing = processing);
+    this.applicationStore.changes.pipe(
+      map(change => change.processing),
+      takeUntil(this.destroy)
+    ).subscribe(processing => this.processing = processing);
   }
 
   ngOnDestroy(): void {

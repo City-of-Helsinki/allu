@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of, Subject} from 'rxjs';
 
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
@@ -16,7 +16,6 @@ import {findTranslation} from '../../../util/translations';
 import {Option, Some} from '../../../util/option';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {NumberUtil} from '../../../util/number.util';
-import {Subject} from 'rxjs/Subject';
 import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
 import {DefaultRecipient} from '../../../model/common/default-recipient';
 import {DistributionEntry} from '../../../model/common/distribution-entry';
@@ -24,6 +23,7 @@ import {DistributionType} from '../../../model/common/distribution-type';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
+import {map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'application',
@@ -58,8 +58,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     this.initDistribution(application);
 
     this.applicationChanges = this.applicationStore.application;
-    this.applicationChanges
-      .takeUntil(this.destroy)
+    this.applicationChanges.pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));
   }
 
@@ -103,7 +102,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private get attachmentCount(): Observable<number> {
-    return this.applicationStore.attachments.map(attachments => attachments.length);
+    return this.applicationStore.attachments.pipe(map(attachments => attachments.length));
   }
 
   private get commentCount(): Observable<number> {
@@ -111,16 +110,18 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private get taskCount(): Observable<number> {
-    return this.supervisionTaskStore.tasks.map(supervisions => supervisions.length);
+    return this.supervisionTaskStore.tasks.pipe(map(supervisions => supervisions.length));
   }
 
   private get invoicingWarn(): Observable<boolean> {
     const noRecipient = (app: Application) => !NumberUtil.isDefined(app.invoiceRecipientId);
     const isBillable = (app: Application) => !app.notBillable;
-    return this.applicationStore.changes.map(change =>
-      noRecipient(change.application)
-      && isBillable(change.application)
-      && inHandling(change.application.statusEnum));
+    return this.applicationStore.changes.pipe(
+      map(change =>
+        noRecipient(change.application)
+        && isBillable(change.application)
+        && inHandling(change.application.statusEnum))
+    );
   }
 
   private sidebarItem(appType: ApplicationType, item: SidebarItem): Option<SidebarItem> {
@@ -130,31 +131,31 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private initDefaultAttachments(application: Application): void {
-    this.defaultAttachmentsForArea(application)
-      .takeWhile(() => this.applicationStore.isNew) // Only add default attachments if it is a new application
-      .takeUntil(this.destroy)
-      .subscribe(
-        attachments => attachments.forEach(a => this.applicationStore.saveAttachment(a)),
-        err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
+    this.defaultAttachmentsForArea(application).pipe(
+      takeWhile(() => this.applicationStore.isNew), // Only add default attachments if it is a new application
+      takeUntil(this.destroy)
+    ).subscribe(
+      attachments => attachments.forEach(a => this.applicationStore.saveAttachment(a)),
+      err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
   }
 
   private initDistribution(application: Application): void {
-    this.defaultRecipientHub.defaultRecipientsByApplicationType(application.type)
-      .takeWhile(() => this.applicationStore.isNew) // Only add default attachments if it is a new application
-      .takeUntil(this.destroy)
-      .map(recipients => recipients.map(r => this.toDistributionEntry(r)))
-      .subscribe(distributionEntries => {
-        application.decisionDistributionList = distributionEntries;
-        this.applicationStore.applicationChange(application);
-      }, err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
+    this.defaultRecipientHub.defaultRecipientsByApplicationType(application.type).pipe(
+      takeWhile(() => this.applicationStore.isNew), // Only add default attachments if it is a new application
+      takeUntil(this.destroy),
+      map(recipients => recipients.map(r => this.toDistributionEntry(r)))
+    ).subscribe(distributionEntries => {
+      application.decisionDistributionList = distributionEntries;
+      this.applicationStore.applicationChange(application);
+    }, err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
   }
 
   private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {
     return Some(application.firstLocation)
       .map(loc => loc.fixedLocationIds)
-      .map(ids => this.fixedLocationService.areaBySectionIds(ids)
-        .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.typeEnum, area.id)))
-      .orElse(Observable.of([]));
+      .map(ids => this.fixedLocationService.areaBySectionIds(ids).pipe(
+        switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.typeEnum, area.id))
+      )).orElse(of([]));
   }
 
   private toDistributionEntry(recipient: DefaultRecipient): DistributionEntry {

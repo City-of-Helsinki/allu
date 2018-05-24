@@ -5,9 +5,10 @@ import * as basket from '../actions/application-basket-actions';
 import {Store} from '@ngrx/store';
 import {ProjectState} from '../../../service/project/project-state';
 import {Application} from '../../../model/application/application';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Search} from '../actions/application-search-actions';
 import {Some} from '../../../util/option';
+import {map, take} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'project-applications',
@@ -33,8 +34,9 @@ export class ProjectApplicationsComponent implements OnInit {
 
   applicationSelectSearchChange(term: string): void {
     this.store.dispatch(new Search(term));
-    this.matchingApplications = this.store.select(fromProject.getMatchingApplications)
-      .map(applications => this.filterAlreadyIncludedApplications(applications));
+    this.matchingApplications = this.store.select(fromProject.getMatchingApplications).pipe(
+      map(applications => this.filterAlreadyIncludedApplications(applications))
+    );
   }
 
   applicationSelected(id: number): void {
@@ -46,8 +48,7 @@ export class ProjectApplicationsComponent implements OnInit {
   }
 
   addFromBasket(): void {
-    this.store.select(fromProject.getApplicationIdsInBasket)
-      .take(1)
+    this.store.select(fromProject.getApplicationIdsInBasket).pipe(take(1))
       .subscribe((ids: number[]) => {
         this.store.dispatch(new application.AddMultiple(ids));
         this.store.dispatch(new basket.Clear());

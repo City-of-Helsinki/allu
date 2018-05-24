@@ -1,5 +1,5 @@
 import {ActivatedRoute, UrlSegment} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Some} from './option';
 
 export class UrlUtil {

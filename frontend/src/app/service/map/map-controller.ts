@@ -7,8 +7,7 @@ import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
 import '../../js/leaflet/draw-line';
 
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import {Subject, Observable, combineLatest} from 'rxjs';
 import {MapUtil} from './map.util';
 import {Some} from '../../util/option';
 import {translations} from '../../util/translations';
@@ -22,6 +21,7 @@ import {MapFeatureInfo} from './map-feature-info';
 import {MapPopupService} from './map-popup.service';
 import {Injectable} from '@angular/core';
 import GeoJSONOptions = L.GeoJSONOptions;
+import {map, takeUntil} from 'rxjs/internal/operators';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -345,11 +345,12 @@ export class MapController {
       return drawing && noSelectedSections;
     };
 
-    Observable.combineLatest(
+    combineLatest(
       this.mapStore.drawingAllowed,
-      this.mapStore.selectedSections,
-      drawingAllowed
-    ).takeUntil(this.destroy)
-      .subscribe(allowed => this.setDynamicControls(allowed));
+      this.mapStore.selectedSections
+    ).pipe(
+      map(([drawing, sections]) => drawingAllowed(drawing, sections)),
+      takeUntil(this.destroy)
+    ).subscribe(allowed => this.setDynamicControls(allowed));
   }
 }

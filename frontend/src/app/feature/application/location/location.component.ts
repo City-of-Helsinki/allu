@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {MapUtil} from '../../../service/map/map.util';
@@ -32,9 +32,9 @@ import {Location} from '../../../model/common/location';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 import {defaultFilter, MapSearchFilter} from '../../../service/map-search-filter';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
-import {Subject} from 'rxjs/Subject';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
+import {distinctUntilChanged, filter, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'type',
@@ -100,10 +100,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.mapStore.locationSearchFilterChange(defaultFilter);
 
-    this.router.events
-      .takeUntil(this.destroy)
-      .filter(e => e instanceof NavigationStart)
-      .subscribe(() => this.mapStore.locationSearchFilterChange(defaultFilter));
+    this.router.events.pipe(
+      takeUntil(this.destroy),
+      filter(e => e instanceof NavigationStart)
+    ).subscribe(() => this.mapStore.locationSearchFilterChange(defaultFilter));
 
     this.application = this.applicationStore.snapshot.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
@@ -111,33 +111,28 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadFixedLocations();
 
     this.progressStep = ProgressStep.LOCATION;
-    this.mapStore.locationSearchFilter
-      .takeUntil(this.destroy)
-      .subscribe(filter => this.searchUpdated(filter));
+    this.mapStore.locationSearchFilter.pipe(takeUntil(this.destroy))
+      .subscribe(searchFilter => this.searchUpdated(searchFilter));
 
-    this.mapStore.shape
-      .takeUntil(this.destroy)
+    this.mapStore.shape.pipe(takeUntil(this.destroy))
       .subscribe(shape => this.shapeAdded(shape));
 
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
     this.initForm();
 
-    this.mapStore.editedLocation
-      .takeUntil(this.destroy)
+    this.mapStore.editedLocation.pipe(takeUntil(this.destroy))
       .subscribe(loc => this.editLocation(loc));
 
-    this.areaCtrl.valueChanges
-      .takeUntil(this.destroy)
+    this.areaCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(id => this.onAreaChange(id));
 
-    this.sectionsCtrl.valueChanges
-      .takeUntil(this.destroy)
-      .distinctUntilChanged(ArrayUtil.numberArrayEqual)
-      .subscribe(ids => this.onSectionsChange(ids));
+    this.sectionsCtrl.valueChanges.pipe(
+      takeUntil(this.destroy),
+      distinctUntilChanged(ArrayUtil.numberArrayEqual)
+    ).subscribe(ids => this.onSectionsChange(ids));
 
-    this.mapStore.invalidGeometry
-      .takeUntil(this.destroy)
+    this.mapStore.invalidGeometry.pipe(takeUntil(this.destroy))
       .subscribe(invalid => this.invalidGeometry = invalid);
   }
 
@@ -166,11 +161,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.resetFixedLocations();
   }
 
-  searchUpdated(filter: MapSearchFilter) {
+  searchUpdated(searchFilter: MapSearchFilter) {
     this.locationForm.patchValue({
-      streetAddress: filter.address,
-      startTime: filter.startDate,
-      endTime: filter.endDate
+      streetAddress: searchFilter.address,
+      startTime: searchFilter.startDate,
+      endTime: searchFilter.endDate
     }, {emitEvent: false});
   }
 

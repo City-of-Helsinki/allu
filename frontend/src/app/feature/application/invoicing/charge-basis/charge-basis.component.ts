@@ -6,16 +6,16 @@ import {InvoiceHub} from '../../../../service/application/invoice/invoice-hub';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {CHARGE_BASIS_ENTRY_MODAL_CONFIG, ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
 import {NotificationService} from '../../../../service/notification/notification.service';
-import {Observable} from 'rxjs/Observable';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {FormUtil} from '../../../../util/form.util';
 import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 import {ApplicationStore} from '../../../../service/application/application-store';
-import {Subject} from 'rxjs/Subject';
 import {Application} from '../../../../model/application/application';
 import {applicationCanBeEdited} from '../../../../model/application/application-status';
 import {CurrentUser} from '../../../../service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'charge-basis',
@@ -47,18 +47,18 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.applicationStore.application
-      .takeUntil(this.destroy)
+    this.applicationStore.application.pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));
 
-    this.invoiceHub.chargeBasisEntries
-      .takeUntil(this.destroy)
+    this.invoiceHub.chargeBasisEntries.pipe(takeUntil(this.destroy))
       .subscribe(entries => this.entriesUpdated(entries));
 
-    Observable.combineLatest(
+    combineLatest(
       this.applicationStore.application,
-      this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role])),
-      (app, role) => applicationCanBeEdited(app.statusEnum) && role).subscribe(e => this.canBeEdited = e);
+      this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
+    ).pipe(
+      map(([app, role]) => applicationCanBeEdited(app.statusEnum) && role)
+    ).subscribe(e => this.canBeEdited = e);
   }
 
   ngOnDestroy(): void {
@@ -67,9 +67,9 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   newEntry(): void {
-    this.openModal()
-      .switchMap(entry => this.addEntry(entry))
-      .subscribe(
+    this.openModal().pipe(
+      switchMap(entry => this.addEntry(entry))
+    ).subscribe(
         saved => this.notification.translateSuccess('chargeBasis.action.save'),
         error => this.notification.errorInfo(error)
       );
@@ -77,12 +77,12 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   editEntry(index: number): void {
     const entryForm = <FormGroup>this.chargeBasisEntries.at(index);
-    this.openModal(ChargeBasisEntryForm.toChargeBasisEntry(entryForm.getRawValue()))
-      .switchMap(updatedEntry => this.updateEntry(updatedEntry, index))
-      .subscribe(
-          saved => this.notification.translateSuccess('chargeBasis.action.save'),
-          error => this.notification.errorInfo(error)
-        );
+    this.openModal(ChargeBasisEntryForm.toChargeBasisEntry(entryForm.getRawValue())).pipe(
+      switchMap(updatedEntry => this.updateEntry(updatedEntry, index))
+    ).subscribe(
+      saved => this.notification.translateSuccess('chargeBasis.action.save'),
+      error => this.notification.errorInfo(error)
+    );
   }
 
   removeEntry(index: number): void {
@@ -101,8 +101,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   private onApplicationChange(app: Application): void {
     this.calculatedPrice = app.calculatedPriceEuro;
 
-    this.invoiceHub.loadChargeBasisEntries(app.id)
-      .takeUntil(this.destroy)
+    this.invoiceHub.loadChargeBasisEntries(app.id).pipe(takeUntil(this.destroy))
       .subscribe(() => {}, error => this.notification.errorInfo(error));
   }
 
@@ -125,14 +124,14 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     const config = { ...CHARGE_BASIS_ENTRY_MODAL_CONFIG, data: { entry: entry } };
 
     this.dialogRef = this.dialog.open<ChargeBasisEntryModalComponent>(ChargeBasisEntryModalComponent, config);
-    return this.dialogRef.afterClosed()
-      .filter(r => !!r);
+    return this.dialogRef.afterClosed().pipe(filter(r => !!r));
   }
 
   private saveEntries(): Observable<Array<ChargeBasisEntry>> {
     const entries = this.chargeBasisEntries.getRawValue().map(value => ChargeBasisEntryForm.toChargeBasisEntry(value));
     const appId = this.applicationStore.snapshot.application.id;
-    return this.invoiceHub.saveChargeBasisEntries(appId, entries)
-      .do(e => this.applicationStore.load(appId).subscribe());
+    return this.invoiceHub.saveChargeBasisEntries(appId, entries).pipe(
+      tap(() => this.applicationStore.load(appId).subscribe())
+    );
   }
 }

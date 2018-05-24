@@ -4,7 +4,7 @@
     <div *ngIf="existingApplication">
       <mat-select class="input-no-underline"
                   [(ngModel)]="selectedApplication"
-                  (onClose)="showSelected()">
+                  (closed)="showSelected()">
         <mat-option *ngFor="let replacement of replacements" [value]="replacement.id">
           {{replacement.applicationId}}
           <span *ngIf="replacement.identificationNumber">({{replacement.identificationNumber}})</span>

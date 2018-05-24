@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import {Subject, Observable} from 'rxjs';
 import {Application} from '../../../model/application/application';
 import {Store} from '@ngrx/store';
 import * as fromProject from '../reducers/';
 import {Search} from '../actions/application-search-actions';
 import {MatOption} from '@angular/material';
+import {debounceTime, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'application-select',
@@ -27,10 +27,10 @@ export class ApplicationSelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.searchControl.valueChanges
-      .takeUntil(this.destroy)
-      .debounceTime(300)
-      .subscribe(term => this.searchChange.emit(term));
+    this.searchControl.valueChanges.pipe(
+      takeUntil(this.destroy),
+      debounceTime(300)
+    ).subscribe(term => this.searchChange.emit(term));
   }
 
   ngOnDestroy(): void {

@@ -1,19 +1,18 @@
 import {Injectable} from '@angular/core';
 import {WorkQueueTab} from '../workqueue/workqueue-tab';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {ArrayUtil} from '../../util/array-util';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {Application} from '../../model/application/application';
-import '../../rxjs-extensions';
 import {ApplicationService} from '../../service/application/application.service';
 import {NotificationService} from '../../service/notification/notification.service';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
 import {ObjectUtil} from '../../util/object.util';
+import {debounceTime, distinctUntilChanged, map, switchMap, take, tap, catchError} from 'rxjs/internal/operators';
 
 const initialState: ApplicationWorkqueueState = {
   tab: undefined,
@@ -34,15 +33,16 @@ export class ApplicationWorkItemStore {
   constructor(private service: ApplicationService,
               private currentUserService: CurrentUser,
               private notification: NotificationService) {
-    Observable.combineLatest(
-      this.changes.map(state => state.search).distinctUntilChanged(),
-      this.changes.map(state => state.sort).distinctUntilChanged(),
-      this.changes.map(state => state.pageRequest).distinctUntilChanged()
-    ).debounceTime(100) // Need a small delay here so changes in multiple observables do only on refresh
-      .switchMap(() => this.pagedSearch())
-      .subscribe(page => this.pageChange(page));
+    combineLatest(
+      this.changes.pipe(map(state => state.search), distinctUntilChanged()),
+      this.changes.pipe(map(state => state.sort), distinctUntilChanged()),
+      this.changes.pipe(map(state => state.pageRequest), distinctUntilChanged())
+    ).pipe(
+      debounceTime(100), // Need a small delay here so changes in multiple observables do only on refresh
+      switchMap(() => this.pagedSearch())
+    ).subscribe(page => this.pageChange(page));
 
-    this.currentUserService.user.take(1)
+    this.currentUserService.user.pipe(take(1))
       .subscribe(user => this.currentUser = user);
   }
 
@@ -51,7 +51,9 @@ export class ApplicationWorkItemStore {
   }
 
   get changes(): Observable<ApplicationWorkqueueState> {
-    return this.store.asObservable().distinctUntilChanged();
+    return this.store.asObservable().pipe(
+      distinctUntilChanged()
+    );
   }
 
   public change(state: ApplicationWorkqueueState): void {
@@ -109,16 +111,18 @@ export class ApplicationWorkItemStore {
 
   public changeOwnerForSelected(ownerId: number): Observable<Page<Application>> {
     const selected = this.store.getValue().selectedItems;
-    return this.service.changeOwner(ownerId, selected)
-      .switchMap(() => this.pagedSearch())
-      .do(result => this.pageChange(result));
+    return this.service.changeOwner(ownerId, selected).pipe(
+      switchMap(() => this.pagedSearch()),
+      tap(result => this.pageChange(result))
+    );
   }
 
   public removeOwnerFromSelected(): Observable<Page<Application>> {
     const selected = this.store.getValue().selectedItems;
-    return this.service.removeOwner(selected)
-      .switchMap(() => this.pagedSearch())
-      .do(result => this.pageChange(result));
+    return this.service.removeOwner(selected).pipe(
+      switchMap(() => this.pagedSearch()),
+      tap(result => this.pageChange(result))
+    );
   }
 
   public selectedItemsChange(selected: Array<number>) {
@@ -139,8 +143,9 @@ export class ApplicationWorkItemStore {
       search.owner = [this.currentUser.userName];
     }
 
-    return this.service.pagedSearch(search, state.sort, state.pageRequest)
-      .catch(err => this.notification.errorCatch(err, new Page<Application>()));
+    return this.service.pagedSearch(search, state.sort, state.pageRequest).pipe(
+      catchError(err => this.notification.errorCatch(err, new Page<Application>()))
+    );
   }
 
   private allSelected(items: Array<number>, selected: Array<number>): boolean {

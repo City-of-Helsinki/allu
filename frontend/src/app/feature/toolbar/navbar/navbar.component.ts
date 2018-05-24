@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {CurrentUser} from '../../../service/user/current-user';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'navbar',
@@ -14,6 +15,6 @@ export class NavbarComponent {
   }
 
   hasRole(role: string): Observable<boolean> {
-    return this.currentUser.user.map(u => u.hasRole(role));
+    return this.currentUser.user.pipe(map(u => u.hasRole(role)));
   }
 }

@@ -5,7 +5,7 @@
     <mat-radio-button value="until" class="recurring-radio-button">
       <span>Toistuu vuosittain</span>
       <span>
-                <mat-form-field floatPlaceholder="never" class="error-overflow">
+                <mat-form-field floatLabel="never" class="error-overflow">
                     <input type="number" matInput formControlName="endYear" placeholder="Loppuvuosi"
                            class="year-input" min="{{minYear}}" max="{{maxYear}}" step="1"/>
                     <mat-error>{{'application.field.recurringEndYearNotBetween' | translation}}</mat-error>

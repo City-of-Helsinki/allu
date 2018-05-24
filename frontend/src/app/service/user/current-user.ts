@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {UserService} from './user-service';
 import {User} from '../../model/user/user';
-import {Observable} from 'rxjs/Observable';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable, BehaviorSubject, of} from 'rxjs';
 import {NumberUtil} from '../../util/number.util';
+import {filter, first, map} from 'rxjs/internal/operators';
 
 @Injectable()
 export class CurrentUser {
@@ -20,26 +20,31 @@ export class CurrentUser {
     if (!this.user$.getValue()) {
       this.userService.getCurrentUser().subscribe(user => this.user$.next(user));
     }
-    return this.user$.asObservable()
-      .filter(u => !!u)
-      .first(); // Use first so clients observable automatically completes after logged user is returned
+
+    // Use first so clients observable automatically completes after logged user is returned
+    return this.user$.asObservable().pipe(
+      filter(u => !!u),
+      first()
+    );
   }
 
   public hasRole(roles: Array<string>): Observable<boolean> {
-    return this.user
-      .map(u => u.roles.reduce((prev, cur) => prev || roles.some(role => role === cur), false));
+    return this.user.pipe(
+      map(u => u.roles.reduce((prev, cur) => prev || roles.some(role => role === cur), false))
+    );
   }
 
   public hasApplicationType(types: Array<string>): Observable<boolean> {
-    return this.user
-      .map(u => u.allowedApplicationTypes.reduce((prev, cur) => prev || types.some(type => type === cur), false));
+    return this.user.pipe(
+      map(u => u.allowedApplicationTypes.reduce((prev, cur) => prev || types.some(type => type === cur), false))
+    );
   }
 
   public isCurrentUser(id: number): Observable<boolean> {
     if (NumberUtil.isDefined(id)) {
-      return this.user.map(user => user.id === id);
+      return this.user.pipe(map(user => user.id === id));
     } else {
-      return Observable.of(false);
+      return of(false);
     }
   }
 }

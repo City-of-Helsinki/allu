@@ -6,12 +6,9 @@ import {ErrorHandler} from '../../../src/app/service/error/error-handler.service
 import {RECIPIENT_NEW, RECIPIENT_ONE, RECIPIENT_TWO} from './default-recipient-mock-values';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {HttpClient} from '@angular/common/http';
+import {ErrorHandlerMock} from '../../mocks';
 
 const API_URL = '/api/default-recipients';
-
-class ErrorHandlerMock {
-  handle(error: any, message?: string) {}
-}
 
 describe('DefaultRecipientService', () => {
   let service: DefaultRecipientService;
@@ -46,7 +43,7 @@ describe('DefaultRecipientService', () => {
 
   it('getComments() should handle errors', fakeAsync(() => {
     let result: Array<DefaultRecipient>;
-    spyOn(errorHandler, 'handle');
+    spyOn(errorHandler, 'handle').and.callThrough();
     service.getDefaultRecipients().subscribe(r => result = r, error => {});
     const req = httpTestingController.expectOne(API_URL);
     req.error(new ErrorEvent('Expected'));
@@ -83,7 +80,7 @@ describe('DefaultRecipientService', () => {
 
   it('save() recipien should handle errors', fakeAsync(() => {
     let result: DefaultRecipient;
-    spyOn(errorHandler, 'handle');
+    spyOn(errorHandler, 'handle').and.callThrough();
     service.saveDefaultRecipient(RECIPIENT_ONE).subscribe(r => result = r, error => {});
     const req = httpTestingController.expectOne(`${API_URL}/${RECIPIENT_ONE.id}`);
     req.error(new ErrorEvent('Expected'));
@@ -101,7 +98,7 @@ describe('DefaultRecipientService', () => {
   }));
 
   it('remove() recipient should handle errors', fakeAsync(() => {
-    spyOn(errorHandler, 'handle');
+    spyOn(errorHandler, 'handle').and.callThrough();
     service.removeDefaultRecipient(RECIPIENT_ONE.id).subscribe(() => {}, err => {});
     const req = httpTestingController.expectOne(`${API_URL}/${RECIPIENT_ONE.id}`);
     req.error(new ErrorEvent('Expected'));

@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {EMPTY, Observable} from 'rxjs';
 import {Option, Some} from '../../util/option';
 import {ErrorHandler} from '../../service/error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {BlobFile} from './blob-file';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
+import {catchError, map} from 'rxjs/internal/operators';
 
 const URL_PREFIX = '/api/';
 const HEADER_CONTENT_DISPOSITION = 'content-disposition';
@@ -17,11 +18,12 @@ export class DownloadService {
 
   download(url: string, defaultFilename?: string): Observable<BlobFile> {
     if (url) {
-      return this.http.get(URL_PREFIX  + url, {observe: 'response', responseType: 'blob'})
-        .map(response => this.toFile(response, defaultFilename))
-        .catch(error => this.errorHandler.handle(error, findTranslation('common.error.downloadFailed')));
+      return this.http.get(URL_PREFIX  + url, {observe: 'response', responseType: 'blob'}).pipe(
+        map(response => this.toFile(response, defaultFilename)),
+        catchError(error => this.errorHandler.handle(error, findTranslation('common.error.downloadFailed')))
+      );
     } else {
-      return Observable.empty();
+      return EMPTY;
     }
   }
 

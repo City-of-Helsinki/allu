@@ -6,7 +6,8 @@ import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basi
 import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
 import {NumberUtil} from '../../../../util/number.util';
 import {ChargeBasisType, manualChargeBasisTypes} from '../../../../model/application/invoice/charge-basis-type';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
+import {distinctUntilChanged, takeUntil} from 'rxjs/internal/operators';
 
 export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};
 
@@ -35,13 +36,12 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
     this.chargeBasisEntryForm = ChargeBasisEntryForm.formGroup(this.fb, entry);
     this.typeCtrl = <FormControl>this.chargeBasisEntryForm.get('type');
 
-    this.typeCtrl.valueChanges
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(type => this.typeChanges(type));
+    this.typeCtrl.valueChanges.pipe(
+      distinctUntilChanged(),
+      takeUntil(this.destroy)
+    ).subscribe(type => this.typeChanges(type));
 
-    this.chargeBasisEntryForm.valueChanges
-      .takeUntil(this.destroy)
+    this.chargeBasisEntryForm.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(entryForm => this.updateNetPrice(entryForm));
   }
 

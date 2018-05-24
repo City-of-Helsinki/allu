@@ -1,7 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
+import {Observable, Subject} from 'rxjs';
 import {FileUploader} from 'ng2-file-upload';
 import {AttachmentInfo} from '../model/application/attachment/attachment-info';
 import {AttachmentInfoMapper} from './mapper/attachment-info-mapper';
@@ -10,6 +9,7 @@ import {DefaultAttachmentInfoMapper} from './mapper/default-attachment-info-mapp
 import {ApplicationType} from '../model/application/type/application-type';
 import {BackendAttachmentInfo} from './backend-model/backend-attachment-info';
 import {BackendDefaultAttachmentInfo} from './backend-model/backend-default-attachment-info';
+import {map} from 'rxjs/internal/operators';
 
 const uploadUrl = '/api/applications/appId/attachments';
 const downloadUrl = '/api/applications/attachments/:attachmentId/data';
@@ -53,39 +53,46 @@ export class AttachmentService {
 
   updateAttachmentInfo(attachment: AttachmentInfo): Observable<AttachmentInfo> {
     const url = updateUrl.replace(':attachmentId', String(attachment.id));
-    return this.http.put<BackendAttachmentInfo>(url, attachment)
-      .map(info => AttachmentInfoMapper.mapBackend(info));
+    return this.http.put<BackendAttachmentInfo>(url, attachment).pipe(
+      map(info => AttachmentInfoMapper.mapBackend(info))
+    );
   }
 
   getDefaultAttachmentInfo(id: number): Observable<DefaultAttachmentInfo> {
     const url = defaultAttachmentGetUrl + '/' + id;
-    return this.http.get<BackendDefaultAttachmentInfo>(url)
-      .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
+    return this.http.get<BackendDefaultAttachmentInfo>(url).pipe(
+      map(info => DefaultAttachmentInfoMapper.mapBackend(info))
+    );
   }
 
   getDefaultAttachmentInfos(): Observable<Array<DefaultAttachmentInfo>> {
-    return this.http.get<BackendDefaultAttachmentInfo[]>(defaultAttachmentGetUrl)
-      .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
+    return this.http.get<BackendDefaultAttachmentInfo[]>(defaultAttachmentGetUrl).pipe(
+      map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)))
+    );
   }
 
   getDefaultAttachmentInfosByType(appType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
     const url = defaultAttachmentGetUrl + '/applicationType/' + ApplicationType[appType];
-    return this.http.get<BackendDefaultAttachmentInfo[]>(url)
-      .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
+    return this.http.get<BackendDefaultAttachmentInfo[]>(url).pipe(
+      map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)))
+    );
   }
 
   saveDefaultAttachment(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
     if (attachment.id) {
       return this.updateDefaultAttachmentInfo(attachment);
     } else {
-      return this.upload(defaultAttachmentUrlEdit, [attachment]).map(results => results[0]);
+      return this.upload(defaultAttachmentUrlEdit, [attachment]).pipe(
+        map(results => results[0])
+      );
     }
   }
 
   updateDefaultAttachmentInfo(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
     const url = defaultAttachmentUrlEdit + '/' + attachment.id;
-    return this.http.put<BackendDefaultAttachmentInfo>(url, attachment)
-      .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
+    return this.http.put<BackendDefaultAttachmentInfo>(url, attachment).pipe(
+      map(info => DefaultAttachmentInfoMapper.mapBackend(info))
+    );
   }
 
   removeDefaultAttachment(id: number): Observable<{}> {

@@ -26,6 +26,7 @@ import {findTranslation} from '../../../../src/app/util/translations';
 import {UserHub} from '../../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../../src/app/model/user/user-search-criteria';
 import {SupervisionTaskStatusType} from '../../../../src/app/model/application/supervision/supervision-task-status-type';
+import {of, throwError} from 'rxjs/index';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -55,7 +56,7 @@ const validTask = {
 };
 
 class UserHubMock {
-  searchUsers(criteria: UserSearchCriteria) { return Observable.of([]); }
+  searchUsers(criteria: UserSearchCriteria) { return of([]); }
 }
 
 class SupervisionTaskStoreMock {
@@ -66,11 +67,11 @@ class SupervisionTaskStoreMock {
   }
 
   saveTask(applicationId: number, task: SupervisionTask): Observable<SupervisionTask> {
-    return Observable.of(task);
+    return of(task);
   }
 
   removeTask(applicationId: number, taskId: number): Observable<{}> {
-    return Observable.of({});
+    return of({});
   }
 }
 
@@ -146,7 +147,7 @@ describe('SupervisionTaskComponent', () => {
 
   it('should handle save error', fakeAsync(() => {
     const errorInfo = new ErrorInfo('expected');
-    spyOn(supervisionTaskStore, 'saveTask').and.returnValue(Observable.throw(errorInfo));
+    spyOn(supervisionTaskStore, 'saveTask').and.returnValue(throwError(errorInfo));
     spyOn(notification, 'translateError');
 
     patchValueAndInit(validTask);
@@ -195,7 +196,7 @@ describe('SupervisionTaskComponent', () => {
     const onRemove = comp.onRemove;
     spyOn(onRemove, 'emit');
     spyOn(notification, 'translateSuccess');
-    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.of({}));
+    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(of({}));
 
     patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     const removeBtn = de.query(By.css('#remove')).nativeElement;
@@ -212,7 +213,7 @@ describe('SupervisionTaskComponent', () => {
     const onRemove = comp.onRemove;
     spyOn(notification, 'translateError');
     spyOn(onRemove, 'emit');
-    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.throw(errorInfo));
+    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(throwError(errorInfo));
 
     patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     const removeBtn = de.query(By.css('#remove')).nativeElement;
@@ -230,7 +231,7 @@ describe('SupervisionTaskComponent', () => {
     patchValueAndInit({id: 1, creatorId: myself.id});
     expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(1); // Only edit button
 
-    spyOn(currentUserMock, 'isCurrentUser').and.returnValue(Observable.of(false));
+    spyOn(currentUserMock, 'isCurrentUser').and.returnValue(of(false));
     patchValueAndInit({creatorId: other.id});
     expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(0);
   }));
@@ -250,7 +251,7 @@ describe('SupervisionTaskComponent', () => {
 
   it('should preset supervisor when creating new task', fakeAsync(() => {
     const preferredSupervisor = new User(52);
-    spyOn(userHub, 'searchUsers').and.returnValue(Observable.of([preferredSupervisor]));
+    spyOn(userHub, 'searchUsers').and.returnValue(of([preferredSupervisor]));
     patchValueAndInit({});
     expect(comp.form.value.ownerId).toEqual(preferredSupervisor.id);
   }));
@@ -266,7 +267,7 @@ describe('SupervisionTaskComponent', () => {
     expect(de.query(By.css('#approve'))).toBeDefined();
     expect(de.query(By.css('#reject'))).toBeDefined();
 
-    spyOn(currentUserMock, 'isCurrentUser').and.returnValue(Observable.of(false));
+    spyOn(currentUserMock, 'isCurrentUser').and.returnValue(of(false));
     patchValueAndInit({ownerId: 1});
     expect(de.query(By.css('#approve'))).toBeNull();
     expect(de.query(By.css('#reject'))).toBeNull();

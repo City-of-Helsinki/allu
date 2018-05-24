@@ -1,10 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
-import {StructureMetaMapper} from './../mapper/structure-meta-mapper';
-import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {ErrorHandler} from '../error/error-handler.service';
@@ -24,8 +22,8 @@ import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
 import {BackendApplication} from '../backend-model/backend-application';
 import {BackendPage} from '../backend-model/backend-page';
-import {BackendStructureMeta} from '../backend-model/backend-structure-meta';
 import {BackendAttachmentInfo} from '../backend-model/backend-attachment-info';
+import {catchError, map} from 'rxjs/internal/operators';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -52,17 +50,19 @@ export class ApplicationService {
    * Fetches single application
    */
   public get(id: number): Observable<Application> {
-    return this.http.get<BackendApplication>(APPLICATIONS_URL + '/' + id)
-      .map(app => ApplicationMapper.mapBackend(app))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')));
+    return this.http.get<BackendApplication>(APPLICATIONS_URL + '/' + id).pipe(
+      map(app => ApplicationMapper.mapBackend(app)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')))
+    );
   }
 
   public byIds(ids: number[]): Observable<Application[]> {
     const idsParam = ids.join(',');
     const url = `${APPLICATIONS_URL}?ids=${idsParam}`;
-    return this.http.get<BackendApplication[]>(url)
-      .map(apps => ApplicationMapper.mapBackendList(apps))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')));
+    return this.http.get<BackendApplication[]>(url).pipe(
+      map(apps => ApplicationMapper.mapBackendList(apps)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')))
+    );
   }
 
   /**
@@ -75,9 +75,10 @@ export class ApplicationService {
     return this.http.post<BackendPage<BackendApplication>>(
       searchUrl,
       JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
-      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort, matchAny)})
-      .map(page => PageMapper.mapBackend(page, ApplicationMapper.mapBackend))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort, matchAny)}).pipe(
+      map(page => PageMapper.mapBackend(page, ApplicationMapper.mapBackend)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')))
+    );
   }
 
   /**
@@ -85,8 +86,9 @@ export class ApplicationService {
    */
   public search(searchQuery: ApplicationSearchQuery, sort?: Sort,
       pageRequest?: PageRequest, matchAny?: boolean): Observable<Array<Application>> {
-    return this.pagedSearch(searchQuery, sort, pageRequest, matchAny)
-      .map(page => page.content);
+    return this.pagedSearch(searchQuery, sort, pageRequest, matchAny).pipe(
+      map(page => page.content)
+    );
   }
 
   /**
@@ -113,14 +115,16 @@ export class ApplicationService {
       const url = APPLICATIONS_URL + '/' + application.id;
 
       return this.http.put<BackendApplication>(url,
-        JSON.stringify(ApplicationMapper.mapFrontend(application)))
-        .map(saved => ApplicationMapper.mapBackend(saved))
-        .catch(error => this.errorHandler.handle(error, findTranslation('application.error.saveFailed')));
+        JSON.stringify(ApplicationMapper.mapFrontend(application))).pipe(
+        map(saved => ApplicationMapper.mapBackend(saved)),
+        catchError(error => this.errorHandler.handle(error, findTranslation('application.error.saveFailed')))
+      );
     } else {
       return this.http.post<BackendApplication>(APPLICATIONS_URL,
-        JSON.stringify(ApplicationMapper.mapFrontend(application)))
-        .map(saved => ApplicationMapper.mapBackend(saved))
-        .catch(error => this.errorHandler.handle(error, findTranslation('application.error.saveFailed')));
+        JSON.stringify(ApplicationMapper.mapFrontend(application))).pipe(
+        map(saved => ApplicationMapper.mapBackend(saved)),
+        catchError(error => this.errorHandler.handle(error, findTranslation('application.error.saveFailed')))
+      );
     }
   }
 
@@ -129,8 +133,9 @@ export class ApplicationService {
    */
   public remove(id: number): Observable<{}> {
     const url = APPLICATIONS_URL + '/note/' + id;
-    return this.http.delete(url)
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')));
+    return this.http.delete(url).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')))
+    );
   }
 
   /**
@@ -142,9 +147,10 @@ export class ApplicationService {
       .replace(':appId', String(appId))
       .replace(':statusPart', this.statusToUrl.get(status));
 
-    return this.http.put<BackendApplication>(url, JSON.stringify(StatusChangeInfoMapper.mapFrontEnd(changeInfo)))
-      .map(app => ApplicationMapper.mapBackend(app))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.statusChangeFailed')));
+    return this.http.put<BackendApplication>(url, JSON.stringify(StatusChangeInfoMapper.mapFrontEnd(changeInfo))).pipe(
+      map(app => ApplicationMapper.mapBackend(app)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.statusChangeFailed')))
+    );
   }
 
   /**
@@ -152,8 +158,9 @@ export class ApplicationService {
    */
   public changeOwner(owner: number, applicationIds: Array<number>): Observable<{}> {
     const url = APPLICATIONS_URL + '/owner/' + owner;
-    return this.http.put(url, JSON.stringify(applicationIds))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')));
+    return this.http.put(url, JSON.stringify(applicationIds)).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')))
+    );
   }
 
   /**
@@ -161,8 +168,9 @@ export class ApplicationService {
    */
   public removeOwner(applicationIds: Array<number>): Observable<{}> {
     const url = APPLICATIONS_URL + '/owner/remove';
-    return this.http.put(url, JSON.stringify(applicationIds))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')));
+    return this.http.put(url, JSON.stringify(applicationIds)).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.ownerChangeFailed')))
+    );
   }
 
   /**
@@ -170,28 +178,32 @@ export class ApplicationService {
    */
   public saveTags(appId: number, tags: Array<ApplicationTag>): Observable<Array<ApplicationTag>> {
     const url = TAGS_URL.replace(':appId', String(appId));
-    return this.http.put<BackendApplicationTag[]>(url, JSON.stringify(ApplicationTagMapper.mapFrontendList(tags)))
-      .map(saved => ApplicationTagMapper.mapBackendList(saved))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.tagUpdateFailed')));
+    return this.http.put<BackendApplicationTag[]>(url, JSON.stringify(ApplicationTagMapper.mapFrontendList(tags))).pipe(
+      map(saved => ApplicationTagMapper.mapBackendList(saved)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagUpdateFailed')))
+    );
   }
 
   getAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
     const url = ATTACHMENTS_URL.replace(':appId', String(applicationId));
-    return this.http.get<BackendAttachmentInfo[]>(url)
-      .map(infos => infos.map(info => AttachmentInfoMapper.mapBackend(info)));
+    return this.http.get<BackendAttachmentInfo[]>(url).pipe(
+      map(infos => infos.map(info => AttachmentInfoMapper.mapBackend(info)))
+    );
   }
 
   replace(id: number): Observable<Application> {
     const url = `${APPLICATIONS_URL}/${id}/replace`;
-    return this.http.post<BackendApplication>(url, undefined)
-      .map(app => ApplicationMapper.mapBackend(app))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replaceFailed')));
+    return this.http.post<BackendApplication>(url, undefined).pipe(
+      map(app => ApplicationMapper.mapBackend(app)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.replaceFailed')))
+    );
   }
 
   getReplacementHistory(id: number): Observable<Array<ApplicationIdentifier>> {
     const url = `${APPLICATIONS_URL}/${id}/replacementHistory`;
-    return this.http.get<ApplicationIdentifier>(url)
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replacementHistory')));
+    return this.http.get<ApplicationIdentifier>(url).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.replacementHistory')))
+    );
   }
 }
 

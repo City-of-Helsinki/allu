@@ -7,6 +7,7 @@ import {Store} from '@ngrx/store';
 import * as fromAuth from '../auth/reducers';
 import {NumberUtil} from '../../util/number.util';
 import {StringUtil} from '../../util/string.util';
+import {map, take, takeWhile} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'comment',
@@ -45,10 +46,11 @@ export class CommentComponent implements OnInit {
       this.form.disable();
     }
 
-    this.store.select(fromAuth.getUser).take(1)
-      .takeWhile(() => !!this.comment.user)
-      .map(user => user.id === this.comment.user.id)
-      .subscribe(canEdit => this.canEdit = canEdit);
+    this.store.select(fromAuth.getUser).pipe(
+      take(1),
+      takeWhile(() => !!this.comment.user),
+      map(user => user.id === this.comment.user.id)
+    ).subscribe(canEdit => this.canEdit = canEdit);
   }
 
   remove(): void {

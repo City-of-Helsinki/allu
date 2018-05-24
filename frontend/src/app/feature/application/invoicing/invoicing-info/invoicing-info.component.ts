@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {Some} from '../../../../util/option';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
@@ -20,6 +20,7 @@ import {applicationCanBeEdited} from '../../../../model/application/application-
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {CustomerService} from '../../../../service/customer/customer.service';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
+import {filter, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'invoicing-info',
@@ -56,7 +57,7 @@ export class InvoicingInfoComponent implements OnInit {
     this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
     this.initForm();
-    this.reset.filter(r => r).subscribe(r => this.resetMe(r));
+    this.reset.pipe(filter(r => !!r)).subscribe(r => this.resetMe(r));
   }
 
   invoiceRecipientChange(recipient: CustomerForm) {
@@ -68,8 +69,7 @@ export class InvoicingInfoComponent implements OnInit {
   editCustomer(): void {
     const customerModalRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, CUSTOMER_MODAL_CONFIG);
     customerModalRef.componentInstance.customerId = this.recipientForm.value.id;
-    customerModalRef.afterClosed()
-      .filter(customer => !!customer)
+    customerModalRef.afterClosed().pipe(filter(customer => !!customer))
       .subscribe(customer => this.recipientForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 
@@ -78,12 +78,12 @@ export class InvoicingInfoComponent implements OnInit {
     const config = {...DEPOSIT_MODAL_CONFIG, data: {deposit: deposit}};
 
     const depositModalRef = this.dialog.open<DepositModalComponent>(DepositModalComponent, config);
-    depositModalRef.afterClosed()
-      .filter(result => !!result)
-      .switchMap(result => this.applicationStore.saveDeposit(result))
-      .subscribe(
-        result => this.notification.translateSuccess('deposit.action.save'),
-        error => this.notification.errorInfo(error));
+    depositModalRef.afterClosed().pipe(
+      filter(result => !!result),
+      switchMap(result => this.applicationStore.saveDeposit(result))
+    ).subscribe(
+      result => this.notification.translateSuccess('deposit.action.save'),
+      error => this.notification.errorInfo(error));
   }
 
   nextDepositStatus(): void {
@@ -134,8 +134,7 @@ export class InvoicingInfoComponent implements OnInit {
       }
     });
 
-    this.applicationStore.deposit
-      .filter(deposit => !!deposit)
+    this.applicationStore.deposit.pipe(filter(deposit => !!deposit))
       .subscribe(deposit => this.form.patchValue({
           depositAmount: deposit.amountEuro,
           depositReason: deposit.reason,

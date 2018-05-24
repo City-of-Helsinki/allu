@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, ContentChildren, EventEmitter, forwardRef, OnDestroy, Output, QueryList} from '@angular/core';
 import {SelectionEvent, SelectionEventService} from './selection-event.service';
-import {Subscription} from 'rxjs/Subscription';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Subscription, BehaviorSubject} from 'rxjs';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {SelectionItemComponent} from './selection-item.component';
 

@@ -5,7 +5,8 @@ import {AttachmentInfo} from '../../../model/application/attachment/attachment-i
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/internal/operators';
 
 @Injectable()
 export class AttachmentHub {
@@ -49,15 +50,17 @@ export class AttachmentHub {
    * Fetches default attachment infos which are for given application- and attachment type
    */
   defaultAttachmentInfosBy = (applicationType: ApplicationType, attachmentType?: AttachmentType) =>
-    this.attachmentService.getDefaultAttachmentInfosByType(applicationType)
-      .map(attachments => this.filterByAttachmentType(attachments, attachmentType))
+    this.attachmentService.getDefaultAttachmentInfosByType(applicationType).pipe(
+      map(attachments => this.filterByAttachmentType(attachments, attachmentType))
+    )
 
   /**
    * Fetches default attachment infos which are for given application type and area
    */
   defaultAttachmentInfosByArea = (applicationType: ApplicationType, areaId: number) =>
-    this.defaultAttachmentInfosBy(applicationType)
-      .map(attachments => attachments.filter((a: DefaultAttachmentInfo) => a.fixedLocationId === areaId))
+    this.defaultAttachmentInfosBy(applicationType).pipe(
+      map(attachments => attachments.filter((a: DefaultAttachmentInfo) => a.fixedLocationId === areaId))
+    )
 
   /**
    * Saves given default attachment

@@ -12,6 +12,7 @@ import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
 import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {of} from 'rxjs/index';
 
 const filters = [
   new StoredFilter(1, StoredFilterType.MAP, 'map-filter-1', false, '{field1: "value1"}', 1),
@@ -44,11 +45,11 @@ class ParentComponent {
 
 class StoredFilterStoreMock {
   save(filter: StoredFilter): Observable<StoredFilter> {
-    return Observable.of(filter);
+    return of(filter);
   }
 
   remove(id: number): Observable<{}> {
-    return Observable.of({});
+    return of({});
   }
 
   currentChange(filter: StoredFilter): void {

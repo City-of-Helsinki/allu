@@ -8,5 +8,6 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AlluModule)
-  .catch(err => console.log(err));
+platformBrowserDynamic().bootstrapModule(AlluModule, {
+  preserveWhitespaces: false
+}).catch(err => console.log(err));

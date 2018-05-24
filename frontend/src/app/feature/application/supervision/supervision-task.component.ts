@@ -21,6 +21,7 @@ import {
 } from './supervision-approval-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SupervisionTask} from '../../../model/application/supervision/supervision-task';
+import {filter, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'supervision-task',
@@ -119,24 +120,24 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   approve(): void {
-    this.openModal('APPROVE').afterClosed()
-      .filter(result => !!result)
-      .map(result => this.taskWithResult(SupervisionTaskStatusType.APPROVED, result))
-      .switchMap(task => this.store.approve(task))
-      .subscribe(
-        saved => this.notification.translateSuccess('supervision.task.action.approve'),
-        err => this.notification.translateSuccess('supervision.task.error.approve'));
+    this.openModal('APPROVE').afterClosed().pipe(
+      filter(result => !!result),
+      map(result => this.taskWithResult(SupervisionTaskStatusType.APPROVED, result)),
+      switchMap(task => this.store.approve(task))
+    ).subscribe(
+      saved => this.notification.translateSuccess('supervision.task.action.approve'),
+      err => this.notification.translateSuccess('supervision.task.error.approve'));
   }
 
   reject(): void {
-    this.openModal('REJECT').afterClosed()
-      .filter(result => !!result)
-      .switchMap(result => this.store.reject(
+    this.openModal('REJECT').afterClosed().pipe(
+      filter(result => !!result),
+      switchMap(result => this.store.reject(
         this.taskWithResult(SupervisionTaskStatusType.REJECTED, result),
         result.newSupervisionDate))
-      .subscribe(
-        saved => this.notification.translateSuccess('supervision.task.action.reject'),
-        err => this.notification.translateSuccess('supervision.task.error.reject'));
+    ).subscribe(
+      saved => this.notification.translateSuccess('supervision.task.action.reject'),
+      err => this.notification.translateSuccess('supervision.task.error.reject'));
   }
 
   private taskWithResult(status: SupervisionTaskStatusType, result: SupervisionApprovalResult): SupervisionTask {
@@ -181,8 +182,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private preferredSupervisor(): void {
     const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
-    this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))
-      .filter(preferred => !!preferred)
-      .subscribe(preferred => this.form.patchValue({ownerId: preferred.id}));
+    this.userHub.searchUsers(criteria).pipe(
+      map(preferred => ArrayUtil.first(preferred)),
+      filter(preferred => !!preferred)
+    ).subscribe(preferred => this.form.patchValue({ownerId: preferred.id}));
   }
 }

@@ -11,6 +11,7 @@ import {ApplicationKind} from '../../../../model/application/type/application-ki
 import {TimeUtil} from '../../../../util/time.util';
 import {ProjectService} from '../../../../service/project/project.service';
 import {NotificationService} from '../../../../service/notification/notification.service';
+import {takeUntil} from 'rxjs/internal/operators';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -53,8 +54,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
     this.commercialCtrl = <FormControl>this.applicationForm.get('commercial');
 
-    this.commercialCtrl.valueChanges
-      .takeUntil(this.destroy)
+    this.commercialCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(value => this.updateCommercialLabel(value));
   }
 

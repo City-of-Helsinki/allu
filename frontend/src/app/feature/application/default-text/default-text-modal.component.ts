@@ -10,6 +10,7 @@ import {NotificationService} from '../../../service/notification/notification.se
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NumberUtil} from '../../../util/number.util';
 import {DefaultTextService} from '../../../service/application/default-text.service';
+import {map} from 'rxjs/internal/operators';
 
 export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '800px'};
 
@@ -39,11 +40,11 @@ export class DefaultTextModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.defaultTextService.load(this.applicationType)
-      .map(texts => texts.filter(text => text.type === this.type))
-      .subscribe(
-        texts => texts.forEach(text => this.add(text)),
-        error => this.notification.errorInfo(error));
+    this.defaultTextService.load(this.applicationType).pipe(
+      map(texts => texts.filter(text => text.type === this.type))
+    ).subscribe(
+      texts => texts.forEach(text => this.add(text)),
+      error => this.notification.errorInfo(error));
 
     this.typeName = DefaultTextType[this.type];
   }

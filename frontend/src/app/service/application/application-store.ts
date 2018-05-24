@@ -1,10 +1,9 @@
+
+import {throwError as observableThrowError, Observable, Subject, BehaviorSubject, forkJoin} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 import {Application} from '../../model/application/application';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
-import {Subject} from 'rxjs/Subject';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Comment} from '../../model/application/comment/comment';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
@@ -19,6 +18,7 @@ import {isCommon} from '../../model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
 import {CommentService} from './comment/comment.service';
+import {catchError, distinctUntilChanged, filter, map, skip, switchMap, tap} from 'rxjs/internal/operators';
 
 export interface ApplicationState {
   application?: Application;
@@ -60,8 +60,7 @@ export class ApplicationStore {
   }
 
   get changes(): Observable<ApplicationState> {
-    return this.store.asObservable()
-      .distinctUntilChanged();
+    return this.store.asObservable().pipe(distinctUntilChanged());
   }
 
   reset(): void {
@@ -69,9 +68,11 @@ export class ApplicationStore {
   }
 
   get application(): Observable<Application> {
-    return this.store.map(change => change.application)
-      .distinctUntilChanged()
-      .filter(app => !!app);
+    return this.store.pipe(
+      map(change => change.application),
+      distinctUntilChanged(),
+      filter(app => !!app)
+    );
   }
 
   applicationChange(application: Application) {
@@ -105,12 +106,16 @@ export class ApplicationStore {
   }
 
   replace(): Observable<Application> {
-    return this.applicationService.replace(this.current.application.id)
-      .do(replacement => this.applicationChange(replacement));
+    return this.applicationService.replace(this.current.application.id).pipe(
+      tap(replacement => this.applicationChange(replacement))
+    );
   }
 
   get tags(): Observable<Array<ApplicationTag>> {
-    return this.store.map(change => change.tags).distinctUntilChanged();
+    return this.store.pipe(
+      map(change => change.tags),
+      distinctUntilChanged()
+    );
   }
 
   changeTags(tags: Array<ApplicationTag>) {
@@ -123,8 +128,9 @@ export class ApplicationStore {
       throw new Error('Cannot save tags when application state has no saved application');
     }
 
-    return this.applicationService.saveTags(applicationId, tags)
-      .do(savedTags => this.changeTags(savedTags));
+    return this.applicationService.saveTags(applicationId, tags).pipe(
+      tap(savedTags => this.changeTags(savedTags))
+    );
   }
 
   changeDraft(draft: boolean) {
@@ -132,9 +138,11 @@ export class ApplicationStore {
   }
 
   get tab(): Observable<SidebarItemType> {
-    return this.store.map(state => state.tab)
-      .skip(1)
-      .distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.tab),
+      skip(1),
+      distinctUntilChanged()
+    );
   }
 
   changeTab(tab: SidebarItemType): void {
@@ -142,33 +150,39 @@ export class ApplicationStore {
   }
 
   get attachments(): Observable<Array<AttachmentInfo>> {
-    return this.store.map(state => state.attachments).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.attachments),
+      distinctUntilChanged()
+    );
   }
 
   saveAttachment(attachment: AttachmentInfo): Observable<AttachmentInfo> {
     if (NumberUtil.isDefined(attachment.id) && isCommon(attachment.type)) {
       return this.updateAttachment(attachment);
     } else {
-      return this.saveAttachments(this.snapshot.application.id, [attachment])
-        .filter(attachments => attachments.length > 0)
-        .map(attachments => attachments[0]);
+      return this.saveAttachments(this.snapshot.application.id, [attachment]).pipe(
+        filter(attachments => attachments.length > 0),
+        map(attachments => attachments[0])
+      );
     }
   }
 
   removeAttachment(attachmentId: number): Observable<{}> {
     const appId = this.snapshot.application.id;
-    return this.attachmentHub.remove(appId, attachmentId)
-      .do(response => this.loadAttachments(appId).subscribe());
+    return this.attachmentHub.remove(appId, attachmentId).pipe(
+      tap(response => this.loadAttachments(appId).subscribe())
+    );
   }
 
   loadAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
-    return this.applicationService.getAttachments(applicationId)
-      .do(attachments => this.store.next({...this.current, attachments}));
+    return this.applicationService.getAttachments(applicationId).pipe(
+      tap(attachments => this.store.next({...this.current, attachments}))
+    );
   }
 
   load(id: number): Observable<Application> {
-    return this.applicationService.get(id)
-      .do(application => {
+    return this.applicationService.get(id).pipe(
+      tap(application => {
         this.store.next({
           ...this.current,
           application,
@@ -176,13 +190,15 @@ export class ApplicationStore {
           tags: application.applicationTags,
           draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
         });
-      });
+      })
+    );
   }
 
   save(application: Application): Observable<Application> {
-    return this.saveCustomersAndContacts(application)
-      .switchMap(app => this.saveApplication(app))
-      .do(app => this.saved(app));
+    return this.saveCustomersAndContacts(application).pipe(
+      switchMap(app => this.saveApplication(app)),
+      tap(app => this.saved(app))
+    );
   }
 
   delete(id: number): Observable<{}> {
@@ -190,18 +206,19 @@ export class ApplicationStore {
       ? this.applicationDraftService.remove(id)
       : this.applicationService.remove(id);
 
-    return response.do(() => this.reset());
+    return response.pipe(tap(() => this.reset()));
   }
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     const appId = id || this.snapshot.application.id;
     this.store.next({...this.current, processing: true});
-    return this.applicationService.changeStatus(appId, status, changeInfo)
-      .do(application => this.applicationChange(application))
-      .catch(err => {
+    return this.applicationService.changeStatus(appId, status, changeInfo).pipe(
+      tap(application => this.applicationChange(application)),
+      catchError(err => {
         this.store.next({...this.current, processing: false});
-        return Observable.throw(err);
-      });
+        return observableThrowError(err);
+      })
+    );
   }
 
   changeRelatedProject(projectId: number) {
@@ -210,20 +227,25 @@ export class ApplicationStore {
 
   loadDeposit(): Observable<Deposit> {
     const appId = this.snapshot.application.id;
-    return this.depositService.fetchByApplication(appId)
-      .do(deposit => this.store.next({...this.current, deposit}));
+    return this.depositService.fetchByApplication(appId).pipe(
+      tap(deposit => this.store.next({...this.current, deposit}))
+    );
   }
 
   get deposit(): Observable<Deposit> {
-    return this.store.map(state => state.deposit).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.deposit),
+      distinctUntilChanged()
+    );
   }
 
   saveDeposit(deposit: Deposit): Observable<Deposit> {
-    return this.depositService.save(deposit)
-      .do(saved => {
+    return this.depositService.save(deposit).pipe(
+      tap(saved => {
         this.load(deposit.applicationId).subscribe();
         this.store.next({...this.current, deposit: saved});
-      });
+      })
+    );
   }
 
   private saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
@@ -237,23 +259,26 @@ export class ApplicationStore {
           error => result.error(error),
           () => result.complete());
 
-      return result.do(a => this.loadAttachments(applicationId).subscribe());
+      return result.pipe(tap(a => this.loadAttachments(applicationId).subscribe()));
     }
   }
 
   private updateAttachment(attachment: AttachmentInfo): Observable<AttachmentInfo> {
-    return this.attachmentHub.update(attachment)
-      .do(a => this.loadAttachments(this.snapshot.application.id));
+    return this.attachmentHub.update(attachment).pipe(
+      tap(a => this.loadAttachments(this.snapshot.application.id))
+    );
   }
 
   private saveCustomersAndContacts(application: Application): Observable<Application> {
     const app = ObjectUtil.clone(application);
-    return Observable.forkJoin(application.customersWithContacts.map(cwc =>
+    return forkJoin(application.customersWithContacts.map(cwc =>
       this.customerService.saveCustomerWithContacts(cwc))
-    ).map(savedCustomersWithContacts => {
-      app.customersWithContacts = savedCustomersWithContacts;
-      return app;
-    });
+    ).pipe(
+      map(savedCustomersWithContacts => {
+        app.customersWithContacts = savedCustomersWithContacts;
+        return app;
+      })
+    );
   }
 
   private saveApplication(application: Application): Observable<Application> {

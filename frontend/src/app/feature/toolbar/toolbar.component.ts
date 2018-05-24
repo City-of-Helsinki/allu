@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../service/authorization/auth.service';
 import {ConfigService} from '../../service/config/config.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {EnvironmentType} from '../../model/config/environment-type';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
 import * as fromProject from '../project/reducers';
+import {map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'toolbar',
@@ -26,8 +27,9 @@ export class ToolbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.version = this.config.getConfiguration()
-      .map(config => config.versionNumber);
+    this.version = this.config.getConfiguration().pipe(
+      map(config => config.versionNumber)
+    );
 
     this.config.getConfiguration().subscribe(config =>
       this.logo = config.environment === EnvironmentType.PRODUCTION

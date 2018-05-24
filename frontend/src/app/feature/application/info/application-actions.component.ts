@@ -4,11 +4,10 @@ import {ApplicationStore} from '../../../service/application/application-store';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NotificationService} from '../../../service/notification/notification.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of, Subscription} from 'rxjs';
 import {Application} from '../../../model/application/application';
 import {Some} from '../../../util/option';
 import {NumberUtil} from '../../../util/number.util';
-import {Subscription} from 'rxjs/Subscription';
 import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material';
@@ -17,6 +16,7 @@ import {User} from '../../../model/user/user';
 import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
 import {ArrayUtil} from '../../../util/array-util';
 import {UserHub} from '../../../service/user/user-hub';
+import {catchError, filter, map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'application-actions',
@@ -126,7 +126,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   toDecisionmaking(): void {
-    this.moveToDecisionMaking().subscribe(app => this.router.navigate(['/applications', app.id, 'decision']));
+    this.moveToDecisionMaking().subscribe(
+      app => this.router.navigate(['/applications', app.id, 'decision']),
+      err => this.notification.translateErrorMessage('application.error.toDecisionmaking')
+    );
   }
 
   delete(): void {
@@ -146,10 +149,9 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
         cancelText: findTranslation('application.confirmCancel.cancelText')
       };
 
-      this.dialog.open(ConfirmDialogComponent, {data})
-        .afterClosed()
-        .filter(result => result) // Ignore no answers
-        .subscribe(() => this.cancelApplication());
+      this.dialog.open(ConfirmDialogComponent, {data}).afterClosed().pipe(
+        filter(result => !!result) // Ignore no answers
+      ).subscribe(() => this.cancelApplication());
     }
   }
 
@@ -165,15 +167,15 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private moveToDecisionMaking(): Observable<Application> {
     if (this.shouldMoveToDecisionMaking()) {
-      return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING)
-        .map(app => {
-            this.notification.translateSuccess('application.statusChange.DECISIONMAKING');
-            this.applicationStore.applicationChange(app);
-            return app;
-          },
-          err => this.notification.translateErrorMessage('application.error.toDecisionmaking'));
+      return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING).pipe(
+        map(app => {
+          this.notification.translateSuccess('application.statusChange.DECISIONMAKING');
+          this.applicationStore.applicationChange(app);
+          return app;
+        })
+      );
     } else {
-      return Observable.of(this.applicationStore.snapshot.application);
+      return of(this.applicationStore.snapshot.application);
     }
   }
 
@@ -196,6 +198,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private findDefaultRegionalOwner(app: Application): Observable<User> {
     const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
-    return this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred));
+    return this.userHub.searchUsers(criteria).pipe(
+      map(preferred => ArrayUtil.first(preferred))
+    );
   }
 }

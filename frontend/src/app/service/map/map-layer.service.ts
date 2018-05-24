@@ -14,8 +14,9 @@ import '../../js/leaflet/wms-authentication';
 import '../../js/leaflet/wfs-geojson';
 import 'leaflet-wfst';
 import TimeoutOptions = L.TimeoutOptions;
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {PathOptions} from 'leaflet';
+import {filter, map} from 'rxjs/internal/operators';
 
 const timeout: TimeoutOptions = {
   response: 10000,
@@ -87,9 +88,10 @@ export class MapLayerService {
   }
 
   get restrictedOverlays(): Observable<L.Control.LayersObject> {
-    return this.config.isStagingOrProduction()
-      .filter(isStagOrProd => isStagOrProd)
-      .map(() => this.initRestrictedOverlays(this.token));
+    return this.config.isStagingOrProduction().pipe(
+      filter(isStagOrProd => isStagOrProd),
+      map(() => this.initRestrictedOverlays(this.token))
+    );
   }
 
   private createOverlays(): L.Control.LayersObject {
@@ -141,7 +143,7 @@ export class MapLayerService {
     return this.winkkiWFS(layerName, statusFilter, style);
   }
 
-  private winkkiWFS(layerName: string, filter: L.Filter, style: PathOptions): L.FeatureGroup {
+  private winkkiWFS(layerName: string, wfsFilter: L.Filter, style: PathOptions): L.FeatureGroup {
     return L.wfs({
       url: '/geoserver/hkr/ows',
       typeNS: 'hkr',
@@ -152,7 +154,7 @@ export class MapLayerService {
       opacity: style.opacity,
       fillOpacity: style.fillOpacity,
       showExisting: true,
-      filter: filter
+      filter: wfsFilter
     });
   }
 

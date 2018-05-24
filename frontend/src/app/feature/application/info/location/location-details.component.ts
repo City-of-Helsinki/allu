@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 import {MapStore} from '../../../../service/map/map-store';
 import {Application} from '../../../../model/application/application';
@@ -12,6 +12,7 @@ import {applicationCanBeEdited} from '../../../../model/application/application-
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 import * as fromRoot from '../../../allu/reducers';
 import {Store} from '@ngrx/store';
+import {map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'location-details',
@@ -47,11 +48,11 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     this.fixedLocationService.areaBySectionIds(this.location.fixedLocationIds)
       .subscribe(area => this.area = area.name);
 
-    this.fixedLocationService.sectionsByIds(this.location.fixedLocationIds)
-      .map(sections => sections.map(s => s.name))
-      .map(names => names.sort(ArrayUtil.naturalSort((name: string) => name)))
-      .map(names => names.join(', '))
-      .subscribe(sectionNames => this.sections = sectionNames);
+    this.fixedLocationService.sectionsByIds(this.location.fixedLocationIds).pipe(
+      map(sections => sections.map(s => s.name)),
+      map(names => names.sort(ArrayUtil.naturalSort((name: string) => name))),
+      map(names => names.join(', '))
+    ).subscribe(sectionNames => this.sections = sectionNames);
 
     this.mapStore.editedLocation.subscribe(loc => this.editLocation(loc));
   }

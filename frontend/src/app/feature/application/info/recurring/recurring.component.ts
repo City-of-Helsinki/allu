@@ -1,6 +1,6 @@
 import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
 

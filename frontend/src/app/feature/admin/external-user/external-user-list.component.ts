@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 import {User} from '../../../model/user/user';
 import {ExternalUser} from '../../../model/common/external-user';

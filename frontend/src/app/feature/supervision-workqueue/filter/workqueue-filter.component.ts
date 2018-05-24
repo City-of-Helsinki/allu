@@ -6,15 +6,15 @@ import {SupervisionWorkItemStore} from '../supervision-work-item-store';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {CityDistrict} from '../../../model/common/city-district';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {Sort} from '../../../model/common/sort';
 import {SupervisionTaskSearchCriteria} from '../../../model/application/supervision/supervision-task-search-criteria';
 import {StoredFilter} from '../../../model/user/stored-filter';
 import {StoredFilterType} from '../../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
-import {Subject} from 'rxjs/Subject';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
+import {debounceTime, distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
 
 interface TaskSearchFilter {
   search?: SupervisionTaskSearchCriteria;
@@ -63,31 +63,33 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
-    this.itemStore.changes.map(state => state.search)
-      .take(1)
-      .subscribe(search => this.queryForm.patchValue(search, {emitEvent: false}));
+    this.itemStore.changes.pipe(
+      map(state => state.search),
+      take(1)
+    ).subscribe(search => this.queryForm.patchValue(search, {emitEvent: false}));
 
-    this.queryForm.valueChanges
-      .takeUntil(this.destroy)
-      .distinctUntilChanged()
-      .debounceTime(300)
-      .subscribe(search => {
+    this.queryForm.valueChanges.pipe(
+      takeUntil(this.destroy),
+      distinctUntilChanged(),
+      debounceTime(300)
+    ) .subscribe(search => {
         this.storedFilterStore.resetCurrent(StoredFilterType.SUPERVISION_WORKQUEUE);
         this.itemStore.searchChange(search);
       });
 
-    this.taskFilter = this.itemStore.changes
-      .map(state => ({ search: state.search, sort: state.sort }));
+    this.taskFilter = this.itemStore.changes.pipe(
+      map(state => ({ search: state.search, sort: state.sort }))
+    );
 
     this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.SUPERVISION_WORKQUEUE);
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.SUPERVISION_WORKQUEUE);
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.SUPERVISION_WORKQUEUE);
 
-    this.storedFilterStore.getCurrentFilter(StoredFilterType.SUPERVISION_WORKQUEUE)
-      .takeUntil(this.destroy)
-      .filter(filter => !!filter)
-      .map(filter => filter.search)
-      .subscribe(search => this.itemStore.searchChange(search));
+    this.storedFilterStore.getCurrentFilter(StoredFilterType.SUPERVISION_WORKQUEUE).pipe(
+      takeUntil(this.destroy),
+      filter(sf => !!sf),
+      map(sf => sf.search)
+    ).subscribe(search => this.itemStore.searchChange(search));
   }
 
   ngOnDestroy(): void {
@@ -95,7 +97,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  selectFilter(filter: StoredFilter) {
-    this.storedFilterStore.currentChange(filter);
+  selectFilter(storedFilter: StoredFilter) {
+    this.storedFilterStore.currentChange(storedFilter);
   }
 }

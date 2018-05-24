@@ -2,13 +2,14 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SupervisionWorkItemStore} from '../supervision-work-item-store';
 import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {WorkQueueTab} from '../../workqueue/workqueue-tab';
 import {Sort} from '../../../model/common/sort';
 import {StoredFilterType} from '../../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -43,37 +44,39 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
     this.dataSource = new SupervisionWorkItemDatasource(this.store, this.paginator, this.sort);
 
-    this.dataSource.page
-      .takeUntil(this.destroy)
+    this.dataSource.page.pipe(takeUntil(this.destroy))
       .subscribe(page => {
         this.length = page.totalElements;
         this.pageIndex = page.pageNumber;
       });
 
-    this.route.data
-      .map(data => data.tab)
-      .takeUntil(this.destroy)
-      .subscribe((tab: string) => this.store.tabChange(WorkQueueTab[tab]));
+    this.route.data.pipe(
+      map(data => data.tab),
+      takeUntil(this.destroy)
+    ).subscribe((tab: string) => this.store.tabChange(WorkQueueTab[tab]));
 
-    this.store.changes.map(state => state.selectedItems)
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(selected => this.selectedItems = selected);
+    this.store.changes.pipe(
+      map(state => state.selectedItems),
+      distinctUntilChanged(),
+      takeUntil(this.destroy)
+    ).subscribe(selected => this.selectedItems = selected);
 
-    this.store.changes.map(state => state.allSelected)
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(allSelected => this.allSelected = allSelected);
+    this.store.changes.pipe(
+      map(state => state.allSelected),
+      distinctUntilChanged(),
+      takeUntil(this.destroy)
+    ).subscribe(allSelected => this.allSelected = allSelected);
 
-    this.store.changes.map(state => state.loading)
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(loading => this.loading = loading);
+    this.store.changes.pipe(
+      map(state => state.loading),
+      distinctUntilChanged(),
+      takeUntil(this.destroy)
+    ).subscribe(loading => this.loading = loading);
 
-    this.storedFilterStore.getCurrentFilter(StoredFilterType.SUPERVISION_WORKQUEUE)
-      .takeUntil(this.destroy)
-      .map(filter => Sort.toMatSortable(filter.sort))
-      .subscribe(sort => this.sort.sort(sort));
+    this.storedFilterStore.getCurrentFilter(StoredFilterType.SUPERVISION_WORKQUEUE).pipe(
+      takeUntil(this.destroy),
+      map(filter => Sort.toMatSortable(filter.sort))
+    ).subscribe(sort => this.sort.sort(sort));
   }
 
   ngOnDestroy(): void {

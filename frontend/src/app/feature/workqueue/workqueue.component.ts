@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import 'rxjs/add/operator/publish';
+
 import {MatDialog} from '@angular/material';
 import {EnumUtil} from '../../util/enum.util';
 import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
@@ -10,12 +10,12 @@ import {DialogCloseReason} from '../common/dialog-close-value';
 import {WorkQueueTab} from './workqueue-tab';
 import {NotificationService} from '../../service/notification/notification.service';
 import {findTranslation} from '../../util/translations';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {ApplicationWorkItemStore} from './application-work-item-store';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
-import * as fromProject from '../project/reducers';
 import {AddMultiple} from '../project/actions/application-basket-actions';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'workqueue',
@@ -42,10 +42,11 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.userHub.getActiveUsers().subscribe(users => this.owners = users);
 
-    this.itemStore.changes.map(state => state.selectedItems)
-      .distinctUntilChanged()
-      .takeUntil(this.destroy)
-      .subscribe(items => this.noneSelected = (items.length === 0));
+    this.itemStore.changes.pipe(
+      map(state => state.selectedItems),
+      distinctUntilChanged(),
+      takeUntil(this.destroy),
+    ).subscribe(items => this.noneSelected = (items.length === 0));
   }
 
   ngOnDestroy() {
@@ -54,9 +55,9 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   moveSelectedToSelf() {
-    this.currentUser.user
-      .takeUntil(this.destroy)
-      .subscribe(u => this.changeOwner(u));
+    this.currentUser.user.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(u => this.changeOwner(u));
   }
 
   addToBasket(): void {

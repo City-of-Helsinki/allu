@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 import {Project} from '../../model/project/project';
 import {ProjectMapper} from '../mapper/project-mapper';
@@ -18,6 +18,7 @@ import {Sort} from '../../model/common/sort';
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendProject} from '../backend-model/backend-project';
 import {BackendApplication} from '../backend-model/backend-application';
+import {catchError, map} from 'rxjs/internal/operators';
 
 @Injectable()
 export class ProjectService {
@@ -38,15 +39,17 @@ export class ProjectService {
     return this.http.post<BackendPage<BackendProject>>(
       searchUrl,
       JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)),
-      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)})
-      .map(page => PageMapper.mapBackend(page, ProjectMapper.mapBackend))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)}).pipe(
+      map(page => PageMapper.mapBackend(page, ProjectMapper.mapBackend)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')))
+    );
   }
 
   public getProject(id: number): Observable<Project> {
-    return this.http.get<BackendProject>(ProjectService.PROJECT_URL + '/' + id)
-      .map(project => ProjectMapper.mapBackend(project))
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.fetchFailed')));
+    return this.http.get<BackendProject>(ProjectService.PROJECT_URL + '/' + id).pipe(
+      map(project => ProjectMapper.mapBackend(project)),
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.fetchFailed')))
+    );
   }
 
   public save(project: Project): Observable<Project> {
@@ -54,22 +57,25 @@ export class ProjectService {
       const url = ProjectService.PROJECT_URL + '/' + project.id;
 
       return this.http.put<BackendProject>(url,
-        JSON.stringify(ProjectMapper.mapFrontend(project)))
-        .map(saved => ProjectMapper.mapBackend(saved))
-        .catch(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')));
+        JSON.stringify(ProjectMapper.mapFrontend(project))).pipe(
+        map(saved => ProjectMapper.mapBackend(saved)),
+        catchError(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')))
+      );
     } else {
       return this.http.post<BackendProject>(ProjectService.PROJECT_URL,
-        JSON.stringify(ProjectMapper.mapFrontend(project)))
-        .map(saved => ProjectMapper.mapBackend(saved))
-        .catch(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')));
+        JSON.stringify(ProjectMapper.mapFrontend(project))).pipe(
+        map(saved => ProjectMapper.mapBackend(saved)),
+        catchError(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')))
+      );
     }
   }
 
   public addProjectApplications(id: number, applicationIds: number[]): Observable<Application[]> {
     const url = `${ProjectService.PROJECT_URL}/${id}/applications`;
-    return this.http.put<BackendApplication[]>(url, JSON.stringify(applicationIds))
-      .map(applications => applications.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationAddFailed')));
+    return this.http.put<BackendApplication[]>(url, JSON.stringify(applicationIds)).pipe(
+      map(applications => applications.map(app => ApplicationMapper.mapBackend(app))),
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.applicationAddFailed')))
+    );
   }
 
   public addProjectApplication(id: number, applicationId: number): Observable<Application[]> {
@@ -78,16 +84,18 @@ export class ProjectService {
 
   public removeApplication(appId: number): Observable<{}> {
     const url = `${ProjectService.PROJECT_URL}/applications/${appId}`;
-    return this.http.delete(url)
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationRemoveFailed')));
+    return this.http.delete(url).pipe(
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.applicationRemoveFailed')))
+    );
   }
 
   public getProjectApplications(id: number, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Application>> {
     const url = ProjectService.PROJECT_URL + '/' + id + '/applications';
     return this.http.get<BackendApplication[]>(url,
-      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)})
-      .map(applications => applications.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.applicationFetchFailed')));
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)}).pipe(
+      map(applications => applications.map(app => ApplicationMapper.mapBackend(app))),
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.applicationFetchFailed')))
+    );
   }
 
   public getChildProjects(id: number): Observable<Array<Project>> {
@@ -102,26 +110,30 @@ export class ProjectService {
 
   public updateParent(id: number, parentId: number): Observable<Project> {
     const url = [ProjectService.PROJECT_URL, id, 'parentProject', parentId].join('/');
-    return this.http.put<BackendProject>(url, '')
-      .map(project => ProjectMapper.mapBackend(project))
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.updateParentFailed')));
+    return this.http.put<BackendProject>(url, '').pipe(
+      map(project => ProjectMapper.mapBackend(project)),
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.updateParentFailed')))
+    );
   }
 
   public removeParent(ids: Array<number>): Observable<{}> {
     const url = [ProjectService.PROJECT_URL, 'parent', 'remove'].join('/');
-    return this.http.put(url, JSON.stringify(ids))
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.removeParentFailed')));
+    return this.http.put(url, JSON.stringify(ids)).pipe(
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.removeParentFailed')))
+    );
   }
 
   public getNextProjectNumber(): Observable<number> {
     const url = [ProjectService.PROJECT_URL, 'nextProjectNumber'].join('/');
-    return this.http.post<number>(url, null)
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.nextProjectNumberFailed')));
+    return this.http.post<number>(url, null).pipe(
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.nextProjectNumberFailed')))
+    );
   }
 
   private getProjects(url: string): Observable<Array<Project>> {
-    return this.http.get<BackendProject[]>(url)
-      .map(projects => projects.map(project => ProjectMapper.mapBackend(project)))
-      .catch(err => this.errorHandler.handle(err, findTranslation('project.error.searchFailed')));
+    return this.http.get<BackendProject[]>(url).pipe(
+      map(projects => projects.map(project => ProjectMapper.mapBackend(project))),
+      catchError(err => this.errorHandler.handle(err, findTranslation('project.error.searchFailed')))
+    );
   }
 }

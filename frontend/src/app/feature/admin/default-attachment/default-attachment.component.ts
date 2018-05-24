@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as filesaver from 'file-saver';
 
@@ -15,6 +15,7 @@ import {FixedLocationArea} from '../../../model/common/fixed-location-area';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../../allu/reducers';
+import {filter, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'default-attachment',
@@ -29,7 +30,7 @@ export class DefaultAttachmentComponent implements OnInit {
   hasFileOverDropzone = false;
   attachmentType: string;
   areas = this.fixedLocationService.existing
-    .map(areas => areas.sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name)));
+    .pipe(map(areas => areas.sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name))));
 
   file: Blob;
 
@@ -56,11 +57,11 @@ export class DefaultAttachmentComponent implements OnInit {
   ngOnInit(): void {
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
-    this.route.params
-      .map(params => params['id'])
-      .filter(id => !!id)
-      .switchMap(id => this.loadDefaultAttachment(id))
-      .subscribe(attachment => this.updateForm(attachment));
+    this.route.params.pipe(
+      map(params => params['id']),
+      filter(id => !!id),
+      switchMap(id => this.loadDefaultAttachment(id))
+    ).subscribe(attachment => this.updateForm(attachment));
 
     this.route.data.subscribe((data: {attachmentType: string}) => {
       this.attachmentType = data.attachmentType;

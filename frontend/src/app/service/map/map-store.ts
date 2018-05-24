@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {BehaviorSubject, merge, Observable} from 'rxjs';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 
 import {Application} from '../../model/application/application';
@@ -8,7 +8,6 @@ import {LocationService} from '../location.service';
 import {Location} from '../../model/common/location';
 import {NotificationService} from '../notification/notification.service';
 import {defaultFilter, MapSearchFilter} from '../map-search-filter';
-import {Observable} from 'rxjs/Observable';
 import {PostalAddress} from '../../model/common/postal-address';
 import {MapDataService} from './map-data-service';
 import {LatLngBounds} from 'leaflet';
@@ -16,6 +15,7 @@ import {ObjectUtil} from '../../util/object.util';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
+import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/internal/operators';
 
 export type MapRole = 'SEARCH' | 'LOCATION';
 
@@ -65,17 +65,17 @@ export class MapStore {
               private notification: NotificationService) {
 
     // Search when either of filters change
-    Observable.merge(this.mapSearchFilter, this.locationSearchFilter)
-      .debounceTime(300)
-      .filter(filter => !!filter.geometry)
-      .subscribe(filter => this.fetchMapDataByFilter(filter));
+    merge(this.mapSearchFilter, this.locationSearchFilter).pipe(
+      debounceTime(300),
+      filter(storedFilter => !!storedFilter.geometry)
+    ).subscribe(storedFilter => this.fetchMapDataByFilter(storedFilter));
 
     // When search changes fetches new coordinates and adds them to coordinates observable
-    this.coordinateSearch
-      .filter(search => !!search)
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .subscribe(term => this.fetchCoordinates(term));
+    this.coordinateSearch.pipe(
+      filter(search => !!search),
+      debounceTime(300),
+      distinctUntilChanged(),
+    ).subscribe(term => this.fetchCoordinates(term));
 
     this.storedFilterStore.getCurrent(StoredFilterType.MAP)
       .subscribe(sf => this.storedFilterChange(sf));
@@ -90,8 +90,7 @@ export class MapStore {
   }
 
   get changes(): Observable<MapState> {
-    return this.store.asObservable()
-      .distinctUntilChanged();
+    return this.store.asObservable().pipe(distinctUntilChanged());
   }
 
   get snapshot(): MapState {
@@ -99,68 +98,111 @@ export class MapStore {
   }
 
   get applications(): Observable<Array<Application>> {
-    return this.store.map(state => state.visibleApplications)
-      .distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.visibleApplications),
+      distinctUntilChanged()
+    );
   }
 
   get coordinates(): Observable<Option<Geocoordinates>> {
-    return this.store.map(state => state.coordinates)
-      .distinctUntilChanged()
-      .filter(c => !!c);
+    return this.store.pipe(
+      map(state => state.coordinates),
+      distinctUntilChanged(),
+      filter(c => !!c)
+    );
   }
 
   get coordinateSearch(): Observable<string> {
-    return this.store.map(state => state.coordinateSearch).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.coordinateSearch),
+      distinctUntilChanged()
+    );
   }
 
   get selectedApplication(): Observable<Application> {
-    return this.store.map(state => state.selectedApplication).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.selectedApplication),
+      distinctUntilChanged()
+    );
   }
 
   get editedLocation(): Observable<Location> {
-    return this.store.map(state => state.editedLocation).distinctUntilChanged()
-      .filter(shape => !!shape);
+    return this.store.pipe(
+      map(state => state.editedLocation),
+      distinctUntilChanged(),
+      filter(shape => !!shape)
+    );
   }
 
   get locationsToDraw(): Observable<Location[]> {
-    return this.store.map(state => state.locationsToDraw).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.locationsToDraw),
+      distinctUntilChanged()
+    );
   }
 
   get mapSearchFilter(): Observable<MapSearchFilter> {
-    return this.store.map(state => state.mapSearchFilter).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.mapSearchFilter),
+      distinctUntilChanged()
+    );
   }
 
   get locationSearchFilter(): Observable<MapSearchFilter> {
-    return this.store.map(state => state.locationSearchFilter).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.locationSearchFilter),
+      distinctUntilChanged()
+    );
   }
 
   get shape(): Observable<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>> {
-    return this.store.map(state => state.shape).distinctUntilChanged()
-      .filter(shape => !!shape);
+    return this.store.pipe(
+      map(state => state.shape),
+      distinctUntilChanged(),
+      filter(shape => !!shape)
+    );
   }
 
   get selectedSections(): Observable<number[]> {
-    return this.store.map(state => state.selectedSections).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.selectedSections),
+      distinctUntilChanged()
+    );
   }
 
   get drawingAllowed(): Observable<boolean> {
-    return this.store.map(state => state.drawingAllowed).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.drawingAllowed),
+      distinctUntilChanged()
+    );
   }
 
   get hasFixedGeometry(): Observable<boolean> {
-    return this.changes.map(state => state.hasFixedGeometry).distinctUntilChanged();
+    return this.changes.pipe(
+      map(state => state.hasFixedGeometry),
+      distinctUntilChanged()
+    );
   }
 
   get matchingAddresses(): Observable<PostalAddress[]> {
-    return this.store.map(state => state.matchingAddresses).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.matchingAddresses),
+      distinctUntilChanged()
+    );
   }
 
   get role(): Observable<MapRole> {
-    return this.store.map(state => state.role).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.role),
+      distinctUntilChanged()
+    );
   }
 
   get invalidGeometry(): Observable<boolean> {
-    return this.store.map(state => state.invalidGeometry).distinctUntilChanged();
+    return this.store.pipe(
+      map(state => state.invalidGeometry),
+      distinctUntilChanged()
+    );
   }
 
   coordinateSearchChange(term: string): void {
@@ -187,17 +229,17 @@ export class MapStore {
     this.store.next({...this.store.getValue(), locationsToDraw: locations});
   }
 
-  mapSearchFilterChange(filter: MapSearchFilter): void {
+  mapSearchFilterChange(searchFilter: MapSearchFilter): void {
     this.store.next({
       ...this.store.getValue(),
-      mapSearchFilter: { ...this.snapshot.mapSearchFilter, ...filter }
+      mapSearchFilter: { ...this.snapshot.mapSearchFilter, ...searchFilter }
     });
   }
 
-  locationSearchFilterChange(filter: MapSearchFilter): void {
+  locationSearchFilterChange(searchFilter: MapSearchFilter): void {
     this.store.next({
       ...this.store.getValue(),
-      locationSearchFilter: { ...this.snapshot.locationSearchFilter, ...filter }
+      locationSearchFilter: { ...this.snapshot.locationSearchFilter, ...searchFilter }
     });
   }
 
@@ -254,8 +296,8 @@ export class MapStore {
     this.store.next({...this.snapshot, invalidGeometry});
   }
 
-  private fetchMapDataByFilter(filter: MapSearchFilter): void {
-    this.mapDataService.applicationsByLocation(filter)
+  private fetchMapDataByFilter(searchFilter: MapSearchFilter): void {
+    this.mapDataService.applicationsByLocation(searchFilter)
       .subscribe(applications => this.applicationsChange(applications));
   }
 

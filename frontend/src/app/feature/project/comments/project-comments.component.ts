@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
 import {CommentsComponent} from '../../comment/comments.component';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'project-comments',

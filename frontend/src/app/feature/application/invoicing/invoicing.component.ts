@@ -3,11 +3,10 @@ import {ApplicationStore} from '../../../service/application/application-store';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {NotificationService} from '../../../service/notification/notification.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of, Subject} from 'rxjs';
 import {Application} from '../../../model/application/application';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerForm} from '../../customerregistry/customer/customer.form';
-import {Subject} from 'rxjs/Subject';
 import {MatDialog} from '@angular/material';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
@@ -16,6 +15,7 @@ import {NumberUtil} from '../../../util/number.util';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {CurrentUser} from '../../../service/user/current-user';
 import {RoleType, MODIFY_ROLES} from '../../../model/user/role-type';
+import {catchError, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'invoicing',
@@ -81,11 +81,12 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     application.invoicingDate = invoicingInfo.invoicingDate;
     application.skipPriceCalculation = invoicingInfo.skipPriceCalculation;
 
-    return this.saveCustomer()
-      .switchMap(customer => {
+    return this.saveCustomer().pipe(
+      switchMap(customer => {
         application.invoiceRecipientId = customer.id;
         return this.applicationStore.save(application);
-      });
+      })
+    );
   }
 
   private saveCustomer(): Observable<Customer> {
@@ -97,7 +98,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     if (billable && this.recipientForm.dirty) {
       return this.customerService.saveCustomer(customer);
     } else {
-      return Observable.of(customer);
+      return of(customer);
     }
   }
 
@@ -124,8 +125,9 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     };
 
     if (this.infoForm.valid) {
-      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed()
-        .switchMap(save => this.saveChanges(save));
+      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed().pipe(
+        switchMap(save => this.saveChanges(save))
+      );
     } else {
       return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
     }
@@ -133,16 +135,18 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   private saveChanges(save: boolean): Observable<boolean> {
     if (save) {
-      return this.saveApplicationInfo()
-        .map(() => {
+      return this.saveApplicationInfo().pipe(
+        map(() => {
           this.notification.translateSuccess('invoice.action.save');
           return true;
-        }).catch(error => {
+        }),
+        catchError(error => {
           this.notification.error(error);
-          return Observable.of(false);
-        });
+          return of(false);
+        })
+      );
     } else {
-      return Observable.of(true);
+      return of(true);
     }
   }
 }

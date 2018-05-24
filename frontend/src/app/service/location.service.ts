@@ -1,6 +1,7 @@
+
+import {throwError as observableThrowError, Observable, of} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
 
 import {Geocoordinates} from '../model/common/geocoordinates';
 import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
@@ -18,6 +19,7 @@ import {BackendGeocoordinates} from './backend-model/backend-geocoordinates';
 import {BackendFixedLocationArea} from './backend-model/backend-fixed-location-area';
 import {BackendPostalAddress} from './backend-model/backend-postal-address';
 import {HttpStatus} from '../util/http-status';
+import {catchError, map} from 'rxjs/internal/operators';
 
 const ADDRESS_URL = '/api/address';
 const GEOCODE_URL = '/geocode/helsinki';
@@ -34,30 +36,34 @@ export class LocationService {
     private errorHandler: ErrorHandler) {}
 
   public geocode(address: string): Observable<Option<Geocoordinates>> {
-    return this.http.get<BackendGeocoordinates>(this.geocodeUrl(address))
-      .catch(error => this.handleNotFound(error, address))
-      .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService))
-      .map(coordinates => Some(coordinates))
-      .catch(err => this.handleGeocodeError(err));
+    return this.http.get<BackendGeocoordinates>(this.geocodeUrl(address)).pipe(
+      catchError(error => this.handleNotFound(error, address)),
+      map(response => GeocoordinatesMapper.mapBackend(response, this.mapService)),
+      map(coordinates => Some(coordinates)),
+      catchError(err => this.handleGeocodeError(err))
+    );
   }
 
   public getFixedLocations(): Observable<Array<FixedLocationArea>> {
-    return this.http.get<BackendFixedLocationArea[]>(FIXED_LOCATION_URL)
-      .map(json => json.map(ss => FixedLocationMapper.mapBackend(ss)))
-      .catch(err => this.errorHandler.handle(err, findTranslation('location.error.fetchFixedLocations')));
+    return this.http.get<BackendFixedLocationArea[]>(FIXED_LOCATION_URL).pipe(
+      map(json => json.map(ss => FixedLocationMapper.mapBackend(ss))),
+      catchError(err => this.errorHandler.handle(err, findTranslation('location.error.fetchFixedLocations')))
+    );
   }
 
   public districts(): Observable<Array<CityDistrict>> {
-    return this.http.get<BackendCityDistrict[]>(CITY_DISTRICT_URL)
-      .map(districts => districts.map(district => CityDistrictMapper.mapBackend(district)))
-      .catch(err => this.errorHandler.handle(err, findTranslation('location.error.fetchCityDistricts')));
+    return this.http.get<BackendCityDistrict[]>(CITY_DISTRICT_URL).pipe(
+      map(districts => districts.map(district => CityDistrictMapper.mapBackend(district))),
+      catchError(err => this.errorHandler.handle(err, findTranslation('location.error.fetchCityDistricts')))
+    );
   }
 
   public search(searchTerm: string): Observable<Array<PostalAddress>> {
     const searchUrl = ADDRESS_URL + SEARCH_URL + '/' + searchTerm;
-    return this.http.get<BackendPostalAddress[]>(searchUrl)
-      .map(addressses => addressses.map(address => PostalAddress.fromBackend(address)))
-      .catch(err => this.errorHandler.handle(err, findTranslation('location.error.addressSearch')));
+    return this.http.get<BackendPostalAddress[]>(searchUrl).pipe(
+      map(addressses => addressses.map(address => PostalAddress.fromBackend(address))),
+      catchError(err => this.errorHandler.handle(err, findTranslation('location.error.addressSearch')))
+    );
   }
 
   private geocodeUrl(address: string, defaultStreetNumber?: number) {
@@ -78,12 +84,12 @@ export class LocationService {
   private handleNotFound(error: HttpErrorResponse, address: string): Observable<BackendGeocoordinates> {
     return error.status === HttpStatus.NOT_FOUND
       ? this.http.get<BackendGeocoordinates>(this.geocodeUrl(address, DEFAULT_STREET_AREA_NUMBER))
-      : Observable.throw(error);
+      : observableThrowError(error);
   }
 
   private handleGeocodeError(errorResponse: HttpErrorResponse): Observable<Option<Geocoordinates>> {
     return errorResponse.status === HttpStatus.NOT_FOUND
-      ? Observable.of(None())
+      ? of(None())
       : this.errorHandler.handle(errorResponse, findTranslation('geolocation.error.searchFailed'));
   }
 }

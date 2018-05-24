@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
@@ -13,16 +13,16 @@ import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-r
 import {Component, Input} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
 import {CustomerServiceMock} from '../../../../mocks';
-import {Application} from '../../../../../src/app/model/application/application';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 import {CodeSetService} from '../../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
+import {of} from 'rxjs/index';
 
 const headerText = 'Hakija';
 
 class CodeSetServiceMock {
   public getCountries(): Observable<Array<CodeSet>> {
-    return Observable.of([{code: 'FI', type: 'Country', description: 'Suomi'}]);
+    return of([{code: 'FI', type: 'Country', description: 'Suomi'}]);
   }
 }
 

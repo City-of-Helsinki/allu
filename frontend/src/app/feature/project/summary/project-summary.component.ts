@@ -1,14 +1,14 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {Store} from '@ngrx/store';
 
 import {Project} from '../../../model/project/project';
 import * as fromProject from '../reducers';
 import {CityDistrict} from '../../../model/common/city-district';
-import {Subject} from 'rxjs/Subject';
 import {MapStore} from '../../../service/map/map-store';
 import {MapComponent} from '../../map/map.component';
 import {Comment} from '../../../model/application/comment/comment';
+import {takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'project-summary',
@@ -33,8 +33,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngAfterViewInit(): void {
     // TODO: This should be done using ngrx store after map is refactored
-    this.store.select(fromProject.getApplications)
-      .takeUntil(this.destroy$)
+    this.store.select(fromProject.getApplications).pipe(takeUntil(this.destroy$))
       .subscribe(applications => {
         this.mapStore.applicationsChange(applications);
         this.map.centerAndZoomOnDrawn();

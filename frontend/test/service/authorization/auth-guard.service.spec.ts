@@ -7,6 +7,7 @@ import {UiConfiguration} from '../../../src/app/model/config/ui-configuration';
 import {AuthGuard} from '../../../src/app/service/authorization/auth-guard.service';
 import {AuthService} from '../../../src/app/service/authorization/auth.service';
 import {ConfigService} from '../../../src/app/service/config/config.service';
+import {EMPTY, of} from 'rxjs/index';
 
 class AuthServiceMock {
   authenticated(): boolean {
@@ -14,13 +15,13 @@ class AuthServiceMock {
   }
 
   loginOAuth(code: string): Observable<User> {
-    return Observable.empty();
+    return EMPTY;
   }
 }
 
 class ConfigServiceMock {
   getConfiguration(): Observable<UiConfiguration> {
-    return Observable.empty();
+    return EMPTY;
   }
 }
 
@@ -54,7 +55,7 @@ describe('AuthGuard', () => {
 
   it('authenticates when code is found in route parameters', () => {
     spyOn(authService, 'authenticated').and.returnValue(false);
-    const loginOauth = spyOn(authService, 'loginOAuth').and.returnValue(Observable.of(new User()));
+    const loginOauth = spyOn(authService, 'loginOAuth').and.returnValue(of(new User()));
     activatedRouteSnapshot.queryParams = {code: 'CODE'};
 
     authGuard.canActivate(activatedRouteSnapshot, routerStateSnapshot).subscribe();
@@ -63,7 +64,7 @@ describe('AuthGuard', () => {
 
   it('redirects to oauth login when no code is found in route parameters', () => {
     spyOn(authService, 'authenticated').and.returnValue(false);
-    const getConfiguration = spyOn(configService, 'getConfiguration').and.returnValue(Observable.empty());
+    const getConfiguration = spyOn(configService, 'getConfiguration').and.returnValue(EMPTY);
     const setItem = spyOn(localStorage, 'setItem');
     activatedRouteSnapshot.queryParams = {code: undefined};
     routerStateSnapshot.url = 'testUrl';

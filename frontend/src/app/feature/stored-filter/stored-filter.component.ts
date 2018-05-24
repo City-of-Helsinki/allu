@@ -1,15 +1,14 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {StoredFilterService} from '../../service/stored-filter/stored-filter.service';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {UserService} from '../../service/user/user-service';
-import {Subject} from 'rxjs/Subject';
+import {Observable, Subject} from 'rxjs';
 import {StoredFilter} from '../../model/user/stored-filter';
-import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../service/notification/notification.service';
 import {User} from '../../model/user/user';
 import {MatDialog} from '@angular/material';
 import {STORED_FILTER_MODAL_CONFIG, StoredFilterModalComponent} from './stored-filter-modal.component';
 import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
+import {catchError, filter, switchMap, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'stored-filter',
@@ -59,16 +58,16 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
     }};
 
     const dialogRef = this.dialog.open<StoredFilterModalComponent>(StoredFilterModalComponent, config);
-    dialogRef.afterClosed()
-      .filter(result => !!result)
-      .switchMap(added => this.store.save(added))
-      .subscribe(
-        () => this.notification.translateSuccess('storedFilter.action.save'),
-        err => this.notification.errorInfo(err));
+    dialogRef.afterClosed().pipe(
+      filter(result => !!result),
+      switchMap(added => this.store.save(added))
+    ).subscribe(
+      () => this.notification.translateSuccess('storedFilter.action.save'),
+      err => this.notification.errorInfo(err));
   }
 
-  selectFilter(filter: StoredFilter): void {
-    this.store.currentChange(filter);
+  selectFilter(storedFilter: StoredFilter): void {
+    this.store.currentChange(storedFilter);
   }
 
   removeFilter(id: number): void {
@@ -79,8 +78,9 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
   }
 
   private loadCurrentUser(): Observable<User> {
-    return this.userService.getCurrentUser()
-      .takeUntil(this.destroy)
-      .catch(err => this.notification.errorCatch(err, undefined));
+    return this.userService.getCurrentUser().pipe(
+      takeUntil(this.destroy),
+      catchError(err => this.notification.errorCatch(err, undefined))
+    );
   }
 }

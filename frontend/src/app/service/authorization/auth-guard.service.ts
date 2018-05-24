@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 import {AuthService} from './auth.service';
 import {ConfigService} from '../config/config.service';
 import {REDIRECT_URL} from '../../../util/local-storage';
+import {map} from 'rxjs/internal/operators';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,7 +15,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (this.authService.authenticated()) {
-      return Observable.of(true);
+      return of(true);
     } else {
       return this.authenticate(route, state.url);
     }
@@ -23,11 +24,11 @@ export class AuthGuard implements CanActivate {
   private authenticate(route: ActivatedRouteSnapshot, redirectUrl: string): Observable<boolean> {
     const code = route.queryParams['code'];
     if (code) {
-      return this.authService.loginOAuth(code).map(response => true);
+      return this.authService.loginOAuth(code).pipe(map(response => true));
     } else {
       localStorage.setItem(REDIRECT_URL, redirectUrl);
       this.redirectToOAuth();
-      return Observable.of(false);
+      return of(false);
     }
   }
 

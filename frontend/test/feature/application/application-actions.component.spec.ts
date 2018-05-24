@@ -27,10 +27,11 @@ import {MatDialog} from '@angular/material';
 import {User} from '../../../src/app/model/user/user';
 import {UserHub} from '../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../src/app/model/user/user-search-criteria';
+import {EMPTY, of} from 'rxjs/index';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
-    return Observable.empty();
+    return EMPTY;
   }
 }
 
@@ -41,7 +42,7 @@ class MatDialogMock {
 }
 
 class UserHubMock {
-  searchUsers(criteria: UserSearchCriteria) { return Observable.of([]); }
+  searchUsers(criteria: UserSearchCriteria) { return of([]); }
 }
 
 
@@ -165,7 +166,7 @@ describe('ApplicationActionsComponent', () => {
     const location = new Location(12, 12, 12, new Date());
 
     const preferredOwner = new User(52);
-    spyOn(userHub, 'searchUsers').and.returnValue(Observable.of([preferredOwner]));
+    spyOn(userHub, 'searchUsers').and.returnValue(of([preferredOwner]));
 
     const application = applicationStore.snapshot.application;
     application.id = 1;
@@ -189,7 +190,7 @@ describe('ApplicationActionsComponent', () => {
     applicationStore.updateType(ApplicationType.NOTE);
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'delete').and.returnValue(Observable.of({}));
+    spyOn(applicationStore, 'delete').and.returnValue(of({}));
     spyOn(notification, 'translateSuccess');
 
     const removeBtn = getButtonWithText(de, findTranslation('common.button.remove').toUpperCase());
@@ -232,7 +233,7 @@ describe('ApplicationActionsComponent', () => {
     spyOn(notification, 'translateSuccess');
 
     const dialogRef = new MatDialogRefMock();
-    spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(true));
+    spyOn(dialogRef, 'afterClosed').and.returnValue(of(true));
     spyOn(dialog, 'open').and.returnValue(dialogRef);
 
     const cancelBtn = getButtonWithText(de, findTranslation('application.button.cancel').toUpperCase());
@@ -252,7 +253,7 @@ describe('ApplicationActionsComponent', () => {
     spyOn(notification, 'translateSuccess');
 
     const dialogRef = new MatDialogRefMock();
-    spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(false));
+    spyOn(dialogRef, 'afterClosed').and.returnValue(of(false));
     spyOn(dialog, 'open').and.returnValue(dialogRef);
 
     const cancelBtn = getButtonWithText(de, findTranslation('application.button.cancel').toUpperCase());

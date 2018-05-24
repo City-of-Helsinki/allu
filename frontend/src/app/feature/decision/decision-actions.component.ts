@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 
 import {Application} from '../../model/application/application';
 import {ApplicationStatus, inHandling} from '../../model/application/application-status';
@@ -18,6 +18,7 @@ import * as fromApplication from '../application/reducers';
 import {Store} from '@ngrx/store';
 import {Load} from '../comment/actions/comment-actions';
 import {ActionTargetType} from '../allu/actions/action-target-type';
+import {switchMap, tap} from 'rxjs/internal/operators';
 
 
 @Component({
@@ -69,9 +70,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   public decisionConfirmed(confirmation: DecisionConfirmation) {
     if (!!confirmation) {
-      this.changeStatus(confirmation)
-        .switchMap(app => this.sendDecision(app.id, confirmation))
-        .subscribe(
+      this.changeStatus(confirmation).pipe(
+        switchMap(app => this.sendDecision(app.id, confirmation))
+      ).subscribe(
           () => this.router.navigateByUrl('/workqueue'),
           error => this.notification.errorInfo(error));
     }
@@ -91,8 +92,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
     const changeInfo = new StatusChangeInfo(undefined, confirmation.comment, confirmation.owner);
-    return this.applicationStore.changeStatus(this.application.id, confirmation.status, changeInfo)
-      .do(application => this.statusChanged(application));
+    return this.applicationStore.changeStatus(this.application.id, confirmation.status, changeInfo).pipe(
+      tap(application => this.statusChanged(application))
+    );
   }
 
   private statusChanged(application: Application): void {
@@ -105,6 +107,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
       .map(details => this.decisionHub.sendDecision(appId, details))
-      .orElseGet(() => Observable.of({}));
+      .orElseGet(() => of({}));
   }
 }

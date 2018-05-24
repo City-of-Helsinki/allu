@@ -2,8 +2,7 @@ import {Injectable} from '@angular/core';
 import {WorkQueueTab} from '../workqueue/workqueue-tab';
 import {SupervisionTaskSearchCriteria} from '../../model/application/supervision/supervision-task-search-criteria';
 import {SupervisionWorkItem} from '../../model/application/supervision/supervision-work-item';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {SupervisionTaskService} from '../../service/supervision/supervision-task.service';
 import {ArrayUtil} from '../../util/array-util';
 import {Page} from '../../model/common/page';
@@ -12,6 +11,7 @@ import {PageRequest} from '../../model/common/page-request';
 import {NotificationService} from '../../service/notification/notification.service';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
+import {debounceTime, distinctUntilChanged, map, take, tap} from 'rxjs/internal/operators';
 
 const initialState: SupervisionWorkqueueState = {
   tab: undefined,
@@ -32,19 +32,19 @@ export class SupervisionWorkItemStore {
   constructor(private service: SupervisionTaskService,
               private currentUserService: CurrentUser,
               private notification: NotificationService) {
-    Observable.combineLatest(
-      this.changes.map(state => state.search).distinctUntilChanged(),
-      this.changes.map(state => state.sort).distinctUntilChanged(),
-      this.changes.map(state => state.pageRequest).distinctUntilChanged()
-    ).debounceTime(100) // Need a small delay here so changes in multiple observables do only on refresh
+    combineLatest(
+      this.changes.pipe(map(state => state.search), distinctUntilChanged()),
+      this.changes.pipe(map(state => state.sort), distinctUntilChanged()),
+      this.changes.pipe(map(state => state.pageRequest), distinctUntilChanged())
+    ).pipe(debounceTime(100)) // Need a small delay here so changes in multiple observables do only on refresh
      .subscribe(() => this.refresh());
 
-    this.currentUserService.user.take(1)
+    this.currentUserService.user.pipe(take(1))
       .subscribe(user => this.currentUser = user);
   }
 
   get changes(): Observable<SupervisionWorkqueueState> {
-    return this.store.asObservable().distinctUntilChanged();
+    return this.store.asObservable().pipe(distinctUntilChanged());
   }
 
   get snapshot(): SupervisionWorkqueueState {
@@ -98,14 +98,16 @@ export class SupervisionWorkItemStore {
 
   public changeHandlerForSelected(handlerId: number): Observable<{}> {
     const selected = this.store.getValue().selectedItems;
-    return this.service.changeOwner(handlerId, selected)
-      .do(search => this.refresh());
+    return this.service.changeOwner(handlerId, selected).pipe(
+      tap(search => this.refresh())
+    );
   }
 
   public removeHandlerFromSelected(): Observable<{}> {
     const selected = this.store.getValue().selectedItems;
-    return this.service.removeOwner(selected)
-      .do(search => this.refresh());
+    return this.service.removeOwner(selected).pipe(
+      tap(search => this.refresh())
+    );
   }
 
   private selectedItems(selected: Array<number>) {

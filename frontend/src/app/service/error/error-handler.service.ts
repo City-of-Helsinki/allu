@@ -1,5 +1,6 @@
+
+import {throwError, Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 import {ErrorInfo} from './error-info';
 import {Router} from '@angular/router';
 import {findTranslation} from '../../util/translations';
@@ -21,7 +22,7 @@ export class ErrorHandler {
     if (HttpStatus.UNAUTHORIZED === error.status) {
       this.router.navigate(['/home']);
     }
-    return Observable.throw(new ErrorInfo(title, message));
+    return throwError(new ErrorInfo(title, message));
   }
 
   private mapStatusToTitle(error: HttpErrorResponse): string {

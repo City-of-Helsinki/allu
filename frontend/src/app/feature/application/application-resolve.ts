@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
@@ -11,6 +11,7 @@ import * as fromApplication from './reducers';
 import {LoadSuccess} from './actions/application-actions';
 import {Load} from '../comment/actions/comment-actions';
 import {ActionTargetType} from '../allu/actions/action-target-type';
+import {catchError, tap} from 'rxjs/internal/operators';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -26,11 +27,12 @@ export class ApplicationResolve implements Resolve<Application> {
 
     return Some(route.params['id'])
       .map(id => Number(id))
-      .map(id => this.applicationStore.load(id)
-        .do(app => this.store.dispatch(new LoadSuccess(app)))
-        .do(() => this.loadComments(id))
-        .catch(err => this.handleError(err)))
-      .orElseGet(() => Observable.of(this.applicationStore.currentOrCopy()));
+      .map(id => this.applicationStore.load(id).pipe(
+        tap(app => this.store.dispatch(new LoadSuccess(app))),
+        tap(() => this.loadComments(id)),
+        catchError(err => this.handleError(err)))
+      )
+      .orElseGet(() => of(this.applicationStore.currentOrCopy()));
   }
 
   private loadComments(id: number) {
@@ -40,6 +42,6 @@ export class ApplicationResolve implements Resolve<Application> {
   private handleError(err: any): Observable<Application> {
     this.notification.errorInfo(err);
     this.router.navigate(['/applications']);
-    return Observable.of(new Application());
+    return of(new Application());
   }
 }

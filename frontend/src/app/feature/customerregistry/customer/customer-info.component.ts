@@ -2,8 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {CustomerType} from '../../../model/customer/customer-type';
 import {EnumUtil} from '../../../util/enum.util';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
-import {Subscription} from 'rxjs/Subscription';
+import {EMPTY, Observable, Subscription} from 'rxjs';
 import {NumberUtil} from '../../../util/number.util';
 import {CustomerForm} from './customer.form';
 import {ComplexValidator} from '../../../util/complex-validator';
@@ -13,6 +12,7 @@ import {CustomerSearchQuery} from '../../../service/customer/customer-search-que
 import {CodeSetService} from '../../../service/codeset/codeset.service';
 import {CodeSet} from '../../../model/codeset/codeset';
 import {postalCodeValidator} from '../../../util/complex-validator';
+import {debounceTime, map, switchMap} from 'rxjs/internal/operators';
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
@@ -55,17 +55,19 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.countryControl = <FormControl>this.form.get('country');
     this.postalCodeControl = <FormControl> this.form.get('postalAddress').get('postalCode');
 
-    this.matchingNameCustomers = this.nameControl.valueChanges
-      .debounceTime(DEBOUNCE_TIME_MS)
-      .switchMap(name => this.onSearchChange({name: name}));
+    this.matchingNameCustomers = this.nameControl.valueChanges.pipe(
+      debounceTime(DEBOUNCE_TIME_MS),
+      switchMap(name => this.onSearchChange({name: name}))
+    );
 
-    this.matchingRegistryKeyCustomers = this.registryKeyControl.valueChanges
-      .debounceTime(DEBOUNCE_TIME_MS)
-      .switchMap(key => this.onSearchChange({registryKey: key}));
+    this.matchingRegistryKeyCustomers = this.registryKeyControl.valueChanges.pipe(
+      debounceTime(DEBOUNCE_TIME_MS),
+      switchMap(key => this.onSearchChange({registryKey: key}))
+    );
 
-    this.typeSubscription = this.typeControl.valueChanges
-      .map((type: string) => CustomerType[type])
-      .subscribe(type => this.updateRegistryKeyValidators(type));
+    this.typeSubscription = this.typeControl.valueChanges.pipe(
+      map((type: string) => CustomerType[type])
+    ).subscribe(type => this.updateRegistryKeyValidators(type));
 
     this.countrySubscription = this.countryControl.valueChanges
       .subscribe(country => this.updatePostalAddressValidator(country));
@@ -86,7 +88,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       }
       return this.customerService.search(termsWithType);
     } else {
-      return Observable.empty();
+      return EMPTY;
     }
   }
 

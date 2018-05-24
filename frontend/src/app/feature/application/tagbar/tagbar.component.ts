@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {ApplicationTagType, manualTagTypes} from '../../../model/application/tag/application-tag-type';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Application} from '../../../model/application/application';

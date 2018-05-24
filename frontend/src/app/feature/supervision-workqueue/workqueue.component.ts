@@ -9,7 +9,8 @@ import {User} from '../../model/user/user';
 import {NotificationService} from '../../service/notification/notification.service';
 import {UserHub} from '../../service/user/user-hub';
 import {RoleType} from '../../model/user/role-type';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
+import {distinctUntilChanged, map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'supervision-workqueue',
@@ -35,9 +36,10 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     this.userHub.getByRole(RoleType.ROLE_SUPERVISE)
       .subscribe(supervisors => this.activeSupervisors = supervisors);
 
-    this.changeSubscription = this.store.changes.map(state => state.selectedItems)
-      .distinctUntilChanged()
-      .subscribe(items => this.noneSelected = (items.length === 0));
+    this.changeSubscription = this.store.changes.pipe(
+      map(state => state.selectedItems),
+      distinctUntilChanged()
+    ).subscribe(items => this.noneSelected = (items.length === 0));
   }
 
   ngOnDestroy() {

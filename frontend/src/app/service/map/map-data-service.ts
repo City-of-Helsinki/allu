@@ -4,7 +4,7 @@ import {ApplicationLocationQueryMapper} from '../mapper/application-location-que
 import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 import {ErrorHandler} from '../error/error-handler.service';
 import {MapUtil} from './map.util';
 import {MapSearchFilter} from '../map-search-filter';
@@ -12,6 +12,7 @@ import {ApplicationStatus, ApplicationStatusGroup} from '../../model/application
 import {ArrayUtil} from '../../util/array-util';
 import {HttpClient} from '@angular/common/http';
 import {BackendApplication} from '../backend-model/backend-application';
+import {catchError, map} from 'rxjs/internal/operators';
 
 const APPLICATION_SEARCH_URL = '/api/applications/search_location';
 
@@ -47,11 +48,12 @@ export class MapDataService {
       const query = this.toApplicationLocationQuery(filter);
       return this.http.post<BackendApplication[]>(
         APPLICATION_SEARCH_URL,
-        JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query)))
-        .map(applications => applications.map(app => ApplicationMapper.mapBackend(app)))
-        .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
+        JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query))).pipe(
+        map(applications => applications.map(app => ApplicationMapper.mapBackend(app))),
+        catchError(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')))
+      );
     } else {
-      return Observable.of([]);
+      return of([]);
     }
   }
 

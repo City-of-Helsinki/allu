@@ -12,11 +12,11 @@ import {Some} from '../../../util/option';
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import {Subject, Observable} from 'rxjs';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {FormUtil} from '../../../util/form.util';
 import {ProjectService} from '../../../service/project/project.service';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
@@ -55,14 +55,14 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
     this.applicationChanges = this.applicationStore.application;
 
-    this.applicationChanges
-      .takeUntil(this.destroy)
+    this.applicationChanges.pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));
 
-    this.applicationStore.changes.map(change => change.draft)
-      .takeUntil(this.destroy)
-      .distinctUntilChanged()
-      .subscribe(draft => this.onDraftChange(draft));
+    this.applicationStore.changes.pipe(
+      map(change => change.draft),
+      takeUntil(this.destroy),
+      distinctUntilChanged()
+    ).subscribe(draft => this.onDraftChange(draft));
   }
 
   ngAfterContentInit(): void {
@@ -70,8 +70,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
       this.applicationForm.disable();
     }
 
-    this.applicationStore.tab
-      .takeUntil(this.destroy)
+    this.applicationStore.tab.pipe(takeUntil(this.destroy))
       .subscribe(tab => this.onTabChange(tab));
   }
 

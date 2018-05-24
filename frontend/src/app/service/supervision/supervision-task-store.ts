@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {SupervisionTask} from '../../model/application/supervision/supervision-task';
 import {SupervisionTaskService} from './supervision-task.service';
 import {ApplicationStore} from '../application/application-store';
+import {tap} from 'rxjs/internal/operators';
 
 @Injectable()
 export class SupervisionTaskStore {
@@ -24,26 +24,30 @@ export class SupervisionTaskStore {
 
   saveTask(applicationId: number, task: SupervisionTask): Observable<SupervisionTask> {
     task.applicationId = applicationId;
-    return this.supervisionTaskService.save(task)
-      .do(() => this.loadTasks(applicationId))
-      .do(() => this.applicationStore.load(applicationId).subscribe());
+    return this.supervisionTaskService.save(task).pipe(
+      tap(() => this.loadTasks(applicationId)),
+      tap(() => this.applicationStore.load(applicationId).subscribe())
+    );
   }
 
   removeTask(applicationId: number, taskId: number): Observable<{}> {
-    return this.supervisionTaskService.remove(taskId)
-      .do(() => this.loadTasks(applicationId))
-      .do(() => this.applicationStore.load(applicationId).subscribe());
+    return this.supervisionTaskService.remove(taskId).pipe(
+      tap(() => this.loadTasks(applicationId)),
+      tap(() => this.applicationStore.load(applicationId).subscribe())
+    );
   }
 
   approve(task: SupervisionTask): Observable<SupervisionTask> {
-    return this.supervisionTaskService.approve(task)
-      .do(() => this.loadTasks(task.applicationId))
-      .do(() => this.applicationStore.load(task.applicationId).subscribe());
+    return this.supervisionTaskService.approve(task).pipe(
+      tap(() => this.loadTasks(task.applicationId)),
+      tap(() => this.applicationStore.load(task.applicationId).subscribe())
+    );
   }
 
   reject(task: SupervisionTask, newSupervisionDate: Date): Observable<SupervisionTask> {
-    return this.supervisionTaskService.reject(task, newSupervisionDate)
-      .do(() => this.loadTasks(task.applicationId))
-      .do(() => this.applicationStore.load(task.applicationId).subscribe());
+    return this.supervisionTaskService.reject(task, newSupervisionDate).pipe(
+      tap(() => this.loadTasks(task.applicationId)),
+      tap(() => this.applicationStore.load(task.applicationId).subscribe())
+    );
   }
 }

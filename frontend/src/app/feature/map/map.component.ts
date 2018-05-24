@@ -9,9 +9,10 @@ import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Location} from '../../model/common/location';
 import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '../../service/map/map-controller';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {FixedLocationService} from '../../service/map/fixed-location.service';
 import {ProjectService} from '../../service/project/project.service';
+import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'map',
@@ -170,34 +171,29 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initSubscriptions(): void {
-    this.mapStore.coordinates
-      .takeUntil(this.destroy)
+    this.mapStore.coordinates.pipe(takeUntil(this.destroy))
       .subscribe(opt => opt.map(coordinates => this.mapController.panToCoordinates(coordinates)));
 
-    this.mapController.shapes
-      .takeUntil(this.destroy)
+    this.mapController.shapes.pipe(takeUntil(this.destroy))
       .subscribe(shapes => this.addShape(shapes));
 
-    this.mapStore.applications
-      .takeUntil(this.destroy)
+    this.mapStore.applications.pipe(takeUntil(this.destroy))
       .subscribe(applications => this.drawApplications(applications));
 
-    this.mapStore.selectedApplication
-      .takeUntil(this.destroy)
-      .filter(app => !!app)
-      .subscribe(app => this.applicationSelected(app));
+    this.mapStore.selectedApplication.pipe(
+      takeUntil(this.destroy),
+      filter(app => !!app)
+    ).subscribe(app => this.applicationSelected(app));
 
-      this.mapStore.selectedSections
-        .takeUntil(this.destroy)
-        .switchMap(ids => this.fixedLocationService.sectionsByIds(ids))
-        .subscribe(fxs => this.drawFixedLocations(fxs));
+      this.mapStore.selectedSections.pipe(
+        takeUntil(this.destroy),
+        switchMap(ids => this.fixedLocationService.sectionsByIds(ids))
+      ).subscribe(fxs => this.drawFixedLocations(fxs));
 
-    this.mapStore.editedLocation
-      .takeUntil(this.destroy)
+    this.mapStore.editedLocation.pipe(takeUntil(this.destroy))
       .subscribe(loc => this.drawEditedLocation(loc));
 
-    this.mapStore.locationsToDraw
-      .takeUntil(this.destroy)
+    this.mapStore.locationsToDraw.pipe(takeUntil(this.destroy))
       .subscribe(locs => this.drawFocusedLocations(locs));
   }
 }

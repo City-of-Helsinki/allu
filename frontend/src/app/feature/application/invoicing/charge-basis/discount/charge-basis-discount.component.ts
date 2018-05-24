@@ -1,11 +1,11 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {InvoiceHub} from '../../../../../service/application/invoice/invoice-hub';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {ChargeBasisEntry} from '../../../../../model/application/invoice/charge-basis-entry';
-import {Subject} from 'rxjs/Subject';
 import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-basis-unit';
 import {ChargeBasisType} from '../../../../../model/application/invoice/charge-basis-type';
+import {map, takeUntil} from 'rxjs/internal/operators';
 
 const discountSumValidators = {
   unitPrice: [Validators.required]
@@ -39,12 +39,12 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
   constructor(private invoiceHub: InvoiceHub) {}
 
   ngOnInit(): void {
-    this.referableEntries = this.invoiceHub.chargeBasisEntries
-      .map(entries => entries.filter(entry => this.discountableChargeBasisTypes.includes(entry.type)));
+    this.referableEntries = this.invoiceHub.chargeBasisEntries.pipe(
+      map(entries => entries.filter(entry => this.discountableChargeBasisTypes.includes(entry.type)))
+    );
 
     this.unitCtrl = <FormControl>this.form.get('unit');
-    this.unitCtrl.valueChanges
-      .takeUntil(this.destroy)
+    this.unitCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(unit => this.unitChanges(unit));
   }
 

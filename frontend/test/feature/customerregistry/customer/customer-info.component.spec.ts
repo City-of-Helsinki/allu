@@ -11,13 +11,14 @@ import {DebugElement} from '@angular/core';
 import {CustomerService} from '../../../../src/app/service/customer/customer.service';
 import {CodeSetService} from '../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../src/app/model/codeset/codeset';
+import {of} from 'rxjs/index';
 
 class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}
 }
 class CodeSetServiceMock {
   public getCountries(): Observable<Array<CodeSet>> {
-    return Observable.of([{code: 'FI', type: 'Country', description: 'Suomi'}]);
+    return of([{code: 'FI', type: 'Country', description: 'Suomi'}]);
   }
 }
 

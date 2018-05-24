@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {InvoiceService} from './invoice.service';
 import {ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-entry';
-import {Observable} from 'rxjs/Observable';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable, BehaviorSubject} from 'rxjs';
+import {tap} from 'rxjs/internal/operators';
 
 @Injectable()
 export class InvoiceHub {
@@ -14,16 +14,18 @@ export class InvoiceHub {
   /**
    * Loads all charge basis entries for given application
    */
-  loadChargeBasisEntries = (applicationId: number) => this.invoiceService.getChargeBasisEntries(applicationId)
-    .do(loaded => this.chargeBasisEntries$.next(loaded))
+  loadChargeBasisEntries = (applicationId: number) => this.invoiceService.getChargeBasisEntries(applicationId).pipe(
+    tap(loaded => this.chargeBasisEntries$.next(loaded))
+  )
 
   /**
    * Saves given charge basis entries for application
    * @returns all applications charge basis entries
    */
   saveChargeBasisEntries = (applicationId: number, rows: Array<ChargeBasisEntry>) =>
-    this.invoiceService.saveChargeBasisEntries(applicationId, rows)
-      .do(savedRows => this.chargeBasisEntries$.next(savedRows))
+    this.invoiceService.saveChargeBasisEntries(applicationId, rows).pipe(
+      tap(savedRows => this.chargeBasisEntries$.next(savedRows))
+    )
 
   /**
    * Observable to get latest saved charge basis entries

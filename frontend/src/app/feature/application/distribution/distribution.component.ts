@@ -5,7 +5,7 @@ import {PublicityType} from '../../../model/application/publicity-type';
 import {EnumUtil} from '../../../util/enum.util';
 import {DistributionType} from '../../../model/common/distribution-type';
 import {DistributionEntry} from '../../../model/common/distribution-entry';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'distribution',

@@ -3,10 +3,9 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ProjectService} from '../../../service/project/project.service';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 import {ParentProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/parent-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
-import {of} from 'rxjs/observable/of';
 
 @Injectable()
 export class ParentProjectEffects {

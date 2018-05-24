@@ -9,20 +9,22 @@ import {Page} from '../../../src/app/model/common/page';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {CurrentUserMock, NotificationServiceMock} from '../../mocks';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {of} from 'rxjs/index';
+import {map} from 'rxjs/internal/operators';
 
 const STORE_DEBOUNCE_MS = 150;
 
 class SupervisionTaskServiceMock {
   search(searchCriteria: SupervisionTaskSearchCriteria): Observable<Page<SupervisionWorkItem>> {
-    return Observable.of(new Page<SupervisionWorkItem>());
+    return of(new Page<SupervisionWorkItem>());
   }
 
   changeOwner(ownerId: number, taskIds: Array<number>): Observable<{}> {
-    return Observable.of({});
+    return of({});
   }
 
   removeOwner(taskIds: Array<number>): Observable<{}> {
-    return Observable.of({});
+    return of({});
   }
 }
 
@@ -47,7 +49,7 @@ describe('supervision-work-item-store', () => {
   it('should notify tab change', fakeAsync(() => {
     let result;
     store.tabChange(WorkQueueTab.COMMON);
-    store.changes.map(state => state.tab).subscribe(change => result = change);
+    store.changes.pipe(map(state => state.tab)).subscribe(change => result = change);
     tick();
     expect(result).toEqual(WorkQueueTab.COMMON);
   }));
@@ -56,7 +58,7 @@ describe('supervision-work-item-store', () => {
     let result;
     const search = new SupervisionTaskSearchCriteria([], 'testId');
     store.searchChange(search);
-    store.changes.map(state => state.search).subscribe(change => result = change);
+    store.changes.pipe(map(state => state.search)).subscribe(change => result = change);
     expect(result).toEqual(search);
   }));
 
@@ -64,7 +66,7 @@ describe('supervision-work-item-store', () => {
     let result;
     const page = new Page([new SupervisionWorkItem(1), new SupervisionWorkItem(2)]);
     store.pageChange(page);
-    store.changes.map(state => state.page).subscribe(change => result = change);
+    store.changes.pipe(map(state => state.page)).subscribe(change => result = change);
     tick();
     expect(result).toEqual(page);
   }));
@@ -72,7 +74,7 @@ describe('supervision-work-item-store', () => {
   it('should select item', fakeAsync(() => {
     let result;
     const page = initWithItems();
-    store.changes.map(state => state.selectedItems).subscribe(change => result = change);
+    store.changes.pipe(map(state => state.selectedItems)).subscribe(change => result = change);
     store.toggleSingle(page.content[0].id, true);
     tick();
     expect(result.length).toEqual(1);
@@ -85,8 +87,8 @@ describe('supervision-work-item-store', () => {
     let selected;
     let allSelected;
     initWithItems();
-    store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
-    store.changes.map(state => state.allSelected).subscribe(change => allSelected = change);
+    store.changes.pipe(map(state => state.selectedItems)).subscribe(change => selected = change);
+    store.changes.pipe(map(state => state.allSelected)).subscribe(change => allSelected = change);
 
     store.toggleAll(true);
     tick();
@@ -103,8 +105,8 @@ describe('supervision-work-item-store', () => {
     let selected;
     let allSelected;
     const page = initWithItems();
-    store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
-    store.changes.map(state => state.allSelected).subscribe(change => allSelected = change);
+    store.changes.pipe(map(state => state.selectedItems)).subscribe(change => selected = change);
+    store.changes.pipe(map(state => state.allSelected)).subscribe(change => allSelected = change);
     store.toggleAll(true);
     tick();
 
@@ -118,7 +120,7 @@ describe('supervision-work-item-store', () => {
     let selected;
     const page = new Page([new SupervisionWorkItem(1), new SupervisionWorkItem(2)]);
     store.pageChange(page);
-    store.changes.map(state => state.selectedItems)
+    store.changes.pipe(map(state => state.selectedItems))
       .subscribe(change => selected = change);
     store.toggleAll(true);
 
@@ -129,7 +131,7 @@ describe('supervision-work-item-store', () => {
 
   it('should change owner for selected', fakeAsync(() => {
     let selected;
-    store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
+    store.changes.pipe(map(state => state.selectedItems)).subscribe(change => selected = change);
     store.toggleAll(true);
     tick();
 
@@ -142,7 +144,7 @@ describe('supervision-work-item-store', () => {
 
   it('should remove owner for selected', fakeAsync(() => {
     let selected;
-    store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
+    store.changes.pipe(map(state => state.selectedItems)).subscribe(change => selected = change);
     store.toggleAll(true);
     tick();
 

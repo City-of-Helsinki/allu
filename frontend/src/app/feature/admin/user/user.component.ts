@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 import {UserHub} from '../../../service/user/user-hub';
 import {CurrentUser} from '../../../service/user/current-user';
@@ -14,6 +14,7 @@ import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {NumberUtil} from '../../../util/number.util';
 import {UserService} from '../../../service/user/user-service';
+import {filter, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'user',
@@ -57,11 +58,11 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params
-      .map(params => params['id'])
-      .filter(id => NumberUtil.isDefined(id))
-      .switchMap(id => this.userService.getById(id))
-      .subscribe(user => this.userForm.patchValue(user));
+    this.route.params.pipe(
+      map(params => params['id']),
+      filter(id => NumberUtil.isDefined(id)),
+      switchMap(id => this.userService.getById(id))
+    ).subscribe(user => this.userForm.patchValue(user));
 
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
   }
@@ -76,7 +77,8 @@ export class UserComponent implements OnInit {
   }
 
   canRemoveAdminRole(): Observable<boolean> {
-    return this.currentUser.user
-      .map(u => u.isAdmin && u.userName !== this.userForm.value.userName);
+    return this.currentUser.user.pipe(
+      map(u => u.isAdmin && u.userName !== this.userForm.value.userName)
+    );
   }
 }

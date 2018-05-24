@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Resolve, ActivatedRouteSnapshot} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 import {Project} from '../../model/project/project';
 import {Some} from '../../util/option';
@@ -10,8 +10,9 @@ import * as fromProject from './reducers';
 import * as projectActions from './actions/project-actions';
 import * as commentActions from '../comment/actions/comment-actions';
 import {NumberUtil} from '../../util/number.util';
-import 'rxjs/add/operator/skipWhile';
+
 import {ActionTargetType} from '../allu/actions/action-target-type';
+import {filter, switchMap, take, tap} from 'rxjs/internal/operators';
 
 @Injectable()
 export class ProjectResolve implements Resolve<Project> {
@@ -32,10 +33,11 @@ export class ProjectResolve implements Resolve<Project> {
   }
 
   private waitForProject(): Observable<Project> {
-    return this.store.select(fromProject.getProjectLoaded)
-      .filter(loaded => loaded)
-      .switchMap(() => this.store.select(fromProject.getCurrentProject))
-      .do(() => this.store.dispatch(new commentActions.Load(ActionTargetType.Project)))
-      .take(1);
+    return this.store.select(fromProject.getProjectLoaded).pipe(
+      filter(loaded => loaded),
+      switchMap(() => this.store.select(fromProject.getCurrentProject)),
+      tap(() => this.store.dispatch(new commentActions.Load(ActionTargetType.Project))),
+      take(1)
+    );
   }
 }

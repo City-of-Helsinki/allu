@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
+import {forkJoin} from 'rxjs';
 import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../default-text/default-text-modal.component';
 import {DefaultText} from '../../../model/application/cable-report/default-text';
 import {NotificationService} from '../../../service/notification/notification.service';
@@ -10,6 +10,7 @@ import {DefaultTextType} from '../../../model/application/default-text-type';
 import {Some} from '../../../util/option';
 import {findTranslation} from '../../../util/translations';
 import {DefaultTextService} from '../../../service/application/default-text.service';
+import {switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'terms',
@@ -57,14 +58,14 @@ export class TermsComponent implements OnInit {
     this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
       this.dialogRef = undefined;
 
-      Observable.forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt)))
-        .switchMap(result => this.defaultTextService.load(this.applicationType))
-        .subscribe(
-          texts => {
-            this.defaultTexts = texts;
-            this.notification.success(findTranslation('defaultText.actions.saved'));
-          },
-          err => this.notification.errorInfo(err));
+      forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt))).pipe(
+        switchMap(() => this.defaultTextService.load(this.applicationType))
+      ).subscribe(
+        texts => {
+          this.defaultTexts = texts;
+          this.notification.success(findTranslation('defaultText.actions.saved'));
+        },
+        err => this.notification.errorInfo(err));
     });
   }
 }

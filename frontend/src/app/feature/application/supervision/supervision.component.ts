@@ -9,7 +9,8 @@ import {SupervisionTask} from '../../../model/application/supervision/supervisio
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {SupervisionTaskForm} from './supervision-task-form';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
+import {map} from 'rxjs/internal/operators';
 
 
 @Component({
@@ -30,9 +31,9 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.supervisionTaskSubscription = this.supervisionTaskStore.tasks
-      .map(tasks => tasks.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // latest first
-      .subscribe(tasks => {
+    this.supervisionTaskSubscription = this.supervisionTaskStore.tasks.pipe(
+      map(tasks => tasks.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // latest first
+    ).subscribe(tasks => {
         FormUtil.clearArray(this.supervisionTasks);
         tasks.forEach(task => this.addNew(task));
       });

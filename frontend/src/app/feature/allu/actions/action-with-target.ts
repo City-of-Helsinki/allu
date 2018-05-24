@@ -2,7 +2,7 @@ import {Action} from '@ngrx/store';
 import {ActionTargetType} from './action-target-type';
 import {filter, withLatestFrom} from 'rxjs/operators';
 import {ofType} from '@ngrx/effects';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 export interface ActionWithTarget extends Action {
   targetType: ActionTargetType;

@@ -10,6 +10,7 @@ import {StringUtil} from '../../util/string.util';
 import {CityDistrict} from '../../model/common/city-district';
 import * as fromRoot from '../../feature/allu/reducers';
 import {Store} from '@ngrx/store';
+import {take} from 'rxjs/internal/operators';
 
 @Injectable()
 export class ApplicationHistoryFormatter {
@@ -18,7 +19,7 @@ export class ApplicationHistoryFormatter {
   private cityDistricts: Array<CityDistrict> = [];
 
   constructor(private store: Store<fromRoot.State>) {
-    this.store.select(fromRoot.getAllCityDistricts).take(1)
+    this.store.select(fromRoot.getAllCityDistricts).pipe(take(1))
       .subscribe(districts => this.cityDistricts = districts);
   }
 

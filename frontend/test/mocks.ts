@@ -18,6 +18,8 @@ import {Comment} from '../src/app/model/application/comment/comment';
 import {ApplicationType} from '../src/app/model/application/type/application-type';
 import {CityDistrict} from '../src/app/model/common/city-district';
 import {ErrorInfo} from '../src/app/service/error/error-info';
+import {EMPTY, of, throwError} from 'rxjs/index';
+import {map} from 'rxjs/internal/operators';
 
 /**
  * Mock for application state
@@ -49,7 +51,7 @@ export class ApplicationStoreMock {
   }
 
   get changes(): Observable<ApplicationState> {
-    return this.application$.map(app => ({application: app}));
+    return this.application$.pipe(map(app => ({application: app})));
   }
 
   applicationCopyChange(app: Application) {
@@ -57,16 +59,16 @@ export class ApplicationStoreMock {
   }
 
   delete(id: number): Observable<{}> {
-    return Observable.of({});
+    return of({});
   }
 
   replace(): Observable<Application> {
-    return Observable.empty();
+    return EMPTY;
   }
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     this.applicationChange(this.application$.getValue());
-    return Observable.of(this.snapshot.application);
+    return of(this.snapshot.application);
   }
 
   get comments() { return this.comments$.asObservable(); }
@@ -118,15 +120,15 @@ export class CurrentUserMock {
   }
 
   public hasRole(roles: Array<string>): Observable<boolean> {
-    return Observable.of(this.allowHasRole);
+    return of(this.allowHasRole);
   }
 
   public hasApplicationType(types: Array<string>): Observable<boolean> {
-    return Observable.of(this.allowHasType);
+    return of(this.allowHasType);
   }
 
   public isCurrentUser(id: number): Observable<boolean> {
-    return Observable.of(true);
+    return of(true);
   }
 
   get user(): Observable<User> {
@@ -140,7 +142,7 @@ const supervisor = new User(1, 'supervisor', 'super visor');
  * Mock for user hub
  */
 export class UserHubMock {
-  public getByRole = (role: RoleType) => Observable.of([supervisor]);
+  public getByRole = (role: RoleType) => of([supervisor]);
 }
 
 /**
@@ -148,7 +150,7 @@ export class UserHubMock {
  */
 export class UserServiceMock {
   public getCurrentUser(): Observable<User> {
-    return Observable.of(new User(1));
+    return of(new User(1));
   }
 }
 
@@ -186,15 +188,15 @@ export class ActivatedRouteMock {
  */
 export class InvoiceHubMock {
   public loadChargeBasisEntries(applicationId: number): Observable<Array<ChargeBasisEntry>> {
-    return Observable.empty();
+    return EMPTY;
   }
 
   public saveChargeBasisEntries(applicationId: number, rows: Array<ChargeBasisEntry>): Observable<Array<ChargeBasisEntry>> {
-    return Observable.empty();
+    return EMPTY;
   }
 
   get chargeBasisEntries(): Observable<Array<ChargeBasisEntry>> {
-    return Observable.empty();
+    return EMPTY;
   }
 }
 
@@ -205,7 +207,7 @@ export class CityDistrictServiceMock {
   ];
 
   public get(): Observable<CityDistrict[]> {
-    return Observable.of(this.districts);
+    return of(this.districts);
   }
 }
 
@@ -221,12 +223,18 @@ export class NotificationServiceMock {
   errorInfo(errorInfo: ErrorInfo): void {}
 
   errorCatch<T>(errorInfo: ErrorInfo, returnValue?: T): Observable<T> {
-    return returnValue ? Observable.of(returnValue) : Observable.empty();
+    return returnValue ? of(returnValue) : EMPTY;
   }
 
   translateError(errorInfo: ErrorInfo): void {}
 
   translateErrorMessage(key: string): void {}
+}
+
+export class ErrorHandlerMock {
+  handle(error: any, message?: string): Observable<any> {
+    return throwError(new ErrorInfo('error', message));
+  }
 }
 
 /**

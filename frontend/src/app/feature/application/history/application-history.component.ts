@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {combineLatest, Observable} from 'rxjs';
 import {MatDialog} from '@angular/material';
 
 import {HistoryHub} from '../../../service/history/history-hub';
@@ -13,6 +13,7 @@ import {findTranslation} from '../../../util/translations';
 import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
 import {ArrayUtil} from '../../../util/array-util';
 import {MetadataService} from '../../../service/meta/metadata.service';
+import {map, tap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'application-history',
@@ -39,8 +40,9 @@ export class ApplicationHistoryComponent implements OnInit {
     this.metadataService.loadByApplicationType(this.applicationStore.snapshot.application.type).subscribe(meta => {
       this.meta = meta;
       this.formatter.setMeta(meta);
-      this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id)
-        .do(changes => this.fetchUsersForChanges(changes));
+      this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id).pipe(
+        tap(changes => this.fetchUsersForChanges(changes))
+      );
     },
     err => this.notification.error(findTranslation('history.error.metadata')));
   }
@@ -60,8 +62,8 @@ export class ApplicationHistoryComponent implements OnInit {
       .map(c => c.userId)
       .filter(ArrayUtil.unique);
 
-    Observable.combineLatest(userIds.map(id => this.userHub.getById(id)))
-      .map(user => user )
+    combineLatest(userIds.map(id => this.userHub.getById(id)))
+      .pipe(map(user => user ))
       .subscribe(users => users.forEach(user => this.users.set(user.id, user.realName)));
   }
 }

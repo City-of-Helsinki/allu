@@ -1,12 +1,12 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import {Subject, Observable} from 'rxjs';
 import {Some} from '../../../../../util/option';
 import {EnumUtil} from '../../../../../util/enum.util';
 import {NegligenceFeeType} from '../../../../../model/application/invoice/negligence-fee-type';
 import {findTranslation} from '../../../../../util/translations';
 import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-basis-unit';
+import {debounceTime, map, startWith, takeUntil} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'charge-basis-negligence-fee',
@@ -27,11 +27,12 @@ export class ChargeBasisNegligenceFeeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.textCtrl = <FormControl>this.form.get('text');
 
-    this.matchingTexts = this.textCtrl.valueChanges
-      .startWith(undefined)
-      .takeUntil(this.destroy)
-      .debounceTime(300)
-      .map(text => this.filterNegligenceFeeTypes(text));
+    this.matchingTexts = this.textCtrl.valueChanges.pipe(
+      startWith(undefined),
+      takeUntil(this.destroy),
+      debounceTime(300),
+      map(text => this.filterNegligenceFeeTypes(text))
+    );
 
     if (!this.form.value.unit) {
       this.form.patchValue({unit: ChargeBasisUnit[ChargeBasisUnit.DAY]});

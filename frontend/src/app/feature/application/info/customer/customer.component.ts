@@ -15,6 +15,7 @@ import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 import {Application} from '../../../../model/application/application';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
+import {filter} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'customer',
@@ -69,8 +70,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   edit(): void {
     this.dialogRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, CUSTOMER_MODAL_CONFIG);
     this.dialogRef.componentInstance.customerId = this.customerForm.value.id;
-    this.dialogRef.afterClosed()
-      .filter(customer => !!customer)
+    this.dialogRef.afterClosed().pipe(filter(customer => !!customer))
       .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 

@@ -2,8 +2,7 @@ import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Injectable} from '@angular/core';
 import * as fromProject from '../reducers';
-import {Observable} from 'rxjs/Observable';
-import {of} from 'rxjs/observable/of';
+import {Observable, of} from 'rxjs';
 import {Action, Store} from '@ngrx/store';
 import {ProjectService} from '../../../service/project/project.service';
 import {

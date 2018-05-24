@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CommentType} from '../../../model/application/comment/comment-type';
 import {StatusChangeInfo} from '../../../model/application/status-change-info';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {User} from '../../../model/user/user';
 import {UserHub} from '../../../service/user/user-hub';
 import {RoleType} from '../../../model/user/role-type';

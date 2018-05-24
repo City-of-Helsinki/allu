@@ -5,7 +5,6 @@ import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
 import {ActivatedRouteMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
-import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
@@ -13,7 +12,6 @@ import {WorkQueueContentComponent} from '../../../src/app/feature/supervision-wo
 import {Page} from '../../../src/app/model/common/page';
 import {ActivatedRoute} from '@angular/router';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
-import '../../../src/app/rxjs-extensions';
 import {RouterTestingModule} from '@angular/router/testing';
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
 import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';

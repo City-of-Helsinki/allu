@@ -14,6 +14,7 @@ import {ChargeBasisEntry} from '../../../../../../src/app/model/application/invo
 import {ChargeBasisType} from '../../../../../../src/app/model/application/invoice/charge-basis-type';
 import {ChargeBasisUnit} from '../../../../../../src/app/model/application/invoice/charge-basis-unit';
 import {findTranslation} from '../../../../../../src/app/util/translations';
+import {of} from 'rxjs/index';
 
 describe('ChargeBasisDiscountComponent', () => {
   let comp: ChargeBasisDiscountComponent;
@@ -61,7 +62,7 @@ describe('ChargeBasisDiscountComponent', () => {
     const manual = manualEntry();
     const calculated = calculatedEntry();
     const existingEntries = [manual, calculated];
-    spyOnProperty(invoiceHub, 'chargeBasisEntries', 'get').and.returnValue(Observable.of(existingEntries));
+    spyOnProperty(invoiceHub, 'chargeBasisEntries', 'get').and.returnValue(of(existingEntries));
     comp.ngOnInit();
     comp.referableEntries.subscribe(referable => {
       expect(referable.length).toEqual(1);
@@ -72,7 +73,7 @@ describe('ChargeBasisDiscountComponent', () => {
 
   it('should allow selecting referred entry by tag', fakeAsync(() => {
     const existingEntries = [calculatedEntry('entry1', 'tag1'), calculatedEntry('entry2', 'tag2')];
-    spyOnProperty(invoiceHub, 'chargeBasisEntries', 'get').and.returnValue(Observable.of(existingEntries));
+    spyOnProperty(invoiceHub, 'chargeBasisEntries', 'get').and.returnValue(of(existingEntries));
     comp.ngOnInit();
     detectAndTick();
 

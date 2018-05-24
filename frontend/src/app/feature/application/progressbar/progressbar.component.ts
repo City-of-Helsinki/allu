@@ -7,6 +7,7 @@ import {ApplicationIdentifier} from '../../../model/application/application-iden
 import {ApplicationService} from '../../../service/application/application.service';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Router} from '@angular/router';
+import {startWith} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'progressbar',
@@ -75,11 +76,11 @@ export class ProgressbarComponent implements OnChanges {
       const defaultReplacements = [
           new ApplicationIdentifier(application.id, application.applicationId, application.identificationNumber)];
 
-      this.service.getReplacementHistory(application.id)
-        .startWith(defaultReplacements)
-        .subscribe(
-          (replacements) => this.replacements = replacements,
-          (err) => this.notification.errorInfo(err));
+      this.service.getReplacementHistory(application.id).pipe(
+        startWith(defaultReplacements)
+      ).subscribe(
+        (replacements) => this.replacements = replacements,
+        (err) => this.notification.errorInfo(err));
     } else {
       this.replacements = [];
     }

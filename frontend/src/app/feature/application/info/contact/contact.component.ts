@@ -6,15 +6,15 @@ import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {OrdererIdForm} from '../cable-report/cable-report.form';
-import {Subject} from 'rxjs/Subject';
 import {FormUtil} from '../../../../util/form.util';
 import {CustomerService} from '../../../../service/customer/customer.service';
+import {debounceTime, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -47,8 +47,9 @@ export class ContactComponent implements OnInit {
               private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
-    this.availableContacts = this.customerIdChanges.asObservable()
-      .switchMap(id => this.customerService.findCustomerActiveContacts(id));
+    this.availableContacts = this.customerIdChanges.asObservable().pipe(
+      switchMap(id => this.customerService.findCustomerActiveContacts(id))
+    );
 
     this.initContacts();
     this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationStore.snapshot.application.typeEnum;
@@ -92,8 +93,7 @@ export class ContactComponent implements OnInit {
       width: '800px'
     });
     this.dialogRef.componentInstance.contactId = id;
-    this.dialogRef.afterClosed()
-      .filter(contact => !!contact)
+    this.dialogRef.afterClosed().pipe(filter(contact => !!contact))
       .subscribe(contact => this.contacts.at(index).patchValue(contact));
   }
 
@@ -121,9 +121,10 @@ export class ContactComponent implements OnInit {
   addContact(contact: Contact = new Contact()): void {
     const fg = Contact.formGroup(this.fb, contact);
     const nameControl = fg.get('name');
-    this.matchingContacts = nameControl.valueChanges
-      .debounceTime(300)
-      .switchMap(name => this.onNameSearchChange(name));
+    this.matchingContacts = nameControl.valueChanges.pipe(
+      debounceTime(300),
+      switchMap(name => this.onNameSearchChange(name))
+    );
 
     this.contacts.push(fg);
 
@@ -154,8 +155,9 @@ export class ContactComponent implements OnInit {
 
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
     if (!!term) {
-      return this.availableContacts
-        .map(contacts => contacts.filter(c => c.nameLowercase.indexOf(term.toLowerCase()) >= 0));
+      return this.availableContacts.pipe(
+        map(contacts => contacts.filter(c => c.nameLowercase.indexOf(term.toLowerCase()) >= 0))
+      );
     } else {
       return this.availableContacts;
     }
@@ -167,14 +169,14 @@ export class ContactComponent implements OnInit {
     const defaultContactList = this.contactRequired ? [new Contact()] : [];
     const roleType = CustomerRoleType[this.customerRoleType];
 
-    this.applicationStore.application
-      .map(app => app.customerWithContactsByRole(roleType))
-      .do(cwc => this.customerIdChanges.next(cwc.customerId))
-      .map(cwc => cwc.contacts.length > 0 ? cwc.contacts : defaultContactList)
-      .subscribe(contacts => {
-        FormUtil.clearArray(this.contacts);
-        contacts.forEach(contact => this.addContact(contact));
-      });
+    this.applicationStore.application.pipe(
+      map(app => app.customerWithContactsByRole(roleType)),
+      tap(cwc => this.customerIdChanges.next(cwc.customerId)),
+      map(cwc => cwc.contacts.length > 0 ? cwc.contacts : defaultContactList)
+    ).subscribe(contacts => {
+      FormUtil.clearArray(this.contacts);
+      contacts.forEach(contact => this.addContact(contact));
+    });
   }
 
   private resetContacts(): void {

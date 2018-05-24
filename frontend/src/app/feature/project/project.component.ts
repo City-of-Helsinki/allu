@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {Project} from '../../model/project/project';
-import {SidebarItem, SidebarItemType} from '../sidebar/sidebar-item';
+import {SidebarItem} from '../sidebar/sidebar-item';
 import {ProjectState} from '../../service/project/project-state';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import * as fromProject from './reducers';
 import {Store} from '@ngrx/store';
 import {Application} from '../../model/application/application';
 import * as parentProjects from './actions/parent-project-actions';
 import * as childProjects from './actions/child-project-actions';
 import * as application from './actions/application-actions';
-import * as fromApplication from '../application/reducers';
+import {map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'project',
@@ -31,7 +31,7 @@ export class ProjectComponent implements OnInit {
 
     this.project$ = this.store.select(fromProject.getCurrentProject);
     this.applications$ = this.store.select(fromProject.getApplications);
-    this.relatedProjectCount$ = this.store.select(fromProject.getRelatedProjects).map(projects => projects.length);
+    this.relatedProjectCount$ = this.store.select(fromProject.getRelatedProjects).pipe(map(projects => projects.length));
     this.sidebarItems = this.sidebar();
   }
 

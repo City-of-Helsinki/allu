@@ -12,12 +12,13 @@ import {
 import {Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {Option, Some} from '../../../util/option';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {Dictionary} from '@ngrx/entity/src/models';
 import {CityDistrict} from '../../../model/common/city-district';
+import {take} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'project-application-list',
@@ -49,7 +50,7 @@ export class ProjectApplicationListComponent implements OnInit, AfterViewInit, O
 
   constructor(private router: Router,
               private store: Store<fromRoot.State>) {
-    this.store.select(fromRoot.getCityDistrictEntities).take(1)
+    this.store.select(fromRoot.getCityDistrictEntities).pipe(take(1))
       .subscribe(districts => this.districts = districts);
   }
 

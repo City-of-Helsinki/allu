@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs/Observable';
+import {EMPTY, Observable, of} from 'rxjs';
 import {ErrorInfo} from '../error/error-info';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
@@ -42,8 +42,8 @@ export class NotificationService {
   errorCatch<T>(errorInfo: ErrorInfo, returnValue?: T): Observable<T> {
     this.errorInfo(errorInfo);
     return Some(returnValue)
-      .map(val => Observable.of(val))
-      .orElse(Observable.empty());
+      .map(val => of(val))
+      .orElse(EMPTY);
   }
 
   translateError(errorInfo: ErrorInfo): void {

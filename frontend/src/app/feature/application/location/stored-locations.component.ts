@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {LocationState} from '../../../service/application/location-state';
 import {Location} from '../../../model/common/location';
 import * as fromRoot from '../../allu/reducers';

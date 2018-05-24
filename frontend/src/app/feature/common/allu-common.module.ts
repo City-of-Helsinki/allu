@@ -23,8 +23,6 @@ import {
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MaterializeModule} from 'angular2-materialize';
-import {AutoCompletionDirective} from './auto-completion/auto-completion.directive';
-import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component';
 import {FieldErrorComponent} from './field-error/field-error.component';
 import {TranslationPipe} from '../../pipe/translation.pipe';
 import {FileDropDirective} from './file-drop/file-drop.directive';
@@ -46,8 +44,6 @@ import {NotificationService} from '../../service/notification/notification.servi
     MatCardModule
   ],
   declarations: [
-    AutoCompletionDirective,
-    AutoCompletionListComponent,
     FieldErrorComponent,
     TranslationPipe,
     FileSelectDirective,
@@ -87,8 +83,6 @@ import {NotificationService} from '../../service/notification/notification.servi
     MatMenuModule,
     FlexLayoutModule,
     MaterializeModule,
-    AutoCompletionDirective,
-    AutoCompletionListComponent,
     FieldErrorComponent,
     TranslationPipe,
     FileSelectDirective,
@@ -103,7 +97,6 @@ import {NotificationService} from '../../service/notification/notification.servi
     AlluCardComponent
   ],
   entryComponents: [
-    AutoCompletionListComponent,
     ConfirmDialogComponent
   ]
 })

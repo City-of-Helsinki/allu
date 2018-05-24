@@ -5,10 +5,10 @@ import {ActivatedRoute} from '@angular/router';
 import {Contact} from '../../../model/customer/contact';
 import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
 import {NumberUtil} from '../../../util/number.util';
-import {Subscription} from 'rxjs/Subscription';
-import {Observable} from 'rxjs/Observable';
+import {Subscription, Observable, EMPTY} from 'rxjs';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {CustomerService} from '../../../service/customer/customer.service';
+import {filter, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'customer-contacts',
@@ -17,7 +17,7 @@ import {CustomerService} from '../../../service/customer/customer.service';
 })
 export class CustomerContactsComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
-  @Input() onAddContact: Observable<Contact> = Observable.empty();
+  @Input() onAddContact: Observable<Contact> = EMPTY;
 
   contacts: FormArray;
 
@@ -32,13 +32,13 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.contacts = <FormArray>this.parentForm.get('contacts');
     this.contactSubscription = this.onAddContact.subscribe(c => this.addContact(c));
-    this.route.params.map(p => p['id']).subscribe(p => this.customerId = p);
+    this.route.params.pipe(map(p => p['id'])).subscribe(p => this.customerId = p);
 
-    this.route.params
-      .map(p => p['id'])
-      .filter(id => NumberUtil.isDefined(id))
-      .switchMap(id => this.customerService.findCustomerActiveContacts(id))
-      .subscribe(contacts => contacts.forEach(c => this.addContact(c)));
+    this.route.params.pipe(
+      map(p => p['id']),
+      filter(id => NumberUtil.isDefined(id)),
+      switchMap(id => this.customerService.findCustomerActiveContacts(id))
+    ).subscribe(contacts => contacts.forEach(c => this.addContact(c)));
   }
 
   ngOnDestroy(): void {

@@ -7,6 +7,8 @@ import {SupervisionWorkItem} from '../../../src/app/model/application/supervisio
 import {Sort} from '../../../src/app/model/common/sort';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {PageRequest} from '../../../src/app/model/common/page-request';
+import {distinctUntilChanged} from 'rxjs/internal/operators';
+import {of} from 'rxjs/index';
 
 
 const initialState: SupervisionWorkqueueState = {
@@ -22,7 +24,7 @@ export class SupervisionWorkItemStoreMock {
   public changeSubject = new BehaviorSubject<SupervisionWorkqueueState>(initialState);
 
   get changes(): Observable<SupervisionWorkqueueState> {
-    return this.changeSubject.asObservable().distinctUntilChanged();
+    return this.changeSubject.asObservable().pipe(distinctUntilChanged());
   }
 
   get snapshot(): SupervisionWorkqueueState {
@@ -48,10 +50,10 @@ export class SupervisionWorkItemStoreMock {
   }
 
   public changeHandlerForSelected(handlerId: number): Observable<{}> {
-    return Observable.of({});
+    return of({});
   }
 
   public removeHandlerFromSelected(): Observable<{}> {
-    return Observable.of({});
+    return of({});
   }
 }

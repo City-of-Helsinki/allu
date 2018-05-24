@@ -1,7 +1,8 @@
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {ConfigService} from '../config/config.service';
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/internal/operators';
 
 @Injectable()
 export class CanActivateLogin implements CanActivate {
@@ -9,12 +10,13 @@ export class CanActivateLogin implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.configService.isStagingOrProduction()
-      .map(isStagOrProd => {
+    return this.configService.isStagingOrProduction().pipe(
+      map(isStagOrProd => {
         if (isStagOrProd) {
           this.router.navigate(['/home']);
         }
         return !isStagOrProd;
-      });
+      })
+    );
   }
 }

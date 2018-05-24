@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, ReplaySubject} from 'rxjs';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {UiConfiguration} from '../../model/config/ui-configuration';
 import {EnvironmentType} from '../../model/config/environment-type';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
 import {HttpClient} from '@angular/common/http';
+import {catchError, first, map} from 'rxjs/internal/operators';
 
 export const CONFIG_URL = '/api/uiconfig';
 
@@ -25,18 +25,19 @@ export class ConfigService {
   }
 
   getConfiguration(): Observable<UiConfiguration> {
-    return this.configuration$.asObservable().first();
+    return this.configuration$.asObservable().pipe(first());
   }
 
   isStagingOrProduction(): Observable<boolean> {
-    return this.getConfiguration().map(conf =>
-      (conf.environment === EnvironmentType.STAGING || conf.environment === EnvironmentType.PRODUCTION));
+    return this.getConfiguration().pipe(
+      map(conf => (conf.environment === EnvironmentType.STAGING || conf.environment === EnvironmentType.PRODUCTION))
+    );
   }
 
   private loadConfiguration(): void {
-    this.http.get<BackendUiConfiguration>(CONFIG_URL)
-      .catch(error => this.errorHandler.handle(error, findTranslation('config.error.fetch')))
-      .subscribe(config => this.configuration$.next(this.mapConfiguration(config)));
+    this.http.get<BackendUiConfiguration>(CONFIG_URL).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('config.error.fetch')))
+    ).subscribe(config => this.configuration$.next(this.mapConfiguration(config)));
   }
 
   private mapConfiguration(configJson: BackendUiConfiguration): UiConfiguration {

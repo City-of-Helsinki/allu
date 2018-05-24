@@ -1,12 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ApplicationService} from '../../../service/application/application.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
 import * as application from '../actions/application-search-actions';
 import * as customer from '../actions/customer-search-actions';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/observable/of';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {CustomerSearchActionType} from '../actions/customer-search-actions';
 import {ApplicationSearchActionType} from '../actions/application-search-actions';

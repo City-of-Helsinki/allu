@@ -1,15 +1,13 @@
 import {Actions, Effect} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of, defer} from 'rxjs';
 import {LoadFailed, LoadSuccess} from '../actions/city-district-actions';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
 import * as fromAuth from '../../auth/reducers';
-import {of} from 'rxjs/observable/of';
 import {LocationService} from '../../../service/location.service';
 import {ArrayUtil} from '../../../util/array-util';
 import {CityDistrict} from '../../../model/common/city-district';
-import {defer} from 'rxjs/observable/defer';
 
 @Injectable()
 export class CityDistrictEffects {

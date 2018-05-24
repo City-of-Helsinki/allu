@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
+import {forkJoin, Observable} from 'rxjs';
 
 import {EnumUtil} from '../../../../util/enum.util';
 import {DefaultTextType} from '../../../../model/application/default-text-type';
@@ -14,6 +14,7 @@ import {Some} from '../../../../util/option';
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {DefaultTextService} from '../../../../service/application/default-text.service';
+import {switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'cable-info',
@@ -66,14 +67,14 @@ export class CableInfoComponent implements OnInit {
     this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
       this.dialogRef = undefined;
 
-      Observable.forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt)))
-        .switchMap(result => this.defaultTextService.load(ApplicationType.CABLE_REPORT))
-        .subscribe(
-          texts => {
-            this.setDefaultTexts(texts);
-            this.notification.success(findTranslation('defaultText.actions.saved'));
-          },
-          err => this.notification.errorInfo(err));
+      forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt))).pipe(
+        switchMap(result => this.defaultTextService.load(ApplicationType.CABLE_REPORT))
+      ).subscribe(
+        texts => {
+          this.setDefaultTexts(texts);
+          this.notification.success(findTranslation('defaultText.actions.saved'));
+        },
+        err => this.notification.errorInfo(err));
     });
   }
 

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {Store} from '@ngrx/store';
 import {Remove, Save, ToggleDirection} from './actions/comment-actions';
@@ -10,7 +10,6 @@ import {Comment} from '../../model/application/comment/comment';
 import * as fromApplication from '../application/reducers';
 import * as fromProject from '../project/reducers';
 import * as fromRoot from '../allu/reducers';
-import {of} from 'rxjs/observable/of';
 import {SortDirection} from '../../model/common/sort';
 import {ActionTargetType} from '../allu/actions/action-target-type';
 

@@ -11,7 +11,6 @@ import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
-import '../src/app/rxjs-extensions';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 // Unfortunately there's no typing for the `__karma__` variable. Just declare it as any.

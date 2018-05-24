@@ -1,8 +1,9 @@
+
+import {mergeMap} from 'rxjs/operators';
 import {DataSource} from '@angular/cdk/collections';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of, Subject} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
 import {Sort} from '../../../model/common/sort';
-import {Subject} from 'rxjs/Subject';
 import {Page} from '../../../model/common/page';
 import {PageRequest} from '../../../model/common/page-request';
 import {ApplicationWorkItemStore} from '../application-work-item-store';
@@ -10,6 +11,7 @@ import {Application} from '../../../model/application/application';
 import {Some} from '../../../util/option';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {NotificationService} from '../../../service/notification/notification.service';
+import {catchError, distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 export interface ApplicationWorkItemRow {
   content: Application | ApplicationTag[];
@@ -30,19 +32,19 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
   }
 
   connect(): Observable<ApplicationWorkItemRow[]> {
-    this.sort.sortChange
-      .takeUntil(this.destroy)
-      .distinctUntilChanged()
-      .subscribe(sortChange => this.store.sortChange(Sort.fromMatSort(sortChange)));
+    this.sort.sortChange.pipe(
+      takeUntil(this.destroy),
+      distinctUntilChanged()
+    ).subscribe(sortChange => this.store.sortChange(Sort.fromMatSort(sortChange)));
 
-    this.paginator.page
-      .takeUntil(this.destroy)
-      .distinctUntilChanged()
-      .subscribe(p => this.store.pageRequestChange(new PageRequest(p.pageIndex, p.pageSize)));
+    this.paginator.page.pipe(
+      takeUntil(this.destroy),
+      distinctUntilChanged()
+    ).subscribe(p => this.store.pageRequestChange(new PageRequest(p.pageIndex, p.pageSize)));
 
     // Material datatable when condition is not run properly if empty data is not provided
     // between data changes. To fix this we provide an empty array between all data changes.
-    return this.data.mergeMap(d => Observable.of([], d));
+    return this.data.pipe(mergeMap(d => of([], d)));
   }
 
   disconnect(): void {
@@ -51,18 +53,22 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
   }
 
   public get page(): Observable<Page<Application>> {
-    return this.store.changes
-      .takeUntil(this.destroy)
-      .map(state => state.page).distinctUntilChanged()
-      .catch(err => {
+    return this.store.changes.pipe(
+      takeUntil(this.destroy),
+      map(state => state.page),
+      distinctUntilChanged(),
+      catchError(err => {
         this.notification.errorInfo(err);
-        return Observable.of(new Page<Application>());
-      });
+        return of(new Page<Application>());
+      })
+    );
   }
 
   public get data(): Observable<ApplicationWorkItemRow[]> {
-    return this.page.map(page => page.content)
-      .map(content => this.toRows(content));
+    return this.page.pipe(
+      map(page => page.content),
+      map(content => this.toRows(content))
+    );
   }
 
   private toRows(applications: Application[]): ApplicationWorkItemRow[] {
