@@ -1,16 +1,21 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import static fi.hel.allu.common.domain.types.ApplicationType.AREA_RENTAL;
+import static fi.hel.allu.common.domain.types.ApplicationType.EXCAVATION_ANNOUNCEMENT;
 import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
+import fi.hel.allu.servicecore.domain.LocationJson;
+import fi.hel.allu.servicecore.domain.PostalAddressJson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -71,6 +76,7 @@ public class MailComposerService {
 
   public void sendDecision(ApplicationJson applicationJson, DecisionDetailsJson decisionDetailsJson) {
     String subject = String.format(subjectFor(applicationJson.getType()), applicationJson.getApplicationId());
+    subject += getAddressForSubject(applicationJson);
     List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
         .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
 
@@ -166,4 +172,30 @@ public class MailComposerService {
     }
   }
 
+  private String getAddressForSubject(ApplicationJson application) {
+    if (Arrays.asList(
+        ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
+        ApplicationType.AREA_RENTAL,
+        ApplicationType.EXCAVATION_ANNOUNCEMENT,
+        ApplicationType.EVENT).contains(application.getType())) {
+      final String address = address(application);
+      if (!StringUtils.isEmpty(address)) {
+        return ", " + address;
+      }
+    }
+    return "";
+  }
+
+  private String address(ApplicationJson application) {
+    final List<LocationJson> locations = application.getLocations();
+    if (locations == null || locations.isEmpty()) {
+      return null;
+    }
+    final LocationJson location = locations.get(0);
+    final PostalAddressJson address = location.getPostalAddress();
+    if (address == null) {
+      return null;
+    }
+    return address.getStreetAddress();
+  }
 }
