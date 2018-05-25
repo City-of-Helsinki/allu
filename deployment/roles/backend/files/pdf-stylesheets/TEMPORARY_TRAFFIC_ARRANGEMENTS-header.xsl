@@ -52,7 +52,7 @@
         <p>Alueidenkäyttö ja -valvonta</p>
         <p>luvat@hel.fi</p>
       </div>
-      <div class="half-right">
+      <div class="half-right" style="position:relative;left:-20pt;">
         <xsl:choose>
           <xsl:when test="data/replacingDecision = 'false'">
             <h1>Päätös tilapäisestä liikennejärjestelystä</h1>
@@ -61,9 +61,9 @@
            <h1>Korvaava päätös tilapäisestä liikennejärjestelystä</h1>
           </xsl:otherwise>
         </xsl:choose>
-        <p class="page">
+        <div class="page">
           <span id="pdfkit_page_current" />/<span id="pdfkit_page_count" />
-        </p>
+        </div>
         <div class="id">
           <table>
             <tr>

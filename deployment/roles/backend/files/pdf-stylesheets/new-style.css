@@ -58,7 +58,11 @@ hr {
       margin: 0.1em;
       display: inline;
       float: right;
-      font-style: normal; }
+      font-style: normal;
+      position: fixed;
+      top: 40px;
+      right: 0px;
+      font-size: 9pt;}
     .header .half-right .id {
       clear: both;
       display: block; }
