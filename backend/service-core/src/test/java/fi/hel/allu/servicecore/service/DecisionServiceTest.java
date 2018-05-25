@@ -25,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,8 +54,6 @@ public class DecisionServiceTest {
   private ChargeBasisService chargeBasisService;
   @Mock
   private MetaService metaService;
-  @Mock
-  private SupervisionTaskService supervisionTaskService;
 
   private DecisionService decisionService;
 
@@ -67,10 +64,14 @@ public class DecisionServiceTest {
     Mockito.when(applicationProperties.getGeneratePdfUrl()).thenReturn(GENERATE_PDF_URL);
     Mockito.when(applicationProperties.getStoreDecisionUrl()).thenReturn(STORE_DECISION_URL);
     Mockito.when(applicationProperties.getDecisionUrl()).thenReturn(DECISION_URL);
-    Mockito.when(supervisionTaskService.findByApplicationId(Mockito.anyInt())).thenReturn(new ArrayList<>());
+
+    final UserJson owner = new UserJson();
+    owner.setId(1);
+    owner.setRealName("Task owner");
+    Mockito.when(locationService.findSupervisionTaskOwner(Mockito.any(), Mockito.anyInt())).thenReturn(owner);
 
     decisionService = new DecisionService(applicationProperties, restTemplate, locationService,
-        applicationServiceComposer, customerService, contactService, chargeBasisService, metaService, supervisionTaskService);
+        applicationServiceComposer, customerService, contactService, chargeBasisService, metaService);
   }
 
   @Test(expected = IllegalArgumentException.class)

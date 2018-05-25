@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.service;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,8 +9,6 @@ import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,10 +16,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.LocationMapper;
+import fi.hel.allu.servicecore.mapper.UserMapper;
+
 
 @Service
 public class LocationService {
@@ -68,7 +69,7 @@ public class LocationService {
    */
   public List<CityDistrictInfoJson> getCityDistrictList() {
     ResponseEntity<CityDistrictInfo[]> queryResult = restTemplate
-        .getForEntity(applicationProperties.getCityDistrictUrl(), CityDistrictInfo[].class);
+        .getForEntity(applicationProperties.getCityDistrictsUrl(), CityDistrictInfo[].class);
     List<CityDistrictInfoJson> resultList = Arrays.stream(queryResult.getBody()).map(LocationMapper::mapToJson)
         .collect(Collectors.toList());
     return resultList;
@@ -91,4 +92,9 @@ public class LocationService {
     return restTemplate.postForObject(applicationProperties.getIsValidGeometryUrl(), new GeometryWrapper(geometry), Boolean.class);
   }
 
+  public UserJson findSupervisionTaskOwner(ApplicationType type, Integer cityDistrictId) {
+    final ResponseEntity<User> queryResult = restTemplate
+        .getForEntity(applicationProperties.getFindSupervisionTaskOwnerUrl(), User.class, cityDistrictId, type);
+    return UserMapper.mapToUserJson(queryResult.getBody());
+  }
 }

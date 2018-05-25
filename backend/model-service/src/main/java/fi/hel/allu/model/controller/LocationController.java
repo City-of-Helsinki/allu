@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.GeometryWrapper;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.model.domain.user.User;
+
 import javax.validation.Valid;
 
 import java.util.List;
@@ -101,11 +104,19 @@ public class LocationController {
    *
    * @return city district list
    */
-  @RequestMapping(value = "/city-district", method = RequestMethod.GET)
+  @RequestMapping(value = "/city-districts", method = RequestMethod.GET)
   public ResponseEntity<List<CityDistrictInfo>> getCityDistrictList() {
     List<CityDistrictInfo> result = locationDao.getCityDistrictList().stream().map(LocationController::mapToInfo)
         .collect(Collectors.toList());
     return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/city-districts/{cityDistrictId}/supervisor/{type}", method = RequestMethod.GET)
+  public ResponseEntity<User> findSupervisionTaskOwner(@PathVariable int cityDistrictId, @PathVariable ApplicationType type) {
+    final Optional<User> optUser = locationService.findSupervisionTaskOwner(type, cityDistrictId);
+    return optUser
+        .map(user -> ResponseEntity.ok(user))
+        .orElseThrow(() -> new NoSuchEntityException("Didn't find supervisor for citydistrict"));
   }
 
   @RequestMapping(value = "/geometry/isvalid", method = RequestMethod.POST)

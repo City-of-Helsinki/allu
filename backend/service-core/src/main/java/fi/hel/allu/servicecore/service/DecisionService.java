@@ -7,6 +7,7 @@ import static fi.hel.allu.common.domain.types.ApplicationType.*;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
@@ -17,7 +18,6 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.pdf.domain.KindWithSpecifiers;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -61,7 +61,6 @@ public class DecisionService {
   private final CustomerService customerService;
   private final ContactService contactService;
   private final MetaService metaService;
-  private final SupervisionTaskService supervisionTaskService;
   private final ApplicationServiceComposer applicationServiceComposer;
   private final ChargeBasisService chargeBasisService;
   private final ZoneId zoneId;
@@ -99,8 +98,7 @@ public class DecisionService {
       CustomerService customerService,
       ContactService contactService,
       ChargeBasisService chargeBasisService,
-      MetaService metaService,
-      SupervisionTaskService supervisionTaskService) {
+      MetaService metaService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -109,7 +107,6 @@ public class DecisionService {
     this.contactService = contactService;
     this.chargeBasisService = chargeBasisService;
     this.metaService = metaService;
-    this.supervisionTaskService = supervisionTaskService;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
@@ -770,11 +767,23 @@ public class DecisionService {
   }
 
   private UserJson findSupervisor(ApplicationJson application) {
-    final List<SupervisionTaskJson> tasks = supervisionTaskService.findByApplicationId(application.getId());
-    if (!tasks.isEmpty()) {
-      // TODO: Take supervisor from a first task, is there a better way?
-      SupervisionTaskJson task = tasks.get(0);
-      return task.getOwner();
+    if (application.getLocations() == null) {
+      return null;
+    }
+
+    final List<Integer> cityDistricts = application.getLocations().stream()
+        .map(l -> l.getCityDistrictIdOverride() != null
+            ? l.getCityDistrictIdOverride()
+            : l.getCityDistrictId())
+        .collect(Collectors.toList());
+    if (!cityDistricts.isEmpty()) {
+      final Integer cityDistrict = cityDistricts.get(0);
+      final ApplicationType applicationType = application.getType();
+      try {
+        return locationService.findSupervisionTaskOwner(application.getType(), cityDistricts.get(0));
+      } catch (NoSuchEntityException e) {
+        logger.info("No owner for supervision tasks on city district {} for application type {}", cityDistrict, applicationType);
+      }
     }
     return null;
   }

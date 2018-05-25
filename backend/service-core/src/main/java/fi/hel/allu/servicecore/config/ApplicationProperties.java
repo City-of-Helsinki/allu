@@ -448,8 +448,12 @@ public class ApplicationProperties {
   /**
    * @return url for fetching the list of city districts.
    */
-  public String getCityDistrictUrl() {
-    return getModelServiceUrl("/locations/city-district");
+  public String getCityDistrictsUrl() {
+    return getModelServiceUrl("/locations/city-districts");
+  }
+
+  public String getFindSupervisionTaskOwnerUrl() {
+    return getModelServiceUrl("/locations/city-districts/{cityDistrictId}/supervisor/{type}");
   }
 
   /**
