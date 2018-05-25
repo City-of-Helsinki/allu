@@ -57,8 +57,10 @@ public class ApplicationStatusController {
   @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToDecisionMaking(
-      @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
-    commentService.addDecisionProposalComment(id, info);
+      @PathVariable int id, @RequestBody(required = false) StatusChangeInfoJson info) {
+    if (info != null) {
+      commentService.addDecisionProposalComment(id, info);
+    }
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.DECISIONMAKING, info));
   }
 
