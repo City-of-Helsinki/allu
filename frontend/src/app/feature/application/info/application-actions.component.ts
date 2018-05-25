@@ -183,7 +183,9 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     const app = this.applicationStore.snapshot.application;
     const appType = app.typeEnum;
     const status = app.statusEnum;
-    return appType === ApplicationType.CABLE_REPORT && status === ApplicationStatus.HANDLING;
+    return (appType === ApplicationType.CABLE_REPORT ||
+            appType === ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS) &&
+            status === ApplicationStatus.HANDLING;
   }
 
   private showDecisionForApplication(app: Application): boolean {
