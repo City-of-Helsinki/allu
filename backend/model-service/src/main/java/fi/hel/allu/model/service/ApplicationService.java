@@ -7,6 +7,7 @@ import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.InvoiceDao;
 import fi.hel.allu.model.domain.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -372,14 +373,23 @@ public class ApplicationService {
     if (application.getNotBillable() == true) {
       return;
     }
-    Customer invoicee = customerDao.findById(application.getInvoiceRecipientId())
-        .orElseThrow(() -> new NoSuchEntityException("application.customer.notFound"));
-    final boolean sapIdPending = StringUtils.isEmpty(invoicee.getSapCustomerNumber());
+    createInvoice(applicationId, userId, application);
+  }
+
+  public void createInvoice(int applicationId, int userId, Application application) {
+    final boolean sapIdPending = isSapIdPending(application);
     invoiceService.createInvoices(applicationId, sapIdPending);
     if (sapIdPending) {
       applicationDao.addTag(applicationId,
           new ApplicationTag(userId, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
     }
+  }
+
+  public boolean isSapIdPending(Application application) {
+    Customer invoicee = customerDao.findById(application.getInvoiceRecipientId())
+        .orElseThrow(() -> new NoSuchEntityException("application.customer.notFound"));
+    final boolean sapIdPending = StringUtils.isEmpty(invoicee.getSapCustomerNumber());
+    return sapIdPending;
   }
 
   private void changeReplacedApplicationStatus(Application application) {
@@ -398,5 +408,21 @@ public class ApplicationService {
 
   public Integer getApplicationExternalOwner(Integer id) {
     return applicationDao.getApplicationExternalOwner(id);
+  }
+
+  @Transactional
+  public void setInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId) {
+    Application application = findById(id);
+    changeInvoiceRecipient(id, invoiceRecipientId, userId, application);
+  }
+
+  public void changeInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId, Application application) {
+    application.setInvoiceRecipientId(invoiceRecipientId);
+    applicationDao.update(id, application);
+    if (invoiceService.hasInvoices(id)) {
+      applicationDao.removeTagByType(id, ApplicationTagType.SAP_ID_MISSING);
+      // Recreates invoice with new invoice recipient
+      createInvoice(id, userId, application);
+    }
   }
 }

@@ -261,7 +261,7 @@ public class ApplicationServiceComposer {
    * @return New stored tags
    */
   public List<ApplicationTagJson> updateTags(int id, List<ApplicationTagJson> tags) {
-    List<ApplicationTagJson> oldTags = applicationService.findTagsByApplicationId(id);
+    List<ApplicationTagJson> oldTags = findTags(id);
     List<ApplicationTagJson> updatedTags = applicationService.updateTags(id, tags);
     searchService.updateTags(id, tags);
     ApplicationJson withOldTags = new ApplicationJson();
@@ -270,6 +270,10 @@ public class ApplicationServiceComposer {
     withNewTags.setApplicationTags(updatedTags);
     applicationHistoryService.addFieldChanges(id, withOldTags, withNewTags);
     return updatedTags;
+  }
+
+  public List<ApplicationTagJson> findTags(int id) {
+    return applicationService.findTagsByApplicationId(id);
   }
 
   /**
@@ -392,5 +396,9 @@ public class ApplicationServiceComposer {
 
   public Integer getApplicationExternalOwner(Integer applicationId) {
     return applicationService.getApplicationExternalOwner(applicationId);
+  }
+
+  public void setInvoiceRecipient(int id, Integer invoiceRecipientId) {
+    applicationService.setInvoiceRecipient(id, invoiceRecipientId);
   }
 }

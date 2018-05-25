@@ -2,11 +2,10 @@ package fi.hel.allu.servicecore.service;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -16,8 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.util.ApplicationIdUtil;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
@@ -25,11 +27,21 @@ import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 
 @Service
 public class ApplicationService {
+
+  private static final Set<StatusType> INVOICE_RECIPIENT_CHANGE_ALLOWED_STATUSES = new HashSet<StatusType>(){{
+    add(StatusType.PRE_RESERVED);
+    add(StatusType.PENDING);
+    add(StatusType.HANDLING);
+    add(StatusType.RETURNED_TO_PREPARATION);
+    add(StatusType.DECISIONMAKING);
+  }};
+
   private ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final ApplicationMapper applicationMapper;
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
+
 
   @Autowired
   public ApplicationService(
@@ -306,6 +318,53 @@ public class ApplicationService {
 
   public Integer getApplicationExternalOwner(Integer applicationId) {
     return restTemplate.getForObject(applicationProperties.getApplicationExternalOwnerUrl(), Integer.class, applicationId);
+  }
+
+
+  public void setInvoiceRecipient(int id, Integer invoiceRecipientId) {
+    Application application = findApplicationById(id);
+    if (invoiceRecipientId.equals(application.getInvoiceRecipientId())) {
+      return;
+    }
+    validateInvoiceRecipientChangeAllowed(application);
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationInvoiceRecipientUrl())
+        .queryParam("invoicerecipientid", invoiceRecipientId)
+        .queryParam("userid", userService.getCurrentUser().getId())
+        .buildAndExpand(Collections.singletonMap("id", id)).toUri();
+    restTemplate.exchange(uri, HttpMethod.PUT,
+        new HttpEntity<>(null), Void.class);
+  }
+
+  private void validateInvoiceRecipientChangeAllowed(Application application) {
+    boolean allowed = BooleanUtils.isTrue(application.getNotBillable())
+        || (application.getInvoiceRecipientId() == null)
+        || (invoiceRecipientChangeAllowedByStatus(application))
+        || (isInDecisionState(application) && invoiceRecipientChangeAllowedInDecisionState(application));
+    if (!allowed) {
+      throw new IllegalOperationException("application.invoicing.invoicerecipient.notallowed");
+    }
+  }
+
+  private boolean invoiceRecipientChangeAllowedByStatus(Application application) {
+    return INVOICE_RECIPIENT_CHANGE_ALLOWED_STATUSES.contains(application.getStatus());
+  }
+
+  private boolean isInDecisionState(Application application) {
+    return application.getStatus() != null &&
+        (application.getStatus() == StatusType.DECISION);
+  }
+
+  private boolean invoiceRecipientChangeAllowedInDecisionState(Application application) {
+    return application.getApplicationTags().stream().anyMatch(t -> t.getType() == ApplicationTagType.SAP_ID_MISSING) ||
+        invoicingDateInFuture(application);
+  }
+
+  private boolean invoicingDateInFuture(Application application) {
+    if (application.getInvoicingDate() == null) {
+      return true;
+    }
+    ZonedDateTime tomorrow = TimeUtil.startOfDay(ZonedDateTime.now()).plusDays(1);
+    return !application.getInvoicingDate().isBefore(tomorrow);
   }
 
 }

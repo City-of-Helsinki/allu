@@ -121,4 +121,8 @@ public class InvoiceService {
     return findByApplication(applicationId).stream()
         .anyMatch(invoice -> invoice.isInvoiced());
   }
+
+  public boolean hasInvoices(int applicationId) {
+    return invoiceDao.hasInvoices(applicationId);
+  }
 }

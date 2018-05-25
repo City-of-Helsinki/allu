@@ -1,5 +1,15 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
@@ -11,16 +21,6 @@ import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
@@ -203,5 +203,10 @@ public class InvoiceDao {
         .select(invoice.applicationId)
         .from(invoice)
         .where(invoice.id.in(invoiceIds)).fetch();
+  }
+
+  public boolean hasInvoices(int applicationId) {
+    return queryFactory.select(invoice.id).from(invoice).where(invoice.applicationId.eq(applicationId))
+        .fetchCount() > 0;
   }
 }

@@ -1,9 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -14,12 +12,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,16 +21,7 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.AttachmentDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.dao.DistributionEntryDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationIdentifier;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.DeadlineCheckParams;
-import fi.hel.allu.model.domain.DistributionEntry;
-import fi.hel.allu.model.domain.Invoice;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.ApplicationReplacementService;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
@@ -371,6 +355,13 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}/externalowner", method = RequestMethod.GET)
   public ResponseEntity<Integer> getApplicationExternalOwner(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationExternalOwner(id), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
+  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam("invoicerecipientid") final Integer invoiceRecipientId,
+      @RequestParam("userid") final Integer userId) {
+    applicationService.setInvoiceRecipient(id, invoiceRecipientId, userId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 

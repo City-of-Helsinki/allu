@@ -1188,4 +1188,9 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/informationrequests/response");
   }
 
+  public String getApplicationInvoiceRecipientUrl() {
+    return getModelServiceUrl("/applications/{id}/invoicerecipient");
+  }
+
+
 }

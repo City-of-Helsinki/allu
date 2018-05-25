@@ -321,6 +321,12 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationServiceComposer.updateTags(id, tags), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/tags", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<ApplicationTagJson>> getTags(@PathVariable int id) {
+    return new ResponseEntity<>(applicationServiceComposer.findTags(id), HttpStatus.OK);
+  }
+
   /**
    * Get the invoice data for application
    *
@@ -351,5 +357,12 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationIdentifierJson>> replacementHistory(@PathVariable int id) {
     return new ResponseEntity<>(applicationServiceComposer.replacementHistory(id), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam("invoicerecipientid") final Integer invoiceRecipientId) {
+    applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }
