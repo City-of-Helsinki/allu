@@ -1,9 +1,9 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)"
       *ngIf="applicationChanges | async as application">
-  <div class="row">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
-              [readonly]="readonly" [contactRequired]="true"></customer>
-  </div>
+  <customer [parentForm]="applicationForm"
+            [customerWithContacts]="application.applicant"
+            [readonly]="readonly"
+            [contactRequired]="true"></customer>
 
   <div class="row">
     <div class="col m12">

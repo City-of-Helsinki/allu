@@ -1,7 +1,7 @@
 <form [formGroup]="chargeBasisEntryForm" (ngSubmit)="onSubmit()">
   <h2 mat-dialog-title>{{'chargeBasis.newEntry' | translation}}</h2>
   <div mat-dialog-content>
-    <div fxLayout="row" fxLayoutWrap>
+    <div fxLayout="row wrap">
       <div fxFlex="50">
         <mat-form-field class="input-full-width">
           <mat-select [placeholder]="'chargeBasis.type.title' | translation" class="input-full-width"

@@ -6,7 +6,7 @@
   <ul class="comment-list">
     <li *ngFor="let comment of visibleComments">
       <h1 class="comment-header">
-        <div fxLayout="row" fxLayoutGap="6px" fxLayoutWrap class="slim">
+        <div fxLayout="row wrap" fxLayoutGap="6px" class="slim">
           <div fxFlex="none">
             {{comment.user.realName}} {{comment.updateTime | date:'short'}}
           </div>

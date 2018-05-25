@@ -104,3 +104,8 @@ td.mat-calendar-body-cell:hover {
 .mat-form-field.input-no-underline .mat-form-field-underline {
   display: none;
 }
+
+textarea.mat-input-element.mat-autosize {
+  padding: 0px 0;
+  margin: 4px 0;
+}

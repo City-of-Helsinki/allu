@@ -3,8 +3,8 @@
 </h1>
 <div mat-dialog-content>
   <form [formGroup]="proposalForm">
-    <div fxLayout="row" fxLayoutWrap>
-      <div fxFlex="100">
+    <div fxLayout="row">
+      <div fxFlex>
         <mat-form-field class="input-full-width">
                     <textarea matInput matTextareaAutosize formControlName="comment" required
                               [placeholder]="'decision.proposal.comment' | translation"></textarea>
@@ -13,7 +13,9 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <div fxFlex="50">
+    </div>
+    <div fxLayout="row">
+      <div fxFlex>
         <mat-form-field class="input-full-width">
           <mat-select [placeholder]="'decision.proposal.selectDecisionMaker' | translation" class="input-full-width"
                       formControlName="handler" required>

@@ -19,7 +19,7 @@
           <li *ngFor="let entry of chargeBasisEntries.controls; let i=index;">
             <allu-card class="slim-card" [class.indented]="entry.value.referredTag">
               <mat-card-content>
-                <div fxLayout="row" fxLayout.sm="column" fxLayoutWrap>
+                <div fxLayout="row wrap" fxLayout.sm="column">
                   <div fxFlex="100px">
                     <ng-container *ngIf="entry.value.manuallySet">
                       <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="editEntry(i)">

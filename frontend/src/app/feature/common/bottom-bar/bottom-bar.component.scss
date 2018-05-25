@@ -6,10 +6,25 @@
   position: fixed;
   bottom: 0px;
   left: 0px;
-  width: 100vw;
+  width: 100%;
   min-height: 60px;
   text-align: center;
   box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.15);
   margin: 0;
   z-index: 9999;
+}
+
+.bottom-bar-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 100px;
+  padding: 10px 0;
+}
+
+:host ::ng-deep {
+  .bottom-bar-item {
+    flex: 0 1 auto;
+    margin: 0 14px;
+  }
 }

@@ -17,3 +17,7 @@
 [fxFlex] button.mat-raised-button:not(:first-of-type) {
   margin-left: 8px;
 }
+
+.row .col:first-of-type {
+  padding-left: 0;
+}

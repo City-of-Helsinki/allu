@@ -3,8 +3,8 @@
 </h1>
 <div mat-dialog-content>
   <form [formGroup]="decisionForm">
-    <div fxLayout="row" fxLayoutWrap>
-      <div fxFlex="50" *ngIf="ownerSelection">
+    <div fxLayout="row">
+      <div fxFlex *ngIf="ownerSelection">
         <mat-form-field class="input-full-width">
           <mat-select [placeholder]="'decision.selectHandler' | translation" class="input-full-width"
                       formControlName="owner" required>
@@ -17,19 +17,27 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <div fxFlex="100" *ngIf="status !== 'DECISION'">
+    </div>
+    <div fxLayout="row" *ngIf="status !== 'DECISION'">
+      <div fxFlex>
         <mat-form-field class="input-full-width">
-          <textarea matInput matTextareaAutosize formControlName="comment" placeholder="Perustelut"></textarea>
+          <textarea matInput matTextareaAutosize formControlName="comment"
+                    [placeholder]="'decision.reason' | translation"></textarea>
         </mat-form-field>
       </div>
-      <div fxFlex="100" *ngIf="emailDistribution">
+    </div>
+    <div fxLayout="row" *ngIf="emailDistribution">
+      <div fxFlex>
         <mat-form-field class="input-full-width">
-          <textarea matInput matTextareaAutosize formControlName="emailMessage"
-                    placeholder="Sähköpostiviesti"></textarea>
+            <textarea matInput matTextareaAutosize formControlName="emailMessage"
+                      [placeholder]="'decision.emailMessage' | translation"></textarea>
         </mat-form-field>
       </div>
-      <div fxFlex="100" *ngIf="status !== 'RETURNED_TO_PREPARATION'">
-        <h2>Päätöksen jakelu</h2>
+    </div>
+
+    <div fxLayout="row" *ngIf="status !== 'RETURNED_TO_PREPARATION'">
+      <div fxFlex="100">
+        <h2>{{'decision.distribution.title' | translation}}</h2>
         <distribution-list [form]="decisionForm" [distributionList]="distributionList"></distribution-list>
       </div>
     </div>

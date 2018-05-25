@@ -1,8 +1,10 @@
 <form [formGroup]="form">
-  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+  <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
-        <mat-select class="input-full-width" formControlName="type" placeholder="Valitse tyyppi*">
+        <mat-select class="input-full-width" formControlName="type"
+                    (selectionChange)="resetFormIfExisting()"
+                    placeholder="Valitse tyyppi*">
           <mat-option *ngFor="let type of customerTypes" [value]="type">
             {{['customer.type', type, 'name'] | translation}}
           </mat-option>
@@ -34,7 +36,7 @@
   </div>
 
   <!-- Person -->
-  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px" *ngIf="form.value.type==='PERSON'; else notPerson">
+  <div fxLayout="row wrap" fxLayoutGap="18px" *ngIf="form.value.type==='PERSON'; else notPerson">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
         <input matInput type="text" formControlName="name"
@@ -107,7 +109,7 @@
         </mat-form-field>
       </div>
     </div>
-    <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+    <div fxLayout="row wrap" fxLayoutGap="18px">
       <div fxFlex="calc(50% - 18px)">
         <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
           <input matInput type="text" formControlName="registryKey"
@@ -160,7 +162,7 @@
     </div>
   </ng-template>
 
-  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px" formGroupName="postalAddress">
+  <div fxLayout="row wrap" fxLayoutGap="18px" formGroupName="postalAddress">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
         <input matInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
@@ -187,7 +189,7 @@
     </div>
   </div>
 
-  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+  <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
         <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
@@ -208,7 +210,7 @@
     </div>
   </div>
 
-  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+  <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width">
         <input matInput type="text" formControlName="projectIdentifierPrefix"

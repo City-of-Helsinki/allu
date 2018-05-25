@@ -1,21 +1,21 @@
 <form [formGroup]="infoForm" (ngSubmit)="onSubmit()" novalidate>
-  <div fxLayout="row" fxLayoutWrap>
+  <div fxLayout="row wrap">
     <div fxFlex="100">
       <invoicing-info [form]="infoForm" [reset]="reset.asObservable()"></invoicing-info>
     </div>
   </div>
-  <div fxLayout="row" fxLayoutWrap>
+  <div fxLayout="row wrap">
     <div fxFlex="100">
       <charge-basis></charge-basis>
     </div>
   </div>
-  <div fxLayout="row" fxLayoutWrap>
+  <div fxLayout="row wrap">
     <div fxFlex="100">
       <invoice-comments [applicationId]="applicationId"></invoice-comments>
     </div>
   </div>
-  <bottom-bar fxLayout="row" fxFlexAlign="center center">
-    <div fxFlex fxFlexAlign="center">
+  <bottom-bar>
+    <div class="bottom-bar-item">
       <button type="submit" mat-raised-button color="primary" [disabled]="!(infoForm.valid && infoForm.dirty)">
         {{'common.button.save' | translation}}
       </button>

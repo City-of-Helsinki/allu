@@ -8,16 +8,16 @@
       <div *ngIf="!form.value.id">{{'supervision.task.newTask' | translation}}</div>
     </mat-card-title>
     <mat-card-content>
-      <div fxLayout="row" fxLayout.lt-md="column" fxLayoutWrap>
-        <div fxFlex="100" *ngIf="form.value.id">
+      <div fxLayout="row wrap" fxLayout.lt-md="column">
+        <div fxFlex="100%" *ngIf="form.value.id">
           <div class="save-info">
             <div>{{'supervision.task.createdBy' | translation}}: {{form.value.creatorName}} {{form.value.creationTime |
               date:'short'}}
             </div>
           </div>
         </div>
-        <div fxFlex="100">
-          <div fxLayout="row" fxLayout.lt-md="column" fxLayoutWrap fxLayoutGap="18px">
+        <div fxFlex="100%">
+          <div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="18px">
             <div fxFlex>
               <mat-form-field class="input-full-width">
                 <mat-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width"
@@ -56,25 +56,29 @@
             </div>
           </div>
         </div>
-        <div fxFlex="100">
-          <div fxLayout="row" fxLayoutWrap>
-            <div fxFlex="100">
+      </div>
+      <div fxLayout="row">
+        <div fxFlex="100%">
+          <div fxLayout="row">
+            <div fxFlex="100%">
               <mat-form-field class="input-full-width">
-                                <textarea matInput matTextareaAutosize formControlName="description"
-                                          [placeholder]="'supervision.task.description' | translation"></textarea>
+                <textarea matInput matTextareaAutosize formControlName="description"
+                          [placeholder]="'supervision.task.description' | translation"></textarea>
               </mat-form-field>
             </div>
-            <div fxFlex="100">
-              <mat-form-field class="input-full-width" *ngIf="form.getRawValue().result">
-                                <textarea matInput matTextareaAutosize formControlName="result"
-                                          [placeholder]="'supervision.task.result' | translation"></textarea>
+          </div>
+          <div fxLayout="row" *ngIf="form.getRawValue().result">
+            <div fxFlex="100%">
+              <mat-form-field class="input-full-width">
+                <textarea matInput matTextareaAutosize formControlName="result"
+                          [placeholder]="'supervision.task.result' | translation"></textarea>
               </mat-form-field>
             </div>
           </div>
         </div>
       </div>
       <div fxLayout="row" fxLayout.sm="column">
-        <div fxFlex="100">
+        <div fxFlex="100%">
           <ng-container *ngIf="canApprove && form.disabled">
             <ng-container *availableTo="['ROLE_SUPERVISE']">
               <button id="approve" mat-raised-button type="button" color="primary" (click)="approve()">

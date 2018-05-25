@@ -13,7 +13,7 @@
       </mat-form-field>
     </div>
   </div>
-  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+  <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex>
       <mat-form-field class="input-full-width">
         <textarea matInput type="text" formControlName="manualExplanation"
@@ -43,7 +43,7 @@
     </div>
 
   </div>
-  <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px">
+  <div fxLayout="row wrap" fxLayoutGap="18px">
     <div fxFlex="calc(50% - 18px)" *ngIf="form.value.unit==='PIECE'">
       <mat-form-field class="input-full-width">
         <input matInput type="number" formControlName="unitPrice" required

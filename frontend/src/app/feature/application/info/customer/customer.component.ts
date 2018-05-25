@@ -12,10 +12,9 @@ import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
 import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
-import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
-import {Application} from '../../../../model/application/application';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {filter} from 'rxjs/internal/operators';
+import {CustomerType} from '../../../../model/customer/customer-type';
 
 @Component({
   selector: 'customer',
@@ -38,6 +37,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   customerWithContactsForm: FormGroup;
   customerForm: FormGroup;
+  customerClass: string[] = [];
 
   private dialogRef: MatDialogRef<CustomerModalComponent>;
 
@@ -56,6 +56,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
     }
 
     this.onCustomerWithContactsChange();
+    this.customerForm.get('type').valueChanges
+      .subscribe(type => this.onCustomerTypeChange(type));
   }
 
   ngOnDestroy(): void {
@@ -110,7 +112,21 @@ export class CustomerComponent implements OnInit, OnDestroy {
       .do(customer => {
         this.customerForm.patchValue(customer);
         this.disableEdit(customer);
+        this.onCustomerTypeChange(customer.type);
       });
 
+  }
+
+  private onCustomerTypeChange(type: string) {
+    const classes = [];
+    if (CustomerType[type] === CustomerType.PERSON) {
+      classes.push('customer-person');
+    }
+
+    if (this.showPropertyDeveloper || this.showRepresentative) {
+      classes.push('customer-additional-toggle');
+    }
+
+    this.customerClass = classes;
   }
 }

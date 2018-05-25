@@ -1,24 +1,26 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)"
       *ngIf="applicationChanges | async as application">
-  <div class="row">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
-              [readonly]="readonly" [showPropertyDeveloper]="true" [contactRequired]="true"></customer>
-  </div>
+  <customer [parentForm]="applicationForm"
+            [customerWithContacts]="application.applicant"
+            [readonly]="readonly"
+            [showPropertyDeveloper]="true"
+            [contactRequired]="true"></customer>
 
-  <div class="row" *ngIf="hasPropertyDeveloper">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.propertyDeveloper"
-              [readonly]="readonly"></customer>
-  </div>
+  <customer *ngIf="hasPropertyDeveloper"
+            [parentForm]="applicationForm"
+            [customerWithContacts]="application.propertyDeveloper"
+            [readonly]="readonly"></customer>
 
-  <div class="row">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
-              [readonly]="readonly" [showRepresentative]="true" [contactRequired]="true"></customer>
-  </div>
+  <customer [parentForm]="applicationForm"
+            [customerWithContacts]="application.contractor"
+            [readonly]="readonly"
+            [showRepresentative]="true"
+            [contactRequired]="true"></customer>
 
-  <div class="row" *ngIf="hasRepresentative">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
-              [readonly]="readonly"></customer>
-  </div>
+  <customer *ngIf="hasRepresentative"
+            [parentForm]="applicationForm"
+            [customerWithContacts]="application.representative"
+            [readonly]="readonly"></customer>
 
   <div class="row">
     <div class="col m6">

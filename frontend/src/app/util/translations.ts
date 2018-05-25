@@ -619,6 +619,8 @@ export const translations = {
   decision: {
     selectHandler: 'Valitse käsittelijä',
     attachments: 'Päätöksen liitteet',
+    reason: 'Perustelut',
+    emailMessage: 'Sähköpostiviesti',
     type: {
       DECISION: {
         title: 'Päätä hakemus',
@@ -652,6 +654,7 @@ export const translations = {
       }
     },
     distribution: {
+      title: 'Päätöksen jakelu',
       type: {
         EMAIL: 'Sähköposti',
         PAPER: 'Paperi'

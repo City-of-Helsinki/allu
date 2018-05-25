@@ -2,7 +2,7 @@
   <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
   <mat-card-content>
     <div *ngIf="isAllowedToEdit">
-      <selection-group fxLayout="row" fxLayoutWrap fxLayoutGap="18px" fxLayoutAlign="start"
+      <selection-group fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start"
                        [ngModel]="selectedAttachments" (select)="onSelect($event)"
                        *ngIf="defaultAttachments">
         <div fxFlex="nogrow" *ngFor="let attachment of defaultAttachments">
@@ -15,7 +15,7 @@
         </div>
       </selection-group>
     </div>
-    <div fxLayout="row" fxLayoutWrap fxLayoutGap="18px" fxLayoutAlign="start" *ngIf="!isAllowedToEdit">
+    <div fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start" *ngIf="!isAllowedToEdit">
       <div fxFlex="nogrow" *ngFor="let attachment of selectedAttachments">
         <span>{{attachment.name}}</span>
         <button mat-icon-button (click)="download(attachment)">

@@ -1,33 +1,30 @@
-<bottom-bar fxLayout="row" fxFlexAlign="space-between">
-  <div fxFlex fxFlexAlign="center" *ngIf="readonly">
-    <div>
-      <ng-container *availableTo="MODIFY_ROLES">
-        <button *ngIf="showReplace" mat-raised-button type="button" color="primary" (click)="replace()">
-          {{'application.button.replace' | translation | uppercase}}
-        </button>
-      </ng-container>
-      <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-        <button *ngIf="showEdit" mat-raised-button type="button" color="primary"
-                [routerLink]="['/applications', applicationId, 'edit']">
-          {{'common.button.edit' | translation | uppercase}}
-        </button>
-        <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
-          {{'application.button.copy' | translation | uppercase}}
-        </button>
-        <button *ngIf="showDelete" mat-raised-button type="button" color="primary" (click)="delete()">
-          {{'common.button.remove' | translation | uppercase}}
-        </button>
-      </ng-container>
-    </div>
+<bottom-bar>
+  <div class="bottom-bar-item">
+    <ng-container *availableTo="MODIFY_ROLES">
+      <button *ngIf="showReplace" mat-raised-button type="button" color="primary" (click)="replace()">
+        {{'application.button.replace' | translation | uppercase}}
+      </button>
+    </ng-container>
+    <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+      <button *ngIf="showEdit" mat-raised-button type="button" color="primary"
+              [routerLink]="['/applications', applicationId, 'edit']">
+        {{'common.button.edit' | translation | uppercase}}
+      </button>
+      <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
+        {{'application.button.copy' | translation | uppercase}}
+      </button>
+      <button *ngIf="showDelete" mat-raised-button type="button" color="primary" (click)="delete()">
+        {{'common.button.remove' | translation | uppercase}}
+      </button>
+    </ng-container>
   </div>
-  <div fxFlex></div>
-  <div fxFlex fxFlexAlign="center">
-    <div *ngIf="!readonly">
+  <div class="bottom-bar-item">
+    <ng-container *ngIf="!readonly">
       <button type="submit" mat-raised-button color="primary" [disabled]="submitPending || !valid">
         {{'common.button.save' | translation | uppercase}}
       </button>
-    </div>
-    <div *ngIf="readonly">
+    </ng-container>
+    <ng-container *ngIf="readonly">
       <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
         <button *ngIf="showCancel" mat-raised-button type="button" color="primary" (click)="cancel()">
           {{'application.button.cancel' | translation | uppercase}}
@@ -43,6 +40,6 @@
               (click)="toDecisionmaking()">
         {{'application.button.toDecision' | translation | uppercase}}
       </button>
-    </div>
+    </ng-container>
   </div>
 </bottom-bar>

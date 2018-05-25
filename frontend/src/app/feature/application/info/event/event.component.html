@@ -1,21 +1,23 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)"
       *ngIf="applicationChanges | async as application">
-  <div class="row">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
-              [readonly]="readonly" [showRepresentative]="true" [contactRequired]="!hasRepresentative"></customer>
-  </div>
+    <customer [parentForm]="applicationForm"
+              [customerWithContacts]="application.applicant"
+              [readonly]="readonly"
+              [showRepresentative]="true"
+              [contactRequired]="!hasRepresentative"></customer>
 
-  <div class="row" *ngIf="hasRepresentative">
-    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
-              roleType="REPRESENTATIVE" [readonly]="readonly"></customer>
-  </div>
+    <customer *ngIf="hasRepresentative"
+              [parentForm]="applicationForm"
+              [customerWithContacts]="application.representative"
+              roleType="REPRESENTATIVE"
+              [readonly]="readonly"></customer>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <allu-card>
         <mat-card-title>{{'application.event.title' | translation}}</mat-card-title>
         <mat-card-content>
-          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+          <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="calc(50% - 18px)">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="name" required
@@ -118,12 +120,12 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <allu-card>
         <mat-card-title>{{'application.event.structures' | translation}}</mat-card-title>
         <mat-card-content>
-          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+          <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="0 0 calc(25% - 18px)">
               <mat-checkbox #structureArea [disabled]="readonly"
                             class="input-field-checkbox"
@@ -149,7 +151,7 @@
               </mat-form-field>
             </div>
           </div>
-          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+          <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="0 0 calc(25% - 18px)">
               <mat-checkbox #structureTimes [disabled]="readonly" class="input-field-checkbox"
                             [checked]="applicationForm.get('structureTimes').value.startTime || applicationForm.get('structureTimes').value.endTime"
@@ -199,24 +201,24 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <pricing-info [form]="applicationForm" [kind]="application.uiKind"></pricing-info>
     </div>
   </div>
 
-  <div class="row" *ngIf="readonly">
-    <div class="col m12">
+  <div fxLayout="row" *ngIf="readonly">
+    <div fxFlex>
       <location-details [application]="application" [readonly]="readonly"></location-details>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <allu-card>
         <mat-card-title>{{'application.event.marketingProvidersTitle' | translation}}</mat-card-title>
         <mat-card-content>
-          <div fxLayout="row" fxLayoutGap="18px" fxLayoutWrap>
+          <div fxLayout="row wrap" fxLayoutGap="18px">
             <div fxFlex="calc(100% - 18px)">
               <mat-checkbox #marketingProviders [disabled]="readonly" class="input-field-checkbox"
                             [checked]="applicationForm.value.marketingProviders">
@@ -247,8 +249,8 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="showTerms">
-    <div class="col s12">
+  <div fxLayout="row" *ngIf="showTerms">
+    <div fxFlex>
       <terms [form]="applicationForm"
              [applicationType]="application.typeEnum"
              [terms]="application.extension.terms"
@@ -256,14 +258,14 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col s12">
+  <div fxLayout="row">
+    <div fxFlex>
       <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col s12">
+  <div fxLayout="row">
+    <div fxFlex>
       <application-actions
         [readonly]="readonly"
         [valid]="applicationForm.valid"
