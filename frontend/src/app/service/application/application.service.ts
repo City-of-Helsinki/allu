@@ -24,6 +24,7 @@ import {BackendApplication} from '../backend-model/backend-application';
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendAttachmentInfo} from '../backend-model/backend-attachment-info';
 import {catchError, map} from 'rxjs/internal/operators';
+import {ApplicationTagType} from '../../model/application/tag/application-tag-type';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -181,6 +182,29 @@ export class ApplicationService {
     return this.http.put<BackendApplicationTag[]>(url, JSON.stringify(ApplicationTagMapper.mapFrontendList(tags))).pipe(
       map(saved => ApplicationTagMapper.mapBackendList(saved)),
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagUpdateFailed')))
+    );
+  }
+
+  public saveTag(appId: number, tag: ApplicationTag): Observable<ApplicationTag> {
+    const url = `${APPLICATIONS_URL}/${appId}/tags`;
+    return this.http.post<BackendApplicationTag>(url, JSON.stringify(ApplicationTagMapper.mapFrontend(tag))).pipe(
+      map(saved => ApplicationTagMapper.mapBackend(saved)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagSaveFailed')))
+    );
+  }
+
+  public removeTag(appId: number, tag: ApplicationTag): Observable<{}> {
+    const url = `${APPLICATIONS_URL}/${appId}/tags/${tag.type}`;
+    return this.http.delete(url).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagRemoveFailed')))
+    );
+  }
+
+  public getTags(appId: number): Observable<ApplicationTag[]> {
+    const url = `${APPLICATIONS_URL}/${appId}/tags`;
+    return this.http.get<BackendApplicationTag[]>(url).pipe(
+      map(tags => ApplicationTagMapper.mapBackendList(tags)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagFetchFailed')))
     );
   }
 

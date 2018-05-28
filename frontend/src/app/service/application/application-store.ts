@@ -1,11 +1,8 @@
-
-import {throwError as observableThrowError, Observable, Subject, BehaviorSubject, forkJoin} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable, Subject, throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Application} from '../../model/application/application';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
-import {Comment} from '../../model/application/comment/comment';
-import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
 import {NumberUtil} from '../../util/number.util';
 import {ObjectUtil} from '../../util/object.util';
@@ -17,13 +14,14 @@ import {ApplicationService} from './application.service';
 import {isCommon} from '../../model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
-import {CommentService} from './comment/comment.service';
-import {catchError, distinctUntilChanged, filter, map, skip, switchMap, tap} from 'rxjs/internal/operators';
+import {catchError, distinctUntilChanged, filter, map, skip, switchMap, take, tap} from 'rxjs/internal/operators';
+import {Store} from '@ngrx/store';
+import * as fromApplication from '../../feature/application/reducers';
+import {Load as LoadTags, LoadSuccess} from '../../feature/application/actions/application-tag-actions';
 
 export interface ApplicationState {
   application?: Application;
   applicationCopy?: Application;
-  tags?: Array<ApplicationTag>;
   attachments?: Array<AttachmentInfo>;
   tab?: SidebarItemType;
   relatedProject?: number;
@@ -35,7 +33,6 @@ export interface ApplicationState {
 export const initialState: ApplicationState = {
   application: new Application(),
   applicationCopy: undefined,
-  tags: [],
   attachments: [],
   tab: 'BASIC_INFO',
   relatedProject: undefined,
@@ -46,13 +43,14 @@ export const initialState: ApplicationState = {
 
 @Injectable()
 export class ApplicationStore {
-  private store = new BehaviorSubject<ApplicationState>(initialState);
+  private appStore = new BehaviorSubject<ApplicationState>(initialState);
 
   constructor(private applicationService: ApplicationService,
               private applicationDraftService: ApplicationDraftService,
               private customerService: CustomerService,
               private attachmentHub: AttachmentHub,
-              private depositService: DepositService) {
+              private depositService: DepositService,
+              private store: Store<fromApplication.State>) {
   }
 
   get snapshot(): ApplicationState {
@@ -60,15 +58,15 @@ export class ApplicationStore {
   }
 
   get changes(): Observable<ApplicationState> {
-    return this.store.asObservable().pipe(distinctUntilChanged());
+    return this.appStore.asObservable().pipe(distinctUntilChanged());
   }
 
   reset(): void {
-    this.store.next(initialState);
+    this.appStore.next(initialState);
   }
 
   get application(): Observable<Application> {
-    return this.store.pipe(
+    return this.appStore.pipe(
       map(change => change.application),
       distinctUntilChanged(),
       filter(app => !!app)
@@ -76,7 +74,7 @@ export class ApplicationStore {
   }
 
   applicationChange(application: Application) {
-    this.store.next({
+    this.appStore.next({
       ...this.current,
       application: application,
       processing: false
@@ -88,7 +86,7 @@ export class ApplicationStore {
   }
 
   applicationCopyChange(application: Application) {
-    this.store.next({
+    this.appStore.next({
       ...this.current,
       applicationCopy: ObjectUtil.clone(application)
     });
@@ -97,7 +95,7 @@ export class ApplicationStore {
   currentOrCopy(): Application {
     const copy = this.snapshot.applicationCopy;
     if (copy) {
-      this.store.next({
+      this.appStore.next({
         ...initialState,
         application: copy
       });
@@ -111,34 +109,12 @@ export class ApplicationStore {
     );
   }
 
-  get tags(): Observable<Array<ApplicationTag>> {
-    return this.store.pipe(
-      map(change => change.tags),
-      distinctUntilChanged()
-    );
-  }
-
-  changeTags(tags: Array<ApplicationTag>) {
-    this.store.next({...this.current, tags});
-  }
-
-  saveTags(tags: Array<ApplicationTag>) {
-    const applicationId = this.current.application.id;
-    if (!NumberUtil.isDefined(applicationId)) {
-      throw new Error('Cannot save tags when application state has no saved application');
-    }
-
-    return this.applicationService.saveTags(applicationId, tags).pipe(
-      tap(savedTags => this.changeTags(savedTags))
-    );
-  }
-
   changeDraft(draft: boolean) {
-    this.store.next({...this.current, draft});
+    this.appStore.next({...this.current, draft});
   }
 
   get tab(): Observable<SidebarItemType> {
-    return this.store.pipe(
+    return this.appStore.pipe(
       map(state => state.tab),
       skip(1),
       distinctUntilChanged()
@@ -146,11 +122,11 @@ export class ApplicationStore {
   }
 
   changeTab(tab: SidebarItemType): void {
-    this.store.next({...this.current, tab});
+    this.appStore.next({...this.current, tab});
   }
 
   get attachments(): Observable<Array<AttachmentInfo>> {
-    return this.store.pipe(
+    return this.appStore.pipe(
       map(state => state.attachments),
       distinctUntilChanged()
     );
@@ -176,20 +152,20 @@ export class ApplicationStore {
 
   loadAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
     return this.applicationService.getAttachments(applicationId).pipe(
-      tap(attachments => this.store.next({...this.current, attachments}))
+      tap(attachments => this.appStore.next({...this.current, attachments}))
     );
   }
 
   load(id: number): Observable<Application> {
     return this.applicationService.get(id).pipe(
       tap(application => {
-        this.store.next({
+        this.appStore.next({
           ...this.current,
           application,
           attachments: application.attachmentList,
-          tags: application.applicationTags,
           draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
         });
+        this.store.dispatch(new LoadSuccess(application.applicationTags));
       })
     );
   }
@@ -211,29 +187,29 @@ export class ApplicationStore {
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     const appId = id || this.snapshot.application.id;
-    this.store.next({...this.current, processing: true});
+    this.appStore.next({...this.current, processing: true});
     return this.applicationService.changeStatus(appId, status, changeInfo).pipe(
       tap(application => this.applicationChange(application)),
       catchError(err => {
-        this.store.next({...this.current, processing: false});
+        this.appStore.next({...this.current, processing: false});
         return observableThrowError(err);
       })
     );
   }
 
   changeRelatedProject(projectId: number) {
-    this.store.next({...this.current, relatedProject: projectId});
+    this.appStore.next({...this.current, relatedProject: projectId});
   }
 
   loadDeposit(): Observable<Deposit> {
     const appId = this.snapshot.application.id;
     return this.depositService.fetchByApplication(appId).pipe(
-      tap(deposit => this.store.next({...this.current, deposit}))
+      tap(deposit => this.appStore.next({...this.current, deposit}))
     );
   }
 
   get deposit(): Observable<Deposit> {
-    return this.store.pipe(
+    return this.appStore.pipe(
       map(state => state.deposit),
       distinctUntilChanged()
     );
@@ -242,8 +218,8 @@ export class ApplicationStore {
   saveDeposit(deposit: Deposit): Observable<Deposit> {
     return this.depositService.save(deposit).pipe(
       tap(saved => {
-        this.load(deposit.applicationId).subscribe();
-        this.store.next({...this.current, deposit: saved});
+        this.store.dispatch(new LoadTags());
+        this.appStore.next({...this.current, deposit: saved});
       })
     );
   }
@@ -282,25 +258,29 @@ export class ApplicationStore {
   }
 
   private saveApplication(application: Application): Observable<Application> {
-    const snapshot = this.snapshot;
-    application.applicationTags = snapshot.tags;
-    if (snapshot.draft) {
-      return this.applicationDraftService.save(application);
-    } else {
-      // Convert to full application
-      if (application.statusEnum === ApplicationStatus.PRE_RESERVED) {
-        return this.applicationDraftService.convertToApplication(application);
-      } else {
-        return this.applicationService.save(application);
-      }
-    }
+    return this.store.select(fromApplication.getTags).pipe(
+      take(1),
+      switchMap(tags => {
+        application.applicationTags = tags;
+        if (this.snapshot.draft) {
+          return this.applicationDraftService.save(application);
+        } else {
+          // Convert to full application
+          if (application.statusEnum === ApplicationStatus.PRE_RESERVED) {
+            return this.applicationDraftService.convertToApplication(application);
+          } else {
+            return this.applicationService.save(application);
+          }
+        }
+      })
+    );
   }
 
   private saved(application: Application): void {
-    this.store.next({...this.current, application, tags: application.applicationTags});
+    this.appStore.next({...this.current, application});
   }
 
   private get current(): ApplicationState {
-    return this.store.getValue();
+    return this.appStore.getValue();
   }
 }

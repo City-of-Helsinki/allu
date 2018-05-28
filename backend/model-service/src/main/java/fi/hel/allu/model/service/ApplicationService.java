@@ -273,6 +273,11 @@ public class ApplicationService {
     return applicationDao.addTag(applicationId, tag);
   }
 
+  @Transactional
+  public void removeTag(int applicationId, ApplicationTagType type) {
+    applicationDao.removeTagByType(applicationId, type);
+  }
+
   /**
    * Update (replace) applications tags with new ones
    * @param applicationId Id of the application to be changed.

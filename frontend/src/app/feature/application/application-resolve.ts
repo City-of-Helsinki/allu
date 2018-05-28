@@ -12,6 +12,7 @@ import {LoadSuccess} from './actions/application-actions';
 import {Load} from '../comment/actions/comment-actions';
 import {ActionTargetType} from '../allu/actions/action-target-type';
 import {catchError, tap} from 'rxjs/internal/operators';
+import {Load as LoadTags, LoadSuccess as LoadTagsSuccess} from './actions/application-tag-actions';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -29,19 +30,31 @@ export class ApplicationResolve implements Resolve<Application> {
       .map(id => Number(id))
       .map(id => this.applicationStore.load(id).pipe(
         tap(app => this.store.dispatch(new LoadSuccess(app))),
-        tap(() => this.loadComments(id)),
+        tap(() => this.loadComments()),
+        tap(() => this.loadTags()),
         catchError(err => this.handleError(err)))
       )
-      .orElseGet(() => of(this.applicationStore.currentOrCopy()));
+      .orElseGet(() => this.currentOrCopy());
   }
 
-  private loadComments(id: number) {
+  private loadComments() {
     this.store.dispatch(new Load(ActionTargetType.Application));
+  }
+
+  private loadTags() {
+    this.store.dispatch(new LoadTags());
   }
 
   private handleError(err: any): Observable<Application> {
     this.notification.errorInfo(err);
     this.router.navigate(['/applications']);
     return of(new Application());
+  }
+
+  private currentOrCopy(): Observable<Application> {
+    const app = this.applicationStore.currentOrCopy();
+    this.store.dispatch(new LoadSuccess(app));
+    this.store.dispatch(new LoadTagsSuccess([]));
+    return of(app);
   }
 }

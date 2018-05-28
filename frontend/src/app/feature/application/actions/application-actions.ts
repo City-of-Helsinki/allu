@@ -2,6 +2,7 @@ import {Action} from '@ngrx/store';
 import {ErrorInfo} from '../../../service/error/error-info';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {Application} from '../../../model/application/application';
+import {ApplicationTag} from '../../../model/application/tag/application-tag';
 
 export enum ApplicationActionType {
   Load = '[Application] Load application',

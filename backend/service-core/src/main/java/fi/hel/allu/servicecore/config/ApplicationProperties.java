@@ -771,17 +771,14 @@ public class ApplicationProperties {
   }
 
   /**
-   * Model-service path for adding single tag
-   */
-  public String getTagUrl() {
-    return getModelServiceUrl("/applications/{id}/tag");
-  }
-
-  /**
    * Model-service path to tags (get, put)
    */
   public String getTagsUrl() {
     return getModelServiceUrl("/applications/{id}/tags");
+  }
+
+  public String getTagsDeleteUrl() {
+    return getModelServiceUrl("/applications/{id}/tags/{tagType}");
   }
 
   /**

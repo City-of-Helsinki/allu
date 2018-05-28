@@ -16,14 +16,14 @@
         <mat-chip-list>
           <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of tags | async; let i = index;">
             {{['application.tag.type', tag.type] | translation}}
-            <button *ngIf="canBeRemoved(tag.type)" mat-icon-button (click)="remove(i)">
+            <button *ngIf="canBeRemoved(tag.type)" mat-icon-button (click)="remove(tag)">
               <mat-icon>remove_circle_outline</mat-icon>
             </button>
           </mat-chip>
         </mat-chip-list>
       </div>
       <div *availableTo="MODIFY_ROLES" fxFlex="initial">
-        <mat-chip class="slim-chip chip-outline" color="primary" selected="true">
+        <mat-chip *ngIf="(availableTagCount | async)" class="slim-chip chip-outline" color="primary" selected="true">
           Lisää tunniste
           <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>
         </mat-chip>
@@ -32,7 +32,7 @@
   </div>
 </div>
 <mat-menu x-position="before" #menu="matMenu">
-  <button mat-menu-item *ngFor="let type of manualTagTypes" (click)="add(type)">{{['application.tag.type', type] |
-    translation}}
+  <button mat-menu-item *ngFor="let type of availableTagTypes | async" (click)="add(type)">
+    {{['application.tag.type', type] | translation}}
   </button>
 </mat-menu>

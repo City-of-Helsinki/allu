@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
  * in Finnish: hakemuksen tagi.
  */
 public class ApplicationTagJson {
-  @NotNull
   private Integer addedBy;
   @NotNull
   private ApplicationTagType type;

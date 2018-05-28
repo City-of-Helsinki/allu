@@ -7,15 +7,15 @@ import {
 import * as fromApplication from './application-reducer';
 import * as fromComments from '../../comment/reducers/comment-reducer';
 import * as fromApplicationComments from '../../application/reducers/application-comments-reducer';
+import * as fromTags from './application-tags-reducer';
 import * as fromRoot from '../../allu/reducers/index';
 import {Application} from '../../../model/application/application';
-import {SortDirection} from '../../../model/common/sort';
-import {Comment} from '../../../model/application/comment/comment';
-import {TimeUtil} from '../../../util/time.util';
+
 
 export interface ApplicationState {
   application: fromApplication.State;
   comments: fromComments.State;
+  tags: fromTags.State;
 }
 
 export interface State extends fromRoot.State {
@@ -24,7 +24,8 @@ export interface State extends fromRoot.State {
 
 export const reducers: ActionReducerMap<ApplicationState> = {
   application: fromApplication.reducer,
-  comments: fromApplicationComments.reducer
+  comments: fromApplicationComments.reducer,
+  tags: fromTags.reducer
 };
 
 export const getApplicationState = createFeatureSelector<ApplicationState>('application');
@@ -71,5 +72,18 @@ export const getSortedComments = createSelector(
   getAllComments,
   getDirection,
   (comments, direction) => comments.slice().sort(fromComments.sort(direction))
+);
+
+/**
+ * Selectors for tags
+ */
+export const getTagsState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.tags
+);
+
+export const getTags = createSelector(
+  getTagsState,
+  fromTags.getCurrent
 );
 

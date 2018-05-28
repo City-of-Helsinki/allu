@@ -17,6 +17,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.servicecore.domain.*;
@@ -325,6 +326,20 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ApplicationTagJson>> getTags(@PathVariable int id) {
     return new ResponseEntity<>(applicationServiceComposer.findTags(id), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/tags", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationTagJson> addTag(@PathVariable int id,
+                                                         @Valid @RequestBody ApplicationTagJson tag) {
+    return new ResponseEntity<>(applicationServiceComposer.addTag(id, tag), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/tags/{tagType}", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationTagJson> removeTag(@PathVariable int id, @PathVariable ApplicationTagType tagType) {
+    applicationServiceComposer.removeTag(id, tagType);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

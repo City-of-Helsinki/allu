@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.AttachmentDao;
@@ -202,9 +203,15 @@ public class ApplicationController {
    * @param id Application's database ID
    * @param tag Tag to add
    */
-  @RequestMapping(value = "/{id}/tag", method = RequestMethod.POST)
+  @RequestMapping(value = "/{id}/tags", method = RequestMethod.POST)
   public ResponseEntity<ApplicationTag> addTag(@PathVariable int id, @RequestBody ApplicationTag tag) {
     return new ResponseEntity<>(applicationService.addTag(id, tag), HttpStatus.OK);
+  }
+
+  @RequestMapping(value ="/{id}/tags/{tagType}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> removeTag(@PathVariable int id, @PathVariable ApplicationTagType tagType) {
+    applicationService.removeTag(id, tagType);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

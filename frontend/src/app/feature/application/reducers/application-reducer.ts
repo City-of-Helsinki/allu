@@ -10,7 +10,7 @@ export interface State {
 const initialState: State = {
   loaded: false,
   loading: false,
-  current: undefined
+  current: new Application()
 };
 
 export function reducer(state: State = initialState, action: ApplicationActions) {

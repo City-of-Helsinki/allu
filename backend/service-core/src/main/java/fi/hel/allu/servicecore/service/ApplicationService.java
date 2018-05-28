@@ -129,9 +129,13 @@ public class ApplicationService {
     return Optional.of(tagJson)
         .map(t -> tagWithUserInfo(currentUser, tagJson))
         .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime()))
-        .map(t -> restTemplate.postForEntity(applicationProperties.getTagUrl(), t, ApplicationTag.class, id))
+        .map(t -> restTemplate.postForEntity(applicationProperties.getTagsUrl(), t, ApplicationTag.class, id))
         .map(response -> applicationMapper.createTagJson(response.getBody()))
         .get();
+  }
+
+  public void removeTag(int id, ApplicationTagType tagType) {
+    restTemplate.delete(applicationProperties.getTagsDeleteUrl(), id, tagType);
   }
 
   /**

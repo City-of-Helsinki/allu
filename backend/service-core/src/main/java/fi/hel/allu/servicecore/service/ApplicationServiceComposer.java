@@ -17,9 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -263,17 +261,27 @@ public class ApplicationServiceComposer {
   public List<ApplicationTagJson> updateTags(int id, List<ApplicationTagJson> tags) {
     List<ApplicationTagJson> oldTags = findTags(id);
     List<ApplicationTagJson> updatedTags = applicationService.updateTags(id, tags);
-    searchService.updateTags(id, tags);
-    ApplicationJson withOldTags = new ApplicationJson();
-    ApplicationJson withNewTags = new ApplicationJson();
-    withOldTags.setApplicationTags(oldTags);
-    withNewTags.setApplicationTags(updatedTags);
-    applicationHistoryService.addFieldChanges(id, withOldTags, withNewTags);
+    onTagsChange(id, oldTags, tags);
     return updatedTags;
   }
 
   public List<ApplicationTagJson> findTags(int id) {
     return applicationService.findTagsByApplicationId(id);
+  }
+
+  public ApplicationTagJson addTag(int id, ApplicationTagJson tag) {
+    List<ApplicationTagJson> oldTags = applicationService.findTagsByApplicationId(id);
+    ApplicationTagJson added = applicationService.addTag(id, tag);
+    List<ApplicationTagJson> newTags = new ArrayList<>(oldTags);
+    newTags.add(added);
+    onTagsChange(id, oldTags, newTags);
+    return added;
+  }
+
+  public void removeTag(int id, ApplicationTagType tagType) {
+    List<ApplicationTagJson> oldTags = applicationService.findTagsByApplicationId(id);
+    applicationService.removeTag(id, tagType);
+    onTagsChange(id, oldTags, oldTags.stream().filter(t -> t.getType() != tagType).collect(Collectors.toList()));
   }
 
   /**
@@ -312,6 +320,15 @@ public class ApplicationServiceComposer {
       applicationService.addTag(applicationId, tag);
     }
     mailComposerService.sendDecision(applicationJson, decisionDetailsJson);
+  }
+
+  private void onTagsChange(int id, List<ApplicationTagJson> oldTags, List<ApplicationTagJson> newTags) {
+    searchService.updateTags(id, newTags);
+    ApplicationJson withOldTags = new ApplicationJson();
+    ApplicationJson withNewTags = new ApplicationJson();
+    withOldTags.setApplicationTags(oldTags);
+    withNewTags.setApplicationTags(newTags);
+    applicationHistoryService.addFieldChanges(id, withOldTags, withNewTags);
   }
 
   private boolean hasPaperDistribution(DecisionDetailsJson decisionDetailsJson) {

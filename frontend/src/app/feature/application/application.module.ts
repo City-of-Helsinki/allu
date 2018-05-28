@@ -44,12 +44,17 @@ import {ApplicationDraftService} from '../../service/application/application-dra
 import {ApplicationCommentsComponent} from './comment/application-comments.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
+import {EffectsModule} from '@ngrx/effects';
+import {ApplicationTagEffects} from './effects/application-tag-effects';
 
 @NgModule({
   imports: [
     AlluCommonModule,
     RouterModule.forChild(applicationRoutes),
     StoreModule.forFeature('application', reducers),
+    EffectsModule.forFeature([
+      ApplicationTagEffects
+    ]),
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,

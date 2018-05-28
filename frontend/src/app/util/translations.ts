@@ -44,6 +44,9 @@ export const translations = {
       replacementHistory: 'Hakemuksen korvaushistorian haku epäonnistui',
       deleteFailed: 'Hakemuksen poistaminen epäonnistui',
       tagUpdateFailed: 'Hakemuksen tarkenteiden tallentaminen epäonnistui',
+      saveTagFailed: 'Hakemuksen tarkenteen lisääminen epäonnistui',
+      removeTagFailed: 'Hakemuksen tarkenteen poistaminen epäonnistui',
+      tagFetchFailed: 'Hakemuksen tarkenteiden hakeminen epäonnistui',
       toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',
       toDecisionmaking: 'Hakemuksen siirtäminen odottamaan päätöstä epäonnistui',
       cancel: 'Hakemuksen peruminen epäonnistui'
