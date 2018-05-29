@@ -41,6 +41,8 @@ public class MailComposerService {
 
   private static final String SUBJECT_AREA_RENTAL = "Aluevarauspäätös %s";
 
+  private static final String SUBJECT_TRAFFIC_ARRANGEMENT = "Liikennejärjestelypäätös %s";
+
   // E-mail templates for various application types:
   private static final String TEMPLATE_GENERIC = "yleinen";
 
@@ -49,6 +51,8 @@ public class MailComposerService {
   private static final String TEMPLATE_SHORT_TERM_RENTAL = "lyhytaikainen_vuokraus";
 
   private static final String TEMPLATE_EVENT = "tapahtuma";
+
+  private static final String TEMPLATE_TRAFFIC_ARRANGEMENT = "liikennejarjestely";
 
   // File extensions:
   private static final String EXTENSION_TXT = ".txt";
@@ -150,6 +154,8 @@ public class MailComposerService {
         return TEMPLATE_SHORT_TERM_RENTAL;
       case EVENT:
         return TEMPLATE_EVENT;
+      case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+        return TEMPLATE_TRAFFIC_ARRANGEMENT;
       default:
         return TEMPLATE_GENERIC;
     }
@@ -167,6 +173,8 @@ public class MailComposerService {
         return SUBJECT_EXCAVATION_ANN;
       case PLACEMENT_CONTRACT:
         return SUBJECT_PLACEMENT_CONTR;
+      case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+        return SUBJECT_TRAFFIC_ARRANGEMENT;
       default:
         return SUBJECT_GENERIC;
     }
