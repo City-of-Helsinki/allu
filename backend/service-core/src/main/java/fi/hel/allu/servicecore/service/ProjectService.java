@@ -157,6 +157,13 @@ public class ProjectService {
   }
 
   /**
+   * Marks project and it's child projects deleted
+   */
+  void delete(int id) {
+    restTemplate.delete(applicationProperties.getProjectUpdateUrl(), id);
+  }
+
+  /**
    * Update parent of the given project.
    *
    * @param id              Project whose parent should be updated.

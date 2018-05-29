@@ -17,6 +17,7 @@ import {InvoicingActionType} from '../../application/actions/invoicing-actions';
 const handledActions = [
   ProjectActionTypes.LoadFailed,
   ProjectActionTypes.SaveFailed,
+  ProjectActionTypes.DeleteFailed,
   ProjectApplicationActionType.LoadFailed,
   ProjectApplicationActionType.AddFailed,
   ProjectApplicationActionType.RemoveFailed,

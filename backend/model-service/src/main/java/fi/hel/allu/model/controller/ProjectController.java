@@ -103,6 +103,12 @@ public class ProjectController {
         id, projectChange.getProject(), projectChange.getUserId()), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> delete(@PathVariable int id) {
+    projectService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
   public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
     return new ResponseEntity<>(projectService.getProjectChanges(id), HttpStatus.OK);

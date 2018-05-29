@@ -252,6 +252,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to delete project from search index.
+   */
+  public String getProjectSearchDeleteUrl() {
+    return getSearchServiceUrl("/projects/{id}");
+  }
+
+  /**
    * @return  url to request applications by their project.
    */
   public String getApplicationsByProjectUrl() {

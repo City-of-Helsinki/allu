@@ -70,6 +70,13 @@ export class ProjectService {
     }
   }
 
+  public delete(id: number): Observable<{}> {
+    const url = ProjectService.PROJECT_URL + '/' + id;
+    return this.http.delete(url).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('project.error.removeFailed')))
+    );
+  }
+
   public addProjectApplications(id: number, applicationIds: number[]): Observable<Application[]> {
     const url = `${ProjectService.PROJECT_URL}/${id}/applications`;
     return this.http.put<BackendApplication[]>(url, JSON.stringify(applicationIds)).pipe(

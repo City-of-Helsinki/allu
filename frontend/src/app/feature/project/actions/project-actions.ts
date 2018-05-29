@@ -10,6 +10,9 @@ export enum ProjectActionTypes {
   Save = '[Project] Save project',
   SaveSuccess = '[Project] Save project success',
   SaveFailed = '[Project] Save project failed',
+  Delete = '[Project] Delete project',
+  DeleteSuccess = '[Project] Delete project success',
+  DeleteFailed = '[Project] Delete project failed'
 }
 
 export class Load implements Action {
@@ -48,10 +51,27 @@ export class SaveFailed implements ActionWithPayload<ErrorInfo> {
   constructor(public payload: ErrorInfo) {}
 }
 
+export class Delete implements Action {
+  readonly type = ProjectActionTypes.Delete;
+}
+
+export class DeleteSuccess implements Action {
+  readonly type = ProjectActionTypes.DeleteSuccess;
+}
+
+export class DeleteFailed implements ActionWithPayload<ErrorInfo> {
+  readonly type = ProjectActionTypes.DeleteFailed;
+
+  constructor(public payload: ErrorInfo) {}
+}
+
 export type ProjectActions =
   | Load
   | LoadSuccess
   | LoadFailed
   | Save
   | SaveSuccess
-  | SaveFailed;
+  | SaveFailed
+  | Delete
+  | DeleteSuccess
+  | DeleteFailed;

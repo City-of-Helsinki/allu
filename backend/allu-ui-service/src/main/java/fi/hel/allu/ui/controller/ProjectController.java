@@ -110,6 +110,14 @@ public class ProjectController {
     return new ResponseEntity<>(projectServiceComposer.update(id, project), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> delete(@PathVariable int id) {
+    projectServiceComposer.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
   /**
    * Find all applications for a project
    *

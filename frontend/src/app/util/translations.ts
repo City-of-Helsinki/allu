@@ -469,8 +469,9 @@ export const translations = {
       applicationFetchFailed: 'Hankkeen hakemusten hakeminen epäonnistui',
       applicationAddFailed: 'Hakemuksen lisääminen hankkeelle epäonnistui',
       applicationRemoveFailed: 'Hakemuksen poistaminen hankkeelta epäonnistui',
-      updateParentFailed: 'Projektin päivitys epäonnistui',
-      removeParentFailed: 'Projektin poistaminen epäonnistui'
+      updateParentFailed: 'Hankkeen päivitys epäonnistui',
+      removeParentFailed: 'Hankkeen poistaminen epäonnistui',
+      removeFailed: 'Hankkeen poistaminen epäonnistui'
     },
     applications: {
       title: 'Hakemukset',
@@ -480,7 +481,14 @@ export const translations = {
       fromBasket: 'Tuo korista'
     },
     button: {
-      addApplication: 'Lisää hakemus'
+      addApplication: 'Lisää hakemus',
+      remove: 'Poista hanke'
+    },
+    confirmCancel: {
+      title: 'Haluatko varmasti poistaa hankkeen?',
+      description: 'Hanke ja kaikki siihen liittyvät hankkeet poistetaan.',
+      confirmText: 'Poista hanke',
+      cancelText: 'Hylkää'
     }
   },
   customer: {

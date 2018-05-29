@@ -134,6 +134,10 @@ public class SearchService {
         projects);
   }
 
+  public void deleteProject(int id) {
+    restTemplate.delete(applicationProperties.getProjectSearchDeleteUrl(), id);
+  }
+
   /**
    * Insert customers to search index.
    *

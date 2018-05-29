@@ -77,6 +77,12 @@ public class ProjectServiceComposer {
     return updatedProject;
   }
 
+  public void delete(int id) {
+    projectService.delete(id);
+    searchService.deleteProject(id);
+  }
+
+
   public List<ApplicationJson> addApplications(int id, List<Integer> applicationIds) {
     Set<Integer> relatedProjects = getRelatedProjects(id, applicationIds);
     List<Integer> addedApplicationIds = projectService.addApplications(id, applicationIds);
@@ -149,4 +155,5 @@ public class ProjectServiceComposer {
         .map(a -> applicationJsonService.getFullyPopulatedApplication(a))
         .collect(Collectors.toList());
   }
+
 }

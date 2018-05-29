@@ -433,4 +433,8 @@ public class ProjectService {
       historyDao.addProjectChange(projectId, change);
     }
   }
+
+  public void delete(int id) {
+    projectDao.delete(id);
+  }
 }

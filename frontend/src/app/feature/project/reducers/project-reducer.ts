@@ -49,6 +49,14 @@ export function reducer(state: State = initialState, action: ProjectActions) {
       };
     }
 
+    case ProjectActionTypes.DeleteSuccess: {
+      return {
+        ...state,
+        current: undefined
+      };
+    }
+
+
     default:
       return {...state};
   }

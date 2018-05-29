@@ -50,6 +50,14 @@ public class ProjectController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> delete(
+      @PathVariable String id) {
+    projectSearchService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
   @RequestMapping(value = "/index", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteIndex() {
     projectSearchService.deleteIndex();
