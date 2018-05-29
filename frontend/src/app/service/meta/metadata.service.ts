@@ -10,6 +10,8 @@ import {catchError, map} from 'rxjs/internal/operators';
 const APPLICATION_URL = '/api/applications';
 const METADATA_URL = '/api/meta';
 
+export const META_PROJECT = 'Project';
+
 @Injectable()
 export class MetadataService {
 

@@ -1,19 +1,23 @@
 import {Project} from '../../../model/project/project';
 import {ProjectActions, ProjectActionTypes} from '../actions/project-actions';
+import {StructureMeta} from '../../../model/application/meta/structure-meta';
+import {ProjectMetaActions, ProjectMetaActionType} from '../actions/project-meta-actions';
 
 export interface State {
   loaded: boolean;
   loading: boolean;
   current: Project;
+  meta: StructureMeta;
 }
 
 const initialState: State = {
   loaded: false,
   loading: false,
-  current: undefined
+  current: undefined,
+  meta: undefined
 };
 
-export function reducer(state: State = initialState, action: ProjectActions) {
+export function reducer(state: State = initialState, action: ProjectActions | ProjectMetaActions) {
   switch (action.type) {
     case ProjectActionTypes.Load: {
       return {
@@ -56,6 +60,12 @@ export function reducer(state: State = initialState, action: ProjectActions) {
       };
     }
 
+    case ProjectMetaActionType.LoadSuccess: {
+      return {
+        ...state,
+        meta: action.payload
+      };
+    }
 
     default:
       return {...state};

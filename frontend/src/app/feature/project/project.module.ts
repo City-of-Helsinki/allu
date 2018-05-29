@@ -30,6 +30,7 @@ import {ProjectEffects} from './effects/project-effects';
 import {ApplicationBasketEffects} from './effects/application-basket-effects';
 import {ProjectCommentsComponent} from './comments/project-comments.component';
 import {CommentModule} from '../comment/comment.module';
+import {HistoryModule} from '../history/history.module';
 
 @NgModule({
   imports: [
@@ -54,7 +55,8 @@ import {CommentModule} from '../comment/comment.module';
       ChildProjectEffects,
       ApplicationBasketEffects
     ]),
-    CommentModule
+    CommentModule,
+    HistoryModule
   ],
   declarations: [
     ProjectComponent,
