@@ -78,6 +78,6 @@ export class ChargeBasisEntryForm {
   }
 
   private static splitExplanation(explanation: string): string[] {
-    return explanation.split('\n');
+    return explanation.split('\n').filter(line => line.trim().length > 0);
   }
 }
