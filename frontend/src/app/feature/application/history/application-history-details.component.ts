@@ -1,10 +1,10 @@
 import {AfterContentInit, Component, Input} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 
-import {ApplicationChange} from '../../../model/application/application-change/application-change';
+import {ChangeHistoryItem} from '../../../model/history/change-history-item';
 import {User} from '../../../model/user/user';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
-import {ApplicationFieldChange} from '../../../model/application/application-change/application-field-change';
+import {FieldChange} from '../../../model/history/field-change';
 import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
 
 @Component({
@@ -16,11 +16,11 @@ import {ApplicationHistoryFormatter} from '../../../service/history/application-
 })
 export class ApplicationHistoryDetailsComponent implements AfterContentInit {
 
-  @Input() change: ApplicationChange;
+  @Input() change: ChangeHistoryItem;
   @Input() user: User;
   @Input() meta: StructureMeta;
 
-  fieldChanges: Array<ApplicationFieldChange>;
+  fieldChanges: Array<FieldChange>;
 
   constructor(public dialogRef: MatDialogRef<ApplicationHistoryDetailsComponent>, private formatter: ApplicationHistoryFormatter) {}
 

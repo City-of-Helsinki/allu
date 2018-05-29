@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {StructureMeta} from '../../model/application/meta/structure-meta';
-import {ApplicationFieldChange, FieldChangeType} from '../../model/application/application-change/application-field-change';
+import {FieldChange, FieldChangeType} from '../../model/history/field-change';
 import {AttributeDataType} from '../../model/application/meta/attribute-data-type';
 import {TimeUtil} from '../../util/time.util';
 import {findTranslation} from '../../util/translations';
@@ -27,7 +27,7 @@ export class ApplicationHistoryFormatter {
     this.meta = meta;
   }
 
-  public toFormattedFieldNames(fieldChange: ApplicationFieldChange): ApplicationFieldChange {
+  public toFormattedFieldNames(fieldChange: FieldChange): FieldChange {
     let uiFieldName = this.meta.uiName(fieldChange.fieldName);
 
     switch (fieldChange.fieldChangeType) {
@@ -38,30 +38,30 @@ export class ApplicationHistoryFormatter {
         break;
       default:
     }
-    return new ApplicationFieldChange(fieldChange.fieldName, fieldChange.oldValue, fieldChange.newValue, uiFieldName);
+    return new FieldChange(fieldChange.fieldName, fieldChange.oldValue, fieldChange.newValue, uiFieldName);
   }
 
-  public toFormattedChange(fieldChange: ApplicationFieldChange): ApplicationFieldChange {
+  public toFormattedChange(fieldChange: FieldChange): FieldChange {
     const dataType = this.meta.dataType(fieldChange.fieldName);
     return this.formatByDataType(dataType, fieldChange);
   }
 
-  private formatByDataType(dataType: string, fieldChange: ApplicationFieldChange): ApplicationFieldChange {
+  private formatByDataType(dataType: string, fieldChange: FieldChange): FieldChange {
     switch (AttributeDataType[dataType]) {
       case AttributeDataType.DATETIME:
-        return new ApplicationFieldChange(
+        return new FieldChange(
           fieldChange.fieldName,
           TimeUtil.formatHistoryDateTimeString(fieldChange.oldValue),
           TimeUtil.formatHistoryDateTimeString(fieldChange.newValue),
           this.meta.uiName(fieldChange.fieldName));
       case AttributeDataType.BOOLEAN:
-        return new ApplicationFieldChange(
+        return new FieldChange(
           fieldChange.fieldName,
           Some(fieldChange.oldValue).map(val => findTranslation(['common.boolean', val])).orElse(''),
           Some(fieldChange.newValue).map(val => findTranslation(['common.boolean', val])).orElse(''),
           this.meta.uiName(fieldChange.fieldName));
       case AttributeDataType.ENUMERATION:
-        return new ApplicationFieldChange(
+        return new FieldChange(
           fieldChange.fieldName,
           this.formatNonEmpty(fieldChange.fieldName, fieldChange.oldValue),
           this.formatNonEmpty(fieldChange.fieldName, fieldChange.newValue),
@@ -78,7 +78,7 @@ export class ApplicationHistoryFormatter {
       .orElse('');
   }
 
-  private formatDefault(fieldChange: ApplicationFieldChange): ApplicationFieldChange {
+  private formatDefault(fieldChange: FieldChange): FieldChange {
     let oldValue = StringUtil.replaceNull(fieldChange.oldValue);
     let newValue = StringUtil.replaceNull(fieldChange.newValue);
     let uiFieldName = this.meta.uiName(fieldChange.fieldName);
@@ -96,6 +96,6 @@ export class ApplicationHistoryFormatter {
       default:
         break;
     }
-    return new ApplicationFieldChange(fieldChange.fieldName, oldValue, newValue, uiFieldName);
+    return new FieldChange(fieldChange.fieldName, oldValue, newValue, uiFieldName);
   }
 }

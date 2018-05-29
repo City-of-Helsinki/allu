@@ -4,7 +4,7 @@ import {MatDialog} from '@angular/material';
 
 import {HistoryHub} from '../../../service/history/history-hub';
 import {ApplicationStore} from '../../../service/application/application-store';
-import {ApplicationChange} from '../../../model/application/application-change/application-change';
+import {ChangeHistoryItem} from '../../../model/history/change-history-item';
 import {UserHub} from '../../../service/user/user-hub';
 import {ApplicationHistoryDetailsComponent} from './application-history-details.component';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
@@ -22,7 +22,7 @@ import {MetadataService} from '../../../service/meta/metadata.service';
 })
 export class ApplicationHistoryComponent implements OnInit {
 
-  history: Observable<Array<ApplicationChange>>;
+  history: Observable<Array<ChangeHistoryItem>>;
   meta: StructureMeta;
 
   constructor(private applicationStore: ApplicationStore,
@@ -42,7 +42,7 @@ export class ApplicationHistoryComponent implements OnInit {
     err => this.notification.error(findTranslation('history.error.metadata')));
   }
 
-  showDetails(change: ApplicationChange) {
+  showDetails(change: ChangeHistoryItem) {
     const dialogRef = this.dialog.open<ApplicationHistoryDetailsComponent>(ApplicationHistoryDetailsComponent);
     const detailsComponent = dialogRef.componentInstance;
     detailsComponent.change = change;

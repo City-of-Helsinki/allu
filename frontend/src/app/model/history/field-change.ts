@@ -1,6 +1,6 @@
-import {StringUtil} from '../../../util/string.util';
-import {ArrayUtil} from '../../../util/array-util';
-import {NumberUtil} from '../../../util/number.util';
+import {StringUtil} from '../../util/string.util';
+import {ArrayUtil} from '../../util/array-util';
+import {NumberUtil} from '../../util/number.util';
 
 const DISTRICT_ID_CHANGE = 'cityDistrictId';
 const CUSTOMER_CHANGE = '/customer/';
@@ -20,7 +20,7 @@ export enum FieldChangeOperationType {
   CHANGE
 }
 
-export class ApplicationFieldChange {
+export class FieldChange {
   private _id: number;
   private _fieldChangeType: FieldChangeType;
   private _fieldChangeOperationType: FieldChangeOperationType;
