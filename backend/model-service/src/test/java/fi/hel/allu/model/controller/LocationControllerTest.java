@@ -80,10 +80,8 @@ public class LocationControllerTest {
   @Test
   public void addLocationWithId() throws Exception {
     // add location with id. Should not use the given id
-    Location[] foo = wtc.parseObjectFromResult(addLocation("Kuoppakuja 2", "06660", "Hellsinki", makeGeometry(), 113), Location[].class);
-    ResultActions resultActions =
-        addLocation("Kuoppakuja 2", "06660", "Hellsinki", makeGeometry(), 113)
-            .andExpect(status().isOk()).andExpect(jsonPath("$.[0].id", not(113)));
+    addLocation("Kuoppakuja 2", "06660", "Hellsinki", makeGeometry(), 999999999)
+        .andExpect(status().isOk()).andExpect(jsonPath("$.[0].id", not(999999999)));
   }
 
   @Test
