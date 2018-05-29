@@ -13,6 +13,8 @@ import * as fromApplicationBasket from './application-basket-reducer';
 import * as fromRoot from '../../allu/reducers/index';
 import * as fromComments from '../../comment/reducers/comment-reducer';
 import * as fromProjectComments from './project-comments-reducer';
+import * as fromHistory from '../../history/reducers/history-reducer';
+import * as fromProjectHistory from './project-history-reducer';
 import {Project} from '../../../model/project/project';
 import {SortDirection} from '../../../model/common/sort';
 
@@ -25,6 +27,7 @@ export interface ProjectState {
   customerSearch: fromCustomerSearch.State;
   applicationBasket: fromApplicationBasket.State;
   comments: fromComments.State;
+  history: fromHistory.State;
 }
 
 export interface State extends fromRoot.State {
@@ -39,7 +42,8 @@ export const reducers: ActionReducerMap<ProjectState> = {
   children: fromChildProjects.reducer,
   customerSearch: fromCustomerSearch.reducer,
   applicationBasket: fromApplicationBasket.reducer,
-  comments: fromProjectComments.reducer
+  comments: fromProjectComments.reducer,
+  history: fromProjectHistory.reducer
 };
 
 export const getProjectState = createFeatureSelector<ProjectState>('project');
@@ -193,5 +197,16 @@ export const getSortedComments = createSelector(
 export const getLatestComments = (direction: SortDirection) => createSelector(
   getAllComments,
   comments => comments.slice().sort(fromComments.sort(direction))
+);
+
+// History selectors
+export const getHistoryState = createSelector(
+  getProjectState,
+  (state: ProjectState) => state.history
+);
+
+export const getHistory = createSelector(
+  getHistoryState,
+  (state: fromHistory.State) => state.history
 );
 
