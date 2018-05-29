@@ -1,5 +1,7 @@
 import {Application} from '../../../model/application/application';
 import {ApplicationActions, ApplicationActionType} from '../actions/application-actions';
+import {InvoicingActions, InvoicingActionType} from '../actions/invoicing-actions';
+import {ObjectUtil} from '../../../util/object.util';
 
 export interface State {
   loaded: boolean;
@@ -13,7 +15,7 @@ const initialState: State = {
   current: new Application()
 };
 
-export function reducer(state: State = initialState, action: ApplicationActions) {
+export function reducer(state: State = initialState, action: ApplicationActions | InvoicingActions) {
   switch (action.type) {
     case ApplicationActionType.Load: {
       return {
@@ -37,6 +39,15 @@ export function reducer(state: State = initialState, action: ApplicationActions)
         ...state,
         loading: false,
         loaded: true
+      };
+    }
+
+    case InvoicingActionType.SetRecipientSuccess: {
+      const application = ObjectUtil.clone(state.current);
+      application.invoiceRecipientId = action.payload;
+      return {
+        ...state,
+        current: application
       };
     }
 

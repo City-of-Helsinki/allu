@@ -17,7 +17,8 @@ import {CustomerService} from '../customer/customer.service';
 import {catchError, distinctUntilChanged, filter, map, skip, switchMap, take, tap} from 'rxjs/internal/operators';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '../../feature/application/reducers';
-import {Load as LoadTags, LoadSuccess} from '../../feature/application/actions/application-tag-actions';
+import * as TagAction from '../../feature/application/actions/application-tag-actions';
+import * as ApplicationAction from '../../feature/application/actions/application-actions';
 
 export interface ApplicationState {
   application?: Application;
@@ -165,7 +166,7 @@ export class ApplicationStore {
           attachments: application.attachmentList,
           draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
         });
-        this.store.dispatch(new LoadSuccess(application.applicationTags));
+        this.store.dispatch(new TagAction.LoadSuccess(application.applicationTags));
       })
     );
   }
@@ -218,7 +219,7 @@ export class ApplicationStore {
   saveDeposit(deposit: Deposit): Observable<Deposit> {
     return this.depositService.save(deposit).pipe(
       tap(saved => {
-        this.store.dispatch(new LoadTags());
+        this.store.dispatch(new TagAction.Load());
         this.appStore.next({...this.current, deposit: saved});
       })
     );
@@ -278,6 +279,8 @@ export class ApplicationStore {
 
   private saved(application: Application): void {
     this.appStore.next({...this.current, application});
+    this.store.dispatch(new ApplicationAction.LoadSuccess(application));
+    this.store.dispatch(new TagAction.Load());
   }
 
   private get current(): ApplicationState {

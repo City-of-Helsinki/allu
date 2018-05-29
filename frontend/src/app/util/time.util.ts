@@ -57,6 +57,10 @@ export class TimeUtil {
     return date ? moment(date).day(asWeeks).toDate() : undefined;
   }
 
+  public static addDays(date: Date, days: number): Date {
+    return date ? moment(date).add(days, 'day').toDate() : undefined;
+  }
+
   public static dateWithYear(date: Date, year: number): Date {
     if (date && year) {
       const baseDate = moment(date);

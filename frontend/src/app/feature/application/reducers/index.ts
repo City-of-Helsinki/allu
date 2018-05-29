@@ -10,6 +10,8 @@ import * as fromApplicationComments from '../../application/reducers/application
 import * as fromTags from './application-tags-reducer';
 import * as fromRoot from '../../allu/reducers/index';
 import {Application} from '../../../model/application/application';
+import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
+import {ApplicationTag} from '../../../model/application/tag/application-tag';
 
 
 export interface ApplicationState {
@@ -85,5 +87,10 @@ export const getTagsState = createSelector(
 export const getTags = createSelector(
   getTagsState,
   fromTags.getCurrent
+);
+
+export const hasTag = (tagType: ApplicationTagType) => createSelector(
+  getTags,
+  (tags: ApplicationTag[]) => tags.some(tag => tagType === ApplicationTagType[tag.type])
 );
 

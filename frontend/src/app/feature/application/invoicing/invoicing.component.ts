@@ -15,7 +15,11 @@ import {NumberUtil} from '../../../util/number.util';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {CurrentUser} from '../../../service/user/current-user';
 import {RoleType, MODIFY_ROLES} from '../../../model/user/role-type';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {catchError, map, switchMap, take} from 'rxjs/internal/operators';
+import {applicationCanBeEdited} from '../../../model/application/application-status';
+import {SetRecipient} from '../actions/invoicing-actions';
+import {Store} from '@ngrx/store';
+import * as fromApplication from '../reducers';
 
 @Component({
   selector: 'invoicing',
@@ -37,7 +41,8 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
               private customerService: CustomerService,
               private dialog: MatDialog,
               private currentUser: CurrentUser,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private store: Store<fromApplication.State>) {
   }
 
   ngOnInit(): void {
@@ -60,32 +65,19 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
   }
 
   onSubmit(): void {
-    this.saveApplicationInfo()
-      .subscribe(
-        () => this.saved(),
-        error => this.notification.error(error));
+    this.saveApplicationInfo().subscribe(
+      () => this.saved(),
+      error => this.notification.error(error));
   }
 
   cancel(): void {
     this.reset.next(true);
-
   }
 
   private saveApplicationInfo(): Observable<Application> {
-    const application = this.applicationStore.snapshot.application;
-
-    const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
-    application.notBillable = invoicingInfo.notBillable;
-    application.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;
-    application.customerReference = invoicingInfo.customerReference;
-    application.invoicingDate = invoicingInfo.invoicingDate;
-    application.skipPriceCalculation = invoicingInfo.skipPriceCalculation;
-
     return this.saveCustomer().pipe(
-      switchMap(customer => {
-        application.invoiceRecipientId = customer.id;
-        return this.applicationStore.save(application);
-      })
+      switchMap(customer => this.saveInvoiceRecipient(customer)),
+      switchMap(recipient => this.saveInvoicingInfo(recipient))
     );
   }
 
@@ -100,6 +92,31 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     } else {
       return of(customer);
     }
+  }
+
+  private saveInvoiceRecipient(customer: Customer): Observable<Customer> {
+    this.store.dispatch(new SetRecipient(customer.id));
+    return of(customer);
+  }
+
+  private saveInvoicingInfo(invoiceRecipient: Customer): Observable<Application> {
+    return this.store.select(fromApplication.getCurrentApplication).pipe(
+      take(1),
+      switchMap(app => {
+        if (applicationCanBeEdited(app.statusEnum)) {
+          const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
+          app.notBillable = invoicingInfo.notBillable;
+          app.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;
+          app.customerReference = invoicingInfo.customerReference;
+          app.invoicingDate = invoicingInfo.invoicingDate;
+          app.skipPriceCalculation = invoicingInfo.skipPriceCalculation;
+          app.invoiceRecipientId = invoiceRecipient.id;
+          return this.applicationStore.save(app);
+        } else {
+          return of(app);
+        }
+      })
+    );
   }
 
   private saved(): void {

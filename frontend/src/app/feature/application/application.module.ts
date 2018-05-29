@@ -46,6 +46,7 @@ import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {ApplicationTagEffects} from './effects/application-tag-effects';
+import {InvoicingEffects} from './effects/invoicing-effects';
 
 @NgModule({
   imports: [
@@ -53,7 +54,8 @@ import {ApplicationTagEffects} from './effects/application-tag-effects';
     RouterModule.forChild(applicationRoutes),
     StoreModule.forFeature('application', reducers),
     EffectsModule.forFeature([
-      ApplicationTagEffects
+      ApplicationTagEffects,
+      InvoicingEffects
     ]),
     FormsModule,
     ReactiveFormsModule,

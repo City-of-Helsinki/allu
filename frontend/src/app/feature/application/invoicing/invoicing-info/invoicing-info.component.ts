@@ -16,11 +16,15 @@ import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-mo
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {Deposit} from '../../../../model/application/invoice/deposit';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
-import {applicationCanBeEdited} from '../../../../model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus} from '../../../../model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {CustomerService} from '../../../../service/customer/customer.service';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
-import {filter, switchMap} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {Store} from '@ngrx/store';
+import * as fromApplication from '../../reducers';
+import {ApplicationTagType} from '../../../../model/application/tag/application-tag-type';
+import {TimeUtil} from '../../../../util/time.util';
 
 @Component({
   selector: 'invoicing-info',
@@ -37,6 +41,7 @@ export class InvoicingInfoComponent implements OnInit {
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
   recipientForm: FormGroup;
+  applicationLoaded: Observable<boolean>;
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
@@ -45,6 +50,7 @@ export class InvoicingInfoComponent implements OnInit {
   private originalRecipientForm: CustomerForm;
 
   constructor(private applicationStore: ApplicationStore,
+              private store: Store<fromApplication.State>,
               private customerService: CustomerService,
               private dialog: MatDialog,
               private notification: NotificationService) {
@@ -58,11 +64,12 @@ export class InvoicingInfoComponent implements OnInit {
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
     this.initForm();
     this.reset.pipe(filter(r => !!r)).subscribe(r => this.resetMe(r));
+    this.applicationLoaded = this.store.select(fromApplication.getApplicationLoaded);
   }
 
   invoiceRecipientChange(recipient: CustomerForm) {
     if (recipient.id) {
-      this.disableCustomerEdit();
+      this.setCustomerEdit();
     }
   }
 
@@ -117,39 +124,41 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.applicationStore.application.subscribe(app => {
-      Some(app.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
+    this.store.select(fromApplication.getCurrentApplication).pipe(take(1))
+      .subscribe(app => {
+        Some(app.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
+        const invoicingDate = app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app);
 
-      this.form.patchValue({
-        notBillable: app.notBillable,
-        notBillableReason: app.notBillableReason,
-        customerReference: app.customerReference,
-        invoicingDate: app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app),
-        skipPriceCalculation: app.skipPriceCalculation
-      });
-      this.originalForm = this.form.getRawValue();
+        this.form.patchValue({
+          notBillable: app.notBillable,
+          notBillableReason: app.notBillableReason,
+          customerReference: app.customerReference,
+          invoicingDate: invoicingDate,
+          skipPriceCalculation: app.skipPriceCalculation
+        });
+        this.originalForm = this.form.getRawValue();
 
-      if (!applicationCanBeEdited(app.statusEnum)) {
-        this.form.disable();
-      }
+        this.setEditable(app.statusEnum, invoicingDate);
     });
 
-    this.applicationStore.deposit.pipe(filter(deposit => !!deposit))
-      .subscribe(deposit => this.form.patchValue({
-          depositAmount: deposit.amountEuro,
-          depositReason: deposit.reason,
-          depositStatus: deposit.uiStatus
-        })
-      );
+    this.initDeposit();
+  }
 
-    this.applicationStore.loadDeposit().subscribe();
+  private setEditable(status: ApplicationStatus, invoicingDate: Date) {
+    if (!applicationCanBeEdited(status)) {
+      this.form.disable();
+
+      this.invoiceRecipientCanBeEdited(status, invoicingDate)
+        .pipe(filter(canBeEdited => canBeEdited))
+        .subscribe(() => this.setCustomerEdit());
+    }
   }
 
   private findAndPatchCustomer(id: number): void {
-    this.disableCustomerEdit();
+    this.setCustomerEdit();
     this.customerService.findCustomerById(id)
       .subscribe(customer => {
-        this.recipientForm.patchValue(CustomerForm.fromCustomer(customer));
+        this.recipientForm.patchValue(CustomerForm.fromCustomer(customer), {emitEvent: false});
         this.originalRecipientForm = this.recipientForm.getRawValue();
     });
   }
@@ -166,10 +175,15 @@ export class InvoicingInfoComponent implements OnInit {
     }
   }
 
-  private disableCustomerEdit(): void {
-    Object.keys(this.recipientForm.controls)
-      .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
-      .forEach(key => this.recipientForm.get(key).disable({emitEvent: false}));
+  private setCustomerEdit(): void {
+    Object.keys(this.recipientForm.controls).forEach(key => {
+      const field = this.recipientForm.get(key);
+      if (ALWAYS_ENABLED_FIELDS.indexOf(key) >= 0) {
+        field.enable({emitEvent: false});
+      } else {
+        field.disable({emitEvent: false});
+      }
+    });
   }
 
   private currentDeposit(): Deposit {
@@ -195,5 +209,29 @@ export class InvoicingInfoComponent implements OnInit {
     } else {
       this.recipientForm.reset();
     }
+  }
+
+  private initDeposit(): void {
+    this.applicationStore.deposit.pipe(filter(deposit => !!deposit))
+      .subscribe(deposit => this.form.patchValue({
+          depositAmount: deposit.amountEuro,
+          depositReason: deposit.reason,
+          depositStatus: deposit.uiStatus
+        })
+      );
+
+    this.applicationStore.loadDeposit().subscribe();
+  }
+
+  private invoiceRecipientCanBeEdited(status: ApplicationStatus, invoicingDate: Date): Observable<boolean> {
+    const waitingForDecision = ApplicationStatus.DECISIONMAKING === status;
+    const decision = ApplicationStatus.DECISION === status;
+    const tomorrow = TimeUtil.toStartDate(TimeUtil.addDays(new Date(), 1));
+    const dayBeforeInvoicing = !TimeUtil.isBefore(invoicingDate, tomorrow);
+    const editableAfterDecision = decision && dayBeforeInvoicing;
+
+    return this.store.select(fromApplication.hasTag(ApplicationTagType.SAP_ID_MISSING)).pipe(
+      map(sapIdMissing => waitingForDecision || (sapIdMissing && editableAfterDecision))
+    );
   }
 }
