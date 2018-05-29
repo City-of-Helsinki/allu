@@ -30,29 +30,23 @@ public class MailComposerService {
 
   // E-mail subjects for various application types:
   private static final String SUBJECT_GENERIC = "Päätös %s";
-
   private static final String SUBJECT_PLACEMENT_CONTR = "Sijoitussopimus %s";
-
   private static final String SUBJECT_EXCAVATION_ANN = "Kaivuilmoitus %s";
-
   private static final String SUBJECT_EVENT = "Tapahtumapäätös %s";
-
   private static final String SUBJECT_CABLE_REPORT = "Johtoselvitys %s";
-
-  private static final String SUBJECT_AREA_RENTAL = "Aluevarauspäätös %s";
-
+  private static final String SUBJECT_AREA_RENTAL = "Aluevuokrauspäätös %s";
   private static final String SUBJECT_TRAFFIC_ARRANGEMENT = "Liikennejärjestelypäätös %s";
 
   // E-mail templates for various application types:
   private static final String TEMPLATE_GENERIC = "yleinen";
-
   private static final String TEMPLATE_CABLE_REPORT = "johtoselvitys";
-
   private static final String TEMPLATE_SHORT_TERM_RENTAL = "lyhytaikainen_vuokraus";
-
   private static final String TEMPLATE_EVENT = "tapahtuma";
+  private static final String TEMPLATE_STREET_WORK = "katutyo";
 
-  private static final String TEMPLATE_TRAFFIC_ARRANGEMENT = "liikennejarjestely";
+  private static final String DECISION_TYPE_TRAFFIC_ARRANGEMENT = "liikennejärjestelypäätös";
+  private static final String DECISION_TYPE_AREA_RENTAL = "aluevuokrauspäätös";
+  private static final String DECISION_TYPE_EXCAVATION_ANN = "kaivuilmoituspäätös";
 
   // File extensions:
   private static final String EXTENSION_TXT = ".txt";
@@ -99,7 +93,7 @@ public class MailComposerService {
         .withHtmlBody(htmlBodyFor(applicationJson))
         .withAttachments(attachments)
         .withInlineResources(inlineResources)
-        .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody()))
+        .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType())))
         .send();
     } else {
       logger.warn("No email recipients");
@@ -136,9 +130,10 @@ public class MailComposerService {
     }
   }
 
-  private Map<String, Object> mailModel(ApplicationJson applicationJson, String accompanyingMessage) {
+  private Map<String, Object> mailModel(ApplicationJson applicationJson, String accompanyingMessage, String decisionType) {
     Map<String, Object> result = new HashMap<>();
     result.put("applicationId", applicationJson.getApplicationId());
+    result.put("decisionType", decisionType);
     result.put("accompanyingMessage", accompanyingMessage);
     result.put("handlerName", Optional.ofNullable(applicationJson.getHandler()).map(h -> h.getRealName()).orElse(null));
     result.put("totalPrice", applicationJson.getCalculatedPrice());
@@ -155,7 +150,10 @@ public class MailComposerService {
       case EVENT:
         return TEMPLATE_EVENT;
       case TEMPORARY_TRAFFIC_ARRANGEMENTS:
-        return TEMPLATE_TRAFFIC_ARRANGEMENT;
+      case AREA_RENTAL:
+      case EXCAVATION_ANNOUNCEMENT:
+        // Same template for temporary traffic arrangement, area rental and excavation announcement
+        return TEMPLATE_STREET_WORK;
       default:
         return TEMPLATE_GENERIC;
     }
@@ -177,6 +175,19 @@ public class MailComposerService {
         return SUBJECT_TRAFFIC_ARRANGEMENT;
       default:
         return SUBJECT_GENERIC;
+    }
+  }
+
+  private String decisionTypeFor(ApplicationType type) {
+    switch (type) {
+      case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+        return DECISION_TYPE_TRAFFIC_ARRANGEMENT;
+      case AREA_RENTAL:
+        return DECISION_TYPE_AREA_RENTAL;
+      case EXCAVATION_ANNOUNCEMENT:
+        return DECISION_TYPE_EXCAVATION_ANN;
+      default:
+        return "";
     }
   }
 

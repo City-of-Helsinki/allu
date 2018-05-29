@@ -1,0 +1,17 @@
+Hei,
+
+Viestin liitteenä on ${decisionType} ${applicationId} liitteineen. Tutustukaa päätöksen sisältöön huolellisesti ja ottakaa yhteyttä, mikäli teillä on kysyttävää tai huomautettavaa siihen liittyen.
+
+${accompanyingMessage}
+
+Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/mkqgmxkxxv
+Ystävällisin terveisin
+
+${handlerName}
+
+Helsingin kaupunki
+Kaupunkiympäristön asukas- ja yrityspalvelut
+Alueidenkäyttö
+Puh. 09 310 22111
+luvat@hel.fi
+www.hel.fi/luvat/yleisetalueet
