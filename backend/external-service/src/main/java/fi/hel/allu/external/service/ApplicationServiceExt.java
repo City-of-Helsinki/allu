@@ -26,6 +26,7 @@ import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.InvoiceJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
 import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
@@ -113,7 +114,7 @@ public class ApplicationServiceExt {
   public void validateFullUpdateAllowed(Integer applicationId) {
     StatusType status = applicationServiceComposer.getApplicationStatus(applicationId);
     if (status != StatusType.PENDING_CLIENT) {
-      throw new IllegalOperationException("Update of an application with status " + status + " is not allowed");
+      throw new IllegalOperationException("application.ext.notpending");
     }
   }
 
@@ -121,7 +122,7 @@ public class ApplicationServiceExt {
     Integer externalOwnerId = applicationServiceComposer.getApplicationExternalOwner(applicationId);
     getExternalUserId();
     if (!getExternalUserId().equals(externalOwnerId)) {
-      throw new IllegalOperationException("Trying to modify application not owned by current user");
+      throw new IllegalOperationException("application.ext.notowner");
     }
   }
 
@@ -157,8 +158,13 @@ public class ApplicationServiceExt {
   private void validateInformationRequestOpen(Integer requestId) {
     InformationRequest request =  informationRequestService.findById(requestId);
     if (request.getStatus() != InformationRequestStatus.OPEN) {
-      throw new IllegalOperationException("Information request with id " + requestId + "  is not open.");
+      throw new IllegalOperationException("informationrequest.notopen");
     }
+  }
+
+  public void cancelApplication(Integer id) {
+    applicationServiceComposer.changeStatus(
+        id, StatusType.CANCELLED, new StatusChangeInfoJson());
   }
 
 }

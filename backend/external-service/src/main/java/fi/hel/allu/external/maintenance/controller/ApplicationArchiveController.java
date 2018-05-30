@@ -18,7 +18,7 @@ import fi.hel.allu.servicecore.service.ApplicationArchiverService;
  */
 @RestController
 @RequestMapping("/v1/applications")
-public class ApplicationController {
+public class ApplicationArchiveController {
 
   @Autowired
   ApplicationArchiverService applicationArchiverService;
