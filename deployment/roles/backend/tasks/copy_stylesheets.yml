@@ -1,9 +1,9 @@
 - name: remove old pdf-service stylesheets
   file:
-    path: /home/allu/services/pdf-service/stylesheets
+    path: /srv/data/allu/services/pdf-service/stylesheets
     state: absent
 
 - name: copy pdf-service stylesheets
-  copy: src=pdf-stylesheets/ dest=/home/allu/services/pdf-service/stylesheets
+  copy: src=pdf-stylesheets/ dest=/srv/data/allu/services/pdf-service/stylesheets
         directory_mode=0755 mode=0644 owner=allu group=allu
   become: yes

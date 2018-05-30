@@ -65,7 +65,7 @@
     image: allu_backend
     restart_policy: always
     volumes:
-      - /home/allu:/servicehome:rw
+      - /srv/data/allu:/servicehome:rw
     published_ports:
       - "9000:9000"
       - "9040:9040"

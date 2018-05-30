@@ -63,7 +63,7 @@
     image: allu_elasticsearch
     restart_policy: always
     volumes:
-      - /home/allu/elasticsearch:/usr/share/elasticsearch/data:rw
+      - /srv/data/allu/elasticsearch:/usr/share/elasticsearch/data:rw
     published_ports:
       - "9200:9200"
       - "9300:9300"
