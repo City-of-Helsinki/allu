@@ -1,5 +1,13 @@
-- name: create backend service directories under allu home
-  file: path=/home/allu/services/{{ item }}
+- name: create data directory
+  file: path=/srv/data/allu
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=r,o=r"
+  become: yes
+
+- name: create backend service directories
+  file: path=/srv/data/allu/services/{{ item }}
         state=directory
         owner=allu
         group=allu
@@ -7,7 +15,7 @@
   with_items: "{{ allu_service_list }}"
 
 - name: create logging directories for different services
-  file: path=/home/allu/logs/{{ item }}
+  file: path=/srv/data/allu/logs/{{ item }}
         state=directory
         owner=allu
         group=allu
@@ -15,28 +23,28 @@
   with_items: "{{ allu_service_list }}"
 
 - name: create process directory for SAP customer files
-  file: path=/home/allu/services/scheduler-service/sap/customer-process
+  file: path=/srv/data/allu/services/scheduler-service/sap/customer-process
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
 
 - name: create archive directory for SAP customer files
-  file: path=/home/allu/services/scheduler-service/sap/customer-archive
+  file: path=/srv/data/allu/services/scheduler-service/sap/customer-archive
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
 
 - name: create archive  directory for failed SAP customer files
-  file: path=/home/allu/services/scheduler-service/sap/customer-failed
+  file: path=/srv/data/allu/services/scheduler-service/sap/customer-failed
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
 
 - name: create archive directory for SAP invoices
-  file: path=/home/allu/services/scheduler-service/sap/invoice-archive
+  file: path=/srv/data/allu/services/scheduler-service/sap/invoice-archive
         state=directory
         owner=allu
         group=allu
