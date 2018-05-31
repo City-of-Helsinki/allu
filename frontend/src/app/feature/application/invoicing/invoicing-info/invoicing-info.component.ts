@@ -231,7 +231,7 @@ export class InvoicingInfoComponent implements OnInit {
     const editableAfterDecision = decision && dayBeforeInvoicing;
 
     return this.store.select(fromApplication.hasTag(ApplicationTagType.SAP_ID_MISSING)).pipe(
-      map(sapIdMissing => waitingForDecision || (sapIdMissing && editableAfterDecision))
+      map(sapIdMissing => waitingForDecision || sapIdMissing || editableAfterDecision)
     );
   }
 }
