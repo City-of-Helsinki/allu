@@ -31,6 +31,7 @@ import {ApplicationBasketEffects} from './effects/application-basket-effects';
 import {ProjectCommentsComponent} from './comments/project-comments.component';
 import {CommentModule} from '../comment/comment.module';
 import {HistoryModule} from '../history/history.module';
+import {ProjectHistoryComponent} from './history/project-history.component';
 
 @NgModule({
   imports: [
@@ -68,7 +69,8 @@ import {HistoryModule} from '../history/history.module';
     ProjectApplicationsComponent,
     ProjectApplicationListComponent,
     ApplicationSelectComponent,
-    ProjectCommentsComponent
+    ProjectCommentsComponent,
+    ProjectHistoryComponent
   ],
   providers: [
     ProjectService,

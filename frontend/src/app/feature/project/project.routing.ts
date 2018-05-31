@@ -4,11 +4,11 @@ import {ProjectSummaryComponent} from './summary/project-summary.component';
 import {ProjectEditComponent} from './edit/project-edit.component';
 import {ProjectSearchComponent} from './search/project-search.component';
 import {ProjectComponent} from './project.component';
-import {ProjectApplicationListComponent} from './applications/project-application-list.component';
 import {ProjectResolve} from './project-resolve';
 import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {ProjectCommentsComponent} from './comments/project-comments.component';
+import {ProjectHistoryComponent} from './history/project-history.component';
 
 export const projectRoutes: Routes = [
   { path: 'projects', canActivate: [AuthGuard], children: [
@@ -20,8 +20,8 @@ export const projectRoutes: Routes = [
         { path: '', children: [
           { path: '', redirectTo: 'info', pathMatch: 'full' },
           { path: 'info', component: ProjectSummaryComponent},
-          { path: 'applications', component: ProjectApplicationListComponent },
           { path: 'comments', component: ProjectCommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
+          { path: 'history', component: ProjectHistoryComponent, canActivate: [AuthGuard] },
         ]}
       ]},
       { path: 'edit', component: ProjectEditComponent, resolve: { project: ProjectResolve }}

@@ -1314,7 +1314,7 @@ export const translations = {
     }
   },
   history: {
-    title: 'Muutoshistoria',
+    title: 'Historia',
     changeTime: 'Muutettu',
     changer: 'Tekijä',
     error: {

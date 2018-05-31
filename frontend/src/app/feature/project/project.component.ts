@@ -38,7 +38,8 @@ export class ProjectComponent implements OnInit {
   sidebar(): Array<SidebarItem> {
     return [
       {type: 'BASIC_INFO'},
-      {type: 'COMMENTS', count: this.store.select(fromProject.getCommentCount)}
+      {type: 'COMMENTS', count: this.store.select(fromProject.getCommentCount)},
+      {type: 'HISTORY'}
     ];
   }
 }
