@@ -3,6 +3,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {HistoryEffects} from './effects/history-effects';
 import {HistoryComponent} from './history.component';
 import {AlluCommonModule} from '../common/allu-common.module';
+import {HistoryItemComponent} from './history-item.component';
 
 @NgModule({
   imports: [
@@ -10,7 +11,8 @@ import {AlluCommonModule} from '../common/allu-common.module';
     EffectsModule.forFeature([HistoryEffects])
   ],
   declarations: [
-    HistoryComponent
+    HistoryComponent,
+    HistoryItemComponent
   ],
   providers: [],
   exports: [

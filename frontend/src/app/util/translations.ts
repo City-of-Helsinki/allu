@@ -827,6 +827,11 @@ export const translations = {
       toSelf: 'Omaksi',
       moveTo: 'Siirrä'
     },
+    time: {
+      today: 'Tänään',
+      withinWeek: 'Viikon sisällä',
+      older: 'Vanhemmat',
+    },
     error: {
       downloadFailed: 'Tiedoston lataus epäonnistui'
     },

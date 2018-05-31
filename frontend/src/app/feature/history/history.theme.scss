@@ -1,0 +1,13 @@
+@mixin history-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  ul.history-items {
+    li:nth-of-type(odd) {
+      background: mat-color($primary, 100);
+    }
+
+    li:nth-of-type(even) {
+      background: mat-color($primary, 50);
+    }
+  }
+}

@@ -10,7 +10,11 @@
     }
 
     mat-card-content label.info-label {
-        color: $allu-text-black;
+      color: $allu-text-black;
+    }
+
+    &.mat-card .mat-divider {
+      border-top-color: mat-color($primary, 200);
     }
   }
 }

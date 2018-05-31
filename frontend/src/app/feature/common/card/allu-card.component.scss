@@ -23,6 +23,24 @@
   }
 }
 
+:host mat-card.mat-card ::ng-deep {
+  .mat-divider {
+    position: relative;
+    margin: 25px 0;
+  }
+}
+
+:host(.full-width) ::ng-deep {
+  mat-card {
+    padding: 24px 0;
+
+    .allu-card-title,
+    .allu-card-content {
+      padding: 0 24px;
+    }
+  }
+}
+
 :host(.slim-card) ::ng-deep {
   mat-card {
     display: flex;
@@ -42,7 +60,7 @@
       flex-direction: row;
       flex-wrap: wrap;
       align-items: center;
-      
+
       & > div {
         padding: 0 10px;
         white-space: nowrap;

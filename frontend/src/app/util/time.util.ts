@@ -115,16 +115,16 @@ export class TimeUtil {
    *
    * @returns {boolean} true when first date is before second or given dates are undefined, otherwise false.
    */
-  public static isBefore(first: Date, second: Date): boolean {
+  public static isBefore(first: Date, second: Date, granularity?: UnitOfTime): boolean {
     if (first && second) {
-      return moment(first).isBefore(moment(second));
+      return moment(first).isBefore(moment(second), granularity);
     } else {
       return true;
     }
   }
 
-  public static isAfter(first: Date, second: Date): boolean {
-    return this.isBefore(second, first);
+  public static isAfter(first: Date, second: Date, granularity?: UnitOfTime): boolean {
+    return this.isBefore(second, first, granularity);
   }
 
   public static isBetweenInclusive(date: Date, start: Date, end: Date): boolean {
@@ -143,6 +143,12 @@ export class TimeUtil {
 
   public static equals(left: Date, right: Date): boolean {
     return this.compareTo(left, right) === 0;
+  }
+
+  public static isSame(left: Date, right: Date, granularity: string): boolean {
+    const lMoment = moment(left);
+    const rMoment = moment(right);
+    return lMoment.isSame(rMoment, granularity);
   }
 
   public static isInWinterTime(date: Date): boolean {

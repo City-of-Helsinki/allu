@@ -1,0 +1,15 @@
+<div fxLayout="row wrap" class="history-item">
+  <div fxFlex="0 0 15%">
+    {{change.changeTime | date:'short'}}
+  </div>
+  <div fxFlex="0 0 20%" class="text-highlight">
+    {{change.changeType}}
+  </div>
+  <div fxFlex="0 0 20%">
+    <span [matBadge]="change.fieldChanges.length" matBadgeOverlap="false"
+          matBadgeColor="accent" class="allu-badge-center"></span>
+  </div>
+  <div fxFlex="0 0 20%">
+    {{change.user?.realName}}
+  </div>
+</div>

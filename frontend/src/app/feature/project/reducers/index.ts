@@ -207,6 +207,6 @@ export const getHistoryState = createSelector(
 
 export const getHistory = createSelector(
   getHistoryState,
-  (state: fromHistory.State) => state.history
+  fromHistory.getHistory
 );
 

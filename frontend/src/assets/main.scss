@@ -12,6 +12,7 @@
 @import "table";
 @import "accordion";
 @import "notification/oval";
+@import "badge";
 @import 'allu-common';
 @import 'allu-common-theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
@@ -20,6 +21,7 @@
 @import '../app/feature/stored-filter/stored-filter.component.theme';
 @import '../app/feature/project/header/project-header.component.theme';
 @import '../app/feature/comment/comments.theme';
+@import '../app/feature/history/history.theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
 @import "~ngx-toastr/toastr.css";
 
@@ -39,6 +41,7 @@
 @include project-header-theme($allu-theme);
 @include oval-theme($allu-theme);
 @include comments-theme($allu-theme);
+@include history-theme($allu-theme);
 
 // Reset
 html,

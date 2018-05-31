@@ -35,6 +35,10 @@ export function reducer(state: State = initialState, action: HistoryActions) {
         history: []
       };
     }
+
+    default: {
+      return {...state};
+    }
   }
 }
 
