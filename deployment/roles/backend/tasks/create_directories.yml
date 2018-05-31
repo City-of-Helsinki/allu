@@ -3,7 +3,7 @@
         state=directory
         owner=allu
         group=allu
-        mode="u=rwx,g=r,o=r"
+        mode="u=rwx,g=rx,o=rx"
   become: yes
 
 - name: create backend service directories
