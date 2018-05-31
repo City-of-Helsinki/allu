@@ -1361,6 +1361,7 @@ export const translations = {
     FORBIDDEN: 'Oikeutesi eivät riitä',
     NOT_FOUND: 'Haku epäonnistui',
     INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
+    GATEWAY_TIMEOUT: 'Palvelimeen ei saatu yhteyttä',
     UNKNOWN: 'Tuntematon virhe'
   },
   sort: {
