@@ -32,6 +32,7 @@ export class ErrorHandler {
       case HttpStatus.FORBIDDEN:
       case HttpStatus.NOT_FOUND:
       case HttpStatus.INTERNAL_SERVER_ERROR:
+      case HttpStatus.GATEWAY_TIMEOUT:
         return findTranslation(['httpStatus', HttpStatus[error.status]]);
       default:
         return findTranslation('httpStatus.UNKNOWN');
