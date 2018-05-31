@@ -159,10 +159,7 @@ public class ApplicationDao {
   private BooleanExpression strictStartEndTimeCondition(LocationSearchCriteria lsc) {
     BooleanExpression strictStartEndTimeCondition = null;
     if (lsc.getAfter() != null) {
-      BooleanExpression beforeOrUnfinished = application.endTime.after(lsc.getAfter())
-          .or(application.endTime.before(ZonedDateTime.now())
-              .and(application.status.notIn(StatusType.FINISHED, StatusType.CANCELLED)));
-      strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, beforeOrUnfinished);
+      strictStartEndTimeCondition = application.endTime.after(lsc.getAfter());
     }
     if (lsc.getBefore() != null) {
       strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, application.startTime.before(lsc.getBefore()));

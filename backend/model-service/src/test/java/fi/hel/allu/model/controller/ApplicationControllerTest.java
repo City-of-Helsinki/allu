@@ -239,7 +239,7 @@ public class ApplicationControllerTest {
   }
 
   @Test
-  public void testFindNonFinishedAfterEndTime() throws Exception {
+  public void testFindWhenOverlappingDates() throws Exception {
     Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
     newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
     newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
@@ -252,8 +252,8 @@ public class ApplicationControllerTest {
 
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     lsc.setIntersects(geometry);
-    lsc.setAfter(ZonedDateTime.parse("2016-11-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2016-11-03T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setAfter(ZonedDateTime.parse("2015-06-01T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-07-01T08:00:00+02:00[Europe/Helsinki]"));
     lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
 
     ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
