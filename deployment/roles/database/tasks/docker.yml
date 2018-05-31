@@ -63,7 +63,7 @@
     image: allu_database
     restart_policy: always
     volumes:
-      - /home/allu/database/data:/var/lib/postgresql/data:rw
+      - /srv/data/allu/database/data:/var/lib/postgresql/data:rw
     published_ports:
       - "5432:5432"
   become: yes
