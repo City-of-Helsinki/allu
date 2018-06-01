@@ -4,14 +4,21 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.ContactDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.service.changehistory.ApplicationChange;
+import fi.hel.allu.model.service.changehistory.ContactChange;
+import fi.hel.allu.model.service.changehistory.CustomerChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,16 +45,22 @@ public class ProjectService {
   private final LocationDao locationDao;
   private final HistoryDao historyDao;
   private final ObjectComparer objectComparer;
+  private final CustomerDao customerDao;
+  private final ContactDao contactDao;
 
   @Autowired
   public ProjectService(ProjectDao projectDao,
       ApplicationDao applicationDao,
       LocationDao locationDao,
-      HistoryDao historyDao) {
+      HistoryDao historyDao,
+      CustomerDao customerDao,
+      ContactDao contactDao) {
     this.projectDao = projectDao;
     this.applicationDao = applicationDao;
     this.locationDao = locationDao;
     this.historyDao = historyDao;
+    this.customerDao = customerDao;
+    this.contactDao = contactDao;
     this.objectComparer = new ObjectComparer();
   }
 
@@ -142,7 +155,7 @@ public class ProjectService {
     project.setCityDistricts(currentProject.getCityDistricts());
     project.setParentId(currentProject.getParentId());
     final Project updatedProject = projectDao.update(id, project);
-    addChangeItem(id, userId, currentProject, updatedProject, ChangeType.CONTENTS_CHANGED);
+    addProjectChangeItems(userId, currentProject, updatedProject);
     return updatedProject;
   }
 
@@ -370,6 +383,44 @@ public class ProjectService {
     return projectDao.findById(projectId).orElseThrow(() -> new NoSuchEntityException(errorText, projectId));
   }
 
+  /* Separates customer and contact changes into own change types. */
+  private void addProjectChangeItems(int userId, Project origCurrentProject, Project origUpdatedProject) {
+    final Project currentProject = new Project(origCurrentProject);
+    final Project updatedProject = new Project(origUpdatedProject);
+    final Integer currentCustomerId = currentProject.getCustomerId();
+    final Integer updatedCustomerId = updatedProject.getCustomerId();
+    currentProject.setCustomerId(null);
+    updatedProject.setCustomerId(null);
+    final Integer currentContactId = currentProject.getContactId();
+    final Integer updatedContactId = updatedProject.getContactId();
+    currentProject.setContactId(null);
+    updatedProject.setContactId(null);
+
+    addChangeItem(currentProject.getId(), userId, currentProject, updatedProject, ChangeType.CONTENTS_CHANGED);
+    if (!Objects.equals(currentCustomerId, updatedCustomerId)) {
+      addChangeItem(currentProject.getId(), userId, new CustomerChange(getCustomer(currentCustomerId)),
+          new CustomerChange(getCustomer(updatedCustomerId)), ChangeType.CUSTOMER_CHANGED);
+    }
+    if (!Objects.equals(currentContactId, updatedContactId)) {
+      addChangeItem(currentProject.getId(), userId, new ContactChange(getContact(currentContactId)),
+          new ContactChange(getContact(updatedContactId)), ChangeType.CONTACT_CHANGED);
+    }
+  }
+
+  private Customer getCustomer(Integer id) {
+    if (id == null) {
+      return null;
+    }
+    return customerDao.findById(id).get();
+  }
+
+  private Contact getContact(Integer id) {
+    if (id == null) {
+      return null;
+    }
+    return contactDao.findById(id).get();
+  }
+
   /*
    * Add a change item to given user's change history. Compare oldData with
    * newData and log all differences between them.
@@ -380,30 +431,6 @@ public class ProjectService {
     if (!fieldChanges.isEmpty()) {
       final ChangeHistoryItem change = new ChangeHistoryItem(userId, changeType, null, ZonedDateTime.now(), fieldChanges);
       historyDao.addProjectChange(projectId, change);
-    }
-  }
-
-  /** Helper class for saving application adding/removing into project history. */
-  private class ApplicationChange {
-    private final String applicationName;
-    private final Integer id;
-    private final String applicationId;
-    public ApplicationChange(Application application) {
-      this.applicationName = application.getName();
-      this.id = application.getId();
-      this.applicationId = application.getApplicationId();
-    }
-
-    public String getApplicationName() {
-      return applicationName;
-    }
-
-    public Integer getId() {
-      return id;
-    }
-
-    public String getApplicationId() {
-      return applicationId;
     }
   }
 }

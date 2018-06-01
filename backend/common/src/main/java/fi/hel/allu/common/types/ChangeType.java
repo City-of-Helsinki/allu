@@ -6,5 +6,7 @@ public enum ChangeType {
   CONTENTS_CHANGED, // Application contents changed
   REPLACED, // Application replaced
   APPLICATION_ADDED, // Application added to a project
-  APPLICATION_REMOVED // Application removed from a project
+  APPLICATION_REMOVED, // Application removed from a project
+  CUSTOMER_CHANGED,
+  CONTACT_CHANGED
 }
