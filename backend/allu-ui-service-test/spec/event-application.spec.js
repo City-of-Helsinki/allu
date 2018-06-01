@@ -79,7 +79,8 @@ describe('Event application', () => {
         'email': 'info@tervaajat.fi',
         'phone': '09-1234567',
         'active': true,
-        'country': 'FI'
+        'country': 'FI',
+        'projectIdentifierPrefix': 'TERVA'
       },
       'contacts': [tervaContactNew]
     };
