@@ -18,7 +18,8 @@ export class CommentMapper {
       backendComment.text,
       TimeUtil.dateFromBackend(backendComment.createTime),
       TimeUtil.dateFromBackend(backendComment.updateTime),
-      UserMapper.mapBackend(backendComment.user)
+      UserMapper.mapBackend(backendComment.user),
+      backendComment.commentator
     );
   }
 
@@ -30,7 +31,8 @@ export class CommentMapper {
         text: comment.text,
         createTime: Some(comment.createTime).map(createTime => createTime.toISOString()).orElse(undefined),
         updateTime: Some(comment.updateTime).map(updateTime => updateTime.toISOString()).orElse(undefined),
-        user: UserMapper.mapFrontend(comment.user)
+        user: UserMapper.mapFrontend(comment.user),
+        commentator: comment.commentator
       }
       : undefined;
   }
@@ -43,4 +45,5 @@ export interface BackendComment {
   createTime: string;
   updateTime: string;
   user: BackendUser;
+  commentator: string;
 }

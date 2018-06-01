@@ -385,6 +385,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/projects/{projectId}/comments");
   }
 
+  public String getCommentsFindByIdUrl() {
+    return getModelServiceUrl("/comments/{id}");
+  }
+
   /**
    * Get URL to add a comment for an application
    *

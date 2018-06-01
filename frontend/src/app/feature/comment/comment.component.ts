@@ -34,7 +34,8 @@ export class CommentComponent implements OnInit {
       text: [undefined],
       createTime: [undefined],
       updateTime: [undefined],
-      user: [undefined]
+      user: [undefined],
+      commentator: [undefined]
     });
   }
 

@@ -1032,7 +1032,8 @@ export const translations = {
       PRELIMINARY_SUPERVISION: 'Aloitusvalvonta',
       SUPERVISION: 'Valvonta',
       PROPOSE_APPROVAL: 'Ehdotettu hyväksyttäväksi',
-      PROPOSE_REJECT: 'Ehdotettu hylättäväksi'
+      PROPOSE_REJECT: 'Ehdotettu hylättäväksi',
+      EXTERNAL_SYSTEM: 'Ulkoinen järjestelmä'
     },
     addComment: 'LISÄÄ KOMMENTTI',
     newComment: 'Uusi kommentti',

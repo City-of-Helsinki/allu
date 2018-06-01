@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.CommentDao;
 import fi.hel.allu.model.domain.Comment;
 
@@ -20,6 +21,13 @@ public class CommentController {
   @Autowired
   public CommentController(CommentDao commentDao) {
     this.commentDao = commentDao;
+  }
+
+  @RequestMapping(value = "/comments/{id}", method = RequestMethod.GET)
+  public ResponseEntity<Comment> findById(@PathVariable int id) {
+    return new ResponseEntity<>(
+        commentDao.findById(id).orElseThrow(() -> new NoSuchEntityException("Comment not found with id " + id)),
+        HttpStatus.OK);
   }
 
   /**

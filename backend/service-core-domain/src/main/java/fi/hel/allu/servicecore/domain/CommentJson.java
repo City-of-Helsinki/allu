@@ -18,6 +18,7 @@ public class CommentJson {
   private ZonedDateTime createTime;
   private ZonedDateTime updateTime;
   private UserJson user;
+  private String commentator;
 
   /**
    * Get the database ID of the comment. Can be null for new comments.
@@ -95,5 +96,13 @@ public class CommentJson {
 
   public void setUser(UserJson user) {
     this.user = user;
+  }
+
+  public String getCommentator() {
+    return commentator;
+  }
+
+  public void setCommentator(String commentator) {
+    this.commentator = commentator;
   }
 }

@@ -8,7 +8,8 @@ export class CommentForm {
     public text?: string,
     public createTime?: Date,
     public updateTime?: Date,
-    public user?: User
+    public user?: User,
+    public commentator?: string
   ) {}
 
   static from(comment: Comment): CommentForm {
@@ -19,6 +20,7 @@ export class CommentForm {
     form.createTime = comment.createTime;
     form.updateTime = comment.updateTime;
     form.user = comment.user;
+    form.commentator = comment.commentator;
     return form;
   }
 
@@ -30,6 +32,7 @@ export class CommentForm {
     comment.createTime = form.createTime;
     comment.updateTime = form.updateTime;
     comment.user = form.user;
+    comment.commentator = form.commentator;
     return comment;
   }
 }

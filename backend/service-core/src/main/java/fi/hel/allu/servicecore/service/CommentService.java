@@ -1,10 +1,8 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.model.domain.Comment;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.CommentJson;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.model.domain.Comment;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.CommentJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 
 @Service
 public class CommentService {
@@ -28,7 +30,8 @@ public class CommentService {
 
   private static Set<CommentType> allowedUserCommentTypes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
       CommentType.INTERNAL,
-      CommentType.INVOICING
+      CommentType.INVOICING,
+      CommentType.EXTERNAL_SYSTEM
   )));
 
   @Autowired
@@ -45,6 +48,10 @@ public class CommentService {
 
   public List<CommentJson> findByProjectId(int projectId) {
     return findBy(applicationProperties.getCommentsFindByProjectUrl(), projectId);
+  }
+
+  public Comment findById(int id) {
+    return restTemplate.getForEntity(applicationProperties.getCommentsFindByIdUrl(), Comment.class, id).getBody();
   }
 
   public CommentJson addApplicationComment(int applicationId, CommentJson commentJson) {
@@ -77,8 +84,7 @@ public class CommentService {
 
   public CommentJson updateComment(int id, CommentJson commentJson) {
     validateCommentType(commentJson.getType());
-    Comment comment = mapToModel(commentJson);
-    comment.setUserId(userService.getCurrentUser().getId());
+    Comment comment = mapToModel(commentJson, userService.getCurrentUser());
     HttpEntity<Comment> request = new HttpEntity<>(comment);
     ResponseEntity<Comment> result = restTemplate.exchange(applicationProperties.getCommentsUpdateUrl(), HttpMethod.PUT,
         request, Comment.class, id);
@@ -105,19 +111,22 @@ public class CommentService {
     commentJson.setCreateTime(comment.getCreateTime());
     commentJson.setUpdateTime(comment.getUpdateTime());
     commentJson.setUser(Optional.ofNullable(comment.getUserId()).map(id -> userService.findUserById(id)).orElse(null));
+    commentJson.setCommentator(comment.getCommentator());
     return commentJson;
   }
 
   /*
    * Map a UI-domain Comment to model-domain
    */
-  private Comment mapToModel(CommentJson commentJson) {
+  private Comment mapToModel(CommentJson commentJson, UserJson user) {
     Comment comment = new Comment();
     comment.setId(commentJson.getId());
     comment.setType(commentJson.getType());
     comment.setText(commentJson.getText());
     comment.setCreateTime(commentJson.getCreateTime());
     comment.setUpdateTime(commentJson.getUpdateTime());
+    comment.setUserId(user.getId());
+    comment.setCommentator(commentJson.getCommentator() != null ? commentJson.getCommentator() : user.getRealName());
     return comment;
   }
 
@@ -141,10 +150,10 @@ public class CommentService {
   }
 
   private CommentJson addComment(String url, int targetId, CommentJson commentJson) {
-    Comment comment = mapToModel(commentJson);
-    comment.setUserId(userService.getCurrentUser().getId());
+    Comment comment = mapToModel(commentJson, userService.getCurrentUser());
     ResponseEntity<Comment> result = restTemplate.postForEntity(url, comment, Comment.class, targetId);
     return mapToJson(result.getBody());
   }
+
 
 }

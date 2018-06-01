@@ -18,6 +18,9 @@ public class Comment {
   private ZonedDateTime createTime;
   private ZonedDateTime updateTime;
   private Integer userId;
+  private String commentator;
+  private Integer applicationId;
+  private Integer projectId;
 
   /**
    * Get the database ID of the comment. Can be null for new comments.
@@ -96,5 +99,29 @@ public class Comment {
 
   public void setUserId(Integer userId) {
     this.userId = userId;
+  }
+
+  public String getCommentator() {
+    return commentator;
+  }
+
+  public void setCommentator(String commentator) {
+    this.commentator = commentator;
+  }
+
+  public Integer getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(Integer applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public Integer getProjectId() {
+    return projectId;
+  }
+
+  public void setProjectId(Integer projectId) {
+    this.projectId = projectId;
   }
 }

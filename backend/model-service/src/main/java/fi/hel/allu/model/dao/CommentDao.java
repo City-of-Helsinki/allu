@@ -66,22 +66,22 @@ public class CommentDao {
 
   @Transactional
   public Comment insertForApplication(Comment c, int applicationId) {
+    c.setApplicationId(applicationId);
     c.setCreateTime(ZonedDateTime.now());
     c.setUpdateTime(ZonedDateTime.now());
     int id = queryFactory.insert(comment)
         .populate(c, DefaultMapper.WITH_NULL_BINDINGS)
-        .set(comment.applicationId, applicationId)
         .executeWithKey(comment.id);
     return findById(id).get();
   }
 
   @Transactional
   public Comment insertForProject(Comment c, int projectId) {
+    c.setProjectId(projectId);
     c.setCreateTime(ZonedDateTime.now());
     c.setUpdateTime(ZonedDateTime.now());
     int id = queryFactory.insert(comment)
         .populate(c, DefaultMapper.WITH_NULL_BINDINGS)
-        .set(comment.projectId, projectId)
         .executeWithKey(comment.id);
     return findById(id).get();
   }

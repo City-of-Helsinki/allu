@@ -6,7 +6,7 @@
       </div>
 
       <div fxFlex="none" *ngIf="!isNew">
-        {{form.value.user.realName}} {{form.value.updateTime | date:'short'}}
+        {{form.value.commentator || form.value.user.realName }} {{form.value.updateTime | date:'short'}}
       </div>
 
       <div fxFlex="none" *ngIf="!form.enabled">

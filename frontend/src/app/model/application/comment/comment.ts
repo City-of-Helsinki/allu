@@ -9,7 +9,8 @@ export class Comment {
     public text?: string,
     public createTime?: Date,
     public updateTime?: Date,
-    public user?: User
+    public user?: User,
+    public commentator?: string
   ) {}
 
   copy(): Comment {
