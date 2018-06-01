@@ -1,6 +1,7 @@
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import * as fromAuth from './auth-reducer';
 import * as fromRoot from '../../allu/reducers';
+import {User} from '../../../model/user/user';
 
 export interface AuthState {
   status: fromAuth.State;
@@ -29,4 +30,9 @@ export const getUser = createSelector(
 export const getLoggedIn = createSelector(
   getAuthStatusState,
   fromAuth.getLoggedIn
+);
+
+export const getAllowedApplicationTypes = createSelector(
+  getUser,
+  (user: User) => !!user ? user.allowedApplicationTypes : []
 );

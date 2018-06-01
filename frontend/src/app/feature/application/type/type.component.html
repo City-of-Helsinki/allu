@@ -9,7 +9,7 @@
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="type" class="input-full-width"
                             [placeholder]="'application.type.titleLong' | translation">
-                  <mat-option *ngFor="let type of applicationTypes" [value]="type">
+                  <mat-option *ngFor="let type of applicationTypes | async" [value]="type">
                     {{['application.type', type] | translation}}
                   </mat-option>
                 </mat-select>

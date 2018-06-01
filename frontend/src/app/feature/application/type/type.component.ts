@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {
   ApplicationType,
-  creatableTypes,
   hasMultipleKinds,
   kindEntryByTypeAndKind,
   typeEntryByType
@@ -17,9 +16,10 @@ import {
 } from '../../../model/application/type/application-specifier';
 import {EnumUtil} from '../../../util/enum.util';
 import {ArrayUtil} from '../../../util/array-util';
-import {ApplicationStatus} from '../../../model/application/application-status';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/internal/operators';
+import {Observable, of, Subject} from 'rxjs';
+import {filter, map, takeUntil} from 'rxjs/internal/operators';
+import {Store} from '@ngrx/store';
+import * as fromAuth from '../../auth/reducers';
 
 @Component({
   selector: 'application-type',
@@ -36,7 +36,7 @@ export class TypeComponent implements OnInit, OnDestroy {
   @Output() onKindSpecifierChange = new EventEmitter<KindsWithSpecifiers>();
 
   multipleKinds = false;
-  applicationTypes = creatableTypes.map(t => ApplicationType[t]);
+  applicationTypes: Observable<string[]>;
   availableKinds: string[] = [];
   availableKindsWithSpecifiers: ApplicationKindEntry[] = [];
   form: FormGroup;
@@ -47,17 +47,17 @@ export class TypeComponent implements OnInit, OnDestroy {
   private draftCtrl: FormControl;
   private destroy = new Subject<boolean>();
 
-  constructor(private applicationStore: ApplicationStore, private fb: FormBuilder) {
+  constructor(private applicationStore: ApplicationStore,
+              private store: Store<fromAuth.State>,
+              private fb: FormBuilder) {
   }
 
   ngOnInit(): any {
     this.initForm();
+    this.applicationTypes = this.getAvailableTypes()
+      .pipe(map(types => types.sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type))));
 
-    if (this.typeChangeDisabled) {
-      // Show all values although only event and short term rental can be selected
-      this.applicationTypes = EnumUtil.enumValues(ApplicationType);
-      this.kindsCtrl.updateValueAndValidity();
-    }
+    this.kindsCtrl.updateValueAndValidity();
 
     if (this.readonly) {
       this.form.disable();
@@ -144,6 +144,14 @@ export class TypeComponent implements OnInit, OnDestroy {
       specifiers: this.specifiersCtrl,
       draft: this.draftCtrl
     });
+  }
+
+  private getAvailableTypes() {
+    if (this.typeChangeDisabled) {
+      return of(EnumUtil.enumValues(ApplicationType));
+    } else {
+      return this.store.select(fromAuth.getAllowedApplicationTypes);
+    }
   }
 
   private updateSelectedSpecifiers() {

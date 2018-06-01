@@ -201,13 +201,3 @@ export function hasSpecifiers(type: ApplicationType): boolean {
     ApplicationType.PLACEMENT_CONTRACT
   ].indexOf(type) >= 0;
 }
-
-export const creatableTypes = [
-  ApplicationType.EVENT,
-  ApplicationType.SHORT_TERM_RENTAL,
-  ApplicationType.NOTE,
-  ApplicationType.PLACEMENT_CONTRACT,
-  ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
-  ApplicationType.CABLE_REPORT
-];
-

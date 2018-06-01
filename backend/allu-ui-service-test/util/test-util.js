@@ -40,7 +40,14 @@ function tryToCreateUsers() {
     'emailAddress':'kasittelija@helsinki.fi',
     'title':'Käsittelijä',
     'allowedApplicationTypes':[
-      'EVENT'
+      'EXCAVATION_ANNOUNCEMENT',
+      'AREA_RENTAL',
+      'TEMPORARY_TRAFFIC_ARRANGEMENTS',
+      'CABLE_REPORT',
+      'PLACEMENT_CONTRACT',
+      'EVENT',
+      'SHORT_TERM_RENTAL',
+      'NOTE'
     ],
     'assignedRoles':[
       'ROLE_VIEW',

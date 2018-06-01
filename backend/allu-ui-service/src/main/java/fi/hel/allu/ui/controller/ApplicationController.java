@@ -26,6 +26,7 @@ import fi.hel.allu.servicecore.service.AttachmentService;
 import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.InvoiceService;
 import fi.hel.allu.servicecore.validation.ApplicationGeometryValidator;
+import fi.hel.allu.ui.security.ApplicationSecurityService;
 
 @RestController
 @RequestMapping("/applications")
@@ -45,6 +46,9 @@ public class ApplicationController {
   @Autowired
   private ApplicationGeometryValidator geometryValidator;
 
+  @Autowired
+  private ApplicationSecurityService applicationSecurityService;
+
 
   @InitBinder("applicationJson")
   protected void initBinder(WebDataBinder binder) {
@@ -52,7 +56,7 @@ public class ApplicationController {
   }
 
   @RequestMapping(method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
+  @PreAuthorize("@applicationSecurityService.canCreate(#applicationJson.getType())")
   public ResponseEntity<ApplicationJson> create(@Valid @RequestBody ApplicationJson applicationJson) {
     return new ResponseEntity<>(applicationServiceComposer.createApplication(applicationJson), HttpStatus.OK);
   }
@@ -376,7 +380,7 @@ public class ApplicationController {
 
   @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam("invoicerecipientid") final Integer invoiceRecipientId) {
+  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam("f") final Integer invoiceRecipientId) {
     applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
