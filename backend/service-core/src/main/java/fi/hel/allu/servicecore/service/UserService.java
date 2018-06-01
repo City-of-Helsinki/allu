@@ -9,6 +9,8 @@ import fi.hel.allu.servicecore.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -67,6 +69,7 @@ public class UserService {
     return mapUsers(userResults.getBody());
   }
 
+  @Cacheable(value = "users", key = "#id")
   public UserJson findUserById(int id) {
     ResponseEntity<User> userResults = restTemplate.getForEntity(
         applicationProperties.getUserByIdUrl(), User.class, id);
@@ -83,6 +86,7 @@ public class UserService {
     return UserMapper.mapToUserJson(userResults.getBody());
   }
 
+  @CacheEvict(value="users", key="#userJson.id")
   public void updateUser(UserJson userJson) {
     User user = UserMapper.mapToModelUser(userJson);
     restTemplate.put(applicationProperties.getUserUpdateUrl(), user);

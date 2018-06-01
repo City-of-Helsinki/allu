@@ -39,6 +39,7 @@ public class ApplicationHistoryService {
   private UserService userService;
   private ObjectComparer comparer;
   private Pattern skipFieldPattern;
+  private ChangeHistoryMapper changeHistoryMapper;
 
   // regex to skip id fields since they are needed for comparison but no need to show them to user.
   // TODO: add cable report validityTime as skipped field too
@@ -53,10 +54,11 @@ public class ApplicationHistoryService {
 
   @Autowired
   public ApplicationHistoryService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      UserService userService) {
+      UserService userService, ChangeHistoryMapper changeHistoryMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
+    this.changeHistoryMapper = changeHistoryMapper;
     this.skipFieldPattern = Pattern.compile(SKIP_FIELDS_RE);
 
     this.comparer = new ObjectComparer();
@@ -75,7 +77,7 @@ public class ApplicationHistoryService {
    */
   public List<ChangeHistoryItemJson> getChanges(Integer applicationId) {
     return Arrays.stream(restTemplate.getForObject(applicationProperties.getApplicationHistoryUrl(),
-        ChangeHistoryItem[].class, applicationId)).map(c -> ChangeHistoryMapper.mapToJson(c))
+        ChangeHistoryItem[].class, applicationId)).map(c -> changeHistoryMapper.mapToJson(c))
         .collect(Collectors.toList());
   }
 

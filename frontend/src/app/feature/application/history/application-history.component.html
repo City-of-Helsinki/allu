@@ -21,7 +21,7 @@
               {{formatter.toFormattedFieldNames(fieldChange).uiFieldName | commaSeparated: last}}
           </span>
         </td>
-        <td class="no-wrap">{{users.get(change.userId)}}</td>
+        <td class="no-wrap">{{change.user?.realName}}</td>
       </tr>
       </tbody>
     </table>

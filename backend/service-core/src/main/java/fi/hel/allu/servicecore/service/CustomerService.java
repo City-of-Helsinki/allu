@@ -33,6 +33,7 @@ public class CustomerService {
   private final ContactService contactService;
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
+  private final ChangeHistoryMapper changeHistoryMapper;
 
   @Autowired
   public CustomerService(
@@ -42,7 +43,8 @@ public class CustomerService {
       SearchService searchService,
       ContactService contactService,
       UserService userService,
-      PersonAuditLogService personAuditLogService) {
+      PersonAuditLogService personAuditLogService,
+      ChangeHistoryMapper changeHistoryMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.customerMapper = customerMapper;
@@ -50,6 +52,7 @@ public class CustomerService {
     this.contactService = contactService;
     this.userService = userService;
     this.personAuditLogService = personAuditLogService;
+    this.changeHistoryMapper = changeHistoryMapper;
   }
 
 
@@ -225,7 +228,7 @@ public class CustomerService {
   public List<ChangeHistoryItemJson> getChanges(Integer customerId) {
     return Arrays.stream(
         restTemplate.getForObject(applicationProperties.getCustomerHistoryUrl(), ChangeHistoryItem[].class, customerId))
-        .map(c -> ChangeHistoryMapper.mapToJson(c))
+        .map(c -> changeHistoryMapper.mapToJson(c))
         .collect(Collectors.toList());
   }
 

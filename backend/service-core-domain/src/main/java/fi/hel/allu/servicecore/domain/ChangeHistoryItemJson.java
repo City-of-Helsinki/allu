@@ -12,7 +12,7 @@ import java.util.List;
  * contents change, the changed field descriptions are provided.
  */
 public class ChangeHistoryItemJson {
-  private Integer userId;
+  private UserJson user;
   private ChangeType changeType;
   private StatusType newStatus;
   private ZonedDateTime changeTime;
@@ -21,26 +21,21 @@ public class ChangeHistoryItemJson {
   public ChangeHistoryItemJson() {
   }
 
-  public ChangeHistoryItemJson(Integer userId, ChangeType changeType,
+  public ChangeHistoryItemJson(UserJson user, ChangeType changeType,
       StatusType newStatus, ZonedDateTime changeTime, List<FieldChangeJson> fieldChanges) {
-    this.userId = userId;
+    this.user = user;
     this.changeType = changeType;
     this.newStatus = newStatus;
     this.changeTime = changeTime;
     this.fieldChanges = fieldChanges;
   }
 
-  /**
-   * Get the database ID for the user who made the change.
-   *
-   * @return
-   */
-  public Integer getUserId() {
-    return userId;
+  public UserJson getUser() {
+    return user;
   }
 
-  public void setUserId(Integer userId) {
-    this.userId = userId;
+  public void setUser(UserJson user) {
+    this.user = user;
   }
 
   /**

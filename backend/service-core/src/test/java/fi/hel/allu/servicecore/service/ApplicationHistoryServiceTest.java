@@ -13,6 +13,7 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,6 +39,8 @@ public class ApplicationHistoryServiceTest extends MockServices {
   private UserService mockUserService;
   @Mock
   private UserJson mockUserJson;
+  @Mock
+  private ChangeHistoryMapper changeHistoryMapper;
 
   private ApplicationHistoryService applicationHistoryService;
 
@@ -60,7 +63,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Mockito.when(mockUserService.getCurrentUser()).thenReturn(mockUserJson);
     Mockito.when(mockUserJson.getId()).thenReturn(MOCK_USER_ID);
     applicationHistoryService = new ApplicationHistoryService(mockApplicationProperties, mockRestTemplate,
-        mockUserService);
+        mockUserService, changeHistoryMapper);
   }
 
   @Test
@@ -72,11 +75,8 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Mockito.when(mockRestTemplate.getForObject(Mockito.eq(APPLICATION_HISTORY_URL),
         Mockito.eq(ChangeHistoryItem[].class), Mockito.eq(APPLICATION_ID))).thenReturn(changes);
 
-    List<ChangeHistoryItemJson> result = applicationHistoryService.getChanges(APPLICATION_ID);
-    Assert.assertNotNull(result);
-    Assert.assertEquals(1, result.size());
-    Assert.assertEquals(ChangeType.CONTENTS_CHANGED, result.get(0).getChangeType());
-    Assert.assertEquals("foo", result.get(0).getFieldChanges().get(0).getFieldName());
+    applicationHistoryService.getChanges(APPLICATION_ID);
+    Mockito.verify(changeHistoryMapper).mapToJson(changes[0]);
   }
 
   /*

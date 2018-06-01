@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,6 +30,8 @@ public class ProjectServiceTest extends MockServices {
   private ContactService contactService;
   @Mock
   private UserService userService;
+  @Mock
+  private ChangeHistoryMapper changeHistoryMapper;
 
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -43,7 +46,7 @@ public class ProjectServiceTest extends MockServices {
     initSearchMocks();
 
     ProjectMapper projectMapper = new ProjectMapper(customerService, contactService);
-    projectService = new ProjectService(props, restTemplate, projectMapper, userService);
+    projectService = new ProjectService(props, restTemplate, projectMapper, userService, changeHistoryMapper);
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(), Mockito.eq(Project[].class)))
         .thenAnswer(invocation -> new Project[] {createMockProjectModel()});

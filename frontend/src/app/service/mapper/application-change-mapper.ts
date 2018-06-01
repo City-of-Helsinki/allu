@@ -3,6 +3,7 @@ import {ApplicationChange} from '../../model/application/application-change/appl
 import {TimeUtil} from '../../util/time.util';
 import {ApplicationFieldChange} from '../../model/application/application-change/application-field-change';
 import {BackendApplicationFieldChange} from '../backend-model/backend-application-field-change';
+import {UserMapper} from './user-mapper';
 
 class ApplicationFieldChangeMapper {
   public static mapBackend(backendFieldChange: BackendApplicationFieldChange): ApplicationFieldChange {
@@ -17,7 +18,7 @@ class ApplicationFieldChangeMapper {
 export class ApplicationChangeMapper {
   public static mapBackend(backendChange: BackendApplicationChange): ApplicationChange {
     return new ApplicationChange(
-      backendChange.userId,
+      UserMapper.mapBackend(backendChange.user),
       backendChange.changeType,
       backendChange.newStatus,
       TimeUtil.dateFromBackend(backendChange.changeTime),

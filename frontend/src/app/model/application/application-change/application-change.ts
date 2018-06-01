@@ -1,9 +1,10 @@
 import {ApplicationFieldChange} from './application-field-change';
 import {TimeUtil} from '../../../util/time.util';
+import {User} from '../../user/user';
 
 export class ApplicationChange {
   constructor(
-    public userId?: number,
+    public user?: User,
     public changeType?: string,
     public newStatus?: string,
     public changeTime?: Date,

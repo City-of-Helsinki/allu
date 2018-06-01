@@ -32,17 +32,20 @@ public class ProjectService {
   private final RestTemplate restTemplate;
   private final ProjectMapper projectMapper;
   private final UserService userService;
+  private final ChangeHistoryMapper changeHistoryMapper;
 
   @Autowired
   public ProjectService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
       ProjectMapper projectMapper,
-      UserService userService) {
+      UserService userService,
+      ChangeHistoryMapper changeHistoryMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.projectMapper = projectMapper;
     this.userService = userService;
+    this.changeHistoryMapper = changeHistoryMapper;
   }
 
   public ProjectJson findById(int id) {
@@ -171,7 +174,7 @@ public class ProjectService {
   public List<ChangeHistoryItemJson> getChanges(Integer projectId) {
     return Arrays.stream(
         restTemplate.getForObject(applicationProperties.getProjectHistoryUrl(), ChangeHistoryItem[].class, projectId))
-        .map(c -> ChangeHistoryMapper.mapToJson(c))
+        .map(c -> changeHistoryMapper.mapToJson(c))
         .collect(Collectors.toList());
   }
 
