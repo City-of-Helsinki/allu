@@ -8,13 +8,15 @@ public class ApplicationDefaultValueService {
   public void setByType(Application application) {
     switch (application.getType()) {
       case TEMPORARY_TRAFFIC_ARRANGEMENTS:
-        setTemporaryTrafficArrangementDefaults(application);
+        setNotBillable(application);
+      case CABLE_REPORT:
+        setNotBillable(application);
       default:
         break;
     }
   }
 
-  private void setTemporaryTrafficArrangementDefaults(Application application) {
+  private void setNotBillable(Application application) {
     application.setNotBillable(true);
     application.setSkipPriceCalculation(true);
   }

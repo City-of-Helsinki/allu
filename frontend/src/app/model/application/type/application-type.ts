@@ -207,6 +207,7 @@ export const creatableTypes = [
   ApplicationType.SHORT_TERM_RENTAL,
   ApplicationType.NOTE,
   ApplicationType.PLACEMENT_CONTRACT,
-  ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS
+  ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
+  ApplicationType.CABLE_REPORT
 ];
 
