@@ -18,6 +18,7 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.pdf.domain.KindWithSpecifiers;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+import org.apache.commons.lang3.BooleanUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -402,7 +403,7 @@ public class DecisionService {
       decisionJson
           .setEventNature("Lyhytaikainen maanvuokraus, " + translate(application.getKind()));
       decisionJson.setEventDescription(strj.getDescription());
-      decisionJson.setPriceBasisText(shortTermPriceBasis(application.getKind()));
+      decisionJson.setPriceBasisText(shortTermPriceBasis(application.getKind(), strj));
     }
     if (ApplicationKind.BRIDGE_BANNER.equals(application.getKind())) {
       // For bridge banners, site area should be skipped in printout
@@ -414,13 +415,16 @@ public class DecisionService {
    * Return the application-kind specific price basis text for Short term
    * rentals
    */
-  private String shortTermPriceBasis(ApplicationKind kind) {
+  private String shortTermPriceBasis(ApplicationKind kind, ShortTermRentalJson shortTermRental) {
     switch (kind) {
       case BENJI:
         return "320 &euro;/p&auml;iv&auml; + alv";
       case BRIDGE_BANNER:
-        return "<ul><li>Ei-kaupalliset toimijat: 150 &euro;/kalenteriviikko + alv</li>"
-            + "<li>Kaupalliset toimijat: 750 &euro;/kalenteriviikko + alv</li></ul>";
+        if (BooleanUtils.isTrue(shortTermRental.getCommercial())) {
+          return "Kaupalliset toimijat: 750 &euro;/kalenteriviikko + alv";
+        } else {
+          return "Ei-kaupalliset toimijat: 150 &euro;/kalenteriviikko + alv";
+        }
       case CIRCUS:
         return "200 €/p&auml;iv&auml; + alv";
       case DOG_TRAINING_EVENT:
