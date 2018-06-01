@@ -168,7 +168,7 @@ public class ProjectService {
     applicationIds.forEach((appId) -> {
       final Application application = applicationDao.findById(appId);
       if (application != null) {
-        addChangeItem(id, userId, null, new ApplicationChange(application.getName()), ChangeType.APPLICATION_ADDED);
+        addChangeItem(id, userId, null, new ApplicationChange(application), ChangeType.APPLICATION_ADDED);
       }
     });
 
@@ -180,7 +180,7 @@ public class ProjectService {
     final Application app = applicationDao.findById(applicationId);
     applicationDao.updateProject(null, Collections.singletonList(applicationId));
     updateProjectInformation(Collections.singletonList(app.getProjectId()), userId);
-    addChangeItem(app.getProjectId(), userId, new ApplicationChange(app.getName()), null, ChangeType.APPLICATION_REMOVED);
+    addChangeItem(app.getProjectId(), userId, new ApplicationChange(app), null, ChangeType.APPLICATION_REMOVED);
   }
 
   /**
@@ -386,12 +386,24 @@ public class ProjectService {
   /** Helper class for saving application adding/removing into project history. */
   private class ApplicationChange {
     private final String applicationName;
-    public ApplicationChange(String name) {
-      this.applicationName = name;
+    private final Integer id;
+    private final String applicationId;
+    public ApplicationChange(Application application) {
+      this.applicationName = application.getName();
+      this.id = application.getId();
+      this.applicationId = application.getApplicationId();
     }
 
     public String getApplicationName() {
       return applicationName;
+    }
+
+    public Integer getId() {
+      return id;
+    }
+
+    public String getApplicationId() {
+      return applicationId;
     }
   }
 }
