@@ -8,21 +8,10 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("Placement contract (sijoitussopimus)")
 public class PlacementContractExt extends ApplicationExt {
 
-  private PostalAddressExt postalAddress;
-
   @NotEmpty(message = "{application.clientApplicationKind}")
   private String clientApplicationKind;
   private String workDescription;
   private String propertyIdentificationNumber;
-
-  @ApiModelProperty(value = "Postal address")
-  public PostalAddressExt getPostalAddress() {
-    return postalAddress;
-  }
-
-  public void setPostalAddress(PostalAddressExt postalAddress) {
-    this.postalAddress = postalAddress;
-  }
 
   @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
   public String getClientApplicationKind() {

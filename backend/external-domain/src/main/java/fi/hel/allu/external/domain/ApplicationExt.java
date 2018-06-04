@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public abstract class ApplicationExt {
 
+  private PostalAddressExt postalAddress;
   private String name;
   @NotNull(message = "{application.customersWithContacts}")
   @Valid
@@ -38,6 +39,14 @@ public abstract class ApplicationExt {
   private String identificationNumber;
   private String customerReference;
 
+  @ApiModelProperty(value = "Postal address")
+  public PostalAddressExt getPostalAddress() {
+    return postalAddress;
+  }
+
+  public void setPostalAddress(PostalAddressExt postalAddress) {
+    this.postalAddress = postalAddress;
+  }
 
   @ApiModelProperty(value="Name for the application")
   public String getName() {
