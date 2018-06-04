@@ -1,15 +1,20 @@
 <div fxLayout="row wrap" class="history-item">
   <div fxFlex="0 0 15%">
-    {{change.changeTime | date:'short'}}
+    {{time | date:'short'}}
   </div>
   <div fxFlex="0 0 20%" class="text-highlight">
-    {{change.changeType}}
+    {{['history.change.type', type] | translation}}
+  </div>
+  <div fxFlex="0 0 20%" class="text-highlight">
+    <a *ngIf="description.ref; else plainContent" [routerLink]="description.ref">{{description.content}}</a>
+    <ng-template #plainContent>{{description.content}}</ng-template>
+    <span *ngIf="fieldChanges.length"
+          [matBadge]="fieldChanges.length"
+          matBadgeOverlap="false"
+          matBadgeColor="accent"
+          class="allu-badge-center"></span>
   </div>
   <div fxFlex="0 0 20%">
-    <span [matBadge]="change.fieldChanges.length" matBadgeOverlap="false"
-          matBadgeColor="accent" class="allu-badge-center"></span>
-  </div>
-  <div fxFlex="0 0 20%">
-    {{change.user?.realName}}
+    {{user}}
   </div>
 </div>

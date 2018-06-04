@@ -5,18 +5,23 @@ import {HistoryComponent} from './history.component';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {HistoryItemComponent} from './history-item.component';
 import {HistoryItemGroupComponent} from './history-item-group.component';
+import {RouterModule} from '@angular/router';
+import {HistoryFormatter} from '../../service/history/history-formatter';
 
 @NgModule({
   imports: [
     AlluCommonModule,
-    EffectsModule.forFeature([HistoryEffects])
+    EffectsModule.forFeature([HistoryEffects]),
+    RouterModule.forChild([])
   ],
   declarations: [
     HistoryComponent,
     HistoryItemGroupComponent,
     HistoryItemComponent
   ],
-  providers: [],
+  providers: [
+    HistoryFormatter
+  ],
   exports: [
     HistoryComponent
   ]

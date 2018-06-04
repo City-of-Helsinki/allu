@@ -1331,7 +1331,11 @@ export const translations = {
         CREATED: 'Luotu',
         STATUS_CHANGED: 'Siirretty tilaan',
         CONTENTS_CHANGED: 'Tietoja päivitetty',
-        REPLACED: 'Korvattu'
+        REPLACED: 'Korvattu',
+        APPLICATION_ADDED: 'Hakemus lisätty',
+        APPLICATION_REMOVED: 'Hakemus poistettu',
+        CUSTOMER_CHANGED: 'Asiakas muutettu',
+        CONTACT_CHANGED: 'Yhteyshenkilö muutettu'
       },
       field: {
         CUSTOMER: 'Asiakas',

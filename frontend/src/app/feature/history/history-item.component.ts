@@ -1,5 +1,11 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
+import {ChangeType} from '../../model/history/change-type';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '../allu/reducers';
+import {FieldChange} from '../../model/history/field-change';
+import {HistoryFormatter} from '../../service/history/history-formatter';
+import {EntityDescriptor} from '../../model/history/entity-change';
 
 @Component({
   selector: 'history-item',
@@ -7,6 +13,30 @@ import {ChangeHistoryItem} from '../../model/history/change-history-item';
   styleUrls: ['./history-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HistoryItemComponent {
-  @Input() change: ChangeHistoryItem;
+export class HistoryItemComponent implements OnInit {
+  time: Date;
+  type: string;
+  description: EntityDescriptor;
+  fieldChanges: FieldChange[] = [];
+  user: string;
+
+  constructor(private store: Store<fromRoot.State>,
+              private formatter: HistoryFormatter) {}
+
+  ngOnInit(): void {
+  }
+
+  @Input() set change(change: ChangeHistoryItem) {
+    this.time = change.changeTime;
+    this.type = change.changeType;
+    this.user = change.user ? change.user.realName : undefined;
+    this.description = this.formatter.getChangeDescription(change);
+    this.fieldChanges = this.getFieldChanges(change);
+  }
+
+  private getFieldChanges(change: ChangeHistoryItem) {
+    return ChangeType.CONTENTS_CHANGED === ChangeType[change.changeType]
+      ? change.fieldChanges
+      : [];
+  }
 }

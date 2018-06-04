@@ -1,3 +1,5 @@
+import {FieldChange} from '../model/history/field-change';
+
 export class ObjectUtil {
   static clone(source: any) {
     if (typeof source !== 'object') {
@@ -59,4 +61,15 @@ export class ObjectUtil {
       return true;
     }
   }
+}
+
+export interface Dictionary<T> {
+  [key: string]: T;
+}
+
+export function toDictionary<T>(items: T[], keyFn: (item: T) => string): Dictionary<T> {
+  return items.reduce((prev: { [key: string]: T }, cur: T) => {
+    prev[keyFn(cur)] = cur;
+    return prev;
+  }, {});
 }
