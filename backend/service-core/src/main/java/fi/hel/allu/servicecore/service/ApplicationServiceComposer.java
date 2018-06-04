@@ -36,6 +36,7 @@ public class ApplicationServiceComposer {
   private final ApplicationHistoryService applicationHistoryService;
   private final MailComposerService mailComposerService;
   private final UserService userService;
+  private final InvoiceService invoiceService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -45,7 +46,8 @@ public class ApplicationServiceComposer {
       ApplicationJsonService applicationJsonService,
       ApplicationHistoryService applicationHistoryService,
       @Lazy MailComposerService mailComposerService,
-      UserService userService) {
+      UserService userService,
+      InvoiceService invoiceService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
@@ -53,6 +55,7 @@ public class ApplicationServiceComposer {
     this.applicationHistoryService = applicationHistoryService;
     this.mailComposerService = mailComposerService;
     this.userService = userService;
+    this.invoiceService = invoiceService;
   }
 
   /**
@@ -418,4 +421,23 @@ public class ApplicationServiceComposer {
   public void setInvoiceRecipient(int id, Integer invoiceRecipientId) {
     applicationService.setInvoiceRecipient(id, invoiceRecipientId);
   }
+
+  public void releaseCustomersInvoices(Integer customerId) {
+    List<Integer> applicationIds = findApplicationIdsByInvoiceRecipientId(customerId);
+    applicationIds
+        .forEach(id -> removeTagFromApplication(id, ApplicationTagType.SAP_ID_MISSING));
+    applicationIds.forEach(id -> releaseInvoicesOfApplication(id));
+  }
+
+  private void releaseInvoicesOfApplication(Integer applicationId) {
+    List<InvoiceJson> invoicesToRelease = invoiceService.findByApplication(applicationId);
+    invoicesToRelease.forEach(i -> releaseInvoice(i));
+  }
+
+  private void releaseInvoice(InvoiceJson invoice) {
+    if (invoice.isSapIdPending()) {
+      invoiceService.releasePendingInvoice(invoice.getId());
+    }
+  }
+
 }

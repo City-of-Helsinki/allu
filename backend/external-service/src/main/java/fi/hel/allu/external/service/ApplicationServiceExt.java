@@ -55,26 +55,6 @@ public class ApplicationServiceExt {
   @Autowired
   private InformationRequestService informationRequestService;
 
-
-
-  public void releaseCustomersInvoices(Integer customerId) {
-    List<Integer> applicationIds = applicationServiceComposer.findApplicationIdsByInvoiceRecipientId(customerId);
-    applicationIds
-        .forEach(id -> applicationServiceComposer.removeTagFromApplication(id, ApplicationTagType.SAP_ID_MISSING));
-    applicationIds.forEach(id -> releaseInvoicesOfApplication(id));
-  }
-
-  private void releaseInvoicesOfApplication(Integer applicationId) {
-    List<InvoiceJson> invoicesToRelease = invoiceService.findByApplication(applicationId);
-    invoicesToRelease.forEach(i -> releaseInvoice(i));
-  }
-
-  private void releaseInvoice(InvoiceJson invoice) {
-    if (invoice.isSapIdPending()) {
-      invoiceService.releasePendingInvoice(invoice.getId());
-    }
-  }
-
   public Integer createPlacementContract(PlacementContractExt placementContract) throws JsonProcessingException {
     ApplicationJson applicationJson = ApplicationFactory.fromPlacementContractExt(placementContract, getExternalUserId());
     StatusType status = placementContract.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;

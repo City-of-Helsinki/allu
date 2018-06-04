@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.external.domain.InvoicingCustomerExt;
 import fi.hel.allu.external.mapper.CustomerExtMapper;
-import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.CustomerService;
 
 /**
@@ -25,8 +25,9 @@ public class CustomerController {
 
   @Autowired
   CustomerService customerService;
+
   @Autowired
-  ApplicationServiceExt applicationService;
+  ApplicationServiceComposer applicationServiceComposer;
 
   /**
    * Updates customer's properties which have non null value in request JSON.
@@ -40,7 +41,7 @@ public class CustomerController {
     CustomerExtMapper.mergeCustomerJson(customerJson, customer);
     customerService.updateCustomerWithInvoicingInfo(customerJson.getId(), customerJson);
     if (addsSapNumber) {
-      applicationService.releaseCustomersInvoices(customer.getId());
+      applicationServiceComposer.releaseCustomersInvoices(customer.getId());
     }
     return new ResponseEntity<>(HttpStatus.OK);
   }
