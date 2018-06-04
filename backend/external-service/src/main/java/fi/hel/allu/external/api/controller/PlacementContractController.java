@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
-import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.external.service.PlacementContractService;
 import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +26,7 @@ import io.swagger.annotations.Authorization;
 public class PlacementContractController {
 
   @Autowired
-  private ApplicationServiceExt applicationService;
+  private PlacementContractService placementContractService;
 
   @Autowired
   private ApplicationExtGeometryValidator geometryValidator;
@@ -47,7 +47,7 @@ public class PlacementContractController {
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> create(@ApiParam(value = "Placement contract data", required = true)
                                         @Valid @RequestBody PlacementContractExt placementContract) throws JsonProcessingException {
-    return new ResponseEntity<>(applicationService.createPlacementContract(placementContract), HttpStatus.OK);
+    return new ResponseEntity<>(placementContractService.createApplication(placementContract), HttpStatus.OK);
   }
 
   @ApiOperation(value = "Update placement contract application. Allowed only if application was created with pendingOnClient = true",
@@ -60,9 +60,9 @@ public class PlacementContractController {
                                         @PathVariable Integer id,
                                         @ApiParam(value = "Placement contract data", required = true)
                                         @Valid @RequestBody PlacementContractExt placementContract) throws JsonProcessingException {
-    applicationService.validateFullUpdateAllowed(id);
-    applicationService.validateOwnedByExternalUser(id);
-    return new ResponseEntity<>(applicationService.updatePlacementContract(id, placementContract), HttpStatus.OK);
+    placementContractService.validateFullUpdateAllowed(id);
+    placementContractService.validateOwnedByExternalUser(id);
+    return new ResponseEntity<>(placementContractService.updateApplication(id, placementContract), HttpStatus.OK);
   }
 
   @ApiOperation(value = "Send response for information request specified by ID parameter. Only fields listed in response are processed in Allu. "
@@ -74,7 +74,7 @@ public class PlacementContractController {
   public ResponseEntity<Void> addResponse(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,
                                           @ApiParam(value = "Id of the information request") @PathVariable("requestid") Integer requestId,
                                           @ApiParam(value = "Content of the response") @RequestBody @Valid InformationRequestResponseExt<PlacementContractExt> response) throws JsonProcessingException {
-    applicationService.addInformationRequestResponse(applicationId, requestId, response);
+    placementContractService.addInformationRequestResponse(applicationId, requestId, response);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

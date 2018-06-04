@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,18 +31,15 @@ import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
- * Service class for application-related operations that are only needed in
+ * Base class for services with application-related operations that are only needed in
  * external service.
  */
-@Service
-public class ApplicationServiceExt {
+public abstract class ApplicationServiceExt <T extends ApplicationExt> {
 
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
   @Autowired
   private ApplicationHistoryService applicationHistoryService;
-  @Autowired
-  private InvoiceService invoiceService;
   @Autowired
   private ExternalUserService externalUserService;
   @Autowired
@@ -55,16 +51,18 @@ public class ApplicationServiceExt {
   @Autowired
   private InformationRequestService informationRequestService;
 
-  public Integer createPlacementContract(PlacementContractExt placementContract) throws JsonProcessingException {
-    ApplicationJson applicationJson = ApplicationFactory.fromPlacementContractExt(placementContract, getExternalUserId());
-    StatusType status = placementContract.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
+  public abstract ApplicationJson getApplicationJson(T application);
+
+  public Integer createApplication(T application) throws JsonProcessingException {
+    ApplicationJson applicationJson = getApplicationJson(application);
+    StatusType status = application.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     applicationJson.setExternalOwnerId(getExternalUserId());
     Integer applicationId = applicationServiceComposer.createApplication(applicationJson, status).getId();
     saveOriginalApplication(applicationId, null, applicationJson);
     return applicationId;
   }
 
-  private Integer getExternalUserId() {
+  protected Integer getExternalUserId() {
     User alluUser = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
     String username = alluUser.getUsername();
     return externalUserService.findUserByUserName(username).getId();
@@ -82,10 +80,9 @@ public class ApplicationServiceExt {
     new ApplicationHistoryEventExt(i.getChangeTime(), i.getNewStatus())).collect(Collectors.toList());
   }
 
-  public Integer updatePlacementContract(Integer id, PlacementContractExt placementContract) throws JsonProcessingException {
-    ApplicationJson applicationJson = ApplicationFactory.fromPlacementContractExt(placementContract, getExternalUserId());
-    ApplicationJson application = applicationServiceComposer.updateApplication(id, applicationJson);
-    StatusType status = placementContract.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
+  public Integer updateApplication(Integer id, T applicationExt) throws JsonProcessingException {
+    ApplicationJson application = applicationServiceComposer.updateApplication(id, getApplicationJson(applicationExt));
+    StatusType status = applicationExt.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     applicationServiceComposer.changeStatus(id, status);
     saveOriginalApplication(id, null, application);
     return application.getId();
@@ -127,10 +124,10 @@ public class ApplicationServiceExt {
   }
 
   public void addInformationRequestResponse(Integer applicationId, Integer requestId,
-      InformationRequestResponseExt<PlacementContractExt> response) throws JsonProcessingException {
+      InformationRequestResponseExt<T> response) throws JsonProcessingException {
     validateOwnedByExternalUser(applicationId);
     validateInformationRequestOpen(requestId);
-    ApplicationJson applicationJson = ApplicationFactory.fromPlacementContractExt(response.getApplicationData(), getExternalUserId());
+    ApplicationJson applicationJson = getApplicationJson(response.getApplicationData());
     ExternalApplication extApp = createExternalApplication(applicationId, requestId, applicationJson);
     informationRequestService.addResponse(requestId, extApp, response.getUpdatedFields());
   }
