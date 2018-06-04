@@ -3,40 +3,30 @@
     {{'history.title' | translation}}
   </mat-card-title>
 
-  <mat-card-subtitle class="allu-card-title">
-    {{'common.time.today' | translation | uppercase}}
-  </mat-card-subtitle>
-  <mat-card-content>
-    <ul class="history-items">
-      <li *ngFor="let change of changesToday$ | async" class="allu-card-content">
-        <history-item [change]="change"></history-item>
-      </li>
-    </ul>
-  </mat-card-content>
+  <history-item-group
+    [changes]="changesToday$ | async"
+    [title]="'common.time.today' | translation | uppercase">
+  </history-item-group>
 
-  <mat-divider></mat-divider>
+  <ng-container *ngIf="changesWithinWeek$ | async as changesWithinWeek">
+    <ng-container *ngIf="changesWithinWeek.length">
+      <mat-divider></mat-divider>
 
-  <mat-card-subtitle class="allu-card-title">
-    {{'common.time.withinWeek' | translation | uppercase}}
-  </mat-card-subtitle>
-  <mat-card-content>
-    <ul class="history-items">
-      <li *ngFor="let change of changesWithinWeek$ | async" class="allu-card-content">
-        <history-item [change]="change"></history-item>
-      </li>
-    </ul>
-  </mat-card-content>
+      <history-item-group
+        [changes]="changesWithinWeek"
+        [title]="'common.time.withinWeek' | translation | uppercase">
+      </history-item-group>
+    </ng-container>
+  </ng-container>
 
-  <mat-divider></mat-divider>
+  <ng-container *ngIf="olderChanges$ | async as olderChanges">
+    <ng-container *ngIf="olderChanges.length">
+      <mat-divider></mat-divider>
 
-  <mat-card-subtitle class="allu-card-title">
-    {{'common.time.older' | translation | uppercase}}
-  </mat-card-subtitle>
-  <mat-card-content>
-    <ul class="history-items">
-      <li *ngFor="let change of olderChanges$ | async" class="allu-card-content">
-        <history-item [change]="change"></history-item>
-      </li>
-    </ul>
-  </mat-card-content>
+      <history-item-group
+        [changes]="olderChanges"
+        [title]="'common.time.older' | translation | uppercase">
+      </history-item-group>
+    </ng-container>
+  </ng-container>
 </allu-card>

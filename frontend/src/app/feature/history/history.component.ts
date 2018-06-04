@@ -12,7 +12,7 @@ import {TimeUtil} from '../../util/time.util';
 @Component({
   selector: 'history',
   templateUrl: './history.component.html',
-  styleUrls: ['./history.component.scss']
+  styleUrls: []
 })
 export class HistoryComponent implements OnInit {
   @Input() targetType: ActionTargetType;

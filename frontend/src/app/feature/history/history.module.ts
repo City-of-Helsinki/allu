@@ -4,6 +4,7 @@ import {HistoryEffects} from './effects/history-effects';
 import {HistoryComponent} from './history.component';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {HistoryItemComponent} from './history-item.component';
+import {HistoryItemGroupComponent} from './history-item-group.component';
 
 @NgModule({
   imports: [
@@ -12,6 +13,7 @@ import {HistoryItemComponent} from './history-item.component';
   ],
   declarations: [
     HistoryComponent,
+    HistoryItemGroupComponent,
     HistoryItemComponent
   ],
   providers: [],

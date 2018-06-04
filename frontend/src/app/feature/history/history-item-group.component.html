@@ -1,0 +1,10 @@
+<mat-card-subtitle class="allu-card-title">
+  {{title}}
+</mat-card-subtitle>
+<mat-card-content>
+  <ul class="history-items">
+    <li *ngFor="let change of changes" class="allu-card-content">
+      <history-item [change]="change"></history-item>
+    </li>
+  </ul>
+</mat-card-content>
