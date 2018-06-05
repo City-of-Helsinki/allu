@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
       List<SecurityScheme> schemeList = Collections.singletonList(new ApiKey("api_key", "Authorization", "Bearer"));
 
       return new Docket(DocumentationType.SWAGGER_2)
+         .directModelSubstitute(Geometry.class, String.class) // Prevent Swagger from generating documentation for third party geometry classes
         .select()
         .apis(RequestHandlerSelectors.basePackage("fi.hel.allu.external.api"))
         .paths(PathSelectors.any())

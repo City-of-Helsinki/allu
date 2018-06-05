@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -79,7 +78,13 @@ public abstract class ApplicationExt {
     this.invoicingCustomer = invoicingCustomer;
   }
 
-  @ApiModelProperty(value = "Application location geometry", required = true)
+  @ApiModelProperty(value =
+      "Application geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a> with following limitations:"
+      +"<ul>"
+      +"<li>Feature / FeatureCollection is currently not supported, geometry should be given as <a href=\"https://tools.ietf.org/html/rfc7946#section-3.1.8\">GeometryCollection</a>.</li>"
+     + "<li>Only named CRS is supported, the given name must either be of the form: urn:ogc:def:EPSG:x.y:4326 (x.y: the version of the EPSG) or of the form EPSG:4326</li>"
+      +"</ul>",
+  required = true)
   public Geometry getGeometry() {
     return geometry;
   }
