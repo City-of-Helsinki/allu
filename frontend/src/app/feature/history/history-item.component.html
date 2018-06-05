@@ -1,9 +1,14 @@
 <div fxLayout="row wrap" class="history-item">
   <div fxFlex="0 0 15%">
-    {{time | date:'short'}}
+    {{change.changeTime | date:'short'}}
   </div>
   <div fxFlex="0 0 20%" class="text-highlight">
-    {{['history.change.type', type] | translation}}
+    <ng-container *ngIf="change.changeType==='STATUS_CHANGED'; else changeTypeInfo">
+      {{['application.statusChange', change.newStatus] | translation}}
+    </ng-container>
+    <ng-template #changeTypeInfo>
+      {{['history.change.type', change.changeType] | translation}}
+    </ng-template>
   </div>
   <div fxFlex="0 0 20%" class="text-highlight">
     <ng-container *ngIf="description">
@@ -26,6 +31,6 @@
           class="allu-badge-center"></span>
   </div>
   <div fxFlex="0 0 20%">
-    {{user}}
+    {{change.user?.realname}}
   </div>
 </div>

@@ -13,11 +13,10 @@ import {ChangeDescription, HistoryFormatter} from '../../service/history/history
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HistoryItemComponent implements OnInit {
-  time: Date;
-  type: string;
   description: ChangeDescription;
   fieldChanges: FieldChange[] = [];
-  user: string;
+
+  private _change: ChangeHistoryItem;
 
   constructor(private store: Store<fromRoot.State>,
               private formatter: HistoryFormatter) {}
@@ -26,11 +25,13 @@ export class HistoryItemComponent implements OnInit {
   }
 
   @Input() set change(change: ChangeHistoryItem) {
-    this.time = change.changeTime;
-    this.type = change.changeType;
-    this.user = change.user ? change.user.realName : undefined;
+    this._change = change;
     this.description = this.formatter.getChangeDescription(change);
     this.fieldChanges = this.getFieldChanges(change);
+  }
+
+  get change() {
+    return this._change;
   }
 
   private getFieldChanges(change: ChangeHistoryItem) {

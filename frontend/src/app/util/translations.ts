@@ -79,9 +79,17 @@ export const translations = {
       ARCHIVED: 'Arkistoitu'
     },
     statusChange: {
+      PRE_RESERVED: 'Alustava varaus luotu',
+      PENDING: 'Hakemus saapunut',
       HANDLING: 'Hakemus siirretty käsittelyyn',
+      RETURNED_TO_PREPARATION: 'Hakemus palautettu käsittelyyn',
       DECISIONMAKING: 'Hakemus siirretty odottamaan päätöstä',
-      CANCELLED: 'Hakemus peruttu'
+      DECISION: 'Hakemus päätetty',
+      REJECTED: 'Hakemuksen päätös hylätty',
+      FINISHED: 'Hakemus valmistunut',
+      CANCELLED: 'Hakemus peruttu',
+      REPLACED: 'Hakemus korvattu',
+      ARCHIVED: 'Hakemus arkistoitu'
     },
     confirmDiscard: {
       title: 'Hylätäänkö muutokset',
