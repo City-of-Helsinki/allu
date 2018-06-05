@@ -8,33 +8,37 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.common.domain.ExternalApplication;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.external.domain.*;
+import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.InvoiceJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
-import fi.hel.allu.servicecore.service.*;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.AttachmentService;
+import fi.hel.allu.servicecore.service.ExternalUserService;
+import fi.hel.allu.servicecore.service.InformationRequestService;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
- * Base class for services with application-related operations that are only needed in
+ * Service with application-related operations that are only needed in
  * external service.
  */
-public abstract class ApplicationServiceExt <T extends ApplicationExt> {
+@Service
+public class ApplicationServiceExt {
 
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
@@ -51,21 +55,13 @@ public abstract class ApplicationServiceExt <T extends ApplicationExt> {
   @Autowired
   private InformationRequestService informationRequestService;
 
-  public abstract ApplicationJson getApplicationJson(T application);
-
-  public Integer createApplication(T application) throws JsonProcessingException {
-    ApplicationJson applicationJson = getApplicationJson(application);
+  public <T extends ApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+    ApplicationJson applicationJson = mapper.mapExtApplication(application, getExternalUserId());
     StatusType status = application.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     applicationJson.setExternalOwnerId(getExternalUserId());
     Integer applicationId = applicationServiceComposer.createApplication(applicationJson, status).getId();
     saveOriginalApplication(applicationId, null, applicationJson);
     return applicationId;
-  }
-
-  protected Integer getExternalUserId() {
-    User alluUser = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-    String username = alluUser.getUsername();
-    return externalUserService.findUserByUserName(username).getId();
   }
 
   public List<ApplicationHistoryExt> searchApplicationHistory(ApplicationHistorySearchExt searchParameters) {
@@ -80,8 +76,9 @@ public abstract class ApplicationServiceExt <T extends ApplicationExt> {
     new ApplicationHistoryEventExt(i.getChangeTime(), i.getNewStatus())).collect(Collectors.toList());
   }
 
-  public Integer updateApplication(Integer id, T applicationExt) throws JsonProcessingException {
-    ApplicationJson application = applicationServiceComposer.updateApplication(id, getApplicationJson(applicationExt));
+  public <T extends ApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+    ApplicationJson application = applicationServiceComposer.updateApplication(id,
+        mapper.mapExtApplication(applicationExt, getExternalUserId()));
     StatusType status = applicationExt.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     applicationServiceComposer.changeStatus(id, status);
     saveOriginalApplication(id, null, application);
@@ -123,11 +120,11 @@ public abstract class ApplicationServiceExt <T extends ApplicationExt> {
     return externalApplication;
   }
 
-  public void addInformationRequestResponse(Integer applicationId, Integer requestId,
-      InformationRequestResponseExt<T> response) throws JsonProcessingException {
+  public <T extends ApplicationExt> void addInformationRequestResponse(Integer applicationId, Integer requestId,
+      InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     validateOwnedByExternalUser(applicationId);
     validateInformationRequestOpen(requestId);
-    ApplicationJson applicationJson = getApplicationJson(response.getApplicationData());
+    ApplicationJson applicationJson = mapper.mapExtApplication(response.getApplicationData(), getExternalUserId());
     ExternalApplication extApp = createExternalApplication(applicationId, requestId, applicationJson);
     informationRequestService.addResponse(requestId, extApp, response.getUpdatedFields());
   }
@@ -142,6 +139,12 @@ public abstract class ApplicationServiceExt <T extends ApplicationExt> {
   public void cancelApplication(Integer id) {
     applicationServiceComposer.changeStatus(
         id, StatusType.CANCELLED, new StatusChangeInfoJson());
+  }
+
+  private Integer getExternalUserId() {
+    User alluUser = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    String username = alluUser.getUsername();
+    return externalUserService.findUserByUserName(username).getId();
   }
 
 }

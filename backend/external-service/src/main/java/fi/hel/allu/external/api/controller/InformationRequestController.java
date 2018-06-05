@@ -17,6 +17,7 @@ import fi.hel.allu.external.domain.InformationRequestFieldExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.domain.InformationRequestFieldJson;
 import fi.hel.allu.servicecore.domain.InformationRequestJson;
+import fi.hel.allu.servicecore.service.InformationRequestService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
@@ -26,7 +27,7 @@ import io.swagger.annotations.Authorization;
 public class InformationRequestController {
 
   @Autowired
-  private fi.hel.allu.servicecore.service.InformationRequestService informationRequestService;
+  private InformationRequestService informationRequestService;
 
   @Autowired
   private ApplicationServiceExt applicationService;

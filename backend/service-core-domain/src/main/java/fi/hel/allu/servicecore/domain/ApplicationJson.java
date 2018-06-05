@@ -460,7 +460,9 @@ public class ApplicationJson {
     if (extension == null) {
       throw new IllegalStateException("Extension not set");
     }
-    setKindsWithSpecifiers(Collections.singletonMap(kind, Collections.emptyList()));
+    if (kind != null) {
+      setKindsWithSpecifiers(Collections.singletonMap(kind, Collections.emptyList()));
+    }
   }
 
   @JsonIgnore
