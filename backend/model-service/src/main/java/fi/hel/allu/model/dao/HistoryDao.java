@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
+import static com.querydsl.sql.SQLExpressions.select;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QChangeHistory.changeHistory;
 import static fi.hel.allu.QFieldChange.fieldChange;
@@ -26,6 +27,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.QApplication;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
 
@@ -88,7 +90,16 @@ public class HistoryDao {
 
   @Transactional(readOnly = true)
   public List<ChangeHistoryItem> getProjectHistory(int projectId) {
-    return getChangeHistory(changeHistory.projectId.eq(projectId));
+    // Include application status in project history
+    final List<Tuple> results = queryFactory.query()
+      .union(
+        select(changeHistory.all()).from(changeHistory).where(changeHistory.projectId.eq(projectId)),
+        select(changeHistory.all()).from(changeHistory).innerJoin(application)
+          .on(changeHistory.applicationId.eq(application.id))
+          .where(application.projectId.eq(projectId)
+            .and(changeHistory.changeType.eq(ChangeType.STATUS_CHANGED))))
+      .orderBy(changeHistory.id.asc()).fetch();
+    return resultToChangeHistory(results);
   }
 
   /*
@@ -97,6 +108,10 @@ public class HistoryDao {
   private List<ChangeHistoryItem> getChangeHistory(Predicate condition) {
     List<Tuple> results = queryFactory.select(changeHistory.all()).from(changeHistory)
         .where(condition).orderBy(changeHistory.id.asc()).fetch();
+    return resultToChangeHistory(results);
+  }
+
+  private List<ChangeHistoryItem> resultToChangeHistory(List<Tuple> results) {
     return results.stream()
         .map(r -> new ChangeHistoryItem(r.get(changeHistory.userId), r.get(changeHistory.changeType),
             r.get(changeHistory.newStatus), r.get(changeHistory.changeTime), getChangeLines(r.get(changeHistory.id))))
