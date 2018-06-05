@@ -11,7 +11,7 @@ export interface ChangeDescription {
 }
 
 export interface ChangeItemDescription {
-  ref: string | any[];
+  ref?: string | any[];
   content;
 }
 
@@ -24,6 +24,8 @@ export class HistoryFormatter {
         return this.getApplicationChangeDescription(change);
       case ChangeType.CUSTOMER_CHANGED:
         return this.getCustomerChangeDescription(change);
+      case ChangeType.CONTACT_CHANGED:
+        return this.getContactChangeDescription(change);
       default:
         return undefined;
     }
@@ -57,6 +59,18 @@ export class HistoryFormatter {
       new: {
         ref: ['/customers', entityChange.newEntity['/id']],
         content: entityChange.newEntity['/customerName']
+      }
+    };
+  }
+
+  private getContactChangeDescription(change: ChangeHistoryItem) {
+    const entityChange = toEntityChange(change.fieldChanges);
+    return {
+      old: {
+        content: entityChange.oldEntity['/contactName']
+      },
+      new: {
+        content: entityChange.newEntity['/contactName']
       }
     };
   }
