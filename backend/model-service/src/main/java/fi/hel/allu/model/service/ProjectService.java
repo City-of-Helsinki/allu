@@ -11,6 +11,7 @@ import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.FieldChange;
@@ -238,7 +239,6 @@ public class ProjectService {
    */
   @Transactional
   public List<Project> updateProjectInformation(List<Integer> projectIds, Integer userId) {
-    logger.info("updateProjectInformation " + Arrays.toString(projectIds.toArray()));
     List<Integer> rootParentIds = new ArrayList<>();
     HashSet<Integer> resolvedProjectIds = new HashSet<>();
     for (Integer projectId : projectIds) {
@@ -261,7 +261,16 @@ public class ProjectService {
 
   @Transactional(readOnly = true)
   public List<ChangeHistoryItem> getProjectChanges(Integer projectId) {
-    return historyDao.getProjectHistory(projectId);
+    final List<ChangeHistoryItem> items = historyDao.getProjectHistory(projectId);
+    items.stream().forEach(item -> {
+      final ChangeHistoryItemInfo info = item.getInfo();
+      if (info.getId() != null && item.getChangeType() == ChangeType.STATUS_CHANGED) {
+          final Application app = applicationDao.findById(item.getInfo().getId());
+          info.setApplicationId(app.getApplicationId());
+          info.setName(app.getName());
+      }
+    });
+    return items;
   }
 
   @Transactional
@@ -429,7 +438,7 @@ public class ProjectService {
     final List<FieldChange> fieldChanges = objectComparer.compare(oldData, newData).stream()
         .map(d -> new FieldChange(d.keyName, d.oldValue, d.newValue)).collect(Collectors.toList());
     if (!fieldChanges.isEmpty()) {
-      final ChangeHistoryItem change = new ChangeHistoryItem(userId, changeType, null, ZonedDateTime.now(), fieldChanges);
+      final ChangeHistoryItem change = new ChangeHistoryItem(userId, null, changeType, null, ZonedDateTime.now(), fieldChanges);
       historyDao.addProjectChange(projectId, change);
     }
   }

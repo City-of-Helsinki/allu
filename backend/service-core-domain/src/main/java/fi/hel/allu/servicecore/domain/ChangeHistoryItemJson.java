@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class ChangeHistoryItemJson {
   private UserJson user;
+  private ChangeHistoryItemInfoJson info;
   private ChangeType changeType;
   private StatusType newStatus;
   private ZonedDateTime changeTime;
@@ -21,9 +22,10 @@ public class ChangeHistoryItemJson {
   public ChangeHistoryItemJson() {
   }
 
-  public ChangeHistoryItemJson(UserJson user, ChangeType changeType,
+  public ChangeHistoryItemJson(UserJson user, ChangeHistoryItemInfoJson info, ChangeType changeType,
       StatusType newStatus, ZonedDateTime changeTime, List<FieldChangeJson> fieldChanges) {
     this.user = user;
+    this.info = info;
     this.changeType = changeType;
     this.newStatus = newStatus;
     this.changeTime = changeTime;
@@ -36,6 +38,14 @@ public class ChangeHistoryItemJson {
 
   public void setUser(UserJson user) {
     this.user = user;
+  }
+
+  public ChangeHistoryItemInfoJson getInfo() {
+    return info;
+  }
+
+  public void setInfo(ChangeHistoryItemInfoJson info) {
+    this.info = info;
   }
 
   /**

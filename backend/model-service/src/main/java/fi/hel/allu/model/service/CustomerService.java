@@ -229,7 +229,7 @@ public class CustomerService {
     List<FieldChange> fieldChanges = objectComparer.compare(oldData, newData).stream()
         .map(d -> new FieldChange(pathPrefix + d.keyName, d.oldValue, d.newValue)).collect(Collectors.toList());
     if (!fieldChanges.isEmpty()) {
-      ChangeHistoryItem change = new ChangeHistoryItem(userId,
+      ChangeHistoryItem change = new ChangeHistoryItem(userId, null,
           isCreate ? ChangeType.CREATED : ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(), fieldChanges);
       historyDao.addCustomerChange(customerId, change);
     }

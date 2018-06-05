@@ -1,15 +1,17 @@
 package fi.hel.allu.servicecore.mapper;
 
 import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.FieldChange;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemInfoJson;
 import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.FieldChangeJson;
-import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.servicecore.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,7 @@ public class ChangeHistoryMapper {
   public ChangeHistoryItemJson mapToJson(ChangeHistoryItem c) {
     return new ChangeHistoryItemJson(
         Optional.ofNullable(c.getUserId()).map(userId -> userService.findUserById(userId)).orElse(null),
+        mapToJson(c.getInfo()),
         c.getChangeType(),
         c.getNewStatus(),
         c.getChangeTime(),
@@ -50,4 +53,14 @@ public class ChangeHistoryMapper {
     return new FieldChangeJson(fc.getFieldName(), fc.getOldValue(), fc.getNewValue());
   }
 
+  private ChangeHistoryItemInfoJson mapToJson(ChangeHistoryItemInfo info) {
+    if (info == null) {
+      return null;
+    }
+    final ChangeHistoryItemInfoJson infoJson = new ChangeHistoryItemInfoJson();
+    infoJson.setId(info.getId());
+    infoJson.setName(info.getName());
+    infoJson.setApplicationId(info.getApplicationId());
+    return infoJson;
+  }
 }
