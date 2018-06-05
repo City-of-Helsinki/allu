@@ -1,34 +1,63 @@
 import {Injectable} from '@angular/core';
 import {ChangeType} from '../../model/history/change-type';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
-import {EntityDescriptor} from '../../model/history/entity-change';
-import {toDictionary} from '../../util/object.util';
-import {Some} from '../../util/option';
+import {toEntityChange} from '../../model/history/entity-change';
+
+// Description containing either old and new values or single value
+export interface ChangeDescription {
+  old?: ChangeItemDescription;
+  new?: ChangeItemDescription;
+  single?: ChangeItemDescription;
+}
+
+export interface ChangeItemDescription {
+  ref: string | any[];
+  content;
+}
 
 @Injectable()
 export class HistoryFormatter {
-  public getChangeDescription(change: ChangeHistoryItem): EntityDescriptor {
+  public getChangeDescription(change: ChangeHistoryItem): ChangeDescription {
     switch (ChangeType[change.changeType]) {
       case ChangeType.APPLICATION_ADDED:
       case ChangeType.APPLICATION_REMOVED:
         return this.getApplicationChangeDescription(change);
+      case ChangeType.CUSTOMER_CHANGED:
+        return this.getCustomerChangeDescription(change);
       default:
-        return {
-          ref: undefined,
-          content: undefined
-        };
+        return undefined;
     }
   }
 
-  public getApplicationChangeDescription(change: ChangeHistoryItem): EntityDescriptor {
-    const dict = toDictionary(change.fieldChanges, item => item.fieldName);
-    const id = Some(dict['/id']).map(field => field.newValue || field.oldValue).orElse(undefined);
-    const applicationId = Some(dict['/applicationId']).map(field => field.newValue || field.oldValue).orElse(undefined);
-    const applicationName = Some(dict['/applicationName']).map(field => field.newValue || field.oldValue).orElse(undefined);
+  public getApplicationChangeDescription(change: ChangeHistoryItem): ChangeDescription {
+    const entityChange = toEntityChange(change.fieldChanges);
+    const entity = ChangeType.APPLICATION_ADDED === ChangeType[change.changeType]
+      ? entityChange.newEntity
+      : entityChange.oldEntity;
+
+    const id = entity['/id'];
+    const applicationId = entity['/applicationId'];
+    const applicationName = entity['/applicationName'];
 
     return {
-      ref: ['/applications', id, 'summary'],
-      content: `${applicationId} - ${applicationName}`
+      single: {
+        ref: ['/applications', id, 'summary'],
+        content: `${applicationId} - ${applicationName}`
+      }
+    };
+  }
+
+  public getCustomerChangeDescription(change: ChangeHistoryItem): ChangeDescription {
+    const entityChange = toEntityChange(change.fieldChanges);
+    return {
+      old: {
+        ref: ['/customers', entityChange.oldEntity['/id']],
+        content: entityChange.oldEntity['/customerName']
+      },
+      new: {
+        ref: ['/customers', entityChange.newEntity['/id']],
+        content: entityChange.newEntity['/customerName']
+      }
     };
   }
 }

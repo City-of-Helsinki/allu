@@ -4,8 +4,7 @@ import {ChangeType} from '../../model/history/change-type';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
 import {FieldChange} from '../../model/history/field-change';
-import {HistoryFormatter} from '../../service/history/history-formatter';
-import {EntityDescriptor} from '../../model/history/entity-change';
+import {ChangeDescription, HistoryFormatter} from '../../service/history/history-formatter';
 
 @Component({
   selector: 'history-item',
@@ -16,7 +15,7 @@ import {EntityDescriptor} from '../../model/history/entity-change';
 export class HistoryItemComponent implements OnInit {
   time: Date;
   type: string;
-  description: EntityDescriptor;
+  description: ChangeDescription;
   fieldChanges: FieldChange[] = [];
   user: string;
 

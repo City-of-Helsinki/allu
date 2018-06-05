@@ -6,8 +6,19 @@
     {{['history.change.type', type] | translation}}
   </div>
   <div fxFlex="0 0 20%" class="text-highlight">
-    <a *ngIf="description.ref; else plainContent" [routerLink]="description.ref">{{description.content}}</a>
-    <ng-template #plainContent>{{description.content}}</ng-template>
+    <ng-container *ngIf="description">
+      <ng-container *ngIf="description.single; else oldToNew">
+        <history-item-description [changeItem]="description.single"></history-item-description>
+      </ng-container>
+      <ng-template #oldToNew>
+        <history-item-description *ngIf="description.old" [changeItem]="description.old"></history-item-description>
+        <mat-icon class="icon-middle">arrow_forward</mat-icon>
+        <history-item-description *ngIf="description.new" [changeItem]="description.new"></history-item-description>
+      </ng-template>
+      <ng-container>
+    </ng-container>
+
+    </ng-container>
     <span *ngIf="fieldChanges.length"
           [matBadge]="fieldChanges.length"
           matBadgeOverlap="false"

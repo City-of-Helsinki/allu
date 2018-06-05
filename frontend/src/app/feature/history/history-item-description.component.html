@@ -1,0 +1,2 @@
+<a *ngIf="changeItem.ref; else plainContent" [routerLink]="changeItem.ref">{{changeItem.content}}</a>
+<ng-template #plainContent>{{changeItem.content}}</ng-template>
