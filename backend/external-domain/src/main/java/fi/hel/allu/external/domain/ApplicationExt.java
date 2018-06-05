@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
 public abstract class ApplicationExt {
 
   private PostalAddressExt postalAddress;
+  @NotBlank(message = "{application.name}")
   private String name;
   @NotNull(message = "{application.customersWithContacts}")
   @Valid
@@ -32,7 +34,9 @@ public abstract class ApplicationExt {
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   @NotNull(message = "{application.geometry.missing}")
   private Geometry geometry;
+  @NotNull(message = "{application.starttime}")
   private ZonedDateTime startTime;
+  @NotNull(message = "{application.endtime}")
   private ZonedDateTime endTime;
   private boolean pendingOnClient;
   @NotBlank(message = "{application.identificationNumber}")
@@ -48,7 +52,7 @@ public abstract class ApplicationExt {
     this.postalAddress = postalAddress;
   }
 
-  @ApiModelProperty(value="Name for the application")
+  @ApiModelProperty(value="Name for the application", required = true)
   public String getName() {
     return name;
   }
@@ -84,7 +88,7 @@ public abstract class ApplicationExt {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Start time of the application i.e. the starting time certain land area is reserved by application.")
+  @ApiModelProperty(value = "Start time of the application i.e. the starting time certain land area is reserved by application.", required = true)
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -93,7 +97,7 @@ public abstract class ApplicationExt {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "End time of the application i.e. the time certain land area stops being reserved by the application")
+  @ApiModelProperty(value = "End time of the application i.e. the time certain land area stops being reserved by the application", required = true)
   public ZonedDateTime getEndTime() {
     return endTime;
   }
