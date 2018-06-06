@@ -99,7 +99,7 @@ public class HistoryDao {
           .on(changeHistory.applicationId.eq(application.id))
           .where(application.projectId.eq(projectId)
             .and(changeHistory.changeType.eq(ChangeType.STATUS_CHANGED))))
-      .orderBy(changeHistory.id.asc()).fetch();
+      .orderBy(changeHistory.id.desc()).fetch();
     return resultToChangeHistory(results);
   }
 
