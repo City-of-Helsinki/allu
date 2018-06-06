@@ -12,7 +12,8 @@ export enum ProjectActionTypes {
   SaveFailed = '[Project] Save project failed',
   Delete = '[Project] Delete project',
   DeleteSuccess = '[Project] Delete project success',
-  DeleteFailed = '[Project] Delete project failed'
+  DeleteFailed = '[Project] Delete project failed',
+  ShowBasicInfo = '[Project] Set show basic info'
 }
 
 export class Load implements Action {
@@ -65,6 +66,12 @@ export class DeleteFailed implements ActionWithPayload<ErrorInfo> {
   constructor(public payload: ErrorInfo) {}
 }
 
+export class ShowBasicInfo implements Action {
+  readonly type = ProjectActionTypes.ShowBasicInfo;
+
+  constructor(public payload: boolean) {}
+}
+
 export type ProjectActions =
   | Load
   | LoadSuccess
@@ -74,4 +81,5 @@ export type ProjectActions =
   | SaveFailed
   | Delete
   | DeleteSuccess
-  | DeleteFailed;
+  | DeleteFailed
+  | ShowBasicInfo;

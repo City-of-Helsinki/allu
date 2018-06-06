@@ -1,16 +1,23 @@
 <div *ngIf="project$ | async as project">
-  <div fxLayout="row">
-    <div fxFlex>
+  <div fxLayout="row" fxLayoutAlign="space-between center">
+    <div fxFlex="auto">
       <h2 class="allu-header">
         <span>{{project.customer?.name}}</span>
         <span *ngIf="project.startTime">{{project.startTime | date:'shortDate'}}</span>
         <span *ngIf="project.endTime"> - {{project.endTime | date:'shortDate'}}</span>
       </h2>
     </div>
-    <div fxFlex></div>
+    <div fxFlex="none">
+      <mat-slide-toggle
+        labelPosition="before"
+        [checked]="showBasicInfo$ | async"
+        (change)="toggleBasicInfo($event)">
+        {{'project.showBasicInfo' | translation}}
+      </mat-slide-toggle>
+    </div>
   </div>
 
-  <div fxLayout="row" fxLayoutGap="18px">
+  <div fxLayout="row" fxLayoutGap="18px" *ngIf="showBasicInfo$ | async">
     <div fxFlex="calc(50% - 18px)">
       <project-info [project]="project"
                     [cityDistricts]="districts$ | async">

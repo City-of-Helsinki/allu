@@ -438,6 +438,7 @@ export const translations = {
     activeApplications: 'Aktiivista hakemusta',
     decidedApplications: 'Päätettyä hakemusta',
     relatedProjects: 'Liittyvää hanketta',
+    showBasicInfo: 'Näytä perustiedot',
     info: {
       title: 'Perustiedot',
       identifier: 'Hanketunnus',

@@ -8,13 +8,15 @@ export interface State {
   loading: boolean;
   current: Project;
   meta: StructureMeta;
+  showBasicInfo: boolean;
 }
 
 const initialState: State = {
   loaded: false,
   loading: false,
   current: undefined,
-  meta: undefined
+  meta: undefined,
+  showBasicInfo: true
 };
 
 export function reducer(state: State = initialState, action: ProjectActions | ProjectMetaActions) {
@@ -56,7 +58,15 @@ export function reducer(state: State = initialState, action: ProjectActions | P
     case ProjectActionTypes.DeleteSuccess: {
       return {
         ...state,
-        current: undefined
+        current: undefined,
+        showBasicInfo: true
+      };
+    }
+
+    case ProjectActionTypes.ShowBasicInfo: {
+      return {
+        ...state,
+        showBasicInfo: action.payload
       };
     }
 
@@ -75,6 +85,8 @@ export function reducer(state: State = initialState, action: ProjectActions | P
 export const getCurrent = (state: State) => state.current;
 
 export const getLoaded = (state: State) => state.loaded;
+
+export const getShowBasicInfo = (state: State) => state.showBasicInfo;
 
 export const getMeta = (state: State) => state.meta;
 

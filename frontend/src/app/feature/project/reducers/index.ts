@@ -69,6 +69,11 @@ export const getProjectLoaded = createSelector(
   fromProject.getLoaded
 );
 
+export const getShowBasicInfo = createSelector(
+  getProjectEntitiesState,
+  fromProject.getShowBasicInfo
+);
+
 export const getMeta = createSelector(
   getProjectEntitiesState,
   fromProject.getMeta
