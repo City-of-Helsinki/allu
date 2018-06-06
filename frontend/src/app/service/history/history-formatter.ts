@@ -15,25 +15,30 @@ export interface ChangeItemDescription {
   content: string;
 }
 
+export enum ChangeDescriptionType {
+  FULL,
+  SIMPLE
+}
+
 @Injectable()
 export class HistoryFormatter {
-  public getChangeDescription(change: ChangeHistoryItem): ChangeDescription {
+  public getChangeDescription(change: ChangeHistoryItem, type: ChangeDescriptionType = ChangeDescriptionType.FULL): ChangeDescription {
     switch (ChangeType[change.changeType]) {
       case ChangeType.APPLICATION_ADDED:
       case ChangeType.APPLICATION_REMOVED:
-        return this.getApplicationChangeDescription(change);
+        return this.getApplicationChangeDescription(change, type);
       case ChangeType.CUSTOMER_CHANGED:
-        return this.getCustomerChangeDescription(change);
+        return this.getCustomerChangeDescription(change, type);
       case ChangeType.CONTACT_CHANGED:
-        return this.getContactChangeDescription(change);
+        return this.getContactChangeDescription(change, type);
       case ChangeType.STATUS_CHANGED:
-        return this.getStatusChangeDescription(change);
+        return this.getStatusChangeDescription(change, type);
       default:
         return undefined;
     }
   }
 
-  public getApplicationChangeDescription(change: ChangeHistoryItem): ChangeDescription {
+  public getApplicationChangeDescription(change: ChangeHistoryItem, type: ChangeDescriptionType): ChangeDescription {
     const entityChange = toEntityChange(change.fieldChanges);
     const entity = ChangeType.APPLICATION_ADDED === ChangeType[change.changeType]
       ? entityChange.newEntity
@@ -42,51 +47,46 @@ export class HistoryFormatter {
     const id = entity['/id'];
     const applicationId = entity['/applicationId'];
     const applicationName = entity['/applicationName'];
+    const content = this.getApplicationContent(type, applicationId, applicationName);
 
-    return {
-      single: {
-        ref: ['/applications', id, 'summary'],
-        content: `${applicationId} - ${applicationName}`
-      }
-    };
+    return { single: this.createChangeItemDescription(type, content, ['/applications', id, 'summary']) };
   }
 
-  public getCustomerChangeDescription(change: ChangeHistoryItem): ChangeDescription {
+  public getCustomerChangeDescription(change: ChangeHistoryItem, type: ChangeDescriptionType): ChangeDescription {
     const entityChange = toEntityChange(change.fieldChanges);
     return {
-      old: {
-        ref: ['/customers', entityChange.oldEntity['/id']],
-        content: entityChange.oldEntity['/customerName']
-      },
-      new: {
-        ref: ['/customers', entityChange.newEntity['/id']],
-        content: entityChange.newEntity['/customerName']
-      }
+      old: this.createChangeItemDescription(type, entityChange.oldEntity['/customerName'], ['/customers', entityChange.oldEntity['/id']]),
+      new: this.createChangeItemDescription(type, entityChange.newEntity['/customerName'], ['/customers', entityChange.newEntity['/id']])
     };
   }
 
-  private getContactChangeDescription(change: ChangeHistoryItem) {
+  private getContactChangeDescription(change: ChangeHistoryItem, type: ChangeDescriptionType) {
     const entityChange = toEntityChange(change.fieldChanges);
     return {
-      old: {
-        content: entityChange.oldEntity['/contactName']
-      },
-      new: {
-        content: entityChange.newEntity['/contactName']
-      }
+      old: this.createChangeItemDescription(type, entityChange.oldEntity['/contactName']),
+      new: this.createChangeItemDescription(type, entityChange.newEntity['/contactName'])
     };
   }
 
-  private getStatusChangeDescription(change: ChangeHistoryItem): ChangeDescription {
+  private getStatusChangeDescription(change: ChangeHistoryItem, type: ChangeDescriptionType): ChangeDescription {
     const id = change.info.id;
     const applicationId = change.info.applicationId;
     const applicationName = change.info.name;
+    const content = this.getApplicationContent(type, applicationId, applicationName);
 
-    return {
-      single: {
-        ref: ['/applications', id, 'summary'],
-        content: `${applicationId} - ${applicationName}`
-      }
-    };
+    return { single: this.createChangeItemDescription(type, content, ['/applications', id, 'summary']) };
+  }
+
+  private createChangeItemDescription(descriptionType: ChangeDescriptionType,
+                                      content: string, ref?: string | any[]): ChangeItemDescription {
+    return ChangeDescriptionType.FULL === descriptionType
+      ? {ref, content}
+      : {content};
+  }
+
+  private getApplicationContent(descriptionType: ChangeDescriptionType, applicationId: string, name: string): string {
+    return ChangeDescriptionType.FULL === descriptionType
+      ? `${applicationId} - ${name}`
+      : `${applicationId}`;
   }
 }

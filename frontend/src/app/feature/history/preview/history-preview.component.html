@@ -5,10 +5,7 @@
 <div *ngIf="visibleChanges.length">
   <ul>
     <li *ngFor="let change of visibleChanges">
-      <history-item
-        [change]="change"
-        [fieldsVisible]="false">
-      </history-item>
+      <history-item-preview [change]="change"></history-item-preview>
     </li>
   </ul>
 
