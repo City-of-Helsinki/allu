@@ -12,7 +12,7 @@ export interface ChangeDescription {
 
 export interface ChangeItemDescription {
   ref?: string | any[];
-  content;
+  content: string;
 }
 
 @Injectable()
@@ -79,7 +79,7 @@ export class HistoryFormatter {
 
   private getStatusChangeDescription(change: ChangeHistoryItem): ChangeDescription {
     const id = change.info.id;
-    const applicationId = change.info.applicationId
+    const applicationId = change.info.applicationId;
     const applicationName = change.info.name;
 
     return {
