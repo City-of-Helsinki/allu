@@ -7,6 +7,7 @@ import {ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-
 import {ChargeBasisEntryMapper} from '../../mapper/charge-basis-entry-mapper';
 import {BackendChargeBasisEntry} from '../../backend-model/backend-charge-basis-entry';
 import {catchError, map} from 'rxjs/internal/operators';
+import {NumberUtil} from '../../../util/number.util';
 
 const APPLICATIONS_URL = '/api/applications';
 const INVOICE_ROWS_URL = '/api/applications/:appId/charge-basis';
@@ -19,7 +20,11 @@ export class InvoiceService {
 
   saveRecipient(applicationId: number, recipientId: number): Observable<{}> {
     const url = `${APPLICATIONS_URL}/${applicationId}/invoicerecipient`;
-    const params = new HttpParams().append('invoicerecipientid', String(recipientId));
+
+    const params = NumberUtil.isDefined(recipientId)
+      ? new HttpParams().append('invoicerecipientid', String(recipientId))
+      : new HttpParams();
+
     return this.http.put(url, null, {params}).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('invoice.error.invoiceRecipientSave')))
     );
