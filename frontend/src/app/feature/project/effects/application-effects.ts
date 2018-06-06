@@ -15,6 +15,7 @@ import {
   RemoveFailed,
   RemoveSuccess
 } from '../actions/application-actions';
+import * as historyActions from '../../history/actions/history-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import * as fromProject from '../reducers';
 import {ApplicationService} from '../../../service/application/application.service';
@@ -23,6 +24,7 @@ import * as projectActions from '../actions/project-actions';
 import {ProjectActionTypes, Save} from '../actions/project-actions';
 import {SaveSuccess} from '../actions/project-actions';
 import {Clear} from '../actions/application-basket-actions';
+import {ActionTargetType} from '../../allu/actions/action-target-type';
 
 @Injectable()
 export class ApplicationEffects {
@@ -67,7 +69,10 @@ export class ApplicationEffects {
     map(action => action.payload),
     switchMap(payload =>
       this.projectService.removeApplication(payload).pipe(
-        map(() => new RemoveSuccess(payload)),
+        switchMap(() => [
+          new RemoveSuccess(payload),
+          new historyActions.Load(ActionTargetType.Project)
+        ]),
         catchError(error => of(new RemoveFailed(error)))
       )
     )
@@ -103,7 +108,10 @@ export class ApplicationEffects {
   private addProjectApplications(projectId: number, applicationIds: number[]): Observable<Action> {
     return this.projectService.addProjectApplications(projectId, applicationIds)
       .pipe(
-        map((applications) => new AddSuccess(applications)),
+        switchMap((applications) => [
+          new AddSuccess(applications),
+          new historyActions.Load(ActionTargetType.Project)
+        ]),
         catchError(error => of(new AddFailed(error)))
       );
   }
