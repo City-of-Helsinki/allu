@@ -1,8 +1,8 @@
 <div fxLayout="row wrap" class="history-item">
-  <div fxFlex="0 0 15%">
+  <div fxFlex="0 0 10%">
     {{change.changeTime | date:'short'}}
   </div>
-  <div fxFlex="0 0 20%" class="text-highlighted">
+  <div fxFlex="0 0 15%" class="text-highlighted">
     <ng-container *ngIf="change.changeType==='STATUS_CHANGED'; else changeTypeInfo">
       {{['application.statusChange', change.newStatus] | translation}}
     </ng-container>
@@ -15,7 +15,7 @@
             class="allu-badge-center"></span>
     </ng-template>
   </div>
-  <div fxFlex="0 0 20%" class="text-highlighted">
+  <div fxFlex="0 0 30%" class="text-highlighted">
     <ng-container *ngIf="description">
       <ng-container *ngIf="description.single; else oldToNew">
         <history-item-description [changeItem]="description.single"></history-item-description>
