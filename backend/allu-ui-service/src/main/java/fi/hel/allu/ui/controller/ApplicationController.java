@@ -380,7 +380,7 @@ public class ApplicationController {
 
   @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam("invoicerecipientid") final Integer invoiceRecipientId) {
+  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam(value = "invoicerecipientid", required = false) final Integer invoiceRecipientId) {
     applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
     return new ResponseEntity<>(HttpStatus.OK);
   }

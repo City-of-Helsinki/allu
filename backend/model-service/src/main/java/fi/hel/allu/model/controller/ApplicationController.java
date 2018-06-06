@@ -365,7 +365,7 @@ public class ApplicationController {
   }
 
   @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
-  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam("invoicerecipientid") final Integer invoiceRecipientId,
+  public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam(value = "invoicerecipientid", required = false) final Integer invoiceRecipientId,
       @RequestParam("userid") final Integer userId) {
     applicationService.setInvoiceRecipient(id, invoiceRecipientId, userId);
     return new ResponseEntity<>(HttpStatus.OK);

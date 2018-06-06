@@ -327,7 +327,7 @@ public class ApplicationService {
 
   public void setInvoiceRecipient(int id, Integer invoiceRecipientId) {
     Application application = findApplicationById(id);
-    if (invoiceRecipientId.equals(application.getInvoiceRecipientId())) {
+    if (Objects.equals(invoiceRecipientId, application.getInvoiceRecipientId())) {
       return;
     }
     validateInvoiceRecipientChangeAllowed(application);
