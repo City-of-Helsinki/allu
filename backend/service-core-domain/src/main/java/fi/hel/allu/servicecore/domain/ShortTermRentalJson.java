@@ -9,7 +9,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
 
   private String description;
   private Boolean commercial;
-  private Boolean largeSalesArea;
+  private Boolean billableSalesArea;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -47,11 +47,11 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
    *
    * @return true if the application is for a large sales area
    */
-  public Boolean getLargeSalesArea() {
-    return largeSalesArea;
+  public Boolean getBillableSalesArea() {
+    return billableSalesArea;
   }
 
-  public void setLargeSalesArea(Boolean largeSalesArea) {
-    this.largeSalesArea = largeSalesArea;
+  public void setBillableSalesArea(Boolean billableSalesArea) {
+    this.billableSalesArea = billableSalesArea;
   }
 }

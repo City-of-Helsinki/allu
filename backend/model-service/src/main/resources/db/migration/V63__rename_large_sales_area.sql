@@ -1,0 +1,2 @@
+update allu.application set extension = extension::jsonb - 'largeSalesArea' || jsonb_build_object('billableSalesArea', extension::jsonb->'largeSalesArea') where type='SHORT_TERM_RENTAL';
+update allu.attribute_meta set name = 'billableSalesArea', ui_name = 'Yli 0,8 metriä seinästä' where name = 'largeSalesArea' and structure_meta_id = (select id from allu.structure_meta where type_name = 'SHORT_TERM_RENTAL');

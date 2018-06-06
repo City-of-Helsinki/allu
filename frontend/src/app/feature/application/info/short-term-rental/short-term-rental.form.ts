@@ -11,7 +11,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     public description?: string,
     public rentalTimes?: TimePeriod,
     public commercial?: boolean,
-    public largeSalesArea?: boolean,
+    public billableSalesArea?: boolean,
     public calculatedPrice?: number,
     public terms?: string) {}
 
@@ -21,7 +21,7 @@ export class ShortTermRentalForm implements ApplicationForm {
       rental.description,
       new TimePeriod(application.startTime, application.endTime),
       rental.commercial,
-      rental.largeSalesArea,
+      rental.billableSalesArea,
       application.calculatedPriceEuro,
       rental.terms
     );
@@ -31,7 +31,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     const rental =  new ShortTermRental();
     rental.description = form.description;
     rental.commercial = form.commercial;
-    rental.largeSalesArea = form.largeSalesArea;
+    rental.billableSalesArea = form.billableSalesArea;
     rental.terms = form.terms;
     return rental;
   }
@@ -41,7 +41,7 @@ export class ShortTermRentalForm implements ApplicationForm {
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: [''],
       commercial: [false],
-      largeSalesArea: [false],
+      billableSalesArea: [false],
       calculatedPrice: [0],
       rentalTimes: fb.group({
         startTime: [undefined, Validators.required],

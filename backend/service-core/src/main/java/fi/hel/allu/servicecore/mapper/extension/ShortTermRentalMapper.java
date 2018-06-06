@@ -8,7 +8,7 @@ public class ShortTermRentalMapper {
     ShortTermRentalJson shortTermRentalJson = new ShortTermRentalJson();
     shortTermRentalJson.setDescription(shortTermRental.getDescription());
     shortTermRentalJson.setCommercial(shortTermRental.getCommercial());
-    shortTermRentalJson.setLargeSalesArea(shortTermRental.getLargeSalesArea());
+    shortTermRentalJson.setBillableSalesArea(shortTermRental.getBillableSalesArea());
     return ApplicationExtensionMapper.modelToJson(shortTermRental, shortTermRentalJson);
   }
 
@@ -16,7 +16,7 @@ public class ShortTermRentalMapper {
     ShortTermRental shortTermRental = new ShortTermRental();
     shortTermRental.setDescription(json.getDescription());
     shortTermRental.setCommercial(json.getCommercial());
-    shortTermRental.setLargeSalesArea(json.getLargeSalesArea());
+    shortTermRental.setBillableSalesArea(json.getBillableSalesArea());
     return ApplicationExtensionMapper.jsonToModel(json, shortTermRental);
   }
 }

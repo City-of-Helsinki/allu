@@ -10,7 +10,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 public class ShortTermRentalPricing extends Pricing {
-
   private final Application application;
   private final PricingExplanator explanationService;
   private final double applicationArea;
@@ -26,14 +25,12 @@ public class ShortTermRentalPricing extends Pricing {
   private static final int DOG_TRAINING_EVENT_ASSOCIATION_PRICE = 5000; // 50
                                                                         // EUR
   private static final int DOG_TRAINING_EVENT_COMPANY_PRICE = 10000; // 100 EUR
-  private static final int DOG_TRAINING_FIELD_YEARLY_COMPANY = 20000; // 200
-                                                                      // EUR/year
+  private static final int DOG_TRAINING_FIELD_YEARLY_COMPANY = 30000; // 300 EUR/year
   private static final int DOG_TRAINING_FIELD_YEARLY_ASSOCIATION = 10000; // 100
                                                                           // EUR/year
   private static final int KESKUSKATU_SALES_TEN_SQM_PRICE = 5000; // 50
                                                                   // EUR/10sqm/day
-  private static final int PROMOTION_OR_SALES_LARGE_YEARLY = 15000; // 150
-                                                                    // EUR/year
+  private static final int PROMOTION_OR_SALES_MONTHLY = 200; // 2 EUR/sqm/kk
   private static final int SEASON_SALE_TEN_SQM_PRICE = 5000; // 50 EUR/10sqm/day
   private static final int STORAGE_AREA_MONTHLY_PRICE = 50;  // 0.50 EUR/sqm/month
   private static final int SUMMER_THEATER_YEARLY_PRICE = 12000; // 120 EUR/year
@@ -50,21 +47,19 @@ public class ShortTermRentalPricing extends Pricing {
     static final String BANDEROL_COMMERCIAL = "Banderollit silloissa, kaupallinen";
     static final String BENJI = "Benji-hyppylaite";
     static final String OTHER_SHORT_TERM_RENTAL = "Muu lyhytaikainen maanvuokraus";
-    static final String PROMOTION_OR_SALES_SMALL = "Esittely- tai myyntitila liikkeen edustalla, alle 0,8 m x 3,0 m";
-    static final String PROMOTION_OR_SALES_LARGE = "Esittely- tai myyntitila liikkeen edustalla, yli 0,8 m x 3,0 m";
+    static final String PROMOTION_OR_SALES_SMALL = "Korkeintaan 0,8 m seinästä";
+    static final String PROMOTION_OR_SALES_LARGE = "2€/m2/kk + alv, yli 0,8 m seinästä";
     static final String STORAGE_AREA = "Varastoalue";
     static final String URBAN_FARMING = "Kaupunkiviljelypaikka yhdistyksille ja yhteisöille";
-    static final String KESKUSKATU_SALES_SHORT = "Keskuskadun myyntipaikka, 1-14 päivää";
-    static final String KESKUSKATU_SALES_LONG = "Keskuskadun myyntipaikka, 15. päivästä alkaen";
-    static final String SUMMER_THEATER = "Kesäteatterit, maksu näytäntöajalta";
-    static final String DOG_TRAINING_FIELD_ORG = "Koirankoulutuskentän vuosimaksu yhdistykselle";
-    static final String DOG_TRAINING_FIELD_COM = "Koirankoulutuskentän vuosimaksu yritykselle";
+    static final String KESKUSKATU_SALES = "50 €/päivä/alkava 10 m² + alv";
+    static final String SUMMER_THEATER = "120 €/toimintakuukausi";
+    static final String DOG_TRAINING_FIELD_ORG = "Vuosivuokra yhdistyksille 100 €/vuosi (2h/vk)";
+    static final String DOG_TRAINING_FIELD_COM = "Vuosivuokra yrityksille 300 €/vuosi (2h/vk)";
     static final String DOG_TRAINING_EVENT_ORG = "Koirankoulutustapahtuma, järjestäjänä yhdistys";
     static final String DOG_TRAINING_EVENT_COM = "Koirankoulutustapahtuma, järjestäjänä yritys";
     static final String SMALL_ART_AND_CULTURE = "Pienimuotoinen kaupallinen taide- ja kulttuuritoiminta";
-    static final String SEASON_SALES_SHORT = "Sesonkimyyntipaikka, 1-14 päivää";
-    static final String SEASON_SALES_LONG = "Sesonkimyyntipaikka, 15. päivästä alkaen";
-    static final String CIRCUS = "Sirkukset ja tivolit";
+    static final String SEASON_SALES = "50 €/päivä/alkava 10 m² + alv";
+    static final String CIRCUS = "200 €/päivä + alv";
   }
 
   public ShortTermRentalPricing(Application application, PricingExplanator explanationService, double applicationArea, boolean customerIsCompany) {
@@ -135,7 +130,7 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case DOG_TRAINING_FIELD:
       // Associations: 100 EUR/year
-      // Companies: 200 EUR/year
+      // Companies: 300 EUR/year
       if (customerIsCompany) {
           updatePricePerUnit(ChargeBasisTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
               DOG_TRAINING_FIELD_YEARLY_COMPANY, InvoiceLines.DOG_TRAINING_FIELD_COM);
@@ -146,22 +141,21 @@ public class ShortTermRentalPricing extends Pricing {
       }
       break;
     case KESKUSKATU_SALES:
-      // 1..14 days: 50 EUR/day/starting 10 sqm
-      // 50% discount from 15. day onwards
-      updatePriceByTimeAndArea(KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true,
-            InvoiceLines.KESKUSKATU_SALES_SHORT, InvoiceLines.KESKUSKATU_SALES_LONG,
-            ChargeBasisTag.ShortTermRentalKeskuskatuSales(), ChargeBasisTag.ShortTermRentalKeskuskatuSalesLong());
+      // 50 EUR/day/starting 10 sqm
+      updatePriceByTimeAndArea(KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, false,
+            InvoiceLines.KESKUSKATU_SALES, null, ChargeBasisTag.ShortTermRentalKeskuskatuSales(), null);
       break;
     case OTHER:
       // Handler should set the price override
       break;
     case PROMOTION_OR_SALES:
-      // 0.8 x 3.0 sqm: free of charge
-      // bigger: 150 EUR/year
+      // at max 0.8 m from a wall: free of charge
+      // over 0.8m from a wall: 2 EUR/sqm/kk
       ShortTermRental str = (ShortTermRental) application.getExtension();
-      if (str != null && Optional.ofNullable(str.getLargeSalesArea()).orElse(false) == true) {
-          updatePricePerUnit(ChargeBasisTag.ShortTermRentalPromotionOrSales(), ChronoUnit.YEARS,
-              PROMOTION_OR_SALES_LARGE_YEARLY, InvoiceLines.PROMOTION_OR_SALES_LARGE);
+      if (str != null && Optional.ofNullable(str.getBillableSalesArea()).orElse(false) == true) {
+        updatePriceByTimeAndArea(PROMOTION_OR_SALES_MONTHLY, ChronoUnit.MONTHS, 1, false,
+              InvoiceLines.PROMOTION_OR_SALES_LARGE, null,
+              ChargeBasisTag.ShortTermRentalPromotionOrSales(), null);
       } else {
         // free of charge
           addChargeBasisEntry(ChargeBasisTag.ShortTermRentalPromotionOrSales(), ChargeBasisUnit.PIECE, 1, 0,
@@ -170,11 +164,9 @@ public class ShortTermRentalPricing extends Pricing {
       }
       break;
     case SEASON_SALE:
-      // 1..14 days: 50 EUR/day/starting 10 sqm
-      // 50% discount from 15. day onwards
-      updatePriceByTimeAndArea(SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true, InvoiceLines.SEASON_SALES_SHORT,
-            InvoiceLines.SEASON_SALES_LONG, ChargeBasisTag.ShortTermRentalSeasonSale(),
-            ChargeBasisTag.ShortTermRentalSeasonSaleLong());
+      // 50 EUR/day/starting 10 sqm
+      updatePriceByTimeAndArea(SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, false, InvoiceLines.SEASON_SALES,
+            null, ChargeBasisTag.ShortTermRentalSeasonSale(), null);
       break;
     case STORAGE_AREA:
       // 0.50 EUR/sqm/month

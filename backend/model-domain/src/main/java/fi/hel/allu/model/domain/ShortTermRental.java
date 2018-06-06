@@ -8,7 +8,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 public class ShortTermRental extends ApplicationExtension {
   private String description;
   private Boolean commercial;
-  private Boolean largeSalesArea;
+  private Boolean billableSalesArea;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -32,15 +32,13 @@ public class ShortTermRental extends ApplicationExtension {
   }
 
   /**
-   * Is this application for a large sales area (over 0.8 * 3 sqm)?
-   *
-   * @return true if the application is for a large sales area
+   * Is this application for a billable sales area (previously over 0.8 * 3 sqm, now over 0.8 from a wall)?
    */
-  public Boolean getLargeSalesArea() {
-    return largeSalesArea;
+  public Boolean getBillableSalesArea() {
+    return billableSalesArea;
   }
 
-  public void setLargeSalesArea(Boolean largeSalesArea) {
-    this.largeSalesArea = largeSalesArea;
+  public void setBillableSalesArea(Boolean billableSalesArea) {
+    this.billableSalesArea = billableSalesArea;
   }
 }

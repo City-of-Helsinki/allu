@@ -215,7 +215,7 @@ export const translations = {
       salesActivity: 'Tapahtuma sisältää kaupallista toimintaa (veloitetaan 50% normaalista hinnasta)',
       heavyStructure: 'Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (veloitetaan 50% normaalista hinnasta)',
       commercial: 'Kaupallinen',
-      largeSalesArea: 'Iso myyntialue (0,8 m x 3,0 m)',
+      billableSalesArea: 'Yli 0,8 metriä seinästä',
       calculatedPrice: 'Hinta'
     },
     tag: {

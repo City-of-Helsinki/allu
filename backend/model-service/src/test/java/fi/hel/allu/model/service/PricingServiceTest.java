@@ -211,8 +211,8 @@ public class PricingServiceTest {
     checkPrice(application, 30000);
 
     addDummyCustomer(application, CustomerType.COMPANY);
-    // Company -> 200 EUR /year -> 600 EUR total
-    checkPrice(application, 60000);
+    // Company -> 300 EUR /year -> 900 EUR total
+    checkPrice(application, 90000);
   }
 
   @Test
@@ -233,27 +233,36 @@ public class PricingServiceTest {
     location.setAreaOverride(135.5);
     location.setApplicationId(application.getId());
     locationDao.insert(location).getId();
-    // 20 days, 135.5 sqm -> 14 * 14 * 50 + 6 * 14 * 25 = 11900 EUR
-    checkPrice(application, 1190000);
+    // 20 days, 135.5 sqm -> 20 * 14 * 50 + 6 * 14 * 25 = 14000 EUR
+    checkPrice(application, 1400000);
   }
 
   @Test
   public void testPromotionOrSales() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
+    application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
+    application.setRecurringEndTime(application.getEndTime());
+    application.setMetadataVersion(1);
     ShortTermRental event = new ShortTermRental();
-    event.setLargeSalesArea(true);
+    event.setBillableSalesArea(true);
     application.setExtension(event);
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.PROMOTION_OR_SALES, Collections.emptyList()));
-    application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
-    application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
+    application.setNotBillable(false);
     addDummyCustomer(application, CustomerType.PERSON);
-    // Large area, price for three years = 150 EUR * 3 = 450 EUR
-    checkPrice(application, 45000);
+    application = applicationDao.insert(application);
+    Location location = newLocationWithDefaults();
+    location.setAreaOverride(4.0);
+    location.setApplicationId(application.getId());
+    locationDao.insert(location).getId();
+    // Large area, price for 25 months & 4 sqm = 25*2*4 EUR = 200 EUR
+    checkPrice(application, 20000);
 
     // Small area is free
-    event.setLargeSalesArea(false);
+    ((ShortTermRental)application.getExtension()).setBillableSalesArea(false);
+    application = applicationDao.update(application.getId(), application);
     checkPrice(application, 0);
   }
 

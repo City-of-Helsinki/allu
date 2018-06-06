@@ -124,8 +124,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               </p>
             </xsl:otherwise>
           </xsl:choose>
-          <p class="space-above">Vuokrauspäätöksen hinta perustuu
-            yleisten töiden lautakunnan päätökseen 11.11.2014 § 431.</p>
+          <p class="space-above">Vuokrauspäätöksen hinta perustuu yleisten töiden lautakunnan päätökseen 11.11.2014 § 431
+            tai kaupunkiympäristölautakunnan päätökseen 15.5.2018 § 238.</p>
           <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <!-- Käytetään, jos lasku enemmän kuin 0 €: -->
             <p class="space-above">Lasku lähetetään erikseen.</p>
