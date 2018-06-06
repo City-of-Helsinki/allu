@@ -1331,6 +1331,8 @@ export const translations = {
     changeTime: 'Muutettu',
     changer: 'Tekijä',
     showFieldChanges: 'Näytä kenttämuutokset',
+    noHistory: 'Ei näytettävää historiaa',
+    showHistory: 'Näytä historia',
     error: {
       metadata: 'Historian kenttien käännöksien lataus epäonnistui'
     },

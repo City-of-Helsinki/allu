@@ -30,6 +30,15 @@
           <div fxLayout="row">
             <div fxFlex="0 0 50%" class="preview-card">
               <h2 class="preview-header">
+                {{'history.title' | translation}}
+              </h2>
+              <history-preview
+                [changes]="changes$ | async"
+                [historyLink]="['/projects', project.id, 'history']">
+              </history-preview>
+            </div>
+            <div fxFlex="0 0 50%" class="preview-card">
+              <h2 class="preview-header">
                 {{'comment.title' | translation}}
               </h2>
               <comment-preview-list
@@ -37,7 +46,6 @@
                 [commentLink]="['/projects', project.id, 'comments']">
               </comment-preview-list>
             </div>
-            <div fxFlex="0 0 50%" class="preview-card"></div>
           </div>
         </mat-card-content>
       </allu-card>

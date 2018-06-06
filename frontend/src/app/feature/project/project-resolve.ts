@@ -9,6 +9,7 @@ import {Store} from '@ngrx/store';
 import * as fromProject from './reducers';
 import * as projectActions from './actions/project-actions';
 import * as commentActions from '../comment/actions/comment-actions';
+import * as historyActions from '../history/actions/history-actions';
 import {NumberUtil} from '../../util/number.util';
 
 import {ActionTargetType} from '../allu/actions/action-target-type';
@@ -37,6 +38,7 @@ export class ProjectResolve implements Resolve<Project> {
       filter(loaded => loaded),
       switchMap(() => this.store.select(fromProject.getCurrentProject)),
       tap(() => this.store.dispatch(new commentActions.Load(ActionTargetType.Project))),
+      tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Project))),
       take(1)
     );
   }

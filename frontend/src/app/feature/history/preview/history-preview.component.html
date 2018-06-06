@@ -1,0 +1,23 @@
+<div *ngIf="!visibleChanges.length">
+  {{'history.noHistory' | translation}}
+</div>
+
+<div *ngIf="visibleChanges.length">
+  <ul>
+    <li *ngFor="let change of visibleChanges">
+      <history-item
+        [change]="change"
+        [fieldsVisible]="false">
+      </history-item>
+    </li>
+  </ul>
+
+  <div fxLayout="row">
+    <div fxFlex class="history-link">
+      <a [routerLink]="historyLink">{{'history.showHistory' | translation}}</a>
+    </div>
+  </div>
+</div>
+
+
+
