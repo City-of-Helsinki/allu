@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {Some} from '../../../../util/option';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
@@ -25,6 +25,7 @@ import {Store} from '@ngrx/store';
 import * as fromApplication from '../../reducers';
 import {ApplicationTagType} from '../../../../model/application/tag/application-tag-type';
 import {TimeUtil} from '../../../../util/time.util';
+import {Customer} from '../../../../model/customer/customer';
 
 @Component({
   selector: 'invoicing-info',
@@ -124,9 +125,9 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.store.select(fromApplication.getCurrentApplication).pipe(take(1))
+    this.store.select(fromApplication.getCurrentApplication)
       .subscribe(app => {
-        Some(app.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
+        this.findAndPatchCustomer(app.invoiceRecipientId);
         const invoicingDate = app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app);
 
         this.form.patchValue({
@@ -156,8 +157,11 @@ export class InvoicingInfoComponent implements OnInit {
 
   private findAndPatchCustomer(id: number): void {
     this.setCustomerEdit();
-    this.customerService.findCustomerById(id)
-      .subscribe(customer => {
+    const customerObs = NumberUtil.isDefined(id)
+      ? this.customerService.findCustomerById(id)
+      : of(new Customer());
+
+    customerObs.subscribe(customer => {
         this.recipientForm.patchValue(CustomerForm.fromCustomer(customer), {emitEvent: false});
         this.originalRecipientForm = this.recipientForm.getRawValue();
     });

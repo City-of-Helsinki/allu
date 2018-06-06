@@ -26,7 +26,7 @@ import * as fromApplication from '../reducers';
   templateUrl: './invoicing.component.html',
   styleUrls: []
 })
-export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+export class InvoicingComponent implements OnInit, CanComponentDeactivate {
 
   applicationId: number;
   infoForm: FormGroup;
@@ -34,7 +34,6 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   private recipientForm: FormGroup;
   private notBillableCtrl: FormControl;
-  private destroy = new Subject<boolean>();
 
   constructor(private applicationStore: ApplicationStore,
               private fb: FormBuilder,
@@ -60,10 +59,6 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
         });
   }
 
-  ngOnDestroy(): void {
-    this.destroy.next(true);
-  }
-
   onSubmit(): void {
     this.saveApplicationInfo().subscribe(
       () => this.saved(),
@@ -76,6 +71,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   private saveApplicationInfo(): Observable<Application> {
     return this.saveCustomer().pipe(
+      map(customer => customer.id),
       switchMap(customer => this.saveInvoiceRecipient(customer)),
       switchMap(recipient => this.saveInvoicingInfo(recipient))
     );
@@ -87,19 +83,20 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
     if (!NumberUtil.isDefined(customer.id)) {
       customer.invoicingOnly = true;
     }
+
     if (billable && this.recipientForm.dirty) {
-      return this.customerService.saveCustomer(customer);
+        return this.customerService.saveCustomer(customer);
     } else {
       return of(customer);
     }
   }
 
-  private saveInvoiceRecipient(customer: Customer): Observable<Customer> {
-    this.store.dispatch(new SetRecipient(customer.id));
-    return of(customer);
+  private saveInvoiceRecipient(customerId: number): Observable<number> {
+    this.store.dispatch(new SetRecipient(customerId));
+    return of(customerId);
   }
 
-  private saveInvoicingInfo(invoiceRecipient: Customer): Observable<Application> {
+  private saveInvoicingInfo(invoiceRecipientId: number): Observable<Application> {
     return this.store.select(fromApplication.getCurrentApplication).pipe(
       take(1),
       switchMap(app => {
@@ -110,7 +107,7 @@ export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeacti
           app.customerReference = invoicingInfo.customerReference;
           app.invoicingDate = invoicingInfo.invoicingDate;
           app.skipPriceCalculation = invoicingInfo.skipPriceCalculation;
-          app.invoiceRecipientId = invoiceRecipient.id;
+          app.invoiceRecipientId = invoicingInfo.notBillable ? undefined : invoiceRecipientId;
           return this.applicationStore.save(app);
         } else {
           return of(app);
