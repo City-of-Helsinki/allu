@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.MailSenderLog;
 import fi.hel.allu.mail.model.MailMessage;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.mail.model.MailMessage.InlineResource;
@@ -102,7 +103,7 @@ public class AlluMailService {
       return this;
     }
 
-    public void send() {
+    public MailSenderLog send() {
       List<Attachment> attachments = new ArrayList<>();
       if (decisionAttachment != null) {
         attachments.add(decisionAttachment);
@@ -111,17 +112,13 @@ public class AlluMailService {
         attachments.addAll(otherAttachments);
       }
       mailMessage.setAttachments(attachments);
-
-      try {
-        if (model != null) {
-          mailService.send(mailMessage, model);
-        } else {
-          mailService.send(mailMessage);
-        }
-      } catch (MessagingException e) {
-        throw new RuntimeException(e);
+      MailSenderLog log;
+      if (model != null) {
+        log = mailService.send(mailMessage, model);
+      } else {
+        log = mailService.send(mailMessage);
       }
-
+      return log;
     }
   }
 

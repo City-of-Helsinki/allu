@@ -27,6 +27,11 @@
             <version>3.4.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
         <!--  support for Java 8 Date & Time API types -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>

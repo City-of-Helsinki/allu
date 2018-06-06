@@ -1204,5 +1204,9 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/invoicerecipient");
   }
 
+  public String getMailSenderLogUrl() {
+    return getModelServiceUrl("/logs/mailsender");
+  }
+
 
 }

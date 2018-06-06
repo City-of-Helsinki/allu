@@ -1,5 +1,6 @@
 package fi.hel.allu.scheduler.service;
 
+import fi.hel.allu.common.domain.MailSenderLog;
 import fi.hel.allu.mail.model.MailMessage;
 import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,13 +30,17 @@ public class AlluMailService {
 
   private final ApplicationProperties applicationProperties;
   private final MailService mailService;
+  private final LogService logService;
   private Pattern emailAcceptPattern = null;
+
 
   @Autowired
   public AlluMailService(ApplicationProperties applicationProperties,
-      JavaMailSender javaMailSender) {
+      JavaMailSender javaMailSender, LogService logService) {
     this.applicationProperties = applicationProperties;
+    this.logService = logService;
     mailService = new MailService(javaMailSender);
+
   }
 
   @PostConstruct
@@ -55,24 +62,33 @@ public class AlluMailService {
    * @return
    */
   public void sendEmail(List<String> recipients, String subject, String body) {
+    MailSenderLog log;
+    List<String> forbiddenAddresses = getForbiddenEmailAddresses(recipients);
+    if (!forbiddenAddresses.isEmpty() ) {
+      String errorMessage = "Forbidden recipient addresses: " + String.join(", ", forbiddenAddresses);
+      logger.warn(errorMessage);
+      log = new MailSenderLog(subject, ZonedDateTime.now(), recipients, true, errorMessage);
+    } else {
+      MailMessage message = new MailMessage();
+      message.setBody(body);
+      message.setSubject(subject);
+      message.setTo(recipients);
+      message.setFrom(applicationProperties.getEmailSenderAddress());
+      log =  mailService.send(message);
+    }
+    logService.addMailSenderLog(log);
+  }
+
+  public List<String> getForbiddenEmailAddresses(List<String> recipients) {
+    List<String> forbidden;
     if (emailAcceptPattern != null) {
-      List<String> forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
+      forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
           .collect(Collectors.toList());
-      if (!forbidden.isEmpty()) {
-        throw new IllegalArgumentException("Forbidden recipient addresses: " + String.join(", ", forbidden));
-      }
+      return forbidden;
+    } else {
+     forbidden = Collections.emptyList();
     }
-    MailMessage message = new MailMessage();
-    message.setBody(body);
-    message.setSubject(subject);
-    message.setTo(recipients);
-    message.setFrom(applicationProperties.getEmailSenderAddress());
-    try {
-      mailService.send(message);
-    } catch (MessagingException e) {
-      logger.error("Failed to send the message", e);
-      throw new RuntimeException(e);
-    }
+    return forbidden;
   }
 
 }

@@ -24,6 +24,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>common-domain</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
     </dependencies>
-
 </project>

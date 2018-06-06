@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.common.domain.MailSenderLog;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
@@ -34,6 +35,10 @@ public class MailComposerServiceSpec {
   private AlluMailService alluMailService;
   @Mock
   private AlluMailService.MailBuilder mailBuilder;
+  @Mock
+  private LogService logService;
+  @Mock
+  private ApplicationService applicationService;
 
   private MailComposerService mailComposerService;
 
@@ -49,7 +54,8 @@ public class MailComposerServiceSpec {
         Mockito.when(mailBuilder.withSubject(Mockito.anyString())).thenReturn(mailBuilder);
         Mockito.when(mailBuilder.withModel(Mockito.anyMapOf(String.class, Object.class))).thenReturn(mailBuilder);
         Mockito.when(alluMailService.newMailTo(Mockito.anyListOf(String.class))).thenReturn(mailBuilder);
-        mailComposerService = new MailComposerService(alluMailService, attachmentService);
+        Mockito.when(mailBuilder.send()).thenReturn(new MailSenderLog());
+        mailComposerService = new MailComposerService(alluMailService, attachmentService, logService, applicationService);
       });
       describe("Create decision e-mail", () -> {
         final int APPLICATION_ID = 911;

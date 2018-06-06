@@ -1,12 +1,13 @@
 package fi.hel.allu.scheduler.config;
 
-import fi.hel.allu.model.domain.ConfigurationType;
+import java.util.List;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import fi.hel.allu.model.domain.ConfigurationType;
 
 @Component
 public class ApplicationProperties {
@@ -358,5 +359,9 @@ public class ApplicationProperties {
 
   public String getArchiveApplicationsUrl() {
     return getExtServiceUrl("/v1/applications/finished/archive");
+  }
+
+  public String getMailSenderLogUrl() {
+    return getModelServiceUrl("/logs/mailsender");
   }
 }

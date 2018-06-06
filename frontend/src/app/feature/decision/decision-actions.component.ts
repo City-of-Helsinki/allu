@@ -18,7 +18,7 @@ import * as fromApplication from '../application/reducers';
 import {Store} from '@ngrx/store';
 import {Load} from '../comment/actions/comment-actions';
 import {ActionTargetType} from '../allu/actions/action-target-type';
-import {switchMap, tap} from 'rxjs/internal/operators';
+import {switchMap, tap, catchError} from 'rxjs/internal/operators';
 
 
 @Component({
@@ -106,7 +106,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
-      .map(details => this.decisionHub.sendDecision(appId, details))
+      .map(details => this.decisionHub.sendDecision(appId, details).pipe(
+        catchError(error => this.notification.errorCatch(error, {}))
+      ))
       .orElseGet(() => of({}));
   }
 }

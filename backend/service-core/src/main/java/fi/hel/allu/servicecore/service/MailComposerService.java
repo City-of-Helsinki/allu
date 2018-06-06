@@ -1,25 +1,24 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import static fi.hel.allu.common.domain.types.ApplicationType.AREA_RENTAL;
-import static fi.hel.allu.common.domain.types.ApplicationType.EXCAVATION_ANNOUNCEMENT;
-import fi.hel.allu.common.util.ResourceUtil;
-import fi.hel.allu.mail.model.MailMessage.Attachment;
-import fi.hel.allu.mail.model.MailMessage.InlineResource;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
-import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.domain.PostalAddressJson;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.MailSenderLog;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.util.ResourceUtil;
+import fi.hel.allu.mail.model.MailMessage.Attachment;
+import fi.hel.allu.mail.model.MailMessage.InlineResource;
+import fi.hel.allu.servicecore.domain.*;
 
 /**
  * Service that's responsible for creating the outgoing emails and passing them
@@ -65,11 +64,17 @@ public class MailComposerService {
 
   private final AlluMailService alluMailService;
   private final AttachmentService attachmentService;
+  private final LogService logService;
+  private final ApplicationService applicationService;
+
 
   @Autowired
-  public MailComposerService(AlluMailService alluMailService, AttachmentService attachmentService) {
+  public MailComposerService(AlluMailService alluMailService, AttachmentService attachmentService,
+      LogService logService, ApplicationService applicationService) {
     this.alluMailService = alluMailService;
     this.attachmentService = attachmentService;
+    this.logService = logService;
+    this.applicationService = applicationService;
   }
 
   public void sendDecision(ApplicationJson applicationJson, DecisionDetailsJson decisionDetailsJson) {
@@ -86,18 +91,37 @@ public class MailComposerService {
 
       List<InlineResource> inlineResources = inlineResources();
 
-      alluMailService.newMailTo(emailRecipients)
-        .withSubject(subject)
-        .withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId())
-        .withBody(textBodyFor(applicationJson))
-        .withHtmlBody(htmlBodyFor(applicationJson))
-        .withAttachments(attachments)
-        .withInlineResources(inlineResources)
-        .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType())))
-        .send();
+      MailSenderLog log;
+      try {
+        log = alluMailService.newMailTo(emailRecipients)
+          .withSubject(subject)
+          .withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId())
+          .withBody(textBodyFor(applicationJson))
+          .withHtmlBody(htmlBodyFor(applicationJson))
+          .withAttachments(attachments)
+          .withInlineResources(inlineResources)
+          .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType())))
+          .send();
+      } catch (Exception e) {
+        logger.warn("Failed to send message", e);
+        log = new MailSenderLog(subject, ZonedDateTime.now(), emailRecipients, true, e.getMessage());
+      }
+      saveMailSenderLog(log);
+      if (log.isSentFailed()) {
+        handleDecisionEmailSentFailed(log, applicationJson.getId());
+      }
     } else {
       logger.warn("No email recipients");
     }
+  }
+
+  private void handleDecisionEmailSentFailed(MailSenderLog log, Integer id) {
+    applicationService.addTag(id, new ApplicationTagJson(null, ApplicationTagType.DECISION_NOT_SENT, ZonedDateTime.now()));
+    throw new MailSendException("decision.email.failed");
+  }
+
+  private void saveMailSenderLog(MailSenderLog log) {
+    logService.addMailSenderLog(log);
   }
 
   private List<InlineResource> inlineResources() {
