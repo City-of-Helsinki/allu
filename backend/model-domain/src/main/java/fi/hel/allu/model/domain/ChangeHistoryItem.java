@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class ChangeHistoryItem {
   private Integer userId;
+  private ChangeHistoryItemInfo info;
   private ChangeType changeType;
   private StatusType newStatus;
   private ZonedDateTime changeTime;
@@ -21,9 +22,10 @@ public class ChangeHistoryItem {
   public ChangeHistoryItem() {
   }
 
-  public ChangeHistoryItem(Integer userId, ChangeType changeType,
+  public ChangeHistoryItem(Integer userId, ChangeHistoryItemInfo info, ChangeType changeType,
       StatusType newStatus, ZonedDateTime changeTime, List<FieldChange> fieldChanges) {
     this.userId = userId;
+    this.info = info;
     this.changeType = changeType;
     this.newStatus = newStatus;
     this.changeTime = changeTime;
@@ -41,6 +43,14 @@ public class ChangeHistoryItem {
 
   public void setUserId(Integer userId) {
     this.userId = userId;
+  }
+
+  public ChangeHistoryItemInfo getInfo() {
+    return info;
+  }
+
+  public void setInfo(ChangeHistoryItemInfo info) {
+    this.info = info;
   }
 
   /**

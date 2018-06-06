@@ -29,6 +29,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QApplication;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.FieldChange;
 
 /**
@@ -113,8 +114,9 @@ public class HistoryDao {
 
   private List<ChangeHistoryItem> resultToChangeHistory(List<Tuple> results) {
     return results.stream()
-        .map(r -> new ChangeHistoryItem(r.get(changeHistory.userId), r.get(changeHistory.changeType),
-            r.get(changeHistory.newStatus), r.get(changeHistory.changeTime), getChangeLines(r.get(changeHistory.id))))
+        .map(r -> new ChangeHistoryItem(r.get(changeHistory.userId), getInfo(r),
+            r.get(changeHistory.changeType), r.get(changeHistory.newStatus), r.get(changeHistory.changeTime),
+            getChangeLines(r.get(changeHistory.id))))
         .collect(Collectors.toList());
   }
 
@@ -124,6 +126,14 @@ public class HistoryDao {
   private List<FieldChange> getChangeLines(Integer changeId) {
     return queryFactory.select(fieldChangeBean).from(fieldChange).where(fieldChange.changeHistoryId.eq(changeId))
         .fetch();
+  }
+
+  private ChangeHistoryItemInfo getInfo(Tuple result) {
+    if (result.get(changeHistory.applicationId) != null) {
+      return new ChangeHistoryItemInfo(result.get(changeHistory.applicationId));
+    } else {
+      return new ChangeHistoryItemInfo(result.get(changeHistory.projectId));
+    }
   }
 
   /**

@@ -26,6 +26,8 @@ export class HistoryFormatter {
         return this.getCustomerChangeDescription(change);
       case ChangeType.CONTACT_CHANGED:
         return this.getContactChangeDescription(change);
+      case ChangeType.STATUS_CHANGED:
+        return this.getStatusChangeDescription(change);
       default:
         return undefined;
     }
@@ -71,6 +73,19 @@ export class HistoryFormatter {
       },
       new: {
         content: entityChange.newEntity['/contactName']
+      }
+    };
+  }
+
+  private getStatusChangeDescription(change: ChangeHistoryItem): ChangeDescription {
+    const id = change.info.id;
+    const applicationId = change.info.applicationId
+    const applicationName = change.info.name;
+
+    return {
+      single: {
+        ref: ['/applications', id, 'summary'],
+        content: `${applicationId} - ${applicationName}`
       }
     };
   }

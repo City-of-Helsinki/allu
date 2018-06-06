@@ -51,11 +51,11 @@ public class HistoryDaoTest {
     int userId = testCommon.insertUser("Test User").getId();
     // Add some changes to the application
     historyDao.addApplicationChange(applicationId,
-        new ChangeHistoryItem(userId, ChangeType.CREATED, null, ZonedDateTime.now(), null));
+        new ChangeHistoryItem(userId, null, ChangeType.CREATED, null, ZonedDateTime.now(), null));
     historyDao.addApplicationChange(applicationId,
-        new ChangeHistoryItem(userId, ChangeType.STATUS_CHANGED, StatusType.HANDLING, ZonedDateTime.now(), null));
+        new ChangeHistoryItem(userId, null, ChangeType.STATUS_CHANGED, StatusType.HANDLING, ZonedDateTime.now(), null));
     historyDao.addApplicationChange(applicationId,
-        new ChangeHistoryItem(userId, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(),
+        new ChangeHistoryItem(userId, null, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(),
             Arrays.asList(new FieldChange("/foo", "oldFoo", "newFoo"),
                 new FieldChange("/bar", "oldBar", "newBar"))));
     // Check that the changes are there

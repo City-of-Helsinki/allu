@@ -1,10 +1,12 @@
 import {User} from '../user/user';
 import {FieldChange} from './field-change';
 import {TimeUtil} from '../../util/time.util';
+import {ChangeHistoryItemInfo} from './change-history-item-info';
 
 export class ChangeHistoryItem {
   constructor(
     public user?: User,
+    public info?: ChangeHistoryItemInfo,
     public changeType?: string,
     public newStatus?: string,
     public changeTime?: Date,

@@ -8,7 +8,6 @@ import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.UserJson;
@@ -70,7 +69,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
   public void testGetChanges() {
     final int APPLICATION_ID = 432;
     ChangeHistoryItem[] changes = new ChangeHistoryItem[] {
-        new ChangeHistoryItem(12, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.parse("2017-02-03T10:15:30+02:00"),
+        new ChangeHistoryItem(12, null, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.parse("2017-02-03T10:15:30+02:00"),
             Arrays.asList(new FieldChange("foo", "oldFoo", "newFoo"))) };
     Mockito.when(mockRestTemplate.getForObject(Mockito.eq(APPLICATION_HISTORY_URL),
         Mockito.eq(ChangeHistoryItem[].class), Mockito.eq(APPLICATION_ID))).thenReturn(changes);
