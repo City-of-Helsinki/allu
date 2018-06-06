@@ -20,7 +20,7 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatBadgeModule,
+  MatBadgeModule, MatSlideToggleModule,
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MaterializeModule} from 'angular2-materialize';
@@ -83,6 +83,7 @@ import {NotificationService} from '../../service/notification/notification.servi
     MatProgressSpinnerModule,
     MatMenuModule,
     MatBadgeModule,
+    MatSlideToggleModule,
     FlexLayoutModule,
     MaterializeModule,
     FieldErrorComponent,

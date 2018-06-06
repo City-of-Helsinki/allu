@@ -13,7 +13,7 @@
       color: $allu-text-black;
     }
 
-    &.mat-card .mat-divider {
+    &.mat-card .mat-divider .divider-primary {
       border-top-color: mat-color($primary, 200);
     }
   }

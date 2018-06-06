@@ -7,7 +7,8 @@ import {ErrorInfo} from '../../../service/error/error-info';
 export enum HistoryActionType {
   Load = '[History] Load history',
   LoadSuccess = '[History] Load history success',
-  LoadFailed = '[History] Load history failed'
+  LoadFailed = '[History] Load history failed',
+  SetFieldsVisible = '[History] Set fields visible'
 }
 
 export class Load implements ActionWithTarget {
@@ -28,7 +29,14 @@ export class LoadFailed implements ActionWithTarget, ActionWithPayload<ErrorInfo
   constructor(public targetType: ActionTargetType, public payload: ErrorInfo) {}
 }
 
+export class SetFieldsVisible implements ActionWithTarget {
+  readonly type = HistoryActionType.SetFieldsVisible;
+
+  constructor(public targetType: ActionTargetType, public payload: boolean) {}
+}
+
 export type HistoryActions =
   | Load
   | LoadSuccess
-  | LoadFailed;
+  | LoadFailed
+  | SetFieldsVisible;

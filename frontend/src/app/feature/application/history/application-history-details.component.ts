@@ -5,7 +5,7 @@ import {ChangeHistoryItem} from '../../../model/history/change-history-item';
 import {User} from '../../../model/user/user';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {FieldChange} from '../../../model/history/field-change';
-import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
+import {HistoryFieldFormatter} from '../../../service/history/history-field-formatter';
 
 @Component({
   selector: 'application-history-details',
@@ -22,12 +22,11 @@ export class ApplicationHistoryDetailsComponent implements AfterContentInit {
 
   fieldChanges: Array<FieldChange>;
 
-  constructor(public dialogRef: MatDialogRef<ApplicationHistoryDetailsComponent>, private formatter: ApplicationHistoryFormatter) {}
+  constructor(public dialogRef: MatDialogRef<ApplicationHistoryDetailsComponent>, private formatter: HistoryFieldFormatter) {}
 
   ngAfterContentInit(): void {
-    this.formatter.setMeta(this.meta);
     this.fieldChanges = this.change.fieldChanges
-      .map(fc => this.formatter.toFormattedChange(fc));
+      .map(fc => this.formatter.toFormattedChange(fc, this.meta));
   }
 
   closeModal(): void {

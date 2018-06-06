@@ -2,7 +2,7 @@
   <div fxFlex="0 0 15%">
     {{change.changeTime | date:'short'}}
   </div>
-  <div fxFlex="0 0 20%" class="text-highlight">
+  <div fxFlex="0 0 20%" class="text-highlighted">
     <ng-container *ngIf="change.changeType==='STATUS_CHANGED'; else changeTypeInfo">
       {{['application.statusChange', change.newStatus] | translation}}
     </ng-container>
@@ -10,7 +10,7 @@
       {{['history.change.type', change.changeType] | translation}}
     </ng-template>
   </div>
-  <div fxFlex="0 0 20%" class="text-highlight">
+  <div fxFlex="0 0 20%" class="text-highlighted">
     <ng-container *ngIf="description">
       <ng-container *ngIf="description.single; else oldToNew">
         <history-item-description [changeItem]="description.single"></history-item-description>
@@ -34,3 +34,7 @@
     {{change.user?.realname}}
   </div>
 </div>
+<history-fields
+  *ngIf="fieldsVisible"
+  [fieldChanges]="fieldChanges"
+  [meta]="meta"></history-fields>

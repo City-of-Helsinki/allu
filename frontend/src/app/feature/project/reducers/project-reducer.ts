@@ -76,3 +76,5 @@ export const getCurrent = (state: State) => state.current;
 
 export const getLoaded = (state: State) => state.loaded;
 
+export const getMeta = (state: State) => state.meta;
+

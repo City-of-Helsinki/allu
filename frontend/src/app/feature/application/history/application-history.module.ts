@@ -7,7 +7,7 @@ import {ApplicationHistoryComponent} from './application-history.component';
 import {HistoryHub} from '../../../service/history/history-hub';
 import {HistoryService} from '../../../service/history/history-service';
 import {ApplicationHistoryDetailsComponent} from './application-history-details.component';
-import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
+import {HistoryFieldFormatter} from '../../../service/history/history-field-formatter';
 
 @NgModule({
   imports: [
@@ -22,7 +22,7 @@ import {ApplicationHistoryFormatter} from '../../../service/history/application-
   providers: [
     HistoryHub,
     HistoryService,
-    ApplicationHistoryFormatter
+    HistoryFieldFormatter
   ],
   entryComponents: [
     ApplicationHistoryDetailsComponent

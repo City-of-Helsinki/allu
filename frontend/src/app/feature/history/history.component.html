@@ -1,31 +1,49 @@
 <allu-card class="full-width">
-  <mat-card-title class="allu-card-title">
-    {{'history.title' | translation}}
-  </mat-card-title>
+  <div fxLayout="row" fxLayoutAlign="space-between" class="history-header-row">
+    <div fxFlex="auto">
+      <mat-card-title>
+        {{'history.title' | translation}}
+      </mat-card-title>
+    </div>
+    <div fxFlex="0 0 auto">
+      <mat-slide-toggle
+        labelPosition="before"
+        [checked]="fieldsVisible$ | async"
+        (change)="toggleFieldVisibility($event)">
+        {{'history.showFieldChanges' | translation}}
+      </mat-slide-toggle>
+    </div>
+  </div>
 
   <history-item-group
     [changes]="changesToday$ | async"
-    [title]="'common.time.today' | translation | uppercase">
+    [title]="'common.time.today' | translation | uppercase"
+    [meta]="meta$ | async"
+    [fieldsVisible]="fieldsVisible$ | async">
   </history-item-group>
 
   <ng-container *ngIf="changesWithinWeek$ | async as changesWithinWeek">
     <ng-container *ngIf="changesWithinWeek.length">
-      <mat-divider></mat-divider>
+      <mat-divider class="divider-loose divider-primary"></mat-divider>
 
       <history-item-group
         [changes]="changesWithinWeek"
-        [title]="'common.time.withinWeek' | translation | uppercase">
+        [title]="'common.time.withinWeek' | translation | uppercase"
+        [meta]="meta$ | async"
+        [fieldsVisible]="fieldsVisible$ | async">
       </history-item-group>
     </ng-container>
   </ng-container>
 
   <ng-container *ngIf="olderChanges$ | async as olderChanges">
     <ng-container *ngIf="olderChanges.length">
-      <mat-divider></mat-divider>
+      <mat-divider class="divider-loose divider-primary"></mat-divider>
 
       <history-item-group
         [changes]="olderChanges"
-        [title]="'common.time.older' | translation | uppercase">
+        [title]="'common.time.older' | translation | uppercase"
+        [meta]="meta$ | async"
+        [fieldsVisible]="fieldsVisible$ | async">
       </history-item-group>
     </ng-container>
   </ng-container>

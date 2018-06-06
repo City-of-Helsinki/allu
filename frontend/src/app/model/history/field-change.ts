@@ -2,7 +2,7 @@ import {StringUtil} from '../../util/string.util';
 import {ArrayUtil} from '../../util/array-util';
 import {NumberUtil} from '../../util/number.util';
 
-const DISTRICT_ID_CHANGE = 'cityDistrictId';
+const DISTRICT_ID_CHANGE = ['cityDistrictId', '/cityDistricts'];
 const CUSTOMER_CHANGE = '/customer/';
 const CONTACT_CHANGE = '/contacts/';
 const CUSTOMER_URL = '/customers/:id';
@@ -68,7 +68,7 @@ export class FieldChange {
   }
 
   private initFieldChangeType(fieldName: string) {
-    if (fieldName.indexOf(DISTRICT_ID_CHANGE) >= 0) {
+    if (DISTRICT_ID_CHANGE.some(partId => fieldName.indexOf(partId) >= 0)) {
       this._fieldChangeType = FieldChangeType.DISTRICT_ID;
     } else if (fieldName.indexOf(CUSTOMER_CHANGE) >= 0) {
       this._fieldChangeType = FieldChangeType.CUSTOMER;

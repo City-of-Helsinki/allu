@@ -2,11 +2,11 @@
   $primary: map-get($theme, primary);
 
   ul.history-items {
-    li:nth-of-type(odd) {
+    li:nth-of-type(odd) .history-item {
       background: mat-color($primary, 100);
     }
 
-    li:nth-of-type(even) {
+    li:nth-of-type(even) .history-item {
       background: mat-color($primary, 50);
     }
   }

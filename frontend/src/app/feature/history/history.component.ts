@@ -5,20 +5,25 @@ import * as fromRoot from '../allu/reducers';
 import * as fromProject from '../project/reducers';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
-import {Load} from './actions/history-actions';
+import {Load, SetFieldsVisible} from './actions/history-actions';
 import {takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '../../util/time.util';
+import {StructureMeta} from '../../model/application/meta/structure-meta';
+import {MatSlideToggleChange} from '@angular/material';
 
 @Component({
   selector: 'history',
   templateUrl: './history.component.html',
-  styleUrls: []
+  styleUrls: ['./history.component.scss']
 })
 export class HistoryComponent implements OnInit {
   @Input() targetType: ActionTargetType;
+
+  meta$: Observable<StructureMeta>;
   changesToday$ = new BehaviorSubject<ChangeHistoryItem[]>([]);
   changesWithinWeek$ = new BehaviorSubject<ChangeHistoryItem[]>([]);
   olderChanges$ = new BehaviorSubject<ChangeHistoryItem[]>([]);
+  fieldsVisible$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
 
@@ -30,9 +35,16 @@ export class HistoryComponent implements OnInit {
       this.store.select(fromProject.getHistory)
         .pipe(takeUntil(this.destroy))
         .subscribe(changes => this.splitByTime(changes));
+
+      this.meta$ = this.store.select(fromProject.getMeta);
+      this.fieldsVisible$ = this.store.select(fromProject.getFieldsVisible);
     } else {
       // No implementation for applications yet
     }
+  }
+
+  toggleFieldVisibility(toggleChange: MatSlideToggleChange): void {
+    this.store.dispatch(new SetFieldsVisible(this.targetType, toggleChange.checked));
   }
 
   private splitByTime(changes: ChangeHistoryItem[]): void {

@@ -69,6 +69,11 @@ export const getProjectLoaded = createSelector(
   fromProject.getLoaded
 );
 
+export const getMeta = createSelector(
+  getProjectEntitiesState,
+  fromProject.getMeta
+);
+
 export const getProjectDistricts = createSelector(
   getCurrentProject,
   fromRoot.getCityDistrictEntities,
@@ -208,5 +213,10 @@ export const getHistoryState = createSelector(
 export const getHistory = createSelector(
   getHistoryState,
   fromHistory.getHistory
+);
+
+export const getFieldsVisible = createSelector(
+  getHistoryState,
+  fromHistory.getFieldsVisible
 );
 

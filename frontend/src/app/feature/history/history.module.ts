@@ -8,6 +8,8 @@ import {HistoryItemGroupComponent} from './history-item-group.component';
 import {RouterModule} from '@angular/router';
 import {HistoryFormatter} from '../../service/history/history-formatter';
 import {HistoryItemDescriptionComponent} from './history-item-description.component';
+import {HistoryFieldComponent} from './field/history-field.component';
+import {HistoryFieldsComponent} from './field/history-fields.component';
 
 @NgModule({
   imports: [
@@ -19,7 +21,9 @@ import {HistoryItemDescriptionComponent} from './history-item-description.compon
     HistoryComponent,
     HistoryItemGroupComponent,
     HistoryItemComponent,
-    HistoryItemDescriptionComponent
+    HistoryItemDescriptionComponent,
+    HistoryFieldsComponent,
+    HistoryFieldComponent
   ],
   providers: [
     HistoryFormatter

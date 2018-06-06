@@ -4,7 +4,10 @@
 <mat-card-content>
   <ul class="history-items">
     <li *ngFor="let change of changes" class="allu-card-content">
-      <history-item [change]="change"></history-item>
+      <history-item
+        [change]="change"
+        [meta]="meta"
+        [fieldsVisible]="fieldsVisible"></history-item>
     </li>
   </ul>
 </mat-card-content>

@@ -1,0 +1,9 @@
+<ul>
+  <li *ngFor="let fieldChange of fieldChanges; last as isLast">
+    <history-field
+      [fieldChange]="fieldChange"
+      [meta]="meta"></history-field>
+
+    <mat-divider *ngIf="!isLast"></mat-divider>
+  </li>
+</ul>

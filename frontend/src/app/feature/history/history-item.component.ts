@@ -5,6 +5,7 @@ import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
 import {FieldChange} from '../../model/history/field-change';
 import {ChangeDescription, HistoryFormatter} from '../../service/history/history-formatter';
+import {StructureMeta} from '../../model/application/meta/structure-meta';
 
 @Component({
   selector: 'history-item',
@@ -13,6 +14,9 @@ import {ChangeDescription, HistoryFormatter} from '../../service/history/history
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HistoryItemComponent implements OnInit {
+  @Input() meta: StructureMeta;
+  @Input() fieldsVisible: boolean;
+
   description: ChangeDescription;
   fieldChanges: FieldChange[] = [];
 
@@ -35,8 +39,12 @@ export class HistoryItemComponent implements OnInit {
   }
 
   private getFieldChanges(change: ChangeHistoryItem) {
-    return ChangeType.CONTENTS_CHANGED === ChangeType[change.changeType]
+    return this.showFields(change)
       ? change.fieldChanges
       : [];
+  }
+
+  private showFields(change: ChangeHistoryItem): boolean {
+    return ChangeType.CONTENTS_CHANGED === ChangeType[change.changeType];
   }
 }

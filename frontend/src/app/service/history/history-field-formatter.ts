@@ -13,7 +13,7 @@ import {Store} from '@ngrx/store';
 import {take} from 'rxjs/internal/operators';
 
 @Injectable()
-export class ApplicationHistoryFormatter {
+export class HistoryFieldFormatter {
 
   private meta: StructureMeta;
   private cityDistricts: Array<CityDistrict> = [];
@@ -23,11 +23,8 @@ export class ApplicationHistoryFormatter {
       .subscribe(districts => this.cityDistricts = districts);
   }
 
-  public setMeta(meta: StructureMeta) {
+  public toFormattedFieldNames(fieldChange: FieldChange, meta: StructureMeta): FieldChange {
     this.meta = meta;
-  }
-
-  public toFormattedFieldNames(fieldChange: FieldChange): FieldChange {
     let uiFieldName = this.meta.uiName(fieldChange.fieldName);
 
     switch (fieldChange.fieldChangeType) {
@@ -41,7 +38,8 @@ export class ApplicationHistoryFormatter {
     return new FieldChange(fieldChange.fieldName, fieldChange.oldValue, fieldChange.newValue, uiFieldName);
   }
 
-  public toFormattedChange(fieldChange: FieldChange): FieldChange {
+  public toFormattedChange(fieldChange: FieldChange, meta: StructureMeta): FieldChange {
+    this.meta = meta;
     const dataType = this.meta.dataType(fieldChange.fieldName);
     return this.formatByDataType(dataType, fieldChange);
   }

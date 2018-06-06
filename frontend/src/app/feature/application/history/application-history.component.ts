@@ -10,7 +10,7 @@ import {ApplicationHistoryDetailsComponent} from './application-history-details.
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
-import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
+import {HistoryFieldFormatter} from '../../../service/history/history-field-formatter';
 import {MetadataService} from '../../../service/meta/metadata.service';
 
 @Component({
@@ -31,12 +31,11 @@ export class ApplicationHistoryComponent implements OnInit {
               private userHub: UserHub,
               private dialog: MatDialog,
               private notification: NotificationService,
-              protected formatter: ApplicationHistoryFormatter) {}
+              protected formatter: HistoryFieldFormatter) {}
 
   ngOnInit(): void {
     this.metadataService.loadByApplicationType(this.applicationStore.snapshot.application.type).subscribe(meta => {
       this.meta = meta;
-      this.formatter.setMeta(meta);
       this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id);
     },
     err => this.notification.error(findTranslation('history.error.metadata')));

@@ -6,7 +6,11 @@
     color: mat-color($primary, 500);
   }
 
-  .text-highlight {
+  .text-highlighted {
+    color: mat-color($primary, 500);
+  }
+
+  .text-primary {
     color: mat-color($primary, 500);
   }
 }

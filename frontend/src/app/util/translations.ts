@@ -1330,6 +1330,7 @@ export const translations = {
     title: 'Historia',
     changeTime: 'Muutettu',
     changer: 'Tekijä',
+    showFieldChanges: 'Näytä kenttämuutokset',
     error: {
       metadata: 'Historian kenttien käännöksien lataus epäonnistui'
     },

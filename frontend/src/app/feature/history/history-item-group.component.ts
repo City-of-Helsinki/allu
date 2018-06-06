@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
+import {StructureMeta} from '../../model/application/meta/structure-meta';
 
 @Component({
   selector: 'history-item-group',
@@ -10,4 +11,6 @@ import {ChangeHistoryItem} from '../../model/history/change-history-item';
 export class HistoryItemGroupComponent {
   @Input() title: string;
   @Input() changes: ChangeHistoryItem[];
+  @Input() meta: StructureMeta;
+  @Input() fieldsVisible: boolean;
 }

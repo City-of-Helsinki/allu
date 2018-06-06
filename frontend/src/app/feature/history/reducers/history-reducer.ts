@@ -4,11 +4,13 @@ import {HistoryActions, HistoryActionType} from '../actions/history-actions';
 export interface State {
   loading: boolean;
   history: ChangeHistoryItem[];
+  fieldsVisible: boolean;
 }
 
 export const initialState: State = {
   loading: false,
-  history: []
+  history: [],
+  fieldsVisible: false
 };
 
 export function reducer(state: State = initialState, action: HistoryActions) {
@@ -36,6 +38,13 @@ export function reducer(state: State = initialState, action: HistoryActions) {
       };
     }
 
+    case HistoryActionType.SetFieldsVisible: {
+      return {
+        ...state,
+        fieldsVisible: action.payload
+      };
+    }
+
     default: {
       return {...state};
     }
@@ -43,3 +52,5 @@ export function reducer(state: State = initialState, action: HistoryActions) {
 }
 
 export const getHistory = (state: State) => state.history;
+
+export const getFieldsVisible = (state: State) => state.fieldsVisible;

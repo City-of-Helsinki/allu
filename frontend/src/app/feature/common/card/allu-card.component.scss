@@ -26,6 +26,9 @@
 :host mat-card.mat-card ::ng-deep {
   .mat-divider {
     position: relative;
+  }
+
+  .mat-divider.divider-loose {
     margin: 25px 0;
   }
 }
