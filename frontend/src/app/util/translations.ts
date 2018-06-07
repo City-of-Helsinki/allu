@@ -641,6 +641,7 @@ export const translations = {
     attachments: 'Päätöksen liitteet',
     reason: 'Perustelut',
     emailMessage: 'Sähköpostiviesti',
+    sendDecision: 'Lähetä päätös',
     type: {
       DECISION: {
         title: 'Päätä hakemus',
@@ -688,6 +689,9 @@ export const translations = {
     error: {
       generatePdf: 'Pdf:n muodostaminen epäonnistui',
       send: 'Päätöksen lähettäminen sähköpostijakeluna epäonnistui'
+    },
+    action: {
+      send: 'Päätös lähettetty'
     }
   },
   user: {

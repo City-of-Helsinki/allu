@@ -2,7 +2,7 @@
   <ng-container *ngIf="showProposal">
     <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
       <div class="action-item">
-        <button mat-raised-button type="button" color="primary" class="modal-trigger"
+        <button mat-raised-button type="button" color="primary"
                 (click)="decisionProposal('PROPOSE_APPROVAL')">
           {{'decision.proposal.type.PROPOSE_APPROVAL' | translation}}
         </button>
@@ -13,7 +13,7 @@
     <ng-container *ngIf="application.type === 'CABLE_REPORT'">
       <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
         <div class="action-item">
-          <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">
+          <button mat-raised-button type="button" color="primary" (click)="decision('DECISION')">
             {{'decision.type.DECISION.confirmText' | translation}}
           </button>
         </div>
@@ -22,17 +22,27 @@
     <ng-container *ngIf="application.type !== 'CABLE_REPORT'">
       <ng-container *availableTo="['ROLE_DECISION']">
         <div class="action-item">
-          <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">
+          <button mat-raised-button type="button" color="primary" (click)="decision('DECISION')">
             {{'decision.type.DECISION.confirmText' | translation}}
           </button>
         </div>
         <div class="action-item">
-          <button mat-raised-button type="button" color="primary" class="modal-trigger"
+          <button mat-raised-button type="button" color="primary"
                   (click)="decision('RETURNED_TO_PREPARATION')">
             {{'decision.type.RETURNED_TO_PREPARATION.confirmText' | translation}}
           </button>
         </div>
       </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="showResend">
+    <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
+      <div class="action-item">
+        <button mat-raised-button type="button" color="primary"
+                (click)="resendDecision()">
+          {{'decision.sendDecision' | translation}}
+        </button>
+      </div>
     </ng-container>
   </ng-container>
 </div>

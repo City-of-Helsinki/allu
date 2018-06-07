@@ -17,9 +17,15 @@ import {DecisionDetails} from '../../model/decision/decision-details';
 import * as fromApplication from '../application/reducers';
 import {Store} from '@ngrx/store';
 import {Load} from '../comment/actions/comment-actions';
+import * as tagActions from '../application/actions/application-tag-actions';
 import {ActionTargetType} from '../allu/actions/action-target-type';
-import {switchMap, tap, catchError} from 'rxjs/internal/operators';
+import {filter, switchMap, tap, catchError} from 'rxjs/internal/operators';
 
+const RESEND_ALLOWED = [
+  ApplicationStatus.DECISION,
+  ApplicationStatus.FINISHED,
+  ApplicationStatus.ARCHIVED,
+];
 
 @Component({
   selector: 'decision-actions',
@@ -32,6 +38,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   showProposal = false;
   showDecision = false;
+  showResend = false;
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromApplication.State>,
@@ -48,6 +55,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     const status = this.application.statusEnum;
     this.showProposal = inHandling(status);
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
+    this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
   }
 
   public decisionProposal(proposalType: string): void {
@@ -59,13 +67,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   public decision(status: string): void {
-    const config = {...DECISION_MODAL_CONFIG};
-    config.data.status = ApplicationStatus[status];
-    config.data.distributionList = this.application.decisionDistributionList;
-
-    const dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config);
-    dialogRef.afterClosed()
-      .subscribe((result: DecisionConfirmation) => this.decisionConfirmed(result));
+    this.confirmDecisionSend(status)
+      .subscribe(result => this.decisionConfirmed(result));
   }
 
   public decisionConfirmed(confirmation: DecisionConfirmation) {
@@ -78,6 +81,17 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     }
   }
 
+  public resendDecision(): void {
+    this.confirmDecisionSend(ApplicationStatus[ApplicationStatus.DECISION])
+      .pipe(
+        filter(result => !!result),
+        switchMap(result => this.sendDecision(this.application.id, result)),
+        tap(() => this.store.dispatch(new tagActions.Load()))
+      ).subscribe(
+        () => this.notification.success(findTranslation('decision.action.send')),
+        error => this.notification.errorInfo(error));
+  }
+
   private proposalConfirmed(changeInfo: StatusChangeInfo) {
     if (changeInfo) {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
@@ -88,6 +102,15 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
           this.onDecisionConfirm.emit(changeInfo);
         }, err => this.notification.error(findTranslation('application.error.toDecisionmaking')));
     }
+  }
+
+  private confirmDecisionSend(status: string): Observable<DecisionConfirmation> {
+    const config = {...DECISION_MODAL_CONFIG};
+    config.data.status = ApplicationStatus[status];
+    config.data.distributionList = this.application.decisionDistributionList;
+
+    const dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config);
+    return dialogRef.afterClosed();
   }
 
   private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
