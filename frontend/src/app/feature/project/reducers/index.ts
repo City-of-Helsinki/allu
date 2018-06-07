@@ -123,6 +123,11 @@ export const getParentProjects = createSelector(
   fromParentProjects.getProjects
 );
 
+export const getParentProjectsLoading = createSelector(
+  getParentsState,
+  fromParentProjects.getLoading
+);
+
 // Child selectors
 export const getChildrenState = createSelector(
   getProjectState,
@@ -132,6 +137,11 @@ export const getChildrenState = createSelector(
 export const getChildProjects = createSelector(
   getChildrenState,
   fromChildProjects.getProjects
+);
+
+export const getChildProjectsLoading = createSelector(
+  getChildrenState,
+  fromChildProjects.getLoading
 );
 
 // Customer selectors

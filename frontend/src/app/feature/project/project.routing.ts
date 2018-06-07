@@ -9,6 +9,7 @@ import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {ProjectCommentsComponent} from './comments/project-comments.component';
 import {ProjectHistoryComponent} from './history/project-history.component';
+import {RelatedProjectsComponent} from './related-projects/related-projects.component';
 
 export const projectRoutes: Routes = [
   { path: 'projects', canActivate: [AuthGuard], children: [
@@ -20,6 +21,7 @@ export const projectRoutes: Routes = [
         { path: '', children: [
           { path: '', redirectTo: 'info', pathMatch: 'full' },
           { path: 'info', component: ProjectSummaryComponent},
+          { path: 'projects', component: RelatedProjectsComponent, canActivate: [AuthGuard] },
           { path: 'comments', component: ProjectCommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
           { path: 'history', component: ProjectHistoryComponent, canActivate: [AuthGuard] },
         ]}

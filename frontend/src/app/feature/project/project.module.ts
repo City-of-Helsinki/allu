@@ -32,6 +32,8 @@ import {ProjectCommentsComponent} from './comments/project-comments.component';
 import {CommentModule} from '../comment/comment.module';
 import {HistoryModule} from '../history/history.module';
 import {ProjectHistoryComponent} from './history/project-history.component';
+import {RelatedProjectsComponent} from './related-projects/related-projects.component';
+import {RelatedProjectListComponent} from './related-projects/related-project-list.component';
 
 @NgModule({
   imports: [
@@ -70,7 +72,9 @@ import {ProjectHistoryComponent} from './history/project-history.component';
     ProjectApplicationListComponent,
     ApplicationSelectComponent,
     ProjectCommentsComponent,
-    ProjectHistoryComponent
+    ProjectHistoryComponent,
+    RelatedProjectsComponent,
+    RelatedProjectListComponent
   ],
   providers: [
     ProjectService,

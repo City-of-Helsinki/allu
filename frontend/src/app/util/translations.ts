@@ -437,7 +437,6 @@ export const translations = {
     title: 'Hanke',
     activeApplications: 'Aktiivista hakemusta',
     decidedApplications: 'Päätettyä hakemusta',
-    relatedProjects: 'Liittyvää hanketta',
     showBasicInfo: 'Näytä perustiedot',
     info: {
       title: 'Perustiedot',
@@ -488,6 +487,10 @@ export const translations = {
       searchAndAdd: 'Etsi ja lisää hakemuksia',
       moveFromAnother: 'Hakemus kuuluu hankkeeseen {{project}} ja siirretään uuteen hankkeeseen',
       fromBasket: 'Tuo korista'
+    },
+    relatedProjects: {
+      title: 'Liittyvät hankkeet',
+      count: 'Liittyvää hanketta'
     },
     button: {
       addApplication: 'Lisää hakemus',

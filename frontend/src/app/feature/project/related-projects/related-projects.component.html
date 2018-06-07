@@ -1,0 +1,23 @@
+<div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="18px">
+  <div fxFlex="auto">
+    <h1>{{'project.relatedProjects.title' | translation}}</h1>
+  </div>
+  <div fxFlex="none">
+    <!-- TODO project select -->
+    <!--<application-select
+      [matchingApplications]="matchingApplications"
+      (searchChange)="applicationSelectSearchChange($event)"
+      (selectedChange)="applicationSelected($event)">
+    </application-select>-->
+  </div>
+</div>
+
+<related-project-list
+  [projects]="parentProjects$ | async"
+  [loading]="parentProjectsLoading$ | async">
+</related-project-list>
+
+<related-project-list
+  [projects]="childProjects$ | async"
+  [loading]="childProjectsLoading$ | async">
+</related-project-list>
