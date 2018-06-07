@@ -11,15 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/placementcontracts")
@@ -47,6 +45,10 @@ public class PlacementContractController {
       produces = "application/json",
       response = Integer.class,
       authorizations=@Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+    @ApiResponse(code = 200, message = "Application created successfully", response = Integer.class),
+    @ApiResponse(code = 400, message = "Invalid application", response = ErrorInfo.class)
+  })
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> create(@ApiParam(value = "Placement contract data", required = true)
@@ -58,6 +60,10 @@ public class PlacementContractController {
       produces = "application/json",
       response = Integer.class,
       authorizations=@Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Application updated successfully", response = Integer.class),
+      @ApiResponse(code = 400, message = "Invalid application", response = ErrorInfo.class)
+  })
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> update(@ApiParam(value = "Id of the placement contract application to update.")
@@ -73,6 +79,10 @@ public class PlacementContractController {
       + "Also data sent through some separate API (e.g. application attachments) should be included in field list of response.",
       produces = "application/json",
       authorizations=@Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Response added successfully", response = Void.class),
+      @ApiResponse(code = 400, message = "Invalid request response", response = ErrorInfo.class)
+  })
   @RequestMapping(value = "{applicationid}/informationrequests/{requestid}/response", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> addResponse(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,

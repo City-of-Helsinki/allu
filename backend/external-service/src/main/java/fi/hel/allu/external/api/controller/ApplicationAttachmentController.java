@@ -11,11 +11,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.domain.AttachmentInfoExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1")
@@ -29,6 +28,10 @@ public class ApplicationAttachmentController {
       consumes = "multipart/form-data",
       response = Integer.class,
       authorizations=@Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Attachment added successfully", response = Void.class),
+      @ApiResponse(code = 400, message = "Invalid request data", response = ErrorInfo.class)
+  })
   @RequestMapping(value = "/applications/{id}/attachments", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> create(@ApiParam(value = "Application ID to add attachment for") @PathVariable Integer id,
