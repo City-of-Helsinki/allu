@@ -1249,26 +1249,18 @@ export const translations = {
     newEntry: 'Uusi laskuperuste',
     type: {
       title: 'Laskuperusteen tyyppi',
-      CALCULATED: {
-        title: 'Laskettu',
-        basis: 'Peruste'
-      },
-      AREA_USAGE_FEE: {
-        title: 'Alueenkäyttömaksu',
-        basis: 'Alueenkäyttömaksun peruste'
-      },
-      NEGLIGENCE_FEE: {
-        title: 'Laiminlyöntimaksu',
-        basis: 'Laiminlyöntimaksun peruste'
-      },
-      ADDITIONAL_FEE: {
-        title: 'Ylimääräinen maksu',
-        basis: 'Ylimääräisen maksun peruste'
-      },
-      DISCOUNT: {
-        title: 'Alennus',
-        basis: 'Alennusperuste'
-      }
+      CALCULATED: 'Laskettu',
+      AREA_USAGE_FEE: 'Alueenkäyttömaksu',
+      NEGLIGENCE_FEE: 'Laiminlyöntimaksu',
+      ADDITIONAL_FEE: 'Ylimääräinen maksu',
+      DISCOUNT: 'Alennus'
+    },
+    basis:{
+      CALCULATED: 'Peruste',
+      AREA_USAGE_FEE: 'Alueenkäyttömaksun peruste',
+      NEGLIGENCE_FEE: 'Laiminlyöntimaksun peruste',
+      ADDITIONAL_FEE: 'Ylimääräisen maksun peruste',
+      DISCOUNT: 'Alennusperuste'
     },
     unit: {
       placeholder: 'Yksikkö',

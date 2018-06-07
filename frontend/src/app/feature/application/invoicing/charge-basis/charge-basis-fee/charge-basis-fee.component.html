@@ -3,7 +3,7 @@
     <div fxFlex="100">
       <mat-form-field class="input-full-width">
         <input matInput type="text" formControlName="text" required
-               placeholder="{{['chargeBasis.type', form.value.type, 'basis'] | translation}}"/>
+               placeholder="{{['chargeBasis.basis', form.value.type] | translation}}"/>
         <mat-error *ngIf="form.get('text').hasError('required')">
           {{'chargeBasis.field.rowTextMissing' | translation}}
         </mat-error>

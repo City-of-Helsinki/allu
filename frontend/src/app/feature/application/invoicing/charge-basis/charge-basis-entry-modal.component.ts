@@ -5,6 +5,7 @@ import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
 import {NumberUtil} from '../../../../util/number.util';
+import {ArrayUtil} from '../../../../util/array-util';
 import {ChargeBasisType, manualChargeBasisTypes} from '../../../../model/application/invoice/charge-basis-type';
 import {Subject} from 'rxjs';
 import {distinctUntilChanged, takeUntil} from 'rxjs/internal/operators';
@@ -32,6 +33,7 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.chargeBasisTypes.sort(ArrayUtil.naturalSortTranslated(['chargeBasis.type'], (item: string) => item));
     const entry = this.data.entry || new ChargeBasisEntry(ChargeBasisType.DISCOUNT, ChargeBasisUnit.PIECE, 1);
     this.chargeBasisEntryForm = ChargeBasisEntryForm.formGroup(this.fb, entry);
     this.typeCtrl = <FormControl>this.chargeBasisEntryForm.get('type');

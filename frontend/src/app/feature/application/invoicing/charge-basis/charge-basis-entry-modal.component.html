@@ -7,7 +7,7 @@
           <mat-select [placeholder]="'chargeBasis.type.title' | translation" class="input-full-width"
                       formControlName="type" required>
             <mat-option *ngFor="let type of chargeBasisTypes" [value]="type">
-              {{['chargeBasis.type', type, 'title'] | translation}}
+              {{['chargeBasis.type', type] | translation}}
             </mat-option>
           </mat-select>
         </mat-form-field>
