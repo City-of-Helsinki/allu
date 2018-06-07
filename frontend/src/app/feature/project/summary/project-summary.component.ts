@@ -12,11 +12,14 @@ import {filter, takeUntil, takeWhile} from 'rxjs/internal/operators';
 import {ChangeHistoryItem} from '../../../model/history/change-history-item';
 import {MatSlideToggleChange} from '@angular/material';
 import {ShowBasicInfo} from '../actions/project-actions';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {shrinkFadeInOut} from '../../common/animation/common-animations';
 
 @Component({
   selector: 'project-summary',
   templateUrl: './project-summary.component.html',
-  styleUrls: ['./project-summary.component.scss']
+  styleUrls: ['./project-summary.component.scss'],
+  animations: [shrinkFadeInOut]
 })
 export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit {
   project$: Observable<Project>;

@@ -17,7 +17,9 @@
     </div>
   </div>
 
-  <div fxLayout="row" fxLayoutGap="18px" *ngIf="showBasicInfo$ | async">
+  <div fxLayout="row" fxLayoutGap="18px"
+       *ngIf="showBasicInfo$ | async"
+       [@shrinkFadeInOut]="'visible'">
     <div fxFlex="calc(50% - 18px)">
       <project-info [project]="project"
                     [cityDistricts]="districts$ | async">
