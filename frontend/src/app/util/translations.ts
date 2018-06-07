@@ -1255,7 +1255,7 @@ export const translations = {
       ADDITIONAL_FEE: 'Ylimääräinen maksu',
       DISCOUNT: 'Alennus'
     },
-    basis:{
+    basis: {
       CALCULATED: 'Peruste',
       AREA_USAGE_FEE: 'Alueenkäyttömaksun peruste',
       NEGLIGENCE_FEE: 'Laiminlyöntimaksun peruste',
