@@ -13,11 +13,6 @@
 </div>
 
 <related-project-list
-  [projects]="parentProjects$ | async"
-  [loading]="parentProjectsLoading$ | async">
-</related-project-list>
-
-<related-project-list
   [projects]="childProjects$ | async"
   [loading]="childProjectsLoading$ | async">
 </related-project-list>

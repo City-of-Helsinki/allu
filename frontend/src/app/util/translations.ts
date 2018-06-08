@@ -464,12 +464,13 @@ export const translations = {
     ownerName: 'Omistaja',
     state: 'Tila',
     active: {
+      'title': 'Tila',
       'false': 'Inaktiivinen',
       'true': 'Aktiivinen'
     },
     startTime: 'Alku',
     endTime: 'Loppu',
-    cityDistricts: 'Kaupunginosa',
+    cityDistricts: 'Kaupunginosa(t)',
     error: {
       saveFailed: 'Hankkeen tallentaminen epäonnistui',
       searchFailed: 'Hankkeiden hakeminen epäonnistui',
