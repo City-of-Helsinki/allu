@@ -18,6 +18,7 @@ const handledActions = [
   ProjectActionTypes.LoadFailed,
   ProjectActionTypes.SaveFailed,
   ProjectActionTypes.DeleteFailed,
+  ProjectActionTypes.RemoveParentFailed,
   ProjectApplicationActionType.LoadFailed,
   ProjectApplicationActionType.AddFailed,
   ProjectApplicationActionType.RemoveFailed,
@@ -27,7 +28,7 @@ const handledActions = [
   CommentActionType.LoadFailed,
   CommentActionType.SaveFailed,
   CommentActionType.RemoveFailed,
-  InvoicingActionType.SetRecipientFailed
+  InvoicingActionType.SetRecipientFailed,
 ];
 
 @Injectable()

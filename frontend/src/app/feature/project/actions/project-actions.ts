@@ -13,7 +13,10 @@ export enum ProjectActionTypes {
   Delete = '[Project] Delete project',
   DeleteSuccess = '[Project] Delete project success',
   DeleteFailed = '[Project] Delete project failed',
-  ShowBasicInfo = '[Project] Set show basic info'
+  ShowBasicInfo = '[Project] Set show basic info',
+  RemoveParent = '[Project] Remove projects parent',
+  RemoveParentSuccess = '[Project] Remove projects parent success',
+  RemoveParentFailed = '[Project] Remove projects parent failed'
 }
 
 export class Load implements Action {
@@ -72,6 +75,22 @@ export class ShowBasicInfo implements Action {
   constructor(public payload: boolean) {}
 }
 
+export class RemoveParent implements Action {
+  readonly type = ProjectActionTypes.RemoveParent;
+
+  constructor(public payload: number[]) {}
+}
+
+export class RemoveParentSuccess implements Action {
+  readonly type = ProjectActionTypes.RemoveParentSuccess;
+}
+
+export class RemoveParentFailed implements ActionWithPayload<ErrorInfo> {
+  readonly type = ProjectActionTypes.RemoveParentFailed;
+
+  constructor(public payload: ErrorInfo) {}
+}
+
 export type ProjectActions =
   | Load
   | LoadSuccess
@@ -82,4 +101,7 @@ export type ProjectActions =
   | Delete
   | DeleteSuccess
   | DeleteFailed
-  | ShowBasicInfo;
+  | ShowBasicInfo
+  | RemoveParent
+  | RemoveParentSuccess
+  | RemoveParentFailed;

@@ -15,9 +15,10 @@ import {
   SaveSuccess,
   Delete,
   DeleteFailed,
-  DeleteSuccess
+  DeleteSuccess, RemoveParent, RemoveParentSuccess, RemoveParentFailed
 } from '../actions/project-actions';
 import * as MetaAction from '../actions/project-meta-actions';
+import * as ChildAction from '../actions/child-project-actions';
 import {Router} from '@angular/router';
 import { NumberUtil } from '../../../util/number.util';
 import {META_PROJECT, MetadataService} from '../../../service/meta/metadata.service';
@@ -70,6 +71,15 @@ export class ProjectEffects {
         catchError(error => of(new DeleteFailed(error)))
       )
     )
+  );
+
+  @Effect()
+  removeParent: Observable<Action> = this.actions.pipe(
+    ofType<RemoveParent>(ProjectActionTypes.RemoveParent),
+    switchMap(action => this.projectService.removeParent(action.payload).pipe(
+      switchMap(() => [new RemoveParentSuccess(), new ChildAction.Load()]),
+      catchError(error => of(new RemoveParentFailed(error)))
+    ))
   );
 
   @Effect({dispatch: false})

@@ -14,5 +14,6 @@
 
 <related-project-list
   [projects]="childProjects$ | async"
-  [loading]="childProjectsLoading$ | async">
+  [loading]="childProjectsLoading$ | async"
+  (remove)="removeChild($event)">
 </related-project-list>

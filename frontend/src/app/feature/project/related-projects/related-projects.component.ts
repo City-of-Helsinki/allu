@@ -3,6 +3,7 @@ import {Observable} from 'rxjs/index';
 import {Project} from '../../../model/project/project';
 import * as fromProject from '../reducers';
 import {Store} from '@ngrx/store';
+import {RemoveParent} from '../actions/project-actions';
 
 @Component({
   selector: 'related-projects',
@@ -22,5 +23,10 @@ export class RelatedProjectsComponent implements OnInit {
     this.childProjectsLoading$ = this.store.select(fromProject.getChildProjectsLoading);
     this.parentProjects$ = this.store.select(fromProject.getParentProjects);
     this.parentProjectsLoading$ = this.store.select(fromProject.getParentProjectsLoading);
+  }
+
+  removeChild(id: number): void {
+    // remove childs parent
+    this.store.dispatch(new RemoveParent([id]));
   }
 }
