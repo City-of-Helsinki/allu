@@ -8,6 +8,9 @@ import {ProjectState} from '../../service/project/project-state';
 import {Store} from '@ngrx/store';
 import * as fromProject from './reducers';
 import * as projectActions from './actions/project-actions';
+import * as childActions from './actions/child-project-actions';
+import * as parentActions from './actions/parent-project-actions';
+import * as applicationActions from './actions/application-actions';
 import * as commentActions from '../comment/actions/comment-actions';
 import * as historyActions from '../history/actions/history-actions';
 import {NumberUtil} from '../../util/number.util';
@@ -39,6 +42,9 @@ export class ProjectResolve implements Resolve<Project> {
       switchMap(() => this.store.select(fromProject.getCurrentProject)),
       tap(() => this.store.dispatch(new commentActions.Load(ActionTargetType.Project))),
       tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Project))),
+      tap(() => this.store.dispatch(new childActions.Load())),
+      tap(() => this.store.dispatch(new parentActions.Load())),
+      tap(() => this.store.dispatch(new applicationActions.Load())),
       take(1)
     );
   }

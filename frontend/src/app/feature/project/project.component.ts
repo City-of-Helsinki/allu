@@ -25,10 +25,6 @@ export class ProjectComponent implements OnInit {
   constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
 
   ngOnInit(): void {
-    this.store.dispatch(new application.Load());
-    this.store.dispatch(new parentProjects.Load());
-    this.store.dispatch(new childProjects.Load());
-
     this.project$ = this.store.select(fromProject.getCurrentProject);
     this.applications$ = this.store.select(fromProject.getApplications);
     this.relatedProjectCount$ = this.store.select(fromProject.getRelatedProjects).pipe(map(projects => projects.length));
