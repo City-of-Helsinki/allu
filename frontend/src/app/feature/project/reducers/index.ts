@@ -5,7 +5,8 @@ import {
 } from '@ngrx/store';
 import * as fromApplications from './application-reducer';
 import * as fromProject from './project-reducer';
-import * as fromSearch from './application-search-reducer';
+import * as fromApplicationSearch from './application-search-reducer';
+import * as fromProjectSearch from './project-search-reducer';
 import * as fromParentProjects from './parent-project-reducer';
 import * as fromCustomerSearch from './customer-search-reducer';
 import * as fromChildProjects from './child-project-reducer';
@@ -21,7 +22,8 @@ import {SortDirection} from '../../../model/common/sort';
 export interface ProjectState {
   project: fromProject.State;
   applications: fromApplications.State;
-  applicationSearch: fromSearch.State;
+  applicationSearch: fromApplicationSearch.State;
+  projectSearch: fromProjectSearch.State;
   parents: fromParentProjects.State;
   children: fromChildProjects.State;
   customerSearch: fromCustomerSearch.State;
@@ -37,7 +39,8 @@ export interface State extends fromRoot.State {
 export const reducers: ActionReducerMap<ProjectState> = {
   project: fromProject.reducer,
   applications: fromApplications.reducer,
-  applicationSearch: fromSearch.reducer,
+  applicationSearch: fromApplicationSearch.reducer,
+  projectSearch: fromProjectSearch.reducer,
   parents: fromParentProjects.reducer,
   children: fromChildProjects.reducer,
   customerSearch: fromCustomerSearch.reducer,
@@ -101,7 +104,18 @@ export const getApplicationsLoading = createSelector(
   fromApplications.getLoading
 );
 
-// Search selectors
+// Project search selectors
+export const getProjectSearchState = createSelector(
+  getProjectState,
+  (state: ProjectState) => state.projectSearch
+);
+
+export const getMatchingProjects = createSelector(
+  getProjectSearchState,
+  fromProjectSearch.getMatching
+);
+
+// Application search selectors
 export const getApplicationSearchState = createSelector(
   getProjectState,
   (state: ProjectState) => state.applicationSearch
@@ -109,7 +123,7 @@ export const getApplicationSearchState = createSelector(
 
 export const getMatchingApplications = createSelector(
   getApplicationSearchState,
-  fromSearch.getMatchingApplications
+  fromApplicationSearch.getMatchingApplications
 );
 
 // Parent selectors

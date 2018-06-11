@@ -1,0 +1,23 @@
+<form>
+  <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="18px">
+    <div fxFlex="initial">
+      <mat-form-field class="search-field">
+        <input matInput type="text" [formControl]="searchControl"
+               [placeholder]="'project.relatedProjects.searchAndAdd' | translation"
+               [matAutocomplete]="projectSearch"/>
+        <mat-autocomplete #projectSearch="matAutocomplete"
+                          [displayWith]="displayName"
+                          (optionSelected)="add($event.option)">
+          <mat-option *ngFor="let project of matchingProjects"
+                      [value]="project">
+            {{ displayName(project) }}
+            <mat-icon *ngIf="project.parentId"
+                      [matTooltip]="'project.relatedProjects.moveFromAnother' | translation"
+                      color="accent"
+                      class="icon-sub">warning</mat-icon>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  </div>
+</form>

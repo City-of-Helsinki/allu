@@ -16,6 +16,7 @@ export class ProjectQueryParametersMapper {
   private static mapProjectParameters(query: ProjectSearchQuery): Array<BackendQueryParameter> {
     const queryParameters: Array<BackendQueryParameter> = [];
     Some(query.id).do(id => QueryParametersMapper.mapParameter(queryParameters, 'id', id.toString()));
+    Some(query.identifier).do(identifier => QueryParametersMapper.mapParameter(queryParameters, 'identifier', identifier));
     QueryParametersMapper.mapDateParameter(queryParameters, START_TIME_FIELD, MIN_DATE, query.endTime);
     QueryParametersMapper.mapDateParameter(queryParameters, END_TIME_FIELD, query.startTime, MAX_DATE);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'cityDistricts', query.districts);

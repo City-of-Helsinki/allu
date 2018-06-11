@@ -19,6 +19,7 @@ import {BackendPage} from '../backend-model/backend-page';
 import {BackendProject} from '../backend-model/backend-project';
 import {BackendApplication} from '../backend-model/backend-application';
 import {catchError, map} from 'rxjs/internal/operators';
+import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 
 @Injectable()
 export class ProjectService {
@@ -43,6 +44,13 @@ export class ProjectService {
       map(page => PageMapper.mapBackend(page, ProjectMapper.mapBackend)),
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')))
     );
+  }
+
+  public identifierSearch(term: string): Observable<Project[]> {
+    const searchQuery = new ProjectSearchQuery();
+    searchQuery.identifier = term;
+    return this.pagedSearch(searchQuery, undefined, undefined)
+      .pipe(map(page => page.content));
   }
 
   public getProject(id: number): Observable<Project> {

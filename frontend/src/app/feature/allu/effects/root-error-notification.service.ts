@@ -24,6 +24,7 @@ const handledActions = [
   ProjectApplicationActionType.RemoveFailed,
   ParentProjectActionType.LoadFailed,
   ChildProjectActionType.LoadFailed,
+  ChildProjectActionType.AddFailed,
   ApplicationBasketActionType.LoadFailed,
   CommentActionType.LoadFailed,
   CommentActionType.SaveFailed,

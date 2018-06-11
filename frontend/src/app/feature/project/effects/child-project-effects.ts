@@ -4,7 +4,7 @@ import {ProjectService} from '../../../service/project/project.service';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
 import {Observable, of} from 'rxjs';
-import {ChildProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/child-project-actions';
+import {Add, AddFailed, AddSuccess, ChildProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/child-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ChildProjectEffects {
               private projectService: ProjectService) {}
 
   @Effect()
-  loadParents: Observable<Action> = this.actions.pipe(
+  loadChildren: Observable<Action> = this.actions.pipe(
     ofType<Load>(ChildProjectActionType.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     switchMap(([payload, project]) =>
@@ -23,6 +23,18 @@ export class ChildProjectEffects {
           map(children => new LoadSuccess(children)),
           catchError(error => of(new LoadFailed(error)))
         )
+    )
+  );
+
+  @Effect()
+  addChild: Observable<Action> = this.actions.pipe(
+    ofType<Add>(ChildProjectActionType.Add),
+    withLatestFrom(this.store.select(fromProject.getCurrentProject)),
+    switchMap(([action, project]) =>
+      this.projectService.updateParent(action.payload, project.id).pipe(
+        map(updated => new AddSuccess(updated)),
+        catchError(error => of(new AddFailed(error)))
+      )
     )
   );
 }

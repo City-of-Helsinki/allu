@@ -491,7 +491,9 @@ export const translations = {
     },
     relatedProjects: {
       title: 'Liittyvät hankkeet',
-      count: 'Liittyvää hanketta'
+      count: 'Liittyvää hanketta',
+      searchAndAdd: 'Etsi ja lisää hankkeita',
+      moveFromAnother: 'Hanke kuuluu toiseen hankkeeseen ja siirretään uuteen hankkeeseen'
     },
     button: {
       addApplication: 'Lisää hakemus',

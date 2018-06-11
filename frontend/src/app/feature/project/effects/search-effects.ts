@@ -5,16 +5,31 @@ import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
 import * as application from '../actions/application-search-actions';
 import * as customer from '../actions/customer-search-actions';
+import * as project from '../actions/project-search-actions';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {CustomerSearchActionType} from '../actions/customer-search-actions';
 import {ApplicationSearchActionType} from '../actions/application-search-actions';
+import {ProjectService} from '../../../service/project/project.service';
+import {ProjectSearchActionType} from '../actions/project-search-actions';
 
 @Injectable()
 export class SearchEffects {
   constructor(private actions: Actions,
               private applicationService: ApplicationService,
-              private customerService: CustomerService) {}
+              private customerService: CustomerService,
+              private projectService: ProjectService) {}
+
+  @Effect()
+  projectSearch: Observable<Action> = this.actions.pipe(
+    ofType<project.Search>(ProjectSearchActionType.Search),
+    map(action => action.payload),
+    filter(term => term && term.length > 2),
+    switchMap(searchTerm => this.projectService.identifierSearch(searchTerm).pipe(
+      map(projects => new project.SearchSuccess(projects)),
+      catchError(error => of(new project.SearchFailed(error)))
+    ))
+  );
 
   @Effect()
   applicationSearch: Observable<Action> = this.actions.pipe(

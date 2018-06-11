@@ -35,6 +35,13 @@ export function reducer(state: State = initialState, action: ChildProjectActions
       };
     }
 
+    case ChildProjectActionType.AddSuccess: {
+      return {
+        ...state,
+        projects: state.projects.concat(action.payload)
+      };
+    }
+
     default:
       return {...state};
   }

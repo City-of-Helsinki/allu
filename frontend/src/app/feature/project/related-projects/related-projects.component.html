@@ -3,12 +3,11 @@
     <h1>{{'project.relatedProjects.title' | translation}}</h1>
   </div>
   <div fxFlex="none">
-    <!-- TODO project select -->
-    <!--<application-select
-      [matchingApplications]="matchingApplications"
-      (searchChange)="applicationSelectSearchChange($event)"
-      (selectedChange)="applicationSelected($event)">
-    </application-select>-->
+    <project-select
+      [matchingProjects]="matchingProjects$ | async"
+      (searchChange)="projectSelectSearchChange($event)"
+      (selectedChange)="addChild($event)">
+    </project-select>
   </div>
 </div>
 

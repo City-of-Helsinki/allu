@@ -16,7 +16,7 @@
     <ng-container matColumnDef="identifier">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.info.identifier' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <a class="row-details-link" [routerLink]="['/project', row.id]">
+        <a class="row-details-link" [routerLink]="['/projects', row.id]">
           {{row.identifier}}
         </a>
       </mat-cell>

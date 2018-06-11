@@ -34,6 +34,7 @@ import {HistoryModule} from '../history/history.module';
 import {ProjectHistoryComponent} from './history/project-history.component';
 import {RelatedProjectsComponent} from './related-projects/related-projects.component';
 import {RelatedProjectListComponent} from './related-projects/related-project-list.component';
+import {ProjectSelectComponent} from './related-projects/project-select.component';
 
 @NgModule({
   imports: [
@@ -74,7 +75,8 @@ import {RelatedProjectListComponent} from './related-projects/related-project-li
     ProjectCommentsComponent,
     ProjectHistoryComponent,
     RelatedProjectsComponent,
-    RelatedProjectListComponent
+    RelatedProjectListComponent,
+    ProjectSelectComponent
   ],
   providers: [
     ProjectService,
