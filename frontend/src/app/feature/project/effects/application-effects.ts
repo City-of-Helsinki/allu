@@ -25,6 +25,7 @@ import {ProjectActionTypes, Save} from '../actions/project-actions';
 import {SaveSuccess} from '../actions/project-actions';
 import {Clear} from '../actions/application-basket-actions';
 import {ActionTargetType} from '../../allu/actions/action-target-type';
+import {NumberUtil} from '../../../util/number.util';
 
 @Injectable()
 export class ApplicationEffects {
@@ -38,6 +39,7 @@ export class ApplicationEffects {
   loadApplications: Observable<Action> = this.actions.pipe(
     ofType<Load>(ApplicationActionTypes.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
+    filter(([payload, project]) => NumberUtil.isExisting(project)),
     switchMap(([action, project]) =>
       this.projectService.getProjectApplications(project.id)
         .pipe(

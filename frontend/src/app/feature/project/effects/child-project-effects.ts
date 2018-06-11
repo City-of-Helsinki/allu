@@ -6,6 +6,8 @@ import * as fromProject from '../reducers';
 import {Observable, of} from 'rxjs';
 import {Add, AddFailed, AddSuccess, ChildProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/child-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {NumberUtil} from '../../../util/number.util';
+import {filter} from 'rxjs/internal/operators';
 
 @Injectable()
 export class ChildProjectEffects {
@@ -17,6 +19,7 @@ export class ChildProjectEffects {
   loadChildren: Observable<Action> = this.actions.pipe(
     ofType<Load>(ChildProjectActionType.Load),
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
+    filter(([payload, project]) => NumberUtil.isExisting(project)),
     switchMap(([payload, project]) =>
       this.projectService.getChildProjects(project.id)
         .pipe(
