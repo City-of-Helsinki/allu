@@ -1,11 +1,16 @@
 <allu-card>
   <mat-card-content>
     <div fxLayout="row" fxLayoutAlign="flex-start">
-      <div fxFlex="50%">
-        <h1>
-          <span>{{'project.title' | translation | uppercase}} {{project.identifier}}</span>
-          <span *ngIf="project.name" class="project-header-details">({{project.name}})</span>
-          <span class="project-header-details"> - {{['project.active', project.active] | translation}}</span>
+      <div fxFlex="50%" class="header-main-info">
+        <h2 *ngIf="parent" class="project-header-container">
+          <mat-icon color="primary" class="icon-sub">arrow_upward</mat-icon>
+          <div>{{'project.title' | translation | uppercase}}</div>
+          <div>{{parent.identifier | uppercase}}</div>
+        </h2>
+        <h1 class="project-header-container">
+          <div>{{'project.title' | translation | uppercase}} {{project.identifier}}</div>
+          <div *ngIf="project.name" class="project-header-details">({{project.name}})</div>
+          <div class="project-header-details"> - {{['project.active', project.active] | translation}}</div>
         </h1>
       </div>
       <div fxFlex class="project-header-item">

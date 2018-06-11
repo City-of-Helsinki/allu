@@ -1,7 +1,8 @@
 <div class="page-header">
   <project-header [project]="project$ | async"
                   [applications]="applications$ | async"
-                  [relatedProjects]="relatedProjectCount$ | async">
+                  [relatedProjects]="relatedProjectCount$ | async"
+                  [parent]="parent$ | async">
   </project-header>
 </div>
 <div fxLayout="row">

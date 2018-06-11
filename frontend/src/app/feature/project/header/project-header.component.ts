@@ -12,6 +12,7 @@ import {ApplicationStatus, decided} from '../../../model/application/application
 export class ProjectHeaderComponent {
   @Input() project: Project;
   @Input() relatedProjects = 0;
+  @Input() parent: Project;
 
   activeApplications = 0;
   decidedApplications = 0;

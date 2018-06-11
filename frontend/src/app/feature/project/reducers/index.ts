@@ -18,6 +18,7 @@ import * as fromHistory from '../../history/reducers/history-reducer';
 import * as fromProjectHistory from './project-history-reducer';
 import {Project} from '../../../model/project/project';
 import {SortDirection} from '../../../model/common/sort';
+import {ArrayUtil} from '../../../util/array-util';
 
 export interface ProjectState {
   project: fromProject.State;
@@ -135,6 +136,15 @@ export const getParentsState = createSelector(
 export const getParentProjects = createSelector(
   getParentsState,
   fromParentProjects.getProjects
+);
+
+export const getParentProject = createSelector(
+  getCurrentProject,
+  getParentProjects,
+  (current: Project, parents: Project[]) => {
+    console.log('getParentProject', current, parents);
+    return ArrayUtil.first(parents, (p => p.id === current.parentId));
+  }
 );
 
 export const getParentProjectsLoading = createSelector(

@@ -24,7 +24,7 @@ export function reducer(state: State = initialState, action: ParentProjectAction
       return {
         ...state,
         loading: false,
-        parents: action.payload
+        projects: action.payload
       };
     }
 

@@ -2,12 +2,31 @@
   padding: 0 24px;
 
   h1 {
-    margin: 18px 0;
+    margin: 0 0 6px;
   }
+
+  h2 {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.header-main-info {
+  margin: 18px 0;
 }
 
 .project-header-details {
   font-size: 18px;
+}
+
+.project-header-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  & > *:not(:first-child) {
+    margin-left: 4px;
+  }
 }
 
 .project-header-item {
