@@ -9,7 +9,6 @@ import {DecisionDetailsMapper} from '../mapper/decision-details-mapper';
 import {catchError, map} from 'rxjs/internal/operators';
 
 const DECISION_URL = '/api/applications/:appId/decision';
-const DECISION_PREVIEW_URL = '/api/applications/:appId/decision-preview';
 const DECISION_DISTRIBUTION_URL = '/api/applications/:appId/decision/send';
 
 @Injectable()
@@ -21,15 +20,6 @@ export class DecisionService {
   public fetch(applicationId: number): Observable<Decision> {
     console.log('Fetching pdf for application ' + applicationId);
     const url = DECISION_URL.replace(':appId', String(applicationId));
-
-    return this.http.get(url, {responseType: 'blob'}).pipe(
-      map(pdf => new Decision(applicationId, pdf))
-    );
-  }
-
-  public preview(applicationId: number): Observable<Decision> {
-    console.log('Fetching pdf preview for application ' + applicationId);
-    const url = DECISION_PREVIEW_URL.replace(':appId', String(applicationId));
 
     return this.http.get(url, {responseType: 'blob'}).pipe(
       map(pdf => new Decision(applicationId, pdf))

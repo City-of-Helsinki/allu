@@ -277,14 +277,10 @@ public class ApplicationController {
   @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getDecision(@PathVariable int applicationId) {
-    try {
-      byte[] bytes = decisionService.getDecision(applicationId);
-      HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
-      return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
-    } catch (NoSuchEntityException e) {
-      return getDecisionPreview(applicationId);
-    }
+    byte[] bytes = decisionService.getDecision(applicationId);
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
+    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
   }
 
   /**
@@ -300,23 +296,6 @@ public class ApplicationController {
       @RequestBody DecisionDetailsJson decisionDetailsJson) {
     applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson);
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  /**
-   * Get the decision preview PDF for application
-   *
-   * @param applicationId
-   *          the application's Id
-   * @return The PDF data
-   */
-  @RequestMapping(value = "/{applicationId}/decision-preview", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<byte[]> getDecisionPreview(@PathVariable int applicationId) {
-    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
-    byte[] bytes = decisionService.getDecisionPreview(applicationJson);
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
-    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)

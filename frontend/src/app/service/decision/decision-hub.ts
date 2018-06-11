@@ -14,12 +14,6 @@ export class DecisionHub {
   public fetch = (applicationId: number) => this.decisionService.fetch(applicationId);
 
   /**
-   * Asks decision service to fetch preview of decision pdf for given application.
-   * Returns observable which contains preview pdf
-   */
-  public preview = (applicationId: number) => this.decisionService.preview(applicationId);
-
-  /**
    * Sends decision to its recepients based on distribution
    * @param applicationId application id of decision
    * @param decisionDetails containing messageToReadable and distribution

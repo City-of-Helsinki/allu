@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -69,6 +70,10 @@ public class DecisionServiceTest {
     owner.setId(1);
     owner.setRealName("Task owner");
     Mockito.when(locationService.findSupervisionTaskOwner(Mockito.any(), Mockito.anyInt())).thenReturn(owner);
+    ApplicationJson application = new ApplicationJson();
+    application.setDecisionTime(ZonedDateTime.now());
+    Mockito.when(applicationServiceComposer.findApplicationById(Mockito.anyInt())).thenReturn(application);
+
 
     decisionService = new DecisionService(applicationProperties, restTemplate, locationService,
         applicationServiceComposer, customerService, contactService, chargeBasisService, metaService);

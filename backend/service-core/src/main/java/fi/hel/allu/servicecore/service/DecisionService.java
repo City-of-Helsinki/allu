@@ -1,25 +1,18 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationSpecifier;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import static fi.hel.allu.common.domain.types.ApplicationType.*;
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.DefaultTextType;
-import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.domain.util.EventDayUtil;
-import fi.hel.allu.pdf.domain.CableInfoTexts;
-import fi.hel.allu.pdf.domain.ChargeInfoTexts;
-import fi.hel.allu.pdf.domain.DecisionJson;
-import fi.hel.allu.pdf.domain.KindWithSpecifiers;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
-import org.apache.commons.lang3.BooleanUtils;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -32,17 +25,20 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.DefaultTextType;
+import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.util.EventDayUtil;
+import fi.hel.allu.pdf.domain.CableInfoTexts;
+import fi.hel.allu.pdf.domain.ChargeInfoTexts;
+import fi.hel.allu.pdf.domain.DecisionJson;
+import fi.hel.allu.pdf.domain.KindWithSpecifiers;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.*;
+
+import static fi.hel.allu.common.domain.types.ApplicationType.*;
 
 @Service
 public class DecisionService {
@@ -159,9 +155,16 @@ public class DecisionService {
    * @return PDF data
    */
   public byte[] getDecision(int applicationId) {
-    return restTemplate.getForObject(
-        applicationProperties.getDecisionUrl(), byte[].class,
-        applicationId);
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    if (isDecisionDone(application)) {
+      return restTemplate.getForObject(applicationProperties.getDecisionUrl(), byte[].class, applicationId);
+    } else {
+      return getDecisionPreview(application);
+    }
+  }
+
+  private boolean isDecisionDone(ApplicationJson application) {
+    return application.getDecisionTime() != null;
   }
 
   /**
