@@ -213,7 +213,7 @@ public class ProjectService {
       // make sure there's no circular references
       List<Integer> newParents = resolveParentIds(parentProject);
       if (newParents.contains(currentProject.getId())) {
-        throw new IllegalArgumentException("Attempted to create a circular reference for project id " + currentProject.getId());
+        throw new IllegalArgumentException("project.update.parent.circular");
       }
       changedProjects.add(parentProject);
     }
