@@ -1,0 +1,8 @@
+@mixin allu-icons-theme($theme, $gray) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  mat-icon.info-icon-gray {
+    color: $gray;
+  }
+}

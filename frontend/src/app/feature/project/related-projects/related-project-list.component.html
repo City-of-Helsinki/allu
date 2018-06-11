@@ -34,7 +34,14 @@
 
     <ng-container matColumnDef="cityDistricts">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.cityDistricts' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.cityDistricts}}</mat-cell>
+      <mat-cell *matCellDef="let row">
+        <div *ngIf="row.cityDistricts.length"
+             [matTooltip]="row.cityDistricts"
+             matTooltipPosition="above">
+          <span>{{row.cityDistricts.length}}</span>
+          <mat-icon class="mat-icon-14 info-icon-gray">info</mat-icon>
+        </div>
+      </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="startTime">

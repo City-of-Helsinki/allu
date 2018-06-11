@@ -15,6 +15,7 @@
 @import "badge";
 @import 'allu-common';
 @import 'allu-common-theme';
+@import 'icons-theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
 @import '../app/feature/common/card/allu-card.component.theme';
@@ -28,6 +29,7 @@
 // Theme components
 @include angular-material-theme($allu-theme);
 @include allu-common-theme($allu-theme);
+@include allu-icons-theme($allu-theme, $black-50-opacity);
 @include placeholder-theme($allu-theme);
 @include checkbox-theme($allu-theme);
 @include nav-theme($allu-theme);
