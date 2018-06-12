@@ -2,17 +2,20 @@ import {Application} from '../../../model/application/application';
 import {ApplicationActions, ApplicationActionType} from '../actions/application-actions';
 import {InvoicingActions, InvoicingActionType} from '../actions/invoicing-actions';
 import {ObjectUtil} from '../../../util/object.util';
+import {StructureMeta} from '../../../model/application/meta/structure-meta';
 
 export interface State {
   loaded: boolean;
   loading: boolean;
   current: Application;
+  meta: StructureMeta;
 }
 
 const initialState: State = {
   loaded: false,
   loading: false,
-  current: new Application()
+  current: new Application(),
+  meta: undefined
 };
 
 export function reducer(state: State = initialState, action: ApplicationActions | InvoicingActions) {
@@ -59,4 +62,6 @@ export function reducer(state: State = initialState, action: ApplicationActions 
 export const getCurrent = (state: State) => state.current;
 
 export const getLoaded = (state: State) => state.loaded;
+
+export const getMeta = (state: State) => state.meta;
 

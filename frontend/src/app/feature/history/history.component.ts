@@ -3,6 +3,7 @@ import {ActionTargetType} from '../allu/actions/action-target-type';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../allu/reducers';
 import * as fromProject from '../project/reducers';
+import * as fromApplication from '../application/reducers';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
 import {Load, SetFieldsVisible} from './actions/history-actions';
@@ -30,17 +31,17 @@ export class HistoryComponent implements OnInit {
   constructor(private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
-    if (this.targetType === ActionTargetType.Project) {
-      this.store.dispatch(new Load(this.targetType));
-      this.store.select(fromProject.getHistory)
-        .pipe(takeUntil(this.destroy))
-        .subscribe(changes => this.splitByTime(changes));
+    this.store.dispatch(new Load(this.targetType));
+    const target = this.targetType === ActionTargetType.Project
+      ? fromProject
+      : fromApplication;
 
-      this.meta$ = this.store.select(fromProject.getMeta);
-      this.fieldsVisible$ = this.store.select(fromProject.getFieldsVisible);
-    } else {
-      // No implementation for applications yet
-    }
+    this.store.select(target.getHistory)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(changes => this.splitByTime(changes));
+
+    this.meta$ = this.store.select(target.getMeta);
+    this.fieldsVisible$ = this.store.select(target.getFieldsVisible);
   }
 
   toggleFieldVisibility(toggleChange: MatSlideToggleChange): void {

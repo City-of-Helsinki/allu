@@ -30,7 +30,6 @@ import {TagBarModule} from './tagbar/tagbar.module';
 import {AttachmentModule} from './attachment/attachment.module';
 import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-arrangement.component';
 import {PlacementContractComponent} from './info/placement-contract/placement-contract.component';
-import {ApplicationHistoryModule} from './history/application-history.module';
 import {TermsModule} from './terms/terms.module';
 import {AreaRentalComponent} from './info/area-rental/area-rental.component';
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
@@ -47,6 +46,8 @@ import {reducers} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {ApplicationTagEffects} from './effects/application-tag-effects';
 import {InvoicingEffects} from './effects/invoicing-effects';
+import {HistoryModule} from '../history/history.module';
+import {ApplicationHistoryComponent} from './history/application-history.component';
 
 @NgModule({
   imports: [
@@ -71,7 +72,7 @@ import {InvoicingEffects} from './effects/invoicing-effects';
     CommentModule,
     TagBarModule,
     AttachmentModule,
-    ApplicationHistoryModule,
+    HistoryModule,
     TermsModule,
     DistributionModule,
     InvoicingModule,
@@ -99,7 +100,8 @@ import {InvoicingEffects} from './effects/invoicing-effects';
     DecisionPreviewComponent,
     PricingInfoComponent,
     RecurringComponent,
-    ApplicationCommentsComponent
+    ApplicationCommentsComponent,
+    ApplicationHistoryComponent
   ],
   providers: [
     ApplicationResolve,

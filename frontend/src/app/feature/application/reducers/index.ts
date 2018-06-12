@@ -1,8 +1,4 @@
-import {
-  createSelector,
-  createFeatureSelector,
-  ActionReducerMap
-} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 
 import * as fromApplication from './application-reducer';
 import * as fromComments from '../../comment/reducers/comment-reducer';
@@ -12,12 +8,15 @@ import * as fromRoot from '../../allu/reducers/index';
 import {Application} from '../../../model/application/application';
 import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
+import * as fromHistory from '../../history/reducers/history-reducer';
+import * as fromApplicationHistory from '../reducers/application-history-reducer';
 
 
 export interface ApplicationState {
   application: fromApplication.State;
   comments: fromComments.State;
   tags: fromTags.State;
+  history: fromHistory.State;
 }
 
 export interface State extends fromRoot.State {
@@ -27,7 +26,8 @@ export interface State extends fromRoot.State {
 export const reducers: ActionReducerMap<ApplicationState> = {
   application: fromApplication.reducer,
   comments: fromApplicationComments.reducer,
-  tags: fromTags.reducer
+  tags: fromTags.reducer,
+  history: fromApplicationHistory.reducer
 };
 
 export const getApplicationState = createFeatureSelector<ApplicationState>('application');
@@ -51,6 +51,11 @@ export const getIsNew = createSelector(
 export const getApplicationLoaded = createSelector(
   getApplicationEntitiesState,
   fromApplication.getLoaded
+);
+
+export const getMeta = createSelector(
+  getApplicationEntitiesState,
+  fromApplication.getMeta
 );
 
 export const getCommentsEntitiesState = createSelector(
@@ -94,3 +99,18 @@ export const hasTag = (tagType: ApplicationTagType) => createSelector(
   (tags: ApplicationTag[]) => tags.some(tag => tagType === ApplicationTagType[tag.type])
 );
 
+// History selectors
+export const getHistoryState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.history
+);
+
+export const getHistory = createSelector(
+  getHistoryState,
+  fromHistory.getHistory
+);
+
+export const getFieldsVisible = createSelector(
+  getHistoryState,
+  fromHistory.getFieldsVisible
+);
