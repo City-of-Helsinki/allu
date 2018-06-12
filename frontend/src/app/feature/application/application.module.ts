@@ -48,6 +48,7 @@ import {ApplicationTagEffects} from './effects/application-tag-effects';
 import {InvoicingEffects} from './effects/invoicing-effects';
 import {HistoryModule} from '../history/history.module';
 import {ApplicationHistoryComponent} from './history/application-history.component';
+import {ApplicationEffects} from './effects/application-effects';
 
 @NgModule({
   imports: [
@@ -55,6 +56,7 @@ import {ApplicationHistoryComponent} from './history/application-history.compone
     RouterModule.forChild(applicationRoutes),
     StoreModule.forFeature('application', reducers),
     EffectsModule.forFeature([
+      ApplicationEffects,
       ApplicationTagEffects,
       InvoicingEffects
     ]),

@@ -3,6 +3,7 @@ import {ApplicationActions, ApplicationActionType} from '../actions/application-
 import {InvoicingActions, InvoicingActionType} from '../actions/invoicing-actions';
 import {ObjectUtil} from '../../../util/object.util';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
+import {ApplicationMetaActions, ApplicationMetaActionType} from '../actions/application-meta-actions';
 
 export interface State {
   loaded: boolean;
@@ -18,7 +19,9 @@ const initialState: State = {
   meta: undefined
 };
 
-export function reducer(state: State = initialState, action: ApplicationActions | InvoicingActions) {
+type HandledActions = ApplicationActions | InvoicingActions | ApplicationMetaActions;
+
+export function reducer(state: State = initialState, action: HandledActions) {
   switch (action.type) {
     case ApplicationActionType.Load: {
       return {
@@ -45,6 +48,13 @@ export function reducer(state: State = initialState, action: ApplicationActions 
       };
     }
 
+    case ApplicationMetaActionType.LoadSuccess: {
+      return {
+        ...state,
+        meta: action.payload
+      };
+    }
+
     case InvoicingActionType.SetRecipientSuccess: {
       const application = ObjectUtil.clone(state.current);
       application.invoiceRecipientId = action.payload;
@@ -53,6 +63,7 @@ export function reducer(state: State = initialState, action: ApplicationActions 
         current: application
       };
     }
+
 
     default:
       return {...state};

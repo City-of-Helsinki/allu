@@ -14,6 +14,7 @@ import {ActionTargetType} from '../allu/actions/action-target-type';
 import {catchError, tap} from 'rxjs/internal/operators';
 import {Load as LoadTags, LoadSuccess as LoadTagsSuccess} from './actions/application-tag-actions';
 import * as historyActions from '../history/actions/history-actions';
+import * as metaActions from './actions/application-meta-actions';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -34,6 +35,7 @@ export class ApplicationResolve implements Resolve<Application> {
         tap(() => this.loadComments()),
         tap(() => this.loadTags()),
         tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Application))),
+        tap(() => this.store.dispatch(new metaActions.Load())),
         catchError(err => this.handleError(err)))
       )
       .orElseGet(() => this.currentOrCopy());
