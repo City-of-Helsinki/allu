@@ -1139,7 +1139,8 @@ export const translations = {
         approve: 'Valvontatehtävän hyväksyminen epäonnistui',
         reject: 'Valvontatehtävän hylkääminen epäonnistui',
         handlerChange: 'Valvojan vaihtaminen epäonnistui',
-        hanlerRemove: 'Valvojan poistaminen tehtäviltä epäonnistui'
+        hanlerRemove: 'Valvojan poistaminen tehtäviltä epäonnistui',
+        fetch: 'Valvontatehtävien hakeminen epäonnistui'
       },
       field: {
         plannedFinishingTimeInThePast: 'Ajankohta ei voi olla menneisyydessä',
