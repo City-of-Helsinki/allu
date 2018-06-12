@@ -610,6 +610,7 @@ export const translations = {
     }
   },
   contact: {
+    name: 'Yhteyshenkilön nimi',
     role: {
       APPLICANT: {
         title: 'Yhteyshenkilö'

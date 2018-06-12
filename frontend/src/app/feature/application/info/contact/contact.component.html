@@ -22,8 +22,8 @@
             <div fxLayout="row">
               <div fxFlex="50%">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="name"
-                         placeholder="Yhteyshenkilön nimi*"
+                  <input matInput type="text" formControlName="name" required
+                         [placeholder]="'contact.name' | translation"
                          [matAutocomplete]="nameSearch" (keyup)="resetContactIfExisting(index)"/>
                   <mat-autocomplete #nameSearch="matAutocomplete">
                     <mat-option *ngFor="let contact of matchingContacts | async"
@@ -32,8 +32,8 @@
                     </mat-option>
                   </mat-autocomplete>
                   <mat-hint>
-                    <field-error [form]="contact" field="name" hasError="required">{{'contact.field.nameMissing' |
-                      translation}}
+                    <field-error [form]="contact" field="name" hasError="required">
+                      {{'contact.field.nameMissing' | translation}}
                     </field-error>
                   </mat-hint>
                 </mat-form-field>
@@ -42,29 +42,37 @@
             <div fxLayout="row wrap" fxLayoutGap="18px">
               <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+                  <input matInput type="text"
+                         formControlName="streetAddress"
+                         [placeholder]="'postalAddress.streetAddress' | translation"/>
                 </mat-form-field>
               </div>
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                  <input matInput type="text"
+                         formControlName="postalCode"
+                         [placeholder]="'postalAddress.postalCode' | translation"/>
                   <mat-hint>
-                    <field-error [form]="contact" field="postalCode" hasError="pattern">{{'common.field.postalCode' |
-                      translation}}
+                    <field-error [form]="contact" field="postalCode" hasError="pattern">
+                      {{'common.field.postalCode' | translation}}
                     </field-error>
                   </mat-hint>
                 </mat-form-field>
               </div>
               <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+                  <input matInput type="text"
+                         formControlName="city"
+                         [placeholder]="'postalAddress.postalOffice' | translation"/>
                 </mat-form-field>
               </div>
             </div>
             <div fxLayout="row wrap" fxLayoutGap="18px">
               <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                  <input matInput type="text"
+                         formControlName="email"
+                         [placeholder]="'emailAddress' | translation"/>
                   <mat-hint>
                     <field-error [form]="contact" field="email" hasError="email">
                       {{'common.field.emailInvalid' | translation}}
@@ -74,7 +82,9 @@
               </div>
               <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                  <input matInput type="text"
+                         formControlName="phone"
+                         [placeholder]="'phone' | translation"/>
                   <mat-hint>
                     <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' |
                       translation}}
