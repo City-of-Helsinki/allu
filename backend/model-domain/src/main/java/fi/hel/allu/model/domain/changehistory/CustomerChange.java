@@ -1,4 +1,4 @@
-package fi.hel.allu.model.service.changehistory;
+package fi.hel.allu.model.domain.changehistory;
 
 import fi.hel.allu.model.domain.Customer;
 
@@ -14,6 +14,11 @@ public class CustomerChange {
       this.customerName = null;
       this.id = null;
     }
+  }
+
+  public CustomerChange(Integer id, String name) {
+    this.id = id;
+    this.customerName = name;
   }
 
   public String getCustomerName() {

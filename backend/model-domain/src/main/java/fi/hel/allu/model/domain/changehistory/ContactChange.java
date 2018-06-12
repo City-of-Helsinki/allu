@@ -1,4 +1,4 @@
-package fi.hel.allu.model.service.changehistory;
+package fi.hel.allu.model.domain.changehistory;
 
 import fi.hel.allu.model.domain.Contact;
 

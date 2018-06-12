@@ -17,9 +17,9 @@ import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.model.service.changehistory.ApplicationChange;
-import fi.hel.allu.model.service.changehistory.ContactChange;
-import fi.hel.allu.model.service.changehistory.CustomerChange;
+import fi.hel.allu.model.domain.changehistory.ApplicationChange;
+import fi.hel.allu.model.domain.changehistory.ContactChange;
+import fi.hel.allu.model.domain.changehistory.CustomerChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
