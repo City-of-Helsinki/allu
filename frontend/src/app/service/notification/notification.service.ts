@@ -22,8 +22,8 @@ export class NotificationService {
     this.toastService.info(message, title);
   }
 
-  error(title: string, message?: string): void {
-    this.toastService.error(message, title);
+  error(title: string, message?: string, disableTimeOut: boolean = true): void {
+    this.toastService.error(message, title, {disableTimeOut});
   }
 
   errorInfo(errorInfo: ErrorInfo): void {

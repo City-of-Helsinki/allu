@@ -244,7 +244,7 @@ export class MapController {
     });
 
     this.map.on(L.Draw.Event.INTERSECTS, (e: any) => {
-      this.notification.error(translations.map.areasIntersect);
+      this.notification.error(translations.map.areasIntersect, undefined, false);
     });
 
     this.map.on('click', (e: L.LeafletMouseEvent) => {
@@ -256,7 +256,7 @@ export class MapController {
     this.map.on('draw:editvertex ', (e: any) => {
       if (e.poly.intersects()) {
         this.mapStore.invalidGeometryChange(true);
-        this.notification.error(translations.map.areaIntersects);
+        this.notification.error(translations.map.areaIntersects, undefined, false);
       } else {
         this.mapStore.invalidGeometryChange(false);
       }
