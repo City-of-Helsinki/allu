@@ -141,10 +141,7 @@ export const getParentProjects = createSelector(
 export const getParentProject = createSelector(
   getCurrentProject,
   getParentProjects,
-  (current: Project, parents: Project[]) => {
-    console.log('getParentProject', current, parents);
-    return ArrayUtil.first(parents, (p => p.id === current.parentId));
-  }
+  (current: Project, parents: Project[]) => ArrayUtil.first(parents, (p => p.id === current.parentId))
 );
 
 export const getParentProjectsLoading = createSelector(
