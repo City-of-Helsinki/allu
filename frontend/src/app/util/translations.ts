@@ -520,7 +520,9 @@ export const translations = {
     invoicingProhibited: 'Asiakkaalla laskutuskielto',
     invoicingOnly: 'Vain laskutusasiakas',
     projectIdentifierPrefix: 'Projektitunnuksen alkuosa',
+    country: 'Maa',
     type: {
+      pick: 'Valitse tyyppi',
       title: 'Tyyppi',
       COMPANY: {
         name: 'Yritys',
@@ -818,6 +820,13 @@ export const translations = {
       addressSearch: 'Osoitehaku epäonnistui'
     }
   },
+  postalAddress: {
+    streetAddress: 'Katuosoite',
+    postalCode: 'Postinumero',
+    postalOffice: 'Postitoimipaikka'
+  },
+  emailAddress: 'Sähköpostiosoite',
+  phone: 'Puhelin',
   common: {
     freeTextSearch: 'Vapaa tekstihaku',
     field: {
