@@ -17,6 +17,11 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.geolatte</groupId>
             <artifactId>geolatte-common</artifactId>
             <version>0.7.1</version>

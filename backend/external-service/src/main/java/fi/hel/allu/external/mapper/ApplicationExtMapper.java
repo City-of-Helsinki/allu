@@ -1,6 +1,7 @@
 package fi.hel.allu.external.mapper;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.geolatte.geom.Geometry;
 
@@ -46,6 +47,21 @@ public abstract class ApplicationExtMapper<T extends ApplicationExt> {
     return clientApplicationData;
   }
 
+  private LocationJson createLocation(T application, Geometry geometry, PostalAddressExt postalAddress) {
+    LocationJson location = new LocationJson();
+    location.setGeometry(geometry);
+    location.setPostalAddress(postalAddress != null ? new PostalAddressJson(postalAddress.getStreetAddressAsString(), postalAddress.getPostalCode(),postalAddress.getCity()) : null);
+    location.setStartTime(application.getStartTime());
+    location.setEndTime(application.getEndTime());
+    location.setFixedLocationIds(getFixedLocationIds(application));
+    location.setArea(getArea(application));
+    return location;
+  }
+
+  protected Double getArea(T application) {
+    return null;
+  }
+
   protected ApplicationKind getApplicationKind(T application) {
     return null;
   }
@@ -54,12 +70,7 @@ public abstract class ApplicationExtMapper<T extends ApplicationExt> {
     return null;
   }
 
-  private LocationJson createLocation(T application, Geometry geometry, PostalAddressExt postalAddress) {
-    LocationJson location = new LocationJson();
-    location.setGeometry(geometry);
-    location.setPostalAddress(postalAddress != null ? new PostalAddressJson(postalAddress.getStreetAddressAsString(), postalAddress.getPostalCode(),postalAddress.getCity()) : null);
-    location.setStartTime(application.getStartTime());
-    location.setEndTime(application.getEndTime());
-    return location;
+  protected List<Integer> getFixedLocationIds(T application) {
+    return null;
   }
 }
