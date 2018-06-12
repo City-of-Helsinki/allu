@@ -16,8 +16,6 @@ import fi.hel.allu.external.domain.FixedLocationExt;
 import fi.hel.allu.external.mapper.FixedLocationMapper;
 import fi.hel.allu.servicecore.service.LocationService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiKeyAuthDefinition;
-import io.swagger.annotations.ApiKeyAuthDefinition.ApiKeyLocation;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
