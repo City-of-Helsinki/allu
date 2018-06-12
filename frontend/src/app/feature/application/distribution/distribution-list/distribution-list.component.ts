@@ -4,7 +4,7 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angul
 import {DistributionType} from '../../../../model/common/distribution-type';
 import {EnumUtil} from '../../../../util/enum.util';
 import {DistributionEntry} from '../../../../model/common/distribution-entry';
-import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
+import {postalCodeValidator} from '../../../../util/complex-validator';
 
 @Component({
   selector: 'distribution-list',
@@ -58,7 +58,7 @@ export class DistributionListComponent implements OnInit {
       id: [distributionEntry.id],
       name: [distributionEntry.name, Validators.required],
       type: [distributionEntry.uiType, Validators.required],
-      email: [distributionEntry.email, emailValidator],
+      email: [distributionEntry.email, Validators.email],
       streetAddress: [distributionEntry.postalAddress.streetAddress, Validators.minLength(1)],
       postalCode: [distributionEntry.postalAddress.postalCode, postalCodeValidator],
       city: [distributionEntry.postalAddress.city],

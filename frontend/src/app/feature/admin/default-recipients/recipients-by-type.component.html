@@ -32,7 +32,7 @@
             <div *ngIf="row.disabled" class="left-align">{{row.value.email}}</div>
             <input-box *ngIf="row.enabled">
               <input inputBoxInput type="text" formControlName="email" placeholder="Sähköposti*"/>
-              <field-error [form]="recipientRows.controls[i]" field="email" hasError="pattern">
+              <field-error [form]="recipientRows.controls[i]" field="email" hasError="email">
                 {{'common.field.emailInvalid' | translation}}
               </field-error>
             </input-box>

@@ -62,7 +62,7 @@
           <div class="table-flex-field" *ngIf="distribution.value.edit">
             <input-box>
               <input inputBoxInput type="text" placeholder="Sähköposti*" formControlName="email"/>
-              <field-error [form]="distributionRows.controls[i]" field="email" hasError="pattern">
+              <field-error [form]="distributionRows.controls[i]" field="email" hasError="email">
                 {{'common.field.emailInvalid' | translation}}
               </field-error>
             </input-box>

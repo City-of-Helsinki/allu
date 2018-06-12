@@ -1,5 +1,5 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {emailValidator, postalCodeValidator} from '../../util/complex-validator';
+import {postalCodeValidator} from '../../util/complex-validator';
 
 export class Contact {
   constructor(
@@ -21,7 +21,7 @@ export class Contact {
       streetAddress: [contact.streetAddress],
       postalCode: [contact.postalCode, postalCodeValidator],
       city: [contact.city],
-      email: [contact.email, emailValidator],
+      email: [contact.email, Validators.email],
       phone: [contact.phone, Validators.minLength(2)],
       active: [contact.active]
     });

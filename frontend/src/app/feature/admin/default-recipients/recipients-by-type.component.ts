@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {DefaultRecipient} from '../../../model/common/default-recipient';
-import {emailValidator} from '../../../util/complex-validator';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {EnumUtil} from '../../../util/enum.util';
 import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
@@ -74,7 +73,7 @@ export class RecipientsByTypeComponent implements OnInit {
   private createRecipient(recipient: DefaultRecipient = DefaultRecipient.ofType(this.type)): FormGroup {
     return this.fb.group({
       id: [recipient.id],
-      email: [recipient.email, [Validators.required, emailValidator]],
+      email: [recipient.email, [Validators.required, Validators.email]],
       applicationType: [recipient.applicationType, Validators.required]
     });
   }

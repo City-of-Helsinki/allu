@@ -3,9 +3,9 @@ import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 
 import {Contact} from '../../../model/customer/contact';
-import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
+import {postalCodeValidator} from '../../../util/complex-validator';
 import {NumberUtil} from '../../../util/number.util';
-import {Subscription, Observable, EMPTY} from 'rxjs';
+import {EMPTY, Observable, Subscription} from 'rxjs';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
@@ -69,7 +69,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
       streetAddress: [contact.streetAddress],
       postalCode: [contact.postalCode, postalCodeValidator],
       city: [contact.city],
-      email: [contact.email, emailValidator],
+      email: [contact.email, Validators.email],
       phone: [contact.phone, Validators.minLength(2)],
       active: [contact.active]
     });

@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Subject, Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {EnumUtil} from '../../../util/enum.util';
 import {NumberUtil} from '../../../util/number.util';
 import {ExternalUserHub} from '../../../service/user/external-user-hub';
 import {ExternalRoleType} from '../../../model/common/external-role-type';
 import {Customer} from '../../../model/customer/customer';
-import {emailValidator} from '../../../util/complex-validator';
 import {ExternalUserForm} from './external-user-form';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {translations} from '../../../util/translations';
@@ -47,7 +46,7 @@ export class ExternalUserComponent implements OnInit {
       id: undefined,
       username: ['', Validators.required],
       name: ['', Validators.required],
-      emailAddress: [undefined, emailValidator],
+      emailAddress: [undefined, Validators.email],
       active: [true],
       assignedRoles: [[]],
       token: [{value: undefined, disabled: true}],

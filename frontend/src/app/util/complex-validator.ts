@@ -174,6 +174,4 @@ export interface AbstractControlWarn extends AbstractControl {
   warnings: { [key: string]: any; };
 }
 
-export const emailValidator = Validators.pattern('.+@.+\\..+');
-
 export const postalCodeValidator = Validators.pattern(/^[0-9]{5}$/);

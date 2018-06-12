@@ -1,6 +1,6 @@
 import {PostalAddress} from '../../../model/common/postal-address';
 import {FormBuilder, Validators} from '@angular/forms';
-import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
+import {postalCodeValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
 
 export class CustomerForm {
@@ -76,7 +76,7 @@ export class CustomerForm {
         postalCode: ['', postalCodeValidator],
         city: ['']
       }),
-      email: ['', emailValidator],
+      email: ['', Validators.email],
       phone: ['', Validators.minLength(2)],
       active: [true],
       sapCustomerNumber: [{value: '', disabled: true}],

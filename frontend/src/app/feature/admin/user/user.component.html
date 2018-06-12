@@ -31,6 +31,9 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="emailAddress"
                          [placeholder]="'user.email' | translation"/>
+                  <mat-error *ngIf="userForm.get('emailAddress').hasError('email')">
+                    {{'common.field.emailInvalid' | translation}}
+                  </mat-error>
                 </mat-form-field>
               </div>
               <div fxFlex="calc(30% - 18px)">

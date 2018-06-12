@@ -45,8 +45,8 @@
                   <mat-form-field class="input-full-width">
                     <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                     <mat-hint>
-                      <field-error [form]="contact" field="email" hasError="pattern">{{'common.field.emailInvalid' |
-                        translation}}
+                      <field-error [form]="contact" field="email" hasError="email">
+                        {{'common.field.emailInvalid' | translation}}
                       </field-error>
                     </mat-hint>
                   </mat-form-field>
