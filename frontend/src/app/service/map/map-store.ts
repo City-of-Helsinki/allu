@@ -35,6 +35,7 @@ export interface MapState {
   drawingAllowed: boolean;
   hasFixedGeometry: boolean;
   invalidGeometry: boolean;
+  loading: boolean;
 }
 
 const initialState: MapState = {
@@ -52,7 +53,8 @@ const initialState: MapState = {
   selectedSections: [],
   drawingAllowed: true,
   hasFixedGeometry: false,
-  invalidGeometry: false
+  invalidGeometry: false,
+  loading: false
 };
 
 @Injectable()
@@ -205,6 +207,13 @@ export class MapStore {
     );
   }
 
+  get loading(): Observable<boolean> {
+    return this.store.pipe(
+      map(state => state.loading),
+      distinctUntilChanged()
+    );
+  }
+
   coordinateSearchChange(term: string): void {
     this.store.next({...this.store.getValue(), coordinateSearch: term});
   }
@@ -218,7 +227,7 @@ export class MapStore {
   }
 
   applicationsChange(applications: Application[]): void {
-    this.store.next({...this.store.getValue(), visibleApplications: applications});
+    this.store.next({...this.store.getValue(), visibleApplications: applications, loading: false});
   }
 
   editedLocationChange(location: Location): void {
@@ -297,6 +306,7 @@ export class MapStore {
   }
 
   private fetchMapDataByFilter(searchFilter: MapSearchFilter): void {
+    this.store.next({...this.snapshot, loading: true})
     this.mapDataService.applicationsByLocation(searchFilter)
       .subscribe(applications => this.applicationsChange(applications));
   }

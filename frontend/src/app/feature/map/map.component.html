@@ -1,4 +1,5 @@
 <div id="map" class="map">
-  <!-- <navigator></navigator> -->
-  <!-- <marker></marker> -->
+  <div class="loading-container">
+    <mat-spinner *ngIf="loading$ | async"></mat-spinner>
+  </div>
 </div>

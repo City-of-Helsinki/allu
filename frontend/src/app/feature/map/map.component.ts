@@ -9,7 +9,7 @@ import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Location} from '../../model/common/location';
 import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '../../service/map/map-controller';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {FixedLocationService} from '../../service/map/fixed-location.service';
 import {ProjectService} from '../../service/project/project.service';
 import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
@@ -31,6 +31,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
+  loading$: Observable<boolean>;
+
   private destroy = new Subject<boolean>();
 
   constructor(
@@ -41,6 +43,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.mapStore.roleChange(this.role);
+    this.loading$ = this.mapStore.loading;
   }
 
   /**
