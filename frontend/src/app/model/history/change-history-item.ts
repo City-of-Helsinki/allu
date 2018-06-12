@@ -8,7 +8,7 @@ export class ChangeHistoryItem {
     public user?: User,
     public info?: ChangeHistoryItemInfo,
     public changeType?: string,
-    public newStatus?: string,
+    public changeSpecifier?: string,
     public changeTime?: Date,
     public fieldChanges?: Array<FieldChange>
   ) {

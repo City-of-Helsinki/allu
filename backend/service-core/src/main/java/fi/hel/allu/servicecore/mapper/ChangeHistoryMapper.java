@@ -34,7 +34,7 @@ public class ChangeHistoryMapper {
         Optional.ofNullable(c.getUserId()).map(userId -> userService.findUserById(userId)).orElse(null),
         mapToJson(c.getInfo()),
         c.getChangeType(),
-        c.getNewStatus(),
+        c.getChangeSpecifier(),
         c.getChangeTime(),
         mapToJson(c.getFieldChanges()));
   }

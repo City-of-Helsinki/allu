@@ -1,16 +1,18 @@
 package fi.hel.allu.servicecore.service.applicationhistory;
 
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
+import fi.hel.allu.model.domain.changehistory.CustomerChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
-
 import fi.hel.allu.servicecore.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -33,13 +35,13 @@ import java.util.stream.Collectors;
 @Service
 public class ApplicationHistoryService {
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
-  private UserService userService;
-  private ObjectComparer comparer;
-  private Pattern skipFieldPattern;
-  private ChangeHistoryMapper changeHistoryMapper;
-  private ApplicationMapper applicationMapper;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
+  private final UserService userService;
+  private final ObjectComparer comparer;
+  private final Pattern skipFieldPattern;
+  private final ChangeHistoryMapper changeHistoryMapper;
+  private final ApplicationMapper applicationMapper;
 
   // regex to skip id fields since they are needed for comparison but no need to show them to user.
   // TODO: add cable report validityTime as skipped field too
@@ -94,11 +96,39 @@ public class ApplicationHistoryService {
    *          new contents
    */
   public void addFieldChanges(Integer applicationId, ApplicationJson oldApplication, ApplicationJson newApplication) {
+    final Integer userId = userService.getCurrentUser().getId();
     final ApplicationForHistory oldHistoryApplication = applicationMapper.mapJsonToHistory(oldApplication);
     final ApplicationForHistory newHistoryApplication = applicationMapper.mapJsonToHistory(newApplication);
+    final Map<CustomerRoleType, CustomerWithContactsJson> oldCustomers = oldHistoryApplication.getCustomersWithContacts();
+    final Map<CustomerRoleType, CustomerWithContactsJson> newCustomers = newHistoryApplication.getCustomersWithContacts();
+    oldHistoryApplication.setCustomersWithContacts(null);
+    newHistoryApplication.setCustomersWithContacts(null);
+
+    addContentsChange(applicationId, oldHistoryApplication, newHistoryApplication);
+    for (CustomerRoleType role : CustomerRoleType.values()) {
+      addCustomerChange(applicationId, userId, oldCustomers.get(role), newCustomers.get(role), role);
+    }
+  }
+
+  private void addCustomerChange(Integer applicationId, Integer userId, CustomerWithContactsJson oldCustomer, CustomerWithContactsJson newCustomer, CustomerRoleType role) {
+    final Integer oldCustomerId = oldCustomer != null ? oldCustomer.getCustomer().getId() : null;
+    final String oldCustomerName = oldCustomer != null ? oldCustomer.getCustomer().getName() : null;
+    final List<ContactJson> oldContacts = oldCustomer != null ? oldCustomer.getContacts() : null;
+    final Integer newCustomerId = newCustomer != null ? newCustomer.getCustomer().getId() : null;
+    final String newCustomerName = newCustomer != null ? newCustomer.getCustomer().getName() : null;
+    final List<ContactJson> newContacts = newCustomer != null ? newCustomer.getContacts() : null;
+
+    if (!Objects.equals(oldCustomerId, newCustomerId)) {
+      addChangeItem(applicationId, userId, new CustomerChange(oldCustomerId, oldCustomerName),
+          new CustomerChange(newCustomerId, newCustomerName), ChangeType.CUSTOMER_CHANGED, role.name());
+    }
+    addChangeItem(applicationId, userId, oldContacts, newContacts, ChangeType.CONTACT_CHANGED, role.name());
+  }
+
+  private void addContentsChange(Integer applicationId, ApplicationForHistory oldApplication, ApplicationForHistory newApplication) {
     final Set<String> abbreviated = new HashSet<>();
 
-    List<FieldChange> fieldChanges = comparer.compare(oldHistoryApplication, newHistoryApplication).stream()
+    List<FieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()
         .filter(diff -> !skipFieldPattern.matcher(diff.keyName).matches())
         .filter(diff -> !shouldAbbreviate(diff.keyName, abbreviated))
         .map(diff -> new FieldChange(diff.keyName, diff.oldValue, diff.newValue))
@@ -140,7 +170,7 @@ public class ApplicationHistoryService {
   public void addStatusChange(Integer applicationId, StatusType newStatus) {
     ChangeHistoryItem change = new ChangeHistoryItem();
     change.setChangeType(ChangeType.STATUS_CHANGED);
-    change.setNewStatus(newStatus);
+    change.setChangeSpecifier(newStatus.name());
     addChangeItem(applicationId, change);
   }
 
@@ -166,6 +196,15 @@ public class ApplicationHistoryService {
     ChangeHistoryItem change = new ChangeHistoryItem();
     change.setChangeType(ChangeType.REPLACED);
     addChangeItem(applicationId, change);
+  }
+
+  private void addChangeItem(Integer applicationId, int userId, Object oldData, Object newData, ChangeType changeType, String newStatus) {
+    final List<FieldChange> fieldChanges = comparer.compare(oldData, newData).stream()
+        .map(d -> new FieldChange(d.keyName, d.oldValue, d.newValue)).collect(Collectors.toList());
+    if (!fieldChanges.isEmpty()) {
+      final ChangeHistoryItem change = new ChangeHistoryItem(userId, null, changeType, newStatus, ZonedDateTime.now(), fieldChanges);
+      restTemplate.postForObject(applicationProperties.getAddApplicationHistoryUrl(), change, Void.class, applicationId);
+    }
   }
 
   /*

@@ -73,7 +73,7 @@ public class ApplicationServiceExt {
 
   private List<ApplicationHistoryEventExt> toHistoryEvents(List<ChangeHistoryItem> items) {
     return items.stream().map(i ->
-    new ApplicationHistoryEventExt(i.getChangeTime(), i.getNewStatus())).collect(Collectors.toList());
+    new ApplicationHistoryEventExt(i.getChangeTime(), StatusType.valueOf(i.getChangeSpecifier()))).collect(Collectors.toList());
   }
 
   public <T extends ApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {

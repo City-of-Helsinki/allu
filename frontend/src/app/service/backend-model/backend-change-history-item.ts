@@ -6,7 +6,7 @@ export interface BackendChangeHistoryItem {
   user: BackendUser;
   info: BackendChangeHistoryItemInfo;
   changeType: string;
-  newStatus: string;
+  changeSpecifier: string;
   changeTime: string;
   fieldChanges: Array<BackendFieldChange>;
 }

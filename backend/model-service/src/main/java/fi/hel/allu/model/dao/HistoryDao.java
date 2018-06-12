@@ -115,7 +115,7 @@ public class HistoryDao {
   private List<ChangeHistoryItem> resultToChangeHistory(List<Tuple> results) {
     return results.stream()
         .map(r -> new ChangeHistoryItem(r.get(changeHistory.userId), getInfo(r),
-            r.get(changeHistory.changeType), r.get(changeHistory.newStatus), r.get(changeHistory.changeTime),
+            r.get(changeHistory.changeType), r.get(changeHistory.changeSpecifier), r.get(changeHistory.changeTime),
             getChangeLines(r.get(changeHistory.id))))
         .collect(Collectors.toList());
   }
@@ -194,7 +194,7 @@ public class HistoryDao {
     QApplication application = QApplication.application;
     BooleanBuilder builder = new BooleanBuilder();
     builder.and(application.externalOwnerId.eq(externalOwnerId));
-    builder.and(changeHistory.newStatus.isNotNull());
+    builder.and(changeHistory.changeSpecifier.isNotNull());
     if (eventsAfter != null) {
       builder.and(changeHistory.changeTime.after(eventsAfter));
     }

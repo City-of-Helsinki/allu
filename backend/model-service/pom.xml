@@ -438,11 +438,6 @@
                             <type>fi.hel.allu.model.querydsl.StringToChangeType</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>change_history</table>
-                            <column>new_status</column>
-                            <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
-                        </typeMapping>
-                        <typeMapping>
                             <table>default_recipient</table>
                             <column>application_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>

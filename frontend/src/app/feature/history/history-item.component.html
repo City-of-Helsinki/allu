@@ -4,7 +4,7 @@
   </div>
   <div fxFlex="0 0 15%" class="text-highlighted">
     <ng-container *ngIf="change.changeType==='STATUS_CHANGED'; else changeTypeInfo">
-      {{['application.statusChange', change.newStatus] | translation}}
+      {{['application.statusChange', change.changeSpecifier] | translation}}
     </ng-container>
     <ng-template #changeTypeInfo>
       {{['history.change.type', change.changeType] | translation}}

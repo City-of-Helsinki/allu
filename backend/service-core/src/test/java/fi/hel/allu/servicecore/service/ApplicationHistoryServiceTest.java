@@ -126,7 +126,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
 
     Assert.assertNotNull(capturedChange);
     Assert.assertEquals(ChangeType.STATUS_CHANGED, capturedChange.getChangeType());
-    Assert.assertEquals(StatusType.PRE_RESERVED, capturedChange.getNewStatus());
+    Assert.assertEquals(StatusType.PRE_RESERVED.name(), capturedChange.getChangeSpecifier());
   }
 
   @Test

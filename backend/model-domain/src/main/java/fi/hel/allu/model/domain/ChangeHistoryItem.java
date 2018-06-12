@@ -1,7 +1,6 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.common.domain.types.StatusType;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -15,7 +14,7 @@ public class ChangeHistoryItem {
   private Integer userId;
   private ChangeHistoryItemInfo info;
   private ChangeType changeType;
-  private StatusType newStatus;
+  private String changeSpecifier;
   private ZonedDateTime changeTime;
   private List<FieldChange> fieldChanges;
 
@@ -23,11 +22,11 @@ public class ChangeHistoryItem {
   }
 
   public ChangeHistoryItem(Integer userId, ChangeHistoryItemInfo info, ChangeType changeType,
-      StatusType newStatus, ZonedDateTime changeTime, List<FieldChange> fieldChanges) {
+      String newStatus, ZonedDateTime changeTime, List<FieldChange> fieldChanges) {
     this.userId = userId;
     this.info = info;
     this.changeType = changeType;
-    this.newStatus = newStatus;
+    this.changeSpecifier = newStatus;
     this.changeTime = changeTime;
     this.fieldChanges = fieldChanges;
   }
@@ -68,15 +67,14 @@ public class ChangeHistoryItem {
 
   /**
    * Get the new status if this was a status change change
-   *
-   * @return new status or null
+   * Get the customer role type if this was a customer change.
    */
-  public StatusType getNewStatus() {
-    return newStatus;
+  public String getChangeSpecifier() {
+    return changeSpecifier;
   }
 
-  public void setNewStatus(StatusType newStatus) {
-    this.newStatus = newStatus;
+  public void setChangeSpecifier(String changeSpecifier) {
+    this.changeSpecifier = changeSpecifier;
   }
 
   /**
