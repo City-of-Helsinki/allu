@@ -4,13 +4,10 @@ import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import fi.hel.allu.common.domain.types.ApplicationKind;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel("Event (tapahtuma)")
+@ApiModel("Event (tapahtuma). Currently only supported event type is promotion.")
 public class EventExt extends ApplicationExt {
 
   private Integer structureArea;
