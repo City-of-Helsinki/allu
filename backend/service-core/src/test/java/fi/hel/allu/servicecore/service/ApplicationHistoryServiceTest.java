@@ -11,8 +11,10 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +42,9 @@ public class ApplicationHistoryServiceTest extends MockServices {
   private UserJson mockUserJson;
   @Mock
   private ChangeHistoryMapper changeHistoryMapper;
+  @Mock
+  private CustomerMapper customerMapper;
+  private ApplicationMapper applicationMapper;
 
   private ApplicationHistoryService applicationHistoryService;
 
@@ -57,12 +62,13 @@ public class ApplicationHistoryServiceTest extends MockServices {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
+    applicationMapper = new ApplicationMapper(customerMapper, mockUserService);
     Mockito.when(mockApplicationProperties.getApplicationHistoryUrl()).thenReturn(APPLICATION_HISTORY_URL);
     Mockito.when(mockApplicationProperties.getAddApplicationHistoryUrl()).thenReturn(ADD_APPLICATION_HISTORY_URL);
     Mockito.when(mockUserService.getCurrentUser()).thenReturn(mockUserJson);
     Mockito.when(mockUserJson.getId()).thenReturn(MOCK_USER_ID);
     applicationHistoryService = new ApplicationHistoryService(mockApplicationProperties, mockRestTemplate,
-        mockUserService, changeHistoryMapper);
+        mockUserService, changeHistoryMapper, applicationMapper);
   }
 
   @Test

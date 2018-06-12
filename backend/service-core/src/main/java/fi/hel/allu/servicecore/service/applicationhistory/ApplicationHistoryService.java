@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 
 import fi.hel.allu.servicecore.service.UserService;
@@ -17,8 +18,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.annotation.PostConstruct;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -40,6 +39,7 @@ public class ApplicationHistoryService {
   private ObjectComparer comparer;
   private Pattern skipFieldPattern;
   private ChangeHistoryMapper changeHistoryMapper;
+  private ApplicationMapper applicationMapper;
 
   // regex to skip id fields since they are needed for comparison but no need to show them to user.
   // TODO: add cable report validityTime as skipped field too
@@ -54,11 +54,12 @@ public class ApplicationHistoryService {
 
   @Autowired
   public ApplicationHistoryService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      UserService userService, ChangeHistoryMapper changeHistoryMapper) {
+      UserService userService, ChangeHistoryMapper changeHistoryMapper, ApplicationMapper applicationMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.changeHistoryMapper = changeHistoryMapper;
+    this.applicationMapper = applicationMapper;
     this.skipFieldPattern = Pattern.compile(SKIP_FIELDS_RE);
 
     this.comparer = new ObjectComparer();
@@ -93,9 +94,11 @@ public class ApplicationHistoryService {
    *          new contents
    */
   public void addFieldChanges(Integer applicationId, ApplicationJson oldApplication, ApplicationJson newApplication) {
-    Set<String> abbreviated = new HashSet<>();
+    final ApplicationForHistory oldHistoryApplication = applicationMapper.mapJsonToHistory(oldApplication);
+    final ApplicationForHistory newHistoryApplication = applicationMapper.mapJsonToHistory(newApplication);
+    final Set<String> abbreviated = new HashSet<>();
 
-    List<FieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()
+    List<FieldChange> fieldChanges = comparer.compare(oldHistoryApplication, newHistoryApplication).stream()
         .filter(diff -> !skipFieldPattern.matcher(diff.keyName).matches())
         .filter(diff -> !shouldAbbreviate(diff.keyName, abbreviated))
         .map(diff -> new FieldChange(diff.keyName, diff.oldValue, diff.newValue))

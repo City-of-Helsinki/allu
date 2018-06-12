@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -186,6 +187,50 @@ public class ApplicationMapper {
     return applicationJson;
   }
 
+  public ApplicationForHistory mapJsonToHistory(ApplicationJson application) {
+    ApplicationForHistory history = new ApplicationForHistory();
+    history.setId(application.getId());
+    history.setApplicationId(application.getApplicationId());
+    history.setStatus(application.getStatus());
+    history.setType(application.getType());
+    history.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
+    history.setApplicationTags(application.getApplicationTags());
+    history.setMetadataVersion(application.getMetadataVersion());
+    history.setCreationTime(application.getCreationTime());
+    history.setStartTime(application.getStartTime());
+    history.setEndTime(application.getEndTime());
+    history.setRecurringEndTime(application.getRecurringEndTime());
+    history.setName(application.getName());
+    history.setDecisionTime(application.getDecisionTime());
+    history.setDecisionMaker(application.getDecisionMaker());
+    history.setExtension(application.getExtension());
+    history.setDecisionPublicityType(application.getDecisionPublicityType());
+    history.setDecisionDistributionList(application.getDecisionDistributionList());
+    history.setOwner(application.getOwner());
+    history.setCalculatedPrice(application.getCalculatedPrice());
+    history.setNotBillable(application.getNotBillable());
+    history.setNotBillableReason(application.getNotBillableReason());
+    history.setCustomersWithContacts(customersToHistory(application.getCustomersWithContacts()));
+    history.setInvoiceRecipientId(application.getInvoiceRecipientId());
+    history.setReplacedByApplicationId(application.getReplacedByApplicationId());
+    history.setReplacesApplicationId(application.getReplacesApplicationId());
+    history.setCustomerReference(application.getCustomerReference());
+    history.setInvoicingDate(application.getInvoicingDate());
+    history.setInvoiced(application.getInvoiced());
+    history.setSkipPriceCalculation(application.getSkipPriceCalculation());
+    history.setProject(application.getProject());
+    history.setExternalOwnerId(application.getExternalOwnerId());
+    history.setClientApplicationData(application.getClientApplicationData());
+    history.setIdentificationNumber(application.getIdentificationNumber());
+    history.setLocations(application.getLocations());
+    return history;
+  }
+
+  private Map<CustomerRoleType, CustomerWithContactsJson> customersToHistory(List<CustomerWithContactsJson> customers) {
+    Map<CustomerRoleType, CustomerWithContactsJson> customerMap = new HashMap<>();
+    customers.forEach(c -> customerMap.put(c.getRoleType(), c));
+    return customerMap;
+  }
   /**
    * Transfer the information from the given model-domain object to given ui-domain object
    * @param application
