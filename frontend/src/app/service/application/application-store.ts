@@ -19,6 +19,8 @@ import {Store} from '@ngrx/store';
 import * as fromApplication from '../../feature/application/reducers';
 import * as TagAction from '../../feature/application/actions/application-tag-actions';
 import * as ApplicationAction from '../../feature/application/actions/application-actions';
+import * as HistoryAction from '../../feature/history/actions/history-actions';
+import {ActionTargetType} from '../../feature/allu/actions/action-target-type';
 
 export interface ApplicationState {
   application?: Application;
@@ -281,6 +283,7 @@ export class ApplicationStore {
     this.appStore.next({...this.current, application});
     this.store.dispatch(new ApplicationAction.LoadSuccess(application));
     this.store.dispatch(new TagAction.Load());
+    this.store.dispatch(new HistoryAction.Load(ActionTargetType.Application));
   }
 
   private get current(): ApplicationState {
