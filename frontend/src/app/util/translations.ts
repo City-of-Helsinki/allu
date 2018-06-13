@@ -666,6 +666,11 @@ export const translations = {
         title: 'Hylkää hakemus',
         confirmText: 'Hylkää',
         confirmation: 'Hakemus hylätty'
+      },
+      RESEND_EMAIL: {
+        title: 'Lähetä päätös',
+        confirmText: 'Lähetä',
+        confirmation: 'Päätös lähetetty'
       }
     },
     field: {

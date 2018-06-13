@@ -14,7 +14,10 @@ import {ArrayUtil} from '../../util/array-util';
 import {DistributionType} from '../../model/common/distribution-type';
 import {filter, map} from 'rxjs/internal/operators';
 
+export type DecisionModalType = 'DECISIONMAKING' | 'RETURNED_TO_PREPARATION' | 'REJECTED' | 'RESEND_EMAIL';
+
 interface DecisionModalData {
+  type: DecisionModalType;
   status: ApplicationStatus;
   distributionList: Array<DistributionEntry>;
   distributionType: DistributionType;
@@ -23,6 +26,7 @@ interface DecisionModalData {
 export const DECISION_MODAL_CONFIG = {
   width: '800px',
   data: {
+    type: undefined,
     status: undefined,
     distributionList: [],
     distributionType: DistributionType.EMAIL
@@ -44,6 +48,7 @@ export interface DecisionConfirmation {
 })
 export class DecisionModalComponent implements OnInit {
   status: string;
+  type: string;
   distributionList: Array<DistributionEntry>;
   emailDistribution: boolean;
   ownerSelection: boolean;
@@ -65,6 +70,7 @@ export class DecisionModalComponent implements OnInit {
     });
 
     this.status = ApplicationStatus[this.data.status];
+    this.type = this.data.type;
     this.distributionList = this.data.distributionList;
     this.emailDistribution = DistributionType.EMAIL === this.data.distributionType
       && this.data.status !== ApplicationStatus.RETURNED_TO_PREPARATION;

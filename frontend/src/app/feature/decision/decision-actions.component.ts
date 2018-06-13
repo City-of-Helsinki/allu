@@ -67,7 +67,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   public decision(status: string): void {
-    this.confirmDecisionSend(status)
+    this.confirmDecisionSend(status, status)
       .subscribe(result => this.decisionConfirmed(result));
   }
 
@@ -82,7 +82,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   public resendDecision(): void {
-    this.confirmDecisionSend(ApplicationStatus[ApplicationStatus.DECISION])
+    this.confirmDecisionSend('RESEND_EMAIL')
       .pipe(
         filter(result => !!result),
         switchMap(result => this.sendDecision(this.application.id, result)),
@@ -104,8 +104,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     }
   }
 
-  private confirmDecisionSend(status: string): Observable<DecisionConfirmation> {
+  private confirmDecisionSend(type: string, status?: string): Observable<DecisionConfirmation> {
     const config = {...DECISION_MODAL_CONFIG};
+    config.data.type = type;
     config.data.status = ApplicationStatus[status];
     config.data.distributionList = this.application.decisionDistributionList;
 
