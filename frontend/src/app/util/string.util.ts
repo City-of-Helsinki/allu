@@ -14,7 +14,7 @@ export class StringUtil {
   }
 
   public static isEmpty(s: string): boolean {
-    return (!s || s.length === 0);
+    return (s === undefined || s === null || s.length === 0);
   }
 
   public static replaceNull(s: string): string {
@@ -24,15 +24,12 @@ export class StringUtil {
   public static toPath(p: string | string[], separator?: string): string {
     let pathString = '';
     if (Array.isArray(p)) {
-      pathString = p.join(separator || '.');
+      const pathParts = p.filter(item => !StringUtil.isEmpty(item));
+      pathString = pathParts.join(separator || '.');
     } else {
       pathString = p;
     }
     return pathString;
-  }
-
-  public static toUppercase(s: string): string {
-    return s ? s.toLocaleUpperCase() : s;
   }
 
   public static capitalize(s: string): string {

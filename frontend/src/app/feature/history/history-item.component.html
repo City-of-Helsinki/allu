@@ -3,17 +3,17 @@
     {{change.changeTime | date:'short'}}
   </div>
   <div fxFlex="0 0 15%" class="text-highlighted">
-    <ng-container *ngIf="change.changeType==='STATUS_CHANGED'; else changeTypeInfo">
-      {{['application.statusChange', change.changeSpecifier] | translation}}
+    <ng-container *ngIf="change.changeSpecifier; else changeTypeInfo">
+      {{['history.change.typeWithSpecifier', change.changeType, change.changeSpecifier] | translation}}
     </ng-container>
     <ng-template #changeTypeInfo>
       {{['history.change.type', change.changeType] | translation}}
-      <span *ngIf="fieldChanges.length"
-            [matBadge]="fieldChanges.length"
-            matBadgeOverlap="false"
-            matBadgeColor="accent"
-            class="allu-badge-center"></span>
     </ng-template>
+    <span *ngIf="fieldChanges.length"
+          [matBadge]="fieldChanges.length"
+          matBadgeOverlap="false"
+          matBadgeColor="accent"
+          class="allu-badge-center"></span>
   </div>
   <div fxFlex="0 0 30%" class="text-highlighted">
     <ng-container *ngIf="description">

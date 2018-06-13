@@ -1362,6 +1362,33 @@ export const translations = {
         CUSTOMER_CHANGED: 'Asiakas muutettu',
         CONTACT_CHANGED: 'Yhteyshenkilö muutettu'
       },
+      typeWithSpecifier: {
+        STATUS_CHANGED: {
+          PRE_RESERVED: 'Alustava varaus luotu',
+          PENDING: 'Hakemus saapunut',
+          HANDLING: 'Hakemus siirretty käsittelyyn',
+          RETURNED_TO_PREPARATION: 'Hakemus palautettu käsittelyyn',
+          DECISIONMAKING: 'Hakemus siirretty odottamaan päätöstä',
+          DECISION: 'Hakemus päätetty',
+          REJECTED: 'Hakemuksen päätös hylätty',
+          FINISHED: 'Hakemus valmistunut',
+          CANCELLED: 'Hakemus peruttu',
+          REPLACED: 'Hakemus korvattu',
+          ARCHIVED: 'Hakemus arkistoitu'
+        },
+        CUSTOMER_CHANGED: {
+          APPLICANT: 'Hakija muutettu',
+          PROPERTY_DEVELOPER: 'Rakennuttaja muutettu',
+          CONTRACTOR: 'Työn suorittaja muutettu',
+          REPRESENTATIVE: 'Asiamies muutettu'
+        },
+        CONTACT_CHANGED: {
+          APPLICANT: 'Hakijan yhteyshenkilö muutettu',
+          PROPERTY_DEVELOPER: 'Rakennuttajan yhteyshenkilö muutettu',
+          CONTRACTOR: 'Työn suorittajan yhteyshenkilö muutettu',
+          REPRESENTATIVE: 'Asiamiehen yhteyshenkilö muutettu'
+        }
+      },
       field: {
         CUSTOMER: 'Asiakas',
         CONTACT: 'Yhteyshenkilö'
