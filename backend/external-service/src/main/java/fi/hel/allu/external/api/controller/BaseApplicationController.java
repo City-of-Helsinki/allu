@@ -34,7 +34,7 @@ public abstract class BaseApplicationController<T extends ApplicationExt, M exte
 
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
-    if (ApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
+    if (binder.getTarget() != null && ApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
       binder.addValidators(geometryValidator);
     }
   }
