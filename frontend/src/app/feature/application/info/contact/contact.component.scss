@@ -1,3 +1,5 @@
+$baseHeight: 9.4rem;
+
 .col.contact-card {
   padding-bottom: 5px;
 }
@@ -7,7 +9,7 @@
 }
 
 @mixin contact-card-height($typeHeight, $additionalHeight) {
-  $cardHeight: 8rem + $typeHeight + $additionalHeight;
+  $cardHeight: $baseHeight + $typeHeight + $additionalHeight;
   .col.contact-card:first-of-type:not(last-of-type) {
     padding-bottom: $cardHeight;
   }
