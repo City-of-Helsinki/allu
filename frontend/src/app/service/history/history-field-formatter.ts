@@ -55,8 +55,8 @@ export class HistoryFieldFormatter {
       case AttributeDataType.BOOLEAN:
         return new FieldChange(
           fieldChange.fieldName,
-          Some(fieldChange.oldValue).map(val => findTranslation(['common.boolean', val])).orElse(''),
-          Some(fieldChange.newValue).map(val => findTranslation(['common.boolean', val])).orElse(''),
+          this.formatAndTranslate('common.boolean', fieldChange.oldValue),
+          this.formatAndTranslate('common.boolean', fieldChange.newValue),
           this.meta.uiName(fieldChange.fieldName));
       case AttributeDataType.ENUMERATION:
         return new FieldChange(
@@ -67,6 +67,12 @@ export class HistoryFieldFormatter {
       default:
         return this.formatDefault(fieldChange);
     }
+  }
+
+  private formatAndTranslate(prefix: string, value: string) {
+    return !StringUtil.isEmpty(value)
+      ? findTranslation([prefix, value])
+      : '';
   }
 
   private formatNonEmpty(path: string, value: string) {
