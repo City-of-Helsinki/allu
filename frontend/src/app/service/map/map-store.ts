@@ -306,7 +306,7 @@ export class MapStore {
   }
 
   private fetchMapDataByFilter(searchFilter: MapSearchFilter): void {
-    this.store.next({...this.snapshot, loading: true})
+    this.store.next({...this.snapshot, loading: true});
     this.mapDataService.applicationsByLocation(searchFilter)
       .subscribe(applications => this.applicationsChange(applications));
   }
