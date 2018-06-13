@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>
-  {{['decision.type', status, 'title'] | translation }}
+  {{['decision.type', type, 'title'] | translation }}
 </h1>
 <div mat-dialog-content>
   <form [formGroup]="decisionForm">
@@ -18,7 +18,7 @@
         </mat-form-field>
       </div>
     </div>
-    <div fxLayout="row" *ngIf="status !== 'DECISION'">
+    <div fxLayout="row" *ngIf="type === 'RETURNED_TO_PREPARATION' || type === 'REJECTED'">
       <div fxFlex>
         <mat-form-field class="input-full-width">
           <textarea matInput matTextareaAutosize formControlName="comment"
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div fxLayout="row" *ngIf="status !== 'RETURNED_TO_PREPARATION'">
+    <div fxLayout="row" *ngIf="type !== 'RETURNED_TO_PREPARATION'">
       <div fxFlex="100">
         <h2>{{'decision.distribution.title' | translation}}</h2>
         <distribution-list [form]="decisionForm" [distributionList]="distributionList"></distribution-list>
@@ -45,7 +45,7 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button type="button" color="primary" (click)="confirm()">
-    {{['decision.type', status, 'confirmText'] | translation | uppercase }}
+    {{['decision.type', type, 'confirmText'] | translation | uppercase }}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">
     {{'common.button.cancel' | translation}}
