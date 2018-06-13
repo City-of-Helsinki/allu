@@ -19,6 +19,15 @@ export class ArrayUtil {
     }
   }
 
+  static rest<T>(array: Array<T>, filterFn?: (item: T) => boolean): T[] {
+    if (array) {
+      const filter = filterFn || ((item: T) => true);
+      return array.filter(filter).slice(1);
+    } else {
+      return undefined;
+    }
+  }
+
   static last<T>(array: Array<T>, filterFn?: (item: T) => boolean): T {
     if (array) {
       return ArrayUtil.first(array.reverse());

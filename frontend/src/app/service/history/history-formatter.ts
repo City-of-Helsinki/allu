@@ -63,8 +63,8 @@ export class HistoryFormatter {
   private getContactChangeDescription(change: ChangeHistoryItem, type: ChangeDescriptionType) {
     const entityChange = toEntityChange(change.fieldChanges);
     return {
-      old: this.createChangeItemDescription(type, entityChange.oldEntity['/contactName']),
-      new: this.createChangeItemDescription(type, entityChange.newEntity['/contactName'])
+      old: this.createChangeItemDescription(type, entityChange.oldEntity['/name']),
+      new: this.createChangeItemDescription(type, entityChange.newEntity['/name'])
     };
   }
 

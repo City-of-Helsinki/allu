@@ -1,6 +1,6 @@
 import {StringUtil} from '../../util/string.util';
-import {ArrayUtil} from '../../util/array-util';
 import {NumberUtil} from '../../util/number.util';
+import {ArrayUtil} from '../../util/array-util';
 
 const DISTRICT_ID_CHANGE = ['cityDistrictId', '/cityDistricts'];
 const CUSTOMER_CHANGE = '/customer/';
@@ -21,7 +21,7 @@ export enum FieldChangeOperationType {
 }
 
 export class FieldChange {
-  private _id: number;
+  private readonly _id: number;
   private _fieldChangeType: FieldChangeType;
   private _fieldChangeOperationType: FieldChangeOperationType;
   private _link: string;
@@ -32,8 +32,9 @@ export class FieldChange {
     public newValue?: string,
     public uiFieldName?: string
   ) {
-    const parts = fieldName.split('/');
-    this._id = +ArrayUtil.first(parts, (part) => NumberUtil.isNumeric(part)); // Parse first id from path
+    const parts = fieldName.split('/').filter(part => !StringUtil.isEmpty(part));
+    this._id = this.getId(ArrayUtil.first(parts));
+    this.fieldName = this.getFieldName(ArrayUtil.rest(parts));
     this.initFieldChangeType(fieldName);
     this.initFieldChangeOperationType(oldValue, newValue);
     this.initLink();
@@ -65,6 +66,20 @@ export class FieldChange {
 
   get link() {
     return this._link;
+  }
+
+  private getId(idField: string): number {
+    return NumberUtil.isNumeric(idField)
+      ? +idField
+      : undefined;
+  }
+
+  private getFieldName(parts: string[]): string {
+    if (NumberUtil.isNumeric(this._id) && parts.length) {
+      return '/' + parts.join('/');
+    } else {
+      return this.fieldName;
+    }
   }
 
   private initFieldChangeType(fieldName: string) {
