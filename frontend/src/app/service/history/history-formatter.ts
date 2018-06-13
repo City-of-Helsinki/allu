@@ -44,9 +44,9 @@ export class HistoryFormatter {
       ? entityChange.newEntity
       : entityChange.oldEntity;
 
-    const id = entity['/id'];
-    const applicationId = entity['/applicationId'];
-    const applicationName = entity['/applicationName'];
+    const id = entity['/id'] ? entity['/id'] : change.info.id;
+    const applicationId = entity['/applicationId'] ? entity['/applicationId'] : change.info.applicationId;
+    const applicationName = entity['/applicationName'] ? entity['/applicationName'] : change.info.name;
     const content = this.getApplicationContent(type, applicationId, applicationName);
 
     return { single: this.createChangeItemDescription(type, content, ['/applications', id, 'summary']) };

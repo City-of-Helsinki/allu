@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
   private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
+  private static final List<ChangeType> infoChangeTypes = Arrays.asList(
+      ChangeType.STATUS_CHANGED, ChangeType.APPLICATION_ADDED, ChangeType.APPLICATION_REMOVED);
 
   private final ProjectDao projectDao;
   private final ApplicationDao applicationDao;
@@ -264,7 +266,7 @@ public class ProjectService {
     final List<ChangeHistoryItem> items = historyDao.getProjectHistory(projectId);
     items.stream().forEach(item -> {
       final ChangeHistoryItemInfo info = item.getInfo();
-      if (info.getId() != null && item.getChangeType() == ChangeType.STATUS_CHANGED) {
+      if (info.getId() != null && infoChangeTypes.contains(item.getChangeType())) {
           final Application app = applicationDao.findById(item.getInfo().getId());
           info.setApplicationId(app.getApplicationId());
           info.setName(app.getName());
