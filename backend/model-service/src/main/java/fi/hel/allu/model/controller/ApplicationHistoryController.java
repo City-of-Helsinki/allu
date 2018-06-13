@@ -1,5 +1,8 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.types.ChangeType;
+import fi.hel.allu.model.dao.ApplicationDao;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 
@@ -24,10 +29,12 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 public class ApplicationHistoryController {
 
   private final HistoryDao historyDao;
+  private final ApplicationDao applicationDao;
 
   @Autowired
-  public ApplicationHistoryController(HistoryDao historyDao) {
+  public ApplicationHistoryController(HistoryDao historyDao, ApplicationDao applicationDao) {
     this.historyDao = historyDao;
+    this.applicationDao = applicationDao;
   }
 
 
@@ -50,7 +57,16 @@ public class ApplicationHistoryController {
    */
   @RequestMapping(value = "/applications/{id}/history", method = RequestMethod.GET)
   public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
-    return new ResponseEntity<>(historyDao.getApplicationHistory(id), HttpStatus.OK);
+    final List<ChangeHistoryItem> history = historyDao.getApplicationHistory(id);
+    history.stream().forEach(item -> {
+      final ChangeHistoryItemInfo info = item.getInfo();
+      if (info.getId() != null && item.getChangeType() == ChangeType.STATUS_CHANGED) {
+          final Application app = applicationDao.findById(item.getInfo().getId());
+          info.setApplicationId(app.getApplicationId());
+          info.setName(app.getName());
+      }
+    });
+    return ResponseEntity.ok(history);
   }
 
   /**
