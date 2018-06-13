@@ -62,12 +62,12 @@ public class HistoryDaoTest {
     // Check that the changes are there
     List<ChangeHistoryItem> changes = historyDao.getApplicationHistory(applicationId);
     assertEquals(3, changes.size());
-    assertEquals(ChangeType.CREATED, changes.get(0).getChangeType());
+    assertEquals(ChangeType.CONTENTS_CHANGED, changes.get(0).getChangeType());
+    List<FieldChange> fields = changes.get(0).getFieldChanges();
+    assertEquals(2, fields.size());
     assertEquals(ChangeType.STATUS_CHANGED, changes.get(1).getChangeType());
     assertEquals(StatusType.HANDLING.name(), changes.get(1).getChangeSpecifier());
-    assertEquals(ChangeType.CONTENTS_CHANGED, changes.get(2).getChangeType());
-    List<FieldChange> fields = changes.get(2).getFieldChanges();
-    assertEquals(2, fields.size());
+    assertEquals(ChangeType.CREATED, changes.get(2).getChangeType());
   }
 
 }

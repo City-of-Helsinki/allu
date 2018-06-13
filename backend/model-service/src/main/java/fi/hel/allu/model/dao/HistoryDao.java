@@ -108,7 +108,7 @@ public class HistoryDao {
    */
   private List<ChangeHistoryItem> getChangeHistory(Predicate condition) {
     List<Tuple> results = queryFactory.select(changeHistory.all()).from(changeHistory)
-        .where(condition).orderBy(changeHistory.id.asc()).fetch();
+        .where(condition).orderBy(changeHistory.id.desc()).fetch();
     return resultToChangeHistory(results);
   }
 
