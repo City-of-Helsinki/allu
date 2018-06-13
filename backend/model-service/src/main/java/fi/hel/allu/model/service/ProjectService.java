@@ -179,14 +179,18 @@ public class ProjectService {
     changedProjects.add(id);
     changedProjects.addAll(getRelatedProjects(applicationIds));
 
-    applicationDao.updateProject(id, applicationIds);
-    updateProjectInformation(new ArrayList<>(changedProjects), userId);
     applicationIds.forEach((appId) -> {
       final Application application = applicationDao.findById(appId);
       if (application != null) {
+        if (application.getProjectId() != null) {
+          addChangeItem(application.getProjectId(), userId, new ApplicationChange(application), null, ChangeType.APPLICATION_REMOVED);
+        }
         addChangeItem(id, userId, null, new ApplicationChange(application), ChangeType.APPLICATION_ADDED);
       }
     });
+
+    applicationDao.updateProject(id, applicationIds);
+    updateProjectInformation(new ArrayList<>(changedProjects), userId);
 
     return applicationIds;
   }
@@ -226,7 +230,7 @@ public class ProjectService {
 
     currentProject.setParentId(parentProject);
     projectDao.update(currentProject.getId(), currentProject);
-    addChangeItem(id, userId, originalProject, currentProject, ChangeType.APPLICATION_REMOVED);
+    addChangeItem(id, userId, originalProject, currentProject, ChangeType.CONTENTS_CHANGED);
     updateProjectInformation(changedProjects, userId);
 
     return projectDao.findById(id).get();
