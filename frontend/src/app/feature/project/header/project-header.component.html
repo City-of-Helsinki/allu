@@ -5,7 +5,7 @@
         <h2 *ngIf="parent" class="project-header-container">
           <mat-icon color="primary" class="icon-sub">arrow_upward</mat-icon>
           <div>{{'project.title' | translation | uppercase}}</div>
-          <div>{{parent.identifier | uppercase}}</div>
+          <a [routerLink]="['/projects', parent.id]">{{parent.identifier | uppercase}}</a>
         </h2>
         <h1 class="project-header-container">
           <div>{{'project.title' | translation | uppercase}} {{project.identifier}}</div>
