@@ -40,8 +40,7 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
   private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
-  private static final List<ChangeType> infoChangeTypes = Arrays.asList(
-      ChangeType.STATUS_CHANGED, ChangeType.APPLICATION_ADDED, ChangeType.APPLICATION_REMOVED);
+  private static final List<ChangeType> infoChangeTypes = Arrays.asList(ChangeType.STATUS_CHANGED);
 
   private final ProjectDao projectDao;
   private final ApplicationDao applicationDao;
