@@ -10,7 +10,7 @@ import {ApplicationTagType} from '../../../model/application/tag/application-tag
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import * as fromHistory from '../../history/reducers/history-reducer';
 import * as fromApplicationHistory from '../reducers/application-history-reducer';
-
+import {ClientApplicationData} from '../../../model/application/client-application-data';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -43,14 +43,34 @@ export const getCurrentApplication = createSelector(
   fromApplication.getCurrent
 );
 
-export const getIsNew = createSelector(
-  getCurrentApplication,
-  (app: Application) => app ? app.id === undefined : true
-);
-
 export const getApplicationLoaded = createSelector(
   getApplicationEntitiesState,
   fromApplication.getLoaded
+);
+
+export const getType = createSelector(
+  getApplicationEntitiesState,
+  fromApplication.getType
+);
+
+export const getKindsWithSpecifiers = createSelector(
+  getApplicationEntitiesState,
+  fromApplication.getKindsWithSpecifiers
+);
+
+export const getClientData = createSelector(
+  getApplicationEntitiesState,
+  fromApplication.getClientData
+);
+
+export const getPendingKind = createSelector(
+  getCurrentApplication,
+  getClientData,
+  (application: Application, clientData: ClientApplicationData) => {
+    const noKind = application.kinds.length === 0;
+    const pendingKind = !!clientData ? clientData.clientApplicationKind : undefined;
+    return (noKind && pendingKind) ? pendingKind : undefined;
+  }
 );
 
 export const getMeta = createSelector(

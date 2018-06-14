@@ -2,6 +2,7 @@ import {TimePeriod} from '../time-period';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
 import {AreaRental} from '../../../../model/application/area-rental/area-rental';
+import {NumberUtil} from '../../../../util/number.util';
 
 export class AreaRentalForm implements ApplicationForm {
   constructor(
@@ -31,7 +32,7 @@ export class AreaRentalForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       areaRental.pksCard,
       areaRental.uiWorkFinished,
-      application.calculatedPriceEuro,
+      NumberUtil.toEuros(application.calculatedPrice),
       areaRental.trafficArrangements,
       areaRental.trafficArrangementImpedimentType,
       areaRental.additionalInfo,

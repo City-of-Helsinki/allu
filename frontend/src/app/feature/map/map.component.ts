@@ -13,6 +13,9 @@ import {Observable, Subject} from 'rxjs';
 import {FixedLocationService} from '../../service/map/fixed-location.service';
 import {ProjectService} from '../../service/project/project.service';
 import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
+import {TimeUtil} from '../../util/time.util';
+import {MapUtil} from '../../service/map/map.util';
+import {GeometryCollection} from 'geojson';
 
 @Component({
   selector: 'map',
@@ -72,8 +75,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapController.clearDrawn();
 
     // Check to see if the application has a location
-    if (application.hasGeometry()) {
-      this.mapController.drawGeometry(application.geometries(), findTranslation(['application.type', application.type]));
+    const geometries = this.geometries(application);
+    if (this.geometryCount(geometries) > 0) {
+      this.mapController.drawGeometry(geometries, findTranslation(['application.type', application.type]));
       this.mapController.centerAndZoomOnDrawn();
     }
   }
@@ -102,12 +106,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       id: application.id,
       name: application.name,
       applicationId: application.applicationId,
-      startTime: application.uiStartTime,
-      endTime: application.uiEndTime
+      startTime: TimeUtil.getUiDateString(application.startTime),
+      endTime: TimeUtil.getUiDateString(application.endTime)
     };
 
     this.mapController.drawGeometry(
-      application.geometries(),
+      application.locations.map(loc => loc.geometry),
       findTranslation(['application.type', application.type]),
       styleByApplicationType[application.type],
       featureInfo);
@@ -116,7 +120,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private applicationShouldBeDrawn(application: Application): boolean {
     const allAreDrawn = !this.showOnlyApplicationArea && this.projectId === undefined;
     const isSelectedApplication = this.showOnlyApplicationArea && application.id === this.applicationId;
-    return isSelectedApplication || allAreDrawn || application.belongsToProject(this.projectId);
+    const belongsToProject = Some(application.project).map(p => p.id === this.projectId).orElse(false);
+    return isSelectedApplication || allAreDrawn || belongsToProject;
   }
 
   private drawFocusedLocations(locations: Array<Location>): void {
@@ -135,7 +140,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private updateMapControls(locations: Array<Location>) {
     if (!locations.some(loc => loc.hasFixedGeometry())) {
-      const geometryCount = locations.reduce((cur, acc) => cur + acc.geometryCount(), 0);
+      const geometryCount = this.geometryCount(locations.map(loc => loc.geometry));
       this.editedItemCountChanged.emit(geometryCount);
     }
   }
@@ -198,5 +203,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.mapStore.locationsToDraw.pipe(takeUntil(this.destroy))
       .subscribe(locs => this.drawFocusedLocations(locs));
+  }
+
+  private geometries(application: Application): GeometryCollection[] {
+    return application.locations.map(loc => loc.geometry);
+  }
+
+  private geometryCount(geometries: GeometryCollection[]): number {
+    return geometries.reduce((acc, cur) => acc + MapUtil.geometryCount(cur), 0);
   }
 }

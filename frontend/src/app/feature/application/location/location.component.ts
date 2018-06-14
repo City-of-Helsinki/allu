@@ -29,12 +29,14 @@ import {NumberUtil} from '../../../util/number.util';
 import {LocationForm} from './location-form';
 import {LocationState} from '../../../service/application/location-state';
 import {Location} from '../../../model/common/location';
-import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 import {defaultFilter, MapSearchFilter} from '../../../service/map-search-filter';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import * as fromRoot from '../../allu/reducers';
+import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, take, takeUntil} from 'rxjs/internal/operators';
+import {TimeUtil} from '../../../util/time.util';
+import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 
 @Component({
   selector: 'type',
@@ -134,6 +136,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.mapStore.invalidGeometry.pipe(takeUntil(this.destroy))
       .subscribe(invalid => this.invalidGeometry = invalid);
+
+    this.store.select(fromApplication.getType)
+      .subscribe(type => this.onApplicationTypeChange(type));
+
+    this.store.select(fromApplication.getKindsWithSpecifiers)
+      .subscribe(kindsWithSpecifiers => this.onKindSpecifierChange(kindsWithSpecifiers));
   }
 
   ngOnDestroy() {
@@ -187,8 +195,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(form: LocationForm) {
     this.locationState.storeLocation(LocationForm.to(form));
-    this.application.locations = this.locationState.locationsSnapshot;
-    this.application.updateDatesFromLocations();
+    const locations = this.locationState.locationsSnapshot;
+    this.application.locations = locations;
+    this.application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
+    this.application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
 
     if (this.application.id) {
       this.applicationStore.save(this.application)
@@ -249,7 +259,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadFixedLocations(): void {
-    if (hasSingleKind(this.application.typeEnum)) {
+    if (hasSingleKind(this.application.type)) {
       this.fixedLocationService.existing
         .subscribe(fixedLocations => {
           this.areas = fixedLocations
@@ -295,7 +305,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private onAreaChange(id: number): void {
-    if (NumberUtil.isDefined(id) && hasSingleKind(this.application.typeEnum)) {
+    if (NumberUtil.isDefined(id) && hasSingleKind(this.application.type)) {
       const area = this.areas.find(a => a.id === id);
       const kind = this.application.kind;
 
@@ -370,7 +380,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {
-    if (hasSingleKind(this.application.typeEnum)) {
+    if (hasSingleKind(this.application.type)) {
       const kind = this.application.kind;
       return area.namedSectionsForKind(kind).sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
     } else {

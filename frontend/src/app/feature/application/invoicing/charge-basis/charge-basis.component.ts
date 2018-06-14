@@ -16,6 +16,7 @@ import {applicationCanBeEdited} from '../../../../model/application/application-
 import {CurrentUser} from '../../../../service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 import {filter, map, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
+import {NumberUtil} from '../../../../util/number.util';
 
 @Component({
   selector: 'charge-basis',
@@ -116,7 +117,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   private onApplicationChange(app: Application): void {
-    this.calculatedPrice = app.calculatedPriceEuro;
+    this.calculatedPrice = NumberUtil.toEuros(app.calculatedPrice);
 
     this.invoiceHub.loadChargeBasisEntries(app.id).pipe(takeUntil(this.destroy))
       .subscribe(() => {}, error => this.notification.errorInfo(error));

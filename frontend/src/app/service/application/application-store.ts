@@ -1,4 +1,4 @@
-import {BehaviorSubject, forkJoin, Observable, Subject, throwError as observableThrowError} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject, throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Application} from '../../model/application/application';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
@@ -21,6 +21,7 @@ import * as TagAction from '../../feature/application/actions/application-tag-ac
 import * as ApplicationAction from '../../feature/application/actions/application-actions';
 import * as HistoryAction from '../../feature/history/actions/history-actions';
 import {ActionTargetType} from '../../feature/allu/actions/action-target-type';
+import {ApplicationType} from '../../model/application/type/application-type';
 
 export interface ApplicationState {
   application?: Application;
@@ -261,10 +262,16 @@ export class ApplicationStore {
   }
 
   private saveApplication(application: Application): Observable<Application> {
-    return this.store.select(fromApplication.getTags).pipe(
+    return combineLatest(
+      this.store.select(fromApplication.getTags),
+      this.store.select(fromApplication.getType),
+      this.store.select(fromApplication.getKindsWithSpecifiers)
+    ).pipe(
       take(1),
-      switchMap(tags => {
+      switchMap(([tags, type, kindsWithSpecifiers]) => {
         application.applicationTags = tags;
+        application.type = ApplicationType[type];
+        application.kindsWithSpecifiers = kindsWithSpecifiers;
         if (this.snapshot.draft) {
           return this.applicationDraftService.save(application);
         } else {

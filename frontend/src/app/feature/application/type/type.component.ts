@@ -1,25 +1,28 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {
   ApplicationType,
+  applicationTypeTree,
+  getAvailableSpecifiers,
   hasMultipleKinds,
-  kindEntryByTypeAndKind,
-  typeEntryByType
 } from '../../../model/application/type/application-type';
-import {ApplicationKindEntry} from '../../../model/application/type/application-kind';
 import {ApplicationStore} from '../../../service/application/application-store';
+import {EnumUtil} from '../../../util/enum.util';
+import {ArrayUtil} from '../../../util/array-util';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {map, take, takeUntil} from 'rxjs/internal/operators';
+import {Store} from '@ngrx/store';
+import * as fromAuth from '../../auth/reducers';
+import * as fromApplication from '../reducers';
 import {
   fromKindsWithSpecifiers,
+  hasSpecifiers,
   KindsWithSpecifiers,
   SpecifierEntry,
   toKindsWithSpecifiers
 } from '../../../model/application/type/application-specifier';
-import {EnumUtil} from '../../../util/enum.util';
-import {ArrayUtil} from '../../../util/array-util';
-import {Observable, of, Subject} from 'rxjs';
-import {filter, map, takeUntil} from 'rxjs/internal/operators';
-import {Store} from '@ngrx/store';
-import * as fromAuth from '../../auth/reducers';
+import {Some} from '../../../util/option';
+import {SetKindsWithSpecifiers, SetType} from '../actions/application-actions';
 
 @Component({
   selector: 'application-type',
@@ -32,13 +35,12 @@ export class TypeComponent implements OnInit, OnDestroy {
   @Input() readonly  = false;
   @Input() typeChangeDisabled = false;
   @Input() showDraftSelection = false;
-  @Output() onTypeChange = new EventEmitter<ApplicationType>();
-  @Output() onKindSpecifierChange = new EventEmitter<KindsWithSpecifiers>();
 
   multipleKinds = false;
   applicationTypes: Observable<string[]>;
   availableKinds: string[] = [];
-  availableKindsWithSpecifiers: ApplicationKindEntry[] = [];
+  availableKindsWithSpecifiers: KindsWithSpecifiers = {};
+  pendingKind$: Observable<string>;
   form: FormGroup;
 
   private typeCtrl: FormControl;
@@ -53,15 +55,89 @@ export class TypeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): any {
-    this.initForm();
-    this.applicationTypes = this.getAvailableTypes()
-      .pipe(map(types => types.sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type))));
+    combineLatest(
+      this.store.select(fromApplication.getType),
+      this.store.select(fromApplication.getKindsWithSpecifiers),
+      this.store.select(fromApplication.getPendingKind)
+    ).pipe(
+      take(1)
+    ).subscribe(([type, kindsWithSpecifiers, pendingKind]) => {
+      const typeName = ApplicationType[type];
+      const kinds = kindsWithSpecifiers ? Object.keys(kindsWithSpecifiers) : [];
+      this.availableKinds = this.getAvailableKinds(typeName);
+      this.multipleKinds = hasMultipleKinds(typeName);
+      this.availableKindsWithSpecifiers = getAvailableSpecifiers(typeName, kinds);
+
+      this.initForm(typeName, kinds, kindsWithSpecifiers, pendingKind);
+      this.applicationTypes = this.getAvailableTypes()
+        .pipe(map(types => types.sort(ArrayUtil.naturalSortTranslated(['application.type'], (t: string) => t))));
+
+      this.initEvents();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
+
+  typeSelection(type: string) {
+    this.kindsCtrl.reset([]);
+    this.availableKinds = this.getAvailableKinds(type);
+    this.multipleKinds = hasMultipleKinds(type);
+    this.store.dispatch(new SetType(ApplicationType[type]));
+  }
+
+  kindSelection(kinds: string | Array<string>) {
+    const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
+    const kindsWithSpecifiers = getAvailableSpecifiers(this.typeCtrl.value, selectedKinds);
+    this.availableKindsWithSpecifiers = kindsWithSpecifiers;
+
+    if (hasSpecifiers(kindsWithSpecifiers)) {
+      this.updateSelectedSpecifiers();
+    }
+    this.store.dispatch(new SetKindsWithSpecifiers(kindsWithSpecifiers));
+  }
+
+  onSpecifierSelection(specifierKeys: Array<string>) {
+    const kindsWithSpecifiers = toKindsWithSpecifiers(specifierKeys.map(key => SpecifierEntry.fromKey(key)));
+    this.store.dispatch(new SetKindsWithSpecifiers(kindsWithSpecifiers));
+  }
+
+  showSpecifierSelection(): boolean {
+    return hasSpecifiers(this.availableKindsWithSpecifiers);
+  }
+
+  getAvailableKinds(type: string): Array<string> {
+    return Some(applicationTypeTree[type])
+      .map(typeTree => Object.keys(typeTree))
+      .map(kinds => kinds.sort(ArrayUtil.naturalSortTranslated(['application.kind'], (kind: string) => kind)))
+      .orElse([]);
+  }
+
+  private initForm(type: string, selectedKinds: string[], kindsWithSpecifiers: KindsWithSpecifiers, pendingKind: string) {
+    const selectedSpecifiers = fromKindsWithSpecifiers(kindsWithSpecifiers);
+
+    const kinds = this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds);
+    this.typeCtrl = this.fb.control({ value: type, disabled: this.typeChangeDisabled });
+    this.kindsCtrl = this.fb.control(kinds);
+    this.specifiersCtrl = this.fb.control(selectedSpecifiers);
+    this.draftCtrl = this.fb.control(this.applicationStore.snapshot.draft);
+
+    this.form = this.fb.group({
+      type: this.typeCtrl,
+      kinds: this.kindsCtrl,
+      specifiers: this.specifiersCtrl,
+      draft: this.draftCtrl
+    });
 
     this.kindsCtrl.updateValueAndValidity();
+    const hasKinds = selectedKinds.length > 0;
+    this.setFormMode(hasKinds, pendingKind);
+  }
 
-    if (this.readonly) {
-      this.form.disable();
-    }
+  private initEvents(): void {
+    this.pendingKind$ = this.store.select(fromApplication.getPendingKind);
 
     this.typeCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(type => this.typeSelection(type));
@@ -76,76 +152,6 @@ export class TypeComponent implements OnInit, OnDestroy {
       .subscribe(draft => this.applicationStore.changeDraft(draft));
   }
 
-  ngOnDestroy(): void {
-    this.destroy.next(true);
-    this.destroy.unsubscribe();
-  }
-
-  typeSelection(type: string) {
-    this.kindsCtrl.reset([]);
-    this.availableKinds = this.getAvailableKinds(type);
-    this.multipleKinds = hasMultipleKinds(ApplicationType[type]);
-    this.onTypeChange.emit(ApplicationType[type]);
-  }
-
-  kindSelection(kinds: string | Array<string>) {
-    const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
-    this.availableKindsWithSpecifiers = this.getAvailableSpecifiers(this.typeCtrl.value, selectedKinds);
-
-    if (this.availableKindsWithSpecifiers.length > 0) {
-      this.updateSelectedSpecifiers();
-    } else {
-      const kindsWithSpecifiers = toKindsWithSpecifiers(selectedKinds.map(kind => new SpecifierEntry(undefined, kind)));
-      this.onKindSpecifierChange.emit(kindsWithSpecifiers);
-    }
-  }
-
-  onSpecifierSelection(specifierKeys: Array<string>) {
-    const kindsWithSpecifiers = toKindsWithSpecifiers(specifierKeys.map(key => SpecifierEntry.fromKey(key)));
-    this.onKindSpecifierChange.emit(kindsWithSpecifiers);
-  }
-
-  showSpecifierSelection(): boolean {
-    return this.availableKindsWithSpecifiers.length > 0;
-  }
-
-  getAvailableKinds(type: string): Array<string> {
-    return typeEntryByType(type)
-      .map(ts => ts.applicationKindNamesSortedByTranslation)
-      .orElse([]);
-  }
-
-  getAvailableSpecifiers(applicationType: string, kinds: Array<string>): Array<ApplicationKindEntry> {
-    return kinds.map(k => kindEntryByTypeAndKind(applicationType, k))
-      .filter(entry => entry.isDefined())
-      .map(entry => entry.value())
-      .filter(kindEntry => kindEntry.hasSpecifiers());
-  }
-
-  private initForm() {
-    const application = this.applicationStore.snapshot.application;
-    const selectedKinds = application.uiKinds;
-    const selectedSpecifiers = fromKindsWithSpecifiers(application.kindsWithSpecifiers);
-
-    this.typeCtrl = this.fb.control({ value: application.type, disabled: this.typeChangeDisabled });
-    this.availableKinds = this.getAvailableKinds(application.type);
-    this.availableKindsWithSpecifiers = this.getAvailableSpecifiers(application.type, selectedKinds);
-
-    this.multipleKinds = hasMultipleKinds(application.typeEnum);
-    const kinds = this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds);
-    this.kindsCtrl = this.fb.control({ value: kinds, disabled: this.typeChangeDisabled });
-    this.specifiersCtrl = this.fb.control({ value: selectedSpecifiers, disabled: this.typeChangeDisabled });
-
-    this.draftCtrl = this.fb.control(this.applicationStore.snapshot.draft);
-
-    this.form = this.fb.group({
-      type: this.typeCtrl,
-      kinds: this.kindsCtrl,
-      specifiers: this.specifiersCtrl,
-      draft: this.draftCtrl
-    });
-  }
-
   private getAvailableTypes() {
     if (this.typeChangeDisabled) {
       return of(EnumUtil.enumValues(ApplicationType));
@@ -157,9 +163,20 @@ export class TypeComponent implements OnInit, OnDestroy {
   private updateSelectedSpecifiers() {
     const remainingSpecifiers = this.specifiersCtrl.value
       .map(key => SpecifierEntry.fromKey(key))
-      .filter(se => this.availableKindsWithSpecifiers.some(kindEntry => kindEntry.uiKind === se.kind))
+      .filter(se => this.availableKinds.indexOf(se.kind) >= 0)
       .map(specifierEntry => specifierEntry.key);
 
     this.specifiersCtrl.patchValue(remainingSpecifiers);
+  }
+
+  private setFormMode(hasKind: boolean, pendingKind: string): void {
+    if (hasKind && pendingKind === undefined) {
+      this.kindsCtrl.disable();
+      this.specifiersCtrl.disable();
+    }
+
+    if (this.readonly) {
+      this.form.disable();
+    }
   }
 }

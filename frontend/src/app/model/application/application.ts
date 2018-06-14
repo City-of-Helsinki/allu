@@ -1,14 +1,11 @@
 import {Location} from '../common/location';
 import {ApplicationExtension} from './type/application-extension';
 import {AttachmentInfo} from './attachment/attachment-info';
-import {TimeUtil} from '../../util/time.util';
 import {User} from '../user/user';
 import {Some} from '../../util/option';
 import {Project} from '../project/project';
 import {ApplicationTag} from './tag/application-tag';
-import {ApplicationTagType} from './tag/application-tag-type';
 import {Comment} from './comment/comment';
-import {NumberUtil} from '../../util/number.util';
 import {ApplicationType} from './type/application-type';
 import {PublicityType} from './publicity-type';
 import {DistributionEntry} from '../common/distribution-entry';
@@ -17,7 +14,8 @@ import {CustomerWithContacts} from '../customer/customer-with-contacts';
 import {CustomerRoleType} from '../customer/customer-role-type';
 import {ApplicationStatus} from './application-status';
 import {ApplicationKind} from './type/application-kind';
-import {ApplicationSpecifier, KindsWithSpecifiers} from './type/application-specifier';
+import {KindsWithSpecifiers} from './type/application-specifier';
+import {ClientApplicationData} from './client-application-data';
 
 export class Application {
   constructor(
@@ -54,7 +52,8 @@ export class Application {
     public customerReference?: string,
     public invoicingDate?: Date,
     public identificationNumber?: string,
-    public skipPriceCalculation: boolean = false) {
+    public skipPriceCalculation: boolean = false,
+    public clientApplicationData?: ClientApplicationData) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];
@@ -63,29 +62,6 @@ export class Application {
     this.decisionPublicityType = decisionPublicityType || PublicityType[PublicityType.PUBLIC];
     this.decisionDistributionList = decisionDistributionList || [];
     this.kindsWithSpecifiers = this.kindsWithSpecifiers || {};
-  }
-
-  /*
-   * Getters and setters for supporting pickadate editing in UI.
-   */
-  get uiApplicationCreationTime(): string {
-    return TimeUtil.getUiDateString(this.creationTime);
-  }
-
-  get uiStartTime(): string {
-    return TimeUtil.getUiDateString(this.startTime);
-  }
-
-  get uiEndTime(): string {
-    return TimeUtil.getUiDateString(this.endTime);
-  }
-
-  get recurringEndYear() {
-    return TimeUtil.yearFromDate(this.recurringEndTime);
-  }
-
-  set recurringEndYear(year: number) {
-    this.recurringEndTime = TimeUtil.dateWithYear(this.endTime, year);
   }
 
   get singleLocation(): Location {
@@ -98,19 +74,6 @@ export class Application {
 
   get firstLocation(): Location {
     return ArrayUtil.first(this.locations);
-  }
-
-  get calculatedPriceEuro(): number {
-    return this.toEuros(this.calculatedPrice);
-  }
-
-  set calculatedPriceEuro(priceInEuros: number) {
-    this.calculatedPrice = this.toCents(priceInEuros);
-  }
-
-  get waiting(): boolean {
-    return this.applicationTags
-      .some(tag => ApplicationTagType[tag.type] === ApplicationTagType.WAITING);
   }
 
   get typeEnum(): ApplicationType {
@@ -145,14 +108,6 @@ export class Application {
     return this.kindsWithSpecifiers ? Object.keys(this.kindsWithSpecifiers) : [];
   }
 
-  get uiSpecifiers() {
-    return [].concat(this.uiKinds.map(kind => this.kindsWithSpecifiers[kind]));
-  }
-
-  get specifiers() {
-    return this.uiSpecifiers.map(s => ApplicationSpecifier[s]);
-  }
-
   get applicant(): CustomerWithContacts {
     return this.customerWithContactsByRole(CustomerRoleType.APPLICANT);
   }
@@ -172,38 +127,5 @@ export class Application {
   public customerWithContactsByRole(roleType: CustomerRoleType): CustomerWithContacts {
     return Some(this.customersWithContacts.find(cwc => cwc.roleType === roleType))
       .orElse(new CustomerWithContacts(roleType));
-  }
-
-  public hasGeometry(): boolean {
-    return this.geometryCount() > 0;
-  }
-
-  public geometryCount(): number {
-    return this.locations.reduce((acc, cur) => acc + cur.geometryCount(), 0);
-  }
-
-  public updateDatesFromLocations(): void {
-    this.startTime = TimeUtil.minimum(... this.locations.map(l => l.startTime));
-    this.endTime = TimeUtil.maximum(... this.locations.map(l => l.endTime));
-  }
-
-  public geometries(): Array<GeoJSON.GeometryCollection> {
-    return this.locations.map(l => l.geometry);
-  }
-
-  public hasFixedGeometry(): boolean {
-    return this.locations.some(l => l.hasFixedGeometry());
-  }
-
-  public belongsToProject(projectId: number): boolean {
-    return Some(this.project).map(p => p.id === projectId).orElse(false);
-  }
-
-  private toEuros(priceInCents: number): number {
-    return NumberUtil.toEuros(priceInCents);
-  }
-
-  private toCents(priceInEuros: number): number {
-    return NumberUtil.toCents(priceInEuros);
   }
 }

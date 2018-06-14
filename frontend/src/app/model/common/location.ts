@@ -63,12 +63,6 @@ export class Location {
     return this.underpass ? 'X' : '-';
   }
 
-  public geometryCount(): number {
-    return Some(this.geometry)
-      .map(g => g.geometries.length)
-      .orElse(0);
-  }
-
   public hasFixedGeometry(): boolean {
     return this.fixedLocationIds.length > 0;
   }

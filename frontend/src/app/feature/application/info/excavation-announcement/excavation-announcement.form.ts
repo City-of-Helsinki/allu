@@ -2,6 +2,7 @@ import {TimePeriod} from '../time-period';
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
+import {NumberUtil} from '../../../../util/number.util';
 
 export class ExcavationAnnouncementForm implements ApplicationForm {
   constructor(
@@ -64,7 +65,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       new TimePeriod(excavation.customerStartTime, excavation.customerEndTime),
       excavation.customerWinterTimeOperation,
       excavation.customerWorkFinished,
-      application.calculatedPriceEuro,
+      NumberUtil.toEuros(application.calculatedPrice),
       excavation.cableReportId,
       excavation.additionalInfo,
       excavation.trafficArrangements,

@@ -3,7 +3,7 @@
     <ng-container *ngIf="application | async as app">
       <span *ngIf="app.status" class="application-status-text">{{['application.status', app.status] | translation}}</span>
       <span *ngIf="app.startTime">
-        {{app.uiStartTime}} - {{app.uiEndTime}}
+        {{app.startTime | date:'shortDate'}} - {{app.endTime | date:'shortDate'}}
       </span>
     </ng-container>
   </div>

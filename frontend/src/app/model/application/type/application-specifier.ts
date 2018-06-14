@@ -57,6 +57,10 @@ export enum ApplicationSpecifier {
   OTHER // Muu
 }
 
+export interface KindsWithSpecifiers {
+  [kind: string]: string[];
+}
+
 export class SpecifierEntry {
   constructor(public specifier: string, public kind: string) {}
 
@@ -68,10 +72,6 @@ export class SpecifierEntry {
     const kindAndSpecifier = key.split(':');
     return new SpecifierEntry(kindAndSpecifier[1], kindAndSpecifier[0]);
   }
-}
-
-export interface KindsWithSpecifiers {
-  [kind: string]: string[];
 }
 
 export function toKindsWithSpecifiers(specifierEntries: Array<SpecifierEntry>) {
@@ -89,6 +89,16 @@ export function toKindsWithSpecifiers(specifierEntries: Array<SpecifierEntry>) {
   }, {});
 }
 
+export function hasSpecifiers(kindsWithSpecifiers: KindsWithSpecifiers): boolean {
+  return getSpecifiers(kindsWithSpecifiers).length > 0;
+}
+
+function getSpecifiers(kindsWithSpecifiers: KindsWithSpecifiers): string[] {
+  return Object.keys(kindsWithSpecifiers)
+    .map(kind => kindsWithSpecifiers[kind])
+    .reduce((prev, cur) => prev.concat(cur), []);
+}
+
 /**
  * Converts kinds with specifiers object to array of kind:specifier keys
  * where string is in form of kind:specifier
@@ -99,6 +109,6 @@ export function fromKindsWithSpecifiers(kindsWithSpecifiers: KindsWithSpecifiers
     .reduce((prev, cur) => prev.concat(cur), []);
 }
 
-function fromKindAndSpecifiers(kind: string, specifiers: Array<string>): Array<string> {
+function fromKindAndSpecifiers(kind: string, specifiers: Array<string> = []): Array<string> {
   return specifiers.map(s => new SpecifierEntry(s, kind).key);
 }

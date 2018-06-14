@@ -2,6 +2,7 @@ import {TimePeriod} from '../time-period';
 import {Application} from '../../../../model/application/application';
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
 import {ApplicationForm} from '../application-form';
+import {NumberUtil} from '../../../../util/number.util';
 
 export class PlacementContractForm implements ApplicationForm {
   constructor(
@@ -28,7 +29,7 @@ export class PlacementContractForm implements ApplicationForm {
     return new PlacementContractForm(
       new TimePeriod(application.startTime, application.endTime),
       contract.propertyIdentificationNumber,
-      application.calculatedPriceEuro,
+      NumberUtil.toEuros(application.calculatedPrice),
       contract.additionalInfo,
       contract.contractText,
       contract.terms,

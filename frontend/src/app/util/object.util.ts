@@ -1,6 +1,17 @@
-import {FieldChange} from '../model/history/field-change';
-
 export class ObjectUtil {
+  static filter(source: any, filterFn: (fieldName: string) => any) {
+    if (typeof source !== 'object') {
+      throw new Error('Filtered object must be object');
+    } else {
+      return Object.keys(source)
+        .filter(key => filterFn(key))
+        .reduce((prev: any, key: string) => {
+          prev[key] = source[key];
+          return prev;
+        }, {});
+    }
+  }
+
   static clone(source: any) {
     if (typeof source !== 'object') {
       return source;

@@ -66,7 +66,7 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.name = form.name;
     application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
-    application.recurringEndYear = form.recurringEndYear;
+    application.recurringEndTime = TimeUtil.dateWithYear(application.endTime, form.recurringEndYear);
     application.extension = NoteForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

@@ -36,6 +36,7 @@ import {AvailableToDirective} from '../../service/authorization/available-to.dir
 import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 import {AlluCardComponent} from './card/allu-card.component';
 import {NotificationService} from '../../service/notification/notification.service';
+import {KeysPipe} from '../../pipe/keys-pipe';
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import {NotificationService} from '../../service/notification/notification.servi
     FileDropDirective,
     ConfirmDialogComponent,
     CommaSeparatedPipe,
+    KeysPipe,
     InputBoxComponent,
     InputBoxInputDirective,
     InputWarningDirective,
@@ -97,7 +99,8 @@ import {NotificationService} from '../../service/notification/notification.servi
     InputWarningDirective,
     AvailableToDirective,
     BottomBarComponent,
-    AlluCardComponent
+    AlluCardComponent,
+    KeysPipe
   ],
   entryComponents: [
     ConfirmDialogComponent

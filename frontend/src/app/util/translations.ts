@@ -396,6 +396,10 @@ export const translations = {
       title: 'Haluatko varmasti perua hakemuksen?',
       confirmText: 'Hyväksy',
       cancelText: 'Hylkää'
+    },
+    clientData: {
+      update: 'Kortti sisältää tietopäivityksen',
+      updateMultiple: 'Kortti sisältää {{count}} tietopäivitystä',
     }
   },
   applicationSearch: {

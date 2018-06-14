@@ -6,6 +6,7 @@ import {ApplicationForm} from '../application-form';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TimeUtil} from '../../../../util/time.util';
+import {NumberUtil} from '../../../../util/number.util';
 
 export class EventForm implements ApplicationForm {
   constructor(public name?: string,
@@ -47,7 +48,7 @@ export class EventForm implements ApplicationForm {
       event.structureArea,
       event.structureDescription,
       this.structureTimes(application, event),
-      application.calculatedPriceEuro,
+      NumberUtil.toEuros(application.calculatedPrice),
       event.terms);
   }
 

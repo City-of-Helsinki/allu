@@ -3,11 +3,18 @@ import * as L from 'leaflet';
 import 'proj4leaflet';
 import {MapFeatureInfo} from './map-feature-info';
 import {ALLU_PREFIX} from './map-layer-id';
+import {GeometryCollection} from 'geojson';
 
 @Injectable()
 export class MapUtil {
 
   private epsg3879: L.Proj.CRS;
+
+  public static geometryCount(geometryCollection: GeometryCollection): number {
+    return geometryCollection
+      ? geometryCollection.geometries.length
+      : 0;
+  }
 
   public featureCollectionToGeometryCollection(
     featureCollection: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>): GeoJSON.GeometryCollection {

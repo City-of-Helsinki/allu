@@ -1,5 +1,4 @@
-import {ApplicationSpecifier, SpecifierEntry} from './application-specifier';
-import {ArrayUtil} from '../../../util/array-util';
+import {KindsWithSpecifiers} from './application-specifier';
 
 export enum ApplicationKind {
   PROMOTION,
@@ -48,44 +47,71 @@ export enum ApplicationKind {
   OTHER
 }
 
-export class ApplicationKindEntry {
-  private _specifierNamesSortedByTranslation: Array<SpecifierEntry>;
-
-  constructor(public kind: ApplicationKind, private specifiers?: Array<ApplicationSpecifier>) {
-    this.specifiers = specifiers || [];
-    this._specifierNamesSortedByTranslation = this.uiSpecifiers
-      .sort(ArrayUtil.naturalSortTranslated(['application.specifier'], (specifier: string) => specifier))
-      .map(s => new SpecifierEntry(s, this.uiKind));
-  }
-
-  get uiKind() {
-    return ApplicationKind[this.kind];
-  }
-
-  set uiKind(kind: string) {
-    this.kind = ApplicationKind[kind];
-  }
-
-  get uiSpecifiers() {
-    return this.specifiers.map(s => ApplicationSpecifier[s]);
-  }
-
-  set uiSpecifiers(specifiers: Array<string>) {
-    this.specifiers = specifiers.map(s => ApplicationSpecifier[s]);
-  }
-
-  get specifierEntriesSortedByTranslation() {
-    return this._specifierNamesSortedByTranslation;
-  }
-
-  contains(specifier: string): boolean {
-    return this.specifiers.some(s => s === ApplicationSpecifier[specifier]);
-  }
-
-  hasSpecifiers(): boolean {
-    return this.specifiers.length > 0;
-  }
-}
+export const commonKinds: KindsWithSpecifiers = {
+  STREET_AND_GREEN: [
+    'ASPHALT',
+    'INDUCTION_LOOP',
+    'COVER_STRUCTURE',
+    'STREET_OR_PARK',
+    'PAVEMENT',
+    'TRAFFIC_LIGHT',
+    'COMMERCIAL_DEVICE',
+    'TRAFFIC_STOP',
+    'BRIDGE',
+    'OUTDOOR_LIGHTING'
+  ],
+  WATER_AND_SEWAGE: [
+    'STORM_DRAIN',
+    'WELL',
+    'UNDERGROUND_DRAIN',
+    'WATER_PIPE',
+    'DRAIN'
+  ],
+  ELECTRICITY: [
+    'DISTRIBUTION_CABINET',
+    'ELECTRICITY_CABLE',
+    'ELECTRICITY_WELL'
+  ],
+  DATA_TRANSFER: [
+    'DISTRIBUTION_CABINET_OR_PILAR',
+    'DATA_CABLE',
+    'DATA_WELL'
+  ],
+  HEATING_COOLING: [
+    'STREET_HEATING',
+    'DISTRICT_HEATING',
+    'DISTRICT_COOLING'
+  ],
+  CONSTRUCTION: [
+    'GROUND_ROCK_ANCHOR',
+    'UNDERGROUND_STRUCTURE',
+    'UNDERGROUND_SPACE',
+    'BASE_STRUCTURES',
+    'DRILL_PILE',
+    'CONSTRUCTION_EQUIPMENT',
+    'CONSTRUCTION_PART',
+    'GROUND_FROST_INSULATION',
+    'SMOKE_HATCH_OR_PIPE',
+    'STOP_OR_TRANSITION_SLAB',
+    'SUPPORTING_WALL_OR_PILE'
+  ],
+  YARD: [
+    'FENCE_OR_WALL',
+    'DRIVEWAY',
+    'STAIRS_RAMP',
+    'SUPPORTING_WALL_OR_BANK'
+  ],
+  GEOLOGICAL_SURVEY: [
+    'DRILLING',
+    'TEST_HOLE',
+    'GROUND_WATER_PIPE'
+  ],
+  OTHER: [
+    'ABSORBING_SEWAGE_SYSTEM',
+    'GAS_PIPE',
+    'OTHER'
+  ]
+};
 
 export function drawingAllowedForKind(kind: ApplicationKind): boolean {
   return ![ApplicationKind.BRIDGE_BANNER, ApplicationKind.DOG_TRAINING_EVENT, ApplicationKind.DOG_TRAINING_FIELD]

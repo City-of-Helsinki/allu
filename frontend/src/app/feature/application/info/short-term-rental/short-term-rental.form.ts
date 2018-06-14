@@ -4,6 +4,7 @@ import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
 import {FormBuilder, Validators} from '@angular/forms';
 import {ComplexValidator} from '../../../../util/complex-validator';
+import {NumberUtil} from '../../../../util/number.util';
 
 export class ShortTermRentalForm implements ApplicationForm {
   constructor(
@@ -22,7 +23,7 @@ export class ShortTermRentalForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       rental.commercial,
       rental.billableSalesArea,
-      application.calculatedPriceEuro,
+      NumberUtil.toEuros(application.calculatedPrice),
       rental.terms
     );
   }

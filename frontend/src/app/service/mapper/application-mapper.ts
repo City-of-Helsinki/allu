@@ -11,6 +11,7 @@ import {ApplicationTagMapper} from './application-tag-mapper';
 import {CommentMapper} from '../application/comment/comment-mapper';
 import {DistributionMapper} from './distribution-mapper';
 import {Some} from '../../util/option';
+import {ClientApplicationDataMapper} from './client-application-data-mapper';
 
 export class ApplicationMapper {
 
@@ -58,6 +59,7 @@ export class ApplicationMapper {
     application.invoicingDate = backendApplication.invoicingDate;
     application.identificationNumber = backendApplication.identificationNumber;
     application.skipPriceCalculation = backendApplication.skipPriceCalculation;
+    application.clientApplicationData = ClientApplicationDataMapper.mapBackend(backendApplication.clientApplicationData);
     return application;
   }
 

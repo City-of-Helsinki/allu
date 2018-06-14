@@ -9,7 +9,7 @@
       <div class="col l6 m12 info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.creationTime' | translation}}
         </mat-card-subtitle>
-        <div>{{application.uiApplicationCreationTime}}</div>
+        <div>{{application.creationTime | date:'shortDate'}}</div>
       </div>
       <div class="col l6 m12 info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.kinds' | translation}}</mat-card-subtitle>

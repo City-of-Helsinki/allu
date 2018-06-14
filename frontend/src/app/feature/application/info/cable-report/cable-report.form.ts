@@ -7,6 +7,7 @@ import {TimeUtil} from '../../../../util/time.util';
 import {ApplicationStatus} from '../../../../model/application/application-status';
 import {OrdererId} from '../../../../model/application/cable-report/orderer-id';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
+import {NumberUtil} from '../../../../util/number.util';
 
 export class CableInfoForm {
   constructor(
@@ -96,7 +97,7 @@ export class CableReportForm implements ApplicationForm {
       cableReport.workDescription,
       CableInfoForm.from(cableReport),
       OrdererIdForm.from(cableReport.ordererId),
-      application.calculatedPriceEuro
+      NumberUtil.toEuros(application.calculatedPrice)
     );
   }
 

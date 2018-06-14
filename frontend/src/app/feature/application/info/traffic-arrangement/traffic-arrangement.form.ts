@@ -2,6 +2,7 @@ import {TimePeriod} from '../time-period';
 import {Application} from '../../../../model/application/application';
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {ApplicationForm} from '../application-form';
+import {NumberUtil} from '../../../../util/number.util';
 
 export class TrafficArrangementForm implements ApplicationForm {
   constructor(
@@ -25,7 +26,7 @@ export class TrafficArrangementForm implements ApplicationForm {
   static from(application: Application, arrangement: TrafficArrangement) {
     return new TrafficArrangementForm(
       new TimePeriod(application.startTime, application.endTime),
-      application.calculatedPriceEuro,
+      NumberUtil.toEuros(application.calculatedPrice),
       arrangement.trafficArrangements,
       arrangement.trafficArrangementImpedimentType,
       arrangement.workPurpose,

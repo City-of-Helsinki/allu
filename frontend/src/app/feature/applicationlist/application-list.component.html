@@ -5,7 +5,7 @@
       <h1 matLine class="clickable">{{application.name}}</h1>
       <div matLine>{{['application.type', application.type] | translation}}</div>
       <div matLine>{{['application.status', application.status] | translation}}</div>
-      <div matLine>{{application.uiStartTime}} - {{application.uiEndTime}}</div>
+      <div matLine>{{application.startTime | date:'shortDate'}} - {{application.endTime | date:'shortDate'}}</div>
     </mat-list-item>
   </ng-container>
 </mat-list>

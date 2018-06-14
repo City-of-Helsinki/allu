@@ -7,6 +7,7 @@ import {BackendComment} from '../application/comment/comment-mapper';
 import {BackendDistributionEntry} from './backend-distribution-entry';
 import {BackendCustomerWithContacts} from './backend-customer-with-contacts';
 import {KindsWithSpecifiers} from '../../model/application/type/application-specifier';
+import {BackendClientApplicationData} from '../mapper/client-application-data-mapper';
 
 export interface BackendApplication {
   id: number;
@@ -43,4 +44,5 @@ export interface BackendApplication {
   invoicingDate?: Date;
   identificationNumber?: string;
   skipPriceCalculation: boolean;
+  clientApplicationData?: BackendClientApplicationData;
 }

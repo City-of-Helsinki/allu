@@ -2,6 +2,7 @@ import {Note} from '../../../../model/application/note/note';
 import {TimePeriod} from '../time-period';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
+import {TimeUtil} from '../../../../util/time.util';
 
 export class NoteForm implements ApplicationForm {
   constructor(
@@ -22,7 +23,7 @@ export class NoteForm implements ApplicationForm {
     return new NoteForm(
       application.name,
       new TimePeriod(application.startTime, application.endTime),
-      application.recurringEndYear,
+      TimeUtil.yearFromDate(application.recurringEndTime),
       note.description
     );
   }
