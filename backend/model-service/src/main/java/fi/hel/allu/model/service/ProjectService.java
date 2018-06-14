@@ -271,9 +271,11 @@ public class ProjectService {
     items.stream().forEach(item -> {
       final ChangeHistoryItemInfo info = item.getInfo();
       if (info.getId() != null && infoChangeTypes.contains(item.getChangeType())) {
-          final Application app = applicationDao.findById(item.getInfo().getId());
+        final Application app = applicationDao.findById(info.getId());
+        if (app != null) {
           info.setApplicationId(app.getApplicationId());
           info.setName(app.getName());
+        }
       }
     });
     return items;
