@@ -9,6 +9,7 @@ public class LocationES {
   private String city;
   private Integer cityDistrictId;
   private String additionalInfo;
+  private String address;
 
   public LocationES() {
     // for JSON serialization
@@ -61,5 +62,13 @@ public class LocationES {
 
   public void setAdditionalInfo(String additionalInfo) {
     this.additionalInfo = additionalInfo;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 }

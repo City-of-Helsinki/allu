@@ -74,6 +74,7 @@ public class GenericSearchService<T> {
       "customer.name",
       "contacts.name",
       "locations.streetAddress",
+      "locations.address",
       "applicationId",
       "ownerName",
       "owner.userName",

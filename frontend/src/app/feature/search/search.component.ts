@@ -25,7 +25,7 @@ export class SearchComponent implements OnInit {
 
   displayedColumns = [
     'owner.realName', 'applicationId', 'name', 'type', 'status', 'project.identifier',
-    'customers.applicant.customer.name', 'locations.streetAddress', 'locations.cityDistrictId',
+    'customers.applicant.customer.name', 'locations.address', 'locations.cityDistrictId',
     'creationTime', 'startTime'
   ];
 

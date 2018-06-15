@@ -393,6 +393,7 @@ public class ApplicationMapper {
       locationEs.setPostalCode(address.getPostalCode());
       locationEs.setCity(address.getCity());
     });
+    locationEs.setAddress(json.getAddress());
     locationEs.setCityDistrictId(getCityDistrictId(json));
     locationEs.setAdditionalInfo(json.getAdditionalInfo());
     return locationEs;

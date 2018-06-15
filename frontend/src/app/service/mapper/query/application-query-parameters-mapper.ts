@@ -14,7 +14,7 @@ export class ApplicationQueryParametersMapper {
   private static mapApplicationParameters(query: ApplicationSearchQuery): Array<BackendQueryParameter> {
     const queryParameters: Array<BackendQueryParameter> = [];
     QueryParametersMapper.mapParameter(
-      queryParameters, 'locations.streetAddress', QueryParametersMapper.removeExtraWhitespace(query.address));
+      queryParameters, 'locations.address', QueryParametersMapper.removeExtraWhitespace(query.address));
     QueryParametersMapper.mapParameter(queryParameters, 'customers.applicant.customer.name',
       QueryParametersMapper.removeExtraWhitespace(query.applicant));
     QueryParametersMapper.mapParameter(queryParameters, 'customers.applicant.contacts.name',
