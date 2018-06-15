@@ -27,7 +27,7 @@ import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
     'selected', 'owner.userName', 'applicationId', 'type', 'status', 'project.identifier',
-    'customers.applicant.customer.name', 'locations.streetAddress', 'locations.cityDistrictId',
+    'customers.applicant.customer.name', 'locations.address', 'locations.cityDistrictId',
     'creationTime', 'startTime', 'comments'
   ];
   dataSource: ApplicationWorkItemDatasource;

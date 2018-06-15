@@ -53,9 +53,9 @@
       <mat-cell *matCellDef="let row">{{row.content.applicant.customer?.name}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="locations.streetAddress">
+    <ng-container matColumnDef="locations.address">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.streetAddress' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.firstLocation?.postalAddress?.streetAddress}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.content.firstLocation?.address}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="locations.cityDistrictId">
