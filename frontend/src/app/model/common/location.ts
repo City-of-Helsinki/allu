@@ -14,6 +14,7 @@ export class Location {
     public area?: number,
     public areaOverride?: number,
     public postalAddress?: PostalAddress,
+    public address?: string,
     public fixedLocationIds?: Array<number>,
     public cityDistrictId?: number,
     public cityDistrictIdOverride?: number,

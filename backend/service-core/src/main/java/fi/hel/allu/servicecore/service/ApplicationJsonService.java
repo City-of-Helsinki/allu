@@ -1,16 +1,15 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.FixedLocationJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service for populating <code>ApplicationJson</code>s.
@@ -21,9 +20,10 @@ public class ApplicationJsonService {
   private final ApplicationMapper applicationMapper;
   private final ProjectService projectService;
   private final UserService userService;
-  private final LocationService locationService;
   private final AttachmentService attachmentService;
   private final CommentService commentService;
+  private final LocationService locationService;
+  private volatile Map<Integer, FixedLocationJson> fixedLocations;
 
   @Autowired
   public ApplicationJsonService(
@@ -32,14 +32,14 @@ public class ApplicationJsonService {
       UserService userService,
       LocationService locationService,
       AttachmentService attachmentService,
-      CommentService commentService
-  ) {
+      CommentService commentService) {
     this.applicationMapper = applicationMapper;
     this.projectService = projectService;
     this.userService = userService;
-    this.locationService = locationService;
     this.attachmentService = attachmentService;
     this.commentService = commentService;
+    this.locationService = locationService;
+    this.fixedLocations = null;
   }
 
   /**
@@ -73,6 +73,58 @@ public class ApplicationJsonService {
         .map(owner -> userService.findUserById(owner))
         .ifPresent(owner -> json.setOwner(owner));
 
+    setAddress(json);
+
     return json;
+  }
+
+  /**
+   * If an application has a fixed location defined then address is name of the fixed location + sections.
+   * Otherwise it is street address.
+   */
+  private void setAddress(ApplicationJson applicationJson) {
+    if (applicationJson.getLocations() != null) {
+      applicationJson.getLocations().stream().filter((loc) -> (loc.getFixedLocationIds() != null))
+        .forEachOrdered((loc) -> {
+          String address = "";
+          for (Integer id : loc.getFixedLocationIds()) {
+            final FixedLocationJson fixedLocation = fixedLocations().get(id);
+            if (fixedLocation != null) {
+              if (address.isEmpty()) {
+                address = fixedLocation.getArea() + getSectionString(fixedLocation.getSection());
+              } else {
+                address += getSectionString(fixedLocation.getSection());
+              }
+            }
+          }
+          if (!address.isEmpty()) {
+            loc.setAddress(address);
+          } else {
+            loc.setAddress(Optional.ofNullable(loc.getPostalAddress()).map(p -> p.getStreetAddress()).orElse(null));
+          }
+        }
+      );
+    }
+  }
+
+  private String getSectionString(String section) {
+    if (section != null) {
+      return ", " + section;
+    }
+    return "";
+  }
+
+  private Map<Integer, FixedLocationJson> fixedLocations() {
+    Map<Integer, FixedLocationJson> fixedLocations = this.fixedLocations;
+    if (fixedLocations == null) {
+      synchronized (ApplicationJsonService.class) {
+        fixedLocations = this.fixedLocations;
+        if (fixedLocations == null) {
+          this.fixedLocations = fixedLocations = locationService.getFixedLocationList().stream().collect(
+                  Collectors.toMap(FixedLocationJson::getId, item -> item));
+        }
+      }
+    }
+    return fixedLocations;
   }
 }

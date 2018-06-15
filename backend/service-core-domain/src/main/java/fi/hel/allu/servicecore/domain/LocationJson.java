@@ -36,6 +36,7 @@ public class LocationJson {
   private Double areaOverride;
   @Valid
   private PostalAddressJson postalAddress;
+  private String address;
   private List<Integer> fixedLocationIds;
   private Integer cityDistrictId;
   private Integer cityDistrictIdOverride;
@@ -236,5 +237,13 @@ public class LocationJson {
   @JsonIgnore
   public boolean getStartTimeBeforeEndTimeValidation() {
     return startTime.isBefore(endTime);
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 }

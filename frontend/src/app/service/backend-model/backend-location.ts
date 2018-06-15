@@ -10,6 +10,7 @@ export interface BackendLocation {
   area: number;
   areaOverride: number;
   postalAddress: BackendPostalAddress;
+  address: string;
   fixedLocationIds: Array<number>;
   cityDistrictId: number;
   cityDistrictIdOverride: number;
