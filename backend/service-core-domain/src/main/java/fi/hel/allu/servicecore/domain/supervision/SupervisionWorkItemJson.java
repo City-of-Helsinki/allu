@@ -15,7 +15,8 @@ public class SupervisionWorkItemJson {
   private StatusType applicationStatus;
   private UserJson creator;
   private ZonedDateTime plannedFinishingTime;
-  private PostalAddressJson address;
+  private PostalAddressJson postalAddress;
+  private String address;
   private String projectName;
   private UserJson owner;
 
@@ -75,11 +76,19 @@ public class SupervisionWorkItemJson {
     this.plannedFinishingTime = plannedFinishingTime;
   }
 
-  public PostalAddressJson getAddress() {
+  public PostalAddressJson getPostalAddress() {
+    return postalAddress;
+  }
+
+  public void setPostalAddress(PostalAddressJson postalAddress) {
+    this.postalAddress = postalAddress;
+  }
+
+  public String getAddress() {
     return address;
   }
 
-  public void setAddress(PostalAddressJson address) {
+  public void setAddress(String address) {
     this.address = address;
   }
 

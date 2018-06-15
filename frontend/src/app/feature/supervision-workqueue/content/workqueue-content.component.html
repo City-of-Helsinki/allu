@@ -34,9 +34,9 @@
       <mat-cell *matCellDef="let row">{{row.applicationIdText}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="streetAddress">
+    <ng-container matColumnDef="address">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'supervisionWorkqueue.content.address' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.address?.streetAddress}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.address}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="plannedFinishingTime">

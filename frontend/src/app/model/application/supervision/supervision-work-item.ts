@@ -13,7 +13,8 @@ export class SupervisionWorkItem {
     public applicationStatus?: ApplicationStatus,
     public creator?: User,
     public plannedFinishingTime?: Date,
-    public address?: PostalAddress,
+    public postalAddress?: PostalAddress,
+    public address?: string,
     public projectName?: string,
     public owner?: User
   ) {}
@@ -35,7 +36,8 @@ export interface BackendSupervisionWorkItem {
    applicationStatus: string;
    creator: BackendUser;
    plannedFinishingTime: string;
-   address: PostalAddress;
+   postalAddress: PostalAddress;
+   address: string;
    projectName: string;
    owner: BackendUser;
 }

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SupervisionWorkItemStore} from '../supervision-work-item-store';
 import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Subject} from 'rxjs';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
@@ -18,7 +18,7 @@ import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 })
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
-    'selected', 'owner.realName', 'type', 'application.applicationId', 'streetAddress',
+    'selected', 'owner.realName', 'type', 'application.applicationId', 'address',
     'plannedFinishingTime', 'application.status', 'creator.realName'
   ];
   dataSource: SupervisionWorkItemDatasource;
@@ -34,7 +34,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private destroy = new Subject<boolean>();
 
   constructor(private store: SupervisionWorkItemStore,
-              private router: Router,
               private route: ActivatedRoute,
               private storedFilterStore: StoredFilterStore) {
   }

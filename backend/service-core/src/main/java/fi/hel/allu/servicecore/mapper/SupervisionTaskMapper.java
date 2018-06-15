@@ -1,14 +1,11 @@
 package fi.hel.allu.servicecore.mapper;
 
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,8 +57,10 @@ public class SupervisionTaskMapper {
     workItem.setApplicationStatus(application.getStatus());
     workItem.setCreator(creator);
     workItem.setPlannedFinishingTime(task.getPlannedFinishingTime());
-    application.getLocations().stream().findFirst()
-        .ifPresent(loc -> workItem.setAddress(loc.getPostalAddress()));
+    application.getLocations().stream().findFirst().ifPresent(loc -> {
+      workItem.setPostalAddress(loc.getPostalAddress());
+      workItem.setAddress(loc.getAddress());
+    });
     Optional.ofNullable(application.getProject())
         .ifPresent(project -> workItem.setProjectName(project.getName()));
     workItem.setOwner(owner);

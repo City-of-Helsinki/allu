@@ -24,7 +24,9 @@ export class SupervisionSearchMapper {
     workItem.applicationStatus = ApplicationStatus[backendWorkItem.applicationStatus];
     workItem.creator = UserMapper.mapBackend(backendWorkItem.creator);
     workItem.plannedFinishingTime = TimeUtil.dateFromBackend(backendWorkItem.plannedFinishingTime);
-    workItem.address = Some(backendWorkItem.address).map(address => PostalAddress.fromBackend(address)).orElse(new PostalAddress());
+    workItem.postalAddress = Some(backendWorkItem.postalAddress)
+      .map(address => PostalAddress.fromBackend(address)).orElse(new PostalAddress());
+    workItem.address = backendWorkItem.address;
     workItem.projectName = backendWorkItem.projectName;
     workItem.owner = UserMapper.mapBackend(backendWorkItem.owner);
     return workItem;
