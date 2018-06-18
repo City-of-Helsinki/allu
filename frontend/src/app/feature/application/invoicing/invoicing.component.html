@@ -6,7 +6,7 @@
   </div>
   <div fxLayout="row wrap">
     <div fxFlex="100">
-      <charge-basis></charge-basis>
+      <charge-basis *ngIf="!infoForm.value.notBillable"></charge-basis>
     </div>
   </div>
   <div fxLayout="row wrap">
