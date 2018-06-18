@@ -84,6 +84,17 @@ public class ApplicationHistoryService {
         .collect(Collectors.toList());
   }
 
+  public void addInvoiceRecipientChange(Integer applicationId, CustomerJson oldInvoiceRecipient, CustomerJson newInvoiceRecipient) {
+    final Integer userId = userService.getCurrentUser().getId();
+    final Integer oldCustomerId = oldInvoiceRecipient != null ? oldInvoiceRecipient.getId() : null;
+    final String oldCustomerName = oldInvoiceRecipient != null ? oldInvoiceRecipient.getName() : null;
+    final Integer newCustomerId = newInvoiceRecipient != null ? newInvoiceRecipient.getId() : null;
+    final String newCustomerName = newInvoiceRecipient != null ? newInvoiceRecipient.getName() : null;
+
+    addChangeItem(applicationId, userId, new CustomerChange(oldCustomerId, oldCustomerName),
+        new CustomerChange(newCustomerId, newCustomerName), ChangeType.CUSTOMER_CHANGED, "INVOICE_RECIPIENT");
+  }
+
   /**
    * Compare two applications and add a change item that describes their
    * differences
@@ -103,6 +114,8 @@ public class ApplicationHistoryService {
     final Map<CustomerRoleType, CustomerWithContactsJson> newCustomers = newHistoryApplication.getCustomersWithContacts();
     oldHistoryApplication.setCustomersWithContacts(null);
     newHistoryApplication.setCustomersWithContacts(null);
+    oldHistoryApplication.setInvoiceRecipientId(null); // Invoice recipient change is saved separately
+    newHistoryApplication.setInvoiceRecipientId(null);
 
     addContentsChange(applicationId, oldHistoryApplication, newHistoryApplication);
     for (CustomerRoleType role : CustomerRoleType.values()) {

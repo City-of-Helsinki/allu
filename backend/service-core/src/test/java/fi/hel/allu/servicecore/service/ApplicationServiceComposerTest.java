@@ -31,6 +31,7 @@ public class ApplicationServiceComposerTest {
   private MailComposerService mailComposerService;
   private UserService userService;
   private InvoiceService invoiceService;
+  private CustomerService customerService;
 
   private static final int applicationId = 1;
   private static final int projectId = 12;
@@ -49,6 +50,7 @@ public class ApplicationServiceComposerTest {
     mailComposerService = Mockito.mock(MailComposerService.class);
     userService = Mockito.mock(UserService.class);
     invoiceService = Mockito.mock(InvoiceService.class);
+    customerService = Mockito.mock(CustomerService.class);
 
     applicationServiceComposer = new ApplicationServiceComposer(
         applicationService,
@@ -58,7 +60,8 @@ public class ApplicationServiceComposerTest {
         applicationHistoryService,
         mailComposerService,
         userService,
-        invoiceService
+        invoiceService,
+        customerService
     );
   }
 

@@ -1386,7 +1386,8 @@ export const translations = {
           APPLICANT: 'Hakija muutettu',
           PROPERTY_DEVELOPER: 'Rakennuttaja muutettu',
           CONTRACTOR: 'Työn suorittaja muutettu',
-          REPRESENTATIVE: 'Asiamies muutettu'
+          REPRESENTATIVE: 'Asiamies muutettu',
+          INVOICE_RECIPIENT: 'Laskutusasiakas muutettu'
         },
         CONTACT_CHANGED: {
           APPLICANT: 'Hakijan yhteyshenkilö muutettu',

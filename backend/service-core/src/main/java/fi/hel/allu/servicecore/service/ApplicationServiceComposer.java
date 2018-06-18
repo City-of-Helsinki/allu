@@ -40,6 +40,7 @@ public class ApplicationServiceComposer {
   private final MailComposerService mailComposerService;
   private final UserService userService;
   private final InvoiceService invoiceService;
+  private final CustomerService customerService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -50,7 +51,8 @@ public class ApplicationServiceComposer {
       ApplicationHistoryService applicationHistoryService,
       @Lazy MailComposerService mailComposerService,
       UserService userService,
-      InvoiceService invoiceService) {
+      InvoiceService invoiceService,
+      CustomerService customerService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
@@ -59,6 +61,7 @@ public class ApplicationServiceComposer {
     this.mailComposerService = mailComposerService;
     this.userService = userService;
     this.invoiceService = invoiceService;
+    this.customerService = customerService;
   }
 
   /**
@@ -428,7 +431,11 @@ public class ApplicationServiceComposer {
   }
 
   public void setInvoiceRecipient(int id, Integer invoiceRecipientId) {
+    final ApplicationJson oldApplication = findApplicationById(id);
+    final CustomerJson oldInvoiceRecipient = getCustomer(oldApplication.getInvoiceRecipientId());
+    final CustomerJson newInvoiceRecipient = getCustomer(invoiceRecipientId);
     applicationService.setInvoiceRecipient(id, invoiceRecipientId);
+    applicationHistoryService.addInvoiceRecipientChange(id, oldInvoiceRecipient, newInvoiceRecipient);
   }
 
   public void releaseCustomersInvoices(Integer customerId) {
@@ -449,4 +456,10 @@ public class ApplicationServiceComposer {
     }
   }
 
+  private CustomerJson getCustomer(Integer id) {
+    if (id == null) {
+      return null;
+    }
+    return customerService.findCustomerById(id);
+  }
 }
