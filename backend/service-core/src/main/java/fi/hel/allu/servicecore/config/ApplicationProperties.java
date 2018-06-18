@@ -1208,5 +1208,20 @@ public class ApplicationProperties {
     return getModelServiceUrl("/logs/mailsender");
   }
 
+  public String getContractProposalUrl() {
+    return getModelServiceUrl("/applications/{id}/contract/proposal");
+  }
+
+  public String getContractApprovedUrl() {
+    return getModelServiceUrl("/applications/{id}/contract/approved");
+  }
+
+  public String getContractRejectedUrl() {
+    return getModelServiceUrl("/applications/{id}/contract/rejected");
+  }
+
+  public String getContractInfoUrl() {
+    return getModelServiceUrl("/applications/{id}/contract/info");
+  }
 
 }

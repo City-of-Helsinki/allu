@@ -11,6 +11,7 @@ public enum StatusType {
   PENDING, // Vireillä
   HANDLING, // Käsittelyssä
   RETURNED_TO_PREPARATION, // Palautettu valmisteluun
+  WAITING_CONTRACT_APPROVAL, // Odottaa sopimuksen hyväksyntää
   DECISIONMAKING, // Odottaa päätöstä
   DECISION, // Päätetty
   REJECTED, // Hylätty päätös

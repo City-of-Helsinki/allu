@@ -49,7 +49,9 @@ public enum ApplicationTagType {
   // laskutettavan sap-tunnus ei tiedossa
   SAP_ID_MISSING,
   // Päätös lähettämättä
-  DECISION_NOT_SENT;
+  DECISION_NOT_SENT,
+  // Sopimusehdotus hylätty asiakasjärjestelmässä
+  CONTRACT_REJECTED;
 
   private final List<ApplicationTagType> replaces;
 

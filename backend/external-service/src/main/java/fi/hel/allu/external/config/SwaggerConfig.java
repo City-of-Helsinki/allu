@@ -9,6 +9,7 @@ import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -76,6 +77,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
     builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
+    addDefaultHttpMessageConverters(converters);
   }
 
   @Override

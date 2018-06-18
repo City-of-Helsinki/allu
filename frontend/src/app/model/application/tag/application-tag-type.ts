@@ -40,7 +40,9 @@ export enum ApplicationTagType {
   // laskutettavan sap-tunnus ei tiedossa
   SAP_ID_MISSING,
   // Päätös lähettämättä
-  DECISION_NOT_SENT
+  DECISION_NOT_SENT,
+  // Sopimusta ei hyväksytty
+  CONTRACT_REJECTED
 }
 
 export const manualTagTypes = [
@@ -49,5 +51,6 @@ export const manualTagTypes = [
   ApplicationTagType.STATEMENT_REQUESTED,
   ApplicationTagType.COMPENSATION_CLARIFICATION,
   ApplicationTagType.PAYMENT_BASIS_CORRECTION,
-  ApplicationTagType.DECISION_NOT_SENT
+  ApplicationTagType.DECISION_NOT_SENT,
+  ApplicationTagType.CONTRACT_REJECTED
 ];

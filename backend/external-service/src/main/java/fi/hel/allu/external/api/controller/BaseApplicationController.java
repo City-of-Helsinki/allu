@@ -25,7 +25,7 @@ import io.swagger.annotations.*;
 public abstract class BaseApplicationController<T extends ApplicationExt, M extends ApplicationExtMapper<T>>  {
 
   @Autowired
-  private ApplicationServiceExt applicationService;
+  protected ApplicationServiceExt applicationService;
 
   @Autowired
   protected ApplicationExtGeometryValidator geometryValidator;

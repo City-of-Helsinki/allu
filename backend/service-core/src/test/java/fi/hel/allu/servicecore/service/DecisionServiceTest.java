@@ -11,6 +11,7 @@ import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -74,9 +75,9 @@ public class DecisionServiceTest {
     application.setDecisionTime(ZonedDateTime.now());
     Mockito.when(applicationServiceComposer.findApplicationById(Mockito.anyInt())).thenReturn(application);
 
-
-    decisionService = new DecisionService(applicationProperties, restTemplate, locationService,
-        applicationServiceComposer, customerService, contactService, chargeBasisService, metaService);
+    DecisionJsonMapper decisionMapper = new DecisionJsonMapper(locationService, applicationServiceComposer, customerService, contactService, chargeBasisService, metaService);
+    decisionService = new DecisionService(applicationProperties, restTemplate,
+        applicationServiceComposer, decisionMapper);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -237,11 +238,6 @@ public class DecisionServiceTest {
     Assert.assertNotNull(infoEntries);
     Assert.assertEquals(3, infoEntries.size());
     Assert.assertEquals(MAP_EXCTRACT_COUNT, decisionJson.getMapExtractCount());
-    // - Validity time was stored to model:
-    final ArgumentCaptor<ApplicationJson> msgCaptor = ArgumentCaptor.forClass(ApplicationJson.class);
-    Mockito.verify(applicationServiceComposer).updateApplication(Matchers.eq(123), msgCaptor.capture());
-    CableReportJson cableReportJsonOut = (CableReportJson) msgCaptor.getValue().getExtension();
-    Assert.assertNotNull(cableReportJsonOut.getValidityTime());
     // - Generated PDF was stored to model:
     Mockito.verify(restTemplate).exchange(Matchers.eq(STORE_DECISION_URL), Matchers.eq(HttpMethod.POST), Mockito.any(),
         Matchers.eq(String.class), Mockito.anyInt());
@@ -261,20 +257,6 @@ public class DecisionServiceTest {
     byte[] decision = decisionService.getDecision(911);
 
     Assert.assertArrayEquals(MOCK_DECISION_DATA, decision);
-  }
-
-  @Test
-  public void testPostalAddress() {
-    PostalAddressJson postalAddressJson = new PostalAddressJson("Aapakatu 12", "123456", "Aapala");
-    Assert.assertEquals("Aapakatu 12, 123456 Aapala", decisionService.postalAddress(postalAddressJson));
-    postalAddressJson = new PostalAddressJson("", null, "Apaa");
-    Assert.assertEquals("Apaa", decisionService.postalAddress(postalAddressJson));
-    postalAddressJson = new PostalAddressJson("Syrjäpolku 3", null, null);
-    Assert.assertEquals("Syrjäpolku 3", decisionService.postalAddress(postalAddressJson));
-    postalAddressJson = new PostalAddressJson("Yypöntie 1", null, "Ypäjä");
-    Assert.assertEquals("Yypöntie 1, Ypäjä", decisionService.postalAddress(postalAddressJson));
-    postalAddressJson = new PostalAddressJson(null, null, null);
-    Assert.assertEquals("", decisionService.postalAddress(postalAddressJson));
   }
 
   private List<CustomerWithContactsJson> createDummyCustomersWithContactsJson() {

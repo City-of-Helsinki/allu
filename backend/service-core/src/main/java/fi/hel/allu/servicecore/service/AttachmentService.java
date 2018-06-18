@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -240,19 +242,7 @@ public class AttachmentService {
 
   private HttpEntity<?> createMultipartRequest(AttachmentInfo info, MultipartFile data)
       throws IOException {
-    // Generate suitable multi-part request...
-    MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
-    requestParts.add("info", info);
-    requestParts.add("data", new ByteArrayResource(data.getBytes()) {
-      @Override // return some filename so that Spring handles this as file
-      public String getFilename() {
-        return "data";
-      }
-    });
-    HttpHeaders requestHeader = new HttpHeaders();
-    requestHeader.setContentType(MediaType.MULTIPART_FORM_DATA);
-    HttpEntity<?> requestEntity = new HttpEntity<>(requestParts, requestHeader);
-    return requestEntity;
+    return MultipartRequestBuilder.buildByteArrayRequest("data",  data.getBytes(), Collections.singletonMap("info", info));
   }
 
   // convert (Default)AttachmentInfoJson --> (Default)AttachmentInfo

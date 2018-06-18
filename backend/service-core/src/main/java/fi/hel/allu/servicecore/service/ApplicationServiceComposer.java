@@ -1,12 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
-import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
  * Service for composing different application related services together. The main purpose of this class is to avoid circular references
@@ -274,6 +277,12 @@ public class ApplicationServiceComposer {
 
   public ApplicationTagJson addTag(int id, ApplicationTagJson tag) {
     List<ApplicationTagJson> oldTags = applicationService.findTagsByApplicationId(id);
+    return oldTags.stream().filter(t -> t.getType().equals(tag.getType())).findFirst()
+        .orElseGet(() -> addNewTag(id, tag, oldTags));
+  }
+
+  private ApplicationTagJson addNewTag(int id, ApplicationTagJson tag,
+      List<ApplicationTagJson> oldTags) {
     ApplicationTagJson added = applicationService.addTag(id, tag);
     List<ApplicationTagJson> newTags = new ArrayList<>(oldTags);
     newTags.add(added);

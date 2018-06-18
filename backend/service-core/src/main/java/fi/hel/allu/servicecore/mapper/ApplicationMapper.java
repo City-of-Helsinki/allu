@@ -228,8 +228,11 @@ public class ApplicationMapper {
 
   private Map<CustomerRoleType, CustomerWithContactsJson> customersToHistory(List<CustomerWithContactsJson> customers) {
     Map<CustomerRoleType, CustomerWithContactsJson> customerMap = new HashMap<>();
-    customers.forEach(c -> customerMap.put(c.getRoleType(), c));
+    if (customers != null) {
+      customers.forEach(c -> customerMap.put(c.getRoleType(), c));
+    }
     return customerMap;
+
   }
   /**
    * Transfer the information from the given model-domain object to given ui-domain object

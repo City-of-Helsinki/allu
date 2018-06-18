@@ -69,6 +69,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToClientApplicationData());
     configuration.register(new StringToInformationRequestFieldKey());
     configuration.register(new StringToInformationRequestStatus());
+    configuration.register(new StringToContractStatus());
     return configuration;
   }
 

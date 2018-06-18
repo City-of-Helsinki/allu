@@ -241,7 +241,8 @@ export const translations = {
         FINAL_SUPERVISION_ACCEPTED: 'Loppuvalvonta hyväksytty',
         FINAL_SUPERVISION_REJECTED: 'Loppuvalvonta hylätty',
         SAP_ID_MISSING: 'Laskutettavan SAP-tunnus puuttuu',
-        DECISION_NOT_SENT: 'Päätös lähettämättä'
+        DECISION_NOT_SENT: 'Päätös lähettämättä',
+        CONTRACT_REJECTED: 'Sopimusta ei hyväksytty'
       },
       action: {
         PRELIMINARY_SUPERVISION_REQUESTED: 'Aloitusvalvontapyyntö',

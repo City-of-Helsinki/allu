@@ -14,10 +14,7 @@ import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PlacementContract;
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.LocationService;
 import fi.hel.allu.model.service.SupervisionTaskService;
@@ -62,6 +59,8 @@ public class ApplicationStatusChangeListener {
       logger.debug("Process temporary traffic arrangement status change to decision");
       handleTemporaryTrafficArrangementDecision(application, userId);
       break;
+    case CABLE_REPORT:
+      handleCableReportDecision(application, userId);
     default:
       // No actions for other application types
     }
@@ -98,6 +97,17 @@ public class ApplicationStatusChangeListener {
         getNextDay(application.getEndTime()), null, SupervisionTaskStatusType.OPEN, null, null);
     supervisionTaskService.insert(supervisionTask);
   }
+
+  private void handleCableReportDecision(Application application, Integer userId) {
+    // Validity time of cable report to decision time + one month
+    ZonedDateTime validityTime = ZonedDateTime.now().plusMonths(1);
+    CableReport cableReport = (CableReport)application.getExtension();
+    cableReport.setValidityTime(validityTime);
+    applicationService.update(application.getId(), application, userId);
+
+
+  }
+
 
   private ZonedDateTime getNextDay(ZonedDateTime endTime) {
     return endTime != null ? endTime.plusDays(1) : null;
