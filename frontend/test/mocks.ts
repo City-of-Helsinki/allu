@@ -149,6 +149,7 @@ export class UserServiceMock {
   public getCurrentUser(): Observable<User> {
     return of(new User(1));
   }
+  public getByRole = (role: RoleType) => of([supervisor]);
 }
 
 /**

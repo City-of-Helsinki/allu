@@ -6,7 +6,7 @@ export class SupervisionTaskSearchCriteria {
     public before?: Date,
     public applicationTypes?: Array<string>,
     public applicationStatus?: Array<string>,
-    public ownerId?: number,
+    public owners?: Array<number>,
     public cityDistrictIds?: Array<number>
   ) {}
 }
@@ -18,6 +18,6 @@ export interface BackendSupervisionTaskSearchCriteria {
   before: string;
   applicationTypes: Array<string>;
   applicationStatus: Array<string>;
-  ownerId: number;
+  owners: Array<number>;
   cityDistrictIds: Array<number>;
 }

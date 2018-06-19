@@ -1,6 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
+import {of} from 'rxjs/index';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
@@ -10,7 +11,6 @@ import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
 import {WorkQueueFilterComponent} from '../../../src/app/feature/supervision-workqueue/filter/workqueue-filter.component';
 import {findTranslation} from '../../../src/app/util/translations';
-
 import {Page} from '../../../src/app/model/common/page';
 import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
@@ -50,7 +50,7 @@ describe('SupervisionWorkqueueFilterComponent', () => {
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
         {provide: StoredFilterStore, useClass: StoredFilterStoreMock},
         {provide: UserService, useClass: UserServiceMock},
-        {provide: NotificationService, useClass: NotificationServiceMock}
+        {provide: NotificationService, useClass: NotificationServiceMock},
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))

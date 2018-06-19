@@ -13,6 +13,9 @@ import {StoredFilter} from '../../../model/user/stored-filter';
 import {StoredFilterType} from '../../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
 import {ArrayUtil} from '../../../util/array-util';
+import {UserService} from '../../../service/user/user-service';
+import {User} from '../../../model/user/user';
+import {RoleType} from '../../../model/user/role-type';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {debounceTime, distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
@@ -36,6 +39,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
   districts: Observable<Array<CityDistrict>>;
+  supervisors: Array<User> = [];
 
   SUPERVISION_WORKQUEUE_FILTER = StoredFilterType.SUPERVISION_WORKQUEUE;
   taskFilter: Observable<TaskSearchFilter>;
@@ -49,7 +53,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private itemStore: SupervisionWorkItemStore,
     private store: Store<fromRoot.State>,
-    private storedFilterStore: StoredFilterStore) {
+    private storedFilterStore: StoredFilterStore,
+    private userService: UserService) {
     this.queryForm = this.fb.group({
       taskTypes: [[]],
       applicationId: [undefined],
@@ -57,13 +62,15 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       before: [undefined],
       applicationTypes: [[]],
       applicationStatus: [[]],
-      ownerId: [undefined],
+      owners: [[]],
       cityDistrictIds: [[]]
     });
   }
 
   ngOnInit(): void {
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
+    this.userService.getByRole(RoleType.ROLE_SUPERVISE).subscribe(
+      users => this.supervisors = users.sort(ArrayUtil.naturalSort((user: User) => user.realName)));
 
     this.itemStore.changes.pipe(
       map(state => state.search),

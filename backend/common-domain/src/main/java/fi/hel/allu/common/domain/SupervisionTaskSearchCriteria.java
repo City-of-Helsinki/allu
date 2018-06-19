@@ -8,14 +8,22 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public class SupervisionTaskSearchCriteria {
+  private List<Integer> owners;
   private List<SupervisionTaskType> taskTypes;
   private String applicationId;
   private ZonedDateTime after;
   private ZonedDateTime before;
   private List<ApplicationType> applicationTypes;
   private List<StatusType> applicationStatus;
-  private Integer ownerId;
   private List<Integer> cityDistrictIds;
+
+  public List<Integer> getOwners() {
+    return owners;
+  }
+
+  public void setOwners(List<Integer> owners) {
+    this.owners = owners;
+  }
 
   public List<SupervisionTaskType> getTaskTypes() {
     return taskTypes;
@@ -63,14 +71,6 @@ public class SupervisionTaskSearchCriteria {
 
   public void setApplicationStatus(List<StatusType> applicationStatus) {
     this.applicationStatus = applicationStatus;
-  }
-
-  public Integer getOwnerId() {
-    return ownerId;
-  }
-
-  public void setOwnerId(Integer ownerId) {
-    this.ownerId = ownerId;
   }
 
   public List<Integer> getCityDistrictIds() {

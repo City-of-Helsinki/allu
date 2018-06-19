@@ -130,7 +130,7 @@ export class SupervisionWorkItemStore {
 
     const search = {...state.search};
     if (WorkQueueTab.OWN === state.tab) {
-      search.ownerId = this.currentUser.id;
+      search.owners = [this.currentUser.id];
     }
 
     this.service.search(search, state.sort, state.pageRequest)

@@ -27,6 +27,16 @@
 
   <form [formGroup]="queryForm">
     <div fxLayout="row wrap" fxLayout.lt-md="column wrap" fxLayoutGap="0.75rem">
+      <div fxFlex="10">
+        <mat-form-field class="input-full-width">
+          <mat-select formControlName="owners" [multiple]="true"
+                      [placeholder]="'supervision.task.owner' | translation" class="input-full-width">
+            <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
+              {{supervisor.realName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       <div fxFlex="15">
         <mat-form-field class="input-full-width">
           <mat-select formControlName="taskTypes" [multiple]="true"
@@ -37,7 +47,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div fxFlex="15">
+      <div fxFlex="10">
         <mat-form-field class="input-full-width">
           <input matInput type="text" formControlName="applicationId"
                  [placeholder]="'supervisionWorkqueue.filter.applicationId' | translation">

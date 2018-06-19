@@ -197,10 +197,10 @@ public class SupervisionTaskDao {
     return Stream.of(
         Optional.of(supervisionTask.status.eq(SupervisionTaskStatusType.OPEN)),
         values(searchCriteria.getTaskTypes()).map(supervisionTask.type::in),
-        Optional.ofNullable(searchCriteria.getOwnerId()).map(supervisionTask.ownerId::eq),
         Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTask.plannedFinishingTime::goe),
         Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTask.plannedFinishingTime::loe),
         Optional.ofNullable(searchCriteria.getApplicationId()).map(application.applicationId::startsWith),
+        values(searchCriteria.getOwners()).map(supervisionTask.ownerId::in),
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
         values(searchCriteria.getApplicationStatus()).map(application.status::in),
         values(searchCriteria.getCityDistrictIds()).map(location.cityDistrictId::in)

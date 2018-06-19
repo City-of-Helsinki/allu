@@ -41,7 +41,7 @@ export class SupervisionSearchMapper {
         before: TimeUtil.dateToBackend(searchCriteria.before),
         applicationTypes: Some(searchCriteria.applicationTypes).orElse([]),
         applicationStatus: Some(searchCriteria.applicationStatus).orElse([]),
-        ownerId: searchCriteria.ownerId,
+        owners: searchCriteria.owners,
         cityDistrictIds: Some(searchCriteria.cityDistrictIds).orElse([])
       } : undefined;
   }
