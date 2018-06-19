@@ -9,7 +9,6 @@ import {EventNature} from '../../../../model/application/event/event-nature';
 import {TimeUtil} from '../../../../util/time.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 
-
 @Component({
   selector: 'event',
   viewProviders: [],

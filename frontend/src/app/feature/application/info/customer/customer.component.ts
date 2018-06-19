@@ -1,13 +1,10 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {
-  CUSTOMER_MODAL_CONFIG,
-  CustomerModalComponent
-} from '../../../customerregistry/customer/customer-modal.component';
+import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '../../../customerregistry/customer/customer-modal.component';
 import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
@@ -26,12 +23,14 @@ import {CustomerType} from '../../../../model/customer/customer-type';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomerComponent implements OnInit, OnDestroy {
-  @Input() customerWithContacts: CustomerWithContacts;
+  @Input() pendingInfo: boolean;
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
   @Input() showRepresentative = false;
   @Input() showPropertyDeveloper = false;
   @Input() contactRequired = false;
+
+  @Output() showPendingInfo = new EventEmitter<{}>();
 
   @ViewChild('contacts') contacts: ContactComponent;
 
@@ -39,9 +38,19 @@ export class CustomerComponent implements OnInit, OnDestroy {
   customerForm: FormGroup;
   customerClass: string[] = [];
 
+  private _customerWithContacts: CustomerWithContacts;
   private dialogRef: MatDialogRef<CustomerModalComponent>;
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {
+  }
+
+  @Input() set customerWithContacts(customerWithContacts) {
+    this._customerWithContacts = customerWithContacts;
+    this.onCustomerWithContactsChange();
+  }
+
+  get customerWithContacts() {
+    return this._customerWithContacts;
   }
 
   ngOnInit(): void {
@@ -76,6 +85,10 @@ export class CustomerComponent implements OnInit, OnDestroy {
       .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 
+  showPending(): void {
+    this.showPendingInfo.emit({});
+  }
+
   onCustomerChange(customer: Customer): void {
     this.disableEdit(customer);
     this.contacts.onCustomerChange(customer.id);
@@ -105,16 +118,17 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   private onCustomerWithContactsChange() {
-    Some(this.customerWithContacts)
-      .map(cwc => cwc.customer)
-      .filter(customer => !!customer)
-      .do(customer => this.disableEdit(customer))
-      .map(customer => CustomerForm.fromCustomer(customer))
-      .do(customer => {
-        this.customerForm.patchValue(customer);
-        this.onCustomerTypeChange(customer.type);
-      });
-
+    if (this.customerForm) {
+      Some(this.customerWithContacts)
+        .map(cwc => cwc.customer)
+        .filter(customer => !!customer)
+        .do(customer => this.disableEdit(customer))
+        .map(customer => CustomerForm.fromCustomer(customer))
+        .do(customer => {
+          this.customerForm.patchValue(customer);
+          this.onCustomerTypeChange(customer.type);
+        });
+    }
   }
 
   private onCustomerTypeChange(type: string) {

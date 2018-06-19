@@ -1,0 +1,15 @@
+@import '~@angular/material/theming';
+
+@mixin information-request-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  @include field-acceptance-theme($theme);
+}
+
+@mixin field-acceptance-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  li:nth-child(odd) .field-acceptance {
+    background: mat-color($primary, 50);
+  }
+}

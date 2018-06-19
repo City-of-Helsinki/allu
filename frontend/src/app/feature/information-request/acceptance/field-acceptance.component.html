@@ -1,0 +1,20 @@
+<div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim">
+  <div fxFlex class="text-primary">
+    {{label}}
+  </div>
+  <div fxFlex class="value-change">
+    <field-value [value]="oldValue"></field-value>
+    <mat-icon class="icon-middle">arrow_forward</mat-icon>
+    <field-value [value]="newValue"></field-value>
+  </div>
+  <div fxFlex>
+    <mat-button-toggle-group [ngModel]="selected" (change)="select($event.value)">
+      <mat-button-toggle value="old">
+        <mat-icon>clear</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="new">
+        <mat-icon>check</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</div>

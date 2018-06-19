@@ -84,3 +84,35 @@ export function toDictionary<T>(items: T[], keyFn: (item: T) => string): Diction
     return prev;
   }, {});
 }
+
+export type ValueType = undefined | 'number' | 'string' | 'boolean' | 'date';
+
+export function isNumber(value: any): boolean {
+  return typeof value === 'number';
+}
+
+export function isString(value: any): boolean {
+  return typeof value === 'string';
+}
+
+export function isBoolean(value: any): boolean {
+  return typeof value === 'boolean';
+}
+
+export function isDate(value: any): boolean {
+  return value instanceof Date;
+}
+
+export function typeOfValue(value: any): ValueType {
+  if (isNumber(value)) {
+    return 'number';
+  } else if (isString(value)) {
+    return 'string';
+  } else if (isBoolean(value)) {
+    return 'boolean';
+  } else if (isDate(value)) {
+    return 'date';
+  } else {
+    return undefined;
+  }
+}

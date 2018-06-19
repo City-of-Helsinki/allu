@@ -12,6 +12,7 @@ import * as fromHistory from '../../history/reducers/history-reducer';
 import * as fromApplicationHistory from '../reducers/application-history-reducer';
 import * as fromInformationRequest from '../../information-request/reducers/information-request-reducer';
 import {ClientApplicationData} from '../../../model/application/client-application-data';
+import {InformationRequestFieldKey} from '../../../model/information-request/information-request-field-key';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -74,6 +75,35 @@ export const getPendingKind = createSelector(
     const pendingKind = !!clientData ? clientData.clientApplicationKind : undefined;
     return (noKind && pendingKind) ? pendingKind : undefined;
   }
+);
+
+export const getPendingCustomerWithContacts = createSelector(
+  getCurrentApplication,
+  getClientData,
+  (application: Application, clientData: ClientApplicationData) => {
+    const noCustomers = application.customersWithContacts.length === 0;
+    const pendingCustomer = !!clientData ? clientData.customer : undefined;
+    return (noCustomers && pendingCustomer) ? pendingCustomer : undefined;
+  }
+);
+
+export const hasPendingKind = createSelector(
+  getPendingKind,
+  kind => !!kind
+);
+
+export const hasPendingCustomerInfo = createSelector(
+  getPendingCustomerWithContacts,
+  pending => !!pending
+);
+
+export const pendingClientDataFields = createSelector(
+  hasPendingKind,
+  hasPendingCustomerInfo,
+  (pendingKind, pendingCustomer) => ([
+    ...(pendingKind ? [InformationRequestFieldKey.APPLICATION_KIND] : []),
+    ...(pendingCustomer ? [InformationRequestFieldKey.CUSTOMER] : [])
+  ])
 );
 
 export const getMeta = createSelector(

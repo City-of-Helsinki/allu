@@ -404,8 +404,9 @@ export const translations = {
       cancelText: 'Hylkää'
     },
     clientData: {
-      update: 'Kortti sisältää tietopäivityksen',
-      updateMultiple: 'Kortti sisältää {{count}} tietopäivitystä',
+      newValue: 'Kortti sisältää uusia tietoja: {{value}}',
+      newData: 'Kortti sisältää uusia tietoja.',
+      show: 'Näytä'
     }
   },
   applicationSearch: {
@@ -447,6 +448,25 @@ export const translations = {
   informationRequestResponse: {
     error: {
       fetch: 'Täydennyspyynnön hakeminen epäonnistui'
+    }
+  },
+  informationRequest: {
+    acceptance: {
+      title: 'Hyväksy tietopäivitykset'
+    },
+    field: {
+      CUSTOMER: 'Hakija',
+      INVOICING_CUSTOMER: 'Laskutettava',
+      GEOMETRY: 'Geometria',
+      START_TIME: 'Aloituspäivämäärä',
+      END_TIME: 'Lopetuspäivämäärä',
+      IDENTIFICATION_NUMBER: 'Asiointitunnus',
+      CLIENT_APPLICATION_KIND: 'Asiakasjärjestelmän hakemuksen laji',
+      APPLICATION_KIND: 'Hakemuksen laji',
+      POSTAL_ADDRESS: 'Postiosoite',
+      WORK_DESCRIPTION: 'Työn kuvaus',
+      PROPERTY_IDENTIFICATION_NUMBER: 'Kiinteistötunnus',
+      ATTACHMENT: 'Liite'
     }
   },
   project: {

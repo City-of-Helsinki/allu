@@ -1,16 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {FormControl, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicationStore} from '../../../../service/application/application-store';
 import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR, TimeUtil} from '../../../../util/time.util';
 import {Application} from '../../../../model/application/application';
-import {ProjectService} from '../../../../service/project/project.service';
-import {NotificationService} from '../../../../service/notification/notification.service';
 
 @Component({
   selector: 'note',

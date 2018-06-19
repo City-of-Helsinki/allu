@@ -4,7 +4,9 @@
             [customerWithContacts]="application.applicant"
             [readonly]="readonly"
             [showPropertyDeveloper]="true"
-            [contactRequired]="true"></customer>
+            [contactRequired]="true"
+            [pendingInfo]="pendingCustomerInfo$ | async"
+            (showPendingInfo)="showPendingInfo()"></customer>
 
   <customer *ngIf="hasPropertyDeveloper"
             [parentForm]="applicationForm"

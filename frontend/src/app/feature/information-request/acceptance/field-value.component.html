@@ -1,0 +1,6 @@
+<ng-container [ngSwitch]="valueType">
+  <span *ngSwitchCase="'date'">{{displayValue | date:'shortDate'}}</span>
+  <span *ngSwitchCase="'boolean'">{{['common.boolean', displayValue] | translation}}</span>
+  <span *ngSwitchDefault>{{displayValue}}</span>
+</ng-container>
+

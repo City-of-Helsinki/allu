@@ -3,7 +3,9 @@
   <customer [parentForm]="applicationForm"
             [customerWithContacts]="application.applicant"
             [readonly]="readonly"
-            [contactRequired]="true"></customer>
+            [contactRequired]="true"
+            [pendingInfo]="pendingCustomerInfo$ | async"
+            (showPendingInfo)="showPendingInfo()"></customer>
 
   <div class="row">
     <div class="col m12">

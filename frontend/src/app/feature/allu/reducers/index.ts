@@ -42,10 +42,10 @@ export const getCodeSetState = createFeatureSelector<fromCodeSets.State>('codeSe
 
 export const getCodeSetEntityState = createSelector(
   getCodeSetState,
-  (state: fromCodeSets.State) => state.codeSet
+  fromCodeSets.getCodeSet
 );
 
-export const getCodeSet = (type: string, code: string) => createSelector(
+export const getCodeSetCodeMap = (type: string) => createSelector(
   getCodeSetEntityState,
-  (codeSets: CodeSetTypeMap) => Some(codeSets[type]).map(byCode => byCode[code]).orElse(undefined)
+  (byTypes: CodeSetTypeMap) => Some(byTypes[type]).orElse({})
 );

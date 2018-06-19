@@ -2,6 +2,13 @@
   <form [formGroup]="customerForm">
     <div class="col m6 col-first">
       <allu-card>
+        <mat-card-content *ngIf="pendingInfo">
+          <div fxLayout="row" fxLayoutGap=2px fxLayoutAlign="start center">
+            <mat-icon color="accent">warning</mat-icon>
+            <div>{{'application.clientData.newData' | translation}}</div>
+            <a class="clickable" (click)="showPending()">{{'application.clientData.show' | translation}}</a>
+          </div>
+        </mat-card-content>
         <mat-card-title>
           {{['customer.role', customerWithContacts.uiRoleType, 'title'] | translation}}
           <button mat-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()" class="align-with-text">

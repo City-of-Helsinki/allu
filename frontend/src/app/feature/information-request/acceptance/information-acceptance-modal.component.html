@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>{{'informationRequest.acceptance.title' | translation}}</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div *ngFor="let field of updatedFields">
+    <h2 mat-dialog-title>
+      {{['informationRequest.field', field] | translation}}
+    </h2>
+    <mat-dialog-content>
+      <customer-acceptance
+        *ngIf="field === 'CUSTOMER'"
+        [parentForm]="form"
+        [countryCodes]="countryCodes$ | async"
+        [oldCustomer]="data.oldInfo?.applicant.customer"
+        [newCustomer]="data.newInfo?.clientApplicationData?.customer?.customer"></customer-acceptance>
+    </mat-dialog-content>
+  </div>
+  <div mat-dialog-actions>
+    <button type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">
+      {{'common.button.save' | translation}}
+    </button>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">
+      {{'common.button.cancel' | translation}}
+    </button>
+  </div>
+</form>

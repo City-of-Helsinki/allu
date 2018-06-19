@@ -1,0 +1,11 @@
+<form [formGroup]="form">
+  <ul>
+    <li *ngFor="let fieldName of fieldLabels | keys">
+      <field-acceptance
+        [formControlName]="fieldName"
+        [label]="fieldLabels[fieldName]"
+        [oldValue]="oldValues[fieldName]"
+        [newValue]="newValues[fieldName]"></field-acceptance>
+    </li>
+  </ul>
+</form>

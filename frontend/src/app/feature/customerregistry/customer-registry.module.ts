@@ -11,6 +11,7 @@ import {CustomerModalComponent} from './customer/customer-modal.component';
 import {ContactModalComponent} from './contact/contact-modal.component';
 import {CustomerInfoComponent} from './customer/customer-info.component';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
+import {InformationRequestModule} from '../information-request/information-request.module';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/materi
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    AlluCommonModule
+    AlluCommonModule,
+    InformationRequestModule
   ],
   declarations: [
     CustomerRegistryComponent,
@@ -30,7 +32,7 @@ import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/materi
     CustomerContactsComponent,
     CustomerModalComponent,
     CustomerModalComponent,
-    ContactModalComponent
+    ContactModalComponent,
   ],
   exports: [
     CustomerModalComponent,
@@ -39,7 +41,7 @@ import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/materi
   ],
   entryComponents: [
     CustomerModalComponent,
-    ContactModalComponent
+    ContactModalComponent,
   ]
 })
 export class CustomerRegistryModule {}

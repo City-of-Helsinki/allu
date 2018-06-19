@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {FormControl, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {MatDatepicker} from '@angular/material';
 import {Application} from '../../../../model/application/application';
@@ -9,15 +8,11 @@ import {ExcavationAnnouncementForm} from './excavation-announcement.form';
 import {ApplicationSearchQuery} from '../../../../model/search/ApplicationSearchQuery';
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {NotificationService} from '../../../../service/notification/notification.service';
 import {NumberUtil} from '../../../../util/number.util';
 import {TimeUtil} from '../../../../util/time.util';
 import {Some} from '../../../../util/option';
 import {IconConfig} from '../../../common/icon-config';
-import {ApplicationService} from '../../../../service/application/application.service';
-import {ProjectService} from '../../../../service/project/project.service';
 import {catchError, debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/internal/operators';
 
 @Component({
