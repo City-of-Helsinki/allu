@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
+import {map} from 'rxjs/internal/operators';
 
 import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
@@ -14,6 +15,7 @@ import {ApplicationService} from '../../service/application/application.service'
 import {MatPaginator, MatSort} from '@angular/material';
 import {ApplicationSearchDatasource} from '../../service/application/application-search-datasource';
 import {NotificationService} from '../../service/notification/notification.service';
+import {ArrayUtil} from '../../util/array-util';
 import * as fromRoot from '../allu/reducers';
 import {Store} from '@ngrx/store';
 
@@ -34,7 +36,8 @@ export class SearchComponent implements OnInit {
   owners: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
   applicationStatusStrings = searchable.map(status => ApplicationStatus[status]);
-  applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
+  applicationTypeStrings = EnumUtil.enumValues(ApplicationType)
+    .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   dataSource: ApplicationSearchDatasource;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -62,7 +65,8 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.notification, this.paginator, this.sort);
-    this.owners = this.userHub.getActiveUsers();
+    this.owners = this.userHub.getActiveUsers().pipe(
+      map(users => users.sort(ArrayUtil.naturalSort((user: User) => user.realName))));
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
   }
 

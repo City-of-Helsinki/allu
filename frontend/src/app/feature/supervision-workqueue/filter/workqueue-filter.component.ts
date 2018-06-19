@@ -12,6 +12,7 @@ import {SupervisionTaskSearchCriteria} from '../../../model/application/supervis
 import {StoredFilter} from '../../../model/user/stored-filter';
 import {StoredFilterType} from '../../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
+import {ArrayUtil} from '../../../util/array-util';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {debounceTime, distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
@@ -31,7 +32,8 @@ interface TaskSearchFilter {
 export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   queryForm: FormGroup;
   taskTypes = EnumUtil.enumValues(SupervisionTaskType);
-  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  applicationTypes = EnumUtil.enumValues(ApplicationType)
+    .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
   districts: Observable<Array<CityDistrict>>;
 
