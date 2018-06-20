@@ -13,7 +13,6 @@ describe('Event application mass insert', () => {
   function createCustomers() {
     const herneContactNew = {
       'id': null,
-      'applicantId': null,
       'name': 'Heikki Herne',
       'streetAddress': 'Hernikka 1',
       'postalCode': '33000',
@@ -28,7 +27,7 @@ describe('Event application mass insert', () => {
       'customer': {
         'id': null,
         'type': 'COMPANY',
-        'representative': null,
+        'person': null,
         'name': 'Hakija Inc.',
         'registryKey': '7654321-6',
         'postalAddress': {
@@ -38,7 +37,8 @@ describe('Event application mass insert', () => {
         },
         'email': 'hernari@hernerokka.fi',
         'phone': '03-1234567',
-        'active': true
+        'active': true,
+        'country': 'FI'
       },
       'contacts': [herneContactNew]
     };
