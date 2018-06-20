@@ -1,4 +1,4 @@
-import {BackendApplication} from '../backend-model/backend-application';
+import {BackendApplication, SearchResultApplication} from '../backend-model/backend-application';
 import {Application} from '../../model/application/application';
 import {ProjectMapper} from './project-mapper';
 import {CustomerMapper} from './customer-mapper';
@@ -21,24 +21,46 @@ export class ApplicationMapper {
       : [];
   }
 
-  public static mapBackend(backendApplication: BackendApplication): Application {
+  public static mapSearchResult(backendApplication: SearchResultApplication): Application {
     const application = new Application();
     application.id = backendApplication.id;
     application.applicationId = backendApplication.applicationId;
+    application.name = backendApplication.name;
+    application.type = backendApplication.type.value;
+    application.status = backendApplication.status.value;
+    application.owner = UserMapper.mapSearchResult(backendApplication.owner);
+    application.locations = LocationMapper.mapSearchResultList(backendApplication.locations);
+    application.customersWithContacts = CustomerMapper.mapSearchResultsWithContacts(backendApplication.customers);
+    application.project = ProjectMapper.mapSearchResult(backendApplication.project);
+    application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
+    application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
+    application.nrOfComments = backendApplication.nrOfComments;
+    return application;
+  }
+
+  public static mapCommon(backendApplication: BackendApplication): Application {
+    const application = new Application();
+    application.id = backendApplication.id;
+    application.applicationId = backendApplication.applicationId;
+    application.name = backendApplication.name;
+    application.type = backendApplication.type;
+    application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
+    application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
     application.project = ProjectMapper.mapBackend(backendApplication.project);
+    application.locations = LocationMapper.mapBackendList(backendApplication.locations);
+    return application;
+  }
+
+  public static mapBackend(backendApplication: BackendApplication): Application {
+    const application = ApplicationMapper.mapCommon(backendApplication);
     application.owner = UserMapper.mapBackend(backendApplication.owner);
     application.handler = UserMapper.mapBackend(backendApplication.handler);
     application.status = backendApplication.status;
-    application.type = backendApplication.type;
     application.kindsWithSpecifiers = backendApplication.kindsWithSpecifiers;
     application.metadataVersion = backendApplication.metadataVersion;
-    application.name = backendApplication.name;
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
-    application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
-    application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
     application.recurringEndTime = TimeUtil.dateFromBackend(backendApplication.recurringEndTime);
     application.customersWithContacts = CustomerMapper.mapBackendCustomersWithContacts(backendApplication.customersWithContacts);
-    application.locations = LocationMapper.mapBackendList(backendApplication.locations);
     application.extension = ApplicationExtensionMapper.mapBackend(backendApplication.extension);
     application.decisionTime = TimeUtil.dateFromBackend(backendApplication.decisionTime);
     application.decisionMaker = backendApplication.decisionMaker;

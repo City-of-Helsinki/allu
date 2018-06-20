@@ -138,4 +138,10 @@ public class CommentDao {
     comment.setId(null);
     insertForApplication(comment, copyToApplicationId);
   }
+
+  @Transactional(readOnly = true)
+  public Integer getCountByApplicationId(int applicationId) {
+    return (int)queryFactory.select(commentBean).from(comment)
+        .where(comment.applicationId.eq(applicationId)).fetchCount();
+  }
 }

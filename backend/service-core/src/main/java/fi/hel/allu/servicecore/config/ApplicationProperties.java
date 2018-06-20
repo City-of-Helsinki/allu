@@ -384,9 +384,14 @@ public class ApplicationProperties {
    *
    * @return the URL
    */
+  public String getCommentsFindCountByApplicationUrl() {
+    return getModelServiceUrl("/applications/{applicationId}/comments/count");
+  }
+
   public String getCommentsFindByApplicationUrl() {
     return getModelServiceUrl("/applications/{applicationId}/comments");
   }
+
 
   public String getCommentsFindByProjectUrl() {
     return getModelServiceUrl("/projects/{projectId}/comments");

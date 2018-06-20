@@ -14,3 +14,8 @@ export interface BackendProject {
   additionalInfo: string;
   parentId: number;
 }
+
+export interface SearchResultProject {
+  id: number;
+  identifier: string;
+}

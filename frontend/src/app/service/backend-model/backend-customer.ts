@@ -17,3 +17,8 @@ export interface BackendCustomer {
   country: string;
   projectIdentifierPrefix?: string;
 }
+
+export interface SearchResultCustomer {
+  id: number;
+  name: string;
+}

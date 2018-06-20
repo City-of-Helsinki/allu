@@ -59,7 +59,7 @@ public class GenericSearchService<T> {
   private static final Logger logger = LoggerFactory.getLogger(GenericSearchService.class);
   private static final int DEFAULT_PAGE = 0;
   private static final int DEFAULT_PAGESIZE = 100;
-  private static final Pageable DEFAULT_PAGEREQUEST = new PageRequest(DEFAULT_PAGE, DEFAULT_PAGESIZE);
+  protected static final Pageable DEFAULT_PAGEREQUEST = new PageRequest(DEFAULT_PAGE, DEFAULT_PAGESIZE);
 
   /* Sort field suffix for alphabetic sort */
   private static final String ALPHASORT = ".alphasort";
@@ -89,7 +89,7 @@ public class GenericSearchService<T> {
   private final ElasticSearchMappingConfig elasticSearchMappingConfig;
   private final Client client;
   private final String indexTypeName;
-  private final ObjectMapper objectMapper;
+  protected final ObjectMapper objectMapper;
   private final IndexConductor indexConductor;
   private final Function<T, String> keyMapper;
   private final Class<T> valueType;
@@ -301,33 +301,7 @@ public class GenericSearchService<T> {
       pageRequest = DEFAULT_PAGEREQUEST;
     }
     try {
-      BoolQueryBuilder qb = QueryBuilders.boolQuery();
-
-      for (QueryParameter param : queryParameters.getQueryParameters()) {
-        if (matchAny) {
-          qb.should(createQueryBuilder(param));
-        } else {
-          qb.must(createQueryBuilder(param));
-        }
-      }
-
-      SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
-          .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
-          .setTypes(indexTypeName).setQuery(qb);
-
-      Optional.ofNullable(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
-        SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty()));
-        if (o.isAscending()) {
-          sb.order(SortOrder.ASC);
-        } else {
-          sb.order(SortOrder.DESC);
-        }
-        srBuilder.addSort(sb);
-      }));
-
-      logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
-          srBuilder.toString());
-
+      SearchRequestBuilder srBuilder = buildSearchRequest(queryParameters, pageRequest, matchAny);
       SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
       long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
       List<Integer> results = (totalHits == 0) ? Collections.emptyList() : iterateIntSearchResponse(response);
@@ -335,6 +309,37 @@ public class GenericSearchService<T> {
     } catch (IOException e) {
       throw new SearchException(e);
     }
+  }
+
+  public SearchRequestBuilder buildSearchRequest(QueryParameters queryParameters, Pageable pageRequest,
+      Boolean matchAny) {
+    BoolQueryBuilder qb = QueryBuilders.boolQuery();
+
+    for (QueryParameter param : queryParameters.getQueryParameters()) {
+      if (matchAny) {
+        qb.should(createQueryBuilder(param));
+      } else {
+        qb.must(createQueryBuilder(param));
+      }
+    }
+
+    SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
+        .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
+        .setTypes(indexTypeName).setQuery(qb);
+
+    Optional.ofNullable(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
+      SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty()));
+      if (o.isAscending()) {
+        sb.order(SortOrder.ASC);
+      } else {
+        sb.order(SortOrder.DESC);
+      }
+      srBuilder.addSort(sb);
+    }));
+
+    logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
+        srBuilder.toString());
+    return srBuilder;
   }
 
   public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {

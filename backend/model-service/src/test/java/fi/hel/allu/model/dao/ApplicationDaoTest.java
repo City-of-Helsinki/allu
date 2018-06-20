@@ -190,7 +190,7 @@ public class ApplicationDaoTest {
     // Add same tag twice, only one should be added
     applicationDao.addTag(application.getId(), createApplicationTag(ApplicationTagType.SAP_ID_MISSING));
     applicationDao.addTag(application.getId(), createApplicationTag(ApplicationTagType.SAP_ID_MISSING));
-    Application afterAdd = applicationDao.findByIds(Collections.singletonList(application.getId()), false).get(0);
+    Application afterAdd = applicationDao.findByIds(Collections.singletonList(application.getId())).get(0);
     assertEquals(2, afterAdd.getApplicationTags().size());
     assertEquals(1, afterAdd.getApplicationTags().stream()
         .filter(t -> ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED.equals(t.getType())).count());

@@ -1,6 +1,7 @@
-import {BackendCustomer} from '../backend-model/backend-customer';
+import {BackendCustomer, SearchResultCustomer} from '../backend-model/backend-customer';
 import {PostalAddress} from '../../model/common/postal-address';
-import {BackendCustomerWithContacts} from '../backend-model/backend-customer-with-contacts';
+import {BackendCustomerWithContacts, SearchResultCustomersWithContacts,
+SearchResultCustomerWithContacts} from '../backend-model/backend-customer-with-contacts';
 import {ContactMapper} from './contact-mapper';
 import {Customer} from '../../model/customer/customer';
 import {CustomerWithContacts} from '../../model/customer/customer-with-contacts';
@@ -32,6 +33,17 @@ export class CustomerMapper {
         backendCustomer.invoicingProhibited,
         backendCustomer.invoicingOnly,
         backendCustomer.projectIdentifierPrefix);
+    } else {
+      return undefined;
+    }
+  }
+
+  public static mapSearchResultCustomer(backendCustomer: SearchResultCustomer): Customer {
+    if (backendCustomer) {
+      const customer = new Customer();
+      customer.name = backendCustomer.name;
+      customer.id = backendCustomer.id;
+      return customer;
     } else {
       return undefined;
     }
@@ -74,6 +86,16 @@ export class CustomerMapper {
       customer: customer.customer ? CustomerMapper.mapFrontend(customer.customer) : undefined,
       contacts: customer.contacts ? customer.contacts.map(contact => ContactMapper.mapFrontend(contact)) : []
     };
+  }
+
+  public static mapSearchResultApplicantWithContacts(customersWithContacts: SearchResultCustomerWithContacts): CustomerWithContacts {
+    return new CustomerWithContacts(
+      CustomerRoleType.APPLICANT,
+      CustomerMapper.mapSearchResultCustomer(customersWithContacts.customer)
+    );
+  }
+  public static mapSearchResultsWithContacts(customersWithContacts: SearchResultCustomersWithContacts): Array<CustomerWithContacts> {
+    return customersWithContacts ? [this.mapSearchResultApplicantWithContacts(customersWithContacts.applicant)] : [];
   }
 
   public static mapBackendCustomersWithContacts(customersWithContacts: Array<BackendCustomerWithContacts>): Array<CustomerWithContacts> {

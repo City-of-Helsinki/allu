@@ -19,6 +19,7 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
@@ -86,9 +87,9 @@ public class ApplicationServiceComposer {
    * @param query   the location query
    * @return list of found applications with details
    */
-  public List<ApplicationJson> findApplicationByLocation(LocationQueryJson query) {
+  public List<ApplicationMapItemJson> findApplicationByLocation(LocationQueryJson query) {
     return applicationService.findApplicationByLocation(query)
-        .stream().map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
+        .stream().map(a -> applicationJsonService.getApplicationMapItemJson(a)).collect(Collectors.toList());
   }
 
   /**
@@ -200,16 +201,11 @@ public class ApplicationServiceComposer {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public Page<ApplicationJson> search(QueryParametersJson queryParameters, Pageable pageRequest, Boolean matchAny) {
+  public Page<ApplicationES> search(QueryParametersJson queryParameters, Pageable pageRequest, Boolean matchAny) {
     return searchService.searchApplication(
         QueryParameterMapper.mapToQueryParameters(queryParameters),
         pageRequest,
-        matchAny,
-        (idlist) -> {
-          List<ApplicationJson> resultList = getFullyPopulatedApplications(idlist);
-          SearchService.orderByIdList(idlist, resultList, (applicationJson) -> applicationJson.getId());
-          return resultList;
-        });
+        matchAny);
   }
 
   /**

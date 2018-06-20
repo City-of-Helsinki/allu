@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
@@ -108,13 +108,13 @@ public class ApplicationController {
 
   @RequestMapping(value = "/search_location", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> findByLocation(@RequestBody final LocationQueryJson query) {
+  public ResponseEntity<List<ApplicationMapItemJson>> findByLocation(@RequestBody final LocationQueryJson query) {
     return new ResponseEntity<>(applicationServiceComposer.findApplicationByLocation(query), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Page<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
+  public ResponseEntity<Page<ApplicationES>> search(@Valid @RequestBody QueryParametersJson queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort = "creationTime", direction = Direction.DESC)
       Pageable pageRequest,
       @RequestParam(defaultValue = "false") Boolean matchAny) {

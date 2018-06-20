@@ -127,9 +127,10 @@ public class ApplicationMapper {
     if (applicationJson.getProject() != null) {
       CompactProjectES project = new CompactProjectES();
       project.setIdentifier(applicationJson.getProject().getIdentifier());
+      project.setId(applicationJson.getProject().getId());
       applicationES.setProject(project);
     }
-
+    applicationES.setNrOfComments(applicationJson.getComments() != null ? applicationJson.getComments().size() : 0);
     return applicationES;
   }
 

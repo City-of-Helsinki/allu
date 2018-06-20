@@ -1,5 +1,8 @@
 package fi.hel.allu.search.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 
 /**
@@ -24,6 +27,7 @@ public class ApplicationTypeES {
     this.applicationType = applicationType;
   }
 
+  @JsonProperty(access = Access.READ_ONLY)
   public int getOrdinal() {
     return this.applicationType.ordinal();
   }

@@ -53,7 +53,8 @@ export class Application {
     public invoicingDate?: Date,
     public identificationNumber?: string,
     public skipPriceCalculation: boolean = false,
-    public clientApplicationData?: ClientApplicationData) {
+    public clientApplicationData?: ClientApplicationData,
+    public nrOfComments?: number) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

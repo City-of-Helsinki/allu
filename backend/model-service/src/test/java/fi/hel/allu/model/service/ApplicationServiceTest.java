@@ -99,7 +99,7 @@ public class ApplicationServiceTest {
     final Customer customer = new Customer();
     customer.setSapCustomerNumber("SAP_123");
     Application application = Mockito.mock(Application.class);
-    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class), Mockito.eq(false))).thenReturn(Arrays.asList(application));
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
     Mockito.when(application.getNotBillable()).thenReturn(false);
     Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
     Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
@@ -118,7 +118,7 @@ public class ApplicationServiceTest {
     final Customer customer = new Customer();
     customer.setSapCustomerNumber("");
     Application application = Mockito.mock(Application.class);
-    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class), Mockito.eq(false))).thenReturn(Arrays.asList(application));
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
     Mockito.when(application.getNotBillable()).thenReturn(false);
     Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
     Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
@@ -163,7 +163,7 @@ public class ApplicationServiceTest {
     Mockito.when(application.getHandler()).thenReturn(HANDLER_ID);
     Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
     Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
-    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class), Mockito.eq(false))).thenReturn(Arrays.asList(application));
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
     Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
     Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID, HANDLER_ID);
@@ -190,7 +190,7 @@ public class ApplicationServiceTest {
     application.setReplacesApplicationId(REPLACED_APP_ID);
     application.setNotBillable(true);
     Mockito.when(applicationDao.findById(APP_ID)).thenReturn(application);
-    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class), Mockito.eq(false))).thenReturn(Arrays.asList(application));
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
     Mockito.verify(applicationDao).updateStatus(REPLACED_APP_ID, StatusType.REPLACED);
   }

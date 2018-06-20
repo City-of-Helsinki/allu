@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.service.WorkQueueService;
 
@@ -30,7 +30,7 @@ public class WorkQueueController {
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Page<ApplicationJson>> searchSharedByGroup(
+  public ResponseEntity<Page<ApplicationES>> searchSharedByGroup(
       @Valid @RequestBody QueryParametersJson queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort = "creationTime", direction = Direction.DESC)
       Pageable pageRequest) {

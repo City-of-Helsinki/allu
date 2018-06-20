@@ -20,7 +20,7 @@ import {ApplicationIdentifier} from '../../model/application/application-identif
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
-import {BackendApplication} from '../backend-model/backend-application';
+import {BackendApplication, SearchResultApplication} from '../backend-model/backend-application';
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendAttachmentInfo} from '../backend-model/backend-attachment-info';
 import {catchError, map} from 'rxjs/internal/operators';
@@ -73,11 +73,11 @@ export class ApplicationService {
       pageRequest?: PageRequest, matchAny?: boolean): Observable<Page<Application>> {
     const searchUrl = APPLICATIONS_URL + SEARCH;
 
-    return this.http.post<BackendPage<BackendApplication>>(
+    return this.http.post<BackendPage<SearchResultApplication>>(
       searchUrl,
       JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)),
       {params: QueryParametersMapper.mapPageRequest(pageRequest, sort, matchAny)}).pipe(
-      map(page => PageMapper.mapBackend(page, ApplicationMapper.mapBackend)),
+      map(page => PageMapper.mapBackend(page, ApplicationMapper.mapSearchResult)),
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')))
     );
   }

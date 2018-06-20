@@ -1,13 +1,14 @@
-import {BackendProject} from './backend-project';
-import {BackendLocation} from './backend-location';
+import {BackendProject, SearchResultProject} from './backend-project';
+import {BackendLocation, SearchResultLocation} from './backend-location';
 import {BackendAttachmentInfo} from './backend-attachment-info';
-import {BackendUser} from './backend-user';
+import {BackendUser, SearchResultUser} from './backend-user';
 import {BackendApplicationTag} from '../mapper/application-tag-mapper';
 import {BackendComment} from '../application/comment/comment-mapper';
 import {BackendDistributionEntry} from './backend-distribution-entry';
-import {BackendCustomerWithContacts} from './backend-customer-with-contacts';
+import {BackendCustomerWithContacts, SearchResultCustomersWithContacts} from './backend-customer-with-contacts';
 import {KindsWithSpecifiers} from '../../model/application/type/application-specifier';
 import {BackendClientApplicationData} from '../mapper/client-application-data-mapper';
+import {SearchResultEnumType} from './search-result-enum-type';
 
 export interface BackendApplication {
   id: number;
@@ -45,4 +46,19 @@ export interface BackendApplication {
   identificationNumber?: string;
   skipPriceCalculation: boolean;
   clientApplicationData?: BackendClientApplicationData;
+}
+
+export interface SearchResultApplication {
+  id: number;
+  applicationId: string;
+  project: SearchResultProject;
+  owner: SearchResultUser;
+  status: SearchResultEnumType;
+  type: SearchResultEnumType;
+  name: string;
+  creationTime: string;
+  startTime: string;
+  customers: SearchResultCustomersWithContacts;
+  locations: Array<SearchResultLocation>;
+  nrOfComments: number;
 }

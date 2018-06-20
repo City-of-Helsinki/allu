@@ -3,8 +3,6 @@ package fi.hel.allu.servicecore.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,8 +19,6 @@ import fi.hel.allu.servicecore.domain.UserJson;
 
 @Service
 public class CommentService {
-
-  private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
@@ -56,7 +52,10 @@ public class CommentService {
 
   public CommentJson addApplicationComment(int applicationId, CommentJson commentJson) {
     validateCommentType(commentJson.getType());
-    return addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
+    CommentJson comment = addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
+    updateSearchServiceNrOfComments(applicationId);
+    return comment;
+
   }
 
   public CommentJson addProjectComment(int projectId, CommentJson commentJson) {
@@ -92,7 +91,11 @@ public class CommentService {
   }
 
   public void deleteComment(int id) {
+    Comment comment = findById(id);
     restTemplate.delete(applicationProperties.getCommentsDeleteUrl(), id);
+    if (comment.getApplicationId() != null) {
+      updateSearchServiceNrOfComments(comment.getApplicationId());
+    }
   }
 
   private List<CommentJson> findBy(String url, int targetId) {
@@ -155,5 +158,14 @@ public class CommentService {
     return mapToJson(result.getBody());
   }
 
+  private void updateSearchServiceNrOfComments(int applicationId) {
+    HashMap<Integer, Map<String, Integer>> idToNrOfComments= new HashMap<>();
+    idToNrOfComments.put(applicationId, Collections.singletonMap("nrOfComments", getNumberOfApplicationComments(applicationId)));
+    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), idToNrOfComments);
+  }
+
+  private Integer getNumberOfApplicationComments(int applicationId) {
+    return restTemplate.getForEntity(applicationProperties.getCommentsFindCountByApplicationUrl(), Integer.class, applicationId).getBody();
+  }
 
 }

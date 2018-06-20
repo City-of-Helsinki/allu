@@ -73,7 +73,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/find", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByIds(@RequestBody List<Integer> ids) {
-    return new ResponseEntity<>(applicationService.findByIds(ids, true), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.findByIds(ids), HttpStatus.OK);
   }
 
   /**

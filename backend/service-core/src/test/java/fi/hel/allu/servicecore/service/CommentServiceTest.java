@@ -1,10 +1,8 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.model.domain.Comment;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.CommentJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.model.domain.Comment;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.CommentJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 
 public class CommentServiceTest {
   @Mock
@@ -35,6 +36,8 @@ public class CommentServiceTest {
   private static final String COMMENTS_CREATE_URL = "CommentsCreateUrl";
   private static final String COMMENTS_UPDATE_URL = "CommentsUpdateUrl";
   private static final String COMMENTS_DELETE_URL = "CommentsDeleteUrl";
+  private static final String COMMENTS_COUNT_URL = "CommentsCountUrl";
+  private static final String COMMENTS_FIND_BY_ID_URL = "CommentsFindByIdUrl";
 
   @Before
   public void setUp() {
@@ -43,6 +46,13 @@ public class CommentServiceTest {
     Mockito.when(applicationProperties.getApplicationCommentsCreateUrl()).thenReturn(COMMENTS_CREATE_URL);
     Mockito.when(applicationProperties.getCommentsUpdateUrl()).thenReturn(COMMENTS_UPDATE_URL);
     Mockito.when(applicationProperties.getCommentsDeleteUrl()).thenReturn(COMMENTS_DELETE_URL);
+    Mockito.when(applicationProperties.getCommentsFindCountByApplicationUrl()).thenReturn(COMMENTS_COUNT_URL);
+    Mockito.when(applicationProperties.getCommentsFindByIdUrl()).thenReturn(COMMENTS_FIND_BY_ID_URL);
+    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_COUNT_URL), Mockito.eq(Integer.class), Mockito.any(Integer.class)))
+    .thenReturn(ResponseEntity.ok(Integer.valueOf(1)));
+    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_FIND_BY_ID_URL), Mockito.eq(Comment.class), Mockito.any(Integer.class)))
+    .thenReturn(ResponseEntity.ok(new Comment()));
+
   }
 
   @Test

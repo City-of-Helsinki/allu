@@ -24,6 +24,13 @@ public class ProjectJson {
   @NotNull
   private String identifier;
 
+  public ProjectJson() {
+  }
+
+  public ProjectJson(Integer id) {
+    this.id = id;
+  }
+
   /**
    * in Finnish: Hankkeen tunniste
    */

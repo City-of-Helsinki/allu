@@ -1,9 +1,20 @@
-import {BackendUser} from '../backend-model/backend-user';
+import {BackendUser, SearchResultUser} from '../backend-model/backend-user';
 import {User} from '../../model/user/user';
 import {TimeUtil} from '../../util/time.util';
 import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 
 export class UserMapper {
+
+  public static mapSearchResult(backendUser: SearchResultUser): User {
+    if (backendUser) {
+      const user = new User();
+      user.userName = backendUser.userName;
+      user.realName = backendUser.realName;
+      return user;
+    } else {
+      return undefined;
+    }
+  }
 
   public static mapBackend(backendUser: BackendUser): User {
     return (backendUser) ?

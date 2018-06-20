@@ -1,4 +1,4 @@
-import {BackendProject} from '../backend-model/backend-project';
+import {BackendProject, SearchResultProject} from '../backend-model/backend-project';
 import {Project} from '../../model/project/project';
 import {CustomerMapper} from './customer-mapper';
 import {ContactMapper} from './contact-mapper';
@@ -20,6 +20,15 @@ export class ProjectMapper {
         backendProject.customerReference,
         backendProject.additionalInfo,
         backendProject.parentId
+      ) : undefined;
+  }
+
+  public static mapSearchResult(backendProject: SearchResultProject): Project {
+    return (backendProject) ?
+      new Project(
+        backendProject.id,
+        undefined,
+        backendProject.identifier
       ) : undefined;
   }
 

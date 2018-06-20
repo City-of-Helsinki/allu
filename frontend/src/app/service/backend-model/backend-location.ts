@@ -19,3 +19,8 @@ export interface BackendLocation {
   underpass: boolean;
   additionalInfo: string;
 }
+
+export interface SearchResultLocation {
+  address: string;
+  cityDistrictId: number;
+}

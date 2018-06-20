@@ -1,5 +1,9 @@
 package fi.hel.allu.search.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import fi.hel.allu.common.domain.types.StatusType;
 
 /**
@@ -24,6 +28,7 @@ public class StatusTypeES {
     this.status = status;
   }
 
+  @JsonProperty(access = Access.READ_ONLY)
   public int getOrdinal() {
     return status.ordinal();
   }

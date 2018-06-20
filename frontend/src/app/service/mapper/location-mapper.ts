@@ -1,4 +1,4 @@
-import {BackendLocation} from '../backend-model/backend-location';
+import {BackendLocation, SearchResultLocation} from '../backend-model/backend-location';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
 import {TimeUtil} from '../../util/time.util';
@@ -9,6 +9,13 @@ export class LocationMapper {
       ? backendLocations.map(loc => LocationMapper.mapBackend(loc))
       : [];
   }
+
+  public static mapSearchResultList(backendLocations: Array<SearchResultLocation>): Array<Location> {
+    return (backendLocations)
+      ? backendLocations.map(loc => LocationMapper.mapSearchResult(loc))
+      : [];
+  }
+
 
   public static mapFrontendList(locations: Array<Location>): Array<BackendLocation> {
     return (locations)
@@ -37,6 +44,18 @@ export class LocationMapper {
         backendLocation.underpass,
         backendLocation.additionalInfo) : undefined;
   }
+
+  public static mapSearchResult(backendLocation: SearchResultLocation): Location {
+    if (backendLocation) {
+      const location = new Location();
+      location.address = backendLocation.address;
+      location.cityDistrictId = backendLocation.cityDistrictId;
+      return location;
+    } else {
+      return undefined;
+    }
+  }
+
   public static mapFrontend(location: Location): BackendLocation {
     return (location) ?
     {

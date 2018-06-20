@@ -29,6 +29,7 @@ public class ApplicationES {
   private List<LocationES> locations;
   private RoleTypedCustomerES customers;
   private RecurringApplication recurringApplication;
+  private Integer nrOfComments;
 
   public Integer getId() {
     return id;
@@ -156,6 +157,14 @@ public class ApplicationES {
 
   public void setRecurringApplication(RecurringApplication recurringApplication) {
     this.recurringApplication = recurringApplication;
+  }
+
+  public Integer getNrOfComments() {
+    return nrOfComments;
+  }
+
+  public void setNrOfComments(Integer nrOfComments) {
+    this.nrOfComments = nrOfComments;
   }
 
 }

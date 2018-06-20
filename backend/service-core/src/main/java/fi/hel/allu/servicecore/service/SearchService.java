@@ -1,14 +1,10 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.search.domain.*;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
-import fi.hel.allu.servicecore.mapper.ProjectMapper;
-import fi.hel.allu.servicecore.util.PageRequestBuilder;
-import fi.hel.allu.servicecore.util.RestResponsePage;
+import java.net.URI;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,11 +18,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.search.domain.*;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 
 @Service
 public class SearchService {
@@ -200,9 +200,8 @@ public class SearchService {
    *          applications.
    * @return List of found applications.
    */
-  public Page<ApplicationJson> searchApplication(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny,
-      Function<List<Integer>, List<ApplicationJson>> mapper) {
-    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, mapper);
+  public Page<ApplicationES> searchApplication(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity());
   }
 
   /**
@@ -279,16 +278,16 @@ public class SearchService {
   }
 
 
-  private <T> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny,
-      Function<List<Integer>, List<T>> mapper) {
-    ParameterizedTypeReference<RestResponsePage<Integer>> typeref = new ParameterizedTypeReference<RestResponsePage<Integer>>() {
+  private <T, R> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny,
+      Function<List<R>, List<T>> mapper) {
+    ParameterizedTypeReference<RestResponsePage<R>> typeref = new ParameterizedTypeReference<RestResponsePage<R>>() {
     };
 
     URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest, matchAny);
-    ResponseEntity<RestResponsePage<Integer>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
+    ResponseEntity<RestResponsePage<R>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
         new HttpEntity<>(queryParameters), typeref);
 
-    final Page<Integer> responsePage = response.getBody();
+    final Page<R> responsePage = response.getBody();
     final PageRequest responsePageRequest = new PageRequest(responsePage.getNumber(),
         Math.max(1, responsePage.getNumberOfElements()), responsePage.getSort());
 

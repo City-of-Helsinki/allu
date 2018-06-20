@@ -41,6 +41,12 @@ public class CommentController {
     return new ResponseEntity<>(commentDao.findByApplicationId(applicationId), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/applications/{applicationId}/comments/count", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getCountByApplicationId(@PathVariable int applicationId) {
+    return new ResponseEntity<>(commentDao.getCountByApplicationId(applicationId), HttpStatus.OK);
+  }
+
+
   @RequestMapping(value = "/projects/{projectId}/comments", method = RequestMethod.GET)
   public ResponseEntity<List<Comment>> findByProjectId(@PathVariable int projectId) {
     return new ResponseEntity<>(commentDao.findByProjectId(projectId), HttpStatus.OK);

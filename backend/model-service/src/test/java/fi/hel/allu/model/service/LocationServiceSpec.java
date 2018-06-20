@@ -53,7 +53,7 @@ public class LocationServiceSpec {
         beforeEach(() -> {
           insertedLocation = dummyLocation();
           testApplication = dummyApplication();
-          Mockito.when(applicationDao.findByIds(Mockito.any(), Mockito.eq(false)))
+          Mockito.when(applicationDao.findByIds(Mockito.any()))
               .thenReturn(Collections.singletonList(testApplication));
           Mockito.when(applicationDao.findById(Mockito.anyInt())).thenReturn(testApplication);
           Mockito.when(locationDao.insert(Mockito.any())).thenReturn(insertedLocation);

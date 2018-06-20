@@ -72,8 +72,8 @@ public class ApplicationService {
    * @return  found applications
    */
   @Transactional(readOnly = true)
-  public List<Application> findByIds(List<Integer> ids, boolean anonymizePersons) {
-    return applicationDao.findByIds(ids, anonymizePersons);
+  public List<Application> findByIds(List<Integer> ids) {
+    return applicationDao.findByIds(ids);
   }
 
   /**
@@ -194,7 +194,8 @@ public class ApplicationService {
     // Calculate application price. This must be done after locations have been inserted.
     calculateApplicationPrice(result);
     result.setLocations(locations);
-    return result;
+    // Fetch from DB because location insert updates start / end time
+    return applicationDao.findById(result.getId());
   }
 
   private void calculateApplicationPrice(Application application) {
@@ -313,7 +314,7 @@ public class ApplicationService {
     List<Integer> candidates = applicationDao.findByEndTime(checkParams.getEndsAfter(), checkParams.getEndsBefore(),
         checkParams.getTypeSelector(), checkParams.getStatusSelector());
     candidates = applicationDao.excludeSentReminders(candidates);
-    return findByIds(candidates, false);
+    return findByIds(candidates);
   }
 
   /**
@@ -370,7 +371,7 @@ public class ApplicationService {
    * Create invoice for the given application if it's needed
    */
   private void createInvoiceIfNeeded(int applicationId, int userId) {
-    List<Application> applications = applicationDao.findByIds(Collections.singletonList(applicationId), false);
+    List<Application> applications = applicationDao.findByIds(Collections.singletonList(applicationId));
     if (applications.isEmpty()) {
       throw new NoSuchEntityException("application.notFound", applicationId);
     }

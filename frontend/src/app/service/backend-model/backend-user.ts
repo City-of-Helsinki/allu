@@ -11,3 +11,8 @@ export interface BackendUser {
   assignedRoles: Array<string>;
   cityDistrictIds: Array<number>;
 }
+
+export interface SearchResultUser {
+  userName: string;
+  realName: string;
+}

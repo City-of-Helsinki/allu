@@ -1,15 +1,9 @@
 package fi.hel.allu.servicecore.service;
 
-import com.greghaskins.spectrum.Spectrum;
-
-import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
-import fi.hel.allu.servicecore.mapper.ProjectMapper;
-import fi.hel.allu.servicecore.util.RestResponsePage;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,14 +16,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.greghaskins.spectrum.Spectrum;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.QueryParameter;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import fi.hel.allu.servicecore.util.RestResponsePage;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Spectrum.class)
@@ -69,21 +68,12 @@ public class SearchServiceSpec {
             Mockito.<ParameterizedTypeReference<RestResponsePage<Integer>>> any()))
             .thenReturn(new ResponseEntity<>(response, HttpStatus.OK));
 
-        Page<ApplicationJson> applicationJsons = searchService.searchApplication(queryParameters,
+        Page<ApplicationES> applications= searchService.searchApplication(queryParameters,
             new PageRequest(0, 100),
-            false,
-            ids -> mapApplications(ids));
-        assertEquals(3, applicationJsons.getNumberOfElements());
+            false);
+        assertEquals(3, applications.getNumberOfElements());
       });
     });
-  }
-
-  private List<ApplicationJson> mapApplications(List<Integer> ids) {
-    return ids.stream().map(i -> {
-      ApplicationJson a = new ApplicationJson();
-      a.setId(i);
-      return a;
-    }).collect(Collectors.toList());
   }
 
 }

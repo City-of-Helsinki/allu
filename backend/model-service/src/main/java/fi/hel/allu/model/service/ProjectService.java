@@ -389,7 +389,7 @@ public class ProjectService {
   }
 
   private Set<Integer> getRelatedProjects(List<Integer> applicationIds) {
-    return applicationDao.findByIds(applicationIds, false).stream()
+    return applicationDao.findByIds(applicationIds).stream()
         .map(app -> app.getProjectId())
         .filter(id -> id != null)
         .collect(Collectors.toSet());

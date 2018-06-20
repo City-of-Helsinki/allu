@@ -1,33 +1,7 @@
 package fi.hel.allu.model.dao;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.core.types.Projections.bean;
-import static com.querydsl.sql.SQLExpressions.select;
-import static com.querydsl.sql.SQLExpressions.selectDistinct;
-import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
-import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
-import static fi.hel.allu.QApplicationKind.applicationKind;
-import static fi.hel.allu.QApplicationReminder.applicationReminder;
-import static fi.hel.allu.QApplicationTag.applicationTag;
-import static fi.hel.allu.QContact.contact;
-import static fi.hel.allu.QKindSpecifier.kindSpecifier;
-import static fi.hel.allu.QLocation.location;
-import static fi.hel.allu.QLocationGeometry.locationGeometry;
-import static fi.hel.allu.QPostalAddress.postalAddress;
-import static fi.hel.allu.QRecurringPeriod.recurringPeriod;
-import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
-
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,18 +24,31 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
 import fi.hel.allu.QApplication;
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationSpecifier;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.domain.util.CustomerAnonymizer;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.types.Projections.bean;
+import static com.querydsl.sql.SQLExpressions.select;
+import static com.querydsl.sql.SQLExpressions.selectDistinct;
+import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
+import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
+import static fi.hel.allu.QApplicationKind.applicationKind;
+import static fi.hel.allu.QApplicationReminder.applicationReminder;
+import static fi.hel.allu.QApplicationTag.applicationTag;
+import static fi.hel.allu.QContact.contact;
+import static fi.hel.allu.QKindSpecifier.kindSpecifier;
+import static fi.hel.allu.QLocation.location;
+import static fi.hel.allu.QLocationGeometry.locationGeometry;
+import static fi.hel.allu.QPostalAddress.postalAddress;
+import static fi.hel.allu.QRecurringPeriod.recurringPeriod;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class ApplicationDao {
@@ -111,22 +98,22 @@ public class ApplicationDao {
   @Transactional
   public Application findById(int id) {
     Application app = queryFactory.select(applicationBean).from(application).where(application.id.eq(id)).fetchOne();
-    Optional.ofNullable(app).ifPresent(a -> populateDependencies(Collections.singletonList(a), false));
+    Optional.ofNullable(app).ifPresent(a -> populateDependencies(Collections.singletonList(a)));
     return app;
   }
 
   @Transactional(readOnly = true)
-  public List<Application> findByIds(List<Integer> ids, boolean anonymizePersons) {
+  public List<Application> findByIds(List<Integer> ids) {
     List<Application> appl = queryFactory.select(applicationBean).from(application)
         .where(application.id.in(ids).and(APPLICATION_NOT_REPLACED)).fetch();
-    return populateDependencies(appl, anonymizePersons);
+    return populateDependencies(appl);
   }
 
   @Transactional(readOnly = true)
   public List<Application> findByProject(int projectId) {
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(application.projectId.eq(projectId)).fetch();
-    return populateDependencies(applications, false);
+    return populateDependencies(applications);
   }
 
   @Transactional(readOnly = true)
@@ -153,7 +140,7 @@ public class ApplicationDao {
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(condition).fetch();
 
-    return populateDependencies(applications, false);
+    return populateDependencies(applications);
   }
 
   private BooleanExpression strictStartEndTimeCondition(LocationSearchCriteria lsc) {
@@ -198,7 +185,7 @@ public class ApplicationDao {
     int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     QueryResults<Application> queryResults = queryFactory.select(applicationBean).from(application)
         .orderBy(application.id.asc()).offset(offset).limit(count).fetchResults();
-    return new PageImpl<>(populateDependencies(queryResults.getResults(), false), pageRequest, queryResults.getTotal());
+    return new PageImpl<>(populateDependencies(queryResults.getResults()), pageRequest, queryResults.getTotal());
   }
 
   /**
@@ -338,7 +325,7 @@ public class ApplicationDao {
     insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
-    Application application = findByIds(Collections.singletonList(id), false).get(0);
+    Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
     return populateTags(application);
@@ -424,7 +411,7 @@ public class ApplicationDao {
     if (updated != 1) {
       throw new NoSuchEntityException("application.update.notFound", applicationId);
     }
-    return findByIds(Collections.singletonList(applicationId), false).get(0);
+    return findByIds(Collections.singletonList(applicationId)).get(0);
   }
 
   /**
@@ -447,7 +434,7 @@ public class ApplicationDao {
     if (updated != 1) {
       throw new NoSuchEntityException("application.update.notFound", applicationId);
     }
-    return findByIds(Collections.singletonList(applicationId), false).get(0);
+    return findByIds(Collections.singletonList(applicationId)).get(0);
   }
 
   /**
@@ -509,7 +496,7 @@ public class ApplicationDao {
     insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
-    Application application = findByIds(Collections.singletonList(id), false).get(0);
+    Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
     return populateTags(application);
@@ -580,15 +567,10 @@ public class ApplicationDao {
     }
   }
 
-  private List<Application> populateDependencies(List<Application> applications, boolean anonymizePersons) {
+  private List<Application> populateDependencies(List<Application> applications) {
     applications.forEach(a -> a.setDecisionDistributionList(distributionEntryDao.findByApplicationId(a.getId())));
     applications.forEach(a -> populateTags(a));
-    if (anonymizePersons) {
-      applications.forEach(a -> a.setCustomersWithContacts(
-          CustomerAnonymizer.anonymize(customerDao.findByApplicationWithContacts(a.getId()))));
-    } else {
-      applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
-    }
+    applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
     applications.forEach(a -> a.setKindsWithSpecifiers(findKindsAndSpecifiers(a.getId())));
     applications.forEach(a -> a.setLocations(findApplicationLocations(a.getId())));
     return applications;

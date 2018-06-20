@@ -2,8 +2,11 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ApplicationMapItemJson;
 import fi.hel.allu.servicecore.domain.FixedLocationJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.LocationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +79,20 @@ public class ApplicationJsonService {
     setAddress(json);
 
     return json;
+  }
+
+
+  public ApplicationMapItemJson getApplicationMapItemJson(Application model) {
+    return new ApplicationMapItemJson(
+        model.getId(),
+        model.getApplicationId(),
+        model.getName(),
+        model.getType(),
+        model.getStartTime(),
+        model.getEndTime(),
+        model.getProjectId() != null ? new ProjectJson(model.getProjectId()) : null,
+        LocationMapper.mapToLocationJsons(model.getLocations())
+     );
   }
 
   /**

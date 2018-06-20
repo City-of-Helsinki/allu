@@ -9,6 +9,14 @@ public class CustomerWithContactsES {
   private CustomerES customer;
   private List<ContactES> contacts;
 
+  public CustomerWithContactsES() {
+  }
+
+  public CustomerWithContactsES(CustomerES customer, List<ContactES> contacts) {
+    this.customer = customer;
+    this.contacts = contacts;
+  }
+
   public CustomerES getCustomer() {
     return customer;
   }

@@ -49,7 +49,7 @@ export class MapDataService {
       return this.http.post<BackendApplication[]>(
         APPLICATION_SEARCH_URL,
         JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query))).pipe(
-        map(applications => applications.map(app => ApplicationMapper.mapBackend(app))),
+        map(applications => applications.map(app => ApplicationMapper.mapCommon(app))),
         catchError(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')))
       );
     } else {
