@@ -60,6 +60,17 @@ public class MailComposerService {
   // Path to template files in resources:
   private static final String TEMPLATE_PATH = "/templates/";
 
+  private static final List<ApplicationType> subjectAddressTypes = Arrays.asList(
+      ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
+      ApplicationType.AREA_RENTAL,
+      ApplicationType.SHORT_TERM_RENTAL,
+      ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.EVENT);
+
+  private static final List<ApplicationType> subjectNameTypes = Arrays.asList(
+      ApplicationType.SHORT_TERM_RENTAL,
+      ApplicationType.EVENT);
+
   private static final Logger logger = LoggerFactory.getLogger(MailComposerService.class);
 
   private final AlluMailService alluMailService;
@@ -79,6 +90,7 @@ public class MailComposerService {
 
   public void sendDecision(ApplicationJson applicationJson, DecisionDetailsJson decisionDetailsJson) {
     String subject = String.format(subjectFor(applicationJson.getType()), applicationJson.getApplicationId());
+    subject += getApplicationNameForSubject(applicationJson);
     subject += getAddressForSubject(applicationJson);
     List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
         .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
@@ -216,11 +228,7 @@ public class MailComposerService {
   }
 
   private String getAddressForSubject(ApplicationJson application) {
-    if (Arrays.asList(
-        ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
-        ApplicationType.AREA_RENTAL,
-        ApplicationType.EXCAVATION_ANNOUNCEMENT,
-        ApplicationType.EVENT).contains(application.getType())) {
+    if (subjectAddressTypes.contains(application.getType())) {
       final String address = address(application);
       if (!StringUtils.isEmpty(address)) {
         return ", " + address;
@@ -235,10 +243,16 @@ public class MailComposerService {
       return null;
     }
     final LocationJson location = locations.get(0);
-    final PostalAddressJson address = location.getPostalAddress();
-    if (address == null) {
-      return null;
+    return location.getAddress();
+  }
+
+  private String getApplicationNameForSubject(ApplicationJson application) {
+    if (subjectNameTypes.contains(application.getType())) {
+      final String name = application.getName();
+      if (!StringUtils.isEmpty(name)) {
+        return ", " + name;
+      }
     }
-    return address.getStreetAddress();
+    return "";
   }
 }
