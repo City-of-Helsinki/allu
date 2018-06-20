@@ -13,7 +13,8 @@
         {{'common.button.moveTo' | translation | uppercase}}
       </button>
       <button mat-raised-button type="button" color="primary" [disabled]="noneSelected"
-              class="in-front" (click)="addToBasket()">
+              class="in-front" (click)="addToBasket()"
+              *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
         {{'applicationBasket.addTo' | translation | uppercase}}
       </button>
     </div>

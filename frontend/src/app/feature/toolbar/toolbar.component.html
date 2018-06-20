@@ -10,7 +10,7 @@
   <div fxFlex="auto">
     <navbar *ngIf="authenticated"></navbar>
   </div>
-  <div fxFlex="none" class="toolbar-section">
+  <div fxFlex="none" class="toolbar-section" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
     <button mat-icon-button [matMenuTriggerFor]="applicationBasket">
       <mat-icon>shopping_basket</mat-icon>
     </button>

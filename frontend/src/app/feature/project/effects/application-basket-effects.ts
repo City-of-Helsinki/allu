@@ -76,7 +76,7 @@ export class ApplicationBasketEffects {
   @Effect()
   loadInitial: Observable<Action> = defer(() => of(LocalStorageUtil.getItemArray<number>(BASKET))).pipe(
     combineLatest(this.store.select(fromAuth.getLoggedIn)),
-    filter(([ids, loggedIn]) => loggedIn),
+    filter(([ids, loggedIn]) => loggedIn && ids.length > 0),
     switchMap(([ids, loggedIn]) => this.loadApplications(ids))
   );
 
