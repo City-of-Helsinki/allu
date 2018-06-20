@@ -30,7 +30,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>${springframework.version}</version>
         </dependency>
         <!--  support for Java 8 Date & Time API types -->
         <dependency>

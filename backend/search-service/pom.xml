@@ -40,7 +40,6 @@
             <!--  support for Java 8 Date & Time API types -->
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.7.5</version>
         </dependency>
         <dependency>
             <!-- support for conditional processing of logback configuration file -->
