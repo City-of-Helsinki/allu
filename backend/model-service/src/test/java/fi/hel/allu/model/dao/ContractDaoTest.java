@@ -94,10 +94,11 @@ public class ContractDaoTest {
   }
 
   @Test
-  public void shouldReturnLatestInfo() {
+  public void shouldReturnLatestInfo() throws Exception {
     // If only responded contracts exists, should return latest
     contractDao.insertContractProposal(applicationId, DATA_1);
     contractDao.insertApprovedContract(applicationId, DATA_1);
+    Thread.sleep(10);
     contractDao.insertContractProposal(applicationId, DATA_1);
     contractDao.rejectContract(applicationId, "foobar");
     assertEquals(2, getContractCount());
@@ -109,9 +110,10 @@ public class ContractDaoTest {
   }
 
   @Test
-  public void shouldReturnLatestApprovedContract() {
+  public void shouldReturnLatestApprovedContract() throws Exception {
     contractDao.insertContractProposal(applicationId, DATA_1);
     contractDao.insertApprovedContract(applicationId, DATA_1);
+    Thread.sleep(10);
     contractDao.insertContractProposal(applicationId, DATA_2);
     contractDao.insertApprovedContract(applicationId, DATA_2);
     assertEquals(2, getContractCount());
