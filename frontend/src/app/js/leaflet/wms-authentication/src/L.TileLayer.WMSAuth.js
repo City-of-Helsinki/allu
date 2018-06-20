@@ -5,8 +5,8 @@ const request = require('superagent');
 L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
   token: undefined,
   timeoutOptions: {
-    response: 10000,  // Wait 10 seconds for the server to start sending,
-    deadline: 60000, // but allow 1 minute for the file to finish loading.
+    response: 2000,  // Wait max 2 seconds for the server to start sending,
+    deadline: 30000, // but allow 30 seconds for the file to finish loading.
   },
 
   initialize: function (url, options) {
