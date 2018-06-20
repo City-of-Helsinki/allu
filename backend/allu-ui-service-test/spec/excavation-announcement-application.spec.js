@@ -5,13 +5,13 @@ TestUtil.assertEnv();
 
 describe('Excavation announcement application', () => {
 
-  let applicationStartTime = TestUtil.getISODateString(-5);
-  let applicationEndTime = TestUtil.getISODateString(0);
-  let guaranteeEndTime = TestUtil.getISODateString(365*2);
+  let applicationStartTime = TestUtil.getStartDateString(-5);
+  let applicationEndTime = TestUtil.getEndDateString(0);
+  let guaranteeEndTime = TestUtil.getEndDateString(365*2);
   let customerStartTime = applicationStartTime;
   let customerEndTime = applicationEndTime;
   let customerWinterTimeOperation = null;
-  let customerWorkFinished = TestUtil.getISODateString(-1);
+  let customerWorkFinished = TestUtil.getEndDateString(-1);
 
   let applicantCustomersWithContactsCreated;
   let contractorCustomersWithContactsCreated;

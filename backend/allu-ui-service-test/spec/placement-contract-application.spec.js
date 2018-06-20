@@ -5,8 +5,8 @@ TestUtil.assertEnv();
 
 describe('Placement contract application', () => {
 
-  let applicationStartTime = TestUtil.getISODateString(-100);
-  let applicationEndTime = TestUtil.getISODateString(100);
+  let applicationStartTime = TestUtil.getStartDateString(-100);
+  let applicationEndTime = TestUtil.getEndDateString(100);
 
   let applicantWithContactsCreated;
   let representativeCustomersWithContactsCreated;

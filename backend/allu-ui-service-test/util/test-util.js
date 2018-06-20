@@ -7,7 +7,8 @@ module.exports.checkSearchService = checkSearchService;
 module.exports.addAuthorization = addAuthorization;
 module.exports.getPostOptions = getPostOptions;
 module.exports.tryRetryPromise = tryRetryPromise;
-module.exports.getISODateString = getISODateString;
+module.exports.getStartDateString = getStartDateString;
+module.exports.getEndDateString = getEndDateString;
 
 module.exports.assertEnv = function() {
   // If tested server is not available for some reason, tests wait awhile. To support waiting, Jasmine async timeout has to be increased
@@ -135,13 +136,29 @@ function request(options, token) {
   return rp(options);
 }
 
-
 /**
- * Returns ISO date string (such as 2017-01-01T22:00:00Z) of current date adjusted with the given day offset.
- *
+ * Returns ISO date string (such as 2017-01-01T22:00:00Z) of current date adjusted with the given day offset
+ * at the begin of the day.
  * @param dayOffset   Day offset where positive is future and negative is past.
  */
-function getISODateString(dayOffset) {
+function getStartDateString(dayOffset) {
+  let date = getDate(dayOffset);
+  date.setHours(0, 0, 0, 0);
+  return date.toISOString()
+}
+
+/**
+ * Returns ISO date string (such as 2017-01-01T22:00:00Z) of current date adjusted with the given day offset
+ * at the end of the day.
+ * @param dayOffset   Day offset where positive is future and negative is past.
+ */
+function getEndDateString(dayOffset) {
+  let date = getDate(dayOffset);
+  date.setHours(23, 59, 59, 999);
+  return date.toISOString()
+}
+
+function getDate(dayOffset) {
   let milliOffset = dayOffset * 24 * 60 * 60 * 1000;
-  return new Date(Date.now() + milliOffset).toISOString();
+  return new Date(Date.now() + milliOffset);
 }

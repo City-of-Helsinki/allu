@@ -5,8 +5,8 @@ TestUtil.assertEnv();
 
 describe('Short term rental application', () => {
 
-  let applicationStartTime = TestUtil.getISODateString(-10);
-  let applicationEndTime = TestUtil.getISODateString(10);
+  let applicationStartTime = TestUtil.getStartDateString(-10);
+  let applicationEndTime = TestUtil.getEndDateString(10);
 
   let applicantCustomersWithContactsCreated;
 

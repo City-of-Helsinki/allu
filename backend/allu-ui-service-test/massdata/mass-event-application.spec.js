@@ -199,8 +199,8 @@ function repeatRequest(times, optionsFactory) {
 }
 
 function setApplicationDates(eventApplication, offsetBase) {
-  eventApplication.locations[0].startTime = TestUtil.getISODateString(offsetBase);
-  eventApplication.locations[0].endTime = TestUtil.getISODateString(offsetBase + 1);
+  eventApplication.locations[0].startTime = TestUtil.getStartDateString(offsetBase);
+  eventApplication.locations[0].endTime = TestUtil.getEndDateString(offsetBase + 1);
   eventApplication.extension.eventStartTime = eventApplication.locations[0].startTime;
   eventApplication.extension.eventEndTime = eventApplication.locations[0].endTime;
   eventApplication.extension.structureStartTime = eventApplication.locations[0].startTime;

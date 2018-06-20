@@ -5,15 +5,15 @@ TestUtil.assertEnv();
 
 describe('Event application', () => {
 
-  let application1StartTime = TestUtil.getISODateString(-15);
-  let application1EndTime = TestUtil.getISODateString(1);
-  let event1StartTime = TestUtil.getISODateString(-13);
-  let event1EndTime = TestUtil.getISODateString(0);
+  let application1StartTime = TestUtil.getStartDateString(-15);
+  let application1EndTime = TestUtil.getEndDateString(1);
+  let event1StartTime = TestUtil.getStartDateString(-13);
+  let event1EndTime = TestUtil.getEndDateString(0);
 
-  let application2StartTime = TestUtil.getISODateString(-30);
-  let application2EndTime = TestUtil.getISODateString(-16);
-  let event2StartTime = TestUtil.getISODateString(-29);
-  let event2EndTime = TestUtil.getISODateString(-17);
+  let application2StartTime = TestUtil.getStartDateString(-30);
+  let application2EndTime = TestUtil.getEndDateString(-16);
+  let event2StartTime = TestUtil.getStartDateString(-29);
+  let event2EndTime = TestUtil.getEndDateString(-17);
 
   let herneCustomersWithContactsCreated;
   let tervaCustomersWithContactsCreated;

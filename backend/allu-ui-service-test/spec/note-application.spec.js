@@ -5,8 +5,8 @@ TestUtil.assertEnv();
 
 describe('Note application', () => {
 
-  let applicationStartTime = TestUtil.getISODateString(-1);
-  let applicationEndTime = TestUtil.getISODateString(30);
+  let applicationStartTime = TestUtil.getStartDateString(-1);
+  let applicationEndTime = TestUtil.getEndDateString(30);
 
   let nuupuryCustomersWithContactsCreated;
 

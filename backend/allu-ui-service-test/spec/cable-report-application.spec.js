@@ -5,8 +5,8 @@ TestUtil.assertEnv();
 
 describe('Cable report application', () => {
 
-  let applicationStartTime = TestUtil.getISODateString(0);
-  let applicationEndTime = TestUtil.getISODateString(30);
+  let applicationStartTime = TestUtil.getStartDateString(0);
+  let applicationEndTime = TestUtil.getEndDateString(30);
 
   let applicantCustomersWithContactsCreated;
   let propertyDeveloperCustomersWithContactsCreated;

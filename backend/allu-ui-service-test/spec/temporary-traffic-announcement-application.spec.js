@@ -5,8 +5,8 @@ TestUtil.assertEnv();
 
 describe('Temporary traffic announcement application', () => {
 
-  let applicationStartTime = TestUtil.getISODateString(13);
-  let applicationEndTime = TestUtil.getISODateString(33);
+  let applicationStartTime = TestUtil.getStartDateString(13);
+  let applicationEndTime = TestUtil.getEndDateString(33);
 
   let lasseCustomersWithContactsCreated;
   let liikenneCustomersWithContactsCreated;

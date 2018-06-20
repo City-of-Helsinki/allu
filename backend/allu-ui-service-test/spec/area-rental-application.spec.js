@@ -5,11 +5,11 @@ TestUtil.assertEnv();
 
 describe('Area rental application', () => {
 
-  let area1StartTime = TestUtil.getISODateString(10);
-  let area1EndTime = TestUtil.getISODateString(20);
+  let area1StartTime = TestUtil.getStartDateString(10);
+  let area1EndTime = TestUtil.getEndDateString(20);
 
-  let area2StartTime = TestUtil.getISODateString(15);
-  let area2EndTime = TestUtil.getISODateString(25);
+  let area2StartTime = TestUtil.getStartDateString(15);
+  let area2EndTime = TestUtil.getEndDateString(25);
 
   let reimaCustomersWithContactsCreated;
   let bulvaaniCustomersWithContactsCreated;
