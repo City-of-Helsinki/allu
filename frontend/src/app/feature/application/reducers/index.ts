@@ -10,6 +10,7 @@ import {ApplicationTagType} from '../../../model/application/tag/application-tag
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import * as fromHistory from '../../history/reducers/history-reducer';
 import * as fromApplicationHistory from '../reducers/application-history-reducer';
+import * as fromInformationRequest from '../../information-request/reducers/information-request-reducer';
 import {ClientApplicationData} from '../../../model/application/client-application-data';
 
 export interface ApplicationState {
@@ -17,6 +18,7 @@ export interface ApplicationState {
   comments: fromComments.State;
   tags: fromTags.State;
   history: fromHistory.State;
+  informationRequest: fromInformationRequest.State;
 }
 
 export interface State extends fromRoot.State {
@@ -27,7 +29,8 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   application: fromApplication.reducer,
   comments: fromApplicationComments.reducer,
   tags: fromTags.reducer,
-  history: fromApplicationHistory.reducer
+  history: fromApplicationHistory.reducer,
+  informationRequest: fromInformationRequest.reducer
 };
 
 export const getApplicationState = createFeatureSelector<ApplicationState>('application');
@@ -133,4 +136,20 @@ export const getHistory = createSelector(
 export const getFieldsVisible = createSelector(
   getHistoryState,
   fromHistory.getFieldsVisible
+);
+
+// Information request selectors
+export const getInformationRequestState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.informationRequest
+);
+
+export const getInformationRequestResponse = createSelector(
+  getInformationRequestState,
+  fromInformationRequest.getResponse
+);
+
+export const getInformationRequestResponseLoading = createSelector(
+  getInformationRequestState,
+  fromInformationRequest.getResponseLoading
 );

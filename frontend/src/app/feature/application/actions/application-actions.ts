@@ -10,7 +10,7 @@ export enum ApplicationActionType {
   LoadSuccess = '[Application] Load application success',
   LoadFailed = '[Application] Load application failed',
   SetType = '[Application] Set type',
-  SetKindsWithSpecifiers = '[Application] Set kinds with specifiers',
+  SetKindsWithSpecifiers = '[Application] Set kinds with specifiers'
 }
 
 export class Load implements Action {

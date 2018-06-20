@@ -49,6 +49,7 @@ import {InvoicingEffects} from './effects/invoicing-effects';
 import {HistoryModule} from '../history/history.module';
 import {ApplicationHistoryComponent} from './history/application-history.component';
 import {ApplicationEffects} from './effects/application-effects';
+import {InformationRequestModule} from '../information-request/information-request.module';
 
 @NgModule({
   imports: [
@@ -79,7 +80,8 @@ import {ApplicationEffects} from './effects/application-effects';
     DistributionModule,
     InvoicingModule,
     CustomerRegistryModule,
-    SupervisionModule
+    SupervisionModule,
+    InformationRequestModule
   ],
   declarations: [
     ApplicationComponent,

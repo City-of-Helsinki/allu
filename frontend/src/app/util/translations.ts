@@ -438,6 +438,11 @@ export const translations = {
     selectTerm: 'Valitse ehto',
     applicationTerms: 'Hakemuksen ehdot'
   },
+  informationRequestResponse: {
+    error: {
+      fetch: 'Täydennyspyynnön hakeminen epäonnistui'
+    }
+  },
   project: {
     title: 'Hanke',
     activeApplications: 'Aktiivista hakemusta',
