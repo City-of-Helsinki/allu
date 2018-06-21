@@ -1,5 +1,6 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
-<application-type></application-type>
+<application-type
+  [typeChangeDisabled]="application.id !== undefined"></application-type>
 
 <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="kindsSelected">
   <div class="row">
