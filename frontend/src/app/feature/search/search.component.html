@@ -89,9 +89,14 @@
             <mat-datepicker #endTimePicker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="col m12 s12">
+        <div class="col m12 s12" fxFlex="25">
           <button (click)="search()" mat-raised-button type="button" color="primary">
             {{'common.button.search' | translation | uppercase}}
+          </button>
+          <button mat-raised-button type="button" color="primary" [disabled]="noneSelected"
+                  class="in-front" (click)="addToBasket()"
+                  *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+            {{'applicationBasket.addTo' | translation | uppercase}}
           </button>
         </div>
       </div>
@@ -105,6 +110,17 @@
         <mat-spinner></mat-spinner>
       </div>
       <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+        <ng-container matColumnDef="selected">
+          <mat-header-cell *matHeaderCellDef>
+            <div>
+              <mat-checkbox [checked]="allSelected" (change)="checkAll($event)"></mat-checkbox>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [checked]="selected(row.id)" (change)="checkSingle($event, row.id)"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
         <ng-container matColumnDef="owner.realName">
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</mat-header-cell>
           <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
