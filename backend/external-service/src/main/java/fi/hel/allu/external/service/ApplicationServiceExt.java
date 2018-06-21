@@ -127,6 +127,7 @@ public class ApplicationServiceExt {
     ApplicationJson applicationJson = mapper.mapExtApplication(response.getApplicationData(), getExternalUserId());
     ExternalApplication extApp = createExternalApplication(applicationId, requestId, applicationJson);
     informationRequestService.addResponse(requestId, extApp, response.getUpdatedFields());
+    applicationServiceComposer.changeStatus(applicationId, StatusType.INFORMATION_RECEIVED);
   }
 
   private void validateInformationRequestOpen(Integer requestId) {
