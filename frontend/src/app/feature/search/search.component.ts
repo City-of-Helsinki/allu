@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/internal/operators';
 
 import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
@@ -8,8 +8,9 @@ import {ApplicationStatus, searchable} from '../../model/application/application
 import {ApplicationWorkItemStore} from '../workqueue/application-work-item-store';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
-import {UserHub} from '../../service/user/user-hub';
+import {UserService} from '../../service/user/user-service';
 import {User} from '../../model/user/user';
+import {RoleType} from '../../model/user/role-type';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CityDistrict} from '../../model/common/city-district';
 import {ApplicationService} from '../../service/application/application.service';
@@ -20,6 +21,10 @@ import {ArrayUtil} from '../../util/array-util';
 import {AddMultiple} from '../project/actions/application-basket-actions';
 import * as fromRoot from '../allu/reducers';
 import {Store} from '@ngrx/store';
+
+  const ownerRoles = [RoleType.ROLE_CREATE_APPLICATION,
+                      RoleType.ROLE_PROCESS_APPLICATION,
+                      RoleType.ROLE_DECISION];
 
 @Component({
   selector: 'search',
@@ -52,7 +57,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   constructor(private applicationService: ApplicationService,
               private itemStore: ApplicationWorkItemStore,
-              private userHub: UserHub,
+              private userService: UserService,
               private store: Store<fromRoot.State>,
               private fb: FormBuilder,
               private notification: NotificationService) {
@@ -73,7 +78,8 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.notification, this.paginator, this.sort);
-    this.owners = this.userHub.getActiveUsers().pipe(
+    this.owners = this.userService.getActiveUsers().pipe(
+      map(users => users.filter(user => user.roles.some(r => ownerRoles.includes(RoleType[r])))),
       map(users => users.sort(ArrayUtil.naturalSort((user: User) => user.realName))));
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
