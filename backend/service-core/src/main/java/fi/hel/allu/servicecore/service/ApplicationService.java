@@ -186,6 +186,7 @@ public class ApplicationService {
    * @return Updated application
    */
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
+    applicationJson.setId(applicationId);
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
