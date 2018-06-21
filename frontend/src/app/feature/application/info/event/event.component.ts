@@ -1,18 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder} from '@angular/forms';
 import {Application} from '../../../../model/application/application';
 import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {Event} from '../../../../model/application/event/event';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {EventNature} from '../../../../model/application/event/event-nature';
 import {TimeUtil} from '../../../../util/time.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ProjectService} from '../../../../service/project/project.service';
-import {NotificationService} from '../../../../service/notification/notification.service';
 
 
 @Component({
@@ -22,19 +17,6 @@ import {NotificationService} from '../../../../service/notification/notification
   styleUrls: []
 })
 export class EventComponent extends ApplicationInfoBaseComponent implements OnInit {
-
-  constructor(fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationStore: ApplicationStore,
-              notification: NotificationService,
-              router: Router,
-              projectService: ProjectService) {
-    super(fb, route, applicationStore, notification, router, projectService);
-  }
-
-  ngOnInit(): any {
-    super.ngOnInit();
-  }
 
   get maxEventStartTime(): Date {
     return this.applicationForm.get('eventTimes.endTime').value;

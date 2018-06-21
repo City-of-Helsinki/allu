@@ -1,4 +1,4 @@
-import {AfterContentInit, OnDestroy, OnInit, Output, EventEmitter} from '@angular/core';
+import {AfterContentInit, OnDestroy, OnInit, Output, EventEmitter, Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
@@ -17,9 +17,17 @@ import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {FormUtil} from '../../../util/form.util';
 import {ProjectService} from '../../../service/project/project.service';
 import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {ApplicationService} from '../../../service/application/application.service';
 
-
-export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
+/**
+ * This component should be used only as base class for other more specific application components.
+ * Component would be abstract but Angular does not allow this.
+ */
+@Component({
+  selector: 'application-info-base',
+  template: ''
+})
+export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
 
   @Output() formDirty: EventEmitter<boolean> = new EventEmitter();
 
@@ -41,6 +49,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   constructor(protected fb: FormBuilder,
               protected route: ActivatedRoute,
               protected applicationStore: ApplicationStore,
+              protected applicationService: ApplicationService,
               protected notification: NotificationService,
               private router: Router,
               private projectService: ProjectService) {}
@@ -99,7 +108,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   /**
    * Initializes application form
    */
-  protected abstract initForm();
+  protected initForm() {}
 
   /**
    * Handles application changes

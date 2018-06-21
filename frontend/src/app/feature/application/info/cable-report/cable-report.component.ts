@@ -1,17 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, Validators} from '@angular/forms';
+import {Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {CableReportForm, OrdererIdForm} from './cable-report.form';
-import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {ApplicationStatus} from '../../../../model/application/application-status';
 import {TimeUtil} from '../../../../util/time.util';
-import {ProjectService} from '../../../../service/project/project.service';
-import {NotificationService} from '../../../../service/notification/notification.service';
 
 @Component({
   selector: 'cable-report',
@@ -22,22 +18,6 @@ import {NotificationService} from '../../../../service/notification/notification
 export class CableReportComponent extends ApplicationInfoBaseComponent implements OnInit {
 
   showCableInfo = false;
-
-  constructor(
-    fb: FormBuilder,
-    route: ActivatedRoute,
-    applicationStore: ApplicationStore,
-    notification: NotificationService,
-    router: Router,
-    projectService: ProjectService) {
-    super(fb, route, applicationStore, notification, router, projectService);
-  }
-
-  ngOnInit(): any {
-    super.ngOnInit();
-
-  }
-
 
   protected initForm() {
     this.applicationForm = this.fb.group({

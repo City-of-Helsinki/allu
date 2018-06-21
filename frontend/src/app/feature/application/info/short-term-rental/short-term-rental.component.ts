@@ -1,16 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ShortTermRentalForm} from './short-term-rental.form';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
-import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {TimeUtil} from '../../../../util/time.util';
-import {ProjectService} from '../../../../service/project/project.service';
-import {NotificationService} from '../../../../service/notification/notification.service';
 import {takeUntil} from 'rxjs/internal/operators';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
@@ -28,20 +24,6 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   commercialLabel: string;
 
   private commercialCtrl: FormControl;
-
-  constructor(
-    fb: FormBuilder,
-    route: ActivatedRoute,
-    applicationStore: ApplicationStore,
-    notification: NotificationService,
-    router: Router,
-    projectService: ProjectService) {
-    super(fb, route, applicationStore, notification, router, projectService);
-  }
-
-  ngOnInit(): any {
-    super.ngOnInit();
-  }
 
   protected initForm() {
     const draft = this.applicationStore.snapshot.draft;

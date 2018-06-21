@@ -1,16 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, Validators} from '@angular/forms';
+import {Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicationStore} from '../../../../service/application/application-store';
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
 import {PlacementContractForm} from './placement-contract.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {TimeUtil} from '../../../../util/time.util';
-import {ProjectService} from '../../../../service/project/project.service';
-import {NotificationService} from '../../../../service/notification/notification.service';
 
 
 @Component({
@@ -20,20 +16,6 @@ import {NotificationService} from '../../../../service/notification/notification
   styleUrls: []
 })
 export class PlacementContractComponent extends ApplicationInfoBaseComponent implements OnInit {
-
-  constructor(
-    fb: FormBuilder,
-    route: ActivatedRoute,
-    applicationStore: ApplicationStore,
-    notification: NotificationService,
-    router: Router,
-    projectService: ProjectService) {
-    super(fb, route, applicationStore, notification, router, projectService);
-  }
-
-  ngOnInit(): any {
-    super.ngOnInit();
-  }
 
   protected initForm() {
     this.applicationForm = this.fb.group({

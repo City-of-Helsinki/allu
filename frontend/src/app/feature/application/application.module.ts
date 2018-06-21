@@ -50,6 +50,7 @@ import {HistoryModule} from '../history/history.module';
 import {ApplicationHistoryComponent} from './history/application-history.component';
 import {ApplicationEffects} from './effects/application-effects';
 import {InformationRequestModule} from '../information-request/information-request.module';
+import {ApplicationInfoBaseComponent} from './info/application-info-base.component';
 
 @NgModule({
   imports: [
@@ -85,6 +86,7 @@ import {InformationRequestModule} from '../information-request/information-reque
   ],
   declarations: [
     ApplicationComponent,
+    ApplicationInfoBaseComponent,
     ApplicationInfoComponent,
     EventComponent,
     ShortTermRentalComponent,

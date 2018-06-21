@@ -1,15 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, Validators} from '@angular/forms';
+import {Validators} from '@angular/forms';
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicationStore} from '../../../../service/application/application-store';
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {TimeUtil} from '../../../../util/time.util';
-import {ProjectService} from '../../../../service/project/project.service';
-import {NotificationService} from '../../../../service/notification/notification.service';
 import {ApplicationStatus} from '../../../../model/application/application-status';
 
 @Component({
@@ -21,20 +17,6 @@ import {ApplicationStatus} from '../../../../model/application/application-statu
 export class TrafficArrangementComponent extends ApplicationInfoBaseComponent implements OnInit {
 
   showImpedimentType = false;
-
-  constructor(
-    fb: FormBuilder,
-    route: ActivatedRoute,
-    applicationStore: ApplicationStore,
-    notification: NotificationService,
-    router: Router,
-    projectService: ProjectService) {
-    super(fb, route, applicationStore, notification, router, projectService);
-  }
-
-  ngOnInit(): any {
-    super.ngOnInit();
-  }
 
   protected initForm() {
     this.applicationForm = this.fb.group({

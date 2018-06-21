@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
@@ -22,20 +22,6 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
 
   private validityTimesControl: FormControl;
   private recurringEndYearSubscription: Subscription;
-
-  constructor(
-    fb: FormBuilder,
-    route: ActivatedRoute,
-    applicationStore: ApplicationStore,
-    notification: NotificationService,
-    router: Router,
-    projectService: ProjectService) {
-    super(fb, route, applicationStore, notification, router, projectService);
-  }
-
-  ngOnInit(): any {
-    super.ngOnInit();
-  }
 
   ngOnDestroy(): void {
     this.recurringEndYearSubscription.unsubscribe();

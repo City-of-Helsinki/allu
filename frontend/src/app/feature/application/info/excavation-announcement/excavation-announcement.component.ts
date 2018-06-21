@@ -35,20 +35,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   private cableReportIdentifierCtrl: FormControl;
 
-  constructor(
-    private applicationService: ApplicationService,
-    fb: FormBuilder,
-    route: ActivatedRoute,
-    applicationStore: ApplicationStore,
-    notification: NotificationService,
-    router: Router,
-    projectService: ProjectService) {
-    super(fb, route, applicationStore, notification, router, projectService);
-  }
-
   ngOnInit(): any {
-    super.ngOnInit();
-
     this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
