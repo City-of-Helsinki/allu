@@ -1,29 +1,7 @@
 package fi.hel.allu.model.dao;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QCityDistrict.cityDistrict;
-import static fi.hel.allu.QFixedLocation.fixedLocation;
-import static fi.hel.allu.QLocation.location;
-import static fi.hel.allu.QLocationArea.locationArea;
-import static fi.hel.allu.QLocationFlids.locationFlids;
-import static fi.hel.allu.QLocationGeometry.locationGeometry;
-import static fi.hel.allu.QPaymentClass.paymentClass1;
-import static fi.hel.allu.QPostalAddress.postalAddress;
-import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
-
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.geolatte.geom.Geometry;
@@ -36,11 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -54,13 +28,22 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.coordinates.CoordinateTransformation;
-import fi.hel.allu.model.domain.CityDistrict;
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.FixedLocationArea;
-import fi.hel.allu.model.domain.FixedLocationSection;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PostalAddress;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QCityDistrict.cityDistrict;
+import static fi.hel.allu.QFixedLocation.fixedLocation;
+import static fi.hel.allu.QLocation.location;
+import static fi.hel.allu.QLocationArea.locationArea;
+import static fi.hel.allu.QLocationFlids.locationFlids;
+import static fi.hel.allu.QLocationGeometry.locationGeometry;
+import static fi.hel.allu.QPaymentClass.paymentClass1;
+import static fi.hel.allu.QPostalAddress.postalAddress;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class LocationDao {
@@ -207,54 +190,25 @@ public class LocationDao {
    */
   @Transactional
   public List<Location> updateApplicationLocations(int applicationId, List<Location> locations) {
-    // Make sure all new locations have an id (map null to -1, since it's not a
-    // valid Database ID).
-    locations.stream().filter(l -> l.getId() == null).forEach(l -> l.setId(-1));
-    locations.sort((l1, l2) -> l1.getId().compareTo(l2.getId()));
     // Read existing location IDs
     List<Integer> oldLocationIds = queryFactory.select(location.id).from(location)
-        .where(location.applicationId.eq(applicationId)).orderBy(location.id.asc()).fetch();
+        .where(location.applicationId.eq(applicationId)).fetch();
 
-    // walk through the sorted lists and compare IDs.
-    Iterator<Integer> oldIter = oldLocationIds.iterator();
-    Iterator<Location> newIter = locations.iterator();
-    while (oldIter.hasNext() && newIter.hasNext()) {
-      Integer oldId = oldIter.next();
-      Location newLocation = newIter.next();
+    Set<Location> locationsToUpdate = locations.stream().filter(l -> isExistingLocation(l, oldLocationIds)).collect(Collectors.toSet());
+    Set<Integer> locationIdsToUpdate = locationsToUpdate.stream().map(Location::getId).collect(Collectors.toSet());
+    Set<Location> locationsToAdd = locations.stream().filter(l -> !locationIdsToUpdate.contains(l.getId())).collect(Collectors.toSet());
+    Set<Integer> locationIdsToDelete = oldLocationIds.stream().filter(i -> !locationIdsToUpdate.contains(i)).collect(Collectors.toSet());
 
-      while (!oldId.equals(newLocation.getId())) {
-        if (oldId < newLocation.getId()) {
-          // Not in new list, remove
-          deleteById(oldId);
-          if (!oldIter.hasNext())
-            break;
-          oldId = oldIter.next();
-        } else {
-          // ID not in old list, add
-          insert(newLocation);
-          if (!newIter.hasNext())
-            break;
-          newLocation = newIter.next();
-        }
-      }
-      if (oldId.equals(newLocation.getId())) {
-        // ID in both lists, update
-        update(newLocation);
-      }
-    }
-    // Handle possible tails
-    while (oldIter.hasNext()) {
-      // remove
-      Integer oldId = oldIter.next();
-      deleteById(oldId);
-    }
-    while (newIter.hasNext()) {
-      // add
-      Location newLocation = newIter.next();
-      insert(newLocation);
-    }
+    locationIdsToDelete.forEach(i -> deleteById(i));
+    locationsToUpdate.forEach(l -> update(l));
+    locationsToAdd.forEach(l -> insert(l));
+
     updateApplicationDate(applicationId);
     return findByApplication(applicationId);
+  }
+
+  public boolean isExistingLocation(Location l, List<Integer> oldLocationIds) {
+    return l.getId() != null && oldLocationIds.contains(l.getId());
   }
 
   /**
