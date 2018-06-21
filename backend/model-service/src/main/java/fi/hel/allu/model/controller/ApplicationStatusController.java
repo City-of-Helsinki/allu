@@ -34,6 +34,21 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.PENDING_CLIENT, null), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/status/waiting_information", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToWaitingInformation(@PathVariable int id) {
+    return ResponseEntity.ok(applicationStatusService.changeApplicationStatus(id, StatusType.WAITING_INFORMATION, null));
+  }
+
+  @RequestMapping(value = "/{id}/status/information_received", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToInformationReceived(@PathVariable int id) {
+    return ResponseEntity.ok(applicationStatusService.changeApplicationStatus(id, StatusType.INFORMATION_RECEIVED, null));
+  }
+
+
+  @RequestMapping(value = "/{id}/status/waiting_contract_approval", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToWaitingContract(@PathVariable int id) {
+    return ResponseEntity.ok(applicationStatusService.changeApplicationStatus(id, StatusType.WAITING_CONTRACT_APPROVAL, null));
+  }
 
   @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
   public ResponseEntity<Application> changeStatusToHandling(@PathVariable int id) {

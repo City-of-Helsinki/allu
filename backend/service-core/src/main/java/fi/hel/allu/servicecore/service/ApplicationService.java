@@ -28,14 +28,6 @@ import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 @Service
 public class ApplicationService {
 
-  private static final Set<StatusType> INVOICE_RECIPIENT_CHANGE_ALLOWED_STATUSES = new HashSet<StatusType>(){{
-    add(StatusType.PRE_RESERVED);
-    add(StatusType.PENDING);
-    add(StatusType.HANDLING);
-    add(StatusType.RETURNED_TO_PREPARATION);
-    add(StatusType.DECISIONMAKING);
-  }};
-
   private ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final ApplicationMapper applicationMapper;
@@ -350,7 +342,7 @@ public class ApplicationService {
   }
 
   private boolean invoiceRecipientChangeAllowedByStatus(Application application) {
-    return INVOICE_RECIPIENT_CHANGE_ALLOWED_STATUSES.contains(application.getStatus());
+    return application.getStatus().isBeforeDecision();
   }
 
   private boolean isInDecisionState(Application application) {

@@ -1,8 +1,12 @@
 export enum ApplicationStatus {
+  PENDING_CLIENT,
   PRE_RESERVED,
   PENDING,
+  WAITING_INFORMATION,
+  INFORMATION_RECEIVED,
   HANDLING,
   RETURNED_TO_PREPARATION,
+  WAITING_CONTRACT_APPROVAL,
   DECISIONMAKING,
   DECISION,
   REJECTED,
@@ -21,10 +25,14 @@ export function inHandling(status: ApplicationStatus): boolean {
 }
 
 export const searchable = [
+  ApplicationStatus.PENDING_CLIENT,
   ApplicationStatus.PRE_RESERVED,
   ApplicationStatus.PENDING,
+  ApplicationStatus.WAITING_INFORMATION,
+  ApplicationStatus.INFORMATION_RECEIVED,
   ApplicationStatus.HANDLING,
   ApplicationStatus.RETURNED_TO_PREPARATION,
+  ApplicationStatus.WAITING_CONTRACT_APPROVAL,
   ApplicationStatus.DECISIONMAKING,
   ApplicationStatus.DECISION,
   ApplicationStatus.REJECTED,
@@ -36,8 +44,11 @@ export const searchable = [
 export const workqueue_searchable = [
   ApplicationStatus.PRE_RESERVED,
   ApplicationStatus.PENDING,
+  ApplicationStatus.WAITING_INFORMATION,
+  ApplicationStatus.INFORMATION_RECEIVED,
   ApplicationStatus.HANDLING,
   ApplicationStatus.RETURNED_TO_PREPARATION,
+  ApplicationStatus.WAITING_CONTRACT_APPROVAL,
   ApplicationStatus.DECISIONMAKING,
   ApplicationStatus.DECISION,
   ApplicationStatus.REJECTED,

@@ -48,6 +48,18 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.PENDING));
   }
 
+  @RequestMapping(value = "/{id}/status/waiting_information", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> changeStatusToWaitingInformation(@PathVariable int id) {
+    return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.WAITING_INFORMATION));
+  }
+
+  @RequestMapping(value = "/{id}/status/waiting_contract_approval", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> changeStatusToWaitingContract(@PathVariable int id) {
+    return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.WAITING_CONTRACT_APPROVAL));
+  }
+
   @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToHandling(@PathVariable int id) {
