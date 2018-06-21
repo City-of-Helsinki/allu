@@ -95,7 +95,7 @@ export class CustomerMapper {
     );
   }
   public static mapSearchResultsWithContacts(customersWithContacts: SearchResultCustomersWithContacts): Array<CustomerWithContacts> {
-    return customersWithContacts ? [this.mapSearchResultApplicantWithContacts(customersWithContacts.applicant)] : [];
+    return customersWithContacts.applicant ? [this.mapSearchResultApplicantWithContacts(customersWithContacts.applicant)] : [];
   }
 
   public static mapBackendCustomersWithContacts(customersWithContacts: Array<BackendCustomerWithContacts>): Array<CustomerWithContacts> {
