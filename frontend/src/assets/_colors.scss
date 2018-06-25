@@ -5,6 +5,7 @@
 $black-87-opacity: rgba(black, 0.87);
 $black-50-opacity: rgba(black, 0.50);
 $black-38-opacity: rgba(black, 0.38);
+$black-28-opacity: rgba(black, 0.28);
 $white-87-opacity: rgba(white, 0.87);
 
 $allu-blue: (
@@ -71,6 +72,15 @@ $allu-orange: (
     A400: $black-87-opacity,
     A700: black,
   )
+);
+
+$allu-success: (
+  200: #b8e986,
+  500: #57be3c
+);
+
+$allu-basic: (
+  500: #9b9b9b
 );
 
 $allu-primary: mat-palette($allu-blue);

@@ -1,6 +1,5 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {Application} from '../../../model/application/application';
-import {Some} from '../../../util/option';
 import {NumberUtil} from '../../../util/number.util';
 import {ApplicationIdentifier} from '../../../model/application/application-identifier';
 import {ApplicationService} from '../../../service/application/application.service';
@@ -9,6 +8,14 @@ import {Router} from '@angular/router';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {Observable, of} from 'rxjs/index';
 import {catchError, map} from 'rxjs/internal/operators';
+
+export type ProgressColor =
+  | 'pending'
+  | 'decision'
+  | 'finished'
+  | 'rejected'
+  | 'cancelled'
+  | 'history';
 
 @Component({
   selector: 'progressbar',
@@ -22,6 +29,7 @@ import {catchError, map} from 'rxjs/internal/operators';
 export class ProgressbarComponent implements OnInit {
   @Input() application: Application;
   progress: number;
+  color: ProgressColor;
   replacements$: Observable<ApplicationIdentifier[]>;
   hasReplacements$: Observable<boolean>;
   existingApplication: boolean;
@@ -33,6 +41,7 @@ export class ProgressbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.progress = this.calculateProgress(this.application.statusEnum);
+    this.color = this.calculateColor(this.application.statusEnum);
     this.existingApplication = NumberUtil.isDefined(this.application.id);
     this.replacements$ = this.existingApplication
       ? this.service.getReplacementHistory(this.application.id)
@@ -78,6 +87,33 @@ export class ProgressbarComponent implements OnInit {
       }
       default:
         return  0;
+    }
+  }
+
+  private calculateColor(status: ApplicationStatus): ProgressColor {
+    switch (status) {
+      case ApplicationStatus.DECISION: {
+        return 'decision';
+      }
+
+      case ApplicationStatus.REJECTED: {
+        return 'rejected';
+      }
+
+      case ApplicationStatus.CANCELLED: {
+        return 'cancelled';
+      }
+
+      case ApplicationStatus.FINISHED: {
+        return 'finished';
+      }
+
+      case ApplicationStatus.REPLACED:
+      case ApplicationStatus.ARCHIVED: {
+        return 'history';
+      }
+      default:
+        return 'pending';
     }
   }
 }

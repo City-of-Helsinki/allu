@@ -28,7 +28,7 @@
     </div>
   </div>
   <div fxFlex="0 1 25%" fxFlexOffset="25%">
-    <div class="progress-bar">
+    <div class="progress-bar-container">
       <div>
         <ng-container *ngIf="application.status===undefined; else statusName">
           {{'application.newApplication' | translation | uppercase}}
@@ -37,7 +37,9 @@
           {{['application.status', application.status] | translation | uppercase}}
         </ng-template>
       </div>
-      <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
+      <div class="progress-bar" [ngClass]="color">
+        <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+      </div>
     </div>
   </div>
 </mat-toolbar>

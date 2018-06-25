@@ -13,11 +13,12 @@
   margin-left: 4px;
 }
 
-.progress-bar {
+.progress-bar-container {
   font-size: 16px;
   max-width: 200px;
 }
 
 .progress-bar .mat-progress-bar {
   height: 12px;
+  border-radius: 2px;
 }

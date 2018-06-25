@@ -45,7 +45,7 @@
 @include oval-theme($allu-theme);
 @include comments-theme($allu-theme);
 @include history-theme($allu-theme);
-@include progressbar-theme($allu-theme);
+@include progressbar-theme($allu-theme, $allu-success, $allu-basic);
 
 // Reset
 html,
