@@ -1,5 +1,5 @@
 <ng-container *ngIf="applicationChanges | async as application">
-  <progressbar [step]="progressStep" [application]="application"></progressbar>
+  <progressbar [application]="application"></progressbar>
   <div fxLayout="row" fxLayoutGap="18px" class="content-main">
     <div fxFlex="calc(33% - 18px)">
       <div fxLayout="row">

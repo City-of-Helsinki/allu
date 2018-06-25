@@ -1,0 +1,10 @@
+@mixin progressbar-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  progressbar,
+  progressbar .mat-toolbar {
+    background: mat-color($allu-primary, 50);
+    color: mat-color($allu-primary, 500);
+  }
+}

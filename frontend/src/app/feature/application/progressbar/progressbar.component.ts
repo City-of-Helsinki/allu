@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Application} from '../../../model/application/application';
-import {ProgressStep} from './progress-step';
 import {Some} from '../../../util/option';
 import {NumberUtil} from '../../../util/number.util';
 import {ApplicationIdentifier} from '../../../model/application/application-identifier';
@@ -8,6 +7,7 @@ import {ApplicationService} from '../../../service/application/application.servi
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Router} from '@angular/router';
 import {startWith} from 'rxjs/internal/operators';
+import {ApplicationStatus} from '../../../model/application/application-status';
 
 @Component({
   selector: 'progressbar',
@@ -19,10 +19,10 @@ import {startWith} from 'rxjs/internal/operators';
   encapsulation: ViewEncapsulation.None
 })
 export class ProgressbarComponent implements OnChanges {
-  @Input() step: number;
   @Input() application: Application;
-  width: number;
+  progress: number;
   replacements: Array<ApplicationIdentifier>;
+  existingApplication: boolean;
   selectedApplication: number;
 
   constructor(private router: Router,
@@ -31,41 +31,51 @@ export class ProgressbarComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    Some(changes.step)
-      .map(change => change.currentValue)
-      .map(step => this.calculateWidth(step))
-      .do(width => this.width = width);
-
     Some(changes.application)
       .map(change => change.currentValue)
       .do(app => {
         this.selectedApplication = app.id;
         this.updateReplacementHistory(app);
+        this.progress = this.calculateProgress(app.statusEnum);
+        this.existingApplication = NumberUtil.isDefined(app.id);
       });
-  }
-
-  get existingApplication(): boolean {
-    return Some(this.application)
-      .map(app => NumberUtil.isDefined(app.id))
-      .orElse(false);
   }
 
   showSelected() {
     this.router.navigate(['/applications', this.selectedApplication, 'summary']);
   }
 
-  private calculateWidth(step: ProgressStep): number {
-    switch (step) {
-      case ProgressStep.LOCATION:
-        return 9;
-      case ProgressStep.INFORMATION:
+  private calculateProgress(status: ApplicationStatus): number {
+    switch (status) {
+      case ApplicationStatus.PENDING_CLIENT:
+      case ApplicationStatus.PRE_RESERVED: {
+        return 0;
+      }
+
+      case ApplicationStatus.PENDING:
+      case ApplicationStatus.WAITING_INFORMATION:
+      case ApplicationStatus.INFORMATION_RECEIVED: {
         return 25;
-      case ProgressStep.SUMMARY:
-        return 42;
-      case ProgressStep.HANDLING:
-        return 58;
-      case ProgressStep.DECISION:
+      }
+
+      case ApplicationStatus.HANDLING:
+      case ApplicationStatus.RETURNED_TO_PREPARATION: {
+        return 50;
+      }
+
+      case ApplicationStatus.WAITING_CONTRACT_APPROVAL:
+      case ApplicationStatus.DECISIONMAKING: {
         return 75;
+      }
+
+      case ApplicationStatus.DECISION:
+      case ApplicationStatus.REJECTED:
+      case ApplicationStatus.FINISHED:
+      case ApplicationStatus.CANCELLED:
+      case ApplicationStatus.REPLACED:
+      case ApplicationStatus.ARCHIVED: {
+        return 100;
+      }
       default:
         return  0;
     }

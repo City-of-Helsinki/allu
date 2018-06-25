@@ -3,8 +3,6 @@ import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser'
 import {Application} from '../../model/application/application';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {Decision} from '../../model/decision/Decision';
-import {stepFrom} from '../application/progressbar/progress-step';
-import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationStore} from '../../service/application/application-store';
 import {Observable, Subject} from 'rxjs';
 import {NumberUtil} from '../../util/number.util';
@@ -19,7 +17,6 @@ import {filter, map, takeUntil} from 'rxjs/internal/operators';
 export class DecisionComponent implements OnInit, OnDestroy {
   applicationChanges: Observable<Application>;
   decisionAttachments: Observable<Array<AttachmentInfo>>;
-  progressStep: number;
   pdfUrl: SafeResourceUrl;
   pdfDownloadUrl: SafeUrl;
   pdfLoaded: boolean;
@@ -42,9 +39,8 @@ export class DecisionComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       filter(app => NumberUtil.isDefined(app.id))
     ).subscribe(app => {
-        this.progressStep = stepFrom(ApplicationStatus[app.status]);
-        this.decisionHub.fetch(app.id)
-          .subscribe(decision => this.providePdf(decision));
+      this.decisionHub.fetch(app.id)
+        .subscribe(decision => this.providePdf(decision));
     });
 
     this.applicationStore.changes.pipe(

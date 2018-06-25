@@ -7,8 +7,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {SidebarItem, visibleFor} from '../../sidebar/sidebar-item';
-import {ProgressStep, stepFrom} from '../progressbar/progress-step';
-import {ApplicationStatus, inHandling} from '../../../model/application/application-status';
+import {inHandling} from '../../../model/application/application-status';
 import {AttachmentHub} from '../attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {NotificationService} from '../../../service/notification/notification.service';
@@ -34,7 +33,6 @@ import {map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
   ]
 })
 export class ApplicationComponent implements OnInit, OnDestroy {
-  progressStep: ProgressStep;
   applicationChanges: Observable<Application>;
   readonly: boolean;
   sidebarItems: Array<SidebarItem> = [];
@@ -72,7 +70,6 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     this.verifyTypeExists(ApplicationType[application.type]);
 
     this.readonly = UrlUtil.urlPathContains(this.route, 'summary');
-    this.progressStep = stepFrom(ApplicationStatus[application.status], this.readonly);
 
     const existingApplication = NumberUtil.isDefined(application.id);
     this.sidebarItems = Some(application.typeEnum).map(type => this.createSidebar(type, existingApplication)).orElse([]);

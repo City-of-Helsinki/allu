@@ -23,6 +23,7 @@
 @import '../app/feature/project/header/project-header.component.theme';
 @import '../app/feature/comment/comments.theme';
 @import '../app/feature/history/history.theme';
+@import '../app/feature/application/progressbar/progressbar-theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
 @import "~ngx-toastr/toastr.css";
 
@@ -44,6 +45,7 @@
 @include oval-theme($allu-theme);
 @include comments-theme($allu-theme);
 @include history-theme($allu-theme);
+@include progressbar-theme($allu-theme);
 
 // Reset
 html,

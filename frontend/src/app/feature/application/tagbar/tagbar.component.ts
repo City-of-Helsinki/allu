@@ -1,10 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {ApplicationTagType, manualTagTypes} from '../../../model/application/tag/application-tag-type';
-import {Observable, of} from 'rxjs';
-import {ApplicationStore} from '../../../service/application/application-store';
+import {Observable} from 'rxjs';
 import {NotificationService} from '../../../service/notification/notification.service';
-import {Application} from '../../../model/application/application';
 import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '../reducers';
@@ -23,19 +21,16 @@ export class TagBarComponent implements OnInit {
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
-  application: Observable<Application>;
   tags: Observable<Array<ApplicationTag>>;
   availableTagTypes: Observable<string[]>;
   availableTagCount: Observable<number>;
   manualTagTypes: string[] = manualTagTypes.map(type => ApplicationTagType[type]);
 
 
-  constructor(private applicationStore: ApplicationStore,
-              private notification: NotificationService,
+  constructor(private notification: NotificationService,
               private store: Store<fromApplication.State>) {}
 
   ngOnInit() {
-    this.application = this.applicationStore.application;
     this.tags = this.store.select(fromApplication.getTags);
     this.availableTagTypes = this.tags.pipe(
       map(tags => tags.map(tag => tag.type)),

@@ -1,36 +1,23 @@
 @import '../../../../assets/colors';
 
-:host {
-  mat-toolbar {
-    background: mat-color($allu-primary, 50);
-    color: mat-color($allu-primary, 500);
-    margin-bottom: 0px;
-  }
+:host ::ng-deep {
+  margin-bottom: 0px;
 }
 
-.progress-header {
-  color: mat-color($allu-primary, 300);
-  min-width: 250px;
-
-  .mat-select-value-text {
-    color: mat-color($allu-primary, 300) !important;
-  }
+.application-info {
+  font-weight: 300;
+  white-space: nowrap;
 }
 
-.progress-label p {
-  color: mat-color($allu-primary, 300);
-  font-weight: bold;
+.application-info span:not(:first-child) {
+  margin-left: 4px;
 }
 
-.progress {
-  background-color: mat-color($allu-accent, 50);
-
-  .determinate {
-    background-color: mat-color($allu-accent, A100);
-  }
+.progress-bar {
+  font-size: 16px;
+  max-width: 200px;
 }
 
-p {
-  font-size: .8rem;
-  margin-bottom: 0;
+.progress-bar .mat-progress-bar {
+  height: 12px;
 }

@@ -1,14 +1,6 @@
 <div fxLayout="row" fxLayoutAlign="space-between center" class="item-bar">
-  <div fxFlex="20" class="item-bar-content application-info align-with-content">
-    <ng-container *ngIf="application | async as app">
-      <span *ngIf="app.status" class="application-status-text">{{['application.status', app.status] | translation}}</span>
-      <span *ngIf="app.startTime">
-        {{app.startTime | date:'shortDate'}} - {{app.endTime | date:'shortDate'}}
-      </span>
-    </ng-container>
-  </div>
   <div fxFlex>
-    <div fxLayout="row wrap" fxLayoutAlign="start center" class="tags">
+    <div fxLayout="row wrap" fxLayoutAlign="start center" class="tags align-with-content">
       <div fxFlex="initial">
           {{'application.tags' | translation}}:
       </div>

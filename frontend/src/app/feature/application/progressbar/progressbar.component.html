@@ -1,7 +1,26 @@
-<mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
-  <div fxFlex="200px" class="progress-header align-with-content">
-    <div *ngIf="!existingApplication">{{'application.newApplication' | translation | uppercase}}</div>
+<mat-toolbar fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="12px">
+  <div fxFlex="1 1 50%">
     <div *ngIf="existingApplication">
+        <div fxLayout="row" fxLayoutGap="32px" class="align-with-content">
+          <div fxFlex="none" class="main-header">
+            <h1>
+              {{application.applicationId}}
+            </h1>
+          </div>
+          <div fxFlex="none">
+            <div class="application-info">
+              <span>{{application.startTime | date:'shortDate'}}</span>
+              <ng-container *ngIf="application.endTime">
+                <span>-</span>
+                <span>{{application.endTime | date:'shortDate'}}</span>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+
+      <!-- TODO: change as menu
+
       <mat-select class="input-no-underline"
                   [(ngModel)]="selectedApplication"
                   (closed)="showSelected()">
@@ -9,34 +28,20 @@
           {{replacement.applicationId}}
           <span *ngIf="replacement.identificationNumber">({{replacement.identificationNumber}})</span>
         </mat-option>
-      </mat-select>
+      </mat-select>-->
     </div>
   </div>
-  <div fxFlex="60" class="progress-label">
-    <div fxLayout="row">
-      <div fxFlex class="center-align">
-        <p>{{'application.progress.location' | translation}}</p>
+  <div fxFlex="0 1 25%" fxFlexOffset="25%">
+    <div class="progress-bar">
+      <div>
+        <ng-container *ngIf="application.status===undefined; else statusName">
+          {{'application.newApplication' | translation | uppercase}}
+        </ng-container>
+        <ng-template #statusName>
+          {{['application.status', application.status] | translation | uppercase}}
+        </ng-template>
       </div>
-      <div fxFlex class="center-align">
-        <p>{{'application.progress.basicInfo' | translation}}</p>
-      </div>
-      <div fxFlex class="center-align">
-        <p>{{'application.progress.summary' | translation}}</p>
-      </div>
-      <div fxFlex class="center-align">
-        <p>{{'application.progress.handling' | translation}}</p>
-      </div>
-      <div fxFlex class="center-align">
-        <p>{{'application.progress.decision' | translation}}</p>
-      </div>
-      <div fxFlex class="center-align">
-        <p>{{'application.progress.supervision' | translation}}</p>
-      </div>
-    </div>
-    <div fxLayout="row">
-      <div fxFlex class="progress">
-        <mat-progress-bar color="accent" [value]="width"></mat-progress-bar>
-      </div>
+      <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
     </div>
   </div>
 </mat-toolbar>

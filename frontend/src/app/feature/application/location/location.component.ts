@@ -18,7 +18,6 @@ import {Note} from '../../../model/application/note/note';
 import {CityDistrict} from '../../../model/common/city-district';
 import {TrafficArrangement} from '../../../model/application/traffic-arrangement/traffic-arrangement';
 import {PlacementContract} from '../../../model/application/placement-contract/placement-contract';
-import {ProgressStep} from '../progressbar/progress-step';
 import {ArrayUtil} from '../../../util/array-util';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
@@ -55,7 +54,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   areaSections = new Array<FixedLocationSection>();
   editedItemCount = 0;
   application: Application;
-  progressStep: ProgressStep;
   kindsSelected = false;
   districts: Observable<Array<CityDistrict>>;
   multipleLocations = false;
@@ -112,7 +110,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.kindsSelected = this.application.kinds.length > 0;
     this.loadFixedLocations();
 
-    this.progressStep = ProgressStep.LOCATION;
     this.mapStore.locationSearchFilter.pipe(takeUntil(this.destroy))
       .subscribe(searchFilter => this.searchUpdated(searchFilter));
 
