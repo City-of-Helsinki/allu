@@ -32,6 +32,7 @@ export const translations = {
     comments: 'Kommentit',
     tags: 'Tunnisteet',
     pricingBasis: 'Hinnoitteluperusteet',
+    replaced: 'Korvatut',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',

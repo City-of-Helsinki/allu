@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Application} from '../../../model/application/application';
 import {Some} from '../../../util/option';
 import {NumberUtil} from '../../../util/number.util';
@@ -6,8 +6,9 @@ import {ApplicationIdentifier} from '../../../model/application/application-iden
 import {ApplicationService} from '../../../service/application/application.service';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Router} from '@angular/router';
-import {startWith} from 'rxjs/internal/operators';
 import {ApplicationStatus} from '../../../model/application/application-status';
+import {Observable, of} from 'rxjs/index';
+import {catchError, map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'progressbar',
@@ -18,31 +19,30 @@ import {ApplicationStatus} from '../../../model/application/application-status';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None
 })
-export class ProgressbarComponent implements OnChanges {
+export class ProgressbarComponent implements OnInit {
   @Input() application: Application;
   progress: number;
-  replacements: Array<ApplicationIdentifier>;
+  replacements$: Observable<ApplicationIdentifier[]>;
+  hasReplacements$: Observable<boolean>;
   existingApplication: boolean;
-  selectedApplication: number;
 
   constructor(private router: Router,
               private service: ApplicationService,
               private notification: NotificationService) {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    Some(changes.application)
-      .map(change => change.currentValue)
-      .do(app => {
-        this.selectedApplication = app.id;
-        this.updateReplacementHistory(app);
-        this.progress = this.calculateProgress(app.statusEnum);
-        this.existingApplication = NumberUtil.isDefined(app.id);
-      });
+  ngOnInit(): void {
+    this.progress = this.calculateProgress(this.application.statusEnum);
+    this.existingApplication = NumberUtil.isDefined(this.application.id);
+    this.replacements$ = this.existingApplication
+      ? this.service.getReplacementHistory(this.application.id)
+        .pipe(catchError(err => this.notification.errorCatch<ApplicationIdentifier[]>(err)))
+      : of([]);
+    this.hasReplacements$ = this.replacements$.pipe(map(replacements => replacements.length > 1));
   }
 
-  showSelected() {
-    this.router.navigate(['/applications', this.selectedApplication, 'summary']);
+  show(id: number) {
+    this.router.navigate(['/applications', id, 'summary']);
   }
 
   private calculateProgress(status: ApplicationStatus): number {
@@ -78,21 +78,6 @@ export class ProgressbarComponent implements OnChanges {
       }
       default:
         return  0;
-    }
-  }
-
-  private updateReplacementHistory(application: Application): void {
-    if (NumberUtil.isDefined(application.id)) {
-      const defaultReplacements = [
-          new ApplicationIdentifier(application.id, application.applicationId, application.identificationNumber)];
-
-      this.service.getReplacementHistory(application.id).pipe(
-        startWith(defaultReplacements)
-      ).subscribe(
-        (replacements) => this.replacements = replacements,
-        (err) => this.notification.errorInfo(err));
-    } else {
-      this.replacements = [];
     }
   }
 }

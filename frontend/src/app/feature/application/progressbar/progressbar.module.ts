@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {ProgressbarComponent} from './progressbar.component';
-import {MatProgressBarModule, MatSelectModule} from '@angular/material';
+import {MatMenuModule, MatProgressBarModule} from '@angular/material';
 import {RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 
@@ -9,7 +9,7 @@ import {FormsModule} from '@angular/forms';
   imports: [
     AlluCommonModule,
     MatProgressBarModule,
-    MatSelectModule,
+    MatMenuModule,
     FormsModule,
     RouterModule
   ],

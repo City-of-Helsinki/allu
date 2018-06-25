@@ -1,34 +1,30 @@
 <mat-toolbar fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="12px">
   <div fxFlex="1 1 50%">
     <div *ngIf="existingApplication">
-        <div fxLayout="row" fxLayoutGap="32px" class="align-with-content">
-          <div fxFlex="none" class="main-header">
-            <h1>
+      <div fxLayout="row" fxLayoutGap="32px" fxLayoutAlign="start center" class="align-with-content">
+        <div fxFlex="none" class="main-header">
+          <h1>
+            <a [routerLink]="['/applications', application.id, 'summary']">
               {{application.applicationId}}
-            </h1>
-          </div>
-          <div fxFlex="none">
-            <div class="application-info">
-              <span>{{application.startTime | date:'shortDate'}}</span>
-              <ng-container *ngIf="application.endTime">
-                <span>-</span>
-                <span>{{application.endTime | date:'shortDate'}}</span>
-              </ng-container>
-            </div>
+            </a>
+          </h1>
+        </div>
+        <div fxFlex="none">
+          <div class="application-info">
+            <span>{{application.startTime | date:'shortDate'}}</span>
+            <ng-container *ngIf="application.endTime">
+              <span>-</span>
+              <span>{{application.endTime | date:'shortDate'}}</span>
+            </ng-container>
           </div>
         </div>
-
-
-      <!-- TODO: change as menu
-
-      <mat-select class="input-no-underline"
-                  [(ngModel)]="selectedApplication"
-                  (closed)="showSelected()">
-        <mat-option *ngFor="let replacement of replacements" [value]="replacement.id">
-          {{replacement.applicationId}}
-          <span *ngIf="replacement.identificationNumber">({{replacement.identificationNumber}})</span>
-        </mat-option>
-      </mat-select>-->
+        <div fxFlex="none" *ngIf="hasReplacements$ | async">
+          <button mat-button [matMenuTriggerFor]="replacementMenu" color="primary" disableRipple>
+            <mat-icon>history</mat-icon>
+            {{'application.replaced' | translation}}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
   <div fxFlex="0 1 25%" fxFlexOffset="25%">
@@ -45,3 +41,10 @@
     </div>
   </div>
 </mat-toolbar>
+
+<mat-menu #replacementMenu="matMenu" [overlapTrigger]="false">
+  <button mat-menu-item *ngFor="let replacement of replacements$ | async" (click)="show(replacement.id)">
+    {{replacement.applicationId}}
+    <span *ngIf="replacement.identificationNumber">({{replacement.identificationNumber}})</span>
+  </button>
+</mat-menu>
