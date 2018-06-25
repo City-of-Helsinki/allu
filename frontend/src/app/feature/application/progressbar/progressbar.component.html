@@ -19,10 +19,14 @@
           </div>
         </div>
         <div fxFlex="none" *ngIf="hasReplacements$ | async">
-          <button mat-button [matMenuTriggerFor]="replacementMenu" color="primary" disableRipple>
+          <button mat-button [matMenuTriggerFor]="replacementMenu" color="primary" disableRipple class="icon-with-info">
             <mat-icon>history</mat-icon>
             {{'application.replaced' | translation}}
           </button>
+        </div>
+        <div fxFlex="none" *ngIf="application.invoiced" class="icon-with-info">
+          <mat-icon color="primary" class="icon-middle">check_circle</mat-icon>
+          {{'application.invoiced' | translation}}
         </div>
       </div>
     </div>

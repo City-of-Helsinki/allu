@@ -33,6 +33,7 @@ export const translations = {
     tags: 'Tunnisteet',
     pricingBasis: 'Hinnoitteluperusteet',
     replaced: 'Korvatut',
+    invoiced: 'Laskutettu',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',

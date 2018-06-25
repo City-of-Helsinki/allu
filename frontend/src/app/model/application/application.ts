@@ -54,7 +54,8 @@ export class Application {
     public identificationNumber?: string,
     public skipPriceCalculation: boolean = false,
     public clientApplicationData?: ClientApplicationData,
-    public nrOfComments?: number) {
+    public nrOfComments?: number,
+    public invoiced?: boolean) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

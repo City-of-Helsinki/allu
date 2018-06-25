@@ -81,6 +81,7 @@ export class ApplicationMapper {
     application.invoicingDate = backendApplication.invoicingDate;
     application.identificationNumber = backendApplication.identificationNumber;
     application.skipPriceCalculation = backendApplication.skipPriceCalculation;
+    application.invoiced = backendApplication.invoiced;
     application.clientApplicationData = ClientApplicationDataMapper.mapBackend(backendApplication.clientApplicationData);
     return application;
   }
