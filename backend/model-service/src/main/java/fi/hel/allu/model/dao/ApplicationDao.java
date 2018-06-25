@@ -771,4 +771,17 @@ public class ApplicationDao {
     queryFactory.update(application).set(application.calculatedPrice, calculatedPrice).where(application.id.eq(id)).execute();
   }
 
+  @Transactional
+  public void updateClientApplicationData(int id, ClientApplicationData clientApplicationData) {
+    // Client application data is updated only if application
+    // is still pending on client before update.
+    if (getStatus(id) == StatusType.PENDING_CLIENT) {
+      queryFactory.update(application)
+      .set(application.clientApplicationData, clientApplicationData)
+      .where(application.id.eq(id))
+      .execute();
+    }
+
+  }
+
 }

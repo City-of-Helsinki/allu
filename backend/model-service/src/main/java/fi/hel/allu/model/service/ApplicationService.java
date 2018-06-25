@@ -148,6 +148,7 @@ public class ApplicationService {
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
+    applicationDao.updateClientApplicationData(id, application.getClientApplicationData());
     Application result = applicationDao.update(id, application);
     result.setLocations(locations);
     return result;
