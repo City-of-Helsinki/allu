@@ -322,6 +322,7 @@ public class GenericSearchService<T> {
         qb.must(createQueryBuilder(param));
       }
     }
+    addAdditionalQueryParameters(qb);
 
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
         .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
@@ -340,6 +341,9 @@ public class GenericSearchService<T> {
     logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
         srBuilder.toString());
     return srBuilder;
+  }
+
+  protected void addAdditionalQueryParameters(BoolQueryBuilder qb) {
   }
 
   public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {

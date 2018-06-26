@@ -15,6 +15,7 @@ public class QueryParameter {
   public static final String FIELD_NAME_STATUS = "status.value";
   /** Recurring application search. Add this field to enable the search. */
   public static final String FIELD_NAME_RECURRING_APPLICATION = "recurringApplication";
+  public static final String FIELD_NAME_APPLICATION_STATUS = "status.value";
 
   private String fieldName;
   private String fieldValue;

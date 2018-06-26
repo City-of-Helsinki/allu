@@ -9,6 +9,9 @@ import java.util.Optional;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,11 +19,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.domain.RoleTypedCustomerES;
 import fi.hel.allu.search.domain.util.CustomerAnonymizer;
 
 @Service
@@ -53,6 +57,14 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     } catch (IOException e) {
       throw new SearchException(e);
     }
+  }
+
+  @Override
+  protected void addAdditionalQueryParameters(BoolQueryBuilder qb) {
+    qb.mustNot(
+        QueryBuilders.matchQuery(
+            QueryParameter.FIELD_NAME_APPLICATION_STATUS, StatusType.REPLACED.name()).operator(Operator.AND)
+    );
   }
 
   private void anonymizeCustomers(List<ApplicationES> results) {
