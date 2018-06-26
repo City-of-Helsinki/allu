@@ -237,7 +237,14 @@ public class ApplicationServiceComposer {
         applicationService.findApplicationById(applicationId));
 
     applicationHistoryService.addStatusChange(applicationId, newStatus);
-    searchService.updateApplications(Collections.singletonList(applicationJson));
+    List<ApplicationJson> applicationsUpdated = new ArrayList<>();
+    applicationsUpdated.add(applicationJson);
+    // Update possible replaced applications to search service, also status of those might have changed
+    if (application.getReplacesApplicationId() != null) {
+      applicationsUpdated.add(applicationJsonService
+        .getFullyPopulatedApplication(applicationService.findApplicationById(application.getReplacesApplicationId())));
+    }
+    searchService.updateApplications(applicationsUpdated);
     return applicationJson;
   }
 

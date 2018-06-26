@@ -1,23 +1,20 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
-import fi.hel.allu.servicecore.domain.ProjectJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
-import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import java.util.Collections;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import static org.junit.Assert.assertEquals;
-import org.mockito.Matchers;
 
 
 public class ApplicationServiceComposerTest {
@@ -113,7 +110,9 @@ public class ApplicationServiceComposerTest {
     assertEquals(updatedApplicationJson, applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, info));
 
     Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
-    Mockito.verify(searchService).updateApplications(Matchers.refEq(Collections.singletonList(updatedApplicationJson)));
+    List<ApplicationJson> expected = new ArrayList<>();
+    expected.add(updatedApplicationJson);
+    Mockito.verify(searchService).updateApplications(Matchers.refEq(expected));
   }
 
   @Test
