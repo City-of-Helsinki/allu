@@ -73,8 +73,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       users => this.supervisors = users.sort(ArrayUtil.naturalSort((user: User) => user.realName)));
 
     this.itemStore.changes.pipe(
-      map(state => state.search),
-      take(1)
+      map(state => state.search)
     ).subscribe(search => this.queryForm.patchValue(search, {emitEvent: false}));
 
     this.queryForm.valueChanges.pipe(

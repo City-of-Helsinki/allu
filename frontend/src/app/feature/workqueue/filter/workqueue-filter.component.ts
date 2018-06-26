@@ -68,8 +68,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
     this.itemStore.changes.pipe(
-      map(state => state.search),
-      take(1)
+      map(state => state.search)
     ).subscribe(search => this.queryForm.patchValue(search, {emitEvent: false}));
 
     this.queryForm.valueChanges.pipe(
