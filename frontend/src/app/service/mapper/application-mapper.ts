@@ -48,6 +48,7 @@ export class ApplicationMapper {
     application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
     application.project = ProjectMapper.mapBackend(backendApplication.project);
     application.locations = LocationMapper.mapBackendList(backendApplication.locations);
+    application.status = backendApplication.status;
     return application;
   }
 

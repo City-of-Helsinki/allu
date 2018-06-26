@@ -91,7 +91,8 @@ public class ApplicationJsonService {
         model.getStartTime(),
         model.getEndTime(),
         model.getProjectId() != null ? new ProjectJson(model.getProjectId()) : null,
-        LocationMapper.mapToLocationJsons(model.getLocations())
+        LocationMapper.mapToLocationJsons(model.getLocations()),
+        model.getStatus()
      );
   }
 

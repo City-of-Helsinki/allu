@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
 
 public class ApplicationMapItemJson {
   private Integer id;
@@ -14,13 +15,15 @@ public class ApplicationMapItemJson {
   private ZonedDateTime endTime;
   private ProjectJson project;
   private List<LocationJson> locations;
+  private StatusType status;
 
 
   public ApplicationMapItemJson() {
   }
 
   public ApplicationMapItemJson(Integer id, String applicationId, String name, ApplicationType type,
-      ZonedDateTime startTime, ZonedDateTime endTime, ProjectJson project, List<LocationJson> locations) {
+      ZonedDateTime startTime, ZonedDateTime endTime, ProjectJson project, List<LocationJson> locations,
+      StatusType status) {
     this.id = id;
     this.applicationId = applicationId;
     this.name = name;
@@ -29,6 +32,7 @@ public class ApplicationMapItemJson {
     this.endTime = endTime;
     this.project = project;
     this.locations = locations;
+    this.status = status;
   }
 
   public Integer getId() {
@@ -93,6 +97,14 @@ public class ApplicationMapItemJson {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public StatusType getStatus() {
+    return status;
+  }
+
+  public void setStatus(StatusType status) {
+    this.status = status;
   }
 
 }
