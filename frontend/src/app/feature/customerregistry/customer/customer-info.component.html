@@ -21,12 +21,15 @@
         <div fxFlex="0 1 calc(25% - 18px)">
           <mat-form-field class="input-full-width">
             <mat-select class="input-full-width"
-                        formControlName="country"
+                        formControlName="country" required
                         [placeholder]="'customer.country' | translation">
               <mat-option *ngFor="let country of countries | async" [value]="country.code">
                 {{country.description}}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="form.get('country').hasError('required')">
+              {{'customer.field.countryMissing' | translation}}
+            </mat-error>
           </mat-form-field>
         </div>
         <div fxFlex="calc(50% - 18px)" *ngIf="showInvoicingInfo && existingCustomer">

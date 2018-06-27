@@ -607,7 +607,8 @@ export const translations = {
       ovtLong: 'OVT-tunnus liian pitkä',
       emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt',
-      invalidSsn: 'Virheellinen henkilötunnus'
+      invalidSsn: 'Virheellinen henkilötunnus',
+      countryMissing: 'Maa puuttuu'
     },
     action: {
       save: 'Asiakas tallennettu',

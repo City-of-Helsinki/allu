@@ -106,7 +106,8 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       this.form.reset({
         name: this.form.value.name,
         type: this.form.value.type,
-        active: true
+        active: true,
+        country: 'FI'
       });
       this.form.enable();
       this.customerChange.emit(new Customer());

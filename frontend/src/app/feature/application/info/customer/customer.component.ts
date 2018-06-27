@@ -108,10 +108,10 @@ export class CustomerComponent implements OnInit, OnDestroy {
     Some(this.customerWithContacts)
       .map(cwc => cwc.customer)
       .filter(customer => !!customer)
+      .do(customer => this.disableEdit(customer))
       .map(customer => CustomerForm.fromCustomer(customer))
       .do(customer => {
         this.customerForm.patchValue(customer);
-        this.disableEdit(customer);
         this.onCustomerTypeChange(customer.type);
       });
 

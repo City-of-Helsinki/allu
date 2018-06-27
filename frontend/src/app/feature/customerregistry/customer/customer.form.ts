@@ -70,7 +70,7 @@ export class CustomerForm {
       registryKey: ['', [Validators.required, Validators.minLength(2)]],
       ovt: ['', [Validators.minLength(12), Validators.maxLength(18)]],
       invoicingOperator: [''],
-      country: ['FI'],
+      country: ['FI', Validators.required],
       postalAddress: fb.group({
         streetAddress: [''],
         postalCode: ['', postalCodeValidator],

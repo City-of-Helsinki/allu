@@ -2,7 +2,7 @@ export interface Option<A> {
   isDefined(): boolean;
   value(): A;
   map<B>(fn: (a: A) => B): Option<B>;
-  do(fn: (a: A) => any): void;
+  do(fn: (a: A) => any): Option<A>;
   filter(predicate: (a: A) => boolean): Option<A>;
   orElse(val: A): A;
   orElseGet(fn: () => A): A;
@@ -23,7 +23,9 @@ export class NoneOpt implements Option<any> {
     return new NoneOpt();
   }
 
-  do(fn: (a: any) => any): void {}
+  do(fn: (a: any) => any): NoneOpt {
+    return this;
+  }
 
 
   filter(predicate: (a: never) => boolean): Option<any> {
@@ -56,10 +58,11 @@ export class SomeOpt<T> implements Option<T> {
     return result === undefined ? new NoneOpt() : new SomeOpt(result);
   }
 
-  do(fn: (a: T) => any): void {
+  do(fn: (a: T) => any): Option<T> {
     if (this.isDefined()) {
       fn(this.val);
     }
+    return this;
   }
 
   filter(predicate: (a: T) => boolean): Option<T> {
