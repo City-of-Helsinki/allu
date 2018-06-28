@@ -7,7 +7,7 @@ export class CodeSetMapper {
     return (backendCodeSet) ?
       new CodeSet(
         backendCodeSet.id,
-        backendCodeSet.codeSetType,
+        backendCodeSet.type,
         backendCodeSet.code,
         backendCodeSet.description,
         backendCodeSet.value) : undefined;

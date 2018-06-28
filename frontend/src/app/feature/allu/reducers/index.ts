@@ -1,13 +1,17 @@
 import * as fromCityDistricts from './city-district-reducer';
+import * as fromCodeSets from './code-set-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {Some} from '../../../util/option';
+import {CodeSetTypeMap} from '../../../model/codeset/codeset';
 
 export interface State {
   cityDistricts: fromCityDistricts.State;
+  codeSets: fromCodeSets.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
-  cityDistricts: fromCityDistricts.reducer
+  cityDistricts: fromCityDistricts.reducer,
+  codeSets: fromCodeSets.reducer
 };
 
 export const getCityDistrictsState = createFeatureSelector<fromCityDistricts.State>('cityDistricts');
@@ -32,4 +36,16 @@ export const getCityDistrictName = (id: number) => createSelector(
 export const getCityDistrictsByIds = (ids: number[]) => createSelector(
   getCityDistrictEntities,
   (districts) => ids.map(id => districts[id])
+);
+
+export const getCodeSetState = createFeatureSelector<fromCodeSets.State>('codeSets');
+
+export const getCodeSetEntityState = createSelector(
+  getCodeSetState,
+  (state: fromCodeSets.State) => state.codeSet
+);
+
+export const getCodeSet = (type: string, code: string) => createSelector(
+  getCodeSetEntityState,
+  (codeSets: CodeSetTypeMap) => Some(codeSets[type]).map(byCode => byCode[code]).orElse(undefined)
 );

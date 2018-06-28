@@ -54,6 +54,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {httpInterceptorProviders} from '../../http-interceptors';
 import {MetadataService} from '../../service/meta/metadata.service';
 import {ToastrModule} from 'ngx-toastr';
+import {CodeSetEffects} from './effects/code-set-effects';
 
 @NgModule({
   imports: [
@@ -64,7 +65,8 @@ import {ToastrModule} from 'ngx-toastr';
     BrowserAnimationsModule,
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([
-      CityDistrictEffects
+      CityDistrictEffects,
+      CodeSetEffects
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

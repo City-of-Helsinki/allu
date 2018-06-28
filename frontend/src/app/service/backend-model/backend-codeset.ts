@@ -1,6 +1,6 @@
 export interface BackendCodeSet {
   id: number;
-  codeSetType: string;
+  type: string;
   code: string;
   description: string;
   value: string;
