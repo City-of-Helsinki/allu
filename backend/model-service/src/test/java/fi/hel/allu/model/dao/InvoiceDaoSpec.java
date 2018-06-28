@@ -187,7 +187,15 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
             final List<Invoice> invoices = invoiceDao.findPending();
             assertEquals(1, invoices.size());
           });
-
+          it("should return not invoice of application if status is replaced", () -> {
+            applicationDao.updateStatus(appId.get(), StatusType.REPLACED);
+            Application app = testCommon.dummyBridgeBannerApplication("replacing_app", "replacing_app");
+            app.setReplacesApplicationId(appId.get());
+            app.setStatus(StatusType.CANCELLED);
+            applicationDao.insert(app);
+            final List<Invoice> invoices = invoiceDao.findPending();
+            assertEquals(0, invoices.size());
+          });
         });
       });
     });

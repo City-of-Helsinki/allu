@@ -150,7 +150,7 @@ public class InvoiceDao {
         .where(invoice.invoicableTime.before(ZonedDateTime.now())
             .and(invoice.invoiced.ne(true))
             .and(invoice.sapIdPending.isFalse())
-            .and(application.status.ne(StatusType.CANCELLED)))
+            .and(application.status.notIn(StatusType.CANCELLED, StatusType.REPLACED)))
         .fetch().stream()
         .map(id -> find(id)).filter(Optional::isPresent).map(Optional::get)
           .filter(i -> isNotReplaced(i.getApplicationId()))
