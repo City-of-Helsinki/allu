@@ -134,7 +134,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
       return message;
     } catch (NoSuchMessageException ne) {
       logger.warn("Didn't find the message for key {}", key);
-      return null;
+      return key;
     }
   }
 }
