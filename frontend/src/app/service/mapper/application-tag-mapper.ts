@@ -18,6 +18,12 @@ export class ApplicationTagMapper {
     );
   }
 
+  public static mapSearchResultList(tags: Array<string>): Array<ApplicationTag> {
+    return (tags)
+      ? tags.map(tag => new ApplicationTag(tag))
+      : [];
+  }
+
   public static mapFrontendList(tags: Array<ApplicationTag>): Array<BackendApplicationTag> {
     return (tags)
       ? tags.map(tag => ApplicationTagMapper.mapFrontend(tag))

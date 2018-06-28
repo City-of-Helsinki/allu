@@ -35,6 +35,7 @@ export class ApplicationMapper {
     application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
     application.nrOfComments = backendApplication.nrOfComments;
+    application.applicationTags = ApplicationTagMapper.mapSearchResultList(backendApplication.applicationTags);
     return application;
   }
 

@@ -62,4 +62,5 @@ export interface SearchResultApplication {
   customers: SearchResultCustomersWithContacts;
   locations: Array<SearchResultLocation>;
   nrOfComments: number;
+  applicationTags: Array<string>;
 }
