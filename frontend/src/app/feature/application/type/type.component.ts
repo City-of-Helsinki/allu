@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {
   ApplicationType,
   applicationTypeTree,
@@ -57,18 +57,17 @@ export class TypeComponent implements OnInit, OnDestroy {
   ngOnInit(): any {
     combineLatest(
       this.store.select(fromApplication.getType),
-      this.store.select(fromApplication.getKindsWithSpecifiers),
-      this.store.select(fromApplication.getPendingKind)
+      this.store.select(fromApplication.getKindsWithSpecifiers)
     ).pipe(
       take(1)
-    ).subscribe(([type, kindsWithSpecifiers, pendingKind]) => {
+    ).subscribe(([type, kindsWithSpecifiers]) => {
       const typeName = ApplicationType[type];
       const kinds = kindsWithSpecifiers ? Object.keys(kindsWithSpecifiers) : [];
       this.availableKinds = this.getAvailableKinds(typeName);
       this.multipleKinds = hasMultipleKinds(typeName);
       this.availableKindsWithSpecifiers = getAvailableSpecifiers(typeName, kinds);
 
-      this.initForm(typeName, kinds, kindsWithSpecifiers, pendingKind);
+      this.initForm(typeName, kinds, kindsWithSpecifiers);
       this.applicationTypes = this.getAvailableTypes()
         .pipe(map(types => types.sort(ArrayUtil.naturalSortTranslated(['application.type'], (t: string) => t))));
 
@@ -115,12 +114,12 @@ export class TypeComponent implements OnInit, OnDestroy {
       .orElse([]);
   }
 
-  private initForm(type: string, selectedKinds: string[], kindsWithSpecifiers: KindsWithSpecifiers, pendingKind: string) {
+  private initForm(type: string, selectedKinds: string[], kindsWithSpecifiers: KindsWithSpecifiers) {
     const selectedSpecifiers = fromKindsWithSpecifiers(kindsWithSpecifiers);
 
     const kinds = this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds);
     this.typeCtrl = this.fb.control({ value: type, disabled: this.typeChangeDisabled });
-    this.kindsCtrl = this.fb.control(kinds);
+    this.kindsCtrl = this.fb.control(kinds, Validators.required);
     this.specifiersCtrl = this.fb.control(selectedSpecifiers);
     this.draftCtrl = this.fb.control(this.applicationStore.snapshot.draft);
 
@@ -132,8 +131,7 @@ export class TypeComponent implements OnInit, OnDestroy {
     });
 
     this.kindsCtrl.updateValueAndValidity();
-    const hasKinds = selectedKinds.length > 0;
-    this.setFormMode(hasKinds, pendingKind);
+    this.setFormMode(ApplicationType[type]);
   }
 
   private initEvents(): void {
@@ -169,10 +167,11 @@ export class TypeComponent implements OnInit, OnDestroy {
     this.specifiersCtrl.patchValue(remainingSpecifiers);
   }
 
-  private setFormMode(hasKind: boolean, pendingKind: string): void {
-    if (hasKind && pendingKind === undefined) {
+  private setFormMode(type: ApplicationType): void {
+    // Disallow kind change afterwards for events
+    // since they have different forms for different kinds
+    if (ApplicationType.EVENT === type) {
       this.kindsCtrl.disable();
-      this.specifiersCtrl.disable();
     }
 
     if (this.readonly) {

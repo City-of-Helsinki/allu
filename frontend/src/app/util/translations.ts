@@ -273,7 +273,8 @@ export const translations = {
       nameMissing: 'Tapahtuman nimi puuttuu',
       nameShort: 'Tapahtuman nimi on liian lyhyt',
       recurringEndYearNotBetween: 'Virheellinen toistuvuuden päättymisvuosi',
-      invoiceRecipientMissing: 'Laskutettavaa asiakasta ei ole valittu'
+      invoiceRecipientMissing: 'Laskutettavaa asiakasta ei ole valittu',
+      kindMissing: 'Hakemuksen laji puuttuu',
     },
     common: {
       startTime: 'Voimassaolon aloitus',
