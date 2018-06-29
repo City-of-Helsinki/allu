@@ -1,13 +1,16 @@
 <mat-toolbar fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="12px">
   <div fxFlex="1 1 50%">
     <div *ngIf="existingApplication">
-      <div fxLayout="row" fxLayoutGap="32px" fxLayoutAlign="start center" class="align-with-content">
-        <div fxFlex="none" class="main-header">
+      <div fxLayout="row" fxLayoutGap="32px" fxLayoutAlign="start" class="align-with-content">
+        <div fxFlex="none">
           <h1>
             <a [routerLink]="['/applications', application.id, 'summary']">
               {{application.applicationId}}
             </a>
           </h1>
+          <div *ngIf="application.project as project" class="text-hint">
+            {{project.identifier}}
+          </div>
         </div>
         <div fxFlex="none">
           <div class="application-info">
