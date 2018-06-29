@@ -25,6 +25,9 @@ public class FixedLocationExt {
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
 
+  public FixedLocationExt() {
+  }
+
   public FixedLocationExt(Integer id, String area, String section, ApplicationKind applicationKind, Geometry geometry) {
     this.id = id;
     this.area = area;
