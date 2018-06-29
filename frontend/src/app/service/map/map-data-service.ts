@@ -25,6 +25,7 @@ export class MapDataService {
               private mapUtil: MapUtil) {
     this.groupedStatuses.set(ApplicationStatusGroup.PRELIMINARY, [
       ApplicationStatus.PRE_RESERVED,
+      ApplicationStatus.PENDING_CLIENT,
       ApplicationStatus.PENDING]);
 
     this.groupedStatuses.set(ApplicationStatusGroup.HANDLING, [
@@ -71,7 +72,7 @@ export class MapDataService {
 
   private statusesFromGroup(groups: ApplicationStatusGroup[]): string[] {
     return ArrayUtil.flatten(groups.map(group => this.groupedStatuses.get(group)))
-      .filter(s => !!s)
+      .filter(s => s !== undefined)
       .map(s => ApplicationStatus[s]);
   }
 }
