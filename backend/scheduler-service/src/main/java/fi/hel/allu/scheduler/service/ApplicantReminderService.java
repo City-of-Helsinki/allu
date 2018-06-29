@@ -1,12 +1,12 @@
 package fi.hel.allu.scheduler.service;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.util.ResourceUtil;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.DeadlineCheckParams;
-import fi.hel.allu.scheduler.config.ApplicationProperties;
+
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.ResourceUtil;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.scheduler.config.ApplicationProperties;
 
 @Service
 public class ApplicantReminderService {
@@ -66,10 +67,15 @@ public class ApplicantReminderService {
   }
 
   private void sendReminder(Application application) {
-    String email = application.getCustomersWithContacts().stream()
-        .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT)
-        .map(cwc -> cwc.getCustomer().getEmail()).findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("No email found for customer in APPLICANT role!"));
+    application.getCustomersWithContacts().stream()
+      .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT)
+      .map(cwc -> cwc.getCustomer().getEmail())
+      .filter(e -> e != null)
+      .findFirst()
+      .ifPresent(e -> sendEmail(e, application));
+  }
+
+  private void sendEmail(String email, Application application) {
     String subject = String.format(MAIL_SUBJECT, application.getApplicationId());
     String mailTemplate = null;
     try {
@@ -87,4 +93,5 @@ public class ApplicantReminderService {
     result.put("endDate", application.getEndTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
     return result;
   }
+
 }
