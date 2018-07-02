@@ -4,8 +4,7 @@
             [customerWithContacts]="application.applicant"
             [readonly]="readonly"
             [showRepresentative]="true"
-            [pendingInfo]="pendingCustomerInfo$ | async"
-            (showPendingInfo)="showPendingInfo()"></customer>
+            [pendingInfo]="pendingCustomerInfo$ | async"></customer>
 
   <customer *ngIf="hasRepresentative"
             [parentForm]="applicationForm"

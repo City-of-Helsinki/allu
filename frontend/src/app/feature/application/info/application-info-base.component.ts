@@ -16,8 +16,9 @@ import {EMPTY, Observable, of, Subject} from 'rxjs';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {FormUtil} from '../../../util/form.util';
 import {ProjectService} from '../../../service/project/project.service';
-import {distinctUntilChanged, filter, map, switchMap, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import {ApplicationService} from '../../../service/application/application.service';
+import * as fromRoot from '../reducers';
 import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
 import {
@@ -27,6 +28,8 @@ import {
 } from '../../information-request/acceptance/information-acceptance-modal.component';
 import {MatDialog, MatDialogConfig} from '@angular/material';
 import {InformationRequestResult} from '../../information-request/information-request-result';
+import {SetKindsWithSpecifiers} from '../actions/application-actions';
+import {InformationAcceptanceModalEvents} from '../../information-request/acceptance/information-acceptance-modal-events';
 
 /**
  * This component should be used only as base class for other more specific application components.
@@ -63,8 +66,9 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
               protected notification: NotificationService,
               private router: Router,
               private projectService: ProjectService,
-              private store: Store<fromApplication.State>,
-              private dialog: MatDialog) {}
+              private store: Store<fromRoot.State>,
+              private dialog: MatDialog,
+              private modalState: InformationAcceptanceModalEvents) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -86,6 +90,11 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       takeUntil(this.destroy),
       distinctUntilChanged()
     ).subscribe(draft => this.onDraftChange(draft));
+
+    this.modalState.isOpen$.pipe(
+      takeUntil(this.destroy),
+      filter(open => open)
+    ).subscribe(() => this.showPendingInfo());
   }
 
   ngAfterContentInit(): void {
@@ -116,6 +125,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       .pipe(switchMap(data => this.openAcceptanceModal(data)))
       .subscribe((result: InformationRequestResult) => {
         // TODO: Handle closing information request when implementing it
+        this.store.dispatch(new SetKindsWithSpecifiers(result.application.kindsWithSpecifiers));
         this.save(result.application);
       });
   }
@@ -245,7 +255,8 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
         } else {
           return EMPTY;
         }
-      }));
+      }),
+      take(1));
   }
 
   private openAcceptanceModal(data: InformationAcceptanceData): Observable<InformationRequestResult>  {

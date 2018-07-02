@@ -5,6 +5,14 @@
       {{['informationRequest.field', field] | translation}}
     </h2>
     <mat-dialog-content>
+      <kind-acceptance
+        *ngIf="field === 'APPLICATION_KIND'"
+        [parentForm]="form"
+        [applicationType]="data.oldInfo.type"
+        [oldValues]="data.oldInfo?.kindsWithSpecifiers"
+        [newValues]="data.newInfo?.clientApplicationData.clientApplicationKind">
+      </kind-acceptance>
+
       <customer-acceptance
         *ngIf="field === 'CUSTOMER'"
         [parentForm]="form"

@@ -875,6 +875,7 @@ export const translations = {
   phone: 'Puhelin',
   common: {
     freeTextSearch: 'Vapaa tekstihaku',
+    select: 'Valitse',
     field: {
       usernameMissing: 'Käyttäjänimi puuttuu',
       nameMissing: 'Nimi puuttuu',

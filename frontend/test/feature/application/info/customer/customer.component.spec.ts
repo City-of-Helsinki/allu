@@ -9,13 +9,14 @@ import {CustomerInfoComponent} from '../../../../../src/app/feature/customerregi
 import {Customer} from '../../../../../src/app/model/customer/customer';
 import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
-import {Component, Input} from '@angular/core';
+import {Component, Injectable, Input} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
 import {CustomerServiceMock} from '../../../../mocks';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 import {CodeSetService} from '../../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
 import {Observable, of} from 'rxjs/index';
+import {InformationAcceptanceModalEvents} from '../../../../../src/app/feature/information-request/acceptance/information-acceptance-modal-events';
 
 const headerText = 'Hakija';
 
@@ -79,7 +80,8 @@ describe('CustomerComponent', () => {
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
-        {provide: CodeSetService, useClass: CodeSetServiceMock}
+        {provide: CodeSetService, useClass: CodeSetServiceMock},
+        InformationAcceptanceModalEvents
       ]
     }).compileComponents();
   }));

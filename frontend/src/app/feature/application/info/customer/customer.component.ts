@@ -12,6 +12,7 @@ import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {filter} from 'rxjs/internal/operators';
 import {CustomerType} from '../../../../model/customer/customer-type';
+import {InformationAcceptanceModalEvents} from '../../../information-request/acceptance/information-acceptance-modal-events';
 
 @Component({
   selector: 'customer',
@@ -41,7 +42,9 @@ export class CustomerComponent implements OnInit, OnDestroy {
   private _customerWithContacts: CustomerWithContacts;
   private dialogRef: MatDialogRef<CustomerModalComponent>;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) {
+  constructor(private fb: FormBuilder,
+              private dialog: MatDialog,
+              private modalState: InformationAcceptanceModalEvents) {
   }
 
   @Input() set customerWithContacts(customerWithContacts) {
@@ -86,7 +89,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   showPending(): void {
-    this.showPendingInfo.emit({});
+    this.modalState.open();
   }
 
   onCustomerChange(customer: Customer): void {

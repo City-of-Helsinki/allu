@@ -47,3 +47,8 @@ export const getResultCustomerWithContacts = createSelector(
   getResultContacts,
   (customer, contacts) => new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, contacts)
 );
+
+export const getResultKindsWithSpecifiers = createSelector(
+  getInformationRequestResultState,
+  fromInformationRequestResult.getKindsWithSpecifiers
+);

@@ -5,8 +5,7 @@
             [readonly]="readonly"
             [showPropertyDeveloper]="true"
             [contactRequired]="true"
-            [pendingInfo]="pendingCustomerInfo$ | async"
-            (showPendingInfo)="showPendingInfo()"></customer>
+            [pendingInfo]="pendingCustomerInfo$ | async"></customer>
 
   <customer  *ngIf="hasPropertyDeveloper"
              [parentForm]="applicationForm"

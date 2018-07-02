@@ -13,6 +13,7 @@ import {ArrayUtil} from '../../../util/array-util';
 import {SetApplication, SetCustomer} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {CodeSetCodeMap} from '../../../model/codeset/codeset';
+import {InformationAcceptanceModalEvents} from './information-acceptance-modal-events';
 
 export interface InformationAcceptanceData {
   informationRequestId?: number;
@@ -23,7 +24,7 @@ export interface InformationAcceptanceData {
 
 export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcceptanceData> = {
   width: '80vw',
-  disableClose: false
+  disableClose: true
 };
 
 @Component({
@@ -43,7 +44,8 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
               private store: Store<fromRoot.State>,
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
-              private fb: FormBuilder) {}
+              private fb: FormBuilder,
+              private modalState: InformationAcceptanceModalEvents) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({});
@@ -72,13 +74,15 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   onSubmit(): void {
     combineLatest(
       this.store.select(fromInformationRequest.getResultApplication),
-      this.store.select(fromInformationRequest.getResultCustomerWithContacts)
+      this.store.select(fromInformationRequest.getResultCustomerWithContacts),
+      this.store.select(fromInformationRequest.getResultKindsWithSpecifiers)
     ).pipe(take(1))
-      .subscribe(([app, customerWithContacts]) => {
+      .subscribe(([app, customerWithContacts, kindsWithSpecifiers]) => {
         app.customersWithContacts = ArrayUtil.createOrReplace(
           app.customersWithContacts,
           customerWithContacts,
           cwc => cwc.roleType === CustomerRoleType.APPLICANT);
+        app.kindsWithSpecifiers = kindsWithSpecifiers;
         this.dialogRef.close(new InformationRequestResult(this.data.informationRequestId, app));
       });
   }

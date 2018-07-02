@@ -2,6 +2,7 @@ import {commonKinds} from './application-kind';
 import {Some} from '../../../util/option';
 import {KindsWithSpecifiers} from './application-specifier';
 import {ObjectUtil} from '../../../util/object.util';
+import {ArrayUtil} from '../../../util/array-util';
 
 export enum ApplicationType {
   EXCAVATION_ANNOUNCEMENT, // Kaivuilmoitus
@@ -89,6 +90,13 @@ export function hasMultipleKinds(typeName: string): boolean {
     ApplicationType.EXCAVATION_ANNOUNCEMENT,
     ApplicationType.PLACEMENT_CONTRACT
     ].indexOf(ApplicationType[typeName]) >= 0;
+}
+
+export function getAvailableKinds(type: string): string[] {
+  return Some(applicationTypeTree[type])
+    .map(typeTree => Object.keys(typeTree))
+    .map(kinds => kinds.sort(ArrayUtil.naturalSortTranslated(['application.kind'], (kind: string) => kind)))
+    .orElse([]);
 }
 
 export function getAvailableSpecifiers(applicationType: string, kinds: Array<string>): KindsWithSpecifiers {
