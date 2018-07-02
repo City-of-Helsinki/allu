@@ -38,6 +38,7 @@
 @include input-box-theme($allu-theme);
 @include stored-filter-theme($allu-theme);
 @include buttons-theme($allu-theme);
+@include toggle-buttons-theme($allu-theme);
 @include modal-theme($allu-theme);
 @include allu-card-theme($allu-theme);
 @include table-theme($allu-theme);

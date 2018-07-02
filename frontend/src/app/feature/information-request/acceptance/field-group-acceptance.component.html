@@ -1,4 +1,8 @@
 <form [formGroup]="form">
+  <div class="field-group-options">
+    <label>{{'informationRequest.acceptance.noChange' | translation}}</label>
+    <label>{{'informationRequest.acceptance.change' | translation}}</label>
+  </div>
   <ul>
     <li *ngFor="let fieldName of fieldLabels | keys">
       <field-acceptance

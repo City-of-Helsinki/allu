@@ -12,7 +12,7 @@ export interface FieldValues {
 @Component({
   selector: 'field-group-acceptance',
   templateUrl: './field-group-acceptance.component.html',
-  styleUrls: [],
+  styleUrls: ['./field-group-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FieldGroupAcceptanceComponent implements OnInit {

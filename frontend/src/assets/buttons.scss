@@ -24,6 +24,20 @@
   }
 }
 
+@mixin toggle-buttons-theme($theme) {
+  .icon-button-toggle-group.mat-button-toggle-group {
+    box-shadow: none;
+
+    .mat-button-toggle-checked {
+      background: none;
+    }
+
+    .mat-button-toggle-checked label {
+      color: black;
+    }
+  }
+}
+
 
 .mat-icon-button.align-with-text {
   top: -4px;
@@ -61,5 +75,11 @@ button.button-link {
 
   &:focus {
     outline: 0;
+  }
+}
+
+.icon-button-toggle-group.mat-button-toggle-group {
+  .mat-button-toggle-checked label .mat-icon {
+    font-weight: bold;
   }
 }

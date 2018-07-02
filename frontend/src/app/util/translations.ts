@@ -453,7 +453,9 @@ export const translations = {
   },
   informationRequest: {
     acceptance: {
-      title: 'Hyväksy tietopäivitykset'
+      title: 'Hyväksy tietopäivitykset',
+      noChange: 'Älä vaihda',
+      change: 'Vaihda'
     },
     field: {
       CUSTOMER: 'Hakija',

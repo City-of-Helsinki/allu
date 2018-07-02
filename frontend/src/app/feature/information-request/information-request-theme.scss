@@ -9,6 +9,10 @@
 @mixin field-acceptance-theme($theme) {
   $primary: map-get($theme, primary);
 
+  .field-group-options label {
+    color: mat-color($primary, 300);
+  }
+
   li:nth-child(odd) .field-acceptance {
     background: mat-color($primary, 50);
   }
