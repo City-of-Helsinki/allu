@@ -1,10 +1,11 @@
 import {CustomerSearchQuery} from '../../../service/customer/customer-search-query';
 import {Customer} from '../../../model/customer/customer';
-import {CustomerSearchActions, CustomerSearchActionType} from '../actions/customer-search-actions';
 import {Contact} from '../../../model/customer/contact';
+import {CustomerSearchActions, CustomerSearchActionType} from '../actions/customer-search-actions';
 
 export interface State {
   search: CustomerSearchQuery;
+  loading: boolean;
   matchingCustomers: Customer[];
   contactSearch: string;
   availableContacts: Contact[];
@@ -13,6 +14,7 @@ export interface State {
 
 const initialState: State = {
   search: undefined,
+  loading: false,
   matchingCustomers: [],
   contactSearch: undefined,
   availableContacts: [],
@@ -24,21 +26,24 @@ export function reducer(state: State = initialState, action: CustomerSearchActio
     case CustomerSearchActionType.Search: {
       return {
         ...state,
-        search: action.payload
+        search: action.payload,
+        loading: true
       };
     }
 
     case CustomerSearchActionType.SearchSuccess: {
       return {
         ...state,
-        matchingCustomers: action.payload
+        matchingCustomers: action.payload,
+        loading: false
       };
     }
 
     case CustomerSearchActionType.SearchFailed: {
       return {
         ...state,
-        matchingCustomers: []
+        matchingCustomers: [],
+        loading: false
       };
     }
 
@@ -78,3 +83,5 @@ export function reducer(state: State = initialState, action: CustomerSearchActio
 export const getMatchingCustomers = (state: State) => state.matchingCustomers;
 
 export const getMatchingContacts = (state: State) => state.matchingContacts;
+
+export const getLoading = (state: State) => state.loading;

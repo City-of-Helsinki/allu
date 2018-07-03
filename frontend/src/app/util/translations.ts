@@ -646,8 +646,14 @@ export const translations = {
     search: {
       name: 'Asiakkaan nimi',
       registryKey: 'Asiakkaan tunniste',
-      type: 'Asiakkaan tyyppi'
-    }
+      type: 'Asiakkaan tyyppi',
+      search: 'Hae asiakasta',
+    },
+    suggestion: {
+      title: 'Ehdotettu asiakas',
+      info: 'Nimi yhdistetään samoilla tiedoilla löytyneeseen asiakkaaseen. Voit myös hakea vaihtoehtoa tai luoda nimellä uuden asiakkaan.'
+    },
+    createNew: 'Luo uusi asiakas'
   },
   contact: {
     name: 'Yhteyshenkilön nimi',

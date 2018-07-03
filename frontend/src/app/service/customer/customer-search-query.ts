@@ -4,4 +4,5 @@ export interface CustomerSearchQuery {
   type?: string;
   active?: boolean;
   invoicingOnly?: boolean;
+  matchAny?: boolean;
 }

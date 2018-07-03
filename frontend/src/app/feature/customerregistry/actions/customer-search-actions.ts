@@ -17,11 +17,8 @@ export enum CustomerSearchActionType {
 
 export class Search implements Action {
   readonly type = CustomerSearchActionType.Search;
-  public payload: CustomerSearchQuery;
 
-  constructor(type: string, name: string) {
-    this.payload = {type, name};
-  }
+  constructor(public payload: CustomerSearchQuery) {}
 }
 
 export class SearchSuccess implements Action {

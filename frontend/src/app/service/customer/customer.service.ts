@@ -38,7 +38,7 @@ export class CustomerService {
     return this.http.post<BackendPage<BackendCustomer>>(
       CUSTOMERS_SEARCH_URL,
       JSON.stringify(CustomerQueryParametersMapper.mapFrontend(searchQuery)),
-      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort)}).pipe(
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort, searchQuery.matchAny)}).pipe(
       map(page => PageMapper.mapBackend(page, CustomerMapper.mapBackend)),
       catchError(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')))
     );

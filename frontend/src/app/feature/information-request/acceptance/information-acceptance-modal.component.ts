@@ -12,8 +12,6 @@ import {CustomerRoleType} from '../../../model/customer/customer-role-type';
 import {ArrayUtil} from '../../../util/array-util';
 import {SetApplication, SetCustomer} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
-import {CodeSetCodeMap} from '../../../model/codeset/codeset';
-import {InformationAcceptanceModalEvents} from './information-acceptance-modal-events';
 
 export interface InformationAcceptanceData {
   informationRequestId?: number;
@@ -37,15 +35,13 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   form: FormGroup;
   updatedFields: string[];
   submitDisabled: Observable<boolean>;
-  countryCodes$: Observable<CodeSetCodeMap>;
 
   private childrenLoaded$ = new Subject<boolean>();
 
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
               private store: Store<fromRoot.State>,
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
-              private fb: FormBuilder,
-              private modalState: InformationAcceptanceModalEvents) {}
+              private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({});
@@ -64,7 +60,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
       startWith(true)
     );
 
-    this.countryCodes$ = this.store.select(fromRoot.getCodeSetCodeMap('Country'));
+
   }
 
   ngAfterViewInit(): void {

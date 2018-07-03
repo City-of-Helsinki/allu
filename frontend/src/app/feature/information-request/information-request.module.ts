@@ -8,12 +8,13 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {InformationAcceptanceModalComponent} from './acceptance/information-acceptance-modal.component';
 import {FieldAcceptanceComponent} from './acceptance/field-acceptance.component';
 import {FieldGroupAcceptanceComponent} from './acceptance/field-group-acceptance.component';
-import {CustomerAcceptanceComponent} from './acceptance/customer-acceptance.component';
+import {CustomerInfoAcceptanceComponent} from './acceptance/customer-info-acceptance.component';
 import {FieldValueComponent} from './acceptance/field-value.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {KindAcceptanceComponent} from './acceptance/kind-acceptance.component';
 import {InformationAcceptanceModalEvents} from './acceptance/information-acceptance-modal-events';
+import {CustomerAcceptanceComponent} from './acceptance/customer-acceptance.component';
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import {InformationAcceptanceModalEvents} from './acceptance/information-accepta
     FieldAcceptanceComponent,
     FieldGroupAcceptanceComponent,
     CustomerAcceptanceComponent,
+    CustomerInfoAcceptanceComponent,
     KindAcceptanceComponent
   ],
   providers: [

@@ -8,7 +8,6 @@ import * as fromProject from './project-reducer';
 import * as fromApplicationSearch from './application-search-reducer';
 import * as fromProjectSearch from './project-search-reducer';
 import * as fromParentProjects from './parent-project-reducer';
-import * as fromCustomerSearch from './customer-search-reducer';
 import * as fromChildProjects from './child-project-reducer';
 import * as fromApplicationBasket from './application-basket-reducer';
 import * as fromRoot from '../../allu/reducers/index';
@@ -27,7 +26,6 @@ export interface ProjectState {
   projectSearch: fromProjectSearch.State;
   parents: fromParentProjects.State;
   children: fromChildProjects.State;
-  customerSearch: fromCustomerSearch.State;
   applicationBasket: fromApplicationBasket.State;
   comments: fromComments.State;
   history: fromHistory.State;
@@ -44,7 +42,6 @@ export const reducers: ActionReducerMap<ProjectState> = {
   projectSearch: fromProjectSearch.reducer,
   parents: fromParentProjects.reducer,
   children: fromChildProjects.reducer,
-  customerSearch: fromCustomerSearch.reducer,
   applicationBasket: fromApplicationBasket.reducer,
   comments: fromProjectComments.reducer,
   history: fromProjectHistory.reducer
@@ -163,22 +160,6 @@ export const getChildProjects = createSelector(
 export const getChildProjectsLoading = createSelector(
   getChildrenState,
   fromChildProjects.getLoading
-);
-
-// Customer selectors
-export const getCustomerSearchState = createSelector(
-  getProjectState,
-  (state: ProjectState) => state.customerSearch
-);
-
-export const getMatchingCustomers = createSelector(
-  getCustomerSearchState,
-  fromCustomerSearch.getMatchingCustomers
-);
-
-export const getMatchingContacts = createSelector(
-  getCustomerSearchState,
-  fromCustomerSearch.getMatchingContacts
 );
 
 export const getRelatedProjects = createSelector(

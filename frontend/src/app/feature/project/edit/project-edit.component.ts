@@ -1,8 +1,10 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProjectForm} from './project.form';
+import * as fromRoot from '../../allu/reducers';
 import * as fromProject from '../reducers';
-import * as customerSearch from '../actions/customer-search-actions';
+import * as fromCustomerSearch from '../../customerregistry/reducers';
+import * as CustomerSearchAction from '../../customerregistry/actions/customer-search-actions';
 import {Store} from '@ngrx/store';
 import {Save} from '../actions/project-actions';
 import {EnumUtil} from '../../../util/enum.util';
@@ -36,7 +38,7 @@ export class ProjectEditComponent {
 
   private destroy = new Subject<boolean>();
 
-  constructor(private store: Store<fromProject.State>,
+  constructor(private store: Store<fromRoot.State>,
               private fb: FormBuilder,
               private projectService: ProjectService) {
     this.initForm();
@@ -105,7 +107,7 @@ export class ProjectEditComponent {
   }
 
   private initCustomerSearch(): void {
-    this.matchingCustomers$ = this.store.select(fromProject.getMatchingCustomers);
+    this.matchingCustomers$ = this.store.select(fromCustomerSearch.getMatchingCustomers);
 
     combineLatest(
       this.customerTypeCtrl.valueChanges,
@@ -113,26 +115,26 @@ export class ProjectEditComponent {
     ).pipe(
       takeUntil(this.destroy),
       debounceTime(300)
-    ).subscribe(([type, name]) => this.store.dispatch(new customerSearch.Search(type, name)));
+    ).subscribe(([type, name]) => this.store.dispatch(new CustomerSearchAction.Search({type, name})));
 
     this.customerTypeCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(() => this.customerCtrl.reset());
   }
 
   private initContactSearch(): void {
-    this.matchingContacts$ = this.store.select(fromProject.getMatchingContacts);
+    this.matchingContacts$ = this.store.select(fromCustomerSearch.getMatchingContacts);
 
     this.contactCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
       filter(contact => typeof contact === 'string')
-    ).subscribe(name => this.store.dispatch(new customerSearch.SearchContacts(name)));
+    ).subscribe(name => this.store.dispatch(new CustomerSearchAction.SearchContacts(name)));
 
     this.customerCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
       filter(customer => customer instanceof Customer)
-    ).subscribe(customer => this.store.dispatch(new customerSearch.LoadContacts(customer.id)));
+    ).subscribe(customer => this.store.dispatch(new CustomerSearchAction.LoadContacts(customer.id)));
   }
 
   private customerSelected(customer: Customer): void {

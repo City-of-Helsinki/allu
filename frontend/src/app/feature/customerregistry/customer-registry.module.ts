@@ -12,11 +12,19 @@ import {ContactModalComponent} from './contact/contact-modal.component';
 import {CustomerInfoComponent} from './customer/customer-info.component';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 import {InformationRequestModule} from '../information-request/information-request.module';
+import {StoreModule} from '@ngrx/store';
+import {EffectsModule} from '@ngrx/effects';
+import {reducers} from './reducers';
+import {CustomerSearchEffects} from './effects/customer-search-effects';
 
 @NgModule({
   imports: [
     RouterModule.forChild(customerRegistryRoutes),
     FormsModule,
+    StoreModule.forFeature('customer', reducers),
+    EffectsModule.forFeature([
+      CustomerSearchEffects
+    ]),
     ReactiveFormsModule,
     MatTableModule,
     MatSortModule,
