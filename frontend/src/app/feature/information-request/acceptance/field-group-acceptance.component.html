@@ -1,10 +1,13 @@
 <form [formGroup]="form">
-  <div class="field-group-options">
+  <div class="field-group-options" *ngIf="displayedFields.length">
     <label>{{'informationRequest.acceptance.noChange' | translation}}</label>
     <label>{{'informationRequest.acceptance.change' | translation}}</label>
   </div>
   <ul>
-    <li *ngFor="let fieldName of fieldLabels | keys">
+    <li *ngIf="displayedFields.length === 0" class="label-row text-primary">
+      {{'informationRequest.acceptance.noChanges' | translation}}
+    </li>
+    <li *ngFor="let fieldName of displayedFields">
       <field-acceptance
         [formControlName]="fieldName"
         [label]="fieldLabels[fieldName]"

@@ -62,7 +62,7 @@ const codeSet: CodeSetTypeMap = {
   }
 };
 
-fdescribe('CustomerAcceptanceComponent', () => {
+describe('CustomerAcceptanceComponent', () => {
   let hostComp: MockHostComponent;
   let fixture: ComponentFixture<MockHostComponent>;
   let de: DebugElement;

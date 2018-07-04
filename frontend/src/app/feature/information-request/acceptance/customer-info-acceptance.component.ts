@@ -57,7 +57,7 @@ export class CustomerInfoAcceptanceComponent implements OnInit {
     customer.name = result.name;
     customer.registryKey = result.registryKey;
     customer.ovt = result.ovt;
-    customer.invoicingOperator = result.invoivingOperator;
+    customer.invoicingOperator = result.invoicingOperator;
     customer.postalAddress = new PostalAddress(result.streetAddress, result.postalCode, result.city);
     customer.email = result.email;
     customer.phone = result.phone;

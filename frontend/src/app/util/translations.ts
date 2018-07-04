@@ -455,7 +455,8 @@ export const translations = {
     acceptance: {
       title: 'Hyväksy tietopäivitykset',
       noChange: 'Älä vaihda',
-      change: 'Vaihda'
+      change: 'Vaihda',
+      noChanges: 'Ei muutoksia'
     },
     field: {
       CUSTOMER: 'Hakija',
