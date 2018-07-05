@@ -32,6 +32,8 @@ export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcc
 })
 export class InformationAcceptanceModalComponent implements OnInit, AfterViewInit {
 
+  oldInfo: Application;
+  newInfo: Application;
   form: FormGroup;
   updatedFields: string[];
   submitDisabled: Observable<boolean>;
@@ -55,6 +57,8 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   }
 
   ngOnInit(): void {
+    this.oldInfo = this.data.oldInfo;
+    this.newInfo = this.data.newInfo;
     this.updatedFields = this.data.updatedFields.map(field => InformationRequestFieldKey[field]);
 
     // set initial values to the store

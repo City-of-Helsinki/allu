@@ -5,10 +5,7 @@
 
   .mat-button-toggle-checked {
     background: mat-color($primary, 500);
-
-    & label {
-      color: mat-contrast($primary, 500);
-    }
+    color: $dark-primary-text;
   }
 
   .mat-button-toggle-disabled.mat-button-toggle-checked {

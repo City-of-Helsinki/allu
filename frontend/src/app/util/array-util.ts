@@ -60,6 +60,16 @@ export class ArrayUtil {
     }
   }
 
+  static createOrReplaceAt<T>(array: T[] = [], item: T, index: number): T[] {
+    const result = [...array];
+    if (index < result.length) {
+      result[index] = item;
+    } else {
+      result.push(item);
+    }
+    return result;
+  }
+
   static uniqueItem(valueFn?: (item) => any): (value: any, index: number, self: any[]) => boolean {
     return (value, index, self) => self
       .map(item => valueFn(item))

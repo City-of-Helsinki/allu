@@ -1,15 +1,15 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import * as fromRoot from '../../allu/reducers';
-import * as fromCustomerSearch from '../../customerregistry/reducers';
-import {Customer} from '../../../model/customer/customer';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromCustomerSearch from '@feature/customerregistry/reducers';
+import {Customer} from '@model/customer/customer';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {CodeSetCodeMap} from '../../../model/codeset/codeset';
+import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
-import {SetCustomer} from '../actions/information-request-result-actions';
-import {debounceTime, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/internal/operators';
-import {Search} from '../../customerregistry/actions/customer-search-actions';
-import {ArrayUtil} from '../../../util/array-util';
+import {SetCustomer} from '../../actions/information-request-result-actions';
+import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {Search} from '@feature/customerregistry/actions/customer-search-actions';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'customer-acceptance',

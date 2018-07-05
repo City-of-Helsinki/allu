@@ -1,0 +1,6 @@
+<div *ngFor="let contact of newContacts; let index=index">
+  <contact-acceptance
+    [formArray]="contactForms"
+    [newContact]="contact"
+    (contactChanges)="onContactChange($event, index)"></contact-acceptance>
+</div>

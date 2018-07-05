@@ -661,6 +661,7 @@ export const translations = {
     createNew: 'Luo uusi asiakas'
   },
   contact: {
+    title: 'Yhteyshenkilö',
     name: 'Yhteyshenkilön nimi',
     role: {
       APPLICANT: {
@@ -884,6 +885,7 @@ export const translations = {
   },
   emailAddress: 'Sähköpostiosoite',
   phone: 'Puhelin',
+  name: 'Nimi',
   common: {
     freeTextSearch: 'Vapaa tekstihaku',
     select: 'Valitse',

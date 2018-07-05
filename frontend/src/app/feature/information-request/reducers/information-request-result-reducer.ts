@@ -3,6 +3,7 @@ import {InformationRequestResultActions, InformationRequestResultActionType} fro
 import {Customer} from '../../../model/customer/customer';
 import {Contact} from '../../../model/customer/contact';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
+import {ArrayUtil} from '@util/array-util';
 
 export interface State {
   application: Application;
@@ -31,6 +32,23 @@ export function reducer(state: State = initialState, action: InformationRequestR
       return {
         ...state,
         customer: action.payload
+      };
+    }
+
+    case InformationRequestResultActionType.SetContacts: {
+      return {
+        ...state,
+        contacts: action.payload
+      };
+    }
+
+    case InformationRequestResultActionType.SetContact: {
+      const index = action.payload.index;
+      const contact = action.payload.contact;
+      const result = ArrayUtil.createOrReplaceAt(state.contacts, contact, index);
+      return {
+        ...state,
+        contacts: result
       };
     }
 

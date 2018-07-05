@@ -1,42 +1,27 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FieldLabels, FieldValues} from './field-group-acceptance.component';
-import {Customer} from '../../../model/customer/customer';
-import {PostalAddress} from '../../../model/common/postal-address';
+import {FieldLabels, FieldValues} from '../field-group-acceptance.component';
+import {Customer} from '../../../../model/customer/customer';
+import {PostalAddress} from '../../../../model/common/postal-address';
 import {FormGroup} from '@angular/forms';
-import {FieldSelection, Selected} from './field-acceptance.component';
+import {FieldSelection, Selected} from '../field-acceptance.component';
 import {map} from 'rxjs/internal/operators';
-import {findTranslation} from '../../../util/translations';
-import {CodeSetCodeMap} from '../../../model/codeset/codeset';
-import {Some} from '../../../util/option';
+import {findTranslation} from '../../../../util/translations';
+import {CodeSetCodeMap} from '../../../../model/codeset/codeset';
+import {Some} from '../../../../util/option';
+import {InfoAcceptance} from '@feature/information-request/acceptance/info-acceptance';
 
 @Component({
   selector: 'customer-info-acceptance',
   templateUrl: './customer-info-acceptance.component.html',
   styleUrls: []
 })
-export class CustomerInfoAcceptanceComponent implements OnInit {
+export class CustomerInfoAcceptanceComponent extends InfoAcceptance<Customer> implements OnInit {
   _oldCustomer: Customer;
   _newCustomer: Customer;
 
-  @Input() form: FormGroup;
   @Input() countryCodes: CodeSetCodeMap;
 
   @Output() customerChanges: EventEmitter<Customer> = new EventEmitter<Customer>();
-
-  fieldLabels: FieldLabels;
-  oldValues: FieldValues;
-  oldDisplayValues: FieldValues;
-  newValues: FieldValues;
-  newDisplayValues: FieldValues;
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-    this.form.valueChanges.pipe(
-      map((selections: FieldSelection) => this.selectionsToValues(selections))
-    ).subscribe((selectedValues) => this.resultChanges(selectedValues));
-  }
 
   @Input() set oldCustomer(customer: Customer) {
     this._oldCustomer = customer;
@@ -63,24 +48,6 @@ export class CustomerInfoAcceptanceComponent implements OnInit {
     customer.phone = result.phone;
     customer.country = result.country;
     this.customerChanges.emit(customer);
-  }
-
-  private selectionsToValues(selections: FieldSelection): FieldValues {
-    return Object.keys(selections).reduce((prev: FieldValues, field: string) => {
-      const selection = selections[field];
-      prev[field] = this.getValue(field, selection);
-      return prev;
-    }, {});
-  }
-
-  private getValue(fieldName: string, selection: Selected): any {
-    if (selection === 'old') {
-      return this.oldValues[fieldName];
-    } else if (selection === 'new') {
-      return this.newValues[fieldName];
-    } else {
-      return undefined;
-    }
   }
 
   private toFieldValues(customer: Customer): FieldValues {

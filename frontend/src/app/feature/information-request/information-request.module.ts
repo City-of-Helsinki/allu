@@ -8,13 +8,17 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {InformationAcceptanceModalComponent} from './acceptance/information-acceptance-modal.component';
 import {FieldAcceptanceComponent} from './acceptance/field-acceptance.component';
 import {FieldGroupAcceptanceComponent} from './acceptance/field-group-acceptance.component';
-import {CustomerInfoAcceptanceComponent} from './acceptance/customer-info-acceptance.component';
+import {CustomerInfoAcceptanceComponent} from './acceptance/customer/customer-info-acceptance.component';
 import {FieldValueComponent} from './acceptance/field-value.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {KindAcceptanceComponent} from './acceptance/kind-acceptance.component';
 import {InformationAcceptanceModalEvents} from './acceptance/information-acceptance-modal-events';
-import {CustomerAcceptanceComponent} from './acceptance/customer-acceptance.component';
+import {CustomerAcceptanceComponent} from './acceptance/customer/customer-acceptance.component';
+import {CustomerWithContactsAcceptanceComponent} from '@feature/information-request/acceptance/customer-with-contacts-acceptance.component';
+import {ContactsAcceptanceComponent} from '@feature/information-request/acceptance/contact/contacts-acceptance-component';
+import {ContactAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-acceptance.component';
+import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
 
 @NgModule({
   imports: [
@@ -30,8 +34,12 @@ import {CustomerAcceptanceComponent} from './acceptance/customer-acceptance.comp
     FieldValueComponent,
     FieldAcceptanceComponent,
     FieldGroupAcceptanceComponent,
+    CustomerWithContactsAcceptanceComponent,
     CustomerAcceptanceComponent,
     CustomerInfoAcceptanceComponent,
+    ContactsAcceptanceComponent,
+    ContactAcceptanceComponent,
+    ContactInfoAcceptanceComponent,
     KindAcceptanceComponent
   ],
   providers: [

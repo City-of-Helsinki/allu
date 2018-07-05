@@ -7,7 +7,7 @@ import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromCustomerSearch from '../../../../src/app/feature/customerregistry/reducers';
 import * as fromCodeSet from '../../../../src/app/feature/allu/reducers/code-set-reducer';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {CustomerAcceptanceComponent} from '../../../../src/app/feature/information-request/acceptance/customer-acceptance.component';
+import {CustomerAcceptanceComponent} from '../../../../src/app/feature/information-request/acceptance/customer/customer-acceptance.component';
 import {SearchSuccess} from '../../../../src/app/feature/customerregistry/actions/customer-search-actions';
 import * as CodeSetAction from '../../../../src/app/feature/allu/actions/code-set-actions';
 import {By} from '@angular/platform-browser';

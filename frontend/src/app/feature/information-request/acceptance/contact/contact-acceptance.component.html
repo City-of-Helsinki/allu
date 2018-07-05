@@ -1,0 +1,7 @@
+<h2 mat-dialog-title>{{'contact.title' | translation}}</h2>
+
+<contact-info-acceptance
+  [form]="form"
+  [oldContact]="undefined"
+  [newContact]="newContact"
+  (contactChanges)="contactChanges.emit($event)"></contact-info-acceptance>

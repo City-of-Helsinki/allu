@@ -9,16 +9,16 @@
       <kind-acceptance
         *ngIf="field === 'APPLICATION_KIND'"
         [parentForm]="form"
-        [applicationType]="data.oldInfo.type"
-        [oldValues]="data.oldInfo?.kindsWithSpecifiers"
-        [newValues]="data.newInfo?.clientApplicationData.clientApplicationKind">
+        [applicationType]="oldInfo.type"
+        [oldValues]="oldInfo?.kindsWithSpecifiers"
+        [newValues]="newInfo?.clientApplicationData.clientApplicationKind">
       </kind-acceptance>
 
-      <customer-acceptance
+      <customer-with-contacts-acceptance
         *ngIf="field === 'CUSTOMER'"
         [parentForm]="form"
-        [oldCustomer]="data.oldInfo?.applicant.customer"
-        [newCustomer]="data.newInfo?.clientApplicationData?.customer?.customer"></customer-acceptance>
+        [oldCustomerWithContacts]="oldInfo?.applicant"
+        [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"></customer-with-contacts-acceptance>
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>
