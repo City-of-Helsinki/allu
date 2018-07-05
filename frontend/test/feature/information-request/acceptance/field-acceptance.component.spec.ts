@@ -5,7 +5,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
 import {MatDialogModule} from '@angular/material';
-import {getMatButtonToggleWithMatIcon} from '../../../selector-helpers';
+import {getButtonWithMatIcon} from '../../../selector-helpers';
 
 @Component({
   selector: 'parent',
@@ -84,8 +84,8 @@ describe('FieldAcceptanceComponent', () => {
   });
 
   it('selects new or old by user action', () => {
-    const oldButton: HTMLButtonElement = getMatButtonToggleWithMatIcon(de, 'clear');
-    const newButton: HTMLButtonElement = getMatButtonToggleWithMatIcon(de, 'check');
+    const oldButton: HTMLButtonElement = getButtonWithMatIcon(de, 'clear');
+    const newButton: HTMLButtonElement = getButtonWithMatIcon(de, 'check');
     expect(testHost.form.get(testHost.fieldName).value).toBeNull();
 
     oldButton.click();
