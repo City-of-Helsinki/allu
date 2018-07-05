@@ -120,6 +120,10 @@ export const translations = {
         single: 'Hakemuksen laji',
         multiple: 'Hakemuksen lajit'
       },
+      suggestion: {
+        single: 'Ehdotettu laji',
+        multiple: 'Ehdotetut lajit'
+      },
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
       PROMOTION: 'Promootio',
       AREA_RENTAL: 'Aluevuokraus',

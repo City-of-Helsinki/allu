@@ -59,8 +59,6 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
       map(status => status !== 'VALID'),
       startWith(true)
     );
-
-
   }
 
   ngAfterViewInit(): void {

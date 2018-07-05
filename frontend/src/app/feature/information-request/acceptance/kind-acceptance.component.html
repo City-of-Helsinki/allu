@@ -1,81 +1,58 @@
 <form [formGroup]="form">
   <ul>
-    <li>
+    <li class="label-row text-primary">
       <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim">
-        <div fxFlex class="text-primary">
+        <div fxFlex="0 1 33%" class="text-primary">
           <ng-container *ngIf="multipleKinds; else singleKind">
-            {{'application.kind.placeholder.multiple' | translation}}
+            {{'application.kind.suggestion.multiple' | translation}}
           </ng-container>
           <ng-template #singleKind>
-            {{'application.kind.placeholder.single' | translation}}
+            {{'application.kind.suggestion.single' | translation}}
           </ng-template>
         </div>
-        <div fxFlex>
+        <div fxFlex="0 1 33%">
           <div fxLayout="row" fxLayoutAlign="start center" class="slim value-change">
-            <div fxFlex="none">
-              <div *ngFor="let kind of oldValues | keys">
-                {{['application.kind', kind] | translation}}
-              </div>
-            </div>
-            <div fxFlex="none">
-              <mat-icon class="icon-middle">arrow_forward</mat-icon>
-            </div>
             <div fxFlex="none">
               {{newValues}}
             </div>
           </div>
         </div>
-        <div fxFlex *ngIf="multipleKinds">
-          <mat-form-field class="input-full-width">
-            <mat-select formControlName="kinds" multiple required
-                        [placeholder]="'common.select' | translation"
-                        class="input-full-width">
-              <mat-option *ngFor="let kind of availableKinds" [value]="kind">
-                {{['application.kind', kind] | translation}}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="form.get('kinds').hasError('required')">
-              {{'application.field.kindMissing' | translation}}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div *ngIf="!multipleKinds">
-          <mat-form-field class="input-full-width">
-            <mat-select formControlName="kinds" required
-                        [placeholder]="'common.select' | translation"
-                        class="input-full-width">
-              <mat-option *ngFor="let kind of availableKinds" [value]="kind">
-                {{['application.kind', kind] | translation}}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="form.get('kinds').hasError('required')">
-              {{'application.field.kindMissing' | translation}}
-            </mat-error>
-          </mat-form-field>
-        </div>
       </div>
     </li>
-    <li *ngIf="showSpecifierSelection()">
+    <li>
       <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim">
-        <div fxFlex class="text-primary">
-          {{'application.specifier.placeholder' | translation}}
+        <div fxFlex="0 1 33%" *ngIf="multipleKinds">
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="kinds" multiple required
+                        [placeholder]="'application.kind.placeholder.multiple' | translation"
+                        class="input-full-width">
+              <mat-option *ngFor="let kind of availableKinds" [value]="kind">
+                {{['application.kind', kind] | translation}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('kinds').hasError('required')">
+              {{'application.field.kindMissing' | translation}}
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div fxFlex>
-          <div *ngFor="let kind of oldValues | keys">
-            <span>
-              {{['application.kind', kind] | translation}}:
-            </span>
-            <span>
-              <ng-container *ngFor="let specifier of oldValues[kind]; let last=last">
-                {{['application.specifier', specifier] | translation | commaSeparated: last}}
-              </ng-container>
-            </span>
-          </div>
+        <div fxFlex="0 1 33%" *ngIf="!multipleKinds">
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="kinds" required
+                        [placeholder]="'application.kind.placeholder.single' | translation"
+                        class="input-full-width">
+              <mat-option *ngFor="let kind of availableKinds" [value]="kind">
+                {{['application.kind', kind] | translation}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('kinds').hasError('required')">
+              {{'application.field.kindMissing' | translation}}
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div fxFlex>
+        <div fxFlex="0 1 33%" *ngIf="showSpecifierSelection()">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="specifiers" multiple
-                        [placeholder]="'common.select' | translation"
+                        [placeholder]="'application.specifier.placeholder' | translation"
                         class="input-full-width">
               <mat-optgroup *ngFor="let kind of availableKindsWithSpecifiers | keys"
                             [label]="['application.kind', kind] | translation">
