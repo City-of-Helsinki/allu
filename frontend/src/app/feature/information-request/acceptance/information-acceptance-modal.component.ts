@@ -7,7 +7,7 @@ import {InformationRequestResult} from '../information-request-result';
 import {Application} from '../../../model/application/application';
 import {InformationRequestFieldKey} from '../../../model/information-request/information-request-field-key';
 import {combineLatest, Observable, Subject} from 'rxjs/index';
-import {map, skipUntil, startWith, take} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, map, skipUntil, startWith, take} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '../../../model/customer/customer-role-type';
 import {ArrayUtil} from '../../../util/array-util';
 import {SetApplication, SetCustomer} from '../actions/information-request-result-actions';
@@ -41,24 +41,26 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
               private store: Store<fromRoot.State>,
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
-              private fb: FormBuilder) {}
-
-  ngOnInit(): void {
+              private fb: FormBuilder) {
     this.form = this.fb.group({});
-    this.updatedFields = this.data.updatedFields.map(field => InformationRequestFieldKey[field]);
-
-    // set initial values to the store
-    const baseInfo = this.data.oldInfo || new Application();
-    this.store.dispatch(new SetApplication(baseInfo));
-    this.store.dispatch(new SetCustomer(baseInfo.applicant.customer));
 
     // Need to wait until viewChildren are loaded so they wont emit
     // form changes before component tree has been stabilized
     this.submitDisabled = this.form.statusChanges.pipe(
       skipUntil(this.childrenLoaded$),
       map(status => status !== 'VALID'),
-      startWith(true)
+      startWith(true),
+      distinctUntilChanged()
     );
+  }
+
+  ngOnInit(): void {
+    this.updatedFields = this.data.updatedFields.map(field => InformationRequestFieldKey[field]);
+
+    // set initial values to the store
+    const baseInfo = this.data.oldInfo || new Application();
+    this.store.dispatch(new SetApplication(baseInfo));
+    this.store.dispatch(new SetCustomer(baseInfo.applicant.customer));
   }
 
   ngAfterViewInit(): void {
