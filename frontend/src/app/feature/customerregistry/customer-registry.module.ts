@@ -16,6 +16,7 @@ import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {reducers} from './reducers';
 import {CustomerSearchEffects} from './effects/customer-search-effects';
+import {ContactSearchEffects} from '@feature/customerregistry/effects/contact-search-effects';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import {CustomerSearchEffects} from './effects/customer-search-effects';
     FormsModule,
     StoreModule.forFeature('customer', reducers),
     EffectsModule.forFeature([
-      CustomerSearchEffects
+      CustomerSearchEffects,
+      ContactSearchEffects
     ]),
     ReactiveFormsModule,
     MatTableModule,

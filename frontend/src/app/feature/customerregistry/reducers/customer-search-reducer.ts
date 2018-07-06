@@ -1,24 +1,17 @@
 import {CustomerSearchQuery} from '../../../service/customer/customer-search-query';
 import {Customer} from '../../../model/customer/customer';
-import {Contact} from '../../../model/customer/contact';
 import {CustomerSearchActions, CustomerSearchActionType} from '../actions/customer-search-actions';
 
 export interface State {
   search: CustomerSearchQuery;
   loading: boolean;
-  matchingCustomers: Customer[];
-  contactSearch: string;
-  availableContacts: Contact[];
-  matchingContacts: Contact[];
+  matching: Customer[];
 }
 
 const initialState: State = {
   search: undefined,
   loading: false,
-  matchingCustomers: [],
-  contactSearch: undefined,
-  availableContacts: [],
-  matchingContacts: []
+  matching: []
 };
 
 export function reducer(state: State = initialState, action: CustomerSearchActions) {
@@ -34,7 +27,7 @@ export function reducer(state: State = initialState, action: CustomerSearchActio
     case CustomerSearchActionType.SearchSuccess: {
       return {
         ...state,
-        matchingCustomers: action.payload,
+        matching: action.payload,
         loading: false
       };
     }
@@ -42,35 +35,8 @@ export function reducer(state: State = initialState, action: CustomerSearchActio
     case CustomerSearchActionType.SearchFailed: {
       return {
         ...state,
-        matchingCustomers: [],
+        matching: [],
         loading: false
-      };
-    }
-
-    case CustomerSearchActionType.LoadContactsSuccess: {
-      return {
-        ...state,
-        availableContacts: action.payload,
-        matchingContacts: []
-      };
-    }
-
-    case CustomerSearchActionType.LoadContactsFailed: {
-      return {
-        ...state,
-        availableContacts: [],
-        matchingContacts: []
-      };
-    }
-
-    case CustomerSearchActionType.SearchContacts: {
-      const searchTerm = action.payload ? action.payload.toLocaleLowerCase() : '';
-      const matching = state.availableContacts
-        .filter(c => c.name.toLocaleLowerCase().startsWith(searchTerm));
-
-      return {
-        ...state,
-        matchingContacts: matching
       };
     }
 
@@ -80,8 +46,6 @@ export function reducer(state: State = initialState, action: CustomerSearchActio
   }
 }
 
-export const getMatchingCustomers = (state: State) => state.matchingCustomers;
-
-export const getMatchingContacts = (state: State) => state.matchingContacts;
+export const getMatching = (state: State) => state.matching;
 
 export const getLoading = (state: State) => state.loading;

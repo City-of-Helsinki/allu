@@ -3,8 +3,9 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProjectForm} from './project.form';
 import * as fromRoot from '../../allu/reducers';
 import * as fromProject from '../reducers';
-import * as fromCustomerSearch from '../../customerregistry/reducers';
-import * as CustomerSearchAction from '../../customerregistry/actions/customer-search-actions';
+import * as fromCustomerSearch from '@feature/customerregistry/reducers';
+import * as CustomerSearchAction from '@feature/customerregistry/actions/customer-search-actions';
+import * as ContactSearchAction from '@feature/customerregistry/actions/contact-search-actions';
 import {Store} from '@ngrx/store';
 import {Save} from '../actions/project-actions';
 import {EnumUtil} from '../../../util/enum.util';
@@ -128,13 +129,13 @@ export class ProjectEditComponent {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(contact => typeof contact === 'string')
-    ).subscribe(name => this.store.dispatch(new CustomerSearchAction.SearchContacts(name)));
+    ).subscribe(name => this.store.dispatch(new ContactSearchAction.Search(name)));
 
     this.customerCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
       filter(customer => customer instanceof Customer)
-    ).subscribe(customer => this.store.dispatch(new CustomerSearchAction.LoadContacts(customer.id)));
+    ).subscribe(customer => this.store.dispatch(new ContactSearchAction.LoadByCustomer(customer.id)));
   }
 
   private customerSelected(customer: Customer): void {

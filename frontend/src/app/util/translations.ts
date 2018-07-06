@@ -691,7 +691,14 @@ export const translations = {
     action: {
       remove: 'Yhteyshenkilö poistettu',
       save: 'Yhteyshenkilö tallennettu'
-    }
+    },
+    suggestion: {
+      title: 'Ehdotettu yhteyshenkilö',
+      info: `Nimi yhdistetään samoilla tiedoilla löytyneeseen yhteyshenkilöön.
+       Voit myös hakea vaihtoehtoa tai luoda nimellä uuden yhteyshenkilön.`
+    },
+    createNew: 'Luo uusi yhteyshenkilö',
+    search: 'Hae yhteyshenkilöä'
   },
   geolocation: {
     error: {

@@ -6,8 +6,6 @@ import {catchError, map, switchMap} from 'rxjs/operators';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {
   CustomerSearchActionType,
-  LoadContacts, LoadContactsFailed,
-  LoadContactsSuccess,
   Search,
   SearchFailed,
   SearchSuccess
@@ -26,18 +24,6 @@ export class CustomerSearchEffects {
       this.customerService.search(search).pipe(
         map(customers => new SearchSuccess(customers)),
         catchError(error => of(new SearchFailed(error)))
-      )
-    )
-  );
-
-  @Effect()
-  loadContacts: Observable<Action> = this.actions.pipe(
-    ofType<LoadContacts>(CustomerSearchActionType.LoadContacts),
-    map(action => action.payload),
-    switchMap(customerId =>
-      this.customerService.findCustomerContacts(customerId).pipe(
-        map(contacts => new LoadContactsSuccess(contacts)),
-        catchError(error => of(new LoadContactsFailed(error)))
       )
     )
   );

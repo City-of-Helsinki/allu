@@ -1,7 +1,33 @@
 <h2 mat-dialog-title>{{'contact.title' | translation}}</h2>
 
+<form [formGroup]="searchForm">
+  <div class="label-row text-primary">
+    {{'contact.suggestion.title' | translation}}
+  </div>
+
+  <mat-form-field floatLabel="never" class="form-field-33 form-field-dense" *ngIf="matchingContacts$">
+    <input matInput type="text" formControlName="search"
+           [placeholder]="'contact.search' | translation"
+           [matAutocomplete]="contactSearch"/>
+    <mat-icon matSuffix>arrow_drop_down</mat-icon>
+    <mat-autocomplete #contactSearch="matAutocomplete">
+      <mat-option *ngFor="let contact of matchingContacts$ | async" [value]="contact.name"
+                  (click)="selectReferenceContact(contact)">
+        {{ contact.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <p class="acceptance-info">
+    {{'contact.suggestion.info' | translation}}
+    <button class="button-link" (click)="createNewContact()">
+      {{'contact.createNew' | translation}}
+    </button>
+  </p>
+</form>
+
 <contact-info-acceptance
   [form]="form"
-  [oldContact]="undefined"
+  [oldContact]="referenceContact$ | async"
   [newContact]="newContact"
   (contactChanges)="contactChanges.emit($event)"></contact-info-acceptance>
