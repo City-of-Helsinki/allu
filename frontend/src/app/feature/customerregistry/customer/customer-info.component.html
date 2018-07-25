@@ -249,4 +249,12 @@
         </mat-checkbox>
     </div>
   </div>
+
+  <div fxFlex *ngIf="invoicingProhibited && showInvoicingProhibited" class="align-left">
+    <mat-icon color="accent" class="align-with-text">
+      report_problem
+    </mat-icon>
+    <span class="title-normal">{{'customer.invoicingProhibited' | translation}}</span>
+  </div>
+
 </form>

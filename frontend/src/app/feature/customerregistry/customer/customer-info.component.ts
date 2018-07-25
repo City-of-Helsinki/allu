@@ -29,6 +29,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   @Input() allowSearch = false;
   @Input() showInvoicingInfo = false;
   @Input() showInvoicingOnly = false;
+  @Input() showInvoicingProhibited = false;
   @Input() excludeInvoicingOnlyCustomers = true;
 
   @Output() customerChange = new EventEmitter<Customer>();
@@ -133,5 +134,9 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     } else {
       this.registryKeyControl.setValidators(REGISTRY_KEY_VALIDATORS);
     }
+  }
+
+  get invoicingProhibited(): boolean {
+    return (<CustomerForm>this.form.getRawValue()).invoicingProhibited;
   }
 }
