@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
+import static com.querydsl.sql.SQLExpressions.select;
 import static fi.hel.allu.QUser.user;
 import static fi.hel.allu.QUserApplicationType.userApplicationType;
 import static fi.hel.allu.QUserCityDistrict.userCityDistrict;
@@ -100,6 +101,31 @@ public class UserDao {
             .and(userRole.role.eq(roleType.name()).and(userCityDistrict.cityDistrictId.eq(cityDistrictId))))
         .fetchResults().getResults();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
+    mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
+    return users;
+  }
+
+  @Transactional(readOnly = true)
+  public List<User> findMatching(RoleType hasRoleType, RoleType doesntHaveRoleType, ApplicationType applicationType, Integer cityDistrictId) {
+    // Find users that have role 'hasRoleType' but don't have role 'doesntHaveRoleType' and that
+    // have 'applicationType' allowed and that have 'cityDistrcitId' enabled.
+    final List<User> users = queryFactory
+        .select(userBean).from(
+          select(userBean).from(QUser.user).innerJoin(userApplicationType)
+            .on(user.id.eq(userApplicationType.userId)).innerJoin(userRole).on(user.id.eq(userRole.userId))
+            .innerJoin(userCityDistrict).on(user.id.eq(userCityDistrict.userId))
+            .where(userApplicationType.applicationType.eq(applicationType.name())
+                .and(userRole.role.eq(hasRoleType.name())
+                .and(userCityDistrict.cityDistrictId.eq(cityDistrictId)))).as("user"))
+        .where(user.id.notIn(
+          select(user.id).from(QUser.user).innerJoin(userApplicationType)
+            .on(user.id.eq(userApplicationType.userId)).innerJoin(userRole).on(user.id.eq(userRole.userId))
+            .innerJoin(userCityDistrict).on(user.id.eq(userCityDistrict.userId))
+            .where(userApplicationType.applicationType.eq(applicationType.name())
+                .and(userRole.role.eq(doesntHaveRoleType.name())
+                .and(userCityDistrict.cityDistrictId.eq(cityDistrictId)))))
+        ).fetchResults().getResults();
+    final List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;
   }
