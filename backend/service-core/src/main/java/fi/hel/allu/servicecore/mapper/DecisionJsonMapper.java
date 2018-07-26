@@ -355,8 +355,7 @@ public class DecisionJsonMapper {
             + "<li>Vuosivuokra yrityksille: 200 &euro;/vuosi</li></ul>";
       case KESKUSKATU_SALES:
       case SEASON_SALE:
-        return "<ul><li>(1&ndash;14 p&auml;iv&auml;&auml;): 50 &euro;/p&auml;iv&auml;/alkava 10 m&sup2; + alv</li>"
-            + "<li>(15. p&auml;iv&auml;st&auml; alkaen): 25 &euro;/p&auml;iv&auml;/alkava 10 m&sup2; + alv</li></ul>";
+        return "50 &euro;/&auml;/alkava 10m&sup2; + alv";
       case PROMOTION_OR_SALES:
         return "150 &euro;/kalenterivuosi + alv";
       case SUMMER_THEATER:
