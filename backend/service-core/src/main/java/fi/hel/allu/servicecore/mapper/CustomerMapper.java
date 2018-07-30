@@ -73,7 +73,7 @@ public class CustomerMapper {
     customerModel.setInvoicingOperator(customerJson.getInvoicingOperator());
     customerModel.setInvoicingOnly(customerJson.isInvoicingOnly());
     if (customerJson.getCountry() != null) {
-      customerModel.setCountryId(codeSetService.findByTypeAndCode(CodeSetType.Country, customerJson.getCountry()).getId());
+      customerModel.setCountryId(codeSetService.findByTypeAndCode(CodeSetType.Country, customerJson.getCountry().toUpperCase()).getId());
     }
     customerModel.setProjectIdentifierPrefix(customerJson.getProjectIdentifierPrefix());
     return customerModel;
