@@ -55,7 +55,6 @@ public class ApplicationForHistory {
 
   private boolean skipPriceCalculation = false;
 
-  private ClientApplicationDataJson clientApplicationData;
   private String identificationNumber;
   private Integer externalOwnerId;
 
@@ -337,14 +336,6 @@ public class ApplicationForHistory {
 
   public void setExternalOwnerId(Integer externalOwnerId) {
     this.externalOwnerId = externalOwnerId;
-  }
-
-  public ClientApplicationDataJson getClientApplicationData() {
-    return clientApplicationData;
-  }
-
-  public void setClientApplicationData(ClientApplicationDataJson clientApplicationData) {
-    this.clientApplicationData = clientApplicationData;
   }
 
   public String getIdentificationNumber() {

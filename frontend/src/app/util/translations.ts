@@ -1423,6 +1423,7 @@ export const translations = {
       },
       typeWithSpecifier: {
         STATUS_CHANGED: {
+          PENDING_CLIENT: 'Vireille asiakasjärjestelmässä',
           PRE_RESERVED: 'Alustava varaus luotu',
           PENDING: 'Hakemus saapunut',
           HANDLING: 'Hakemus siirretty käsittelyyn',

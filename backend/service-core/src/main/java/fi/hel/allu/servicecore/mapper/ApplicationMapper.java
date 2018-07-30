@@ -221,7 +221,6 @@ public class ApplicationMapper {
     history.setSkipPriceCalculation(application.getSkipPriceCalculation());
     history.setProject(application.getProject());
     history.setExternalOwnerId(application.getExternalOwnerId());
-    history.setClientApplicationData(application.getClientApplicationData());
     history.setIdentificationNumber(application.getIdentificationNumber());
     history.setLocations(application.getLocations());
     return history;

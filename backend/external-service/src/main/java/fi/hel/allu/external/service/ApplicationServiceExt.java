@@ -80,7 +80,9 @@ public class ApplicationServiceExt {
     ApplicationJson application = applicationServiceComposer.updateApplication(id,
         mapper.mapExtApplication(applicationExt, getExternalUserId()));
     StatusType status = applicationExt.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
-    applicationServiceComposer.changeStatus(id, status);
+    if (application.getStatus() != status) {
+      applicationServiceComposer.changeStatus(id, status);
+    }
     saveOriginalApplication(id, null, application);
     return application.getId();
   }
