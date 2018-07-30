@@ -22,10 +22,10 @@ import java.util.stream.Stream;
 @Service
 public class ProjectServiceComposer {
 
-  private ApplicationService applicationService;
-  private ProjectService projectService;
-  private SearchService searchService;
-  private ApplicationJsonService applicationJsonService;
+  private final ApplicationService applicationService;
+  private final ProjectService projectService;
+  private final SearchService searchService;
+  private final ApplicationJsonService applicationJsonService;
 
   @Autowired
   public ProjectServiceComposer(
@@ -77,9 +77,12 @@ public class ProjectServiceComposer {
     return updatedProject;
   }
 
-  public void delete(int id) {
+  public void delete(int id, List<Integer> applicationIds) {
     projectService.delete(id);
     searchService.deleteProject(id);
+
+    final List<ApplicationJson> applications = getFullyPopulatedApplications(applicationIds);
+    searchService.updateApplications(applications);
   }
 
 

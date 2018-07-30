@@ -29,6 +29,8 @@ import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.ProjectService;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
 
+import java.util.stream.Collectors;
+
 /**
  * Controller for managing projects.
  */
@@ -113,7 +115,9 @@ public class ProjectController {
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
-    projectServiceComposer.delete(id);
+    final List<Integer> applicationIds = applicationServiceComposer.findApplicationsByProject(id).stream()
+        .map(a -> a.getId()).collect(Collectors.toList());
+    projectServiceComposer.delete(id, applicationIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
