@@ -8,6 +8,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {TimeUtil} from '../../../../util/time.util';
 import {takeUntil} from 'rxjs/internal/operators';
+import {findTranslation} from '@util/translations';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -22,8 +23,13 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   showCommercial = false;
   commercialLabel: string;
+  billable = false;
 
   private commercialCtrl: FormControl;
+
+  billableChange(billable: boolean): void {
+    this.billable = billable;
+  }
 
   protected initForm() {
     const draft = this.applicationStore.snapshot.draft;
@@ -48,6 +54,13 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     this.applicationForm.patchValue(formValue);
     this.showCommercial = application.kinds.some(kind => ApplicationKind.BRIDGE_BANNER === kind);
     this.updateCommercialLabel(rental.commercial);
+
+    if (application.kinds.some(kind => ApplicationKind.PROMOTION_OR_SALES === kind)) {
+      application.notBillable = !this.billable;
+      if (!this.billable && !application.notBillableReason) {
+        application.notBillableReason = findTranslation('application.shortTermRental.notBillableReason');
+      }
+    }
   }
 
   protected update(form: ShortTermRentalForm): Application {

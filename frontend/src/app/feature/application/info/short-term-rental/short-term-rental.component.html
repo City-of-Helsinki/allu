@@ -93,7 +93,7 @@
 
   <div class="row">
     <div class="col m12">
-      <pricing-info [form]="applicationForm" [kind]="application.uiKind"></pricing-info>
+      <pricing-info [form]="applicationForm" [kind]="application.uiKind" (billableChange)="billableChange($event)"></pricing-info>
     </div>
   </div>
 

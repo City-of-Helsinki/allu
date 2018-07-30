@@ -359,7 +359,8 @@ export const translations = {
         rentalStartTimeMissing: 'Vuokrauksen alkuaika puuttuu',
         rentalEndTimeMissing: 'Vuokrauksen loppuaika puuttuu',
         startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää'
-      }
+      },
+      notBillableReason: 'Myyntitila alle 0.8m seinästä veloituksetta'
     },
     cableReport: {
       cableInfo: {
