@@ -58,7 +58,7 @@ public class LocationServiceSpec {
           Mockito.when(applicationDao.findById(Mockito.anyInt())).thenReturn(testApplication);
           Mockito.when(locationDao.insert(Mockito.any())).thenReturn(insertedLocation);
           Mockito
-              .when(userDao.findMatching(Mockito.eq(RoleType.ROLE_PROCESS_APPLICATION), Mockito.any(), Mockito.any()))
+              .when(userDao.findMatching(Mockito.eq(RoleType.ROLE_PROCESS_APPLICATION), Mockito.any(), Mockito.any(), Mockito.any()))
               .thenReturn(Collections.singletonList(dummyUser()));
           locationService.insert(Collections.singletonList(dummyLocation()), TEST_USER_ID);
         });
