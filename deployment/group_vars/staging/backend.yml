@@ -22,6 +22,7 @@ email_allowed_addresses: "*@vincit.fi,*@hel.fi"
 email_sender_address: Allu Staging Aluevaraus <noreply@staging.allu.kaupunkiymparisto.fi>
 
 invoice_cronstring: "0 0 0 24 4 ?"
+invoice_sending_enabled: false
 sap_ftp_invoice_host: 137.163.136.62
 sap_ftp_invoice_port: 22
 sap_ftp_invoice_directory: /

@@ -76,6 +76,10 @@ public class InvoicingService {
     }
   }
 
+  public boolean isInvoiceSendingEnabled() {
+    return applicationProperties.isInvoiceSendingEnabled();
+  }
+
   public void sendInvoices() {
     final List<Invoice> invoices = getPendingInvoices();
     if (invoices.isEmpty()) {

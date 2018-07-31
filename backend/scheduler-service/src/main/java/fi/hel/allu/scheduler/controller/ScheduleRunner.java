@@ -60,7 +60,9 @@ public class ScheduleRunner {
 
   @Scheduled(cron = "${invoice.cronstring}")
   public void sendInvoices() {
-    invoicingService.sendInvoices();
+    if (invoicingService.isInvoiceSendingEnabled()) {
+      invoicingService.sendInvoices();
+    }
   }
 
   @Scheduled(cron = "${customer.update.cronstring}")

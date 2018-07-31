@@ -22,6 +22,7 @@ email_allowed_addresses: "*@*"
 email_sender_address: Allu <noreply@kaupunkiymparisto.fi>
 
 invoice_cronstring: "0 0 7 * * *"
+invoice_sending_enabled: true
 
 sap_ftp_invoice_host: localhost
 sap_ftp_invoice_port: 8022

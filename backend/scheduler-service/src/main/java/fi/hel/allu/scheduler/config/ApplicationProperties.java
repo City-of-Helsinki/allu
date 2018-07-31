@@ -39,6 +39,7 @@ public class ApplicationProperties {
   private final String uiBaseUrl;
   private final String invoiceNotificationSubject;
   private final int searchSyncStartupDelay;
+  private final boolean invoiceSendingEnabled;
 
   @Autowired
   public ApplicationProperties(
@@ -68,7 +69,8 @@ public class ApplicationProperties {
       @Value("${customer.notification.subject}") @NotEmpty String customerNotificationSubject,
       @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl,
-      @Value("${search.sync.startup.delay}") int searchSyncStartupDelay) {
+      @Value("${search.sync.startup.delay}") int searchSyncStartupDelay,
+      @Value("${invoice.sending.enabled}") boolean invoiceSendingEnabled) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.extServiceHost = extServiceHost;
@@ -96,6 +98,7 @@ public class ApplicationProperties {
     this.invoiceNotificationSubject = invoiceNotificationSubject;
     this.uiBaseUrl = uiBaseUrl;
     this.searchSyncStartupDelay = searchSyncStartupDelay;
+    this.invoiceSendingEnabled = invoiceSendingEnabled;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -363,5 +366,9 @@ public class ApplicationProperties {
 
   public String getMailSenderLogUrl() {
     return getModelServiceUrl("/logs/mailsender");
+  }
+
+  public boolean isInvoiceSendingEnabled() {
+    return invoiceSendingEnabled;
   }
 }
