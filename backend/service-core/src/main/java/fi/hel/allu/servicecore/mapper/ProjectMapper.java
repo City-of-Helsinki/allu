@@ -6,6 +6,7 @@ import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
+import fi.hel.allu.servicecore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -20,11 +21,13 @@ public class ProjectMapper {
 
   private final CustomerService customerService;
   private final ContactService contactService;
+  private final UserService userService;
 
   @Autowired
-  public ProjectMapper(@Lazy CustomerService customerService, @Lazy ContactService contactService) {
+  public ProjectMapper(@Lazy CustomerService customerService, @Lazy ContactService contactService, UserService userService) {
     this.customerService = customerService;
     this.contactService = contactService;
+    this.userService = userService;
   }
 
   public Project createProjectModel(ProjectJson projectJson) {
@@ -46,6 +49,9 @@ public class ProjectMapper {
       projectDomain.setContactId(projectJson.getContact().getId());
     }
     projectDomain.setIdentifier(projectJson.getIdentifier());
+    if (projectJson.getCreator() != null) {
+      projectDomain.setCreatorId(projectJson.getCreator().getId());
+    }
     return projectDomain;
   }
 
@@ -68,6 +74,9 @@ public class ProjectMapper {
       projectJson.setContact(contactService.findById(projectDomain.getContactId()));
     }
     projectJson.setIdentifier(projectDomain.getIdentifier());
+    if (projectDomain.getCreatorId() != null) {
+      projectJson.setCreator(userService.findUserById(projectDomain.getCreatorId()));
+    }
     return projectJson;
   }
 
@@ -84,6 +93,9 @@ public class ProjectMapper {
     projectES.setAdditionalInfo(projectJson.getAdditionalInfo());
     projectES.setParentId(projectJson.getParentId());
     projectES.setIdentifier(projectJson.getIdentifier());
+    if (projectJson.getCreator() != null) {
+      projectES.setCreator(projectJson.getCreator().getRealName());
+    }
     return projectES;
   }
 }

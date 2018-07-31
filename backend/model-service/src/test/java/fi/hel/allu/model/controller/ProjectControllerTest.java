@@ -374,6 +374,7 @@ public class ProjectControllerTest {
     p.setCustomerId(testCustomer.getId());
     p.setContactId(testContact.getId());
     p.setIdentifier("project" + (projectNbr++));
+    p.setCreatorId(testUser.getId());
     return p;
   }
 
@@ -384,6 +385,7 @@ public class ProjectControllerTest {
     project.setAdditionalInfo("lisätietoja");
     project.setName("das projekt");
     project.setIdentifier("project" +  + (projectNbr++));
+    project.setCreatorId(testUser.getId());
     return project;
   }
 

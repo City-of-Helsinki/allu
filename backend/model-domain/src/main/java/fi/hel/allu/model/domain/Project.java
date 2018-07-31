@@ -18,6 +18,7 @@ public class Project {
   private Integer customerId;
   private Integer contactId;
   private String identifier;
+  private Integer creatorId;
 
   public Project() {
   }
@@ -34,6 +35,7 @@ public class Project {
     customerId = other.customerId;
     contactId = other.contactId;
     identifier = other.identifier;
+    creatorId = other.creatorId;
   }
 
   /**
@@ -148,6 +150,14 @@ public class Project {
 
   public void setIdentifier(String identifier) {
     this.identifier = identifier;
+  }
+
+  public Integer getCreatorId() {
+    return creatorId;
+  }
+
+  public void setCreatorId(Integer creatorId) {
+    this.creatorId = creatorId;
   }
 
   @Override

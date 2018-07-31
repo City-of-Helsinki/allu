@@ -8,6 +8,7 @@ import fi.hel.allu.model.domain.ProjectChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import org.slf4j.Logger;
@@ -96,9 +97,11 @@ public class ProjectService {
    * @return Created project
    */
   public ProjectJson insert(ProjectJson projectJson) {
+    final UserJson currentUser = userService.getCurrentUser();
+    projectJson.setCreator(currentUser);
     Project projectModel = restTemplate.postForObject(
         applicationProperties.getProjectCreateUrl(),
-        new ProjectChange(userService.getCurrentUser().getId(), projectMapper.createProjectModel(projectJson)),
+        new ProjectChange(currentUser.getId(), projectMapper.createProjectModel(projectJson)),
         Project.class);
     return projectMapper.mapProjectToJson(projectModel);
   }

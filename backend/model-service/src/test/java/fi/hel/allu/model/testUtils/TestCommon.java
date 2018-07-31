@@ -2,10 +2,10 @@ package fi.hel.allu.model.testUtils;
 
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.builder.DSL.Polygon2DToken;
@@ -19,7 +19,6 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
-import fi.hel.allu.model.service.LocationService;
 
 import static org.geolatte.geom.builder.DSL.*;
 
@@ -39,8 +38,6 @@ public class TestCommon {
   private SqlRunner sqlRunner;
   @Autowired
   private ApplicationDao applicationDao;
-  @Autowired
-  private LocationService locationService;
   @Autowired
   private CustomerDao customerDao;
   @Autowired
@@ -235,6 +232,7 @@ public class TestCommon {
     project.setContactId(insertContact(project.getCustomerId()).getId());
     project.setStartTime(ZonedDateTime.now());
     project.setIdentifier(identifier);
+    project.setCreatorId(insertUser(RandomStringUtils.randomAlphabetic(12)).getId());
     Project insertedProject = projectDao.insert(project);
     return insertedProject.getId();
   }

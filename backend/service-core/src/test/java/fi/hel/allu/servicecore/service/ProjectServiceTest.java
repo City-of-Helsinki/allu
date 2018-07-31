@@ -45,7 +45,7 @@ public class ProjectServiceTest extends MockServices {
     initSaveMocks();
     initSearchMocks();
 
-    ProjectMapper projectMapper = new ProjectMapper(customerService, contactService);
+    ProjectMapper projectMapper = new ProjectMapper(customerService, contactService, userService);
     projectService = new ProjectService(props, restTemplate, projectMapper, userService, changeHistoryMapper);
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(), Mockito.eq(Project[].class)))

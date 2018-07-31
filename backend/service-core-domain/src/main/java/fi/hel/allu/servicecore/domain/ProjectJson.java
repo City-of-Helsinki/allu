@@ -23,6 +23,7 @@ public class ProjectJson {
   private ContactJson contact;
   @NotNull
   private String identifier;
+  private UserJson creator;
 
   public ProjectJson() {
   }
@@ -143,6 +144,14 @@ public class ProjectJson {
 
   public void setIdentifier(String identifier) {
     this.identifier = identifier;
+  }
+
+  public UserJson getCreator() {
+    return creator;
+  }
+
+  public void setCreator(UserJson creator) {
+    this.creator = creator;
   }
 
   @Override

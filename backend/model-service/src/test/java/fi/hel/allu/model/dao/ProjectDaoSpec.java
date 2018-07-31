@@ -20,6 +20,7 @@ import java.util.List;
 import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import org.apache.commons.lang3.RandomStringUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -65,6 +66,7 @@ public class ProjectDaoSpec extends SpeccyTestBase {
     project.setCustomerId(testCommon.insertPerson().getId());
     project.setContactId(testCommon.insertContact(project.getCustomerId()).getId());
     project.setIdentifier("DaoSpecProject" + (projectNbr++));
+    project.setCreatorId(testCommon.insertUser(RandomStringUtils.randomAlphabetic(12)).getId());
     return project;
   }
 

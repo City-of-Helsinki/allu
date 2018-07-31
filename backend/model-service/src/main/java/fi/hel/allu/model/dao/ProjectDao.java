@@ -12,11 +12,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.DefaultMapper;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Project;
@@ -24,10 +24,17 @@ import fi.hel.allu.model.domain.Project;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QProject.project;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
+
+import java.util.Arrays;
 
 
 @Repository
 public class ProjectDao {
+
+  /** Fields that won't be updated in regular updates */
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(project.creatorId);
 
   @Autowired
   private SQLQueryFactory queryFactory;
@@ -76,8 +83,8 @@ public class ProjectDao {
   @Transactional
   public Project update(int id, Project p) {
     p.setId(id);
-    long changed = queryFactory.update(project).populate(p, DefaultMapper.WITH_NULL_BINDINGS).where(project.id.eq(id))
-        .execute();
+    long changed = queryFactory.update(project).populate(p, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
+        .where(project.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }

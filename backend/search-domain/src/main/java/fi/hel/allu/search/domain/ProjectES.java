@@ -14,6 +14,7 @@ public class ProjectES {
   private String additionalInfo;
   private Integer parentId;
   private String identifier;
+  private String creator;
 
   public Integer getId() {
     return id;
@@ -101,5 +102,13 @@ public class ProjectES {
 
   public void setIdentifier(String identifier) {
     this.identifier = identifier;
+  }
+
+  public String getCreator() {
+    return creator;
+  }
+
+  public void setCreator(String creator) {
+    this.creator = creator;
   }
 }
