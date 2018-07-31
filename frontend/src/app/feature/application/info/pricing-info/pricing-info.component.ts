@@ -26,11 +26,15 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.billableSalesAreaControl = <FormControl>this.form.get('billableSalesArea');
-    this.billableSalesAreaSubscription = this.billableSalesAreaControl.valueChanges
-      .subscribe(billable => this.billableChange.emit(billable));
+    if (this.billableSalesAreaControl) {
+      this.billableSalesAreaSubscription = this.billableSalesAreaControl.valueChanges
+        .subscribe(billable => this.billableChange.emit(billable));
+    }
   }
 
   ngOnDestroy(): void {
-    this.billableSalesAreaSubscription.unsubscribe();
+    if (this.billableSalesAreaSubscription) {
+      this.billableSalesAreaSubscription.unsubscribe();
+    }
   }
 }
