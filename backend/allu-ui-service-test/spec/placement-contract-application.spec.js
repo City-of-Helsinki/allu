@@ -52,7 +52,8 @@ describe('Placement contract application', () => {
         'email': 'seppo.sijoittaja@sijoitussopimus.com',
         'phone': '040095634',
         'active': true,
-        'country': 'FI'
+        'country': 'FI',
+        'invoicingProhibited': true
       },
       'contacts': [applicantContactNew]
     };
