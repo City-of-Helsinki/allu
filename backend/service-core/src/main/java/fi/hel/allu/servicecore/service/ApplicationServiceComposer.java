@@ -376,7 +376,7 @@ public class ApplicationServiceComposer {
   private void changeOwnerOnStatusChange(Application application, Integer newOwner) {
     if (newOwner != null) {
       updateApplicationOwner(newOwner, Collections.singletonList(application.getId()));
-    } else if (StatusType.HANDLING.equals(application.getStatus()) && application.getOwner() == null) {
+    } else if (StatusType.HANDLING.equals(application.getStatus())) {
       updateApplicationOwner(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
     } else if (StatusType.CANCELLED.equals(application.getStatus()) || StatusType.ARCHIVED.equals(application.getStatus())) {
       removeApplicationOwner(Collections.singletonList(application.getId()));
