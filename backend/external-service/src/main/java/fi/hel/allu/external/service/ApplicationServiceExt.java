@@ -103,6 +103,9 @@ public class ApplicationServiceExt {
   }
 
   public void addAttachment(Integer applicationId, AttachmentInfoExt metadata, MultipartFile file) throws IOException {
+    if (file.isEmpty()) {
+      throw new IllegalArgumentException("attachment.empty");
+    }
    attachmentService.addAttachment(applicationId, AttachmentMapper.toAttachmentInfoJson(metadata), file);
   }
 

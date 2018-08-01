@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import fi.hel.allu.external.domain.AttachmentInfoExt;
 
@@ -23,16 +24,28 @@ public class ApplicationAttachmentTest extends BaseApplicationRelatedTest {
   private static final String ATTACHMENT_DATA = "Liitteen data";
   private static final String APPLICATION_NAME = "Vuokraus, liitteet - ext";
 
-
   @Test
   public void shouldCreateApplicationAttachments() {
-    HttpEntity<?> requestEntity = createAttachmentRequest();
+    HttpEntity<?> requestEntity = createAttachmentRequest(ATTACHMENT_DATA.getBytes());
     ResponseEntity<Void> response = restTemplate.exchange(getExtServiceUrl(ATTACHMENT_RESOURCE_PATH), HttpMethod.POST,
         requestEntity, Void.class, getApplicationId());
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 
-  protected HttpEntity<?> createAttachmentRequest() {
+  @Test
+  public void shouldNotAllowEmptyAttachment() {
+    HttpEntity<?> requestEntity = createAttachmentRequest(new byte[0]);
+    HttpStatus status = null;
+    try {
+      restTemplate.exchange(getExtServiceUrl(ATTACHMENT_RESOURCE_PATH), HttpMethod.POST,
+        requestEntity, Void.class, getApplicationId());
+    } catch (HttpStatusCodeException ex) {
+      status = ex.getStatusCode();
+    }
+    assertEquals(HttpStatus.BAD_REQUEST, status);
+  }
+
+  private HttpEntity<?> createAttachmentRequest(byte[] data) {
     AttachmentInfoExt info = new AttachmentInfoExt();
     info.setDescription(ATTACHMENT_DESCRIPTION);
     info.setMimeType(MIME_TYPE);
@@ -40,7 +53,7 @@ public class ApplicationAttachmentTest extends BaseApplicationRelatedTest {
 
     MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
     requestParts.add("metadata", info);
-    requestParts.add("file", new ByteArrayResource(ATTACHMENT_DATA.getBytes()) {
+    requestParts.add("file", new ByteArrayResource(data) {
       @Override
       public String getFilename() {
         return "file.txt";
