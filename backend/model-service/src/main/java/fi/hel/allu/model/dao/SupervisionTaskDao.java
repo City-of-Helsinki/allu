@@ -199,7 +199,7 @@ public class SupervisionTaskDao {
         values(searchCriteria.getTaskTypes()).map(supervisionTask.type::in),
         Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTask.plannedFinishingTime::goe),
         Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTask.plannedFinishingTime::loe),
-        Optional.ofNullable(searchCriteria.getApplicationId()).map(application.applicationId::startsWith),
+        Optional.ofNullable(searchCriteria.getApplicationId()).map(String::toUpperCase).map(application.applicationId::startsWith),
         values(searchCriteria.getOwners()).map(supervisionTask.ownerId::in),
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
         values(searchCriteria.getApplicationStatus()).map(application.status::in),
