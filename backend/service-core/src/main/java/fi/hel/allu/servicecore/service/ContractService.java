@@ -1,17 +1,19 @@
 package fi.hel.allu.servicecore.service;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Collections;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import fi.hel.allu.common.domain.ContractInfo;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
@@ -39,19 +41,103 @@ public class ContractService {
     this.restTemplate = restTemplate;
   }
 
-  public byte[] createContractProposal(Integer applicationId) throws IOException {
+  public byte[] getContractPreview(Integer applicationId) {
+    return generateContractPdf(applicationId, null);
+  }
+
+  public byte[] getContract(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getContractUrl(), byte[].class, applicationId);
+  }
+
+  public byte[] getContractProposal(Integer applicationId) {
+    validateIsInProposalState(getContractInfo(applicationId));
+    return restTemplate.getForObject(applicationProperties.getContractUrl(), byte[].class, applicationId);
+  }
+
+
+  public byte[] createContractProposal(Integer applicationId) {
+    byte[] pdfData = generateContractPdf(applicationId, null);
+    restTemplate.exchange(applicationProperties.getContractProposalUrl(), HttpMethod.POST,
+        MultipartRequestBuilder.buildByteArrayRequest("data", pdfData), String.class, applicationId);
+    applicationServiceComposer.changeStatus(applicationId, StatusType.WAITING_CONTRACT_APPROVAL);
+    return pdfData;
+  }
+
+  public byte[] createApprovedContract(int applicationId, ContractInfo contractInfo) {
+    byte[] pdfData = generateContractPdf(applicationId, contractInfo);
+    if (!contractInfo.isContractAsAttachment() && !contractInfo.isFrameAgreementExists()) {
+      throw new IllegalArgumentException("contract.approved.notallowed");
+    }
+    restTemplate.exchange(applicationProperties.getApprovedContractUrl(), HttpMethod.POST,
+        MultipartRequestBuilder.buildByteArrayRequest("data", pdfData, Collections.singletonMap("contractinfo", contractInfo)), String.class, applicationId);
+    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING);
+    return pdfData;
+  }
+
+  public void approveContract(Integer applicationId, String signer, ZonedDateTime signingTime) {
+    ContractInfo contractInfo = getContractInfo(applicationId);
+    validateIsInProposalState(contractInfo);
+    contractInfo.setStatus(ContractStatusType.APPROVED);
+    contractInfo.setSigner(signer);
+    contractInfo.setResponseTime(signingTime);
+    restTemplate.exchange(applicationProperties.getContractInfoUrl(), HttpMethod.PUT, new HttpEntity<>(contractInfo), Void.class, applicationId);
+
+    // After contract approval move application to waiting for decision state and remove possible contract rejected -tag
+    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING);
+    applicationServiceComposer.removeTag(applicationId, ApplicationTagType.CONTRACT_REJECTED);
+  }
+
+  public void rejectContract(Integer applicationId, String rejectReason) {
+    ContractInfo contractInfo = getContractInfo(applicationId);
+    validateIsInProposalState(contractInfo);
+    contractInfo.setStatus(ContractStatusType.REJECTED);
+    contractInfo.setResponseTime(ZonedDateTime.now());
+    contractInfo.setRejectionReason(rejectReason);
+
+    restTemplate.exchange(applicationProperties.getContractInfoUrl(), HttpMethod.PUT, new HttpEntity<>(contractInfo), Void.class, applicationId);
+    // If contract is rejected move application to pending state and add corresponding tag
+    applicationServiceComposer.changeStatus(applicationId, StatusType.PENDING);
+    applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, ApplicationTagType.CONTRACT_REJECTED, null));
+  }
+
+  public ContractInfo getContractInfo(Integer applicationId) {
+    return restTemplate.getForEntity(applicationProperties.getContractInfoUrl(), ContractInfo.class,
+        applicationId).getBody();
+  }
+
+  public void generateFinalContract(int applicationId, ApplicationJson applicationJson) {
+    if (applicationJson.getType() == ApplicationType.PLACEMENT_CONTRACT) {
+      ContractInfo contractInfo = getContractInfo(applicationId);
+      if (contractInfo != null && contractInfo.getStatus() == ContractStatusType.APPROVED) {
+        byte[] contractData = generateContractPdf(applicationId, contractInfo);
+        restTemplate.exchange(applicationProperties.getFinalContractUrl(), HttpMethod.POST,
+            MultipartRequestBuilder.buildByteArrayRequest("data", contractData), String.class, applicationId);
+      }
+    }
+  }
+
+  private byte[] generateContractPdf(Integer applicationId, ContractInfo contractInfo) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    return generateContractPdf(application, contractInfo);
+  }
+
+  private byte[] generateContractPdf(ApplicationJson application, ContractInfo contractInfo) {
     validateProposalCreationAllowed(application);
     DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, false);
+    setContractData(contractInfo, decisionJson);
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,
         STYLE_SHEET_NAME);
-    ResponseEntity<String> response = restTemplate.exchange(applicationProperties.getContractProposalUrl(), HttpMethod.POST,
-        MultipartRequestBuilder.buildByteArrayRequest("data", pdfData), String.class, applicationId);
-    if (!response.getStatusCode().is2xxSuccessful()) {
-      throw new IOException(response.getBody());
-    }
     return pdfData;
+  }
+
+  protected void setContractData(ContractInfo contractInfo, DecisionJson decisionJson) {
+    if (contractInfo != null) {
+      decisionJson.setContractSigner(contractInfo.getSigner());
+      decisionJson.setContractSigningDate(contractInfo.getResponseTime());
+      decisionJson.setContractAsAttachment(contractInfo.isContractAsAttachment());
+      decisionJson.setFrameAgreement(contractInfo.isFrameAgreementExists());
+    }
   }
 
   private void validateProposalCreationAllowed(ApplicationJson application) {
@@ -63,32 +149,10 @@ public class ContractService {
     }
   }
 
-  public byte[] getContractProposal(Integer applicationId) {
-    return restTemplate.getForObject(applicationProperties.getContractProposalUrl(), byte[].class, applicationId);
-  }
-
-  public byte[] getApprovedContract(Integer applicationId) {
-    return restTemplate.getForObject(applicationProperties.getContractApprovedUrl(), byte[].class, applicationId);
-  }
-
-  public void approveContract(Integer applicationId, MultipartFile file) throws IOException {
-    HttpEntity<?> requestEntity = MultipartRequestBuilder.buildByteArrayRequest("data", file.getBytes());
-    restTemplate.exchange(applicationProperties.getContractApprovedUrl(), HttpMethod.POST, requestEntity, Void.class, applicationId);
-    // After contract approval move application to waiting for decision state and remove possible contract rejected -tag
-    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING);
-    applicationServiceComposer.removeTag(applicationId, ApplicationTagType.CONTRACT_REJECTED);
-  }
-
-  public void rejectContract(Integer applicationId, String rejectReason) {
-    restTemplate.postForObject(applicationProperties.getContractRejectedUrl(), rejectReason, Void.class, applicationId);
-    // If contract is rejected move application to pending state and add corresponding tag
-    applicationServiceComposer.changeStatus(applicationId, StatusType.PENDING);
-    applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, ApplicationTagType.CONTRACT_REJECTED, null));
-  }
-
-  public ContractInfo getContractInfo(Integer applicationId) {
-    return restTemplate.getForEntity(applicationProperties.getContractInfoUrl(), ContractInfo.class,
-        applicationId).getBody();
+  private void validateIsInProposalState(ContractInfo contractInfo) {
+    if (contractInfo == null || contractInfo.getStatus() != ContractStatusType.PROPOSAL) {
+      throw new IllegalArgumentException("contractProposal.notFound");
+    }
   }
 
 }

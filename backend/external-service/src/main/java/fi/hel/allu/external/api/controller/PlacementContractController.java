@@ -2,6 +2,8 @@ package fi.hel.allu.external.api.controller;
 
 import java.io.IOException;
 
+import javax.validation.Valid;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -10,9 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.external.domain.ContractSigningInfoExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
 import fi.hel.allu.servicecore.service.ContractService;
@@ -21,7 +23,7 @@ import io.swagger.annotations.*;
 @RestController
 @RequestMapping("/v1/placementcontracts")
 @Api(value = "v1/placementcontracts")
-public class PlacementContractController extends BaseApplicationController<PlacementContractExt, PlacementContractExtMapper>{
+public class PlacementContractController extends BaseApplicationController<PlacementContractExt, PlacementContractExtMapper> {
 
   @Autowired
   private PlacementContractExtMapper placementContractMapper;
@@ -50,7 +52,7 @@ public class PlacementContractController extends BaseApplicationController<Place
 
   @ApiOperation(value = "Approve contract",
       produces = "application/json",
-      consumes = "multipart/form-data",
+      consumes = "application/json",
       response = Void.class,
       authorizations=@Authorization(value ="api_key"))
   @ApiResponses(value =  {
@@ -60,9 +62,10 @@ public class PlacementContractController extends BaseApplicationController<Place
   @RequestMapping(value = "/{id}/contract/approved", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> approve(@ApiParam(value = "Application ID of the contract") @PathVariable Integer id,
-                                      @ApiParam(value = "Signed contract", required = true) @RequestPart(value = "file", required = true) MultipartFile file) throws IOException {
+                                      @ApiParam(value = "Signing information")
+                                      @Valid @RequestBody ContractSigningInfoExt signingInfo) throws IOException {
     applicationService.validateOwnedByExternalUser(id);
-    contractService.approveContract(id, file);
+    contractService.approveContract(id, signingInfo.getSigner(), signingInfo.getSigningTime());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

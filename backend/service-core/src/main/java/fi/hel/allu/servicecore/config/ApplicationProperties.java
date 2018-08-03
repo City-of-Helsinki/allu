@@ -1217,12 +1217,16 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/contract/proposal");
   }
 
-  public String getContractApprovedUrl() {
+  public String getApprovedContractUrl() {
     return getModelServiceUrl("/applications/{id}/contract/approved");
   }
 
-  public String getContractRejectedUrl() {
-    return getModelServiceUrl("/applications/{id}/contract/rejected");
+  public String getFinalContractUrl() {
+    return getModelServiceUrl("/applications/{id}/contract/final");
+  }
+
+  public String getContractUrl() {
+    return getModelServiceUrl("/applications/{id}/contract");
   }
 
   public String getContractInfoUrl() {

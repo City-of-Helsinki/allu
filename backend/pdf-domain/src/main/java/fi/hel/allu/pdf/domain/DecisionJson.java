@@ -1,5 +1,6 @@
 package fi.hel.allu.pdf.domain;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -99,6 +100,11 @@ public class DecisionJson {
   private String workPurpose;
   private String trafficArrangements;
   private Boolean replacingDecision;
+
+  private boolean frameAgreement;
+  private boolean contractAsAttachment;
+  private String contractSigner;
+  private ZonedDateTime contractSigningDate;
 
   public boolean isDraft() {
     return isDraft;
@@ -646,5 +652,37 @@ public class DecisionJson {
 
   public void setReplacingDecision(Boolean replacingDecision) {
     this.replacingDecision = replacingDecision;
+  }
+
+  public boolean isFrameAgreement() {
+    return frameAgreement;
+  }
+
+  public void setFrameAgreement(boolean frameAgreement) {
+    this.frameAgreement = frameAgreement;
+  }
+
+  public boolean isContractAsAttachment() {
+    return contractAsAttachment;
+  }
+
+  public void setContractAsAttachment(boolean contractAsAttachment) {
+    this.contractAsAttachment = contractAsAttachment;
+  }
+
+  public String getContractSigner() {
+    return contractSigner;
+  }
+
+  public void setContractSigner(String contractSigner) {
+    this.contractSigner = contractSigner;
+  }
+
+  public ZonedDateTime getContractSigningDate() {
+    return contractSigningDate;
+  }
+
+  public void setContractSigningDate(ZonedDateTime contractSigningDate) {
+    this.contractSigningDate = contractSigningDate;
   }
 }

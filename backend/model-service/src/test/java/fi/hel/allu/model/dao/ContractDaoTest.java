@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,78 +47,69 @@ public class ContractDaoTest {
   public void shouldInsertProposal() {
     contractDao.insertContractProposal(applicationId, DATA_1);
     assertEquals(1, getContractCount());
-    assertArrayEquals(DATA_1, contractDao.getContractProposal(applicationId));
-  }
-
-  @Test
-  public void shouldReplaceProposalOnInsert() {
-    contractDao.insertContractProposal(applicationId, DATA_1);
-    assertEquals(1, getContractCount());
-    contractDao.insertContractProposal(applicationId, DATA_2);
-    assertArrayEquals(DATA_2, contractDao.getContractProposal(applicationId));
-  }
-
-  @Test(expected = NoSuchEntityException.class)
-  public void shouldThrowIfProposalNotFound() {
-    contractDao.getContractProposal(applicationId);
-  }
-
-  @Test
-  public void shouldApproveContract() {
-    contractDao.insertContractProposal(applicationId, DATA_1);
-    contractDao.insertApprovedContract(applicationId, DATA_2);
-    assertArrayEquals(DATA_2, contractDao.getApprovedContract(applicationId));
-    ContractInfo contractInfo = contractDao.getContractInfo(applicationId);
-    assertEquals(ContractStatusType.APPROVED, contractInfo.getStatus());
-    assertNotNull(contractInfo.getResponseTime());
-  }
-
-  @Test
-  public void shouldRejectContract() {
-    String rejectionReason = "reason";
-    contractDao.insertContractProposal(applicationId, DATA_1);
-    contractDao.rejectContract(applicationId, rejectionReason);
-    ContractInfo contractInfo = contractDao.getContractInfo(applicationId);
-    assertEquals(ContractStatusType.REJECTED, contractInfo.getStatus());
-    assertEquals(rejectionReason, contractInfo.getRejectionReason());
-    assertNotNull(contractInfo.getResponseTime());
-  }
-
-  @Test(expected = NoSuchEntityException.class)
-  public void shouldThrowOnApprovalIfNoProposal() {
-    contractDao.insertApprovedContract(applicationId, DATA_1);
-  }
-
-  @Test(expected = NoSuchEntityException.class)
-  public void shouldThrowOnRejectionIfNoProposal() {
-    contractDao.rejectContract(applicationId, "foobar");
-  }
-
-  @Test
-  public void shouldReturnLatestInfo() throws Exception {
-    // If only responded contracts exists, should return latest
-    contractDao.insertContractProposal(applicationId, DATA_1);
-    contractDao.insertApprovedContract(applicationId, DATA_1);
-    Thread.sleep(10);
-    contractDao.insertContractProposal(applicationId, DATA_1);
-    contractDao.rejectContract(applicationId, "foobar");
-    assertEquals(2, getContractCount());
-    assertEquals(ContractStatusType.REJECTED, contractDao.getContractInfo(applicationId).getStatus());
-    // If proposal exists, should return it
-    contractDao.insertContractProposal(applicationId, DATA_1);
-    assertEquals(3, getContractCount());
+    assertArrayEquals(DATA_1, contractDao.getContract(applicationId));
     assertEquals(ContractStatusType.PROPOSAL, contractDao.getContractInfo(applicationId).getStatus());
   }
 
   @Test
-  public void shouldReturnLatestApprovedContract() throws Exception {
+  public void shouldInsertApprovedContract() {
+    ContractInfo contractInfo = new ContractInfo();
+    contractInfo.setContractAsAttachment(true);
+    contractDao.insertApprovedContract(applicationId, contractInfo, DATA_1);
+    assertEquals(1, getContractCount());
+    assertArrayEquals(DATA_1, contractDao.getContract(applicationId));
+    ContractInfo insertedInfo = contractDao.getContractInfo(applicationId);
+    assertEquals(ContractStatusType.APPROVED, insertedInfo.getStatus());
+    assertEquals(true, insertedInfo.isContractAsAttachment());
+  }
+
+
+  @Test(expected = NoSuchEntityException.class)
+  public void shouldThrowIfContractNotFound() {
+    contractDao.getContract(applicationId);
+  }
+
+  @Test
+  public void shouldInsertFinalContract() {
     contractDao.insertContractProposal(applicationId, DATA_1);
-    contractDao.insertApprovedContract(applicationId, DATA_1);
-    Thread.sleep(10);
+    contractDao.insertFinalContract(applicationId, DATA_2);
+    assertArrayEquals(DATA_2, contractDao.getContract(applicationId));
+    assertEquals(ContractStatusType.FINAL, contractDao.getContractInfo(applicationId).getStatus());
+  }
+
+  @Test
+  public void shouldUpdateContractInfo() {
+    ContractInfo contractInfo = new ContractInfo();
+    contractInfo.setSigner("signer");
+    contractInfo.setResponseTime(ZonedDateTime.now());
+    contractInfo.setStatus(ContractStatusType.APPROVED);
+    contractDao.insertContractProposal(applicationId, DATA_1);
+    contractDao.updateContractInfo(applicationId, contractInfo);
+
+    ContractInfo updated = contractDao.getContractInfo(applicationId);
+    assertEquals(contractInfo.getStatus(), updated.getStatus());
+    assertEquals(contractInfo.getSigner(), updated.getSigner());
+    assertTrue(contractInfo.getResponseTime().isEqual(updated.getResponseTime()));
+  }
+
+  @Test(expected = NoSuchEntityException.class)
+  public void shouldThrowOnFinalContractIfNoProposal() {
+    contractDao.insertFinalContract(applicationId, DATA_1);
+  }
+
+  @Test
+  public void shouldReturnInfo() throws Exception {
+    ContractInfo contractInfo = new ContractInfo();
+
+    // If proposal and rejected exists, should return proposal
+    contractDao.insertContractProposal(applicationId, DATA_1);
+    contractInfo.setStatus(ContractStatusType.REJECTED);
+    contractDao.updateContractInfo(applicationId, contractInfo);
+
     contractDao.insertContractProposal(applicationId, DATA_2);
-    contractDao.insertApprovedContract(applicationId, DATA_2);
     assertEquals(2, getContractCount());
-    assertArrayEquals(DATA_2, contractDao.getApprovedContract(applicationId));
+    assertEquals(ContractStatusType.PROPOSAL, contractDao.getContractInfo(applicationId).getStatus());
+
   }
 
   private int getContractCount() {

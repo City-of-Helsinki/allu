@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,51 +10,80 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.SimplePath;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.common.domain.ContractInfo;
 import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QContract.contract;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
+
 @Repository
 public class ContractDao {
+
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(contract.id, contract.applicationId);
 
   @Autowired
   private SQLQueryFactory queryFactory;
   private QBean<ContractInfo> contractBean = bean(ContractInfo.class, contract.all());
 
+
   @Transactional
   public void insertContractProposal(Integer applicationId, byte[] data) {
-    // There can be only one contract proposal at time for application
-    queryFactory.delete(contract)
-        .where(contract.applicationId.eq(applicationId), contract.status.eq(ContractStatusType.PROPOSAL)).execute();
+    validateNoActiveContracts(applicationId);
     queryFactory.insert(contract)
-      .columns(contract.applicationId, contract.creationTime, contract.status, contract.proposal)
-      .values(applicationId, ZonedDateTime.now(), ContractStatusType.PROPOSAL, data)
+    .columns(contract.applicationId, contract.creationTime, contract.status, contract.proposal, contract.contractAsAttachment, contract.frameAgreementExists)
+      .values(applicationId, ZonedDateTime.now(), ContractStatusType.PROPOSAL, data, false, false)
       .execute();
   }
 
-  @Transactional(readOnly = true)
-  public byte[] getContractProposal(Integer applicationId) {
-    byte[] data = getFromContractProposal(applicationId, contract.proposal);
-    if (data == null) {
-      throw new NoSuchEntityException("contractProposal.notFound");
+  @Transactional
+  public void insertApprovedContract(Integer applicationId, ContractInfo contractInfo, byte[] data) {
+    validateNoActiveContracts(applicationId);
+    queryFactory.insert(contract)
+      .columns(contract.applicationId, contract.creationTime, contract.status, contract.proposal, contract.contractAsAttachment, contract.frameAgreementExists)
+      .values(applicationId, ZonedDateTime.now(), ContractStatusType.APPROVED, data, contractInfo.isContractAsAttachment(), contractInfo.isFrameAgreementExists())
+      .execute();
+  }
+
+  private void validateNoActiveContracts(Integer applicationId) {
+    boolean activeExists = getAllContractInfos(applicationId).stream().anyMatch(c -> c.getStatus() != ContractStatusType.REJECTED);
+    if (activeExists) {
+      throw new IllegalArgumentException("contract.exists");
     }
-    return data;
   }
 
   @Transactional(readOnly = true)
-  public byte[] getApprovedContract(Integer applicationId) {
-    byte[] data = queryFactory.select(contract.signedContract).from(contract)
-        .where(contract.applicationId.eq(applicationId), contract.status.eq(ContractStatusType.APPROVED))
-        .orderBy(contract.responseTime.desc())
-        .fetchFirst();
-    if (data == null) {
-      throw new NoSuchEntityException("approvedContract.notFound");
+  public byte[] getContract(Integer applicationId) {
+    ContractInfo contractInfo = getContractInfo(applicationId);
+    if (contractInfo == null) {
+      throw new NoSuchEntityException("contract.notFound");
     }
+    SimplePath<byte[]> contractPath = contractInfo.getStatus() == ContractStatusType.FINAL ? contract.finalContract : contract.proposal;
+    byte[] data = queryFactory.select(contractPath).from(contract)
+        .where(contract.id.eq(contractInfo.getId()))
+        .fetchFirst();
     return data;
+  }
+
+  @Transactional
+  public void updateContractInfo(Integer applicationId, ContractInfo updatedInfo) {
+    Integer contractId = getContractId(applicationId);
+    queryFactory.update(contract)
+        .populate(updatedInfo, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
+        .where(contract.id.eq(contractId)).execute();
+  }
+
+  private Integer getContractId(Integer applicationId) {
+    ContractInfo contractInfo = getContractInfo(applicationId);
+    if (contractInfo == null) {
+      throw new NoSuchEntityException("contract.notFound");
+    }
+    return contractInfo.getId();
   }
 
   /**
@@ -63,38 +93,26 @@ public class ContractDao {
   public ContractInfo getContractInfo(Integer applicationId) {
     List<ContractInfo> contractInfos = getAllContractInfos(applicationId);
         queryFactory.select(contractBean).from(contract).where(contract.applicationId.eq(applicationId)).fetch();
-    // If there's open proposal, return it. Otherwise return latest approved/rejected contract
+    // If there's not rejected contract, return it. Otherwise return latest rejected
     return contractInfos.stream()
-        .filter(c -> c.getStatus() == ContractStatusType.PROPOSAL)
+        .filter(c -> c.getStatus() != ContractStatusType.REJECTED)
         .findFirst()
-        .orElseGet(() -> findLatestWithResponse(contractInfos));
+        .orElseGet(() -> findLatestResponseTime(contractInfos));
   }
 
-  private ContractInfo findLatestWithResponse(List<ContractInfo> contractInfos) {
+  private ContractInfo findLatestResponseTime(List<ContractInfo> contractInfos) {
     return contractInfos.stream()
         .sorted((c1, c2) -> c2.getResponseTime().compareTo(c1.getResponseTime()))
         .findFirst().orElse(null);
   }
 
   @Transactional
-  public void insertApprovedContract(Integer applicationId, byte[] data) {
-    Integer proposalId = getFromContractProposal(applicationId, contract.id);
+  public void insertFinalContract(Integer applicationId, byte[] data) {
+    Integer contractId = getContractId(applicationId);
     queryFactory.update(contract)
-      .set(contract.signedContract, data)
-      .set(contract.status, ContractStatusType.APPROVED)
-      .set(contract.responseTime, ZonedDateTime.now())
-      .where(contract.id.eq(proposalId))
-      .execute();
-  }
-
-  @Transactional
-  public void rejectContract(Integer applicationId, String rejectionReason) {
-    Integer proposalId = getFromContractProposal(applicationId, contract.id);
-    queryFactory.update(contract)
-      .set(contract.rejectionReason, rejectionReason)
-      .set(contract.status, ContractStatusType.REJECTED)
-      .set(contract.responseTime, ZonedDateTime.now())
-      .where(contract.id.eq(proposalId))
+      .set(contract.finalContract, data)
+      .set(contract.status, ContractStatusType.FINAL)
+      .where(contract.id.eq(contractId))
       .execute();
   }
 
@@ -102,16 +120,4 @@ public class ContractDao {
   public List<ContractInfo> getAllContractInfos(Integer applicationId) {
     return queryFactory.select(contractBean).from(contract).where(contract.applicationId.eq(applicationId)).fetch();
   }
-
-  private <T> T getFromContractProposal(Integer applicationId, Path<T> field) {
-    T fieldData = queryFactory.select(field).from(contract)
-        .where(contract.applicationId.eq(applicationId), contract.status.eq(ContractStatusType.PROPOSAL))
-        .orderBy(contract.responseTime.desc())
-        .fetchFirst();
-    if (fieldData == null) {
-      throw new NoSuchEntityException("contractProposal.notFound");
-    }
-    return fieldData;
-  }
-
 }

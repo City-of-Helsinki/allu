@@ -1,19 +1,20 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.CommentService;
-import fi.hel.allu.servicecore.service.DecisionService;
-import fi.hel.allu.ui.security.DecisionSecurityService;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.CommentService;
+import fi.hel.allu.servicecore.service.ContractService;
+import fi.hel.allu.servicecore.service.DecisionService;
+import fi.hel.allu.ui.security.DecisionSecurityService;
 
 @RestController
 @RequestMapping("/applications")
@@ -22,17 +23,20 @@ public class ApplicationStatusController {
   private final CommentService commentService;
   private final DecisionSecurityService decisionSecurityService;
   private final DecisionService decisionService;
+  private final ContractService contractService;
 
   @Autowired
   public ApplicationStatusController(
       ApplicationServiceComposer applicationServiceComposer,
       CommentService commentService,
       DecisionSecurityService decisionSecurityService,
-      DecisionService decisionService) {
+      DecisionService decisionService,
+      ContractService contractService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.commentService = commentService;
     this.decisionSecurityService = decisionSecurityService;
     this.decisionService = decisionService;
+    this.contractService = contractService;
   }
 
   @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
@@ -82,6 +86,7 @@ public class ApplicationStatusController {
       @PathVariable int id, @RequestBody StatusChangeInfoJson info) throws IOException {
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.DECISION, info);
     decisionService.generateDecision(id, applicationJson);
+    contractService.generateFinalContract(id, applicationJson);
     return ResponseEntity.ok(applicationJson);
   }
 

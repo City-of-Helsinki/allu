@@ -18,9 +18,9 @@ public class ContractController {
   @Autowired
   private ContractDao contractDao;
 
-  @RequestMapping(value = "/{id}/contract/proposal", method = RequestMethod.GET)
-  public ResponseEntity<byte[]> getContractProposal(@PathVariable Integer id) {
-    return new ResponseEntity<>(contractDao.getContractProposal(id), HttpStatus.OK);
+  @RequestMapping(value = "/{id}/contract", method = RequestMethod.GET)
+  public ResponseEntity<byte[]> getContract(@PathVariable Integer id) {
+    return new ResponseEntity<>(contractDao.getContract(id), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/contract/proposal", method = RequestMethod.POST)
@@ -30,21 +30,24 @@ public class ContractController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/contract/approved", method = RequestMethod.GET)
-  public ResponseEntity<byte[]> getApprovedContract(@PathVariable Integer id) {
-    return new ResponseEntity<>(contractDao.getApprovedContract(id), HttpStatus.OK);
-  }
-
   @RequestMapping(value = "/{id}/contract/approved", method = RequestMethod.POST)
-  public ResponseEntity<Void> insertApprovedContract(@PathVariable int id, @RequestParam("data") MultipartFile file)
+  public ResponseEntity<Void> insertApprovedContract(@PathVariable int id, @RequestPart("contractinfo") ContractInfo contractInfo, @RequestPart("data") MultipartFile file)
       throws IOException {
-    contractDao.insertApprovedContract(id, file.getBytes());
+    contractDao.insertApprovedContract(id, contractInfo, file.getBytes());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/contract/rejected", method = RequestMethod.POST)
-  public ResponseEntity<Void> rejectContract(@PathVariable int id, @RequestBody String rejectionReason) {
-    contractDao.rejectContract(id, rejectionReason);
+
+  @RequestMapping(value = "/{id}/contract/final", method = RequestMethod.POST)
+  public ResponseEntity<Void> insertFinalContract(@PathVariable int id, @RequestParam("data") MultipartFile file)
+      throws IOException {
+    contractDao.insertFinalContract(id, file.getBytes());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/contract/info", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateContractInfo(@PathVariable Integer id, @RequestBody ContractInfo contractInfo) {
+    contractDao.updateContractInfo(id, contractInfo);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
