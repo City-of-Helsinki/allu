@@ -11,6 +11,15 @@ public class StatusChangeInfoJson {
     private String comment;
     private Integer owner;
 
+    public StatusChangeInfoJson() {
+    }
+
+    public StatusChangeInfoJson(Integer owner, CommentType type, String comment) {
+      this.type = type;
+      this.comment = comment;
+      this.owner = owner;
+    }
+
     /**
      * Type of comment
      */

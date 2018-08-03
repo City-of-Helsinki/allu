@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.config;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.ConfigurationType;
 
 import java.util.List;
 
@@ -1232,5 +1233,10 @@ public class ApplicationProperties {
   public String getContractInfoUrl() {
     return getModelServiceUrl("/applications/{id}/contract/info");
   }
+
+  public String getConfigurationUrl(ConfigurationType configuration) {
+    return getModelServiceUrl("/configuration/" + configuration);
+  }
+
 
 }

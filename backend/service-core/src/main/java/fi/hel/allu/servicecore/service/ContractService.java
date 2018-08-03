@@ -1,12 +1,12 @@
 package fi.hel.allu.servicecore.service;
 
-import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,11 +16,16 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
+import fi.hel.allu.model.domain.Configuration;
+import fi.hel.allu.model.domain.ConfigurationType;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
 
 @Service
@@ -30,15 +35,20 @@ public class ContractService {
   private final DecisionJsonMapper decisionJsonMapper;
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
+  private final UserService userService;
+  private final ConfigurationService configurationService;
 
   private static final String STYLE_SHEET_NAME = "PLACEMENT_CONTRACT-contract";
 
   public ContractService(ApplicationServiceComposer applicationServiceComposer, DecisionJsonMapper decisionJsonMapper,
-      ApplicationProperties applicationProperties, RestTemplate restTemplate) {
+      ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
+      ConfigurationService configurationService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.decisionJsonMapper = decisionJsonMapper;
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.userService = userService;
+    this.configurationService = configurationService;
   }
 
   public byte[] getContractPreview(Integer applicationId) {
@@ -53,7 +63,6 @@ public class ContractService {
     validateIsInProposalState(getContractInfo(applicationId));
     return restTemplate.getForObject(applicationProperties.getContractUrl(), byte[].class, applicationId);
   }
-
 
   public byte[] createContractProposal(Integer applicationId) {
     byte[] pdfData = generateContractPdf(applicationId, null);
@@ -70,7 +79,7 @@ public class ContractService {
     }
     restTemplate.exchange(applicationProperties.getApprovedContractUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("data", pdfData, Collections.singletonMap("contractinfo", contractInfo)), String.class, applicationId);
-    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING);
+    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, getDecisionMakerInfo());
     return pdfData;
   }
 
@@ -83,8 +92,18 @@ public class ContractService {
     restTemplate.exchange(applicationProperties.getContractInfoUrl(), HttpMethod.PUT, new HttpEntity<>(contractInfo), Void.class, applicationId);
 
     // After contract approval move application to waiting for decision state and remove possible contract rejected -tag
-    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING);
+    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, getDecisionMakerInfo());
     applicationServiceComposer.removeTag(applicationId, ApplicationTagType.CONTRACT_REJECTED);
+  }
+
+  // Fetch placement contract decision maker from configuration
+  private StatusChangeInfoJson getDecisionMakerInfo() {
+    String decisionMakerUsername = configurationService.getSingleValue(ConfigurationType.PLACEMENT_CONTRACT_DECISION_MAKER);
+    if (decisionMakerUsername != null) {
+      UserJson user = userService.findUserByUserName(decisionMakerUsername);
+      return new StatusChangeInfoJson(user.getId(), CommentType.PROPOSE_APPROVAL, "");
+    }
+    return null;
   }
 
   public void rejectContract(Integer applicationId, String rejectReason) {
