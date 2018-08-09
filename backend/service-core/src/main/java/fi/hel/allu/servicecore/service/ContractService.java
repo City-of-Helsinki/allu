@@ -37,18 +37,20 @@ public class ContractService {
   private final RestTemplate restTemplate;
   private final UserService userService;
   private final ConfigurationService configurationService;
+  private final CommentService commentService;
 
   private static final String STYLE_SHEET_NAME = "PLACEMENT_CONTRACT-contract";
 
   public ContractService(ApplicationServiceComposer applicationServiceComposer, DecisionJsonMapper decisionJsonMapper,
       ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
-      ConfigurationService configurationService) {
+      ConfigurationService configurationService, CommentService commentService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.decisionJsonMapper = decisionJsonMapper;
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.configurationService = configurationService;
+    this.commentService = commentService;
   }
 
   public byte[] getContractPreview(Integer applicationId) {
@@ -72,14 +74,18 @@ public class ContractService {
     return pdfData;
   }
 
-  public byte[] createApprovedContract(int applicationId, ContractInfo contractInfo) {
+  public byte[] createApprovedContract(int applicationId, ContractInfo contractInfo, StatusChangeInfoJson statusChangeInfo) {
     byte[] pdfData = generateContractPdf(applicationId, contractInfo);
     if (!contractInfo.isContractAsAttachment() && !contractInfo.isFrameAgreementExists()) {
       throw new IllegalArgumentException("contract.approved.notallowed");
     }
+    if (statusChangeInfo != null) {
+      commentService.addDecisionProposalComment(applicationId, statusChangeInfo);
+    }
+
     restTemplate.exchange(applicationProperties.getApprovedContractUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("data", pdfData, Collections.singletonMap("contractinfo", contractInfo)), String.class, applicationId);
-    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, getDecisionMakerInfo());
+    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, statusChangeInfo);
     return pdfData;
   }
 
@@ -101,7 +107,7 @@ public class ContractService {
     String decisionMakerUsername = configurationService.getSingleValue(ConfigurationType.PLACEMENT_CONTRACT_DECISION_MAKER);
     if (decisionMakerUsername != null) {
       UserJson user = userService.findUserByUserName(decisionMakerUsername);
-      return new StatusChangeInfoJson(user.getId(), CommentType.PROPOSE_APPROVAL, "");
+      return new StatusChangeInfoJson(user.getId());
     }
     return null;
   }
