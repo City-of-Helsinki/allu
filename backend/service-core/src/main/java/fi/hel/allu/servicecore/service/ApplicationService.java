@@ -221,6 +221,10 @@ public class ApplicationService {
     restTemplate.put(applicationProperties.getApplicationOwnerRemoveUrl(), applicationIds);
   }
 
+  void updateApplicationHandler(Integer applicationId, Integer updatedHandler) {
+    restTemplate.put(applicationProperties.getApplicationHandlerUpdateUrl(), null, applicationId, updatedHandler);
+  }
+
   Application changeApplicationStatus(int applicationId, StatusType statusType) {
     HttpEntity<Integer> userIdRequest = getUserIdRequest(statusType);
 

@@ -175,6 +175,11 @@ public class ApplicationService {
     applicationDao.removeOwner(applications);
   }
 
+  @Transactional
+  public void updateHandler(Integer applicationId, Integer handlerId) {
+    applicationDao.updateHandler(applicationId, handlerId);
+  }
+
   /**
    * Create new application
    *
@@ -248,12 +253,22 @@ public class ApplicationService {
         changeReplacedApplicationStatus(application);
         return applicationDao.updateDecision(applicationId, statusType, userId, application.getHandler());
       case DECISIONMAKING:
-        return applicationDao.startDecisionMaking(applicationId, statusType, userId);
+        return applicationDao.startDecisionMaking(applicationId, statusType, getHandlerId(applicationId, userId));
       case CANCELLED:
         addCompensationClarificationForInvoiced(applicationId, userId);
         applicationDao.updateStatus(applicationId, statusType);
       default:
         return applicationDao.updateStatus(applicationId, statusType);
+    }
+  }
+
+  private Integer getHandlerId(int applicationId, Integer userId) {
+    Application application = applicationDao.findById(applicationId);
+    if (userId != null && userId.equals(application.getExternalOwnerId())) {
+      // If current user is external do not change handler
+      return application.getHandler();
+    } else {
+      return userId;
     }
   }
 

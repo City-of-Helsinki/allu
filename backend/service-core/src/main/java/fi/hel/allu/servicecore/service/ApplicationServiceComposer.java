@@ -183,6 +183,10 @@ public class ApplicationServiceComposer {
     searchService.updateApplications(applicationJsons);
   }
 
+  public void updateApplicationHandler(Integer applicationId, Integer updatedHandler) {
+    applicationService.updateApplicationHandler(applicationId, updatedHandler);
+  }
+
   /**
    * Removes owner of given applications.
    *

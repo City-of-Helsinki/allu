@@ -71,6 +71,7 @@ public class ContractService {
     restTemplate.exchange(applicationProperties.getContractProposalUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("data", pdfData), String.class, applicationId);
     applicationServiceComposer.changeStatus(applicationId, StatusType.WAITING_CONTRACT_APPROVAL);
+    applicationServiceComposer.updateApplicationHandler(applicationId, userService.getCurrentUser().getId());
     return pdfData;
   }
 

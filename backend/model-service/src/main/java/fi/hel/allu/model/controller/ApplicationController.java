@@ -147,6 +147,13 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/handler/{handlerId}", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateHandler(@PathVariable("id") Integer id, @PathVariable("handlerId") Integer handlerId) {
+    applicationService.updateHandler(id, handlerId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
 
   /**
    * Create new application

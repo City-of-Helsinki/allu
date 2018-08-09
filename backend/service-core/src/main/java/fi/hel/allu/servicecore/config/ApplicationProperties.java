@@ -296,6 +296,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/owner/{ownerId}");
   }
 
+  public String getApplicationHandlerUpdateUrl() {
+    return getModelServiceUrl("/applications/{id}/handler/{handlerId}");
+  }
+
+
   /**
    * @return url to remove owner of applications.
    */

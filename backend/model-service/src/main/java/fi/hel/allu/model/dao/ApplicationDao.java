@@ -401,6 +401,16 @@ public class ApplicationDao {
   }
 
   @Transactional
+  public int updateHandler(Integer applicationId, Integer handlerId) {
+    int updated = (int) queryFactory
+        .update(application)
+        .set(application.handler, handlerId)
+        .where(application.id.eq(applicationId))
+        .execute();
+    return updated;
+  }
+
+  @Transactional
   public Application startDecisionMaking(int applicationId, StatusType status, int userId) {
     int updated = (int) queryFactory
         .update(application)
