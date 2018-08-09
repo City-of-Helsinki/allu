@@ -13,6 +13,7 @@ import {ApplicationBasketActionType} from '../../project/actions/application-bas
 import {CommentActionType} from '../../comment/actions/comment-actions';
 import {map} from 'rxjs/internal/operators';
 import {InvoicingActionType} from '../../application/actions/invoicing-actions';
+import {DecisionActionType} from '@feature/decision/actions/decision-actions';
 
 const handledActions = [
   ProjectActionTypes.LoadFailed,
@@ -30,6 +31,7 @@ const handledActions = [
   CommentActionType.SaveFailed,
   CommentActionType.RemoveFailed,
   InvoicingActionType.SetRecipientFailed,
+  DecisionActionType.LoadFailed
 ];
 
 @Injectable()

@@ -1,0 +1,17 @@
+<pdf-view
+  [pdf]="pdf$ | async"
+  [loading]="loading$ | async"
+  [processing]="processing$ | async">
+</pdf-view>
+<div class="document-footer">
+  <div *ngIf="tab$ | async as tab">
+    <ng-container *ngIf="showActions$ | async">
+      <ng-container *ngIf="tab==='DECISION'">
+        <decision-actions
+          pdfViewFooter
+          [application]="applicationChanges$ | async"
+          (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

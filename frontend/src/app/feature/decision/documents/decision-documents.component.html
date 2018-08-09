@@ -1,0 +1,14 @@
+<div class="document-header">
+  <div class="labels-solid">
+    <nav mat-tab-nav-bar headerPosition="end">
+      <a mat-tab-link *ngFor="let tab of tabs$ | async"
+         [routerLink]="tab | lowercase"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        {{['decision.tab', tab] | translation}}
+      </a>
+    </nav>
+  </div>
+</div>
+<router-outlet></router-outlet>
+

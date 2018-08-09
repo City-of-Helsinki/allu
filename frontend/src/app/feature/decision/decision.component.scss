@@ -2,29 +2,3 @@
   height: 75%;
   padding: 0 0.75rem;
 }
-
-.pdf-header {
-  background: white;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px 6px 0 0;
-  box-shadow: 0 2px 4px 0 rgba(153, 190, 220, 0.5);
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-  min-height: 56px;
-}
-
-.content-placeholder {
-  height: 100%;
-  width: 100%;
-
-  img {
-    height: 100%;
-    width: 100%;
-  }
-}
-
-.pdf-content {
-  height: 100%;
-  position: relative;
-}

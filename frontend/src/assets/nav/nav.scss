@@ -42,15 +42,11 @@ nav.nav-bar-secondary {
 
 .labels-solid .mat-tab-label,
 .labels-solid .mat-tab-link {
-  margin: 0 5px;
+  margin: 2px 5px 0;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   font-size: 16px !important;
   font-weight: bold !important;
-}
-
-.labels-solid .mat-tab-label.mat-tab-label-active {
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
 }
 
 .labels-end .mat-tab-labels,

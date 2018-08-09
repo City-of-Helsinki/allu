@@ -8,7 +8,7 @@ import {ApplicationStatus, inHandling} from '../../model/application/application
 import {findTranslation} from '../../util/translations';
 import {NotificationService} from '../../service/notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
-import {DecisionHub} from '../../service/decision/decision-hub';
+import {DecisionService} from '../../service/decision/decision.service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
 import {ApplicationStore} from '../../service/application/application-store';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
@@ -42,7 +42,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromApplication.State>,
-              private decisionHub: DecisionHub,
+              private decisionService: DecisionService,
               private router: Router,
               private dialog: MatDialog,
               private notification: NotificationService) {}
@@ -130,7 +130,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
-      .map(details => this.decisionHub.sendDecision(appId, details).pipe(
+      .map(details => this.decisionService.sendDecision(appId, details).pipe(
         tap(() => this.application.decisionDistributionList = details.decisionDistributionList),
         catchError(error => this.notification.errorCatch(error, {}))
       ))

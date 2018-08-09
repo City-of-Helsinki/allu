@@ -18,7 +18,6 @@ export class DecisionService {
   }
 
   public fetch(applicationId: number): Observable<Decision> {
-    console.log('Fetching pdf for application ' + applicationId);
     const url = DECISION_URL.replace(':appId', String(applicationId));
 
     return this.http.get(url, {responseType: 'blob'}).pipe(

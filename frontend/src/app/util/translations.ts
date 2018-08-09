@@ -713,6 +713,7 @@ export const translations = {
     reason: 'Perustelut',
     emailMessage: 'Sähköpostiviesti',
     sendDecision: 'Lähetä päätös',
+    cannotShow: 'Päätöksen näyttäminen ei onnistu selaimellasi.',
     type: {
       DECISION: {
         title: 'Päätä hakemus',
@@ -734,6 +735,10 @@ export const translations = {
         confirmText: 'Lähetä',
         confirmation: 'Päätös lähetetty'
       }
+    },
+    tab: {
+      DECISION: 'Päätös',
+      CONTRACT: 'Sopimus'
     },
     field: {
       handlerMissing: 'Käsittelijä puuttuuu'
@@ -768,6 +773,12 @@ export const translations = {
     },
     action: {
       send: 'Päätös lähettetty'
+    }
+  },
+  contract: {
+    error: {
+      createProposalFailed: 'Sopimusluonnoksen luonti epäonnistui',
+      approveFailed: 'Sopimuksen hyväksyntä epäonnistui'
     }
   },
   user: {
@@ -910,7 +921,8 @@ export const translations = {
       'false': 'Ei'
     },
     action: {
-      remove: 'poistettu'
+      remove: 'poistettu',
+      canDownload: 'Voit ladata sen'
     },
     button: {
       ok: 'HYVÄKSY',
@@ -938,7 +950,8 @@ export const translations = {
       nextPage: 'Seuraava',
       previousPage: 'Edellinen',
       of: '/'
-    }
+    },
+    fromHere: 'tästä'
   },
   map: {
     zoomIn: 'Lähennä',

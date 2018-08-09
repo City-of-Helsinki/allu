@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MatCardModule, MatToolbarModule, MatDialogModule, MatSlideToggleModule} from '@angular/material';
+import {MatCardModule, MatDialogModule, MatSlideToggleModule, MatToolbarModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -32,7 +32,6 @@ import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-ar
 import {PlacementContractComponent} from './info/placement-contract/placement-contract.component';
 import {TermsModule} from './terms/terms.module';
 import {AreaRentalComponent} from './info/area-rental/area-rental.component';
-import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
 import {DistributionModule} from './distribution/distribution.module';
 import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
 import {InvoicingModule} from './invoicing/invoicing.module';
@@ -51,6 +50,8 @@ import {ApplicationHistoryComponent} from './history/application-history.compone
 import {ApplicationEffects} from './effects/application-effects';
 import {InformationRequestModule} from '../information-request/information-request.module';
 import {ApplicationInfoBaseComponent} from './info/application-info-base.component';
+import {PdfModule} from '@feature/pdf/pdf.module';
+import {DecisionModule} from '@feature/decision/decision.module';
 
 @NgModule({
   imports: [
@@ -82,7 +83,9 @@ import {ApplicationInfoBaseComponent} from './info/application-info-base.compone
     InvoicingModule,
     CustomerRegistryModule,
     SupervisionModule,
-    InformationRequestModule
+    InformationRequestModule,
+    DecisionModule,
+    PdfModule
   ],
   declarations: [
     ApplicationComponent,
@@ -103,7 +106,6 @@ import {ApplicationInfoBaseComponent} from './info/application-info-base.compone
     TrafficArrangementComponent,
     PlacementContractComponent,
     AreaRentalComponent,
-    DecisionPreviewComponent,
     PricingInfoComponent,
     RecurringComponent,
     ApplicationCommentsComponent,
