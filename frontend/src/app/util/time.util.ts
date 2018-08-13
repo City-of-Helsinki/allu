@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import {UnitOfTime} from 'moment';
+import {unitOfTime} from 'moment';
 
 export const MIN_YEAR = 1972;
 export const MAX_YEAR = 9999;
@@ -92,11 +92,11 @@ export class TimeUtil {
     return moment.max(... moments).toDate();
   }
 
-  public static add(baseDate: Date = new Date(), amount: number, unit: UnitOfTime): Date {
+  public static add(baseDate: Date = new Date(), amount: number, unit: unitOfTime.DurationConstructor): Date {
     return moment(baseDate).add(amount, unit).toDate();
   }
 
-  public static subract(baseDate: Date = new Date(), amount: number, unit: UnitOfTime): Date {
+  public static subract(baseDate: Date = new Date(), amount: number, unit: unitOfTime.DurationConstructor): Date {
     return moment(baseDate).subtract(amount, unit).toDate();
   }
 
@@ -115,7 +115,7 @@ export class TimeUtil {
    *
    * @returns {boolean} true when first date is before second or given dates are undefined, otherwise false.
    */
-  public static isBefore(first: Date, second: Date, granularity?: UnitOfTime): boolean {
+  public static isBefore(first: Date, second: Date, granularity?: unitOfTime.StartOf): boolean {
     if (first && second) {
       return moment(first).isBefore(moment(second), granularity);
     } else {
@@ -123,7 +123,7 @@ export class TimeUtil {
     }
   }
 
-  public static isAfter(first: Date, second: Date, granularity?: UnitOfTime): boolean {
+  public static isAfter(first: Date, second: Date, granularity?: unitOfTime.StartOf): boolean {
     return this.isBefore(second, first, granularity);
   }
 
@@ -145,7 +145,7 @@ export class TimeUtil {
     return this.compareTo(left, right) === 0;
   }
 
-  public static isSame(left: Date, right: Date, granularity: string): boolean {
+  public static isSame(left: Date, right: Date, granularity: unitOfTime.StartOf): boolean {
     const lMoment = moment(left);
     const rMoment = moment(right);
     return lMoment.isSame(rMoment, granularity);
