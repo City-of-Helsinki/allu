@@ -105,7 +105,6 @@
           LIMIT TO (
           application,
           application_attachment,
-          application_comment,
           application_customer,
           application_kind,
           application_tag,
@@ -114,13 +113,18 @@
           change_history,
           charge_basis,
           city_district,
+          codeset,
+          comment,
           contact,
+          contract,
           customer,
           decision,
           deposit,
           distribution_entry,
           field_change,
           fixed_location,
+          information_request,
+          information_request_field,
           invoice,
           invoice_recipient,
           invoice_row,
@@ -144,5 +148,14 @@
 
 - name: Grant select to operative schema for {{ reporting_database_user }}
   command:  psql {{ reporting_database_name }} --host localhost -p 5433 -c 'GRANT SELECT ON ALL TABLES IN SCHEMA allu_operative to  "{{ reporting_database_user }}";'
+  become: yes
+  become_user: postgres
+
+- name: Create schema for views
+  postgresql_schema:
+    login_host=localhost
+    port=5433
+    database={{ reporting_database_name }}
+    name=allu_report_views
   become: yes
   become_user: postgres
