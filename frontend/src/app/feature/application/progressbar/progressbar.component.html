@@ -9,7 +9,9 @@
             </a>
           </h1>
           <div *ngIf="application.project as project" class="text-hint">
-            {{project.identifier}}
+            <a [routerLink]="['/projects', project.id, 'info']">
+              {{project.identifier}}
+          </a>
           </div>
         </div>
         <div fxFlex="none">
