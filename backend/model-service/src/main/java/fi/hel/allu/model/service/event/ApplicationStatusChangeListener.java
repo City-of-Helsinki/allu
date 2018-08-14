@@ -45,6 +45,8 @@ public class ApplicationStatusChangeListener {
   public void onApplicationStatusChange(ApplicationStatusChangeEvent event) {
     if (event.getNewStatus() == StatusType.DECISION) {
       handleDecisionStatus(event.getApplication(), event.getUserId());
+    } else if (event.getNewStatus() == StatusType.CANCELLED) {
+      cancelOpenSupervisionTasks(event.getApplication());
     }
   }
 
@@ -75,6 +77,10 @@ public class ApplicationStatusChangeListener {
       supervisionTaskService.cancelOpenTasksOfApplication(application.getReplacesApplicationId());
     }
 
+  }
+
+  private void cancelOpenSupervisionTasks(Application application) {
+    supervisionTaskService.cancelOpenTasksOfApplication(application.getId());
   }
 
   private void handlePlacementContractDecision(Application application, Integer userId) {
