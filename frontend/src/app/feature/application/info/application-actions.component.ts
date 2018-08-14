@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {ApplicationStatus} from '../../../model/application/application-status';
@@ -16,7 +16,7 @@ import {User} from '../../../model/user/user';
 import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
 import {ArrayUtil} from '../../../util/array-util';
 import {UserHub} from '../../../service/user/user-hub';
-import {catchError, filter, map} from 'rxjs/internal/operators';
+import {filter, map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'application-actions',
@@ -43,6 +43,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showCancel = false;
   showReplace = false;
   showConvertToApplication = false;
+  showActions = true;
   applicationId: number;
 
   private applicationSub: Subscription;
@@ -65,6 +66,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showEdit = this.readonly && (status < ApplicationStatus.DECISION);
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
+      this.showActions = status !== ApplicationStatus.PENDING_CLIENT && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL;
       this.applicationId = app.id;
     });
   }

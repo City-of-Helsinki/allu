@@ -1,4 +1,6 @@
-export enum ApplicationStatus {
+import {NumberUtil} from '@util/number.util';
+
+  export enum ApplicationStatus {
   PENDING_CLIENT,
   PRE_RESERVED,
   PENDING,
@@ -17,7 +19,7 @@ export enum ApplicationStatus {
 }
 
 export function applicationCanBeEdited(status: ApplicationStatus): boolean {
-  return status ? status < ApplicationStatus.DECISIONMAKING : true;
+  return NumberUtil.isDefined(status) ? (status > ApplicationStatus.PENDING_CLIENT && status < ApplicationStatus.WAITING_CONTRACT_APPROVAL) : true;
 }
 
 export function inHandling(status: ApplicationStatus): boolean {

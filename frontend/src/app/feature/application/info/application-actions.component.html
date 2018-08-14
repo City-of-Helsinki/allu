@@ -1,4 +1,4 @@
-<bottom-bar>
+<bottom-bar *ngIf="showActions">
   <div class="bottom-bar-item">
     <ng-container *availableTo="MODIFY_ROLES">
       <button *ngIf="showReplace" mat-raised-button type="button" color="primary" (click)="replace()">
