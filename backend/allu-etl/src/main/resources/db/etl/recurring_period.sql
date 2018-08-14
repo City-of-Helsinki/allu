@@ -1,4 +1,9 @@
-INSERT INTO allureport.toistuvuusjakso
+INSERT INTO allureport.toistuvuusjakso (
+  id,
+  hakemus_id,
+  toistuvuus_alku,
+  toistuvuus_loppu
+)
 SELECT
     r.id AS id,
     r.application_id AS hakemus_id,
@@ -10,3 +15,5 @@ ON CONFLICT (id) DO UPDATE SET
     toistuvuus_alku = EXCLUDED.toistuvuus_alku,
     toistuvuus_loppu = EXCLUDED.toistuvuus_loppu
 ;
+
+DELETE FROM allureport.toistuvuusjakso t WHERE NOT EXISTS (SELECT id FROM allu_operative.recurring_period op WHERE op.id = t.id);

@@ -1,8 +1,18 @@
-INSERT INTO allureport.laskurivi
+INSERT INTO allureport.laskurivi (
+  id,
+  lasku_id,
+  rivinumero,
+  yksikko,
+  maara,
+  teksti,
+  perusteet,
+  yksikkohinta,
+  kokonaishinta
+)
 SELECT
     i.id AS id,
     i.invoice_id AS lasku_id,
-    i.row_number AS rivi_numero,
+    i.row_number AS rivinumero,
     CASE
         WHEN i.unit = 'PIECE' THEN 'kpl'
         WHEN i.unit = 'SQUARE_METER' THEN 'm²'
@@ -29,3 +39,5 @@ ON CONFLICT (id) DO UPDATE SET
     yksikkohinta = EXCLUDED.yksikkohinta,
     kokonaishinta = EXCLUDED.kokonaishinta
 ;
+
+DELETE FROM allureport.laskurivi l WHERE NOT EXISTS (SELECT id FROM allu_operative.invoice_row oi WHERE oi.id = l.id);

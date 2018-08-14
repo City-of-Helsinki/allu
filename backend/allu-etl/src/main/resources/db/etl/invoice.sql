@@ -1,4 +1,19 @@
-INSERT INTO allureport.lasku
+INSERT INTO allureport.lasku  (
+  id,
+  hakemus_id,
+  asiakas_tyyppi,
+  asiakas_nimi,
+  asiakas_ovt,
+  asiakas_tunniste,
+  asiakas_email,
+  asiakas_puhelin,
+  asiakas_katuosoite,
+  asiakas_postinumero,
+  asiakas_postitoimipaikka,
+  laskutettava_aika,
+  laskutettu,
+  sap_tunnus_puuttuu
+)
 SELECT
     i.id AS id,
     i.application_id AS hakemus_id,
@@ -59,3 +74,5 @@ ON CONFLICT (id) DO UPDATE SET
     laskutettu = EXCLUDED.laskutettu,
     sap_tunnus_puuttuu = EXCLUDED.sap_tunnus_puuttuu
 ;
+
+DELETE FROM allureport.lasku l WHERE NOT EXISTS (SELECT id FROM allu_operative.invoice oi WHERE oi.id = l.id);

@@ -1,4 +1,30 @@
-INSERT INTO allureport.hakemus
+INSERT INTO allureport.hakemus (
+  id,
+  hakemuksen_tunnus,
+  hanke_id,
+  nimi,
+  kasittelija,
+  omistaja,
+  tila,
+  tyyppi,
+  luontiaika,
+  alkuaika,
+  loppuaika,
+  toistuvuuden_loppuaika,
+  paatoksen_julkisuus,
+  paatosaika,
+  paatoksen_tekija,
+  laskettu_hinta,
+  ei_laskutettava,
+  ei_laskutettava_peruste,
+  laskutusasiakas_id,
+  laskutettu,
+  korvaava_hakemus_id,
+  asiakkaan_viite,
+  laskutuspaiva,
+  asiointitunnus,
+  asiakasjarjestelma_kayttaja
+)
 SELECT
     a.id AS id,
     a.application_id AS hakemuksen_tunnus,
@@ -7,17 +33,21 @@ SELECT
     h.user_name AS kasittelija,
     o.user_name AS omistaja,
     CASE
-	      WHEN a.status = 'PRE_RESERVED' THEN 'Alustava varaus'
-	      WHEN a.status = 'PENDING' THEN 'Vireillä'
-	      WHEN a.status = 'HANDLING' THEN 'Käsittelyssä'
-	      WHEN a.status = 'RETURNED_TO_PREPARATION' THEN 'Palautettu valmisteluun'
-	      WHEN a.status = 'DECISION_MAKING' THEN 'Odottaa päätöstä'
-	      WHEN a.status = 'DECISION' THEN 'Päätetty'
-	      WHEN a.status = 'REJECTED' THEN 'Hylätty päätös'
-	      WHEN a.status = 'FINISHED' THEN 'Valmis'
-	      WHEN a.status = 'CANCELLED' THEN 'Peruttu'
-	      WHEN a.status = 'REPLACED' THEN 'Korvattu'
-	      WHEN a.status = 'ARCHIVED' THEN 'Arkistoitu'
+        WHEN a.status = 'PENDING_CLIENT' THEN 'Vireillä asiakasjärjestelmässä'
+        WHEN a.status = 'PRE_RESERVED' THEN 'Alustava varaus'
+        WHEN a.status = 'PENDING' THEN 'Vireillä'
+        WHEN a.status = 'WAITING_INFORMATION' THEN 'Odottaa täydennystä'
+        WHEN a.status = 'INFORMATION_RECEIVED' THEN 'Täydennys vastaanotettu'
+        WHEN a.status = 'HANDLING' THEN 'Käsittelyssä'
+        WHEN a.status = 'RETURNED_TO_PREPARATION' THEN 'Palautettu valmisteluun'
+        WHEN a.status = 'WAITING_CONTRACT_APPROVAL' THEN 'Odottaa sopimusta'
+        WHEN a.status = 'DECISION_MAKING' THEN 'Odottaa päätöstä'
+        WHEN a.status = 'DECISION' THEN 'Päätetty'
+        WHEN a.status = 'REJECTED' THEN 'Hylätty päätös'
+        WHEN a.status = 'FINISHED' THEN 'Valmis'
+        WHEN a.status = 'CANCELLED' THEN 'Peruttu'
+        WHEN a.status = 'REPLACED' THEN 'Korvattu'
+        WHEN a.status = 'ARCHIVED' THEN 'Arkistoitu'
         ELSE 'NA'
     END AS tila,
     CASE
@@ -30,7 +60,7 @@ SELECT
         WHEN a.type = 'SHORT_TERM_RENTAL' THEN 'Lyhytaikainen maanvuokraus'
         WHEN a.type = 'NOTE' THEN 'Muistiinpano'
     END AS tyyppi,
-    a.creation_time AS luonti_aika,
+    a.creation_time AS luontiaika,
     a.start_time AS alkuaika,
     a.end_time AS loppuaika,
     a.recurring_end_time AS toistuvuuden_loppuaika,
@@ -49,11 +79,14 @@ SELECT
     a.invoiced AS laskutettu,
     a.replaced_by_application_id AS korvaava_hakemus_id,
     a.customer_reference AS asiakkaan_viite,
-    a.invoicing_date AS laskutuspaiva
+    a.invoicing_date AS laskutuspaiva,
+    a.identification_number AS asiointitunnus,
+    eu.user_name AS asiakasjarjestelma_kayttaja
 FROM allu_operative.application a
 LEFT JOIN allu_operative.user h ON a.handler = h.id
 LEFT JOIN allu_operative.user o ON a.owner = o.id
 LEFT JOIN allu_operative.user d ON a.decision_maker = d.id
+LEFT JOIN allu_operative.user eu ON a.external_owner_id = eu.id
 ON CONFLICT (id) DO UPDATE SET
     hakemuksen_tunnus = EXCLUDED.hakemuksen_tunnus,
     hanke_id = EXCLUDED.hanke_id,
@@ -62,7 +95,7 @@ ON CONFLICT (id) DO UPDATE SET
     omistaja = EXCLUDED.omistaja,
     tila = EXCLUDED.tila,
     tyyppi = EXCLUDED.tyyppi,
-    luonti_aika = EXCLUDED.luonti_aika,
+    luontiaika = EXCLUDED.luontiaika,
     alkuaika = EXCLUDED.alkuaika,
     loppuaika = EXCLUDED.loppuaika,
     toistuvuuden_loppuaika = EXCLUDED.toistuvuuden_loppuaika,
@@ -76,10 +109,28 @@ ON CONFLICT (id) DO UPDATE SET
     laskutettu = EXCLUDED.laskutettu,
     korvaava_hakemus_id = EXCLUDED.korvaava_hakemus_id,
     asiakkaan_viite = EXCLUDED.asiakkaan_viite,
-    laskutuspaiva = EXCLUDED.laskutuspaiva
+    laskutuspaiva = EXCLUDED.laskutuspaiva,
+    asiointitunnus = EXCLUDED.asiointitunnus,
+    asiakasjarjestelma_kayttaja = EXCLUDED.asiakasjarjestelma_kayttaja
 ;
 
-INSERT INTO allureport.tapahtuma
+INSERT INTO allureport.tapahtuma (
+  hakemus_id,
+  ehdot,
+  tapahtuman_luonne,
+  kuvaus,
+  www_sivu,
+  tapahtuman_alkuaika,
+  tapahtuman_loppuaika,
+  yleisomaara,
+  osallistumismaksu,
+  eko_kompassi,
+  elintarvikemyynti,
+  elintarviketoimijat,
+  rakenteiden_neliomaara,
+  rakenteiden_kuvaus,
+  tapahtuma_ajan_poikkeukset
+)
 SELECT
     a.id AS hakemus_id,
     a.extension::json ->> 'terms' AS ehdot,
@@ -96,7 +147,7 @@ SELECT
     (a.extension::json ->> 'entryFee')::integer AS osallistumismaksu,
     (a.extension::json ->> 'ecoCompass')::boolean AS eko_kompassi,
     (a.extension::json ->> 'foodSales')::boolean AS elintarvikemyynti,
-    a.extension::json ->> 'foodProviders' AS elintarvike_toimijat,
+    a.extension::json ->> 'foodProviders' AS elintarviketoimijat,
     (a.extension::json ->> 'structureArea')::float AS rakenteiden_neliomaara,
     a.extension::json ->> 'structureDescription' AS rakenteiden_kuvaus,
     a.extension::json ->> 'timeExceptions' AS tapahtuma_ajan_poikkeukset
@@ -113,29 +164,39 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
     osallistumismaksu = EXCLUDED.osallistumismaksu,
     eko_kompassi = EXCLUDED.eko_kompassi,
     elintarvikemyynti = EXCLUDED.elintarvikemyynti,
-    elintarvike_toimijat = EXCLUDED.elintarvike_toimijat,
+    elintarviketoimijat = EXCLUDED.elintarviketoimijat,
     rakenteiden_neliomaara = EXCLUDED.rakenteiden_neliomaara,
     rakenteiden_kuvaus = EXCLUDED.rakenteiden_kuvaus,
     tapahtuma_ajan_poikkeukset = EXCLUDED.tapahtuma_ajan_poikkeukset
 ;
 
-INSERT INTO allureport.lyhyt_maanvuokraus
+INSERT INTO allureport.lyhyt_maanvuokraus (
+  hakemus_id,
+  ehdot,
+  kuvaus,
+  kaupallinen,
+  laskutettava_myyntialue
+)
 SELECT
     a.id AS hakemus_id,
     a.extension::json ->> 'terms' AS ehdot,
     a.extension::json ->> 'description' AS kuvaus,
     (a.extension::json ->> 'commercial')::boolean AS kaupallinen,
-    (a.extension::json ->> 'largeSalesArea')::boolean AS iso_myyntialue
+    (a.extension::json ->> 'billableSalesArea')::boolean AS laskutettava_myyntialue
 FROM allu_operative.application a
 WHERE a.type = 'SHORT_TERM_RENTAL'
 ON CONFLICT (hakemus_id) DO UPDATE SET
     ehdot = EXCLUDED.ehdot,
     kuvaus = EXCLUDED.kuvaus,
     kaupallinen = EXCLUDED.kaupallinen,
-    iso_myyntialue = EXCLUDED.iso_myyntialue
+    laskutettava_myyntialue = EXCLUDED.laskutettava_myyntialue
 ;
 
-INSERT INTO allureport.muistiinpano
+INSERT INTO allureport.muistiinpano (
+  hakemus_id,
+  ehdot,
+  kuvaus
+)
 SELECT
     a.id AS hakemus_id,
     a.extension::json ->> 'terms' AS ehdot,
@@ -146,3 +207,65 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
     ehdot = EXCLUDED.ehdot,
     kuvaus = EXCLUDED.kuvaus
 ;
+
+INSERT INTO allureport.liikennejarjestely (
+  hakemus_id,
+  ehdot,
+  tyon_tarkoitus,
+  liikennejarjestelyt,
+  liikennehaitta
+)
+SELECT
+  a.id AS hakemus_id,
+  a.extension::json ->> 'terms' AS ehdot,
+  a.extension::json ->> 'workPurpose' AS tyon_tarkoitus,
+  a.extension::json ->> 'trafficArrangements' AS liikennejarjestelyt,
+  CASE
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
+  END AS liikennehaitta
+FROM allu_operative.application a
+WHERE a.type = 'TEMPORARY_TRAFFIC_ARRANGEMENTS'
+ON CONFLICT (hakemus_id) DO UPDATE SET
+    ehdot = EXCLUDED.ehdot,
+    tyon_tarkoitus = EXCLUDED.tyon_tarkoitus,
+    liikennejarjestelyt = EXCLUDED.liikennejarjestelyt,
+    liikennehaitta = EXCLUDED.liikennehaitta
+;
+
+INSERT INTO allureport.sijoitussopimus (
+  hakemus_id,
+  ehdot,
+  kiinteistotunnus,
+  tyonkuvaus,
+  sopimusteksti,
+  irtisanomispaiva,
+  pykala
+)
+SELECT
+  a.id AS hakemus_id,
+  a.extension::json ->> 'terms' AS ehdot,
+  a.extension::json ->> 'propertyIdentificationNumber' AS kiinteistotunnus,
+  a.extension::json ->> 'additionalInfo' AS tyonkuvaus,
+  a.extension::json ->> 'contractText' AS sopimusteksti,
+  TO_TIMESTAMP((a.extension::json ->> 'terminationDate')::float) AS irtisanomispaiva,
+  (a.extension::json ->> 'sectionNumber')::integer AS pykala
+FROM allu_operative.application a
+WHERE a.type = 'PLACEMENT_CONTRACT'
+ON CONFLICT (hakemus_id) DO UPDATE SET
+    ehdot = EXCLUDED.ehdot,
+    kiinteistotunnus = EXCLUDED.kiinteistotunnus,
+    tyonkuvaus = EXCLUDED.tyonkuvaus,
+    sopimusteksti = EXCLUDED.sopimusteksti,
+    irtisanomispaiva = EXCLUDED.irtisanomispaiva,
+    pykala = EXCLUDED.pykala
+;
+
+DELETE FROM allureport.tapahtuma h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.lyhyt_maanvuokraus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.muistiinpano h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.liikennejarjestely h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.sijoitussopimus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.hakemus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.id);

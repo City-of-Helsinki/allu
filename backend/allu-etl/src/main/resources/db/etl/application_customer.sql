@@ -1,4 +1,9 @@
-INSERT INTO allureport.hakemus_asiakas
+INSERT INTO allureport.hakemus_asiakas (
+  id,
+  asiakas_id,
+  hakemus_id,
+  asiakkaan_rooli
+)
 SELECT
     a.id AS id,
     a.customer_id AS asiakas_id,
@@ -15,3 +20,5 @@ ON CONFLICT (id) DO UPDATE SET
     hakemus_id = EXCLUDED.hakemus_id,
     asiakkaan_rooli = EXCLUDED.asiakkaan_rooli
 ;
+
+DELETE FROM allureport.hakemus_asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.application_customer oc WHERE oc.id = a.id);

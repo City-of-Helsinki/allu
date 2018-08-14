@@ -1,4 +1,8 @@
-INSERT INTO allureport.sijainti_kiinteasijainti
+INSERT INTO allureport.sijainti_kiinteasijainti  (
+  id,
+  sijainti_id,
+  kiinteasijainti_id
+)
 SELECT
     l.id AS id,
     l.location_id AS sijainti_id,
@@ -8,3 +12,5 @@ ON CONFLICT (id) DO UPDATE SET
     sijainti_id = EXCLUDED.sijainti_id,
     kiinteasijainti_id = EXCLUDED.kiinteasijainti_id
 ;
+
+DELETE FROM allureport.sijainti_kiinteasijainti s WHERE NOT EXISTS (SELECT id FROM allu_operative.location_flids ol WHERE ol.id = s.id);

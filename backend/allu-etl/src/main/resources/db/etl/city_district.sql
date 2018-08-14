@@ -1,4 +1,8 @@
-INSERT INTO allureport.kaupunginosa
+INSERT INTO allureport.kaupunginosa (
+  id,
+  tunnus,
+  nimi
+)
 SELECT
     c.id AS id,
     c.district_id AS tunnus,
@@ -9,3 +13,4 @@ ON CONFLICT (id) DO UPDATE SET
     nimi = EXCLUDED.nimi
 ;
 
+DELETE FROM allureport.kaupunginosa k WHERE NOT EXISTS (SELECT id FROM allu_operative.city_district oc WHERE oc.id = k.id);

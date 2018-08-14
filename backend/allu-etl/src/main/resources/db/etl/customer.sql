@@ -1,4 +1,21 @@
-INSERT INTO allureport.asiakas
+INSERT INTO allureport.asiakas (
+  id,
+  katuosoite,
+  postinumero,
+  postitoimipaikka,
+  tyyppi,
+  nimi,
+  tunniste,
+  ovt,
+  operaattoritunnus,
+  email,
+  puhelin,
+  sap_asiakas_numero,
+  laskutuskielto,
+  laskutusasiakas,
+  maa,
+  aktiivinen
+)
 SELECT
     c.id AS id,
     CASE
@@ -41,9 +58,14 @@ SELECT
     END AS puhelin,
     c.sap_customer_number AS sap_asiakas_numero,
     c.invoicing_prohibited AS laskutuskielto,
-    c.invoicing_only AS laskutusasiakas
+    c.invoicing_only AS laskutusasiakas,
+    cs.description AS maa,
+    c.is_active AS aktiivinen
 FROM allu_operative.customer c
-LEFT JOIN allu_operative.postal_address p ON c.postal_address_id = p.id
+LEFT JOIN
+  allu_operative.postal_address p ON c.postal_address_id = p.id
+LEFT JOIN
+  allu_operative.codeset cs on c.country_id = cs.id
 ON CONFLICT (id) DO UPDATE SET
     katuosoite = EXCLUDED.katuosoite,
     postinumero = EXCLUDED.postinumero,
@@ -57,4 +79,9 @@ ON CONFLICT (id) DO UPDATE SET
     puhelin = EXCLUDED.puhelin,
     sap_asiakas_numero = EXCLUDED.sap_asiakas_numero,
     laskutuskielto = EXCLUDED.laskutuskielto,
-    laskutusasiakas = EXCLUDED.laskutusasiakas;
+    laskutusasiakas = EXCLUDED.laskutusasiakas,
+    maa = EXCLUDED.maa,
+    aktiivinen = EXCLUDED.aktiivinen
+;
+
+DELETE FROM allureport.asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.customer oc WHERE oc.id = a.id);

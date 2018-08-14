@@ -1,4 +1,17 @@
-INSERT INTO allureport.laskuperuste
+INSERT INTO allureport.laskuperuste (
+  id,
+  hakemus_id,
+  tunniste,
+  viitattu_tunniste,
+  manuaalisesti_asetettu,
+  tyyppi,
+  yksikko,
+  maara,
+  teksti,
+  perusteet,
+  yksikkohinta,
+  kokonaishinta
+)
 SELECT
     c.id AS id,
     c.application_id AS hakemus_id,
@@ -10,6 +23,7 @@ SELECT
         WHEN c.type = 'NEGLIGENCE_FEE' THEN 'Laiminlyöntimaksu'
         WHEN c.type = 'ADDITIONAL_FEE' THEN 'Ylimääräinen maksu'
         WHEN c.type = 'DISCOUNT' THEN 'Alennus'
+        WHEN c.type = 'AREA_USAGE_FEE' THEN 'Alueenkäyttömaksu'
     END AS tyyppi,
     CASE
         WHEN c.unit = 'PIECE' THEN 'kpl'
@@ -40,3 +54,5 @@ ON CONFLICT (id) DO UPDATE SET
     yksikkohinta = EXCLUDED.yksikkohinta,
     kokonaishinta = EXCLUDED.kokonaishinta
 ;
+
+DELETE FROM allureport.laskuperuste l WHERE NOT EXISTS (SELECT id FROM allu_operative.charge_basis oc WHERE oc.id = l.id);

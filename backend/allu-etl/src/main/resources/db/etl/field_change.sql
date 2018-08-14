@@ -1,4 +1,10 @@
-INSERT INTO allureport.kenttamuutos
+INSERT INTO allureport.kenttamuutos (
+  id,
+  muutoshistoria_id,
+  kentan_nimi,
+  vanha_arvo,
+  uusi_arvo
+)
 SELECT
     f.id AS id,
     f.change_history_id AS muutoshistoria_id,
@@ -12,3 +18,5 @@ ON CONFLICT (id) DO UPDATE SET
     vanha_arvo = EXCLUDED.vanha_arvo,
     uusi_arvo = EXCLUDED.uusi_arvo
 ;
+
+DELETE FROM allureport.kenttamuutos k WHERE NOT EXISTS (SELECT id FROM allu_operative.field_change of WHERE of.id = k.id);

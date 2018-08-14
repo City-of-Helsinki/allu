@@ -20,15 +20,22 @@ WITH tunnisteet (en, fi) AS (
         ('FINAL_SUPERVISION_ACCEPTED', 'Loppuvalvonta hyväksytty'),
         ('FINAL_SUPERVISION_REJECTED', 'Loppuvalvonta hylätty'),
         ('SAP_ID_MISSING', 'Laskutettavan SAP-tunnus puuttuu'),
-        ('DECISION_NOT_SENT', 'Päätös lähettämättä')
+        ('DECISION_NOT_SENT', 'Päätös lähettämättä'),
+        ('CONTRACT_REJECTED', 'Sopimusta ei hyväksytty')
 )
-INSERT INTO allureport.hakemustunniste
+INSERT INTO allureport.hakemustunniste (
+  id,
+  hakemus_id,
+  lisaaja,
+  tyyppi,
+  luontiaika
+)
 SELECT
     t.id AS id,
     t.application_id AS hakemus_id,
     u.user_name AS lisaaja,
     tu.fi AS tyyppi,
-    t.creation_time AS luonti_aika
+    t.creation_time AS luontiaika
 FROM allu_operative.application_tag t
 LEFT JOIN allu_operative.user u on t.added_by = u.id
 LEFT JOIN tunnisteet tu ON t.type = tu.en
@@ -36,5 +43,7 @@ ON CONFLICT (id) DO UPDATE SET
     hakemus_id = EXCLUDED.hakemus_id,
     lisaaja = EXCLUDED.lisaaja,
     tyyppi = EXCLUDED.tyyppi,
-    luonti_aika = EXCLUDED.luonti_aika
+    luontiaika = EXCLUDED.luontiaika
 ;
+
+DELETE FROM allureport.hakemustunniste h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_tag ot WHERE ot.id = h.id);

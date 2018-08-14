@@ -47,7 +47,11 @@ WITH hakemuslajit (en, fi) AS (
         ('ELECTION_ADD_STAND', 'Vaalimainosteline'),
         ('PUBLIC_EVENT', 'Yleisötilaisuus'),
         ('OTHER', 'Muu'))
-INSERT INTO allureport.hakemuslaji
+INSERT INTO allureport.hakemuslaji (
+  id,
+  hakemus_id,
+  laji
+)
 SELECT
     k.id AS id,
     k.application_id AS hakemus_id,
@@ -58,4 +62,6 @@ ON CONFLICT (id) DO UPDATE SET
     hakemus_id = EXCLUDED.hakemus_id,
     laji = EXCLUDED.laji
 ;
+
+DELETE FROM allureport.hakemuslaji h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_kind ok WHERE ok.id = h.id);
 

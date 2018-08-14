@@ -1,11 +1,29 @@
-INSERT INTO allureport.sijainti
+INSERT INTO allureport.sijainti (
+  id,
+  hakemus_id,
+  sijainti_avain,
+  sijainti_versio,
+  alkuaika,
+  loppuaika,
+  lisatiedot,
+  katuosoite,
+  postinumero,
+  postitoimipaikka,
+  pinta_ala,
+  syotetty_pinta_ala,
+  kaupunginosa_id,
+  syotetty_kaupunginosa_id,
+  maksuluokka,
+  syotetty_maksuluokka,
+  altakuljettava
+)
 SELECT
     l.id AS id,
     l.application_id AS hakemus_id,
     l.location_key AS sijainti_avain,
     l.location_version AS sijainti_versio,
-    l.start_time AS alku_aika,
-    l.end_time AS loppu_aika,
+    l.start_time AS alkuaika,
+    l.end_time AS loppuaika,
     l.additional_info AS lisatiedot,
     p.street_address AS katuosoite,
     p.postal_code AS postinumero,
@@ -23,8 +41,8 @@ ON CONFLICT (id) DO UPDATE SET
     hakemus_id = EXCLUDED.hakemus_id,
     sijainti_avain = EXCLUDED.sijainti_avain,
     sijainti_versio = EXCLUDED.sijainti_versio,
-    alku_aika = EXCLUDED.alku_aika,
-    loppu_aika = EXCLUDED.loppu_aika,
+    alkuaika = EXCLUDED.alkuaika,
+    loppuaika = EXCLUDED.loppuaika,
     lisatiedot = EXCLUDED.lisatiedot,
     katuosoite = EXCLUDED.katuosoite,
     postinumero = EXCLUDED.postinumero,
@@ -37,3 +55,5 @@ ON CONFLICT (id) DO UPDATE SET
     syotetty_maksuluokka = EXCLUDED.syotetty_maksuluokka,
     altakuljettava = EXCLUDED.altakuljettava
 ;
+
+DELETE FROM allureport.sijainti s WHERE NOT EXISTS (SELECT id FROM allu_operative.location ol WHERE ol.id = s.id);

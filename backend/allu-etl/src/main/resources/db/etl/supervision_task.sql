@@ -1,4 +1,16 @@
-INSERT INTO allureport.valvontatehtava
+INSERT INTO allureport.valvontatehtava (
+  id,
+  hakemus_id,
+  tyyppi,
+  lisaaja,
+  omistaja,
+  luontiaika,
+  suunniteltu_loppuaika,
+  toteutunut_loppuaika,
+  status,
+  kuvaus,
+  tulos
+)
 SELECT
     s.id AS id,
     s.application_id AS hakemus_id,
@@ -11,9 +23,9 @@ SELECT
     END AS tyyppi,
     c.user_name AS lisaaja,
     o.user_name AS omistaja,
-    s.creation_time AS luonti_aika,
+    s.creation_time AS luontiaika,
     s.planned_finishing_time AS suunniteltu_loppuaika,
-    s.actual_finishing_time AS tpteutunut_loppuaika,
+    s.actual_finishing_time AS toteutunut_loppuaika,
     CASE
         WHEN s.status = 'OPEN' THEN 'Avoin'
         WHEN s.status = 'APPROVED' THEN 'Hyväksytty'
@@ -29,10 +41,12 @@ ON CONFLICT (id) DO UPDATE SET
     tyyppi = EXCLUDED.tyyppi,
     lisaaja = EXCLUDED.lisaaja,
     omistaja = EXCLUDED.omistaja,
-    luonti_aika = EXCLUDED.luonti_aika,
+    luontiaika = EXCLUDED.luontiaika,
     suunniteltu_loppuaika = EXCLUDED.suunniteltu_loppuaika,
     toteutunut_loppuaika = EXCLUDED.toteutunut_loppuaika,
     status = EXCLUDED.status,
     kuvaus = EXCLUDED.kuvaus,
     tulos = EXCLUDED.tulos;
 ;
+
+DELETE FROM allureport.valvontatehtava v WHERE NOT EXISTS (SELECT id FROM allu_operative.supervision_task os WHERE os.id = v.id);

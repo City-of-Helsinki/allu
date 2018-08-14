@@ -46,7 +46,11 @@ WITH tarkenteet (en, fi) AS (
         ('GAS_PIPE', 'Kaasujohto'),
         ('OTHER', 'Muu')
 )
-INSERT INTO allureport.hakemuslaji_tarkenne
+INSERT INTO allureport.hakemuslaji_tarkenne (
+  id,
+  hakemuslaji_id,
+  tarkenne
+)
 SELECT
     s.id AS id,
     s.kind_id AS hakemuslaji_id,
@@ -58,3 +62,4 @@ ON CONFLICT (id) DO UPDATE SET
     tarkenne = EXCLUDED.tarkenne
 ;
 
+DELETE FROM allureport.hakemuslaji_tarkenne h WHERE NOT EXISTS (SELECT id FROM allu_operative.kind_specifier ok WHERE ok.id = h.id);

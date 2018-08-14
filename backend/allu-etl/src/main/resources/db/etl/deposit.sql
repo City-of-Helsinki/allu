@@ -1,4 +1,12 @@
-INSERT INTO allureport.vakuus
+INSERT INTO allureport.vakuus (
+  id,
+  hakemus_id,
+  maara,
+  syy,
+  status,
+  lisaaja,
+  luontiaika
+)
 SELECT
     d.id AS id,
     d.application_id AS hakemus_id,
@@ -10,7 +18,7 @@ SELECT
         WHEN d.status = 'RETURNED_DEPOSIT' THEN 'Palautettu'
     END AS status,
     u.user_name AS lisaaja,
-    d.creation_time AS luonti_aika
+    d.creation_time AS luontiaika
 FROM allu_operative.deposit d
 LEFT JOIN allu_operative.user u on d.creator_id = u.id
 ON CONFLICT (id) DO UPDATE SET
@@ -19,5 +27,7 @@ ON CONFLICT (id) DO UPDATE SET
     syy = EXCLUDED.syy,
     status = EXCLUDED.status,
     lisaaja = EXCLUDED.lisaaja,
-    luonti_aika = EXCLUDED.luonti_aika
+    luontiaika = EXCLUDED.luontiaika
 ;
+
+DELETE FROM allureport.vakuus v WHERE NOT EXISTS (SELECT id FROM allu_operative.deposit od WHERE od.id = v.id);

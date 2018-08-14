@@ -47,7 +47,14 @@ WITH hakemuslajit (en, fi) AS (
         ('ELECTION_ADD_STAND', 'Vaalimainosteline'),
         ('PUBLIC_EVENT', 'Yleisötilaisuus'),
         ('OTHER', 'Muu'))
-INSERT INTO allureport.kiinteasijainti
+INSERT INTO allureport.kiinteasijainti (
+  id,
+  alue_id,
+  lohko,
+  hakemuslaji,
+  aktiivinen,
+  geometria
+)
 SELECT
     f.id AS id,
     f.area_id AS alue_id,
@@ -63,3 +70,5 @@ ON CONFLICT (id) DO UPDATE SET
     hakemuslaji = EXCLUDED.hakemuslaji,
     geometria = EXCLUDED.geometria
 ;
+
+DELETE FROM allureport.kiinteasijainti k WHERE NOT EXISTS (SELECT id FROM allu_operative.fixed_location of WHERE of.id = k.id);
