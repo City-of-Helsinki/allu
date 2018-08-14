@@ -19,7 +19,9 @@ import {NumberUtil} from '@util/number.util';
 }
 
 export function applicationCanBeEdited(status: ApplicationStatus): boolean {
-  return NumberUtil.isDefined(status) ? (status > ApplicationStatus.PENDING_CLIENT && status < ApplicationStatus.WAITING_CONTRACT_APPROVAL) : true;
+  return NumberUtil.isDefined(status)
+      ? (status > ApplicationStatus.PENDING_CLIENT && status < ApplicationStatus.WAITING_CONTRACT_APPROVAL)
+      : true;
 }
 
 export function inHandling(status: ApplicationStatus): boolean {
