@@ -2,5 +2,6 @@
   <contact-acceptance
     [formArray]="contactForms"
     [newContact]="contact"
+    [readonly]="readonly"
     (contactChanges)="onContactChange($event, index)"></contact-acceptance>
 </div>

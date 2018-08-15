@@ -20,6 +20,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptance<Customer> im
   _newCustomer: Customer;
 
   @Input() countryCodes: CodeSetCodeMap;
+  @Input() readonly: boolean;
 
   @Output() customerChanges: EventEmitter<Customer> = new EventEmitter<Customer>();
 

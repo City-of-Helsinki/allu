@@ -23,6 +23,7 @@ export class FieldAcceptanceComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() oldValue: any;
   @Input() newValue: any;
+  @Input() readonly: boolean;
 
   @HostBinding('class') classNames = 'field-acceptance';
 

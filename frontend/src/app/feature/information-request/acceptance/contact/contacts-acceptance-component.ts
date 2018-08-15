@@ -17,6 +17,7 @@ import {LoadByCustomer, LoadByCustomerSuccess} from '@feature/customerregistry/a
 export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() newContacts: Contact[] = [];
   @Input() parentForm: FormGroup;
+  @Input() readonly: boolean;
 
   contactForms: FormArray;
   contactChanges$ = new Subject<{contact: Contact, index: number}>();

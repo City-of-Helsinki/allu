@@ -260,6 +260,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   }
 
   private openAcceptanceModal(data: InformationAcceptanceData): Observable<InformationRequestResult>  {
+    data.readonly = this.applicationStore.snapshot.application.status === ApplicationStatus[ApplicationStatus.PENDING_CLIENT];
     const config: MatDialogConfig<InformationAcceptanceData> = {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
     return this.dialog
       .open<InformationAcceptanceModalComponent>(InformationAcceptanceModalComponent, config)

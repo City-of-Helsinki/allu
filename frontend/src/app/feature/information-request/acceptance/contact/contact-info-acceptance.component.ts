@@ -12,6 +12,8 @@ import {findTranslation} from '@util/translations';
 export class ContactInfoAcceptanceComponent extends InfoAcceptance<Contact> implements OnInit {
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
+  @Input() readonly: boolean;
+
   private _oldContact: Contact;
   private _newContact: Contact;
 

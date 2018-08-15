@@ -11,4 +11,5 @@ export class CustomerWithContactsAcceptanceComponent {
   @Input() oldCustomerWithContacts: CustomerWithContacts;
   @Input() newCustomerWithContacts: CustomerWithContacts;
   @Input() parentForm: FormGroup;
+  @Input() readonly: boolean;
 }

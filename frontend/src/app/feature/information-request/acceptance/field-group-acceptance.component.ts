@@ -21,6 +21,7 @@ export interface FieldValues {
 export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
   @Input() fieldLabels: FieldLabels;
   @Input() form: FormGroup;
+  @Input() readonly: boolean;
 
   displayedFields: string[];
 

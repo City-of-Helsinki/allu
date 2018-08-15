@@ -56,6 +56,7 @@ class MockFieldAcceptanceComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() oldValue: any;
   @Input() newValue: any;
+  @Input() readonly: boolean;
 
   select(selected: Selected) {
     this._onChange(selected);

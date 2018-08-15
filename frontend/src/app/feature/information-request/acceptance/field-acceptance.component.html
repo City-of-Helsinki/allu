@@ -7,7 +7,7 @@
     <mat-icon class="icon-middle">arrow_forward</mat-icon>
     <field-value [value]="newValue"></field-value>
   </div>
-  <div fxFlex>
+  <div fxFlex *ngIf="!readonly">
     <mat-button-toggle-group
       [ngModel]="selected"
       (change)="select($event.value)"

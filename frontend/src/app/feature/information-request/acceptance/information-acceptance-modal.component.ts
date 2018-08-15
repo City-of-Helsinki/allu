@@ -7,13 +7,14 @@ import {InformationRequestResult} from '../information-request-result';
 import {Application} from '../../../model/application/application';
 import {InformationRequestFieldKey} from '../../../model/information-request/information-request-field-key';
 import {combineLatest, Observable, Subject} from 'rxjs/index';
-import {debounceTime, distinctUntilChanged, map, skipUntil, startWith, take} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, skipUntil, startWith, take} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '../../../model/customer/customer-role-type';
 import {ArrayUtil} from '../../../util/array-util';
 import {SetApplication, SetCustomer} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 
 export interface InformationAcceptanceData {
+  readonly?: boolean;
   informationRequestId?: number;
   oldInfo: Application;
   newInfo: Application;
@@ -37,6 +38,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   form: FormGroup;
   updatedFields: string[];
   submitDisabled: Observable<boolean>;
+  readonly: boolean;
 
   private childrenLoaded$ = new Subject<boolean>();
 
@@ -45,6 +47,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
               private fb: FormBuilder) {
     this.form = this.fb.group({});
+    this.readonly = data.readonly;
 
     // Need to wait until viewChildren are loaded so they wont emit
     // form changes before component tree has been stabilized

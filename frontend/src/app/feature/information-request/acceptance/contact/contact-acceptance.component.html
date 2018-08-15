@@ -5,7 +5,7 @@
     {{'contact.suggestion.title' | translation}}
   </div>
 
-  <mat-form-field floatLabel="never" class="form-field-33 form-field-dense" *ngIf="matchingContacts$">
+  <mat-form-field floatLabel="never" class="form-field-33 form-field-dense" *ngIf="matchingContacts$ && !readonly">
     <input matInput type="text" formControlName="search"
            [placeholder]="'contact.search' | translation"
            [matAutocomplete]="contactSearch"/>
@@ -18,7 +18,7 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <p class="acceptance-info">
+  <p class="acceptance-info" *ngIf="!readonly">
     {{'contact.suggestion.info' | translation}}
     <button class="button-link" (click)="createNewContact()">
       {{'contact.createNew' | translation}}
@@ -30,4 +30,5 @@
   [form]="form"
   [oldContact]="referenceContact$ | async"
   [newContact]="newContact"
+  [readonly]="readonly"
   (contactChanges)="contactChanges.emit($event)"></contact-info-acceptance>

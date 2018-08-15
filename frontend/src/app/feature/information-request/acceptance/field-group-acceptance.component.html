@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-  <div class="field-group-options" *ngIf="displayedFields.length">
+  <div class="field-group-options" *ngIf="displayedFields.length && !readonly">
     <label>{{'informationRequest.acceptance.noChange' | translation}}</label>
     <label>{{'informationRequest.acceptance.change' | translation}}</label>
   </div>
@@ -12,7 +12,8 @@
         [formControlName]="fieldName"
         [label]="fieldLabels[fieldName]"
         [oldValue]="oldValues[fieldName]"
-        [newValue]="newValues[fieldName]"></field-acceptance>
+        [newValue]="newValues[fieldName]"
+        [readonly]="readonly"></field-acceptance>
     </li>
   </ul>
 </form>

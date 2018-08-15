@@ -16,6 +16,7 @@ import {ArrayUtil} from '@util/array-util';
 })
 export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   @Input() formArray: FormArray;
+  @Input() readonly: boolean;
 
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 

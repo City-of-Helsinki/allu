@@ -21,6 +21,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() oldCustomer: Customer;
   @Input() newCustomer: Customer;
   @Input() parentForm: FormGroup;
+  @Input() readonly: boolean;
 
   referenceCustomer$: BehaviorSubject<Customer>;
 

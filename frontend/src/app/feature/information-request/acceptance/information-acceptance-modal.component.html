@@ -1,4 +1,5 @@
-<h1 mat-dialog-title>{{'informationRequest.acceptance.title' | translation}}</h1>
+<h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.acceptance.title' | translation}}</h1>
+<h1 mat-dialog-title *ngIf="readonly">{{'informationRequest.acceptance.readonlyTitle' | translation}}</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     <div *ngFor="let field of updatedFields">
@@ -18,15 +19,19 @@
         *ngIf="field === 'CUSTOMER'"
         [parentForm]="form"
         [oldCustomerWithContacts]="oldInfo?.applicant"
-        [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"></customer-with-contacts-acceptance>
+        [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
+        [readonly]="true"></customer-with-contacts-acceptance>
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>
-    <button type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">
+    <button *ngIf="!readonly" type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">
       {{'common.button.save' | translation}}
     </button>
-    <button type="button" mat-raised-button color="primary" (click)="cancel()">
+    <button *ngIf="!readonly" type="button" mat-raised-button color="primary" (click)="cancel()">
       {{'common.button.cancel' | translation}}
+    </button>
+    <button *ngIf="readonly" type="button" mat-raised-button color="primary" (click)="cancel()">
+      {{'informationRequest.acceptance.close' | translation}}
     </button>
   </div>
 </form>

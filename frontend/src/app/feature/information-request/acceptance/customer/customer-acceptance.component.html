@@ -3,7 +3,7 @@
     {{'customer.suggestion.title' | translation}}
   </div>
 
-  <mat-form-field floatLabel="never" class="form-field-33 form-field-dense">
+  <mat-form-field floatLabel="never" class="form-field-33 form-field-dense" *ngIf="!readonly">
     <input matInput type="text" formControlName="search"
            [placeholder]="'customer.search.search' | translation"
            [matAutocomplete]="customerSearch"/>
@@ -16,7 +16,7 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <p class="acceptance-info">
+  <p class="acceptance-info" *ngIf="!readonly">
     {{'customer.suggestion.info' | translation}}
     <button class="button-link" (click)="createNewCustomer()">
       {{'customer.createNew' | translation}}
@@ -29,4 +29,5 @@
   [countryCodes]="countryCodes$ | async"
   [oldCustomer]="referenceCustomer$ | async"
   [newCustomer]="newCustomer"
+  [readonly]="readonly"
   (customerChanges)="customerChanges($event)"></customer-info-acceptance>

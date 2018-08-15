@@ -1,8 +1,10 @@
 <customer-acceptance
   [parentForm]="parentForm"
   [oldCustomer]="oldCustomerWithContacts?.customer"
-  [newCustomer]="newCustomerWithContacts?.customer"></customer-acceptance>
+  [newCustomer]="newCustomerWithContacts?.customer"
+  [readonly]="readonly"></customer-acceptance>
 
 <contacts-acceptance
   [parentForm]="parentForm"
-  [newContacts]="newCustomerWithContacts?.contacts"></contacts-acceptance>
+  [newContacts]="newCustomerWithContacts?.contacts"
+  [readonly]="readonly"></contacts-acceptance>
