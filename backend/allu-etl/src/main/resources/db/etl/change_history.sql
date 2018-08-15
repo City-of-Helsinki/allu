@@ -60,4 +60,3 @@ ON CONFLICT (id) DO UPDATE SET
     muutosaika = EXCLUDED.muutosaika
 ;
 
-DELETE FROM allureport.muutoshistoria m WHERE NOT EXISTS (SELECT id FROM allu_operative.change_history oc WHERE oc.id = m.id);

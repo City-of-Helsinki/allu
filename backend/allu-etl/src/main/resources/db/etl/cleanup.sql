@@ -1,0 +1,33 @@
+-- Removes data deleted from operative database
+
+DELETE FROM allureport.taydennyspyynto_kentta t WHERE NOT EXISTS (SELECT id FROM allu_operative.information_request_field oi WHERE oi.id = t.id);
+DELETE FROM allureport.taydennyspyynto t WHERE NOT EXISTS (SELECT id FROM allu_operative.information_request oi WHERE oi.id = t.id);
+DELETE FROM allureport.sopimus s WHERE NOT EXISTS (SELECT id FROM allu_operative.contract oc WHERE oc.id = s.id);
+DELETE FROM allureport.valvontatehtava v WHERE NOT EXISTS (SELECT id FROM allu_operative.supervision_task os WHERE os.id = v.id);
+DELETE FROM allureport.laskurivi l WHERE NOT EXISTS (SELECT id FROM allu_operative.invoice_row oi WHERE oi.id = l.id);
+DELETE FROM allureport.lasku l WHERE NOT EXISTS (SELECT id FROM allu_operative.invoice oi WHERE oi.id = l.id);
+DELETE FROM allureport.kenttamuutos k WHERE NOT EXISTS (SELECT id FROM allu_operative.field_change of WHERE of.id = k.id);
+DELETE FROM allureport.muutoshistoria m WHERE NOT EXISTS (SELECT id FROM allu_operative.change_history oc WHERE oc.id = m.id);
+DELETE FROM allureport.kommentti k WHERE NOT EXISTS (SELECT id FROM allu_operative.comment oc WHERE oc.id = k.id);
+DELETE FROM allureport.laskuperuste l WHERE NOT EXISTS (SELECT id FROM allu_operative.charge_basis oc WHERE oc.id = l.id);
+DELETE FROM allureport.sijainti_geometria s WHERE NOT EXISTS (SELECT id FROM allu_operative.location_geometry ol WHERE ol.id = s.id);
+DELETE FROM allureport.sijainti_kiinteasijainti s WHERE NOT EXISTS (SELECT id FROM allu_operative.location_flids ol WHERE ol.id = s.id);
+DELETE FROM allureport.sijainti s WHERE NOT EXISTS (SELECT id FROM allu_operative.location ol WHERE ol.id = s.id);
+DELETE FROM allureport.kiinteasijainti k WHERE NOT EXISTS (SELECT id FROM allu_operative.fixed_location of WHERE of.id = k.id);
+DELETE FROM allureport.alue a WHERE NOT EXISTS (SELECT id FROM allu_operative.location_area ol WHERE ol.id = a.id);
+DELETE FROM allureport.vakuus v WHERE NOT EXISTS (SELECT id FROM allu_operative.deposit od WHERE od.id = v.id);
+DELETE FROM allureport.hakemustunniste h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_tag ot WHERE ot.id = h.id);
+DELETE FROM allureport.toistuvuusjakso t WHERE NOT EXISTS (SELECT id FROM allu_operative.recurring_period op WHERE op.id = t.id);
+DELETE FROM allureport.hakemus_asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.application_customer oc WHERE oc.id = a.id);
+DELETE FROM allureport.hakemuslaji_tarkenne h WHERE NOT EXISTS (SELECT id FROM allu_operative.kind_specifier ok WHERE ok.id = h.id);
+DELETE FROM allureport.hakemuslaji h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_kind ok WHERE ok.id = h.id);
+DELETE FROM allureport.tapahtuma h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.lyhyt_maanvuokraus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.muistiinpano h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.liikennejarjestely h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.sijoitussopimus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
+DELETE FROM allureport.hakemus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.id);
+DELETE FROM allureport.hanke h WHERE EXISTS (SELECT id FROM allu_operative.project op WHERE op.id = h.id AND op.deleted = true);
+DELETE FROM allureport.hanke h WHERE NOT EXISTS (SELECT id FROM allu_operative.project op WHERE op.id = h.id);
+DELETE FROM allureport.asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.customer oc WHERE oc.id = a.id);
+DELETE FROM allureport.kaupunginosa k WHERE NOT EXISTS (SELECT id FROM allu_operative.city_district oc WHERE oc.id = k.id);

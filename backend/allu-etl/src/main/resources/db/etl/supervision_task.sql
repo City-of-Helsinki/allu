@@ -49,4 +49,3 @@ ON CONFLICT (id) DO UPDATE SET
     tulos = EXCLUDED.tulos;
 ;
 
-DELETE FROM allureport.valvontatehtava v WHERE NOT EXISTS (SELECT id FROM allu_operative.supervision_task os WHERE os.id = v.id);

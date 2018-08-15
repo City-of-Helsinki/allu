@@ -62,4 +62,3 @@ ON CONFLICT (id) DO UPDATE SET
     tarkenne = EXCLUDED.tarkenne
 ;
 
-DELETE FROM allureport.hakemuslaji_tarkenne h WHERE NOT EXISTS (SELECT id FROM allu_operative.kind_specifier ok WHERE ok.id = h.id);

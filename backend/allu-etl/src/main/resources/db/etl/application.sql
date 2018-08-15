@@ -262,10 +262,3 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
     irtisanomispaiva = EXCLUDED.irtisanomispaiva,
     pykala = EXCLUDED.pykala
 ;
-
-DELETE FROM allureport.tapahtuma h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
-DELETE FROM allureport.lyhyt_maanvuokraus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
-DELETE FROM allureport.muistiinpano h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
-DELETE FROM allureport.liikennejarjestely h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
-DELETE FROM allureport.sijoitussopimus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
-DELETE FROM allureport.hakemus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.id);

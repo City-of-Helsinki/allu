@@ -40,4 +40,3 @@ ON CONFLICT (id) DO UPDATE SET
     kommentoija = EXCLUDED.kommentoija
 ;
 
-DELETE FROM allureport.kommentti k WHERE NOT EXISTS (SELECT id FROM allu_operative.comment oc WHERE oc.id = k.id);

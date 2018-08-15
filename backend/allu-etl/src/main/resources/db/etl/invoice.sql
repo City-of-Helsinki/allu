@@ -75,4 +75,3 @@ ON CONFLICT (id) DO UPDATE SET
     sap_tunnus_puuttuu = EXCLUDED.sap_tunnus_puuttuu
 ;
 
-DELETE FROM allureport.lasku l WHERE NOT EXISTS (SELECT id FROM allu_operative.invoice oi WHERE oi.id = l.id);

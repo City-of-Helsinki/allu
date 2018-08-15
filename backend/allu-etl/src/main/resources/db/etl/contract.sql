@@ -35,4 +35,3 @@ ON CONFLICT (id) DO UPDATE SET
     sopimus_liitteena = EXCLUDED.sopimus_liitteena
 ;
 
-DELETE FROM allureport.sopimus s WHERE NOT EXISTS (SELECT id FROM allu_operative.contract oc WHERE oc.id = s.id);

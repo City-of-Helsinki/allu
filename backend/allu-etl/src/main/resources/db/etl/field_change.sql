@@ -19,4 +19,3 @@ ON CONFLICT (id) DO UPDATE SET
     uusi_arvo = EXCLUDED.uusi_arvo
 ;
 
-DELETE FROM allureport.kenttamuutos k WHERE NOT EXISTS (SELECT id FROM allu_operative.field_change of WHERE of.id = k.id);

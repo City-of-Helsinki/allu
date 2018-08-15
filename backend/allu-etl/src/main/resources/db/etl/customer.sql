@@ -83,5 +83,3 @@ ON CONFLICT (id) DO UPDATE SET
     maa = EXCLUDED.maa,
     aktiivinen = EXCLUDED.aktiivinen
 ;
-
-DELETE FROM allureport.asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.customer oc WHERE oc.id = a.id);

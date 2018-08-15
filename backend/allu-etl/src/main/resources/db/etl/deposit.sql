@@ -30,4 +30,3 @@ ON CONFLICT (id) DO UPDATE SET
     luontiaika = EXCLUDED.luontiaika
 ;
 
-DELETE FROM allureport.vakuus v WHERE NOT EXISTS (SELECT id FROM allu_operative.deposit od WHERE od.id = v.id);

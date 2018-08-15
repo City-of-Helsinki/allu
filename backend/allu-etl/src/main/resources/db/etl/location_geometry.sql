@@ -13,4 +13,3 @@ ON CONFLICT (id) DO UPDATE SET
     sijainti_id = EXCLUDED.sijainti_id
 ;
 
-DELETE FROM allureport.sijainti_geometria s WHERE NOT EXISTS (SELECT id FROM allu_operative.location_geometry ol WHERE ol.id = s.id);

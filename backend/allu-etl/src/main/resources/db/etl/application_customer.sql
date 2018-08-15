@@ -21,4 +21,3 @@ ON CONFLICT (id) DO UPDATE SET
     asiakkaan_rooli = EXCLUDED.asiakkaan_rooli
 ;
 
-DELETE FROM allureport.hakemus_asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.application_customer oc WHERE oc.id = a.id);

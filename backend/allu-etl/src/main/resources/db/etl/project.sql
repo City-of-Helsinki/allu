@@ -37,6 +37,3 @@ ON CONFLICT (id) DO UPDATE SET
     tunniste = EXCLUDED.tunniste,
     lisaaja = EXCLUDED.lisaaja
 ;
-
-DELETE FROM allureport.hanke h WHERE EXISTS (SELECT id FROM allu_operative.project op WHERE op.id = h.id AND op.deleted = true);
-DELETE FROM allureport.hanke h WHERE NOT EXISTS (SELECT id FROM allu_operative.project op WHERE op.id = h.id);

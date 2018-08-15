@@ -71,4 +71,3 @@ ON CONFLICT (id) DO UPDATE SET
     geometria = EXCLUDED.geometria
 ;
 
-DELETE FROM allureport.kiinteasijainti k WHERE NOT EXISTS (SELECT id FROM allu_operative.fixed_location of WHERE of.id = k.id);

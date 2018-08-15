@@ -40,4 +40,3 @@ ON CONFLICT (id) DO UPDATE SET
     kokonaishinta = EXCLUDED.kokonaishinta
 ;
 
-DELETE FROM allureport.laskurivi l WHERE NOT EXISTS (SELECT id FROM allu_operative.invoice_row oi WHERE oi.id = l.id);

@@ -55,4 +55,3 @@ ON CONFLICT (id) DO UPDATE SET
     kokonaishinta = EXCLUDED.kokonaishinta
 ;
 
-DELETE FROM allureport.laskuperuste l WHERE NOT EXISTS (SELECT id FROM allu_operative.charge_basis oc WHERE oc.id = l.id);

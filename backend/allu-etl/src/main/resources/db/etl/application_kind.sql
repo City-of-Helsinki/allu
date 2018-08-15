@@ -63,5 +63,4 @@ ON CONFLICT (id) DO UPDATE SET
     laji = EXCLUDED.laji
 ;
 
-DELETE FROM allureport.hakemuslaji h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_kind ok WHERE ok.id = h.id);
 

@@ -55,5 +55,3 @@ ON CONFLICT (id) DO UPDATE SET
     kuvaus = EXCLUDED.kuvaus
 ;
 
-DELETE FROM allureport.taydennyspyynto_kentta t WHERE NOT EXISTS (SELECT id FROM allu_operative.information_request_field oi WHERE oi.id = t.id);
-DELETE FROM allureport.taydennyspyynto t WHERE NOT EXISTS (SELECT id FROM allu_operative.information_request oi WHERE oi.id = t.id);

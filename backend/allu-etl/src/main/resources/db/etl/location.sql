@@ -56,4 +56,3 @@ ON CONFLICT (id) DO UPDATE SET
     altakuljettava = EXCLUDED.altakuljettava
 ;
 
-DELETE FROM allureport.sijainti s WHERE NOT EXISTS (SELECT id FROM allu_operative.location ol WHERE ol.id = s.id);

@@ -45,5 +45,3 @@ ON CONFLICT (id) DO UPDATE SET
     tyyppi = EXCLUDED.tyyppi,
     luontiaika = EXCLUDED.luontiaika
 ;
-
-DELETE FROM allureport.hakemustunniste h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_tag ot WHERE ot.id = h.id);

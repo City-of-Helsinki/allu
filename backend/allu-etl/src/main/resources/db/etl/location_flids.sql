@@ -13,4 +13,3 @@ ON CONFLICT (id) DO UPDATE SET
     kiinteasijainti_id = EXCLUDED.kiinteasijainti_id
 ;
 
-DELETE FROM allureport.sijainti_kiinteasijainti s WHERE NOT EXISTS (SELECT id FROM allu_operative.location_flids ol WHERE ol.id = s.id);
