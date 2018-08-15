@@ -30,6 +30,7 @@ SELECT
         WHEN s.status = 'OPEN' THEN 'Avoin'
         WHEN s.status = 'APPROVED' THEN 'Hyväksytty'
         WHEN s.status = 'REJECTED' THEN 'Hylätty'
+        WHEN s.status = 'CANCELLED' THEN 'Peruttu'
     END AS status,
     s.description AS kuvaus,
     s.result AS tulos
