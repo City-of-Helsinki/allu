@@ -3,7 +3,8 @@
 sh -e install_imageprep_to_production.sh dbservers
 sh -e install_imageprep_to_production.sh backendservers
 sh -e install_imageprep_to_production.sh webservers
-sh -e install_imageprep_to_production.sh reporting_dbserver
+# No imageprep to reporting db server, requires modified sshd_config
+
 
 ansible-playbook -i production.inventory --private-key=$HOME/allu_keys/allu_id_rsa database.yml --vault-password-file ~/allu_keys/vault_secret
 ansible-playbook -i production.inventory --private-key=$HOME/allu_keys/allu_id_rsa elasticsearch.yml --vault-password-file ~/allu_keys/vault_secret
