@@ -13,15 +13,18 @@ const initialState: State = {
 
 export function reducer(state: State = initialState, action: ContractActions) {
   switch (action.type) {
-
-    case ContractActionType.Load: {
+    case ContractActionType.Load:
+    case ContractActionType.CreateProposal:
+    case ContractActionType.Approve: {
       return {
         ...state,
         loading: true
       };
     }
 
-    case ContractActionType.LoadSuccess: {
+    case ContractActionType.LoadSuccess:
+    case ContractActionType.CreateProposalSuccess:
+    case ContractActionType.ApproveSuccess: {
       return {
         ...state,
         loading: false,
@@ -29,7 +32,9 @@ export function reducer(state: State = initialState, action: ContractActions) {
       };
     }
 
-    case ContractActionType.LoadFailed: {
+    case ContractActionType.LoadFailed:
+    case ContractActionType.CreateProposalFailed:
+    case ContractActionType.ApproveFailed: {
       return {
         ...state,
         loading: false

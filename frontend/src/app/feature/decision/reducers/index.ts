@@ -93,3 +93,15 @@ export const getLoading = createSelector(
   getContractLoading,
   (tab, decision, contract) => tab === DecisionTab.DECISION ? decision : contract
 );
+
+export const showDecisionActions = createSelector(
+  getShowActions,
+  getTab,
+  (show, tab) => show && tab === DecisionTab.DECISION
+);
+
+export const showContractActions = createSelector(
+  getShowActions,
+  getTab,
+  (show, tab) => show && tab === DecisionTab.CONTRACT
+);

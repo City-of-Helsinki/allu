@@ -1,0 +1,59 @@
+<h1 mat-dialog-title>
+  {{'contract.approval.title' | translation}}
+</h1>
+<div mat-dialog-content>
+  <form [formGroup]="approvalForm">
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-radio-group formControlName="approvalBasis">
+          <mat-radio-button value="contractAsAttachment">
+            {{['contract.approval.basis.contractAsAttachment'] | translation}}
+          </mat-radio-button>
+          <mat-radio-button value="frameAgreementExists">
+            {{['contract.approval.basis.frameAgreementExists'] | translation}}
+          </mat-radio-button>
+        </mat-radio-group>
+        <mat-error
+          *ngIf="approvalForm.get('approvalBasis').dirty && approvalForm.get('approvalBasis').hasError('required')"
+          class="radio-group-error">
+          {{'contract.approval.field.basisMissing' | translation}}
+        </mat-error>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width">
+          <textarea matInput matTextareaAutosize formControlName="comment" required
+                    [placeholder]="'contract.approval.comment' | translation"></textarea>
+          <mat-error *ngIf="approvalForm.get('comment').hasError('required')">
+            {{'contract.approval.field.commentMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width">
+          <mat-select [placeholder]="'contract.approval.selectDecisionMaker' | translation"
+                      class="input-full-width"
+                      formControlName="handler" required>
+            <mat-option *ngFor="let handler of handlers | async" [value]="handler.id">
+              {{handler.realName}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="approvalForm.get('handler').hasError('required')">
+            {{'contract.approval.field.handlerMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button type="button" color="primary" [disabled]="!approvalForm.valid" (click)="confirm()">
+    {{'common.button.save' | translation}}
+  </button>
+  <button mat-raised-button type="button" color="primary" (click)="cancel()">
+    {{'common.button.cancel' | translation}}
+  </button>
+</div>

@@ -23,6 +23,7 @@ import {ActionTargetType} from '../../allu/actions/action-target-type';
 import {ofTargetAndType} from '../../allu/actions/action-with-target';
 import * as fromProject from '../../project/reducers';
 import * as fromApplication from '../../application/reducers';
+import {ApproveSuccess, ContractActionType} from '@feature/decision/actions/contract-actions';
 
 @Injectable()
 export class CommentEffects {
@@ -61,6 +62,12 @@ export class CommentEffects {
       map(() => new RemoveSuccess(action.targetType, action.payload)),
       catchError(error => of(new RemoveFailed(action.targetType, error)))
     ))
+  );
+
+  @Effect()
+  contractApproved: Observable<Action> = this.actions.pipe(
+    ofType<ApproveSuccess>(ContractActionType.ApproveSuccess),
+    map(() => new Load(ActionTargetType.Application))
   );
 
   private loadByType(type: ActionTargetType, id): Observable<Action> {

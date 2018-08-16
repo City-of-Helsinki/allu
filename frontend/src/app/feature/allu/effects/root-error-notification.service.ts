@@ -6,6 +6,7 @@ import {ProjectActionTypes} from '../../project/actions/project-actions';
 import {
   ApplicationActionTypes as ProjectApplicationActionType
 } from '../../project/actions/application-actions';
+import {ApplicationActionType} from '@feature/application/actions/application-actions';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ParentProjectActionType} from '../../project/actions/parent-project-actions';
 import {ChildProjectActionType} from '../../project/actions/child-project-actions';
@@ -14,8 +15,10 @@ import {CommentActionType} from '../../comment/actions/comment-actions';
 import {map} from 'rxjs/internal/operators';
 import {InvoicingActionType} from '../../application/actions/invoicing-actions';
 import {DecisionActionType} from '@feature/decision/actions/decision-actions';
+import {ContractActionType} from '@feature/decision/actions/contract-actions';
 
 const handledActions = [
+  ApplicationActionType.LoadFailed,
   ProjectActionTypes.LoadFailed,
   ProjectActionTypes.SaveFailed,
   ProjectActionTypes.DeleteFailed,
@@ -31,7 +34,9 @@ const handledActions = [
   CommentActionType.SaveFailed,
   CommentActionType.RemoveFailed,
   InvoicingActionType.SetRecipientFailed,
-  DecisionActionType.LoadFailed
+  DecisionActionType.LoadFailed,
+  ContractActionType.CreateProposalFailed,
+  ContractActionType.ApproveFailed
 ];
 
 @Injectable()

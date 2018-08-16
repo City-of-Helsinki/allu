@@ -1,5 +1,6 @@
 import {ApplicationTagActions, ApplicationTagActionType} from '../actions/application-tag-actions';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
+import {ApplicationActions, ApplicationActionType} from '@feature/application/actions/application-actions';
 
 export interface State {
   current: ApplicationTag[];
@@ -9,7 +10,7 @@ const initialState: State = {
   current: []
 };
 
-export function reducer(state: State = initialState, action: ApplicationTagActions) {
+export function reducer(state: State = initialState, action: ApplicationTagActions | ApplicationActions) {
   switch (action.type) {
     case ApplicationTagActionType.LoadSuccess:
     case ApplicationTagActionType.SaveSuccess: {
@@ -30,6 +31,13 @@ export function reducer(state: State = initialState, action: ApplicationTagActio
       return {
         ...state,
         current: state.current.filter(tag => tag.type !== action.payload.type)
+      };
+    }
+
+    case ApplicationActionType.LoadSuccess: {
+      return {
+        ...state,
+        current: action.payload.applicationTags
       };
     }
 

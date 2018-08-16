@@ -1,14 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
-import {Observable, Subject} from 'rxjs/index';
+import {combineLatest, Observable, Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
-import {map, switchMap, takeUntil} from 'rxjs/internal/operators';
+import {map, takeUntil} from 'rxjs/internal/operators';
 import {Application} from '@model/application/application';
 import {Load} from '@feature/decision/actions/decision-actions';
-import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {ApplicationType} from '@model/application/type/application-type';
+import {ApplicationStatus} from '@model/application/application-status';
 
 @Component({
   selector: 'decision-document',
@@ -21,8 +22,9 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   pdf$: Observable<Blob>;
   loading$: Observable<boolean>;
   processing$: Observable<boolean>;
-  showActions$: Observable<boolean>;
   tab$: Observable<string>;
+  showDecisionActions$: Observable<boolean>;
+  showContractActions$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
 
@@ -41,7 +43,15 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy)
     );
 
-    this.showActions$ = this.store.select(fromDecision.getShowActions);
+    this.showDecisionActions$ = combineLatest(
+      this.store.select(fromDecision.showDecisionActions),
+      this.applicationChanges$
+    ).pipe(map(([show, app]) => this.showDecisionActions(show, app)));
+
+    this.showContractActions$ = combineLatest(
+      this.store.select(fromDecision.showContractActions),
+      this.applicationChanges$
+    ).pipe(map(([show, app]) => this.showContractActions(show, app)));
   }
 
   ngOnDestroy(): void {
@@ -51,5 +61,17 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
 
   onDecisionConfirm(): void {
     this.store.dispatch(new Load());
+  }
+
+  private showDecisionActions(show: boolean, app: Application): boolean {
+    const showByType = app.typeEnum !== ApplicationType.PLACEMENT_CONTRACT;
+    const showByStatus = app.statusEnum >= ApplicationStatus.DECISIONMAKING;
+    return show && (showByType || showByStatus);
+  }
+
+  private showContractActions(show: boolean, app: Application): boolean {
+    const showByType = app.typeEnum === ApplicationType.PLACEMENT_CONTRACT;
+    const showByStatus = [ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION].indexOf(app.statusEnum) >= 0;
+    return show && showByType && showByStatus;
   }
 }

@@ -85,6 +85,7 @@ export class ApplicationMapper {
     application.skipPriceCalculation = backendApplication.skipPriceCalculation;
     application.invoiced = backendApplication.invoiced;
     application.clientApplicationData = ClientApplicationDataMapper.mapBackend(backendApplication.clientApplicationData);
+    application.externalOwnerId = backendApplication.externalOwnerId;
     return application;
   }
 

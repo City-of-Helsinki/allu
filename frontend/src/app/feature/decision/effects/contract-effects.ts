@@ -4,7 +4,16 @@ import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs/index';
-import {ContractActionType, Load, LoadFailed, LoadSuccess} from '@feature/decision/actions/contract-actions';
+import {
+  Approve, ApproveFailed, ApproveSuccess,
+  ContractActionType,
+  CreateProposal, CreateProposalFailed,
+  CreateProposalSuccess,
+  Load,
+  LoadFailed,
+  LoadSuccess
+} from '@feature/decision/actions/contract-actions';
+import * as ApplicationAction from '@feature/application/actions/application-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
 import {ContractService} from '@service/contract/contract.service';
@@ -24,6 +33,38 @@ export class ContractEffects {
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.loadAvailableContract(application))
+  );
+
+  @Effect()
+  createProposal: Observable<Action> = this.actions.pipe(
+    ofType<CreateProposal>(ContractActionType.CreateProposal),
+    withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+    filter(([action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([action, application]) => this.contractService.createProposal(application.id).pipe(
+      map(contract => new CreateProposalSuccess(contract)),
+      catchError(error => of(new CreateProposalFailed(error)))
+    ))
+  );
+
+  @Effect()
+  approve: Observable<Action> = this.actions.pipe(
+    ofType<Approve>(ContractActionType.Approve),
+    withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+    filter(([action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([action, application]) => this.contractService.approve(application.id, action.payload).pipe(
+      switchMap(contract => [
+        new ApproveSuccess(contract),
+        new Load
+      ]),
+      catchError(error => of(new ApproveFailed(error)))
+    ))
+  );
+
+  @Effect()
+  reloadApplication: Observable<Action> = this.actions.pipe(
+    ofType(ContractActionType.ApproveSuccess, ContractActionType.CreateProposalSuccess),
+    withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+    map(([contract, application]) => new ApplicationAction.Load(application.id))
   );
 
   private loadAvailableContract(application: Application): Observable<Action> {

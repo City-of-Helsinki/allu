@@ -160,18 +160,13 @@ export class ApplicationStore {
     );
   }
 
-  load(id: number): Observable<Application> {
-    return this.applicationService.get(id).pipe(
-      tap(application => {
-        this.appStore.next({
-          ...this.current,
-          application,
-          attachments: application.attachmentList,
-          draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
-        });
-        this.store.dispatch(new TagAction.LoadSuccess(application.applicationTags));
-      })
-    );
+  setApplication(application: Application): void {
+    this.appStore.next({
+      ...this.current,
+      application,
+      attachments: application.attachmentList,
+      draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
+    });
   }
 
   save(application: Application): Observable<Application> {
@@ -289,7 +284,6 @@ export class ApplicationStore {
   private saved(application: Application): void {
     this.appStore.next({...this.current, application});
     this.store.dispatch(new ApplicationAction.LoadSuccess(application));
-    this.store.dispatch(new TagAction.Load());
     this.store.dispatch(new HistoryAction.Load(ActionTargetType.Application));
   }
 

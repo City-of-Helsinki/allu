@@ -13,6 +13,7 @@ import * as fromApplicationHistory from '../reducers/application-history-reducer
 import * as fromInformationRequest from '../../information-request/reducers/information-request-reducer';
 import {ClientApplicationData} from '../../../model/application/client-application-data';
 import {InformationRequestFieldKey} from '../../../model/information-request/information-request-field-key';
+import {NumberUtil} from '@util/number.util';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -60,6 +61,11 @@ export const getType = createSelector(
 export const getKindsWithSpecifiers = createSelector(
   getApplicationEntitiesState,
   fromApplication.getKindsWithSpecifiers
+);
+
+export const isFromExternalSystem = createSelector(
+  getCurrentApplication,
+  (app: Application) => app && NumberUtil.isDefined(app.externalOwnerId)
 );
 
 export const getClientData = createSelector(

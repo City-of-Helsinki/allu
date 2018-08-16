@@ -751,7 +751,7 @@ export const translations = {
         PROPOSE_REJECT: 'Ehdota hylkäystä'
       },
       field: {
-        commentMissing: 'Perustelut puuttuva',
+        commentMissing: 'Perustelut puuttuvat',
         handlerMissing: 'Päättäjä puuttuu'
       }
     },
@@ -776,6 +776,21 @@ export const translations = {
     }
   },
   contract: {
+    createProposal: 'Hyväksytä asiakkaalla',
+    proposeApproval: 'Ehdota hyväksymistä',
+    approval: {
+      title: 'Ehdota hyväksymistä',
+      basis: {
+        contractAsAttachment: 'Asiakkaan allekirjoittama sopimus liitteenä',
+        frameAgreementExists: 'Asiakkaan kanssa muu sopimusjärjestely'
+      },
+      selectDecisionMaker: 'Valitse päättäjä',
+      comment: 'Perustelut',
+      field: {
+        basisMissing: 'Peruste puuttuu',
+        commentMissing: 'Perustelut puuttuvat'
+      },
+    },
     error: {
       createProposalFailed: 'Sopimusluonnoksen luonti epäonnistui',
       approveFailed: 'Sopimuksen hyväksyntä epäonnistui'

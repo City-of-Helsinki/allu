@@ -5,3 +5,20 @@
 .radio-group-item .mat-form-field-wrapper {
   margin: 0;
 }
+
+.vertical-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.vertical-radio-group .mat-radio-button {
+  margin: 5px 0;
+}
+
+.mat-radio-button:not(:first-of-type) {
+  margin: 5px 15px;
+}
+
+.radio-group-error {
+  font-size: 75%;
+}

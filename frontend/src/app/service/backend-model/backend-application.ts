@@ -46,6 +46,7 @@ export interface BackendApplication {
   identificationNumber?: string;
   skipPriceCalculation: boolean;
   clientApplicationData?: BackendClientApplicationData;
+  externalOwnerId?: number;
   invoiced?: boolean;
 }
 

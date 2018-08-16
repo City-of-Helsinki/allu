@@ -17,6 +17,9 @@ import {CurrentUser} from '../../../../service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 import {filter, map, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
 import {NumberUtil} from '../../../../util/number.util';
+import {Store} from '@ngrx/store';
+import * as fromApplication from '@feature/application/reducers';
+import {Load} from '@feature/application/actions/application-actions';
 
 @Component({
   selector: 'charge-basis',
@@ -39,6 +42,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private invoiceHub: InvoiceHub,
               private applicationStore: ApplicationStore,
+              private store: Store<fromApplication.State>,
               private currentUser: CurrentUser,
               private notification: NotificationService) {
     this.chargeBasisEntries = fb.array([]);
@@ -149,7 +153,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     const entries = this.chargeBasisEntries.getRawValue().map(value => ChargeBasisEntryForm.toChargeBasisEntry(value));
     const appId = this.applicationStore.snapshot.application.id;
     return this.invoiceHub.saveChargeBasisEntries(appId, entries).pipe(
-      tap(() => this.applicationStore.load(appId).subscribe())
+      tap(() => this.store.dispatch(new Load(appId)))
     );
   }
 }

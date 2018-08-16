@@ -26,6 +26,8 @@ import {ContractEffects} from '@feature/decision/effects/contract-effects';
 import {DocumentEffects} from '@feature/decision/effects/document-effects';
 import {DecisionTabResolve} from '@feature/decision/decision-tab-resolve';
 import {ContractGuard} from '@feature/decision/documents/contract-guard';
+import {ContractActionsComponent} from '@feature/decision/contract-actions.component';
+import {ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
 
 @NgModule({
   imports: [
@@ -49,11 +51,13 @@ import {ContractGuard} from '@feature/decision/documents/contract-guard';
     DecisionDocumentComponent,
     DecisionPreviewComponent,
     DecisionActionsComponent,
+    ContractActionsComponent,
     DecisionModalComponent,
     ApplicationBasicInfoComponent,
     DecisionProposalModalComponent,
     DecisionProposalComponent,
-    AttachmentThumbnailsComponent
+    AttachmentThumbnailsComponent,
+    ContractApprovalModalComponent
   ],
   providers: [
     DecisionService,
@@ -64,7 +68,8 @@ import {ContractGuard} from '@feature/decision/documents/contract-guard';
   ],
   entryComponents: [
     DecisionModalComponent,
-    DecisionProposalModalComponent
+    DecisionProposalModalComponent,
+    ContractApprovalModalComponent
   ],
   exports: [
     DecisionPreviewComponent
