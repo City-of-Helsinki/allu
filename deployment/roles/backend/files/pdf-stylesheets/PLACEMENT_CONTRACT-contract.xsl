@@ -22,7 +22,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="unboxed">
         <section>
-          <h2>Sopimus oikeudesta sijoittaa johtoja, rakenteita ja laitteita yleiselle alueelle</h2>
+          <h2>Sopimus oikeudesta sijoittaa rakenteita yleiselle alueelle</h2>
           <p class="space-above">Sopimustunnus: <xsl:value-of select="data/decisionId"/></p>
         </section>
       </div>
@@ -156,7 +156,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="unboxed">
         <section>
-          <h2>Sopimus on kummankin sopijapuolen sähköisesti allekirjoittama</h2>
+          <h2>Sopimuksen allekirjoitukset</h2>
+
           <p class="indented">Helsingin kaupungin puolesta alueidenkäyttö ja -valvonta yksikön päällikkö on
                               allekirjoittanut tämän asiakirjan sähköisesti</p>
           <p class="indented">
@@ -164,8 +165,26 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <xsl:value-of select="data/deciderTitle"/>,
             <xsl:value-of select="data/deciderName"/>
           </p>
-          <p class="indented space-above"><xsl:value-of select="data/applicantName"/> puolesta ___________________________ <!-- [asioinnissa sopimuksen hyväksyjä] -->
-                on allekirjoittanut tämän asiakirjan sähköisesti ___________________________ <!-- [aikaleima sopimuksen hyväksynnästä asioinnissa]--></p>
+          <xsl:choose>
+            <xsl:when test="data/frameAgreement = 'true'">
+              <p class="indented space-above">
+                Hakijan kanssa on voimassaoleva muu erillinen sopimus ja siksi tämä sijoitussopimus ei
+                tarvitse erillistä asiakkaan allekirjoitusta.
+              </p>
+            </xsl:when>
+            <xsl:when test="data/contractAsAttachment = 'true'">
+              <p class="indented space-above">
+                Hakijan tai hakijan edustajan allekirjoitus on tämän sopimuksen liitteenä olevassa
+                asiakirjassa.
+              </p>
+            </xsl:when>
+            <xsl:otherwise>
+              <p class="indented space-above">
+                <xsl:value-of select="data/applicantName"/> puolesta <xsl:value-of select="data/contractSigner"/> <!-- [asioinnissa sopimuksen hyväksyjä] -->
+                    on allekirjoittanut tämän asiakirjan sähköisesti <xsl:value-of select="data/contractSigningDate"/> <!-- [aikaleima sopimuksen hyväksynnästä asioinnissa]-->
+              </p>
+            </xsl:otherwise>
+          </xsl:choose>
         </section>
       </div>
 
