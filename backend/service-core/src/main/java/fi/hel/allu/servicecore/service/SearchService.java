@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
@@ -232,6 +233,11 @@ public class SearchService {
     return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest, false, mapper);
   }
 
+  public Page<CustomerJson> searchCustomerByType(CustomerType type, QueryParameters queryParameters,
+      Pageable pageRequest, Boolean matchAny, Function<List<Integer>, List<CustomerJson>> mapper) {
+    return search(applicationProperties.getCustomerSearchByTypeUrl(type), queryParameters, pageRequest, matchAny, mapper);
+  }
+
   /**
    * Find contacts by given fields.
    *
@@ -295,4 +301,5 @@ public class SearchService {
         responsePage.getTotalElements());
     return result;
   }
+
 }

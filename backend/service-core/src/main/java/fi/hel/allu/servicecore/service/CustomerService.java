@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerChange;
@@ -209,6 +210,14 @@ public class CustomerService {
     return customers;
   }
 
+  public Page<CustomerJson> searchByType(CustomerType type, QueryParametersJson queryParameters, Pageable pageRequest, Boolean matchAny) {
+    Page<CustomerJson> customers = searchService.searchCustomerByType(type, QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest, matchAny,
+        ids -> getCustomersById(ids));
+    customers.forEach(c -> personAuditLogService.log(c, "CustomerService"));
+    return customers;
+  }
+
+
   public List<CustomerJson> getCustomersById(List<Integer> customerIds) {
     Customer[] customers = restTemplate.postForObject(
         applicationProperties.getCustomersByIdUrl(),
@@ -244,5 +253,4 @@ public class CustomerService {
   public Integer getNumberInvoiceRecipientsWithoutSapNumber() {
     return restTemplate.getForEntity(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl(), Integer.class).getBody();
   }
-
 }

@@ -300,9 +300,13 @@ public class GenericSearchService<T> {
     if (pageRequest == null) {
       pageRequest = DEFAULT_PAGEREQUEST;
     }
+    SearchRequestBuilder srBuilder = buildSearchRequest(queryParameters, pageRequest, matchAny);
+    return fetchResponse(pageRequest, srBuilder);
+  }
+
+  protected Page<Integer> fetchResponse(Pageable pageRequest, SearchRequestBuilder srBuilder) {
     try {
-      SearchRequestBuilder srBuilder = buildSearchRequest(queryParameters, pageRequest, matchAny);
-      SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
+      SearchResponse response = srBuilder.setFetchSource("id", "").execute().actionGet();
       long totalHits = Optional.ofNullable(response).map(r -> r.getHits().getTotalHits()).orElse(0L);
       List<Integer> results = (totalHits == 0) ? Collections.emptyList() : iterateIntSearchResponse(response);
       return new PageImpl<>(results, pageRequest, totalHits);
@@ -314,7 +318,17 @@ public class GenericSearchService<T> {
   public SearchRequestBuilder buildSearchRequest(QueryParameters queryParameters, Pageable pageRequest,
       Boolean matchAny) {
     BoolQueryBuilder qb = QueryBuilders.boolQuery();
+    addQueryParameters(queryParameters, matchAny, qb);
+    addAdditionalQueryParameters(qb);
+    SearchRequestBuilder srBuilder = prepareSearch(pageRequest, qb);
+    addSearchOrder(pageRequest, srBuilder);
 
+    logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
+        srBuilder.toString());
+    return srBuilder;
+  }
+
+  protected void addQueryParameters(QueryParameters queryParameters, Boolean matchAny, BoolQueryBuilder qb) {
     for (QueryParameter param : queryParameters.getQueryParameters()) {
       if (matchAny) {
         qb.should(createQueryBuilder(param));
@@ -322,12 +336,16 @@ public class GenericSearchService<T> {
         qb.must(createQueryBuilder(param));
       }
     }
-    addAdditionalQueryParameters(qb);
+  }
 
+  protected SearchRequestBuilder prepareSearch(Pageable pageRequest, BoolQueryBuilder qb) {
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
         .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
         .setTypes(indexTypeName).setQuery(qb);
+    return srBuilder;
+  }
 
+  protected void addSearchOrder(Pageable pageRequest, SearchRequestBuilder srBuilder) {
     Optional.ofNullable(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
       SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty()));
       if (o.isAscending()) {
@@ -337,10 +355,6 @@ public class GenericSearchService<T> {
       }
       srBuilder.addSort(sb);
     }));
-
-    logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
-        srBuilder.toString());
-    return srBuilder;
   }
 
   protected void addAdditionalQueryParameters(BoolQueryBuilder qb) {

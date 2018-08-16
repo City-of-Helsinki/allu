@@ -1,12 +1,10 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.search.domain.CustomerES;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.ApplicationSearchService;
-import fi.hel.allu.search.service.CustomerSearchService;
-import fi.hel.allu.search.util.CustomersIndexUtil;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,11 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.search.domain.CustomerES;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerSearchService;
+import fi.hel.allu.search.util.CustomersIndexUtil;
 
 /**
  * Controller for searching and indexing customers.
@@ -81,6 +82,15 @@ public class CustomerController {
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
     return new ResponseEntity<>(customerSearchService.findByField(queryParameters, pageRequest, false), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/search/{type}", method = RequestMethod.POST)
+  public ResponseEntity<Page<Integer>> searchByType(@PathVariable CustomerType type,
+      @Valid @RequestBody QueryParameters queryParameters,
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest,
+      @RequestParam(defaultValue = "false") Boolean matchAny) {
+    return new ResponseEntity<>(customerSearchService.findByTypeAndField(type, queryParameters, pageRequest, matchAny), HttpStatus.OK);
+  }
+
 
   @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
   public ResponseEntity<Void> syncData(@Valid @RequestBody List<CustomerES> customerESs) {

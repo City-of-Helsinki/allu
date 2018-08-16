@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.config;
 
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.ConfigurationType;
 
@@ -721,6 +722,11 @@ public class ApplicationProperties {
   public String getCustomerSearchUrl() {
     return getSearchServiceUrl("/customers/search");
   }
+
+  public String getCustomerSearchByTypeUrl(CustomerType type) {
+    return getSearchServiceUrl("/customers/search/" + type.name());
+  }
+
 
   /**
    * @return url to send multiple customer search index updates.
