@@ -229,13 +229,11 @@ export class InvoicingInfoComponent implements OnInit {
 
   private invoiceRecipientCanBeEdited(status: ApplicationStatus, invoicingDate: Date): Observable<boolean> {
     const waitingForDecision = ApplicationStatus.DECISIONMAKING === status;
-    const decision = ApplicationStatus.DECISION === status;
     const tomorrow = TimeUtil.toStartDate(TimeUtil.addDays(new Date(), 1));
     const dayBeforeInvoicing = !TimeUtil.isBefore(invoicingDate, tomorrow);
-    const editableAfterDecision = decision && dayBeforeInvoicing;
 
     return this.store.select(fromApplication.hasTag(ApplicationTagType.SAP_ID_MISSING)).pipe(
-      map(sapIdMissing => waitingForDecision || sapIdMissing || editableAfterDecision)
+      map(sapIdMissing => sapIdMissing || waitingForDecision || dayBeforeInvoicing)
     );
   }
 }

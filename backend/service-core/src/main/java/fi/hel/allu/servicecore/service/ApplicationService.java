@@ -340,7 +340,7 @@ public class ApplicationService {
     boolean allowed = BooleanUtils.isTrue(application.getNotBillable())
         || (application.getInvoiceRecipientId() == null)
         || (invoiceRecipientChangeAllowedByStatus(application))
-        || (isInDecisionState(application) && invoiceRecipientChangeAllowedInDecisionState(application));
+        || invoiceRecipientChangeAllowedAfterDecision(application);
     if (!allowed) {
       throw new IllegalOperationException("application.invoicing.invoicerecipient.notallowed");
     }
@@ -350,12 +350,7 @@ public class ApplicationService {
     return application.getStatus().isBeforeDecision();
   }
 
-  private boolean isInDecisionState(Application application) {
-    return application.getStatus() != null &&
-        (application.getStatus() == StatusType.DECISION);
-  }
-
-  private boolean invoiceRecipientChangeAllowedInDecisionState(Application application) {
+  private boolean invoiceRecipientChangeAllowedAfterDecision(Application application) {
     return application.getApplicationTags().stream().anyMatch(t -> t.getType() == ApplicationTagType.SAP_ID_MISSING) ||
         invoicingDateInFuture(application);
   }
