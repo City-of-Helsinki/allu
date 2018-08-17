@@ -24,6 +24,7 @@ export class KindAcceptanceComponent implements OnInit {
   @Input() parentForm: FormGroup;
   @Input() oldValues: KindsWithSpecifiers;
   @Input() newValues: string;
+  @Input() readonly: boolean;
 
   multipleKinds = false;
   availableKinds: string[] = [];

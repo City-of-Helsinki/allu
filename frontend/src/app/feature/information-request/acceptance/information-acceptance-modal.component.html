@@ -12,7 +12,8 @@
         [parentForm]="form"
         [applicationType]="oldInfo.type"
         [oldValues]="oldInfo?.kindsWithSpecifiers"
-        [newValues]="newInfo?.clientApplicationData.clientApplicationKind">
+        [newValues]="newInfo?.clientApplicationData.clientApplicationKind"
+        [readonly]="readonly">
       </kind-acceptance>
 
       <customer-with-contacts-acceptance
@@ -20,7 +21,7 @@
         [parentForm]="form"
         [oldCustomerWithContacts]="oldInfo?.applicant"
         [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
-        [readonly]="true"></customer-with-contacts-acceptance>
+        [readonly]="readonly"></customer-with-contacts-acceptance>
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>

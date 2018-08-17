@@ -20,7 +20,7 @@
       </div>
     </li>
     <li>
-      <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim">
+      <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim" *ngIf="!readonly">
         <div fxFlex="0 1 33%" *ngIf="multipleKinds">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="kinds" multiple required
