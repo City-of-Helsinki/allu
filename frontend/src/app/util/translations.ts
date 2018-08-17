@@ -400,6 +400,7 @@ export const translations = {
       copy: 'Kopioi uudeksi',
       replace: 'Korvaava päätös',
       toHandling: 'Käsittelyyn',
+      informationRequest: 'Täydennyspyyntö',
       cancel: 'Peru hakemus',
       convertToApplication: 'Vahvista varaus',
       toDecision: 'Päättämiseen',
@@ -473,6 +474,23 @@ export const translations = {
       noChanges: 'Ei muutoksia',
       close: 'Sulje'
     },
+    request: {
+      title: 'Hyväksy tiedot täydennyspyyntöön',
+      description: 'Merkitse tiedot jotka puuttuvat, ovat virheellisiä tai jotka haluat muusta syystä päivittää. Huomaa, että et voi päivittää hakemusta niin kauan kuin sillä on vastaamattomia täydennyspyyntöjä.',
+      customer: 'Asiakas',
+      invoiceRecipient: 'Laskutusasiakas',
+      geometry: 'Alueen rajaus',
+      startTime: 'Aloituspäivämäärä',
+      endTime: 'Lopetuspäivämäärä',
+      clientApplicationKind: 'Asiakasjärjestelmän hakemuslaji',
+      applicationKind: 'Hakemuksen laji',
+      postalAddress: 'Postiosoite',
+      workDescription: 'Työn kuvaus',
+      propertyIdentificationNumber: 'Kiinteistön tunnus',
+      attachment: 'Liite',
+      guide: 'Selite',
+      send: 'Lähetä pyyntö'
+    },
     field: {
       CUSTOMER: 'Hakija',
       INVOICING_CUSTOMER: 'Laskutettava',
@@ -487,6 +505,10 @@ export const translations = {
       PROPERTY_IDENTIFICATION_NUMBER: 'Kiinteistötunnus',
       ATTACHMENT: 'Liite',
       others: 'Muut tiedot'
+    },
+    error: {
+      create: 'Täydennyspyynnön luominen epäonnistui',
+      update: 'Täydennyspyynnön päivittäminen epäonnistui'
     }
   },
   project: {

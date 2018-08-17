@@ -48,6 +48,9 @@
             <button *ngIf="showConvertToApplication" mat-raised-button type="button" color="primary" (click)="convertToApplication()">
               {{'application.button.convertToApplication' | translation | uppercase}}
             </button>
+            <button *ngIf="showInformationRequest" mat-raised-button type="button" color="primary" (click)="informationRequest()">
+              {{'application.button.informationRequest' | translation | uppercase}}
+            </button>
             <button *ngIf="showHandling" mat-raised-button type="button" color="primary" (click)="moveToHandling()">
               {{'application.button.toHandling' | translation | uppercase}}
             </button>

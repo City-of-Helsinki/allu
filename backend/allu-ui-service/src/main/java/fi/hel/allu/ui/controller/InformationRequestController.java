@@ -30,7 +30,7 @@ public class InformationRequestController {
 
   @RequestMapping(value = "/informationrequests/{requestid}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<InformationRequestJson> update(@PathVariable("id") int id,
+  public ResponseEntity<InformationRequestJson> update(@PathVariable("requestid") int id,
       @PathVariable("requestid") int informationRequestId, @Valid @RequestBody(required = true) InformationRequestJson informationRequest) {
     return new ResponseEntity<>(informationRequestService.update(id, informationRequest), HttpStatus.OK);
   }

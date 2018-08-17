@@ -18,6 +18,13 @@ import {ArrayUtil} from '../../../util/array-util';
 import {UserHub} from '../../../service/user/user-hub';
 import {filter, map} from 'rxjs/internal/operators';
 import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
+import {InformationRequestModalComponent} from '@feature/information-request/request/information-request-modal.component';
+import {InformationRequest} from '@model/information-request/information-request';
+
+import {InformationRequestService} from '@service/application/information-request.service';
+import {InformationRequestField} from '@model/information-request/information-request-field';
+import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {InformationRequestFieldKey} from '@model/information-request//information-request-field-key';
 
 @Component({
   selector: 'application-actions',
@@ -46,8 +53,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showCancel = false;
   showReplace = false;
   showConvertToApplication = false;
+  showInformationRequest = false;
   showActions = true;
   applicationId: number;
+  currentInformationRequest: InformationRequest;
 
   private applicationSub: Subscription;
 
@@ -56,7 +65,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private userHub: UserHub,
               private notification: NotificationService,
-              private modalState: InformationAcceptanceModalEvents) {
+              private modalState: InformationAcceptanceModalEvents,
+              private informationRequestservice: InformationRequestService) {
   }
 
   ngOnInit(): void {
@@ -71,7 +81,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
       this.showActions = this.normalActionsAllowed(status);
+      this.showInformationRequest = (status === ApplicationStatus.PENDING || status === ApplicationStatus.HANDLING);
       this.applicationId = app.id;
+      this.informationRequestservice.getRequestForApplication(app.id).subscribe(request => {
+        this.currentInformationRequest = request
+      });
     });
   }
 
@@ -119,6 +133,22 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   convertToApplication(): void {
     this.applicationStore.changeDraft(false);
     this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
+  }
+
+  informationRequest(): void {
+    const request = this.currentInformationRequest ? this.currentInformationRequest : new InformationRequest(undefined, this.applicationStore.snapshot.application.id, [], InformationRequestStatus.OPEN);
+    const data = {
+      application: this.applicationStore.snapshot.application,
+      request: request
+    };
+
+    this.dialog.open(InformationRequestModalComponent, {data}).afterClosed().pipe(
+      filter(result => !!result) // Ignore no answers
+    ).subscribe(() => this.createInformationRequest());
+  }
+
+  private createInformationRequest(): void {
+    console.log("createInformationRequest");
   }
 
   moveToHandling(): void {

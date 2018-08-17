@@ -1,0 +1,20 @@
+<h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.request.title' | translation}}</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <p>{{'informationRequest.request.description' | translation}}</p>
+    <request-field *ngFor="let key of fieldKeys"
+                  [form]="form"
+                  [label]="['informationRequest.field', key] | translation"
+                  [fieldKey]="key">
+    </request-field>
+  </mat-dialog-content>
+
+  <div mat-dialog-actions>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">
+      {{'common.button.cancel' | translation}}
+    </button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">
+      {{'informationRequest.request.send' | translation}}
+    </button>
+  </div>
+</form>
