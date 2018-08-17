@@ -9,8 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.ContractInfo;
+import fi.hel.allu.servicecore.domain.ContractApprovalInfo;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
-import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.ContractService;
 
 @RestController
@@ -56,9 +56,8 @@ public class ContractController {
    */
   @RequestMapping(value = "/{id}/contract/approved", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<byte[]> createApprovedContract(@PathVariable int id, @RequestBody ContractInfo contractInfo,
-      @RequestBody(required = false) StatusChangeInfoJson statusChangeInfo) {
-    return pdfResult(contractService.createApprovedContract(id, contractInfo, statusChangeInfo));
+  public ResponseEntity<byte[]> createApprovedContract(@PathVariable int id, @RequestBody ContractApprovalInfo contractApprovalInfo) {
+    return pdfResult(contractService.createApprovedContract(id, contractApprovalInfo));
   }
 
   /**

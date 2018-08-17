@@ -2,9 +2,8 @@ package fi.hel.allu.servicecore.service;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.List;
 
-import org.springframework.core.ParameterizedTypeReference;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -16,16 +15,11 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
-import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
-import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.model.domain.ConfigurationType;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ApplicationTagJson;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
 
 @Service
@@ -75,18 +69,21 @@ public class ContractService {
     return pdfData;
   }
 
-  public byte[] createApprovedContract(int applicationId, ContractInfo contractInfo, StatusChangeInfoJson statusChangeInfo) {
-    byte[] pdfData = generateContractPdf(applicationId, contractInfo);
-    if (!contractInfo.isContractAsAttachment() && !contractInfo.isFrameAgreementExists()) {
+  public byte[] createApprovedContract(int applicationId, ContractApprovalInfo contractApprovalInfo) {
+    if (!contractApprovalInfo.isContractAsAttachment() && !contractApprovalInfo.isFrameAgreementExists()) {
       throw new IllegalArgumentException("contract.approved.notallowed");
     }
-    if (statusChangeInfo != null) {
-      commentService.addDecisionProposalComment(applicationId, statusChangeInfo);
-    }
+    ContractInfo contractInfo = new ContractInfo();
+    contractInfo.setFrameAgreementExists(contractApprovalInfo.isFrameAgreementExists());
+    contractInfo.setContractAsAttachment(contractApprovalInfo.isContractAsAttachment());
 
+    byte[] pdfData = generateContractPdf(applicationId, contractInfo);
+    if (StringUtils.isNotBlank(contractApprovalInfo.getComment())) {
+      commentService.addDecisionProposalComment(applicationId, contractApprovalInfo);
+    }
     restTemplate.exchange(applicationProperties.getApprovedContractUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("data", pdfData, Collections.singletonMap("contractinfo", contractInfo)), String.class, applicationId);
-    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, statusChangeInfo);
+    applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, contractApprovalInfo);
     return pdfData;
   }
 
