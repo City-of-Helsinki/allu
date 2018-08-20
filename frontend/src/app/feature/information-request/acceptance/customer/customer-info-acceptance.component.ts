@@ -2,9 +2,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FieldLabels, FieldValues} from '../field-group-acceptance.component';
 import {Customer} from '../../../../model/customer/customer';
 import {PostalAddress} from '../../../../model/common/postal-address';
-import {FormGroup} from '@angular/forms';
-import {FieldSelection, Selected} from '../field-acceptance.component';
-import {map} from 'rxjs/internal/operators';
 import {findTranslation} from '../../../../util/translations';
 import {CodeSetCodeMap} from '../../../../model/codeset/codeset';
 import {Some} from '../../../../util/option';
@@ -48,6 +45,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptance<Customer> im
     customer.email = result.email;
     customer.phone = result.phone;
     customer.country = result.country;
+    customer.active = this._newCustomer.active;
     this.customerChanges.emit(customer);
   }
 
