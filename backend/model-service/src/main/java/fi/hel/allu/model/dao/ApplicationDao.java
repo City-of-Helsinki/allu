@@ -57,7 +57,8 @@ public class ApplicationDao {
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
           application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
-          application.invoiced, application.clientApplicationData, application.applicationId);
+          application.invoiced, application.clientApplicationData, application.applicationId,
+          application.externalOwnerId);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
