@@ -110,17 +110,37 @@ public class ContractService {
     return null;
   }
 
-  public void rejectContract(Integer applicationId, String rejectReason) {
+  /**
+   * Rejects contract if application has one.
+   */
+  public void rejectContractIfExists(Integer applicationId, String rejectReason) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    if (application.getType() == ApplicationType.PLACEMENT_CONTRACT) {
+      ContractInfo contractInfo = getContractInfo(applicationId);
+      if (contractInfo != null) {
+        setContractRejected(applicationId, rejectReason, contractInfo);
+      }
+    }
+  }
+
+  /**
+   * Rejects contract proposal and moves application to pending state.
+   */
+  public void rejectContractProposal(Integer applicationId, String rejectReason) {
     ContractInfo contractInfo = getContractInfo(applicationId);
     validateIsInProposalState(contractInfo);
+    setContractRejected(applicationId, rejectReason, contractInfo);
+    // If contract is rejected move application to pending state and add corresponding tag
+    applicationServiceComposer.changeStatus(applicationId, StatusType.PENDING);
+    applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, ApplicationTagType.CONTRACT_REJECTED, null));
+  }
+
+  protected void setContractRejected(Integer applicationId, String rejectReason, ContractInfo contractInfo) {
     contractInfo.setStatus(ContractStatusType.REJECTED);
     contractInfo.setResponseTime(ZonedDateTime.now());
     contractInfo.setRejectionReason(rejectReason);
 
     restTemplate.exchange(applicationProperties.getContractInfoUrl(), HttpMethod.PUT, new HttpEntity<>(contractInfo), Void.class, applicationId);
-    // If contract is rejected move application to pending state and add corresponding tag
-    applicationServiceComposer.changeStatus(applicationId, StatusType.PENDING);
-    applicationServiceComposer.addTag(applicationId, new ApplicationTagJson(null, ApplicationTagType.CONTRACT_REJECTED, null));
   }
 
   public ContractInfo getContractInfo(Integer applicationId) {

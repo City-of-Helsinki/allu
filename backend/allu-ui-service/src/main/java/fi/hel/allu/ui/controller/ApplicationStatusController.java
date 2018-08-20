@@ -95,6 +95,7 @@ public class ApplicationStatusController {
   public ResponseEntity<ApplicationJson> changeStatusToRejected(
       @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
     commentService.addApplicationRejectComment(id, info.getComment());
+    contractService.rejectContractIfExists(id, info.getComment());
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.REJECTED, info));
   }
 

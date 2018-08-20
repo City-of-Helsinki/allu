@@ -82,7 +82,7 @@ public class PlacementContractController extends BaseApplicationController<Place
   public ResponseEntity<Void> reject(@ApiParam(value = "Application ID of the contract") @PathVariable Integer id,
                                      @ApiParam(value = "Reject reason", required = true) @NotBlank(message = "{contract.rejectreason}") @RequestBody String rejectReason) {
     applicationService.validateOwnedByExternalUser(id);
-    contractService.rejectContract(id, rejectReason);
+    contractService.rejectContractProposal(id, rejectReason);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }
