@@ -78,15 +78,16 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     combineLatest(
       this.store.select(fromInformationRequest.getResultApplication),
       this.store.select(fromInformationRequest.getResultCustomerWithContacts),
-      this.store.select(fromInformationRequest.getResultKindsWithSpecifiers)
+      this.store.select(fromInformationRequest.getResultKindsWithSpecifiers),
+      this.store.select(fromInformationRequest.getResultInvoicingCustomer)
     ).pipe(take(1))
-      .subscribe(([app, customerWithContacts, kindsWithSpecifiers]) => {
+      .subscribe(([app, customerWithContacts, kindsWithSpecifiers, invoicingCustomer]) => {
         app.customersWithContacts = ArrayUtil.createOrReplace(
           app.customersWithContacts,
           customerWithContacts,
           cwc => cwc.roleType === CustomerRoleType.APPLICANT);
         app.kindsWithSpecifiers = kindsWithSpecifiers;
-        this.dialogRef.close(new InformationRequestResult(this.data.informationRequestId, app));
+        this.dialogRef.close(new InformationRequestResult(this.data.informationRequestId, app, invoicingCustomer));
       });
   }
 

@@ -52,3 +52,8 @@ export const getResultKindsWithSpecifiers = createSelector(
   getInformationRequestResultState,
   fromInformationRequestResult.getKindsWithSpecifiers
 );
+
+export const getResultInvoicingCustomer = createSelector(
+  getInformationRequestResultState,
+  fromInformationRequestResult.getInvoicingCustomer
+);

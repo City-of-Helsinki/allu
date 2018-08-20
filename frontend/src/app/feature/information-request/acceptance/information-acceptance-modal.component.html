@@ -22,6 +22,12 @@
         [oldCustomerWithContacts]="oldInfo?.applicant"
         [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
         [readonly]="readonly"></customer-with-contacts-acceptance>
+
+      <invoice-customer-acceptance
+        *ngIf="field === 'INVOICING_CUSTOMER'"
+        [parentForm]="form"
+        [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
+        [readonly]="readonly"></invoice-customer-acceptance>
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>

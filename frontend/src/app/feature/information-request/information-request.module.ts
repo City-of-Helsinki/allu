@@ -15,11 +15,16 @@ import {reducers} from './reducers';
 import {KindAcceptanceComponent} from './acceptance/kind-acceptance.component';
 import {InformationAcceptanceModalEvents} from './acceptance/information-acceptance-modal-events';
 import {CustomerAcceptanceComponent} from './acceptance/customer/customer-acceptance.component';
-import {CustomerWithContactsAcceptanceComponent} from '@feature/information-request/acceptance/customer-with-contacts-acceptance.component';
+import {
+  CustomerWithContactsAcceptanceComponent
+} from '@feature/information-request/acceptance/customer-with-contacts-acceptance.component';
 import {ContactsAcceptanceComponent} from '@feature/information-request/acceptance/contact/contacts-acceptance-component';
 import {ContactAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-acceptance.component';
 import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
 import {FieldDisplayComponent} from '@feature/information-request/acceptance/field-display.component';
+import {
+  InvoiceCustomerAcceptanceComponent
+} from '@feature/information-request/acceptance/invoice-customer/invoice-customer-acceptance.component';
 
 @NgModule({
   imports: [
@@ -42,7 +47,8 @@ import {FieldDisplayComponent} from '@feature/information-request/acceptance/fie
     ContactsAcceptanceComponent,
     ContactAcceptanceComponent,
     ContactInfoAcceptanceComponent,
-    KindAcceptanceComponent
+    KindAcceptanceComponent,
+    InvoiceCustomerAcceptanceComponent
   ],
   providers: [
     InformationRequestService,

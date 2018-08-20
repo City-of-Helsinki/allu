@@ -10,13 +10,15 @@ export interface State {
   customer: Customer;
   contacts: Contact[];
   kindsWithSpecifiers: KindsWithSpecifiers;
+  invoicingCustomer: Customer;
 }
 
 export const initialState: State = {
   application: undefined,
   customer: undefined,
   contacts: [],
-  kindsWithSpecifiers: {}
+  kindsWithSpecifiers: {},
+  invoicingCustomer: undefined
 };
 
 export function reducer(state: State = initialState, action: InformationRequestResultActions) {
@@ -59,6 +61,13 @@ export function reducer(state: State = initialState, action: InformationRequestR
       };
     }
 
+    case InformationRequestResultActionType.SetInvoicingCustomer: {
+      return {
+        ...state,
+        invoicingCustomer: action.payload
+      };
+    }
+
     default: {
       return {
         ...state
@@ -74,3 +83,5 @@ export const getCustomer = (state: State) => state.customer;
 export const getContacts = (state: State) => state.contacts;
 
 export const getKindsWithSpecifiers = (state: State) => state.kindsWithSpecifiers;
+
+export const getInvoicingCustomer = (state: State) => state.invoicingCustomer;

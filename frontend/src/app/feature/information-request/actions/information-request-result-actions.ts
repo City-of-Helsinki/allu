@@ -9,7 +9,8 @@ export enum InformationRequestResultActionType {
   SetCustomer = '[InformationRequestResult] Set result customer',
   SetContacts = '[InformationRequestResult] Set result contacts',
   SetContact = '[InformationRequestResult] Set result contact at index',
-  SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers'
+  SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers',
+  SetInvoicingCustomer = '[InformationRequestResult] Set result invoicing customer'
 }
 
 export class SetApplication implements Action {
@@ -37,9 +38,15 @@ export class SetKindsWithSpecifiers implements Action {
   constructor(public payload: KindsWithSpecifiers) {}
 }
 
+export class SetInvoicingCustomer implements Action {
+  readonly type = InformationRequestResultActionType.SetInvoicingCustomer;
+  constructor(public payload: Customer) {}
+}
+
 export type InformationRequestResultActions =
   | SetApplication
   | SetCustomer
   | SetContacts
   | SetContact
-  | SetKindsWithSpecifiers;
+  | SetKindsWithSpecifiers
+  | SetInvoicingCustomer;

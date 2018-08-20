@@ -660,6 +660,7 @@ export const translations = {
     },
     suggestion: {
       title: 'Ehdotettu asiakas',
+      titleInvoice: 'Ehdotettu laskutusasiakas',
       info: 'Nimi yhdistetään samoilla tiedoilla löytyneeseen asiakkaaseen. Voit myös hakea vaihtoehtoa tai luoda nimellä uuden asiakkaan.'
     },
     createNew: 'Luo uusi asiakas'

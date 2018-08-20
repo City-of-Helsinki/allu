@@ -93,6 +93,16 @@ export const getPendingCustomerWithContacts = createSelector(
   }
 );
 
+export const getPendingInvoicingCustomer = createSelector(
+  getCurrentApplication,
+  getClientData,
+  (application: Application, clientData: ClientApplicationData) => {
+    const noInvoicingCustomer = !NumberUtil.isDefined(application.invoiceRecipientId);
+    const pendingInvoicingCustomer = !!clientData ? clientData.invoicingCustomer : undefined;
+    return (noInvoicingCustomer && pendingInvoicingCustomer) ? pendingInvoicingCustomer : undefined;
+  }
+);
+
 export const hasPendingKind = createSelector(
   getPendingKind,
   kind => !!kind
@@ -103,12 +113,19 @@ export const hasPendingCustomerInfo = createSelector(
   pending => !!pending
 );
 
+export const hasPendingInvoicingCustomer = createSelector(
+  getPendingInvoicingCustomer,
+  pending => !! pending
+);
+
 export const pendingClientDataFields = createSelector(
   hasPendingKind,
   hasPendingCustomerInfo,
-  (pendingKind, pendingCustomer) => ([
+  hasPendingInvoicingCustomer,
+  (pendingKind, pendingCustomer, pendingInvoicingCustomer) => ([
     ...(pendingKind ? [InformationRequestFieldKey.APPLICATION_KIND] : []),
-    ...(pendingCustomer ? [InformationRequestFieldKey.CUSTOMER] : [])
+    ...(pendingCustomer ? [InformationRequestFieldKey.CUSTOMER] : []),
+    ...(pendingInvoicingCustomer ? [InformationRequestFieldKey.INVOICING_CUSTOMER] : [])
   ])
 );
 
