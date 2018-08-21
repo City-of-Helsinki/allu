@@ -47,14 +47,17 @@
         <h2>Pykälä <xsl:value-of select="data/sectionNumber"/>§</h2>
         <p>Sopimus oikeudesta sijoittaa
             <xsl:for-each select="data/kinds">
-              <xsl:value-of select="kind" /> (
-              <xsl:for-each select="./specifiers">
-                <xsl:value-of select="." />
-                <xsl:if test="position() != last()">
-                    <xsl:text>, </xsl:text>
-                </xsl:if>
-              </xsl:for-each>
-              )
+              <xsl:value-of select="kind" />
+              <xsl:if test="./specifiers != ''">
+               (
+                <xsl:for-each select="./specifiers">
+                  <xsl:value-of select="." />
+                  <xsl:if test="position() != last()">
+                      <xsl:text>, </xsl:text>
+                  </xsl:if>
+                </xsl:for-each>
+                )
+              </xsl:if>
             </xsl:for-each>
             Helsingin kaupungin yleiselle alueelle.</p>
       </section>
@@ -66,14 +69,17 @@
         <p class="indented">
           Yksikön päällikkö päätti hyväksyä ja allekirjoittaa sopimuksen <xsl:value-of select="data/decisionId"/> koskien
           <xsl:for-each select="data/kinds">
-            <xsl:value-of select="kind" /> (
-            <xsl:for-each select="./specifiers">
-              <xsl:value-of select="." />
-              <xsl:if test="position() != last()">
-                  <xsl:text>, </xsl:text>
-              </xsl:if>
-            </xsl:for-each>
-            )
+            <xsl:value-of select="kind" />
+            <xsl:if test="./specifiers != ''">
+              (
+              <xsl:for-each select="./specifiers">
+                <xsl:value-of select="." />
+                <xsl:if test="position() != last()">
+                    <xsl:text>, </xsl:text>
+                </xsl:if>
+              </xsl:for-each>
+              )
+            </xsl:if>
           </xsl:for-each>
           sijoittamisesta kaupungin yleiselle alueelle.</p>
         <p class="indented">Tämä päätös on sähköisesti allekirjoitettu.</p>

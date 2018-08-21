@@ -53,14 +53,17 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <section>
           <p class="space-above">Tällä sopimuksella <xsl:value-of select="data/decisionId"/> sovitaan
           <xsl:for-each select="data/kinds">
-            <xsl:value-of select="kind" /> (
-            <xsl:for-each select="./specifiers">
-              <xsl:value-of select="." />
-              <xsl:if test="position() != last()">
-                  <xsl:text>, </xsl:text>
-              </xsl:if>
-            </xsl:for-each>
-            )
+            <xsl:value-of select="kind" />
+            <xsl:if test="./specifiers != ''">
+             (
+              <xsl:for-each select="./specifiers">
+                <xsl:value-of select="." />
+                <xsl:if test="position() != last()">
+                    <xsl:text>, </xsl:text>
+                </xsl:if>
+              </xsl:for-each>
+              )
+            </xsl:if>
           </xsl:for-each>
             sijoittamisesta Helsingin kaupungin omistamalle ja hallitsemalle yleiselle alueelle.</p>
 
