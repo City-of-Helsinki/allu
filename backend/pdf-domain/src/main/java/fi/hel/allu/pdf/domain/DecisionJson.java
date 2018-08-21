@@ -1,6 +1,5 @@
 package fi.hel.allu.pdf.domain;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -104,7 +103,7 @@ public class DecisionJson {
   private boolean frameAgreement;
   private boolean contractAsAttachment;
   private String contractSigner;
-  private ZonedDateTime contractSigningDate;
+  private String contractSigningDate;
 
   public boolean isDraft() {
     return isDraft;
@@ -678,11 +677,11 @@ public class DecisionJson {
     this.contractSigner = contractSigner;
   }
 
-  public ZonedDateTime getContractSigningDate() {
+  public String getContractSigningDate() {
     return contractSigningDate;
   }
 
-  public void setContractSigningDate(ZonedDateTime contractSigningDate) {
+  public void setContractSigningDate(String contractSigningDate) {
     this.contractSigningDate = contractSigningDate;
   }
 }

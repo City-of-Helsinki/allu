@@ -3,11 +3,15 @@ package fi.hel.allu.common.util;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Time related utlitity methods.
  */
 public class TimeUtil {
+
+  private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
+  private static final DateTimeFormatter timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
 
   public static final ZoneId HelsinkiZoneId = ZoneId.of("Europe/Helsinki");
 
@@ -48,5 +52,13 @@ public class TimeUtil {
 
   public static ZonedDateTime endOfDay(ZonedDateTime time) {
     return startOfDay(time).plusDays(1).minusNanos(1);
+  }
+
+  public static String dateAsString(ZonedDateTime date) {
+    return date.withZoneSameInstant(HelsinkiZoneId).format(dateTimeFormatter);
+  }
+
+  public static String dateAsDateTimeString(ZonedDateTime dateTime) {
+    return dateTime.withZoneSameInstant(HelsinkiZoneId).format(timeStampFormatter);
   }
 }

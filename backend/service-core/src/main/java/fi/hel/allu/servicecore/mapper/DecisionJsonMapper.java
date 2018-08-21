@@ -2,9 +2,7 @@ package fi.hel.allu.servicecore.mapper;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
@@ -23,6 +21,7 @@ import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
@@ -62,7 +61,6 @@ public class DecisionJsonMapper {
   }
 
   private final NumberFormat currencyFormat;
-  private final ZoneId zoneId;
   private final Locale locale;
 
   private final LocationService locationService;
@@ -70,8 +68,6 @@ public class DecisionJsonMapper {
   private final ContactService contactService;
   private final MetaService metaService;
   private final ChargeBasisService chargeBasisService;
-  private final DateTimeFormatter dateTimeFormatter;
-  private final DateTimeFormatter timeStampFormatter;
   private final DecimalFormat decimalFormat;
 
   @Autowired
@@ -86,11 +82,8 @@ public class DecisionJsonMapper {
     this.contactService = contactService;
     this.chargeBasisService = chargeBasisService;
     this.metaService = metaService;
-    dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
-    timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
     decimalFormat = new DecimalFormat("0.##");
     locale = new Locale("fi", "FI");
-    zoneId = ZoneId.of("Europe/Helsinki");
     currencyFormat = NumberFormat.getCurrencyInstance(locale);
   }
 
@@ -170,7 +163,7 @@ public class DecisionJsonMapper {
     decisionJson.setVatPercentage(24); // FIXME: find actual value somehow
     decisionJson.setAdditionalConditions(
         splitToList(Optional.ofNullable(application.getExtension()).map(e -> e.getTerms())));
-    decisionJson.setDecisionTimestamp(ZonedDateTime.now().withZoneSameInstant(zoneId).format(timeStampFormatter));
+    decisionJson.setDecisionTimestamp(TimeUtil.dateAsDateTimeString(ZonedDateTime.now()));
     UserJson decider = application.getDecisionMaker();
     if (decider != null) {
       decisionJson.setDeciderTitle(decider.getTitle());
@@ -492,8 +485,7 @@ public class DecisionJsonMapper {
     if (zonedDateTime == null) {
       return null;
     }
-    return zonedDateTime.plusDays(deltaDays).withZoneSameInstant(zoneId)
-        .format(dateTimeFormatter);
+    return TimeUtil.dateAsDateTimeString(zonedDateTime.plusDays(deltaDays));
   }
 
   private List<String> customerAddressLines(ApplicationJson applicationJson) {

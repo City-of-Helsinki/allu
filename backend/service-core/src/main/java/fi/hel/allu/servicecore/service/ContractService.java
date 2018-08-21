@@ -16,6 +16,7 @@ import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.ConfigurationType;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -177,7 +178,7 @@ public class ContractService {
   protected void setContractData(ContractInfo contractInfo, DecisionJson decisionJson) {
     if (contractInfo != null) {
       decisionJson.setContractSigner(contractInfo.getSigner());
-      decisionJson.setContractSigningDate(contractInfo.getResponseTime());
+      decisionJson.setContractSigningDate(TimeUtil.dateAsDateTimeString(contractInfo.getResponseTime()));
       decisionJson.setContractAsAttachment(contractInfo.isContractAsAttachment());
       decisionJson.setFrameAgreement(contractInfo.isFrameAgreementExists());
     }
