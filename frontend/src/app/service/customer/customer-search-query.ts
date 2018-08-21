@@ -19,4 +19,8 @@ export interface CustomerSearchByType {
   matchAny?: boolean;
 }
 
-export const CustomerSearchMinChars = (term: string) => !!term && term.length >= 2;
+export const NAME_SEARCH_MIN_CHARS = 2;
+export const REGISTRY_KEY_SEARCH_MIN_CHARS = 4;
+
+export const CustomerNameSearchMinChars = (term: string) => !!term && term.length >= NAME_SEARCH_MIN_CHARS;
+export const CustomerRegistryKeySearchMinChars = (term: string) => !!term && term.length >= REGISTRY_KEY_SEARCH_MIN_CHARS;

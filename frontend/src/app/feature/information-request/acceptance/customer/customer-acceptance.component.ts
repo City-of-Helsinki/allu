@@ -11,7 +11,7 @@ import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/intern
 import {Search, SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
-import {CustomerSearchMinChars} from '@service/customer/customer-search-query';
+import {CustomerNameSearchMinChars, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
 
 @Component({
   selector: 'customer-acceptance',
@@ -50,7 +50,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     this.searchForm.get('search').valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
-      filter(CustomerSearchMinChars)
+      filter(CustomerNameSearchMinChars)
     ).subscribe(term => this.searchCustomer(CustomerType[this.newCustomer.type], term, term));
     this.matchingCustomers$ = this.store.select(fromCustomerSearch.getMatchingCustomers);
 
@@ -97,11 +97,10 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   private searchCustomer(type: CustomerType, name: string, registryKey: string): void {
-    this.store.dispatch(new SearchByType({
-        type,
-        searchQuery: {name, registryKey},
-        matchAny: true
-      })
-    );
+    const searchQuery = registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS
+      ? {name, registryKey}
+      : {name};
+
+    this.store.dispatch(new SearchByType({type, searchQuery, matchAny: true}));
   }
 }

@@ -8,11 +8,15 @@ import {CustomerForm} from './customer.form';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {CustomerSearchQuery} from '../../../service/customer/customer-search-query';
+import {
+  CustomerNameSearchMinChars,
+  CustomerRegistryKeySearchMinChars,
+  CustomerSearchQuery
+} from '../../../service/customer/customer-search-query';
 import {CodeSetService} from '../../../service/codeset/codeset.service';
 import {CodeSet} from '../../../model/codeset/codeset';
 import {postalCodeValidator} from '../../../util/complex-validator';
-import {debounceTime, map, switchMap} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
@@ -58,11 +62,13 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
 
     this.matchingNameCustomers = this.nameControl.valueChanges.pipe(
       debounceTime(DEBOUNCE_TIME_MS),
+      filter(CustomerNameSearchMinChars),
       switchMap(name => this.onSearchChange({name: name}))
     );
 
     this.matchingRegistryKeyCustomers = this.registryKeyControl.valueChanges.pipe(
       debounceTime(DEBOUNCE_TIME_MS),
+      filter(CustomerRegistryKeySearchMinChars),
       switchMap(key => this.onSearchChange({registryKey: key}))
     );
 
