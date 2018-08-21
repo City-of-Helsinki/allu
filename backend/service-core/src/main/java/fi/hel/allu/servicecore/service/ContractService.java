@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -62,7 +63,9 @@ public class ContractService {
   }
 
   public byte[] createContractProposal(Integer applicationId) {
-    byte[] pdfData = generateContractPdf(applicationId, null);
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    validateProposalCreationAllowed(application);
+    byte[] pdfData = generateContractPdf(application, null);
     restTemplate.exchange(applicationProperties.getContractProposalUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("data", pdfData), String.class, applicationId);
     applicationServiceComposer.changeStatus(applicationId, StatusType.WAITING_CONTRACT_APPROVAL);
@@ -78,7 +81,9 @@ public class ContractService {
     contractInfo.setFrameAgreementExists(contractApprovalInfo.isFrameAgreementExists());
     contractInfo.setContractAsAttachment(contractApprovalInfo.isContractAsAttachment());
 
-    byte[] pdfData = generateContractPdf(applicationId, contractInfo);
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    validateProposalCreationAllowed(application);
+    byte[] pdfData = generateContractPdf(application, contractInfo);
     if (StringUtils.isNotBlank(contractApprovalInfo.getComment())) {
       commentService.addDecisionProposalComment(applicationId, contractApprovalInfo);
     }
@@ -94,7 +99,9 @@ public class ContractService {
     contractInfo.setStatus(ContractStatusType.APPROVED);
     contractInfo.setSigner(signer);
     contractInfo.setResponseTime(signingTime);
-    restTemplate.exchange(applicationProperties.getContractInfoUrl(), HttpMethod.PUT, new HttpEntity<>(contractInfo), Void.class, applicationId);
+    byte[] data = generateContractPdf(applicationId, contractInfo);
+    HttpEntity<?> requestEntity = MultipartRequestBuilder.buildByteArrayRequest("file", data, Collections.singletonMap("info", contractInfo));
+    restTemplate.exchange(applicationProperties.getContractUrl(), HttpMethod.PUT, requestEntity, Void.class, applicationId);
 
     // After contract approval move application to waiting for decision state and remove possible contract rejected -tag
     applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, getDecisionMakerInfo());
@@ -153,7 +160,7 @@ public class ContractService {
     if (applicationJson.getType() == ApplicationType.PLACEMENT_CONTRACT) {
       ContractInfo contractInfo = getContractInfo(applicationId);
       if (contractInfo != null && contractInfo.getStatus() == ContractStatusType.APPROVED) {
-        byte[] contractData = generateContractPdf(applicationId, contractInfo);
+        byte[] contractData = generateContractPdf(applicationJson, contractInfo);
         restTemplate.exchange(applicationProperties.getFinalContractUrl(), HttpMethod.POST,
             MultipartRequestBuilder.buildByteArrayRequest("data", contractData), String.class, applicationId);
       }
@@ -166,7 +173,6 @@ public class ContractService {
   }
 
   private byte[] generateContractPdf(ApplicationJson application, ContractInfo contractInfo) {
-    validateProposalCreationAllowed(application);
     DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, false);
     setContractData(contractInfo, decisionJson);
     byte[] pdfData = restTemplate.postForObject(
@@ -178,7 +184,8 @@ public class ContractService {
   protected void setContractData(ContractInfo contractInfo, DecisionJson decisionJson) {
     if (contractInfo != null) {
       decisionJson.setContractSigner(contractInfo.getSigner());
-      decisionJson.setContractSigningDate(TimeUtil.dateAsDateTimeString(contractInfo.getResponseTime()));
+      decisionJson.setContractSigningDate(contractInfo.getResponseTime() != null
+          ? TimeUtil.dateAsDateTimeString(contractInfo.getResponseTime()) : null);
       decisionJson.setContractAsAttachment(contractInfo.isContractAsAttachment());
       decisionJson.setFrameAgreement(contractInfo.isFrameAgreementExists());
     }

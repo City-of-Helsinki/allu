@@ -23,6 +23,17 @@ public class ContractController {
     return new ResponseEntity<>(contractDao.getContract(id), HttpStatus.OK);
   }
 
+  /**
+   * Updates contract info and proposal PDF data.
+   */
+  @RequestMapping(value = "/{id}/contract", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateContract(@PathVariable Integer id,
+                                             @RequestPart(value = "info") ContractInfo contractInfo,
+                                             @RequestPart(value = "file") MultipartFile file) throws IOException {
+    contractDao.updateContract(id, contractInfo, file.getBytes());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/contract/proposal", method = RequestMethod.POST)
   public ResponseEntity<Void> insertContractProposal(@PathVariable int id, @RequestParam("data") MultipartFile file)
       throws IOException {

@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
@@ -49,6 +50,16 @@ public class ContractDao {
       .values(applicationId, ZonedDateTime.now(), ContractStatusType.APPROVED, data, contractInfo.isContractAsAttachment(), contractInfo.isFrameAgreementExists())
       .execute();
   }
+
+  @Transactional
+  public void updateContract(Integer applicationId, ContractInfo contractInfo, byte[] data) {
+    Integer contractId = getContractId(applicationId);
+    queryFactory.update(contract)
+      .set(contract.proposal, data)
+      .where(contract.id.eq(contractId)).execute();
+    updateContractInfo(applicationId, contractInfo);
+  }
+
 
   private void validateNoActiveContracts(Integer applicationId) {
     boolean activeExists = getAllContractInfos(applicationId).stream().anyMatch(c -> c.getStatus() != ContractStatusType.REJECTED);
