@@ -30,16 +30,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   private cableReportIdentifierCtrl: FormControl;
 
-  ngOnInit(): any {
-    this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]])),
-      switchMap(search => this.applicationService.search(search)),
-      catchError(err => this.notification.errorCatch(err, []))
-    );
-  }
-
   setCableReport(application: Application) {
     this.applicationForm.patchValue({cableReportId: application.id});
   }
@@ -55,7 +45,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   }
 
   protected initForm() {
-    this.cableReportIdentifierCtrl = this.fb.control(undefined);
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
@@ -93,6 +82,16 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     if (this.applicationStore.isNew) {
       this.validityEndTimeCtrl.markAsDirty(); // To trigger validation
     }
+
+    this.cableReportIdentifierCtrl = this.fb.control(undefined);
+
+    this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]])),
+      switchMap(search => this.applicationService.search(search)),
+      catchError(err => this.notification.errorCatch(err, []))
+    );
   }
 
   protected onApplicationChange(application: Application): void {
