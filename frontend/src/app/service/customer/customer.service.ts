@@ -21,6 +21,7 @@ import {HttpClient} from '@angular/common/http';
 import {BackendContact} from '../backend-model/backend-contact';
 import {BackendCustomerWithContacts} from '../backend-model/backend-customer-with-contacts';
 import {catchError, map} from 'rxjs/internal/operators';
+import {CustomerType} from '@model/customer/customer-type';
 
 const CUSTOMERS_URL = '/api/customers';
 const CUSTOMERS_SEARCH_URL = CUSTOMERS_URL + '/search';
@@ -46,6 +47,26 @@ export class CustomerService {
 
   public search(searchQuery: CustomerSearchQuery, sort?: Sort, pageRequest?: PageRequest): Observable<Array<Customer>> {
     return this.pagedSearch(searchQuery, sort, pageRequest).pipe(
+      map(page => page.content)
+    );
+  }
+
+  public pagedSearchByType(type: CustomerType, searchQuery: CustomerSearchQuery,
+                      sort?: Sort, pageRequest?: PageRequest, matchAny?: boolean): Observable<Page<Customer>> {
+    const typename = CustomerType[type];
+    const query = {...searchQuery, type: undefined};
+    const url = `${CUSTOMERS_SEARCH_URL}/${typename}`;
+    return this.http.post<BackendPage<BackendCustomer>>(
+      url, JSON.stringify(CustomerQueryParametersMapper.mapFrontend(query)),
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort, matchAny)}).pipe(
+      map(page => PageMapper.mapBackend(page, CustomerMapper.mapBackend)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')))
+    );
+  }
+
+  public searchByType(type: CustomerType, searchQuery: CustomerSearchQuery,
+                      sort?: Sort, pageRequest?: PageRequest, matchAny?: boolean): Observable<Customer[]> {
+    return this.pagedSearchByType(type, searchQuery, sort, pageRequest, matchAny).pipe(
       map(page => page.content)
     );
   }

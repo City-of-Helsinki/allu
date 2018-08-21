@@ -8,8 +8,10 @@ import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
 import {SetCustomer} from '../../actions/information-request-result-actions';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
-import {Search} from '@feature/customerregistry/actions/customer-search-actions';
+import {Search, SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
+import {CustomerType} from '@model/customer/customer-type';
+import {CustomerSearchMinChars} from '@service/customer/customer-search-query';
 
 @Component({
   selector: 'customer-acceptance',
@@ -45,14 +47,11 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     this.countryCodes$ = this.store.select(fromRoot.getCodeSetCodeMap('Country'));
     this.referenceCustomer$ = new BehaviorSubject<Customer>(this.oldCustomer);
 
-    // TODO: change to use name + registrykey search when available
     this.searchForm.get('search').valueChanges.pipe(
       takeUntil(this.destroy),
-      debounceTime(300)
-    ).subscribe(term => this.store.dispatch(new Search({
-      type: this.newCustomer.type,
-      name: term
-    })));
+      debounceTime(300),
+      filter(CustomerSearchMinChars)
+    ).subscribe(term => this.searchCustomer(CustomerType[this.newCustomer.type], term, term));
     this.matchingCustomers$ = this.store.select(fromCustomerSearch.getMatchingCustomers);
 
     this.initialSearch();
@@ -68,7 +67,6 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   selectReferenceCustomer(customer?: Customer): void {
-    // TODO: change to use name + registrykey search when available
     const search = customer ? `${customer.name} (${customer.registryKey})` : undefined;
     this.searchForm.patchValue({search}, {emitEvent: false});
     this.referenceCustomer$.next(customer);
@@ -80,11 +78,11 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   private initialSearch() {
-    // TODO: change to use name + registrykey search when available
-    this.store.dispatch(new Search({
-      type: this.newCustomer.type,
-      name: this.newCustomer.name
-    }));
+    this.searchCustomer(
+      CustomerType[this.newCustomer.type],
+      this.newCustomer.name,
+      this.newCustomer.registryKey
+    );
 
     if (this.oldCustomer === undefined) {
       this.store.select(fromCustomerSearch.getLoading).pipe(
@@ -96,5 +94,14 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
         this.selectReferenceCustomer(customer);
       });
     }
+  }
+
+  private searchCustomer(type: CustomerType, name: string, registryKey: string): void {
+    this.store.dispatch(new SearchByType({
+        type,
+        searchQuery: {name, registryKey},
+        matchAny: true
+      })
+    );
   }
 }
