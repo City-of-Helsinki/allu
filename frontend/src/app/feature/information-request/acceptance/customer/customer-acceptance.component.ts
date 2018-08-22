@@ -13,12 +13,7 @@ import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
 import {CustomerNameSearchMinChars, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
 
-@Component({
-  selector: 'customer-acceptance',
-  templateUrl: './customer-acceptance.component.html',
-  styleUrls: []
-})
-export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
+export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   @Input() oldCustomer: Customer;
   @Input() newCustomer: Customer;
@@ -34,14 +29,16 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   countryCodes$: Observable<CodeSetCodeMap>;
   matchingCustomers$: Observable<Customer[]>;
 
-  private destroy = new Subject<boolean>();
+  protected formName = 'customer';
 
-  constructor(private fb: FormBuilder,
-              private store: Store<fromRoot.State>) {}
+  protected destroy = new Subject<boolean>();
+
+  protected constructor(protected fb: FormBuilder,
+              protected store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({});
-    this.parentForm.addControl('customer', this.form);
+    this.parentForm.addControl(this.formName, this.form);
     this.searchForm = this.fb.group({
       search: undefined
     });
@@ -62,9 +59,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  customerChanges(customer: Customer): void {
-    this.store.dispatch(new SetCustomer(customer));
-  }
+  abstract customerChanges(customer: Customer): void;
 
   selectReferenceCustomer(customer?: Customer): void {
     const searchCustomer = customer || this.newCustomer;

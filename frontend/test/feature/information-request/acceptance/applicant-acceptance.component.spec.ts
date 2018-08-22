@@ -7,19 +7,19 @@ import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromCustomerSearch from '../../../../src/app/feature/customerregistry/reducers';
 import * as fromCodeSet from '../../../../src/app/feature/allu/reducers/code-set-reducer';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {CustomerAcceptanceComponent} from '../../../../src/app/feature/information-request/acceptance/customer/customer-acceptance.component';
 import {SearchSuccess} from '../../../../src/app/feature/customerregistry/actions/customer-search-actions';
 import * as CodeSetAction from '../../../../src/app/feature/allu/actions/code-set-actions';
 import {By} from '@angular/platform-browser';
+import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
 
 @Component({
   selector: 'host',
   template: `
     <form [formGroup]="form">
-      <customer-acceptance
+      <applicant-acceptance
         [parentForm]="form"
         [oldCustomer]="oldCustomer"
-        [newCustomer]="newCustomer"></customer-acceptance>
+        [newCustomer]="newCustomer"></applicant-acceptance>
     </form>`
 })
 class MockHostComponent {
@@ -63,7 +63,7 @@ const codeSet: CodeSetTypeMap = {
   }
 };
 
-describe('CustomerAcceptanceComponent', () => {
+describe('ApplicantAcceptanceComponent', () => {
   let hostComp: MockHostComponent;
   let fixture: ComponentFixture<MockHostComponent>;
   let de: DebugElement;
@@ -82,7 +82,7 @@ describe('CustomerAcceptanceComponent', () => {
       ],
       declarations: [
         MockHostComponent,
-        CustomerAcceptanceComponent,
+        ApplicantAcceptanceComponent,
         MockCustomerInfoAcceptanceComponent
       ],
       providers: [
@@ -119,7 +119,7 @@ describe('CustomerAcceptanceComponent', () => {
   });
 
   it('should pass old customer on change', () => {
-    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
+    const testedComponent: ApplicantAcceptanceComponent = de.query(By.directive(ApplicantAcceptanceComponent)).componentInstance;
     const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
     testedComponent.selectReferenceCustomer(existingCustomer1);
     fixture.detectChanges();
@@ -129,7 +129,7 @@ describe('CustomerAcceptanceComponent', () => {
   it('should do initial customer search when old customer is undefined', () => {
     hostComp.oldCustomer = undefined;
     fixture.detectChanges();
-    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
+    const testedComponent: ApplicantAcceptanceComponent = de.query(By.directive(ApplicantAcceptanceComponent)).componentInstance;
     expect(testedComponent.oldCustomer).toBeUndefined();
 
     testedComponent.ngOnInit();

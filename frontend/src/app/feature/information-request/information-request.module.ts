@@ -14,7 +14,6 @@ import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {KindAcceptanceComponent} from './acceptance/kind-acceptance.component';
 import {InformationAcceptanceModalEvents} from './acceptance/information-acceptance-modal-events';
-import {CustomerAcceptanceComponent} from './acceptance/customer/customer-acceptance.component';
 import {
   CustomerWithContactsAcceptanceComponent
 } from '@feature/information-request/acceptance/customer-with-contacts-acceptance.component';
@@ -25,6 +24,7 @@ import {FieldDisplayComponent} from '@feature/information-request/acceptance/fie
 import {
   InvoiceCustomerAcceptanceComponent
 } from '@feature/information-request/acceptance/invoice-customer/invoice-customer-acceptance.component';
+import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
 
 @NgModule({
   imports: [
@@ -42,7 +42,7 @@ import {
     FieldAcceptanceComponent,
     FieldGroupAcceptanceComponent,
     CustomerWithContactsAcceptanceComponent,
-    CustomerAcceptanceComponent,
+    ApplicantAcceptanceComponent,
     CustomerInfoAcceptanceComponent,
     ContactsAcceptanceComponent,
     ContactAcceptanceComponent,
