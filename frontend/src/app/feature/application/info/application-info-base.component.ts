@@ -20,6 +20,7 @@ import {distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLates
 import {ApplicationService} from '../../../service/application/application.service';
 import * as fromRoot from '../reducers';
 import * as fromApplication from '../reducers';
+import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';
 import {Store} from '@ngrx/store';
 import {
   INFORMATION_ACCEPTANCE_MODAL_CONFIG,
@@ -126,7 +127,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       .subscribe((result: InformationRequestResult) => {
         // TODO: Handle closing information request when implementing it
         this.store.dispatch(new SetKindsWithSpecifiers(result.application.kindsWithSpecifiers));
-        this.save(result.application);
+        this.store.dispatch(new InformationRequestResultAction.Save(result));
       });
   }
 

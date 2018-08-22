@@ -3,6 +3,9 @@ import {Application} from '../../../model/application/application';
 import {Customer} from '../../../model/customer/customer';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 import {Contact} from '@model/customer/contact';
+import {ActionWithPayload} from '@feature/common/action-with-payload';
+import {ErrorInfo} from '@service/error/error-info';
+import {InformationRequestResult} from '@feature/information-request/information-request-result';
 
 export enum InformationRequestResultActionType {
   SetApplication = '[InformationRequestResult] Set result application',
@@ -10,7 +13,10 @@ export enum InformationRequestResultActionType {
   SetContacts = '[InformationRequestResult] Set result contacts',
   SetContact = '[InformationRequestResult] Set result contact at index',
   SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers',
-  SetInvoicingCustomer = '[InformationRequestResult] Set result invoicing customer'
+  SetInvoicingCustomer = '[InformationRequestResult] Set result invoicing customer',
+  Save = '[InformationRequestResult] Save result of information request',
+  SaveSuccess = '[InformationRequestResult] Save result of information request success',
+  SaveFailed = '[InformationRequestResult] Save result of information request failed',
 }
 
 export class SetApplication implements Action {
@@ -43,10 +49,28 @@ export class SetInvoicingCustomer implements Action {
   constructor(public payload: Customer) {}
 }
 
+export class Save implements Action {
+  readonly type = InformationRequestResultActionType.Save;
+  constructor(public payload: InformationRequestResult) {}
+}
+
+export class SaveSuccess implements Action {
+  readonly type = InformationRequestResultActionType.SaveSuccess;
+  constructor(public payload: Application) {}
+}
+
+export class SaveFailed implements ActionWithPayload<ErrorInfo> {
+  readonly type = InformationRequestResultActionType.Save;
+  constructor(public payload: ErrorInfo) {}
+}
+
 export type InformationRequestResultActions =
   | SetApplication
   | SetCustomer
   | SetContacts
   | SetContact
   | SetKindsWithSpecifiers
-  | SetInvoicingCustomer;
+  | SetInvoicingCustomer
+  | Save
+  | SaveSuccess
+  | SaveFailed;

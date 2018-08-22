@@ -68,6 +68,10 @@ export function reducer(state: State = initialState, action: InformationRequestR
       };
     }
 
+    case InformationRequestResultActionType.SaveSuccess: {
+      return initialState;
+    }
+
     default: {
       return {
         ...state

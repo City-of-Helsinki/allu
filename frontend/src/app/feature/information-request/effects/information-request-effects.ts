@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import * as fromInformationRequest from '../reducers/information-request-reducer';
+import * as fromInformationRequest from '../reducers';
 import * as InformationRequestAction from '../actions/information-request-actions';
+import * as InformationRequestResultAction from '../actions/information-request-result-actions';
 import {Action, Store} from '@ngrx/store';
 import {InformationRequestService} from '../../../service/application/information-request.service';
 import {Observable, of} from 'rxjs/index';
@@ -9,11 +10,16 @@ import {InformationRequestActionType} from '../actions/information-request-actio
 import * as fromApplication from '../../application/reducers';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
 import {NumberUtil} from '../../../util/number.util';
+import {InformationRequestResultActionType} from '@feature/information-request/actions/information-request-result-actions';
+import {ApplicationService} from '@service/application/application.service';
+import {ApplicationStore} from '@service/application/application-store';
 
 @Injectable()
 export class InformationRequestEffects {
   constructor(private actions: Actions,
               private store: Store<fromInformationRequest.State>,
+              private applicationStore: ApplicationStore,
+              private applicationService: ApplicationService,
               private informationRequestService: InformationRequestService) {}
 
   @Effect()
@@ -24,6 +30,15 @@ export class InformationRequestEffects {
     switchMap(([action, application]) => this.informationRequestService.getForApplication(application.id).pipe(
       map(response => new InformationRequestAction.LoadLatestResponseSuccess(response)),
       catchError(error => of(new InformationRequestAction.LoadLatestResponseFailed(error)))
+    ))
+  );
+
+  @Effect()
+  saveResult: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestResultAction.Save>(InformationRequestResultActionType.Save),
+    switchMap(action => this.applicationStore.saveInformationRequestResult(action.payload).pipe(
+      map(application => new InformationRequestResultAction.SaveSuccess(application)),
+      catchError(error => of(new InformationRequestResultAction.SaveFailed(error)))
     ))
   );
 }

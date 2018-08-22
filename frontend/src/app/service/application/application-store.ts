@@ -1,4 +1,4 @@
-import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject, throwError as observableThrowError} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject, throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Application} from '../../model/application/application';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
@@ -22,6 +22,8 @@ import * as ApplicationAction from '../../feature/application/actions/applicatio
 import * as HistoryAction from '../../feature/history/actions/history-actions';
 import {ActionTargetType} from '../../feature/allu/actions/action-target-type';
 import {ApplicationType} from '../../model/application/type/application-type';
+import {InformationRequestResult} from '@feature/information-request/information-request-result';
+import {Customer} from '@model/customer/customer';
 
 export interface ApplicationState {
   application?: Application;
@@ -176,6 +178,17 @@ export class ApplicationStore {
     );
   }
 
+  saveInformationRequestResult(result: InformationRequestResult): Observable<Application> {
+    const application = result.application;
+    const invoicingCustomer = result.invoiceCustomer;
+
+    return this.saveCustomersAndContacts(application).pipe(
+      switchMap(app => this.saveInvoicingCustomer(invoicingCustomer, app)),
+      switchMap(app => this.saveApplication(app)),
+      tap(app => this.saved(app))
+    );
+  }
+
   delete(id: number): Observable<{}> {
     const response = this.snapshot.draft
       ? this.applicationDraftService.remove(id)
@@ -221,6 +234,20 @@ export class ApplicationStore {
         this.appStore.next({...this.current, deposit: saved});
       })
     );
+  }
+
+  saveInvoicingCustomer(customer: Customer, application: Application): Observable<Application> {
+    if (customer) {
+      return this.customerService.saveCustomer(customer).pipe(
+        map(cust => {
+          const updated = ObjectUtil.clone(application);
+          updated.invoiceRecipientId = cust.id;
+          return updated;
+        })
+      );
+    } else {
+      return of(application);
+    }
   }
 
   private saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
