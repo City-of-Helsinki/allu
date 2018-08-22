@@ -1,4 +1,4 @@
-import * as fromDecision from '@feature/decision/reducers/decision-reducer';
+import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
@@ -8,6 +8,8 @@ import {Observable, of} from 'rxjs/index';
 import {DecisionActionType, Load, LoadFailed, LoadSuccess} from '@feature/decision/actions/decision-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
+import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
+import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 @Injectable()
 export class DecisionEffects {
@@ -25,5 +27,19 @@ export class DecisionEffects {
       map(response => new LoadSuccess(response)),
       catchError(error => of(new LoadFailed(error)))
     ))
+  );
+
+  @Effect()
+  decisionTabOpen: Observable<Action> = this.actions.pipe(
+    ofType<SetTab>(DocumentActionType.SetTab),
+    filter(action => action.payload === DecisionTab.DECISION),
+    withLatestFrom(this.store.select(fromDecision.getDecision)),
+    map(([action, decision]) => {
+      if (decision) {
+        return new LoadSuccess(decision);
+      } else {
+        return new Load();
+      }
+    })
   );
 }

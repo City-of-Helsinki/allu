@@ -1,5 +1,6 @@
 import {Decision} from '@model/decision/Decision';
 import {DecisionActions, DecisionActionType} from '@feature/decision/actions/decision-actions';
+import {ApplicationActions, ApplicationActionType} from '@feature/application/actions/application-actions';
 
 export interface State {
   loading: boolean;
@@ -11,9 +12,8 @@ const initialState: State = {
   decision: undefined,
 };
 
-export function reducer(state: State = initialState, action: DecisionActions) {
+export function reducer(state: State = initialState, action: DecisionActions | ApplicationActions) {
   switch (action.type) {
-
     case DecisionActionType.Load: {
       return {
         ...state,
@@ -33,6 +33,13 @@ export function reducer(state: State = initialState, action: DecisionActions) {
       return {
         ...state,
         loading: false
+      };
+    }
+
+    case ApplicationActionType.LoadSuccess: {
+      return {
+        ...state,
+        decision: undefined
       };
     }
 

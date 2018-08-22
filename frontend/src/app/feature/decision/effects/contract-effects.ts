@@ -1,13 +1,16 @@
-import * as fromContract from '@feature/decision/reducers/contract-reducer';
+import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs/index';
 import {
-  Approve, ApproveFailed, ApproveSuccess,
+  Approve,
+  ApproveFailed,
+  ApproveSuccess,
   ContractActionType,
-  CreateProposal, CreateProposalFailed,
+  CreateProposal,
+  CreateProposalFailed,
   CreateProposalSuccess,
   Load,
   LoadFailed,
@@ -19,11 +22,13 @@ import {NumberUtil} from '@util/number.util';
 import {ContractService} from '@service/contract/contract.service';
 import {Application} from '@model/application/application';
 import {ApplicationStatus} from '@model/application/application-status';
+import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
+import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 @Injectable()
 export class ContractEffects {
   constructor(private actions: Actions,
-              private store: Store<fromContract.State>,
+              private store: Store<fromDecision.DecisionState>,
               private contractService: ContractService) {
   }
 
@@ -33,6 +38,20 @@ export class ContractEffects {
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.loadAvailableContract(application))
+  );
+
+  @Effect()
+  contractTabOpen: Observable<Action> = this.actions.pipe(
+    ofType<SetTab>(DocumentActionType.SetTab),
+    filter(action => action.payload === DecisionTab.CONTRACT),
+    withLatestFrom(this.store.select(fromDecision.getContract)),
+    map(([action, contract]) => {
+      if (contract) {
+        return new LoadSuccess(contract);
+      } else {
+        return new Load();
+      }
+    })
   );
 
   @Effect()
@@ -52,10 +71,7 @@ export class ContractEffects {
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.contractService.approve(application.id, action.payload).pipe(
-      switchMap(contract => [
-        new ApproveSuccess(contract),
-        new Load
-      ]),
+      map(contract => new ApproveSuccess(contract)),
       catchError(error => of(new ApproveFailed(error)))
     ))
   );

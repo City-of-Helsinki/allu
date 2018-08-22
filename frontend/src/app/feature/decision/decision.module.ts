@@ -23,7 +23,6 @@ import {DecisionDocumentsComponent} from '@feature/decision/documents/decision-d
 import {DecisionPreviewComponent} from '@feature/decision/preview/decision-preview.component';
 import {DecisionResolve} from '@feature/decision/decision-resolve';
 import {ContractEffects} from '@feature/decision/effects/contract-effects';
-import {DocumentEffects} from '@feature/decision/effects/document-effects';
 import {DecisionTabResolve} from '@feature/decision/decision-tab-resolve';
 import {ContractGuard} from '@feature/decision/documents/contract-guard';
 import {ContractActionsComponent} from '@feature/decision/contract-actions.component';
@@ -37,8 +36,7 @@ import {ContractApprovalModalComponent} from '@feature/decision/contract/contrac
     StoreModule.forFeature('decision', reducers),
     EffectsModule.forFeature([
       DecisionEffects,
-      ContractEffects,
-      DocumentEffects
+      ContractEffects
     ]),
     AlluCommonModule,
     ProgressBarModule,

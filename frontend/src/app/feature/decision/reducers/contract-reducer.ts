@@ -1,5 +1,6 @@
 import {Contract} from '@model/contract/contract';
 import {ContractActions, ContractActionType} from '@feature/decision/actions/contract-actions';
+import {ApplicationActions, ApplicationActionType} from '@feature/application/actions/application-actions';
 
 export interface State {
   loading: boolean;
@@ -11,7 +12,7 @@ const initialState: State = {
   contract: undefined
 };
 
-export function reducer(state: State = initialState, action: ContractActions) {
+export function reducer(state: State = initialState, action: ContractActions | ApplicationActions) {
   switch (action.type) {
     case ContractActionType.Load:
     case ContractActionType.CreateProposal:
@@ -38,6 +39,13 @@ export function reducer(state: State = initialState, action: ContractActions) {
       return {
         ...state,
         loading: false
+      };
+    }
+
+    case ApplicationActionType.LoadSuccess: {
+      return {
+        ...state,
+        contract: undefined
       };
     }
 
