@@ -75,7 +75,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
 
   createNewContact(): void {
     this.searchForm.reset();
-    this.selectReferenceContact();
+    this.selectReferenceContact(new Contact());
   }
 
   private initialSearch(): void {
@@ -85,10 +85,13 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
       switchMap(() => this.store.select(fromCustomerSearch.getAvailableContacts)),
       map(contacts => contacts.filter(c => c.name.toLocaleLowerCase().startsWith(searchTerm))),
       map(contacts => ArrayUtil.first(contacts)),
-      filter(matching => !!matching)
     ).subscribe(matching => {
-      this.selectReferenceContact(matching);
-      this.searchForm.patchValue({search: matching.name}, {emitEvent: false});
+      if (matching) {
+        this.selectReferenceContact(matching);
+        this.searchForm.patchValue({search: matching.name}, {emitEvent: false});
+      } else {
+        this.selectReferenceContact(new Contact());
+      }
     });
   }
 }

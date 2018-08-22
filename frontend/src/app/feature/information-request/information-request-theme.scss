@@ -14,6 +14,7 @@
   }
 
   li:nth-child(odd) .field-acceptance,
+  li:nth-child(odd) .field-display,
   .label-row {
     background: mat-color($primary, 50);
   }

@@ -19,6 +19,7 @@ import {CustomerWithContactsAcceptanceComponent} from '@feature/information-requ
 import {ContactsAcceptanceComponent} from '@feature/information-request/acceptance/contact/contacts-acceptance-component';
 import {ContactAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-acceptance.component';
 import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
+import {FieldDisplayComponent} from '@feature/information-request/acceptance/field-display.component';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import {ContactInfoAcceptanceComponent} from '@feature/information-request/accep
   declarations: [
     InformationAcceptanceModalComponent,
     FieldValueComponent,
+    FieldDisplayComponent,
     FieldAcceptanceComponent,
     FieldGroupAcceptanceComponent,
     CustomerWithContactsAcceptanceComponent,

@@ -2,14 +2,14 @@ import {Component, DebugElement, forwardRef, Input} from '@angular/core';
 import {Selected} from '../../../../src/app/feature/information-request/acceptance/field-acceptance.component';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ControlValueAccessor, FormBuilder, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule} from '@angular/forms';
-import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {MatDialogModule} from '@angular/material';
 import {
   FieldGroupAcceptanceComponent,
   FieldValues
-} from '../../../../src/app/feature/information-request/acceptance/field-group-acceptance.component';
+} from '@feature/information-request/acceptance/field-group-acceptance.component';
 import {By} from '@angular/platform-browser';
-import {findTranslation} from '../../../../src/app/util/translations';
+import {findTranslation} from '@util/translations';
 
 @Component({
   selector: 'test-host',
@@ -73,6 +73,16 @@ class MockFieldAcceptanceComponent implements ControlValueAccessor {
   private _onChange = (_: any) => {};
 }
 
+@Component({
+  selector: 'field-display',
+  template: ''
+})
+class MockFieldDisplayComponent {
+  @Input() label: string;
+  @Input() value: any;
+}
+
+
 describe('FieldGroupAcceptanceComponent', () => {
   let fixture: ComponentFixture<MockHostComponent>;
   let testHost: MockHostComponent;
@@ -89,7 +99,8 @@ describe('FieldGroupAcceptanceComponent', () => {
       declarations: [
         MockHostComponent,
         FieldGroupAcceptanceComponent,
-        MockFieldAcceptanceComponent
+        MockFieldAcceptanceComponent,
+        MockFieldDisplayComponent
       ],
       providers: [
         FormBuilder
@@ -168,5 +179,16 @@ describe('FieldGroupAcceptanceComponent', () => {
     fixture.detectChanges();
     const infoElemenent: HTMLElement = de.query(By.css('li.label-row')).nativeElement;
     expect(infoElemenent.textContent.trim()).toEqual(findTranslation('informationRequest.acceptance.noChanges'));
+  });
+
+  it('should show only new values when all old values are empty', () => {
+    testHost.oldValues = {
+      value1: undefined,
+      value2: undefined
+    };
+
+    fixture.detectChanges();
+    const children: DebugElement[] = de.queryAll(By.directive(MockFieldDisplayComponent));
+    expect(children.length).toEqual(2, 'Should show all fields for new value');
   });
 });

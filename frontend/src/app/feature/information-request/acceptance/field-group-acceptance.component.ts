@@ -23,7 +23,8 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() readonly: boolean;
 
-  displayedFields: string[];
+  displayedFields: string[] = [];
+  emptyOldValues: boolean;
 
   private oldValues$: BehaviorSubject<FieldValues> = new BehaviorSubject<FieldValues>(undefined);
   private newValues$: BehaviorSubject<FieldValues> = new BehaviorSubject<FieldValues>(undefined);
@@ -52,6 +53,10 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
 
   @Input() set oldValues(oldValues: FieldValues) {
     this.oldValues$.next(oldValues);
+    this.emptyOldValues = this.noValues(oldValues);
+    if (this.emptyOldValues) {
+      this.setAllValuesAs('new');
+    }
   }
 
   get oldValues() {
@@ -64,6 +69,13 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
 
   get newValues() {
     return this.newValues$.getValue();
+  }
+
+  get showControls() {
+    const displayedFields = this.displayedFields.length > 0;
+    const notReadonly = !this.readonly;
+    const hasOldValues = !this.emptyOldValues;
+    return displayedFields && notReadonly && hasOldValues;
   }
 
   valuesEqual(field: string): boolean {
@@ -98,5 +110,20 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
 
   private selectedValue(field: string): Selected {
     return this.valuesEqual(field) ? 'new' : undefined;
+  }
+
+  private setAllValuesAs(selected: Selected): void {
+    Object.keys(this.form.controls).forEach(field => {
+      const ctrl = this.form.get(field);
+      ctrl.patchValue(selected);
+    });
+  }
+
+  private noValues(fieldValues: FieldValues): boolean {
+    if (fieldValues) {
+      return Object.keys(fieldValues).every(field => fieldValues[field] === undefined);
+    } else {
+      return true;
+    }
   }
 }

@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-  <div class="field-group-options" *ngIf="displayedFields.length && !readonly">
+  <div class="field-group-options" *ngIf="showControls">
     <label>{{'informationRequest.acceptance.noChange' | translation}}</label>
     <label>{{'informationRequest.acceptance.change' | translation}}</label>
   </div>
@@ -8,12 +8,19 @@
       {{'informationRequest.acceptance.noChanges' | translation}}
     </li>
     <li *ngFor="let fieldName of displayedFields">
-      <field-acceptance
-        [formControlName]="fieldName"
-        [label]="fieldLabels[fieldName]"
-        [oldValue]="oldValues[fieldName]"
-        [newValue]="newValues[fieldName]"
-        [readonly]="readonly"></field-acceptance>
+      <ng-container *ngIf="emptyOldValues; else valueSelection">
+        <field-display
+          [label]="fieldLabels[fieldName]"
+          [value]="newValues[fieldName]"></field-display>
+      </ng-container>
+      <ng-template #valueSelection>
+        <field-acceptance
+          [formControlName]="fieldName"
+          [label]="fieldLabels[fieldName]"
+          [oldValue]="oldValues[fieldName]"
+          [newValue]="newValues[fieldName]"
+          [readonly]="readonly"></field-acceptance>
+      </ng-template>
     </li>
   </ul>
 </form>
