@@ -52,7 +52,11 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     this.matchingCustomers$ = this.store.select(fromCustomerSearch.getMatchingCustomers);
 
     this.initialSearch();
+    this.init();
   }
+
+  // Inheriting components can override for initialization
+  init(): void {}
 
   ngOnDestroy(): void {
     this.destroy.next(true);

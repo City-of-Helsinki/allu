@@ -57,3 +57,8 @@ export const getResultInvoicingCustomer = createSelector(
   getInformationRequestResultState,
   fromInformationRequestResult.getInvoicingCustomer
 );
+
+export const useCustomerForInvoicing = createSelector(
+  getInformationRequestResultState,
+  fromInformationRequestResult.useCustomerForInvoicing
+);

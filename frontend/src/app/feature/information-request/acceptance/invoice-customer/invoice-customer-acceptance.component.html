@@ -1,6 +1,17 @@
+<h2 mat-dialog-title>
+  {{'informationRequest.field.INVOICING_CUSTOMER' | translation}}
+</h2>
+
 <form [formGroup]="searchForm">
   <div class="label-row text-primary">
-    {{'customer.suggestion.titleInvoice' | translation}}
+    <ng-container *ngIf="referenceCustomerSelected; else newCustomerTitle">
+      {{'customer.suggestion.title' | translation}}
+    </ng-container>
+    <ng-template #newCustomerTitle>
+      <div>
+        {{'customer.newCustomer' | translation}}
+      </div>
+    </ng-template>
   </div>
 
   <mat-form-field floatLabel="never" class="form-field-33 form-field-dense" *ngIf="!readonly">
@@ -18,7 +29,7 @@
 
   <p class="acceptance-info" *ngIf="!readonly">
     {{'customer.suggestion.info' | translation}}
-    <button class="button-link" (click)="createNewCustomer()">
+    <button class="button-link" (click)="createNewCustomer()" *ngIf="referenceCustomerSelected">
       {{'customer.createNew' | translation}}
     </button>
   </p>

@@ -24,6 +24,7 @@ import {ActionTargetType} from '../../feature/allu/actions/action-target-type';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {Customer} from '@model/customer/customer';
+import {CustomerRoleType} from '@model/customer/customer-role-type';
 
 export interface ApplicationState {
   application?: Application;
@@ -180,10 +181,9 @@ export class ApplicationStore {
 
   saveInformationRequestResult(result: InformationRequestResult): Observable<Application> {
     const application = result.application;
-    const invoicingCustomer = result.invoiceCustomer;
 
     return this.saveCustomersAndContacts(application).pipe(
-      switchMap(app => this.saveInvoicingCustomer(invoicingCustomer, app)),
+      switchMap(app => this.saveInvoicingCustomer(result, app)),
       switchMap(app => this.saveApplication(app)),
       tap(app => this.saved(app))
     );
@@ -236,7 +236,20 @@ export class ApplicationStore {
     );
   }
 
-  saveInvoicingCustomer(customer: Customer, application: Application): Observable<Application> {
+  private saveInvoicingCustomer(result: InformationRequestResult, application: Application): Observable<Application> {
+    return result.useCustomerForInvoicing === undefined
+      ? this.saveAndUseInvoicingCustomer(result.invoiceCustomer, application)
+      : this.useCustomerForInvoicing(result.useCustomerForInvoicing, application);
+  }
+
+  private useCustomerForInvoicing(roleType: CustomerRoleType, application: Application): Observable<Application> {
+    const customer = application.customerWithContactsByRole(roleType);
+    const updated = ObjectUtil.clone(application);
+    updated.invoiceRecipientId = customer.customerId;
+    return of(updated);
+  }
+
+  private saveAndUseInvoicingCustomer(customer: Customer, application: Application): Observable<Application> {
     if (customer) {
       return this.customerService.saveCustomer(customer).pipe(
         map(cust => {
@@ -249,6 +262,7 @@ export class ApplicationStore {
       return of(application);
     }
   }
+
 
   private saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
     if (attachments.length === 0) {

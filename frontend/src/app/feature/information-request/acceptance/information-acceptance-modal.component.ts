@@ -1,15 +1,15 @@
 import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import * as fromInformationRequest from '../reducers';
+import * as fromInformationRequestResult from '../reducers';
 import {Store} from '@ngrx/store';
 import {InformationRequestResult} from '../information-request-result';
-import {Application} from '../../../model/application/application';
-import {InformationRequestFieldKey} from '../../../model/information-request/information-request-field-key';
+import {Application} from '@model/application/application';
+import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {combineLatest, Observable, Subject} from 'rxjs/index';
 import {distinctUntilChanged, map, skipUntil, startWith, take} from 'rxjs/internal/operators';
-import {CustomerRoleType} from '../../../model/customer/customer-role-type';
-import {ArrayUtil} from '../../../util/array-util';
+import {CustomerRoleType} from '@model/customer/customer-role-type';
+import {ArrayUtil} from '@util/array-util';
 import {SetApplication, SetCustomer} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 
@@ -39,6 +39,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   updatedFields: string[];
   submitDisabled: Observable<boolean>;
   readonly: boolean;
+  useCustomerForInvoicing$: Observable<CustomerRoleType>;
 
   private childrenLoaded$ = new Subject<boolean>();
 
@@ -68,6 +69,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     const baseInfo = this.data.oldInfo || new Application();
     this.store.dispatch(new SetApplication(baseInfo));
     this.store.dispatch(new SetCustomer(baseInfo.applicant.customer));
+    this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
   }
 
   ngAfterViewInit(): void {
@@ -76,18 +78,20 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
 
   onSubmit(): void {
     combineLatest(
-      this.store.select(fromInformationRequest.getResultApplication),
-      this.store.select(fromInformationRequest.getResultCustomerWithContacts),
-      this.store.select(fromInformationRequest.getResultKindsWithSpecifiers),
-      this.store.select(fromInformationRequest.getResultInvoicingCustomer)
+      this.store.select(fromInformationRequestResult.getResultApplication),
+      this.store.select(fromInformationRequestResult.getResultCustomerWithContacts),
+      this.store.select(fromInformationRequestResult.getResultKindsWithSpecifiers),
+      this.store.select(fromInformationRequestResult.getResultInvoicingCustomer),
+      this.store.select(fromInformationRequestResult.useCustomerForInvoicing)
     ).pipe(take(1))
-      .subscribe(([app, customerWithContacts, kindsWithSpecifiers, invoicingCustomer]) => {
+      .subscribe(([app, customerWithContacts, kindsWithSpecifiers, invoicingCustomer, useCustomerForInvoicing]) => {
         app.customersWithContacts = ArrayUtil.createOrReplace(
           app.customersWithContacts,
           customerWithContacts,
           cwc => cwc.roleType === CustomerRoleType.APPLICANT);
         app.kindsWithSpecifiers = kindsWithSpecifiers;
-        this.dialogRef.close(new InformationRequestResult(this.data.informationRequestId, app, invoicingCustomer));
+        const result = new InformationRequestResult(this.data.informationRequestId, app, invoicingCustomer, useCustomerForInvoicing);
+        this.dialogRef.close(result);
       });
   }
 

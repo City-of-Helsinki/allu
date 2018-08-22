@@ -4,6 +4,7 @@ import {Customer} from '../../../model/customer/customer';
 import {Contact} from '../../../model/customer/contact';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 import {ArrayUtil} from '@util/array-util';
+import {CustomerRoleType} from '@model/customer/customer-role-type';
 
 export interface State {
   application: Application;
@@ -11,6 +12,7 @@ export interface State {
   contacts: Contact[];
   kindsWithSpecifiers: KindsWithSpecifiers;
   invoicingCustomer: Customer;
+  useCustomerForInvoicing: CustomerRoleType;
 }
 
 export const initialState: State = {
@@ -18,7 +20,8 @@ export const initialState: State = {
   customer: undefined,
   contacts: [],
   kindsWithSpecifiers: {},
-  invoicingCustomer: undefined
+  invoicingCustomer: undefined,
+  useCustomerForInvoicing: undefined
 };
 
 export function reducer(state: State = initialState, action: InformationRequestResultActions) {
@@ -68,6 +71,13 @@ export function reducer(state: State = initialState, action: InformationRequestR
       };
     }
 
+    case InformationRequestResultActionType.UseCustomerForInvoicing: {
+      return {
+        ...state,
+        useCustomerForInvoicing: action.payload
+      };
+    }
+
     case InformationRequestResultActionType.SaveSuccess: {
       return initialState;
     }
@@ -89,3 +99,5 @@ export const getContacts = (state: State) => state.contacts;
 export const getKindsWithSpecifiers = (state: State) => state.kindsWithSpecifiers;
 
 export const getInvoicingCustomer = (state: State) => state.invoicingCustomer;
+
+export const useCustomerForInvoicing = (state: State) => state.useCustomerForInvoicing;

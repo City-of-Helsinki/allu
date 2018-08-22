@@ -6,6 +6,7 @@ import {Contact} from '@model/customer/contact';
 import {ActionWithPayload} from '@feature/common/action-with-payload';
 import {ErrorInfo} from '@service/error/error-info';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
+import {CustomerRoleType} from '@model/customer/customer-role-type';
 
 export enum InformationRequestResultActionType {
   SetApplication = '[InformationRequestResult] Set result application',
@@ -14,6 +15,7 @@ export enum InformationRequestResultActionType {
   SetContact = '[InformationRequestResult] Set result contact at index',
   SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers',
   SetInvoicingCustomer = '[InformationRequestResult] Set result invoicing customer',
+  UseCustomerForInvoicing = '[InformationRequestResult] Use customer also for invoicing',
   Save = '[InformationRequestResult] Save result of information request',
   SaveSuccess = '[InformationRequestResult] Save result of information request success',
   SaveFailed = '[InformationRequestResult] Save result of information request failed',
@@ -49,6 +51,11 @@ export class SetInvoicingCustomer implements Action {
   constructor(public payload: Customer) {}
 }
 
+export class UseCustomerForInvoicing implements Action {
+  readonly type = InformationRequestResultActionType.UseCustomerForInvoicing;
+  constructor(public payload: CustomerRoleType) {}
+}
+
 export class Save implements Action {
   readonly type = InformationRequestResultActionType.Save;
   constructor(public payload: InformationRequestResult) {}
@@ -71,6 +78,7 @@ export type InformationRequestResultActions =
   | SetContact
   | SetKindsWithSpecifiers
   | SetInvoicingCustomer
+  | UseCustomerForInvoicing
   | Save
   | SaveSuccess
   | SaveFailed;

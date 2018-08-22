@@ -3,10 +3,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     <div *ngFor="let field of updatedFields">
-      <h2 mat-dialog-title>
-        {{['informationRequest.field', field] | translation}}
-      </h2>
-
       <kind-acceptance
         *ngIf="field === 'APPLICATION_KIND'"
         [parentForm]="form"
@@ -23,11 +19,13 @@
         [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
         [readonly]="readonly"></customer-with-contacts-acceptance>
 
-      <invoice-customer-acceptance
-        *ngIf="field === 'INVOICING_CUSTOMER'"
-        [parentForm]="form"
-        [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
-        [readonly]="readonly"></invoice-customer-acceptance>
+      <ng-container *ngIf="field === 'INVOICING_CUSTOMER'">
+        <invoice-customer-acceptance
+          *ngIf="(useCustomerForInvoicing$ | async) === undefined"
+          [parentForm]="form"
+          [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
+          [readonly]="readonly"></invoice-customer-acceptance>
+      </ng-container>
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>

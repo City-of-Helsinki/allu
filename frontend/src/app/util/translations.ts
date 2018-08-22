@@ -663,6 +663,7 @@ export const translations = {
       titleInvoice: 'Ehdotettu laskutusasiakas',
       info: 'Nimi yhdistetään samoilla tiedoilla löytyneeseen asiakkaaseen. Voit myös hakea vaihtoehtoa tai luoda nimellä uuden asiakkaan.'
     },
+    useForInvoicing: 'Käytä laskutettavana asiakkaana',
     createNew: 'Luo uusi asiakas'
   },
   contact: {

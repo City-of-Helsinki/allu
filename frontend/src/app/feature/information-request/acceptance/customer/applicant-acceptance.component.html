@@ -1,3 +1,7 @@
+<h2 mat-dialog-title>
+  {{'informationRequest.field.CUSTOMER' | translation}}
+</h2>
+
 <form [formGroup]="searchForm">
   <div class="label-row text-primary">
     <ng-container *ngIf="referenceCustomerSelected; else newCustomerTitle">
@@ -29,6 +33,12 @@
       {{'customer.createNew' | translation}}
     </button>
   </p>
+
+  <div>
+    <mat-checkbox formControlName="useForInvoicing">
+      {{'customer.useForInvoicing' | translation}}
+    </mat-checkbox>
+  </div>
 </form>
 
 <customer-info-acceptance
