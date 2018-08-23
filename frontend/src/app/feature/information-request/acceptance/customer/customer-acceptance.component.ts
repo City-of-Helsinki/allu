@@ -8,7 +8,7 @@ import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
 import {SetCustomer} from '../../actions/information-request-result-actions';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
-import {Search, SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
+import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
 import {CustomerNameSearchMinChars, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
@@ -25,7 +25,8 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
 
-  referenceCustomer$: BehaviorSubject<Customer>;
+  referenceCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(undefined);
+  referenceCustomerSelected: boolean;
 
   form: FormGroup;
   searchForm: FormGroup;
@@ -45,7 +46,6 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       search: undefined
     });
     this.countryCodes$ = this.store.select(fromRoot.getCodeSetCodeMap('Country'));
-    this.referenceCustomer$ = new BehaviorSubject<Customer>(this.oldCustomer);
 
     this.searchForm.get('search').valueChanges.pipe(
       takeUntil(this.destroy),
@@ -67,13 +67,14 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   selectReferenceCustomer(customer?: Customer): void {
-    const search = customer ? `${customer.name} (${customer.registryKey})` : undefined;
+    const searchCustomer = customer || this.newCustomer;
+    const search = searchCustomer ? `${searchCustomer.name} (${searchCustomer.registryKey})` : undefined;
     this.searchForm.patchValue({search}, {emitEvent: false});
     this.referenceCustomer$.next(customer);
+    this.referenceCustomerSelected = !!customer;
   }
 
   createNewCustomer(): void {
-    this.searchForm.reset();
     this.selectReferenceCustomer();
   }
 
@@ -90,9 +91,9 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
         switchMap(() => this.matchingCustomers$),
         take(1),
         map(customers => ArrayUtil.first(customers))
-      ).subscribe(customer => {
-        this.selectReferenceCustomer(customer);
-      });
+      ).subscribe(customer => this.selectReferenceCustomer(customer));
+    } else {
+      this.selectReferenceCustomer(this.oldCustomer);
     }
   }
 

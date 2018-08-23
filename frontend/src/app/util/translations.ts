@@ -554,6 +554,7 @@ export const translations = {
     }
   },
   customer: {
+    newCustomer: 'Uusi asiakas',
     nameLabel: 'Nimi',
     registryKey: 'Tunniste',
     email: 'Sähköposti',
