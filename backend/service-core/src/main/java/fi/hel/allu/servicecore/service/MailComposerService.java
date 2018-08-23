@@ -42,6 +42,7 @@ public class MailComposerService {
   private static final String TEMPLATE_SHORT_TERM_RENTAL = "lyhytaikainen_vuokraus";
   private static final String TEMPLATE_EVENT = "tapahtuma";
   private static final String TEMPLATE_STREET_WORK = "katutyo";
+  private static final String TEMPLATE_PLACEMENT_CONTRACT = "sijoitussopimus";
 
   private static final String DECISION_TYPE_TRAFFIC_ARRANGEMENT = "liikennejärjestelypäätös";
   private static final String DECISION_TYPE_AREA_RENTAL = "aluevuokrauspäätös";
@@ -65,7 +66,8 @@ public class MailComposerService {
       ApplicationType.AREA_RENTAL,
       ApplicationType.SHORT_TERM_RENTAL,
       ApplicationType.EXCAVATION_ANNOUNCEMENT,
-      ApplicationType.EVENT);
+      ApplicationType.EVENT,
+      ApplicationType.PLACEMENT_CONTRACT);
 
   private static final List<ApplicationType> subjectNameTypes = Arrays.asList(
       ApplicationType.SHORT_TERM_RENTAL,
@@ -190,6 +192,8 @@ public class MailComposerService {
       case EXCAVATION_ANNOUNCEMENT:
         // Same template for temporary traffic arrangement, area rental and excavation announcement
         return TEMPLATE_STREET_WORK;
+      case PLACEMENT_CONTRACT:
+        return TEMPLATE_PLACEMENT_CONTRACT;
       default:
         return TEMPLATE_GENERIC;
     }

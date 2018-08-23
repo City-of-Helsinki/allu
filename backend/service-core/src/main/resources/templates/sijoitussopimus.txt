@@ -1,0 +1,14 @@
+
+Viestin liitteenä on sijoitussopimus ${applicationId} liitteineen. Mikäli teillä on kysyttävää tai huomautettavaa asiaan liittyen ottakaa yhteyttä.
+
+${accompanyingMessage}
+
+Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/gjnnyxrb0q
+
+Ystävällisin terveisin
+Helsingin kaupunki
+Kaupunkiympäristön asukas- ja yrityspalvelut
+Alueidenkäyttö
+Puh. 09 310 22111
+alueidenkaytto@hel.fi
+www.hel.fi/luvat/yleisetalueet
