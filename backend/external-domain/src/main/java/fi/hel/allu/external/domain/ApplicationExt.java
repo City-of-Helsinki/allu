@@ -37,7 +37,8 @@ public abstract class ApplicationExt {
   private ZonedDateTime startTime;
   @NotNull(message = "{application.endtime}")
   private ZonedDateTime endTime;
-  private boolean pendingOnClient;
+  @NotNull(message = "{application.pendingOnClient}")
+  private Boolean pendingOnClient;
   @NotBlank(message = "{application.identificationNumber}")
   private String identificationNumber;
   private String customerReference;
