@@ -21,6 +21,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
   referenceContact$: BehaviorSubject<Contact> = new BehaviorSubject<Contact>(undefined);
+  referenceContactSelected: boolean;
 
   matchingContacts$: Observable<Contact[]>;
   form: FormGroup;
@@ -30,7 +31,11 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   private destroy: Subject<boolean> = new Subject<boolean>();
 
   constructor(private fb: FormBuilder,
-              private store: Store<fromRoot.State>) {}
+              private store: Store<fromRoot.State>) {
+    this.searchForm = this.fb.group({
+      search: undefined
+    });
+  }
 
 
   @Input() set newContact(contact: Contact) {
@@ -45,9 +50,6 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.form = this.fb.group({});
     this.formArray.push(this.form);
-    this.searchForm = this.fb.group({
-      search: undefined
-    });
 
     this.matchingContacts$ = this.store.select(fromCustomerSearch.getMatchingContacts).pipe(
       withLatestFrom(this.store.select(fromInformationRequest.getResultContacts).pipe(
@@ -70,12 +72,15 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   selectReferenceContact(contact?: Contact): void {
+    const searchContact = contact || this.newContact;
+    const search = searchContact ? searchContact.name : undefined;
+    this.searchForm.patchValue({search}, {emitEvent: false});
     this.referenceContact$.next(contact);
+    this.referenceContactSelected = !!contact;
   }
 
   createNewContact(): void {
-    this.searchForm.reset();
-    this.selectReferenceContact(new Contact());
+    this.selectReferenceContact();
   }
 
   private initialSearch(): void {
@@ -85,13 +90,6 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
       switchMap(() => this.store.select(fromCustomerSearch.getAvailableContacts)),
       map(contacts => contacts.filter(c => c.name.toLocaleLowerCase().startsWith(searchTerm))),
       map(contacts => ArrayUtil.first(contacts)),
-    ).subscribe(matching => {
-      if (matching) {
-        this.selectReferenceContact(matching);
-        this.searchForm.patchValue({search: matching.name}, {emitEvent: false});
-      } else {
-        this.selectReferenceContact(new Contact());
-      }
-    });
+    ).subscribe(matching => this.selectReferenceContact(matching));
   }
 }

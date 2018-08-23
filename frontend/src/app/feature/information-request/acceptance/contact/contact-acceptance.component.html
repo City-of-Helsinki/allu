@@ -2,7 +2,12 @@
 
 <form [formGroup]="searchForm">
   <div class="label-row text-primary">
-    {{'contact.suggestion.title' | translation}}
+    <ng-container *ngIf="referenceContactSelected; else newContactTitle">
+      {{'contact.suggestion.title' | translation}}
+    </ng-container>
+    <ng-template #newContactTitle>
+      {{'contact.newContact' | translation}}
+    </ng-template>
   </div>
 
   <mat-form-field floatLabel="never" class="form-field-33 form-field-dense" *ngIf="matchingContacts$ && !readonly">
@@ -20,7 +25,7 @@
 
   <p class="acceptance-info" *ngIf="!readonly">
     {{'contact.suggestion.info' | translation}}
-    <button class="button-link" (click)="createNewContact()">
+    <button class="button-link" (click)="createNewContact()" *ngIf="referenceContactSelected">
       {{'contact.createNew' | translation}}
     </button>
   </p>
