@@ -52,11 +52,8 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   @Input() set oldValues(oldValues: FieldValues) {
-    this.oldValues$.next(oldValues);
     this.emptyOldValues = this.noValues(oldValues);
-    if (this.emptyOldValues) {
-      this.setAllValuesAs('new');
-    }
+    this.oldValues$.next(oldValues);
   }
 
   get oldValues() {
@@ -89,7 +86,12 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
   private updateSelections(): void {
     const displayedFields = [];
     Object.keys(this.fieldLabels).forEach(field => {
-      this.updateFieldSelection(field);
+      if (this.emptyOldValues) {
+        this.updateFieldSelection(field, 'new');
+      } else {
+        const selected = this.selectedValue(field);
+        this.updateFieldSelection(field, selected);
+      }
 
       if (!this.valuesEqual(field)) {
         displayedFields.push(field);
@@ -100,23 +102,15 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
     this.form.updateValueAndValidity();
   }
 
-  private updateFieldSelection(field: string): void {
+  private updateFieldSelection(field: string, selected: Selected): void {
     const ctrl = this.form.get(field);
     if (ctrl) {
-      const selected = this.selectedValue(field);
       ctrl.patchValue(selected);
     }
   }
 
   private selectedValue(field: string): Selected {
     return this.valuesEqual(field) ? 'new' : undefined;
-  }
-
-  private setAllValuesAs(selected: Selected): void {
-    Object.keys(this.form.controls).forEach(field => {
-      const ctrl = this.form.get(field);
-      ctrl.patchValue(selected);
-    });
   }
 
   private noValues(fieldValues: FieldValues): boolean {
