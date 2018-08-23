@@ -6,7 +6,6 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,6 +15,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.ConfigurationType;
@@ -55,6 +55,10 @@ public class ContractService {
 
   public byte[] getContract(Integer applicationId) {
     return restTemplate.getForObject(applicationProperties.getContractUrl(), byte[].class, applicationId);
+  }
+
+  public byte[] getFinalContract(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getFinalContractUrl(), byte[].class, applicationId);
   }
 
   public byte[] getContractProposal(Integer applicationId) {
@@ -202,7 +206,7 @@ public class ContractService {
 
   private void validateIsInProposalState(ContractInfo contractInfo) {
     if (contractInfo == null || contractInfo.getStatus() != ContractStatusType.PROPOSAL) {
-      throw new IllegalArgumentException("contractProposal.notFound");
+      throw new NoSuchEntityException("contractProposal.notFound");
     }
   }
 

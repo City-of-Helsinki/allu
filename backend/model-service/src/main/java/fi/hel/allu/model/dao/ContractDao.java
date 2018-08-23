@@ -75,10 +75,22 @@ public class ContractDao {
       throw new NoSuchEntityException("contract.notFound");
     }
     SimplePath<byte[]> contractPath = contractInfo.getStatus() == ContractStatusType.FINAL ? contract.finalContract : contract.proposal;
-    byte[] data = queryFactory.select(contractPath).from(contract)
-        .where(contract.id.eq(contractInfo.getId()))
+    return getContractData(contractInfo.getId(), contractPath);
+  }
+
+  @Transactional(readOnly = true)
+  public byte[] getFinalContract(int applicationId) {
+    ContractInfo contractInfo = getContractInfo(applicationId);
+    if (contractInfo == null || contractInfo.getStatus() != ContractStatusType.FINAL) {
+      throw new NoSuchEntityException("contract.notFound");
+    }
+    return getContractData(contractInfo.getId(), contract.finalContract);
+  }
+
+  private byte[] getContractData(Integer contractId, SimplePath<byte[]> contractPath) {
+    return queryFactory.select(contractPath).from(contract)
+        .where(contract.id.eq(contractId))
         .fetchFirst();
-    return data;
   }
 
   @Transactional
@@ -131,4 +143,5 @@ public class ContractDao {
   public List<ContractInfo> getAllContractInfos(Integer applicationId) {
     return queryFactory.select(contractBean).from(contract).where(contract.applicationId.eq(applicationId)).fetch();
   }
+
 }

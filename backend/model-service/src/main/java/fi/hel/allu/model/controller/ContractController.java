@@ -56,6 +56,11 @@ public class ContractController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/contract/final", method = RequestMethod.GET)
+  public ResponseEntity<byte[]> getFinalContract(@PathVariable int id) {
+    return new ResponseEntity<>(contractDao.getFinalContract(id), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/contract/info", method = RequestMethod.PUT)
   public ResponseEntity<Void> updateContractInfo(@PathVariable Integer id, @RequestBody ContractInfo contractInfo) {
     contractDao.updateContractInfo(id, contractInfo);

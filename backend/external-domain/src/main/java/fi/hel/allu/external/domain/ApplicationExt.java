@@ -112,7 +112,7 @@ public abstract class ApplicationExt {
     this.endTime = endTime;
   }
 
-  @ApiModelProperty(value = "Value indicating whether application is still pending on client side (and not yet ready to be handled in Allu)")
+  @ApiModelProperty(value = "Value indicating whether application is still pending on client side (and not yet ready to be handled in Allu)", required = true)
   public boolean isPendingOnClient() {
     return pendingOnClient;
   }
