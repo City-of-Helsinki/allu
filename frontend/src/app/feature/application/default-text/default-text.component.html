@@ -1,11 +1,11 @@
 <form [formGroup]="form">
   <allu-card>
-    <mat-card-title>{{'terms.title' | translation}}</mat-card-title>
+    <mat-card-title>{{[textType, 'title'] | translation}}</mat-card-title>
     <mat-card-content>
       <div class="row">
         <div *ngIf="!readonly" class="col s6">
           <mat-form-field class="input-full-width">
-            <mat-select class="input-full-width" [placeholder]="'terms.selectTerm' | translation">
+            <mat-select class="input-full-width" [placeholder]="[textType, 'selectTerm'] | translation">
               <mat-option *ngFor="let defaultText of defaultTexts"
                           [value]="defaultText.text"
                           (click)="addDefaultText(defaultText.text)">
@@ -21,8 +21,8 @@
         </div>
         <div class="col s12">
           <mat-form-field class="input-full-width">
-            <textarea matInput matTextareaAutosize formControlName="terms"
-                      [placeholder]="'terms.applicationTerms' | translation"></textarea>
+            <textarea matInput matTextareaAutosize [formControlName]="textType"
+                      [placeholder]="[textType, 'applicationTerms'] | translation"></textarea>
           </mat-form-field>
         </div>
       </div>

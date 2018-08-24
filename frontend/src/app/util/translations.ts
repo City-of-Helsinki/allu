@@ -446,10 +446,15 @@ export const translations = {
     applicationsAdded: 'Hakemukset lisätty koriin',
     applicationRemoved: 'Hakemus poistettu korista'
   },
-  terms: {
+  TERMS: {
     title: 'Ehdot',
     selectTerm: 'Valitse ehto',
     applicationTerms: 'Hakemuksen ehdot'
+  },
+  OTHER: {
+    title: 'Päätöksen perustelut',
+    selectTerm: 'Valitse perustelu',
+    applicationTerms: 'Päätöksen perustelut'
   },
   informationRequestResponse: {
     error: {
@@ -898,6 +903,7 @@ export const translations = {
       SEWAGE_PIPE: 'Jäteputki',
       GEOTHERMAL_WELL: 'Maalämpökaivo',
       GEOTECHNICAL_OBSERVATION_POST: 'Geotekninen tarkkailupiste',
+      TERMS: 'Ehdot',
       OTHER: 'Yleisesti/muut'
     }
   },

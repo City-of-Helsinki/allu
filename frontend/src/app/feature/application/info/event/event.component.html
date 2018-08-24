@@ -254,8 +254,10 @@
     <div fxFlex>
       <default-text [form]="applicationForm"
                     [applicationType]="application.typeEnum"
-                    [terms]="application.extension.terms"
-                    [readonly]="readonly"></default-text>
+                    [texts]="application.extension.terms"
+                    [readonly]="readonly"
+                    [textType]="'TERMS'"
+                    [includeTypes]="['TERMS']"></default-text>
     </div>
   </div>
 

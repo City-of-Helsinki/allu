@@ -20,13 +20,15 @@ import {switchMap} from 'rxjs/internal/operators';
 export class DefaultTextComponent implements OnInit {
 
   @Input() form: FormGroup;
-  @Input() terms: string;
+  @Input() texts: string;
   @Input() applicationType: ApplicationType;
   @Input() readonly: boolean;
+  @Input() textType: string;
+  @Input() includeTypes: Array<string>;
 
   defaultTexts: Array<DefaultText> = [];
 
-  private termsControl: FormControl;
+  private textsControl: FormControl;
   private dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
   constructor(private fb: FormBuilder,
@@ -35,24 +37,24 @@ export class DefaultTextComponent implements OnInit {
               private notification: NotificationService) {}
 
   ngOnInit(): void {
-    this.termsControl = this.fb.control({value: this.terms, disabled: this.readonly});
-    this.form.addControl('terms', this.termsControl);
+    this.textsControl = this.fb.control({value: this.texts, disabled: this.readonly});
+    this.form.addControl(this.textType, this.textsControl);
     this.defaultTextService.load(this.applicationType).subscribe(
-      dts => this.defaultTexts = dts,
+      dts => this.defaultTexts = this.filterDefaultTexts(dts),
       err => this.notification.errorInfo(err)
     );
   }
 
   addDefaultText(text: string) {
-    let textValue = this.termsControl.value;
+    let textValue = this.textsControl.value;
     textValue = Some(textValue).map(tv => tv + ' ' + text).orElse(text);
-    this.termsControl.patchValue(textValue);
+    this.textsControl.patchValue(textValue);
   }
 
   editDefaultTexts() {
     this.dialogRef = this.dialog.open<DefaultTextModalComponent>(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
     const comp = this.dialogRef.componentInstance;
-    comp.type = DefaultTextType.OTHER;
+    comp.type = DefaultTextType[this.textType];
     comp.applicationType = this.applicationType;
 
     this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
@@ -62,10 +64,17 @@ export class DefaultTextComponent implements OnInit {
         switchMap(() => this.defaultTextService.load(this.applicationType))
       ).subscribe(
         texts => {
-          this.defaultTexts = texts;
+          this.defaultTexts = this.filterDefaultTexts(texts);
           this.notification.success(findTranslation('defaultText.actions.saved'));
         },
         err => this.notification.errorInfo(err));
     });
+  }
+
+  private filterDefaultTexts(texts: Array<DefaultText>): Array<DefaultText> {
+    if (this.includeTypes) {
+      return texts.filter(dt => this.includeTypes.includes(DefaultTextType[dt.type]));
+    }
+    return texts;
   }
 }

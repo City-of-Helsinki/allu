@@ -13,5 +13,6 @@ public enum DefaultTextType {
   SEWAGE_PIPE, // Jäteputki
   GEOTHERMAL_WELL, // Maalämpökaivo
   GEOTECHNICAL_OBSERVATION_POST, // Geotekninen tarkkailupiste
+  TERMS, // Ehdot
   OTHER // Yleisesti/muut
 }

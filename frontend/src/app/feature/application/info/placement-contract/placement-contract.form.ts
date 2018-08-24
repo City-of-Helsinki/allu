@@ -11,7 +11,7 @@ export class PlacementContractForm implements ApplicationForm {
     public calculatedPrice?: number,
     public additionalInfo?: string,
     public contractText?: string,
-    public terms?: string,
+    public TERMS?: string,
     public terminationDate?: Date
   ) {}
 
@@ -20,7 +20,7 @@ export class PlacementContractForm implements ApplicationForm {
     placementContract.propertyIdentificationNumber = form.propertyIdentificationNumber,
     placementContract.additionalInfo = form.additionalInfo;
     placementContract.contractText = form.contractText;
-    placementContract.terms = form.terms;
+    placementContract.terms = form.TERMS;
     placementContract.terminationDate = form.terminationDate;
     return placementContract;
   }
