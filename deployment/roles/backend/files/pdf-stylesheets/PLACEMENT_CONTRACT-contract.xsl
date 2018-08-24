@@ -76,18 +76,37 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <h2>Perittävät maksut</h2>
           <xsl:choose>
             <xsl:when test="data/notBillable = 'false'">
-              <p>
-                <!-- [Hinta] -->
-                <xsl:value-of select="data/totalRent"/>
-                <!-- alv 24 % tai alv 0 %, riippuen asiakkaasta -->
-                 + ALV <xsl:value-of select="data/vatPercentage"/> %
-              </p>
-              <!-- Hinnan peruste tyyppikohtaisesti. Erillinen lista -->
-              <!-- Confluencessa: -->
-              <p class="space-above">
-                <!-- [Hinnan peruste, raakaa HTML:ää] -->
-                <xsl:value-of select="data/priceBasisText" disable-output-escaping="yes"/>
-              </p>
+              <div class="charge-info">
+                <xsl:for-each select="data/chargeInfoEntries">
+                  <div class="row">
+                    <span class="c1">
+                      <xsl:if test="./level > 0">
+                        <span class="up-arrow" style="padding-left: {level}em"></span>
+                      </xsl:if>
+                      <xsl:value-of select="text"/>
+                      <xsl:for-each select="explanation">
+                        <div class="explanation"><xsl:value-of select="."/></div>
+                      </xsl:for-each>
+                    </span>
+                    <span class="c2">
+                      <xsl:value-of select="quantity"/>
+                    </span>
+                    <span class="c3">
+                      <xsl:value-of select="unitPrice"/>
+                    </span>
+                    <span class="c4">
+                      <xsl:value-of select="netPrice"/>
+                    </span>
+                  </div>
+                </xsl:for-each>
+
+                <div class="sum-row">
+                  <span class="c1">YHTEENSÄ</span>
+                  <span class="c2"></span>
+                  <span class="c3"></span>
+                  <span class="c4"><xsl:value-of select="data/totalRent"/></span>
+                </div>
+              </div>
             </xsl:when>
             <xsl:otherwise>
               <p>Korvauksetta.</p>
