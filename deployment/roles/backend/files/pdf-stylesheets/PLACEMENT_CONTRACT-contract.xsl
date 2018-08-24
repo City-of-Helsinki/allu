@@ -29,7 +29,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="unboxed">
         <h2>Osapuolet</h2>
-        <p>Helsingin kaupunki</p>
+        <p class="space-above">Helsingin kaupunki</p>
         <section class="half-left">
           <!-- <p>[Hakijan nimi], [Y-tunnus]<br/>[Osoite, postinumero, toimipaikka]<br/>
             [Sähköpostiosoite, puhelin]</p> -->
@@ -80,6 +80,21 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
         </section>
       </div>
+
+      <xsl:if test="data/additionalConditions">
+        <div class="unboxed">
+          <section>
+            <h2>Sopimuksen lisäehdot</h2>
+              <p class="space-above"> </p>
+              <xsl:for-each select="data/additionalConditions">
+                <p>
+                  <!-- [Ehtokentän teksti]  -->
+                  <xsl:value-of select="."/>
+                </p>
+              </xsl:for-each>
+          </section>
+        </div>
+      </xsl:if>
 
       <div class="unboxed">
         <section>
