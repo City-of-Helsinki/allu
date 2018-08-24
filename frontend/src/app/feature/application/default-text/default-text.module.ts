@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {AlluCommonModule} from '../../common/allu-common.module';
-import {TermsComponent} from './terms.component';
+import {DefaultTextComponent} from './default-text.component';
 
 @NgModule({
   imports: [
@@ -11,12 +11,12 @@ import {TermsComponent} from './terms.component';
     AlluCommonModule
   ],
   declarations: [
-    TermsComponent
+    DefaultTextComponent
   ],
   providers: [
   ],
   exports: [
-    TermsComponent
+    DefaultTextComponent
   ]
 })
-export class TermsModule {}
+export class DefaultTextModule {}

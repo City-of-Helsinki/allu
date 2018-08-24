@@ -30,7 +30,7 @@ import {TagBarModule} from './tagbar/tagbar.module';
 import {AttachmentModule} from './attachment/attachment.module';
 import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-arrangement.component';
 import {PlacementContractComponent} from './info/placement-contract/placement-contract.component';
-import {TermsModule} from './terms/terms.module';
+import {DefaultTextModule} from './default-text/default-text.module';
 import {AreaRentalComponent} from './info/area-rental/area-rental.component';
 import {DistributionModule} from './distribution/distribution.module';
 import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
@@ -78,7 +78,7 @@ import {DecisionModule} from '@feature/decision/decision.module';
     TagBarModule,
     AttachmentModule,
     HistoryModule,
-    TermsModule,
+    DefaultTextModule,
     DistributionModule,
     InvoicingModule,
     CustomerRegistryModule,

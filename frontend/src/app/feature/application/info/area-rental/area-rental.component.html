@@ -137,8 +137,8 @@
 
   <div class="row" *ngIf="showTerms">
     <div class="col s12">
-      <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms"
-             [readonly]="readonly"></terms>
+      <default-text [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms"
+                    [readonly]="readonly"></default-text>
     </div>
   </div>
 

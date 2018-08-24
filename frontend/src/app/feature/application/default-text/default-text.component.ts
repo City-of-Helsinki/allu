@@ -13,11 +13,11 @@ import {DefaultTextService} from '../../../service/application/default-text.serv
 import {switchMap} from 'rxjs/internal/operators';
 
 @Component({
-  selector: 'terms',
-  templateUrl: './terms.component.html',
+  selector: 'default-text',
+  templateUrl: './default-text.component.html',
   styleUrls: []
 })
-export class TermsComponent implements OnInit {
+export class DefaultTextComponent implements OnInit {
 
   @Input() form: FormGroup;
   @Input() terms: string;

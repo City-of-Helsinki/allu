@@ -252,10 +252,10 @@
 
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
-      <terms [form]="applicationForm"
-             [applicationType]="application.typeEnum"
-             [terms]="application.extension.terms"
-             [readonly]="readonly"></terms>
+      <default-text [form]="applicationForm"
+                    [applicationType]="application.typeEnum"
+                    [terms]="application.extension.terms"
+                    [readonly]="readonly"></default-text>
     </div>
   </div>
 
