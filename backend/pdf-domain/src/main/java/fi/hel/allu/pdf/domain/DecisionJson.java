@@ -93,7 +93,7 @@ public class DecisionJson {
   private List<ChargeInfoTexts> chargeInfoEntries;
   private Integer sectionNumber;
   private List<KindWithSpecifiers> kinds;
-  private String contractText;
+  private List<String> contractText;
   private String applicantName;
   private String identificationNumber;
   private String workPurpose;
@@ -605,11 +605,11 @@ public class DecisionJson {
     this.kinds = kinds;
   }
 
-  public String getContractText() {
+  public List<String> getContractText() {
     return contractText;
   }
 
-  public void setContractText(String contractText) {
+  public void setContractText(List<String> contractText) {
     this.contractText = contractText;
   }
 

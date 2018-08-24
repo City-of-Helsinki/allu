@@ -52,22 +52,32 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
         <section>
           <p class="space-above">Tällä sopimuksella <xsl:value-of select="data/decisionId"/> sovitaan
-          <xsl:for-each select="data/kinds">
-            <xsl:value-of select="kind" />
-            <xsl:if test="./specifiers != ''">
-             (
-              <xsl:for-each select="./specifiers">
-                <xsl:value-of select="." />
-                <xsl:if test="position() != last()">
-                    <xsl:text>, </xsl:text>
-                </xsl:if>
-              </xsl:for-each>
-              )
-            </xsl:if>
-          </xsl:for-each>
-            sijoittamisesta Helsingin kaupungin omistamalle ja hallitsemalle yleiselle alueelle.</p>
+            <xsl:for-each select="data/kinds">
+              <xsl:value-of select="kind" />
+              <xsl:if test="./specifiers != ''">
+               (
+                <xsl:for-each select="./specifiers">
+                  <xsl:value-of select="." />
+                  <xsl:if test="position() != last()">
+                      <xsl:text>, </xsl:text>
+                  </xsl:if>
+                </xsl:for-each>
+                )
+              </xsl:if>
+            </xsl:for-each>
+            sijoittamisesta Helsingin kaupungin omistamalle ja hallitsemalle yleiselle alueelle.
+          </p>
 
-          <p class="space-above"><xsl:value-of select="data/contractText"/></p>
+          <xsl:if test="data/contractText">
+            <p class="space-above"> </p>
+          </xsl:if>
+
+          <xsl:for-each select="data/contractText">
+            <p>
+              <xsl:value-of select="."/>
+            </p>
+          </xsl:for-each>
+
         </section>
       </div>
 

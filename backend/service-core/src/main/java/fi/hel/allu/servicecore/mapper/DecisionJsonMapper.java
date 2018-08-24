@@ -204,6 +204,7 @@ public class DecisionJsonMapper {
         .map(a -> Arrays.stream(a)).map(s -> s.collect(Collectors.toList()))
         .orElse(Collections.emptyList());
   }
+
   /*
    * Read application's charge basis entries, order them, and generate matching
    * charge info texts.
@@ -419,7 +420,8 @@ public class DecisionJsonMapper {
     PlacementContractJson placementContract = (PlacementContractJson)applicationJson.getExtension();
     if (placementContract != null) {
       decisionJson.setSectionNumber(placementContract.getSectionNumber());
-      decisionJson.setContractText(placementContract.getContractText());
+      decisionJson.setContractText(splitToList(Optional.of(placementContract.getContractText())));
+
     }
   }
 
