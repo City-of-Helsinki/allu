@@ -420,7 +420,7 @@ public class DecisionJsonMapper {
     PlacementContractJson placementContract = (PlacementContractJson)applicationJson.getExtension();
     if (placementContract != null) {
       decisionJson.setSectionNumber(placementContract.getSectionNumber());
-      decisionJson.setContractText(splitToList(Optional.of(placementContract.getContractText())));
+      decisionJson.setContractText(splitToList(Optional.ofNullable(placementContract.getContractText())));
 
     }
   }
