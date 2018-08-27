@@ -8,7 +8,7 @@ export class ExternalUserForm {
     public emailAddress?: string,
     public active?: boolean,
     public assignedRoles?: Array<string>,
-    public token?: string,
+    public password?: string,
     public expirationTime?: Date,
     public connectedCustomers?: Array<number>
   ) {}
@@ -20,7 +20,7 @@ export class ExternalUserForm {
     user.name = form.name;
     user.emailAddress = form.emailAddress;
     user.active = form.active;
-    user.token = form.token;
+    user.password = form.password;
     user.uiAssignedRoles = form.assignedRoles;
     user.expirationTime = form.expirationTime;
     user.connectedCustomers = form.connectedCustomers;
@@ -35,7 +35,7 @@ export class ExternalUserForm {
       user.emailAddress,
       user.active,
       user.uiAssignedRoles,
-      user.token,
+      user.password,
       user.expirationTime,
       user.connectedCustomers
     );

@@ -8,14 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationProperties {
 
-  private String jwtSecret;
-  private String serviceAuth;
+  private final String jwtSecret;
+  private final String serviceAuth;
+  private final Integer jwtExpirationTime;
 
   @Autowired
   public ApplicationProperties(@Value("${jwt.secret}") @NotEmpty String jwtSecret,
-      @Value("${service.authkey}") @NotEmpty String serviceAuth) {
+      @Value("${service.authkey}") @NotEmpty String serviceAuth,
+      @Value("${jwt.expirationtime}") @NotEmpty Integer jwtExpirationTime) {
     this.jwtSecret = jwtSecret;
     this.serviceAuth = serviceAuth;
+    this.jwtExpirationTime = jwtExpirationTime;
   }
 
   /**
@@ -34,5 +37,12 @@ public class ApplicationProperties {
    */
   public String getServiceAuth() {
     return serviceAuth;
+  }
+
+  /**
+   * Gets JWT expiration time in minutes
+   */
+  public Integer getJwtExpirationTime() {
+    return jwtExpirationTime;
   }
 }

@@ -879,6 +879,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/externalusers");
   }
 
+  public String getExternalUserSetPasswordUrl() {
+    return getModelServiceUrl("/externalusers/{id}/password");
+  }
+
+
   /**
    * @return url for updating external users to model service.
    */

@@ -48,10 +48,17 @@ public class ExternalUserController {
   }
 
   @RequestMapping(method = RequestMethod.PUT)
-  public ResponseEntity updateUser(@RequestBody ExternalUser user) throws NoSuchEntityException {
+  public ResponseEntity<Void> updateUser(@RequestBody ExternalUser user) throws NoSuchEntityException {
     externalUserDao.update(user);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/password", method = RequestMethod.PUT)
+  public ResponseEntity<Void> setPassword(@PathVariable Integer id, @RequestBody String password) throws NoSuchEntityException {
+    externalUserDao.setPassword(id, password);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 
   @RequestMapping(value = "/{id}/lastLogin", method = RequestMethod.PUT)
   public void setLastLogin(@PathVariable int id, @RequestBody ZonedDateTime loginTime) {

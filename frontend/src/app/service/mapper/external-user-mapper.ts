@@ -18,7 +18,7 @@ export class ExternalUserMapper {
         Some(backendUser.assignedRoles)
           .map(roles => roles.map(role => ExternalRoleType[role]))
           .orElse([]),
-        backendUser.token,
+        '',
         TimeUtil.dateFromBackend(backendUser.expirationTime),
         backendUser.connectedCustomers
       ) : undefined;
@@ -34,7 +34,7 @@ export class ExternalUserMapper {
       active: user.active,
       lastLogin: TimeUtil.dateToBackend(user.lastLogin),
       assignedRoles: user.uiAssignedRoles,
-      token: user.token,
+      password: user.password,
       expirationTime: TimeUtil.dateToBackend(user.expirationTime),
       connectedCustomers: user.connectedCustomers
     } : undefined;

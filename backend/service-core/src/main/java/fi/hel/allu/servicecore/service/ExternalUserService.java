@@ -1,32 +1,36 @@
 package fi.hel.allu.servicecore.service;
 
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ExternalUserJson;
 import fi.hel.allu.servicecore.mapper.ExternalUserMapper;
-import fi.hel.allu.servicecore.security.TokenUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ExternalUserService {
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
+  private PasswordEncoder passwordEncoder;
 
   @Autowired
-  public ExternalUserService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
+  public ExternalUserService(ApplicationProperties applicationProperties, RestTemplate restTemplate, PasswordEncoder passwordEncoder) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.passwordEncoder = passwordEncoder;
   }
 
   public List<ExternalUserJson> findAllUsers() {
@@ -47,24 +51,28 @@ public class ExternalUserService {
     return ExternalUserMapper.mapToExternalUserJson(userResults.getBody());
   }
 
-  public ExternalUserJson addUser(String jwtSecret, ExternalUserJson userJson) {
+  public ExternalUserJson addUser(ExternalUserJson userJson) {
     if (userJson.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
     ExternalUser user = ExternalUserMapper.mapToModelExternalUser(userJson);
-    user.setToken(createToken(jwtSecret, userJson));
     ResponseEntity<ExternalUser> userResults = restTemplate.postForEntity(
         applicationProperties.getExternalUserCreateUrl(), user, ExternalUser.class);
+    setPassword(userJson, userResults.getBody().getId());
     return ExternalUserMapper.mapToExternalUserJson(userResults.getBody());
   }
 
-  public void updateUser(String jwtSecret, ExternalUserJson userJson) {
+  protected void setPassword(ExternalUserJson userJson, Integer externalUserId) {
+    restTemplate.exchange(applicationProperties.getExternalUserSetPasswordUrl(), HttpMethod.PUT,
+        new HttpEntity<>(passwordEncoder.encode(userJson.getPassword())), Void.class, externalUserId);
+  }
+
+  public void updateUser(ExternalUserJson userJson) {
     ExternalUser user = ExternalUserMapper.mapToModelExternalUser(userJson);
-    ExternalUserJson existingUser = findUserById(userJson.getId());
-    if (hasTokenChanged(userJson, existingUser)) {
-      user.setToken(createToken(jwtSecret, userJson));
-    }
     restTemplate.put(applicationProperties.getExternalUserUpdateUrl(), user);
+    if (StringUtils.isNotBlank(userJson.getPassword())) {
+      setPassword(userJson, user.getId());
+    }
   }
 
   public void setLastLogin(int userId, ZonedDateTime loginTime) {
@@ -73,23 +81,5 @@ public class ExternalUserService {
 
   private List<ExternalUserJson> mapUsers(ExternalUser[] users) {
     return Arrays.stream(users).map(u -> ExternalUserMapper.mapToExternalUserJson(u)).collect(Collectors.toList());
-  }
-
-  private String createToken(String jwtSecret, ExternalUserJson externalUserJson) {
-    TokenUtil tokenUtil = new TokenUtil(jwtSecret);
-    Map<String, Object> roleMap = Collections.singletonMap(TokenUtil.PROPERTY_ROLE_ALLU_PUBLIC, externalUserJson.getAssignedRoles());
-    return tokenUtil.createToken(externalUserJson.getExpirationTime(), externalUserJson.getUsername(), roleMap);
-  }
-
-  private boolean hasTokenChanged(ExternalUserJson updatedUser, ExternalUserJson existingUser) {
-    if (!existingUser.getExpirationTime().equals(updatedUser.getExpirationTime())) {
-      return true;
-    }
-    if (updatedUser.getAssignedRoles().size() != existingUser.getAssignedRoles().size() ||
-        !updatedUser.getAssignedRoles().containsAll(existingUser.getAssignedRoles())) {
-      return true;
-    }
-
-    return false;
   }
 }

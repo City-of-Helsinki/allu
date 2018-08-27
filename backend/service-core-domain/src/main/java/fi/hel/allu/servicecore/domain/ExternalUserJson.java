@@ -1,26 +1,39 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.domain.types.ExternalRoleType;
-import fi.hel.allu.common.util.TimeUtil;
-import org.hibernate.validator.constraints.NotBlank;
-
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import fi.hel.allu.common.domain.types.ExternalRoleType;
+import fi.hel.allu.common.util.TimeUtil;
 
 /**
  * User of the external-service. Conceptually different than <code>UserJson</code>, because external user is only used in the external interface
  * and not as Allu user available for user interface.
  */
 public class ExternalUserJson {
+  public static final int PASSWORD_MIN_LENGTH = 20;
+  public interface Create {
+  }
+
   private Integer id;
-  @NotBlank(message = "{externaluser.username}")
+  @NotBlank(message = "{externaluser.username}", groups = {Create.class, Default.class})
   private String username;
-  @NotBlank(message = "{externaluser.name}")
+  @NotBlank(message = "{externaluser.name}", groups = {Create.class, Default.class})
   private String name;
   private String emailAddress;
-  private String token;
+  @NotEmpty(message = "{externaluser.password.required}", groups = Create.class)
+  @Size(message = "{externaluser.password.length}", min = PASSWORD_MIN_LENGTH, groups = {Create.class, Default.class})
+  private String password;
   private boolean active;
+  @NotNull(message = "{externaluser.expirationTime}", groups = {Create.class, Default.class})
   private ZonedDateTime expirationTime = TimeUtil.millisToZonedDateTime(0);
   private ZonedDateTime lastLogin;
   private List<ExternalRoleType> assignedRoles = Collections.emptyList();
@@ -35,7 +48,6 @@ public class ExternalUserJson {
       String username,
       String name,
       String emailAddress,
-      String token,
       boolean active,
       ZonedDateTime expirationTime,
       ZonedDateTime lastLogin,
@@ -45,7 +57,6 @@ public class ExternalUserJson {
     this.username = username;
     this.name = name;
     this.emailAddress = emailAddress;
-    this.token = token;
     this.active = active;
     setExpirationTime(expirationTime);
     this.lastLogin = lastLogin;
@@ -98,19 +109,6 @@ public class ExternalUserJson {
 
   public void setEmailAddress(String emailAddress) {
     this.emailAddress = emailAddress;
-  }
-
-  /**
-   * Security token of the external user.
-   *
-   * @return  Security token of the external user.
-   */
-  public String getToken() {
-    return token;
-  }
-
-  public void setToken(String token) {
-    this.token = token;
   }
 
   /**
@@ -179,5 +177,13 @@ public class ExternalUserJson {
 
   public void setConnectedCustomers(List<Integer> connectedCustomers) {
     this.connectedCustomers = connectedCustomers;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 }

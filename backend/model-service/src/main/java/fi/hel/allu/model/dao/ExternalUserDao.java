@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.ResultTransformer;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQuery;
@@ -12,6 +13,8 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.model.postgres.ExceptionResolver;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -23,12 +26,19 @@ import java.util.*;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QExternalUser.externalUser;
 import static fi.hel.allu.QExternalUserCustomer.externalUserCustomer;
 import static fi.hel.allu.QExternalUserRole.externalUserRole;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class ExternalUserDao {
+
+
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
+      Arrays.asList(externalUser.password);
+
   @Autowired
   private SQLQueryFactory queryFactory;
 
@@ -84,7 +94,8 @@ public class ExternalUserDao {
   @Transactional
   public void update(ExternalUser userData) throws NoSuchEntityException {
     try {
-      long changed = queryFactory.update(externalUser).populate(userData).where(externalUser.id.eq(userData.getId())).execute();
+      long changed = queryFactory.update(externalUser).populate(userData, new ExcludingMapper(WITH_NULL_BINDINGS,
+          UPDATE_READ_ONLY_FIELDS)).where(externalUser.id.eq(userData.getId())).execute();
       if (changed == 0) {
         throw new NoSuchEntityException("Failed to update user", Integer.toString(userData.getId()));
       }
@@ -97,6 +108,11 @@ public class ExternalUserDao {
       }
       throw e;
     }
+  }
+
+  @Transactional
+  public void setPassword(int id, String password) {
+    queryFactory.update(externalUser).set(externalUser.password, password).where(externalUser.id.eq(id)).execute();
   }
 
   @Transactional
@@ -128,7 +144,7 @@ public class ExternalUserDao {
         externalUser.username,
         externalUser.name,
         externalUser.emailAddress,
-        externalUser.token,
+        externalUser.password,
         externalUser.active,
         externalUser.expirationTime,
         externalUser.lastLogin,

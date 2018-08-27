@@ -10,7 +10,7 @@ export class ExternalUser {
     public active?: boolean,
     public lastLogin?: Date,
     public assignedRoles: Array<ExternalRoleType> = [],
-    public token?: string,
+    public password?: string,
     public expirationTime?: Date,
     public connectedCustomers?: Array<number>) {}
 

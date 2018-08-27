@@ -1,8 +1,6 @@
 package fi.hel.allu.external.config;
 
-import fi.hel.allu.external.service.ServerTokenAuthenticationService;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.security.StatelessAuthenticationFilter;
+import org.eclipse.jetty.util.security.Password;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import fi.hel.allu.external.service.ExternalUserDetailService;
+import fi.hel.allu.external.service.ServerTokenAuthenticationService;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.security.StatelessAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +29,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private ServerTokenAuthenticationService tokenAuthenticationService;
   @Autowired
+  private ExternalUserDetailService externalUserDetailService;
+  @Autowired
   private ApplicationProperties applicationProperties;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -43,9 +52,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    UserDetailsService uds = (String username) ->
-    { throw new UnsupportedOperationException("UserDetailsService.loadUserByUsername not expected to be called ever"); };
-    auth.userDetailsService(uds);
+    auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder);
+  }
+
+  @Override
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return externalUserDetailService;
   }
 
   @Bean
@@ -53,4 +66,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
   }
+
 }

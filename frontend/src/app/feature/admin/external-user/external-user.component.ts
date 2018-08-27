@@ -50,7 +50,7 @@ export class ExternalUserComponent implements OnInit {
       emailAddress: [undefined, Validators.email],
       active: [true],
       assignedRoles: [[]],
-      token: [{value: undefined, disabled: true}],
+      password: [undefined, Validators.minLength(20)],
       expirationTime: [undefined, Validators.required],
       customerName: [undefined],
       connectedCustomers: this.connectedCustomersCtrl
@@ -81,17 +81,13 @@ export class ExternalUserComponent implements OnInit {
   save(): void {
     const user = ExternalUserForm.to(this.userForm.getRawValue());
     this.submitted = true;
-    const currentCustomerToken = this.userForm.getRawValue().token;
     this.userHub.saveUser(user).pipe(
       map(savedUser => ExternalUserForm.from(savedUser))
     ).subscribe(savedUser => {
       this.submitted = false;
       this.userForm.patchValue(savedUser);
 
-      let message = translations.externalUser.actions.saved;
-      if (currentCustomerToken !== savedUser.token) {
-        message += '<br>' + translations.externalUser.actions.customerTokenGenerated;
-      }
+      const message = translations.externalUser.actions.saved;
       this.notification.success(message);
     });
   }

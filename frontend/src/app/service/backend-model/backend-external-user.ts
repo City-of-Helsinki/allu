@@ -6,7 +6,7 @@ export interface BackendExternalUser {
   active: boolean;
   lastLogin: string;
   assignedRoles: Array<string>;
-  token: string;
+  password: string;
   expirationTime: string;
   connectedCustomers?: Array<number>;
 }

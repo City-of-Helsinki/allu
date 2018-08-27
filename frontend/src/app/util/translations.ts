@@ -942,10 +942,6 @@ export const translations = {
     actions: {
       saved: 'Rajapintakäyttäjä tallennettu.',
       customerTokenGenerated: 'Asiakasavain luotiin uudestaan. <br> Luotu avain tulee toimittaa asiakkaalle kirjatumista varten.'
-    },
-    tooltip: {
-      tokenChanges: 'Alla olevien kenttiä muokkaus aiheuttaa asiakkaan avaimen uudelleen luomisen. ' +
-      'Uusi avain on toimitettava asiakkaalle kirjautumista varten.'
     }
   },
   storedFilter: {

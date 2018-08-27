@@ -4,14 +4,14 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import fi.hel.allu.external.domain.LoginExt;
 
 /**
  * Base class for all external API tests
@@ -19,10 +19,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 @TestPropertySource(locations="classpath:test.properties")
 public class BaseExternalApiTest {
 
+  private static final String LOGIN_PATH = "/login";
   @Value("${ext.service.baseurl}")
   private String baseUrl;
-  @Value("${service.token}")
-  private String bearerToken;
+  @Value("${service.password}")
+  private String password;
+  @Value("${service.user}")
+  private String username;
+
+  private String bearerToken = null;
 
   protected RestTemplate restTemplate = new RestTemplate();
 
@@ -43,6 +48,9 @@ public class BaseExternalApiTest {
   }
 
   protected void setAuthorization(HttpHeaders headers) {
+    if (bearerToken == null) {
+      login();
+    }
     headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken);
   }
 
@@ -60,6 +68,15 @@ public class BaseExternalApiTest {
     MultiValueMap<String, T> params = new LinkedMultiValueMap<>();
     params.put(name, Collections.singletonList(value));
     return params;
+  }
+
+  private void login() {
+    ResponseEntity<String> response = restTemplate.exchange(
+        getExtServiceUrl(LOGIN_PATH),
+        HttpMethod.POST,
+        new HttpEntity<>(new LoginExt(username, password)),
+        String.class);
+    this.bearerToken = response.getBody();
   }
 
 

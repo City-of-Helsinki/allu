@@ -3,6 +3,7 @@ package fi.hel.allu.external.service;
 import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.external.config.ApplicationProperties;
+import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.servicecore.domain.ExternalUserJson;
 import fi.hel.allu.servicecore.security.TokenUtil;
 import fi.hel.allu.servicecore.security.UserAuthentication;
@@ -63,11 +64,11 @@ public class ServerTokenAuthenticationService extends AuthenticationServiceInter
         }
         try {
           ExternalUserJson externalUser = externalUserService.findUserByUserName(user.getUsername());
-          if (externalUser.getToken().equals(parsedToken) && externalUser.getActive()) {
+          if (accountNotExpired(externalUser)) {
             externalUserService.setLastLogin(externalUser.getId(), ZonedDateTime.now());
             return new UserAuthentication(user);
           } else {
-            logger.warn("Attempted login with inactive user or not matching token. Username: {}", user.getUsername());
+            logger.warn("Attempted login with inactive user. Username: {}", user.getUsername());
           }
         } catch (NoSuchEntityException e) {
           logger.error("Login with valid token, but user is missing: {}", user.getUsername());
@@ -75,6 +76,10 @@ public class ServerTokenAuthenticationService extends AuthenticationServiceInter
       }
     }
     return null;
+  }
+
+  private boolean accountNotExpired(ExternalUserJson externalUser) {
+    return externalUser.getActive() && externalUser.getExpirationTime().isAfter(ZonedDateTime.now());
   }
 
   @Override

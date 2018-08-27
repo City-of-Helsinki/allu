@@ -16,7 +16,7 @@ public class ExternalUser {
   private String username;
   private String name;
   private String emailAddress;
-  private String token;
+  private String password;
   private boolean active;
   private ZonedDateTime expirationTime;
   private ZonedDateTime lastLogin;
@@ -32,13 +32,13 @@ public class ExternalUser {
       String username,
       String name,
       String emailAddress,
-      String token,
+      String password,
       boolean active,
       ZonedDateTime expirationTime,
       ZonedDateTime lastLogin,
       List<Integer> connectedCustomers) {
     // for QueryDSL Projections.constructor
-    this(id, username, name, emailAddress, token, active, expirationTime, lastLogin, Collections.emptyList(), connectedCustomers);
+    this(id, username, name, emailAddress, password, active, expirationTime, lastLogin, Collections.emptyList(), connectedCustomers);
   }
 
   public ExternalUser(
@@ -46,7 +46,7 @@ public class ExternalUser {
       String username,
       String name,
       String emailAddress,
-      String token,
+      String password,
       boolean active,
       ZonedDateTime expirationTime,
       ZonedDateTime lastLogin,
@@ -56,7 +56,7 @@ public class ExternalUser {
     setUsername(username);
     this.name = name;
     this.emailAddress = emailAddress;
-    this.token = token;
+    this.password = password;
     this.active = active;
     this.expirationTime = expirationTime;
     this.lastLogin = lastLogin;
@@ -109,19 +109,6 @@ public class ExternalUser {
 
   public void setEmailAddress(String emailAddress) {
     this.emailAddress = emailAddress;
-  }
-
-  /**
-   * Security token of the external user.
-   *
-   * @return  Security token of the external user.
-   */
-  public String getToken() {
-    return token;
-  }
-
-  public void setToken(String token) {
-    this.token = token;
   }
 
   /**
@@ -185,5 +172,13 @@ public class ExternalUser {
 
   public void setConnectedCustomers(List<Integer> connectedCustomers) {
     this.connectedCustomers = connectedCustomers;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 }
