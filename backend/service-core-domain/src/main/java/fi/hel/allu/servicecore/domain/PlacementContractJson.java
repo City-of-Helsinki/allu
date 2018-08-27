@@ -13,6 +13,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
   private String contractText;
   private ZonedDateTime terminationDate;
   private Integer sectionNumber;
+  private String rationale;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -67,5 +68,13 @@ public class PlacementContractJson extends ApplicationExtensionJson {
 
   public void setSectionNumber(Integer sectionNumber) {
     this.sectionNumber = sectionNumber;
+  }
+
+  public String getRationale() {
+    return rationale;
+  }
+
+  public void setRationale(String rationale) {
+    this.rationale = rationale;
   }
 }
