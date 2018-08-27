@@ -99,6 +99,7 @@ public class DecisionJson {
   private String workPurpose;
   private String trafficArrangements;
   private Boolean replacingDecision;
+  private List<String> rationale;
 
   private boolean frameAgreement;
   private boolean contractAsAttachment;
@@ -651,6 +652,14 @@ public class DecisionJson {
 
   public void setReplacingDecision(Boolean replacingDecision) {
     this.replacingDecision = replacingDecision;
+  }
+
+  public List<String> getRationale() {
+    return rationale;
+  }
+
+  public void setRationale(List<String> rationale) {
+    this.rationale = rationale;
   }
 
   public boolean isFrameAgreement() {

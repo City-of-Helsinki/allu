@@ -421,7 +421,7 @@ public class DecisionJsonMapper {
     if (placementContract != null) {
       decisionJson.setSectionNumber(placementContract.getSectionNumber());
       decisionJson.setContractText(splitToList(Optional.ofNullable(placementContract.getContractText())));
-
+      decisionJson.setRationale(splitToList(Optional.ofNullable(placementContract.getRationale())));
     }
   }
 
