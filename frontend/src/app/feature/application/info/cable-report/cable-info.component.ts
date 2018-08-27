@@ -28,7 +28,9 @@ export class CableInfoComponent implements OnInit {
   cableInfoForm: FormGroup;
   cableInfoEntries: FormArray;
   translations = translations;
-  cableInfoTypes = EnumUtil.enumValues(DefaultTextType);
+  cableInfoTypes = ['TELECOMMUNICATION', 'ELECTRICITY', 'WATER_AND_SEWAGE', 'DISTRICT_HEATING_COOLING',
+                    'GAS', 'UNDERGROUND_STRUCTURE', 'TRAMWAY', 'STREET_HEATING', 'SEWAGE_PIPE',
+                    'GEOTHERMAL_WELL', 'GEOTECHNICAL_OBSERVATION_POST', 'OTHER'];
   defaultTexts: DefaultTextMap = {};
   dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
