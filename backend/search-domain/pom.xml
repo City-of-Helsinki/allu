@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.github.wnameless</groupId>
             <artifactId>json-flattener</artifactId>
-            <version>RELEASE</version>
+            <version>0.5.0</version>
         </dependency>
     </dependencies>
 </project>
