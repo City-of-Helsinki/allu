@@ -9,6 +9,7 @@ import {SetContact, SetContacts} from '@feature/information-request/actions/info
 import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
 import {LoadByCustomer, LoadByCustomerSuccess} from '@feature/customerregistry/actions/contact-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'contacts-acceptance',
@@ -38,9 +39,9 @@ export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterView
       distinctUntilChanged()
     ).subscribe(id => {
       if (NumberUtil.isDefined(id)) {
-        this.store.dispatch(new LoadByCustomer(id));
+        this.store.dispatch(new LoadByCustomer(ActionTargetType.Applicant, id));
       } else {
-        this.store.dispatch(new LoadByCustomerSuccess([]));
+        this.store.dispatch(new LoadByCustomerSuccess(ActionTargetType.Applicant, []));
       }
     });
   }

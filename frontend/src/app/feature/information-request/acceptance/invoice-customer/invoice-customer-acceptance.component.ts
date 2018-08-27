@@ -5,6 +5,9 @@ import {FormBuilder} from '@angular/forms';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
 import {Customer} from '@model/customer/customer';
 import {SetInvoicingCustomer} from '@feature/information-request/actions/information-request-result-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import * as fromCustomerSearch from '@feature/customerregistry/reducers';
+import {Observable} from 'rxjs/index';
 
 @Component({
   selector: 'invoice-customer-acceptance',
@@ -14,6 +17,7 @@ import {SetInvoicingCustomer} from '@feature/information-request/actions/informa
 export class InvoiceCustomerAcceptanceComponent extends CustomerAcceptanceComponent {
 
   protected formName = 'invoiceCustomer';
+  protected actionTargetType = ActionTargetType.InvoicingCustomer;
 
   constructor(fb: FormBuilder, store: Store<fromRoot.State>) {
     super(fb, store);
@@ -21,5 +25,13 @@ export class InvoiceCustomerAcceptanceComponent extends CustomerAcceptanceCompon
 
   customerChanges(customer: Customer): void {
     this.store.dispatch(new SetInvoicingCustomer(customer));
+  }
+
+  getMatchingCustomers(): Observable<Customer[]> {
+    return this.store.select(fromCustomerSearch.getMatchingInvoicingCustomers);
+  }
+
+  getLoading(): Observable<boolean> {
+    return this.store.select(fromCustomerSearch.getInvoicingCustomersLoading);
   }
 }

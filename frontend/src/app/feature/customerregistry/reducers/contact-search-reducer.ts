@@ -1,5 +1,6 @@
 import {Contact} from '@model/customer/contact';
 import {ContactSearchActions, ContactSearchActionType} from '@feature/customerregistry/actions/contact-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export interface State {
   loading: boolean;
@@ -17,7 +18,7 @@ export const initialState: State = {
   matching: []
 };
 
-export function reducer(state: State = initialState, action: ContactSearchActions) {
+function reducer(state: State = initialState, action: ContactSearchActions) {
   switch (action.type) {
     case ContactSearchActionType.LoadByCustomer: {
       return {
@@ -62,6 +63,16 @@ export function reducer(state: State = initialState, action: ContactSearchAction
       return {...state};
     }
   }
+}
+
+export function createReducerFor(targetType: ActionTargetType) {
+  return function(state: State = initialState, action: ContactSearchActions) {
+    if (targetType === action.targetType) {
+      return reducer(state, action);
+    } else {
+      return state;
+    }
+  };
 }
 
 export const getMatching = (state: State) => state.matching;

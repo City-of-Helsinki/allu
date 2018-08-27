@@ -1,11 +1,10 @@
-import {Action} from '@ngrx/store';
 import {Customer} from '../../../model/customer/customer';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ErrorInfo} from '../../../service/error/error-info';
 import {CustomerSearchQuery} from '../../../service/customer/customer-search-query';
-import {Contact} from '../../../model/customer/contact';
-import {CustomerType} from '@model/customer/customer-type';
 import {CustomerSearchByType} from '@service/customer/customer-search-query';
+import {ActionWithTarget} from '@feature/allu/actions/action-with-target';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export enum CustomerSearchActionType {
   Search = '[CustomerSearch] Search customer',
@@ -14,28 +13,28 @@ export enum CustomerSearchActionType {
   SearchFailed = '[CustomerSearch] Search customer failed'
 }
 
-export class Search implements Action {
+export class Search implements ActionWithTarget {
   readonly type = CustomerSearchActionType.Search;
 
-  constructor(public payload: CustomerSearchQuery) {}
+  constructor(public targetType: ActionTargetType, public payload: CustomerSearchQuery) {}
 }
 
-export class SearchByType implements Action {
+export class SearchByType implements ActionWithTarget {
   readonly type = CustomerSearchActionType.SearchByType;
 
-  constructor(public payload: CustomerSearchByType) {}
+  constructor(public targetType: ActionTargetType, public payload: CustomerSearchByType) {}
 }
 
-export class SearchSuccess implements Action {
+export class SearchSuccess implements ActionWithTarget {
   readonly type = CustomerSearchActionType.SearchSuccess;
 
-  constructor(public payload: Customer[]) {}
+  constructor(public targetType: ActionTargetType, public payload: Customer[]) {}
 }
 
-export class SearchFailed implements ActionWithPayload<ErrorInfo> {
+export class SearchFailed implements ActionWithTarget, ActionWithPayload<ErrorInfo> {
   readonly type = CustomerSearchActionType.SearchFailed;
 
-  constructor(public payload: ErrorInfo) {}
+  constructor(public targetType: ActionTargetType, public payload: ErrorInfo) {}
 }
 
 export type CustomerSearchActions =

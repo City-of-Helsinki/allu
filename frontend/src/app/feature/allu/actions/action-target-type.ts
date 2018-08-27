@@ -1,4 +1,7 @@
 export enum ActionTargetType {
   Application = 'Application',
-  Project = 'Project'
+  Project = 'Project',
+  Customer = 'Customer', // Generic customer search used when no need for multiple simultaneus searches
+  Applicant = 'Applicant',
+  InvoicingCustomer = 'InvoicingCustomer'
 }

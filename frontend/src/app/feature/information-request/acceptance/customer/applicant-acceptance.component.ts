@@ -7,6 +7,9 @@ import {Customer} from '@model/customer/customer';
 import {SetCustomer, UseCustomerForInvoicing} from '@feature/information-request/actions/information-request-result-actions';
 import {map, takeUntil} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import * as fromCustomerSearch from '@feature/customerregistry/reducers';
+import {Observable} from 'rxjs/index';
 
 @Component({
   selector: 'applicant-acceptance',
@@ -15,6 +18,7 @@ import {CustomerRoleType} from '@model/customer/customer-role-type';
 })
 export class ApplicantAcceptanceComponent extends CustomerAcceptanceComponent {
   protected formName = 'applicant';
+  protected actionTargetType = ActionTargetType.Applicant;
   private useForInvoicingCtrl: FormControl;
 
   constructor(fb: FormBuilder, store: Store<fromRoot.State>) {
@@ -35,5 +39,13 @@ export class ApplicantAcceptanceComponent extends CustomerAcceptanceComponent {
 
   customerChanges(customer: Customer): void {
     this.store.dispatch(new SetCustomer(customer));
+  }
+
+  getMatchingCustomers(): Observable<Customer[]> {
+    return this.store.select(fromCustomerSearch.getMatchingApplicants);
+  }
+
+  getLoading(): Observable<boolean> {
+    return this.store.select(fromCustomerSearch.getApplicantsLoading);
   }
 }

@@ -11,6 +11,7 @@ import {SearchSuccess} from '../../../../src/app/feature/customerregistry/action
 import * as CodeSetAction from '../../../../src/app/feature/allu/actions/code-set-actions';
 import {By} from '@angular/platform-browser';
 import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'host',
@@ -100,7 +101,7 @@ describe('ApplicantAcceptanceComponent', () => {
     hostComp.oldCustomer = oldCustomer;
     hostComp.newCustomer = newCustomer;
 
-    store.dispatch(new SearchSuccess([existingCustomer1, existingCustomer2]));
+    store.dispatch(new SearchSuccess(ActionTargetType.Applicant, [existingCustomer1, existingCustomer2]));
     store.dispatch(new CodeSetAction.LoadSuccess(codeSet));
 
     fixture.detectChanges();
@@ -133,7 +134,7 @@ describe('ApplicantAcceptanceComponent', () => {
     expect(testedComponent.oldCustomer).toBeUndefined();
 
     testedComponent.ngOnInit();
-    store.dispatch(new SearchSuccess([existingCustomer1, existingCustomer2]));
+    store.dispatch(new SearchSuccess(ActionTargetType.Applicant, [existingCustomer1, existingCustomer2]));
     fixture.detectChanges();
 
     const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;

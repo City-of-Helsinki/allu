@@ -14,15 +14,15 @@ import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/materi
 import {InformationRequestModule} from '../information-request/information-request.module';
 import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
-import {reducers} from './reducers';
 import {CustomerSearchEffects} from './effects/customer-search-effects';
 import {ContactSearchEffects} from '@feature/customerregistry/effects/contact-search-effects';
+import {reducersProvider, reducersToken} from '@feature/customerregistry/reducers';
 
 @NgModule({
   imports: [
     RouterModule.forChild(customerRegistryRoutes),
     FormsModule,
-    StoreModule.forFeature('customer', reducers),
+    StoreModule.forFeature('customer', reducersToken),
     EffectsModule.forFeature([
       CustomerSearchEffects,
       ContactSearchEffects
@@ -48,6 +48,9 @@ import {ContactSearchEffects} from '@feature/customerregistry/effects/contact-se
     CustomerModalComponent,
     ContactModalComponent,
     CustomerInfoComponent
+  ],
+  providers: [
+    reducersProvider
   ],
   entryComponents: [
     CustomerModalComponent,

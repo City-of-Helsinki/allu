@@ -9,6 +9,7 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import {Search} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'contact-acceptance',
@@ -51,7 +52,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({});
     this.formArray.push(this.form);
 
-    this.matchingContacts$ = this.store.select(fromCustomerSearch.getMatchingContacts).pipe(
+    this.matchingContacts$ = this.store.select(fromCustomerSearch.getMatchingApplicantContacts).pipe(
       withLatestFrom(this.store.select(fromInformationRequest.getResultContacts).pipe(
         map(selected => selected.map(contact => contact.id))
       )),
@@ -63,7 +64,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
     this.searchForm.get('search').valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300)
-    ).subscribe(search => this.store.dispatch(new Search(search)));
+    ).subscribe(search => this.store.dispatch(new Search(ActionTargetType.Applicant, search)));
   }
 
   ngOnDestroy(): void {
@@ -85,9 +86,9 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
 
   private initialSearch(): void {
     const searchTerm = this.newContact.name ? this.newContact.name.toLocaleLowerCase() : '';
-    this.store.select(fromCustomerSearch.getContactsLoaded).pipe(
+    this.store.select(fromCustomerSearch.getApplicantContactsLoaded).pipe(
       filter(loaded => loaded),
-      switchMap(() => this.store.select(fromCustomerSearch.getAvailableContacts)),
+      switchMap(() => this.store.select(fromCustomerSearch.getAvailableApplicantContacts)),
       map(contacts => contacts.filter(c => c.name.toLocaleLowerCase().startsWith(searchTerm))),
       map(contacts => ArrayUtil.first(contacts)),
     ).subscribe(matching => this.selectReferenceContact(matching));

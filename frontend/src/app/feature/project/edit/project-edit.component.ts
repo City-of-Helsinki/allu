@@ -19,6 +19,7 @@ import {Application} from '../../../model/application/application';
 import {ProjectService} from '../../../service/project/project.service';
 import {NumberUtil} from '../../../util/number.util';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'project-edit',
@@ -116,7 +117,7 @@ export class ProjectEditComponent {
     ).pipe(
       takeUntil(this.destroy),
       debounceTime(300)
-    ).subscribe(([type, name]) => this.store.dispatch(new CustomerSearchAction.Search({type, name})));
+    ).subscribe(([type, name]) => this.store.dispatch(new CustomerSearchAction.Search(ActionTargetType.Customer, {type, name})));
 
     this.customerTypeCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(() => this.customerCtrl.reset());
@@ -129,13 +130,13 @@ export class ProjectEditComponent {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(contact => typeof contact === 'string')
-    ).subscribe(name => this.store.dispatch(new ContactSearchAction.Search(name)));
+    ).subscribe(name => this.store.dispatch(new ContactSearchAction.Search(ActionTargetType.Customer, name)));
 
     this.customerCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
       filter(customer => customer instanceof Customer)
-    ).subscribe(customer => this.store.dispatch(new ContactSearchAction.LoadByCustomer(customer.id)));
+    ).subscribe(customer => this.store.dispatch(new ContactSearchAction.LoadByCustomer(ActionTargetType.Customer, customer.id)));
   }
 
   private customerSelected(customer: Customer): void {

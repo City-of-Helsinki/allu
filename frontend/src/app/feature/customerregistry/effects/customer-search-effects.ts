@@ -2,14 +2,10 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, filter, map, switchMap} from 'rxjs/operators';
 import {CustomerService} from '../../../service/customer/customer.service';
-import {
-  CustomerSearchActionType,
-  Search, SearchByType,
-  SearchFailed,
-  SearchSuccess
-} from '../actions/customer-search-actions';
+import {CustomerSearchActionType, Search, SearchByType, SearchFailed, SearchSuccess} from '../actions/customer-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Injectable()
 export class CustomerSearchEffects {
@@ -19,24 +15,44 @@ export class CustomerSearchEffects {
   @Effect()
   customerSearch: Observable<Action> = this.actions.pipe(
     ofType<Search>(CustomerSearchActionType.Search),
-    map(action => action.payload),
-    switchMap(search =>
-      this.customerService.search(search).pipe(
-        map(customers => new SearchSuccess(customers)),
-        catchError(error => of(new SearchFailed(error)))
+    switchMap(action =>
+      this.customerService.search(action.payload).pipe(
+        map(customers => new SearchSuccess(action.targetType, customers)),
+        catchError(error => of(new SearchFailed(action.targetType, error)))
       )
     )
   );
 
   @Effect()
-  searchByType: Observable<Action> = this.actions.pipe(
+  searchCustomerByType: Observable<Action> = this.actions.pipe(
     ofType<SearchByType>(CustomerSearchActionType.SearchByType),
-    map(action => action.payload),
-    switchMap(search =>
-      this.customerService.searchByType(search.type, search.searchQuery, search.sort, search.pageRequest, search.matchAny).pipe(
-        map(customers => new SearchSuccess(customers)),
-        catchError(error => of(new SearchFailed(error)))
-      )
-    )
+    filter(action => ActionTargetType.Customer === action.targetType),
+    switchMap(action => this.searchByType(action))
   );
+
+  @Effect()
+  searchApplicantByType: Observable<Action> = this.actions.pipe(
+    ofType<SearchByType>(CustomerSearchActionType.SearchByType),
+    filter(action => ActionTargetType.Applicant === action.targetType),
+    switchMap(action => this.searchByType(action))
+  );
+
+  @Effect()
+  searchInvoicingCustomerByType: Observable<Action> = this.actions.pipe(
+    ofType<SearchByType>(CustomerSearchActionType.SearchByType),
+    filter(action => ActionTargetType.InvoicingCustomer === action.targetType),
+    switchMap(action => this.searchByType(action))
+  );
+
+  private searchByType(action: SearchByType): Observable<Action> {
+    return this.customerService.searchByType(
+      action.payload.type,
+      action.payload.searchQuery,
+      action.payload.sort,
+      action.payload.pageRequest,
+      action.payload.matchAny).pipe(
+      map(customers => new SearchSuccess(action.targetType, customers)),
+      catchError(error => of(new SearchFailed(action.targetType, error)))
+    );
+  }
 }

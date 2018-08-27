@@ -1,17 +1,16 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Input, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
-import * as fromCustomerSearch from '@feature/customerregistry/reducers';
 import {Customer} from '@model/customer/customer';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
-import {SetCustomer} from '../../actions/information-request-result-actions';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
 import {CustomerNameSearchMinChars, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
@@ -30,6 +29,7 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   matchingCustomers$: Observable<Customer[]>;
 
   protected formName = 'customer';
+  protected actionTargetType = ActionTargetType.Customer;
 
   protected destroy = new Subject<boolean>();
 
@@ -49,7 +49,7 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       debounceTime(300),
       filter(CustomerNameSearchMinChars)
     ).subscribe(term => this.searchCustomer(CustomerType[this.newCustomer.type], term, term));
-    this.matchingCustomers$ = this.store.select(fromCustomerSearch.getMatchingCustomers);
+    this.matchingCustomers$ = this.getMatchingCustomers();
 
     this.initialSearch();
     this.init();
@@ -64,6 +64,10 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   abstract customerChanges(customer: Customer): void;
+
+  abstract getMatchingCustomers(): Observable<Customer[]>;
+
+  abstract getLoading(): Observable<boolean>;
 
   selectReferenceCustomer(customer?: Customer): void {
     const searchCustomer = customer || this.newCustomer;
@@ -85,7 +89,7 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     );
 
     if (this.oldCustomer === undefined) {
-      this.store.select(fromCustomerSearch.getLoading).pipe(
+      this.getLoading().pipe(
         filter(loading => !loading),
         switchMap(() => this.matchingCustomers$),
         take(1),
@@ -101,6 +105,6 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       ? {name, registryKey}
       : {name};
 
-    this.store.dispatch(new SearchByType({type, searchQuery, matchAny: true}));
+    this.store.dispatch(new SearchByType(this.actionTargetType, {type, searchQuery, matchAny: true}));
   }
 }

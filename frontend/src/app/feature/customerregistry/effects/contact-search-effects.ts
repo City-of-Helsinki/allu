@@ -19,11 +19,10 @@ export class ContactSearchEffects {
   @Effect()
   loadContacts: Observable<Action> = this.actions.pipe(
     ofType<LoadByCustomer>(ContactSearchActionType.LoadByCustomer),
-    map(action => action.payload),
-    switchMap(customerId =>
-      this.customerService.findCustomerContacts(customerId).pipe(
-        map(contacts => new LoadByCustomerSuccess(contacts)),
-        catchError(error => of(new LoadByCustomerFailed(error)))
+    switchMap(action =>
+      this.customerService.findCustomerContacts(action.payload).pipe(
+        map(contacts => new LoadByCustomerSuccess(action.targetType, contacts)),
+        catchError(error => of(new LoadByCustomerFailed(action.targetType, error)))
       )
     )
   );

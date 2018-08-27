@@ -1,6 +1,7 @@
 import {CustomerSearchByType, CustomerSearchQuery} from '../../../service/customer/customer-search-query';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerSearchActions, CustomerSearchActionType} from '../actions/customer-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export interface State {
   search: CustomerSearchQuery;
@@ -16,7 +17,7 @@ const initialState: State = {
   matching: []
 };
 
-export function reducer(state: State = initialState, action: CustomerSearchActions) {
+function reducer(state: State = initialState, action: CustomerSearchActions) {
   switch (action.type) {
     case CustomerSearchActionType.Search: {
       return {
@@ -54,6 +55,16 @@ export function reducer(state: State = initialState, action: CustomerSearchActio
       return {...state};
     }
   }
+}
+
+export function createReducerFor(targetType: ActionTargetType) {
+  return function(state: State = initialState, action: CustomerSearchActions) {
+    if (targetType === action.targetType) {
+      return reducer(state, action);
+    } else {
+      return state;
+    }
+  };
 }
 
 export const getMatching = (state: State) => state.matching;
