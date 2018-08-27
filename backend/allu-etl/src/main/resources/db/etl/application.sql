@@ -242,7 +242,8 @@ INSERT INTO allureport.sijoitussopimus (
   tyonkuvaus,
   sopimusteksti,
   irtisanomispaiva,
-  pykala
+  pykala,
+  paatoksen_perustelut
 )
 SELECT
   a.id AS hakemus_id,
@@ -251,7 +252,8 @@ SELECT
   a.extension::json ->> 'additionalInfo' AS tyonkuvaus,
   a.extension::json ->> 'contractText' AS sopimusteksti,
   TO_TIMESTAMP((a.extension::json ->> 'terminationDate')::float) AS irtisanomispaiva,
-  (a.extension::json ->> 'sectionNumber')::integer AS pykala
+  (a.extension::json ->> 'sectionNumber')::integer AS pykala,
+  a.extension::json ->> 'rationale' AS paatoksen_perustelut,
 FROM allu_operative.application a
 WHERE a.type = 'PLACEMENT_CONTRACT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -260,5 +262,6 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
     tyonkuvaus = EXCLUDED.tyonkuvaus,
     sopimusteksti = EXCLUDED.sopimusteksti,
     irtisanomispaiva = EXCLUDED.irtisanomispaiva,
-    pykala = EXCLUDED.pykala
+    pykala = EXCLUDED.pykala,
+    paatoksen_perustelut = EXCLUDED.paatoksen_perustelut
 ;
