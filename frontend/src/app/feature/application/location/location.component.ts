@@ -134,10 +134,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.invalidGeometry.pipe(takeUntil(this.destroy))
       .subscribe(invalid => this.invalidGeometry = invalid);
 
-    this.store.select(fromApplication.getType)
+    this.store.select(fromApplication.getType).pipe(takeUntil(this.destroy))
       .subscribe(type => this.onApplicationTypeChange(type));
 
-    this.store.select(fromApplication.getKindsWithSpecifiers)
+    this.store.select(fromApplication.getKindsWithSpecifiers).pipe(takeUntil(this.destroy))
       .subscribe(kindsWithSpecifiers => this.onKindSpecifierChange(kindsWithSpecifiers));
   }
 
