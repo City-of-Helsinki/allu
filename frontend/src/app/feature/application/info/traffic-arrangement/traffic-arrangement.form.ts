@@ -11,7 +11,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public workPurpose?: string,
-    public terms?: string
+    public TERMS?: string
   ) {}
 
   static to(form: TrafficArrangementForm): TrafficArrangement {
@@ -19,7 +19,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     arrangement.trafficArrangements = form.trafficArrangements;
     arrangement.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     arrangement.workPurpose = form.workPurpose;
-    arrangement.terms = form.terms;
+    arrangement.terms = form.TERMS;
     return arrangement;
   }
 

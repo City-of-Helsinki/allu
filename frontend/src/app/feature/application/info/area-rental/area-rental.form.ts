@@ -13,7 +13,7 @@ export class AreaRentalForm implements ApplicationForm {
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string,
-    public terms?: string
+    public TERMS?: string
   ) {}
 
   static to(form: AreaRentalForm): AreaRental {
@@ -23,7 +23,7 @@ export class AreaRentalForm implements ApplicationForm {
     areaRental.trafficArrangements = form.trafficArrangements;
     areaRental.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     areaRental.additionalInfo = form.additionalInfo;
-    areaRental.terms = form.terms;
+    areaRental.terms = form.TERMS;
     return areaRental;
   }
 

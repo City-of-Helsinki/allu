@@ -24,7 +24,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public additionalInfo?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
-    public terms?: string) {}
+    public TERMS?: string) {}
 
   static to(form: ExcavationAnnouncementForm): ExcavationAnnouncement {
     const ea = new ExcavationAnnouncement();
@@ -46,7 +46,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.additionalInfo = form.additionalInfo;
     ea.trafficArrangements = form.trafficArrangements;
     ea.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
-    ea.terms = form.terms;
+    ea.terms = form.TERMS;
     return ea;
   }
 

@@ -25,7 +25,7 @@ export class EventForm implements ApplicationForm {
               public structureDescription?: string,
               public structureTimes?: TimePeriod,
               public calculatedPrice?: number,
-              public terms?: string
+              public TERMS?: string
             ) {
     this.eventTimes = eventTimes || new TimePeriod();
     this.structureTimes = structureTimes || new TimePeriod();
@@ -68,7 +68,7 @@ export class EventForm implements ApplicationForm {
     event.marketingProviders = form.marketingProviders;
     event.structureArea = form.structureArea;
     event.structureDescription = form.structureDescription;
-    event.terms = form.terms;
+    event.terms = form.TERMS;
     return event;
   }
 

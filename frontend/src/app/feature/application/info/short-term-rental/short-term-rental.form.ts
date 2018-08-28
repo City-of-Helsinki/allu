@@ -14,7 +14,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     public commercial?: boolean,
     public billableSalesArea?: boolean,
     public calculatedPrice?: number,
-    public terms?: string) {}
+    public TERMS?: string) {}
 
   static from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
     return new ShortTermRentalForm(
@@ -33,7 +33,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     rental.description = form.description;
     rental.commercial = form.commercial;
     rental.billableSalesArea = form.billableSalesArea;
-    rental.terms = form.terms;
+    rental.terms = form.TERMS;
     return rental;
   }
 
