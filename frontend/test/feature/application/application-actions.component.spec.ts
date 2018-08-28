@@ -27,6 +27,7 @@ import {User} from '../../../src/app/model/user/user';
 import {UserHub} from '../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../src/app/model/user/user-search-criteria';
 import {EMPTY, Observable, of} from 'rxjs/index';
+import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -51,6 +52,7 @@ class UserHubMock {
       *ngIf="visible"
       [readonly]="readonly"
       [valid]="valid"
+      [pendingClientData]="pendingClientData"
       [submitPending]="submitPending"></application-actions>`
 })
 class TestHostComponent {
@@ -58,6 +60,7 @@ class TestHostComponent {
   valid = true;
   submitPending = false;
   visible = true;
+  pendingClientData = false;
 }
 
 describe('ApplicationActionsComponent', () => {
@@ -90,7 +93,8 @@ describe('ApplicationActionsComponent', () => {
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: NotificationService, useClass: NotificationServiceMock},
         {provide: MatDialog, useClass: MatDialogMock},
-        {provide: UserHub, useClass: UserHubMock}
+        {provide: UserHub, useClass: UserHubMock},
+        InformationAcceptanceModalEvents
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
     .compileComponents();
@@ -314,6 +318,38 @@ describe('ApplicationActionsComponent', () => {
     applicationStore.applicationChange(app);
     setAndInit(true);
     expect(getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase())).toBeDefined();
+  });
+
+  it('should hide actions when pending on client', () => {
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.PENDING_CLIENT;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    applicationStore.applicationChange(app);
+    setAndInit(true);
+    const buttons = de.queryAll(By.css('button'));
+    expect(buttons.length).toEqual(0, `Visible action buttons ${buttons.length}`);
+  });
+
+  it('should hide actions when waiting for contract approval', () => {
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.WAITING_CONTRACT_APPROVAL;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    applicationStore.applicationChange(app);
+    setAndInit(true);
+    const buttons = de.queryAll(By.css('button'));
+    expect(buttons.length).toEqual(0, `Visible action buttons ${buttons.length}`);
+  });
+
+  it('should show only show pending data when pending client data', () => {
+    const app = applicationStore.snapshot.application;
+    app.statusEnum = ApplicationStatus.PENDING;
+    app.type = ApplicationType[ApplicationType.EVENT];
+    applicationStore.applicationChange(app);
+    comp.pendingClientData = true;
+    setAndInit(true);
+    const buttons = de.queryAll(By.css('button'));
+    expect(buttons.length).toEqual(1, `More than one button visible ${buttons.length}`);
+    expect(getButtonWithText(de, findTranslation('application.button.showPending').toUpperCase())).toBeDefined();
   });
 
   it('should disable to decision making button when no invoice recipient is set', () => {

@@ -157,6 +157,7 @@
       <application-actions
         [readonly]="readonly"
         [valid]="applicationForm.valid"
+        [pendingClientData]="pendingClientData$ | async"
         [submitPending]="submitPending"></application-actions>
     </div>
   </div>

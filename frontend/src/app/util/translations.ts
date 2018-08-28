@@ -402,7 +402,8 @@ export const translations = {
       toHandling: 'Käsittelyyn',
       cancel: 'Peru hakemus',
       convertToApplication: 'Vahvista varaus',
-      toDecision: 'Päättämiseen'
+      toDecision: 'Päättämiseen',
+      showPending: 'Näytä uudet tiedot'
     },
     confirmCancel: {
       title: 'Haluatko varmasti perua hakemuksen?',

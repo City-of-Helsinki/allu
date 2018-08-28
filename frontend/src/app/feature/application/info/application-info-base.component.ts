@@ -50,6 +50,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   showTerms = false;
   applicationChanges: Observable<Application>;
   required = FormUtil.required;
+  pendingClientData$: Observable<boolean>;
   pendingCustomerInfo$: Observable<boolean>;
 
   protected completeFormStructure: { [key: string]: any; } = {};
@@ -84,6 +85,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     this.applicationChanges.pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));
 
+    this.pendingClientData$ = this.store.select(fromApplication.hasPendingClientData);
     this.pendingCustomerInfo$ = this.store.select(fromApplication.hasPendingCustomerInfo);
 
     this.applicationStore.changes.pipe(

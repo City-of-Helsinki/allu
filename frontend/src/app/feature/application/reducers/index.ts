@@ -115,7 +115,14 @@ export const hasPendingCustomerInfo = createSelector(
 
 export const hasPendingInvoicingCustomer = createSelector(
   getPendingInvoicingCustomer,
-  pending => !! pending
+  pending => !!pending
+);
+
+export const hasPendingClientData = createSelector(
+  hasPendingKind,
+  hasPendingCustomerInfo,
+  hasPendingInvoicingCustomer,
+  (pendingKind, pendingCustomer, pendingInvoicingCustomer) => pendingKind || pendingCustomer || pendingInvoicingCustomer
 );
 
 export const pendingClientDataFields = createSelector(

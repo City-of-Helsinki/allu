@@ -17,6 +17,7 @@ import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
 import {ArrayUtil} from '../../../util/array-util';
 import {UserHub} from '../../../service/user/user-hub';
 import {filter, map} from 'rxjs/internal/operators';
+import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
 
 @Component({
   selector: 'application-actions',
@@ -32,6 +33,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   @Input() status: string;
   @Input() submitPending: boolean;
   @Input() valid: boolean;
+  @Input() pendingClientData: boolean;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
@@ -52,7 +54,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private applicationStore: ApplicationStore,
               private dialog: MatDialog,
               private userHub: UserHub,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private modalState: InformationAcceptanceModalEvents) {
   }
 
   ngOnInit(): void {
@@ -66,7 +69,9 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showEdit = this.readonly && (status < ApplicationStatus.DECISION);
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
-      this.showActions = status !== ApplicationStatus.PENDING_CLIENT && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL;
+      this.showActions = status !== ApplicationStatus.PENDING_CLIENT
+        && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL
+        && !this.pendingClientData;
       this.applicationId = app.id;
     });
   }
@@ -155,6 +160,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
         filter(result => !!result) // Ignore no answers
       ).subscribe(() => this.cancelApplication());
     }
+  }
+
+  showPending(): void {
+    this.modalState.open();
   }
 
   private cancelApplication(): void {
