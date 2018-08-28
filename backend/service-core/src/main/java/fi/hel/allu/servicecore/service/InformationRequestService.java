@@ -84,7 +84,7 @@ public class InformationRequestService {
 
   public void addResponse(Integer requestId, ExternalApplication extApp,
       List<InformationRequestFieldKey> updatedFields) {
-    InformationRequestResponse response = new InformationRequestResponse(updatedFields, extApp);
+    InformationRequestResponse response = new InformationRequestResponse(requestId, updatedFields, extApp);
     restTemplate.postForObject(applicationProperties.getInformationRequestResponseUrl(), response, Void.class, requestId);
   }
 

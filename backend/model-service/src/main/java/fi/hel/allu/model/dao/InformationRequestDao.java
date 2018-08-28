@@ -102,7 +102,7 @@ public class InformationRequestDao {
     }
     ExternalApplication applicationData = externalApplicationDao.findByInformationRequestId(informationRequestId);
     List<InformationRequestFieldKey> responseFields = getResponseFields(informationRequestId);
-    return new InformationRequestResponse(responseFields, applicationData);
+    return new InformationRequestResponse(informationRequestId, responseFields, applicationData);
   }
 
   public List<InformationRequestFieldKey> getResponseFields(Integer informationRequestId) {

@@ -15,7 +15,8 @@ public class InformationRequestResponse {
   public InformationRequestResponse() {
   }
 
-  public InformationRequestResponse(List<InformationRequestFieldKey> responseFields, ExternalApplication application) {
+  public InformationRequestResponse(Integer informationRequestId, List<InformationRequestFieldKey> responseFields, ExternalApplication application) {
+    this.informationRequestId = informationRequestId;
     this.responseFields = responseFields;
     this.application = application;
   }
