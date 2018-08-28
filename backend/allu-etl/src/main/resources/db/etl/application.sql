@@ -41,7 +41,7 @@ SELECT
         WHEN a.status = 'HANDLING' THEN 'Käsittelyssä'
         WHEN a.status = 'RETURNED_TO_PREPARATION' THEN 'Palautettu valmisteluun'
         WHEN a.status = 'WAITING_CONTRACT_APPROVAL' THEN 'Odottaa sopimusta'
-        WHEN a.status = 'DECISION_MAKING' THEN 'Odottaa päätöstä'
+        WHEN a.status = 'DECISIONMAKING' THEN 'Odottaa päätöstä'
         WHEN a.status = 'DECISION' THEN 'Päätetty'
         WHEN a.status = 'REJECTED' THEN 'Hylätty päätös'
         WHEN a.status = 'FINISHED' THEN 'Valmis'

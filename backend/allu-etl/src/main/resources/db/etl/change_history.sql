@@ -32,7 +32,7 @@ SELECT
         WHEN c.change_specifier = 'HANDLING' THEN 'Käsittelyssä'
         WHEN c.change_specifier = 'RETURNED_TO_PREPARATION' THEN 'Palautettu käsittelyyn'
         WHEN c.change_specifier = 'WAITING_CONTRACT_APPROVAL' THEN 'Odottaa sopimusta'
-        WHEN c.change_specifier = 'DECISION_MAKING' THEN 'Odottaa päätöstä'
+        WHEN c.change_specifier = 'DECISIONMAKING' THEN 'Odottaa päätöstä'
         WHEN c.change_specifier = 'DECISION' THEN 'Päätetty'
         WHEN c.change_specifier = 'REJECTED' THEN 'Hylätty päätös'
         WHEN c.change_specifier = 'FINISHED' THEN 'Valmis'
