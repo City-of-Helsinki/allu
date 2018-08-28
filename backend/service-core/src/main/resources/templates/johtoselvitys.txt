@@ -5,11 +5,10 @@ Tämän sähköpostiviestin liitteenä on tilaamanne johtoselvitys ${application
 ${accompanyingMessage}
 
 Ystävällisin terveisin,
-Johtotietopalvelu
 
 Helsingin kaupunkiympäristön asukas- ja yrityspalvelut
-Alueiden käyttö ja -valvonta
+Alueidenkäyttö ja -valvonta
+Johtotietopalvelu
 Puh. 09 310 31940
 johtotietopalvelu@hel.fi
 www.hel.fi/katuluvat
-
