@@ -487,7 +487,7 @@ public class DecisionJsonMapper {
     if (zonedDateTime == null) {
       return null;
     }
-    return TimeUtil.dateAsDateTimeString(zonedDateTime.plusDays(deltaDays));
+    return TimeUtil.dateAsString(zonedDateTime.plusDays(deltaDays));
   }
 
   private List<String> customerAddressLines(ApplicationJson applicationJson) {
