@@ -116,7 +116,7 @@ public class LocationController {
     final Optional<User> optUser = locationService.findSupervisionTaskOwner(type, cityDistrictId);
     return optUser
         .map(user -> ResponseEntity.ok(user))
-        .orElseThrow(() -> new NoSuchEntityException("Didn't find supervisor for citydistrict"));
+        .orElseThrow(() -> new NoSuchEntityException("Didn't find supervisor for citydistrict=" + cityDistrictId + " and applicationType=" + type));
   }
 
   @RequestMapping(value = "/geometry/isvalid", method = RequestMethod.POST)
