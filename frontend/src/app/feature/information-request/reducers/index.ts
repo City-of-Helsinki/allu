@@ -21,6 +21,23 @@ export const reducers: ActionReducerMap<InformationRequestState> = {
 
 export const getInformationRequestState = createFeatureSelector<InformationRequestState>('informationRequest');
 
+export const getInformationRequestEntityState = createSelector(
+  getInformationRequestState,
+  (state: InformationRequestState) => state.request
+);
+
+// Information request response selectors
+export const getInformationRequestResponse = createSelector(
+  getInformationRequestEntityState,
+  fromInformationRequest.getResponse
+);
+
+export const getInformationRequestResponseLoading = createSelector(
+  getInformationRequestEntityState,
+  fromInformationRequest.getResponseLoading
+);
+
+// Information request result selectors
 export const getInformationRequestResultState = createSelector(
   getInformationRequestState,
   (state: InformationRequestState) => state.result

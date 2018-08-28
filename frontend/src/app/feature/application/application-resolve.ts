@@ -11,11 +11,12 @@ import * as fromApplication from './reducers';
 import {Load, LoadSuccess} from './actions/application-actions';
 import {ActionTargetType} from '../allu/actions/action-target-type';
 import {catchError, filter, switchMap, take, tap} from 'rxjs/internal/operators';
-import {Load as LoadTags, LoadSuccess as LoadTagsSuccess} from './actions/application-tag-actions';
 import * as commentActions from '@feature/comment/actions/comment-actions';
 import * as historyActions from '../history/actions/history-actions';
 import * as metaActions from './actions/application-meta-actions';
+import * as informationRequestActions from '@feature/information-request/actions/information-request-actions';
 import {NumberUtil} from '@util/number.util';
+import {ApplicationStatus} from '@model/application/application-status';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -50,6 +51,7 @@ export class ApplicationResolve implements Resolve<Application> {
       tap(() => this.loadComments()),
       tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Application))),
       tap(() => this.store.dispatch(new metaActions.Load())),
+      tap((app) => this.loadInformationRequestResponse(app.statusEnum)),
       take(1),
       catchError(err => this.handleError(err))
     );
@@ -57,6 +59,12 @@ export class ApplicationResolve implements Resolve<Application> {
 
   private loadComments() {
     this.store.dispatch(new commentActions.Load(ActionTargetType.Application));
+  }
+
+  private loadInformationRequestResponse(status: ApplicationStatus) {
+    if (ApplicationStatus.INFORMATION_RECEIVED === status) {
+      this.store.dispatch(new informationRequestActions.LoadLatestResponse());
+    }
   }
 
   private handleError(err: any): Observable<Application> {
