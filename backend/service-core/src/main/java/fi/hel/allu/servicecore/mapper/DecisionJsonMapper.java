@@ -434,7 +434,7 @@ public class DecisionJsonMapper {
     decision.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
     decision.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
     decision.setWorkPurpose(trafficArrangement.getWorkPurpose());
-    decision.setTrafficArrangements(trafficArrangement.getTrafficArrangements());
+    decision.setTrafficArrangements(splitToList(Optional.ofNullable(trafficArrangement.getTrafficArrangements())));
   }
 
   /*

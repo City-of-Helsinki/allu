@@ -142,7 +142,14 @@
       <section class="unboxed">
         <h2>Liikennejärjestelypäätös</h2>
         <p>
-          <xsl:value-of select="data/trafficArrangements"/>
+          <xsl:for-each select="data/trafficArrangements">
+            <p>
+              <xsl:value-of select="."/>
+              <xsl:if test="not(normalize-space(.))">
+                <br/>
+              </xsl:if>
+            </p>
+          </xsl:for-each>
         </p>
       </section>
 

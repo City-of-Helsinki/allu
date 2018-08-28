@@ -97,7 +97,7 @@ public class DecisionJson {
   private String applicantName;
   private String identificationNumber;
   private String workPurpose;
-  private String trafficArrangements;
+  private List<String> trafficArrangements;
   private Boolean replacingDecision;
   private List<String> rationale;
 
@@ -638,11 +638,11 @@ public class DecisionJson {
     this.workPurpose = workPurpose;
   }
 
-  public String getTrafficArrangements() {
+  public List<String> getTrafficArrangements() {
     return trafficArrangements;
   }
 
-  public void setTrafficArrangements(String trafficArrangements) {
+  public void setTrafficArrangements(List<String> trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
   }
 
