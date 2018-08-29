@@ -37,7 +37,8 @@
               "node_modules/materialize-css/dist/js/materialize.js",
               "node_modules/file-saver/FileSaver.js",
               "node_modules/finnish-ssn/dist/finnish-ssn.min.js",
-              "node_modules/uuid/index.js"
+              "node_modules/uuid/index.js",
+              "node_modules/@turf/area/index.js"
             ]
           },
           "configurations": {

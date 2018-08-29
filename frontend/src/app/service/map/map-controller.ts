@@ -215,12 +215,22 @@ export class MapController {
   private setupEventHandling(editedItems: L.FeatureGroup): void {
     const self = this;
     this.map.on('draw:created', (e: any) => {
-      editedItems.addLayer(e.layer);
-      self.shapes$.next(new ShapeAdded(editedItems));
-      e.layer.showMeasurements(translations.map.measure);
+      if (this.mapUtil.isValidGeometry(e.layer)) {
+        editedItems.addLayer(e.layer);
+        self.shapes$.next(new ShapeAdded(editedItems));
+        e.layer.showMeasurements(translations.map.measure);
+      } else {
+        this.map.removeLayer(e.layer);
+      }
     });
 
-    this.map.on('draw:edited', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
+    this.map.on('draw:edited', (e: any) => {
+      const removed = this.removeInvalidLayers(e.layers);
+      if (removed > 0) {
+        self.shapes$.next(new ShapeAdded(editedItems));
+      }
+    });
+
     this.map.on('draw:deleted', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
 
     this.map.on('draw:editstart', () => {
@@ -352,5 +362,16 @@ export class MapController {
       map(([drawing, sections]) => drawingAllowed(drawing, sections)),
       takeUntil(this.destroy)
     ).subscribe(allowed => this.setDynamicControls(allowed));
+  }
+
+  private removeInvalidLayers(layers: L.LayerGroup): number {
+    let removed = 0;
+    layers.eachLayer(l => {
+      if (!this.mapUtil.isValidGeometry(l)) {
+        this.editedItems.removeLayer(l);
+        removed++;
+      }
+    });
+    return removed;
   }
 }

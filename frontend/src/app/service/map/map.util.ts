@@ -4,6 +4,7 @@ import 'proj4leaflet';
 import {MapFeatureInfo} from './map-feature-info';
 import {ALLU_PREFIX} from './map-layer-id';
 import {GeometryCollection} from 'geojson';
+import area from '@turf/area';
 
 @Injectable()
 export class MapUtil {
@@ -60,6 +61,11 @@ export class MapUtil {
 
   public polygonFromBounds(bounds: L.LatLngBounds): L.Rectangle {
     return L.rectangle(bounds);
+  }
+
+  public isValidGeometry(layer: any): boolean {
+    const geoJSON = layer.toGeoJSON();
+    return area(geoJSON) > 0;
   }
 
   constructor() {
