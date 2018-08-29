@@ -17,7 +17,7 @@
     </xsl:if>
   </head>
   <body>
-    <div class="header">
+    <div class="header" style="width: 100%">
       <div class="logo">
         <img src="helsinki-logo.png" />
       </div>
@@ -40,50 +40,29 @@
       </div>
     </div>
 
-    <p> </p>
-
     <div class="body">
       <div class="unboxed">
         <section>
-          <h2>Pykälä <xsl:value-of select="data/sectionNumber"/>§</h2>
-          <p>Sopimus oikeudesta sijoittaa
-              <xsl:for-each select="data/kinds">
-                <xsl:value-of select="kind" />
-                <xsl:if test="./specifiers != ''">
-                 (
-                  <xsl:for-each select="./specifiers">
-                    <xsl:value-of select="." />
-                    <xsl:if test="position() != last()">
-                        <xsl:text>, </xsl:text>
-                    </xsl:if>
-                  </xsl:for-each>
-                  )
-                </xsl:if>
-              </xsl:for-each>
-              Helsingin kaupungin yleiselle alueelle.</p>
+          <h2><xsl:value-of select="data/sectionNumber"/>§</h2>
+          <p class="space-above">Sopimus oikeudesta sijoittaa rakenteita Helsingin kaupungin yleiselle alueelle.</p>
+        </section>
+      </div>
+
+      <div class="unboxed">
+        <section>
+          <h2>Sijainti</h2>
+          <p class="indented space-above">Kaupunginosa: <xsl:value-of select="data/siteCityDistrict"/></p>
+          <p class="indented">Osoite: <xsl:value-of select="data/siteAddressLine"/></p>
         </section>
       </div>
 
       <div class="unboxed">
         <section>
           <h2>Päätös</h2>
-          <p class="indented">
+          <p class="indented space-above">
             Yksikön päällikkö päätti hyväksyä ja allekirjoittaa sopimuksen <xsl:value-of select="data/decisionId"/> koskien
-            <xsl:for-each select="data/kinds">
-              <xsl:value-of select="kind" />
-              <xsl:if test="./specifiers != ''">
-                (
-                <xsl:for-each select="./specifiers">
-                  <xsl:value-of select="." />
-                  <xsl:if test="position() != last()">
-                      <xsl:text>, </xsl:text>
-                  </xsl:if>
-                </xsl:for-each>
-                )
-              </xsl:if>
-            </xsl:for-each>
-            sijoittamisesta kaupungin yleiselle alueelle.</p>
-          <p class="indented">Tämä päätös on sähköisesti allekirjoitettu.</p>
+            rakenteiden sijoittamista kaupungin yleiselle alueelle.</p>
+          <p class="indented space-above">Tämä päätös on sähköisesti allekirjoitettu.</p>
           <p class="indented">
           <!-- [aikaleima], [päättäjän työnimike], [päättäjän nimi] -->
           <xsl:value-of select="data/decisionTimestamp"/>,
@@ -95,6 +74,7 @@
       <div class="unboxed">
         <section>
           <h2>Päätöksen perustelut</h2>
+          <p class="space-above"> </p>
           <xsl:if test="data/rationale">
             <xsl:for-each select="data/rationale">
               <p class="indented">
@@ -112,7 +92,7 @@
         <section>
           <h2>Käsittelijä</h2>
           <!-- <p>[tehtävänimike, käsittelijän nimi]</p> -->
-          <p class="indented">
+          <p class="indented space-above">
             <xsl:value-of select="data/handlerTitle"/>, <xsl:value-of select="data/handlerName"/>
           </p>
         </section>
@@ -121,7 +101,7 @@
       <div class="unboxed">
         <section>
           <h2>Muutoksenhaku</h2>
-          <p class="indented">
+          <p class="indented space-above">
             Oikaisuvaatimusohje, kaupunkiympäristölautakunta
           </p>
         </section>
@@ -130,16 +110,18 @@
       <div class="unboxed">
         <section>
           <h2>Lisätiedot</h2>
-          <p class="indented">Kaupunkiympäristön alueidenkäyttö<br/>
-          alueidenkaytto@hel.fi, 09 310 22111<br/>
-          Sörnäistenkatu 1, 00580 Helsinki</p>
+          <p class="indented space-above">
+            Kaupunkiympäristön alueidenkäyttö<br/>
+            alueidenkaytto@hel.fi, 09 310 22111<br/>
+            Sörnäistenkatu 1, 00580 Helsinki
+          </p>
         </section>
       </div>
 
       <h2 class="new-page">MUUTOKSENHAKUOHJEET</h2>
       <h2>OHJEET OIKAISUVAATIMUKSEN TEKEMISEKSI</h2>
       <div class="indented">
-        <p>Tähän päätökseen tyytymätön voi tehdä kirjallisen oikaisuvaatimuksen.
+        <p class="space-above">Tähän päätökseen tyytymätön voi tehdä kirjallisen oikaisuvaatimuksen.
         Päätökseen ei saa hakea muutosta valittamalla tuomioistuimeen.</p>
       </div>
       <h3>Oikaisuvaatimusoikeus</h3>

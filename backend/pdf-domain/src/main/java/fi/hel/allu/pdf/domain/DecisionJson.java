@@ -28,8 +28,8 @@ public class DecisionJson {
 
   private String siteAddressLine;
   private String siteAdditionalInfo;
-
   private String siteArea;
+  private String siteCityDistrict;
 
   private String reservationStartDate;
   private String reservationEndDate;
@@ -216,6 +216,14 @@ public class DecisionJson {
 
   public void setSiteArea(String siteArea) {
     this.siteArea = siteArea;
+  }
+
+  public String getSiteCityDistrict() {
+    return siteCityDistrict;
+  }
+
+  public void setSiteCityDistrict(String siteCityDistrict) {
+    this.siteCityDistrict = siteCityDistrict;
   }
 
   public String getReservationStartDate() {

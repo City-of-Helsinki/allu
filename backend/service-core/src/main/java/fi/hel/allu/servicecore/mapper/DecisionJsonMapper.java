@@ -37,6 +37,7 @@ public class DecisionJsonMapper {
   private static final Logger logger = LoggerFactory.getLogger(DecisionJsonMapper.class);
 
   private static final String ADDRESS_LINE_SEPARATOR = "; ";
+  private static final String CITY_DISTRICT_SEPARATOR = ", ";
   private static final Map<DefaultTextType, String> defaultTextTypeTranslations;
   private static final String UNKNOWN_ADDRESS = "[Osoite ei tiedossa]";
   private static final FixedLocationJson BAD_LOCATION;
@@ -97,6 +98,7 @@ public class DecisionJsonMapper {
     decisionJson.setCustomerContactLines(customerContactLines(application));
     decisionJson.setApplicantName(applicantName(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
+    decisionJson.setSiteCityDistrict(siteCityDistrict(application));
     final Map<ApplicationKind, List<ApplicationSpecifier>> applicationsKindsWithSpecifiers = application.getKindsWithSpecifiers();
     final List<KindWithSpecifiers> kindsWithSpecifiers = new ArrayList<>();
     applicationsKindsWithSpecifiers.keySet().forEach((kind) -> {
@@ -566,6 +568,32 @@ public class DecisionJsonMapper {
     final Map<Integer, FixedLocationJson> fixedLocationsById = fetchFixedLocations(application);
     return application.getLocations().stream().map(l -> locationAddress(l, fixedLocationsById))
         .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR));
+  }
+
+  private String siteCityDistrict(ApplicationJson application) {
+    if (application.getLocations() == null || application.getLocations().isEmpty()) {
+      return "";
+    }
+    final List<CityDistrictInfoJson> cityDistricts = locationService.getCityDistrictList();
+    return application.getLocations().stream().map(l -> getCityDistrict(l, cityDistricts))
+        .collect(Collectors.joining(CITY_DISTRICT_SEPARATOR));
+  }
+
+  private String getCityDistrict(LocationJson location, List<CityDistrictInfoJson> cityDistricts) {
+    final Integer cityDistrictId = getCityDistrictId(location);
+    if (cityDistrictId != null) {
+      final Optional<CityDistrictInfoJson> cityDistrictInfo = getCityDistrictInfo(cityDistrictId, cityDistricts);
+      return cityDistrictInfo.map(c -> c.getName()).orElse("");
+    }
+    return "";
+  }
+
+  private Integer getCityDistrictId(LocationJson locationJson) {
+    return Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
+  }
+
+  private Optional<CityDistrictInfoJson> getCityDistrictInfo(Integer cityDistrictId, List<CityDistrictInfoJson> cityDistricts) {
+    return cityDistricts.stream().filter(c -> c.getId().equals(cityDistrictId)).findAny();
   }
 
   /*
