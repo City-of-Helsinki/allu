@@ -253,7 +253,7 @@ SELECT
   a.extension::json ->> 'contractText' AS sopimusteksti,
   TO_TIMESTAMP((a.extension::json ->> 'terminationDate')::float) AS irtisanomispaiva,
   (a.extension::json ->> 'sectionNumber')::integer AS pykala,
-  a.extension::json ->> 'rationale' AS paatoksen_perustelut,
+  a.extension::json ->> 'rationale' AS paatoksen_perustelut
 FROM allu_operative.application a
 WHERE a.type = 'PLACEMENT_CONTRACT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
