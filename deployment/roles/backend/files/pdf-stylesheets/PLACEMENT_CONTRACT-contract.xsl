@@ -41,9 +41,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
 
         <section class="half-right">
-          <h2>Yhteyshenkilö</h2>
           <!-- <p>[Yhteyshenkilön nimi]<br/>[Sähköpostiosoite, puhelin]</p> -->
-          <p>
+          <p class="space-above">
             <xsl:for-each select="data/customerContactLines">
               <xsl:value-of select="."/><br/>
             </xsl:for-each>
@@ -51,20 +50,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
 
         <section>
-          <p class="space-above">Tällä sopimuksella <xsl:value-of select="data/decisionId"/> sovitaan
-            <xsl:for-each select="data/kinds">
-              <xsl:value-of select="kind" />
-              <xsl:if test="./specifiers != ''">
-               (
-                <xsl:for-each select="./specifiers">
-                  <xsl:value-of select="." />
-                  <xsl:if test="position() != last()">
-                      <xsl:text>, </xsl:text>
-                  </xsl:if>
-                </xsl:for-each>
-                )
-              </xsl:if>
-            </xsl:for-each>
+          <p class="space-above">Tällä sopimuksella <xsl:value-of select="data/decisionId"/> sovitaan rakenteiden
             sijoittamisesta Helsingin kaupungin omistamalle ja hallitsemalle yleiselle alueelle.
           </p>
 
@@ -75,6 +61,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <xsl:for-each select="data/contractText">
             <p>
               <xsl:value-of select="."/>
+              <xsl:if test="not(normalize-space(.))">
+                <br/>
+              </xsl:if>
             </p>
           </xsl:for-each>
 
@@ -90,6 +79,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                 <p>
                   <!-- [Ehtokentän teksti]  -->
                   <xsl:value-of select="."/>
+                  <xsl:if test="not(normalize-space(.))">
+                    <br/>
+                  </xsl:if>
                 </p>
               </xsl:for-each>
           </section>

@@ -35,7 +35,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="department">
         <p>Kaupunkiympäristö</p>
         <p>Alueidenkäyttö ja -valvonta</p>
-        <p>ulkoilma@hel.fi</p>
       </div>
       <div class="half-right">
         <h1>Sopimus</h1>
