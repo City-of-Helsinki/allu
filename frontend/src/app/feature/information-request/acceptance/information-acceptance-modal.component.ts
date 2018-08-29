@@ -10,7 +10,7 @@ import {combineLatest, Observable, Subject} from 'rxjs/index';
 import {distinctUntilChanged, map, skipUntil, startWith, take} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {ArrayUtil} from '@util/array-util';
-import {SetApplication, SetCustomer} from '../actions/information-request-result-actions';
+import {SetApplication, SetCustomer, SetKindsWithSpecifiers} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 
 export interface InformationAcceptanceData {
@@ -69,6 +69,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     const baseInfo = this.data.oldInfo || new Application();
     this.store.dispatch(new SetApplication(baseInfo));
     this.store.dispatch(new SetCustomer(baseInfo.applicant.customer));
+    this.store.dispatch(new SetKindsWithSpecifiers(baseInfo.kindsWithSpecifiers));
     this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
   }
 

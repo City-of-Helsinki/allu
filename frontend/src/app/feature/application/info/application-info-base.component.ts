@@ -52,6 +52,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   required = FormUtil.required;
   pendingClientData$: Observable<boolean>;
   pendingCustomerInfo$: Observable<boolean>;
+  pendingInformationRequestResponse$: Observable<boolean>;
 
   protected completeFormStructure: { [key: string]: any; } = {};
   protected draftFormStructure:  { [key: string]: any; } = {};
@@ -87,6 +88,9 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
     this.pendingClientData$ = this.store.select(fromApplication.hasPendingClientData);
     this.pendingCustomerInfo$ = this.store.select(fromApplication.hasPendingCustomerInfo);
+    this.pendingInformationRequestResponse$ = this.store.select(fromApplication.getInformationRequestResponse).pipe(
+      map(response => !!response)
+    );
 
     this.applicationStore.changes.pipe(
       map(change => change.draft),
@@ -246,20 +250,44 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   }
 
   private getPendingData(): Observable<InformationAcceptanceData> {
+    return this.store.select(fromApplication.getCurrentApplication).pipe(
+      switchMap(app => {
+        if (ApplicationStatus.INFORMATION_RECEIVED === app.statusEnum) {
+          return this.getPendingResponse(app);
+        } else {
+          return this.getPendingInitialInfo(app);
+        }
+      }),
+      take(1)
+    );
+  }
+
+  private getPendingResponse(currentApp: Application): Observable<InformationAcceptanceData> {
+    return this.store.select(fromApplication.getInformationRequestResponse).pipe(
+      filter(response => response !== undefined),
+      map(response => ({
+        informationRequestId: response.informationRequestId,
+        oldInfo: currentApp,
+        newInfo: response.responseData,
+        updatedFields: response.updatedFiedls
+      }))
+    );
+  }
+
+  private getPendingInitialInfo(currentApp: Application): Observable<InformationAcceptanceData> {
     return this.store.select(fromApplication.pendingClientDataFields).pipe(
-      withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-      switchMap(([pending, current]) => {
+      switchMap((pending) => {
         if (pending.length) {
           return of({
-            oldInfo: current,
-            newInfo: current,
+            oldInfo: currentApp,
+            newInfo: currentApp,
             updatedFields: pending
           });
         } else {
           return EMPTY;
         }
-      }),
-      take(1));
+      })
+    );
   }
 
   private openAcceptanceModal(data: InformationAcceptanceData): Observable<InformationRequestResult>  {

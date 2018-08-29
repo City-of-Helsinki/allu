@@ -34,6 +34,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   @Input() submitPending: boolean;
   @Input() valid: boolean;
   @Input() pendingClientData: boolean;
+  @Input() pendingInformationRequestResponse: boolean;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
@@ -69,9 +70,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showEdit = this.readonly && (status < ApplicationStatus.DECISION);
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
-      this.showActions = status !== ApplicationStatus.PENDING_CLIENT
-        && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL
-        && !this.pendingClientData;
+      this.showActions = this.normalActionsAllowed(status);
       this.applicationId = app.id;
     });
   }
@@ -162,7 +161,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  showPending(): void {
+  showExternalUpdates(): void {
     this.modalState.open();
   }
 
@@ -207,6 +206,12 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private validForDecision(app: Application): boolean {
     return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
+  }
+
+  private normalActionsAllowed(status: ApplicationStatus): boolean {
+    const validStatus = status !== ApplicationStatus.PENDING_CLIENT && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL;
+    const noPendingData = !this.pendingClientData && !this.pendingInformationRequestResponse;
+    return validStatus && noPendingData;
   }
 
   private findDefaultRegionalOwner(app: Application): Observable<User> {

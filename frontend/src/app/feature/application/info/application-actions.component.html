@@ -1,7 +1,7 @@
 <bottom-bar>
   <ng-container *ngIf="pendingClientData; else normalActions">
     <div class="bottom-bar-item">
-      <button mat-raised-button type="button" color="primary" (click)="showPending()">
+      <button mat-raised-button type="button" color="primary" (click)="showExternalUpdates()">
         {{'application.button.showPending' | translation | uppercase}}
       </button>
     </div>
@@ -18,6 +18,13 @@
           <button *ngIf="showEdit" mat-raised-button type="button" color="primary"
                   [routerLink]="['/applications', applicationId, 'edit']">
             {{'common.button.edit' | translation | uppercase}}
+          </button>
+          <button *ngIf="pendingInformationRequestResponse"
+                  mat-raised-button
+                  type="button"
+                  color="primary"
+                  (click)="showExternalUpdates()">
+            {{'application.button.handleInformationRequestResponse' | translation | uppercase}}
           </button>
           <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
             {{'application.button.copy' | translation | uppercase}}
