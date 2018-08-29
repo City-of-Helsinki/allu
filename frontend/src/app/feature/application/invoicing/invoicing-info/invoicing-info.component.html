@@ -6,10 +6,6 @@
           <div fxLayout="row" fxFlexAlign="space-between">
             <div fxFlex>
               {{'invoice.info.address' | translation}}
-              <button mat-icon-button type="button" class="align-with-text" *ngIf="customerCanBeEdited()"
-                      (click)="editCustomer()">
-                <mat-icon>mode_edit</mat-icon>
-              </button>
             </div>
             <div fxFlex *ngIf="invoicingProhibited" class="align-right">
               <mat-icon color="accent" class="align-with-text">

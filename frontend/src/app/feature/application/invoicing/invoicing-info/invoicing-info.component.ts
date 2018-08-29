@@ -2,14 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable, of} from 'rxjs';
 import {ApplicationStore} from '../../../../service/application/application-store';
-import {Some} from '../../../../util/option';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Application} from '../../../../model/application/application';
 import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
-import {
-  CUSTOMER_MODAL_CONFIG,
-  CustomerModalComponent
-} from '../../../customerregistry/customer/customer-modal.component';
 import {MatDialog} from '@angular/material';
 import {NumberUtil} from '../../../../util/number.util';
 import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-modal.component';
@@ -20,7 +15,7 @@ import {applicationCanBeEdited, ApplicationStatus} from '../../../../model/appli
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {CustomerService} from '../../../../service/customer/customer.service';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
-import {filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {filter, map, switchMap} from 'rxjs/internal/operators';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '../../reducers';
 import {ApplicationTagType} from '../../../../model/application/tag/application-tag-type';
@@ -74,13 +69,6 @@ export class InvoicingInfoComponent implements OnInit {
     }
   }
 
-  editCustomer(): void {
-    const customerModalRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, CUSTOMER_MODAL_CONFIG);
-    customerModalRef.componentInstance.customerId = this.recipientForm.value.id;
-    customerModalRef.afterClosed().pipe(filter(customer => !!customer))
-      .subscribe(customer => this.recipientForm.patchValue(CustomerForm.fromCustomer(customer)));
-  }
-
   editDeposit(): void {
     const deposit = this.currentDeposit();
     const config = {...DEPOSIT_MODAL_CONFIG, data: {deposit: deposit}};
@@ -114,10 +102,6 @@ export class InvoicingInfoComponent implements OnInit {
 
   get billable(): boolean {
     return !this.notBillableCtrl.value;
-  }
-
-  customerCanBeEdited(): boolean {
-    return NumberUtil.isDefined(this.recipientForm.value.id) && this.billable;
   }
 
   get invoicingProhibited(): boolean {

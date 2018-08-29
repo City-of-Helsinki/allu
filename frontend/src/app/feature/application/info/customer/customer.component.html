@@ -11,9 +11,6 @@
         </mat-card-content>
         <mat-card-title>
           {{['customer.role', customerWithContacts.uiRoleType, 'title'] | translation}}
-          <button mat-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()" class="align-with-text">
-            <mat-icon>mode_edit</mat-icon>
-          </button>
           <button mat-icon-button type="button" *ngIf="!readonly" (click)="contacts.addContact()" class="align-with-text">
             <mat-icon>group_add</mat-icon>
           </button>

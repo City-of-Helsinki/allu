@@ -3,14 +3,11 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
-import {MatDialog, MatDialogRef} from '@angular/material';
-import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '../../../customerregistry/customer/customer-modal.component';
 import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
 import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
-import {filter} from 'rxjs/internal/operators';
 import {CustomerType} from '../../../../model/customer/customer-type';
 import {InformationAcceptanceModalEvents} from '../../../information-request/acceptance/information-acceptance-modal-events';
 
@@ -40,10 +37,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
   customerClass: string[] = [];
 
   private _customerWithContacts: CustomerWithContacts;
-  private dialogRef: MatDialogRef<CustomerModalComponent>;
 
   constructor(private fb: FormBuilder,
-              private dialog: MatDialog,
               private modalState: InformationAcceptanceModalEvents) {
   }
 
@@ -75,17 +70,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.contacts.onCustomerRemove();
     this.parentForm.removeControl(CustomerWithContactsForm.formName(this.customerWithContacts.roleType));
-  }
-
-  canBeEdited(): boolean {
-    return Some(this.customerForm.value).map(val => val.id).orElse(false);
-  }
-
-  edit(): void {
-    this.dialogRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, CUSTOMER_MODAL_CONFIG);
-    this.dialogRef.componentInstance.customerId = this.customerForm.value.id;
-    this.dialogRef.afterClosed().pipe(filter(customer => !!customer))
-      .subscribe(customer => this.customerForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 
   showPending(): void {

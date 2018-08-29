@@ -4,8 +4,6 @@ import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Contact} from '../../../../model/customer/contact';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
-import {MatDialog, MatDialogRef} from '@angular/material';
-import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
 import {Observable, Subject} from 'rxjs';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
@@ -14,7 +12,7 @@ import {ApplicationType} from '../../../../model/application/type/application-ty
 import {OrdererIdForm} from '../cable-report/cable-report.form';
 import {FormUtil} from '../../../../util/form.util';
 import {CustomerService} from '../../../../service/customer/customer.service';
-import {debounceTime, filter, map, switchMap, tap} from 'rxjs/internal/operators';
+import {debounceTime, map, switchMap, tap} from 'rxjs/internal/operators';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -38,11 +36,9 @@ export class ContactComponent implements OnInit {
   matchingContacts: Observable<Array<Contact>>;
   showOrderer = false;
 
-  private dialogRef: MatDialogRef<ContactModalComponent>;
   private customerIdChanges = new Subject<number>();
 
   constructor(private fb: FormBuilder,
-              private dialog: MatDialog,
               private customerService: CustomerService,
               private applicationStore: ApplicationStore) {}
 
@@ -64,10 +60,6 @@ export class ContactComponent implements OnInit {
     this.disableContactEdit(index);
   }
 
-  canBeEdited(contact: Contact): boolean {
-    return NumberUtil.isDefined(contact.id);
-  }
-
   canBeRemoved(): boolean {
     const contactCanBeRemoved = !this.contactRequired || (this.contacts.length > 1);
     const canBeEdited = !this.readonly;
@@ -85,16 +77,6 @@ export class ContactComponent implements OnInit {
       .map(form => OrdererIdForm.to(form))
       .map(currentOrderer => currentOrderer.matches(contact.id, this.customerRoleType, index))
       .orElse(false);
-  }
-
-  edit(id: number, index: number): void {
-    this.dialogRef = this.dialog.open<ContactModalComponent>(ContactModalComponent, {
-      disableClose: false,
-      width: '800px'
-    });
-    this.dialogRef.componentInstance.contactId = id;
-    this.dialogRef.afterClosed().pipe(filter(contact => !!contact))
-      .subscribe(contact => this.contacts.at(index).patchValue(contact));
   }
 
   /**

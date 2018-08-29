@@ -122,16 +122,6 @@ describe('ContactComponent', () => {
     expect(getMatIconButton(page.contacts[0], 'clear')).toBeUndefined();
   }));
 
-  it('should show edit button always', fakeAsync(() => {
-    comp.readonly = false;
-    detectChangesAndUpdate();
-    expect(getMatIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
-
-    comp.readonly = false;
-    detectChangesAndUpdate();
-    expect(getMatIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
-  }));
-
   it('should clear other fields when name is edited', fakeAsync(() => {
     comp.readonly = true;
     detectChangesAndUpdate();

@@ -8,11 +8,6 @@
           <mat-card-title>
             {{['contact.role', customerRoleType, 'title'] | translation}}
             <button mat-icon-button type="button" class="align-with-text"
-                    *ngIf="canBeEdited(contact.value)"
-                    (click)="edit(contact.value.id, index)">
-              <mat-icon>mode_edit</mat-icon>
-            </button>
-            <button mat-icon-button type="button" class="align-with-text"
                     *ngIf="canBeRemoved()"
                     (click)="remove(index)">
               <mat-icon>clear</mat-icon>
