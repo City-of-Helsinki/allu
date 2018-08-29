@@ -34,7 +34,7 @@
     </button>
   </p>
 
-  <div>
+  <div *ngIf="!readonly">
     <mat-checkbox formControlName="useForInvoicing">
       {{'customer.useForInvoicing' | translation}}
     </mat-checkbox>
