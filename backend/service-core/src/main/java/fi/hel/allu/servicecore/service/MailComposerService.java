@@ -19,6 +19,7 @@ import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.AlluMailService.MailBuilder;
 
 /**
  * Service that's responsible for creating the outgoing emails and passing them
@@ -107,15 +108,21 @@ public class MailComposerService {
 
       MailSenderLog log;
       try {
-        log = alluMailService.newMailTo(emailRecipients)
+        final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipients)
           .withSubject(subject)
-          .withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId())
           .withBody(textBodyFor(applicationJson))
           .withHtmlBody(htmlBodyFor(applicationJson))
           .withAttachments(attachments)
           .withInlineResources(inlineResources)
-          .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType())))
-          .send();
+          .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType())));
+
+        if (applicationJson.getType() == ApplicationType.PLACEMENT_CONTRACT) {
+          mailBuilder.withContract(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+        } else {
+          mailBuilder.withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+        }
+
+        log = mailBuilder.send();
       } catch (Exception e) {
         logger.warn("Failed to send message", e);
         log = new MailSenderLog(subject, ZonedDateTime.now(), emailRecipients, true, e.getMessage());

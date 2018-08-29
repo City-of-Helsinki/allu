@@ -12,7 +12,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.mail.MessagingException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,16 +26,18 @@ import java.util.stream.Collectors;
 @Service
 public class AlluMailService {
 
-  private ApplicationProperties applicationProperties;
-  private DecisionService decisionService;
-  private MailService mailService;
+  private final ApplicationProperties applicationProperties;
+  private final DecisionService decisionService;
+  private final ContractService contractService;
+  private final MailService mailService;
   private Pattern emailAcceptPattern = null;
 
   @Autowired
   public AlluMailService(ApplicationProperties applicationProperties, DecisionService decisionService,
-      JavaMailSender javaMailSender) {
+      ContractService contractService, JavaMailSender javaMailSender) {
     this.applicationProperties = applicationProperties;
     this.decisionService = decisionService;
+    this.contractService = contractService;
     mailService = new MailService(javaMailSender);
   }
 
@@ -54,6 +55,7 @@ public class AlluMailService {
     private final MailMessage mailMessage = new MailMessage();
     private Map<String, Object> model = null;
     private Attachment decisionAttachment = null;
+    private Attachment contractAttachment = null;
     private List<Attachment> otherAttachments = Collections.emptyList();
 
     MailBuilder(List<String> recipients) {
@@ -88,6 +90,11 @@ public class AlluMailService {
       return this;
     }
 
+    public MailBuilder withContract(String contractPdfName, int applicationId) {
+      contractAttachment = new Attachment(contractPdfName, "application/pdf", contractService.getContract(applicationId));
+      return this;
+    }
+
     public MailBuilder withAttachments(List<Attachment> attachments) {
       otherAttachments = attachments;
       return this;
@@ -107,6 +114,9 @@ public class AlluMailService {
       List<Attachment> attachments = new ArrayList<>();
       if (decisionAttachment != null) {
         attachments.add(decisionAttachment);
+      }
+      if (contractAttachment != null) {
+        attachments.add(contractAttachment);
       }
       if (otherAttachments != null) {
         attachments.addAll(otherAttachments);
