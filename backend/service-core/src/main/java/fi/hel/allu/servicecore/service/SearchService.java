@@ -212,9 +212,9 @@ public class SearchService {
     if (queryParameters.getIntersectingGeometry() != null) {
       Geometry intersectingGeometry = locationService.transformCoordinates(queryParameters.getIntersectingGeometry(), Constants.ELASTIC_SEARCH_SRID);
       queryParameters.setIntersectingGeometry(intersectingGeometry);
-
     }
-    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity());
+    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity(),
+        new ParameterizedTypeReference<RestResponsePage<ApplicationES>>() {});
   }
 
   /**
@@ -228,7 +228,8 @@ public class SearchService {
    */
   public Page<ProjectJson> searchProject(QueryParameters queryParameters, Pageable pageRequest,
       Function<List<Integer>, List<ProjectJson>> mapper) {
-    return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest, false, mapper);
+    return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest, false, mapper,
+        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
   }
 
   /**
@@ -242,12 +243,14 @@ public class SearchService {
    */
   public Page<CustomerJson> searchCustomer(QueryParameters queryParameters, Pageable pageRequest,
       Function<List<Integer>, List<CustomerJson>> mapper) {
-    return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest, false, mapper);
+    return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest, false, mapper,
+        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
   }
 
   public Page<CustomerJson> searchCustomerByType(CustomerType type, QueryParameters queryParameters,
       Pageable pageRequest, Boolean matchAny, Function<List<Integer>, List<CustomerJson>> mapper) {
-    return search(applicationProperties.getCustomerSearchByTypeUrl(type), queryParameters, pageRequest, matchAny, mapper);
+    return search(applicationProperties.getCustomerSearchByTypeUrl(type), queryParameters, pageRequest, matchAny, mapper,
+        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
   }
 
   /**
@@ -261,7 +264,9 @@ public class SearchService {
    */
   public Page<ContactJson> searchContact(QueryParameters queryParameters, Pageable pageRequest,
       Function<List<Integer>, List<ContactJson>> mapper) {
-    return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, false, mapper);
+    return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest, false, mapper,
+        new ParameterizedTypeReference<RestResponsePage<Integer>>() {});
+
   }
 
   public void updateCustomerOfApplications(
@@ -297,10 +302,7 @@ public class SearchService {
 
 
   private <T, R> Page<T> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny,
-      Function<List<R>, List<T>> mapper) {
-    ParameterizedTypeReference<RestResponsePage<R>> typeref = new ParameterizedTypeReference<RestResponsePage<R>>() {
-    };
-
+      Function<List<R>, List<T>> mapper, ParameterizedTypeReference<RestResponsePage<R>> typeref) {
     URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest, matchAny);
     ResponseEntity<RestResponsePage<R>> response = restTemplate.exchange(targetUri, HttpMethod.POST,
         new HttpEntity<>(queryParameters), typeref);
