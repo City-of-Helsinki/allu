@@ -35,7 +35,7 @@
     "@turf/buffer": "5.1.5",
     "@turf/clean-coords": "5.1.5",
     "@turf/intersect": "5.1.5",
-    "@turf/area": "5.1.5",
+    "@turf/area": "6.0.1",
     "angular2-materialize": "15.1.10",
     "classlist.js": "^1.1.20150312",
     "core-js": "^2.5.7",
