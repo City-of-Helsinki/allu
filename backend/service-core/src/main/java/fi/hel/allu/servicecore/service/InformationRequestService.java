@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.InformationRequestResponse;
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.model.domain.InformationRequestField;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -29,12 +30,15 @@ public class InformationRequestService {
   private final RestTemplate restTemplate;
   private final ApplicationProperties applicationProperties;
   private final UserService userService;
+  private final ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
-  public InformationRequestService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService) {
+  public InformationRequestService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
+      UserService userService, ApplicationServiceComposer applicationServiceComposer) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
+    this.applicationServiceComposer = applicationServiceComposer;
   }
 
   public InformationRequestJson createForApplication(int id, InformationRequestJson informationRequest) {
@@ -99,6 +103,7 @@ public class InformationRequestService {
         new HttpEntity<>(null),
         InformationRequest.class,
         id);
+    applicationServiceComposer.changeStatus(responseEntity.getBody().getApplicationId(), StatusType.HANDLING);
     return toInformationRequestJson(responseEntity.getBody());
   }
 
