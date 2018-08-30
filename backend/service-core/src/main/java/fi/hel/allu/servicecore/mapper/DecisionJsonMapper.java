@@ -250,6 +250,8 @@ public class DecisionJsonMapper {
         return " %";
       case PIECE:
         return " kpl";
+      case METER:
+        return " m";
       case SQUARE_METER:
         return " m²";
       case WEEK:

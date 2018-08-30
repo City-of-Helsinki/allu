@@ -1390,6 +1390,7 @@ export const translations = {
     unit: {
       placeholder: 'Yksikkö',
       PIECE: 'kpl',
+      METER: 'm',
       SQUARE_METER: 'm²',
       HOUR: 't',
       DAY: 'pv',

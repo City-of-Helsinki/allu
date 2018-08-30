@@ -163,6 +163,8 @@ public class AlluMapper {
       return "KK";
     case PIECE:
       return "KPL";
+    case METER:
+      return "M";
     case SQUARE_METER:
       return "M2";
     case WEEK:
