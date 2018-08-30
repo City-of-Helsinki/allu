@@ -1,9 +1,6 @@
 import {PostalAddress} from '../common/postal-address';
-import {Uuid, UuidUtil} from '@util/uuid.util';
 
 export class Customer {
-  public readonly uuid?: Uuid;
-
   constructor(
     public id?: number,
     public type?: string,
@@ -21,6 +18,5 @@ export class Customer {
     public invoicingOnly = false,
     public projectIdentifierPrefix?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
-    this.uuid = UuidUtil.create();
   }
 }
