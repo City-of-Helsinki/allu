@@ -719,7 +719,8 @@ export const translations = {
   },
   decision: {
     selectHandler: 'Valitse käsittelijä',
-    attachments: 'Päätöksen liitteet',
+    decisionAttachments: 'Päätöksen liitteet',
+    contractAttachments: 'Sopimuksen liitteet',
     reason: 'Perustelut',
     emailMessage: 'Sähköpostiviesti',
     sendDecision: 'Lähetä päätös',
