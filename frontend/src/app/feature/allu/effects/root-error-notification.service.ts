@@ -16,6 +16,8 @@ import {map} from 'rxjs/internal/operators';
 import {InvoicingActionType} from '../../application/actions/invoicing-actions';
 import {DecisionActionType} from '@feature/decision/actions/decision-actions';
 import {ContractActionType} from '@feature/decision/actions/contract-actions';
+import {InformationRequestActionType} from '@feature/information-request/actions/information-request-actions';
+import {InformationRequestResultActionType} from '@feature/information-request/actions/information-request-result-actions';
 
 const handledActions = [
   ApplicationActionType.LoadFailed,
@@ -36,7 +38,10 @@ const handledActions = [
   InvoicingActionType.SetRecipientFailed,
   DecisionActionType.LoadFailed,
   ContractActionType.CreateProposalFailed,
-  ContractActionType.ApproveFailed
+  ContractActionType.ApproveFailed,
+  InformationRequestActionType.LoadLatestResponseFailed,
+  InformationRequestResultActionType.SaveFailed,
+  InformationRequestResultActionType.CloseFailed
 ];
 
 @Injectable()

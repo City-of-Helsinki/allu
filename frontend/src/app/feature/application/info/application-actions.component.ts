@@ -210,8 +210,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private normalActionsAllowed(status: ApplicationStatus): boolean {
     const validStatus = status !== ApplicationStatus.PENDING_CLIENT && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL;
-    const noPendingData = !this.pendingClientData && !this.pendingInformationRequestResponse;
-    return validStatus && noPendingData;
+    return validStatus && !this.pendingClientData;
   }
 
   private findDefaultRegionalOwner(app: Application): Observable<User> {

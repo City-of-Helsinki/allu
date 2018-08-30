@@ -19,6 +19,7 @@ export enum InformationRequestResultActionType {
   Save = '[InformationRequestResult] Save result of information request',
   SaveSuccess = '[InformationRequestResult] Save result of information request success',
   SaveFailed = '[InformationRequestResult] Save result of information request failed',
+  CloseFailed = '[InformationRequestResult] Closing information request failed'
 }
 
 export class SetApplication implements Action {
@@ -63,11 +64,16 @@ export class Save implements Action {
 
 export class SaveSuccess implements Action {
   readonly type = InformationRequestResultActionType.SaveSuccess;
-  constructor(public payload: Application) {}
+  constructor(public payload: InformationRequestResult) {}
 }
 
 export class SaveFailed implements ActionWithPayload<ErrorInfo> {
   readonly type = InformationRequestResultActionType.Save;
+  constructor(public payload: ErrorInfo) {}
+}
+
+export class CloseFailed implements ActionWithPayload<ErrorInfo> {
+  readonly type = InformationRequestResultActionType.CloseFailed;
   constructor(public payload: ErrorInfo) {}
 }
 
@@ -81,4 +87,5 @@ export type InformationRequestResultActions =
   | UseCustomerForInvoicing
   | Save
   | SaveSuccess
-  | SaveFailed;
+  | SaveFailed
+  | CloseFailed;

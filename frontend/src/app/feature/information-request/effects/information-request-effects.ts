@@ -3,6 +3,7 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import * as fromInformationRequest from '../reducers';
 import * as InformationRequestAction from '../actions/information-request-actions';
 import * as InformationRequestResultAction from '../actions/information-request-result-actions';
+import * as ApplicationAction from '@feature/application/actions/application-actions';
 import {Action, Store} from '@ngrx/store';
 import {InformationRequestService} from '../../../service/application/information-request.service';
 import {Observable, of} from 'rxjs/index';
@@ -37,8 +38,21 @@ export class InformationRequestEffects {
   saveResult: Observable<Action> = this.actions.pipe(
     ofType<InformationRequestResultAction.Save>(InformationRequestResultActionType.Save),
     switchMap(action => this.applicationStore.saveInformationRequestResult(action.payload).pipe(
-      map(application => new InformationRequestResultAction.SaveSuccess(application)),
+      map(() => new InformationRequestResultAction.SaveSuccess(action.payload)),
       catchError(error => of(new InformationRequestResultAction.SaveFailed(error)))
+    ))
+  );
+
+  @Effect()
+  closeRequest: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestResultAction.SaveSuccess>(InformationRequestResultActionType.SaveSuccess),
+    filter(action => NumberUtil.isDefined(action.payload.informationRequestId)),
+    switchMap(action => this.informationRequestService.closeInformationRequest(action.payload.informationRequestId).pipe(
+      switchMap(() => [
+        new InformationRequestAction.LoadLatestResponseSuccess(undefined),
+        new ApplicationAction.Load(action.payload.application.id)
+      ]),
+      catchError(error => of(new InformationRequestResultAction.CloseFailed(error)))
     ))
   );
 }

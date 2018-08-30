@@ -460,7 +460,8 @@ export const translations = {
   },
   informationRequestResponse: {
     error: {
-      fetch: 'Täydennyspyynnön hakeminen epäonnistui'
+      fetch: 'Täydennyspyynnön hakeminen epäonnistui',
+      close: 'Täydennyspyynnön sulkeminen epäonnistui'
     }
   },
   informationRequest: {
