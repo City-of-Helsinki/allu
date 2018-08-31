@@ -3,29 +3,51 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     <div *ngFor="let field of updatedFields">
-      <kind-acceptance
-        *ngIf="field === 'CLIENT_APPLICATION_KIND'"
-        [parentForm]="form"
-        [applicationType]="oldInfo.type"
-        [oldValues]="oldInfo?.kindsWithSpecifiers"
-        [newValues]="newInfo?.clientApplicationData.clientApplicationKind"
-        [readonly]="readonly">
-      </kind-acceptance>
-
-      <customer-with-contacts-acceptance
-        *ngIf="field === 'CUSTOMER'"
-        [parentForm]="form"
-        [oldCustomerWithContacts]="oldInfo?.applicant"
-        [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
-        [readonly]="readonly"></customer-with-contacts-acceptance>
-
-      <ng-container *ngIf="field === 'INVOICING_CUSTOMER'">
-        <invoice-customer-acceptance
-          *ngIf="(useCustomerForInvoicing$ | async) === undefined"
+      <div [ngSwitch]="field">
+        <kind-acceptance
+          *ngSwitchCase="'CLIENT_APPLICATION_KIND'"
           [parentForm]="form"
-          [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
-          [readonly]="readonly"></invoice-customer-acceptance>
-      </ng-container>
+          [applicationType]="oldInfo.type"
+          [oldValues]="oldInfo?.kindsWithSpecifiers"
+          [newValues]="newInfo?.clientApplicationData.clientApplicationKind"
+          [readonly]="readonly">
+        </kind-acceptance>
+
+        <div *ngSwitchCase="'APPLICATION_KIND'">
+          <!-- Placeholder -->
+        </div>
+
+        <customer-with-contacts-acceptance
+          *ngSwitchCase="'CUSTOMER'"
+          [parentForm]="form"
+          [oldCustomerWithContacts]="oldInfo?.applicant"
+          [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
+          [readonly]="readonly"></customer-with-contacts-acceptance>
+
+        <ng-container *ngSwitchCase="'INVOICING_CUSTOMER'">
+          <invoice-customer-acceptance
+            *ngIf="(useCustomerForInvoicing$ | async) === undefined"
+            [parentForm]="form"
+            [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
+            [readonly]="readonly"></invoice-customer-acceptance>
+        </ng-container>
+
+        <div *ngSwitchCase="'GEOMETRY'">
+          <!-- Placeholder -->
+        </div>
+
+        <div *ngSwitchCase="'POSTAL_ADDRESS'">
+          <!-- Placeholder -->
+        </div>
+
+        <div *ngSwitchCase="'ATTACHMENT'">
+          <!-- Placeholder -->
+        </div>
+
+        <div *ngSwitchDefault>
+          <!-- Placeholder -->
+        </div>
+      </div>
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>
