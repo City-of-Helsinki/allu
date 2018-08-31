@@ -56,7 +56,7 @@
     "ng2-file-upload": "1.2.1",
     "ngx-toastr": "8.7.3",
     "proj4leaflet": "1.0.2",
-    "rxjs": "^6.2.1",
+    "rxjs": "6.2.2",
     "superagent": "^3.8.3",
     "web-animations-js": "^2.3.1",
     "zone.js": "^0.8.26"
