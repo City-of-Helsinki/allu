@@ -5,7 +5,7 @@ import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
 @Component({
   selector: 'customer-with-contacts-acceptance',
   templateUrl: './customer-with-contacts-acceptance.component.html',
-  styleUrls: []
+  styleUrls: ['./customer-with-contacts-acceptance.component.scss']
 })
 export class CustomerWithContactsAcceptanceComponent {
   @Input() oldCustomerWithContacts: CustomerWithContacts;

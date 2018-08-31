@@ -13,7 +13,8 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'contacts-acceptance',
-  templateUrl: './contacts-acceptance-component.html'
+  templateUrl: './contacts-acceptance-component.html',
+  styleUrls: ['./contacts-acceptance-component.scss']
 })
 export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() newContacts: Contact[] = [];

@@ -1,10 +1,12 @@
-<applicant-acceptance
-  [parentForm]="parentForm"
-  [oldCustomer]="oldCustomerWithContacts?.customer"
-  [newCustomer]="newCustomerWithContacts?.customer"
-  [readonly]="readonly"></applicant-acceptance>
+<div class="acceptance-content">
+  <applicant-acceptance
+    [parentForm]="parentForm"
+    [oldCustomer]="oldCustomerWithContacts?.customer"
+    [newCustomer]="newCustomerWithContacts?.customer"
+    [readonly]="readonly"></applicant-acceptance>
 
-<contacts-acceptance
-  [parentForm]="parentForm"
-  [newContacts]="newCustomerWithContacts?.contacts"
-  [readonly]="readonly"></contacts-acceptance>
+  <contacts-acceptance
+    [parentForm]="parentForm"
+    [newContacts]="newCustomerWithContacts?.contacts"
+    [readonly]="readonly"></contacts-acceptance>
+</div>

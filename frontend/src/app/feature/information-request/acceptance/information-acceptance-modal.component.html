@@ -1,7 +1,7 @@
 <h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.acceptance.title' | translation}}</h1>
 <h1 mat-dialog-title *ngIf="readonly">{{'informationRequest.acceptance.readonlyTitle' | translation}}</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-dialog-content>
+  <mat-dialog-content class="acceptance-content">
     <div *ngFor="let field of updatedFields">
       <div [ngSwitch]="field">
         <kind-acceptance
