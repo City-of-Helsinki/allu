@@ -130,7 +130,7 @@ export const pendingClientDataFields = createSelector(
   hasPendingCustomerInfo,
   hasPendingInvoicingCustomer,
   (pendingKind, pendingCustomer, pendingInvoicingCustomer) => ([
-    ...(pendingKind ? [InformationRequestFieldKey.APPLICATION_KIND] : []),
+    ...(pendingKind ? [InformationRequestFieldKey.CLIENT_APPLICATION_KIND] : []),
     ...(pendingCustomer ? [InformationRequestFieldKey.CUSTOMER] : []),
     ...(pendingInvoicingCustomer ? [InformationRequestFieldKey.INVOICING_CUSTOMER] : [])
   ])

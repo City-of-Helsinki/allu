@@ -4,7 +4,7 @@
   <mat-dialog-content>
     <div *ngFor="let field of updatedFields">
       <kind-acceptance
-        *ngIf="field === 'APPLICATION_KIND'"
+        *ngIf="field === 'CLIENT_APPLICATION_KIND'"
         [parentForm]="form"
         [applicationType]="oldInfo.type"
         [oldValues]="oldInfo?.kindsWithSpecifiers"
