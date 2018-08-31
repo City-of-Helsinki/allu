@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApplicationStore} from '../../../service/application/application-store';
-import {ApplicationStatus} from '../../../model/application/application-status';
+import {ApplicationStatus, applicationCanBeEdited} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Observable, of, Subscription} from 'rxjs';
@@ -67,7 +67,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showHandling = (status === ApplicationStatus.PENDING) && (app.typeEnum !== ApplicationType.NOTE);
       this.showDelete = (app.typeEnum === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
       this.showCancel = status <= ApplicationStatus.DECISION;
-      this.showEdit = this.readonly && (status < ApplicationStatus.DECISION);
+      this.showEdit = this.readonly && applicationCanBeEdited(status);
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
       this.showActions = this.normalActionsAllowed(status);
