@@ -2,14 +2,14 @@
   <div class="search-bar">
     <h1>HAKU</h1>
     <form [formGroup]="queryForm">
-      <div class="row">
-        <div class="col m4 s6">
+      <div fxLayout="row" fxLayoutGap="18px">
+        <div fxFlex="30%">
           <mat-form-field class="input-full-width">
             <input matInput type="text" formControlName="applicationId"
                    [placeholder]="'applicationSearch.applicationId' | translation"/>
           </mat-form-field>
         </div>
-        <div class="col m2 s6">
+        <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="type" [multiple]="true"
                         [placeholder]="'applicationSearch.type' | translation" class="input-full-width">
@@ -19,7 +19,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col m2 s6">
+        <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="status" [multiple]="true"
                         [placeholder]="'applicationSearch.status' | translation" class="input-full-width">
@@ -29,7 +29,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col m2 s6">
+        <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="districts" [multiple]="true"
                         [placeholder]="'application.cityDistrict' | translation" class="input-full-width">
@@ -38,7 +38,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col m2 s6">
+        <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="owner" [multiple]="true"
                         [placeholder]="'applicationSearch.owner' | translation" class="input-full-width">
@@ -47,31 +47,33 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col m4 s6">
+      </div>
+      <div fxLayout="row" fxLayoutGap="18px">
+        <div fxFlex="30%">
           <mat-form-field class="input-full-width">
             <input matInput type="text" formControlName="address"
                    [placeholder]="'applicationSearch.address' | translation"/>
           </mat-form-field>
         </div>
-        <div class="col m2 s6">
+        <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <input matInput type="text" formControlName="applicant"
                    [placeholder]="'application.applicant' | translation"/>
           </mat-form-field>
         </div>
-        <div class="col m2 s6">
+        <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <input matInput type="text" formControlName="contact"
                    [placeholder]="'application.contact' | translation"/>
           </mat-form-field>
         </div>
-        <div class="col m2 s6">
+        <div fxFlex="15%">
           <mat-form-field class="input-full-width">
             <input matInput type="text" formControlName="freeText"
                    [placeholder]="'common.freeTextSearch' | translation"/>
           </mat-form-field>
         </div>
-        <div class="col m1 s6">
+        <div fxFlex="7%">
           <mat-form-field class="input-full-width">
             <input matInput type="text" formControlName="startTime"
                    [placeholder]="'applicationSearch.startTime' | translation"
@@ -80,7 +82,7 @@
             <mat-datepicker #startTimePicker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="col m1 s6">
+        <div fxFlex="7%">
           <mat-form-field class="input-full-width">
             <input matInput type="text" formControlName="endTime"
                    [placeholder]="'applicationSearch.endTime' | translation"
@@ -89,7 +91,9 @@
             <mat-datepicker #endTimePicker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="col m12 s12" fxFlex="25">
+      </div>
+      <div fxLayout="row">
+        <div fxFlex>
           <button (click)="search()" mat-raised-button type="button" color="primary">
             {{'common.button.search' | translation | uppercase}}
           </button>
@@ -103,8 +107,8 @@
     </form>
   </div>
 </div>
-<div class="row">
-  <div class=" col s12">
+<div fxLayout="row">
+  <div fxFlex>
     <div class="mat-elevation-z8 data-table data-table-with-paging">
       <div class="loading-shade" *ngIf="dataSource.loading">
         <mat-spinner></mat-spinner>
