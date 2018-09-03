@@ -40,38 +40,6 @@ export class ObjectUtil {
       return cloned;
     }
   }
-
-  static equal(first: any, second: any): boolean {
-    if (first === second) {
-      return true;
-    } else if (first === undefined || second === undefined) {
-      return false;
-    } else {
-      let prop;
-      for (prop in first) {
-        if (first.hasOwnProperty(prop) !== second.hasOwnProperty(prop)) {
-          return false;
-        } else if (typeof first[prop] !== typeof second[prop]) {
-          return false;
-        } else {
-          switch (typeof (first[prop])) {
-            case 'object':
-            case 'function':
-              if (!ObjectUtil.equal(first[prop], second[prop])) {
-                return false;
-              }
-              break;
-            default:
-              if (first[prop] !== second[prop]) {
-                return false;
-              }
-              break;
-          }
-        }
-      }
-      return true;
-    }
-  }
 }
 
 export interface Dictionary<T> {

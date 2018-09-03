@@ -1,4 +1,4 @@
-import moment = require('moment');
+import moment from 'moment';
 import {TimeUtil, WINTER_TIME_END} from '../../src/app/util/time.util';
 
 describe('Time util', () => {

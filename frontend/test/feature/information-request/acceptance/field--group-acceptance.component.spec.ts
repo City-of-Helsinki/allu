@@ -4,10 +4,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ControlValueAccessor, FormBuilder, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {MatDialogModule} from '@angular/material';
-import {
-  FieldGroupAcceptanceComponent,
-  FieldValues
-} from '@feature/information-request/acceptance/field-group-acceptance.component';
+import {FieldGroupAcceptanceComponent, FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
 import {By} from '@angular/platform-browser';
 import {findTranslation} from '@util/translations';
 

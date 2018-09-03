@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Selected} from './field-acceptance.component';
-import {BehaviorSubject, merge, Subject} from 'rxjs/index';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs/index';
 import {takeUntil} from 'rxjs/internal/operators';
+import isEqual from 'lodash/isEqual';
 
 export interface FieldLabels {
   [field: string]: string;
@@ -38,11 +39,11 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
       this.form.addControl(field, ctrl);
     });
 
-    merge(
+    combineLatest(
       this.oldValues$,
       this.newValues$
     ).pipe(
-      takeUntil(this.destroy),
+      takeUntil(this.destroy)
     ).subscribe(() => this.updateSelections());
   }
 
@@ -77,7 +78,9 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
 
   valuesEqual(field: string): boolean {
     if (this.oldValues && this.newValues) {
-      return this.oldValues[field] === this.newValues[field];
+      const oldValue = this.oldValues[field];
+      const newValue = this.newValues[field];
+      return isEqual(oldValue, newValue);
     } else {
       return false;
     }
@@ -105,7 +108,7 @@ export class FieldGroupAcceptanceComponent implements OnInit, OnDestroy {
   private updateFieldSelection(field: string, selected: Selected): void {
     const ctrl = this.form.get(field);
     if (ctrl) {
-      ctrl.patchValue(selected);
+      ctrl.patchValue(selected, {emitEvent: false});
     }
   }
 

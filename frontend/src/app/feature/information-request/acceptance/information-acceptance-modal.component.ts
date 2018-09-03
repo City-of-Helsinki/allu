@@ -23,7 +23,8 @@ export interface InformationAcceptanceData {
 
 export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcceptanceData> = {
   width: '80vw',
-  disableClose: true
+  disableClose: true,
+  autoFocus: false
 };
 
 @Component({
