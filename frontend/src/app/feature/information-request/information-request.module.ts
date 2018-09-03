@@ -25,6 +25,8 @@ import {
   InvoiceCustomerAcceptanceComponent
 } from '@feature/information-request/acceptance/invoice-customer/invoice-customer-acceptance.component';
 import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
+import {OtherAcceptanceComponent} from '@feature/information-request/acceptance/other/other-acceptance.component';
+import {OtherInfoAcceptanceComponent} from '@feature/information-request/acceptance/other/other-info-acceptance.component';
 
 @NgModule({
   imports: [
@@ -48,7 +50,9 @@ import {ApplicantAcceptanceComponent} from '@feature/information-request/accepta
     ContactAcceptanceComponent,
     ContactInfoAcceptanceComponent,
     KindAcceptanceComponent,
-    InvoiceCustomerAcceptanceComponent
+    InvoiceCustomerAcceptanceComponent,
+    OtherAcceptanceComponent,
+    OtherInfoAcceptanceComponent
   ],
   providers: [
     InformationRequestService,

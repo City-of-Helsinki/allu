@@ -49,6 +49,14 @@
         </div>
       </div>
     </div>
+    <div>
+      <other-acceptance
+        [parentForm]="form"
+        [oldInfo]="oldInfo"
+        [newInfo]="newInfo"
+        [fieldKeys]="updatedFields"
+      ></other-acceptance>
+    </div>
   </mat-dialog-content>
   <div mat-dialog-actions>
     <button *ngIf="!readonly" type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">

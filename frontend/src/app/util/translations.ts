@@ -485,7 +485,8 @@ export const translations = {
       POSTAL_ADDRESS: 'Postiosoite',
       WORK_DESCRIPTION: 'Työn kuvaus',
       PROPERTY_IDENTIFICATION_NUMBER: 'Kiinteistötunnus',
-      ATTACHMENT: 'Liite'
+      ATTACHMENT: 'Liite',
+      others: 'Muut tiedot'
     }
   },
   project: {

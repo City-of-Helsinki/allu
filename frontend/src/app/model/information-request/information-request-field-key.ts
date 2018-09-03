@@ -12,3 +12,11 @@ export enum InformationRequestFieldKey {
   PROPERTY_IDENTIFICATION_NUMBER,
   ATTACHMENT
 }
+
+export const OtherInfoKeys: InformationRequestFieldKey[] = [
+  InformationRequestFieldKey.START_TIME,
+  InformationRequestFieldKey.END_TIME,
+  InformationRequestFieldKey.IDENTIFICATION_NUMBER,
+  InformationRequestFieldKey.WORK_DESCRIPTION,
+  InformationRequestFieldKey.PROPERTY_IDENTIFICATION_NUMBER
+];
