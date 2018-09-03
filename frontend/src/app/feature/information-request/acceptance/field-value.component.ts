@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {typeOfValue, ValueType} from '../../../util/object.util';
 import {findTranslation} from '../../../util/translations';
+import {TimeUtil} from '@util/time.util';
 
 @Component({
   selector: 'field-value',
@@ -20,8 +21,15 @@ export class FieldValueComponent implements OnInit {
   }
 
   @Input() set value(value: any) {
-    const translationKey = [this.translationPrefix, value, this.translationSuffix].filter(val => val !== undefined);
-    const translate = value !== undefined && translationKey.length > 1;
-    this.displayValue = translate ? findTranslation(translationKey) : value;
+    if (value !== undefined) {
+      const translationKey = [this.translationPrefix, value, this.translationSuffix].filter(val => val !== undefined);
+      const translate = translationKey.length > 1;
+
+      if (value instanceof Date) {
+        this.displayValue = TimeUtil.getUiDateString(value);
+      } else {
+        this.displayValue = translate ? findTranslation(translationKey) : value;
+      }
+    }
   }
 }
