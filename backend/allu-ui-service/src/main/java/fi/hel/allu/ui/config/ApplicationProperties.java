@@ -1,15 +1,18 @@
 package fi.hel.allu.ui.config;
 
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import fi.hel.allu.servicecore.security.AdfsAuthenticationProperties;
 
 @Component
-public class ApplicationProperties {
+public class ApplicationProperties implements AdfsAuthenticationProperties {
 
   private final Environment environment;
   private final String versionNumber;

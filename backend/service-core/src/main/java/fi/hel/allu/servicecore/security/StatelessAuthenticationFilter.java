@@ -1,6 +1,5 @@
 package fi.hel.allu.servicecore.security;
 
-import fi.hel.allu.servicecore.service.AuthenticationServiceInterface;
 import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

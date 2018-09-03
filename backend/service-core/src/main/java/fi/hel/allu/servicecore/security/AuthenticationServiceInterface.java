@@ -1,4 +1,4 @@
-package fi.hel.allu.servicecore.service;
+package fi.hel.allu.servicecore.security;
 
 import org.springframework.security.core.Authentication;
 

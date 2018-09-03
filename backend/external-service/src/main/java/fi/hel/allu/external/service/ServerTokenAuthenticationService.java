@@ -5,9 +5,9 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.external.config.ApplicationProperties;
 import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.servicecore.domain.ExternalUserJson;
+import fi.hel.allu.servicecore.security.AuthenticationServiceInterface;
 import fi.hel.allu.servicecore.security.TokenUtil;
 import fi.hel.allu.servicecore.security.UserAuthentication;
-import fi.hel.allu.servicecore.service.AuthenticationServiceInterface;
 import fi.hel.allu.servicecore.service.ExternalUserService;
 
 import org.slf4j.Logger;
