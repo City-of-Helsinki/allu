@@ -28,7 +28,7 @@ public class ApplicantReminderService {
 
   /* Application types for which a reminder is sent: */
   private static final List<ApplicationType> APPLICATION_TYPES = Arrays.asList(ApplicationType.EXCAVATION_ANNOUNCEMENT,
-      ApplicationType.AREA_RENTAL, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS);
+      ApplicationType.AREA_RENTAL);
   /* Application statuses that we care of: */
   private static final List<StatusType> STATUS_TYPES = Arrays.asList(StatusType.DECISION);
   /* How many times before application's end should the notification be sent? */
