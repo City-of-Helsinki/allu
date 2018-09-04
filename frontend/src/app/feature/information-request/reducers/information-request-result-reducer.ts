@@ -5,6 +5,7 @@ import {Contact} from '../../../model/customer/contact';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
+import {FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
 
 export interface State {
   application: Application;
@@ -13,6 +14,7 @@ export interface State {
   kindsWithSpecifiers: KindsWithSpecifiers;
   invoicingCustomer: Customer;
   useCustomerForInvoicing: CustomerRoleType;
+  otherInfo: FieldValues;
 }
 
 export const initialState: State = {
@@ -21,7 +23,8 @@ export const initialState: State = {
   contacts: [],
   kindsWithSpecifiers: {},
   invoicingCustomer: undefined,
-  useCustomerForInvoicing: undefined
+  useCustomerForInvoicing: undefined,
+  otherInfo: undefined
 };
 
 export function reducer(state: State = initialState, action: InformationRequestResultActions) {
@@ -78,6 +81,13 @@ export function reducer(state: State = initialState, action: InformationRequestR
       };
     }
 
+    case InformationRequestResultActionType.SetOtherInfo: {
+      return {
+        ...state,
+        otherInfo: action.payload
+      };
+    }
+
     case InformationRequestResultActionType.SaveSuccess: {
       return initialState;
     }
@@ -101,3 +111,5 @@ export const getKindsWithSpecifiers = (state: State) => state.kindsWithSpecifier
 export const getInvoicingCustomer = (state: State) => state.invoicingCustomer;
 
 export const useCustomerForInvoicing = (state: State) => state.useCustomerForInvoicing;
+
+export const getOtherInfo = (state: State) => state.otherInfo;

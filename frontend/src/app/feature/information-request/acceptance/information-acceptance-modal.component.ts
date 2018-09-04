@@ -12,6 +12,7 @@ import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {ArrayUtil} from '@util/array-util';
 import {SetApplication, SetCustomer, SetKindsWithSpecifiers} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
+import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -47,7 +48,8 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
               private store: Store<fromRoot.State>,
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private resultService: InformationRequestResultService) {
     this.form = this.fb.group({});
     this.readonly = data.readonly;
 
@@ -79,22 +81,8 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   }
 
   onSubmit(): void {
-    combineLatest(
-      this.store.select(fromInformationRequestResult.getResultApplication),
-      this.store.select(fromInformationRequestResult.getResultCustomerWithContacts),
-      this.store.select(fromInformationRequestResult.getResultKindsWithSpecifiers),
-      this.store.select(fromInformationRequestResult.getResultInvoicingCustomer),
-      this.store.select(fromInformationRequestResult.useCustomerForInvoicing)
-    ).pipe(take(1))
-      .subscribe(([app, customerWithContacts, kindsWithSpecifiers, invoicingCustomer, useCustomerForInvoicing]) => {
-        app.customersWithContacts = ArrayUtil.createOrReplace(
-          app.customersWithContacts,
-          customerWithContacts,
-          cwc => cwc.roleType === CustomerRoleType.APPLICANT);
-        app.kindsWithSpecifiers = kindsWithSpecifiers;
-        const result = new InformationRequestResult(this.data.informationRequestId, app, invoicingCustomer, useCustomerForInvoicing);
-        this.dialogRef.close(result);
-      });
+    this.resultService.getResult(this.data.informationRequestId)
+      .subscribe(result => this.dialogRef.close(result));
   }
 
   cancel(): void {

@@ -7,6 +7,7 @@ import {ActionWithPayload} from '@feature/common/action-with-payload';
 import {ErrorInfo} from '@service/error/error-info';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
+import {FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
 
 export enum InformationRequestResultActionType {
   SetApplication = '[InformationRequestResult] Set result application',
@@ -16,6 +17,7 @@ export enum InformationRequestResultActionType {
   SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers',
   SetInvoicingCustomer = '[InformationRequestResult] Set result invoicing customer',
   UseCustomerForInvoicing = '[InformationRequestResult] Use customer also for invoicing',
+  SetOtherInfo = '[InformationRequestResult] Set other application info',
   Save = '[InformationRequestResult] Save result of information request',
   SaveSuccess = '[InformationRequestResult] Save result of information request success',
   SaveFailed = '[InformationRequestResult] Save result of information request failed',
@@ -57,6 +59,11 @@ export class UseCustomerForInvoicing implements Action {
   constructor(public payload: CustomerRoleType) {}
 }
 
+export class SetOtherInfo implements Action {
+  readonly type = InformationRequestResultActionType.SetOtherInfo;
+  constructor(public payload: FieldValues) {}
+}
+
 export class Save implements Action {
   readonly type = InformationRequestResultActionType.Save;
   constructor(public payload: InformationRequestResult) {}
@@ -85,6 +92,7 @@ export type InformationRequestResultActions =
   | SetKindsWithSpecifiers
   | SetInvoicingCustomer
   | UseCustomerForInvoicing
+  | SetOtherInfo
   | Save
   | SaveSuccess
   | SaveFailed

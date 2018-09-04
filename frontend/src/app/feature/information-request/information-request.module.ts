@@ -27,6 +27,7 @@ import {
 import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
 import {OtherAcceptanceComponent} from '@feature/information-request/acceptance/other/other-acceptance.component';
 import {OtherInfoAcceptanceComponent} from '@feature/information-request/acceptance/other/other-info-acceptance.component';
+import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 
 @NgModule({
   imports: [
@@ -56,7 +57,8 @@ import {OtherInfoAcceptanceComponent} from '@feature/information-request/accepta
   ],
   providers: [
     InformationRequestService,
-    InformationAcceptanceModalEvents
+    InformationAcceptanceModalEvents,
+    InformationRequestResultService
   ],
   exports: [
     InformationAcceptanceModalComponent

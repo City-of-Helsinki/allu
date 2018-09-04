@@ -4,29 +4,7 @@ import {InfoAcceptance} from '@feature/information-request/acceptance/info-accep
 import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
 import {findTranslation} from '@util/translations';
 import get from 'lodash/get';
-
-const applicationFields = {
-  START_TIME: {
-    fieldName: 'startTime',
-    valueField: 'startTime'
-  },
-  END_TIME: {
-    fieldName: 'endTime',
-    valueField: 'endTime'
-  },
-  IDENTIFICATION_NUMBER: {
-    fieldName: 'identificationNumber',
-    valueField: 'identificationNumber'
-  },
-  WORK_DESCRIPTION: {
-    fieldName: 'workDescription',
-    valueField: 'extension.additionalInfo'
-  },
-  PROPERTY_IDENTIFICATION_NUMBER: {
-    fieldName: 'propertyIdentificationNumber',
-    valueField: 'extension.propertyIdentificationNumber'
-  }
-};
+import {FieldKeyMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
 
 @Component({
   selector: 'other-info-acceptance',
@@ -71,7 +49,7 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptance<any> implements
   }
 
   private toFieldValue(fieldKey: string, application: Application): FieldValues {
-    const fieldInfo = applicationFields[fieldKey];
+    const fieldInfo = FieldKeyMapping[fieldKey];
     const fieldValues = {};
     if (fieldInfo) {
       fieldValues[fieldInfo.fieldName] = get(application, fieldInfo.valueField);
@@ -90,7 +68,7 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptance<any> implements
   }
 
   private createLabel(fieldKey: string): FieldLabels {
-    const fieldInfo = applicationFields[fieldKey];
+    const fieldInfo = FieldKeyMapping[fieldKey];
     const labels = {};
     if (fieldInfo) {
       labels[fieldInfo.fieldName] = findTranslation(['informationRequest.field', fieldKey]);
