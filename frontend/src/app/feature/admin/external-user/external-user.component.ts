@@ -12,6 +12,7 @@ import {NotificationService} from '../../../service/notification/notification.se
 import {translations} from '../../../util/translations';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
+import {ArrayUtil} from '@util/array-util';
 
 const DEBOUNCE_TIME_MS = 300;
 
@@ -26,7 +27,7 @@ export class ExternalUserComponent implements OnInit {
   userForm: FormGroup;
 
   submitted = false;
-  roles = EnumUtil.enumValues(ExternalRoleType);
+  roles = EnumUtil.enumValues(ExternalRoleType).sort(ArrayUtil.naturalSortTranslated(['externalUser.role'], (role: string) => role));
   matchingNameCustomers: Observable<Array<Customer>>;
   connectedCustomers: Observable<Array<Customer>>;
 

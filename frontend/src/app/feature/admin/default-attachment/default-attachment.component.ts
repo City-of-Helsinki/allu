@@ -26,7 +26,8 @@ export class DefaultAttachmentComponent implements OnInit {
 
   attachmentForm: FormGroup;
   districts: Observable<Array<CityDistrict>>;
-  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  applicationTypes = EnumUtil.enumValues(ApplicationType)
+    .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   hasFileOverDropzone = false;
   attachmentType: string;
   areas = this.fixedLocationService.existing

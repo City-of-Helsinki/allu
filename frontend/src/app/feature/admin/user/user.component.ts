@@ -15,6 +15,7 @@ import {Store} from '@ngrx/store';
 import {NumberUtil} from '../../../util/number.util';
 import {UserService} from '../../../service/user/user-service';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'user',
@@ -26,15 +27,16 @@ import {filter, map, switchMap} from 'rxjs/internal/operators';
 export class UserComponent implements OnInit {
   userForm: FormGroup;
   submitted = false;
-  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  applicationTypes = EnumUtil.enumValues(ApplicationType)
+    .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   roles = [
     'ROLE_CREATE_APPLICATION',
     'ROLE_PROCESS_APPLICATION',
     'ROLE_DECISION',
     'ROLE_SUPERVISE',
     'ROLE_INVOICING',
-    'ROLE_VIEW'
-  ];
+    'ROLE_VIEW',
+  ].sort(ArrayUtil.naturalSortTranslated(['user.role'], (role: string) => role));
   districts: Observable<Array<CityDistrict>>;
 
   constructor(private route: ActivatedRoute,

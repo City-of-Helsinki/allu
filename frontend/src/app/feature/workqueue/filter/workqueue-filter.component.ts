@@ -17,6 +17,7 @@ import {Sort} from '../../../model/common/sort';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {debounceTime, distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
+import {ArrayUtil} from '@util/array-util';
 
 interface ApplicationSearchFilter {
   search?: ApplicationSearchQuery;
@@ -37,7 +38,8 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   queryForm: FormGroup;
   districts: Observable<Array<CityDistrict>>;
   applicationStatuses = workqueue_searchable.map(status => ApplicationStatus[status]);
-  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  applicationTypes = EnumUtil.enumValues(ApplicationType)
+    .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
   tab: Observable<string>;
 

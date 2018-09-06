@@ -4,6 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {DialogCloseReason, DialogCloseValue} from '../dialog-close-value';
+import {ArrayUtil} from '@util/array-util';
 
 export const OWNER_MODAL_CONFIG = {width: '400px', data: {}};
 
@@ -23,7 +24,7 @@ export class OwnerModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser.user.subscribe(u => this.selectedUser = u);
-    this.allUsers = this.data.users || [this.selectedUser];
+    this.allUsers = this.sort(this.data.users || [this.selectedUser]);
     this.type = this.data.type || 'OWNER';
   }
 
@@ -33,6 +34,10 @@ export class OwnerModalComponent implements OnInit {
 
   cancel() {
     this.dialogRef.close(new DialogCloseValue(DialogCloseReason.CANCEL, undefined));
+  }
+
+  private sort(users: User[]): User[] {
+    return users.sort(ArrayUtil.naturalSort((user: User) => user.realName));
   }
 }
 
