@@ -15,6 +15,7 @@ public class Contact implements PostalAddressItem {
   private String email;
   private String phone;
   private boolean isActive = true;
+  private Boolean orderer;
 
   /**
    * in Finnish: Yhteyshenkilön tunniste
@@ -100,5 +101,13 @@ public class Contact implements PostalAddressItem {
   public void setActive(boolean active) {
     // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
     setIsActive(active);
+  }
+
+  public Boolean getOrderer() {
+    return orderer;
+  }
+
+  public void setOrderer(Boolean orderer) {
+    this.orderer = orderer;
   }
 }

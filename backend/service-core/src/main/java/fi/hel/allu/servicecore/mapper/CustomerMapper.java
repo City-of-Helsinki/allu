@@ -99,6 +99,7 @@ public class CustomerMapper {
     json.setEmail(c.getEmail());
     json.setPhone(c.getPhone());
     json.setActive(c.isActive());
+    json.setOrderer(c.getOrderer());
     return json;
   }
 
@@ -114,6 +115,7 @@ public class CustomerMapper {
     contact.setEmail(json.getEmail());
     contact.setPhone(json.getPhone());
     contact.setIsActive(json.isActive());
+    contact.setOrderer(json.getOrderer());
     return contact;
   }
 

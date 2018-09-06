@@ -35,6 +35,7 @@ public class CustomerExtMapper {
        contact.setPostalCode(contactExt.getPostalAddress().getPostalCode());
        contact.setStreetAddress(contactExt.getPostalAddress().getStreetAddressAsString());
      }
+     contact.setOrderer(contactExt.getOrderer());
      return contact;
   }
 

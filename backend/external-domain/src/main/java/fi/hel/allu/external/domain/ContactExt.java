@@ -14,6 +14,7 @@ public class ContactExt {
   private PostalAddressExt postalAddress;
   private String email;
   private String phone;
+  private Boolean orderer;
 
   public Integer getId() {
     return id;
@@ -57,5 +58,14 @@ public class ContactExt {
 
   public void setPhone(String phone) {
     this.phone = phone;
+  }
+
+  @ApiModelProperty(value = "Value indicating whether contact is orderer of the application")
+  public Boolean getOrderer() {
+    return orderer;
+  }
+
+  public void setOrderer(Boolean orderer) {
+    this.orderer = orderer;
   }
 }

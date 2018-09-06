@@ -17,6 +17,7 @@ public class ContactJson {
   private String email;
   private String phone;
   private boolean active;
+  private Boolean orderer;
 
   /**
    * in Finnish: Yhteyshenkilön tunniste
@@ -115,5 +116,13 @@ public class ContactJson {
 
   public void setActive(boolean active) {
     this.active = active;
+  }
+
+  public Boolean getOrderer() {
+    return orderer;
+  }
+
+  public void setOrderer(Boolean orderer) {
+    this.orderer = orderer;
   }
 }
