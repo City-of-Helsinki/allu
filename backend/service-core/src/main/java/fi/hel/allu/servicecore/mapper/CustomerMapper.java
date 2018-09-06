@@ -36,6 +36,9 @@ public class CustomerMapper {
   }
 
   public CustomerJson createCustomerJson(Customer customer) {
+    if (customer == null) {
+      return null;
+    }
     CustomerJson customerJson = new CustomerJson();
     customerJson.setId(customer.getId());
     customerJson.setType(customer.getType());
@@ -58,6 +61,9 @@ public class CustomerMapper {
   }
 
   public Customer createCustomerModel(CustomerJson customerJson) {
+    if (customerJson == null) {
+      return null;
+    }
     Customer customerModel = new Customer();
     customerModel.setId(customerJson.getId());
     customerModel.setType(customerJson.getType());
@@ -163,6 +169,9 @@ public class CustomerMapper {
   }
 
   public CustomerWithContactsJson createWithContactsJson(CustomerWithContacts cwc) {
+    if (cwc == null) {
+      return null;
+    }
     CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
     customerWithContactsJson.setContacts(cwc.getContacts().stream()
         .map(c -> createContactJson(c))
@@ -183,10 +192,11 @@ public class CustomerMapper {
   }
 
   public CustomerWithContacts createSingleCustomerWithContactsModel(CustomerWithContactsJson cwcJson) {
-    return new CustomerWithContacts(
-        cwcJson.getRoleType(),
-        createCustomerModel(cwcJson.getCustomer()),
-        cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList()));
+    return cwcJson != null ?
+        new CustomerWithContacts(
+            cwcJson.getRoleType(),
+            createCustomerModel(cwcJson.getCustomer()),
+            cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList())) : null;
   }
 
 
