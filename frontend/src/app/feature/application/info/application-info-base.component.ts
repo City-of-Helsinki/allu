@@ -20,6 +20,7 @@ import {distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLates
 import {ApplicationService} from '../../../service/application/application.service';
 import * as fromRoot from '../reducers';
 import * as fromApplication from '../reducers';
+import * as fromInformationRequest from '@feature/information-request/reducers';
 import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';
 import {Store} from '@ngrx/store';
 import {
@@ -31,6 +32,7 @@ import {MatDialog, MatDialogConfig} from '@angular/material';
 import {InformationRequestResult} from '../../information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '../actions/application-actions';
 import {InformationAcceptanceModalEvents} from '../../information-request/acceptance/information-acceptance-modal-events';
+import {InformationRequest} from '@model/information-request/information-request';
 
 /**
  * This component should be used only as base class for other more specific application components.
@@ -50,6 +52,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   showTerms = false;
   applicationChanges: Observable<Application>;
   required = FormUtil.required;
+  informationRequest$: Observable<InformationRequest>;
   pendingClientData$: Observable<boolean>;
   pendingCustomerInfo$: Observable<boolean>;
   pendingInformationRequestResponse$: Observable<boolean>;
@@ -91,6 +94,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     this.pendingInformationRequestResponse$ = this.store.select(fromApplication.getInformationRequestResponse).pipe(
       map(response => !!response)
     );
+    this.informationRequest$ = this.store.select(fromInformationRequest.getInformationRequest);
 
     this.applicationStore.changes.pipe(
       map(change => change.draft),

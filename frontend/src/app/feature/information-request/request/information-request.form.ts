@@ -33,7 +33,6 @@ export class InformationRequestForm {
   }
 
   public static formGroup(fb: FormBuilder, request: InformationRequest = new InformationRequest()): FormGroup {
-    console.log('formGroup r=', request);
     return fb.group({
       selectedCUSTOMER: this.isSelected(InformationRequestFieldKey.CUSTOMER, request.fields),
       CUSTOMER: this.getDescription(InformationRequestFieldKey.CUSTOMER, request.fields),
@@ -62,19 +61,23 @@ export class InformationRequestForm {
     });
   }
 
-  public static toInformationRequest(form: InformationRequestForm, request: InformationRequest = new InformationRequest()): InformationRequest {
+  public static toInformationRequest(form: InformationRequestForm,
+                                     request: InformationRequest = new InformationRequest()): InformationRequest {
     const fields = new Array<InformationRequestField>();
     this.addIfSelected(form.selectedCUSTOMER, InformationRequestFieldKey.CUSTOMER, form.CUSTOMER, fields);
     this.addIfSelected(form.selectedINVOICING_CUSTOMER, InformationRequestFieldKey.INVOICING_CUSTOMER, form.INVOICING_CUSTOMER, fields);
     this.addIfSelected(form.selectedGEOMETRY, InformationRequestFieldKey.GEOMETRY, form.GEOMETRY, fields);
     this.addIfSelected(form.selectedSTART_TIME, InformationRequestFieldKey.START_TIME, form.START_TIME, fields);
     this.addIfSelected(form.selectedEND_TIME, InformationRequestFieldKey.END_TIME, form.END_TIME, fields);
-    this.addIfSelected(form.selectedIDENTIFICATION_NUMBER, InformationRequestFieldKey.IDENTIFICATION_NUMBER, form.IDENTIFICATION_NUMBER, fields);
-    this.addIfSelected(form.selectedCLIENT_APPLICATION_KIND, InformationRequestFieldKey.CLIENT_APPLICATION_KIND, form.CLIENT_APPLICATION_KIND, fields);
+    this.addIfSelected(form.selectedIDENTIFICATION_NUMBER, InformationRequestFieldKey.IDENTIFICATION_NUMBER,
+      form.IDENTIFICATION_NUMBER, fields);
+    this.addIfSelected(form.selectedCLIENT_APPLICATION_KIND, InformationRequestFieldKey.CLIENT_APPLICATION_KIND,
+      form.CLIENT_APPLICATION_KIND, fields);
     this.addIfSelected(form.selectedAPPLICATION_KIND, InformationRequestFieldKey.APPLICATION_KIND, form.APPLICATION_KIND, fields);
     this.addIfSelected(form.selectedPOSTAL_ADDRESS, InformationRequestFieldKey.POSTAL_ADDRESS, form.POSTAL_ADDRESS, fields);
     this.addIfSelected(form.selectedWORK_DESCRIPTION, InformationRequestFieldKey.WORK_DESCRIPTION, form.WORK_DESCRIPTION, fields);
-    this.addIfSelected(form.selectedPROPERTY_IDENTIFICATION_NUMBER, InformationRequestFieldKey.PROPERTY_IDENTIFICATION_NUMBER, form.PROPERTY_IDENTIFICATION_NUMBER, fields);
+    this.addIfSelected(form.selectedPROPERTY_IDENTIFICATION_NUMBER, InformationRequestFieldKey.PROPERTY_IDENTIFICATION_NUMBER,
+      form.PROPERTY_IDENTIFICATION_NUMBER, fields);
     this.addIfSelected(form.selectedATTACHMENT, InformationRequestFieldKey.ATTACHMENT, form.ATTACHMENT, fields);
     request.fields = fields;
     return request;
@@ -92,7 +95,8 @@ export class InformationRequestForm {
     return !!fields.find(f => f.fieldKey === key);
   }
 
-  private static addIfSelected(selected: boolean, fieldKey: InformationRequestFieldKey, description: string, fields: InformationRequestField[]): void {
+  private static addIfSelected(selected: boolean, fieldKey: InformationRequestFieldKey, description: string,
+                               fields: InformationRequestField[]): void {
     if (selected) {
       fields.push(new InformationRequestField(fieldKey, description));
     }

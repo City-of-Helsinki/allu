@@ -8,6 +8,7 @@ import {BackendInformationRequestResponse, InformationRequestResponseMapper} fro
 import {catchError, map} from 'rxjs/internal/operators';
 import {findTranslation} from '@util/translations';
 import {BackendInformationRequest, InformationRequestMapper} from '../mapper/information-request-mapper';
+import {NumberUtil} from '@util/number.util';
 
 const applicationUrl = '/api/applications';
 const responseUrlPart = 'informationrequests/response';
@@ -27,9 +28,10 @@ export class InformationRequestService {
   }
 
   // TODO: Add information request as return type when implemented
-  closeInformationRequest(id: number): Observable<any> {
+  closeInformationRequest(id: number): Observable<InformationRequest> {
     const url = `${informationRequestUrl}/${id}/close`;
-    return this.http.put<any>(url, {}).pipe(
+    return this.http.put<BackendInformationRequest>(url, {}).pipe(
+      map(response => InformationRequestMapper.mapBackend(response)),
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequestResponse.error.close')))
     );
   }
@@ -42,16 +44,26 @@ export class InformationRequestService {
     );
   }
 
+  save(request: InformationRequest): Observable<InformationRequest> {
+    if (NumberUtil.isDefined(request.informationRequestId)) {
+      return this.update(request);
+    } else {
+      return this.create(request);
+    }
+  }
+
   create(request: InformationRequest): Observable<InformationRequest> {
     const url = `${applicationUrl}/${request.applicationId}/informationrequests`;
-    return this.http.post<InformationRequest>(url, request).pipe(
+    return this.http.post<BackendInformationRequest>(url, request).pipe(
+      map(response => InformationRequestMapper.mapBackend(response)),
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.create')))
     );
   }
 
   update(request: InformationRequest): Observable<InformationRequest> {
     const url = `${informationRequestUrl}/${request.informationRequestId}`;
-    return this.http.put<InformationRequest>(url, InformationRequestMapper.mapFrontend(request)).pipe(
+    return this.http.put<BackendInformationRequest>(url, InformationRequestMapper.mapFrontend(request)).pipe(
+      map(response => InformationRequestMapper.mapBackend(response)),
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.update')))
     );
   }

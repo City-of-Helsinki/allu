@@ -26,6 +26,17 @@ export const getInformationRequestEntityState = createSelector(
   (state: InformationRequestState) => state.request
 );
 
+// Information request selectors
+export const getInformationRequest = createSelector(
+  getInformationRequestEntityState,
+  fromInformationRequest.getRequest
+);
+
+export const getInformationRequestLoading = createSelector(
+  getInformationRequestEntityState,
+  fromInformationRequest.getResponseLoading
+);
+
 // Information request response selectors
 export const getInformationRequestResponse = createSelector(
   getInformationRequestEntityState,

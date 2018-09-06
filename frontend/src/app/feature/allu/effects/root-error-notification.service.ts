@@ -39,9 +39,11 @@ const handledActions = [
   DecisionActionType.LoadFailed,
   ContractActionType.CreateProposalFailed,
   ContractActionType.ApproveFailed,
+  InformationRequestActionType.LoadLatestRequestFailed,
+  InformationRequestActionType.SaveRequestFailed,
   InformationRequestActionType.LoadLatestResponseFailed,
   InformationRequestResultActionType.SaveFailed,
-  InformationRequestResultActionType.CloseFailed
+  InformationRequestResultActionType.CloseFailed,
 ];
 
 @Injectable()

@@ -24,6 +24,26 @@ export class InformationRequestEffects {
               private informationRequestService: InformationRequestService) {}
 
   @Effect()
+  loadRequest: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestAction.LoadLatestRequest>(InformationRequestActionType.LoadLatestRequest),
+    withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+    filter(([action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([action, application]) => this.informationRequestService.getRequestForApplication(application.id).pipe(
+      map(request => new InformationRequestAction.LoadLatestRequestSuccess(request)),
+      catchError(error => of(new InformationRequestAction.LoadLatestRequestFailed(error)))
+    ))
+  );
+
+  @Effect()
+  saveRequest: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestAction.SaveRequest>(InformationRequestActionType.SaveRequest),
+    switchMap(action => this.informationRequestService.save(action.payload).pipe(
+      map(request => new InformationRequestAction.SaveRequestSuccess(request)),
+      catchError(error => of(new InformationRequestAction.SaveRequestFailed(error)))
+    ))
+  )
+
+  @Effect()
   loadResponse: Observable<Action> = this.actions.pipe(
     ofType<InformationRequestAction.LoadLatestResponse>(InformationRequestActionType.LoadLatestResponse),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),

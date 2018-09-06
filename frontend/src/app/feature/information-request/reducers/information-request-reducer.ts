@@ -1,19 +1,48 @@
 import {InformationRequestResponse} from '../../../model/information-request/information-request-response';
 import {InformationRequestAction, InformationRequestActionType} from '../actions/information-request-actions';
+import {InformationRequest} from '@model/information-request/information-request';
 
 export interface State {
+  request: InformationRequest;
+  requestLoading: boolean;
   response: InformationRequestResponse;
   responseLoading: boolean;
 }
 
 export const initialState: State = {
+  request: undefined,
+  requestLoading: false,
   response: undefined,
   responseLoading: false
 };
 
 export function reducer(state: State = initialState, action: InformationRequestAction) {
   switch (action.type) {
-    case InformationRequestActionType.LoadLatestResponse: {
+    case InformationRequestActionType.LoadLatestRequest:
+    case InformationRequestActionType.LoadLatestRequestFailed: {
+      return {
+        ...state,
+        requestLoading: true
+      };
+    }
+
+    case InformationRequestActionType.LoadLatestRequestSuccess: {
+      return {
+        ...state,
+        request: action.payload,
+        requestLoading: false
+      };
+    }
+
+    case InformationRequestActionType.SaveRequestSuccess: {
+      return {
+        ...state,
+        request: action.payload
+      };
+    }
+
+    case InformationRequestActionType.LoadLatestResponse:
+    case InformationRequestActionType.LoadLatestResponseFailed: {
       return {
         ...state,
         responseLoading: true
@@ -28,13 +57,6 @@ export function reducer(state: State = initialState, action: InformationRequestA
       };
     }
 
-    case InformationRequestActionType.LoadLatestResponseFailed: {
-      return {
-        ...state,
-        responseLoading: false
-      };
-    }
-
     default: {
       return {
         ...state
@@ -42,6 +64,10 @@ export function reducer(state: State = initialState, action: InformationRequestA
     }
   }
 }
+
+export const getRequest = (state: State) => state.request;
+
+export const getRequestLoading = (state: State) => state.requestLoading;
 
 export const getResponse = (state: State) => state.response;
 

@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApplicationStore} from '../../../service/application/application-store';
-import {ApplicationStatus, applicationCanBeEdited} from '../../../model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Observable, of, Subscription} from 'rxjs';
@@ -20,11 +20,10 @@ import {filter, map} from 'rxjs/internal/operators';
 import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
 import {InformationRequestModalComponent} from '@feature/information-request/request/information-request-modal.component';
 import {InformationRequest} from '@model/information-request/information-request';
-
-import {InformationRequestService} from '@service/application/information-request.service';
-import {InformationRequestField} from '@model/information-request/information-request-field';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
-import {InformationRequestFieldKey} from '@model/information-request//information-request-field-key';
+import {Store} from '@ngrx/store';
+import * as fromApplication from '@feature/application/reducers';
+import {SaveRequest} from '@feature/information-request/actions/information-request-actions';
 
 @Component({
   selector: 'application-actions',
@@ -42,6 +41,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   @Input() valid: boolean;
   @Input() pendingClientData: boolean;
   @Input() pendingInformationRequestResponse: boolean;
+  @Input() informationRequest: InformationRequest;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
@@ -56,7 +56,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showInformationRequest = false;
   showActions = true;
   applicationId: number;
-  currentInformationRequest: InformationRequest;
 
   private applicationSub: Subscription;
 
@@ -66,7 +65,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private userHub: UserHub,
               private notification: NotificationService,
               private modalState: InformationAcceptanceModalEvents,
-              private informationRequestservice: InformationRequestService) {
+              private store: Store<fromApplication.State>) {
   }
 
   ngOnInit(): void {
@@ -83,9 +82,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showActions = this.normalActionsAllowed(status);
       this.showInformationRequest = (status === ApplicationStatus.PENDING || status === ApplicationStatus.HANDLING);
       this.applicationId = app.id;
-      this.informationRequestservice.getRequestForApplication(app.id).subscribe(request => {
-        this.currentInformationRequest = request
-      });
     });
   }
 
@@ -135,20 +131,15 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
   }
 
-  informationRequest(): void {
-    const request = this.currentInformationRequest ? this.currentInformationRequest : new InformationRequest(undefined, this.applicationStore.snapshot.application.id, [], InformationRequestStatus.OPEN);
-    const data = {
-      application: this.applicationStore.snapshot.application,
-      request: request
-    };
+  openInformationRequest(): void {
+    const initialRequest = this.informationRequest
+      ? this.informationRequest
+      : new InformationRequest(undefined, this.applicationId, [], InformationRequestStatus.OPEN);
+    const data = { request: initialRequest };
 
     this.dialog.open(InformationRequestModalComponent, {data}).afterClosed().pipe(
       filter(result => !!result) // Ignore no answers
-    ).subscribe(() => this.createInformationRequest());
-  }
-
-  private createInformationRequest(): void {
-    console.log("createInformationRequest");
+    ).subscribe((request: InformationRequest) => this.store.dispatch(new SaveRequest(request)));
   }
 
   moveToHandling(): void {

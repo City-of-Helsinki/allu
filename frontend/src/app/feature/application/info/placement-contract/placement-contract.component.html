@@ -135,6 +135,7 @@
       <application-actions
         [readonly]="readonly"
         [valid]="applicationForm.valid"
+        [informationRequest]="informationRequest$ | async"
         [pendingClientData]="pendingClientData$ | async"
         [pendingInformationRequestResponse]="pendingInformationRequestResponse$ | async"
         [submitPending]="submitPending"></application-actions>

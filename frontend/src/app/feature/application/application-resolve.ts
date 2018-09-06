@@ -51,6 +51,7 @@ export class ApplicationResolve implements Resolve<Application> {
       tap(() => this.loadComments()),
       tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Application))),
       tap(() => this.store.dispatch(new metaActions.Load())),
+      tap(() => this.loadInformationRequest()),
       tap((app) => this.loadInformationRequestResponse(app.statusEnum)),
       take(1),
       catchError(err => this.handleError(err))
@@ -59,6 +60,10 @@ export class ApplicationResolve implements Resolve<Application> {
 
   private loadComments() {
     this.store.dispatch(new commentActions.Load(ActionTargetType.Application));
+  }
+
+  private loadInformationRequest() {
+    this.store.dispatch(new informationRequestActions.LoadLatestRequest());
   }
 
   private loadInformationRequestResponse(status: ApplicationStatus) {
