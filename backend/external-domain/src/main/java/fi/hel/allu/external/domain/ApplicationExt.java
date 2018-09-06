@@ -28,6 +28,8 @@ public abstract class ApplicationExt {
   @Valid
   private CustomerWithContactsExt customerWithContacts;
   @Valid
+  private CustomerWithContactsExt representativeWithContacts;
+  @Valid
   private CustomerExt invoicingCustomer;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
@@ -69,6 +71,16 @@ public abstract class ApplicationExt {
   public void setCustomerWithContacts(CustomerWithContactsExt customerWithContacts) {
     this.customerWithContacts = customerWithContacts;
   }
+
+  @ApiModelProperty(value = "Representative of the customer")
+  public CustomerWithContactsExt getRepresentativeWithContacts() {
+    return representativeWithContacts;
+  }
+
+  public void setRepresentativeWithContacts(CustomerWithContactsExt representativeWithContacts) {
+    this.representativeWithContacts = representativeWithContacts;
+  }
+
 
   @ApiModelProperty(value="Recipient of the invoice")
   public CustomerExt getInvoicingCustomer() {
@@ -138,4 +150,5 @@ public abstract class ApplicationExt {
   public void setCustomerReference(String customerReference) {
     this.customerReference = customerReference;
   }
+
 }

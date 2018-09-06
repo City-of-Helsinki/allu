@@ -7,6 +7,7 @@ import org.geolatte.geom.Geometry;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.external.domain.ApplicationExt;
 import fi.hel.allu.external.domain.PostalAddressExt;
@@ -41,10 +42,15 @@ public abstract class ApplicationExtMapper<T extends ApplicationExt> {
 
   private ClientApplicationDataJson createClientApplicationData(T application) {
     ClientApplicationDataJson clientApplicationData = new ClientApplicationDataJson();
-    clientApplicationData.setCustomer(CustomerExtMapper.mapCustomerWithContactsJson(application.getCustomerWithContacts()));
+    clientApplicationData.setCustomer(CustomerExtMapper.mapCustomerWithContactsJson(application.getCustomerWithContacts(), CustomerRoleType.APPLICANT));
     clientApplicationData.setInvoicingCustomer(CustomerExtMapper.mapCustomerJson(application.getInvoicingCustomer()));
+    clientApplicationData.setRepresentative(CustomerExtMapper.mapCustomerWithContactsJson(application.getRepresentativeWithContacts(), CustomerRoleType.REPRESENTATIVE));
     clientApplicationData.setClientApplicationKind(getClientApplicationKind(application));
+    addApplicationTypeSpecificData(application, clientApplicationData);
     return clientApplicationData;
+  }
+
+  protected void addApplicationTypeSpecificData(T application, ClientApplicationDataJson clientApplicationData) {
   }
 
   private LocationJson createLocation(T application, Geometry geometry, PostalAddressExt postalAddress) {

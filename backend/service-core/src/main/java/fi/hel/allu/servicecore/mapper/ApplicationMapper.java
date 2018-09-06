@@ -425,11 +425,13 @@ public class ApplicationMapper {
   private ClientApplicationData createClientApplicationDataModel(ClientApplicationDataJson clientApplicationDataJson) {
     ClientApplicationData data = null;
     if (clientApplicationDataJson != null) {
-      CustomerWithContacts customerWithContacts = Optional.ofNullable(clientApplicationDataJson.getCustomer())
-          .map(c -> customerMapper.createSingleCustomerWithContactsModel(c)).orElse(null);
-      Customer invoicingCustomer = Optional.ofNullable(clientApplicationDataJson.getInvoicingCustomer())
-          .map(c -> customerMapper.createCustomerModel(c)).orElse(null);
-      data = new ClientApplicationData(customerWithContacts, invoicingCustomer, clientApplicationDataJson.getClientApplicationKind());
+      CustomerWithContacts customer = customerMapper.createSingleCustomerWithContactsModel(clientApplicationDataJson.getCustomer());
+      CustomerWithContacts representative = customerMapper.createSingleCustomerWithContactsModel(clientApplicationDataJson.getRepresentative());
+      CustomerWithContacts contractor = customerMapper.createSingleCustomerWithContactsModel(clientApplicationDataJson.getContractor());
+      CustomerWithContacts propertyDeveloper = customerMapper.createSingleCustomerWithContactsModel(clientApplicationDataJson.getPropertyDeveloper());
+      Customer invoicingCustomer = customerMapper.createCustomerModel(clientApplicationDataJson.getInvoicingCustomer());
+      data = new ClientApplicationData(customer, invoicingCustomer, representative, contractor, propertyDeveloper,
+          clientApplicationDataJson.getClientApplicationKind());
     }
     return data;
   }
@@ -437,11 +439,14 @@ public class ApplicationMapper {
   private ClientApplicationDataJson createClientApplicationDataJson(ClientApplicationData clientApplicationData) {
     ClientApplicationDataJson result = null;
     if (clientApplicationData != null) {
-      CustomerWithContactsJson customerWithContacts = Optional.ofNullable(clientApplicationData.getCustomer())
-          .map(c -> customerMapper.createWithContactsJson(c)).orElse(null);
-      CustomerJson invoicingCustomer = Optional.ofNullable(clientApplicationData.getInvoicingCustomer())
-          .map(c -> customerMapper.createCustomerJson(c)).orElse(null);
-      result = new ClientApplicationDataJson(customerWithContacts, invoicingCustomer, clientApplicationData.getClientApplicationKind());
+      CustomerWithContactsJson customer = customerMapper.createWithContactsJson(clientApplicationData.getCustomer());
+      CustomerJson invoicingCustomer = customerMapper.createCustomerJson(clientApplicationData.getInvoicingCustomer());
+      CustomerWithContactsJson representative = customerMapper.createWithContactsJson(clientApplicationData.getRepresentative());
+      CustomerWithContactsJson contractor = customerMapper.createWithContactsJson(clientApplicationData.getContractor());
+      CustomerWithContactsJson propertyDeveloper = customerMapper.createWithContactsJson(clientApplicationData.getPropertyDeveloper());
+      result = new ClientApplicationDataJson(customer, invoicingCustomer, representative, clientApplicationData.getClientApplicationKind());
+      result.setContractor(contractor);
+      result.setPropertyDeveloper(propertyDeveloper);
     }
     return result;
   }

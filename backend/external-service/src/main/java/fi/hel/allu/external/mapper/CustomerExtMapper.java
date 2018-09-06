@@ -14,9 +14,12 @@ import fi.hel.allu.servicecore.domain.PostalAddressJson;
 
 public class CustomerExtMapper {
 
-  public static CustomerWithContactsJson mapCustomerWithContactsJson(CustomerWithContactsExt customerWithContactsExt) {
+  public static CustomerWithContactsJson mapCustomerWithContactsJson(CustomerWithContactsExt customerWithContactsExt, CustomerRoleType roleType) {
+    if (customerWithContactsExt == null) {
+      return null;
+    }
     CustomerWithContactsJson customerWithContacts = new  CustomerWithContactsJson();
-    customerWithContacts.setRoleType(CustomerRoleType.APPLICANT);
+    customerWithContacts.setRoleType(roleType);
     customerWithContacts.setCustomer(mapCustomerJson(customerWithContactsExt.getCustomer()));
     for (ContactExt contact : customerWithContactsExt.getContacts()) {
       customerWithContacts.getContacts().add(mapContactJson(contact));
