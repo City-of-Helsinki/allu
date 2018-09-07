@@ -23,6 +23,7 @@ import {FixedLocationService} from '../../../service/map/fixed-location.service'
 import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
 import {map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
+import {CurrentUser} from '@service/user/current-user';
 
 @Component({
   selector: 'application',
@@ -47,13 +48,15 @@ export class ApplicationComponent implements OnInit, OnDestroy {
               private fixedLocationService: FixedLocationService,
               private supervisionTaskStore: SupervisionTaskStore,
               private defaultRecipientHub: DefaultRecipientHub,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private currentUser: CurrentUser) {
   }
 
   ngOnInit(): void {
     const application = this.applicationStore.snapshot.application;
     this.initDefaultAttachments(application);
     this.initDistribution(application);
+    this.addCurrentUserToDistribution(application);
 
     this.applicationChanges = this.applicationStore.application;
     this.applicationChanges.pipe(takeUntil(this.destroy))
@@ -142,9 +145,21 @@ export class ApplicationComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       map(recipients => recipients.map(r => this.toDistributionEntry(r)))
     ).subscribe(distributionEntries => {
-      application.decisionDistributionList = distributionEntries;
+      application.decisionDistributionList.push(...distributionEntries);
       this.applicationStore.applicationChange(application);
     }, err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
+  }
+
+  private addCurrentUserToDistribution(application: Application): void {
+    const existingApplication = NumberUtil.isDefined(application.id);
+    if (!existingApplication && (application.typeEnum === ApplicationType.EVENT
+                              || application.typeEnum === ApplicationType.SHORT_TERM_RENTAL)) {
+      this.currentUser.user.subscribe(user => {
+        const entry = new DistributionEntry(null, user.realName, DistributionType.EMAIL, user.emailAddress);
+        application.decisionDistributionList.push(entry);
+        this.applicationStore.applicationChange(application);
+      });
+    }
   }
 
   private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {
