@@ -745,7 +745,8 @@ export const translations = {
        Voit myös hakea vaihtoehtoa tai luoda nimellä uuden yhteyshenkilön.`
     },
     createNew: 'Luo uusi yhteyshenkilö',
-    search: 'Hae yhteyshenkilöä'
+    search: 'Hae yhteyshenkilöä',
+    addToDistribution: 'Lisää jakeluun'
   },
   geolocation: {
     error: {

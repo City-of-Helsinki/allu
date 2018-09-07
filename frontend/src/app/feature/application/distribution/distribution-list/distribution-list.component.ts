@@ -1,20 +1,21 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-
+import {Subscription} from 'rxjs';
 import {DistributionType} from '../../../../model/common/distribution-type';
 import {EnumUtil} from '../../../../util/enum.util';
 import {DistributionEntry} from '../../../../model/common/distribution-entry';
 import {postalCodeValidator} from '../../../../util/complex-validator';
+import {DistributionListEvents} from './distribution-list-events';
+import isEqual from 'lodash/isEqual';
 
 @Component({
   selector: 'distribution-list',
   templateUrl: './distribution-list.component.html',
   styleUrls: [
     './distribution-list.component.scss'
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  ]
 })
-export class DistributionListComponent implements OnInit {
+export class DistributionListComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() readonly: boolean;
   @Input() distributionList: Array<DistributionEntry> = [];
@@ -22,7 +23,10 @@ export class DistributionListComponent implements OnInit {
   distributionRows: FormArray;
   distributionTypes = EnumUtil.enumValues(DistributionType);
 
-  constructor(private fb: FormBuilder) {
+  private addContactSubscription: Subscription;
+
+  constructor(private fb: FormBuilder,
+              private distributionListEvents: DistributionListEvents) {
     this.distributionRows = fb.array([]);
   }
 
@@ -35,6 +39,13 @@ export class DistributionListComponent implements OnInit {
     if (this.readonly) {
       this.distributionRows.disable();
     }
+
+    this.addContactSubscription = this.distributionListEvents.distributionList$
+      .subscribe(entry => this.addContact(entry));
+  }
+
+  ngOnDestroy(): void {
+    this.addContactSubscription.unsubscribe();
   }
 
   add(): void {
@@ -51,6 +62,13 @@ export class DistributionListComponent implements OnInit {
 
   remove(index: number): void {
     this.distributionRows.removeAt(index);
+  }
+
+  private addContact(entry: DistributionEntry) {
+    if (this.distributionRows.controls.filter(
+        control => isEqual(control.value.email, entry.email)).length === 0) {
+      this.distributionRows.insert(0, this.createDistribution(entry));
+    }
   }
 
   private createDistribution(distributionEntry: DistributionEntry, edit: boolean = false): FormGroup {

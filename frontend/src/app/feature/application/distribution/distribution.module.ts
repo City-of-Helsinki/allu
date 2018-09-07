@@ -4,6 +4,7 @@ import {MatRadioModule} from '@angular/material';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {DistributionComponent} from './distribution.component';
 import {DistributionListComponent} from './distribution-list/distribution-list.component';
+import {DistributionListEvents} from './distribution-list/distribution-list-events';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import {DistributionListComponent} from './distribution-list/distribution-list.c
     DistributionListComponent
   ],
   providers: [
+    DistributionListEvents
   ],
   exports: [
     DistributionComponent,

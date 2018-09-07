@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
-
 import {Contact} from '../../../../model/customer/contact';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
@@ -13,6 +12,9 @@ import {OrdererIdForm} from '../cable-report/cable-report.form';
 import {FormUtil} from '../../../../util/form.util';
 import {CustomerService} from '../../../../service/customer/customer.service';
 import {debounceTime, map, switchMap, tap} from 'rxjs/internal/operators';
+import {DistributionListEvents} from '../../distribution/distribution-list/distribution-list-events';
+import {DistributionEntry} from '@model/common/distribution-entry';
+import {DistributionType} from '@model/common/distribution-type';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -40,7 +42,8 @@ export class ContactComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private customerService: CustomerService,
-              private applicationStore: ApplicationStore) {}
+              private applicationStore: ApplicationStore,
+              private distributionListEvents: DistributionListEvents) {}
 
   ngOnInit(): void {
     this.availableContacts = this.customerIdChanges.asObservable().pipe(
@@ -133,6 +136,18 @@ export class ContactComponent implements OnInit {
     }
 
     this.contacts.removeAt(index);
+  }
+
+  canBeAddedToDistribution(index: number): boolean {
+    const contact = <FormGroup>this.contacts.at(index);
+    const email = contact.getRawValue().email;
+    return !this.readonly && !!email && email.length > 2;
+  }
+
+  addToDistribution(index: number): void {
+    const contactFg = <FormGroup>this.contacts.at(index);
+    const contact = contactFg.getRawValue();
+    this.distributionListEvents.add(new DistributionEntry(null, contact.name, DistributionType.EMAIL, contact.email));
   }
 
   private onNameSearchChange(term: string): Observable<Array<Contact>> {

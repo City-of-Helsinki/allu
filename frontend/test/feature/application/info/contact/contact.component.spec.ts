@@ -16,6 +16,7 @@ import {Application} from '../../../../../src/app/model/application/application'
 import {OrdererIdForm} from '../../../../../src/app/feature/application/info/cable-report/cable-report.form';
 import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
+import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');
@@ -58,7 +59,8 @@ describe('ContactComponent', () => {
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerService, useClass: CustomerServiceMock}
+        {provide: CustomerService, useClass: CustomerServiceMock},
+        {provide: DistributionListEvents, useClass: DistributionListEvents}
       ]
     }).compileComponents();
   }));

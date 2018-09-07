@@ -14,8 +14,8 @@
             </button>
           </mat-card-title>
           <mat-card-content>
-            <div fxLayout="row">
-              <div fxFlex="50%">
+            <div fxLayout="row wrap" fxLayoutGap="18px">
+              <div fxFlex="calc(50% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="name" required
                          [placeholder]="'contact.name' | translation"
@@ -29,6 +29,30 @@
                   <mat-hint>
                     <field-error [form]="contact" field="name" hasError="required">
                       {{'contact.field.nameMissing' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div fxFlex="calc(25% - 18px)">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text"
+                         formControlName="email"
+                         [placeholder]="'emailAddress' | translation"/>
+                  <mat-hint>
+                    <field-error [form]="contact" field="email" hasError="email">
+                      {{'common.field.emailInvalid' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div fxFlex="calc(25% - 18px)">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text"
+                         formControlName="phone"
+                         [placeholder]="'phone' | translation"/>
+                  <mat-hint>
+                    <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' |
+                      translation}}
                     </field-error>
                   </mat-hint>
                 </mat-form-field>
@@ -62,34 +86,15 @@
                 </mat-form-field>
               </div>
             </div>
-            <div fxLayout="row wrap" fxLayoutGap="18px">
+            <div fxLayout="row wrap" fxLayoutGap="18px" id="orderer">
               <div fxFlex="calc(50% - 18px)">
-                <mat-form-field class="input-full-width">
-                  <input matInput type="text"
-                         formControlName="email"
-                         [placeholder]="'emailAddress' | translation"/>
-                  <mat-hint>
-                    <field-error [form]="contact" field="email" hasError="email">
-                      {{'common.field.emailInvalid' | translation}}
-                    </field-error>
-                  </mat-hint>
-                </mat-form-field>
+                
+                <button *ngIf="canBeAddedToDistribution(index)" mat-button type="button" color="primary" (click)="addToDistribution(index)">
+                  <mat-icon>add</mat-icon>
+                  {{'contact.addToDistribution' | translation }}
+                </button>
               </div>
-              <div fxFlex="calc(50% - 18px)">
-                <mat-form-field class="input-full-width">
-                  <input matInput type="text"
-                         formControlName="phone"
-                         [placeholder]="'phone' | translation"/>
-                  <mat-hint>
-                    <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' |
-                      translation}}
-                    </field-error>
-                  </mat-hint>
-                </mat-form-field>
-              </div>
-            </div>
-            <div fxLayout="row wrap" fxLayoutGap="18px" *ngIf="showOrderer" id="orderer">
-              <div fxFlex>
+              <div fxFlex="calc(50% - 18px)" *ngIf="showOrderer" >
                 <mat-radio-button name="orderer" [checked]="isOrderer(index)" [disabled]="readonly"
                                   (change)="selectOrderer(index)">
                   Hakemuksen tilaaja
