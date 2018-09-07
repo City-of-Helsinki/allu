@@ -416,6 +416,14 @@ export const translations = {
       newValue: 'Kortti sisältää uusia tietoja: {{value}}',
       newData: 'Kortti sisältää uusia tietoja.',
       show: 'Näytä'
+    },
+    notification: {
+      type: {
+        INFORMATION_REQUEST_DRAFT: 'Hakemuksella on lähettämätön täydennyspyyntö.',
+        INFORMATION_REQUEST_RESPONSE: 'Hakemus sisältää tietopäivityksiä.',
+        PENDING_CLIENT_DATA: 'Hakemus sisältää tietopäivityksiä.'
+      },
+      show: 'Näytä'
     }
   },
   applicationSearch: {

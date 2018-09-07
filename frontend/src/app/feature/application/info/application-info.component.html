@@ -1,3 +1,9 @@
+<div fxLayout="row" *ngIf="notificationType$ | async as notificationType">
+  <div fxFlex="50%" class="gap-single-9">
+    <application-notification [type]="notificationType"></application-notification>
+  </div>
+</div>
+
 <application-type typeChangeDisabled="true"
                   [showDraftSelection]="showDraftSelection"
                   [readonly]="readonly"></application-type>

@@ -91,7 +91,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
     this.pendingClientData$ = this.store.select(fromApplication.hasPendingClientData);
     this.pendingCustomerInfo$ = this.store.select(fromApplication.hasPendingCustomerInfo);
-    this.pendingInformationRequestResponse$ = this.store.select(fromApplication.getInformationRequestResponse).pipe(
+    this.pendingInformationRequestResponse$ = this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
       map(response => !!response)
     );
     this.informationRequest$ = this.store.select(fromInformationRequest.getInformationRequest);
@@ -267,7 +267,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   }
 
   private getPendingResponse(currentApp: Application): Observable<InformationAcceptanceData> {
-    return this.store.select(fromApplication.getInformationRequestResponse).pipe(
+    return this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
       filter(response => response !== undefined),
       map(response => ({
         informationRequestId: response.informationRequestId,
@@ -296,7 +296,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   private openAcceptanceModal(data: InformationAcceptanceData): Observable<InformationRequestResult>  {
     data.readonly = this.applicationStore.snapshot.application.status === ApplicationStatus[ApplicationStatus.PENDING_CLIENT];
-    console.log('status=' + this.applicationStore.snapshot.application.status + ' readonly=' + data.readonly);
     const config: MatDialogConfig<InformationAcceptanceData> = {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
     return this.dialog
       .open<InformationAcceptanceModalComponent>(InformationAcceptanceModalComponent, config)

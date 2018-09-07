@@ -26,6 +26,7 @@
 @import '../app/feature/history/history.theme';
 @import '../app/feature/application/progressbar/progressbar-theme';
 @import '../app/feature/information-request/information-request-theme';
+@import '../app/feature/application/notification/application-notification-theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
 @import "~ngx-toastr/toastr.css";
 
@@ -50,6 +51,7 @@
 @include history-theme($allu-theme);
 @include progressbar-theme($allu-theme, $allu-success, $allu-basic);
 @include information-request-theme($allu-theme);
+@include application-notification-theme($allu-theme);
 
 // Reset
 html,

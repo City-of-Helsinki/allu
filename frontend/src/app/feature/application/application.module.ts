@@ -52,6 +52,7 @@ import {InformationRequestModule} from '../information-request/information-reque
 import {ApplicationInfoBaseComponent} from './info/application-info-base.component';
 import {PdfModule} from '@feature/pdf/pdf.module';
 import {DecisionModule} from '@feature/decision/decision.module';
+import {NotificationModule} from '@feature/application/notification/notification-module';
 
 @NgModule({
   imports: [
@@ -85,7 +86,8 @@ import {DecisionModule} from '@feature/decision/decision.module';
     SupervisionModule,
     InformationRequestModule,
     DecisionModule,
-    PdfModule
+    PdfModule,
+    NotificationModule
   ],
   declarations: [
     ApplicationComponent,
