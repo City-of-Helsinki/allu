@@ -1,4 +1,4 @@
-<h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.request.title' | translation}}</h1>
+<h1 mat-dialog-title>{{'informationRequest.request.title' | translation}}</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     <p>{{'informationRequest.request.description' | translation}}</p>
@@ -13,10 +13,10 @@
     <button type="button" mat-raised-button color="primary" (click)="cancel()">
       {{'common.button.cancel' | translation}}
     </button>
-    <button type="button" mat-raised-button color="primary" [disabled]="submitDisabled | async" (click)="saveDraft()">
+    <button type="button" mat-raised-button color="primary" (click)="saveDraft()">
       {{'informationRequest.request.draft' | translation | uppercase}}
     </button>
-    <button type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">
+    <button type="submit" mat-raised-button color="primary">
       {{'informationRequest.request.send' | translation | uppercase}}
     </button>
   </div>
