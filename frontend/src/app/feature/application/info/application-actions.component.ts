@@ -83,7 +83,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
       this.showActions = this.normalActionsAllowed(status);
-      this.showInformationRequest = (status === ApplicationStatus.PENDING || status === ApplicationStatus.HANDLING);
+      this.showInformationRequest = this.validForInformationRequest(app);
       this.applicationId = app.id;
     });
   }
@@ -241,6 +241,13 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   private normalActionsAllowed(status: ApplicationStatus): boolean {
     const validStatus = status !== ApplicationStatus.PENDING_CLIENT && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL;
     return validStatus && !this.pendingClientData;
+  }
+
+  private validForInformationRequest(app: Application): boolean {
+    const status = app.statusEnum;
+    const validStatus = status === ApplicationStatus.PENDING || status === ApplicationStatus.HANDLING;
+    const external =  NumberUtil.isDefined(app.externalOwnerId);
+    return validStatus && external;
   }
 
   private findDefaultRegionalOwner(app: Application): Observable<User> {
