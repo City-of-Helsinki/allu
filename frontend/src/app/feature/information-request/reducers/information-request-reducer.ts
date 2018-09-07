@@ -22,7 +22,8 @@ export function reducer(state: State = initialState, action: InformationRequestA
     case InformationRequestActionType.LoadLatestRequestFailed: {
       return {
         ...state,
-        requestLoading: true
+        requestLoading: true,
+        request: undefined
       };
     }
 
@@ -45,7 +46,8 @@ export function reducer(state: State = initialState, action: InformationRequestA
     case InformationRequestActionType.LoadLatestResponseFailed: {
       return {
         ...state,
-        responseLoading: true
+        responseLoading: true,
+        response: undefined
       };
     }
 

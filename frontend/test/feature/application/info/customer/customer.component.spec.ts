@@ -16,7 +16,7 @@ import {CustomerService} from '../../../../../src/app/service/customer/customer.
 import {CodeSetService} from '../../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
 import {Observable, of} from 'rxjs/index';
-import {InformationAcceptanceModalEvents} from '../../../../../src/app/feature/information-request/acceptance/information-acceptance-modal-events';
+import {InformationRequestModalEvents} from '../../../../../src/app/feature/information-request/information-request-modal-events';
 
 const headerText = 'Hakija';
 
@@ -81,7 +81,7 @@ describe('CustomerComponent', () => {
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: CodeSetService, useClass: CodeSetServiceMock},
-        InformationAcceptanceModalEvents
+        InformationRequestModalEvents
       ]
     }).compileComponents();
   }));

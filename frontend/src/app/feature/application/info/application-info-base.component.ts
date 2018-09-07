@@ -12,26 +12,16 @@ import {Some} from '../../../util/option';
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
-import {EMPTY, Observable, of, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {FormUtil} from '../../../util/form.util';
 import {ProjectService} from '../../../service/project/project.service';
-import {distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 import {ApplicationService} from '../../../service/application/application.service';
 import * as fromRoot from '../reducers';
 import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';
 import {Store} from '@ngrx/store';
-import {
-  INFORMATION_ACCEPTANCE_MODAL_CONFIG,
-  InformationAcceptanceData,
-  InformationAcceptanceModalComponent
-} from '../../information-request/acceptance/information-acceptance-modal.component';
-import {MatDialog, MatDialogConfig} from '@angular/material';
-import {InformationRequestResult} from '../../information-request/information-request-result';
-import {SetKindsWithSpecifiers} from '../actions/application-actions';
-import {InformationAcceptanceModalEvents} from '../../information-request/acceptance/information-acceptance-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
 
 /**
@@ -72,9 +62,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
               protected notification: NotificationService,
               private router: Router,
               private projectService: ProjectService,
-              private store: Store<fromRoot.State>,
-              private dialog: MatDialog,
-              private modalState: InformationAcceptanceModalEvents) {}
+              private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -101,11 +89,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       takeUntil(this.destroy),
       distinctUntilChanged()
     ).subscribe(draft => this.onDraftChange(draft));
-
-    this.modalState.isOpen$.pipe(
-      takeUntil(this.destroy),
-      filter(open => open)
-    ).subscribe(() => this.showPendingInfo());
   }
 
   ngAfterContentInit(): void {
@@ -129,16 +112,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     const application = this.update(value);
 
     this.save(application);
-  }
-
-  showPendingInfo(): void {
-    this.getPendingData()
-      .pipe(switchMap(data => this.openAcceptanceModal(data)))
-      .subscribe((result: InformationRequestResult) => {
-        // TODO: Handle closing information request when implementing it
-        this.store.dispatch(new SetKindsWithSpecifiers(result.application.kindsWithSpecifiers));
-        this.store.dispatch(new InformationRequestResultAction.Save(result));
-      });
   }
 
   get hasPropertyDeveloper(): boolean {
@@ -251,55 +224,5 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
         subGroup.updateValueAndValidity();
       }
     }
-  }
-
-  private getPendingData(): Observable<InformationAcceptanceData> {
-    return this.store.select(fromApplication.getCurrentApplication).pipe(
-      switchMap(app => {
-        if (ApplicationStatus.INFORMATION_RECEIVED === app.statusEnum) {
-          return this.getPendingResponse(app);
-        } else {
-          return this.getPendingInitialInfo(app);
-        }
-      }),
-      take(1)
-    );
-  }
-
-  private getPendingResponse(currentApp: Application): Observable<InformationAcceptanceData> {
-    return this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
-      filter(response => response !== undefined),
-      map(response => ({
-        informationRequestId: response.informationRequestId,
-        oldInfo: currentApp,
-        newInfo: response.responseData,
-        updatedFields: response.updatedFiedls
-      }))
-    );
-  }
-
-  private getPendingInitialInfo(currentApp: Application): Observable<InformationAcceptanceData> {
-    return this.store.select(fromApplication.pendingClientDataFields).pipe(
-      switchMap((pending) => {
-        if (pending.length) {
-          return of({
-            oldInfo: currentApp,
-            newInfo: currentApp,
-            updatedFields: pending
-          });
-        } else {
-          return EMPTY;
-        }
-      })
-    );
-  }
-
-  private openAcceptanceModal(data: InformationAcceptanceData): Observable<InformationRequestResult>  {
-    data.readonly = this.applicationStore.snapshot.application.status === ApplicationStatus[ApplicationStatus.PENDING_CLIENT];
-    const config: MatDialogConfig<InformationAcceptanceData> = {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
-    return this.dialog
-      .open<InformationAcceptanceModalComponent>(InformationAcceptanceModalComponent, config)
-      .afterClosed()
-      .pipe(filter(result => !!result));
   }
 }

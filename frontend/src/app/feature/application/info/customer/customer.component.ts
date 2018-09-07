@@ -9,7 +9,7 @@ import {ContactComponent} from '../contact/contact.component';
 import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerType} from '../../../../model/customer/customer-type';
-import {InformationAcceptanceModalEvents} from '../../../information-request/acceptance/information-acceptance-modal-events';
+import {InformationRequestModalEvents} from '../../../information-request/information-request-modal-events';
 
 @Component({
   selector: 'customer',
@@ -39,7 +39,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   private _customerWithContacts: CustomerWithContacts;
 
   constructor(private fb: FormBuilder,
-              private modalState: InformationAcceptanceModalEvents) {
+              private modalState: InformationRequestModalEvents) {
   }
 
   @Input() set customerWithContacts(customerWithContacts) {
@@ -73,7 +73,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   showPending(): void {
-    this.modalState.open();
+    this.modalState.openAcceptance();
   }
 
   onCustomerChange(customer: Customer): void {

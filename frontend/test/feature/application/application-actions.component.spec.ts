@@ -21,7 +21,7 @@ import {User} from '../../../src/app/model/user/user';
 import {UserHub} from '../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../src/app/model/user/user-search-criteria';
 import {EMPTY, Observable, of} from 'rxjs/index';
-import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
+import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {StoreModule} from '@ngrx/store';
 
 class MatDialogRefMock {
@@ -90,7 +90,7 @@ describe('ApplicationActionsComponent', () => {
         {provide: NotificationService, useClass: NotificationServiceMock},
         {provide: MatDialog, useClass: MatDialogMock},
         {provide: UserHub, useClass: UserHubMock},
-        InformationAcceptanceModalEvents
+        InformationRequestModalEvents
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
     .compileComponents();

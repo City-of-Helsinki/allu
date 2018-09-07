@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
+import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 
 export enum ApplicationNotificationType {
   INFORMATION_REQUEST_DRAFT = 'INFORMATION_REQUEST_DRAFT',
@@ -14,12 +14,24 @@ export enum ApplicationNotificationType {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationNotificationComponent {
-  @Input() type: ApplicationNotificationType = ApplicationNotificationType.INFORMATION_REQUEST_DRAFT;
+  private _type: ApplicationNotificationType = ApplicationNotificationType.INFORMATION_REQUEST_DRAFT;
 
-  constructor(private modalEvents: InformationAcceptanceModalEvents) {
+  constructor(private modalEvents: InformationRequestModalEvents) {
   }
 
   show(): void {
-    this.modalEvents.open();
+    if (ApplicationNotificationType.INFORMATION_REQUEST_DRAFT === this._type) {
+      this.modalEvents.openRequest();
+    } else {
+      this.modalEvents.openAcceptance();
+    }
+  }
+
+  @Input() set type(type: ApplicationNotificationType) {
+    this._type = type;
+  }
+
+  get type() {
+    return this._type;
   }
 }

@@ -13,7 +13,7 @@ import {FieldValueComponent} from './acceptance/field-value.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {KindAcceptanceComponent} from './acceptance/kind-acceptance.component';
-import {InformationAcceptanceModalEvents} from './acceptance/information-acceptance-modal-events';
+import {InformationRequestModalEvents} from './information-request-modal-events';
 import {
   CustomerWithContactsAcceptanceComponent
 } from '@feature/information-request/acceptance/customer-with-contacts-acceptance.component';
@@ -61,7 +61,7 @@ import { RequestFieldComponent } from './request/request-field/request-field.com
   ],
   providers: [
     InformationRequestService,
-    InformationAcceptanceModalEvents,
+    InformationRequestModalEvents,
     InformationRequestResultService
   ],
   exports: [

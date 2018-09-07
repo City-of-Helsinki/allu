@@ -23,7 +23,7 @@ import {
   toKindsWithSpecifiers
 } from '../../../model/application/type/application-specifier';
 import {SetKindsWithSpecifiers, SetType} from '../actions/application-actions';
-import {InformationAcceptanceModalEvents} from '../../information-request/acceptance/information-acceptance-modal-events';
+import {InformationRequestModalEvents} from '../../information-request/information-request-modal-events';
 
 @Component({
   selector: 'application-type',
@@ -53,7 +53,7 @@ export class TypeComponent implements OnInit, OnDestroy {
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromRoot.State>,
               private fb: FormBuilder,
-              private modalEvents: InformationAcceptanceModalEvents) {
+              private modalEvents: InformationRequestModalEvents) {
   }
 
   ngOnInit(): any {
@@ -119,7 +119,7 @@ export class TypeComponent implements OnInit, OnDestroy {
   }
 
   showPending(): void {
-    this.modalEvents.open();
+    this.modalEvents.openAcceptance();
   }
 
   private initForm(type: string, selectedKinds: string[], kindsWithSpecifiers: KindsWithSpecifiers) {

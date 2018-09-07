@@ -17,16 +17,8 @@ import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
 import {ArrayUtil} from '../../../util/array-util';
 import {UserHub} from '../../../service/user/user-hub';
 import {filter, map} from 'rxjs/internal/operators';
-import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
-import {
-  InformationRequestInfo,
-  InformationRequestModalComponent
-} from '@feature/information-request/request/information-request-modal.component';
+import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
-import {InformationRequestStatus} from '@model/information-request/information-request-status';
-import {Store} from '@ngrx/store';
-import * as fromApplication from '@feature/application/reducers';
-import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
 
 @Component({
   selector: 'application-actions',
@@ -67,8 +59,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private userHub: UserHub,
               private notification: NotificationService,
-              private modalState: InformationAcceptanceModalEvents,
-              private store: Store<fromApplication.State>) {
+              private modalState: InformationRequestModalEvents) {
   }
 
   ngOnInit(): void {
@@ -134,23 +125,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
   }
 
-  openInformationRequest(): void {
-    const initialRequest = this.informationRequest
-      ? this.informationRequest
-      : new InformationRequest(undefined, this.applicationId, [], InformationRequestStatus.OPEN);
-    const data = { request: initialRequest };
-
-    this.dialog.open(InformationRequestModalComponent, {data}).afterClosed().pipe(
-      filter(result => !!result) // Ignore no answers
-    ).subscribe((result: InformationRequestInfo) => {
-      if (result.draft) {
-        this.store.dispatch(new SaveRequest(result.request));
-      } else {
-        this.store.dispatch(new SaveAndSendRequest(result.request));
-      }
-    });
-  }
-
   moveToHandling(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.HANDLING)
       .subscribe(app => {
@@ -192,7 +166,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   showExternalUpdates(): void {
-    this.modalState.open();
+    this.modalState.openAcceptance();
+  }
+
+  showInformationRequestInfo(): void {
+    this.modalState.openRequest();
   }
 
   private cancelApplication(): void {
