@@ -18,12 +18,15 @@ import {ArrayUtil} from '../../../util/array-util';
 import {UserHub} from '../../../service/user/user-hub';
 import {filter, map} from 'rxjs/internal/operators';
 import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
-import {InformationRequestModalComponent} from '@feature/information-request/request/information-request-modal.component';
+import {
+  InformationRequestInfo,
+  InformationRequestModalComponent
+} from '@feature/information-request/request/information-request-modal.component';
 import {InformationRequest} from '@model/information-request/information-request';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
-import {SaveRequest} from '@feature/information-request/actions/information-request-actions';
+import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
 
 @Component({
   selector: 'application-actions',
@@ -139,7 +142,13 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
     this.dialog.open(InformationRequestModalComponent, {data}).afterClosed().pipe(
       filter(result => !!result) // Ignore no answers
-    ).subscribe((request: InformationRequest) => this.store.dispatch(new SaveRequest(request)));
+    ).subscribe((result: InformationRequestInfo) => {
+      if (result.draft) {
+        this.store.dispatch(new SaveRequest(result.request));
+      } else {
+        this.store.dispatch(new SaveAndSendRequest(result.request));
+      }
+    });
   }
 
   moveToHandling(): void {

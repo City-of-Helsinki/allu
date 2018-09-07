@@ -14,6 +14,7 @@ import {NumberUtil} from '../../../util/number.util';
 import {InformationRequestResultActionType} from '@feature/information-request/actions/information-request-result-actions';
 import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
+import {ApplicationStatus} from '@model/application/application-status';
 
 @Injectable()
 export class InformationRequestEffects {
@@ -41,7 +42,20 @@ export class InformationRequestEffects {
       map(request => new InformationRequestAction.SaveRequestSuccess(request)),
       catchError(error => of(new InformationRequestAction.SaveRequestFailed(error)))
     ))
-  )
+  );
+
+  @Effect()
+  saveAndSendRequest: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestAction.SaveAndSendRequest>(InformationRequestActionType.SaveAndSendRequest),
+    switchMap(action => this.informationRequestService.save(action.payload)),
+    switchMap(request => this.applicationStore.changeStatus(request.applicationId, ApplicationStatus.WAITING_INFORMATION).pipe(
+      switchMap((app) => [
+        new InformationRequestAction.SaveRequestSuccess(request),
+        new ApplicationAction.LoadSuccess(app)
+      ]),
+      catchError(error => of(new InformationRequestAction.SaveRequestFailed(error)))
+    ))
+  );
 
   @Effect()
   loadResponse: Observable<Action> = this.actions.pipe(

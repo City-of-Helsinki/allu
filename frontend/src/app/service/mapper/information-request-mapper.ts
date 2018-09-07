@@ -34,7 +34,6 @@ export class InformationRequestMapper {
   }
 
   private static mapFields(fields: InformationRequestField[]): BackendInformationRequestField[] {
-    return fields.map(field => { return {fieldKey: InformationRequestFieldKey[field.fieldKey], description: field.description}; });
+    return fields.map(field => ({fieldKey: InformationRequestFieldKey[field.fieldKey], description: field.description}));
   }
-
 }

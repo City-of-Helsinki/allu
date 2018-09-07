@@ -4,13 +4,7 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
 import {ApplicationActionsComponent} from '../../../src/app/feature/application/info/application-actions.component';
-import {
-  ApplicationStoreMock,
-  availableToDirectiveMockMeta,
-  CurrentUserMock,
-  NotificationServiceMock,
-  RouterMock
-} from '../../mocks';
+import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock, NotificationServiceMock, RouterMock} from '../../mocks';
 import {ApplicationStore} from '../../../src/app/service/application/application-store';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
@@ -28,6 +22,7 @@ import {UserHub} from '../../../src/app/service/user/user-hub';
 import {UserSearchCriteria} from '../../../src/app/model/user/user-search-criteria';
 import {EMPTY, Observable, of} from 'rxjs/index';
 import {InformationAcceptanceModalEvents} from '@feature/information-request/acceptance/information-acceptance-modal-events';
+import {StoreModule} from '@ngrx/store';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -81,7 +76,8 @@ describe('ApplicationActionsComponent', () => {
         AlluCommonModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterTestingModule.withRoutes([])
+        RouterTestingModule.withRoutes([]),
+        StoreModule.forRoot({}),
       ],
       declarations: [
         TestHostComponent,

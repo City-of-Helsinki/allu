@@ -24,7 +24,6 @@ import {BackendApplication, SearchResultApplication} from '../backend-model/back
 import {BackendPage} from '../backend-model/backend-page';
 import {BackendAttachmentInfo} from '../backend-model/backend-attachment-info';
 import {catchError, map} from 'rxjs/internal/operators';
-import {ApplicationTagType} from '../../model/application/tag/application-tag-type';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
@@ -39,6 +38,7 @@ export class ApplicationService {
   constructor(private http: HttpClient, private errorHandler: ErrorHandler) {
     this.statusToUrl.set(ApplicationStatus.CANCELLED, 'cancelled');
     this.statusToUrl.set(ApplicationStatus.PENDING, 'pending');
+    this.statusToUrl.set(ApplicationStatus.WAITING_INFORMATION, 'waiting_information');
     this.statusToUrl.set(ApplicationStatus.HANDLING, 'handling');
     this.statusToUrl.set(ApplicationStatus.DECISIONMAKING, 'decisionmaking');
     this.statusToUrl.set(ApplicationStatus.DECISION, 'decision');

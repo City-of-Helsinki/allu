@@ -476,7 +476,8 @@ export const translations = {
     },
     request: {
       title: 'Hyväksy tiedot täydennyspyyntöön',
-      description: 'Merkitse tiedot jotka puuttuvat, ovat virheellisiä tai jotka haluat muusta syystä päivittää. Huomaa, että et voi päivittää hakemusta niin kauan kuin sillä on vastaamattomia täydennyspyyntöjä.',
+      description: `Merkitse tiedot jotka puuttuvat, ovat virheellisiä tai jotka haluat muusta syystä päivittää.
+       Huomaa, että et voi päivittää hakemusta niin kauan kuin sillä on vastaamattomia täydennyspyyntöjä.`,
       customer: 'Asiakas',
       invoiceRecipient: 'Laskutusasiakas',
       geometry: 'Alueen rajaus',
@@ -489,7 +490,8 @@ export const translations = {
       propertyIdentificationNumber: 'Kiinteistön tunnus',
       attachment: 'Liite',
       guide: 'Selite',
-      send: 'Lähetä pyyntö'
+      send: 'Lähetä pyyntö',
+      draft: 'Tallenna luonnos'
     },
     field: {
       CUSTOMER: 'Hakija',
