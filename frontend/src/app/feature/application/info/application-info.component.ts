@@ -31,6 +31,7 @@ import {
 } from '@feature/information-request/request/information-request-modal.component';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
+import {ApplicationUtil} from '@feature/application/application-util';
 
 @Component({
   selector: 'application-info',
@@ -112,6 +113,8 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
         map(pending => pending ? ApplicationNotificationType.PENDING_CLIENT_DATA : undefined)
       ),
       this.store.select(fromInformationRequest.getInformationRequest).pipe(
+        withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+        filter(([request, app]) => ApplicationUtil.validForInformationRequest(app) && request.status !== InformationRequestStatus.CLOSED),
         map(request => request !== undefined ? ApplicationNotificationType.INFORMATION_REQUEST_DRAFT : undefined)
       ),
       this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
