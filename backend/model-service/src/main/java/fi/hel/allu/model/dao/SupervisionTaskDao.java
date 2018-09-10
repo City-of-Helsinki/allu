@@ -1,5 +1,18 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
@@ -15,23 +28,11 @@ import fi.hel.allu.QStructureMeta;
 import fi.hel.allu.QUser;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PathUtil;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
@@ -74,6 +75,14 @@ public class SupervisionTaskDao {
   public List<SupervisionTask> findByApplicationId(int applicationId) {
     return queryFactory.select(supervisionTaskBean).from(supervisionTask).where(supervisionTask.applicationId.eq(applicationId)).fetch();
   }
+
+  @Transactional(readOnly = true)
+  public List<SupervisionTask> findByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
+    return queryFactory.select(supervisionTaskBean).from(supervisionTask)
+        .where(supervisionTask.applicationId.eq(applicationId), supervisionTask.type.eq(type))
+        .fetch();
+  }
+
 
   @Transactional
   public SupervisionTask insert(SupervisionTask st) {

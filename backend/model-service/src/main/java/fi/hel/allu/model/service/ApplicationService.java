@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -446,5 +447,21 @@ public class ApplicationService {
       // Recreates invoice with new invoice recipient
       createInvoice(id, userId, application);
     }
+  }
+
+  /**
+   * Sets excavation announcement operational condition date reported by customer
+   */
+  @Transactional
+  public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
+    return applicationDao.setCustomerOperationalConditionDates(id, dateReport);
+  }
+
+  /**
+   * Sets excavation announcement work finished date reported by customer
+   */
+  @Transactional
+  public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
+    return applicationDao.setCustomerWorkFinishedDates(id, dateReport);
   }
 }

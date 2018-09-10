@@ -78,7 +78,9 @@ export class ApplicationExtensionMapper {
           backendExtension.additionalInfo,
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,
-          backendExtension.terms
+          backendExtension.terms,
+          backendExtension.operationalConditionReported,
+          backendExtension.workFinishedReported
         );
       case ApplicationType.NOTE:
         return new Note(backendExtension.description);
@@ -216,7 +218,9 @@ export class ApplicationExtensionMapper {
       additionalInfo: excavation.additionalInfo,
       trafficArrangements: excavation.trafficArrangements,
       trafficArrangementImpedimentType: excavation.trafficArrangementImpedimentType,
-      terms: excavation.terms
+      terms: excavation.terms,
+      operationalConditionReported: excavation.operationalConditionReported,
+      workFinishedReported: excavation.workFinishedReported
     };
   }
 

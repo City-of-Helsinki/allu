@@ -24,6 +24,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
 import fi.hel.allu.QApplication;
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.RecurringApplication;
@@ -792,7 +793,44 @@ public class ApplicationDao {
       .where(application.id.eq(id))
       .execute();
     }
+  }
+
+  public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
+    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    excavationAnnouncement.setOperationalConditionReported(dateReport.getReportingDate());
+    excavationAnnouncement.setCustomerWinterTimeOperation(dateReport.getReportedDate());
+    updateExtension(id, excavationAnnouncement);
+    return findById(id);
+  }
+
+  public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
+    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    excavationAnnouncement.setWorkFinishedReported(dateReport.getReportingDate());
+    excavationAnnouncement.setCustomerWorkFinished(dateReport.getReportedDate());
+    updateExtension(id, excavationAnnouncement);
+    return findById(id);
+  }
+
+  private void updateExtension(Integer id, ApplicationExtension extension) {
+    queryFactory.update(application)
+    .set(application.extension, extension)
+    .where(application.id.eq(id))
+    .execute();
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T extends ApplicationExtension> T findExtension(Integer id, ApplicationType type) {
+    ApplicationExtension extension =  queryFactory
+        .select(application.extension)
+        .from(application)
+        .where(application.id.eq(id), application.type.eq(type))
+        .fetchOne();
+    if (extension == null) {
+      throw new NoSuchEntityException("No application with type " + type + " found for ID " + id);
+    }
+    return (T)extension;
 
   }
+
 
 }

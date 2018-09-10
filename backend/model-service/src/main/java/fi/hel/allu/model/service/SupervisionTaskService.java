@@ -1,13 +1,7 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.util.SupervisionTaskToTag;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.SupervisionTaskDao;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.SupervisionTask;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,12 +9,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.SupervisionTaskToTag;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.SupervisionTaskDao;
+import fi.hel.allu.model.domain.ApplicationTag;
+import fi.hel.allu.model.domain.SupervisionTask;
 
-import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.APPROVED;
-import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.OPEN;
-import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.REJECTED;
+import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
 
 /**
  * The service class for supervision task operations
@@ -46,6 +45,12 @@ public class SupervisionTaskService {
   public List<SupervisionTask> findByApplicationId(int applicationId) {
     return supervisionTaskDao.findByApplicationId(applicationId);
   }
+
+  @Transactional(readOnly = true)
+  public List<SupervisionTask> findByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
+    return supervisionTaskDao.findByApplicationIdAndType(applicationId, type);
+  }
+
 
   @Transactional
   public SupervisionTask insert(SupervisionTask supervisionTask) {

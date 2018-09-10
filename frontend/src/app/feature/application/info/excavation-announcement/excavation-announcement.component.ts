@@ -108,7 +108,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
     application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
-    application.extension = ExcavationAnnouncementForm.to(form);
+    application.extension = ExcavationAnnouncementForm.to(form, <ExcavationAnnouncement>application.extension);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

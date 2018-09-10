@@ -23,7 +23,9 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public additionalInfo?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
-    public terms?: string
+    public terms?: string,
+    public operationalConditionReported?: Date,
+    public workFinishedReported?: Date
   ) {
     super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
@@ -363,4 +364,15 @@ public class ApplicationService {
     return !application.getInvoicingDate().isBefore(tomorrow);
   }
 
+  public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getExcavationAnnouncementOperationalConditionUrl(),
+        HttpMethod.PUT, new HttpEntity<>(dateReport), Application.class, id);
+    return responseEntity.getBody();
+  }
+
+  public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getExcavationAnnouncementWorkFinishedUrl(),
+        HttpMethod.PUT, new HttpEntity<>(dateReport), Application.class, id);
+    return responseEntity.getBody();
+  }
 }

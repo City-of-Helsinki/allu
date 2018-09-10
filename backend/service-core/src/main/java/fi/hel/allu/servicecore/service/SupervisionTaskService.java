@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -65,14 +66,19 @@ public class SupervisionTaskService {
   }
 
   public SupervisionTaskJson update(SupervisionTaskJson supervisionTask) {
-    HttpEntity<SupervisionTask> supervisionTaskHttpEntity = new HttpEntity<>(SupervisionTaskMapper.mapToModel(supervisionTask));
-    ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.exchange(
+    ResponseEntity<SupervisionTask> supervisionTasksResult = update(supervisionTask.getId(), SupervisionTaskMapper.mapToModel(supervisionTask));
+    return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
+  }
+
+  private ResponseEntity<SupervisionTask> update(Integer id,
+      SupervisionTask supervisionTask) {
+    HttpEntity<SupervisionTask> supervisionTaskHttpEntity = new HttpEntity<>(supervisionTask);
+    return restTemplate.exchange(
         applicationProperties.getSupervisionTaskUpdateUrl(),
         HttpMethod.PUT,
         supervisionTaskHttpEntity,
         SupervisionTask.class,
-        supervisionTask.getId());
-    return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
+        id);
   }
 
   public SupervisionTaskJson insert(SupervisionTaskJson supervisionTaskJson) {
@@ -190,4 +196,23 @@ public class SupervisionTaskService {
         .distinct()
         .collect(Collectors.toMap(Function.identity(), appId -> applicationServiceComposer.findApplicationById(appId)));
   }
+
+  public void updateSupervisionTaskDate(Integer applicationId, SupervisionTaskType taskType,
+      ZonedDateTime date) {
+    SupervisionTask task = findByApplicationIdAndType(applicationId, taskType);
+    if (task != null) {
+      task.setPlannedFinishingTime(date);
+      update(task.getId(), task);
+    }
+  }
+
+  private SupervisionTask findByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
+    SupervisionTask[] supervisionTasksResult = restTemplate.getForEntity(
+        applicationProperties.getSupervisionTaskByApplicationIdAndTypeUrl(), SupervisionTask[].class, applicationId, type).getBody();
+    if (supervisionTasksResult.length > 0) {
+      return supervisionTasksResult[0];
+    }
+    return null;
+  }
+
 }

@@ -929,6 +929,14 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for retrieving supervision tasks by application id.
+   */
+  public String getSupervisionTaskByApplicationIdAndTypeUrl() {
+    return getModelServiceUrl("/supervisiontask/application/{id}/type/{type}");
+  }
+
+
+  /**
    * @return url for creating new supervision task-
    */
   public String getSupervisionTaskCreateUrl() {
@@ -1247,6 +1255,14 @@ public class ApplicationProperties {
 
   public String getConfigurationUrl(ConfigurationType configuration) {
     return getModelServiceUrl("/configuration/" + configuration);
+  }
+
+  public String getExcavationAnnouncementOperationalConditionUrl() {
+    return getModelServiceUrl("/excavationannouncements/{id}/operationalcondition");
+  }
+
+  public String getExcavationAnnouncementWorkFinishedUrl() {
+    return getModelServiceUrl("/excavationannouncements/{id}/workfinished");
   }
 
 

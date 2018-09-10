@@ -1,8 +1,9 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
-import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,10 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.service.SupervisionTaskService;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
@@ -39,6 +40,14 @@ public class SupervisionTaskController {
   public ResponseEntity<List<SupervisionTask>> findByApplicationId(@PathVariable int applicationId) {
     return new ResponseEntity<>(supervisionTaskService.findByApplicationId(applicationId), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/application/{applicationId}/type/{type}", method = RequestMethod.GET)
+  public ResponseEntity<List<SupervisionTask>> findByApplicationIdAndType(
+      @PathVariable(value = "applicationId") int applicationId,
+      @PathVariable(value = "type") SupervisionTaskType type) {
+    return new ResponseEntity<>(supervisionTaskService.findByApplicationIdAndType(applicationId, type), HttpStatus.OK);
+  }
+
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<SupervisionTask> insert(@Valid @RequestBody SupervisionTask supervisionTask) {

@@ -23,6 +23,8 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   private ZonedDateTime customerEndTime;
   private ZonedDateTime customerWinterTimeOperation;
   private ZonedDateTime customerWorkFinished;
+  private ZonedDateTime operationalConditionReported;
+  private ZonedDateTime workFinishedReported;
   private Integer cableReportId;
   private String additionalInfo;
   private String trafficArrangements;
@@ -231,5 +233,27 @@ public class ExcavationAnnouncement extends ApplicationExtension {
 
   public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
+  }
+
+  /**
+   * Date when customer reported operational condition date
+   */
+  public ZonedDateTime getOperationalConditionReported() {
+    return operationalConditionReported;
+  }
+
+  public void setOperationalConditionReported(ZonedDateTime operationalConditionReported) {
+    this.operationalConditionReported = operationalConditionReported;
+  }
+
+  /**
+   * Date when customer reported work finished date
+   */
+  public ZonedDateTime getWorkFinishedReported() {
+    return workFinishedReported;
+  }
+
+  public void setWorkFinishedReported(ZonedDateTime workFinishedReported) {
+    this.workFinishedReported = workFinishedReported;
   }
 }

@@ -15,6 +15,8 @@ public class ExcavationAnnouncementMapper {
     json.setCustomerEndTime(excavationAnnouncement.getCustomerEndTime());
     json.setCustomerWinterTimeOperation(excavationAnnouncement.getCustomerWinterTimeOperation());
     json.setCustomerWorkFinished(excavationAnnouncement.getCustomerWorkFinished());
+    json.setOperationalConditionReported(excavationAnnouncement.getOperationalConditionReported());
+    json.setWorkFinishedReported(excavationAnnouncement.getWorkFinishedReported());
     json.setTrafficArrangements(excavationAnnouncement.getTrafficArrangements());
     json.setTrafficArrangementImpedimentType(excavationAnnouncement.getTrafficArrangementImpedimentType());
     json.setPksCard(excavationAnnouncement.getPksCard());
@@ -38,6 +40,8 @@ public class ExcavationAnnouncementMapper {
     excavationAnnouncement.setCustomerEndTime(json.getCustomerEndTime());
     excavationAnnouncement.setCustomerWinterTimeOperation(json.getCustomerWinterTimeOperation());
     excavationAnnouncement.setCustomerWorkFinished(json.getCustomerWorkFinished());
+    excavationAnnouncement.setOperationalConditionReported(json.getOperationalConditionReported());
+    excavationAnnouncement.setWorkFinishedReported(json.getWorkFinishedReported());
     excavationAnnouncement.setTrafficArrangements(json.getTrafficArrangements());
     excavationAnnouncement.setTrafficArrangementImpedimentType(json.getTrafficArrangementImpedimentType());
     excavationAnnouncement.setPksCard(json.getPksCard());
