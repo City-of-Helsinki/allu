@@ -1,5 +1,7 @@
 package fi.hel.allu.ui.controller;
 
+import java.time.ZonedDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,22 +24,38 @@ public class ExcavationAnnouncementController {
   private SupervisionTaskService supervisionTaskService;
 
 
-  @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{id}/customeroperationalcondition", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<ApplicationJson> reportOperationalCondition(@PathVariable Integer id, @RequestBody ApplicationDateReport dateReport) {
+  public ResponseEntity<ApplicationJson> reportCustomerOperationalCondition(@PathVariable Integer id, @RequestBody ApplicationDateReport dateReport) {
     ApplicationJson application = applicationServiceComposer.setCustomerOperationalConditionDates(id, dateReport);
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.OPERATIONAL_CONDITION, dateReport.getReportedDate());
     return ResponseEntity.ok(application);
 
   }
 
-  @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{id}/customerworkfinished", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<ApplicationJson> reportWorkFinished(@PathVariable Integer id, @RequestBody ApplicationDateReport dateReport) {
+  public ResponseEntity<ApplicationJson> reportCustomerWorkFinished(@PathVariable Integer id, @RequestBody ApplicationDateReport dateReport) {
    ApplicationJson setCustomerWorkFinishedDates = applicationServiceComposer.setCustomerWorkFinishedDates(id, dateReport);
    supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.FINAL_SUPERVISION, dateReport.getReportedDate());
    return ResponseEntity.ok(setCustomerWorkFinishedDates);
   }
+
+  @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> reportOperationalCondition(@PathVariable Integer id, @RequestBody ZonedDateTime operationalConditionDate) {
+    ApplicationJson application = applicationServiceComposer.setOperationalConditionDate(id, operationalConditionDate);
+    return ResponseEntity.ok(application);
+
+  }
+
+  @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> reportWorkFinished(@PathVariable Integer id, @RequestBody ZonedDateTime workFinishedDate) {
+   ApplicationJson setCustomerWorkFinishedDates = applicationServiceComposer.setWorkFinishedDates(id, workFinishedDate);
+   return ResponseEntity.ok(setCustomerWorkFinishedDates);
+  }
+
 
 
 }

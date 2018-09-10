@@ -1257,6 +1257,14 @@ public class ApplicationProperties {
     return getModelServiceUrl("/configuration/" + configuration);
   }
 
+  public String getExcavationAnnouncementCustomerOperationalConditionUrl() {
+    return getModelServiceUrl("/excavationannouncements/{id}/customeroperationalcondition");
+  }
+
+  public String getExcavationAnnouncementCustomerWorkFinishedUrl() {
+    return getModelServiceUrl("/excavationannouncements/{id}/customerworkfinished");
+  }
+
   public String getExcavationAnnouncementOperationalConditionUrl() {
     return getModelServiceUrl("/excavationannouncements/{id}/operationalcondition");
   }
@@ -1264,6 +1272,7 @@ public class ApplicationProperties {
   public String getExcavationAnnouncementWorkFinishedUrl() {
     return getModelServiceUrl("/excavationannouncements/{id}/workfinished");
   }
+
 
 
 }

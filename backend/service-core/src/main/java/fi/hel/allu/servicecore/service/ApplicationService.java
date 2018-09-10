@@ -365,14 +365,32 @@ public class ApplicationService {
   }
 
   public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
-    ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getExcavationAnnouncementOperationalConditionUrl(),
-        HttpMethod.PUT, new HttpEntity<>(dateReport), Application.class, id);
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getExcavationAnnouncementCustomerOperationalConditionUrl(), HttpMethod.PUT,
+        new HttpEntity<>(dateReport), Application.class, id);
     return responseEntity.getBody();
   }
 
   public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
-    ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getExcavationAnnouncementWorkFinishedUrl(),
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getExcavationAnnouncementCustomerWorkFinishedUrl(),
         HttpMethod.PUT, new HttpEntity<>(dateReport), Application.class, id);
+    return responseEntity.getBody();
+  }
+
+
+  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getExcavationAnnouncementOperationalConditionUrl(),
+        HttpMethod.PUT, new HttpEntity<>(operationalConditionDate), Application.class, id);
+    return responseEntity.getBody();
+  }
+
+
+  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getExcavationAnnouncementWorkFinishedUrl(),
+        HttpMethod.PUT, new HttpEntity<>(workFinishedDate), Application.class, id);
     return responseEntity.getBody();
   }
 }

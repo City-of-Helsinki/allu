@@ -480,4 +480,14 @@ public class ApplicationServiceComposer {
     Application application = applicationService.setCustomerWorkFinishedDates(id, dateReport);
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
+
+  public ApplicationJson setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+    Application application = applicationService.setOperationalConditionDate(id, operationalConditionDate);
+    return applicationJsonService.getFullyPopulatedApplication(application);
+  }
+
+  public ApplicationJson setWorkFinishedDates(Integer id, ZonedDateTime workFinishedDate) {
+    Application application = applicationService.setWorkFinishedDate(id, workFinishedDate);
+    return applicationJsonService.getFullyPopulatedApplication(application);
+  }
 }

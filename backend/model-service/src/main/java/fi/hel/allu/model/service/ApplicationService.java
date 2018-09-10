@@ -464,4 +464,20 @@ public class ApplicationService {
   public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
     return applicationDao.setCustomerWorkFinishedDates(id, dateReport);
   }
+
+  /**
+   * Sets excavation announcement operational condition date
+   */
+  @Transactional
+  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+    return applicationDao.setOperationalConditionDate(id, operationalConditionDate);
+  }
+
+  /**
+   * Sets excavation announcement work finished date
+   */
+  @Transactional
+  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+    return applicationDao.setWorkFinishedDate(id, workFinishedDate);
+  }
 }
