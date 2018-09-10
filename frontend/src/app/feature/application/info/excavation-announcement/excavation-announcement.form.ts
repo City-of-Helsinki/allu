@@ -21,7 +21,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public customerWorkFinished?: Date,
     public calculatedPrice?: number,
     public cableReportId?: number,
-    public additionalInfo?: string,
+    public workPurpose?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public TERMS?: string) {}
@@ -43,7 +43,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.customerWinterTimeOperation = form.customerWinterTimeOperation;
     ea.customerWorkFinished = form.customerWorkFinished;
     ea.cableReportId = form.cableReportId;
-    ea.additionalInfo = form.additionalInfo;
+    ea.workPurpose = form.workPurpose;
     ea.trafficArrangements = form.trafficArrangements;
     ea.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     ea.terms = form.TERMS;
@@ -67,7 +67,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.customerWorkFinished,
       NumberUtil.toEuros(application.calculatedPrice),
       excavation.cableReportId,
-      excavation.additionalInfo,
+      excavation.workPurpose,
       excavation.trafficArrangements,
       excavation.trafficArrangementImpedimentType,
       excavation.terms

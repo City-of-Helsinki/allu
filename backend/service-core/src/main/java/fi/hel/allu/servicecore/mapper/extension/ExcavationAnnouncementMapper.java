@@ -6,7 +6,7 @@ import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
 public class ExcavationAnnouncementMapper {
   public static ExcavationAnnouncementJson modelToJson(ExcavationAnnouncement excavationAnnouncement) {
     ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
-    json.setAdditionalInfo(excavationAnnouncement.getAdditionalInfo());
+    json.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
     json.setCableReportId(excavationAnnouncement.getCableReportId());
     json.setGuaranteeEndTime(excavationAnnouncement.getGuaranteeEndTime());
     json.setWinterTimeOperation(excavationAnnouncement.getWinterTimeOperation());
@@ -31,7 +31,7 @@ public class ExcavationAnnouncementMapper {
 
   public static ExcavationAnnouncement jsonToModel(ExcavationAnnouncementJson json) {
     ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
-    excavationAnnouncement.setAdditionalInfo(json.getAdditionalInfo());
+    excavationAnnouncement.setWorkPurpose(json.getWorkPurpose());
     excavationAnnouncement.setCableReportId(json.getCableReportId());
     excavationAnnouncement.setGuaranteeEndTime(json.getGuaranteeEndTime());
     excavationAnnouncement.setWinterTimeOperation(json.getWinterTimeOperation());

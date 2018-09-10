@@ -20,7 +20,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public customerWinterTimeOperation?: Date,
     public customerWorkFinished?: Date,
     public cableReportId?: number,
-    public additionalInfo?: string,
+    public workPurpose?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public terms?: string,

@@ -216,7 +216,7 @@ describe('Excavation announcement application', () => {
           'customerEndTime': customerEndTime,
           'customerWinterTimeOperation': customerWinterTimeOperation,
           'customerWorkFinished': customerWorkFinished,
-          'additionalInfo': 'Automaagisesti tehty kaivuilmoitus',
+          'workPurpose': 'Kaivaa mahdollisimman syvä kuoppa',
           'traffixArrangements': 'Mannerheimintie kokonaan poikki. Koittakaa selvitä!',
           'trafficArrangementImpedimentType': 'SIGNIFICANT_IMPEDIMENT',
           'pksCard': true
