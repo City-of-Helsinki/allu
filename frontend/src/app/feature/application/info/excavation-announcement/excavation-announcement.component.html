@@ -26,13 +26,14 @@
   <div class="row">
     <div class="col m6">
       <allu-card>
-        <mat-card-title>Kaivuilmoituksen voimassaolo</mat-card-title>
+        <mat-card-title>{{'application.excavationAnnouncement.validity' | translation}}</mat-card-title>
         <mat-card-content>
           <div class="row form-group">
             <div formGroupName="validityTimes">
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                  <input matInput type="text" formControlName="startTime" required
+                         [placeholder]="'application.common.startTime' | translation"
                          [matDatepicker]="startTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -49,7 +50,8 @@
               </div>
               <div class="col s6">
                 <mat-form-field class="input-full-width" [inputWarning]="validityEndTimeCtrl">
-                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                  <input matInput type="text" formControlName="endTime" required
+                         [placeholder]="'application.common.endTime' | translation"
                          [matDatepicker]="endTimePicker"/>
                   <button type="button" mat-icon-button [disabled]="readonly" matSuffix
                           (click)="onValidityEndTimePickerClick(endTimePicker)">
@@ -75,7 +77,8 @@
             <div formGroupName="unauthorizedWork">
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
+                  <input matInput type="text" formControlName="startTime"
+                         [placeholder]="'application.excavationAnnouncement.unauthorizedStartTime' | translation"
                          [matDatepicker]="unauthorizedStartTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="unauthorizedStartTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -89,7 +92,8 @@
               </div>
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
+                  <input matInput type="text" formControlName="endTime"
+                         [placeholder]="'application.excavationAnnouncement.unauthorizedEndTime' | translation"
                          [matDatepicker]="unauthorizedEndTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="unauthorizedEndTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -99,7 +103,8 @@
             </div>
             <div class="col s6">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"
+                <input matInput type="text" formControlName="winterTimeOperation"
+                       [placeholder]="'application.excavationAnnouncement.winterTimeOperation' | translation"
                        [matDatepicker]="winterTimeOperationPicker"/>
                 <mat-datepicker-toggle matSuffix [for]="winterTimeOperationPicker"
                                        [disabled]="readonly"></mat-datepicker-toggle>
@@ -108,13 +113,14 @@
             </div>
             <div class="col s6">
               <mat-form-field class="input-full-width">
-                <input matInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
+                <input matInput readonly type="text" formControlName="workFinished"
+                       [placeholder]="'application.excavationAnnouncement.workFinished' | translation"/>
               </mat-form-field>
             </div>
             <div class="col s6">
               <mat-form-field class="input-full-width">
                 <input matInput readonly type="text" formControlName="guaranteeEndTime"
-                       placeholder="Takuu päättyy (katutyö)"/>
+                       [placeholder]="'application.excavationAnnouncement.guaranteeEndTime' | translation"/>
               </mat-form-field>
             </div>
           </div>
@@ -123,13 +129,14 @@
     </div>
     <div class="col m6">
       <allu-card>
-        <mat-card-title>Asiakkaan ilmoittama voimassaolo</mat-card-title>
+        <mat-card-title>{{'application.excavationAnnouncement.validityReportedByCustomer' | translation}}</mat-card-title>
         <mat-card-content>
           <div class="row form-group">
             <div formGroupName="customerValidityTimes">
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus"
+                  <input matInput type="text" formControlName="startTime"
+                         [placeholder]="'application.common.startTime' | translation"
                          [matDatepicker]="customerStartTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="customerStartTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -143,7 +150,8 @@
               </div>
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus"
+                  <input matInput type="text" formControlName="endTime"
+                         [placeholder]="'application.common.endTime' | translation"
                          [matDatepicker]="customerEndTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="customerEndTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -154,7 +162,7 @@
             <div class="col s6">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="customerWinterTimeOperation"
-                       placeholder="Talvityön toiminn. kunto"
+                       [placeholder]="'application.excavationAnnouncement.winterTimeOperation' | translation"
                        [matDatepicker]="customerWinterTimeOperationPicker"/>
                 <mat-datepicker-toggle matSuffix [for]="customerWinterTimeOperationPicker"
                                        [disabled]="readonly"></mat-datepicker-toggle>
@@ -163,7 +171,8 @@
             </div>
             <div class="col s6">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="customerWorkFinished" placeholder="Työ valmis"
+                <input matInput type="text" formControlName="customerWorkFinished"
+                       [placeholder]="'application.excavationAnnouncement.workFinished' | translation"
                        [matDatepicker]="customerWorkFinishedPicker"/>
                 <mat-datepicker-toggle matSuffix [for]="customerWorkFinishedPicker"
                                        [disabled]="readonly"></mat-datepicker-toggle>
@@ -179,13 +188,14 @@
   <div class="row">
     <div class="col m12">
       <allu-card>
-        <mat-card-title>Kaivuilmoituksen tiedot</mat-card-title>
+        <mat-card-title>{{'application.excavationAnnouncement.excavationInfo' | translation}}</mat-card-title>
         <mat-card-content>
           <div class="row form-group">
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="workPurpose"
-                          placeholder="Työn tarkoitus"></textarea>
+                <textarea matInput matTextareaAutosize
+                          formControlName="workPurpose"
+                          [placeholder]="'application.common.workPurpose' | translation"></textarea>
               </mat-form-field>
             </div>
           </div>
@@ -193,7 +203,7 @@
             <div class="col m6">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="cableReportIdentifier"
-                       placeholder="Johtoselvitys"
+                       [placeholder]="'application.excavationAnnouncement.cableReport' | translation"
                        [matAutocomplete]="cableReportSearch"/>
                 <mat-autocomplete #cableReportSearch="matAutocomplete">
                   <mat-option *ngFor="let application of matchingApplications | async"
@@ -206,28 +216,29 @@
           </div>
           <div class="row form-group">
             <div class="col m2">
-              <mat-checkbox formControlName="pksCard">Pks-kortti</mat-checkbox>
+              <mat-checkbox formControlName="pksCard">{{'application.common.pksCard' | translation}}</mat-checkbox>
             </div>
             <div class="col m2">
-              <mat-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</mat-checkbox>
+              <mat-checkbox formControlName="propertyConnectivity">{{'application.common.propertyConnectivity' | translation}}</mat-checkbox>
             </div>
           </div>
           <div class="row form-group">
             <div class="col m2">
-              <mat-checkbox formControlName="constructionWork">Rakentaminen</mat-checkbox>
+              <mat-checkbox formControlName="constructionWork">{{'application.common.constructionWork' | translation}}</mat-checkbox>
             </div>
             <div class="col m2">
-              <mat-checkbox formControlName="maintenanceWork">Kunnossapito</mat-checkbox>
+              <mat-checkbox formControlName="maintenanceWork">{{'application.common.maintenanceWork' | translation}}</mat-checkbox>
             </div>
             <div class="col m2">
-              <mat-checkbox formControlName="emergencyWork">Hätätyö</mat-checkbox>
+              <mat-checkbox formControlName="emergencyWork">{{'application.common.emergencyWork' | translation}}</mat-checkbox>
             </div>
           </div>
           <div class="row form-group">
             <div class="col m12">
               <mat-form-field class="input-full-width">
-                                <textarea matInput matTextareaAutosize formControlName="trafficArrangements"
-                                          placeholder="Suoritettavat liikennejärjestelyt"></textarea>
+                <textarea matInput matTextareaAutosize
+                          formControlName="trafficArrangements"
+                          [placeholder]="'application.common.trafficArrangements' | translation"></textarea>
               </mat-form-field>
             </div>
           </div>

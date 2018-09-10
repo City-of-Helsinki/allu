@@ -284,6 +284,14 @@ export const translations = {
       startTime: 'Voimassaolon aloitus',
       endTime: 'Voimassaolon lopetus',
       area: 'Pinta-ala',
+      pksCard: 'Pks-kortti',
+      propertyConnectivity: 'Tontti- / Kiinteistöliitos',
+      constructionWork: 'Rakentaminen',
+      maintenanceWork: 'Kunnossapito',
+      emergencyWork: 'Hätätyö',
+      additionalInfo: 'Lisätiedot',
+      workPurpose: 'Työn tarkoitus',
+      trafficArrangements: 'Suoritettavat liikennejärjestelyt',
       field: {
         validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
         validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
@@ -370,7 +378,16 @@ export const translations = {
       }
     },
     excavationAnnouncement: {
+      validity: 'Kaivuilmoituksen voimassaolo',
       setToWinterTimeEnd: 'Aseta loppupäivämääräksi talviajan loppupäivä (14.5.)',
+      unauthorizedStartTime: 'Luvattoman kaivun aloitus',
+      unauthorizedEndTime: 'Luvattoman kaivun lopetus',
+      winterTimeOperation: 'Talvityön toiminn. kunto',
+      workFinished: 'Työ valmis',
+      guaranteeEndTime: 'Takuu päättyy (katutyö)',
+      validityReportedByCustomer: 'Asiakkaan ilmoittama voimassaolo',
+      excavationInfo: 'Kaivuilmoituksen tiedot',
+      cableReport: 'Johtoselvitys',
       field: {
         inWinterTime: 'Hakemus päättyy talvityöaikana',
         unauthorizedWorkStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
