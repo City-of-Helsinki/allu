@@ -11,7 +11,7 @@ import {ApplicationNotificationType} from '@feature/application/notification/app
 import {Store} from '@ngrx/store';
 import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, scan, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
@@ -32,6 +32,7 @@ import {
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
 import {ApplicationUtil} from '@feature/application/application-util';
+import {ApplicationNotificationService} from '@feature/application/notification/application-notification.service';
 
 @Component({
   selector: 'application-info',
@@ -53,7 +54,8 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
               private route: ActivatedRoute,
               private store: Store<fromApplication.State>,
               private dialog: MatDialog,
-              private modalState: InformationRequestModalEvents) {}
+              private modalState: InformationRequestModalEvents,
+              private applicationNotificationService: ApplicationNotificationService) {}
 
   ngOnInit(): void {
     const application = this.applicationStore.snapshot.application;
@@ -62,7 +64,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary');
     this.formDirty = false;
-    this.notificationType$ = this.getNotificationType();
+    this.notificationType$ = this.applicationNotificationService.getNotificationType();
 
     this.modalState.isAcceptanceOpen$.pipe(
       takeUntil(this.destroy),
@@ -105,24 +107,6 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   private shouldShowDraftSelection() {
     return this.applicationStore.isNew &&
         this.applicationStore.snapshot.application.type !== 'TEMPORARY_TRAFFIC_ARRANGEMENTS';
-  }
-
-  private getNotificationType(): Observable<ApplicationNotificationType> {
-    return merge(
-      this.store.select(fromApplication.hasPendingClientData).pipe(
-        map(pending => pending ? ApplicationNotificationType.PENDING_CLIENT_DATA : undefined)
-      ),
-      this.store.select(fromInformationRequest.getInformationRequest).pipe(
-        withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-        filter(([request, app]) => ApplicationUtil.validForInformationRequest(app) && request.status !== InformationRequestStatus.CLOSED),
-        map(request => request !== undefined ? ApplicationNotificationType.INFORMATION_REQUEST_DRAFT : undefined)
-      ),
-      this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
-        map(response => response !== undefined ? ApplicationNotificationType.INFORMATION_REQUEST_RESPONSE : undefined)
-      )
-    ).pipe(
-      filter(type => type !== undefined)
-    );
   }
 
   private showPendingInfo(): void {

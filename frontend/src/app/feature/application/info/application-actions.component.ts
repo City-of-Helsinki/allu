@@ -74,7 +74,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showEdit = this.readonly && applicationCanBeEdited(status);
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
-      this.showActions = this.normalActionsAllowed(status);
+      this.showActions = (status !== ApplicationStatus.PENDING_CLIENT) && (status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL);
       this.showInformationRequest = ApplicationUtil.validForInformationRequest(app);
       this.applicationId = app.id;
     });
@@ -215,11 +215,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private validForDecision(app: Application): boolean {
     return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
-  }
-
-  private normalActionsAllowed(status: ApplicationStatus): boolean {
-    const validStatus = status !== ApplicationStatus.PENDING_CLIENT && status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL;
-    return validStatus && !this.pendingClientData;
   }
 
   private findDefaultRegionalOwner(app: Application): Observable<User> {
