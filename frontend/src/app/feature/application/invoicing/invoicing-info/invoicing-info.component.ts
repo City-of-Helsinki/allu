@@ -112,7 +112,7 @@ export class InvoicingInfoComponent implements OnInit {
     this.store.select(fromApplication.getCurrentApplication)
       .subscribe(app => {
         this.findAndPatchCustomer(app.invoiceRecipientId);
-        const invoicingDate = app.invoicingDate ? app.invoicingDate : this.defaultInvoicingDate(app);
+        const invoicingDate = app.invoicingDate;
 
         this.form.patchValue({
           notBillable: app.notBillable,
@@ -177,13 +177,6 @@ export class InvoicingInfoComponent implements OnInit {
   private currentDeposit(): Deposit {
     const applicationId = this.applicationStore.snapshot.application.id;
     return this.applicationStore.snapshot.deposit || Deposit.forApplication(applicationId);
-  }
-
-  private defaultInvoicingDate(application: Application): Date {
-    const currentDate = new Date();
-    const result = new Date(application.startTime);
-    result.setDate(result.getDate() - 15);
-    return result > currentDate ? result : currentDate;
   }
 
   private resetMe(reset: boolean) {
