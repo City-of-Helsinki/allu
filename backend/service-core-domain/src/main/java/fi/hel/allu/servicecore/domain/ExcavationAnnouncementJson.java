@@ -28,6 +28,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private ZonedDateTime operationalConditionReported;
   private ZonedDateTime workFinishedReported;
   private Integer cableReportId;
+  @NotNull(message = "{application.excavationAnnouncement.workPurpose}")
   private String workPurpose;
   private String trafficArrangements;
   @NotNull(message = "{application.excavationAnnouncement.trafficArrangementImpedimentType}")
