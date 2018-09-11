@@ -53,6 +53,9 @@ import {ApplicationInfoBaseComponent} from './info/application-info-base.compone
 import {PdfModule} from '@feature/pdf/pdf.module';
 import {DecisionModule} from '@feature/decision/decision.module';
 import {NotificationModule} from '@feature/application/notification/notification-module';
+import {ExcavationAnnouncementEffects} from '@feature/application/effects/excavation-announcement-effects';
+import {ExcavationAnnouncementService} from '@service/application/excavation-announcement.service';
+import {DateReportingModule} from '@feature/application/date-reporting/date-reporting.module';
 
 @NgModule({
   imports: [
@@ -62,7 +65,8 @@ import {NotificationModule} from '@feature/application/notification/notification
     EffectsModule.forFeature([
       ApplicationEffects,
       ApplicationTagEffects,
-      InvoicingEffects
+      InvoicingEffects,
+      ExcavationAnnouncementEffects
     ]),
     FormsModule,
     ReactiveFormsModule,
@@ -87,7 +91,8 @@ import {NotificationModule} from '@feature/application/notification/notification
     InformationRequestModule,
     DecisionModule,
     PdfModule,
-    NotificationModule
+    NotificationModule,
+    DateReportingModule
   ],
   declarations: [
     ApplicationComponent,
@@ -115,7 +120,8 @@ import {NotificationModule} from '@feature/application/notification/notification
   ],
   providers: [
     ApplicationResolve,
-    ApplicationDraftService
+    ApplicationDraftService,
+    ExcavationAnnouncementService
   ],
   entryComponents: [
     DefaultTextModalComponent

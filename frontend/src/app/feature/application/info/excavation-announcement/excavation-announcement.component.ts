@@ -1,22 +1,35 @@
 import {Component, OnInit} from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {take} from 'rxjs/internal/operators';
-import {MatDatepicker} from '@angular/material';
-import {Application} from '../../../../model/application/application';
-import {AbstractControlWarn, ComplexValidator} from '../../../../util/complex-validator';
+import {MatDatepicker, MatDialog} from '@angular/material';
+import {Application} from '@model/application/application';
+import {AbstractControlWarn, ComplexValidator} from '@util/complex-validator';
 import {ExcavationAnnouncementForm} from './excavation-announcement.form';
-import {ApplicationSearchQuery} from '../../../../model/search/ApplicationSearchQuery';
-import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
-import {ApplicationType} from '../../../../model/application/type/application-type';
+import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
+import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
+import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {NumberUtil} from '../../../../util/number.util';
-import {TimeUtil} from '../../../../util/time.util';
-import {Some} from '../../../../util/option';
-import {IconConfig} from '../../../common/icon-config';
-import {catchError, debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/internal/operators';
-import * as fromRoot from '@feature/allu/reducers';
+import {NumberUtil} from '@util/number.util';
+import {TimeUtil} from '@util/time.util';
+import {Some} from '@util/option';
+import {IconConfig} from '@feature/common/icon-config';
 import {ConfigurationKey} from '@model/config/configuration-key';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap} from 'rxjs/internal/operators';
+import {NotificationService} from '@feature/notification/notification.service';
+import * as fromRoot from '@feature/allu/reducers';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ApplicationService} from '@service/application/application.service';
+import {ProjectService} from '@service/project/project.service';
+import {ApplicationStore} from '@service/application/application-store';
+import {Store} from '@ngrx/store';
+import {
+  DATE_REPORTING_MODAL_CONFIG,
+  DateReportingModalComponent,
+  DateReportingModalData, DateReportingResult, ReportedDateType, ReporterType
+} from '@feature/application/date-reporting/date-reporting-modal.component';
+import {ReportCustomerOperationalCondition, ReportCustomerWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
+import {ApplicationStatus} from '@model/application/application-status';
 
 @Component({
   selector: 'excavation-announcement',
@@ -30,10 +43,23 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   validityEndTimeCtrl: AbstractControlWarn;
   validityEndTimeIcon: IconConfig = new IconConfig(undefined, true, 'today');
+  showReportCustomerDates = false;
 
   private cableReportIdentifierCtrl: FormControl;
   private winterTimeStart: string;
   private winterTimeEnd: string;
+
+  constructor(fb: FormBuilder,
+              route: ActivatedRoute,
+              applicationStore: ApplicationStore,
+              applicationService: ApplicationService,
+              notification: NotificationService,
+              router: Router,
+              projectService: ProjectService,
+              store: Store<fromRoot.State>,
+              private dialog: MatDialog) {
+    super(fb, route, applicationStore, applicationService, notification, router, projectService, store);
+  }
 
   setCableReport(application: Application) {
     this.applicationForm.patchValue({cableReportId: application.id});
@@ -47,6 +73,23 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     } else {
       picker.open();
     }
+  }
+
+  reportCustomerDates(status: string): void {
+    const data = {
+      reporterType: ReporterType.CUSTOMER,
+      reportedDates: this.getReportedDatesByStatus(ApplicationStatus[status])
+    };
+
+    this.dialog.open(DateReportingModalComponent, {
+      ...DATE_REPORTING_MODAL_CONFIG,
+      data
+    }).afterClosed().pipe(
+      filter(result => !!result)
+    ).subscribe((result: DateReportingResult) => {
+      Some(result.winterTimeOperation).do(date => this.store.dispatch(new ReportCustomerOperationalCondition(date)));
+      Some(result.workFinished).do(date => this.store.dispatch(new ReportCustomerWorkFinished(date)));
+    });
   }
 
   protected initForm() {
@@ -117,6 +160,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     const form = ExcavationAnnouncementForm.from(application, excavation);
     this.applicationForm.patchValue(form);
     this.patchRelatedCableReport(excavation);
+    this.showReportCustomerDates =
+      [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(application.statusEnum) >= 0;
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {
@@ -143,5 +188,15 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.validityEndTimeIcon = this.validityEndTimeCtrl.warnings.inWinterTime
       ? new IconConfig('accent', false, 'warning')
       : new IconConfig(undefined, true, 'today');
+  }
+
+  private getReportedDatesByStatus(status: ApplicationStatus): ReportedDateType[] {
+    if (status === ApplicationStatus.DECISION) {
+      return [ReportedDateType.WINTER_TIME_OPERATION, ReportedDateType.WORK_FINISHED];
+    } else if (status === ApplicationStatus.OPERATIONAL_CONDITION) {
+      return [ReportedDateType.WORK_FINISHED];
+    } else {
+      return [];
+    }
   }
 }

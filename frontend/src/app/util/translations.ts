@@ -393,6 +393,18 @@ export const translations = {
       field: {
         inWinterTime: 'Hakemus päättyy talvityöaikana',
         unauthorizedWorkStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
+      },
+      error: {
+        reportOperationalCondition: 'Toiminnallisen kunnon ilmoittaminen epäonnistui',
+        reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui',
+        reportCustomerOperationalCondition: 'Asiakkaan ilmoittaman toiminnallisen kunnon päivittäminen epäonnistui',
+        reportCustomerWorkFinished: 'Asiakkaan ilmoittaman työn valmistumisen päivittäminen epäonnistui',
+      },
+      action: {
+        reportOperationalCondition: 'Toiminnallinen kunto ilmoitettu',
+        reportWorkFinished: 'Työn valmistuminen ilmoitettu',
+        reportCustomerOperationalCondition: 'Asiakkaan ilmoittama toiminnallinen kunto päivitetty',
+        reportCustomerWorkFinished: 'Asiakkaan ilmoittama työn valmistuminen päivitetty',
       }
     },
     note: {
@@ -465,6 +477,25 @@ export const translations = {
     name: 'Hakemuksen nimi',
     location: 'Sijainti',
     handler: 'Käsittelijä'
+  },
+  dateReporting: {
+    report: 'Ilmoita päivät',
+    title: {
+      customer: 'Asiakkaan ilmoittamat päivät',
+      official: 'Viralliset päivät'
+    },
+    reportedInfo: {
+      winterTimeOperation: 'Talvityön toiminnallinen kunto',
+      workFinished: 'Työ valmis'
+    },
+    dateField: {
+      reportedDate: 'Päivä',
+      reportingDate: 'Ilmoituspäivä'
+    },
+    field: {
+      reportedDateMissing: 'Päivä puuttuu',
+      reportingDateMissing: 'Ilmoituspäivä puuttuu'
+    }
   },
   applicationBasket: {
     createNewProject: 'Luo uusi hanke',

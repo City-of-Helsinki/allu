@@ -15,7 +15,7 @@ import {isCommon} from '../../model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
 import {catchError, distinctUntilChanged, filter, map, skip, switchMap, take, tap} from 'rxjs/internal/operators';
-import {Store} from '@ngrx/store';
+import {Action, Store} from '@ngrx/store';
 import * as fromApplication from '../../feature/application/reducers';
 import * as TagAction from '../../feature/application/actions/application-tag-actions';
 import * as ApplicationAction from '../../feature/application/actions/application-actions';
@@ -25,6 +25,7 @@ import {ApplicationType} from '../../model/application/type/application-type';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {Customer} from '@model/customer/customer';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
+import {LoadSuccess} from '@feature/application/actions/application-actions';
 
 export interface ApplicationState {
   application?: Application;
@@ -161,6 +162,11 @@ export class ApplicationStore {
     return this.applicationService.getAttachments(applicationId).pipe(
       tap(attachments => this.appStore.next({...this.current, attachments}))
     );
+  }
+
+  public setAndDispatch(app: Application): Action {
+    this.setApplication(app);
+    return new LoadSuccess(app);
   }
 
   setApplication(application: Application): void {

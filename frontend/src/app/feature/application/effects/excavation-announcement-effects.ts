@@ -1,0 +1,78 @@
+import {Injectable} from '@angular/core';
+import {Actions, Effect, ofType} from '@ngrx/effects';
+import * as fromApplication from '@feature/application/reducers';
+import {Action, Store} from '@ngrx/store';
+import {ApplicationStore} from '@service/application/application-store';
+import {ExcavationAnnouncementService} from '@service/application/excavation-announcement.service';
+import {Observable, of} from 'rxjs/index';
+import {
+  ExcavationAnnouncementActionType,
+  ReportCustomerOperationalCondition,
+  ReportCustomerWorkFinished,
+  ReportOperationalCondition,
+  ReportWorkFinished
+} from '@feature/application/actions/excavation-announcement-actions';
+import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {withLatestExisting} from '@feature/common/with-latest-existing';
+import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
+import {findTranslation} from '@util/translations';
+
+@Injectable()
+export class ExcavationAnnouncementEffects {
+  constructor(private actions: Actions,
+              private store: Store<fromApplication.State>,
+              private applicationStore: ApplicationStore,
+              private excavationAnnouncementService: ExcavationAnnouncementService) {}
+
+  @Effect()
+  reportOperationalCondition: Observable<Action> = this.actions.pipe(
+    ofType<ReportOperationalCondition>(ExcavationAnnouncementActionType.ReportOperationalCondition),
+    withLatestExisting<ReportOperationalCondition>(this.store.select(fromApplication.getCurrentApplication)),
+    switchMap(([action, app]) => this.excavationAnnouncementService.reportOperationalCondition(app.id, action.payload).pipe(
+      switchMap(updated => [
+        this.applicationStore.setAndDispatch(updated),
+        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportOperationalCondition'))
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  reportWorkFinished: Observable<Action> = this.actions.pipe(
+    ofType<ReportWorkFinished>(ExcavationAnnouncementActionType.ReportWorkFinished),
+    withLatestExisting<ReportWorkFinished>(this.store.select(fromApplication.getCurrentApplication)),
+    switchMap(([action, app]) => this.excavationAnnouncementService.reportWorkFinished(app.id, action.payload).pipe(
+      switchMap(updated => [
+        this.applicationStore.setAndDispatch(updated),
+        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportWorkFinished'))
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  reportCustomerOperationalCondition: Observable<Action> = this.actions.pipe(
+    ofType<ReportCustomerOperationalCondition>(ExcavationAnnouncementActionType.ReportCustomerOperationalCondition),
+    withLatestExisting<ReportCustomerOperationalCondition>(this.store.select(fromApplication.getCurrentApplication)),
+    switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerOperationalCondition(app.id, action.payload).pipe(
+      switchMap(updated => [
+        this.applicationStore.setAndDispatch(updated),
+        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerOperationalCondition'))
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  reportCustomerWorkFinished: Observable<Action> = this.actions.pipe(
+    ofType<ReportCustomerWorkFinished>(ExcavationAnnouncementActionType.ReportCustomerWorkFinished),
+    withLatestExisting<ReportCustomerWorkFinished>(this.store.select(fromApplication.getCurrentApplication)),
+    switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerWorkFinished(app.id, action.payload).pipe(
+      switchMap(updated => [
+        this.applicationStore.setAndDispatch(updated),
+        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerWorkFinished'))
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+}

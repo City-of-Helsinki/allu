@@ -13,6 +13,10 @@ input.mat-input-element.year-input {
   line-height: 42px;
 }
 
+.mat-checkbox-margin label.mat-checkbox-layout {
+  margin-bottom: 0.2rem;
+}
+
 
 @mixin placeholder-theme($theme) {
   $primary: map-get($theme, primary);
