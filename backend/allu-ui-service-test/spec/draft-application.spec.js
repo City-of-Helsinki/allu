@@ -123,6 +123,8 @@ describe('Application draft', () => {
           }
         ],
       'name': 'Alustava varaus siltamainoksesta',
+      'startTime': applicationStartTime,
+      'endTime': applicationEndTime,
       'customersWithContacts': [applicantCustomersWithContactsCreated],
       'extension': {
         'applicationType': 'SHORT_TERM_RENTAL'
