@@ -15,7 +15,6 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 
 @Service
 public class ConfigurationService {
@@ -30,9 +29,12 @@ public class ConfigurationService {
     this.restTemplate = restTemplate;
   }
 
-  @PostConstruct
-  public void test() {
-    logger.info("PLACEMENT_CONTRACT_DECISION_MAKER={}", getSingleValue(ConfigurationKey.PLACEMENT_CONTRACT_DECISION_MAKER));
+  public List<Configuration> getAllConfigurations() {
+    return restTemplate.exchange(
+        applicationProperties.getConfigurationUrl(),
+        HttpMethod.GET,
+        null,
+        new ParameterizedTypeReference<List<Configuration>>() {}).getBody();
   }
 
   public String getSingleValue(ConfigurationKey key) {
@@ -45,7 +47,7 @@ public class ConfigurationService {
 
   private List<Configuration> getConfigurations(ConfigurationKey key) {
     final List<Configuration> configurationRows = restTemplate.exchange(
-        applicationProperties.getConfigurationUrl(key),
+        applicationProperties.getConfigurationUrlForKey(key),
         HttpMethod.GET,
         null,
         new ParameterizedTypeReference<List<Configuration>>() {}).getBody();

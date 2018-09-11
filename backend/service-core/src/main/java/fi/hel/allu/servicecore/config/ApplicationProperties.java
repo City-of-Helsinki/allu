@@ -1253,8 +1253,12 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/contract/info");
   }
 
-  public String getConfigurationUrl(ConfigurationKey key) {
-    return getModelServiceUrl("/configuration/" + key);
+  public String getConfigurationUrlForKey(ConfigurationKey key) {
+    return getModelServiceUrl("/configurations/" + key);
+  }
+
+  public String getConfigurationUrl() {
+    return getModelServiceUrl("/configurations");
   }
 
   public String getExcavationAnnouncementCustomerOperationalConditionUrl() {
@@ -1272,7 +1276,4 @@ public class ApplicationProperties {
   public String getExcavationAnnouncementWorkFinishedUrl() {
     return getModelServiceUrl("/excavationannouncements/{id}/workfinished");
   }
-
-
-
 }

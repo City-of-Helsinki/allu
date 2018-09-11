@@ -1,17 +1,21 @@
 import * as fromCityDistricts from './city-district-reducer';
 import * as fromCodeSets from './code-set-reducer';
+import * as fromConfigurations from './configuration-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {Some} from '../../../util/option';
 import {CodeSetTypeMap} from '../../../model/codeset/codeset';
+import {ConfigurationKeyMap} from '@model/config/configuration';
 
 export interface State {
   cityDistricts: fromCityDistricts.State;
   codeSets: fromCodeSets.State;
+  configurations: fromConfigurations.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
   cityDistricts: fromCityDistricts.reducer,
-  codeSets: fromCodeSets.reducer
+  codeSets: fromCodeSets.reducer,
+  configurations: fromConfigurations.reducer
 };
 
 export const getCityDistrictsState = createFeatureSelector<fromCityDistricts.State>('cityDistricts');
@@ -48,4 +52,16 @@ export const getCodeSetEntityState = createSelector(
 export const getCodeSetCodeMap = (type: string) => createSelector(
   getCodeSetEntityState,
   (byTypes: CodeSetTypeMap) => Some(byTypes[type]).orElse({})
+);
+
+export const getConfigurationState = createFeatureSelector<fromConfigurations.State>('configurations');
+
+export const getConfigurationEntityState = createSelector(
+  getConfigurationState,
+  fromConfigurations.getConfiguration
+);
+
+export const getConfiguration = (key: string) => createSelector(
+  getConfigurationEntityState,
+  (byKeys: ConfigurationKeyMap) => byKeys[key]
 );

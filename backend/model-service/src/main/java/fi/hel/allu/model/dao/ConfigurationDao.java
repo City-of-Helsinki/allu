@@ -23,6 +23,11 @@ public class ConfigurationDao {
   final QBean<Configuration> configurationBean = bean(Configuration.class, configuration.all());
 
   @Transactional(readOnly = true)
+  public List<Configuration> findAll() {
+    return queryFactory.select(configurationBean).from(configuration).fetch();
+  }
+
+  @Transactional(readOnly = true)
   public Optional<Configuration> findById(int configurationId) {
     Configuration config = queryFactory.select(configurationBean).from(configuration)
         .where(configuration.id.eq(configurationId)).fetchOne();

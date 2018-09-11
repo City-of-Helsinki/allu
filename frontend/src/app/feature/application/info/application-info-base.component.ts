@@ -62,7 +62,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
               protected notification: NotificationService,
               private router: Router,
               private projectService: ProjectService,
-              private store: Store<fromRoot.State>) {}
+              protected store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
     this.initForm();

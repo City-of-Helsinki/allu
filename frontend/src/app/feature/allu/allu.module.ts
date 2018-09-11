@@ -55,6 +55,8 @@ import {MetadataService} from '../../service/meta/metadata.service';
 import {ToastrModule} from 'ngx-toastr';
 import {CodeSetEffects} from './effects/code-set-effects';
 import {NotificationModule} from '@feature/notification/notification.module';
+import {ConfigurationService} from '@service/config/configuration.service';
+import {ConfigurationEffects} from './effects/configuration-effects';
 
 @NgModule({
   imports: [
@@ -66,7 +68,8 @@ import {NotificationModule} from '@feature/notification/notification.module';
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([
       CityDistrictEffects,
-      CodeSetEffects
+      CodeSetEffects,
+      ConfigurationEffects
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
@@ -114,6 +117,7 @@ import {NotificationModule} from '@feature/notification/notification.module';
     CurrentUser,
     ConfigService,
     CodeSetService,
+    ConfigurationService,
     CustomIconRegistry,
     MetadataService,
     { provide: APP_BASE_HREF,  useValue: '/' },
