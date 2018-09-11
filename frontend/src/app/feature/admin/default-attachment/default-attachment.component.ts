@@ -15,7 +15,7 @@ import {FixedLocationService} from '../../../service/map/fixed-location.service'
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../../allu/reducers';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 
 @Component({
   selector: 'default-attachment',

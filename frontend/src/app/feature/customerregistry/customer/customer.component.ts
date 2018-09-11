@@ -7,7 +7,7 @@ import {EnumUtil} from '../../../util/enum.util';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {Contact} from '../../../model/customer/contact';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';

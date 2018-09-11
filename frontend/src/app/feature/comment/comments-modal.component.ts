@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material';
 import {Observable, of} from 'rxjs';
 
 import {Comment} from '../../model/application/comment/comment';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {CommentService} from '../../service/application/comment/comment.service';
 import {ActionTargetType} from '../allu/actions/action-target-type';
 import {catchError} from 'rxjs/internal/operators';

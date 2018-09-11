@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {ApplicationTagType, manualTagTypes} from '../../../model/application/tag/application-tag-type';
 import {Observable} from 'rxjs';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '../reducers';

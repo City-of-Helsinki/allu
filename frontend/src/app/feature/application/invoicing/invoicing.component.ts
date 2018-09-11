@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {Observable, of, Subject} from 'rxjs';
 import {Application} from '../../../model/application/application';
 import {Customer} from '../../../model/customer/customer';

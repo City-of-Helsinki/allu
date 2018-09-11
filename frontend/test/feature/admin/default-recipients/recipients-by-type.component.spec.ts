@@ -8,7 +8,7 @@ import {DefaultRecipientHub} from '../../../../src/app/service/recipients/defaul
 import {ApplicationType} from '../../../../src/app/model/application/type/application-type';
 import {DefaultRecipient} from '../../../../src/app/model/common/default-recipient';
 import {RECIPIENT_ONE, RECIPIENT_TWO} from '../../../service/recipients/default-recipient-mock-values';
-import {NotificationService} from '../../../../src/app/service/notification/notification.service';
+import {NotificationService} from '../../../../src/app/feature/notification/notification.service';
 import {NotificationServiceMock} from '../../../mocks';
 import {share} from 'rxjs/internal/operators';
 import {BehaviorSubject, of} from 'rxjs/index';

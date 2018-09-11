@@ -4,7 +4,7 @@ import {DefaultRecipient} from '../../../model/common/default-recipient';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {EnumUtil} from '../../../util/enum.util';
 import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 
 @Component({
   selector: 'recipients-by-type',

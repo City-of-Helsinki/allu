@@ -11,19 +11,20 @@ import {
   LoadSuccess,
   ProjectActionTypes,
   Save,
-  SaveFailed,
   SaveSuccess,
   Delete,
-  DeleteFailed,
-  DeleteSuccess, RemoveParent, RemoveParentSuccess, RemoveParentFailed
+  DeleteSuccess,
+  RemoveParent,
+  RemoveParentSuccess
 } from '../actions/project-actions';
 import * as MetaAction from '../actions/project-meta-actions';
 import * as ChildAction from '../actions/child-project-actions';
 import {Router} from '@angular/router';
 import { NumberUtil } from '../../../util/number.util';
 import {META_PROJECT, MetadataService} from '../../../service/meta/metadata.service';
-import {defer} from 'rxjs/index';
+import {defer, from} from 'rxjs/index';
 import * as fromAuth from '../../auth/reducers';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class ProjectEffects {
@@ -39,13 +40,13 @@ export class ProjectEffects {
   loadApplications: Observable<Action> = this.actions.pipe(
     ofType<Load>(ProjectActionTypes.Load),
     map(action => action.payload),
-    switchMap(payload =>
-      this.projectService.getProject(payload)
-        .pipe(
-          map(applications => new LoadSuccess(applications)),
-          catchError(error => of(new LoadFailed(error)))
-        )
-    )
+    switchMap(payload => this.projectService.getProject(payload).pipe(
+      map(applications => new LoadSuccess(applications)),
+      catchError(error => from([
+        new LoadFailed(error),
+        new NotifyFailure(error)
+      ]))
+    ))
   );
 
   @Effect()
@@ -55,7 +56,7 @@ export class ProjectEffects {
     switchMap(project =>
       this.projectService.save(project).pipe(
         map(saved => new SaveSuccess(saved)),
-        catchError(error => of(new SaveFailed(error)))
+        catchError(error => of(new NotifyFailure(error)))
       )
     )
   );
@@ -68,7 +69,7 @@ export class ProjectEffects {
     switchMap(([action, project])  =>
       this.projectService.delete(project.id).pipe(
         map(() => new DeleteSuccess()),
-        catchError(error => of(new DeleteFailed(error)))
+        catchError(error => of(new NotifyFailure(error)))
       )
     )
   );
@@ -78,7 +79,7 @@ export class ProjectEffects {
     ofType<RemoveParent>(ProjectActionTypes.RemoveParent),
     switchMap(action => this.projectService.removeParent(action.payload).pipe(
       switchMap(() => [new RemoveParentSuccess(), new ChildAction.Load()]),
-      catchError(error => of(new RemoveParentFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 

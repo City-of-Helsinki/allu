@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {findTranslation} from '../../../util/translations';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {CustomerService} from '../../../service/customer/customer.service';
 
 export const CUSTOMER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};

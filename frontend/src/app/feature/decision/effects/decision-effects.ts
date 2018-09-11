@@ -4,12 +4,13 @@ import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {DecisionService} from '@service/decision/decision.service';
-import {Observable, of} from 'rxjs/index';
+import {from, Observable, of} from 'rxjs/index';
 import {DecisionActionType, Load, LoadFailed, LoadSuccess} from '@feature/decision/actions/decision-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
 import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class DecisionEffects {
@@ -25,7 +26,10 @@ export class DecisionEffects {
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.decisionService.fetch(application.id).pipe(
       map(response => new LoadSuccess(response)),
-      catchError(error => of(new LoadFailed(error)))
+      catchError(error => from([
+        new LoadFailed(error),
+        new NotifyFailure(error)
+      ]))
     ))
   );
 

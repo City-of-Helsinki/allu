@@ -3,7 +3,7 @@ import {StoredFilterService} from './stored-filter.service';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../feature/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {catchError, distinctUntilChanged, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 

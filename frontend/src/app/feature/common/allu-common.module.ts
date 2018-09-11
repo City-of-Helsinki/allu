@@ -3,6 +3,7 @@ import {CommonModule, registerLocaleData} from '@angular/common';
 import localeFi from '@angular/common/locales/fi';
 import {
   MatAutocompleteModule,
+  MatBadgeModule,
   MatButtonModule,
   MatButtonToggleModule,
   MatCardModule,
@@ -11,16 +12,17 @@ import {
   MatDialogModule,
   MatIconModule,
   MatInputModule,
-  MatListModule, MatMenuModule,
+  MatListModule,
+  MatMenuModule,
   MatNativeDateModule,
   MatProgressBarModule,
   MatProgressSpinnerModule,
   MatRadioModule,
   MatSelectModule,
+  MatSlideToggleModule,
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatBadgeModule, MatSlideToggleModule,
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MaterializeModule} from 'angular2-materialize';
@@ -35,7 +37,6 @@ import {InputWarningDirective} from './validation/input-warning.directive';
 import {AvailableToDirective} from '../../service/authorization/available-to.directive';
 import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 import {AlluCardComponent} from './card/allu-card.component';
-import {NotificationService} from '../../service/notification/notification.service';
 import {KeysPipe} from '../../pipe/keys-pipe';
 
 @NgModule({
@@ -60,9 +61,7 @@ import {KeysPipe} from '../../pipe/keys-pipe';
     BottomBarComponent,
     AlluCardComponent
   ],
-  providers: [
-    NotificationService
-  ],
+  providers: [],
   exports: [
     CommonModule,
     MatToolbarModule,

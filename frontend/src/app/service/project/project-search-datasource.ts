@@ -7,7 +7,7 @@ import {ProjectSearchQuery} from '../../model/project/project-search-query';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../feature/notification/notification.service';
 import {catchError, map, skipUntil, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
 
 export class ProjectSearchDatasource extends DataSource<any> {

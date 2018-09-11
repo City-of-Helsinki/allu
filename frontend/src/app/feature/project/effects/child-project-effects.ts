@@ -3,11 +3,12 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ProjectService} from '../../../service/project/project.service';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
-import {Observable, of} from 'rxjs';
-import {Add, AddFailed, AddSuccess, ChildProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/child-project-actions';
+import {from, Observable, of} from 'rxjs';
+import {Add, AddSuccess, ChildProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/child-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {NumberUtil} from '../../../util/number.util';
 import {filter} from 'rxjs/internal/operators';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class ChildProjectEffects {
@@ -24,7 +25,10 @@ export class ChildProjectEffects {
       this.projectService.getChildProjects(project.id)
         .pipe(
           map(children => new LoadSuccess(children)),
-          catchError(error => of(new LoadFailed(error)))
+          catchError(error => from([
+            new LoadFailed(error),
+            new NotifyFailure(error)
+          ]))
         )
     )
   );
@@ -36,7 +40,7 @@ export class ChildProjectEffects {
     switchMap(([action, project]) =>
       this.projectService.updateParent(action.payload, project.id).pipe(
         map(updated => new AddSuccess(updated)),
-        catchError(error => of(new AddFailed(error)))
+        catchError(error => of(new NotifyFailure(error)))
       )
     )
   );

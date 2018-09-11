@@ -9,7 +9,7 @@ import {StoredFilterModule} from '../../../src/app/feature/stored-filter/stored-
 import {By} from '@angular/platform-browser';
 import {getMatIconButton} from '../../selector-helpers';
 import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
-import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {NotificationService} from '../../../src/app/feature/notification/notification.service';
 import {Observable, of, Subject} from 'rxjs/index';
 
 const filters = [

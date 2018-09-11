@@ -9,7 +9,7 @@ import {CityDistrict} from '../../../model/common/city-district';
 import {ProjectState} from '../../../service/project/project-state';
 import {ProjectService} from '../../../service/project/project.service';
 import {ProjectSearchDatasource} from '../../../service/project/project-search-datasource';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 

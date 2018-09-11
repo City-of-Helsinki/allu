@@ -7,7 +7,7 @@ import {Customer} from '../../model/customer/customer';
 import {CustomerService} from '../../service/customer/customer.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {CustomerDatasource} from '../../service/customer/customer-datasource';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @Component({
   selector: 'customer-list',

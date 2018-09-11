@@ -6,7 +6,7 @@ import {Contact} from '../../../model/customer/contact';
 import {postalCodeValidator} from '../../../util/complex-validator';
 import {NumberUtil} from '../../../util/number.util';
 import {EMPTY, Observable, Subscription} from 'rxjs';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
 

@@ -13,7 +13,7 @@ import {SupervisionWorkItem} from '../../../src/app/model/application/supervisio
 import {FormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
 import {OwnerModalModule} from '../../../src/app/feature/common/ownerModal/owner-modal.module';
-import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {NotificationService} from '../../../src/app/feature/notification/notification.service';
 import {getButtonWithText} from '../../selector-helpers';
 import {Page} from '../../../src/app/model/common/page';
 import {RouterTestingModule} from '@angular/router/testing';

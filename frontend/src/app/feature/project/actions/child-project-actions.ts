@@ -8,8 +8,7 @@ export enum ChildProjectActionType {
   LoadSuccess = '[ChildProject] Load project children success',
   LoadFailed = '[ChildProject] Load project children failed',
   Add = '[ChildProject] Add project child',
-  AddSuccess = '[ChildProject] Add project child success',
-  AddFailed = '[ChildProject] Add project child failed',
+  AddSuccess = '[ChildProject] Add project child success'
 }
 
 export class Load implements Action {
@@ -40,16 +39,9 @@ export class AddSuccess implements Action {
   constructor(public payload: Project) {}
 }
 
-export class AddFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = ChildProjectActionType.AddFailed;
-
-  constructor(public payload: ErrorInfo) {}
-}
-
 export type ChildProjectActions =
   | Load
   | LoadSuccess
   | LoadFailed
   | Add
-  | AddSuccess
-  | AddFailed;
+  | AddSuccess;

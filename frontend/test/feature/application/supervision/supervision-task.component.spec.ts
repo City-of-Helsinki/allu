@@ -18,7 +18,7 @@ import {CurrentUser} from '../../../../src/app/service/user/current-user';
 import {ComplexValidator} from '../../../../src/app/util/complex-validator';
 import {User} from '../../../../src/app/model/user/user';
 import {SupervisionTaskType} from '../../../../src/app/model/application/supervision/supervision-task-type';
-import {NotificationService} from '../../../../src/app/service/notification/notification.service';
+import {NotificationService} from '../../../../src/app/feature/notification/notification.service';
 import {ErrorInfo} from '../../../../src/app/service/error/error-info';
 import {findTranslation} from '../../../../src/app/util/translations';
 import {UserHub} from '../../../../src/app/service/user/user-hub';

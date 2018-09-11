@@ -8,7 +8,7 @@ import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer
 import {MatDialog} from '@angular/material';
 import {NumberUtil} from '../../../../util/number.util';
 import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-modal.component';
-import {NotificationService} from '../../../../service/notification/notification.service';
+import {NotificationService} from '../../../notification/notification.service';
 import {Deposit} from '../../../../model/application/invoice/deposit';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
 import {applicationCanBeEdited, ApplicationStatus} from '../../../../model/application/application-status';

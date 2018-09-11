@@ -7,7 +7,7 @@ import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery'
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../feature/notification/notification.service';
 import {catchError, map, skipUntil, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
 
 export class ApplicationSearchDatasource extends DataSource<any> {

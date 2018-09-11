@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
@@ -16,13 +16,13 @@ import {CityDistrict} from '../../model/common/city-district';
 import {ApplicationService} from '../../service/application/application.service';
 import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
 import {ApplicationSearchDatasource} from '../../service/application/application-search-datasource';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {AddMultiple} from '../project/actions/application-basket-actions';
 import * as fromRoot from '../allu/reducers';
 import {Store} from '@ngrx/store';
 
-  const ownerRoles = [RoleType.ROLE_CREATE_APPLICATION,
+const ownerRoles = [RoleType.ROLE_CREATE_APPLICATION,
                       RoleType.ROLE_PROCESS_APPLICATION,
                       RoleType.ROLE_DECISION];
 

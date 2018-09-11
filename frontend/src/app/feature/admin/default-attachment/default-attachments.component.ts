@@ -9,7 +9,7 @@ import {ContentRow} from '../../../model/common/content-row';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import {Some} from '../../../util/option';
 import {map} from 'rxjs/internal/operators';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 
 @Component({
   selector: 'default-attachments',

@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {FormGroup} from '@angular/forms';
 import {SupervisionTaskForm} from './supervision-task-form';
 import {ApplicationStore} from '../../../service/application/application-store';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';

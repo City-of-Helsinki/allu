@@ -6,7 +6,7 @@ import {Observable, of} from 'rxjs';
 import {Application} from '../../model/application/application';
 import {ApplicationStatus, inHandling} from '../../model/application/application-status';
 import {findTranslation} from '../../util/translations';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
 import {DecisionService} from '../../service/decision/decision.service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';

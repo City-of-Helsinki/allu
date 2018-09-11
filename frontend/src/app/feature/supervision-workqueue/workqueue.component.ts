@@ -6,7 +6,7 @@ import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owne
 import {CurrentUser} from '../../service/user/current-user';
 import {DialogCloseReason} from '../common/dialog-close-value';
 import {User} from '../../model/user/user';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {UserHub} from '../../service/user/user-hub';
 import {RoleType} from '../../model/user/role-type';
 import {Subscription} from 'rxjs';

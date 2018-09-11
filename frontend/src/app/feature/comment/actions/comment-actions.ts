@@ -10,10 +10,8 @@ export enum CommentActionType {
   LoadFailed = '[Comment] Load comments failed',
   Save = '[Comment] Save comment',
   SaveSuccess = '[Comment] Save comment success',
-  SaveFailed = '[Comment] Save comment failed',
   Remove = '[Comment] Remove comment',
   RemoveSuccess = '[Comment] Remove comment success',
-  RemoveFailed = '[Comment] Remove comment failed',
   ToggleDirection = '[Comment] Toggle comment sorting'
 }
 
@@ -47,12 +45,6 @@ export class SaveSuccess implements ActionWithTarget {
   constructor(public targetType: ActionTargetType, public payload: Comment) {}
 }
 
-export class SaveFailed implements ActionWithTarget, ActionWithPayload<ErrorInfo> {
-  readonly type = CommentActionType.SaveFailed;
-
-  constructor(public targetType: ActionTargetType, public payload: ErrorInfo) {}
-}
-
 export class Remove implements ActionWithTarget {
   readonly type = CommentActionType.Remove;
 
@@ -62,13 +54,8 @@ export class Remove implements ActionWithTarget {
 export class RemoveSuccess implements ActionWithTarget {
   readonly type = CommentActionType.RemoveSuccess;
 
-  constructor(public targetType: ActionTargetType, public payload: number) {}
-}
-
-export class RemoveFailed implements ActionWithTarget, ActionWithPayload<ErrorInfo> {
-  readonly type = CommentActionType.RemoveFailed;
-
-  constructor(public targetType: ActionTargetType, public payload: ErrorInfo) {}
+  constructor(public targetType: ActionTargetType, public payload: number) {
+  }
 }
 
 export class ToggleDirection implements ActionWithTarget {
@@ -83,8 +70,6 @@ export type CommentActions =
   | LoadFailed
   | Save
   | SaveSuccess
-  | SaveFailed
   | Remove
   | RemoveSuccess
-  | RemoveFailed
   | ToggleDirection;

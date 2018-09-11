@@ -5,7 +5,7 @@ import {Observable, of} from 'rxjs';
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {ApplicationStore} from '../../service/application/application-store';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
 import {Load, LoadSuccess} from './actions/application-actions';

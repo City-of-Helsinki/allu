@@ -1,31 +1,30 @@
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Observable, of} from 'rxjs';
+import {from, Observable, of} from 'rxjs';
 import {
   Add,
-  AddFailed,
-  AddMultiple, AddPending,
+  AddMultiple,
+  AddPending,
   AddSuccess,
   ApplicationActionTypes,
   Load,
   LoadFailed,
   LoadSuccess,
   Remove,
-  RemoveFailed,
   RemoveSuccess
 } from '../actions/application-actions';
 import * as historyActions from '../../history/actions/history-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import * as fromProject from '../reducers';
-import {ApplicationService} from '../../../service/application/application.service';
-import {ProjectService} from '../../../service/project/project.service';
+import {ApplicationService} from '@service/application/application.service';
+import {ProjectService} from '@service/project/project.service';
 import * as projectActions from '../actions/project-actions';
-import {ProjectActionTypes, Save} from '../actions/project-actions';
-import {SaveSuccess} from '../actions/project-actions';
+import {ProjectActionTypes, SaveSuccess} from '../actions/project-actions';
 import {Clear} from '../actions/application-basket-actions';
 import {ActionTargetType} from '../../allu/actions/action-target-type';
-import {NumberUtil} from '../../../util/number.util';
+import {NumberUtil} from '@util/number.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class ApplicationEffects {
@@ -44,7 +43,10 @@ export class ApplicationEffects {
       this.projectService.getProjectApplications(project.id)
         .pipe(
           map(applications => new LoadSuccess(applications)),
-          catchError(error => of(new LoadFailed(error)))
+          catchError(error => from([
+            new LoadFailed(error),
+            new NotifyFailure(error)
+          ]))
         )
     )
   );
@@ -75,7 +77,7 @@ export class ApplicationEffects {
           new RemoveSuccess(payload),
           new historyActions.Load(ActionTargetType.Project)
         ]),
-        catchError(error => of(new RemoveFailed(error)))
+        catchError(error => of(new NotifyFailure(error)))
       )
     )
   );
@@ -103,7 +105,7 @@ export class ApplicationEffects {
     withLatestFrom(this.store.select(fromProject.getCurrentProject)),
     switchMap(([payload, project]) => this.projectService.addProjectApplications(project.id, payload).pipe(
       switchMap((applications) => [new AddSuccess(applications), new Clear()]),
-      catchError(error => of(new AddFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 
@@ -114,7 +116,7 @@ export class ApplicationEffects {
           new AddSuccess(applications),
           new historyActions.Load(ActionTargetType.Project)
         ]),
-        catchError(error => of(new AddFailed(error)))
+        catchError(error => of(new NotifyFailure(error)))
       );
   }
 }

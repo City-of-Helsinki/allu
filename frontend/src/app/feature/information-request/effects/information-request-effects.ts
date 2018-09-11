@@ -2,12 +2,12 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import * as fromInformationRequest from '../reducers';
 import * as InformationRequestAction from '../actions/information-request-actions';
+import {InformationRequestActionType} from '../actions/information-request-actions';
 import * as InformationRequestResultAction from '../actions/information-request-result-actions';
 import * as ApplicationAction from '@feature/application/actions/application-actions';
 import {Action, Store} from '@ngrx/store';
 import {InformationRequestService} from '../../../service/application/information-request.service';
-import {Observable, of} from 'rxjs/index';
-import {InformationRequestActionType} from '../actions/information-request-actions';
+import {from, Observable, of} from 'rxjs/index';
 import * as fromApplication from '../../application/reducers';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
 import {NumberUtil} from '../../../util/number.util';
@@ -15,6 +15,7 @@ import {InformationRequestResultActionType} from '@feature/information-request/a
 import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus} from '@model/application/application-status';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class InformationRequestEffects {
@@ -31,7 +32,10 @@ export class InformationRequestEffects {
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.informationRequestService.getRequestForApplication(application.id).pipe(
       map(request => new InformationRequestAction.LoadLatestRequestSuccess(request)),
-      catchError(error => of(new InformationRequestAction.LoadLatestRequestFailed(error)))
+      catchError(error => from([
+        new InformationRequestAction.LoadLatestRequestFailed(error),
+        new NotifyFailure(error)
+      ]))
     ))
   );
 
@@ -40,7 +44,7 @@ export class InformationRequestEffects {
     ofType<InformationRequestAction.SaveRequest>(InformationRequestActionType.SaveRequest),
     switchMap(action => this.informationRequestService.save(action.payload).pipe(
       map(request => new InformationRequestAction.SaveRequestSuccess(request)),
-      catchError(error => of(new InformationRequestAction.SaveRequestFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 
@@ -53,7 +57,7 @@ export class InformationRequestEffects {
         new InformationRequestAction.SaveRequestSuccess(request),
         new ApplicationAction.LoadSuccess(app)
       ]),
-      catchError(error => of(new InformationRequestAction.SaveRequestFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 
@@ -64,7 +68,10 @@ export class InformationRequestEffects {
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.informationRequestService.getForApplication(application.id).pipe(
       map(response => new InformationRequestAction.LoadLatestResponseSuccess(response)),
-      catchError(error => of(new InformationRequestAction.LoadLatestResponseFailed(error)))
+      catchError(error => from([
+        new InformationRequestAction.LoadLatestResponseFailed(error),
+        new NotifyFailure(error)
+      ]))
     ))
   );
 
@@ -73,7 +80,7 @@ export class InformationRequestEffects {
     ofType<InformationRequestResultAction.Save>(InformationRequestResultActionType.Save),
     switchMap(action => this.applicationStore.saveInformationRequestResult(action.payload).pipe(
       map(() => new InformationRequestResultAction.SaveSuccess(action.payload)),
-      catchError(error => of(new InformationRequestResultAction.SaveFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 
@@ -86,7 +93,7 @@ export class InformationRequestEffects {
         new InformationRequestAction.LoadLatestResponseSuccess(undefined),
         new ApplicationAction.Load(action.payload.application.id)
       ]),
-      catchError(error => of(new InformationRequestResultAction.CloseFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 }

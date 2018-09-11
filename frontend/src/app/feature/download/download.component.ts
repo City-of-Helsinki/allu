@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {DownloadService} from './download.service';
 import * as filesaver from 'file-saver';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 /**
  * Generic empty component for downloading files from backend

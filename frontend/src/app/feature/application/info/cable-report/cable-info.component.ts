@@ -11,7 +11,7 @@ import {DefaultText, DefaultTextMap} from '../../../../model/application/cable-r
 import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {Some} from '../../../../util/option';
-import {NotificationService} from '../../../../service/notification/notification.service';
+import {NotificationService} from '../../../notification/notification.service';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {DefaultTextService} from '../../../../service/application/default-text.service';
 import {switchMap} from 'rxjs/internal/operators';

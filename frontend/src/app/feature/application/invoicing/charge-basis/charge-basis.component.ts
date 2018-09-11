@@ -5,7 +5,7 @@ import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-bas
 import {InvoiceHub} from '../../../../service/application/invoice/invoice-hub';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {CHARGE_BASIS_ENTRY_MODAL_CONFIG, ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
-import {NotificationService} from '../../../../service/notification/notification.service';
+import {NotificationService} from '../../../notification/notification.service';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {FormUtil} from '../../../../util/form.util';
 import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';

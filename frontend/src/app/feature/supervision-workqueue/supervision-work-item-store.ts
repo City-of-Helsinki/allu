@@ -8,7 +8,7 @@ import {ArrayUtil} from '../../util/array-util';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
 import {debounceTime, distinctUntilChanged, map, take, tap} from 'rxjs/internal/operators';

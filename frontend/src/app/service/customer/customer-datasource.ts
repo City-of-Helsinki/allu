@@ -4,7 +4,7 @@ import {MatPaginator, MatSort} from '@angular/material';
 import {Sort} from '../../model/common/sort';
 import {PageRequest} from '../../model/common/page-request';
 import {Page} from '../../model/common/page';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../feature/notification/notification.service';
 import {CustomerService} from './customer.service';
 import {Customer} from '../../model/customer/customer';
 import {CustomerSearchQuery} from './customer-search-query';

@@ -16,7 +16,7 @@ import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-f
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
 import {StoredFilterModule} from '../../../src/app/feature/stored-filter/stored-filter.module';
 import {UserService} from '../../../src/app/service/user/user-service';
-import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {NotificationService} from '../../../src/app/feature/notification/notification.service';
 import {StoreModule} from '@ngrx/store';
 import * as fromRoot from '../../../src/app/feature/allu/reducers';
 

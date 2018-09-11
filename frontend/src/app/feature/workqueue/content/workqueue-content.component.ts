@@ -14,7 +14,7 @@ import {WorkQueueTab} from '../workqueue-tab';
 import {Sort} from '../../../model/common/sort';
 import {StoredFilterType} from '../../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import * as fromRoot from '../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';

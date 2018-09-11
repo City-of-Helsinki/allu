@@ -13,7 +13,7 @@ import {Some} from '../../util/option';
 import {translations} from '../../util/translations';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {MapLayerService} from './map-layer.service';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../feature/notification/notification.service';
 import {drawOptions, editOptions} from './map-config';
 import {MapStore} from './map-store';
 import {MapEventHandler} from './map-event-handler';

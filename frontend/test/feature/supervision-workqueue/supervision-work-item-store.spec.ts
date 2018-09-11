@@ -7,7 +7,7 @@ import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
 import {Page} from '../../../src/app/model/common/page';
 import {CurrentUser} from '../../../src/app/service/user/current-user';
 import {CurrentUserMock, NotificationServiceMock} from '../../mocks';
-import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {NotificationService} from '../../../src/app/feature/notification/notification.service';
 import {Observable, of} from 'rxjs/index';
 import {map} from 'rxjs/internal/operators';
 

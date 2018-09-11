@@ -44,7 +44,6 @@ import {DownloadModule} from '../download/download.module';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 import {AlluPaginatorIntl} from '../../service/common/allu-paginator-intl';
-import {RootErrorNotificationService} from './effects/root-error-notification.service';
 import {CodeSetService} from '../../service/codeset/codeset.service';
 import {CityDistrictEffects} from './effects/city-district-effects';
 import {reducers} from './reducers';
@@ -55,6 +54,7 @@ import {httpInterceptorProviders} from '../../http-interceptors';
 import {MetadataService} from '../../service/meta/metadata.service';
 import {ToastrModule} from 'ngx-toastr';
 import {CodeSetEffects} from './effects/code-set-effects';
+import {NotificationModule} from '@feature/notification/notification.module';
 
 @NgModule({
   imports: [
@@ -88,7 +88,8 @@ import {CodeSetEffects} from './effects/code-set-effects';
     AdminModule,
     SidebarModule,
     CustomerRegistryModule,
-    DownloadModule
+    DownloadModule,
+    NotificationModule
   ],
   declarations: [
     AlluComponent,
@@ -112,7 +113,6 @@ import {CodeSetEffects} from './effects/code-set-effects';
     DefaultTextService,
     CurrentUser,
     ConfigService,
-    RootErrorNotificationService,
     CodeSetService,
     CustomIconRegistry,
     MetadataService,

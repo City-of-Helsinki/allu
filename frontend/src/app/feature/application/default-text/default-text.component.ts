@@ -5,7 +5,7 @@ import {MatDialog, MatDialogRef} from '@angular/material';
 import {forkJoin} from 'rxjs';
 import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../default-text/default-text-modal.component';
 import {DefaultText} from '../../../model/application/cable-report/default-text';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {DefaultTextType} from '../../../model/application/default-text-type';
 import {Some} from '../../../util/option';
 import {findTranslation} from '../../../util/translations';

@@ -3,7 +3,7 @@ import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {UserService} from '../../service/user/user-service';
 import {Observable, Subject} from 'rxjs';
 import {StoredFilter} from '../../model/user/stored-filter';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {User} from '../../model/user/user';
 import {MatDialog} from '@angular/material';
 import {STORED_FILTER_MODAL_CONFIG, StoredFilterModalComponent} from './stored-filter-modal.component';

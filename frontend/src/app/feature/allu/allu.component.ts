@@ -4,8 +4,7 @@ import {Subscription} from 'rxjs';
 import {ConfigService} from '../../service/config/config.service';
 import {EnvironmentType} from '../../model/config/environment-type';
 import {CustomIconRegistry} from '../../service/common/custom-icon-registry';
-import {NotificationService} from '../../service/notification/notification.service';
-import {RootErrorNotificationService} from './effects/root-error-notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @Component({
   selector: 'allu',
@@ -21,8 +20,7 @@ export class AlluComponent implements OnInit, OnDestroy {
   constructor(private router: Router,
               private config: ConfigService,
               private iconRegistry: CustomIconRegistry,
-              private notification: NotificationService,
-              private rootErrorNotification: RootErrorNotificationService) {
+              private notification: NotificationService) {
   }
 
   ngOnInit(): void {

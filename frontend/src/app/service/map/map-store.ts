@@ -6,7 +6,7 @@ import {Application} from '../../model/application/application';
 import {Option, Some} from '../../util/option';
 import {LocationService} from '../location.service';
 import {Location} from '../../model/common/location';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../feature/notification/notification.service';
 import {defaultFilter, MapSearchFilter} from '../map-search-filter';
 import {PostalAddress} from '../../model/common/postal-address';
 import {MapDataService} from './map-data-service';

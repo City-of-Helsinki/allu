@@ -5,17 +5,19 @@ import * as fromProject from '../reducers';
 import * as fromAuth from '../../auth/reducers';
 import {Observable, of, defer} from 'rxjs';
 import {
-  Add, AddMultiple,
-  ApplicationBasketActionType, Clear,
+  Add,
+  AddMultiple,
+  ApplicationBasketActionType,
+  Clear,
   Load,
-  LoadFailed,
   LoadSuccess,
   Remove
 } from '../actions/application-basket-actions';
 import {catchError, combineLatest, filter, map, switchMap, tap} from 'rxjs/operators';
-import {ApplicationService} from '../../../service/application/application.service';
-import {LocalStorageUtil} from '../../../util/local-storage.util';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {ApplicationService} from '@service/application/application.service';
+import {LocalStorageUtil} from '@util/local-storage.util';
+import {NotificationService} from '@feature/notification/notification.service';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 const BASKET = 'applicationBasket';
 
@@ -83,7 +85,7 @@ export class ApplicationBasketEffects {
   private loadApplications(ids: number[]): Observable<Action> {
     return this.applicationService.byIds(ids).pipe(
       map(applications => new LoadSuccess(applications)),
-      catchError(error => of(new LoadFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     );
   }
 }

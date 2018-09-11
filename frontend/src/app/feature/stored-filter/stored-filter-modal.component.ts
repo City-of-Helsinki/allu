@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {StoredFilterService} from '../../service/stored-filter/stored-filter.service';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {StoredFilter} from '../../model/user/stored-filter';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
 
 export const STORED_FILTER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};

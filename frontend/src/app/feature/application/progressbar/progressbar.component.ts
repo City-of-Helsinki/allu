@@ -3,7 +3,7 @@ import {Application} from '../../../model/application/application';
 import {NumberUtil} from '../../../util/number.util';
 import {ApplicationIdentifier} from '../../../model/application/application-identifier';
 import {ApplicationService} from '../../../service/application/application.service';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {Router} from '@angular/router';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {Observable, of} from 'rxjs/index';

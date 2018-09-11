@@ -14,7 +14,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {AttachmentInfo} from '../../../src/app/model/application/attachment/attachment-info';
 import {Location} from '../../../src/app/model/common/location';
 import {ApplicationType} from '../../../src/app/model/application/type/application-type';
-import {NotificationService} from '../../../src/app/service/notification/notification.service';
+import {NotificationService} from '../../../src/app/feature/notification/notification.service';
 import {ApplicationStatus} from '../../../src/app/model/application/application-status';
 import {MatDialog} from '@angular/material';
 import {User} from '../../../src/app/model/user/user';

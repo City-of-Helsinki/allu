@@ -6,7 +6,7 @@ import {DefaultText} from '../../../model/application/cable-report/default-text'
 import {DefaultTextType} from '../../../model/application/default-text-type';
 import {translations} from '../../../util/translations';
 import {StringUtil} from '../../../util/string.util';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NumberUtil} from '../../../util/number.util';
 import {DefaultTextService} from '../../../service/application/default-text.service';

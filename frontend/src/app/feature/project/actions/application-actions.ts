@@ -14,10 +14,8 @@ export enum ApplicationActionTypes {
   AddMultiple = '[Project] Add multiple applications',
   AddPending = '[Project] Add pending applications',
   AddSuccess = '[Project] Add application success',
-  AddFailed = '[Project] Add application failed',
   Remove = '[Project] Remove application',
-  RemoveSuccess = '[Project] Remove application success',
-  RemoveFailed = '[Project] Remove application failed'
+  RemoveSuccess = '[Project] Remove application success'
 }
 
 export class Load implements Action {
@@ -69,12 +67,6 @@ export class AddSuccess implements Action {
   constructor(public payload: Application[]) {}
 }
 
-export class AddFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = ApplicationActionTypes.AddFailed;
-
-  constructor(public payload: ErrorInfo) {}
-}
-
 export class Remove implements Action {
   readonly type = ApplicationActionTypes.Remove;
 
@@ -87,12 +79,6 @@ export class RemoveSuccess implements Action {
   constructor(public payload: number) {}
 }
 
-export class RemoveFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = ApplicationActionTypes.RemoveFailed;
-
-  constructor(public payload: ErrorInfo) {}
-}
-
 
 export type ApplicationActions =
   | Load
@@ -103,8 +89,6 @@ export type ApplicationActions =
   | AddMultiple
   | AddPending
   | AddSuccess
-  | AddFailed
   | Remove
-  | RemoveSuccess
-  | RemoveFailed;
+  | RemoveSuccess;
 

@@ -2,28 +2,18 @@ import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {catchError, map, switchMap} from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {from, Observable, of} from 'rxjs';
 
 import * as fromComment from '../reducers/comment-reducer';
-import {
-  CommentActionType,
-  Load,
-  LoadFailed,
-  LoadSuccess,
-  Remove,
-  RemoveFailed,
-  RemoveSuccess,
-  Save,
-  SaveFailed,
-  SaveSuccess
-} from '../actions/comment-actions';
-import {CommentService} from '../../../service/application/comment/comment.service';
-import {Comment} from '../../../model/application/comment/comment';
+import {CommentActionType, Load, LoadFailed, LoadSuccess, Remove, RemoveSuccess, Save, SaveSuccess} from '../actions/comment-actions';
+import {CommentService} from '@service/application/comment/comment.service';
+import {Comment} from '@model/application/comment/comment';
 import {ActionTargetType} from '../../allu/actions/action-target-type';
 import {ofTargetAndType} from '../../allu/actions/action-with-target';
 import * as fromProject from '../../project/reducers';
 import * as fromApplication from '../../application/reducers';
 import {ApproveSuccess, ContractActionType} from '@feature/decision/actions/contract-actions';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class CommentEffects {
@@ -60,7 +50,7 @@ export class CommentEffects {
     ofType<Remove>(CommentActionType.Remove),
     switchMap(action => this.commentService.remove(action.payload).pipe(
       map(() => new RemoveSuccess(action.targetType, action.payload)),
-      catchError(error => of(new RemoveFailed(action.targetType, error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 
@@ -73,14 +63,17 @@ export class CommentEffects {
   private loadByType(type: ActionTargetType, id): Observable<Action> {
     return this.commentService.getCommentsFor(type, id).pipe(
       map(comments => new LoadSuccess(type, comments)),
-      catchError(error => of(new LoadFailed(type, error)))
+      catchError(error => from([
+        new LoadFailed(type, error),
+        new NotifyFailure(error)
+      ]))
     );
   }
 
   private saveByType(type: ActionTargetType, targetId: number, comment: Comment): Observable<Action> {
     return this.commentService.saveComment(type, targetId, comment).pipe(
       map(saved => new SaveSuccess(type, saved)),
-      catchError(error => of(new SaveFailed(type, error)))
+      catchError(error => of(new NotifyFailure(error)))
     );
   }
 

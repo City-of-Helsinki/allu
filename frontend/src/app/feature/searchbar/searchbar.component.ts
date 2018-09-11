@@ -4,7 +4,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MapStore} from '../../service/map/map-store';
 import {PostalAddress} from '../../model/common/postal-address';
 import {Observable, Subject} from 'rxjs';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {StringUtil} from '../../util/string.util';
 import {ApplicationStatusGroup} from '../../model/application/application-status';

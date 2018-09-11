@@ -8,7 +8,7 @@ import {User} from '../../model/user/user';
 import {UserHub} from '../../service/user/user-hub';
 import {DialogCloseReason} from '../common/dialog-close-value';
 import {WorkQueueTab} from './workqueue-tab';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {findTranslation} from '../../util/translations';
 import {Subject} from 'rxjs';
 import {ApplicationWorkItemStore} from './application-work-item-store';

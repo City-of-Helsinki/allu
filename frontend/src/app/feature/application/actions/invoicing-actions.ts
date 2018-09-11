@@ -4,8 +4,7 @@ import {ActionWithPayload} from '../../common/action-with-payload';
 
 export enum InvoicingActionType {
   SetRecipient = '[Invoicing] Set invoice recipient',
-  SetRecipientSuccess = '[Invoicing] Set invoice recipient success',
-  SetRecipientFailed = '[Invoicing] Set invoice recipient failed'
+  SetRecipientSuccess = '[Invoicing] Set invoice recipient success'
 }
 
 export class SetRecipient implements Action {
@@ -20,13 +19,6 @@ export class SetRecipientSuccess implements Action {
   constructor(public payload: number) {}
 }
 
-export class SetRecipientFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = InvoicingActionType.SetRecipientFailed;
-
-  constructor(public payload: ErrorInfo) {}
-}
-
 export type InvoicingActions =
   | SetRecipient
-  | SetRecipientSuccess
-  | SetRecipientFailed;
+  | SetRecipientSuccess;

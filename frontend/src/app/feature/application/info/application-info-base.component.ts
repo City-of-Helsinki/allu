@@ -6,7 +6,7 @@ import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationForm} from './application-form';
 import {applicationCanBeEdited, ApplicationStatus} from '../../../model/application/application-status';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';

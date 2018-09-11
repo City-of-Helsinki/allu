@@ -8,7 +8,7 @@ import {PageRequest} from '../../model/common/page-request';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {Application} from '../../model/application/application';
 import {ApplicationService} from '../../service/application/application.service';
-import {NotificationService} from '../../service/notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
 import {ObjectUtil} from '../../util/object.util';

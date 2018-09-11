@@ -8,7 +8,7 @@ import {ExternalUserHub} from '../../../service/user/external-user-hub';
 import {ExternalRoleType} from '../../../model/common/external-role-type';
 import {Customer} from '../../../model/customer/customer';
 import {ExternalUserForm} from './external-user-form';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {translations} from '../../../util/translations';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';

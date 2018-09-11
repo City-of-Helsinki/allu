@@ -10,7 +10,7 @@ import {ApplicationWorkItemStore} from '../application-work-item-store';
 import {Application} from '../../../model/application/application';
 import {Some} from '../../../util/option';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {catchError, distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 export interface ApplicationWorkItemRow {

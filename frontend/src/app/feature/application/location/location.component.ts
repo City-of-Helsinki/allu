@@ -19,7 +19,7 @@ import {CityDistrict} from '../../../model/common/city-district';
 import {TrafficArrangement} from '../../../model/application/traffic-arrangement/traffic-arrangement';
 import {PlacementContract} from '../../../model/application/placement-contract/placement-contract';
 import {ArrayUtil} from '../../../util/array-util';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {AreaRental} from '../../../model/application/area-rental/area-rental';
 import {FixedLocationArea} from '../../../model/common/fixed-location-area';

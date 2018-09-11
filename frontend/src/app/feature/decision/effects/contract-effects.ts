@@ -3,7 +3,7 @@ import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Observable, of} from 'rxjs/index';
+import {from, Observable, of} from 'rxjs/index';
 import {
   Approve,
   ApproveFailed,
@@ -24,6 +24,7 @@ import {Application} from '@model/application/application';
 import {ApplicationStatus} from '@model/application/application-status';
 import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class ContractEffects {
@@ -61,7 +62,10 @@ export class ContractEffects {
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.contractService.createProposal(application.id).pipe(
       map(contract => new CreateProposalSuccess(contract)),
-      catchError(error => of(new CreateProposalFailed(error)))
+      catchError(error => from([
+        new CreateProposalFailed(error),
+        new NotifyFailure(error)
+      ]))
     ))
   );
 
@@ -72,7 +76,10 @@ export class ContractEffects {
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.contractService.approve(application.id, action.payload).pipe(
       map(contract => new ApproveSuccess(contract)),
-      catchError(error => of(new ApproveFailed(error)))
+      catchError(error => from([
+        new ApproveFailed(error),
+        new NotifyFailure(error)
+      ]))
     ))
   );
 

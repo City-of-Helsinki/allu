@@ -6,7 +6,6 @@ import {ErrorInfo} from '../../../service/error/error-info';
 export enum ApplicationBasketActionType {
   Load = '[ApplicationBasket] Load basket',
   LoadSuccess = '[ApplicationBasket] Load basket success',
-  LoadFailed = '[ApplicationBasket] Load basket failed',
   Clear = '[ApplicationBasket] Clear basket',
   Add = '[ApplicationBasket] Add application',
   AddMultiple = '[ApplicationBasket] Add multiple application',
@@ -24,12 +23,6 @@ export class LoadSuccess implements Action {
   readonly type = ApplicationBasketActionType.LoadSuccess;
 
   constructor(public payload: Application[]) {}
-}
-
-export class LoadFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = ApplicationBasketActionType.LoadFailed;
-
-  constructor(public payload: ErrorInfo) {}
 }
 
 export class Clear implements Action {
@@ -61,7 +54,6 @@ export class CreateProject implements Action {
 export type ApplicationBasketActions =
   | Load
   | LoadSuccess
-  | LoadFailed
   | Clear
   | Add
   | AddMultiple

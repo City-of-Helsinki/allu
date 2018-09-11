@@ -11,7 +11,6 @@ export enum InformationRequestActionType {
   SaveRequest = '[InformationRequest] Save information request',
   SaveAndSendRequest = '[InformationRequest] Save and send information request',
   SaveRequestSuccess = '[InformationRequest] Save information request success',
-  SaveRequestFailed = '[InformationRequest] Save information request failed',
   LoadLatestResponse = '[InformationRequest] Load latest information request response',
   LoadLatestResponseSuccess= '[InformationRequest] Load latest information request response success',
   LoadLatestResponseFailed = '[InformationRequest] Load latest information request response failed'
@@ -46,11 +45,6 @@ export class SaveRequestSuccess implements Action {
   constructor(public payload: InformationRequest) {}
 }
 
-export class SaveRequestFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = InformationRequestActionType.SaveRequestFailed;
-  constructor(public payload: ErrorInfo) {}
-}
-
 export class LoadLatestResponse implements Action {
   readonly type = InformationRequestActionType.LoadLatestResponse;
 }
@@ -71,7 +65,6 @@ export type InformationRequestAction =
   | LoadLatestRequestFailed
   | SaveRequest
   | SaveRequestSuccess
-  | SaveRequestFailed
   | LoadLatestResponse
   | LoadLatestResponseSuccess
   | LoadLatestResponseFailed;

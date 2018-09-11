@@ -3,10 +3,11 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Action, Store} from '@ngrx/store';
 import {InvoiceService} from '../../../service/application/invoice/invoice.service';
 import {Observable, of} from 'rxjs/index';
-import {InvoicingActionType, SetRecipient, SetRecipientFailed, SetRecipientSuccess} from '../actions/invoicing-actions';
+import {InvoicingActionType, SetRecipient, SetRecipientSuccess} from '../actions/invoicing-actions';
 import * as fromApplication from '../reducers/index';
 import * as TagAction from '../actions/application-tag-actions';
 import {catchError, filter, switchMap, withLatestFrom} from 'rxjs/internal/operators';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class InvoicingEffects {
@@ -21,7 +22,7 @@ export class InvoicingEffects {
     filter(([action, app]) => app.id !== undefined),
     switchMap(([action, app]) => this.invoiceService.saveRecipient(app.id, action.payload).pipe(
       switchMap(() => [new SetRecipientSuccess(action.payload), new TagAction.Load()]),
-      catchError(error => of(new SetRecipientFailed(error)))
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 }

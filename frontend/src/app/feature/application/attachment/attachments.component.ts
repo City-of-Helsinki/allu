@@ -12,7 +12,7 @@ import {TimeUtil} from '../../../util/time.util';
 import {Some} from '../../../util/option';
 import {AttachmentType, isCommon} from '../../../model/application/attachment/attachment-type';
 import {applicationCanBeEdited} from '../../../model/application/application-status';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
 import {filter, map, takeUntil} from 'rxjs/internal/operators';

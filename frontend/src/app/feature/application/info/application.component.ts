@@ -10,7 +10,7 @@ import {SidebarItem, visibleFor} from '../../sidebar/sidebar-item';
 import {inHandling} from '../../../model/application/application-status';
 import {AttachmentHub} from '../attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
-import {NotificationService} from '../../../service/notification/notification.service';
+import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Option, Some} from '../../../util/option';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';

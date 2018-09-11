@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {FixedLocationArea} from '../../model/common/fixed-location-area';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {LocationService} from '../location.service';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../feature/notification/notification.service';
 import {distinctUntilChanged, filter, map} from 'rxjs/internal/operators';
 
 @Injectable()

@@ -3,11 +3,12 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ProjectService} from '../../../service/project/project.service';
 import {Action, Store} from '@ngrx/store';
 import * as fromProject from '../reducers';
-import {Observable, of} from 'rxjs';
+import {from, Observable, of} from 'rxjs';
 import {ParentProjectActionType, Load, LoadFailed, LoadSuccess} from '../actions/parent-project-actions';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {filter} from 'rxjs/internal/operators';
 import {NumberUtil} from '../../../util/number.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class ParentProjectEffects {
@@ -24,7 +25,10 @@ export class ParentProjectEffects {
       this.projectService.getParentProjects(project.id)
         .pipe(
           map(parents => new LoadSuccess(parents)),
-          catchError(error => of(new LoadFailed(error)))
+          catchError(error => from([
+            new LoadFailed(error),
+            new NotifyFailure(error)
+          ]))
         )
     )
   );
