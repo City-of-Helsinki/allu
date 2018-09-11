@@ -8,11 +8,14 @@ public class Configuration {
   @NotNull
   private ConfigurationType type;
   @NotNull
+  private ConfigurationKey key;
+  @NotNull
   private String value;
 
-  public Configuration(ConfigurationType type, String value) {
+  public Configuration(ConfigurationType type, ConfigurationKey key, String value) {
     this.type = type;
     this.value = value;
+    this.key = key;
   }
 
   public Configuration() {
@@ -26,12 +29,20 @@ public class Configuration {
     this.id = id;
   }
 
-  public ConfigurationType getName() {
+  public ConfigurationType getType() {
     return type;
   }
 
-  public void setName(ConfigurationType type) {
+  public void setType(ConfigurationType type) {
     this.type = type;
+  }
+
+  public ConfigurationKey getKey() {
+    return key;
+  }
+
+  public void setKey(ConfigurationKey key) {
+    this.key = key;
   }
 
   public String getValue() {

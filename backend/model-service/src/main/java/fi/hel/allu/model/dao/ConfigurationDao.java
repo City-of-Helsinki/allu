@@ -6,7 +6,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import static fi.hel.allu.QConfiguration.configuration;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Configuration;
-import fi.hel.allu.model.domain.ConfigurationType;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,21 +30,20 @@ public class ConfigurationDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Configuration> findByType(ConfigurationType type) {
+  public List<Configuration> findByKey(ConfigurationKey key) {
     return queryFactory.select(configurationBean).from(configuration)
-        .where(configuration.type.eq(type)).fetch();
+        .where(configuration.key.eq(key)).fetch();
   }
 
   @Transactional
   public Configuration insert(Configuration config) {
-    int id = queryFactory.insert(configuration).populate(config)
-        .executeWithKey(configuration.id);
+    final int id = queryFactory.insert(configuration).populate(config).executeWithKey(configuration.id);
     return findById(id).get();
   }
 
   @Transactional
   public Configuration update(int configurationId, Configuration config) {
-    long changed = queryFactory.update(configuration)
+    final long changed = queryFactory.update(configuration)
         .set(configuration.value, config.getValue())
         .where(configuration.id.eq(configurationId)).execute();
     if (changed == 0) {

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fi.hel.allu.model.domain.ConfigurationType;
+import fi.hel.allu.model.domain.ConfigurationKey;
 
 @Component
 public class ApplicationProperties {
@@ -307,7 +307,7 @@ public class ApplicationProperties {
    * Url for receiver emails for SAP customer notifications
    */
   public String getCustomerNotificationReceiverEmailsUrl() {
-    return getModelServiceUrl("/configuration/" + ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL);
+    return getModelServiceUrl("/configuration/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL);
   }
 
   /**
@@ -342,7 +342,7 @@ public class ApplicationProperties {
   * @return url for receiver email for SAP invoice notifications
   */
   public String getInvoiceNotificationReceiverEmailsUrl() {
-    return getModelServiceUrl("/configuration/" + ConfigurationType.INVOICE_NOTIFICATION_RECEIVER_EMAIL);
+    return getModelServiceUrl("/configuration/" + ConfigurationKey.INVOICE_NOTIFICATION_RECEIVER_EMAIL);
   }
 
   /**

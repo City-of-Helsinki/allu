@@ -16,6 +16,7 @@ import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.AlluMailService;
 import fi.hel.allu.scheduler.service.AuthenticationService;
 import fi.hel.allu.scheduler.service.SapCustomerNotificationService;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import fi.hel.allu.model.domain.ConfigurationType;
 import static org.junit.Assert.assertTrue;
 import org.mockito.ArgumentCaptor;
@@ -38,7 +39,7 @@ public class SapCustomerNotificationServiceSpec {
   private static final String CUSTOMER_DOWNLOAD_URL = "download_url";
   private static final String CUSTOMER_NOTIFICATION_SUBJECT = "Mail subject";
   private static final String CUSTOMER_NOTIFICATION_RECEIVER = "foo@bar.com";
-  private static final String CUSTOMER_NOTIFICATION_EMAIL_URL = "/configuration/" + ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL;
+  private static final String CUSTOMER_NOTIFICATION_EMAIL_URL = "/configuration/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL;
 
   private SapCustomerNotificationService notificationService;
   @Mock
@@ -55,7 +56,7 @@ public class SapCustomerNotificationServiceSpec {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
         List<Configuration> configs = new ArrayList<>();
-        configs.add(new Configuration(ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
+        configs.add(new Configuration(ConfigurationType.EMAIL, ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
         notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
         when(authenticationService.getBearerToken()).thenReturn("");
         when(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl()).thenReturn(COUNT_URL);
@@ -77,7 +78,7 @@ public class SapCustomerNotificationServiceSpec {
         });
         it("should not send email if no customers without sap number", () -> {
           List<Configuration> configs = new ArrayList<>();
-          configs.add(new Configuration(ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
+          configs.add(new Configuration(ConfigurationType.EMAIL, ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
           when(restTemplate.exchange(eq(CUSTOMER_NOTIFICATION_EMAIL_URL), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class))).thenReturn(new ResponseEntity<>(configs, HttpStatus.OK));
           notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
           when(restTemplate.exchange(eq(COUNT_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(0));
@@ -88,7 +89,7 @@ public class SapCustomerNotificationServiceSpec {
           ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
           List<Configuration> configs = new ArrayList<>();
           when(restTemplate.exchange(eq(CUSTOMER_NOTIFICATION_EMAIL_URL), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class))).thenReturn(new ResponseEntity<>(configs, HttpStatus.OK));
-          configs.add(new Configuration(ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
+          configs.add(new Configuration(ConfigurationType.EMAIL, ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
           notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
           when(restTemplate.exchange(eq(COUNT_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(7));
           notificationService.sendSapCustomerNotificationEmails();

@@ -1,0 +1,7 @@
+package fi.hel.allu.model.domain;
+
+public enum ConfigurationKey {
+  CUSTOMER_NOTIFICATION_RECEIVER_EMAIL,
+  INVOICE_NOTIFICATION_RECEIVER_EMAIL,
+  PLACEMENT_CONTRACT_DECISION_MAKER
+}

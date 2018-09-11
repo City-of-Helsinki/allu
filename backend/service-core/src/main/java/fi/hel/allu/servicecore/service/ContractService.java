@@ -18,7 +18,7 @@ import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.domain.ConfigurationType;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
@@ -114,7 +114,7 @@ public class ContractService {
 
   // Fetch placement contract decision maker from configuration
   private StatusChangeInfoJson getDecisionMakerInfo() {
-    String decisionMakerUsername = configurationService.getSingleValue(ConfigurationType.PLACEMENT_CONTRACT_DECISION_MAKER);
+    String decisionMakerUsername = configurationService.getSingleValue(ConfigurationKey.PLACEMENT_CONTRACT_DECISION_MAKER);
     if (decisionMakerUsername != null) {
       UserJson user = userService.findUserByUserName(decisionMakerUsername);
       return new StatusChangeInfoJson(user.getId());

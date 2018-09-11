@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ConfigurationDao;
 import fi.hel.allu.model.domain.Configuration;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import fi.hel.allu.model.domain.ConfigurationType;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import static org.hamcrest.Matchers.is;
@@ -34,11 +35,11 @@ public class ConfigurationControllerTest {
 
   @Before
   public void setup() throws Exception {
-    config1 = new Configuration(ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, "allu@alluworld.com");
+    config1 = new Configuration(ConfigurationType.EMAIL, ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, "allu@alluworld.com");
     configurationDao.insert(config1);
-    config2 = new Configuration(ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, "allu-friend@alluworld.com");
+    config2 = new Configuration(ConfigurationType.EMAIL, ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, "allu-friend@alluworld.com");
     configurationDao.insert(config2);
-    config3 = new Configuration(ConfigurationType.INVOICE_NOTIFICATION_RECEIVER_EMAIL, "allu-invoice@alluworld.com");
+    config3 = new Configuration(ConfigurationType.EMAIL, ConfigurationKey.INVOICE_NOTIFICATION_RECEIVER_EMAIL, "allu-invoice@alluworld.com");
     configurationDao.insert(config3);
 
     wtc.setup();
@@ -46,7 +47,7 @@ public class ConfigurationControllerTest {
 
   @Test
   public void getCustomerNotificationEmails() throws Exception {
-    wtc.perform(get("/configuration/" + ConfigurationType.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL)).andExpect(status().isOk())
+    wtc.perform(get("/configuration/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL)).andExpect(status().isOk())
       .andExpect(jsonPath("$.length()", is(2)))
       .andExpect(jsonPath("$[0].value", is(config1.getValue())))
       .andExpect(jsonPath("$[1].value", is(config2.getValue())));

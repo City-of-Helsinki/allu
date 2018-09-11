@@ -2,7 +2,7 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.model.dao.ConfigurationDao;
 import fi.hel.allu.model.domain.Configuration;
-import fi.hel.allu.model.domain.ConfigurationType;
+import fi.hel.allu.model.domain.ConfigurationKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class ConfigurationController {
   }
 
   @RequestMapping(value = "/{type}", method = RequestMethod.GET)
-  public ResponseEntity<List<Configuration>> find(@PathVariable ConfigurationType type) {
-    return new ResponseEntity<>(configurationDao.findByType(type), HttpStatus.OK);
+  public ResponseEntity<List<Configuration>> find(@PathVariable ConfigurationKey type) {
+    return new ResponseEntity<>(configurationDao.findByKey(type), HttpStatus.OK);
   }
 }
