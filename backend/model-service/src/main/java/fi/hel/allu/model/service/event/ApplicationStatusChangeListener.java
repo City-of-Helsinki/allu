@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.util.ExcavationAnnouncementDates;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.*;
@@ -63,8 +64,28 @@ public class ApplicationStatusChangeListener {
       break;
     case CABLE_REPORT:
       handleCableReportDecision(application, userId);
+    case EXCAVATION_ANNOUNCEMENT:
+      logger.debug("Process excavation announcement status change to decision");
+      handleExcavationAnnouncementDecision(application, userId);
     default:
       // No actions for other application types
+    }
+  }
+
+  /**
+   * Creates supervision task for excavation announcment
+   */
+  private void handleExcavationAnnouncementDecision(Application application, Integer userId) {
+    ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
+    if (extension.getWinterTimeOperation() != null) {
+      createSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION, userId,
+          ExcavationAnnouncementDates.operationalConditionSupervisionDate(extension.getWinterTimeOperation()));
+    }
+    if (application.getEndTime() != null) {
+      createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
+          ExcavationAnnouncementDates.finalSupervisionDate(application.getEndTime()));
+      createSupervisionTask(application, SupervisionTaskType.WARRANTY, userId,
+          ExcavationAnnouncementDates.warrantySupervisionDate(application.getEndTime()));
     }
   }
 
@@ -98,10 +119,15 @@ public class ApplicationStatusChangeListener {
 
   private void handleTemporaryTrafficArrangementDecision(Application application, Integer userId) {
     // Create supervision task
+    createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId, getNextDay(application.getEndTime()));
+  }
+
+  private void createSupervisionTask(Application application, SupervisionTaskType type, Integer userId, ZonedDateTime plannedTime) {
     SupervisionTask supervisionTask = new SupervisionTask(null,
-        application.getId(), SupervisionTaskType.FINAL_SUPERVISION, userId, getSupervisionTaskOwner(application), null,
-        getNextDay(application.getEndTime()), null, SupervisionTaskStatusType.OPEN, null, null);
+        application.getId(), type, userId, getSupervisionTaskOwner(application), null,
+        plannedTime, null, SupervisionTaskStatusType.OPEN, null, null);
     supervisionTaskService.insert(supervisionTask);
+
   }
 
   private void handleCableReportDecision(Application application, Integer userId) {
@@ -110,8 +136,6 @@ public class ApplicationStatusChangeListener {
     CableReport cableReport = (CableReport)application.getExtension();
     cableReport.setValidityTime(validityTime);
     applicationService.update(application.getId(), application, userId);
-
-
   }
 
 

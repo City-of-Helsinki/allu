@@ -31,12 +31,4 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
       || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }
-
-  get uiGuaranteeEndTime() {
-    return TimeUtil.getUiDateString(this.guaranteeEndTime);
-  }
-
-  set uiGuaranteeEndTime(dateString: string) {
-    this.guaranteeEndTime = TimeUtil.getDateFromUi(dateString);
-  }
 }

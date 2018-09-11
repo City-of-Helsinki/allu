@@ -27,6 +27,7 @@ import fi.hel.allu.QApplication;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.ExcavationAnnouncementDates;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
@@ -821,6 +822,8 @@ public class ApplicationDao {
   public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
     excavationAnnouncement.setWorkFinished(workFinishedDate);
+    // Set guarantee end time when work finished is updated
+    excavationAnnouncement.setGuaranteeEndTime(ExcavationAnnouncementDates.guaranteeEndDate(workFinishedDate));
     updateExtension(id, excavationAnnouncement);
     return findById(id);
   }

@@ -486,7 +486,7 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
-  public ApplicationJson setWorkFinishedDates(Integer id, ZonedDateTime workFinishedDate) {
+  public ApplicationJson setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     Application application = applicationService.setWorkFinishedDate(id, workFinishedDate);
     return applicationJsonService.getFullyPopulatedApplication(application);
   }

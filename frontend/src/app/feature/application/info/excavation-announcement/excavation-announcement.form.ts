@@ -3,6 +3,7 @@ import {ExcavationAnnouncement} from '../../../../model/application/excavation-a
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
 import {NumberUtil} from '../../../../util/number.util';
+import { TimeUtil } from '@app/util/time.util';
 
 export class ExcavationAnnouncementForm implements ApplicationForm {
   constructor(
@@ -13,7 +14,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public emergencyWork?: boolean,
     public propertyConnectivity?: boolean,
     public winterTimeOperation?: Date,
-    public workFinished?: Date,
+    public workFinished?: string,
     public unauthorizedWork?: TimePeriod,
     public guaranteeEndTime?: string,
     public customerValidityTimes?: TimePeriod,
@@ -34,10 +35,10 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.emergencyWork = form.emergencyWork;
     ea.propertyConnectivity = form.propertyConnectivity;
     ea.winterTimeOperation = form.winterTimeOperation;
-    ea.workFinished = form.workFinished;
+    ea.workFinished = TimeUtil.getDateFromUi(form.workFinished);
     ea.unauthorizedWorkStartTime = form.unauthorizedWork.startTime;
     ea.unauthorizedWorkEndTime = form.unauthorizedWork.endTime;
-    ea.uiGuaranteeEndTime = form.guaranteeEndTime;
+    ea.guaranteeEndTime = TimeUtil.getDateFromUi(form.guaranteeEndTime);
     ea.customerStartTime = form.customerValidityTimes.startTime;
     ea.customerEndTime = form.customerValidityTimes.endTime;
     ea.customerWinterTimeOperation = form.customerWinterTimeOperation;
@@ -59,9 +60,9 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.emergencyWork,
       excavation.propertyConnectivity,
       excavation.winterTimeOperation,
-      excavation.workFinished,
+      TimeUtil.getUiDateString(excavation.workFinished),
       new TimePeriod(excavation.unauthorizedWorkStartTime, excavation.unauthorizedWorkEndTime),
-      excavation.uiGuaranteeEndTime,
+      TimeUtil.getUiDateString(excavation.guaranteeEndTime),
       new TimePeriod(excavation.customerStartTime, excavation.customerEndTime),
       excavation.customerWinterTimeOperation,
       excavation.customerWorkFinished,
