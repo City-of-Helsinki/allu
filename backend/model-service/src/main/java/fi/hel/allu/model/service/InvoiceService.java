@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
@@ -59,8 +60,8 @@ public class InvoiceService {
   public void createInvoices(int applicationId, boolean sapIdPending) {
     List<ChargeBasisEntry> chargeBasisEntries = chargeBasisDao.getChargeBasis(applicationId);
     List<InvoiceRow> invoiceRows = pricingService.toSingleInvoice(chargeBasisEntries);
-    ZonedDateTime invoicingDate = applicationDao.getInvoicingDate(applicationId);
     Application application = applicationDao.findById(applicationId);
+    ZonedDateTime invoicingDate = getInvoicingDate(application);
     final Optional<Customer> customerOpt = customerDao.findById(application.getInvoiceRecipientId());
     if (!customerOpt.isPresent()) {
       throw new NoSuchEntityException("invoice.create.customer.notFound");
@@ -68,9 +69,18 @@ public class InvoiceService {
     final Customer customer = customerOpt.get();
     final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
     final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
+
     Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId);
     invoiceDao.deleteByApplication(applicationId);
     invoiceDao.insert(applicationId, invoice);
+  }
+
+  private ZonedDateTime getInvoicingDate(Application application) {
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      // Excavation announcements invoiced when final operational condition / work finished dates are approved
+      return null;
+    }
+    return application.getInvoicingDate();
   }
 
   /**

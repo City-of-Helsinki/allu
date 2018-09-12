@@ -4,6 +4,8 @@ import java.time.ZonedDateTime;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
+
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.Application;
 
 @Service
@@ -24,7 +26,8 @@ public class ApplicationDefaultValueService {
   }
 
   private void setDefaultInvoicingDate(Application application) {
-    if (BooleanUtils.isNotTrue(application.getNotBillable()) && application.getInvoicingDate() == null) {
+    if (BooleanUtils.isNotTrue(application.getNotBillable()) && application.getInvoicingDate() == null
+        && application.getType() != ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       ZonedDateTime now = ZonedDateTime.now();
       ZonedDateTime defaultInvoicingDate = application.getStartTime().minusDays(INVOICINGDATE_DAYS_BEFORE_START);
       application.setInvoicingDate(defaultInvoicingDate.isAfter(now) ? defaultInvoicingDate : now);

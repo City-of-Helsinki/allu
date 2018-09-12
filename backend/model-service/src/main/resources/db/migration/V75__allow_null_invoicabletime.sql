@@ -1,0 +1,1 @@
+ALTER TABLE invoice ALTER COLUMN invoicable_time DROP NOT NULL;

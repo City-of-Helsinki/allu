@@ -21,6 +21,7 @@ import * as fromApplication from '../../reducers';
 import {ApplicationTagType} from '../../../../model/application/tag/application-tag-type';
 import {TimeUtil} from '../../../../util/time.util';
 import {Customer} from '../../../../model/customer/customer';
+import {ApplicationType} from '@app/model/application/type/application-type';
 
 @Component({
   selector: 'invoicing-info',
@@ -123,19 +124,22 @@ export class InvoicingInfoComponent implements OnInit {
         });
         this.originalForm = this.form.getRawValue();
 
-        this.setEditable(app.statusEnum, invoicingDate);
+        this.setEditable(app.statusEnum, app.typeEnum, invoicingDate);
     });
 
     this.initDeposit();
   }
 
-  private setEditable(status: ApplicationStatus, invoicingDate: Date) {
+  private setEditable(status: ApplicationStatus, type: ApplicationType, invoicingDate: Date) {
     if (!applicationCanBeEdited(status)) {
       this.form.disable();
 
       this.invoiceRecipientCanBeEdited(status, invoicingDate)
         .pipe(filter(canBeEdited => canBeEdited))
         .subscribe(() => this.setCustomerEdit());
+    }
+    if (type === ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      this.invoicingDateCtrl.disable();
     }
   }
 

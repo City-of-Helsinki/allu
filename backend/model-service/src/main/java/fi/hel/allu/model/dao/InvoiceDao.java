@@ -147,7 +147,7 @@ public class InvoiceDao {
     QApplication application =  QApplication.application;
     return queryFactory.select(invoice.id).from(invoice)
         .join(application).on(application.id.eq(invoice.applicationId))
-        .where(invoice.invoicableTime.before(ZonedDateTime.now())
+        .where(invoice.invoicableTime.isNotNull(), invoice.invoicableTime.before(ZonedDateTime.now())
             .and(invoice.invoiced.ne(true))
             .and(invoice.sapIdPending.isFalse())
             .and(application.status.notIn(StatusType.CANCELLED, StatusType.REPLACED)))
