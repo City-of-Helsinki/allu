@@ -26,6 +26,8 @@ public class DecisionJson {
   private List<String> representativeAddressLines;
   private List<String> representativeContactLines;
 
+  private List<String> invoiceRecipientAddressLines;
+
   private String siteAddressLine;
   private String siteAdditionalInfo;
   private String siteArea;
@@ -105,6 +107,12 @@ public class DecisionJson {
   private boolean contractAsAttachment;
   private String contractSigner;
   private String contractSigningDate;
+
+  private String winterTimeOperation;
+
+  private String ovt;
+  private String invoicingOperator;
+  private String customerReference;
 
   public boolean isDraft() {
     return isDraft;
@@ -192,6 +200,14 @@ public class DecisionJson {
 
   public void setRepresentativeContactLines(List<String> representativeContactLines) {
     this.representativeContactLines = representativeContactLines;
+  }
+
+  public List<String> getInvoiceRecipientAddressLines() {
+    return invoiceRecipientAddressLines;
+  }
+
+  public void setInvoiceRecipientAddressLines(List<String> invoiceRecipientAddressLines) {
+    this.invoiceRecipientAddressLines = invoiceRecipientAddressLines;
   }
 
   public String getSiteAddressLine() {
@@ -701,4 +717,37 @@ public class DecisionJson {
   public void setContractSigningDate(String contractSigningDate) {
     this.contractSigningDate = contractSigningDate;
   }
+
+  public String getWinterTimeOperation() {
+    return winterTimeOperation;
+  }
+
+  public void setWinterTimeOperation(String winterTimeOperation) {
+    this.winterTimeOperation = winterTimeOperation;
+  }
+
+  public String getOvt() {
+    return ovt;
+  }
+
+  public void setOvt(String ovt) {
+    this.ovt = ovt;
+  }
+
+  public String getInvoicingOperator() {
+    return invoicingOperator;
+  }
+
+  public void setInvoicingOperator(String invoicingOperator) {
+    this.invoicingOperator = invoicingOperator;
+  }
+
+  public String getCustomerReference() {
+    return customerReference;
+  }
+
+  public void setCustomerReference(String customerReference) {
+    this.customerReference = customerReference;
+  }
+
 }

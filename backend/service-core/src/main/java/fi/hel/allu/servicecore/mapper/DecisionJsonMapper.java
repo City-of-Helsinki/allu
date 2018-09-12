@@ -112,6 +112,7 @@ public class DecisionJsonMapper {
     decisionJson.setKinds(kindsWithSpecifiers);
 
     getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
+    decisionJson.setCustomerReference(application.getCustomerReference());
 
     if (application.getType() == null) {
       throw new IllegalArgumentException("Application type is required");
@@ -131,9 +132,12 @@ public class DecisionJsonMapper {
       break;
     case TEMPORARY_TRAFFIC_ARRANGEMENTS:
       fillTemporaryTrafficArrangementSpecifics(decisionJson, application);
+    case EXCAVATION_ANNOUNCEMENT:
+      fillExcavationAnnouncementSpecifics(decisionJson, application);
     default:
       break;
     }
+
     UserJson handler = application.getHandler();
     if (handler != null) {
       decisionJson.setHandlerTitle(handler.getTitle());
@@ -441,6 +445,25 @@ public class DecisionJsonMapper {
     decision.setTrafficArrangements(splitToList(Optional.ofNullable(trafficArrangement.getTrafficArrangements())));
   }
 
+  private void fillExcavationAnnouncementSpecifics(DecisionJson decision, ApplicationJson application) {
+    ExcavationAnnouncementJson excavationAnnouncement = (ExcavationAnnouncementJson)application.getExtension();
+    decision.setContractorAddressLines(addressLines(application, CustomerRoleType.CONTRACTOR));
+    decision.setContractorContactLines(contactLines(application, CustomerRoleType.CONTRACTOR));
+    decision.setPropertyDeveloperAddressLines(addressLines(application, CustomerRoleType.PROPERTY_DEVELOPER));
+    decision.setPropertyDeveloperContactLines(contactLines(application, CustomerRoleType.PROPERTY_DEVELOPER));
+    decision.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
+    decision.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
+    if (application.getInvoiceRecipientId() != null) {
+      CustomerJson customer = customerService.findCustomerById(application.getInvoiceRecipientId());
+      decision.setInvoiceRecipientAddressLines(addressLines(Optional.of(customer)));
+      decision.setOvt(customer.getOvt());
+      decision.setInvoicingOperator(customer.getInvoicingOperator());
+    }
+    decision.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
+    decision.setWinterTimeOperation(formatDateWithDelta(excavationAnnouncement.getWinterTimeOperation(), 0));
+    decision.setTrafficArrangements(splitToList(Optional.ofNullable(excavationAnnouncement.getTrafficArrangements())));
+  }
+
   /*
    * Helper to create streams for possibly null collections
    */
@@ -515,13 +538,17 @@ public class DecisionJsonMapper {
     Optional<CustomerWithContactsJson> cwcOpt =
         application.getCustomersWithContacts().stream().filter(cwc -> roleType.equals(cwc.getRoleType())).findFirst();
 
+    return addressLines(cwcOpt.map(cwc -> cwc.getCustomer()));
+  }
+
+  private List<String> addressLines(Optional<CustomerJson> customer) {
     final List<String> addressLines = new ArrayList<>();
-    cwcOpt.ifPresent(cwc -> {
+    customer.ifPresent(c -> {
       addressLines.addAll(
           Arrays.asList(
-              combinePossibleBlankStrings(cwc.getCustomer().getName(), getCustomerRegistryKey(cwc.getCustomer())),
-              postalAddress(cwc.getCustomer().getPostalAddress()),
-              combinePossibleBlankStrings(cwc.getCustomer().getEmail(), cwc.getCustomer().getPhone())));
+              combinePossibleBlankStrings(c.getName(), getCustomerRegistryKey(c)),
+              postalAddress(c.getPostalAddress()),
+              combinePossibleBlankStrings(c.getEmail(), c.getPhone())));
     });
     return addressLines;
   }

@@ -4,14 +4,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -102,7 +97,8 @@ public class DecisionService {
         SHORT_TERM_RENTAL,
         CABLE_REPORT,
         PLACEMENT_CONTRACT,
-        TEMPORARY_TRAFFIC_ARRANGEMENTS);
+        TEMPORARY_TRAFFIC_ARRANGEMENTS,
+        EXCAVATION_ANNOUNCEMENT);
     if (implementedTypes.contains(application.getType())) {
       return application.getType().name();
     }
