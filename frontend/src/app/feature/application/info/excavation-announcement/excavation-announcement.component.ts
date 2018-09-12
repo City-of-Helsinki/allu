@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
+import {take} from 'rxjs/internal/operators';
 import {MatDatepicker} from '@angular/material';
 import {Application} from '../../../../model/application/application';
 import {AbstractControlWarn, ComplexValidator} from '../../../../util/complex-validator';
@@ -14,6 +15,8 @@ import {TimeUtil} from '../../../../util/time.util';
 import {Some} from '../../../../util/option';
 import {IconConfig} from '../../../common/icon-config';
 import {catchError, debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/internal/operators';
+import * as fromRoot from '@feature/allu/reducers';
+import {ConfigurationKey} from '@model/config/configuration-key';
 
 @Component({
   selector: 'excavation-announcement',
@@ -29,6 +32,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   validityEndTimeIcon: IconConfig = new IconConfig(undefined, true, 'today');
 
   private cableReportIdentifierCtrl: FormControl;
+  private winterTimeStart: string;
+  private winterTimeEnd: string;
 
   setCableReport(application: Application) {
     this.applicationForm.patchValue({cableReportId: application.id});
@@ -37,7 +42,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   onValidityEndTimePickerClick(picker: MatDatepicker<Date>): void {
     if (this.validityEndTimeCtrl.warnings.inWinterTime) {
       Some(this.validityEndTimeCtrl.value)
-        .map(date => TimeUtil.toWinterTimeEnd(date))
+        .map(date => TimeUtil.toWinterTimeEnd(date, this.winterTimeStart, this.winterTimeEnd))
         .do(date => this.validityEndTimeCtrl.patchValue(date));
     } else {
       picker.open();
@@ -48,7 +53,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
-        endTime: [undefined, [Validators.required, ComplexValidator.inWinterTime]]
+        endTime: [undefined, [Validators.required]]
       }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       pksCard: [false],
       constructionWork: [{value: false, disabled: this.readonly}],
@@ -92,6 +97,17 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       switchMap(search => this.applicationService.search(search)),
       catchError(err => this.notification.errorCatch(err, []))
     );
+
+    combineLatest(
+      this.store.select(fromRoot.getConfiguration(ConfigurationKey.WINTER_TIME_START)),
+      this.store.select(fromRoot.getConfiguration(ConfigurationKey.WINTER_TIME_END)))
+        .pipe(take(1)).subscribe(([start, end]) => {
+          this.winterTimeStart = start.value;
+          this.winterTimeEnd = end.value;
+          this.validityEndTimeCtrl.setValidators(
+            [Validators.required, ComplexValidator.inWinterTime(this.winterTimeStart, this.winterTimeEnd)]);
+        });
+
   }
 
   protected onApplicationChange(application: Application): void {

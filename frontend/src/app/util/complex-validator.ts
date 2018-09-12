@@ -52,16 +52,19 @@ export class ComplexValidator {
     return undefined;
   }
 
-  static inWinterTime(fc: AbstractControlWarn) {
-    const date = fc.value;
+  static inWinterTime(winterStart: string, winterEnd: string): ValidatorFn {
+    const validationFn = (fc: AbstractControlWarn) => {
+      const date = fc.value;
 
-    fc.warnings = fc.warnings || {};
-    if (fc.dirty && TimeUtil.isInWinterTime(date)) {
-      fc.warnings.inWinterTime = {date};
-    } else {
-      fc.warnings.inWinterTime = undefined;
+      fc.warnings = fc.warnings || {};
+      if (fc.dirty && TimeUtil.isInWinterTime(date, winterStart, winterEnd)) {
+        fc.warnings.inWinterTime = {date};
+      } else {
+        fc.warnings.inWinterTime = undefined;
+      }
+      return undefined;
     }
-    return undefined;
+    return validationFn;
   }
 
   static startBeforeEnd(startField: string, endField: string): ValidatorFn {

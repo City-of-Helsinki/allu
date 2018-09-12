@@ -10,8 +10,6 @@ export const UI_DATE_FORMAT = 'DD.MM.YYYY';
 export const UI_DATE_TIME_FORMAT = 'DD.MM.YYYY HH:mm';
 const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
-export const WINTER_TIME_START = moment('1972-12-01');
-export const WINTER_TIME_END = moment('1972-05-14');
 const DAYS_IN_WEEK = 7;
 
 
@@ -151,18 +149,22 @@ export class TimeUtil {
     return lMoment.isSame(rMoment, granularity);
   }
 
-  public static isInWinterTime(date: Date): boolean {
-    const checked = moment(date).year(WINTER_TIME_START.year());
-    return checked.isSameOrAfter(WINTER_TIME_START) || checked.isBefore(WINTER_TIME_END);
+  public static isInWinterTime(date: Date, winterStart: string, winterEnd: string): boolean {
+    const start = moment(winterStart);
+    const end = moment(winterEnd);
+    const checked = moment(date).year(start.year());
+    return checked.isSameOrAfter(start) || checked.isBefore(end);
   }
 
-  public static toWinterTimeEnd(date: Date): Date {
-    const checked = moment(date).year(WINTER_TIME_START.year());
+  public static toWinterTimeEnd(date: Date, winterStart: string, winterEnd: string): Date {
+    const start = moment(winterStart);
+    const end = moment(winterEnd);
+    const checked = moment(date).year(start.year());
     let year = date.getFullYear();
-    if (checked.isSameOrAfter(WINTER_TIME_START)) {
+    if (checked.isSameOrAfter(end)) {
       year = year + 1;
     }
-    return moment(WINTER_TIME_END).year(year).toDate();
+    return moment(end).year(year).toDate();
   }
 
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
