@@ -64,8 +64,12 @@ export class MapUtil {
   }
 
   public isValidGeometry(layer: any): boolean {
-    const geoJSON = layer.toGeoJSON();
-    return area(geoJSON) > 0;
+    if (layer instanceof L.Circle || layer instanceof L.Point) {
+      return true;
+    } else {
+      const geoJSON = layer.toGeoJSON();
+      return area(geoJSON) > 0;
+    }
   }
 
   constructor() {
