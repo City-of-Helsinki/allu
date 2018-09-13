@@ -2,11 +2,13 @@ package fi.hel.allu.mail.service;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,13 +75,13 @@ public class MailService {
       }
       for (MailMessage.Attachment attachment : mailMessage.getAttachments()) {
         mimeMessageHelper.addAttachment(
-            attachment.getFilename(),
+            MimeUtility.encodeText(attachment.getFilename()),
             new ByteArrayResource(attachment.getBytes()),
             attachment.getMimeType());
       }
       mailSender.send(mimeMessage);
       return createMailSenderLog(mailMessage, false, null);
-    } catch (MessagingException e) {
+    } catch (UnsupportedEncodingException | MessagingException e) {
       logger.warn("Failed to send email", e);
       return createMailSenderLog(mailMessage, true, e.getMessage());
     }
