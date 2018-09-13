@@ -47,7 +47,7 @@ public class ConfigurationControllerTest {
 
   @Test
   public void getCustomerNotificationEmails() throws Exception {
-    wtc.perform(get("/configuration/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL)).andExpect(status().isOk())
+    wtc.perform(get("/configurations/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL)).andExpect(status().isOk())
       .andExpect(jsonPath("$.length()", is(2)))
       .andExpect(jsonPath("$[0].value", is(config1.getValue())))
       .andExpect(jsonPath("$[1].value", is(config2.getValue())));

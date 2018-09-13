@@ -63,7 +63,7 @@ export class ComplexValidator {
         fc.warnings.inWinterTime = undefined;
       }
       return undefined;
-    }
+    };
     return validationFn;
   }
 

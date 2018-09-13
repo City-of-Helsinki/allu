@@ -28,8 +28,8 @@ public class ConfigurationController {
     return ResponseEntity.ok(configurationDao.findAll());
   }
 
-  @RequestMapping(value = "/{type}", method = RequestMethod.GET)
-  public ResponseEntity<List<Configuration>> find(@PathVariable ConfigurationKey type) {
-    return ResponseEntity.ok(configurationDao.findByKey(type));
+  @RequestMapping(value = "/{key}", method = RequestMethod.GET)
+  public ResponseEntity<List<Configuration>> find(@PathVariable ConfigurationKey key) {
+    return ResponseEntity.ok(configurationDao.findByKey(key));
   }
 }
