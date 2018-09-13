@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormControl, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {take} from 'rxjs/internal/operators';
 import {MatDatepicker, MatDialog} from '@angular/material';
@@ -46,6 +46,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   showReportCustomerDates = false;
 
   private cableReportIdentifierCtrl: FormControl;
+  private winterTimeOperationCtrl: AbstractControl;
   private winterTimeStart: string;
   private winterTimeEnd: string;
 
@@ -67,9 +68,10 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   onValidityEndTimePickerClick(picker: MatDatepicker<Date>): void {
     if (this.validityEndTimeCtrl.warnings.inWinterTime) {
-      Some(this.validityEndTimeCtrl.value)
-        .map(date => TimeUtil.toWinterTimeEnd(date, this.winterTimeStart, this.winterTimeEnd))
-        .do(date => this.validityEndTimeCtrl.patchValue(date));
+      Some(this.validityEndTimeCtrl.value).do(date => {
+        this.validityEndTimeCtrl.patchValue(TimeUtil.toWinterTimeEnd(date, this.winterTimeStart, this.winterTimeEnd));
+        this.winterTimeOperationCtrl.patchValue(date);
+      });
     } else {
       picker.open();
     }
@@ -132,6 +134,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     }
 
     this.cableReportIdentifierCtrl = this.fb.control(undefined);
+    this.winterTimeOperationCtrl = this.applicationForm.controls['winterTimeOperation'];
 
     this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges.pipe(
       debounceTime(300),
