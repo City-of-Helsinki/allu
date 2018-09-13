@@ -470,24 +470,4 @@ public class ApplicationServiceComposer {
     }
     return customerService.findCustomerById(id);
   }
-
-  public ApplicationJson setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
-    Application application = applicationService.setCustomerOperationalConditionDates(id, dateReport);
-    return applicationJsonService.getFullyPopulatedApplication(application);
-  }
-
-  public ApplicationJson setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
-    Application application = applicationService.setCustomerWorkFinishedDates(id, dateReport);
-    return applicationJsonService.getFullyPopulatedApplication(application);
-  }
-
-  public ApplicationJson setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
-    Application application = applicationService.setOperationalConditionDate(id, operationalConditionDate);
-    return applicationJsonService.getFullyPopulatedApplication(application);
-  }
-
-  public ApplicationJson setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    Application application = applicationService.setWorkFinishedDate(id, workFinishedDate);
-    return applicationJsonService.getFullyPopulatedApplication(application);
-  }
 }
