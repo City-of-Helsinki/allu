@@ -44,6 +44,7 @@ SELECT
         WHEN a.status = 'DECISIONMAKING' THEN 'Odottaa päätöstä'
         WHEN a.status = 'DECISION' THEN 'Päätetty'
         WHEN a.status = 'REJECTED' THEN 'Hylätty päätös'
+        WHEN a.status = 'OPERATIONAL_CONDITION' THEN 'Toiminnallinen kunto'
         WHEN a.status = 'FINISHED' THEN 'Valmis'
         WHEN a.status = 'CANCELLED' THEN 'Peruttu'
         WHEN a.status = 'REPLACED' THEN 'Korvattu'

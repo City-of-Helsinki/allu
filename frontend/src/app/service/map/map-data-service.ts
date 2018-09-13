@@ -34,7 +34,10 @@ export class MapDataService {
       ApplicationStatus.DECISIONMAKING
     ]);
 
-    this.groupedStatuses.set(ApplicationStatusGroup.DECISION, [ApplicationStatus.DECISION]);
+    this.groupedStatuses.set(ApplicationStatusGroup.DECISION, [
+      ApplicationStatus.DECISION,
+      ApplicationStatus.OPERATIONAL_CONDITION
+    ]);
 
     this.groupedStatuses.set(ApplicationStatusGroup.HISTORY, [
       ApplicationStatus.REJECTED,

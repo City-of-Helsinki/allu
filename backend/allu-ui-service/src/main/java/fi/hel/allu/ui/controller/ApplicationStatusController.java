@@ -99,6 +99,12 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.REJECTED, info));
   }
 
+  @RequestMapping(value = "/{id}/status/operational_condition", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> changeStatusToOperationalCondition(@PathVariable int id) {
+    return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.OPERATIONAL_CONDITION));
+  }
+
   @RequestMapping(value = "/{id}/status/toPreparation", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToReturnedToPreparation(

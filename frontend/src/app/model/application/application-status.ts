@@ -12,6 +12,7 @@ import {NumberUtil} from '@util/number.util';
   DECISIONMAKING,
   DECISION,
   REJECTED,
+  OPERATIONAL_CONDITION,
   FINISHED,
   CANCELLED,
   REPLACED,
@@ -40,6 +41,7 @@ export const searchable = [
   ApplicationStatus.DECISIONMAKING,
   ApplicationStatus.DECISION,
   ApplicationStatus.REJECTED,
+  ApplicationStatus.OPERATIONAL_CONDITION,
   ApplicationStatus.FINISHED,
   ApplicationStatus.CANCELLED,
   ApplicationStatus.ARCHIVED
@@ -56,6 +58,7 @@ export const workqueue_searchable = [
   ApplicationStatus.DECISIONMAKING,
   ApplicationStatus.DECISION,
   ApplicationStatus.REJECTED,
+  ApplicationStatus.OPERATIONAL_CONDITION,
   ApplicationStatus.FINISHED,
   ApplicationStatus.CANCELLED
 ];
@@ -63,6 +66,7 @@ export const workqueue_searchable = [
 export const decided = [
   ApplicationStatus.DECISION,
   ApplicationStatus.REJECTED,
+  ApplicationStatus.OPERATIONAL_CONDITION,
   ApplicationStatus.FINISHED,
   ApplicationStatus.ARCHIVED
 ];

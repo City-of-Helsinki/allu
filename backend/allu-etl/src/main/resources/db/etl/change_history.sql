@@ -35,6 +35,7 @@ SELECT
         WHEN c.change_specifier = 'DECISIONMAKING' THEN 'Odottaa päätöstä'
         WHEN c.change_specifier = 'DECISION' THEN 'Päätetty'
         WHEN c.change_specifier = 'REJECTED' THEN 'Hylätty päätös'
+        WHEN c.change_specifier = 'OPERATIONAL_CONDITION' THEN 'Toiminnallinen kunto'
         WHEN c.change_specifier = 'FINISHED' THEN 'Valmis'
         WHEN c.change_specifier = 'CANCELLED' THEN 'Peruttu'
         WHEN c.change_specifier = 'REPLACED' THEN 'Korvattu'

@@ -75,6 +75,11 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.REJECTED, userId), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/status/operational_condition", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToOperationalCondition(@PathVariable int id) {
+    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.OPERATIONAL_CONDITION, null), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/status/finished", method = RequestMethod.PUT)
   public ResponseEntity<Application> changeStatusToFinished(@PathVariable int id) {
     return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.FINISHED, null), HttpStatus.OK);

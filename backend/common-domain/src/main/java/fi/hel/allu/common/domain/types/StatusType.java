@@ -17,10 +17,11 @@ public enum StatusType {
   DECISIONMAKING(9), // Odottaa päätöstä
   DECISION(10), // Päätetty
   REJECTED(11), // Hylätty päätös
-  FINISHED(12), // Valmis
-  CANCELLED(13), // Peruttu
-  REPLACED(14), // Korvattu
-  ARCHIVED(15); // Arkistoitu
+  OPERATIONAL_CONDITION(12), // Toiminnallinen kunto
+  FINISHED(13), // Valmis
+  CANCELLED(14), // Peruttu
+  REPLACED(15), // Korvattu
+  ARCHIVED(16); // Arkistoitu
 
   // Status order in application process flow
   private int orderNumber;
