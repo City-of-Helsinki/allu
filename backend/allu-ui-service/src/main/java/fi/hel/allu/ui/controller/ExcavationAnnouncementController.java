@@ -35,24 +35,21 @@ public class ExcavationAnnouncementController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportCustomerWorkFinished(@PathVariable Integer id,
       @RequestBody @Valid ApplicationDateReport dateReport) {
-    return ResponseEntity.ok(excavationAnnouncementService.reportCustomerWorkFinished(id, dateReport);
+    return ResponseEntity.ok(excavationAnnouncementService.reportCustomerWorkFinished(id, dateReport));
   }
 
   @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportOperationalCondition(@PathVariable Integer id,
-      @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
-
-
-    return ResponseEntity.ok(application);
-
+      @RequestBody @NotNull ZonedDateTime operationalConditionDate, @RequestParam(required = false) Integer decisionMakerId) {
+    return ResponseEntity.ok(excavationAnnouncementService.reportOperationalCondition(id, operationalConditionDate, decisionMakerId));
   }
 
   @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportWorkFinished(@PathVariable Integer id,
-      @RequestBody @NotNull ZonedDateTime workFinishedDate) {
-    return ResponseEntity.ok(application);
+      @RequestBody @NotNull ZonedDateTime workFinishedDate, @RequestParam(required = false) Integer decisionMakerId) {
+    return ResponseEntity.ok(excavationAnnouncementService.reportWorkFinished(id, workFinishedDate, decisionMakerId));
   }
 
 }

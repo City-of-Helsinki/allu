@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,13 +33,15 @@ public class ExcavationAnnouncementController {
   }
 
   @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
-  public ResponseEntity<Application> reportOperationalCondition(@PathVariable Integer id, @RequestBody ZonedDateTime operationalConditionDate) {
-   return ResponseEntity.ok(applicationService.setOperationalConditionDate(id, operationalConditionDate));
+  public ResponseEntity<Void> reportOperationalCondition(@PathVariable Integer id, @RequestBody ZonedDateTime operationalConditionDate) {
+    applicationService.setOperationalConditionDate(id, operationalConditionDate);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
-  public ResponseEntity<Application> reportWorkFinished(@PathVariable Integer id, @RequestBody ZonedDateTime workFinishedDate) {
-   return ResponseEntity.ok(applicationService.setWorkFinishedDate(id, workFinishedDate));
+  public ResponseEntity<Void> reportWorkFinished(@PathVariable Integer id, @RequestBody ZonedDateTime workFinishedDate) {
+   applicationService.setWorkFinishedDate(id, workFinishedDate);
+   return new ResponseEntity<>(HttpStatus.OK);
   }
 
 

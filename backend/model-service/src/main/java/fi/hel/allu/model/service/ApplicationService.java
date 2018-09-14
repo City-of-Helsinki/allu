@@ -469,15 +469,15 @@ public class ApplicationService {
    * Sets excavation announcement operational condition date
    */
   @Transactional
-  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
-    return applicationDao.setOperationalConditionDate(id, operationalConditionDate);
+  public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+    applicationDao.setOperationalConditionDate(id, operationalConditionDate);
   }
 
   /**
    * Sets excavation announcement work finished date
    */
   @Transactional
-  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    return applicationDao.setWorkFinishedDate(id, workFinishedDate);
+  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+    applicationDao.setWorkFinishedDate(id, workFinishedDate);
   }
 }

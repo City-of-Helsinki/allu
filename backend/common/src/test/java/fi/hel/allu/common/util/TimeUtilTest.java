@@ -1,9 +1,10 @@
 package fi.hel.allu.common.util;
 
-import static org.junit.Assert.assertEquals;
+import java.time.ZonedDateTime;
+
 import org.junit.Test;
 
-import java.time.ZonedDateTime;
+import static org.junit.Assert.*;
 
 public class TimeUtilTest {
 
@@ -33,5 +34,15 @@ public class TimeUtilTest {
     assertEquals(59, dateEnd.getSecond());
     assertEquals(999999999, dateEnd.getNano());
     assertEquals(TimeUtil.HelsinkiZoneId, dateEnd.getZone());
+  }
+
+  @Test
+  public void isSameDate() {
+    ZonedDateTime today = ZonedDateTime.now();
+    ZonedDateTime date1 = today.withHour(2);
+    ZonedDateTime date2 = today.withHour(5);
+    assertTrue(TimeUtil.isSameDate(date1, date2));
+    date2 = date2.minusDays(1);
+    assertFalse(TimeUtil.isSameDate(date1, date2));
   }
 }

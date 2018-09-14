@@ -812,20 +812,18 @@ public class ApplicationDao {
     return findById(id);
   }
 
-  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+  public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
     ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
     excavationAnnouncement.setWinterTimeOperation(operationalConditionDate);
     updateExtension(id, excavationAnnouncement);
-    return findById(id);
   }
 
-  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
     excavationAnnouncement.setWorkFinished(workFinishedDate);
     // Set guarantee end time when work finished is updated
     excavationAnnouncement.setGuaranteeEndTime(ExcavationAnnouncementDates.guaranteeEndDate(workFinishedDate));
     updateExtension(id, excavationAnnouncement);
-    return findById(id);
   }
 
   private void updateExtension(Integer id, ApplicationExtension extension) {

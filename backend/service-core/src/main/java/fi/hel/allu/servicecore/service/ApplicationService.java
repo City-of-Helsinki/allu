@@ -378,19 +378,15 @@ public class ApplicationService {
     return responseEntity.getBody();
   }
 
-
-  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
-    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+  public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+    restTemplate.exchange(
         applicationProperties.getExcavationAnnouncementOperationalConditionUrl(),
-        HttpMethod.PUT, new HttpEntity<>(operationalConditionDate), Application.class, id);
-    return responseEntity.getBody();
+        HttpMethod.PUT, new HttpEntity<>(operationalConditionDate), Void.class, id);
   }
 
-
-  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+    restTemplate.exchange(
         applicationProperties.getExcavationAnnouncementWorkFinishedUrl(),
-        HttpMethod.PUT, new HttpEntity<>(workFinishedDate), Application.class, id);
-    return responseEntity.getBody();
+        HttpMethod.PUT, new HttpEntity<>(workFinishedDate), Void.class, id);
   }
 }

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Time related utlitity methods.
@@ -60,5 +61,13 @@ public class TimeUtil {
 
   public static String dateAsDateTimeString(ZonedDateTime dateTime) {
     return dateTime.withZoneSameInstant(HelsinkiZoneId).format(timeStampFormatter);
+  }
+
+  public static boolean isSameDateOrLater(ZonedDateTime dateToCheck, ZonedDateTime limitDate) {
+    return isSameDate(dateToCheck, limitDate) || dateToCheck.isAfter(limitDate);
+  }
+
+  public static boolean isSameDate(ZonedDateTime date1, ZonedDateTime date2) {
+    return homeTime(date1).truncatedTo(ChronoUnit.DAYS).equals(homeTime(date2).truncatedTo(ChronoUnit.DAYS));
   }
 }
