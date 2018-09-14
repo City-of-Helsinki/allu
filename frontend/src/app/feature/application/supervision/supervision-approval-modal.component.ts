@@ -1,10 +1,35 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {TimeUtil} from '../../../util/time.util';
-import {ComplexValidator} from '../../../util/complex-validator';
+import {TimeUtil} from '@util/time.util';
+import {ComplexValidator} from '@util/complex-validator';
+import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
+import {ApplicationType} from '@model/application/type/application-type';
+import {ReportedDateType} from '@feature/application/date-reporting/date-reporting-modal.component';
 
 export const SUPERVISION_APPROVAL_MODAL_CONFIG = {width: '600px', data: {}};
+
+export enum SupervisionApprovalResolutionType {
+  APPROVE = 'APPROVE',
+  REJECT = 'REJECT',
+}
+
+export interface SupervisionApprovalModalData {
+  resolutionType: SupervisionApprovalResolutionType;
+  taskType: SupervisionTaskType;
+  applicationType: ApplicationType;
+}
+
+export interface SupervisionApprovalResult {
+  result: string;
+  newSupervisionDate?: Date;
+  reportedDate?: Date;
+}
+
+const taskTypeToReportedDateType = {
+  OPERATIONAL_CONDITION: ReportedDateType.WINTER_TIME_OPERATION,
+  FINAL_SUPERVISION: ReportedDateType.WORK_FINISHED
+};
 
 @Component({
   selector: 'supervision-approval-modal',
@@ -12,27 +37,20 @@ export const SUPERVISION_APPROVAL_MODAL_CONFIG = {width: '600px', data: {}};
   styleUrls: []
 })
 export class SupervisionApprovalModalComponent implements OnInit {
-  type: SupervisionApprovalModalType;
+  resolutionType: SupervisionApprovalResolutionType;
   form: FormGroup;
   showNewSupervisionDate = false;
+  reportedDateType: ReportedDateType;
 
   constructor(
-    public fb: FormBuilder,
-    public dialogRef: MatDialogRef<SupervisionApprovalModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: SupervisionApprovalModalData) {
+    @Inject(MAT_DIALOG_DATA) public data: SupervisionApprovalModalData,
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<SupervisionApprovalModalComponent>) {
   }
 
   ngOnInit(): void {
-    this.type = this.data.type || 'APPROVE';
-    this.form = this.fb.group({
-      result: [undefined, Validators.required]
-    });
-
-    if ('REJECT' === this.type) {
-      const newDateDefault = TimeUtil.datePlusWeeks(new Date(), 2);
-      this.form.addControl('newSupervisionDate', this.fb.control(newDateDefault, [Validators.required, ComplexValidator.inThePast]));
-      this.showNewSupervisionDate = true;
-    }
+    this.resolutionType = this.data.resolutionType || SupervisionApprovalResolutionType.APPROVE;
+    this.initForm();
   }
 
   confirm() {
@@ -46,15 +64,27 @@ export class SupervisionApprovalModalComponent implements OnInit {
   cancel() {
     this.dialogRef.close();
   }
-}
 
-export type SupervisionApprovalModalType = 'APPROVE' | 'REJECT';
+  private initForm(): void {
+    this.form = this.fb.group({
+      result: [undefined, Validators.required]
+    });
 
-export interface SupervisionApprovalModalData {
-  type: SupervisionApprovalModalType;
-}
+    if (SupervisionApprovalResolutionType.REJECT === this.resolutionType) {
+      const newDateDefault = TimeUtil.datePlusWeeks(new Date(), 2);
+      this.form.addControl('newSupervisionDate', this.fb.control(newDateDefault, [Validators.required, ComplexValidator.inThePast]));
+      this.showNewSupervisionDate = true;
+    }
 
-export interface SupervisionApprovalResult {
-  result: string;
-  newSupervisionDate?: Date;
+    if (this.showReportedDate(this.data.taskType, this.data.applicationType)) {
+      this.form.addControl('reportedDate', this.fb.control(undefined, Validators.required));
+      this.reportedDateType = taskTypeToReportedDateType[this.data.taskType];
+    }
+  }
+
+  private showReportedDate(taskType: SupervisionTaskType, applicationType: ApplicationType): boolean {
+    const validApplicationType = ApplicationType.EXCAVATION_ANNOUNCEMENT === applicationType;
+    const validTaskType = [SupervisionTaskType.OPERATIONAL_CONDITION, SupervisionTaskType.FINAL_SUPERVISION].indexOf(taskType) >= 0;
+    return validApplicationType && validTaskType;
+  }
 }

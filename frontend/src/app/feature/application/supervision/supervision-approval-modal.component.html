@@ -1,16 +1,17 @@
 <form [formGroup]="form" (ngSubmit)="confirm()">
-  <h2 mat-dialog-title>{{['supervisionApprovalModal', type, 'title'] | translation}}</h2>
+  <h2 mat-dialog-title>{{['supervisionApprovalModal', resolutionType, 'title'] | translation}}</h2>
   <mat-dialog-content>
     <div fxLayout="column">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-                    <textarea matInput matTextareaAutosize formControlName="result" required
-                              [placeholder]="'supervision.task.result' | translation"></textarea>
+            <textarea matInput matTextareaAutosize formControlName="result" required
+                      [placeholder]="'supervision.task.result' | translation"></textarea>
           <mat-error *ngIf="form.get('result').hasError('required')">
             {{'supervision.task.field.resultMissing' | translation}}
           </mat-error>
         </mat-form-field>
-        <mat-form-field *ngIf="showNewSupervisionDate">
+
+        <mat-form-field *ngIf="showNewSupervisionDate" class="form-field-50">
           <input matInput formControlName="newSupervisionDate" required
                  [placeholder]="'supervision.task.newSupervisionDate' | translation"
                  [matDatepicker]="newSupervisionDatePicker">
@@ -24,6 +25,19 @@
             {{'supervision.task.field.newSupervisionDateInThePast' | translation}}
           </mat-error>
         </mat-form-field>
+
+        <mat-form-field *ngIf="form.get('reportedDate')" class="form-field-50">
+          <input matInput formControlName="reportedDate" required
+                 [placeholder]="['dateReporting.reportedInfo', reportedDateType] | translation"
+                 [matDatepicker]="reportedDatePicker">
+          <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"
+                                 [disabled]="form.disabled"></mat-datepicker-toggle>
+          <mat-datepicker #reportedDatePicker></mat-datepicker>
+          <mat-error *ngIf="form.get('reportedDate').hasError('required')">
+            {{'dateReporting.field.reportedDateMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+
       </div>
     </div>
   </mat-dialog-content>

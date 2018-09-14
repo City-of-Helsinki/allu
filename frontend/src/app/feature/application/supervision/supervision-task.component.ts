@@ -16,7 +16,7 @@ import {UserHub} from '../../../service/user/user-hub';
 import {
   SUPERVISION_APPROVAL_MODAL_CONFIG,
   SupervisionApprovalModalComponent,
-  SupervisionApprovalModalType,
+  SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
@@ -88,7 +88,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    const formValue = <SupervisionTaskForm>this.form.value;
+    const formValue = <SupervisionTaskForm>this.form.getRawValue();
     this.form.disable();
     this.store.saveTask(this.applicationStore.snapshot.application.id, SupervisionTaskForm.to(formValue))
       .subscribe(
@@ -120,7 +120,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   approve(): void {
-    this.openModal('APPROVE').afterClosed().pipe(
+    this.openModal(SupervisionApprovalResolutionType.APPROVE).afterClosed().pipe(
       filter(result => !!result),
       map(result => this.taskWithResult(SupervisionTaskStatusType.APPROVED, result)),
       switchMap(task => this.store.approve(task))
@@ -130,7 +130,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   reject(): void {
-    this.openModal('REJECT').afterClosed().pipe(
+    this.openModal(SupervisionApprovalResolutionType.REJECT).afterClosed().pipe(
       filter(result => !!result),
       switchMap(result => this.store.reject(
         this.taskWithResult(SupervisionTaskStatusType.REJECTED, result),
@@ -149,11 +149,14 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     return task;
   }
 
-  private openModal(type: SupervisionApprovalModalType): MatDialogRef<SupervisionApprovalModalComponent> {
+  private openModal(type: SupervisionApprovalResolutionType): MatDialogRef<SupervisionApprovalModalComponent> {
+    const task = SupervisionTaskForm.to(this.form.value);
     const config = {
       ...SUPERVISION_APPROVAL_MODAL_CONFIG,
       data: {
-        type: type
+        resolutionType: type,
+        taskType: task.type,
+        applicationType: this.applicationStore.snapshot.application.type
       }
     };
 
