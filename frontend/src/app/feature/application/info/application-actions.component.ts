@@ -68,8 +68,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       const status = app.statusEnum;
       this.showDecision = this.showDecisionForApplication(app);
       this.decisionDisabled = !this.validForDecision(app);
-      this.showHandling = (status === ApplicationStatus.PENDING) && (app.typeEnum !== ApplicationType.NOTE);
-      this.showDelete = (app.typeEnum === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
+      this.showHandling = (status === ApplicationStatus.PENDING) && (app.type !== ApplicationType.NOTE);
+      this.showDelete = (app.type === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
       this.showCancel = status <= ApplicationStatus.DECISION;
       this.showEdit = this.readonly && applicationCanBeEdited(status);
       this.showReplace = status === ApplicationStatus.DECISION;
@@ -200,7 +200,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private shouldMoveToDecisionMaking(): boolean {
     const app = this.applicationStore.snapshot.application;
-    const appType = app.typeEnum;
+    const appType = app.type;
     const status = app.statusEnum;
     return (appType === ApplicationType.CABLE_REPORT ||
             appType === ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS) &&
@@ -218,7 +218,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   private findDefaultRegionalOwner(app: Application): Observable<User> {
-    const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
+    const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.type, app.firstLocation.effectiveCityDistrictId);
     return this.userHub.searchUsers(criteria).pipe(
       map(preferred => ArrayUtil.first(preferred))
     );

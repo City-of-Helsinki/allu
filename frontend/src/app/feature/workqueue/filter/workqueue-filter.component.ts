@@ -38,7 +38,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   queryForm: FormGroup;
   districts: Observable<Array<CityDistrict>>;
   applicationStatuses = workqueue_searchable.map(status => ApplicationStatus[status]);
-  applicationTypes = EnumUtil.enumValues(ApplicationType)
+  applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
   tab: Observable<string>;

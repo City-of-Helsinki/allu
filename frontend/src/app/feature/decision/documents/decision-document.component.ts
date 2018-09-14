@@ -64,13 +64,13 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   }
 
   private showDecisionActions(show: boolean, app: Application): boolean {
-    const showByType = app.typeEnum !== ApplicationType.PLACEMENT_CONTRACT;
+    const showByType = app.type !== ApplicationType.PLACEMENT_CONTRACT;
     const showByStatus = app.statusEnum >= ApplicationStatus.DECISIONMAKING;
     return show && (showByType || showByStatus);
   }
 
   private showContractActions(show: boolean, app: Application): boolean {
-    const showByType = app.typeEnum === ApplicationType.PLACEMENT_CONTRACT;
+    const showByType = app.type === ApplicationType.PLACEMENT_CONTRACT;
     const showByStatus = [ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION].indexOf(app.statusEnum) >= 0;
     return show && showByType && showByStatus;
   }

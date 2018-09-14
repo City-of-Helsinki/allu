@@ -12,6 +12,7 @@ import {CommentMapper} from '../application/comment/comment-mapper';
 import {DistributionMapper} from './distribution-mapper';
 import {Some} from '../../util/option';
 import {ClientApplicationDataMapper} from './client-application-data-mapper';
+import {ApplicationType} from '@model/application/type/application-type';
 
 export class ApplicationMapper {
 
@@ -26,7 +27,7 @@ export class ApplicationMapper {
     application.id = backendApplication.id;
     application.applicationId = backendApplication.applicationId;
     application.name = backendApplication.name;
-    application.type = backendApplication.type.value;
+    application.type = <ApplicationType>backendApplication.type.value;
     application.status = backendApplication.status.value;
     application.owner = UserMapper.mapSearchResult(backendApplication.owner);
     application.locations = LocationMapper.mapSearchResultList(backendApplication.locations);

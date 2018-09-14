@@ -11,7 +11,7 @@ import {map} from 'rxjs/internal/operators';
   styleUrls: ['./default-recipients.component.scss']
 })
 export class DefaultRecipientsComponent implements OnInit {
-  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  applicationTypes = Object.keys(ApplicationType);
 
   constructor(private defaultRecipientHub: DefaultRecipientHub) {
   }

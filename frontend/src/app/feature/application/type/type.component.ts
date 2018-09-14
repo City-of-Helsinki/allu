@@ -171,7 +171,7 @@ export class TypeComponent implements OnInit, OnDestroy {
 
   private getAvailableTypes() {
     if (this.typeChangeDisabled) {
-      return of(EnumUtil.enumValues(ApplicationType));
+      return of(Object.keys(ApplicationType));
     } else {
       return this.store.select(fromAuth.getAllowedApplicationTypes);
     }

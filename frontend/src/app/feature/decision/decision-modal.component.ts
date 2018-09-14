@@ -111,7 +111,7 @@ export class DecisionModalComponent implements OnInit {
 
   private preferredOwner(): Observable<User> {
     const app = this.applicationStore.snapshot.application;
-    const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
+    const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.type, app.firstLocation.effectiveCityDistrictId);
     return this.userHub.searchUsers(criteria).pipe(
       map(preferred => ArrayUtil.first(preferred)),
       filter(preferred => !!preferred)

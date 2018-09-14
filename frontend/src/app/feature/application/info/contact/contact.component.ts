@@ -51,7 +51,7 @@ export class ContactComponent implements OnInit {
     );
 
     this.initContacts();
-    this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationStore.snapshot.application.typeEnum;
+    this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationStore.snapshot.application.type;
 
     if (this.readonly) {
       this.contacts.disable();

@@ -13,7 +13,7 @@ export class ContractGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.store.select(fromApplication.getCurrentApplication).pipe(
-      map(app => app.typeEnum === ApplicationType.PLACEMENT_CONTRACT),
+      map(app => app.type === ApplicationType.PLACEMENT_CONTRACT),
       tap(canActivate => {
         if (!canActivate) {
           const segments = state.url.split('/');

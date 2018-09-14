@@ -20,7 +20,7 @@ export class DecisionDocumentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.tabs$ = this.store.select(fromApplication.getCurrentApplication).pipe(
-      map(application => application.typeEnum),
+      map(application => application.type),
       map(type => this.getAvailableTabs(type)),
     );
   }

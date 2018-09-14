@@ -75,7 +75,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     this.readonly = UrlUtil.urlPathContains(this.route, 'summary');
 
     const existingApplication = NumberUtil.isDefined(application.id);
-    this.sidebarItems = Some(application.typeEnum).map(type => this.createSidebar(type, existingApplication)).orElse([]);
+    this.sidebarItems = Some(application.type).map(type => this.createSidebar(type, existingApplication)).orElse([]);
   }
 
   private verifyTypeExists(type: ApplicationType) {
@@ -152,8 +152,8 @@ export class ApplicationComponent implements OnInit, OnDestroy {
 
   private addCurrentUserToDistribution(application: Application): void {
     const existingApplication = NumberUtil.isDefined(application.id);
-    if (!existingApplication && (application.typeEnum === ApplicationType.EVENT
-                              || application.typeEnum === ApplicationType.SHORT_TERM_RENTAL)) {
+    if (!existingApplication && (application.type === ApplicationType.EVENT
+                              || application.type === ApplicationType.SHORT_TERM_RENTAL)) {
       this.currentUser.user.subscribe(user => {
         const entry = new DistributionEntry(null, user.realName, DistributionType.EMAIL, user.emailAddress);
         application.decisionDistributionList.push(entry);
@@ -166,7 +166,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     return Some(application.firstLocation)
       .map(loc => loc.fixedLocationIds)
       .map(ids => this.fixedLocationService.areaBySectionIds(ids).pipe(
-        switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.typeEnum, area.id))
+        switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.type, area.id))
       )).orElse(of([]));
   }
 

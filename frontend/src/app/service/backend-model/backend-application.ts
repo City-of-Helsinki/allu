@@ -9,6 +9,7 @@ import {BackendCustomerWithContacts, SearchResultCustomersWithContacts} from './
 import {KindsWithSpecifiers} from '../../model/application/type/application-specifier';
 import {BackendClientApplicationData} from '../mapper/client-application-data-mapper';
 import {SearchResultEnumType} from './search-result-enum-type';
+import {ApplicationType} from '@model/application/type/application-type';
 
 export interface BackendApplication {
   id: number;
@@ -17,7 +18,7 @@ export interface BackendApplication {
   owner: BackendUser;
   handler: BackendUser;
   status: string;
-  type: string;
+  type: ApplicationType;
   kindsWithSpecifiers?: KindsWithSpecifiers;
   metadataVersion: number;
   name: string;

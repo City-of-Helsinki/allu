@@ -25,7 +25,7 @@ export class Application {
     public owner?: User,
     public handler?: User,
     public status?: string,
-    public type?: string,
+    public type?: ApplicationType,
     public kindsWithSpecifiers?: KindsWithSpecifiers,
     public metadataVersion?: number,
     public name?: string,
@@ -77,10 +77,6 @@ export class Application {
 
   get firstLocation(): Location {
     return ArrayUtil.first(this.locations);
-  }
-
-  get typeEnum(): ApplicationType {
-    return ApplicationType[this.type];
   }
 
   get statusEnum(): ApplicationStatus {

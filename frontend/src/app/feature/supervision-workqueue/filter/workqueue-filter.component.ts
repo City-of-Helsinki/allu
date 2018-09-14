@@ -35,7 +35,7 @@ interface TaskSearchFilter {
 export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   queryForm: FormGroup;
   taskTypes = EnumUtil.enumValues(SupervisionTaskType);
-  applicationTypes = EnumUtil.enumValues(ApplicationType)
+  applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
   districts: Observable<Array<CityDistrict>>;

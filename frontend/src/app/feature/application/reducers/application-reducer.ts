@@ -48,7 +48,7 @@ export function reducer(state: State = initialState, action: HandledActions) {
         loaded: true,
         current: application,
         clientData: application.clientApplicationData,
-        type: application.typeEnum,
+        type: application.type,
         kindsWithSpecifiers: application.kindsWithSpecifiers
       };
     }

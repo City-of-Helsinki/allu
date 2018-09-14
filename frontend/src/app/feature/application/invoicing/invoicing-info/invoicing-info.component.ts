@@ -124,7 +124,7 @@ export class InvoicingInfoComponent implements OnInit {
         });
         this.originalForm = this.form.getRawValue();
 
-        this.setEditable(app.statusEnum, app.typeEnum, invoicingDate);
+        this.setEditable(app.statusEnum, app.type, invoicingDate);
     });
 
     this.initDeposit();

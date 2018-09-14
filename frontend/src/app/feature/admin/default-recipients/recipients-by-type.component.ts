@@ -15,7 +15,7 @@ export class RecipientsByTypeComponent implements OnInit {
   @Input() type: string;
   @Output() onItemCountChanged = new EventEmitter<number>();
 
-  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  applicationTypes = Object.keys(ApplicationType);
 
   form: FormGroup;
   recipientRows: FormArray;

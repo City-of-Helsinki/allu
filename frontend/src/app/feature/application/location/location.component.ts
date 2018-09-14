@@ -152,7 +152,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onApplicationTypeChange(type: ApplicationType) {
-    if (type !== this.application.typeEnum) {
+    if (type !== this.application.type) {
       this.application.type = ApplicationType[type];
       this.application.extension = this.createExtension(type);
       this.multipleLocations = type === ApplicationType.AREA_RENTAL;

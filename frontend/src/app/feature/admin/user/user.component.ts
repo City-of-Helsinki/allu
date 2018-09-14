@@ -27,7 +27,7 @@ import {ArrayUtil} from '@util/array-util';
 export class UserComponent implements OnInit {
   userForm: FormGroup;
   submitted = false;
-  applicationTypes = EnumUtil.enumValues(ApplicationType)
+  applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   roles = [
     'ROLE_CREATE_APPLICATION',

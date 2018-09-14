@@ -51,7 +51,7 @@ export class MapLayerService {
     this.defaultOverlay = this.overlays[DEFAULT_OVERLAY];
 
     const contentLayers = {};
-    EnumUtil.enumValues(ApplicationType)
+    Object.keys(ApplicationType)
       .map(type => findTranslation(['application.type', type]))
       .forEach(type => contentLayers[type] = L.featureGroup());
     this.contentLayers = contentLayers;

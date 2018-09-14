@@ -5,14 +5,14 @@ import {ObjectUtil} from '../../../util/object.util';
 import {ArrayUtil} from '../../../util/array-util';
 
 export enum ApplicationType {
-  EXCAVATION_ANNOUNCEMENT, // Kaivuilmoitus
-  AREA_RENTAL, // Aluevuokraus
-  TEMPORARY_TRAFFIC_ARRANGEMENTS, // Väliaikainen liikennejärjestely
-  CABLE_REPORT, // Johtoselvitykset
-  PLACEMENT_CONTRACT, // Sijoitusopimukset
-  EVENT, // Tapahtuma
-  SHORT_TERM_RENTAL, // Lyhytaikainen maanvuokraus
-  NOTE // Muistiinpano
+  EXCAVATION_ANNOUNCEMENT = 'EXCAVATION_ANNOUNCEMENT', // Kaivuilmoitus
+  AREA_RENTAL = 'AREA_RENTAL', // Aluevuokraus
+  TEMPORARY_TRAFFIC_ARRANGEMENTS = 'TEMPORARY_TRAFFIC_ARRANGEMENTS', // Väliaikainen liikennejärjestely
+  CABLE_REPORT = 'CABLE_REPORT', // Johtoselvitykset
+  PLACEMENT_CONTRACT = 'PLACEMENT_CONTRACT', // Sijoitusopimukset
+  EVENT = 'EVENT', // Tapahtuma
+  SHORT_TERM_RENTAL = 'SHORT_TERM_RENTAL', // Lyhytaikainen maanvuokraus
+  NOTE = 'NOTE' // Muistiinpano
 }
 
 export interface ApplicationTypeTree {

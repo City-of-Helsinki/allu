@@ -43,7 +43,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   owners: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
   applicationStatusStrings = searchable.map(status => ApplicationStatus[status]);
-  applicationTypeStrings = EnumUtil.enumValues(ApplicationType)
+  applicationTypeStrings = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   dataSource: ApplicationSearchDatasource;
   allSelected = false;

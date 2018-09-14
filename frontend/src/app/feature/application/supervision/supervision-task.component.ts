@@ -181,7 +181,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private preferredSupervisor(): void {
     const app = this.applicationStore.snapshot.application;
-    const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
+    const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.type, app.firstLocation.effectiveCityDistrictId);
     this.userHub.searchUsers(criteria).pipe(
       map(preferred => ArrayUtil.first(preferred)),
       filter(preferred => !!preferred)
