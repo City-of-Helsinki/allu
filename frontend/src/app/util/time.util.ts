@@ -151,17 +151,18 @@ export class TimeUtil {
 
   public static isInWinterTime(date: Date, winterStart: string, winterEnd: string): boolean {
     const start = moment(winterStart);
-    const end = moment(winterEnd);
-    const checked = moment(date).year(start.year());
-    return checked.isSameOrAfter(start) || checked.isBefore(end);
+    const winterEndDate = this.toWinterTimeEnd(date, winterEnd);
+    let winterStartYear = winterEndDate.getFullYear();
+    if (start.month() > winterEndDate.getMonth()) {
+      winterStartYear = winterEndDate.getFullYear() - 1;
+    }
+    return this.isBetweenInclusive(date, start.year(winterStartYear).toDate(), winterEndDate);
   }
 
-  public static toWinterTimeEnd(date: Date, winterStart: string, winterEnd: string): Date {
-    const start = moment(winterStart);
-    const end = moment(winterEnd);
-    const checked = moment(date).year(start.year());
+  public static toWinterTimeEnd(date: Date, winterEnd: string): Date {
+    const end = moment(winterEnd).toDate();
     let year = date.getFullYear();
-    if (checked.isSameOrAfter(end)) {
+    if (date.getMonth() > end.getMonth()) {
       year = year + 1;
     }
     return moment(end).year(year).toDate();

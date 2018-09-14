@@ -69,7 +69,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   onValidityEndTimePickerClick(picker: MatDatepicker<Date>): void {
     if (this.validityEndTimeCtrl.warnings.inWinterTime) {
       Some(this.validityEndTimeCtrl.value).do(date => {
-        this.validityEndTimeCtrl.patchValue(TimeUtil.toWinterTimeEnd(date, this.winterTimeStart, this.winterTimeEnd));
+        this.validityEndTimeCtrl.patchValue(TimeUtil.toWinterTimeEnd(date, this.winterTimeEnd));
         this.winterTimeOperationCtrl.patchValue(date);
       });
     } else {
