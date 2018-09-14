@@ -2,29 +2,28 @@ import {DebugElement} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {SupervisionTaskStore} from '../../../../src/app/service/supervision/supervision-task-store';
-import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {
-  ApplicationStoreMock,
-  availableToDirectiveMockMeta,
-  CurrentUserMock,
-  NotificationServiceMock
-} from '../../../mocks';
-import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
-import {SupervisionTask} from '../../../../src/app/model/application/supervision/supervision-task';
-import {SupervisionTaskComponent} from '../../../../src/app/feature/application/supervision/supervision-task.component';
-import {ApplicationStore} from '../../../../src/app/service/application/application-store';
-import {CurrentUser} from '../../../../src/app/service/user/current-user';
-import {ComplexValidator} from '../../../../src/app/util/complex-validator';
-import {User} from '../../../../src/app/model/user/user';
-import {SupervisionTaskType} from '../../../../src/app/model/application/supervision/supervision-task-type';
-import {NotificationService} from '../../../../src/app/feature/notification/notification.service';
-import {ErrorInfo} from '../../../../src/app/service/error/error-info';
-import {findTranslation} from '../../../../src/app/util/translations';
-import {UserHub} from '../../../../src/app/service/user/user-hub';
-import {UserSearchCriteria} from '../../../../src/app/model/user/user-search-criteria';
-import {SupervisionTaskStatusType} from '../../../../src/app/model/application/supervision/supervision-task-status-type';
-import {Observable, of, Subject, throwError} from 'rxjs/index';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {AvailableToDirective} from '@service/authorization/available-to.directive';
+import {SupervisionTaskComponent} from '@feature/application/supervision/supervision-task.component';
+import {ApplicationStore} from '@service/application/application-store';
+import {CurrentUser} from '@service/user/current-user';
+import {ComplexValidator} from '@util/complex-validator';
+import {User} from '@model/user/user';
+import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
+import {findTranslation} from '@util/translations';
+import {UserHub} from '@service/user/user-hub';
+import {UserSearchCriteria} from '@model/user/user-search-criteria';
+import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
+import {of} from 'rxjs/index';
+import * as fromRoot from '@feature/allu/reducers';
+import {combineReducers, Store, StoreModule} from '@ngrx/store';
+import * as fromSupervisionTask from '@feature/application/supervision/reducers';
+import * as fromApplication from '@feature/application/reducers';
+import {Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
+import {Application} from '@model/application/application';
+import * as ApplicationActions from '@feature/application/actions/application-actions';
+import {SupervisionTaskForm} from '@feature/application/supervision/supervision-task-form';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -44,40 +43,25 @@ const taskForm = {
   result: [undefined]
 };
 
-const validTask = {
-  type: SupervisionTaskType[SupervisionTaskType.SUPERVISION],
-  status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN],
+const validTask: SupervisionTaskForm = {
+  type: SupervisionTaskType.SUPERVISION,
+  status: SupervisionTaskStatusType.OPEN,
   creatorId: undefined,
   ownerId: supervisor.id,
   plannedFinishingTime: new Date(),
   description: 'some description here'
 };
 
+const currentApplication = new Application(1);
+
 class UserHubMock {
   searchUsers(criteria: UserSearchCriteria) { return of([]); }
-}
-
-class SupervisionTaskStoreMock {
-  public tasks$ = new Subject<Array<SupervisionTask>>();
-
-  get tasks(): Observable<Array<SupervisionTask>> {
-    return this.tasks$.asObservable();
-  }
-
-  saveTask(applicationId: number, task: SupervisionTask): Observable<SupervisionTask> {
-    return of(task);
-  }
-
-  removeTask(applicationId: number, taskId: number): Observable<{}> {
-    return of({});
-  }
 }
 
 describe('SupervisionTaskComponent', () => {
   let comp: SupervisionTaskComponent;
   let fixture: ComponentFixture<SupervisionTaskComponent>;
-  let supervisionTaskStore: SupervisionTaskStoreMock;
-  let notification: NotificationServiceMock;
+  let store: Store<fromRoot.State>;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
   let userHub: UserHubMock;
@@ -87,17 +71,19 @@ describe('SupervisionTaskComponent', () => {
       imports: [
         AlluCommonModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        StoreModule.forRoot({
+          'supervisionTasks': combineReducers(fromSupervisionTask.reducers),
+          'application': combineReducers(fromApplication.reducers)
+        })
       ],
       declarations: [
         SupervisionTaskComponent
       ],
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
-        {provide: SupervisionTaskStore, useClass: SupervisionTaskStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
         {provide: UserHub, useClass: UserHubMock},
-        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
@@ -105,13 +91,13 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   beforeEach(() => {
-    supervisionTaskStore = TestBed.get(SupervisionTaskStore) as SupervisionTaskStoreMock;
-    notification = TestBed.get(NotificationService) as NotificationServiceMock;
+    store = TestBed.get(Store);
     userHub = TestBed.get(UserHub) as UserHubMock;
     fixture = TestBed.createComponent(SupervisionTaskComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
+    store.dispatch(new ApplicationActions.LoadSuccess(currentApplication));
     comp.form = new FormBuilder().group(taskForm);
     comp.supervisors = [supervisor];
     comp.ngOnInit();
@@ -132,28 +118,15 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should save valid task', fakeAsync(() => {
-    spyOn(supervisionTaskStore, 'saveTask').and.callThrough();
-    spyOn(notification, 'translateSuccess');
+    spyOn(store, 'dispatch').and.callThrough();
 
     patchValueAndInit(validTask);
     const saveBtn = de.query(By.css('#save')).nativeElement;
     saveBtn.click();
     detectAndTick();
-    expect(supervisionTaskStore.saveTask).toHaveBeenCalled();
-    expect(notification.translateSuccess).toHaveBeenCalled();
-  }));
-
-  it('should handle save error', fakeAsync(() => {
-    const errorInfo = new ErrorInfo('expected');
-    spyOn(supervisionTaskStore, 'saveTask').and.returnValue(throwError(errorInfo));
-    spyOn(notification, 'translateError');
-
-    patchValueAndInit(validTask);
-    const saveBtn = de.query(By.css('#save')).nativeElement;
-    saveBtn.click();
-    detectAndTick();
-    expect(supervisionTaskStore.saveTask).toHaveBeenCalled();
-    expect(notification.translateError).toHaveBeenCalled();
+    const expectedTask = SupervisionTaskForm.to(comp.form.value);
+    expectedTask.applicationId = currentApplication.id;
+    expect(store.dispatch).toHaveBeenCalledWith(new Save(expectedTask));
   }));
 
   it('should change to edit mode', fakeAsync(() => {
@@ -193,34 +166,15 @@ describe('SupervisionTaskComponent', () => {
   it('should remove existing', fakeAsync(() => {
     const onRemove = comp.onRemove;
     spyOn(onRemove, 'emit');
-    spyOn(notification, 'translateSuccess');
-    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(of({}));
+    spyOn(store, 'dispatch').and.callThrough();
 
     patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     const removeBtn = de.query(By.css('#remove')).nativeElement;
     removeBtn.click();
     detectAndTick();
 
-    expect(supervisionTaskStore.removeTask).toHaveBeenCalled();
-    expect(notification.translateSuccess).toHaveBeenCalled();
+    expect(store.dispatch).toHaveBeenCalledWith(new Remove(1));
     expect(onRemove.emit).toHaveBeenCalled();
-  }));
-
-  it('should handle remove failure', fakeAsync(() => {
-    const errorInfo = new ErrorInfo('expected');
-    const onRemove = comp.onRemove;
-    spyOn(notification, 'translateError');
-    spyOn(onRemove, 'emit');
-    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(throwError(errorInfo));
-
-    patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
-    const removeBtn = de.query(By.css('#remove')).nativeElement;
-    removeBtn.click();
-    detectAndTick();
-
-    expect(supervisionTaskStore.removeTask).toHaveBeenCalled();
-    expect(notification.translateError).toHaveBeenCalled();
-    expect(onRemove.emit).not.toHaveBeenCalled();
   }));
 
   it('should disallow editing by other users', fakeAsync(() => {

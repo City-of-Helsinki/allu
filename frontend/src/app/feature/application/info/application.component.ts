@@ -13,7 +13,6 @@ import {DefaultAttachmentInfo} from '../../../model/application/attachment/defau
 import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Option, Some} from '../../../util/option';
-import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {NumberUtil} from '../../../util/number.util';
 import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
 import {DefaultRecipient} from '../../../model/common/default-recipient';
@@ -21,6 +20,7 @@ import {DistributionEntry} from '../../../model/common/distribution-entry';
 import {DistributionType} from '../../../model/common/distribution-type';
 import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import * as fromApplication from '../reducers';
+import * as fromSupervisionTask from '@feature/application/supervision/reducers';
 import {Store} from '@ngrx/store';
 import {map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
 import {CurrentUser} from '@service/user/current-user';
@@ -46,7 +46,6 @@ export class ApplicationComponent implements OnInit, OnDestroy {
               private applicationStore: ApplicationStore,
               private attachmentHub: AttachmentHub,
               private fixedLocationService: FixedLocationService,
-              private supervisionTaskStore: SupervisionTaskStore,
               private defaultRecipientHub: DefaultRecipientHub,
               private notification: NotificationService,
               private currentUser: CurrentUser) {
@@ -69,7 +68,6 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private onApplicationChange(application: Application): void {
-    Some(application.id).do(id => this.supervisionTaskStore.loadTasks(id));
     this.verifyTypeExists(ApplicationType[application.type]);
 
     this.readonly = UrlUtil.urlPathContains(this.route, 'summary');
@@ -110,7 +108,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private get taskCount(): Observable<number> {
-    return this.supervisionTaskStore.tasks.pipe(map(supervisions => supervisions.length));
+    return this.store.select(fromSupervisionTask.getSupervisionTaskTotal);
   }
 
   private get invoicingWarn(): Observable<boolean> {

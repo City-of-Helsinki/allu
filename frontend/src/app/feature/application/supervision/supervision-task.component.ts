@@ -1,18 +1,16 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {SupervisionTaskForm} from './supervision-task-form';
-import {ApplicationStore} from '../../../service/application/application-store';
-import {NotificationService} from '../../notification/notification.service';
-import {User} from '../../../model/user/user';
-import {CurrentUser} from '../../../service/user/current-user';
-import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
-import {EnumUtil} from '../../../util/enum.util';
-import {SupervisionTaskType, isAutomaticSupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
-import {SupervisionTaskStatusType} from '../../../model/application/supervision/supervision-task-status-type';
-import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
-import {RoleType} from '../../../model/user/role-type';
-import {ArrayUtil} from '../../../util/array-util';
-import {UserHub} from '../../../service/user/user-hub';
+import {ApplicationStore} from '@service/application/application-store';
+import {User} from '@model/user/user';
+import {CurrentUser} from '@service/user/current-user';
+import {EnumUtil} from '@util/enum.util';
+import {isAutomaticSupervisionTaskType, SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
+import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
+import {UserSearchCriteria} from '@model/user/user-search-criteria';
+import {RoleType} from '@model/user/role-type';
+import {ArrayUtil} from '@util/array-util';
+import {UserHub} from '@service/user/user-hub';
 import {
   SUPERVISION_APPROVAL_MODAL_CONFIG,
   SupervisionApprovalModalComponent,
@@ -20,8 +18,12 @@ import {
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {SupervisionTask} from '../../../model/application/supervision/supervision-task';
-import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {SupervisionTask} from '@model/application/supervision/supervision-task';
+import {filter, map, take} from 'rxjs/internal/operators';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromApplication from '@feature/application/reducers';
+import {Approve, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
 
 @Component({
   selector: 'supervision-task',
@@ -44,11 +46,10 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private originalEntry: SupervisionTaskForm;
 
   constructor(private applicationStore: ApplicationStore,
-              private store: SupervisionTaskStore,
+              private store: Store<fromRoot.State>,
               private currentUser: CurrentUser,
               private userHub: UserHub,
-              private dialog: MatDialog,
-              private notification: NotificationService) {
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -75,28 +76,21 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   remove(): void {
     const task = this.form.value;
     if (task.id) {
-      this.store.removeTask(this.applicationStore.snapshot.application.id, task.id)
-        .subscribe(
-          status => {
-            this.onRemove.emit();
-            this.notification.translateSuccess('supervision.task.action.remove');
-          },
-          error => this.notification.translateError(error));
-    } else {
-      this.onRemove.emit();
+      this.store.dispatch(new Remove(task.id));
     }
+    this.onRemove.emit();
   }
 
   save(): void {
     const formValue = <SupervisionTaskForm>this.form.getRawValue();
-    this.form.disable();
-    this.store.saveTask(this.applicationStore.snapshot.application.id, SupervisionTaskForm.to(formValue))
-      .subscribe(
-        c => this.notification.translateSuccess('supervision.task.action.save'),
-        error => {
-          this.form.enable();
-          this.notification.translateError(error);
-        });
+    this.store.select(fromApplication.getCurrentApplication).pipe(
+      map(app => {
+        const task = SupervisionTaskForm.to(formValue);
+        task.applicationId = task.applicationId || app.id;
+        return task;
+      }),
+      take(1)
+    ).subscribe(task => this.store.dispatch(new Save(task)));
   }
 
   cancel(): void {
@@ -123,21 +117,15 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.openModal(SupervisionApprovalResolutionType.APPROVE).afterClosed().pipe(
       filter(result => !!result),
       map(result => this.taskWithResult(SupervisionTaskStatusType.APPROVED, result)),
-      switchMap(task => this.store.approve(task))
-    ).subscribe(
-      saved => this.notification.translateSuccess('supervision.task.action.approve'),
-      err => this.notification.translateSuccess('supervision.task.error.approve'));
+    ).subscribe(task => this.store.dispatch(new Approve(task)));
   }
 
   reject(): void {
     this.openModal(SupervisionApprovalResolutionType.REJECT).afterClosed().pipe(
-      filter(result => !!result),
-      switchMap(result => this.store.reject(
-        this.taskWithResult(SupervisionTaskStatusType.REJECTED, result),
-        result.newSupervisionDate))
-    ).subscribe(
-      saved => this.notification.translateSuccess('supervision.task.action.reject'),
-      err => this.notification.translateSuccess('supervision.task.error.reject'));
+      filter(result => !!result)
+    ).subscribe(result => this.store.dispatch(
+      new Reject(this.taskWithResult(SupervisionTaskStatusType.REJECTED, result), result.newSupervisionDate)
+    ));
   }
 
   private taskWithResult(status: SupervisionTaskStatusType, result: SupervisionApprovalResult): SupervisionTask {

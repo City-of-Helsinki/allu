@@ -1,16 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, Validators} from '@angular/forms';
-import {FormUtil} from '../../../util/form.util';
-import {UserHub} from '../../../service/user/user-hub';
-import {User} from '../../../model/user/user';
-import {RoleType} from '../../../model/user/role-type';
-import {TimeUtil} from '../../../util/time.util';
-import {SupervisionTask} from '../../../model/application/supervision/supervision-task';
-import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
-import {ComplexValidator} from '../../../util/complex-validator';
+import {FormUtil} from '@util/form.util';
+import {UserHub} from '@service/user/user-hub';
+import {User} from '@model/user/user';
+import {RoleType} from '@model/user/role-type';
+import {SupervisionTask} from '@model/application/supervision/supervision-task';
+import {ComplexValidator} from '@util/complex-validator';
 import {SupervisionTaskForm} from './supervision-task-form';
 import {Subscription} from 'rxjs';
-import {map} from 'rxjs/internal/operators';
+import {Store} from '@ngrx/store';
+import * as fromSupervisionTask from './reducers';
 
 
 @Component({
@@ -25,18 +24,16 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   private supervisionTaskSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
-              private supervisionTaskStore: SupervisionTaskStore,
-              private userHub: UserHub) {
+              private userHub: UserHub,
+              private store: Store<fromSupervisionTask.State>) {
     this.supervisionTasks = this.fb.array([]);
   }
 
   ngOnInit(): void {
-    this.supervisionTaskSubscription = this.supervisionTaskStore.tasks.pipe(
-      map(tasks => tasks.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // latest first
-    ).subscribe(tasks => {
-        FormUtil.clearArray(this.supervisionTasks);
-        tasks.forEach(task => this.addNew(task));
-      });
+    this.supervisionTaskSubscription = this.store.select(fromSupervisionTask.getAllSupervisionTasks).subscribe(tasks => {
+      FormUtil.clearArray(this.supervisionTasks);
+      tasks.forEach(task => this.addNew(task));
+    });
 
     this.userHub.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
   }

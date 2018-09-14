@@ -16,20 +16,4 @@ export class SupervisionTask {
     public description?: string,
     public result?: string) {
   }
-
-  get uiType(): string {
-    return SupervisionTaskType[this.type];
-  }
-
-  set uiType(type: string) {
-    this.type = SupervisionTaskType[type];
-  }
-
-  get uiStatus(): string {
-    return SupervisionTaskStatusType[this.status];
-  }
-
-  set uiStatus(status: string) {
-    this.status = SupervisionTaskStatusType[status];
-  }
 }

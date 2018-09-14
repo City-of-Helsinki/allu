@@ -15,6 +15,7 @@ import * as commentActions from '@feature/comment/actions/comment-actions';
 import * as historyActions from '../history/actions/history-actions';
 import * as metaActions from './actions/application-meta-actions';
 import * as informationRequestActions from '@feature/information-request/actions/information-request-actions';
+import * as supervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
 import {NumberUtil} from '@util/number.util';
 import {ApplicationStatus} from '@model/application/application-status';
 
@@ -51,6 +52,7 @@ export class ApplicationResolve implements Resolve<Application> {
       tap(() => this.loadComments()),
       tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Application))),
       tap(() => this.store.dispatch(new metaActions.Load())),
+      tap(() => this.store.dispatch(new supervisionTaskActions.Load())),
       tap(() => this.loadInformationRequest()),
       tap((app) => this.loadInformationRequestResponse(app.status)),
       take(1),

@@ -2,17 +2,18 @@ import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/cor
 import {FormBuilder, FormGroup, FormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {User} from '../../../../src/app/model/user/user';
-import {SupervisionComponent} from '../../../../src/app/feature/application/supervision/supervision.component';
-import {SupervisionTaskStore} from '../../../../src/app/service/supervision/supervision-task-store';
-import {UserHub} from '../../../../src/app/service/user/user-hub';
-import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
+import {User} from '@model/user/user';
+import {SupervisionComponent} from '@feature/application/supervision/supervision.component';
+import {UserHub} from '@service/user/user-hub';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {availableToDirectiveMockMeta, CurrentUserMock, UserHubMock} from '../../../mocks';
-import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
-import {SupervisionTask} from '../../../../src/app/model/application/supervision/supervision-task';
-import {findTranslation} from '../../../../src/app/util/translations';
+import {AvailableToDirective} from '@service/authorization/available-to.directive';
+import {SupervisionTask} from '@model/application/supervision/supervision-task';
+import {findTranslation} from '@util/translations';
 import {getButtonWithMatIcon} from '../../../selector-helpers';
-import {Observable, Subject} from 'rxjs/index';
+import {combineReducers, Store, StoreModule} from '@ngrx/store';
+import * as fromSupervisionTask from '@feature/application/supervision/reducers';
+import {LoadSuccess} from '@feature/application/supervision/actions/supervision-task-actions';
 
 const firstTask = new SupervisionTask(1);
 
@@ -26,30 +27,28 @@ class MockSupervisionTaskComponent {
   @Output() onRemove = new EventEmitter<void>();
 }
 
-class SupervisionTaskStoreMock {
-  public tasks$ = new Subject<Array<SupervisionTask>>();
-  get tasks(): Observable<Array<SupervisionTask>> {
-    return this.tasks$.asObservable();
-  }
-}
-
 describe('SupervisionComponent', () => {
   let comp: SupervisionComponent;
   let fixture: ComponentFixture<SupervisionComponent>;
-  let supervisionTaskStore: SupervisionTaskStoreMock;
+  let store: Store<fromSupervisionTask.State>;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AlluCommonModule, FormsModule],
+      imports: [
+        AlluCommonModule,
+        FormsModule,
+        StoreModule.forRoot({
+          'supervisionTasks': combineReducers(fromSupervisionTask.reducers)
+        })
+      ],
       declarations: [
         SupervisionComponent,
         MockSupervisionTaskComponent
       ],
       providers: [
         FormBuilder,
-        {provide: SupervisionTaskStore, useClass: SupervisionTaskStoreMock},
         {provide: UserHub, useClass: UserHubMock}
       ]
     })
@@ -58,13 +57,13 @@ describe('SupervisionComponent', () => {
   }));
 
   beforeEach(() => {
-    supervisionTaskStore = TestBed.get(SupervisionTaskStore) as SupervisionTaskStoreMock;
+    store = TestBed.get(Store);
     fixture = TestBed.createComponent(SupervisionComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
     comp.ngOnInit();
-    supervisionTaskStore.tasks$.next([firstTask]);
+    store.dispatch(new LoadSuccess([firstTask]));
     fixture.detectChanges();
   });
 
