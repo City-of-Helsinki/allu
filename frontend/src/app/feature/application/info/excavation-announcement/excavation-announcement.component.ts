@@ -164,7 +164,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.applicationForm.patchValue(form);
     this.patchRelatedCableReport(excavation);
     this.showReportCustomerDates =
-      [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(application.statusEnum) >= 0;
+      [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(application.status) >= 0;
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {

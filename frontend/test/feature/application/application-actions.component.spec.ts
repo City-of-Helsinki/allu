@@ -293,7 +293,7 @@ describe('ApplicationActionsComponent', () => {
   it('should show move to decision depending on status and type', () => {
     // Don't show for status before HANDLING
     let app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.PENDING;
+    app.status = ApplicationStatus.PENDING;
     app.type = ApplicationType[ApplicationType.EVENT];
     applicationStore.applicationChange(app);
     setAndInit(true);
@@ -301,7 +301,7 @@ describe('ApplicationActionsComponent', () => {
 
     // Don't show for states HANDLING and after
     app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.HANDLING;
+    app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.NOTE];
     applicationStore.applicationChange(app);
     setAndInit(true);
@@ -309,7 +309,7 @@ describe('ApplicationActionsComponent', () => {
 
     // Should show
     app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.HANDLING;
+    app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.EVENT];
     applicationStore.applicationChange(app);
     setAndInit(true);
@@ -318,7 +318,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should hide actions when pending on client', () => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.PENDING_CLIENT;
+    app.status = ApplicationStatus.PENDING_CLIENT;
     app.type = ApplicationType[ApplicationType.EVENT];
     applicationStore.applicationChange(app);
     setAndInit(true);
@@ -328,7 +328,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should hide actions when waiting for contract approval', () => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.WAITING_CONTRACT_APPROVAL;
+    app.status = ApplicationStatus.WAITING_CONTRACT_APPROVAL;
     app.type = ApplicationType[ApplicationType.EVENT];
     applicationStore.applicationChange(app);
     setAndInit(true);
@@ -338,7 +338,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should show only show pending data when pending client data', () => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.PENDING;
+    app.status = ApplicationStatus.PENDING;
     app.type = ApplicationType[ApplicationType.EVENT];
     applicationStore.applicationChange(app);
     comp.pendingClientData = true;
@@ -350,7 +350,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should disable to decision making button when no invoice recipient is set', () => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.HANDLING;
+    app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.EVENT];
     applicationStore.applicationChange(app);
     setAndInit(true);
@@ -360,7 +360,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should enable to decision making button when invoice recipient is set', () => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.HANDLING;
+    app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.EVENT];
     app.invoiceRecipientId = 1;
     applicationStore.applicationChange(app);
@@ -371,7 +371,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should enable to decision making button when application is set to not billable', () => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.HANDLING;
+    app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.EVENT];
     app.notBillable = true;
     applicationStore.applicationChange(app);
@@ -382,7 +382,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should change status of Cable report to decision making', fakeAsync(() => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.HANDLING;
+    app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.CABLE_REPORT];
     app.invoiceRecipientId = 1;
     applicationStore.applicationChange(app);
@@ -402,7 +402,7 @@ describe('ApplicationActionsComponent', () => {
 
   it('should navigate to decision making for other application types', fakeAsync(() => {
     const app = applicationStore.snapshot.application;
-    app.statusEnum = ApplicationStatus.HANDLING;
+    app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.EVENT];
     app.invoiceRecipientId = 1;
     applicationStore.applicationChange(app);

@@ -40,8 +40,8 @@ export class ProgressbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.progress = this.calculateProgress(this.application.statusEnum);
-    this.color = this.calculateColor(this.application.statusEnum);
+    this.progress = this.calculateProgress(this.application.status);
+    this.color = this.calculateColor(this.application.status);
     this.existingApplication = NumberUtil.isDefined(this.application.id);
     this.replacements$ = this.existingApplication
       ? this.service.getReplacementHistory(this.application.id)

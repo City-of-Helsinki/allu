@@ -13,6 +13,7 @@ import {DistributionMapper} from './distribution-mapper';
 import {Some} from '../../util/option';
 import {ClientApplicationDataMapper} from './client-application-data-mapper';
 import {ApplicationType} from '@model/application/type/application-type';
+import {ApplicationStatus} from '@model/application/application-status';
 
 export class ApplicationMapper {
 
@@ -28,7 +29,7 @@ export class ApplicationMapper {
     application.applicationId = backendApplication.applicationId;
     application.name = backendApplication.name;
     application.type = <ApplicationType>backendApplication.type.value;
-    application.status = backendApplication.status.value;
+    application.status = <ApplicationStatus>backendApplication.status.value;
     application.owner = UserMapper.mapSearchResult(backendApplication.owner);
     application.locations = LocationMapper.mapSearchResultList(backendApplication.locations);
     application.customersWithContacts = CustomerMapper.mapSearchResultsWithContacts(backendApplication.customers);

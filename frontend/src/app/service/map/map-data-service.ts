@@ -73,9 +73,8 @@ export class MapDataService {
       geometry);
   }
 
-  private statusesFromGroup(groups: ApplicationStatusGroup[]): string[] {
+  private statusesFromGroup(groups: ApplicationStatusGroup[]): ApplicationStatus[] {
     return ArrayUtil.flatten(groups.map(group => this.groupedStatuses.get(group)))
-      .filter(s => s !== undefined)
-      .map(s => ApplicationStatus[s]);
+      .filter(s => s !== undefined);
   }
 }

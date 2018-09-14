@@ -1,32 +1,50 @@
-import {NumberUtil} from '@util/number.util';
+import {Application} from '@model/application/application';
 
-  export enum ApplicationStatus {
-  PENDING_CLIENT,
-  PRE_RESERVED,
-  PENDING,
-  WAITING_INFORMATION,
-  INFORMATION_RECEIVED,
-  HANDLING,
-  RETURNED_TO_PREPARATION,
-  WAITING_CONTRACT_APPROVAL,
-  DECISIONMAKING,
-  DECISION,
-  REJECTED,
-  OPERATIONAL_CONDITION,
-  FINISHED,
-  CANCELLED,
-  REPLACED,
-  ARCHIVED
+export enum ApplicationStatus {
+  PENDING_CLIENT = 'PENDING_CLIENT',
+  PRE_RESERVED = 'PRE_RESERVED',
+  PENDING = 'PENDING',
+  WAITING_INFORMATION = 'WAITING_INFORMATION',
+  INFORMATION_RECEIVED = 'INFORMATION_RECEIVED',
+  HANDLING = 'HANDLING',
+  RETURNED_TO_PREPARATION = 'RETURNED_TO_PREPARATION',
+  WAITING_CONTRACT_APPROVAL = 'WAITING_CONTRACT_APPROVAL',
+  DECISIONMAKING = 'DECISIONMAKING',
+  DECISION = 'DECISION',
+  REJECTED = 'REJECTED',
+  OPERATIONAL_CONDITION = 'OPERATIONAL_CONDITION',
+  FINISHED = 'FINISHED',
+  CANCELLED = 'CANCELLED',
+  REPLACED = 'REPLACED',
+  ARCHIVED = 'ARCHIVED'
 }
 
+export const statusNames = Object.keys(ApplicationStatus);
+
 export function applicationCanBeEdited(status: ApplicationStatus): boolean {
-  return NumberUtil.isDefined(status)
-      ? (status > ApplicationStatus.PENDING_CLIENT && status < ApplicationStatus.WAITING_CONTRACT_APPROVAL)
-      : true;
+  return status !== undefined
+    ? isAfter(status, ApplicationStatus.PENDING_CLIENT) && isBefore(status, ApplicationStatus.WAITING_CONTRACT_APPROVAL)
+    : true;
 }
 
 export function inHandling(status: ApplicationStatus): boolean {
   return [ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION].some(s => s === status);
+}
+
+export function isBefore(first: ApplicationStatus, second: ApplicationStatus): boolean {
+  return statusNames.indexOf(first) < statusNames.indexOf(second);
+}
+
+export function isAfter(first: ApplicationStatus, second: ApplicationStatus): boolean {
+  return statusNames.indexOf(first) > statusNames.indexOf(second);
+}
+
+export function isSameOrBefore(first: ApplicationStatus, second: ApplicationStatus): boolean {
+  return !isAfter(first, second);
+}
+
+export function isSameOrAfter(first: ApplicationStatus, second: ApplicationStatus): boolean {
+  return !isBefore(first, second);
 }
 
 export const searchable = [

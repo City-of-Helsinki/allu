@@ -52,7 +52,7 @@ export class ApplicationResolve implements Resolve<Application> {
       tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Application))),
       tap(() => this.store.dispatch(new metaActions.Load())),
       tap(() => this.loadInformationRequest()),
-      tap((app) => this.loadInformationRequestResponse(app.statusEnum)),
+      tap((app) => this.loadInformationRequestResponse(app.status)),
       take(1),
       catchError(err => this.handleError(err))
     );

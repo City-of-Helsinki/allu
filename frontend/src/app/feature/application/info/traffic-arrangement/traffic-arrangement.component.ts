@@ -6,7 +6,7 @@ import {TrafficArrangement} from '../../../../model/application/traffic-arrangem
 import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {TimeUtil} from '../../../../util/time.util';
-import {ApplicationStatus} from '../../../../model/application/application-status';
+import {ApplicationStatus, isSameOrAfter} from '../../../../model/application/application-status';
 
 @Component({
   selector: 'traffic-arrangement',
@@ -50,6 +50,6 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
     const arrangement = <TrafficArrangement>application.extension || new TrafficArrangement();
     this.applicationForm.patchValue(TrafficArrangementForm.from(application, arrangement));
 
-    this.showImpedimentType = application.statusEnum >= ApplicationStatus.HANDLING;
+    this.showImpedimentType = isSameOrAfter(application.status, ApplicationStatus.HANDLING);
   }
 }

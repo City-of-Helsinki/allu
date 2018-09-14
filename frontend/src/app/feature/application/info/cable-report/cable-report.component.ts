@@ -6,7 +6,7 @@ import {ComplexValidator} from '../../../../util/complex-validator';
 import {CableReportForm, OrdererIdForm} from './cable-report.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
-import {ApplicationStatus} from '../../../../model/application/application-status';
+import {ApplicationStatus, isSameOrAfter} from '../../../../model/application/application-status';
 import {TimeUtil} from '../../../../util/time.util';
 
 @Component({
@@ -41,7 +41,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     super.onApplicationChange(application);
 
     this.applicationForm.patchValue(CableReportForm.from(application));
-    this.showCableInfo = ApplicationStatus[application.status] >= ApplicationStatus.HANDLING;
+    this.showCableInfo = isSameOrAfter(application.status, ApplicationStatus.HANDLING);
   }
 
   protected update(form: CableReportForm): Application {

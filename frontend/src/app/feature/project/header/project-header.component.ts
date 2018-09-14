@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Project} from '../../../model/project/project';
 import {Application} from '../../../model/application/application';
-import {ApplicationStatus, decided} from '../../../model/application/application-status';
+import {ApplicationStatus, decided, isBefore} from '../../../model/application/application-status';
 
 @Component({
   selector: 'project-header',
@@ -19,11 +19,11 @@ export class ProjectHeaderComponent {
 
   @Input() set applications(applications: Application[]) {
     this.activeApplications = applications
-      .filter(app => app.statusEnum < ApplicationStatus.DECISION)
+      .filter(app => isBefore(app.status, ApplicationStatus.DECISION))
       .length;
 
     this.decidedApplications = applications
-      .filter(app => decided.indexOf(app.statusEnum) >= 0)
+      .filter(app => decided.indexOf(app.status) >= 0)
       .length;
   }
 }

@@ -62,7 +62,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
       this.applicationStore.application,
       this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
     ).pipe(
-      map(([app, role]) => applicationCanBeEdited(app.statusEnum) && role)
+      map(([app, role]) => applicationCanBeEdited(app.status) && role)
     ).subscribe(e => this.canBeEdited = e);
   }
 

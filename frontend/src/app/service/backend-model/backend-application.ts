@@ -10,6 +10,7 @@ import {KindsWithSpecifiers} from '../../model/application/type/application-spec
 import {BackendClientApplicationData} from '../mapper/client-application-data-mapper';
 import {SearchResultEnumType} from './search-result-enum-type';
 import {ApplicationType} from '@model/application/type/application-type';
+import {ApplicationStatus} from '@model/application/application-status';
 
 export interface BackendApplication {
   id: number;
@@ -17,7 +18,7 @@ export interface BackendApplication {
   project: BackendProject;
   owner: BackendUser;
   handler: BackendUser;
-  status: string;
+  status: ApplicationStatus;
   type: ApplicationType;
   kindsWithSpecifiers?: KindsWithSpecifiers;
   metadataVersion: number;

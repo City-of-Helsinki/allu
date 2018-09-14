@@ -37,7 +37,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   taskTypes = EnumUtil.enumValues(SupervisionTaskType);
   applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
-  applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
+  applicationStatusTypes = Object.keys(ApplicationStatus);
   districts: Observable<Array<CityDistrict>>;
   supervisors: Array<User> = [];
 

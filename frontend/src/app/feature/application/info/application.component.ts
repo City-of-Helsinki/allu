@@ -120,7 +120,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
       map(change =>
         noRecipient(change.application)
         && isBillable(change.application)
-        && inHandling(change.application.statusEnum))
+        && inHandling(change.application.status))
     );
   }
 

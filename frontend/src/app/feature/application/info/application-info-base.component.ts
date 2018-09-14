@@ -5,7 +5,7 @@ import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationForm} from './application-form';
-import {applicationCanBeEdited, ApplicationStatus} from '../../../model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus, isAfter, isSameOrAfter} from '../../../model/application/application-status';
 import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
@@ -131,7 +131,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
    * Handles application changes
    */
   protected onApplicationChange(application: Application): void {
-    this.showTerms = application.statusEnum >= ApplicationStatus.HANDLING;
+    this.showTerms = isSameOrAfter(application.status, ApplicationStatus.HANDLING);
     this.applicationForm.patchValue({
       hasPropertyDeveloper: application.propertyDeveloper.customerId,
       hasRepresentative: application.representative.customerId,
@@ -139,7 +139,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     });
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary')
-      || !applicationCanBeEdited(application.statusEnum);
+      || !applicationCanBeEdited(application.status);
   }
 
   /**

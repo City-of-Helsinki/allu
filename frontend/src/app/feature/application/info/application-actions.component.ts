@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApplicationStore} from '../../../service/application/application-store';
-import {applicationCanBeEdited, ApplicationStatus} from '../../../model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter, isSameOrBefore} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NotificationService} from '../../notification/notification.service';
 import {Observable, of, Subscription} from 'rxjs';
@@ -65,12 +65,12 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.applicationSub = this.applicationStore.application.subscribe(app => {
-      const status = app.statusEnum;
+      const status = app.status;
       this.showDecision = this.showDecisionForApplication(app);
       this.decisionDisabled = !this.validForDecision(app);
       this.showHandling = (status === ApplicationStatus.PENDING) && (app.type !== ApplicationType.NOTE);
       this.showDelete = (app.type === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
-      this.showCancel = status <= ApplicationStatus.DECISION;
+      this.showCancel = isSameOrBefore(status, ApplicationStatus.DECISION);
       this.showEdit = this.readonly && applicationCanBeEdited(status);
       this.showReplace = status === ApplicationStatus.DECISION;
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
@@ -98,7 +98,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     application.replacesApplicationId = undefined;
     application.replacedByApplicationId = undefined;
     // Pre-reserved should be kept as such
-    application.statusEnum = application.statusEnum === ApplicationStatus.PRE_RESERVED
+    application.status = application.status === ApplicationStatus.PRE_RESERVED
       ? ApplicationStatus.PRE_RESERVED
       : ApplicationStatus.PENDING;
     application.attachmentList = [];
@@ -153,7 +153,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   cancel(): void {
-    if (this.applicationStore.snapshot.application.statusEnum <= ApplicationStatus.DECISION) {
+    if (isSameOrBefore(this.applicationStore.snapshot.application.status, ApplicationStatus.DECISION)) {
       const data = {
         title: findTranslation('application.confirmCancel.title'),
         confirmText: findTranslation('application.confirmCancel.confirmText'),
@@ -201,15 +201,15 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   private shouldMoveToDecisionMaking(): boolean {
     const app = this.applicationStore.snapshot.application;
     const appType = app.type;
-    const status = app.statusEnum;
+    const status = app.status;
     return (appType === ApplicationType.CABLE_REPORT ||
             appType === ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS) &&
             status === ApplicationStatus.HANDLING;
   }
 
   private showDecisionForApplication(app: Application): boolean {
-    const validType = ApplicationType[app.type] !== ApplicationType.NOTE;
-    const validStatus = ApplicationStatus[app.status] >= ApplicationStatus.HANDLING;
+    const validType = app.type !== ApplicationType.NOTE;
+    const validStatus = isSameOrAfter(app.status, ApplicationStatus.HANDLING);
     return validType && validStatus;
   }
 

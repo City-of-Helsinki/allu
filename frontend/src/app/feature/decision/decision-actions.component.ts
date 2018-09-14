@@ -52,7 +52,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    const status = this.application.statusEnum;
+    const status = this.application.status;
     this.showProposal = inHandling(status);
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;

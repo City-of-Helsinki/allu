@@ -174,7 +174,7 @@ export class ApplicationStore {
       ...this.current,
       application,
       attachments: application.attachmentList,
-      draft: application.statusEnum === ApplicationStatus.PRE_RESERVED
+      draft: application.status === ApplicationStatus.PRE_RESERVED
     });
   }
 
@@ -318,7 +318,7 @@ export class ApplicationStore {
           return this.applicationDraftService.save(application);
         } else {
           // Convert to full application
-          if (application.statusEnum === ApplicationStatus.PRE_RESERVED) {
+          if (application.status === ApplicationStatus.PRE_RESERVED) {
             return this.applicationDraftService.convertToApplication(application);
           } else {
             return this.applicationService.save(application);

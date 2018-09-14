@@ -21,7 +21,7 @@ import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/
 import {NumberUtil} from '@util/number.util';
 import {ContractService} from '@service/contract/contract.service';
 import {Application} from '@model/application/application';
-import {ApplicationStatus} from '@model/application/application-status';
+import {ApplicationStatus, isBefore} from '@model/application/application-status';
 import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
@@ -91,7 +91,7 @@ export class ContractEffects {
   );
 
   private loadAvailableContract(application: Application): Observable<Action> {
-    const contract = application.statusEnum < ApplicationStatus.WAITING_CONTRACT_APPROVAL
+    const contract = isBefore(application.status, ApplicationStatus.WAITING_CONTRACT_APPROVAL)
       ? this.contractService.fetchPreview(application.id)
       : this.contractService.fetch(application.id);
 

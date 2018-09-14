@@ -11,7 +11,7 @@ import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-mo
 import {NotificationService} from '../../../notification/notification.service';
 import {Deposit} from '../../../../model/application/invoice/deposit';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
-import {applicationCanBeEdited, ApplicationStatus} from '../../../../model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus, isBefore} from '../../../../model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {CustomerService} from '../../../../service/customer/customer.service';
 import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
@@ -98,7 +98,7 @@ export class InvoicingInfoComponent implements OnInit {
 
   get canChangeDepositStatus(): boolean {
     const deposit = this.applicationStore.snapshot.deposit;
-    return deposit ? deposit.status < DepositStatusType.RETURNED_DEPOSIT : false;
+    return deposit ? isBefore(deposit.status, DepositStatusType.RETURNED_DEPOSIT) : false;
   }
 
   get billable(): boolean {
@@ -124,7 +124,7 @@ export class InvoicingInfoComponent implements OnInit {
         });
         this.originalForm = this.form.getRawValue();
 
-        this.setEditable(app.statusEnum, app.type, invoicingDate);
+        this.setEditable(app.status, app.type, invoicingDate);
     });
 
     this.initDeposit();

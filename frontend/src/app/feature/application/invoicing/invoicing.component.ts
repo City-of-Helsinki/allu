@@ -100,7 +100,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
     return this.store.select(fromApplication.getCurrentApplication).pipe(
       take(1),
       switchMap(app => {
-        if (applicationCanBeEdited(app.statusEnum)) {
+        if (applicationCanBeEdited(app.status)) {
           const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
           app.notBillable = invoicingInfo.notBillable;
           app.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;

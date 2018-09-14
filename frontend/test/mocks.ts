@@ -28,7 +28,7 @@ export class ApplicationStoreMock {
 
   constructor() {
     const application = new Application(1);
-    application.statusEnum = ApplicationStatus.PENDING;
+    application.status = ApplicationStatus.PENDING;
     const location = new Location(1);
     location.cityDistrictId = 1;
     application.locations.push(location);
@@ -77,7 +77,7 @@ export class ApplicationStoreMock {
   // Testing helper which updates status of application and emits new application
   updateStatus(status: ApplicationStatus): void {
     const app = this.application$.getValue();
-    app.statusEnum = status;
+    app.status = status;
     this.applicationChange(app);
   }
 
