@@ -98,7 +98,7 @@ export class InvoicingInfoComponent implements OnInit {
 
   get canChangeDepositStatus(): boolean {
     const deposit = this.applicationStore.snapshot.deposit;
-    return deposit ? isBefore(deposit.status, DepositStatusType.RETURNED_DEPOSIT) : false;
+    return deposit ? deposit.status < DepositStatusType.RETURNED_DEPOSIT : false;
   }
 
   get billable(): boolean {
