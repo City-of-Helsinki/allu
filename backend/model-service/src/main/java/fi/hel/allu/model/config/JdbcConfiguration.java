@@ -71,6 +71,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToInformationRequestFieldKey());
     configuration.register(new StringToInformationRequestStatus());
     configuration.register(new StringToContractStatus());
+    configuration.register(new StringToApprovalDocumentType());
     return configuration;
   }
 

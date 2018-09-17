@@ -11,6 +11,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.ApprovalDocumentService;
 import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.ContractService;
 import fi.hel.allu.servicecore.service.DecisionService;
@@ -24,6 +25,7 @@ public class ApplicationStatusController {
   private final DecisionSecurityService decisionSecurityService;
   private final DecisionService decisionService;
   private final ContractService contractService;
+  private final ApprovalDocumentService approvalDocumentService;
 
   @Autowired
   public ApplicationStatusController(
@@ -31,12 +33,14 @@ public class ApplicationStatusController {
       CommentService commentService,
       DecisionSecurityService decisionSecurityService,
       DecisionService decisionService,
-      ContractService contractService) {
+      ContractService contractService,
+      ApprovalDocumentService approvalDocumentService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.commentService = commentService;
     this.decisionSecurityService = decisionSecurityService;
     this.decisionService = decisionService;
     this.contractService = contractService;
+    this.approvalDocumentService = approvalDocumentService;
   }
 
   @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
@@ -102,7 +106,10 @@ public class ApplicationStatusController {
   @RequestMapping(value = "/{id}/status/operational_condition", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToOperationalCondition(@PathVariable int id) {
-    return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.OPERATIONAL_CONDITION));
+    ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
+    ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.OPERATIONAL_CONDITION);
+    approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson);
+    return ResponseEntity.ok(applicationJson);
   }
 
   @RequestMapping(value = "/{id}/status/toPreparation", method = RequestMethod.PUT)
@@ -116,6 +123,9 @@ public class ApplicationStatusController {
   @RequestMapping(value = "/{id}/status/finished", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToFinished(@PathVariable int id) {
-    return ResponseEntity.ok(applicationServiceComposer.changeStatus(id, StatusType.FINISHED));
+    ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
+    ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.FINISHED);
+    approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson);
+    return ResponseEntity.ok(applicationJson);
   }
 }

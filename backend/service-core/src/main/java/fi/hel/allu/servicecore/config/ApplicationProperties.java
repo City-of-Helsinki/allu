@@ -136,6 +136,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/decision");
   }
 
+  public String getApprovalDocumentUrl() {
+    return getModelServiceUrl("/applications/{id}/approvalDocument/{type}");
+  }
+
   /**
    * @return url to request metadata from model service.
    */
