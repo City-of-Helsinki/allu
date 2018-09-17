@@ -24,6 +24,9 @@ import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Approve, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
+import {Application} from '@model/application/application';
+import {ApplicationType} from '@model/application/type/application-type';
+import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 
 @Component({
   selector: 'supervision-task',
@@ -138,13 +141,19 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private openModal(type: SupervisionApprovalResolutionType): MatDialogRef<SupervisionApprovalModalComponent> {
+    const application = this.applicationStore.snapshot.application;
     const task = SupervisionTaskForm.to(this.form.value);
+    const reportedDate = SupervisionApprovalResolutionType.APPROVE === type
+      ? this.proposedReportedDate(task, application)
+      : undefined;
+
     const config = {
       ...SUPERVISION_APPROVAL_MODAL_CONFIG,
       data: {
         resolutionType: type,
         taskType: task.type,
-        applicationType: this.applicationStore.snapshot.application.type
+        applicationType: application.type,
+        reportedDate
       }
     };
 
@@ -177,5 +186,17 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       map(preferred => ArrayUtil.first(preferred)),
       filter(preferred => !!preferred)
     ).subscribe(preferred => this.form.patchValue({ownerId: preferred.id}));
+  }
+
+  private proposedReportedDate(task: SupervisionTask, application: Application): Date {
+    if (ApplicationType.EXCAVATION_ANNOUNCEMENT === application.type) {
+      const extension = <ExcavationAnnouncement> application.extension;
+      if (SupervisionTaskType.OPERATIONAL_CONDITION === task.type) {
+        return extension.customerWinterTimeOperation || extension.winterTimeOperation;
+      } else if (SupervisionTaskType.FINAL_SUPERVISION === task.type) {
+        return extension.customerWorkFinished || application.endTime;
+      }
+    }
+    return undefined;
   }
 }

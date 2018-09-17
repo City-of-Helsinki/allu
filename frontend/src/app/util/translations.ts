@@ -495,7 +495,8 @@ export const translations = {
     field: {
       reportedDateMissing: 'Päivä puuttuu',
       reportingDateMissing: 'Ilmoituspäivä puuttuu'
-    }
+    },
+    customerReportedDate: 'Asiakkaan ilmoittama päivä'
   },
   applicationBasket: {
     createNewProject: 'Luo uusi hanke',

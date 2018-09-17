@@ -18,6 +18,7 @@ export interface SupervisionApprovalModalData {
   resolutionType: SupervisionApprovalResolutionType;
   taskType: SupervisionTaskType;
   applicationType: ApplicationType;
+  reportedDate?: Date;
 }
 
 export interface SupervisionApprovalResult {
@@ -77,7 +78,7 @@ export class SupervisionApprovalModalComponent implements OnInit {
     }
 
     if (this.showReportedDate(this.data.taskType, this.data.applicationType)) {
-      this.form.addControl('reportedDate', this.fb.control(undefined, Validators.required));
+      this.form.addControl('reportedDate', this.fb.control(this.data.reportedDate, Validators.required));
       this.reportedDateType = taskTypeToReportedDateType[this.data.taskType];
     }
   }
