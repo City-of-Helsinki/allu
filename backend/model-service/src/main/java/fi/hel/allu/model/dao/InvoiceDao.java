@@ -183,6 +183,12 @@ public class InvoiceDao {
     queryFactory.update(invoice).set(invoice.sapIdPending, Boolean.FALSE).where(invoice.id.eq(invoiceId)).execute();
   }
 
+  @Transactional
+  public void setInvoicableTime(int applicationId, ZonedDateTime invoicableTime) {
+    queryFactory.update(invoice).set(invoice.invoicableTime, invoicableTime)
+        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse()).execute();
+  }
+
   private void deleteRows(int invoiceId) {
     queryFactory.delete(invoiceRow).where(invoiceRow.invoiceId.eq(invoiceId)).execute();
   }
@@ -209,4 +215,6 @@ public class InvoiceDao {
     return queryFactory.select(invoice.id).from(invoice).where(invoice.applicationId.eq(applicationId))
         .fetchCount() > 0;
   }
+
+
 }

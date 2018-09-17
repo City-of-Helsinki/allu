@@ -1047,6 +1047,14 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for setting invoicable time for application's invoices
+   */
+  public String getSetInvoicableTimeUrl() {
+    return getModelServiceUrl("/applications/{id}/invoices/invoicabletime");
+  }
+
+
+  /**
   * @return url for getting deposit by application id.
    */
   public String getDepositByApplicationIdUrl() {

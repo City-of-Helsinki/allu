@@ -1,6 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -326,6 +327,12 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}/invoices", method = RequestMethod.GET)
   public ResponseEntity<List<Invoice>> getInvoices(@PathVariable int id) {
     return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "{id}/invoices/invoicabletime",  method = RequestMethod.PUT)
+  public ResponseEntity<Void> setInvoicableTime(@PathVariable Integer id, @RequestBody ZonedDateTime invoicableTime) {
+    invoiceService.setInvoicableTime(id, invoicableTime);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

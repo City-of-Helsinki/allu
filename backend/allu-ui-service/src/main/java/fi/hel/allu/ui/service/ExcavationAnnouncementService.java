@@ -56,6 +56,9 @@ public class ExcavationAnnouncementService {
     Application application = applicationService.findApplicationById(id);
     boolean requiresDecision = requiresDecisionOnOperationalCondition(application, operationalConditionDate);
     applicationService.setOperationalConditionDate(id, operationalConditionDate);
+    if (!requiresDecision) {
+      setInvoicableTime(id, operationalConditionDate);
+    }
     StatusType newStatus = requiresDecision ? StatusType.DECISIONMAKING : StatusType.OPERATIONAL_CONDITION;
     return changeStatus(id, newStatus, decisionMakerUserId);
   }
@@ -71,6 +74,9 @@ public class ExcavationAnnouncementService {
     Application application = applicationService.findApplicationById(id);
     boolean requiresDecision = requiresDecisionOnWorkFinished(application, workFinishedDate);
     applicationService.setWorkFinishedDate(id, workFinishedDate);
+    if (!requiresDecision) {
+      setInvoicableTime(id, workFinishedDate);
+    }
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.WARRANTY,
         ExcavationAnnouncementDates.warrantySupervisionDate(workFinishedDate));
     StatusType newStatus = requiresDecision ? StatusType.DECISIONMAKING : StatusType.FINISHED;
@@ -102,5 +108,9 @@ public class ExcavationAnnouncementService {
         LocalDate.parse(configurationService.getSingleValue(ConfigurationKey.WINTER_TIME_START)),
         LocalDate.parse(configurationService.getSingleValue(ConfigurationKey.WINTER_TIME_END)));
     return winterTime.getWinterTimeEnd(date).atStartOfDay(TimeUtil.HelsinkiZoneId);
+  }
+
+  private void setInvoicableTime(Integer id, ZonedDateTime invoicableTime) {
+    applicationService.setInvoicableTime(id, invoicableTime);
   }
 }

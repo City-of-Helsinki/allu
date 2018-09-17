@@ -846,4 +846,9 @@ public class ApplicationDao {
     return (T)extension;
 
   }
+
+  @Transactional
+  public void setInvoicingDate(int applicationId, ZonedDateTime invoicableTime) {
+    queryFactory.update(application).set(application.invoicingDate, invoicableTime).where(application.id.eq(applicationId)).execute();
+  }
 }

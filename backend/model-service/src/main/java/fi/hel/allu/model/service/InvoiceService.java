@@ -83,6 +83,12 @@ public class InvoiceService {
     return application.getInvoicingDate();
   }
 
+  @Transactional
+  public void setInvoicableTime(int applicationId, ZonedDateTime invoicableTime) {
+    applicationDao.setInvoicingDate(applicationId, invoicableTime);
+    invoiceDao.setInvoicableTime(applicationId, invoicableTime);
+  }
+
   /**
    * Retrieve the list of invoices waiting to be sent
    *

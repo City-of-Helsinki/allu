@@ -389,4 +389,10 @@ public class ApplicationService {
         applicationProperties.getExcavationAnnouncementWorkFinishedUrl(),
         HttpMethod.PUT, new HttpEntity<>(workFinishedDate), Void.class, id);
   }
+
+  public void setInvoicableTime(Integer id, ZonedDateTime invoicableTime) {
+    restTemplate.exchange(
+        applicationProperties.getSetInvoicableTimeUrl(),
+        HttpMethod.PUT, new HttpEntity<>(invoicableTime), Void.class, id);
+  }
 }
