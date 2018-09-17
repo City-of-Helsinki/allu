@@ -12,6 +12,7 @@ import {
   ReportOperationalCondition,
   ReportWorkFinished
 } from '@feature/application/actions/excavation-announcement-actions';
+import * as SupervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
 import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
@@ -57,7 +58,8 @@ export class ExcavationAnnouncementEffects {
     switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerOperationalCondition(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndDispatch(updated),
-        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerOperationalCondition'))
+        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerOperationalCondition')),
+        new SupervisionTaskActions.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
@@ -70,7 +72,8 @@ export class ExcavationAnnouncementEffects {
     switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerWorkFinished(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndDispatch(updated),
-        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerWorkFinished'))
+        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerWorkFinished')),
+        new SupervisionTaskActions.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))

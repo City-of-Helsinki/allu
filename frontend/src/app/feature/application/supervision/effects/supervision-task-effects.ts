@@ -11,7 +11,7 @@ import {
   Load,
   LoadFailed,
   LoadSuccess,
-  Reject,
+  Reject, RejectSuccess,
   Remove,
   RemoveSuccess,
   Save,
@@ -90,7 +90,7 @@ export class SupervisionTaskEffects {
     ofType<Reject>(SupervisionTaskActionType.Reject),
     switchMap(action => this.taskService.reject(action.payload.task, action.payload.newSupervisionDate).pipe(
       switchMap((task) => [
-        new ApproveSuccess(task),
+        new RejectSuccess(task),
         new NotifySuccess('supervision.task.action.reject')
       ]),
       catchError(error => of(new NotifyFailure(error)))
