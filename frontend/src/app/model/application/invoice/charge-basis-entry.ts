@@ -6,6 +6,7 @@ export const DEFAULT_FEE_CENTS = 50000;
 
 export class ChargeBasisEntry {
   constructor(
+    public id?: number,
     public type?: ChargeBasisType,
     public unit?: ChargeBasisUnit,
     public quantity?: number,

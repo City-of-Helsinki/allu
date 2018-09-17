@@ -9,6 +9,7 @@ const EMPTY = '';
 
 export class ChargeBasisEntryForm {
   constructor(
+    public id?: number,
     public type?: string,
     public unit?: string,
     public quantity?: number,
@@ -27,6 +28,7 @@ export class ChargeBasisEntryForm {
   public static formGroup(fb: FormBuilder, entry: ChargeBasisEntry = new ChargeBasisEntry()): FormGroup {
     const formValue = ChargeBasisEntryForm.toFormValue(entry);
     return fb.group({
+      id: [formValue.id],
       type: [formValue.type, Validators.required],
       unit: [formValue.unit, Validators.required],
       quantity: [formValue.quantity, Validators.required],
@@ -43,10 +45,10 @@ export class ChargeBasisEntryForm {
 
   public static toChargeBasisEntry(form: ChargeBasisEntryForm): ChargeBasisEntry {
     const entry = new ChargeBasisEntry(
+      form.id,
       ChargeBasisType[form.type],
       ChargeBasisUnit[form.unit]
     );
-
     entry.uiQuantity = form.quantity;
     entry.text = form.text;
     entry.unitPriceEuro = form.unitPrice;
@@ -63,6 +65,7 @@ export class ChargeBasisEntryForm {
 
   public static toFormValue(entry: ChargeBasisEntry): ChargeBasisEntryForm {
     return new ChargeBasisEntryForm(
+      entry.id,
       ChargeBasisType[entry.type],
       ChargeBasisUnit[entry.unit],
       entry.uiQuantity,

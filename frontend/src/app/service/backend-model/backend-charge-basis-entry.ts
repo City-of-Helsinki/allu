@@ -1,4 +1,5 @@
 export interface BackendChargeBasisEntry {
+  id: number;
   type: string;
   unit: string;
   quantity: number;
