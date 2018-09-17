@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class ChargeBasisEntry {
+  private Integer id;
   private String tag;
   private String referredTag;
   private boolean manuallySet;
@@ -37,6 +38,14 @@ public class ChargeBasisEntry {
     this.explanation = explanation;
     this.unitPrice = unitPrice;
     this.netPrice = netPrice;
+  }
+
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
   }
 
   /**

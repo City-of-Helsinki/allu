@@ -6,6 +6,7 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
  * One line in an invoice
  */
 public class InvoiceRow {
+  private Integer chargeBasisId;
   private ChargeBasisUnit unit;
   private double quantity;
   private String text;
@@ -13,8 +14,9 @@ public class InvoiceRow {
   private int unitPrice;
   private int netPrice;
 
-  public InvoiceRow(ChargeBasisUnit unit, double quantity, String text, String[] explanation, int unitPrice,
+  public InvoiceRow(Integer chargeBasisId, ChargeBasisUnit unit, double quantity, String text, String[] explanation, int unitPrice,
       int netPrice) {
+    this.chargeBasisId = chargeBasisId;
     this.unit = unit;
     this.quantity = quantity;
     this.text = text;
@@ -94,6 +96,14 @@ public class InvoiceRow {
 
   public void setNetPrice(int netPrice) {
     this.netPrice = netPrice;
+  }
+
+  public Integer getChargeBasisId() {
+    return chargeBasisId;
+  }
+
+  public void setChargeBasisId(Integer chargeBasisId) {
+    this.chargeBasisId = chargeBasisId;
   }
 
 }

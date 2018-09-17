@@ -212,8 +212,8 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
     final Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-15T08:00:00+02:00[Europe/Helsinki]"), false,
         false, null, recipientId);
     invoice.setRows(Arrays.asList(
-        new InvoiceRow(ChargeBasisUnit.PIECE, 3.141, "One Pie", new String[] { "A pie", "With Apples" }, 12300, -99999),
-        new InvoiceRow(ChargeBasisUnit.DAY, 14, "A Forthnight", new String[] { "Two weeks", "Fourteen nights" }, 300,
+        new InvoiceRow(null, ChargeBasisUnit.PIECE, 3.141, "One Pie", new String[] { "A pie", "With Apples" }, 12300, -99999),
+        new InvoiceRow(null, ChargeBasisUnit.DAY, 14, "A Forthnight", new String[] { "Two weeks", "Fourteen nights" }, 300,
             4200)));
     return invoice;
   }
@@ -223,11 +223,11 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
     final Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-07T08:00:00+02:00[Europe/Helsinki]"), true,
         false, null, recipientId);
     invoice.setRows(Arrays.asList(
-        new InvoiceRow(ChargeBasisUnit.MONTH, 12, "A Whole year", new String[] { "A calendar year", "About 365 days" },
+        new InvoiceRow(null, ChargeBasisUnit.MONTH, 12, "A Whole year", new String[] { "A calendar year", "About 365 days" },
             12000, 144000),
-        new InvoiceRow(ChargeBasisUnit.WEEK, 2, "Two weeks", new String[] { "Forthnight", "Plenty of hours" }, 1230,
+        new InvoiceRow(null, ChargeBasisUnit.WEEK, 2, "Two weeks", new String[] { "Forthnight", "Plenty of hours" }, 1230,
             2460),
-        new InvoiceRow(ChargeBasisUnit.DAY, 14, "A Forthnight", new String[] { "Unit of time", "14 days" }, 300,
+        new InvoiceRow(null, ChargeBasisUnit.DAY, 14, "A Forthnight", new String[] { "Unit of time", "14 days" }, 300,
             4200)));
     return invoice;
   }

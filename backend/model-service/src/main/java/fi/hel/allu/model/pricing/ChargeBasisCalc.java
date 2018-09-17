@@ -43,7 +43,7 @@ public class ChargeBasisCalc {
     BigDecimal totalPrice = BigDecimal.ZERO;
     for (ChargeBasisEntry se : simpleEntries) {
       invoiceRows.add(
-          new InvoiceRow(se.getUnit(), se.getQuantity(), se.getText(), se.getExplanation(),
+          new InvoiceRow(se.getId(), se.getUnit(), se.getQuantity(), se.getText(), se.getExplanation(),
               se.getUnitPrice(),
               se.getNetPrice()));
       BigDecimal rowPrice = BigDecimal.valueOf(se.getNetPrice());
@@ -62,7 +62,7 @@ public class ChargeBasisCalc {
       final BigDecimal newTotalPrice = BigDecimal.valueOf((100.0 + me.getQuantity()) / 100.0).multiply(totalPrice);
       final int diff = newTotalPrice.subtract(totalPrice).setScale(0, RoundingMode.UP).intValue();
       invoiceRows
-          .add(new InvoiceRow(ChargeBasisUnit.PIECE, 1, me.getText(), me.getExplanation(), diff, diff));
+          .add(new InvoiceRow(me.getId(), ChargeBasisUnit.PIECE, 1, me.getText(), me.getExplanation(), diff, diff));
       totalPrice = newTotalPrice;
     }
     return totalPrice;
