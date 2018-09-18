@@ -1,0 +1,49 @@
+package fi.hel.allu.model.dao;
+
+import java.util.List;
+import java.util.Set;
+
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+
+public class ChargeBasisModification {
+
+  private List<ChargeBasisEntry> entriesToInsert;
+  private Set<Integer> entryIdsToDelete;
+  private Set<ChargeBasisEntry> entriesToUpdate;
+  private boolean manuallySet;
+  private int applicationId;
+
+  public ChargeBasisModification(int applicationId, List<ChargeBasisEntry> entriesToInsert, Set<Integer> entryIdsToDelete,
+      Set<ChargeBasisEntry> entriesToUpdate, boolean manuallySet) {
+    super();
+    this.applicationId = applicationId;
+    this.entriesToInsert = entriesToInsert;
+    this.entryIdsToDelete = entryIdsToDelete;
+    this.entriesToUpdate = entriesToUpdate;
+    this.manuallySet = manuallySet;
+  }
+
+  public List<ChargeBasisEntry> getEntriesToInsert() {
+    return entriesToInsert;
+  }
+
+  public Set<Integer> getEntryIdsToDelete() {
+    return entryIdsToDelete;
+  }
+
+  public Set<ChargeBasisEntry> getEntriesToUpdate() {
+    return entriesToUpdate;
+  }
+
+  public boolean hasChanges() {
+    return !entriesToUpdate.isEmpty() || !entriesToInsert.isEmpty() || !entryIdsToDelete.isEmpty();
+  }
+
+  public boolean isManuallySet() {
+    return manuallySet;
+  }
+
+  public int getApplicationId() {
+    return applicationId;
+  }
+}

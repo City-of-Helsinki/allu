@@ -3,6 +3,7 @@ package fi.hel.allu.model.pricing;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.model.dao.ChargeBasisDao;
+import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.service.ChargeBasisService;
 import static org.junit.Assert.assertEquals;
@@ -16,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,9 +41,9 @@ public class AreaUsageTagTest {
     ChargeBasisEntry e1 = new ChargeBasisEntry(null, null, true, ChargeBasisType.AREA_USAGE_FEE,
         ChargeBasisUnit.PIECE, 1, "Entry 1", new String[] { "One entry", "Item" }, 1, 1);
     List<ChargeBasisEntry> entries = Arrays.asList(e1);
+    Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
+        .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptySet(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
-    Mockito.verify(chargeBasisDao).setChargeBasis(Mockito.eq(1), captor.capture(), Mockito.eq(true));
-
     final List<ChargeBasisEntry> savedEntries = captor.getValue();
     assertEquals(1, savedEntries.size());
     final ChargeBasisEntry entry = savedEntries.get(0);
@@ -56,9 +58,9 @@ public class AreaUsageTagTest {
         ChargeBasisUnit.PIECE, 1, "Entry 2", new String[] { "Discount entry", "Discount" }, 1, 1);
 
     List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
+    Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
+        .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptySet(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
-    Mockito.verify(chargeBasisDao).setChargeBasis(Mockito.eq(1), captor.capture(), Mockito.eq(true));
-
     final List<ChargeBasisEntry> savedEntries = captor.getValue();
     assertEquals(2, savedEntries.size());
     final ChargeBasisEntry entry1 = savedEntries.get(0);
@@ -76,8 +78,9 @@ public class AreaUsageTagTest {
         ChargeBasisUnit.PIECE, 1, "Entry 2", new String[] { "One entry", "Item" }, 1, 1);
 
     List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
+    Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
+    .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptySet(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
-    Mockito.verify(chargeBasisDao).setChargeBasis(Mockito.eq(1), captor.capture(), Mockito.eq(true));
 
     final List<ChargeBasisEntry> savedEntries = captor.getValue();
     assertEquals(2, savedEntries.size());

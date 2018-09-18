@@ -287,4 +287,8 @@ public class TestCommon {
       "delete from allu.default_text",
       "delete from allu.default_recipient"
    };
+
+  public void deleteFrom(String table) throws SQLException {
+    sqlRunner.runSql("delete from allu." + table);
+  }
 }

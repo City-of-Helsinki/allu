@@ -3,6 +3,8 @@ package fi.hel.allu.model.domain;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.types.ChargeBasisType;
 
+import java.util.Arrays;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -165,5 +167,71 @@ public class ChargeBasisEntry {
 
   public void setNetPrice(int netPrice) {
     this.netPrice = netPrice;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(explanation);
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + (manuallySet ? 1231 : 1237);
+    result = prime * result + netPrice;
+    long temp;
+    temp = Double.doubleToLongBits(quantity);
+    result = prime * result + (int) (temp ^ (temp >>> 32));
+    result = prime * result + ((referredTag == null) ? 0 : referredTag.hashCode());
+    result = prime * result + ((tag == null) ? 0 : tag.hashCode());
+    result = prime * result + ((text == null) ? 0 : text.hashCode());
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+    result = prime * result + unitPrice;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ChargeBasisEntry other = (ChargeBasisEntry) obj;
+    if (!Arrays.equals(explanation, other.explanation))
+      return false;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    if (manuallySet != other.manuallySet)
+      return false;
+    if (netPrice != other.netPrice)
+      return false;
+    if (Double.doubleToLongBits(quantity) != Double.doubleToLongBits(other.quantity))
+      return false;
+    if (referredTag == null) {
+      if (other.referredTag != null)
+        return false;
+    } else if (!referredTag.equals(other.referredTag))
+      return false;
+    if (tag == null) {
+      if (other.tag != null)
+        return false;
+    } else if (!tag.equals(other.tag))
+      return false;
+    if (text == null) {
+      if (other.text != null)
+        return false;
+    } else if (!text.equals(other.text))
+      return false;
+    if (type != other.type)
+      return false;
+    if (unit != other.unit)
+      return false;
+    if (unitPrice != other.unitPrice)
+      return false;
+    return true;
   }
 }
