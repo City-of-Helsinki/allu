@@ -1,8 +1,7 @@
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {ApplicationDateReport} from '@model/application/application-date-report';
-import {ChargeBasisEntryModalData} from '@feature/application/invoicing/charge-basis/charge-basis-entry-modal.component';
+import {DateReport} from '@feature/application/date-reporting/date-report';
 
 export enum ReporterType {
   CUSTOMER = 'customer',
@@ -17,11 +16,6 @@ export enum ReportedDateType {
 export interface DateReportingModalData {
   reporterType: ReporterType;
   reportedDates: ReportedDateType[];
-}
-
-export interface DateReportingResult {
-  winterTimeOperation: ApplicationDateReport;
-  workFinished: ApplicationDateReport;
 }
 
 export const DATE_REPORTING_MODAL_CONFIG = {width: '600px'};
@@ -80,7 +74,7 @@ export class DateReportingModalComponent implements OnInit {
     return group;
   }
 
-  private formToResult(): DateReportingResult {
+  private formToResult(): DateReport {
     return this.reportedDates.controls
       .filter(ctrl => ctrl.enabled)
       .map(ctrl => ctrl.value)

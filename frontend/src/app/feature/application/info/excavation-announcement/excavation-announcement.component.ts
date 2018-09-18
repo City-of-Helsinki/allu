@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
-import {take} from 'rxjs/internal/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, take} from 'rxjs/internal/operators';
 import {MatDatepicker, MatDialog} from '@angular/material';
 import {Application} from '@model/application/application';
 import {AbstractControlWarn, ComplexValidator} from '@util/complex-validator';
@@ -15,7 +15,6 @@ import {TimeUtil} from '@util/time.util';
 import {Some} from '@util/option';
 import {IconConfig} from '@feature/common/icon-config';
 import {ConfigurationKey} from '@model/config/configuration-key';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap} from 'rxjs/internal/operators';
 import {NotificationService} from '@feature/notification/notification.service';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -26,10 +25,12 @@ import {Store} from '@ngrx/store';
 import {
   DATE_REPORTING_MODAL_CONFIG,
   DateReportingModalComponent,
-  DateReportingModalData, DateReportingResult, ReportedDateType, ReporterType
+  ReportedDateType,
+  ReporterType
 } from '@feature/application/date-reporting/date-reporting-modal.component';
-import {ReportCustomerOperationalCondition, ReportCustomerWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
+import {ReportCustomerDates} from '@feature/application/actions/excavation-announcement-actions';
 import {ApplicationStatus} from '@model/application/application-status';
+import {DateReport} from '@feature/application/date-reporting/date-report';
 
 @Component({
   selector: 'excavation-announcement',
@@ -88,10 +89,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       data
     }).afterClosed().pipe(
       filter(result => !!result)
-    ).subscribe((result: DateReportingResult) => {
-      Some(result.winterTimeOperation).do(date => this.store.dispatch(new ReportCustomerOperationalCondition(date)));
-      Some(result.workFinished).do(date => this.store.dispatch(new ReportCustomerWorkFinished(date)));
-    });
+    ).subscribe(result => this.store.dispatch(new ReportCustomerDates(result)));
   }
 
   protected initForm() {

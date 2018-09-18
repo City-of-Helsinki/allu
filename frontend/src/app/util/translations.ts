@@ -403,8 +403,7 @@ export const translations = {
       action: {
         reportOperationalCondition: 'Toiminnallinen kunto ilmoitettu',
         reportWorkFinished: 'Työn valmistuminen ilmoitettu',
-        reportCustomerOperationalCondition: 'Asiakkaan ilmoittama toiminnallinen kunto päivitetty',
-        reportCustomerWorkFinished: 'Asiakkaan ilmoittama työn valmistuminen päivitetty',
+        reportCustomerDates: 'Asiakkaan ilmoittamat päivät päivitetty',
       }
     },
     note: {
