@@ -27,6 +27,8 @@ import {Approve, Reject, Remove, Save} from '@feature/application/supervision/ac
 import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
+import {Some} from '@util/option';
+import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
 
 @Component({
   selector: 'supervision-task',
@@ -119,8 +121,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   approve(): void {
     this.openModal(SupervisionApprovalResolutionType.APPROVE).afterClosed().pipe(
       filter(result => !!result),
-      map(result => this.taskWithResult(SupervisionTaskStatusType.APPROVED, result)),
-    ).subscribe(task => this.store.dispatch(new Approve(task)));
+    ).subscribe((result: SupervisionApprovalResult) => this.handleApproval(result));
   }
 
   reject(): void {
@@ -129,6 +130,20 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     ).subscribe(result => this.store.dispatch(
       new Reject(this.taskWithResult(SupervisionTaskStatusType.REJECTED, result), result.newSupervisionDate)
     ));
+  }
+
+  private handleApproval(result: SupervisionApprovalResult): void {
+    const task = this.taskWithResult(SupervisionTaskStatusType.APPROVED, result);
+    this.store.dispatch(new Approve(task));
+    Some(result.reportedDate).do(date => this.reportDatesOnApproval(date, task.type));
+  }
+
+  private reportDatesOnApproval(date: Date, type: SupervisionTaskType): void {
+    if (type === SupervisionTaskType.OPERATIONAL_CONDITION) {
+      this.store.dispatch(new ReportOperationalCondition(date));
+    } else if (type === SupervisionTaskType.FINAL_SUPERVISION) {
+      this.store.dispatch(new ReportWorkFinished(date));
+    }
   }
 
   private taskWithResult(status: SupervisionTaskStatusType, result: SupervisionApprovalResult): SupervisionTask {

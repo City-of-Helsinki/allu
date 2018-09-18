@@ -10,12 +10,12 @@ export enum ExcavationAnnouncementActionType {
 
 export class ReportOperationalCondition implements Action {
   readonly type = ExcavationAnnouncementActionType.ReportOperationalCondition;
-  constructor(public payload: ApplicationDateReport) {}
+  constructor(public payload: Date) {}
 }
 
 export class ReportWorkFinished implements Action {
   readonly type = ExcavationAnnouncementActionType.ReportWorkFinished;
-  constructor(public payload: ApplicationDateReport) {}
+  constructor(public payload: Date) {}
 }
 
 export class ReportCustomerOperationalCondition implements Action {

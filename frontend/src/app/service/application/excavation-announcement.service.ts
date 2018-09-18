@@ -9,6 +9,8 @@ import {BackendApplication} from '@service/backend-model/backend-application';
 import {ApplicationMapper} from '@service/mapper/application-mapper';
 import {catchError, map} from 'rxjs/internal/operators';
 import {findTranslation} from '@util/translations';
+import {toDate} from '@angular/common/src/i18n/format_date';
+import {TimeUtil} from '@util/time.util';
 
 const baseUrl = '/api/excavationannouncements';
 
@@ -17,17 +19,17 @@ export class ExcavationAnnouncementService {
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandler) {}
 
-  reportOperationalCondition(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
+  reportOperationalCondition(applicationId: number, date: Date): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/operationalcondition`;
-    return this.report(url, dateReport).pipe(
+    return this.reportOfficial(url, date).pipe(
       catchError(error =>
         this.errorHandler.handle(error, findTranslation('application.excavationAnnouncement.error.reportOperationalCondition')))
     );
   }
 
-  reportWorkFinished(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
+  reportWorkFinished(applicationId: number, date: Date): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/workfinished`;
-    return this.report(url, dateReport).pipe(
+    return this.reportOfficial(url, date).pipe(
       catchError(error =>
         this.errorHandler.handle(error, findTranslation('application.excavationAnnouncement.error.reportWorkFinished')))
     );
@@ -35,7 +37,7 @@ export class ExcavationAnnouncementService {
 
   reportCustomerOperationalCondition(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/customeroperationalcondition`;
-    return this.report(url, dateReport).pipe(
+    return this.reportCustomer(url, dateReport).pipe(
       catchError(error =>
         this.errorHandler.handle(error, findTranslation('application.excavationAnnouncement.error.reportCustomerOperationalCondition')))
     );
@@ -43,14 +45,21 @@ export class ExcavationAnnouncementService {
 
   reportCustomerWorkFinished(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/customerworkfinished`;
-    return this.report(url, dateReport).pipe(
+    return this.reportCustomer(url, dateReport).pipe(
       catchError(error =>
         this.errorHandler.handle(error, findTranslation('application.excavationAnnouncement.error.reportCustomerWorkFinished')))
     );
   }
 
-  private report(url: string, dateReport: ApplicationDateReport): Observable<Application> {
+  private reportCustomer(url: string, dateReport: ApplicationDateReport): Observable<Application> {
     return this.http.put<BackendApplication>(url, ApplicationDateReportMapper.mapFrontend(dateReport)).pipe(
+      map(response => ApplicationMapper.mapBackend(response))
+    );
+  }
+
+  private reportOfficial(url: string, date: Date): Observable<Application> {
+    const body = TimeUtil.dateToBackend(date);
+    return this.http.put<BackendApplication>(url, JSON.stringify(body)).pipe(
       map(response => ApplicationMapper.mapBackend(response))
     );
   }

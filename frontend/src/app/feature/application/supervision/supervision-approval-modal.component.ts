@@ -58,7 +58,8 @@ export class SupervisionApprovalModalComponent implements OnInit {
     const formValue = this.form.value;
     this.dialogRef.close({
       result: formValue.result,
-      newSupervisionDate: formValue.newSupervisionDate
+      newSupervisionDate: formValue.newSupervisionDate,
+      reportedDate: formValue.reportedDate
     });
   }
 
