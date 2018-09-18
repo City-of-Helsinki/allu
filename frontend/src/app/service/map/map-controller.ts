@@ -225,10 +225,8 @@ export class MapController {
     });
 
     this.map.on('draw:edited', (e: any) => {
-      const removed = this.removeInvalidLayers(e.layers);
-      if (removed > 0) {
-        self.shapes$.next(new ShapeAdded(editedItems));
-      }
+      this.removeInvalidLayers(e.layers);
+      self.shapes$.next(new ShapeAdded(editedItems));
     });
 
     this.map.on('draw:deleted', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
