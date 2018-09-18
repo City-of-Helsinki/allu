@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.ExcavationAnnouncementDates;
@@ -81,6 +82,12 @@ public class ExcavationAnnouncementService {
         ExcavationAnnouncementDates.warrantySupervisionDate(workFinishedDate));
     StatusType newStatus = requiresDecision ? StatusType.DECISIONMAKING : StatusType.FINISHED;
     return changeStatus(id, newStatus, decisionMakerUserId);
+  }
+
+  public ApplicationJson setRequiredTasks(Integer id, RequiredTasks requiredTasks) {
+    applicationService.setRequiredTasks(id, requiredTasks);
+    Application application = applicationService.findApplicationById(id);
+    return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
   private ApplicationJson changeStatus(Integer id, StatusType newStatus, Integer decisionMakerUserId) {

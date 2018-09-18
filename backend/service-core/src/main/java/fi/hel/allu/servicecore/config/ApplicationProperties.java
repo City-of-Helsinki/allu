@@ -1053,7 +1053,6 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/invoices/invoicabletime");
   }
 
-
   /**
   * @return url for getting deposit by application id.
    */
@@ -1283,5 +1282,9 @@ public class ApplicationProperties {
 
   public String getExcavationAnnouncementWorkFinishedUrl() {
     return getModelServiceUrl("/excavationannouncements/{id}/workfinished");
+  }
+
+  public String getSetRequiredTasksUrl() {
+    return getModelServiceUrl("/excavationannouncements/{id}/requiredtasks");
   }
 }

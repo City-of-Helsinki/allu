@@ -25,6 +25,7 @@ import com.querydsl.sql.dml.SQLInsertClause;
 
 import fi.hel.allu.QApplication;
 import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.ExcavationAnnouncementDates;
@@ -823,6 +824,13 @@ public class ApplicationDao {
     excavationAnnouncement.setWorkFinished(workFinishedDate);
     // Set guarantee end time when work finished is updated
     excavationAnnouncement.setGuaranteeEndTime(ExcavationAnnouncementDates.guaranteeEndDate(workFinishedDate));
+    updateExtension(id, excavationAnnouncement);
+  }
+
+  public void setRequiredTasks(Integer id, RequiredTasks tasks) {
+    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    excavationAnnouncement.setCompactionAndBearingCapacityMeasurement(tasks.getCompactionAndBearingCapacityMeasurement());
+    excavationAnnouncement.setQualityAssuranceTest(tasks.getQualityAssuranceTest());
     updateExtension(id, excavationAnnouncement);
   }
 

@@ -1,6 +1,7 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -479,5 +480,10 @@ public class ApplicationService {
   @Transactional
   public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     applicationDao.setWorkFinishedDate(id, workFinishedDate);
+  }
+
+  @Transactional
+  public void setRequiredTasks(Integer id, RequiredTasks requiredTasks) {
+    applicationDao.setRequiredTasks(id, requiredTasks);
   }
 }

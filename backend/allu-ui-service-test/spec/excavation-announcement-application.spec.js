@@ -219,7 +219,9 @@ describe('Excavation announcement application', () => {
           'workPurpose': 'Kaivaa mahdollisimman syvä kuoppa',
           'traffixArrangements': 'Mannerheimintie kokonaan poikki. Koittakaa selvitä!',
           'trafficArrangementImpedimentType': 'SIGNIFICANT_IMPEDIMENT',
-          'pksCard': true
+          'pksCard': true,
+          "compactionAndBearingCapacityMeasurement": true,
+          "qualityAssuranceTest": true
         },
         'invoicingDate': '2018-12-22T22:00:00Z'
       }

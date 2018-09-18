@@ -16,6 +16,8 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
+  private Boolean compactionAndBearingCapacityMeasurement;
+  private Boolean qualityAssuranceTest;
   private ZonedDateTime winterTimeOperation;
   private ZonedDateTime workFinished;
   private ZonedDateTime unauthorizedWorkStartTime;
@@ -93,6 +95,22 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
 
   public void setPropertyConnectivity(Boolean propertyConnectivity) {
     this.propertyConnectivity = propertyConnectivity;
+  }
+
+  public Boolean getCompactionAndBearingCapacityMeasurement() {
+    return compactionAndBearingCapacityMeasurement;
+  }
+
+  public void setCompactionAndBearingCapacityMeasurement(Boolean compactionAndBearingCapacityMeasurement) {
+    this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
+  }
+
+  public Boolean getQualityAssuranceTest() {
+    return qualityAssuranceTest;
+  }
+
+  public void setQualityAssuranceTest(Boolean qualityAssuranceTest) {
+    this.qualityAssuranceTest = qualityAssuranceTest;
   }
 
   /**

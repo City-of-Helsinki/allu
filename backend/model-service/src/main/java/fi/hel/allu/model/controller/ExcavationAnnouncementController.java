@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.ApplicationService;
 
@@ -44,5 +45,9 @@ public class ExcavationAnnouncementController {
    return new ResponseEntity<>(HttpStatus.OK);
   }
 
-
+  @RequestMapping(value = "/{id}/requiredtasks", method = RequestMethod.PUT)
+  public ResponseEntity<Void> setRequiredTasks(@PathVariable Integer id, @RequestBody RequiredTasks tasks) {
+    applicationService.setRequiredTasks(id, tasks);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

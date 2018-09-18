@@ -24,6 +24,8 @@ public class ExcavationAnnouncementMapper {
     json.setMaintenanceWork(excavationAnnouncement.getMaintenanceWork());
     json.setEmergencyWork(excavationAnnouncement.getEmergencyWork());
     json.setPropertyConnectivity(excavationAnnouncement.getPropertyConnectivity());
+    json.setCompactionAndBearingCapacityMeasurement(excavationAnnouncement.getCompactionAndBearingCapacityMeasurement());
+    json.setQualityAssuranceTest(excavationAnnouncement.getQualityAssuranceTest());
     json.setUnauthorizedWorkStartTime(excavationAnnouncement.getUnauthorizedWorkStartTime());
     json.setUnauthorizedWorkEndTime(excavationAnnouncement.getUnauthorizedWorkEndTime());
     return ApplicationExtensionMapper.modelToJson(excavationAnnouncement, json);
@@ -49,6 +51,8 @@ public class ExcavationAnnouncementMapper {
     excavationAnnouncement.setMaintenanceWork(json.getMaintenanceWork());
     excavationAnnouncement.setEmergencyWork(json.getEmergencyWork());
     excavationAnnouncement.setPropertyConnectivity(json.getPropertyConnectivity());
+    excavationAnnouncement.setCompactionAndBearingCapacityMeasurement(json.getCompactionAndBearingCapacityMeasurement());
+    excavationAnnouncement.setQualityAssuranceTest(json.getQualityAssuranceTest());
     excavationAnnouncement.setUnauthorizedWorkStartTime(json.getUnauthorizedWorkStartTime());
     excavationAnnouncement.setUnauthorizedWorkEndTime(json.getUnauthorizedWorkEndTime());
     return ApplicationExtensionMapper.jsonToModel(json, excavationAnnouncement);
