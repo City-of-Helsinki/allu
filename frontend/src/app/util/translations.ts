@@ -390,6 +390,8 @@ export const translations = {
       validityReportedByCustomer: 'Asiakkaan ilmoittama voimassaolo',
       excavationInfo: 'Kaivuilmoituksen tiedot',
       cableReport: 'Johtoselvitys',
+      compactionAndBearingCapacityMeasurement: 'Tiiveys- ja kantavuusmittaus',
+      qualityAssuranceTest: 'Päällysteen laadunvarmistuskoe',
       field: {
         inWinterTime: 'Hakemus päättyy talvityöaikana',
         unauthorizedWorkStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'

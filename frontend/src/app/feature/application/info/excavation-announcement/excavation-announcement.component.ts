@@ -121,7 +121,9 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       cableReportId: [undefined],
       workPurpose: ['', Validators.required],
       trafficArrangements: [''],
-      trafficArrangementImpedimentType: ['', Validators.required]
+      trafficArrangementImpedimentType: ['', Validators.required],
+      compactionAndBearingCapacityMeasurement: [false],
+      qualityAssuranceTest: [false]
     });
 
     this.validityEndTimeCtrl = <AbstractControlWarn>this.applicationForm.get(['validityTimes', 'endTime']);
