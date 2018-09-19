@@ -103,14 +103,19 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="showTerms">
-    <div class="col m12">
-      <default-text [form]="applicationForm"
-                    [applicationType]="application.type"
-                    [texts]="application.extension.terms"
-                    [readonly]="readonly"
-                    [textType]="'TERMS'"
-                    [includeTypes]="['TERMS']"></default-text>
+  <div fxLayout="row" *ngIf="showTerms">
+    <div fxFlex>
+      <allu-card>
+        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-content>
+          <default-text [form]="applicationForm"
+                        [applicationType]="application.type"
+                        [texts]="application.extension.terms"
+                        [readonly]="readonly"
+                        [textType]="'TERMS'"
+                        [includeTypes]="['TERMS']"></default-text>
+        </mat-card-content>
+      </allu-card>
     </div>
   </div>
 

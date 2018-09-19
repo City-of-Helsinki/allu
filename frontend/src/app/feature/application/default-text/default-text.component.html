@@ -1,31 +1,28 @@
 <form [formGroup]="form">
-  <allu-card>
-    <mat-card-title>{{[textType, 'title'] | translation}}</mat-card-title>
-    <mat-card-content>
-      <div class="row">
-        <div *ngIf="!readonly" class="col s6">
-          <mat-form-field class="input-full-width">
-            <mat-select class="input-full-width" [placeholder]="[textType, 'selectTerm'] | translation">
-              <mat-option *ngFor="let defaultText of defaultTexts"
-                          [value]="defaultText.text"
-                          (click)="addDefaultText(defaultText.text)">
-                {{defaultText.text}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div *ngIf="!readonly" class="col s4">
-          <button mat-raised-button type="button" color="primary" (click)="editDefaultTexts()">
-            {{'common.button.edit' | translation | uppercase}}
-          </button>
-        </div>
-        <div class="col s12">
-          <mat-form-field class="input-full-width">
+  <div fxLayout="row">
+    <div *ngIf="!readonly" fxFlex="60">
+      <mat-form-field class="input-full-width">
+        <mat-select class="input-full-width" [placeholder]="[textType, 'selectTerm'] | translation">
+          <mat-option *ngFor="let defaultText of defaultTexts"
+                      [value]="defaultText.text"
+                      (click)="addDefaultText(defaultText.text)">
+            {{defaultText.text}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div *ngIf="!readonly" fxFlex="60">
+      <button mat-raised-button type="button" color="primary" (click)="editDefaultTexts()">
+        {{'common.button.edit' | translation | uppercase}}
+      </button>
+    </div>
+  </div>
+  <div fxLayout="row">
+    <div fxFlex>
+      <mat-form-field class="input-full-width">
             <textarea matInput matTextareaAutosize [formControlName]="textType"
                       [placeholder]="[textType, 'applicationTerms'] | translation"></textarea>
-          </mat-form-field>
-        </div>
-      </div>
-    </mat-card-content>
-  </allu-card>
+      </mat-form-field>
+    </div>
+  </div>
 </form>

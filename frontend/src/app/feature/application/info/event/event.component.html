@@ -252,12 +252,17 @@
 
   <div fxLayout="row" *ngIf="showTerms">
     <div fxFlex>
-      <default-text [form]="applicationForm"
-                    [applicationType]="application.type"
-                    [texts]="application.extension.terms"
-                    [readonly]="readonly"
-                    [textType]="'TERMS'"
-                    [includeTypes]="['TERMS']"></default-text>
+      <allu-card>
+        <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
+        <mat-card-content>
+          <default-text [form]="applicationForm"
+                        [applicationType]="application.type"
+                        [texts]="application.extension.terms"
+                        [readonly]="readonly"
+                        [textType]="'TERMS'"
+                        [includeTypes]="['TERMS']"></default-text>
+        </mat-card-content>
+      </allu-card>
     </div>
   </div>
 
