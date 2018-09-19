@@ -25,6 +25,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public workPurpose?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
+    public compactionAndBearingCapacityMeasurement?: boolean,
+    public qualityAssuranceTest?: boolean,
     public TERMS?: string) {}
 
   static to(form: ExcavationAnnouncementForm, original: ExcavationAnnouncement = new ExcavationAnnouncement()): ExcavationAnnouncement {
@@ -47,6 +49,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.workPurpose = form.workPurpose;
     ea.trafficArrangements = form.trafficArrangements;
     ea.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
+    ea.compactionAndBearingCapacityMeasurement = form.compactionAndBearingCapacityMeasurement;
+    ea.qualityAssuranceTest = form.qualityAssuranceTest;
     ea.terms = form.TERMS;
     return ea;
   }
@@ -71,6 +75,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.workPurpose,
       excavation.trafficArrangements,
       excavation.trafficArrangementImpedimentType,
+      excavation.compactionAndBearingCapacityMeasurement,
+      excavation.qualityAssuranceTest,
       excavation.terms
     );
   }

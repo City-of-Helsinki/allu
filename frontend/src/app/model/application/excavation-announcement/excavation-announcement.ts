@@ -1,7 +1,6 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
-import {TimeUtil} from '../../../util/time.util';
 
 export class ExcavationAnnouncement extends ApplicationExtension {
   constructor(
@@ -25,7 +24,9 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public trafficArrangementImpedimentType?: string,
     public terms?: string,
     public operationalConditionReported?: Date,
-    public workFinishedReported?: Date
+    public workFinishedReported?: Date,
+    public compactionAndBearingCapacityMeasurement?: boolean,
+    public qualityAssuranceTest?: boolean
   ) {
     super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType

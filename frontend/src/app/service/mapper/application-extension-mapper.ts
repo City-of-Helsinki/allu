@@ -80,7 +80,9 @@ export class ApplicationExtensionMapper {
           backendExtension.trafficArrangementImpedimentType,
           backendExtension.terms,
           backendExtension.operationalConditionReported,
-          backendExtension.workFinishedReported
+          backendExtension.workFinishedReported,
+          backendExtension.compactionAndBearingCapacityMeasurement,
+          backendExtension.qualityAssuranceTest
         );
       case ApplicationType.NOTE:
         return new Note(backendExtension.description);
@@ -220,7 +222,9 @@ export class ApplicationExtensionMapper {
       trafficArrangementImpedimentType: excavation.trafficArrangementImpedimentType,
       terms: excavation.terms,
       operationalConditionReported: excavation.operationalConditionReported,
-      workFinishedReported: excavation.workFinishedReported
+      workFinishedReported: excavation.workFinishedReported,
+      compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,
+      qualityAssuranceTest: excavation.qualityAssuranceTest
     };
   }
 
