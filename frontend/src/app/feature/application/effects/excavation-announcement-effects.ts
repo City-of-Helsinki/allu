@@ -8,7 +8,7 @@ import {Observable, of} from 'rxjs/index';
 import {
   ExcavationAnnouncementActionType, ReportCustomerDates,
   ReportOperationalCondition,
-  ReportWorkFinished
+  ReportWorkFinished, SetRequiredTasks
 } from '@feature/application/actions/excavation-announcement-actions';
 import * as SupervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
 import {catchError, map, switchMap} from 'rxjs/internal/operators';
@@ -59,6 +59,16 @@ export class ExcavationAnnouncementEffects {
         new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerDates')),
         new SupervisionTaskActions.Load()
       ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  setRequiredTasks: Observable<Action> = this.actions.pipe(
+    ofType<SetRequiredTasks>(ExcavationAnnouncementActionType.SetRequiredTasks),
+    withLatestExisting<SetRequiredTasks>(this.store.select(fromApplication.getCurrentApplication)),
+    switchMap(([action, app]) => this.excavationAnnouncementService.setRequiredTasks(app.id, action.payload).pipe(
+      map(updated => this.applicationStore.setAndDispatch(updated)),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );

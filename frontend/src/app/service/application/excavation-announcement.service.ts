@@ -11,6 +11,7 @@ import {catchError, map} from 'rxjs/internal/operators';
 import {findTranslation} from '@util/translations';
 import {TimeUtil} from '@util/time.util';
 import {DateReport} from '@feature/application/date-reporting/date-report';
+import {RequiredTasks} from '@model/application/required-tasks';
 
 const baseUrl = '/api/excavationannouncements';
 
@@ -58,6 +59,15 @@ export class ExcavationAnnouncementService {
   reportCustomerWorkFinished(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/customerworkfinished`;
     return this.reportCustomer(url, dateReport).pipe(
+      catchError(error =>
+        this.errorHandler.handle(error, findTranslation('application.excavationAnnouncement.error.reportCustomerWorkFinished')))
+    );
+  }
+
+  setRequiredTasks(applicationId: number, tasks: RequiredTasks): Observable<Application> {
+    const url = `${baseUrl}/${applicationId}/requiredtasks`;
+    return this.http.put<BackendApplication>(url, JSON.stringify(tasks)).pipe(
+      map(response => ApplicationMapper.mapBackend(response)),
       catchError(error =>
         this.errorHandler.handle(error, findTranslation('application.excavationAnnouncement.error.reportCustomerWorkFinished')))
     );

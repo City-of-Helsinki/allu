@@ -401,6 +401,7 @@ export const translations = {
         reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui',
         reportCustomerOperationalCondition: 'Asiakkaan ilmoittaman toiminnallisen kunnon päivittäminen epäonnistui',
         reportCustomerWorkFinished: 'Asiakkaan ilmoittaman työn valmistumisen päivittäminen epäonnistui',
+        setRequiredTasks: 'Vaadittujen toimenpiteiden päivittäminen epäonnistui',
       },
       action: {
         reportOperationalCondition: 'Toiminnallinen kunto ilmoitettu',
