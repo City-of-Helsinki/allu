@@ -7,9 +7,12 @@ import {RoleType} from '@model/user/role-type';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {ComplexValidator} from '@util/complex-validator';
 import {SupervisionTaskForm} from './supervision-task-form';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
 import * as fromSupervisionTask from './reducers';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromApplication from '@feature/application/reducers';
+import {Application} from '@model/application/application';
 
 
 @Component({
@@ -20,12 +23,13 @@ import * as fromSupervisionTask from './reducers';
 export class SupervisionComponent implements OnInit, OnDestroy {
   supervisionTasks: FormArray;
   supervisors: Array<User> = [];
+  application$: Observable<Application>;
 
   private supervisionTaskSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
               private userHub: UserHub,
-              private store: Store<fromSupervisionTask.State>) {
+              private store: Store<fromRoot.State>) {
     this.supervisionTasks = this.fb.array([]);
   }
 
@@ -34,6 +38,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
       FormUtil.clearArray(this.supervisionTasks);
       tasks.forEach(task => this.addNew(task));
     });
+    this.application$ = this.store.select(fromApplication.getCurrentApplication);
 
     this.userHub.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
   }
@@ -58,8 +63,11 @@ export class SupervisionComponent implements OnInit, OnDestroy {
       status: [undefined],
       description: [undefined],
       result: [undefined],
-      automatic: [undefined]
+      automatic: [undefined],
+      compactionAndBearingCapacityMeasurement: [undefined],
+      qualityAssuranceTest: [undefined],
     });
+
     formGroup.patchValue(SupervisionTaskForm.from(task));
 
     if (task.id === undefined) {

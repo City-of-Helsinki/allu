@@ -3,6 +3,7 @@ import {isAutomaticSupervisionTaskType, SupervisionTaskType} from '../../../mode
 import {Some} from '../../../util/option';
 import {User} from '../../../model/user/user';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
+import {RequiredTasks} from '@model/application/required-tasks';
 
 export class SupervisionTaskForm {
   constructor(
@@ -19,7 +20,9 @@ export class SupervisionTaskForm {
     public status?: SupervisionTaskStatusType,
     public description?: string,
     public result?: string,
-    public automatic?: boolean
+    public automatic?: boolean,
+    public compactionAndBearingCapacityMeasurement?: boolean,
+    public qualityAssuranceTest?: boolean
   ) {}
 
   static from(task: SupervisionTask): SupervisionTaskForm {
@@ -59,5 +62,16 @@ export class SupervisionTaskForm {
     task.description = form.description;
     task.result = form.result;
     return task;
+  }
+
+  static requiredTasks(form: SupervisionTaskForm): RequiredTasks {
+    if (form.qualityAssuranceTest || form.compactionAndBearingCapacityMeasurement) {
+      return {
+        qualityAssuranceTest: form.qualityAssuranceTest,
+        compactionAndBearingCapacityMeasurement: form.compactionAndBearingCapacityMeasurement
+      };
+    } else {
+      return undefined;
+    }
   }
 }

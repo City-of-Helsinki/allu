@@ -11,11 +11,15 @@
     </div>
   </div>
 
-  <ul>
+  <ul *ngIf="application$ | async as application">
     <li *ngFor="let task of supervisionTasks.controls; let i = index;">
       <div fxLayout="row" fxLayout.sm="column">
         <div fxFlex="100%">
-          <supervision-task [form]="task" [supervisors]="supervisors" (onRemove)="remove(i)"></supervision-task>
+          <supervision-task
+            [form]="task"
+            [application]="application"
+            [supervisors]="supervisors"
+            (onRemove)="remove(i)"></supervision-task>
         </div>
       </div>
     </li>

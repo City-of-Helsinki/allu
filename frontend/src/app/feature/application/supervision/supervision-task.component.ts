@@ -19,7 +19,7 @@ import {
 } from './supervision-approval-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
-import {filter, map, take} from 'rxjs/internal/operators';
+import {filter, map, startWith, take, takeUntil} from 'rxjs/internal/operators';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
@@ -28,7 +28,13 @@ import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {Some} from '@util/option';
-import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
+import {
+  ReportOperationalCondition,
+  ReportWorkFinished,
+  SetRequiredTasks
+} from '@feature/application/actions/excavation-announcement-actions';
+import {Subject} from 'rxjs/index';
+import {RequiredTasks} from '@model/application/required-tasks';
 
 @Component({
   selector: 'supervision-task',
@@ -47,8 +53,11 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   canEdit = false;
   canApprove = false;
   canRemove = false;
+  showRequiredTasks = false;
 
   private originalEntry: SupervisionTaskForm;
+  private destroy = new Subject<boolean>();
+  private _application: Application;
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromRoot.State>,
@@ -73,9 +82,27 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUserCanEdit(formValue.creatorId);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
+
+    this.form.get('type').valueChanges.pipe(
+      takeUntil(this.destroy),
+      startWith(formValue.type)
+    ).subscribe(type => this.onTypeChange(type, this.application));
   }
 
   ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
+
+  @Input() set application(application: Application) {
+    this._application = application;
+    Some(this.form)
+      .map(form => form.get('type').value)
+      .do(type => this.onTypeChange(type, application));
+  }
+
+  get application() {
+    return this._application;
   }
 
   remove(): void {
@@ -88,6 +115,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   save(): void {
     const formValue = <SupervisionTaskForm>this.form.getRawValue();
+    const requiredTasks: RequiredTasks = SupervisionTaskForm.requiredTasks(formValue);
     this.store.select(fromApplication.getCurrentApplication).pipe(
       map(app => {
         const task = SupervisionTaskForm.to(formValue);
@@ -95,7 +123,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
         return task;
       }),
       take(1)
-    ).subscribe(task => this.store.dispatch(new Save(task)));
+    ).subscribe(task => this.handleSave(task, requiredTasks));
   }
 
   cancel(): void {
@@ -156,10 +184,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private openModal(type: SupervisionApprovalResolutionType): MatDialogRef<SupervisionApprovalModalComponent> {
-    const application = this.applicationStore.snapshot.application;
     const task = SupervisionTaskForm.to(this.form.value);
     const reportedDate = SupervisionApprovalResolutionType.APPROVE === type
-      ? this.proposedReportedDate(task, application)
+      ? this.proposedReportedDate(task, this.application)
       : undefined;
 
     const config = {
@@ -167,7 +194,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       data: {
         resolutionType: type,
         taskType: task.type,
-        applicationType: application.type,
+        applicationType: this.application.type,
         reportedDate
       }
     };
@@ -213,5 +240,28 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       }
     }
     return undefined;
+  }
+
+  private onTypeChange(type: SupervisionTaskType, application: Application): void {
+    this.showRequiredTasks = type === SupervisionTaskType.PRELIMINARY_SUPERVISION
+      && application.type === ApplicationType.EXCAVATION_ANNOUNCEMENT;
+
+    if (this.showRequiredTasks) {
+      const excavation = <ExcavationAnnouncement>application.extension;
+      this.form.patchValue({
+        compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,
+        qualityAssuranceTest: excavation.qualityAssuranceTest
+      });
+    } else {
+      this.form.patchValue({
+        compactionAndBearingCapacityMeasurement: undefined,
+        qualityAssuranceTest: undefined
+      });
+    }
+  }
+
+  private handleSave(task: SupervisionTask, requiredTasks?: RequiredTasks): void {
+    this.store.dispatch(new Save(task));
+    Some(requiredTasks).do(tasks => this.store.dispatch(new SetRequiredTasks(tasks)));
   }
 }

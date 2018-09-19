@@ -77,6 +77,20 @@
           </div>
         </div>
       </div>
+
+      <div fxLayout="row" *ngIf="showRequiredTasks" class="form-group">
+        <div fxFlex="20">
+          <mat-checkbox formControlName="compactionAndBearingCapacityMeasurement">
+            {{'application.excavationAnnouncement.compactionAndBearingCapacityMeasurement' | translation}}
+          </mat-checkbox>
+        </div>
+        <div fxFlex="20">
+          <mat-checkbox formControlName="qualityAssuranceTest">
+            {{'application.excavationAnnouncement.qualityAssuranceTest' | translation}}
+          </mat-checkbox>
+        </div>
+      </div>
+
       <div fxLayout="row" fxLayout.sm="column">
         <div fxFlex="100%">
           <ng-container *ngIf="canApprove && form.disabled">
