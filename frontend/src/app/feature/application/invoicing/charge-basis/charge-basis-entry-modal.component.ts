@@ -34,7 +34,7 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.chargeBasisTypes.sort(ArrayUtil.naturalSortTranslated(['chargeBasis.type'], (item: string) => item));
-    const entry = this.data.entry || new ChargeBasisEntry(ChargeBasisType.DISCOUNT, ChargeBasisUnit.PIECE, 1);
+    const entry = this.data.entry || new ChargeBasisEntry(undefined, ChargeBasisType.DISCOUNT, ChargeBasisUnit.PIECE, 1);
     this.chargeBasisEntryForm = ChargeBasisEntryForm.formGroup(this.fb, entry);
     this.typeCtrl = <FormControl>this.chargeBasisEntryForm.get('type');
 
