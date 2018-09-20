@@ -266,3 +266,123 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
     pykala = EXCLUDED.pykala,
     paatoksen_perustelut = EXCLUDED.paatoksen_perustelut
 ;
+
+INSERT INTO allureport.johtoselvitys (
+  hakemus_id,
+  ehdot,
+  johtokartoitettava,
+  tyon_kuvaus,
+  karttaotteiden_maara,
+  kartta_paivitetty,
+  rakentaminen,
+  kunnossapito,
+  hatatyo,
+  tontti_kiinteisto_liitos,
+  voimassaoloaika
+)
+SELECT
+  a.id AS hakemus_id,
+  a.extension::json ->> 'terms' AS ehdot,
+  (a.extension::json ->> 'cableSurveyRequired')::boolean  AS johtokartoitettava,
+  a.extension::json ->> 'workDescription' AS tyonkuvaus,
+  (a.extension::json ->> 'mapExtractCount')::integer AS karttaotteiden_maara,
+  (a.extension::json ->> 'mapUpdated')::boolean  AS kartta_paivitetty,
+  (a.extension::json ->> 'constructionWork')::boolean AS rakentaminen,
+  (a.extension::json ->> 'maintenanceWork')::boolean AS kunnossapito,
+  (a.extension::json ->> 'emergencyWork')::boolean AS hatatyo,
+  (a.extension::json ->> 'propertyConnectivity')::boolean AS tontti_kiinteisto_liitos,
+  TO_TIMESTAMP((a.extension::json ->> 'validityTime')::float) AS voimassaoloaika
+FROM allu_operative.application a
+WHERE a.type = 'CABLE_REPORT'
+ON CONFLICT (hakemus_id) DO UPDATE SET
+    ehdot = EXCLUDED.ehdot,
+	  johtokartoitettava = EXCLUDED.johtokartoitettava,
+	  tyon_kuvaus = EXCLUDED.tyon_kuvaus,
+	  karttaotteiden_maara = EXCLUDED.karttaotteiden_maara,
+	  kartta_paivitetty = EXCLUDED.kartta_paivitetty,
+	  rakentaminen = EXCLUDED.rakentaminen,
+	  kunnossapito = EXCLUDED.kunnossapito,
+	  hatatyo = EXCLUDED.hatatyo,
+	  tontti_kiinteisto_liitos = EXCLUDED.tontti_kiinteisto_liitos,
+	  voimassaoloaika = EXCLUDED.voimassaoloaika
+;
+
+
+INSERT INTO allureport.kaivuilmoitus (
+  hakemus_id,
+  ehdot,
+  pks_kortti,
+  rakentaminen,
+  kunnossapito,
+  hatatyo,
+  tontti_kiinteisto_liitos,
+  toiminnallinen_kunto,
+  tyo_valmis,
+  luvaton_alkuaika,
+  luvaton_loppuaika,
+  takuu_paattyy,
+  asiakas_alkuaika,
+  asiakas_loppuaika,
+  asiakas_toiminnallinen_kunto,
+  asiakas_tyo_valmis,
+  toiminnallinen_kunto_ilmoitettu,
+  tyo_valmis_ilmoitettu,
+  johtoselvitys_id,
+  tyon_tarkoitus,
+  liikennejarjestelyt,
+  liikennehaitta
+)
+SELECT
+  a.id AS hakemus_id,
+  a.extension::json ->> 'terms' AS ehdot,
+  (a.extension::json ->> 'pksCard')::boolean AS pks_kortti,
+  (a.extension::json ->> 'constructionWork')::boolean AS rakentaminen,
+  (a.extension::json ->> 'maintenanceWork')::boolean AS kunnossapito,
+  (a.extension::json ->> 'emergencyWork')::boolean AS hatatyo,
+  (a.extension::json ->> 'propertyConnectivity')::boolean AS tontti_kiinteisto_liitos,
+  TO_TIMESTAMP((a.extension::json ->> 'winterTimeOperation')::float) AS toiminnallinen_kunto,
+  TO_TIMESTAMP((a.extension::json ->> 'workFinished')::float) AS tyo_valmis,
+  TO_TIMESTAMP((a.extension::json ->> 'unauthorizedWorkStartTime')::float) AS luvaton_alkuaika,
+  TO_TIMESTAMP((a.extension::json ->> 'unauthorizedWorkEndTime')::float) AS luvaton_loppuaika,
+  TO_TIMESTAMP((a.extension::json ->> 'guaranteeEndTime')::float) AS takuu_paattyy,
+  TO_TIMESTAMP((a.extension::json ->> 'customerStartTime')::float) AS asiakas_alkuaika,
+  TO_TIMESTAMP((a.extension::json ->> 'customerEndTime')::float) AS asiakas_loppuaika,
+  TO_TIMESTAMP((a.extension::json ->> 'customerWinterTimeOperation')::float) AS asiakas_toiminnallinen_kunto,
+  TO_TIMESTAMP((a.extension::json ->> 'customerWorkFinished')::float) AS asiakas_tyo_valmis,
+  TO_TIMESTAMP((a.extension::json ->> 'operationalConditionReported')::float) AS toiminnallinen_kunto_ilmoitettu,
+  TO_TIMESTAMP((a.extension::json ->> 'workFinishedReported')::float) AS tyo_valmis_ilmoitettu,
+  (a.extension::json ->> 'cableReportId')::integer AS johtoselvitys_id,
+  a.extension::json ->> 'workPurpose' AS tyon_tarkoitus,
+  a.extension::json ->> 'trafficArrangements' AS liikennejarjestelyt,
+    CASE
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
+  END AS liikennehaitta
+FROM allu_operative.application a
+WHERE a.type = 'EXCAVATION_ANNOUNCEMENT'
+ON CONFLICT (hakemus_id) DO UPDATE SET
+	  ehdot = EXCLUDED.ehdot,
+	  pks_kortti = EXCLUDED.pks_kortti,
+	  rakentaminen = EXCLUDED.rakentaminen,
+	  kunnossapito = EXCLUDED.kunnossapito,
+	  hatatyo = EXCLUDED.hatatyo,
+	  tontti_kiinteisto_liitos = EXCLUDED.tontti_kiinteisto_liitos,
+	  toiminnallinen_kunto = EXCLUDED.toiminnallinen_kunto,
+	  tyo_valmis = EXCLUDED.tyo_valmis,
+	  luvaton_alkuaika = EXCLUDED.luvaton_alkuaika,
+	  luvaton_loppuaika = EXCLUDED.luvaton_loppuaika,
+	  takuu_paattyy = EXCLUDED.takuu_paattyy,
+	  asiakas_alkuaika = EXCLUDED.asiakas_alkuaika,
+	  asiakas_loppuaika = EXCLUDED.asiakas_loppuaika,
+	  asiakas_toiminnallinen_kunto = EXCLUDED.asiakas_toiminnallinen_kunto,
+	  asiakas_tyo_valmis = EXCLUDED.asiakas_tyo_valmis,
+	  toiminnallinen_kunto_ilmoitettu = EXCLUDED.toiminnallinen_kunto_ilmoitettu,
+	  tyo_valmis_ilmoitettu = EXCLUDED.tyo_valmis_ilmoitettu,
+	  johtoselvitys_id = EXCLUDED.johtoselvitys_id,
+	  tyon_tarkoitus = EXCLUDED.tyon_tarkoitus,
+	  liikennejarjestelyt = EXCLUDED.liikennejarjestelyt,
+	  liikennehaitta = EXCLUDED.liikennehaitta
+;
+
