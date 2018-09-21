@@ -74,8 +74,10 @@ public class MailService {
         mimeMessageHelper.addInline(inline.getContentId(), inline);
       }
       for (MailMessage.Attachment attachment : mailMessage.getAttachments()) {
+        final String encodedName = MimeUtility.encodeText(attachment.getFilename(), "UTF-8", "Q");
+        logger.debug("attachment name={}, encoded={}", attachment.getFilename(), encodedName);
         mimeMessageHelper.addAttachment(
-            MimeUtility.encodeText(attachment.getFilename()),
+            encodedName,
             new ByteArrayResource(attachment.getBytes()),
             attachment.getMimeType());
       }
