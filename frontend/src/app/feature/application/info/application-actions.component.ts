@@ -1,21 +1,21 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {ApplicationStore} from '../../../service/application/application-store';
-import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter, isSameOrBefore} from '../../../model/application/application-status';
-import {ApplicationType} from '../../../model/application/type/application-type';
-import {NotificationService} from '../../notification/notification.service';
+import {ApplicationStore} from '@service/application/application-store';
+import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter, isSameOrBefore} from '@model/application/application-status';
+import {ApplicationType, automaticDecisionmaking} from '@model/application/type/application-type';
+import {NotificationService} from '@feature/notification/notification.service';
 import {Observable, of, Subscription} from 'rxjs';
-import {Application} from '../../../model/application/application';
-import {Some} from '../../../util/option';
-import {NumberUtil} from '../../../util/number.util';
-import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
-import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
+import {Application} from '@model/application/application';
+import {Some} from '@util/option';
+import {NumberUtil} from '@util/number.util';
+import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
+import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material';
-import {findTranslation} from '../../../util/translations';
-import {User} from '../../../model/user/user';
-import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
-import {ArrayUtil} from '../../../util/array-util';
-import {UserHub} from '../../../service/user/user-hub';
+import {findTranslation} from '@util/translations';
+import {User} from '@model/user/user';
+import {UserSearchCriteria} from '@model/user/user-search-criteria';
+import {ArrayUtil} from '@util/array-util';
+import {UserHub} from '@service/user/user-hub';
 import {filter, map} from 'rxjs/internal/operators';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
@@ -200,11 +200,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private shouldMoveToDecisionMaking(): boolean {
     const app = this.applicationStore.snapshot.application;
-    const appType = app.type;
-    const status = app.status;
-    return (appType === ApplicationType.CABLE_REPORT ||
-            appType === ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS) &&
-            status === ApplicationStatus.HANDLING;
+    return (automaticDecisionmaking.indexOf(app.type) >= 0) && app.status === ApplicationStatus.HANDLING;
   }
 
   private showDecisionForApplication(app: Application): boolean {
