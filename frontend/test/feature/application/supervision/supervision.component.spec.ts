@@ -13,7 +13,10 @@ import {findTranslation} from '@util/translations';
 import {getButtonWithMatIcon} from '../../../selector-helpers';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
 import * as fromSupervisionTask from '@feature/application/supervision/reducers';
+import * as fromApplication from '@feature/application/reducers';
+import * as ApplicationActions from '@feature/application/actions/application-actions';
 import {LoadSuccess} from '@feature/application/supervision/actions/supervision-task-actions';
+import {Application} from '@model/application/application';
 
 const firstTask = new SupervisionTask(1);
 
@@ -24,6 +27,7 @@ const firstTask = new SupervisionTask(1);
 class MockSupervisionTaskComponent {
   @Input() form: FormGroup;
   @Input() supervisors: Array<User> = [];
+  @Input() application: Application;
   @Output() onRemove = new EventEmitter<void>();
 }
 
@@ -40,7 +44,8 @@ describe('SupervisionComponent', () => {
         AlluCommonModule,
         FormsModule,
         StoreModule.forRoot({
-          'supervisionTasks': combineReducers(fromSupervisionTask.reducers)
+          'supervisionTasks': combineReducers(fromSupervisionTask.reducers),
+          'application': combineReducers(fromApplication.reducers)
         })
       ],
       declarations: [
@@ -62,8 +67,9 @@ describe('SupervisionComponent', () => {
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
-    comp.ngOnInit();
     store.dispatch(new LoadSuccess([firstTask]));
+    store.dispatch(new ApplicationActions.LoadSuccess(new Application()));
+    comp.ngOnInit();
     fixture.detectChanges();
   });
 

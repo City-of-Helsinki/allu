@@ -71,6 +71,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const formValue = this.form.value;
     if (formValue.id) {
       this.form.disable();
+      this.editing = false;
     } else {
       this.editing = true;
       this.preferredSupervisor();

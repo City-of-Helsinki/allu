@@ -24,6 +24,8 @@ import {Remove, Save} from '@feature/application/supervision/actions/supervision
 import {Application} from '@model/application/application';
 import * as ApplicationActions from '@feature/application/actions/application-actions';
 import {SupervisionTaskForm} from '@feature/application/supervision/supervision-task-form';
+import {ApplicationType} from '@model/application/type/application-type';
+import {getButtonWithText} from '../../../selector-helpers';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -100,6 +102,8 @@ describe('SupervisionTaskComponent', () => {
     store.dispatch(new ApplicationActions.LoadSuccess(currentApplication));
     comp.form = new FormBuilder().group(taskForm);
     comp.supervisors = [supervisor];
+    currentApplication.type = ApplicationType.EVENT;
+    comp.application = currentApplication;
     comp.ngOnInit();
     fixture.detectChanges();
   });
@@ -121,7 +125,7 @@ describe('SupervisionTaskComponent', () => {
     spyOn(store, 'dispatch').and.callThrough();
 
     patchValueAndInit(validTask);
-    const saveBtn = de.query(By.css('#save')).nativeElement;
+    const saveBtn = getButtonWithText(de, findTranslation('common.button.save'));
     saveBtn.click();
     detectAndTick();
     const expectedTask = SupervisionTaskForm.to(comp.form.value);
@@ -131,33 +135,34 @@ describe('SupervisionTaskComponent', () => {
 
   it('should change to edit mode', fakeAsync(() => {
     patchValueAndInit({id: 1});
-    const editBtn = de.query(By.css('#edit')).nativeElement;
-    expect(comp.form.disabled).toEqual(true, 'Form was enabled');
+    const editBtn = getButtonWithText(de, findTranslation('common.button.edit'));
+    expect(comp.editing).toEqual(false, 'Form was enabled');
     expect(editBtn).toBeDefined('No edit button');
     editBtn.click();
     detectAndTick();
-    expect(comp.form.enabled).toEqual(true, 'Form was disabled after edit');
+    expect(comp.editing).toEqual(true, 'Form was disabled after edit');
+
   }));
 
   it('should cancel edit changes', fakeAsync(() => {
     patchValueAndInit({id: 1});
-    const editBtn = de.query(By.css('#edit')).nativeElement;
+    const editBtn = getButtonWithText(de, findTranslation('common.button.edit'));
     editBtn.click();
     detectAndTick();
     const valueBeforeReset = comp.form.value;
     comp.form.patchValue(validTask);
     detectAndTick();
-    const cancelBtn = de.query(By.css('#cancel')).nativeElement;
+    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel'));
     cancelBtn.click();
     detectAndTick();
-    expect(comp.form.value).toEqual(valueBeforeReset, 'Form was not reset correctly');
+    expect(comp.form.getRawValue()).toEqual(valueBeforeReset, 'Form was not reset correctly');
   }));
 
   it('should remove new on cancel', fakeAsync(() => {
     const onRemove = comp.onRemove;
     spyOn(onRemove, 'emit');
     patchValueAndInit({});
-    const cancelBtn = de.query(By.css('#cancel')).nativeElement;
+    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel'));
     cancelBtn.click();
     detectAndTick();
     expect(onRemove.emit).toHaveBeenCalled();
@@ -169,7 +174,7 @@ describe('SupervisionTaskComponent', () => {
     spyOn(store, 'dispatch').and.callThrough();
 
     patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
-    const removeBtn = de.query(By.css('#remove')).nativeElement;
+    const removeBtn = getButtonWithText(de, findTranslation('common.button.remove'));
     removeBtn.click();
     detectAndTick();
 
@@ -224,10 +229,6 @@ describe('SupervisionTaskComponent', () => {
     expect(de.query(By.css('#approve'))).toBeNull();
     expect(de.query(By.css('#reject'))).toBeNull();
   }));
-
-  afterEach(() => {
-    comp.ngOnDestroy();
-  });
 
   function patchValueAndInit(val: any): void {
     comp.form.patchValue(val);

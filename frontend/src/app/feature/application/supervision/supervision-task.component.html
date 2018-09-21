@@ -95,10 +95,10 @@
         <div fxFlex="100%">
           <ng-container *ngIf="canApprove && !editing">
             <ng-container *availableTo="['ROLE_SUPERVISE']">
-              <button id="approve" mat-raised-button type="button" color="primary" (click)="approve()">
+              <button mat-raised-button type="button" color="primary" (click)="approve()">
                 {{'supervision.task.approve' | translation}}
               </button>
-              <button id="reject" mat-raised-button type="button" color="primary" (click)="reject()">
+              <button mat-raised-button type="button" color="primary" (click)="reject()">
                 {{'supervision.task.reject' | translation}}
               </button>
             </ng-container>
@@ -106,18 +106,18 @@
           <ng-container *ngIf="canEdit">
             <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE']">
               <ng-container *ngIf="editing">
-                <button id="save" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
+                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
                   {{'common.button.save' | translation}}
                 </button>
-                <button id="cancel" mat-raised-button type="button" color="primary" (click)="cancel()">
+                <button mat-raised-button type="button" color="primary" (click)="cancel()">
                   {{'common.button.cancel' | translation}}
                 </button>
               </ng-container>
               <ng-container *ngIf="!editing">
-                <button id="edit" mat-raised-button type="button" color="primary" (click)="edit()">
+                <button mat-raised-button type="button" color="primary" (click)="edit()">
                   {{'common.button.edit' | translation}}
                 </button>
-                <button *ngIf="canRemove" id="remove" mat-raised-button type="button" color="primary"
+                <button *ngIf="canRemove" mat-raised-button type="button" color="primary"
                         (click)="remove()">
                   {{'common.button.remove' | translation}}
                 </button>
