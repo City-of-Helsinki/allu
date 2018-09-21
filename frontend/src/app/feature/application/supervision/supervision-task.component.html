@@ -93,7 +93,7 @@
 
       <div fxLayout="row" fxLayout.sm="column">
         <div fxFlex="100%">
-          <ng-container *ngIf="canApprove && form.disabled">
+          <ng-container *ngIf="canApprove && !editing">
             <ng-container *availableTo="['ROLE_SUPERVISE']">
               <button id="approve" mat-raised-button type="button" color="primary" (click)="approve()">
                 {{'supervision.task.approve' | translation}}
@@ -105,7 +105,7 @@
           </ng-container>
           <ng-container *ngIf="canEdit">
             <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE']">
-              <ng-container *ngIf="form.enabled">
+              <ng-container *ngIf="editing">
                 <button id="save" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
                   {{'common.button.save' | translation}}
                 </button>
@@ -113,7 +113,7 @@
                   {{'common.button.cancel' | translation}}
                 </button>
               </ng-container>
-              <ng-container *ngIf="form.disabled">
+              <ng-container *ngIf="!editing">
                 <button id="edit" mat-raised-button type="button" color="primary" (click)="edit()">
                   {{'common.button.edit' | translation}}
                 </button>

@@ -54,6 +54,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   canApprove = false;
   canRemove = false;
   showRequiredTasks = false;
+  editing = false;
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
@@ -71,6 +72,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     if (formValue.id) {
       this.form.disable();
     } else {
+      this.editing = true;
       this.preferredSupervisor();
     }
     if (formValue.automatic) {
@@ -133,12 +135,14 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.form.patchValue(this.originalEntry);
       this.originalEntry = undefined;
       this.form.disable();
+      this.editing = false;
     } else {
       this.onRemove.emit();
     }
   }
 
   edit(): void {
+    this.editing = true;
     this.form.enable();
     this.originalEntry = this.form.value;
     if (this.form.value.automatic) {
@@ -263,5 +267,6 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private handleSave(task: SupervisionTask, requiredTasks?: RequiredTasks): void {
     this.store.dispatch(new Save(task));
     Some(requiredTasks).do(tasks => this.store.dispatch(new SetRequiredTasks(tasks)));
+    this.editing = false;
   }
 }
