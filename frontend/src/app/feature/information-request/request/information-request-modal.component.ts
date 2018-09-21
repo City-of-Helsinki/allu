@@ -5,14 +5,10 @@ import {InformationRequest} from '@model/information-request/information-request
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {EnumUtil} from '../../../util/enum.util';
 import {InformationRequestForm} from './information-request.form';
+import {InformationRequestStatus} from '@model/information-request/information-request-status';
 
 export interface InformationRequestData {
   request?: InformationRequest;
-}
-
-export interface InformationRequestInfo {
-  draft: boolean;
-  request: InformationRequest;
 }
 
 @Component({
@@ -37,17 +33,18 @@ export class InformationRequestModalComponent implements OnInit {
   }
 
   saveDraft(): void {
-    this.close(true);
+    this.close(InformationRequestStatus.DRAFT);
   }
 
   onSubmit(): void {
-    this.close();
+    this.close(InformationRequestStatus.OPEN);
   }
 
-  private close(draft: boolean = false): void {
+  private close(status?: InformationRequestStatus): void {
     const originalRequest = this.request || new InformationRequest();
     const request = InformationRequestForm.toInformationRequest(this.form.value, originalRequest);
-    this.dialogRef.close({ draft, request });
+    request.status = status || request.status;
+    this.dialogRef.close(request);
   }
 
   cancel(): void {

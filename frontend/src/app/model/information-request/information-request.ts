@@ -6,5 +6,5 @@ export class InformationRequest {
     public informationRequestId?: number,
     public applicationId?: number,
     public fields: InformationRequestField[] = [],
-    public status: InformationRequestStatus = InformationRequestStatus.OPEN) {}
+    public status: InformationRequestStatus = InformationRequestStatus.DRAFT) {}
 }

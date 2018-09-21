@@ -453,6 +453,7 @@ export const translations = {
     notification: {
       type: {
         INFORMATION_REQUEST_DRAFT: 'Hakemuksella on lähettämätön täydennyspyyntö.',
+        INFORMATION_REQUEST_PENDING: 'Hakemus odottaa täydennystä.',
         INFORMATION_REQUEST_RESPONSE: 'Hakemus sisältää tietopäivityksiä.',
         PENDING_CLIENT_DATA: 'Hakemus sisältää tietopäivityksiä.'
       },

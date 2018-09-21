@@ -12,7 +12,7 @@ export interface BackendInformationRequest {
   id: number;
   applicationId: number;
   fields: BackendInformationRequestField[];
-  status: string;
+  status: InformationRequestStatus;
 }
 
 export class InformationRequestMapper {
@@ -22,7 +22,7 @@ export class InformationRequestMapper {
         backendRequest.id,
         backendRequest.applicationId,
         backendRequest.fields.map(field => new InformationRequestField(InformationRequestFieldKey[field.fieldKey], field.description)),
-        InformationRequestStatus[backendRequest.status])
+        backendRequest.status)
       : undefined;
   }
 
@@ -30,7 +30,7 @@ export class InformationRequestMapper {
     return {id: frontendRequest.informationRequestId,
             applicationId: frontendRequest.applicationId,
             fields: this.mapFields(frontendRequest.fields),
-            status: InformationRequestStatus[frontendRequest.status]};
+            status: frontendRequest.status};
   }
 
   private static mapFields(fields: InformationRequestField[]): BackendInformationRequestField[] {

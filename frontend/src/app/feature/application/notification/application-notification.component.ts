@@ -3,9 +3,15 @@ import {InformationRequestModalEvents} from '@feature/information-request/inform
 
 export enum ApplicationNotificationType {
   INFORMATION_REQUEST_DRAFT = 'INFORMATION_REQUEST_DRAFT',
+  INFORMATION_REQUEST_PENDING = 'INFORMATION_REQUEST_PENDING',
   INFORMATION_REQUEST_RESPONSE = 'INFORMATION_REQUEST_RESPONSE',
   PENDING_CLIENT_DATA = 'PENDING_CLIENT_DATA'
 }
+
+const informationRequestTypes = [
+  ApplicationNotificationType.INFORMATION_REQUEST_DRAFT,
+  ApplicationNotificationType.INFORMATION_REQUEST_PENDING
+];
 
 @Component({
   selector: 'application-notification',
@@ -20,7 +26,7 @@ export class ApplicationNotificationComponent {
   }
 
   show(): void {
-    if (ApplicationNotificationType.INFORMATION_REQUEST_DRAFT === this._type) {
+    if (informationRequestTypes.indexOf(this._type) >= 0) {
       this.modalEvents.openRequest();
     } else {
       this.modalEvents.openAcceptance();

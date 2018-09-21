@@ -1,17 +1,17 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogConfig} from '@angular/material';
-import {merge, Observable} from 'rxjs';
-import {ApplicationStore} from '../../../service/application/application-store';
-import {UrlUtil} from '../../../util/url.util';
+import {Observable} from 'rxjs';
+import {ApplicationStore} from '@service/application/application-store';
+import {UrlUtil} from '@util/url.util';
 import {ActivatedRoute} from '@angular/router';
-import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
+import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
 import {findTranslation} from '../../../util/translations';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {ApplicationNotificationType} from '@feature/application/notification/application-notification.component';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import {filter, map, scan, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
@@ -26,12 +26,11 @@ import {Application} from '@model/application/application';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
 import {
-  InformationRequestInfo,
+  InformationRequestData,
   InformationRequestModalComponent
 } from '@feature/information-request/request/information-request-modal.component';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
-import {ApplicationUtil} from '@feature/application/application-util';
 import {ApplicationNotificationService} from '@feature/application/notification/application-notification.service';
 
 @Component({
@@ -172,19 +171,23 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     this.store.select(fromInformationRequest.getInformationRequest).pipe(
       take(1),
       withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-      map(([request, app]) => request !== undefined
-        ? request
-        : new InformationRequest(undefined, app.id, [], InformationRequestStatus.OPEN)),
-      map(request => ({data: { request }})),
-      switchMap(data => this.dialog.open(InformationRequestModalComponent, data).afterClosed()),
-      filter(result => !!result) // Ignore no answers
-    ).subscribe((result: InformationRequestInfo) => {
-      if (result.draft) {
-        this.store.dispatch(new SaveRequest(result.request));
+      map(([request, app]) => this.createRequestModalData(request, app.id)),
+      switchMap(data => this.dialog.open(InformationRequestModalComponent, {data}).afterClosed()),
+      filter(request => !!request), // Ignore no answers
+    ).subscribe((request: InformationRequest) => {
+      if (InformationRequestStatus.DRAFT === request.status) {
+        this.store.dispatch(new SaveRequest(request));
       } else {
-        this.store.dispatch(new SaveAndSendRequest(result.request));
+        this.store.dispatch(new SaveAndSendRequest(request));
       }
     });
   }
 
+  private createRequestModalData(request: InformationRequest, applicationId: number): InformationRequestData {
+    const result = request !== undefined
+      ? request
+      : new InformationRequest(undefined, applicationId, [], InformationRequestStatus.OPEN);
+
+    return ({request: result});
+  }
 }

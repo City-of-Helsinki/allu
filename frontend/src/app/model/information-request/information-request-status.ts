@@ -1,5 +1,6 @@
 export enum InformationRequestStatus {
-  OPEN,
-  RESPONSE_RECEIVED,
-  CLOSED
+  DRAFT = 'DRAFT',
+  OPEN = 'OPEN',
+  RESPONSE_RECEIVED = 'RESPONSE_RECEIVED',
+  CLOSED = 'CLOSED'
 }
