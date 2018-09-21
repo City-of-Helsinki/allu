@@ -330,7 +330,9 @@ INSERT INTO allureport.kaivuilmoitus (
   johtoselvitys_id,
   tyon_tarkoitus,
   liikennejarjestelyt,
-  liikennehaitta
+  liikennehaitta,
+  tiiveys_ja_kantavuusmittaus,
+  paallysteen_laadunvarmistuskoe
 )
 SELECT
   a.id AS hakemus_id,
@@ -359,7 +361,9 @@ SELECT
       WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
       WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
       WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
-  END AS liikennehaitta
+  END AS liikennehaitta,
+  (a.extension::json ->> 'compactionAndBearingCapacityMeasurement')::boolean AS tiiveys_ja_kantavuusmittaus,
+  (a.extension::json ->> 'qualityAssuranceTest')::boolean AS paallysteen_laadunvarmistuskoe
 FROM allu_operative.application a
 WHERE a.type = 'EXCAVATION_ANNOUNCEMENT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -383,6 +387,8 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
 	  johtoselvitys_id = EXCLUDED.johtoselvitys_id,
 	  tyon_tarkoitus = EXCLUDED.tyon_tarkoitus,
 	  liikennejarjestelyt = EXCLUDED.liikennejarjestelyt,
-	  liikennehaitta = EXCLUDED.liikennehaitta
+	  liikennehaitta = EXCLUDED.liikennehaitta,
+    tiiveys_ja_kantavuusmittaus = EXCLUDED.tiiveys_ja_kantavuusmittaus,
+    paallysteen_laadunvarmistuskoe = EXCLUDED.paallysteen_laadunvarmistuskoe
 ;
 
