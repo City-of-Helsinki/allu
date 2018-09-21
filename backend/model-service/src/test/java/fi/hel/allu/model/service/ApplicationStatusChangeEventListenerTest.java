@@ -19,6 +19,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
@@ -53,6 +54,9 @@ public class ApplicationStatusChangeEventListenerTest {
   private SupervisionTaskService supervisionTaskService;
   @Mock
   private ApplicationService applicationService;
+  @Mock
+  private ApplicationDao applicationDao;
+
 
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
@@ -66,7 +70,7 @@ public class ApplicationStatusChangeEventListenerTest {
   public void setup() {
     supervisor = new User();
     supervisor.setId(228);
-    statusChangeListener = new ApplicationStatusChangeListener(decisionDao, applicationService, locationService, supervisionTaskService);
+    statusChangeListener = new ApplicationStatusChangeListener(decisionDao, applicationService, locationService, supervisionTaskService, applicationDao);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);

@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,5 +217,13 @@ public class InvoiceDao {
         .fetchCount() > 0;
   }
 
+  public List<Integer> getInvoicedChargeBasisIds(int applicationId) {
+    return queryFactory
+        .select(invoiceRow.chargeBasisId)
+        .from(invoiceRow)
+        .join(invoice).on(invoice.id.eq(invoiceRow.invoiceId))
+        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isTrue())
+        .fetch();
+  }
 
 }

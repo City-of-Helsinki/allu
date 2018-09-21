@@ -1,27 +1,45 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.types.ChargeBasisType;
-import fi.hel.allu.model.dao.ChargeBasisDao;
-import fi.hel.allu.model.dao.ChargeBasisModification;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.pricing.ChargeBasisTag;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.types.ChargeBasisType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.ChargeBasisDao;
+import fi.hel.allu.model.dao.ChargeBasisModification;
+import fi.hel.allu.model.dao.InvoiceDao;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.pricing.ChargeBasisTag;
+import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
+import fi.hel.allu.model.service.event.InvoicingChangeEvent;
 
 @Service
 public class ChargeBasisService {
 
-  private ChargeBasisDao chargeBasisDao;
+  private final ChargeBasisDao chargeBasisDao;
+  private final InvoiceDao invoiceDao;
+  private final ApplicationDao applicationDao;
+  private final ApplicationEventPublisher invoicingChangeEventPublisher;
+
+
 
   @Autowired
-  public ChargeBasisService(ChargeBasisDao chargeBasisDao) {
+  public ChargeBasisService(ChargeBasisDao chargeBasisDao, InvoiceDao invoiceDao, ApplicationDao applicationDao,
+      ApplicationEventPublisher invoicingChangeEventPublisher) {
     this.chargeBasisDao = chargeBasisDao;
+    this.invoiceDao = invoiceDao;
+    this.applicationDao = applicationDao;
+    this.invoicingChangeEventPublisher = invoicingChangeEventPublisher;
   }
 
   /**
@@ -32,12 +50,19 @@ public class ChargeBasisService {
    */
   @Transactional
   public boolean setCalculatedChargeBasis(int applicationId, List<ChargeBasisEntry> entries) {
+    List<ChargeBasisEntry> calculatedEntries = entries.stream().filter(e -> !e.getManuallySet()).collect(Collectors.toList());
     ChargeBasisModification modification = chargeBasisDao.getModifications(applicationId,
-        entries.stream().filter(e -> !e.getManuallySet()).collect(Collectors.toList()), false);
-    if (modification.hasChanges()) {
-      chargeBasisDao.setChargeBasis(modification);
-    }
+        calculatedEntries, false);
+    handleModifications(modification);
     return modification.hasChanges();
+  }
+
+  private void handleModifications(ChargeBasisModification modification) {
+    if (modification.hasChanges()) {
+      validateModificationsAllowed(modification);
+      chargeBasisDao.setChargeBasis(modification);
+      handleInvoicingChanged(modification.getApplicationId());
+    }
   }
 
   /**
@@ -53,16 +78,16 @@ public class ChargeBasisService {
             .filter(e -> e.getType() == ChargeBasisType.AREA_USAGE_FEE && e.getTag() != null)
             .max((e1, e2) -> Integer.compare(getNumberPartAreaUsageTag(e1), getNumberPartAreaUsageTag(e2)));
     final AtomicInteger i = new AtomicInteger(maxEntry.map(e -> getNumberPartAreaUsageTag(e)).orElse(0));
+
+    List<ChargeBasisEntry> manualEntries = entries.stream()
+        .filter(e -> e.getManuallySet())
+        .map(e -> setAreaUsageTagIfMissing(e, i))
+        .collect(Collectors.toList());
     ChargeBasisModification modification = chargeBasisDao.getModifications(
         applicationId,
-        entries.stream()
-            .filter(e -> e.getManuallySet())
-            .map(e -> setAreaUsageTagIfMissing(e, i))
-            .collect(Collectors.toList()),
+        manualEntries,
         true);
-    if (modification.hasChanges()) {
-      chargeBasisDao.setChargeBasis(modification);
-    }
+    handleModifications(modification);
     return modification.hasChanges();
 
   }
@@ -85,6 +110,31 @@ public class ChargeBasisService {
    */
   @Transactional(readOnly = true)
   public List<ChargeBasisEntry> getChargeBasis(int applicationId) {
-    return chargeBasisDao.getChargeBasis(applicationId);
+    List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(applicationId);
+    List<Integer> invoicedEntryIds = invoiceDao.getInvoicedChargeBasisIds(applicationId);
+    entries.forEach(e -> e.setInvoiced(invoicedEntryIds.contains(e.getId())));
+    return entries;
   }
+
+  private void validateModificationsAllowed(ChargeBasisModification modification) {
+    Set<Integer> modifiedEntries = modification.getModifiedEntryIds();
+    if (containsInvoicedEntries(modifiedEntries, modification.getApplicationId())) {
+      throw new IllegalOperationException("chargebasis.invoiced");
+    }
+  }
+
+  private void handleInvoicingChanged(int applicationId) {
+    StatusType status = applicationDao.getStatus(applicationId);
+    if (status == StatusType.DECISION || status == StatusType.OPERATIONAL_CONDITION) {
+      // Invoicing changed after last decision
+      applicationDao.setInvoicingChanged(applicationId, true);
+      invoicingChangeEventPublisher.publishEvent(new InvoicingChangeEvent(this, applicationId));
+    }
+  }
+
+  private boolean containsInvoicedEntries(Set<Integer> modifiedEntries, int applicationId) {
+    List<Integer> invoicedChargeBasisIds= invoiceDao.getInvoicedChargeBasisIds(applicationId);
+    return modifiedEntries.stream().anyMatch(invoicedChargeBasisIds::contains);
+  }
+
 }

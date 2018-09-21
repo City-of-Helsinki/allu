@@ -1,12 +1,9 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.types.ChargeBasisType;
-import fi.hel.allu.model.dao.ChargeBasisDao;
-import fi.hel.allu.model.dao.ChargeBasisModification;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.service.ChargeBasisService;
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +12,19 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.types.ChargeBasisType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.ChargeBasisDao;
+import fi.hel.allu.model.dao.ChargeBasisModification;
+import fi.hel.allu.model.dao.InvoiceDao;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.service.ChargeBasisService;
+import fi.hel.allu.model.service.event.InvoicingChangeListener;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AreaUsageTagTest {
@@ -27,13 +33,18 @@ public class AreaUsageTagTest {
 
   @Mock
   private ChargeBasisDao chargeBasisDao;
+  @Mock
+  private InvoiceDao invoiceDao;
+  @Mock
+  private ApplicationDao applicationDao;
+  @Mock
+  private ApplicationEventPublisher eventPublisher;
   @Captor
   private ArgumentCaptor<List<ChargeBasisEntry>> captor;
 
   @Before
   public void setUp() {
-
-    chargeBasisService = new ChargeBasisService(chargeBasisDao);
+    chargeBasisService = new ChargeBasisService(chargeBasisDao, invoiceDao, applicationDao, eventPublisher);
   }
 
   @Test

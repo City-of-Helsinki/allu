@@ -23,6 +23,7 @@ public class ChargeBasisEntry {
   private String[] explanation;
   private int unitPrice;
   private int netPrice;
+  private boolean isInvoiced;
 
   public ChargeBasisEntry() {
     // for deserialization
@@ -233,5 +234,13 @@ public class ChargeBasisEntry {
     if (unitPrice != other.unitPrice)
       return false;
     return true;
+  }
+
+  public boolean isInvoiced() {
+    return isInvoiced;
+  }
+
+  public void setInvoiced(boolean isInvoiced) {
+    this.isInvoiced = isInvoiced;
   }
 }

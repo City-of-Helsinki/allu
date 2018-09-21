@@ -74,6 +74,7 @@ public class Application {
   private ClientApplicationData clientApplicationData;
 
   private List<Location> locations;
+  private boolean invoicingChanged;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -518,5 +519,16 @@ public class Application {
 
   public void setLocations(List<Location> locations) {
     this.locations = locations;
+  }
+
+  /**
+   * Invoicing changed after last decision
+   */
+  public boolean isInvoicingChanged() {
+    return invoicingChanged;
+  }
+
+  public void setInvoicingChanged(boolean invoicingChanged) {
+    this.invoicingChanged = invoicingChanged;
   }
 }

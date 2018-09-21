@@ -14,6 +14,7 @@ import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.ExcavationAnnouncementDates;
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.ApplicationService;
@@ -31,15 +32,17 @@ public class ApplicationStatusChangeListener {
   private final ApplicationService applicationService;
   private final LocationService locationService;
   private final SupervisionTaskService supervisionTaskService;
+  private final ApplicationDao applicationDao;
 
 
   @Autowired
   public ApplicationStatusChangeListener(DecisionDao decisionDao, ApplicationService applicationService,
-      LocationService locationService, SupervisionTaskService supervisionTaskService) {
+      LocationService locationService, SupervisionTaskService supervisionTaskService, ApplicationDao applicationDao) {
     this.decisionDao = decisionDao;
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.supervisionTaskService = supervisionTaskService;
+    this.applicationDao = applicationDao;
   }
 
   @EventListener
@@ -48,11 +51,14 @@ public class ApplicationStatusChangeListener {
       handleDecisionStatus(event.getApplication(), event.getUserId());
     } else if (event.getNewStatus() == StatusType.CANCELLED) {
       cancelOpenSupervisionTasks(event.getApplication());
+    } else if (event.getNewStatus() == StatusType.OPERATIONAL_CONDITION) {
+      applicationDao.setInvoicingChanged(event.getApplication().getId(), false);
     }
   }
 
   private void handleDecisionStatus(Application application, Integer userId) {
     cancelDanglingSupervisionTasks(application);
+    applicationDao.setInvoicingChanged(application.getId(), false);
     switch (application.getType()) {
     case PLACEMENT_CONTRACT:
       logger.debug("Process placement contract status change to decision");

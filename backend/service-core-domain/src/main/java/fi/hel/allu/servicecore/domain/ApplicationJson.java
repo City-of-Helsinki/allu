@@ -94,6 +94,7 @@ public class ApplicationJson {
 
   private ClientApplicationDataJson clientApplicationData;
   private String identificationNumber;
+  private Boolean invoicingChanged;
 
   /**
    * Id of the external owner (external_user.id)
@@ -581,5 +582,13 @@ public class ApplicationJson {
 
   public void setIdentificationNumber(String identificationNumber) {
     this.identificationNumber = identificationNumber;
+  }
+
+  public boolean getInvoicingChanged() {
+    return invoicingChanged;
+  }
+
+  public void setInvoicingChanged(Boolean invoicingChanged) {
+    this.invoicingChanged = invoicingChanged;
   }
 }

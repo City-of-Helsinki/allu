@@ -409,6 +409,10 @@ public class ApplicationService {
     }
   }
 
+  public boolean isSapIdPending(Integer applicationId) {
+    return isSapIdPending(findById(applicationId));
+  }
+
   public boolean isSapIdPending(Application application) {
     Customer invoicee = customerDao.findById(application.getInvoiceRecipientId())
         .orElseThrow(() -> new NoSuchEntityException("application.customer.notFound"));

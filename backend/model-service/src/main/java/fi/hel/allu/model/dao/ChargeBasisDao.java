@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +23,8 @@ import fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling;
 
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
-import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QChargeBasis.chargeBasis;
+import static fi.hel.allu.QInvoiceRow.invoiceRow;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
@@ -113,6 +112,8 @@ public class ChargeBasisDao {
   }
 
   private void deleteEntries(Set<Integer> entryIdsToDelete, int applicationId) {
+    // Delete invoice rows created from charge basis entry
+    queryFactory.delete(invoiceRow).where(invoiceRow.chargeBasisId.in(entryIdsToDelete)).execute();
     queryFactory.delete(chargeBasis).where(chargeBasis.id.in(entryIdsToDelete)).execute();
     // Delete possible dangling referred tags left by above delete
     queryFactory.delete(chargeBasis)

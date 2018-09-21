@@ -68,7 +68,7 @@ public class ExcavationAnnouncementService {
     // If operational condition date differs from original or invoice rows have been added after previous decision
     // application requires new decision
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
-    return !TimeUtil.isSameDate(extension.getWinterTimeOperation(), operationalConditionDate) || hasOpenInvoiceRows(application.getId());
+    return !TimeUtil.isSameDate(extension.getWinterTimeOperation(), operationalConditionDate) || application.isInvoicingChanged();
   }
 
   public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate, Integer decisionMakerUserId) {
@@ -102,12 +102,7 @@ public class ExcavationAnnouncementService {
       winterTimeFinishedBeforeWinterEnd = TimeUtil.isSameDateOrLater(getWinterTimeEnd(extension.getWinterTimeOperation()), workFinishedDate);
     }
     boolean finishedAsPlanned = TimeUtil.isSameDate(application.getEndTime(), workFinishedDate) || winterTimeFinishedBeforeWinterEnd;
-    return !finishedAsPlanned || hasOpenInvoiceRows(application.getId());
-  }
-
-  private boolean hasOpenInvoiceRows(Integer id) {
-    // TODO: check whether application has invoice rows added / modified after previous decision
-    return false;
+    return !finishedAsPlanned || application.isInvoicingChanged();
   }
 
   private ZonedDateTime getWinterTimeEnd(ZonedDateTime date) {

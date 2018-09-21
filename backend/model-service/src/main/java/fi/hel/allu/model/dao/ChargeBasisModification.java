@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 
@@ -45,5 +46,14 @@ public class ChargeBasisModification {
 
   public int getApplicationId() {
     return applicationId;
+  }
+
+  /**
+   * Returns IDs of charge basis entries that have been modified or deleted.
+   */
+  public Set<Integer> getModifiedEntryIds() {
+    Set<Integer> ids = entriesToUpdate.stream().map(ChargeBasisEntry::getId).collect(Collectors.toSet());
+    ids.addAll(entryIdsToDelete);
+    return ids;
   }
 }
