@@ -65,6 +65,12 @@ public class InformationRequestService {
     return toInformationRequestJson(request);
   }
 
+  public InformationRequestJson findByApplicationId(int id) {
+    InformationRequest request = restTemplate.getForObject(applicationProperties.getApplicationInformationRequestFindUrl(), InformationRequest.class, id);
+    return toInformationRequestJson(request);
+  }
+
+
   private InformationRequestJson toInformationRequestJson(InformationRequest request) {
     if (request == null) {
       return null;

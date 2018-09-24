@@ -62,9 +62,15 @@ public class InformationRequestController {
   /**
    * Finds open information request for given application.
    */
-  @RequestMapping(value = "applications/{id}/informationrequest", method = RequestMethod.GET)
-  public ResponseEntity<InformationRequest> getInformationRequest(@PathVariable int id) {
+  @RequestMapping(value = "applications/{id}/informationrequest/open", method = RequestMethod.GET)
+  public ResponseEntity<InformationRequest> findOpenByApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(informationRequestDao.findOpenByApplicationId(id), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "applications/{id}/informationrequest", method = RequestMethod.GET)
+  public ResponseEntity<InformationRequest> findByApplicationId(@PathVariable int id) {
+    return new ResponseEntity<>(informationRequestDao.findByApplicationId(id), HttpStatus.OK);
+  }
+
 
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
@@ -16,6 +17,7 @@ import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.InformationRequestResponse;
 import fi.hel.allu.common.domain.types.InformationRequestFieldKey;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.model.domain.InformationRequestField;
@@ -48,12 +50,18 @@ public class InformationRequestDao {
 
   @Transactional
   public InformationRequest insert(InformationRequest newInformationRequest) {
-    newInformationRequest.setStatus(InformationRequestStatus.OPEN);
+    if (applicationHasActiveInformationRequest(newInformationRequest.getApplicationId())) {
+      throw new IllegalOperationException("informationrequest.active.exists");
+    }
     newInformationRequest.setCreationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(informationRequest).populate(newInformationRequest)
         .executeWithKey(informationRequest.id);
     insertFields(id, newInformationRequest.getFields());
     return findById(id);
+  }
+
+  private boolean applicationHasActiveInformationRequest(Integer applicationId) {
+    return findByApplicationId(applicationId) != null;
   }
 
   @Transactional
@@ -84,13 +92,24 @@ public class InformationRequestDao {
 
   @Transactional(readOnly = true)
   public InformationRequest findOpenByApplicationId(Integer applicationId) {
+    return find(informationRequest.applicationId.eq(applicationId), informationRequest.status.eq(InformationRequestStatus.OPEN));
+  }
+
+  @Transactional(readOnly = true)
+  public InformationRequest findByApplicationId(int applicationId) {
+    return find(informationRequest.applicationId.eq(applicationId), informationRequest.status.ne(InformationRequestStatus.CLOSED));
+  }
+
+  private InformationRequest find(Predicate... predicates) {
     InformationRequest request = queryFactory.select(informationRequestBean).from(informationRequest)
-        .where(informationRequest.applicationId.eq(applicationId), informationRequest.status.eq(InformationRequestStatus.OPEN)).fetchOne();
+        .where(predicates).fetchFirst();
     if (request != null) {
       request.setFields(getInformationRequestFields(request.getId()));
     }
     return request;
+
   }
+
 
   @Transactional(readOnly = true)
   public InformationRequestResponse findResponseForApplicationId(Integer applicationId) {
@@ -174,5 +193,4 @@ public class InformationRequestDao {
     return queryFactory.select(informationRequestFieldBean).from(informationRequestField)
         .where(informationRequestField.informationRequestId.eq(requestId)).fetch();
   }
-
 }

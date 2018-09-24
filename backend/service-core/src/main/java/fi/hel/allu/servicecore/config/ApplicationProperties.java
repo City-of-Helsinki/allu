@@ -1213,8 +1213,13 @@ public class ApplicationProperties {
   }
 
   public String getApplicationOpenInformationRequestFindUrl() {
+    return getModelServiceUrl("applications/{id}/informationrequest/open");
+  }
+
+  public String getApplicationInformationRequestFindUrl() {
     return getModelServiceUrl("applications/{id}/informationrequest");
   }
+
 
   public String getInformationRequestUrl() {
     return getModelServiceUrl("/informationrequests/{id}");

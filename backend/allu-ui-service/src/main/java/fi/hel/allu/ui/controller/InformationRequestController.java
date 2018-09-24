@@ -51,8 +51,8 @@ public class InformationRequestController {
 
   @RequestMapping(value = "/applications/{id}/informationrequests", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<InformationRequestJson> findOpenByApplicationId(@PathVariable("id") int id) {
-    return new ResponseEntity<>(informationRequestService.findOpenByApplicationId(id), HttpStatus.OK);
+  public ResponseEntity<InformationRequestJson> findByApplicationId(@PathVariable("id") int id) {
+    return new ResponseEntity<>(informationRequestService.findByApplicationId(id), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/applications/{id}/informationrequests/response", method = RequestMethod.GET)
