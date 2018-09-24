@@ -27,7 +27,8 @@ import {InformationRequestModalEvents} from '@feature/information-request/inform
 import {InformationRequest} from '@model/information-request/information-request';
 import {
   InformationRequestData,
-  InformationRequestModalComponent
+  InformationRequestModalComponent,
+  INFORMATION_REQUEST_MODAL_CONFIG
 } from '@feature/information-request/request/information-request-modal.component';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
@@ -171,8 +172,8 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     this.store.select(fromInformationRequest.getInformationRequest).pipe(
       take(1),
       withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
-      map(([request, app]) => this.createRequestModalData(request, app.id)),
-      switchMap(data => this.dialog.open(InformationRequestModalComponent, {data}).afterClosed()),
+      map(([request, app]) => this.createRequestModalConfig(request, app.id)),
+      switchMap(data => this.dialog.open(InformationRequestModalComponent, data).afterClosed()),
       filter(request => !!request), // Ignore no answers
     ).subscribe((request: InformationRequest) => {
       if (InformationRequestStatus.DRAFT === request.status) {
@@ -183,11 +184,16 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     });
   }
 
-  private createRequestModalData(request: InformationRequest, applicationId: number): InformationRequestData {
+  private createRequestModalConfig(request: InformationRequest, applicationId: number): MatDialogConfig<InformationRequestData> {
     const result = request !== undefined
       ? request
-      : new InformationRequest(undefined, applicationId, [], InformationRequestStatus.OPEN);
+      : new InformationRequest(undefined, applicationId, [], InformationRequestStatus.DRAFT);
 
-    return ({request: result});
+    const data = {request: result};
+
+    return {
+      ...INFORMATION_REQUEST_MODAL_CONFIG,
+      data
+    };
   }
 }

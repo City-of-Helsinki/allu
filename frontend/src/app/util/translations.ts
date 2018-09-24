@@ -538,6 +538,7 @@ export const translations = {
     },
     request: {
       title: 'Hyväksy tiedot täydennyspyyntöön',
+      readonlyTitle: 'Pyydetyt täydennykset',
       description: `Merkitse tiedot jotka puuttuvat, ovat virheellisiä tai jotka haluat muusta syystä päivittää.
        Huomaa, että et voi päivittää hakemusta niin kauan kuin sillä on vastaamattomia täydennyspyyntöjä.`,
       customer: 'Asiakas',
@@ -1052,7 +1053,8 @@ export const translations = {
       show: 'Näytä',
       search: 'Hae',
       toSelf: 'Omaksi',
-      moveTo: 'Siirrä'
+      moveTo: 'Siirrä',
+      close: 'Sulje'
     },
     time: {
       today: 'Tänään',

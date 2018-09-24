@@ -1,7 +1,16 @@
-<h1 mat-dialog-title>{{'informationRequest.request.title' | translation}}</h1>
+<h1 mat-dialog-title>
+  <ng-container *ngIf="request.status === 'DRAFT'; else readonlyTitle">
+    {{'informationRequest.request.title' | translation}}
+  </ng-container>
+  <ng-template #readonlyTitle>
+    {{'informationRequest.request.readonlyTitle' | translation}}
+  </ng-template>
+</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
-    <p>{{'informationRequest.request.description' | translation}}</p>
+    <p *ngIf="request.status === 'DRAFT'">
+      {{'informationRequest.request.description' | translation}}
+    </p>
     <request-field *ngFor="let key of fieldKeys"
                   [form]="form"
                   [label]="['informationRequest.field', key] | translation"
@@ -10,14 +19,21 @@
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button type="button" mat-raised-button color="primary" (click)="cancel()">
-      {{'common.button.cancel' | translation}}
-    </button>
-    <button type="button" mat-raised-button color="primary" (click)="saveDraft()">
-      {{'informationRequest.request.draft' | translation | uppercase}}
-    </button>
-    <button type="submit" mat-raised-button color="primary">
-      {{'informationRequest.request.send' | translation | uppercase}}
-    </button>
+    <ng-container *ngIf="request.status === 'DRAFT'; else readonlyControls">
+      <button type="button" mat-raised-button color="primary" (click)="cancel()">
+        {{'common.button.cancel' | translation}}
+      </button>
+      <button type="button" mat-raised-button color="primary" (click)="saveDraft()">
+        {{'informationRequest.request.draft' | translation | uppercase}}
+      </button>
+      <button type="submit" mat-raised-button color="primary">
+        {{'informationRequest.request.send' | translation | uppercase}}
+      </button>
+    </ng-container>
+    <ng-template #readonlyControls>
+      <button type="button" mat-raised-button color="primary" (click)="cancel()">
+        {{'common.button.close' | translation | uppercase}}
+      </button>
+    </ng-template>
   </div>
 </form>
