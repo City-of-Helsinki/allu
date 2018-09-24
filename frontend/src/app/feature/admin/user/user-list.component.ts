@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs';
 
-import {UserHub} from '../../../service/user/user-hub';
-import {User} from '../../../model/user/user';
+import {User} from '@model/user/user';
+import {UserService} from '@service/user/user-service';
 
 @Component({
   selector: 'user-list',
@@ -14,10 +14,10 @@ export class UserListComponent implements OnInit {
 
   users: Observable<Array<User>>;
 
-  constructor(private userHub: UserHub, private router: Router) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
-    this.users = this.userHub.getAllUsers();
+    this.users = this.userService.getAllUsers();
   }
 
   onSelect(user: User): void {

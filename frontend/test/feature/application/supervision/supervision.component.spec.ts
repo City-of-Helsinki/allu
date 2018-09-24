@@ -4,9 +4,8 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {User} from '@model/user/user';
 import {SupervisionComponent} from '@feature/application/supervision/supervision.component';
-import {UserHub} from '@service/user/user-hub';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {availableToDirectiveMockMeta, CurrentUserMock, UserHubMock} from '../../../mocks';
+import {availableToDirectiveMockMeta, CurrentUserMock, UserServiceMock} from '../../../mocks';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {findTranslation} from '@util/translations';
@@ -17,6 +16,7 @@ import * as fromApplication from '@feature/application/reducers';
 import * as ApplicationActions from '@feature/application/actions/application-actions';
 import {LoadSuccess} from '@feature/application/supervision/actions/supervision-task-actions';
 import {Application} from '@model/application/application';
+import {UserService} from '@service/user/user-service';
 
 const firstTask = new SupervisionTask(1);
 
@@ -54,7 +54,7 @@ describe('SupervisionComponent', () => {
       ],
       providers: [
         FormBuilder,
-        {provide: UserHub, useClass: UserHubMock}
+        {provide: UserService, useClass: UserServiceMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))

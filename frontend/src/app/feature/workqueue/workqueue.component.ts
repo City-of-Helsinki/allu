@@ -1,21 +1,21 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {MatDialog} from '@angular/material';
-import {EnumUtil} from '../../util/enum.util';
-import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
-import {CurrentUser} from '../../service/user/current-user';
-import {User} from '../../model/user/user';
-import {UserHub} from '../../service/user/user-hub';
-import {DialogCloseReason} from '../common/dialog-close-value';
+import {EnumUtil} from '@util/enum.util';
+import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '@feature/common/ownerModal/owner-modal.component';
+import {CurrentUser} from '@service/user/current-user';
+import {User} from '@model/user/user';
+import {DialogCloseReason} from '@feature/common/dialog-close-value';
 import {WorkQueueTab} from './workqueue-tab';
-import {NotificationService} from '../notification/notification.service';
-import {findTranslation} from '../../util/translations';
+import {NotificationService} from '@feature/notification/notification.service';
+import {findTranslation} from '@util/translations';
 import {Subject} from 'rxjs';
 import {ApplicationWorkItemStore} from './application-work-item-store';
 import {Store} from '@ngrx/store';
-import * as fromRoot from '../allu/reducers';
-import {AddMultiple} from '../project/actions/application-basket-actions';
+import * as fromRoot from '@feature/allu/reducers';
+import {AddMultiple} from '@feature/project/actions/application-basket-actions';
 import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {UserService} from '@service/user/user-service';
 
 @Component({
   selector: 'workqueue',
@@ -33,14 +33,14 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   constructor(private itemStore: ApplicationWorkItemStore,
               private dialog: MatDialog,
-              private userHub: UserHub,
+              private userService: UserService,
               private currentUser: CurrentUser,
               private notification: NotificationService,
               private store: Store<fromRoot.State>) {
   }
 
   ngOnInit() {
-    this.userHub.getActiveUsers().subscribe(users => this.owners = users);
+    this.userService.getActiveUsers().subscribe(users => this.owners = users);
 
     this.itemStore.changes.pipe(
       map(state => state.selectedItems),

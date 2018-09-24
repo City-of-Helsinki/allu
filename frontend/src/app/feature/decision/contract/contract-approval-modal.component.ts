@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CommentType} from '../../../model/application/comment/comment-type';
+import {CommentType} from '@model/application/comment/comment-type';
 import {Observable} from 'rxjs';
-import {User} from '../../../model/user/user';
-import {UserHub} from '../../../service/user/user-hub';
-import {RoleType} from '../../../model/user/role-type';
+import {User} from '@model/user/user';
+import {RoleType} from '@model/user/role-type';
 import {ContractApprovalInfo} from '@model/decision/contract-approval-info';
 import {findTranslation} from '@util/translations';
+import {UserService} from '@service/user/user-service';
 
 export const CONTRACT_APPROVAL_MODAL_CONFIG = {width: '800px'};
 
@@ -23,7 +23,7 @@ export class ContractApprovalModalComponent implements OnInit {
   handlers: Observable<Array<User>>;
 
   constructor(private dialogRef: MatDialogRef<ContractApprovalModalComponent>,
-              private userHub: UserHub,
+              private userService: UserService,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -33,7 +33,7 @@ export class ContractApprovalModalComponent implements OnInit {
       approvalBasis: [undefined, Validators.required]
     });
 
-    this.handlers = this.userHub.getByRole(RoleType.ROLE_DECISION);
+    this.handlers = this.userService.getByRole(RoleType.ROLE_DECISION);
   }
 
   confirm() {

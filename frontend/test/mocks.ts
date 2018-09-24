@@ -17,6 +17,7 @@ import {CityDistrict} from '../src/app/model/common/city-district';
 import {ErrorInfo} from '../src/app/service/error/error-info';
 import {BehaviorSubject, EMPTY, Observable, of, Subject, throwError} from 'rxjs/index';
 import {map} from 'rxjs/internal/operators';
+import {UserSearchCriteria} from '@model/user/user-search-criteria';
 
 /**
  * Mock for application state
@@ -136,13 +137,6 @@ export class CurrentUserMock {
 const supervisor = new User(1, 'supervisor', 'super visor');
 
 /**
- * Mock for user hub
- */
-export class UserHubMock {
-  public getByRole = (role: RoleType) => of([supervisor]);
-}
-
-/**
  * Mock for user service
  */
 export class UserServiceMock {
@@ -150,6 +144,8 @@ export class UserServiceMock {
     return of(new User(1));
   }
   public getByRole = (role: RoleType) => of([supervisor]);
+
+  public search(criteria: UserSearchCriteria) { return of([]); }
 }
 
 /**

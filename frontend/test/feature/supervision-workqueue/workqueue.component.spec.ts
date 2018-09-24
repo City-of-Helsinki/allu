@@ -1,22 +1,22 @@
-import {WorkQueueComponent} from '../../../src/app/feature/supervision-workqueue/workqueue.component';
+import {WorkQueueComponent} from '@feature/supervision-workqueue/workqueue.component';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Component, DebugElement} from '@angular/core';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
-import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
-import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
-import {availableToDirectiveMockMeta, CurrentUserMock, NotificationServiceMock, UserHubMock} from '../../mocks';
-import {CurrentUser} from '../../../src/app/service/user/current-user';
-import {UserHub} from '../../../src/app/service/user/user-hub';
+import {SupervisionWorkItemStore} from '@feature/supervision-workqueue/supervision-work-item-store';
+import {AvailableToDirective} from '@service/authorization/available-to.directive';
+import {availableToDirectiveMockMeta, CurrentUserMock, NotificationServiceMock, UserServiceMock} from '../../mocks';
+import {CurrentUser} from '@service/user/current-user';
 import {MatDialog} from '@angular/material';
-import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
+import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {FormsModule} from '@angular/forms';
-import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
-import {OwnerModalModule} from '../../../src/app/feature/common/ownerModal/owner-modal.module';
-import {NotificationService} from '../../../src/app/feature/notification/notification.service';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {OwnerModalModule} from '@feature/common/ownerModal/owner-modal.module';
+import {NotificationService} from '@feature/notification/notification.service';
 import {getButtonWithText} from '../../selector-helpers';
-import {Page} from '../../../src/app/model/common/page';
+import {Page} from '@model/common/page';
 import {RouterTestingModule} from '@angular/router/testing';
+import {UserService} from '@service/user/user-service';
 
 const defaultItems = [
   new SupervisionWorkItem(1),
@@ -62,7 +62,7 @@ describe('SupervisionWorkqueueComponent', () => {
       providers: [
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
-        {provide: UserHub, useClass: UserHubMock},
+        {provide: UserService, useClass: UserServiceMock},
         {provide: NotificationService, useClass: NotificationServiceMock},
         MatDialog
       ]

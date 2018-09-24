@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, Validators} from '@angular/forms';
 import {FormUtil} from '@util/form.util';
-import {UserHub} from '@service/user/user-hub';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
@@ -13,6 +12,7 @@ import * as fromSupervisionTask from './reducers';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Application} from '@model/application/application';
+import {UserService} from '@service/user/user-service';
 
 
 @Component({
@@ -28,7 +28,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   private supervisionTaskSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
-              private userHub: UserHub,
+              private userService: UserService,
               private store: Store<fromRoot.State>) {
     this.supervisionTasks = this.fb.array([]);
   }
@@ -40,7 +40,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
     });
     this.application$ = this.store.select(fromApplication.getCurrentApplication);
 
-    this.userHub.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
+    this.userService.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
   }
 
   ngOnDestroy(): void {

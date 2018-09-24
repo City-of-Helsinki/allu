@@ -1,18 +1,18 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ApplicationStatus} from '../../model/application/application-status';
-import {DistributionEntry} from '../../model/common/distribution-entry';
-import {DistributionEntryForm} from '../application/distribution/distribution-list/distribution-entry-form';
-import {UserHub} from '../../service/user/user-hub';
-import {User} from '../../model/user/user';
+import {ApplicationStatus} from '@model/application/application-status';
+import {DistributionEntry} from '@model/common/distribution-entry';
+import {DistributionEntryForm} from '@feature/application/distribution/distribution-list/distribution-entry-form';
+import {User} from '@model/user/user';
 import {Observable} from 'rxjs';
-import {RoleType} from '../../model/user/role-type';
-import {ApplicationStore} from '../../service/application/application-store';
-import {UserSearchCriteria} from '../../model/user/user-search-criteria';
-import {ArrayUtil} from '../../util/array-util';
-import {DistributionType} from '../../model/common/distribution-type';
+import {RoleType} from '@model/user/role-type';
+import {ApplicationStore} from '@service/application/application-store';
+import {UserSearchCriteria} from '@model/user/user-search-criteria';
+import {ArrayUtil} from '@util/array-util';
+import {DistributionType} from '@model/common/distribution-type';
 import {filter, map} from 'rxjs/internal/operators';
+import {UserService} from '@service/user/user-service';
 
 export type DecisionModalType = 'DECISIONMAKING' | 'RETURNED_TO_PREPARATION' | 'REJECTED' | 'RESEND_EMAIL';
 
@@ -58,7 +58,7 @@ export class DecisionModalComponent implements OnInit {
   owners: Observable<Array<User>>;
 
   constructor(private dialogRef: MatDialogRef<DecisionModalComponent>,
-              private userHub: UserHub,
+              private userService: UserService,
               private applicationStore: ApplicationStore,
               @Inject(MAT_DIALOG_DATA) public data: DecisionModalData,
               private fb: FormBuilder) {}
@@ -103,7 +103,7 @@ export class DecisionModalComponent implements OnInit {
 
   private initOwners(ownerSelection: boolean): void {
     if (ownerSelection) {
-      this.owners = this.userHub.getByRole(RoleType.ROLE_PROCESS_APPLICATION);
+      this.owners = this.userService.getByRole(RoleType.ROLE_PROCESS_APPLICATION);
       this.decisionForm.addControl('owner', this.fb.control(undefined, Validators.required));
         this.preferredOwner().subscribe(preferred => this.decisionForm.patchValue({owner: preferred.id}));
     }
@@ -112,7 +112,7 @@ export class DecisionModalComponent implements OnInit {
   private preferredOwner(): Observable<User> {
     const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.type, app.firstLocation.effectiveCityDistrictId);
-    return this.userHub.searchUsers(criteria).pipe(
+    return this.userService.search(criteria).pipe(
       map(preferred => ArrayUtil.first(preferred)),
       filter(preferred => !!preferred)
     );

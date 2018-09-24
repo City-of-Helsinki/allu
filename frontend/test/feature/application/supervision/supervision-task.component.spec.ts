@@ -3,7 +3,7 @@ import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angula
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
-import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock, UserServiceMock} from '../../../mocks';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {SupervisionTaskComponent} from '@feature/application/supervision/supervision-task.component';
 import {ApplicationStore} from '@service/application/application-store';
@@ -12,7 +12,6 @@ import {ComplexValidator} from '@util/complex-validator';
 import {User} from '@model/user/user';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {findTranslation} from '@util/translations';
-import {UserHub} from '@service/user/user-hub';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
 import {of} from 'rxjs/index';
@@ -26,6 +25,7 @@ import * as ApplicationActions from '@feature/application/actions/application-ac
 import {SupervisionTaskForm} from '@feature/application/supervision/supervision-task-form';
 import {ApplicationType} from '@model/application/type/application-type';
 import {getButtonWithText} from '../../../selector-helpers';
+import {UserService} from '@service/user/user-service';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -56,17 +56,13 @@ const validTask: SupervisionTaskForm = {
 
 const currentApplication = new Application(1);
 
-class UserHubMock {
-  searchUsers(criteria: UserSearchCriteria) { return of([]); }
-}
-
 describe('SupervisionTaskComponent', () => {
   let comp: SupervisionTaskComponent;
   let fixture: ComponentFixture<SupervisionTaskComponent>;
   let store: Store<fromRoot.State>;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
-  let userHub: UserHubMock;
+  let userService: UserServiceMock;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -85,7 +81,7 @@ describe('SupervisionTaskComponent', () => {
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
-        {provide: UserHub, useClass: UserHubMock},
+        {provide: UserService, useClass: UserServiceMock},
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
@@ -94,7 +90,7 @@ describe('SupervisionTaskComponent', () => {
 
   beforeEach(() => {
     store = TestBed.get(Store);
-    userHub = TestBed.get(UserHub) as UserHubMock;
+    userService = TestBed.get(UserService) as UserServiceMock;
     fixture = TestBed.createComponent(SupervisionTaskComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
@@ -208,7 +204,7 @@ describe('SupervisionTaskComponent', () => {
 
   it('should preset supervisor when creating new task', fakeAsync(() => {
     const preferredSupervisor = new User(52);
-    spyOn(userHub, 'searchUsers').and.returnValue(of([preferredSupervisor]));
+    spyOn(userService, 'search').and.returnValue(of([preferredSupervisor]));
     patchValueAndInit({});
     expect(comp.form.value.ownerId).toEqual(preferredSupervisor.id);
   }));

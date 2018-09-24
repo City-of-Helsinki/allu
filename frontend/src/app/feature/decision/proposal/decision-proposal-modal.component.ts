@@ -1,12 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CommentType} from '../../../model/application/comment/comment-type';
-import {StatusChangeInfo} from '../../../model/application/status-change-info';
+import {CommentType} from '@model/application/comment/comment-type';
+import {StatusChangeInfo} from '@model/application/status-change-info';
 import {Observable} from 'rxjs';
-import {User} from '../../../model/user/user';
-import {UserHub} from '../../../service/user/user-hub';
-import {RoleType} from '../../../model/user/role-type';
+import {User} from '@model/user/user';
+import {RoleType} from '@model/user/role-type';
+import {UserService} from '@service/user/user-service';
 
 export const DECISION_PROPOSAL_MODAL_CONFIG = {width: '800px'};
 
@@ -23,7 +23,7 @@ export class DecisionProposalModalComponent implements OnInit {
   handlers: Observable<Array<User>>;
 
   constructor(private dialogRef: MatDialogRef<DecisionProposalModalComponent>,
-              private userHub: UserHub,
+              private userService: UserService,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -32,7 +32,7 @@ export class DecisionProposalModalComponent implements OnInit {
       handler: [undefined, Validators.required]
     });
 
-    this.handlers = this.userHub.getByRole(RoleType.ROLE_DECISION);
+    this.handlers = this.userService.getByRole(RoleType.ROLE_DECISION);
   }
 
   confirm() {

@@ -15,11 +15,11 @@ import {findTranslation} from '@util/translations';
 import {User} from '@model/user/user';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ArrayUtil} from '@util/array-util';
-import {UserHub} from '@service/user/user-hub';
 import {filter, map} from 'rxjs/internal/operators';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
+import {UserService} from '@service/user/user-service';
 
 @Component({
   selector: 'application-actions',
@@ -58,7 +58,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   constructor(private router: Router,
               private applicationStore: ApplicationStore,
               private dialog: MatDialog,
-              private userHub: UserHub,
+              private userService: UserService,
               private notification: NotificationService,
               private modalState: InformationRequestModalEvents) {
   }
@@ -215,7 +215,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private findDefaultRegionalOwner(app: Application): Observable<User> {
     const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.type, app.firstLocation.effectiveCityDistrictId);
-    return this.userHub.searchUsers(criteria).pipe(
+    return this.userService.search(criteria).pipe(
       map(preferred => ArrayUtil.first(preferred))
     );
   }

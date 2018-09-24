@@ -3,17 +3,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 
-import {UserHub} from '../../../service/user/user-hub';
-import {CurrentUser} from '../../../service/user/current-user';
-import {Some} from '../../../util/option';
-import {EnumUtil} from '../../../util/enum.util';
-import {ApplicationType} from '../../../model/application/type/application-type';
-import {CityDistrict} from '../../../model/common/city-district';
-import {User} from '../../../model/user/user';
-import * as fromRoot from '../../allu/reducers';
+import {CurrentUser} from '@service/user/current-user';
+import {ApplicationType} from '@model/application/type/application-type';
+import {CityDistrict} from '@model/common/city-district';
+import {User} from '@model/user/user';
+import * as fromRoot from '@feature/allu/reducers';
 import {Store} from '@ngrx/store';
-import {NumberUtil} from '../../../util/number.util';
-import {UserService} from '../../../service/user/user-service';
+import {NumberUtil} from '@util/number.util';
+import {UserService} from '@service/user/user-service';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
 

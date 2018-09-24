@@ -10,7 +10,6 @@ import {SupervisionTaskStatusType} from '@model/application/supervision/supervis
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {RoleType} from '@model/user/role-type';
 import {ArrayUtil} from '@util/array-util';
-import {UserHub} from '@service/user/user-hub';
 import {
   SUPERVISION_APPROVAL_MODAL_CONFIG,
   SupervisionApprovalModalComponent,
@@ -35,6 +34,7 @@ import {
 } from '@feature/application/actions/excavation-announcement-actions';
 import {Subject} from 'rxjs/index';
 import {RequiredTasks} from '@model/application/required-tasks';
+import {UserService} from '@service/user/user-service';
 
 @Component({
   selector: 'supervision-task',
@@ -63,7 +63,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromRoot.State>,
               private currentUser: CurrentUser,
-              private userHub: UserHub,
+              private userService: UserService,
               private dialog: MatDialog) {
   }
 
@@ -229,7 +229,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private preferredSupervisor(): void {
     const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.type, app.firstLocation.effectiveCityDistrictId);
-    this.userHub.searchUsers(criteria).pipe(
+    this.userService.search(criteria).pipe(
       map(preferred => ArrayUtil.first(preferred)),
       filter(preferred => !!preferred)
     ).subscribe(preferred => this.form.patchValue({ownerId: preferred.id}));

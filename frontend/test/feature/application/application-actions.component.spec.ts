@@ -2,27 +2,34 @@ import {Component, DebugElement} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
-import {ApplicationActionsComponent} from '../../../src/app/feature/application/info/application-actions.component';
-import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock, NotificationServiceMock, RouterMock} from '../../mocks';
-import {ApplicationStore} from '../../../src/app/service/application/application-store';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {ApplicationActionsComponent} from '@feature/application/info/application-actions.component';
+import {
+  ApplicationStoreMock,
+  availableToDirectiveMockMeta,
+  CurrentUserMock,
+  NotificationServiceMock,
+  RouterMock,
+  UserServiceMock
+} from '../../mocks';
+import {ApplicationStore} from '@service/application/application-store';
 import {ActivatedRoute, Router} from '@angular/router';
-import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
+import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {getButtonWithText} from '../../selector-helpers';
-import {findTranslation} from '../../../src/app/util/translations';
+import {findTranslation} from '@util/translations';
 import {RouterTestingModule} from '@angular/router/testing';
-import {AttachmentInfo} from '../../../src/app/model/application/attachment/attachment-info';
-import {Location} from '../../../src/app/model/common/location';
-import {ApplicationType} from '../../../src/app/model/application/type/application-type';
-import {NotificationService} from '../../../src/app/feature/notification/notification.service';
-import {ApplicationStatus} from '../../../src/app/model/application/application-status';
+import {AttachmentInfo} from '@model/application/attachment/attachment-info';
+import {Location} from '@model/common/location';
+import {ApplicationType} from '@model/application/type/application-type';
+import {NotificationService} from '@feature/notification/notification.service';
+import {ApplicationStatus} from '@model/application/application-status';
 import {MatDialog} from '@angular/material';
-import {User} from '../../../src/app/model/user/user';
-import {UserHub} from '../../../src/app/service/user/user-hub';
-import {UserSearchCriteria} from '../../../src/app/model/user/user-search-criteria';
+import {User} from '@model/user/user';
+import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {EMPTY, Observable, of} from 'rxjs/index';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {StoreModule} from '@ngrx/store';
+import {UserService} from '@service/user/user-service';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -35,11 +42,6 @@ class MatDialogMock {
     return undefined;
   }
 }
-
-class UserHubMock {
-  searchUsers(criteria: UserSearchCriteria) { return of([]); }
-}
-
 
 @Component({
   template: `
@@ -65,7 +67,7 @@ describe('ApplicationActionsComponent', () => {
   let router: RouterMock;
   let applicationStore: ApplicationStoreMock;
   let dialog: MatDialogMock;
-  let userHub: UserHubMock;
+  let userService: UserServiceMock;
   let notification: NotificationServiceMock;
   const currentUserMock = CurrentUserMock.create(true, true);
   const applicationId = 15;
@@ -89,7 +91,7 @@ describe('ApplicationActionsComponent', () => {
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: NotificationService, useClass: NotificationServiceMock},
         {provide: MatDialog, useClass: MatDialogMock},
-        {provide: UserHub, useClass: UserHubMock},
+        {provide: UserService, useClass: UserServiceMock},
         InformationRequestModalEvents
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
@@ -103,7 +105,7 @@ describe('ApplicationActionsComponent', () => {
     router = TestBed.get(Router) as RouterMock;
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
     dialog = TestBed.get(MatDialog) as MatDialogMock;
-    userHub = TestBed.get(UserHub) as UserHubMock;
+    userService = TestBed.get(UserService) as UserServiceMock;
     notification = TestBed.get(NotificationService) as NotificationServiceMock;
 
     const app = applicationStore.snapshot.application;
@@ -165,7 +167,7 @@ describe('ApplicationActionsComponent', () => {
     const location = new Location(12, 12, 12, new Date());
 
     const preferredOwner = new User(52);
-    spyOn(userHub, 'searchUsers').and.returnValue(of([preferredOwner]));
+    spyOn(userService, 'search').and.returnValue(of([preferredOwner]));
 
     const application = applicationStore.snapshot.application;
     application.id = 1;

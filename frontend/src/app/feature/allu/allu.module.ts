@@ -22,7 +22,6 @@ import {DecisionModule} from '../decision/decision.module';
 import {SearchModule} from '../search/search.module';
 import {ToolbarModule} from '../toolbar/toolbar.module';
 import {LoginModule} from '../login/login.module';
-import {UserHub} from '../../service/user/user-hub';
 import {AdminModule} from '../admin/admin.module';
 import {ProjectModule} from '../project/project.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
@@ -105,7 +104,6 @@ import {ConfigurationEffects} from './effects/configuration-effects';
     UserService,
     LocationService,
     CustomerService,
-    UserHub,
     MapStore,
     AuthGuard,
     CanDeactivateGuard,

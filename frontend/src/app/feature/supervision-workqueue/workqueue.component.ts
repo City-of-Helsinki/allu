@@ -3,14 +3,14 @@ import {WorkQueueTab} from '../workqueue/workqueue-tab';
 import {SupervisionWorkItemStore} from './supervision-work-item-store';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '../common/ownerModal/owner-modal.component';
-import {CurrentUser} from '../../service/user/current-user';
-import {DialogCloseReason} from '../common/dialog-close-value';
-import {User} from '../../model/user/user';
-import {NotificationService} from '../notification/notification.service';
-import {UserHub} from '../../service/user/user-hub';
-import {RoleType} from '../../model/user/role-type';
+import {CurrentUser} from '@service/user/current-user';
+import {DialogCloseReason} from '@feature/common/dialog-close-value';
+import {User} from '@model/user/user';
+import {NotificationService} from '@feature/notification/notification.service';
+import {RoleType} from '@model/user/role-type';
 import {Subscription} from 'rxjs';
 import {distinctUntilChanged, map} from 'rxjs/internal/operators';
+import {UserService} from '@service/user/user-service';
 
 @Component({
   selector: 'supervision-workqueue',
@@ -28,12 +28,12 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   constructor(
     private store: SupervisionWorkItemStore,
     private currentUser: CurrentUser,
-    private userHub: UserHub,
+    private userService: UserService,
     private dialog: MatDialog,
     private notification: NotificationService) {}
 
   ngOnInit() {
-    this.userHub.getByRole(RoleType.ROLE_SUPERVISE)
+    this.userService.getByRole(RoleType.ROLE_SUPERVISE)
       .subscribe(supervisors => this.activeSupervisors = supervisors);
 
     this.changeSubscription = this.store.changes.pipe(
