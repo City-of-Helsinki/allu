@@ -1,16 +1,16 @@
 import {BackendApplication, SearchResultApplication} from '../backend-model/backend-application';
-import {Application} from '../../model/application/application';
+import {Application} from '@model/application/application';
 import {ProjectMapper} from './project-mapper';
 import {CustomerMapper} from './customer-mapper';
 import {LocationMapper} from './location-mapper';
 import {ApplicationExtensionMapper} from './application-extension-mapper';
 import {AttachmentInfoMapper} from './attachment-info-mapper';
 import {UserMapper} from './user-mapper';
-import {TimeUtil} from '../../util/time.util';
+import {TimeUtil} from '@util/time.util';
 import {ApplicationTagMapper} from './application-tag-mapper';
 import {CommentMapper} from '../application/comment/comment-mapper';
 import {DistributionMapper} from './distribution-mapper';
-import {Some} from '../../util/option';
+import {Some} from '@util/option';
 import {ClientApplicationDataMapper} from './client-application-data-mapper';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
@@ -88,6 +88,7 @@ export class ApplicationMapper {
     application.invoiced = backendApplication.invoiced;
     application.clientApplicationData = ClientApplicationDataMapper.mapBackend(backendApplication.clientApplicationData);
     application.externalOwnerId = backendApplication.externalOwnerId;
+    application.invoicingChanged = backendApplication.invoicingChanged;
     return application;
   }
 

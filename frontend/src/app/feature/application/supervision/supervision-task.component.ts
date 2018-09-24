@@ -18,10 +18,11 @@ import {
 } from './supervision-approval-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
-import {filter, map, startWith, take, takeUntil} from 'rxjs/internal/operators';
+import {filter, map, startWith, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
+import * as fromSupervision from '@feature/application/supervision/reducers';
 import {Approve, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
 import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
@@ -35,6 +36,14 @@ import {
 import {Subject} from 'rxjs/index';
 import {RequiredTasks} from '@model/application/required-tasks';
 import {UserService} from '@service/user/user-service';
+import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
+import {CommentType} from '@model/application/comment/comment-type';
+import {ApplicationStatus} from '@model/application/application-status';
+import {findTranslation} from '@util/translations';
+import {Load} from '@feature/comment/actions/comment-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {StatusChangeInfo} from '@model/application/status-change-info';
+import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 
 @Component({
   selector: 'supervision-task',
@@ -169,6 +178,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const task = this.taskWithResult(SupervisionTaskStatusType.APPROVED, result);
     this.store.dispatch(new Approve(task));
     Some(result.reportedDate).do(date => this.reportDatesOnApproval(date, task.type));
+    this.handleStatusChange(result);
   }
 
   private reportDatesOnApproval(date: Date, type: SupervisionTaskType): void {
@@ -199,8 +209,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       data: {
         resolutionType: type,
         taskType: task.type,
-        applicationType: this.application.type,
-        reportedDate
+        reportedDate,
+        application: this.application
       }
     };
 
@@ -269,5 +279,48 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.store.dispatch(new Save(task));
     Some(requiredTasks).do(tasks => this.store.dispatch(new SetRequiredTasks(tasks)));
     this.editing = false;
+  }
+
+  private handleStatusChange(result: SupervisionApprovalResult): void {
+    this.store.select(fromSupervision.getSaving).pipe(
+      filter(saving => !saving),
+      take(1)
+    ).subscribe(() => {
+      switch (result.statusChange) {
+        case ApplicationStatus.DECISIONMAKING: {
+          this.toDecisionMaking();
+          break;
+        }
+
+        case ApplicationStatus.OPERATIONAL_CONDITION:
+        case ApplicationStatus.FINISHED: {
+          this.changeStatus(result.statusChange);
+          break;
+        }
+      }
+    });
+  }
+
+  private toDecisionMaking(): void {
+    const config = {
+      ...DECISION_PROPOSAL_MODAL_CONFIG,
+      data: {
+        proposalType: CommentType[CommentType.PROPOSE_APPROVAL],
+        cityDistrict: this.application.firstLocation.effectiveCityDistrictId
+      }
+    };
+
+    this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed()
+      .subscribe(proposal => this.changeStatus(ApplicationStatus.DECISIONMAKING, proposal));
+  }
+
+  private changeStatus(status: ApplicationStatus, changeInfo?: StatusChangeInfo): void {
+    const notificationKey = `application.statusChange.${status}`;
+    this.applicationStore.changeStatus(this.application.id, status, changeInfo)
+      .subscribe(app => {
+        this.store.dispatch(new Load(ActionTargetType.Application));
+        this.store.dispatch(new NotifySuccess(findTranslation(notificationKey)));
+        this.applicationStore.applicationChange(app);
+      }, err => this.store.dispatch(new NotifyFailure(err)));
   }
 }

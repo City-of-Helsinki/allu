@@ -10,12 +10,14 @@ import {EffectsModule} from '@ngrx/effects';
 import {SupervisionTaskEffects} from '@feature/application/supervision/effects/supervision-task-effects';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     AlluCommonModule,
+    RouterModule,
     StoreModule.forFeature('supervisionTasks', reducers),
     EffectsModule.forFeature([
       SupervisionTaskEffects

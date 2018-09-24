@@ -1,5 +1,8 @@
 <form [formGroup]="form" (ngSubmit)="confirm()">
-  <h2 mat-dialog-title>{{['supervisionApprovalModal', resolutionType, 'title'] | translation}}</h2>
+  <h2 mat-dialog-title fxLayout="row" fxLayoutGap="4px">
+    <div fxFlex="none">{{['supervision.task.resolution', data.resolutionType] | translation}}</div>
+    <div fxFlex="none">{{['supervision.task.type', data.taskType] | translation | lowercase}}</div>
+  </h2>
   <mat-dialog-content>
     <div fxLayout="column">
       <div fxFlex>
@@ -26,7 +29,7 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field *ngIf="form.get('reportedDate')" class="form-field-50">
+        <mat-form-field *ngIf="showExcavationExtras" class="form-field-50">
           <input matInput formControlName="reportedDate" required
                  [placeholder]="['dateReporting.reportedInfo', reportedDateType] | translation"
                  [matDatepicker]="reportedDatePicker">
@@ -40,14 +43,28 @@
             {{'dateReporting.field.reportedDateMissing' | translation}}
           </mat-error>
         </mat-form-field>
-
       </div>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
-      {{'common.button.save' | translation}}
-    </button>
+    <div *ngIf="showExcavationExtras" fxLayout="row" fxLayoutGap="4px">
+      <div fxFlex="none">{{'supervision.task.needsInvoicingChanges' | translation}}</div>
+      <a fxFlex="none" (click)="cancel()"
+         [routerLink]="['/applications', application.id, 'summary', 'invoicing']">
+        {{'supervision.task.toInvoicing' | translation}}
+      </a>
+    </div>
+    <ng-container *ngIf="showToDecisionMaking; else approve">
+      <button *ngIf="showToDecisionMaking" mat-raised-button type="button" color="primary"
+              [disabled]="!form.valid" (click)="toDecisionMaking()">
+        {{'application.button.toDecisionMaking' | translation | uppercase}}
+      </button>
+    </ng-container>
+    <ng-template #approve>
+      <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
+        {{'common.button.save' | translation | uppercase}}
+      </button>
+    </ng-template>
     <button mat-raised-button type="button" color="primary" (click)="cancel()">
       {{'common.button.cancel' | translation}}
     </button>

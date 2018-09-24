@@ -22,3 +22,8 @@ export const {
   selectAll: getAllSupervisionTasks,
   selectTotal: getSupervisionTaskTotal
 } = fromSupervisionTask.adapter.getSelectors(getSupervisionTasksEntityState);
+
+export const getSaving = createSelector(
+  getSupervisionTasksEntityState,
+  fromSupervisionTask.getSaving
+);

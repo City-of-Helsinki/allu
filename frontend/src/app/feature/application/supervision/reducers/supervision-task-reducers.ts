@@ -6,6 +6,7 @@ import {TimeUtil} from '@util/time.util';
 export interface State extends EntityState<SupervisionTask> {
   selectedId: number;
   loading: boolean;
+  saving: boolean;
 }
 
 export function sortByCreationTime(left: SupervisionTask, right: SupervisionTask): number {
@@ -18,7 +19,8 @@ export const adapter: EntityAdapter<SupervisionTask> = createEntityAdapter<Super
 
 const initialState: State = adapter.getInitialState({
   selectedId: undefined,
-  loading: false
+  loading: false,
+  saving: false
 });
 
 export function reducer(state: State = initialState, action: SupervisionTaskActions) {
@@ -44,10 +46,22 @@ export function reducer(state: State = initialState, action: SupervisionTaskActi
       };
     }
 
+    case SupervisionTaskActionType.Save:
+    case SupervisionTaskActionType.Approve:
+    case SupervisionTaskActionType.Reject: {
+      return {
+        ...state,
+        saving: true
+      };
+    }
+
     case SupervisionTaskActionType.SaveSuccess:
     case SupervisionTaskActionType.ApproveSuccess:
     case SupervisionTaskActionType.RejectSuccess: {
-      return adapter.upsertOne(action.payload, state);
+      return adapter.upsertOne(action.payload, {
+        ...state,
+        saving: false
+      });
     }
 
     case SupervisionTaskActionType.RemoveSuccess: {
@@ -61,3 +75,5 @@ export function reducer(state: State = initialState, action: SupervisionTaskActi
 }
 
 export const getSelectedTaskId = (state: State) => state.selectedId;
+
+export const getSaving = (state: State) => state.saving;

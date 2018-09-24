@@ -50,6 +50,7 @@ export interface BackendApplication {
   clientApplicationData?: BackendClientApplicationData;
   externalOwnerId?: number;
   invoiced?: boolean;
+  invoicingChanged?: boolean;
 }
 
 export interface SearchResultApplication {

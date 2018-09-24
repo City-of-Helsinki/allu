@@ -44,6 +44,7 @@ export class ApplicationService {
     this.statusToUrl.set(ApplicationStatus.DECISION, 'decision');
     this.statusToUrl.set(ApplicationStatus.REJECTED, 'rejected');
     this.statusToUrl.set(ApplicationStatus.RETURNED_TO_PREPARATION, 'toPreparation');
+    this.statusToUrl.set(ApplicationStatus.OPERATIONAL_CONDITION, 'operational_condition');
     this.statusToUrl.set(ApplicationStatus.FINISHED, 'finished');
   }
 

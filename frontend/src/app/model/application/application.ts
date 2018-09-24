@@ -56,7 +56,8 @@ export class Application {
     public clientApplicationData?: ClientApplicationData,
     public externalOwnerId?: number,
     public nrOfComments?: number,
-    public invoiced?: boolean) {
+    public invoiced?: boolean,
+    public invoicingChanged: boolean = false) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

@@ -20,6 +20,7 @@ import {Load} from '../comment/actions/comment-actions';
 import * as tagActions from '../application/actions/application-tag-actions';
 import {ActionTargetType} from '../allu/actions/action-target-type';
 import {filter, switchMap, tap, catchError} from 'rxjs/internal/operators';
+import {CommentType} from '@model/application/comment/comment-type';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -59,10 +60,15 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   public decisionProposal(proposalType: string): void {
-    const dialogRef = this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, DECISION_PROPOSAL_MODAL_CONFIG);
-    const component = dialogRef.componentInstance;
-    component.proposal = proposalType;
-    dialogRef.afterClosed()
+    const config = {
+      ...DECISION_PROPOSAL_MODAL_CONFIG,
+      data: {
+        proposalType,
+        cityDistrict: this.application.firstLocation.effectiveCityDistrictId
+      }
+    };
+
+    this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed()
       .subscribe(proposal => this.proposalConfirmed(proposal));
   }
 

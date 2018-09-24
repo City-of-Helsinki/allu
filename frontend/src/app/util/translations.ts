@@ -438,7 +438,8 @@ export const translations = {
       convertToApplication: 'Vahvista varaus',
       toDecision: 'Päättämiseen',
       showPending: 'Näytä uudet tiedot',
-      handleInformationRequestResponse: 'Käsittele täydennyspyyntö'
+      handleInformationRequestResponse: 'Käsittele täydennyspyyntö',
+      toDecisionMaking: 'Ehdota päätettäväksi'
     },
     confirmCancel: {
       title: 'Haluatko varmasti perua hakemuksen?',
@@ -1305,6 +1306,8 @@ export const translations = {
       approve: 'HYVÄKSY',
       reject: 'HYLKÄÄ',
       newSupervisionDate: 'Uusi valvonta-aika',
+      needsInvoicingChanges: 'Jos laskutusta tarvitsee muokata ennen hyväksyntää',
+      toInvoicing:  'siirry laskutukseen.',
       type: {
         title: 'Toimenpide',
         PRELIMINARY_SUPERVISION: 'Aloitusvalvonta',
@@ -1345,6 +1348,10 @@ export const translations = {
         resultMissing: 'Valvojan merkinnät puuttuvat',
         newSupervisionDateMissing: 'Uusi valvonta-aika puuttuu',
         newSupervisionDateInThePast: 'Uusi valvonta-aika ei voi olla menneisyydessä'
+      },
+      resolution: {
+        APPROVE: 'Hyväksy',
+        REJECT: 'Hylkää'
       }
     }
   },
