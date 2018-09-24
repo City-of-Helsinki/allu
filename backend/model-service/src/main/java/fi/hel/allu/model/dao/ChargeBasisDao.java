@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -75,9 +76,12 @@ public class ChargeBasisDao {
   }
 
   private void updateEntries(Set<ChargeBasisEntry> entriesToUpdate) {
+    ZonedDateTime modificationTime = ZonedDateTime.now();
     for (ChargeBasisEntry entry : entriesToUpdate) {
-      queryFactory.update(chargeBasis).populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
-          .where(chargeBasis.id.eq(entry.getId())).execute();
+      entry.setModificationTime(modificationTime);
+      queryFactory.update(chargeBasis)
+      .populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
+      .where(chargeBasis.id.eq(entry.getId())).execute();
     }
   }
 
@@ -95,8 +99,10 @@ public class ChargeBasisDao {
 
   private void insertEntries(int applicationId, Collection<ChargeBasisEntry> entries, boolean manuallySet, int nextEntryNumber) {
     if (!entries.isEmpty()) {
+      ZonedDateTime modificationTime = ZonedDateTime.now();
       SQLInsertClause insert = queryFactory.insert(chargeBasis);
       for (ChargeBasisEntry entry : entries) {
+        entry.setModificationTime(modificationTime);
         insert
             .populate(entry,
                 new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Arrays.asList(chargeBasis.manuallySet)))

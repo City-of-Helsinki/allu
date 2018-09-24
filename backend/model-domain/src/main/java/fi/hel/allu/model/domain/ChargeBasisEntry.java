@@ -1,12 +1,13 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.types.ChargeBasisType;
-
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.types.ChargeBasisType;
 
 public class ChargeBasisEntry {
   private Integer id;
@@ -24,6 +25,7 @@ public class ChargeBasisEntry {
   private int unitPrice;
   private int netPrice;
   private boolean isInvoiced;
+  private ZonedDateTime modificationTime;
 
   public ChargeBasisEntry() {
     // for deserialization
@@ -242,5 +244,13 @@ public class ChargeBasisEntry {
 
   public void setInvoiced(boolean isInvoiced) {
     this.isInvoiced = isInvoiced;
+  }
+
+  public ZonedDateTime getModificationTime() {
+    return modificationTime;
+  }
+
+  public void setModificationTime(ZonedDateTime modificationTime) {
+    this.modificationTime = modificationTime;
   }
 }
