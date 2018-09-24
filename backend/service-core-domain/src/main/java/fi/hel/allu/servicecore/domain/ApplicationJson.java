@@ -584,7 +584,7 @@ public class ApplicationJson {
     this.identificationNumber = identificationNumber;
   }
 
-  public boolean getInvoicingChanged() {
+  public Boolean getInvoicingChanged() {
     return invoicingChanged;
   }
 
