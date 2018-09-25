@@ -53,15 +53,14 @@ public class ExcavationAnnouncementService {
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
-  public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate, Integer decisionMakerUserId) {
+  public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate) {
     Application application = applicationService.findApplicationById(id);
     boolean requiresDecision = requiresDecisionOnOperationalCondition(application, operationalConditionDate);
     applicationService.setOperationalConditionDate(id, operationalConditionDate);
     if (!requiresDecision) {
       setInvoicableTime(id, operationalConditionDate);
     }
-    StatusType newStatus = requiresDecision ? StatusType.DECISIONMAKING : StatusType.OPERATIONAL_CONDITION;
-    return changeStatus(id, newStatus, decisionMakerUserId);
+    return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
   private boolean requiresDecisionOnOperationalCondition(Application application, ZonedDateTime operationalConditionDate) {
@@ -71,7 +70,7 @@ public class ExcavationAnnouncementService {
     return !TimeUtil.isSameDate(extension.getWinterTimeOperation(), operationalConditionDate) || application.isInvoicingChanged();
   }
 
-  public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate, Integer decisionMakerUserId) {
+  public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate) {
     Application application = applicationService.findApplicationById(id);
     boolean requiresDecision = requiresDecisionOnWorkFinished(application, workFinishedDate);
     applicationService.setWorkFinishedDate(id, workFinishedDate);
@@ -80,8 +79,7 @@ public class ExcavationAnnouncementService {
     }
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.WARRANTY,
         ExcavationAnnouncementDates.warrantySupervisionDate(workFinishedDate));
-    StatusType newStatus = requiresDecision ? StatusType.DECISIONMAKING : StatusType.FINISHED;
-    return changeStatus(id, newStatus, decisionMakerUserId);
+    return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
   public ApplicationJson setRequiredTasks(Integer id, RequiredTasks requiredTasks) {
@@ -90,9 +88,6 @@ public class ExcavationAnnouncementService {
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
-  private ApplicationJson changeStatus(Integer id, StatusType newStatus, Integer decisionMakerUserId) {
-    return applicationServiceComposer.changeStatus(id, newStatus, new StatusChangeInfoJson(decisionMakerUserId));
-  }
   private boolean requiresDecisionOnWorkFinished(Application application, ZonedDateTime workFinishedDate) {
     // If work finished date differs from original application end time and its not winter time operation ending before winter end
     // or invoice rows have been added after previous decision application requires new decision

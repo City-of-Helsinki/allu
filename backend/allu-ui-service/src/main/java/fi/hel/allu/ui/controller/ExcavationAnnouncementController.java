@@ -40,15 +40,15 @@ public class ExcavationAnnouncementController {
   @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportOperationalCondition(@PathVariable Integer id,
-      @RequestBody @NotNull ZonedDateTime operationalConditionDate, @RequestParam(required = false) Integer decisionMakerId) {
-    return ResponseEntity.ok(excavationAnnouncementService.reportOperationalCondition(id, operationalConditionDate, decisionMakerId));
+      @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
+    return ResponseEntity.ok(excavationAnnouncementService.reportOperationalCondition(id, operationalConditionDate));
   }
 
   @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportWorkFinished(@PathVariable Integer id,
-      @RequestBody @NotNull ZonedDateTime workFinishedDate, @RequestParam(required = false) Integer decisionMakerId) {
-    return ResponseEntity.ok(excavationAnnouncementService.reportWorkFinished(id, workFinishedDate, decisionMakerId));
+      @RequestBody @NotNull ZonedDateTime workFinishedDate) {
+    return ResponseEntity.ok(excavationAnnouncementService.reportWorkFinished(id, workFinishedDate));
   }
 
   @RequestMapping(value = "/{id}/requiredtasks", method = RequestMethod.PUT)
