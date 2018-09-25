@@ -74,7 +74,8 @@ public class UserDao {
 
   @Transactional(readOnly = true)
   public List<User> findAll() {
-    List<User> users = queryFactory.select(userBean).from(QUser.user).fetchResults().getResults();
+    List<User> users = queryFactory.select(userBean).from(QUser.user)
+        .orderBy(QUser.user.realName.asc()).fetchResults().getResults();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;
@@ -135,6 +136,7 @@ public class UserDao {
     List<User> users = queryFactory.select(userBean).from(QUser.user)
         .innerJoin(userRole).on(user.id.eq(userRole.userId))
         .where(userRole.role.eq(roleType.name()))
+        .orderBy(QUser.user.realName.asc())
         .fetchResults().getResults();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
