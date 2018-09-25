@@ -2,10 +2,13 @@ package fi.hel.allu.model.pricing;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ExcavationAnnouncement;
 
 import org.junit.runner.RunWith;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
@@ -23,9 +26,10 @@ public class ExcavationPricingSpec {
       context("with a three-day application", () -> {
         beforeEach(()-> {
           app = new Application();
+          app.setExtension(new ExcavationAnnouncement());
           app.setStartTime(ZonedDateTime.parse("2017-04-20T08:00:00+03:00"));
           app.setEndTime(ZonedDateTime.parse("2017-04-22T17:00:00+03:00"));
-          exc = new ExcavationPricing(app);
+          exc = new ExcavationPricing(app, new WinterTime(LocalDate.parse("1972-12-01"), LocalDate.parse("1972-05-14")));
         });
         context("On price class 2, with area of 65 sqm", () -> {
           it("should cost 3 * 32.50 +  180 EUR", () -> {

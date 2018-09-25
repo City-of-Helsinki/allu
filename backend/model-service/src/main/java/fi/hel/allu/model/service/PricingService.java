@@ -1,24 +1,8 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.model.pricing.PricingExplanator;
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.domain.util.EventDayUtil;
-import fi.hel.allu.model.domain.util.Printable;
-import fi.hel.allu.model.pricing.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -26,6 +10,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.common.util.WinterTime;
+import fi.hel.allu.model.dao.ConfigurationDao;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.util.EventDayUtil;
+import fi.hel.allu.model.domain.util.Printable;
+import fi.hel.allu.model.pricing.*;
 
 /**
  *
@@ -39,6 +42,7 @@ public class PricingService {
   private final LocationDao locationDao;
   private final CustomerDao customerDao;
   private final PricingExplanator pricingExplanator;
+  private final ConfigurationDao configurationDao;
 
   private static final Location EMPTY_LOCATION;
 
@@ -48,11 +52,12 @@ public class PricingService {
   }
 
   @Autowired
-  public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao) {
+  public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao, ConfigurationDao configurationDao) {
     this.pricingDao = pricingDao;
     this.locationDao = locationDao;
     this.customerDao = customerDao;
     this.pricingExplanator = new PricingExplanator(locationDao);
+    this.configurationDao = configurationDao;
   }
 
   /**
@@ -70,12 +75,23 @@ public class PricingService {
     } else if (application.getType() == ApplicationType.EVENT) {
       return updateEventPrice(application);
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      return updateExcavationAnnouncementPrice(application);
+      return updateExcavationAnnouncementPrice(application, getWinterTime());
     } else if (application.getType() == ApplicationType.AREA_RENTAL) {
       return updateAreaRentalPrice(application);
     } else {
       return Collections.emptyList();
     }
+  }
+
+  private WinterTime getWinterTime() {
+    return new WinterTime(
+        LocalDate.parse(getConfigurationValue(ConfigurationKey.WINTER_TIME_START)),
+        LocalDate.parse(getConfigurationValue(ConfigurationKey.WINTER_TIME_END)));
+  }
+
+  private String getConfigurationValue(ConfigurationKey key) {
+    return configurationDao.findByKey(key).stream().findFirst().map(Configuration::getValue)
+        .orElseThrow(() -> new NoSuchEntityException("Required configuration " + key + " not found."));
   }
 
   /**
@@ -146,8 +162,8 @@ public class PricingService {
   /*
    * Calculate price for excavation announcement
    */
-  private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application) {
-    return calculateChargeBasis(application, new ExcavationPricing(application));
+  private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application, WinterTime winterTime) {
+    return calculateChargeBasis(application, new ExcavationPricing(application, winterTime));
   }
 
   /*

@@ -17,7 +17,7 @@ public class WinterTime {
   }
 
   /**
-   * Gets winter time end for given date in winter time
+   * Gets winter time end for given date. If date is not in winter, returns end date of next winter
    * @param date
    */
   public LocalDate getWinterTimeEnd(ZonedDateTime dateInWinter) {
@@ -27,10 +27,20 @@ public class WinterTime {
 
   private int getWinterEndYear(ZonedDateTime date) {
     int winterTimeEndYear = date.getYear();
-    if (date.getMonthValue() > winterTimeEnd.getMonthValue()) {
+    if (date.getMonthValue() > winterTimeEnd.getMonthValue()
+        || (date.getMonthValue() == winterTimeEnd.getMonthValue() && date.getDayOfMonth() > winterTimeEnd.getDayOfMonth())) {
       winterTimeEndYear++;
     }
     return winterTimeEndYear;
+  }
+
+  /**
+   * Gets winter time start for given date. If date is not in winter, returns start date of next winter
+   * @return
+   */
+  public LocalDate getWinterTimeStart(ZonedDateTime date) {
+    LocalDate winterEndDate = getWinterTimeEnd(date);
+    return getWinterStartForWinterEnd(winterEndDate);
   }
 
   /**
@@ -38,12 +48,17 @@ public class WinterTime {
    */
   public boolean isInWinterTime(ZonedDateTime dateToCheck) {
     LocalDate winterEndDate = getWinterTimeEnd(dateToCheck);
+    LocalDate winterStartDate = getWinterStartForWinterEnd(winterEndDate);
+    return Range.closed(winterStartDate, winterEndDate).contains(LocalDate.from(dateToCheck));
+  }
+
+  private LocalDate getWinterStartForWinterEnd(LocalDate winterEndDate) {
     LocalDate winterStartDate;
     if (winterTimeStart.getMonthValue() > winterTimeEnd.getMonthValue()) {
       winterStartDate = winterTimeStart.withYear(winterEndDate.getYear() - 1);
     } else {
       winterStartDate = winterTimeStart.withYear(winterEndDate.getYear());
     }
-    return Range.closed(winterStartDate, winterEndDate).contains(LocalDate.from(dateToCheck));
+    return winterStartDate;
   }
 }
