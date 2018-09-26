@@ -490,4 +490,9 @@ public class ApplicationService {
   public void setRequiredTasks(Integer id, RequiredTasks requiredTasks) {
     applicationDao.setRequiredTasks(id, requiredTasks);
   }
+
+  @Transactional
+  public Application setTargetState(Integer id, StatusType targetState) {
+    return applicationDao.setTargetState(id, targetState);
+  }
 }

@@ -402,4 +402,11 @@ public class ApplicationService {
         applicationProperties.getSetRequiredTasksUrl(),
         HttpMethod.PUT, new HttpEntity<>(tasks), Void.class, id);
   }
+
+
+  public Application setTargetState(Integer id, StatusType targetState) {
+    return restTemplate.exchange(
+        applicationProperties.getSetTargetStateUrl(),
+        HttpMethod.PUT, new HttpEntity<>(targetState), Application.class, id).getBody();
+  }
 }

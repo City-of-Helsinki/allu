@@ -392,6 +392,11 @@
                             <type>fi.hel.allu.model.querydsl.StringToApplicationKind</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>application</table>
+                            <column>target_state</column>
+                            <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>kind_specifier</table>
                             <column>specifier</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationSpecifier</type>

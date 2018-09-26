@@ -61,7 +61,7 @@ public class ApplicationDao {
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
           application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
           application.invoiced, application.clientApplicationData, application.applicationId,
-          application.externalOwnerId, application.invoicingChanged);
+          application.externalOwnerId, application.invoicingChanged, application.targetState);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
@@ -867,4 +867,14 @@ public class ApplicationDao {
     .where(application.id.eq(applicationId))
     .execute();
   }
+
+  @Transactional
+  public Application setTargetState(int applicationId, StatusType targetState) {
+    queryFactory.update(application)
+    .set(application.targetState, targetState)
+    .where(application.id.eq(applicationId))
+    .execute();
+    return findById(applicationId);
+  }
+
 }

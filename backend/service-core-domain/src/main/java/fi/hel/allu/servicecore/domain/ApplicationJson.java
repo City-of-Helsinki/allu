@@ -95,6 +95,7 @@ public class ApplicationJson {
   private ClientApplicationDataJson clientApplicationData;
   private String identificationNumber;
   private Boolean invoicingChanged;
+  private StatusType targetState;
 
   /**
    * Id of the external owner (external_user.id)
@@ -590,5 +591,13 @@ public class ApplicationJson {
 
   public void setInvoicingChanged(Boolean invoicingChanged) {
     this.invoicingChanged = invoicingChanged;
+  }
+
+  public StatusType getTargetState() {
+    return targetState;
+  }
+
+  public void setTargetState(StatusType targetState) {
+    this.targetState = targetState;
   }
 }

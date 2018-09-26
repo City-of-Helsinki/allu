@@ -329,11 +329,17 @@ public class ApplicationController {
     return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "{id}/invoices/invoicabletime",  method = RequestMethod.PUT)
+  @RequestMapping(value = "/{id}/invoices/invoicabletime",  method = RequestMethod.PUT)
   public ResponseEntity<Void> setInvoicableTime(@PathVariable Integer id, @RequestBody ZonedDateTime invoicableTime) {
     invoiceService.setInvoicableTime(id, invoicableTime);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/targetstate",  method = RequestMethod.PUT)
+  public ResponseEntity<Application> setTargetState(@PathVariable Integer id, @RequestBody StatusType targetState) {
+    return ResponseEntity.ok(applicationService.setTargetState(id, targetState));
+  }
+
 
   /**
    * Get list of invoices that are ready to be sent to SAP

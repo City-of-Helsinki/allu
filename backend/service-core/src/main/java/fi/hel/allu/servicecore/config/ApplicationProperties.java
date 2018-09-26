@@ -1059,6 +1059,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for setting target state for applications
+   */
+  public String getSetTargetStateUrl() {
+    return getModelServiceUrl("/applications/{id}/targetstate");
+  }
+
+  /**
   * @return url for getting deposit by application id.
    */
   public String getDepositByApplicationIdUrl() {

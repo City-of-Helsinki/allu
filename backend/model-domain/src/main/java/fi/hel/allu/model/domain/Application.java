@@ -75,6 +75,7 @@ public class Application {
 
   private List<Location> locations;
   private boolean invoicingChanged;
+  private StatusType targetState;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -530,5 +531,16 @@ public class Application {
 
   public void setInvoicingChanged(boolean invoicingChanged) {
     this.invoicingChanged = invoicingChanged;
+  }
+
+  /**
+   * Target state after decision
+   */
+  public StatusType getTargetState() {
+    return targetState;
+  }
+
+  public void setTargetState(StatusType targetState) {
+    this.targetState = targetState;
   }
 }

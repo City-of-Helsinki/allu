@@ -51,13 +51,24 @@ public class ApplicationStatusChangeListener {
       handleDecisionStatus(event.getApplication(), event.getUserId());
     } else if (event.getNewStatus() == StatusType.CANCELLED) {
       cancelOpenSupervisionTasks(event.getApplication());
+    } else if (event.getNewStatus() == StatusType.DECISIONMAKING) {
+      handleDecisionMakingStatus(event.getApplication());
     } else if (event.getNewStatus() == StatusType.OPERATIONAL_CONDITION) {
       applicationDao.setInvoicingChanged(event.getApplication().getId(), false);
     }
   }
 
+  private void handleDecisionMakingStatus(Application application) {
+    if (application.getTargetState() == null) {
+      // By default, application is moved to decision state when decision is made.
+      applicationService.setTargetState(application.getId(), StatusType.DECISION);
+    }
+  }
+
   private void handleDecisionStatus(Application application, Integer userId) {
     cancelDanglingSupervisionTasks(application);
+    // Clear target state on decision
+    applicationService.setTargetState(application.getId(), null);
     applicationDao.setInvoicingChanged(application.getId(), false);
     switch (application.getType()) {
     case PLACEMENT_CONTRACT:
