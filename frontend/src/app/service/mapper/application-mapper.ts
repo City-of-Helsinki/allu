@@ -89,6 +89,7 @@ export class ApplicationMapper {
     application.clientApplicationData = ClientApplicationDataMapper.mapBackend(backendApplication.clientApplicationData);
     application.externalOwnerId = backendApplication.externalOwnerId;
     application.invoicingChanged = backendApplication.invoicingChanged;
+    application.targetState = backendApplication.targetState;
     return application;
   }
 

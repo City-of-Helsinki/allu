@@ -51,6 +51,7 @@ export interface BackendApplication {
   externalOwnerId?: number;
   invoiced?: boolean;
   invoicingChanged?: boolean;
+  targetState?: ApplicationStatus;
 }
 
 export interface SearchResultApplication {

@@ -47,7 +47,7 @@ export interface DecisionConfirmation {
   styleUrls: ['./decision-modal.component.scss']
 })
 export class DecisionModalComponent implements OnInit {
-  status: string;
+  status: ApplicationStatus;
   type: string;
   distributionList: Array<DistributionEntry>;
   emailDistribution: boolean;
@@ -69,7 +69,7 @@ export class DecisionModalComponent implements OnInit {
       emailMessage: ['']
     });
 
-    this.status = ApplicationStatus[this.data.status];
+    this.status = this.data.status;
     this.type = this.data.type;
     this.distributionList = this.data.distributionList;
     this.emailDistribution = DistributionType.EMAIL === this.data.distributionType

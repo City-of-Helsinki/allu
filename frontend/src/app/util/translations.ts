@@ -823,6 +823,16 @@ export const translations = {
         confirmText: 'Päätä',
         confirmation: 'Hakemus päätetty'
       },
+      OPERATIONAL_CONDITION: {
+        title: 'Hyväksy toiminnallinen kunto',
+        confirmText: 'Hyväksy',
+        confirmation: 'Toiminnallinen kunto hyväksytty'
+      },
+      FINISHED: {
+        title: 'Työn valmistumisen hyväksyminen',
+        confirmText: 'Hyväksy',
+        confirmation: 'Työn valmistuminen hyväksytty'
+      },
       RETURNED_TO_PREPARATION: {
         title: 'Palauta hakemus',
         confirmText: 'Palauta',

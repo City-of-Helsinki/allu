@@ -78,6 +78,7 @@ export class ProgressbarComponent implements OnInit {
       }
 
       case ApplicationStatus.DECISION:
+      case ApplicationStatus.OPERATIONAL_CONDITION:
       case ApplicationStatus.REJECTED:
       case ApplicationStatus.FINISHED:
       case ApplicationStatus.CANCELLED:
@@ -92,7 +93,8 @@ export class ProgressbarComponent implements OnInit {
 
   private calculateColor(status: ApplicationStatus): ProgressColor {
     switch (status) {
-      case ApplicationStatus.DECISION: {
+      case ApplicationStatus.DECISION:
+      case ApplicationStatus.OPERATIONAL_CONDITION: {
         return 'decision';
       }
 

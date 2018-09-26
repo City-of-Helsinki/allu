@@ -4,7 +4,7 @@
       <div class="action-item">
         <button mat-raised-button type="button" color="primary"
                 (click)="decisionProposal('PROPOSE_APPROVAL')">
-          {{'decision.proposal.type.PROPOSE_APPROVAL' | translation}}
+          {{'decision.proposal.type.PROPOSE_APPROVAL' | translation | uppercase}}
         </button>
       </div>
     </ng-container>
@@ -13,8 +13,8 @@
     <ng-container *ngIf="application.type === 'CABLE_REPORT'">
       <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
         <div class="action-item">
-          <button mat-raised-button type="button" color="primary" (click)="decision('DECISION')">
-            {{'decision.type.DECISION.confirmText' | translation}}
+          <button mat-raised-button type="button" color="primary" (click)="decision()">
+            {{'decision.type.DECISION.confirmText' | translation | uppercase}}
           </button>
         </div>
       </ng-container>
@@ -22,14 +22,13 @@
     <ng-container *ngIf="application.type !== 'CABLE_REPORT'">
       <ng-container *availableTo="['ROLE_DECISION']">
         <div class="action-item">
-          <button mat-raised-button type="button" color="primary" (click)="decision('DECISION')">
-            {{'decision.type.DECISION.confirmText' | translation}}
+          <button mat-raised-button type="button" color="primary" (click)="decision()">
+            {{['decision.type', application.targetState, 'confirmText'] | translation | uppercase }}
           </button>
         </div>
         <div class="action-item">
-          <button mat-raised-button type="button" color="primary"
-                  (click)="decision('RETURNED_TO_PREPARATION')">
-            {{'decision.type.RETURNED_TO_PREPARATION.confirmText' | translation}}
+          <button mat-raised-button type="button" color="primary" (click)="returnToPreparation()">
+            {{'decision.type.RETURNED_TO_PREPARATION.confirmText' | translation | uppercase}}
           </button>
         </div>
       </ng-container>
@@ -40,7 +39,7 @@
       <div class="action-item">
         <button mat-raised-button type="button" color="primary"
                 (click)="resendDecision()">
-          {{'decision.sendDecision' | translation}}
+          {{'decision.sendDecision' | translation | uppercase}}
         </button>
       </div>
     </ng-container>

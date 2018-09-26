@@ -2,25 +2,23 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {Observable, of} from 'rxjs';
-
-import {Application} from '../../model/application/application';
-import {ApplicationStatus, inHandling} from '../../model/application/application-status';
-import {findTranslation} from '../../util/translations';
-import {NotificationService} from '../notification/notification.service';
+import {Application} from '@model/application/application';
+import {ApplicationStatus, inHandling} from '@model/application/application-status';
+import {findTranslation} from '@util/translations';
+import {NotificationService} from '@feature/notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
-import {DecisionService} from '../../service/decision/decision.service';
+import {DecisionService} from '@service/decision/decision.service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
-import {ApplicationStore} from '../../service/application/application-store';
-import {StatusChangeInfo} from '../../model/application/status-change-info';
-import {Some} from '../../util/option';
-import {DecisionDetails} from '../../model/decision/decision-details';
-import * as fromApplication from '../application/reducers';
+import {ApplicationStore} from '@service/application/application-store';
+import {StatusChangeInfo} from '@model/application/status-change-info';
+import {Some} from '@util/option';
+import {DecisionDetails} from '@model/decision/decision-details';
+import * as fromApplication from '@feature/application/reducers';
 import {Store} from '@ngrx/store';
-import {Load} from '../comment/actions/comment-actions';
-import * as tagActions from '../application/actions/application-tag-actions';
-import {ActionTargetType} from '../allu/actions/action-target-type';
-import {filter, switchMap, tap, catchError} from 'rxjs/internal/operators';
-import {CommentType} from '@model/application/comment/comment-type';
+import {Load} from '@feature/comment/actions/comment-actions';
+import * as tagActions from '@feature/application/actions/application-tag-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {catchError, filter, switchMap, tap} from 'rxjs/internal/operators';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -72,8 +70,14 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       .subscribe(proposal => this.proposalConfirmed(proposal));
   }
 
-  public decision(status: string): void {
+  public decision(): void {
+    const status = this.application.targetState;
     this.confirmDecisionSend(status, status)
+      .subscribe(result => this.decisionConfirmed(result));
+  }
+
+  public returnToPreparation(): void {
+    this.confirmDecisionSend(ApplicationStatus.RETURNED_TO_PREPARATION, ApplicationStatus.RETURNED_TO_PREPARATION)
       .subscribe(result => this.decisionConfirmed(result));
   }
 
@@ -110,14 +114,16 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     }
   }
 
-  private confirmDecisionSend(type: string, status?: string): Observable<DecisionConfirmation> {
-    const config = {...DECISION_MODAL_CONFIG};
-    config.data.type = type;
-    config.data.status = ApplicationStatus[status];
-    config.data.distributionList = this.application.decisionDistributionList;
-
-    const dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config);
-    return dialogRef.afterClosed();
+  private confirmDecisionSend(type: string, status?: ApplicationStatus): Observable<DecisionConfirmation> {
+    const config = {
+      ...DECISION_MODAL_CONFIG,
+      data: {
+        type,
+        status,
+        distributionList: this.application.decisionDistributionList
+      }
+    };
+    return this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config).afterClosed();
   }
 
   private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
