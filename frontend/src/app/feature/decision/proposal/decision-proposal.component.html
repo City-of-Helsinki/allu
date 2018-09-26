@@ -5,16 +5,16 @@
         {{['comment.type', proposal.type] | translation}}
       </mat-card-title>
       <mat-card-content>
-        <div class="row">
-          <div class="col m12">
+        <div fxLayout="row">
+          <div fxFlex>
             <div class="save-info">
               <span>{{proposal.user.realName}} {{proposal.uiCreateTime}}</span>
               <span *ngIf="proposal.updateTime">- {{'comment.updated' | translation}} {{proposal.uiUpdateTime}}</span>
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col m12">
+        <div fxLayout="row">
+          <div fxFlex>
             {{proposal.text}}
           </div>
         </div>

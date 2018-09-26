@@ -51,5 +51,5 @@ export const itemPaths: ItemToPath = {
   'HISTORY': ['history'],
   'SUPERVISION': ['supervision'],
   'PROJECTS': ['projects'],
-  'DECISION': ['decision-preview']
+  'DECISION': ['decision']
 };

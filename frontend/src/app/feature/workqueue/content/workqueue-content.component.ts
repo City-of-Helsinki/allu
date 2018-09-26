@@ -155,12 +155,4 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   hasTagRow(index: number, row: ApplicationWorkItemRow) {
     return Some(row.relatedIndex).map(relatedIndex => relatedIndex > index).orElse(false);
   }
-
-  private getNavigation(application: Application): Array<any> {
-    if (ApplicationStatus[application.status] === ApplicationStatus.DECISIONMAKING) {
-      return ['applications', application.id, 'decision'];
-    } else {
-      return ['applications', application.id, 'summary'];
-    }
-  }
 }

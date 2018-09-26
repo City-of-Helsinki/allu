@@ -399,7 +399,7 @@ describe('ApplicationActionsComponent', () => {
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.DECISIONMAKING);
     expect(notification.translateSuccess).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'decision']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'summary', 'decision']);
   }));
 
   it('should navigate to decision making for other application types', fakeAsync(() => {
@@ -415,7 +415,7 @@ describe('ApplicationActionsComponent', () => {
     decisionBtn.click();
     tickAndDetect();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'decision']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'summary','decision']);
   }));
 
   function setAndInit(readonly: boolean) {

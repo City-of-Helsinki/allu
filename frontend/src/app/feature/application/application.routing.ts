@@ -8,7 +8,6 @@ import {ApplicationInfoComponent} from './info/application-info.component';
 import {SearchComponent} from '../search/search.component';
 import {AttachmentsComponent} from './attachment/attachments.component';
 import {ApplicationHistoryComponent} from './history/application-history.component';
-import {DecisionPreviewComponent} from '../decision/preview/decision-preview.component';
 import {InvoicingComponent} from './invoicing/invoicing.component';
 import {DecisionComponent} from '../decision/decision.component';
 import {SupervisionComponent} from './supervision/supervision.component';
@@ -31,7 +30,7 @@ export const applicationTabs: Routes = [
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'comments', component: ApplicationCommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
-  { path: 'decision-preview', component: DecisionPreviewComponent, canActivate: [AuthGuard], resolve: {decision: DecisionResolve},
+  { path: 'decision', component: DecisionComponent, canActivate: [AuthGuard], resolve: {decision: DecisionResolve},
     children: decisionTabs },
   { path: 'supervision', component: SupervisionComponent, canActivate: [AuthGuard] },
   { path: 'invoicing', component: InvoicingComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] }
@@ -51,8 +50,6 @@ export const applicationRoutes: Routes = [
     children: [
     { path: 'location', component: LocationComponent, canActivate: [AuthGuard] },
     { path: 'edit', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs },
-    { path: 'summary', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs },
-    { path: 'decision', component: DecisionComponent, canActivate: [AuthGuard], resolve: {decision: DecisionResolve},
-      children: decisionTabs}
+    { path: 'summary', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs }
   ]}
 ];

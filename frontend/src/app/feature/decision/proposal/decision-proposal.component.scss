@@ -3,3 +3,11 @@
 .save-info {
   color: mat-contrast($allu-primary, 100);
 }
+
+ul {
+  margin-top: 0;
+}
+
+li:not(:first-of-type) {
+  margin-top: 0;
+}

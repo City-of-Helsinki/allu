@@ -139,7 +139,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   toDecisionmaking(): void {
     this.moveToDecisionMaking().subscribe(
-      app => this.router.navigate(['/applications', app.id, 'decision']),
+      app => this.router.navigate(['/applications', app.id, 'summary', 'decision']),
       err => this.notification.translateErrorMessage('application.error.toDecisionmaking')
     );
   }
