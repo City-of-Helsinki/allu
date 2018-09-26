@@ -70,9 +70,11 @@ public class ApplicationStatusChangeListener {
       break;
     case CABLE_REPORT:
       handleCableReportDecision(application, userId);
+      break;
     case EXCAVATION_ANNOUNCEMENT:
       logger.debug("Process excavation announcement status change to decision");
       handleExcavationAnnouncementDecision(application, userId);
+      break;
     default:
       // No actions for other application types
     }
