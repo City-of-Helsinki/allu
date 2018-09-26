@@ -18,6 +18,7 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.ChargeBasisService;
 import fi.hel.allu.model.service.LocationService;
 import fi.hel.allu.model.service.SupervisionTaskService;
 
@@ -33,16 +34,20 @@ public class ApplicationStatusChangeListener {
   private final LocationService locationService;
   private final SupervisionTaskService supervisionTaskService;
   private final ApplicationDao applicationDao;
+  private final ChargeBasisService chargeBasisService;
 
 
   @Autowired
   public ApplicationStatusChangeListener(DecisionDao decisionDao, ApplicationService applicationService,
-      LocationService locationService, SupervisionTaskService supervisionTaskService, ApplicationDao applicationDao) {
+      LocationService locationService, SupervisionTaskService supervisionTaskService, ApplicationDao applicationDao,
+      ChargeBasisService chargeBasisService) {
     this.decisionDao = decisionDao;
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.supervisionTaskService = supervisionTaskService;
     this.applicationDao = applicationDao;
+    this.chargeBasisService = chargeBasisService;
+
   }
 
   @EventListener
@@ -54,7 +59,7 @@ public class ApplicationStatusChangeListener {
     } else if (event.getNewStatus() == StatusType.DECISIONMAKING) {
       handleDecisionMakingStatus(event.getApplication());
     } else if (event.getNewStatus() == StatusType.OPERATIONAL_CONDITION) {
-      applicationDao.setInvoicingChanged(event.getApplication().getId(), false);
+      updateInvoicingOnDecision(event.getApplication().getId());
     }
   }
 
@@ -69,7 +74,7 @@ public class ApplicationStatusChangeListener {
     cancelDanglingSupervisionTasks(application);
     // Clear target state on decision
     applicationService.setTargetState(application.getId(), null);
-    applicationDao.setInvoicingChanged(application.getId(), false);
+    updateInvoicingOnDecision(application.getId());
     switch (application.getType()) {
     case PLACEMENT_CONTRACT:
       logger.debug("Process placement contract status change to decision");
@@ -89,6 +94,12 @@ public class ApplicationStatusChangeListener {
     default:
       // No actions for other application types
     }
+  }
+
+  private void updateInvoicingOnDecision(Integer applicationId) {
+    applicationDao.setInvoicingChanged(applicationId, false);
+    // Charge basis entries cannot be modified after decision
+    chargeBasisService.lockEntries(applicationId);
   }
 
   /**

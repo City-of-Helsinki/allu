@@ -21,10 +21,7 @@ import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PlacementContract;
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeListener;
@@ -56,7 +53,8 @@ public class ApplicationStatusChangeEventListenerTest {
   private ApplicationService applicationService;
   @Mock
   private ApplicationDao applicationDao;
-
+  @Mock
+  private ChargeBasisService chargeBasisService;
 
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
@@ -70,7 +68,8 @@ public class ApplicationStatusChangeEventListenerTest {
   public void setup() {
     supervisor = new User();
     supervisor.setId(228);
-    statusChangeListener = new ApplicationStatusChangeListener(decisionDao, applicationService, locationService, supervisionTaskService, applicationDao);
+    statusChangeListener = new ApplicationStatusChangeListener(decisionDao, applicationService, locationService,
+        supervisionTaskService, applicationDao, chargeBasisService);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);
@@ -87,6 +86,23 @@ public class ApplicationStatusChangeEventListenerTest {
     assertTrue(isCurrentDate(locationListCaptor.getValue().get(0).getStartTime()));
     assertTrue(isYearAfterCurrentDate(locationListCaptor.getValue().get(0).getEndTime()));
   }
+
+  @Test
+  public void onDecisionShouldLockChargeBasisEntries() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    application.setExtension(new ExcavationAnnouncement());
+    statusChangeListener.onApplicationStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
+  }
+
+  @Test
+  public void onOperationalConditionShouldLockChargeBasisEntries() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    application.setExtension(new ExcavationAnnouncement());
+    statusChangeListener.onApplicationStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
+    verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
+  }
+
 
   @Test
   public void onDecisionShouldUpdatePlacementContractSectionNr() {

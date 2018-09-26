@@ -20,7 +20,6 @@ import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.dao.InvoiceDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.pricing.ChargeBasisTag;
-import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import fi.hel.allu.model.service.event.InvoicingChangeEvent;
 
 @Service
@@ -135,6 +134,11 @@ public class ChargeBasisService {
   private boolean containsInvoicedEntries(Set<Integer> modifiedEntries, int applicationId) {
     List<Integer> invoicedChargeBasisIds= invoiceDao.getInvoicedChargeBasisIds(applicationId);
     return modifiedEntries.stream().anyMatch(invoicedChargeBasisIds::contains);
+  }
+
+  @Transactional
+  public void lockEntries(Integer applicationId) {
+    chargeBasisDao.lockEntries(applicationId);
   }
 
 }

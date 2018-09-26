@@ -130,4 +130,9 @@ public class ChargeBasisDao {
   private boolean isExistingEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> oldEntries) {
     return oldEntries.stream().anyMatch(oe -> oe.getId().equals(entry.getId()));
   }
+
+  @Transactional
+  public void lockEntries(Integer applicationId) {
+    queryFactory.update(chargeBasis).set(chargeBasis.locked, true).where(chargeBasis.applicationId.eq(applicationId)).execute();
+  }
 }

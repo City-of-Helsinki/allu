@@ -26,6 +26,7 @@ public class ChargeBasisEntry {
   private int netPrice;
   private boolean isInvoiced;
   private ZonedDateTime modificationTime;
+  private Boolean locked;
 
   public ChargeBasisEntry() {
     // for deserialization
@@ -252,5 +253,13 @@ public class ChargeBasisEntry {
 
   public void setModificationTime(ZonedDateTime modificationTime) {
     this.modificationTime = modificationTime;
+  }
+
+  public Boolean getLocked() {
+    return locked;
+  }
+
+  public void setLocked(Boolean locked) {
+    this.locked = locked;
   }
 }
