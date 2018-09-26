@@ -128,7 +128,11 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
   }
 
   private onReportedDateChange(date: Date): void {
-    this.requiresDecision(date).subscribe(requires => this.showToDecisionMaking = requires);
+    if (this.application.invoicingChanged) {
+      this.showToDecisionMaking = true;
+    } else {
+      this.requiresDecision(date).subscribe(requires => this.showToDecisionMaking = requires);
+    }
   }
 
   private requiresDecision(date: Date): Observable<boolean> {
