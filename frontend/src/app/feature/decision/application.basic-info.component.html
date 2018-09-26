@@ -1,17 +1,17 @@
 <allu-card *ngIf="application">
   <mat-card-title>{{'applicationInfo.title' | translation}}</mat-card-title>
   <mat-card-content>
-    <div class="row">
-      <div class="col l6 m12 info-field">
+    <div fxLayout="row wrap" fxLayoutGap="18px">
+      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.type' | translation}}</mat-card-subtitle>
         <div>{{['application.type', application.type] | translation}}</div>
       </div>
-      <div class="col l6 m12 info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.creationTime' | translation}}
         </mat-card-subtitle>
         <div>{{application.creationTime | date:'shortDate'}}</div>
       </div>
-      <div class="col l6 m12 info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.kinds' | translation}}</mat-card-subtitle>
         <div>
           <span *ngFor="let kind of application.uiKinds; let last=last">
@@ -19,24 +19,24 @@
           </span>
         </div>
       </div>
-      <div class="col l6 m12 info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.startTime' | translation}}</mat-card-subtitle>
         <div>{{application.startTime | date:'shortDate'}}</div>
       </div>
-      <div class="col l6 m12 info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.name' | translation}}</mat-card-subtitle>
         <div>{{application.name}}</div>
       </div>
-      <div class="col l6 m12 info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.endTime' | translation}}</mat-card-subtitle>
         <div>{{application.endTime | date:'shortDate' }}</div>
       </div>
-      <div class="col l6 m12 info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.location' | translation}}</mat-card-subtitle>
         <div *ngIf="!application.firstLocation.postalAddress.streetAddress">-</div>
         <div>{{application.firstLocation.postalAddress.streetAddress}}</div>
       </div>
-      <div class="col l6 m12 info-field">
+      <div fxFlex="50%" fxFlex.md="100%" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.handler' | translation}}</mat-card-subtitle>
         <div *ngIf="!application.handler">-</div>
         <div>{{application.handler?.realName}}</div>
