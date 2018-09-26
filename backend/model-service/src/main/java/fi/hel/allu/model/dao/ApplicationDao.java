@@ -855,9 +855,13 @@ public class ApplicationDao {
 
   }
 
+  /**
+   * Sets invoicing date for application if not already set
+   */
   @Transactional
   public void setInvoicingDate(int applicationId, ZonedDateTime invoicableTime) {
-    queryFactory.update(application).set(application.invoicingDate, invoicableTime).where(application.id.eq(applicationId)).execute();
+    queryFactory.update(application).set(application.invoicingDate, invoicableTime)
+        .where(application.id.eq(applicationId), application.invoicingDate.isNull()).execute();
   }
 
   @Transactional
