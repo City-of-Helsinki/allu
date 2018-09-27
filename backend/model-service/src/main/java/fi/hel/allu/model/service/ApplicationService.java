@@ -1,5 +1,17 @@
 package fi.hel.allu.model.service;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -9,20 +21,7 @@ import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.InvoiceDao;
 import fi.hel.allu.model.domain.*;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -147,13 +146,17 @@ public class ApplicationService {
     verifyApplicationIsUpdatable(id);
     defaultValueService.setByType(application);
     List<Location> locations = locationService.updateApplicationLocations(id, application.getLocations(), userId);
-    List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
-    chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
-    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
+    updateChargeBasis(id, application);
     applicationDao.updateClientApplicationData(id, application.getClientApplicationData());
     Application result = applicationDao.update(id, application);
     result.setLocations(locations);
     return result;
+  }
+
+  private void updateChargeBasis(int id, Application application) {
+    List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
+    chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
+    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
   }
 
   /**
@@ -397,7 +400,6 @@ public class ApplicationService {
     if (application.getNotBillable() == true) {
       return;
     }
-    createInvoice(applicationId, userId, application);
   }
 
   public void createInvoice(int applicationId, int userId, Application application) {
@@ -471,19 +473,21 @@ public class ApplicationService {
   }
 
   /**
-   * Sets excavation announcement operational condition date
+   * Sets excavation announcement operational condition date and updates pricing of application
    */
   @Transactional
   public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
-    applicationDao.setOperationalConditionDate(id, operationalConditionDate);
+    Application application = applicationDao.setOperationalConditionDate(id, operationalConditionDate);
+    updateChargeBasis(id, application);
   }
 
   /**
-   * Sets excavation announcement work finished date
+   * Sets excavation announcement work finished date and updates pricing of application
    */
   @Transactional
   public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    applicationDao.setWorkFinishedDate(id, workFinishedDate);
+    Application application = applicationDao.setWorkFinishedDate(id, workFinishedDate);
+    updateChargeBasis(id, application);
   }
 
   @Transactional
