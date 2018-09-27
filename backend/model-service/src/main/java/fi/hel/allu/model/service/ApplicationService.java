@@ -480,6 +480,7 @@ public class ApplicationService {
   public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
     Application application = applicationDao.setOperationalConditionDate(id, operationalConditionDate);
     updateChargeBasis(id, application);
+    updateApplicationPricing(id);
   }
 
   /**
@@ -489,6 +490,7 @@ public class ApplicationService {
   public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     Application application = applicationDao.setWorkFinishedDate(id, workFinishedDate);
     updateChargeBasis(id, application);
+    updateApplicationPricing(id);
   }
 
   @Transactional
