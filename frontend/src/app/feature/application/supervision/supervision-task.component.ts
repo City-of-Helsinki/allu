@@ -33,7 +33,7 @@ import {
   ReportWorkFinished,
   SetRequiredTasks
 } from '@feature/application/actions/excavation-announcement-actions';
-import {Subject} from 'rxjs/index';
+import {Observable, Subject} from 'rxjs/index';
 import {RequiredTasks} from '@model/application/required-tasks';
 import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
@@ -163,7 +163,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   approve(): void {
     this.openModal(SupervisionApprovalResolutionType.APPROVE).afterClosed().pipe(
       filter(result => !!result),
-    ).subscribe((result: SupervisionApprovalResult) => this.handleApproval(result));
+    ).subscribe((result: SupervisionApprovalResult) => this.approveWithState(result));
   }
 
   reject(): void {
@@ -174,11 +174,19 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     ));
   }
 
-  private handleApproval(result: SupervisionApprovalResult): void {
+  private approveWithState(result: SupervisionApprovalResult): void {
+    if (ApplicationStatus.DECISIONMAKING === result.statusChange) {
+      this.toDecisionMaking().subscribe(changeInfo => this.handleApproval(result, changeInfo));
+    } else {
+      this.handleApproval(result);
+    }
+  }
+
+  private handleApproval(result: SupervisionApprovalResult, changeInfo?: StatusChangeInfo) {
     const task = this.taskWithResult(SupervisionTaskStatusType.APPROVED, result);
     this.store.dispatch(new Approve(task));
     Some(result.reportedDate).do(date => this.reportDatesOnApproval(date, task.type));
-    this.handleStatusChange(result);
+    this.handleStatusChange(result, changeInfo);
   }
 
   private reportDatesOnApproval(date: Date, type: SupervisionTaskType): void {
@@ -281,27 +289,16 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.editing = false;
   }
 
-  private handleStatusChange(result: SupervisionApprovalResult): void {
-    this.store.select(fromSupervision.getSaving).pipe(
-      filter(saving => !saving),
-      take(1)
-    ).subscribe(() => {
-      switch (result.statusChange) {
-        case ApplicationStatus.DECISIONMAKING: {
-          this.toDecisionMaking();
-          break;
-        }
-
-        case ApplicationStatus.OPERATIONAL_CONDITION:
-        case ApplicationStatus.FINISHED: {
-          this.changeStatus(result.statusChange);
-          break;
-        }
-      }
-    });
+  private handleStatusChange(result: SupervisionApprovalResult, changeInfo?: StatusChangeInfo): void {
+    if (result.statusChange) {
+      this.store.select(fromSupervision.getSaving).pipe(
+        filter(saving => !saving),
+        take(1),
+      ).subscribe(() => this.changeStatus(result.statusChange, changeInfo));
+    }
   }
 
-  private toDecisionMaking(): void {
+  private toDecisionMaking(): Observable<StatusChangeInfo> {
     const config = {
       ...DECISION_PROPOSAL_MODAL_CONFIG,
       data: {
@@ -310,8 +307,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed()
-      .subscribe(proposal => this.changeStatus(ApplicationStatus.DECISIONMAKING, proposal));
+    return this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed().pipe(
+      filter(result => !!result)
+    );
   }
 
   private changeStatus(status: ApplicationStatus, changeInfo?: StatusChangeInfo): void {
