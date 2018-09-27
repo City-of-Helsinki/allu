@@ -1,22 +1,27 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
-import {InvoiceHub} from '../../../../service/application/invoice/invoice-hub';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+import {InvoiceHub} from '@service/application/invoice/invoice-hub';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {CHARGE_BASIS_ENTRY_MODAL_CONFIG, ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
-import {NotificationService} from '../../../notification/notification.service';
+import {NotificationService} from '@feature/notification/notification.service';
 import {combineLatest, Observable, Subject} from 'rxjs';
-import {FormUtil} from '../../../../util/form.util';
-import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
-import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
-import {ApplicationStore} from '../../../../service/application/application-store';
-import {Application} from '../../../../model/application/application';
-import {applicationCanBeEdited} from '../../../../model/application/application-status';
-import {CurrentUser} from '../../../../service/user/current-user';
-import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
-import {NumberUtil} from '../../../../util/number.util';
+import {FormUtil} from '@util/form.util';
+import {ChargeBasisType} from '@model/application/invoice/charge-basis-type';
+import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
+import {ApplicationStore} from '@service/application/application-store';
+import {Application} from '@model/application/application';
+import {
+  applicationCanBeEdited,
+  excavationInvoicingChangeAllowed,
+  invoicingChangesAllowed,
+  invoicingChangesAllowedForType
+} from '@model/application/application-status';
+import {CurrentUser} from '@service/user/current-user';
+import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
+import {filter, map, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/internal/operators';
+import {NumberUtil} from '@util/number.util';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import {Load} from '@feature/application/actions/application-actions';
@@ -33,7 +38,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   form: FormGroup;
   chargeBasisEntries: FormArray;
   calculatedPrice: number;
-  canBeEdited = false;
+  changesAllowed = false;
 
   private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
   private destroy = new Subject<boolean>();
@@ -58,12 +63,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.invoiceHub.chargeBasisEntries.pipe(takeUntil(this.destroy))
       .subscribe(entries => this.entriesUpdated(entries));
 
-    combineLatest(
-      this.applicationStore.application,
-      this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
-    ).pipe(
-      map(([app, role]) => applicationCanBeEdited(app.status) && role)
-    ).subscribe(e => this.canBeEdited = e);
+    this.initChangesAllowed();
   }
 
   ngOnDestroy(): void {
@@ -99,17 +99,16 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   showMinimal(value: ChargeBasisEntryForm): boolean {
-    return value.type === ChargeBasisType[ChargeBasisType.DISCOUNT]
-      || value.unit === ChargeBasisUnit[ChargeBasisUnit.PERCENT];
+    return value.type === ChargeBasisType.DISCOUNT
+      || value.unit === ChargeBasisUnit.PERCENT;
   }
 
   entryValue(entry: ChargeBasisEntryForm): string {
     let prefix = '';
     let value = entry.unitPrice;
-    if (entry.unit === 'PERCENT') {
+    if (entry.unit === ChargeBasisUnit.PERCENT) {
       value = entry.quantity;
-    }
-    if (ChargeBasisType[entry.type] === ChargeBasisType.DISCOUNT) {
+    } else if (entry.type === ChargeBasisType.DISCOUNT) {
       if (value < 0) {
         prefix = '+';
         value = -value;
@@ -118,6 +117,10 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
       }
     }
     return prefix + value;
+  }
+
+  editAllowed(entry: ChargeBasisEntryForm): boolean {
+    return !entry.locked && entry.manuallySet && this.changesAllowed;
   }
 
   private onApplicationChange(app: Application): void {
@@ -155,5 +158,14 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     return this.invoiceHub.saveChargeBasisEntries(appId, entries).pipe(
       tap(() => this.store.dispatch(new Load(appId)))
     );
+  }
+
+  private initChangesAllowed() {
+    this.applicationStore.application.pipe(
+      takeUntil(this.destroy),
+      map(app => invoicingChangesAllowedForType(app.type, app.status)),
+      withLatestFrom(this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))),
+      map(([changesAllowed, modifyRole]) => changesAllowed && modifyRole)
+    ).subscribe(e => this.changesAllowed = e);
   }
 }

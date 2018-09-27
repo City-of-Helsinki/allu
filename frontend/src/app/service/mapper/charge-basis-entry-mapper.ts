@@ -16,8 +16,8 @@ export class ChargeBasisEntryMapper {
   public static mapBackend(backendChargeBasisEntry: BackendChargeBasisEntry): ChargeBasisEntry {
     return new ChargeBasisEntry(
       backendChargeBasisEntry.id,
-      Some(backendChargeBasisEntry.type).map(type => ChargeBasisType[type]).orElse(undefined),
-      Some(backendChargeBasisEntry.unit).map(unit => ChargeBasisUnit[unit]).orElse(ChargeBasisUnit.PIECE),
+      backendChargeBasisEntry.type,
+      backendChargeBasisEntry.unit,
       backendChargeBasisEntry.quantity,
       backendChargeBasisEntry.text,
       backendChargeBasisEntry.unitPrice,
@@ -25,15 +25,16 @@ export class ChargeBasisEntryMapper {
       backendChargeBasisEntry.manuallySet,
       backendChargeBasisEntry.tag,
       backendChargeBasisEntry.referredTag,
-      backendChargeBasisEntry.explanation
+      backendChargeBasisEntry.explanation,
+      backendChargeBasisEntry.locked
     );
   }
 
   public static mapFrontEnd(chargeBasisEntry: ChargeBasisEntry): BackendChargeBasisEntry {
     return {
       id: chargeBasisEntry.id,
-      type: Some(chargeBasisEntry.type).map(type => ChargeBasisType[type]).orElse(undefined),
-      unit: Some(chargeBasisEntry.unit).map(unit => ChargeBasisUnit[unit]).orElse(ChargeBasisUnit[ChargeBasisUnit.PIECE]),
+      type: chargeBasisEntry.type,
+      unit: chargeBasisEntry.unit,
       quantity: chargeBasisEntry.quantity,
       text: chargeBasisEntry.text,
       unitPrice: chargeBasisEntry.unitPrice,

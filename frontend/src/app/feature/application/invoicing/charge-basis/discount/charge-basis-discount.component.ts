@@ -26,7 +26,7 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
 
-  unitTypes = [ChargeBasisUnit.PIECE, ChargeBasisUnit.PERCENT].map(type => ChargeBasisUnit[type]);
+  unitTypes = [ChargeBasisUnit.PIECE, ChargeBasisUnit.PERCENT];
   referableEntries: Observable<Array<ChargeBasisEntry>>;
   unitCtrl: FormControl;
 
@@ -53,8 +53,7 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  private unitChanges(unitName: string): void {
-    const unit = ChargeBasisUnit[unitName];
+  private unitChanges(unit: ChargeBasisUnit): void {
     if (ChargeBasisUnit.PERCENT === unit) {
       this.setPercentDefaults();
     } else if (ChargeBasisUnit.PIECE === unit) {

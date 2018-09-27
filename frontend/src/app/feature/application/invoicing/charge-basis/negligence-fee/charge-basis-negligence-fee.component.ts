@@ -35,7 +35,7 @@ export class ChargeBasisNegligenceFeeComponent implements OnInit, OnDestroy {
     );
 
     if (!this.form.value.unit) {
-      this.form.patchValue({unit: ChargeBasisUnit[ChargeBasisUnit.DAY]});
+      this.form.patchValue({unit: ChargeBasisUnit.DAY});
     }
   }
 

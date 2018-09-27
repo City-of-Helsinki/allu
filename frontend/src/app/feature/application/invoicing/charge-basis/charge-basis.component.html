@@ -4,7 +4,7 @@
       <div fxLayout="row">
         <div fxFlex="70">
           {{'chargeBasis.title' | translation}}
-          <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="newEntry()" class="align-with-text">
+          <button *ngIf="changesAllowed" type="button" mat-icon-button (click)="newEntry()" class="align-with-text">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -21,11 +21,11 @@
               <mat-card-content>
                 <div fxLayout="row wrap" fxLayout.sm="column">
                   <div fxFlex="100px">
-                    <ng-container *ngIf="entry.value.manuallySet">
-                      <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="editEntry(i)">
+                    <ng-container *ngIf="editAllowed(entry.value)">
+                      <button type="button" mat-icon-button (click)="editEntry(i)">
                         <mat-icon>edit</mat-icon>
                       </button>
-                      <button *ngIf="canBeEdited" type="button" mat-icon-button (click)="removeEntry(i)">
+                      <button type="button" mat-icon-button (click)="removeEntry(i)">
                         <mat-icon>clear</mat-icon>
                       </button>
                     </ng-container>
@@ -43,9 +43,9 @@
                     <div fxFlex="15" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
                   </ng-template>
                   <div fxFlex="90" fxFlexOffset="100px">
-                                        <span *ngFor="let explanationEntry of entry.value.explanation; let last=last;">
-                                            {{explanationEntry | commaSeparated:last}}
-                                        </span>
+                    <span *ngFor="let explanationEntry of entry.value.explanation; let last=last;">
+                        {{explanationEntry | commaSeparated:last}}
+                    </span>
                   </div>
                 </div>
               </mat-card-content>

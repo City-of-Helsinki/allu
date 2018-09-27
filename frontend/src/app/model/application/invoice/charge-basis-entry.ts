@@ -1,8 +1,6 @@
+import {NumberUtil} from '@util/number.util';
 import {ChargeBasisUnit} from './charge-basis-unit';
-import {NumberUtil} from '../../../util/number.util';
 import {ChargeBasisType} from './charge-basis-type';
-
-export const DEFAULT_FEE_CENTS = 50000;
 
 export class ChargeBasisEntry {
   constructor(
@@ -16,10 +14,9 @@ export class ChargeBasisEntry {
     public manuallySet?: boolean,
     public tag?: string,
     public referredTag?: string,
-    public explanation: string[] = []
-  ) {
-    quantity = quantity || ChargeBasisUnit.PIECE;
-  }
+    public explanation: string[] = [],
+    public locked?: boolean
+  ) {}
 
   get uiQuantity(): number {
     return this.negateQuantity() ? -this.quantity : this.quantity;

@@ -1,4 +1,5 @@
 import {Application} from '@model/application/application';
+import {ApplicationType} from '@model/application/type/application-type';
 
 export enum ApplicationStatus {
   PENDING_CLIENT = 'PENDING_CLIENT',
@@ -22,9 +23,29 @@ export enum ApplicationStatus {
 export const statusNames = Object.keys(ApplicationStatus);
 
 export function applicationCanBeEdited(status: ApplicationStatus): boolean {
-  return status !== undefined
-    ? isAfter(status, ApplicationStatus.PENDING_CLIENT) && isBefore(status, ApplicationStatus.WAITING_CONTRACT_APPROVAL)
-    : true;
+  if (status !== undefined) {
+    return isAfter(status, ApplicationStatus.PENDING_CLIENT) && isBefore(status, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
+  } else {
+    return true;
+  }
+}
+
+export function invoicingChangesAllowedForType(type: ApplicationType, status: ApplicationStatus): boolean {
+  if (ApplicationType.EXCAVATION_ANNOUNCEMENT === type) {
+    return excavationInvoicingChangeAllowed(status);
+  } else {
+    return invoicingChangesAllowed(status);
+  }
+}
+
+export function invoicingChangesAllowed(status): boolean {
+  return applicationCanBeEdited(status);
+}
+
+export function excavationInvoicingChangeAllowed(status: ApplicationStatus): boolean {
+  const invoicingChangesAllowedForAll = invoicingChangesAllowed(status);
+  const invoicingChangesAllowedForExcavation = [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(status) >= 0;
+  return invoicingChangesAllowedForAll || invoicingChangesAllowedForExcavation;
 }
 
 export function inHandling(status: ApplicationStatus): boolean {

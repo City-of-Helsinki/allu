@@ -88,14 +88,14 @@ describe('ChargeBasisDiscountComponent', () => {
   }));
 
   it('shows correct fields for percentage discount', fakeAsync(() => {
-    comp.form.patchValue({unit: ChargeBasisUnit[ChargeBasisUnit.PERCENT]});
+    comp.form.patchValue({unit: ChargeBasisUnit.PERCENT});
     detectAndTick();
     expect(de.query(By.css('[formControlName="quantity"]'))).toBeTruthy();
     expect(de.query(By.css('[formControlName="unitPrice"]'))).toBeNull();
   }));
 
   it('sets default values when discount changed to percent', fakeAsync(() => {
-    comp.form.patchValue({unit: ChargeBasisUnit[ChargeBasisUnit.PERCENT]});
+    comp.form.patchValue({unit: ChargeBasisUnit.PERCENT});
     detectAndTick();
     const formValue = comp.form.getRawValue();
     expect(formValue.quantity).toBeUndefined();
@@ -104,14 +104,14 @@ describe('ChargeBasisDiscountComponent', () => {
   }));
 
   it('shows correct fields for sum discount', fakeAsync(() => {
-    comp.form.patchValue({unit: ChargeBasisUnit[ChargeBasisUnit.PIECE]});
+    comp.form.patchValue({unit: ChargeBasisUnit.PIECE});
     detectAndTick();
     expect(de.query(By.css('[formControlName="unitPrice"]'))).toBeTruthy();
     expect(de.query(By.css('[formControlName="quantity"]'))).toBeNull();
   }));
 
   it('sets default values when discount changed to sum', fakeAsync(() => {
-    comp.form.patchValue({unit: ChargeBasisUnit[ChargeBasisUnit.PIECE]});
+    comp.form.patchValue({unit: ChargeBasisUnit.PIECE});
     detectAndTick();
     const formValue = comp.form.getRawValue();
     expect(formValue.quantity).toEqual(1);

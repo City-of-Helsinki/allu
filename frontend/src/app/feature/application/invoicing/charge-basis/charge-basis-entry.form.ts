@@ -10,8 +10,8 @@ const EMPTY = '';
 export class ChargeBasisEntryForm {
   constructor(
     public id?: number,
-    public type?: string,
-    public unit?: string,
+    public type?: ChargeBasisType,
+    public unit?: ChargeBasisUnit,
     public quantity?: number,
     public text?: string,
     public unitPrice?: number,
@@ -20,7 +20,8 @@ export class ChargeBasisEntryForm {
     public tag?: string,
     public referredTag: string = EMPTY,
     public explanation: string[] = [],
-    public manualExplanation: string = EMPTY
+    public manualExplanation: string = EMPTY,
+    public locked?: boolean
   ) {
     this.referredTag = referredTag || EMPTY;
   }
@@ -39,21 +40,22 @@ export class ChargeBasisEntryForm {
       tag: [formValue.tag],
       referredTag: [formValue.referredTag],
       explanation: [formValue.explanation],
-      manualExplanation: [formValue.manualExplanation, [ComplexValidator.maxRows(5), ComplexValidator.maxRowLength(70)]]
+      manualExplanation: [formValue.manualExplanation, [ComplexValidator.maxRows(5), ComplexValidator.maxRowLength(70)]],
+      locked: [formValue.locked]
     });
   }
 
   public static toChargeBasisEntry(form: ChargeBasisEntryForm): ChargeBasisEntry {
     const entry = new ChargeBasisEntry(
       form.id,
-      ChargeBasisType[form.type],
-      ChargeBasisUnit[form.unit]
+      form.type,
+      form.unit
     );
     entry.uiQuantity = form.quantity;
     entry.text = form.text;
     entry.unitPriceEuro = form.unitPrice;
     entry.manuallySet = form.manuallySet;
-    if (manualChargeBasisTypes.includes(ChargeBasisType[form.type])) {
+    if (manualChargeBasisTypes.includes(form.type)) {
       entry.explanation = this.splitExplanation(form.manualExplanation);
     } else {
       entry.explanation = form.explanation;
@@ -66,8 +68,8 @@ export class ChargeBasisEntryForm {
   public static toFormValue(entry: ChargeBasisEntry): ChargeBasisEntryForm {
     return new ChargeBasisEntryForm(
       entry.id,
-      ChargeBasisType[entry.type],
-      ChargeBasisUnit[entry.unit],
+      entry.type,
+      entry.unit,
       entry.uiQuantity,
       entry.text,
       entry.unitPriceEuro,
@@ -76,7 +78,8 @@ export class ChargeBasisEntryForm {
       entry.tag,
       entry.referredTag,
       entry.explanation,
-      entry.explanation ? entry.explanation.join('\n') : undefined
+      entry.explanation ? entry.explanation.join('\n') : undefined,
+      entry.locked
     );
   }
 

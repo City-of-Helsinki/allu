@@ -21,7 +21,7 @@ export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};
 })
 export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
   chargeBasisEntryForm: FormGroup;
-  chargeBasisTypes = manualChargeBasisTypes.map(type => ChargeBasisType[type]);
+  chargeBasisTypes = manualChargeBasisTypes;
 
   typeCtrl: FormControl;
 
