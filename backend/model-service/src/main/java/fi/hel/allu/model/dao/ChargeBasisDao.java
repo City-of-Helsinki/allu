@@ -15,6 +15,7 @@ import com.google.common.base.Objects;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
@@ -55,13 +56,18 @@ public class ChargeBasisDao {
     List<ChargeBasisEntry> oldEntries = getChargeBasis(applicationId).stream()
         .filter(e -> e.getManuallySet() == manuallySet).collect(Collectors.toList());
     Set<ChargeBasisEntry> entriesToUpdate = entries.stream().filter(l -> isExistingEntry(l, oldEntries) && hasChanges(l, oldEntries)).collect(Collectors.toSet());
-    List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithId(oldEntries, e.getId())).collect(Collectors.toList());
-    Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithId(entries, oe.getId())).map(e -> e.getId()).collect(Collectors.toSet());
+    List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
+    Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(e -> e.getId()).collect(Collectors.toSet());
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
   }
 
-  private boolean hasEntryWithId(List<ChargeBasisEntry> entries, Integer id) {
-     return entries.stream().anyMatch(e -> Objects.equal(e.getId(), id));
+  private boolean hasEntryWithKey(List<ChargeBasisEntry> entries, ChargeBasisEntry entry) {
+     return entries.stream().anyMatch(e -> hasSameKey(e, entry));
+  }
+
+  private boolean hasSameKey(ChargeBasisEntry entry1, ChargeBasisEntry entry2) {
+    return entry1.getManuallySet() ? Objects.equal(entry1.getId(), entry2.getId())
+        : Objects.equal(entry1.getTag(), entry2.getTag());
   }
 
   /**
@@ -80,14 +86,15 @@ public class ChargeBasisDao {
     ZonedDateTime modificationTime = ZonedDateTime.now();
     for (ChargeBasisEntry entry : entriesToUpdate) {
       entry.setModificationTime(modificationTime);
+      BooleanExpression eqExp = entry.getManuallySet() ? chargeBasis.id.eq(entry.getId()) : chargeBasis.tag.eq(entry.getTag());
       queryFactory.update(chargeBasis)
       .populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
-      .where(chargeBasis.id.eq(entry.getId())).execute();
+      .where(eqExp).execute();
     }
   }
 
   private boolean hasChanges(ChargeBasisEntry entry, List<ChargeBasisEntry> oldEntries) {
-    ChargeBasisEntry old = oldEntries.stream().filter(oe -> oe.getId().equals(entry.getId())).findFirst().get();
+    ChargeBasisEntry old = oldEntries.stream().filter(oe -> hasSameKey(entry, oe)).findFirst().get();
     return !entry.equals(old);
 
   }
@@ -132,7 +139,7 @@ public class ChargeBasisDao {
   }
 
   private boolean isExistingEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> oldEntries) {
-    return oldEntries.stream().anyMatch(oe -> oe.getId().equals(entry.getId()));
+    return oldEntries.stream().anyMatch(oe -> hasSameKey(oe, entry));
   }
 
   @Transactional
