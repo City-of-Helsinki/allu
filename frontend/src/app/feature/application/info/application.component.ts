@@ -90,11 +90,11 @@ export class ApplicationComponent implements OnInit, OnDestroy {
 
       if (existing) {
         this.sidebarItem(applicationType, {type: 'ATTACHMENTS', count: this.attachmentCount }).do(item => sidebar.push(item));
-        this.sidebarItem(applicationType, {type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
-        this.sidebarItem(applicationType, {type: 'HISTORY'}).do(item => sidebar.push(item));
         this.sidebarItem(applicationType, {type: 'DECISION'}).do(item => sidebar.push(item));
         this.sidebarItem(applicationType, {type: 'SUPERVISION', count: this.taskCount}).do(item => sidebar.push(item));
         this.sidebarItem(applicationType, {type: 'INVOICING', warn: this.invoicingWarn}).do(item => sidebar.push(item));
+        this.sidebarItem(applicationType, {type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
+        this.sidebarItem(applicationType, {type: 'HISTORY'}).do(item => sidebar.push(item));
       }
       return sidebar;
   }

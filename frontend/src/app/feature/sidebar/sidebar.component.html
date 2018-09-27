@@ -5,11 +5,11 @@
     <div [ngSwitch]="item.type">
       <div *ngSwitchCase="'BASIC_INFO'">
         <mat-icon class="mat-icon-36">list</mat-icon>
-        <div>Perustiedot</div>
+        <div>{{['sidebar.title', item.type] | translation}}</div>
       </div>
       <div *ngSwitchCase="'ATTACHMENTS'">
         <mat-icon class="mat-icon-36">attach_file</mat-icon>
-        <div>Liitteet ({{item.count | async}})</div>
+        <div>{{['sidebar.title', item.type] | translation}} ({{item.count | async}})</div>
       </div>
       <div *ngSwitchCase="'INVOICING'">
         <div class="oval-18 oval-warn top-right" *ngIf="item.warn | async"
@@ -17,31 +17,31 @@
              matTooltipPosition="above">!
         </div>
         <mat-icon class="mat-icon-36">euro_symbol</mat-icon>
-        <div>Laskutus</div>
-      </div>
-      <div *ngSwitchCase="'COMMENTS'">
-        <mat-icon class="mat-icon-36">chat_bubble_outline</mat-icon>
-        <div>Kommentit ({{item.count | async}})</div>
-      </div>
-      <div *ngSwitchCase="'EMAIL'">
-        <mat-icon class="mat-icon-36">email</mat-icon>
-        <div>Sähköposti</div>
-      </div>
-      <div *ngSwitchCase="'HISTORY'">
-        <mat-icon class="mat-icon-36">history</mat-icon>
-        <div>Historia</div>
+        <div>{{['sidebar.title', item.type] | translation}}</div>
       </div>
       <div *ngSwitchCase="'DECISION'">
-        <mat-icon class="mat-icon-36">pageview</mat-icon>
-        <div>Päätös</div>
+        <mat-icon class="mat-icon-36">gavel</mat-icon>
+        <div>{{['sidebar.title', item.type] | translation}}</div>
       </div>
       <div *ngSwitchCase="'SUPERVISION'">
         <mat-icon class="mat-icon-36">search</mat-icon>
-        <div>Valvonta ({{item.count | async}})</div>
+        <div>{{['sidebar.title', item.type] | translation}} ({{item.count | async}})</div>
       </div>
       <div *ngSwitchCase="'PROJECTS'">
         <mat-icon class="mat-icon-36">line_style</mat-icon>
-        <div>Hankkeet ({{item.count | async }})</div>
+        <div>{{['sidebar.title', item.type] | translation}} ({{item.count | async }})</div>
+      </div>
+      <div *ngSwitchCase="'COMMENTS'">
+        <mat-icon class="mat-icon-36">chat_bubble_outline</mat-icon>
+        <div>{{['sidebar.title', item.type] | translation}} ({{item.count | async}})</div>
+      </div>
+      <div *ngSwitchCase="'EMAIL'">
+        <mat-icon class="mat-icon-36">email</mat-icon>
+        <div>{{['sidebar.title', item.type] | translation}}</div>
+      </div>
+      <div *ngSwitchCase="'HISTORY'">
+        <mat-icon class="mat-icon-36">history</mat-icon>
+        <div>{{['sidebar.title', item.type] | translation}}</div>
       </div>
     </div>
   </a>
