@@ -71,7 +71,7 @@ public class InvoiceService {
     final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
 
     Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId);
-    invoiceDao.deleteByApplication(applicationId);
+    invoiceDao.deleteOpenInvoicesByApplication(applicationId);
     invoiceDao.insert(applicationId, invoice);
   }
 

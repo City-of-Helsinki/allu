@@ -70,7 +70,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         Mockito.when(invoiceRecipientDao.insert(Mockito.any())).thenReturn(INVOICE_RECIPIENT_ID);
         Mockito.when(applicationDao.findById(APPLICATION_ID)).thenReturn(application);
         invoiceService.createInvoices(APPLICATION_ID, false);
-        Mockito.verify(invoiceDao).deleteByApplication(Mockito.eq(APPLICATION_ID));
+        Mockito.verify(invoiceDao).deleteOpenInvoicesByApplication(Mockito.eq(APPLICATION_ID));
         ArgumentCaptor<Invoice> invoiceCaptor = ArgumentCaptor.forClass(Invoice.class);
         Mockito.verify(invoiceDao).insert(Mockito.eq(APPLICATION_ID), invoiceCaptor.capture());
         assertEquals(invoiceCaptor.getValue().getRows(), INVOICE_ROWS);

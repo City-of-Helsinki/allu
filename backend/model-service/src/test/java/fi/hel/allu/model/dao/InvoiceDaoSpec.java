@@ -75,7 +75,7 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
         });
 
         it("deleteByApplication doesn't throw", () -> {
-          invoiceDao.deleteByApplication(123);
+          invoiceDao.deleteOpenInvoicesByApplication(123);
         });
 
         it("findPending returns empty list", () -> {
@@ -127,7 +127,7 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
 
           it("can delete all inserted with deleteByApplication", () -> {
             int otherId = invoiceDao.insert(appId.get(), otherInvoice());
-            invoiceDao.deleteByApplication(appId.get());
+            invoiceDao.deleteOpenInvoicesByApplication(appId.get());
             assertFalse(invoiceDao.find(invoiceId.get()).isPresent());
             assertFalse(invoiceDao.find(otherId).isPresent());
           });
@@ -220,7 +220,7 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
 
   private Invoice otherInvoice() {
     int recipientId = invoiceRecipientDao.insert(invoiceRecipient());
-    final Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-07T08:00:00+02:00[Europe/Helsinki]"), true,
+    final Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-07T08:00:00+02:00[Europe/Helsinki]"), false,
         false, null, recipientId);
     invoice.setRows(Arrays.asList(
         new InvoiceRow(null, ChargeBasisUnit.MONTH, 12, "A Whole year", new String[] { "A calendar year", "About 365 days" },

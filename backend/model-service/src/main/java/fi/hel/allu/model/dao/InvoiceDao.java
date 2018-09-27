@@ -133,8 +133,8 @@ public class InvoiceDao {
    * @param applicationId
    */
   @Transactional
-  public void deleteByApplication(int applicationId) {
-    queryFactory.select(invoice.id).from(invoice).where(invoice.applicationId.eq(applicationId)).fetch()
+  public void deleteOpenInvoicesByApplication(int applicationId) {
+    queryFactory.select(invoice.id).from(invoice).where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse()).fetch()
         .forEach(id -> delete(id));
   }
 
