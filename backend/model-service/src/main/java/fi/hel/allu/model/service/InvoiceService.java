@@ -25,6 +25,7 @@ import fi.hel.allu.model.domain.InvoiceRecipient;
 import fi.hel.allu.model.domain.InvoiceRow;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The service class responsible for managing invoices
@@ -33,7 +34,7 @@ import java.util.Optional;
 public class InvoiceService {
   private static final Logger logger = LoggerFactory.getLogger(InvoiceService.class);
 
-  private final ChargeBasisDao chargeBasisDao;
+  private final ChargeBasisService chargeBasisService;
   private final InvoiceDao invoiceDao;
   private final PricingService pricingService;
   private final ApplicationDao applicationDao;
@@ -41,9 +42,9 @@ public class InvoiceService {
   private final CustomerDao customerDao;
 
   @Autowired
-  public InvoiceService(ChargeBasisDao chargeBasisDao, InvoiceDao invoiceDao, PricingService pricingService,
+  public InvoiceService(ChargeBasisService chargeBasisService, InvoiceDao invoiceDao, PricingService pricingService,
                         ApplicationDao applicationDao, InvoiceRecipientDao invoiceRecipientDao, CustomerDao customerDao) {
-    this.chargeBasisDao = chargeBasisDao;
+    this.chargeBasisService = chargeBasisService;
     this.invoiceDao = invoiceDao;
     this.pricingService = pricingService;
     this.applicationDao = applicationDao;
@@ -58,7 +59,8 @@ public class InvoiceService {
 
   @Transactional
   public void createInvoices(int applicationId, boolean sapIdPending) {
-    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisDao.getChargeBasis(applicationId);
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(applicationId)
+        .stream().filter(c -> !c.isInvoiced()).collect(Collectors.toList());
     List<InvoiceRow> invoiceRows = pricingService.toSingleInvoice(chargeBasisEntries);
     Application application = applicationDao.findById(applicationId);
     ZonedDateTime invoicingDate = getInvoicingDate(application);

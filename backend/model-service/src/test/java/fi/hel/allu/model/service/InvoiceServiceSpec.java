@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Spectrum.class)
 public class InvoiceServiceSpec extends SpeccyTestBase {
 
-  private ChargeBasisDao chargeBasisDao;
+  private ChargeBasisService chargeBasisService;
   private InvoiceDao invoiceDao;
   private PricingService pricingService;
   private ApplicationDao applicationDao;
@@ -44,13 +44,13 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
 
   {
     beforeEach(() -> {
-      chargeBasisDao = Mockito.mock(ChargeBasisDao.class);
+      chargeBasisService = Mockito.mock(ChargeBasisService.class);
       invoiceDao = Mockito.mock(InvoiceDao.class);
       pricingService = Mockito.mock(PricingService.class);
       applicationDao = Mockito.mock(ApplicationDao.class);
       invoiceRecipientDao = Mockito.mock(InvoiceRecipientDao.class);
       customerDao = Mockito.mock(CustomerDao.class);
-      invoiceService = new InvoiceService(chargeBasisDao, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao);
+      invoiceService = new InvoiceService(chargeBasisService, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao);
     });
 
     describe("InvoiceService", () -> {
@@ -64,7 +64,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         customer.setName("The Company");
         Application application = new Application();
         application.setInvoiceRecipientId(INVOICE_RECIPIENT_ID);
-        Mockito.when(chargeBasisDao.getChargeBasis(Mockito.eq(APPLICATION_ID))).thenReturn(CB_ENTRIES);
+        Mockito.when(chargeBasisService.getChargeBasis(Mockito.eq(APPLICATION_ID))).thenReturn(CB_ENTRIES);
         Mockito.when(pricingService.toSingleInvoice(Mockito.eq(CB_ENTRIES))).thenReturn(INVOICE_ROWS);
         Mockito.when(customerDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(customer));
         Mockito.when(invoiceRecipientDao.insert(Mockito.any())).thenReturn(INVOICE_RECIPIENT_ID);
