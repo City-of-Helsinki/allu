@@ -132,8 +132,10 @@ public class DecisionJsonMapper {
       break;
     case TEMPORARY_TRAFFIC_ARRANGEMENTS:
       fillTemporaryTrafficArrangementSpecifics(decisionJson, application);
+      break;
     case EXCAVATION_ANNOUNCEMENT:
       fillExcavationAnnouncementSpecifics(decisionJson, application);
+      break;
     default:
       break;
     }
