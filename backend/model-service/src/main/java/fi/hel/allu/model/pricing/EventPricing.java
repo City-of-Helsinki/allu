@@ -142,7 +142,7 @@ public class EventPricing extends Pricing {
     paymentPercentage = 100;
     if (ecoCompass) {
       // 30 percent discount from full price (incl. extra fees)
-      addChargeBasisEntry(null, ChargeBasisUnit.PERCENT, -30.0, 0, ECO_COMPASS_TEXT, 0);
+      addChargeBasisEntry(ChargeBasisTag.EcoCompassTag(), ChargeBasisUnit.PERCENT, -30.0, 0, ECO_COMPASS_TEXT, 0);
       paymentPercentage = paymentPercentage * 7 / 10;
     }
   }

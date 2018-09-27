@@ -14,4 +14,5 @@ export interface BackendChargeBasisEntry {
   referredTag: string;
   explanation: string[];
   locked?: boolean;
+  referrable?: boolean;
 }

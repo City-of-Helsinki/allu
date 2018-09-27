@@ -26,7 +26,8 @@ export class ChargeBasisEntryMapper {
       backendChargeBasisEntry.tag,
       backendChargeBasisEntry.referredTag,
       backendChargeBasisEntry.explanation,
-      backendChargeBasisEntry.locked
+      backendChargeBasisEntry.locked,
+      backendChargeBasisEntry.referrable
     );
   }
 

@@ -2,10 +2,17 @@ package fi.hel.allu.model.pricing;
 
 public class ChargeBasisTag {
   private final String asString;
+  private boolean referrable = true;
 
   private ChargeBasisTag(TagText txt) {
     this.asString = txt.toString();
   }
+
+  private ChargeBasisTag(TagText txt, boolean referrable) {
+    this.asString = txt.toString();
+    this.referrable = referrable;
+  }
+
 
   private ChargeBasisTag(TagText txtStart, String ending) {
     this.asString = txtStart.toString() + "#" + ending;
@@ -132,10 +139,19 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.ArUs);
   }
 
+  public static ChargeBasisTag EcoCompassTag() {
+    return new ChargeBasisTag(TagText.ECO, false);
+  }
+
   @Override
   public String toString() {
     return asString;
   }
+
+  public boolean isReferrable() {
+    return referrable;
+  }
+
 
 /* Enumerations for different tag texts: */
 private enum TagText {
@@ -194,7 +210,8 @@ private enum TagText {
     // Short term rental, Urban farming
     STRUF,
     // Area Usage
-    ArUs
+    ArUs,
+    // Eco compass
+    ECO
   }
-
 }

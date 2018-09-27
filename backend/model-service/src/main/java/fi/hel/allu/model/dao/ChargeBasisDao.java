@@ -31,7 +31,7 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 @Repository
 public class ChargeBasisDao {
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
-      Arrays.asList(chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber);
+      Arrays.asList(chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber, chargeBasis.referrable, chargeBasis.locked);
 
   @Autowired
   private SQLQueryFactory queryFactory;

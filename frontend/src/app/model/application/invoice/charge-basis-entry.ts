@@ -15,7 +15,8 @@ export class ChargeBasisEntry {
     public tag?: string,
     public referredTag?: string,
     public explanation: string[] = [],
-    public locked?: boolean
+    public locked?: boolean,
+    public referrable?: boolean
   ) {}
 
   get uiQuantity(): number {

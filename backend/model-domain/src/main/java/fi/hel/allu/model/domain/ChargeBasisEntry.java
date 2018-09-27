@@ -27,6 +27,7 @@ public class ChargeBasisEntry {
   private boolean isInvoiced;
   private ZonedDateTime modificationTime;
   private Boolean locked;
+  private boolean referrable;
 
   public ChargeBasisEntry() {
     // for deserialization
@@ -261,5 +262,13 @@ public class ChargeBasisEntry {
 
   public void setLocked(Boolean locked) {
     this.locked = locked;
+  }
+
+  public boolean isReferrable() {
+     return referrable;
+  }
+
+  public void setReferrable(boolean referrable) {
+      this.referrable = referrable;
   }
 }

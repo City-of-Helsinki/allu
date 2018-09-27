@@ -31,16 +31,12 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
   unitCtrl: FormControl;
 
   private destroy = new Subject<boolean>();
-  private readonly discountableChargeBasisTypes =  [
-    ChargeBasisType.AREA_USAGE_FEE,
-    ChargeBasisType.CALCULATED
-];
 
   constructor(private invoiceHub: InvoiceHub) {}
 
   ngOnInit(): void {
     this.referableEntries = this.invoiceHub.chargeBasisEntries.pipe(
-      map(entries => entries.filter(entry => this.discountableChargeBasisTypes.includes(entry.type)))
+      map(entries => entries.filter(entry => entry.referrable))
     );
 
     this.unitCtrl = <FormControl>this.form.get('unit');
