@@ -2,7 +2,7 @@
   display: block;
 }
 
-:host mat-card {
+:host mat-card ::ng-deep {
   border-radius: 6px;
 
   mat-card-content {
@@ -24,6 +24,15 @@
     .input-field-info-text {
       height: 3rem;
     }
+  }
+
+  mat-card-content.bordered {
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+  }
+
+  mat-card-footer.footer-min-height {
+    min-height: 56px;
   }
 }
 

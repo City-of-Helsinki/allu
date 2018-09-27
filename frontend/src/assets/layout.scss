@@ -2,7 +2,8 @@
   margin-bottom: 5px;
 }
 
-[fxLayout="row"].inner-row, [fxLayout="row"].slim {
+[fxLayout="row"].inner-row, [fxLayout="row"].slim,
+[fxLayout="row wrap"].inner-row, [fxLayout="row wrap"].slim {
   margin-bottom: 0;
 }
 
