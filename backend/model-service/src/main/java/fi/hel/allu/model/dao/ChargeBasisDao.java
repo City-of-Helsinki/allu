@@ -73,6 +73,7 @@ public class ChargeBasisDao {
     updateEntries(modification.getEntriesToUpdate());
     deleteEntries(modification.getEntryIdsToDelete(), modification.getApplicationId());
     insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(), nextEntryNumber(modification.getApplicationId(), modification.isManuallySet()));
+    deleteDanglingEntries(modification.getApplicationId());
   }
 
   private void updateEntries(Set<ChargeBasisEntry> entriesToUpdate) {
@@ -121,6 +122,9 @@ public class ChargeBasisDao {
     // Delete invoice rows created from charge basis entry
     queryFactory.delete(invoiceRow).where(invoiceRow.chargeBasisId.in(entryIdsToDelete)).execute();
     queryFactory.delete(chargeBasis).where(chargeBasis.id.in(entryIdsToDelete)).execute();
+  }
+
+  protected void deleteDanglingEntries(int applicationId) {
     // Delete possible dangling referred tags left by above delete
     queryFactory.delete(chargeBasis)
     .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.referredTag.isNotNull()).and(chargeBasis.referredTag.notIn(
