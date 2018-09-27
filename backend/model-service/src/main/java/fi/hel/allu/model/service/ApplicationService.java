@@ -400,6 +400,7 @@ public class ApplicationService {
     if (application.getNotBillable() == true) {
       return;
     }
+    createInvoice(applicationId, userId, application);
   }
 
   public void createInvoice(int applicationId, int userId, Application application) {
