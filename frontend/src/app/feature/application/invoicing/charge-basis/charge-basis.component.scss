@@ -1,17 +1,14 @@
+:host {
+  ul.charge-basis-entries {
+    margin-top: 0;
+  }
 
-.row-header {
-  font-weight: bold;
+  li.charge-basis-entry:first-of-type {
+    margin-top: 0;
+  }
+
+  .charge-basis-entry .entry-content {
+    min-height: 42px;
+    padding: 4px 0px;
+  }
 }
-
-.row-field-highlight {
-  font-weight: bold;
-}
-
-.mat-icon.angle-45 {
-  transform: rotate(-45deg);
-}
-
-.indented {
-  margin-left: 10px;
-}
-

@@ -1483,6 +1483,7 @@ export const translations = {
   chargeBasis: {
     title: 'Laskuperusteet',
     newEntry: 'Uusi laskuperuste',
+    totalPrice: 'Kokonaissumma',
     type: {
       title: 'Laskuperusteen tyyppi',
       CALCULATED: 'Laskettu',

@@ -1,0 +1,17 @@
+@mixin charge-basis-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  charge-basis {
+    li.charge-basis-entry:nth-of-type(odd) {
+      background: mat-color($primary, 50);
+    }
+
+    li.charge-basis-entry:nth-of-type(even) {
+      background: $allu-card-background;
+    }
+
+    .referring-entry {
+      border-color: mat-color($primary, 500);
+    }
+  }
+}

@@ -1,0 +1,32 @@
+<div fxLayout="row wrap" fxLayout.sm="column" fxLayoutAlign="start center" class="slim entry-content">
+  <div fxFlex.gt-sm="100px">
+    <ng-container *ngIf="editAllowed(entry)">
+      <button type="button" mat-icon-button (click)="onEdit.emit(entry)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button type="button" mat-icon-button (click)="onRemove.emit()">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </ng-container>
+  </div>
+  <div fxFlex="40">
+    <div *ngIf="entry.referredTag" class="referring-entry" fxFlex="3em"></div>
+    <div fxLayout="column">
+      <div fxFlex class="entry-header text-highlighted">{{entry.text}}</div>
+      <div fxFlex>
+        <span *ngFor="let explanationEntry of entry.explanation; let last=last;">
+          {{explanationEntry | commaSeparated:last}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="15" fxFlexOffset.gt-sm="30" class="text-highlighted" *ngIf="showMinimal(entry); else normalEntry">
+    <span *ngIf="entry.unit==='PERCENT'">{{entryValue(entry)}} %</span>
+    <span *ngIf="entry.unit==='PIECE'">{{entryValue(entry)}} €</span>
+  </div>
+  <ng-template #normalEntry>
+    <div fxFlex="15">{{entry.quantity}} {{['chargeBasis.unit', entry.unit] | translation}}</div>
+    <div fxFlex="15">à {{entry.unitPriceEuro}} €</div>
+    <div fxFlex="15" class="text-highlighted">{{entry.netPriceEuro}} €</div>
+  </ng-template>
+</div>

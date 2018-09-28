@@ -1,58 +1,31 @@
-<form [formGroup]="form">
-  <allu-card>
-    <mat-card-title>
-      <div fxLayout="row">
-        <div fxFlex="70">
-          {{'chargeBasis.title' | translation}}
-          <button *ngIf="changesAllowed" type="button" mat-icon-button (click)="newEntry()" class="align-with-text">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-        <div fxFlex="15" fxFlexOffset="90px">
-          {{calculatedPrice}} €
-        </div>
+<allu-card class="full-width">
+  <mat-card-title class="allu-card-title">
+    <div fxLayout="row">
+      <div fxFlex>
+        {{'chargeBasis.title' | translation}}
+        <button *ngIf="changesAllowed" type="button" mat-icon-button (click)="newEntry()" class="align-with-text">
+          <mat-icon>add</mat-icon>
+        </button>
       </div>
-    </mat-card-title>
-    <mat-card-content>
-      <div formArrayName="chargeBasisEntries">
-        <ul>
-          <li *ngFor="let entry of chargeBasisEntries.controls; let i=index;">
-            <allu-card class="slim-card" [class.indented]="entry.value.referredTag">
-              <mat-card-content>
-                <div fxLayout="row wrap" fxLayout.sm="column">
-                  <div fxFlex="100px">
-                    <ng-container *ngIf="editAllowed(entry.value)">
-                      <button type="button" mat-icon-button (click)="editEntry(i)">
-                        <mat-icon>edit</mat-icon>
-                      </button>
-                      <button type="button" mat-icon-button (click)="removeEntry(i)">
-                        <mat-icon>clear</mat-icon>
-                      </button>
-                    </ng-container>
-                  </div>
-                  <div fxFlex="40" class="row-header">{{entry.value.text}}</div>
-                  <div fxFlex="15" fxFlexOffset="30" class="row-field-highlight"
-                       *ngIf="showMinimal(entry.value); else normalEntry">
-                    <span *ngIf="entry.value.unit==='PERCENT'">{{entryValue(entry.value)}} %</span>
-                    <span *ngIf="entry.value.unit==='PIECE'">{{entryValue(entry.value)}} €</span>
-                  </div>
-                  <ng-template #normalEntry>
-                    <div fxFlex="15">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}
-                    </div>
-                    <div fxFlex="15">à {{entry.value.unitPrice}} €</div>
-                    <div fxFlex="15" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
-                  </ng-template>
-                  <div fxFlex="90" fxFlexOffset="100px">
-                    <span *ngFor="let explanationEntry of entry.value.explanation; let last=last;">
-                        {{explanationEntry | commaSeparated:last}}
-                    </span>
-                  </div>
-                </div>
-              </mat-card-content>
-            </allu-card>
-          </li>
-        </ul>
+    </div>
+  </mat-card-title>
+  <mat-card-content class="bordered">
+    <ul class="charge-basis-entries">
+      <li *ngFor="let entry of chargeBasisEntries$ | async; let i=index;" class="charge-basis-entry">
+        <charge-basis-entry
+          [entry]="entry"
+          [changesAllowed]="changesAllowed"
+          (onEdit)="editEntry($event)"
+          (onRemove)="removeEntry(entry.id)"></charge-basis-entry>
+      </li>
+    </ul>
+  </mat-card-content>
+  <mat-card-footer>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div fxFlex="95px"></div>
+      <div fxFlex="15" fxFlexOffset="70" class="text-highlighted">
+        {{'chargeBasis.totalPrice' | translation}}: {{calculatedPrice}} €
       </div>
-    </mat-card-content>
-  </allu-card>
-</form>
+    </div>
+  </mat-card-footer>
+</allu-card>

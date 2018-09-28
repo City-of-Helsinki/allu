@@ -51,3 +51,12 @@ export class ChargeBasisEntry {
     return this.type === ChargeBasisType.DISCOUNT && this.unit === ChargeBasisUnit.PERCENT;
   }
 }
+
+export function unitPriceEuro(entry: ChargeBasisEntry) {
+  const unitPrice = NumberUtil.toEuros(entry.unitPrice);
+  return negatePrice(entry.type, entry.unit) ? -unitPrice : unitPrice;
+}
+
+export function negatePrice(type: ChargeBasisType, unit: ChargeBasisUnit) {
+  return type === ChargeBasisType.DISCOUNT && unit === ChargeBasisUnit.PIECE;
+}

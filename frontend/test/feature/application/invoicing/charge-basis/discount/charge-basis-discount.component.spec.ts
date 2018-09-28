@@ -2,46 +2,46 @@ import {DebugElement} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {AlluCommonModule} from '../../../../../../src/app/feature/common/allu-common.module';
-import {
-  ChargeBasisDiscountComponent
-} from '../../../../../../src/app/feature/application/invoicing/charge-basis/discount/charge-basis-discount.component';
-import {InvoiceHubMock} from '../../../../../mocks';
-import {InvoiceHub} from '../../../../../../src/app/service/application/invoice/invoice-hub';
-import {ChargeBasisEntryForm} from '../../../../../../src/app/feature/application/invoicing/charge-basis/charge-basis-entry.form';
-import {ChargeBasisEntry} from '../../../../../../src/app/model/application/invoice/charge-basis-entry';
-import {ChargeBasisType} from '../../../../../../src/app/model/application/invoice/charge-basis-type';
-import {ChargeBasisUnit} from '../../../../../../src/app/model/application/invoice/charge-basis-unit';
-import {findTranslation} from '../../../../../../src/app/util/translations';
-import {of} from 'rxjs/index';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {ChargeBasisDiscountComponent} from '@feature/application/invoicing/charge-basis/discount/charge-basis-discount.component';
+import {ChargeBasisEntryForm} from '@feature/application/invoicing/charge-basis/charge-basis-entry.form';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+import {ChargeBasisType} from '@model/application/invoice/charge-basis-type';
+import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
+import {findTranslation} from '@util/translations';
+import * as fromApplication from '@feature/application/reducers';
+import * as fromInvoicing from '@feature/application/invoicing/reducers';
+import {combineReducers, Store, StoreModule} from '@ngrx/store';
+import {LoadSuccess} from '@feature/application/invoicing/actions/charge-basis-actions';
 
 describe('ChargeBasisDiscountComponent', () => {
   let comp: ChargeBasisDiscountComponent;
   let fixture: ComponentFixture<ChargeBasisDiscountComponent>;
   let de: DebugElement;
-  let invoiceHub: InvoiceHubMock;
+  let store: Store<fromInvoicing.State>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         AlluCommonModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        StoreModule.forRoot({
+          'invoicing': combineReducers(fromInvoicing.reducers),
+          'application': combineReducers(fromApplication.reducers)
+        })
       ],
       declarations: [
         ChargeBasisDiscountComponent
-      ],
-      providers: [
-        {provide: InvoiceHub, useClass: InvoiceHubMock}
       ]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    invoiceHub = TestBed.get(InvoiceHub) as InvoiceHubMock;
     fixture = TestBed.createComponent(ChargeBasisDiscountComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
+    store = TestBed.get(Store);
 
     comp.form = ChargeBasisEntryForm.formGroup(new FormBuilder());
     comp.ngOnInit();
@@ -58,21 +58,21 @@ describe('ChargeBasisDiscountComponent', () => {
   }));
 
   it('allows referring only to non manual entries', fakeAsync(() => {
-    const manual = manualEntry();
-    const calculated = calculatedEntry();
-    const existingEntries = [manual, calculated];
-    spyOnProperty(invoiceHub, 'chargeBasisEntries', 'get').and.returnValue(of(existingEntries));
+    const manual = manualEntry(1);
+    const calculated = calculatedEntry(2);
+    store.dispatch(new LoadSuccess([manual, calculated]));
     comp.ngOnInit();
+    detectAndTick();
+
     comp.referableEntries.subscribe(referable => {
       expect(referable.length).toEqual(1);
       expect(referable[0]).toEqual(calculated);
     });
-    detectAndTick();
   }));
 
   it('should allow selecting referred entry by tag', fakeAsync(() => {
-    const existingEntries = [calculatedEntry('entry1', 'tag1'), calculatedEntry('entry2', 'tag2')];
-    spyOnProperty(invoiceHub, 'chargeBasisEntries', 'get').and.returnValue(of(existingEntries));
+    const existingEntries = [calculatedEntry(1, 'entry1', 'tag1'), calculatedEntry(2, 'entry2', 'tag2')];
+    store.dispatch(new LoadSuccess(existingEntries));
     comp.ngOnInit();
     detectAndTick();
 
@@ -124,12 +124,12 @@ describe('ChargeBasisDiscountComponent', () => {
     tick();
   }
 
-  function calculatedEntry(text = 'calculated', tag = 'tag'): ChargeBasisEntry {
-    return new ChargeBasisEntry(1, ChargeBasisType.CALCULATED, ChargeBasisUnit.PIECE, 10,
+  function calculatedEntry(id: number, text = 'calculated', tag = 'tag'): ChargeBasisEntry {
+    return new ChargeBasisEntry(id, ChargeBasisType.CALCULATED, ChargeBasisUnit.PIECE, 10,
       text, 100, 1000, false, tag, null, null, false, true);
   }
 
-  function manualEntry(): ChargeBasisEntry {
-    return new ChargeBasisEntry(1, ChargeBasisType.ADDITIONAL_FEE, ChargeBasisUnit.PIECE, 5, 'Manual', 100, 500, true);
+  function manualEntry(id: number): ChargeBasisEntry {
+    return new ChargeBasisEntry(id, ChargeBasisType.ADDITIONAL_FEE, ChargeBasisUnit.PIECE, 5, 'Manual', 100, 500, true);
   }
 });

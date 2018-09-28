@@ -1,11 +1,11 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {InvoiceHub} from '../../../../../service/application/invoice/invoice-hub';
 import {Observable, Subject} from 'rxjs';
-import {ChargeBasisEntry} from '../../../../../model/application/invoice/charge-basis-entry';
-import {ChargeBasisUnit} from '../../../../../model/application/invoice/charge-basis-unit';
-import {ChargeBasisType} from '../../../../../model/application/invoice/charge-basis-type';
-import {map, takeUntil} from 'rxjs/internal/operators';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
+import {takeUntil} from 'rxjs/internal/operators';
+import * as fromInvoicing from '@feature/application/invoicing/reducers';
+import {Store} from '@ngrx/store';
 
 const discountSumValidators = {
   unitPrice: [Validators.required]
@@ -32,12 +32,10 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
 
   private destroy = new Subject<boolean>();
 
-  constructor(private invoiceHub: InvoiceHub) {}
+  constructor(private store: Store<fromInvoicing.State>) {}
 
   ngOnInit(): void {
-    this.referableEntries = this.invoiceHub.chargeBasisEntries.pipe(
-      map(entries => entries.filter(entry => entry.referrable))
-    );
+    this.referableEntries = this.store.select(fromInvoicing.getAllReferrableChargeBasisEntries);
 
     this.unitCtrl = <FormControl>this.form.get('unit');
     this.unitCtrl.valueChanges.pipe(takeUntil(this.destroy))

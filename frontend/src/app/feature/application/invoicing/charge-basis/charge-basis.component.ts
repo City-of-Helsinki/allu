@@ -1,30 +1,20 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
-import {InvoiceHub} from '@service/application/invoice/invoice-hub';
-import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {CHARGE_BASIS_ENTRY_MODAL_CONFIG, ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
-import {NotificationService} from '@feature/notification/notification.service';
-import {combineLatest, Observable, Subject} from 'rxjs';
-import {FormUtil} from '@util/form.util';
-import {ChargeBasisType} from '@model/application/invoice/charge-basis-type';
-import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
-import {ApplicationStore} from '@service/application/application-store';
+import {Observable, Subject} from 'rxjs';
 import {Application} from '@model/application/application';
-import {
-  applicationCanBeEdited,
-  excavationInvoicingChangeAllowed,
-  invoicingChangesAllowed,
-  invoicingChangesAllowedForType
-} from '@model/application/application-status';
+import {invoicingChangesAllowedForType} from '@model/application/application-status';
 import {CurrentUser} from '@service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, take, takeUntil, tap, withLatestFrom} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
 import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
-import {Load} from '@feature/application/actions/application-actions';
+import * as fromInvoicing from '@feature/application/invoicing/reducers';
+import {AddEntry, Load, RemoveEntry, UpdateEntry} from '@feature/application/invoicing/actions/charge-basis-actions';
 
 @Component({
   selector: 'charge-basis',
@@ -35,8 +25,7 @@ import {Load} from '@feature/application/actions/application-actions';
 })
 export class ChargeBasisComponent implements OnInit, OnDestroy {
 
-  form: FormGroup;
-  chargeBasisEntries: FormArray;
+  chargeBasisEntries$: Observable<ChargeBasisEntry[]>;
   calculatedPrice: number;
   changesAllowed = false;
 
@@ -45,23 +34,17 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
-              private invoiceHub: InvoiceHub,
-              private applicationStore: ApplicationStore,
-              private store: Store<fromApplication.State>,
-              private currentUser: CurrentUser,
-              private notification: NotificationService) {
-    this.chargeBasisEntries = fb.array([]);
-    this.form = this.fb.group({
-      chargeBasisEntries: this.chargeBasisEntries
-    });
+              private store: Store<fromRoot.State>,
+              private currentUser: CurrentUser) {
   }
 
   ngOnInit(): void {
-    this.applicationStore.application.pipe(takeUntil(this.destroy))
+    this.store.select(fromApplication.getCurrentApplication).pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));
 
-    this.invoiceHub.chargeBasisEntries.pipe(takeUntil(this.destroy))
-      .subscribe(entries => this.entriesUpdated(entries));
+    this.chargeBasisEntries$ = this.store.select(fromInvoicing.getAllChargeBasisEntries);
+
+    this.store.dispatch(new Load());
 
     this.initChangesAllowed();
   }
@@ -72,77 +55,19 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   newEntry(): void {
-    this.openModal().pipe(
-      switchMap(entry => this.addEntry(entry))
-    ).subscribe(
-        saved => this.notification.translateSuccess('chargeBasis.action.save'),
-        error => this.notification.errorInfo(error)
-      );
+    this.openModal().subscribe(entry => this.store.dispatch(new AddEntry(entry)));
   }
 
-  editEntry(index: number): void {
-    const entryForm = <FormGroup>this.chargeBasisEntries.at(index);
-    this.openModal(ChargeBasisEntryForm.toChargeBasisEntry(entryForm.getRawValue())).pipe(
-      switchMap(updatedEntry => this.updateEntry(updatedEntry, index))
-    ).subscribe(
-      saved => this.notification.translateSuccess('chargeBasis.action.save'),
-      error => this.notification.errorInfo(error)
-    );
+  editEntry(entry: ChargeBasisEntry): void {
+    this.openModal(entry).subscribe(updatedEntry => this.store.dispatch(new UpdateEntry(updatedEntry)));
   }
 
-  removeEntry(index: number): void {
-    this.chargeBasisEntries.removeAt(index);
-    this.saveEntries().subscribe(
-      saved => this.notification.translateSuccess('chargeBasis.action.save'),
-      error => this.notification.errorInfo(error)
-    );
-  }
-
-  showMinimal(value: ChargeBasisEntryForm): boolean {
-    return value.type === ChargeBasisType.DISCOUNT
-      || value.unit === ChargeBasisUnit.PERCENT;
-  }
-
-  entryValue(entry: ChargeBasisEntryForm): string {
-    let prefix = '';
-    let value = entry.unitPrice;
-    if (entry.unit === ChargeBasisUnit.PERCENT) {
-      value = entry.quantity;
-    } else if (entry.type === ChargeBasisType.DISCOUNT) {
-      if (value < 0) {
-        prefix = '+';
-        value = -value;
-      } else {
-        prefix = '-';
-      }
-    }
-    return prefix + value;
-  }
-
-  editAllowed(entry: ChargeBasisEntryForm): boolean {
-    return !entry.locked && entry.manuallySet && this.changesAllowed;
+  removeEntry(id: number): void {
+    this.store.dispatch(new RemoveEntry(id));
   }
 
   private onApplicationChange(app: Application): void {
     this.calculatedPrice = NumberUtil.toEuros(app.calculatedPrice);
-
-    this.invoiceHub.loadChargeBasisEntries(app.id).pipe(takeUntil(this.destroy))
-      .subscribe(() => {}, error => this.notification.errorInfo(error));
-  }
-
-  private entriesUpdated(entries: Array<ChargeBasisEntry>): void {
-    FormUtil.clearArray(this.chargeBasisEntries);
-    entries.forEach(entry => this.chargeBasisEntries.push(ChargeBasisEntryForm.formGroup(this.fb, entry)));
-  }
-
-  private addEntry(entry: ChargeBasisEntry): Observable<Array<ChargeBasisEntry>> {
-    this.chargeBasisEntries.push(ChargeBasisEntryForm.formGroup(this.fb, entry));
-    return this.saveEntries();
-  }
-
-  private updateEntry(entry: ChargeBasisEntry, index: number): Observable<Array<ChargeBasisEntry>> {
-    this.chargeBasisEntries.at(index).patchValue(ChargeBasisEntryForm.toFormValue(entry));
-    return this.saveEntries();
   }
 
   private openModal(entry?: ChargeBasisEntry): Observable<ChargeBasisEntry> {
@@ -152,17 +77,9 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     return this.dialogRef.afterClosed().pipe(filter(r => !!r));
   }
 
-  private saveEntries(): Observable<Array<ChargeBasisEntry>> {
-    const entries = this.chargeBasisEntries.getRawValue().map(value => ChargeBasisEntryForm.toChargeBasisEntry(value));
-    const appId = this.applicationStore.snapshot.application.id;
-    return this.invoiceHub.saveChargeBasisEntries(appId, entries).pipe(
-      tap(() => this.store.dispatch(new Load(appId)))
-    );
-  }
-
   private initChangesAllowed() {
-    this.applicationStore.application.pipe(
-      takeUntil(this.destroy),
+    this.store.select(fromApplication.getCurrentApplication).pipe(
+      take(1),
       map(app => invoicingChangesAllowedForType(app.type, app.status)),
       withLatestFrom(this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))),
       map(([changesAllowed, modifyRole]) => changesAllowed && modifyRole)

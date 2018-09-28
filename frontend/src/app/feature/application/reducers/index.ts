@@ -1,17 +1,17 @@
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 
 import * as fromApplication from './application-reducer';
-import * as fromComments from '../../comment/reducers/comment-reducer';
-import * as fromApplicationComments from '../../application/reducers/application-comments-reducer';
+import * as fromComments from '@feature/comment/reducers/comment-reducer';
+import * as fromApplicationComments from '@feature/application/reducers/application-comments-reducer';
 import * as fromTags from './application-tags-reducer';
-import * as fromRoot from '../../allu/reducers/index';
-import {Application} from '../../../model/application/application';
-import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
-import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import * as fromHistory from '../../history/reducers/history-reducer';
+import * as fromRoot from '@feature/allu/reducers/index';
+import {Application} from '@model/application/application';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+import {ApplicationTag} from '@model/application/tag/application-tag';
+import * as fromHistory from '@feature/history/reducers/history-reducer';
 import * as fromApplicationHistory from '../reducers/application-history-reducer';
-import {ClientApplicationData} from '../../../model/application/client-application-data';
-import {InformationRequestFieldKey} from '../../../model/information-request/information-request-field-key';
+import {ClientApplicationData} from '@model/application/client-application-data';
+import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {NumberUtil} from '@util/number.util';
 
 export interface ApplicationState {
