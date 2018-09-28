@@ -125,7 +125,8 @@ describe('ChargeBasisDiscountComponent', () => {
   }
 
   function calculatedEntry(text = 'calculated', tag = 'tag'): ChargeBasisEntry {
-    return new ChargeBasisEntry(1, ChargeBasisType.CALCULATED, ChargeBasisUnit.PIECE, 10, text, 100, 1000, false, tag);
+    return new ChargeBasisEntry(1, ChargeBasisType.CALCULATED, ChargeBasisUnit.PIECE, 10,
+      text, 100, 1000, false, tag, null, null, false, true);
   }
 
   function manualEntry(): ChargeBasisEntry {
