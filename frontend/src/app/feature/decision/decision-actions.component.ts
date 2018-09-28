@@ -19,6 +19,7 @@ import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, switchMap, tap} from 'rxjs/internal/operators';
+import {automaticDecisionMaking} from '@model/application/type/application-type';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -36,6 +37,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
   showProposal = false;
+  skipProposal = false;
   showDecision = false;
   showResend = false;
 
@@ -52,7 +54,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     const status = this.application.status;
-    this.showProposal = inHandling(status);
+    this.showProposal = inHandling(status) && !automaticDecisionMaking(this.application.type);
+    this.skipProposal = inHandling(status) && automaticDecisionMaking(this.application.type);
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
   }
@@ -74,6 +77,13 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     const status = this.application.targetState;
     this.confirmDecisionSend(status, status)
       .subscribe(result => this.decisionConfirmed(result));
+  }
+
+  public decisionMaking(): void {
+    this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING).subscribe(
+      (application) => this.statusChanged(application),
+      (err) => this.notification.error(findTranslation('application.error.toDecisionmaking'))
+    );
   }
 
   public returnToPreparation(): void {
@@ -102,6 +112,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
         error => this.notification.errorInfo(error));
   }
 
+
   private proposalConfirmed(changeInfo: StatusChangeInfo) {
     if (changeInfo) {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
@@ -126,7 +137,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     return this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config).afterClosed();
   }
 
-  private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
+  private changeStatus(confirmation?: DecisionConfirmation): Observable<Application> {
     const changeInfo = new StatusChangeInfo(undefined, confirmation.comment, confirmation.owner);
     return this.applicationStore.changeStatus(this.application.id, confirmation.status, changeInfo).pipe(
       tap(application => this.statusChanged(application))

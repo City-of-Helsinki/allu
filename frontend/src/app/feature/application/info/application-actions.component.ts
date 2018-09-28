@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApplicationStore} from '@service/application/application-store';
 import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter, isSameOrBefore} from '@model/application/application-status';
-import {ApplicationType, automaticDecisionmaking} from '@model/application/type/application-type';
+import {ApplicationType, automaticDecisionMaking} from '@model/application/type/application-type';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Observable, of, Subscription} from 'rxjs';
 import {Application} from '@model/application/application';
@@ -201,7 +201,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private shouldMoveToDecisionMaking(): boolean {
     const app = this.applicationStore.snapshot.application;
-    return (automaticDecisionmaking.indexOf(app.type) >= 0) && app.status === ApplicationStatus.HANDLING;
+    return automaticDecisionMaking(app.type) && app.status === ApplicationStatus.HANDLING;
   }
 
   private showDecisionForApplication(app: Application): boolean {

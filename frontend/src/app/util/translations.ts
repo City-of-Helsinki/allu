@@ -818,6 +818,11 @@ export const translations = {
     sendDecision: 'Lähetä päätös',
     cannotShow: 'Päätöksen näyttäminen ei onnistu selaimellasi.',
     type: {
+      DECISIONMAKING: {
+        title: 'Siirrä odottamaan päätöstä',
+        confirmText: 'Päätettäväksi',
+        confirmation: 'Hakemus siirretty odottamaan päätöstä'
+      },
       DECISION: {
         title: 'Päätä hakemus',
         confirmText: 'Päätä',
