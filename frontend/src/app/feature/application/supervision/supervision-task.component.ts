@@ -12,7 +12,7 @@ import {RoleType} from '@model/user/role-type';
 import {ArrayUtil} from '@util/array-util';
 import {
   SUPERVISION_APPROVAL_MODAL_CONFIG,
-  SupervisionApprovalModalComponent,
+  SupervisionApprovalModalComponent, SupervisionApprovalModalData,
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
@@ -208,18 +208,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private openModal(type: SupervisionApprovalResolutionType): MatDialogRef<SupervisionApprovalModalComponent> {
     const task = SupervisionTaskForm.to(this.form.value);
-    const reportedDate = SupervisionApprovalResolutionType.APPROVE === type
-      ? this.proposedReportedDate(task, this.application)
-      : undefined;
-
     const config = {
       ...SUPERVISION_APPROVAL_MODAL_CONFIG,
-      data: {
-        resolutionType: type,
-        taskType: task.type,
-        reportedDate,
-        application: this.application
-      }
+      data: this.approvalModalData(type, task)
     };
 
     return this.dialog.open(SupervisionApprovalModalComponent, config);
@@ -253,16 +244,38 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     ).subscribe(preferred => this.form.patchValue({ownerId: preferred.id}));
   }
 
-  private proposedReportedDate(task: SupervisionTask, application: Application): Date {
-    if (ApplicationType.EXCAVATION_ANNOUNCEMENT === application.type) {
-      const extension = <ExcavationAnnouncement> application.extension;
-      if (SupervisionTaskType.OPERATIONAL_CONDITION === task.type) {
-        return extension.customerWinterTimeOperation || extension.winterTimeOperation;
-      } else if (SupervisionTaskType.FINAL_SUPERVISION === task.type) {
-        return extension.customerWorkFinished || application.endTime;
-      }
+  private approvalModalData(resolutionType: SupervisionApprovalResolutionType, task: SupervisionTask): SupervisionApprovalModalData {
+    const data = {
+      resolutionType: resolutionType,
+      taskType: task.type,
+      application: this.application
+    };
+
+    if (ApplicationType.EXCAVATION_ANNOUNCEMENT === this.application.type) {
+      return this.excavationApprovalModalData(data);
+    } else {
+      return data;
     }
-    return undefined;
+  }
+
+  private excavationApprovalModalData(baseData: SupervisionApprovalModalData): SupervisionApprovalModalData {
+    let reportedDate: Date;
+    let comparedDate: Date;
+
+    const extension = <ExcavationAnnouncement> baseData.application.extension;
+    if (SupervisionTaskType.OPERATIONAL_CONDITION === baseData.taskType) {
+      reportedDate = extension.customerWinterTimeOperation || extension.winterTimeOperation;
+      comparedDate = extension.winterTimeOperation;
+    } else if (SupervisionTaskType.FINAL_SUPERVISION === baseData.taskType) {
+      reportedDate = extension.customerWorkFinished || baseData.application.endTime;
+      comparedDate = baseData.application.endTime;
+    }
+
+    return {
+      ...baseData,
+      reportedDate,
+      comparedDate
+    };
   }
 
   private onTypeChange(type: SupervisionTaskType, application: Application): void {

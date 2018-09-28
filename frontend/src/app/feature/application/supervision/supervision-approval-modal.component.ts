@@ -27,6 +27,7 @@ export interface SupervisionApprovalModalData {
   taskType: SupervisionTaskType;
   application: Application;
   reportedDate?: Date;
+  comparedDate?: Date;
 }
 
 export interface SupervisionApprovalResult {
@@ -146,12 +147,12 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
   }
 
   private operationalConditionRequiresDecision(date: Date): boolean {
-    return !TimeUtil.isSame(date, this.data.reportedDate, 'day');
+    return !TimeUtil.isSame(date, this.data.comparedDate, 'day');
   }
 
   private workFinishedRequiresDecision(date: Date): Observable<boolean> {
     const excavation = <ExcavationAnnouncement> this.application.extension;
-    const dateChange = !TimeUtil.isSame(date, this.data.reportedDate, 'day');
+    const dateChange = !TimeUtil.isSame(date, this.data.comparedDate, 'day');
     const isWinterTimeOperation = !!excavation.winterTimeOperation;
 
     return combineLatest(
