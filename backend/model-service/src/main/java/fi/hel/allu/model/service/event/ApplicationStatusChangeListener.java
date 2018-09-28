@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -17,10 +18,7 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import fi.hel.allu.model.service.*;
 
 
 @Service
@@ -35,18 +33,20 @@ public class ApplicationStatusChangeListener {
   private final SupervisionTaskService supervisionTaskService;
   private final ApplicationDao applicationDao;
   private final ChargeBasisService chargeBasisService;
+  private final InvoiceService invoiceService;
 
 
   @Autowired
   public ApplicationStatusChangeListener(DecisionDao decisionDao, ApplicationService applicationService,
       LocationService locationService, SupervisionTaskService supervisionTaskService, ApplicationDao applicationDao,
-      ChargeBasisService chargeBasisService) {
+      ChargeBasisService chargeBasisService, InvoiceService invoiceService) {
     this.decisionDao = decisionDao;
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.supervisionTaskService = supervisionTaskService;
     this.applicationDao = applicationDao;
     this.chargeBasisService = chargeBasisService;
+    this.invoiceService = invoiceService;
 
   }
 
@@ -58,9 +58,17 @@ public class ApplicationStatusChangeListener {
       cancelOpenSupervisionTasks(event.getApplication());
     } else if (event.getNewStatus() == StatusType.DECISIONMAKING) {
       handleDecisionMakingStatus(event.getApplication());
-    } else if (event.getNewStatus() == StatusType.OPERATIONAL_CONDITION) {
-      updateInvoicingOnDecision(event.getApplication().getId());
     }
+
+    if (isInvoicableState(event)) {
+      finishInvoicing(event.getApplication(), event.getNewStatus());
+    }
+  }
+
+  private boolean isInvoicableState(ApplicationStatusChangeEvent event) {
+    return event.getNewStatus() == StatusType.DECISION
+        || event.getNewStatus() == StatusType.OPERATIONAL_CONDITION
+        || event.getNewStatus() == StatusType.FINISHED;
   }
 
   private void handleDecisionMakingStatus(Application application) {
@@ -74,7 +82,6 @@ public class ApplicationStatusChangeListener {
     cancelDanglingSupervisionTasks(application);
     // Clear target state on decision
     applicationService.setTargetState(application.getId(), null);
-    updateInvoicingOnDecision(application.getId());
     switch (application.getType()) {
     case PLACEMENT_CONTRACT:
       logger.debug("Process placement contract status change to decision");
@@ -96,14 +103,26 @@ public class ApplicationStatusChangeListener {
     }
   }
 
-  private void updateInvoicingOnDecision(Integer applicationId) {
-    applicationDao.setInvoicingChanged(applicationId, false);
+  private void finishInvoicing(Application application, StatusType status) {
+    applicationDao.setInvoicingChanged(application.getId(), false);
     // Charge basis entries cannot be modified after decision
-    chargeBasisService.lockEntries(applicationId);
+    chargeBasisService.lockEntries(application.getId());
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      setExcavationAnnouncementInvoicable(application, status);
+    }
+  }
+
+  protected void setExcavationAnnouncementInvoicable(Application application, StatusType status) {
+    ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
+    if (status == StatusType.OPERATIONAL_CONDITION) {
+      invoiceService.setInvoicableTime(application.getId(), extension.getWinterTimeOperation());
+    } else if (status == StatusType.FINISHED) {
+      invoiceService.setInvoicableTime(application.getId(), extension.getWorkFinished());
+    }
   }
 
   /**
-   * Creates supervision task for excavation announcment
+   * Creates supervision task for excavation announcement
    */
   private void handleExcavationAnnouncementDecision(Application application, Integer userId) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();

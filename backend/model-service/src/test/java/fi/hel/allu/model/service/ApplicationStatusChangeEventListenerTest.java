@@ -1,6 +1,7 @@
 package fi.hel.allu.model.service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +56,9 @@ public class ApplicationStatusChangeEventListenerTest {
   private ApplicationDao applicationDao;
   @Mock
   private ChargeBasisService chargeBasisService;
+  @Mock
+  private InvoiceService invoiceService;
+
 
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
@@ -69,7 +73,7 @@ public class ApplicationStatusChangeEventListenerTest {
     supervisor = new User();
     supervisor.setId(228);
     statusChangeListener = new ApplicationStatusChangeListener(decisionDao, applicationService, locationService,
-        supervisionTaskService, applicationDao, chargeBasisService);
+        supervisionTaskService, applicationDao, chargeBasisService, invoiceService);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);
@@ -103,6 +107,27 @@ public class ApplicationStatusChangeEventListenerTest {
     verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
   }
 
+  @Test
+  public void onOperationalConditionShouldSetInvoicable() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ZonedDateTime operationalConditionDate = LocalDate.parse("2018-12-22").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setWinterTimeOperation(operationalConditionDate);
+    application.setExtension(extension);
+    statusChangeListener.onApplicationStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
+    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(operationalConditionDate));
+  }
+
+  @Test
+  public void onFinishedShouldSetInvoicable() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ZonedDateTime workFinishedDate = LocalDate.parse("2019-05-10").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setWorkFinished(workFinishedDate);
+    application.setExtension(extension);
+    statusChangeListener.onApplicationStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(workFinishedDate));
+  }
 
   @Test
   public void onDecisionShouldUpdatePlacementContractSectionNr() {

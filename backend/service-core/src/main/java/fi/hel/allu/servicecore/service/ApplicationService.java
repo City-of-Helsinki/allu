@@ -391,12 +391,6 @@ public class ApplicationService {
         HttpMethod.PUT, new HttpEntity<>(workFinishedDate), Void.class, id);
   }
 
-  public void setInvoicableTime(Integer id, ZonedDateTime invoicableTime) {
-    restTemplate.exchange(
-        applicationProperties.getSetInvoicableTimeUrl(),
-        HttpMethod.PUT, new HttpEntity<>(invoicableTime), Void.class, id);
-  }
-
   public void setRequiredTasks(Integer id, RequiredTasks tasks) {
     restTemplate.exchange(
         applicationProperties.getSetRequiredTasksUrl(),

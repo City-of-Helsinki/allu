@@ -32,9 +32,6 @@ public class ExcavationAnnouncementService {
   @Autowired
   private SupervisionTaskService supervisionTaskService;
 
-  @Autowired
-  private ConfigurationService configurationService;
-
   public ApplicationJson reportCustomerOperationalCondition(Integer id, ApplicationDateReport dateReport) {
     Application application = applicationService.setCustomerOperationalConditionDates(id, dateReport);
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.OPERATIONAL_CONDITION,
@@ -53,7 +50,6 @@ public class ExcavationAnnouncementService {
   public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate) {
     Application application = applicationService.findApplicationById(id);
     applicationService.setOperationalConditionDate(id, operationalConditionDate);
-    setInvoicableTime(id, operationalConditionDate);
     application = applicationService.setTargetState(id, StatusType.OPERATIONAL_CONDITION);
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
@@ -61,7 +57,6 @@ public class ExcavationAnnouncementService {
   public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate) {
     Application application = applicationService.findApplicationById(id);
     applicationService.setWorkFinishedDate(id, workFinishedDate);
-    setInvoicableTime(id, workFinishedDate);
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.WARRANTY,
         ExcavationAnnouncementDates.warrantySupervisionDate(workFinishedDate));
     application = applicationService.setTargetState(id, StatusType.FINISHED);
@@ -74,7 +69,4 @@ public class ExcavationAnnouncementService {
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
-  private void setInvoicableTime(Integer id, ZonedDateTime invoicableTime) {
-    applicationService.setInvoicableTime(id, invoicableTime);
-  }
 }

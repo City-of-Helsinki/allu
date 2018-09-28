@@ -1052,13 +1052,6 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return URL for setting invoicable time for application's invoices
-   */
-  public String getSetInvoicableTimeUrl() {
-    return getModelServiceUrl("/applications/{id}/invoices/invoicabletime");
-  }
-
-  /**
    * @return URL for setting target state for applications
    */
   public String getSetTargetStateUrl() {
