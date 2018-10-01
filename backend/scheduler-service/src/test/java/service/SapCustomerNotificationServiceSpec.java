@@ -39,7 +39,7 @@ public class SapCustomerNotificationServiceSpec {
   private static final String CUSTOMER_DOWNLOAD_URL = "download_url";
   private static final String CUSTOMER_NOTIFICATION_SUBJECT = "Mail subject";
   private static final String CUSTOMER_NOTIFICATION_RECEIVER = "foo@bar.com";
-  private static final String CUSTOMER_NOTIFICATION_EMAIL_URL = "/configuration/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL;
+  private static final String CUSTOMER_NOTIFICATION_EMAIL_URL = "/configurations/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL;
 
   private SapCustomerNotificationService notificationService;
   @Mock

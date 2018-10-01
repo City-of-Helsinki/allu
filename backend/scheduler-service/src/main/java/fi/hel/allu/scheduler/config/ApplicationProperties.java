@@ -307,7 +307,7 @@ public class ApplicationProperties {
    * Url for receiver emails for SAP customer notifications
    */
   public String getCustomerNotificationReceiverEmailsUrl() {
-    return getModelServiceUrl("/configuration/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL);
+    return getModelServiceUrl("/configurations/" + ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL);
   }
 
   /**
@@ -342,7 +342,7 @@ public class ApplicationProperties {
   * @return url for receiver email for SAP invoice notifications
   */
   public String getInvoiceNotificationReceiverEmailsUrl() {
-    return getModelServiceUrl("/configuration/" + ConfigurationKey.INVOICE_NOTIFICATION_RECEIVER_EMAIL);
+    return getModelServiceUrl("/configurations/" + ConfigurationKey.INVOICE_NOTIFICATION_RECEIVER_EMAIL);
   }
 
   /**
