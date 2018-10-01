@@ -113,5 +113,5 @@ const AUTOMATIC_DECISION_TYPES = [
 
 export function automaticDecisionMaking(type: ApplicationType): boolean {
   return AUTOMATIC_DECISION_TYPES.indexOf(type) >= 0;
-};
+}
 
