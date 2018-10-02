@@ -1430,7 +1430,8 @@ export const translations = {
     },
     error: {
       save: 'Laskutustietojen tallentaminen epäonnistui',
-      invoiceRecipientSave: 'Laskutusasiakkaan tallentaminen epäonnistui'
+      invoiceRecipientSave: 'Laskutusasiakkaan tallentaminen epäonnistui',
+      fetch: 'Laskujen hakeminen epäonnistui'
     },
     field: {
       workIdMissing: 'Työnumero puuttuu',
