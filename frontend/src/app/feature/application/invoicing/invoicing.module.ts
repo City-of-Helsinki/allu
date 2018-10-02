@@ -19,6 +19,7 @@ import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {ChargeBasisEffects} from '@feature/application/invoicing/effects/charge-basis-effects';
+import {InvoicingCustomerEffects} from '@feature/application/invoicing/effects/invoicing-customer-effects';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import {ChargeBasisEffects} from '@feature/application/invoicing/effects/charge-
     CustomerRegistryModule,
     StoreModule.forFeature('invoicing', reducers),
     EffectsModule.forFeature([
-      ChargeBasisEffects
+      ChargeBasisEffects,
+      InvoicingCustomerEffects
     ])
   ],
   declarations: [

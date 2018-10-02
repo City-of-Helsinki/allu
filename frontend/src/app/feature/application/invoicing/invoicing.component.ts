@@ -1,25 +1,25 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ApplicationStore} from '../../../service/application/application-store';
+import {Component, OnInit} from '@angular/core';
+import {ApplicationStore} from '@service/application/application-store';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '@feature/notification/notification.service';
 import {Observable, of, Subject} from 'rxjs';
-import {Application} from '../../../model/application/application';
-import {Customer} from '../../../model/customer/customer';
-import {CustomerForm} from '../../customerregistry/customer/customer.form';
+import {Application} from '@model/application/application';
+import {Customer} from '@model/customer/customer';
+import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
 import {MatDialog} from '@angular/material';
-import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
-import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
-import {findTranslation} from '../../../util/translations';
-import {NumberUtil} from '../../../util/number.util';
-import {CustomerService} from '../../../service/customer/customer.service';
-import {CurrentUser} from '../../../service/user/current-user';
-import {RoleType, MODIFY_ROLES} from '../../../model/user/role-type';
+import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
+import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
+import {findTranslation} from '@util/translations';
+import {NumberUtil} from '@util/number.util';
+import {CustomerService} from '@service/customer/customer.service';
+import {CurrentUser} from '@service/user/current-user';
+import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import {catchError, map, switchMap, take} from 'rxjs/internal/operators';
-import {applicationCanBeEdited} from '../../../model/application/application-status';
-import {SetRecipient} from '../actions/invoicing-actions';
+import {applicationCanBeEdited} from '@model/application/application-status';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '../reducers';
+import {SetRecipient} from '@feature/application/invoicing/actions/invoicing-customer-actions';
 
 @Component({
   selector: 'invoicing',

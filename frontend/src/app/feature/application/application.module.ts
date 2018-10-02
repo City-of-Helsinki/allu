@@ -44,7 +44,6 @@ import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {ApplicationTagEffects} from './effects/application-tag-effects';
-import {InvoicingEffects} from './effects/invoicing-effects';
 import {HistoryModule} from '../history/history.module';
 import {ApplicationHistoryComponent} from './history/application-history.component';
 import {ApplicationEffects} from './effects/application-effects';
@@ -65,7 +64,6 @@ import {DateReportingModule} from '@feature/application/date-reporting/date-repo
     EffectsModule.forFeature([
       ApplicationEffects,
       ApplicationTagEffects,
-      InvoicingEffects,
       ExcavationAnnouncementEffects
     ]),
     FormsModule,

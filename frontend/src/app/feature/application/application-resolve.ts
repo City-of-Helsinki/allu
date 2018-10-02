@@ -2,20 +2,21 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
 import {Observable, of} from 'rxjs';
 
-import {Application} from '../../model/application/application';
-import {Some} from '../../util/option';
-import {ApplicationStore} from '../../service/application/application-store';
-import {NotificationService} from '../notification/notification.service';
+import {Application} from '@model/application/application';
+import {Some} from '@util/option';
+import {ApplicationStore} from '@service/application/application-store';
+import {NotificationService} from '@feature/notification/notification.service';
 import {Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
 import {Load, LoadSuccess} from './actions/application-actions';
-import {ActionTargetType} from '../allu/actions/action-target-type';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, switchMap, take, tap} from 'rxjs/internal/operators';
 import * as commentActions from '@feature/comment/actions/comment-actions';
-import * as historyActions from '../history/actions/history-actions';
+import * as historyActions from '@feature/history/actions/history-actions';
 import * as metaActions from './actions/application-meta-actions';
 import * as informationRequestActions from '@feature/information-request/actions/information-request-actions';
 import * as supervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
+import * as invoicingCustomerActions from '@feature/application/invoicing/actions/invoicing-customer-actions';
 import {NumberUtil} from '@util/number.util';
 import {ApplicationStatus} from '@model/application/application-status';
 
@@ -53,6 +54,7 @@ export class ApplicationResolve implements Resolve<Application> {
       tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Application))),
       tap(() => this.store.dispatch(new metaActions.Load())),
       tap(() => this.store.dispatch(new supervisionTaskActions.Load())),
+      tap(() => this.store.dispatch(new invoicingCustomerActions.Load())),
       tap(() => this.loadInformationRequest()),
       tap((app) => this.loadInformationRequestResponse(app.status)),
       take(1),

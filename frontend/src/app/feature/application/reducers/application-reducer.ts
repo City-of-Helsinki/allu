@@ -1,12 +1,12 @@
-import {Application} from '../../../model/application/application';
-import {ApplicationActions, ApplicationActionType} from '../actions/application-actions';
-import {InvoicingActions, InvoicingActionType} from '../actions/invoicing-actions';
-import {ObjectUtil} from '../../../util/object.util';
-import {StructureMeta} from '../../../model/application/meta/structure-meta';
-import {ApplicationMetaActions, ApplicationMetaActionType} from '../actions/application-meta-actions';
-import {ClientApplicationData} from '../../../model/application/client-application-data';
-import {ApplicationType} from '../../../model/application/type/application-type';
-import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
+import {Application} from '@model/application/application';
+import {ApplicationActions, ApplicationActionType} from '@feature/application/actions/application-actions';
+import {ObjectUtil} from '@util/object.util';
+import {StructureMeta} from '@model/application/meta/structure-meta';
+import {ApplicationMetaActions, ApplicationMetaActionType} from '@feature/application/actions/application-meta-actions';
+import {ClientApplicationData} from '@model/application/client-application-data';
+import {ApplicationType} from '@model/application/type/application-type';
+import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
+import {InvoicingCustomerActions, InvoicingCustomerActionType} from '@feature/application/invoicing/actions/invoicing-customer-actions';
 
 export interface State {
   loaded: boolean;
@@ -28,7 +28,7 @@ const initialState: State = {
   kindsWithSpecifiers: undefined
 };
 
-type HandledActions = ApplicationActions | InvoicingActions | ApplicationMetaActions;
+type HandledActions = ApplicationActions | InvoicingCustomerActions | ApplicationMetaActions;
 
 export function reducer(state: State = initialState, action: HandledActions) {
   switch (action.type) {
@@ -82,7 +82,7 @@ export function reducer(state: State = initialState, action: HandledActions) {
       };
     }
 
-    case InvoicingActionType.SetRecipientSuccess: {
+    case InvoicingCustomerActionType.SetRecipientSuccess: {
       const application = ObjectUtil.clone(state.current);
       application.invoiceRecipientId = action.payload;
       return {
