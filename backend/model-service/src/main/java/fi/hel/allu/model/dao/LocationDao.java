@@ -18,6 +18,7 @@ import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.SimpleTemplate;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
@@ -415,7 +416,7 @@ public class LocationDao {
             queryFactory.query()
                 .with(appGeom,
                     SQLExpressions
-                        .select(Expressions.simpleTemplate(Geometry.class, "st_union(lg.geometry)").as("geom")).from(
+                        .select(geometryUnion().as("geom")).from(
                             geo)
                         .where(
                             geo.locationId.eq(locationId)))
@@ -432,6 +433,21 @@ public class LocationDao {
                 .orderBy(new OrderSpecifier<>(Order.DESC, Expressions.stringPath("area"))).fetchFirst());
 
     return result.map(r -> r.get(1, Integer.class));
+  }
+
+  /**
+   * Buffers line strings and points to polygons before union (if there's more than
+   * one type of geometries for location, union returns geometry collection
+   * which cannot be used with ST_Intersects)
+   */
+  protected SimpleTemplate<Geometry> geometryUnion() {
+    return Expressions.simpleTemplate(Geometry.class,
+          "ST_Union("
+        + "case "
+        + " when st_geometrytype(lg.geometry) in ('ST_LineString', 'ST_Point') then st_buffer(lg.geometry, 0.5, 4)"
+        + " else lg.geometry "
+        + "end"
+        + ")");
   }
 
   private void updateApplicationDate(int applicationId) {
@@ -458,10 +474,11 @@ public class LocationDao {
    * @return the payment class (1, 2, or 3)
    */
   public int getPaymentClass(Integer id) {
+    QLocationGeometry geo = new QLocationGeometry("lg", "allu", "location_geometry");
     Integer paymentClass = queryFactory.select(paymentClass1.paymentClass).from(paymentClass1)
         .where(paymentClass1.geometry.intersects(
-            SQLExpressions.select(locationGeometry.geometry).from(locationGeometry)
-                .where(locationGeometry.locationId.eq(id))))
+            SQLExpressions.select(geometryUnion()).from(geo)
+                .where(geo.locationId.eq(id))))
         .orderBy(paymentClass1.paymentClass.asc()).fetchFirst();
     return Optional.ofNullable(paymentClass).orElse(3); // Payment class undefined -> default to lowest
   }
