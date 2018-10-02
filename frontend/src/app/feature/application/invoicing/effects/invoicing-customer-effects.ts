@@ -29,11 +29,7 @@ export class InvoicingCustomerEffects {
   load: Observable<Action> = this.actions.pipe(
     ofType<Load>(InvoicingCustomerActionType.Load),
     withLatestExisting<Load>(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, app]) => NumberUtil.isDefined(app.invoiceRecipientId)),
-    switchMap(([action, app]) => this.customerService.findCustomerById(app.invoiceRecipientId).pipe(
-      map(customer => new LoadSuccess(customer)),
-      catchError(error => of(new NotifyFailure(error)))
-    ))
+    switchMap(([action, app]) => this.findInvoicingCustomer(app.invoiceRecipientId))
   );
 
   @Effect()
@@ -46,4 +42,15 @@ export class InvoicingCustomerEffects {
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
+
+  findInvoicingCustomer(id: number): Observable<Action> {
+    if (NumberUtil.isDefined(id)) {
+      return this.customerService.findCustomerById(id).pipe(
+        map(customer => new LoadSuccess(customer)),
+        catchError(error => of(new NotifyFailure(error)))
+      );
+    } else {
+      return of(new LoadSuccess(undefined));
+    }
+  }
 }
