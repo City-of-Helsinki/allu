@@ -1,0 +1,12 @@
+<div fxLayout="row wrap" fxLayout.sm="column" fxLayoutAlign="start center" class="slim row-content">
+  <div fxFlex.gt-sm="100px">
+  </div>
+  <div fxFlex="40">
+    <div fxLayout="column">
+      <div fxFlex class="entry-header text-highlighted">{{row.text}}</div>
+    </div>
+  </div>
+  <div fxFlex="15">{{row.quantity}} {{['chargeBasis.unit', row.unit] | translation}}</div>
+  <div fxFlex="15">à {{row.unitPrice | centsToEuros}}</div>
+  <div fxFlex="15" class="text-highlighted">{{row.netPrice | centsToEuros}}</div>
+</div>

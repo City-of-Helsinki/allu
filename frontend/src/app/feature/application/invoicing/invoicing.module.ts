@@ -23,6 +23,7 @@ import {InvoicingCustomerEffects} from '@feature/application/invoicing/effects/i
 import {InvoiceEffects} from '@feature/application/invoicing/effects/invoice-effects';
 import {InvoiceListComponent} from '@feature/application/invoicing/invoice/invoice-list.component';
 import {InvoiceComponent} from '@feature/application/invoicing/invoice/invoice.component';
+import {InvoiceRowComponent} from '@feature/application/invoicing/invoice/invoice-row.component';
 
 @NgModule({
   imports: [
@@ -44,6 +45,7 @@ import {InvoiceComponent} from '@feature/application/invoicing/invoice/invoice.c
     ChargeBasisEntryComponent,
     InvoiceListComponent,
     InvoiceComponent,
+    InvoiceRowComponent,
     InvoiceCommentsComponent,
     ChargeBasisEntryModalComponent,
     ChargeBasisDiscountComponent,

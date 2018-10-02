@@ -16,9 +16,7 @@
   <mat-card-content class="bordered">
     <ul>
       <li *ngFor="let row of invoice.rows" class="invoice-row-container">
-        <div class="invoice-row">
-          <!-- TODO: Row handling -->
-        </div>
+        <invoice-row [row]="row"></invoice-row>
       </li>
     </ul>
   </mat-card-content>
