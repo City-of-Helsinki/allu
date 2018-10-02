@@ -1,9 +1,11 @@
 import * as fromChargeBasis from './charge-basis-reducer';
 import * as fromCustomer from './invoicing-customer-reducer';
+import * as fromInvoice from './invoice-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 
 export interface InvoicingState {
+  invoice: fromInvoice.State;
   chargeBasis: fromChargeBasis.State;
   customer: fromCustomer.State;
 }
@@ -13,6 +15,7 @@ export interface State {
 }
 
 export const reducers: ActionReducerMap<InvoicingState> = {
+  invoice: fromInvoice.reducer,
   chargeBasis: fromChargeBasis.reducer,
   customer: fromCustomer.reducer
 };
@@ -45,3 +48,15 @@ export const getInvoicingCustomer = createSelector(
   getCustomerEntityState,
   fromCustomer.getCustomer
 );
+
+export const getInvoiceEntityState = createSelector(
+  getInvoicingState,
+  (state: InvoicingState) => state.invoice
+);
+
+export const {
+  selectIds: getInvoiceIds,
+  selectEntities: getInvoiceEntities,
+  selectAll: getAllInvoices,
+  selectTotal: getInvoicesTotal
+} = fromInvoice.adapter.getSelectors(getInvoiceEntityState);
