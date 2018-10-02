@@ -1,9 +1,10 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
-import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
-import {ChargeBasisType, manualChargeBasisTypes} from '../../../../model/application/invoice/charge-basis-type';
-import {StringUtil} from '../../../../util/string.util';
-import {ComplexValidator} from '../../../../util/complex-validator';
+import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+import {ChargeBasisType, manualChargeBasisTypes} from '@model/application/invoice/charge-basis-type';
+import {StringUtil} from '@util/string.util';
+import {ComplexValidator} from '@util/complex-validator';
+import {NumberUtil} from '@util/number.util';
 
 const EMPTY = '';
 
@@ -46,20 +47,13 @@ export class ChargeBasisEntryForm {
   }
 
   public static toChargeBasisEntry(form: ChargeBasisEntryForm): ChargeBasisEntry {
-    const entry = new ChargeBasisEntry(
-      form.id,
-      form.type,
-      form.unit
-    );
-    entry.uiQuantity = form.quantity;
+    const entry = new ChargeBasisEntry(form.id, form.type, form.unit);
+    entry.quantity = this.quantity(form.quantity, form.type, form.unit);
     entry.text = form.text;
-    entry.unitPriceEuro = form.unitPrice;
+    entry.unitPrice = this.unitPriceToCents(form.unitPrice, form.type, form.unit);
+    entry.netPrice = entry.quantity * entry.unitPrice;
     entry.manuallySet = form.manuallySet;
-    if (manualChargeBasisTypes.includes(form.type)) {
-      entry.explanation = this.splitExplanation(form.manualExplanation);
-    } else {
-      entry.explanation = form.explanation;
-    }
+    entry.explanation = this.explanationFromForm(form);
     entry.tag = form.tag;
     entry.referredTag = StringUtil.isEmpty(form.referredTag) ? undefined : form.referredTag;
     return entry;
@@ -70,10 +64,10 @@ export class ChargeBasisEntryForm {
       entry.id,
       entry.type,
       entry.unit,
-      entry.uiQuantity,
+      this.quantity(entry.quantity, entry.type, entry.unit),
       entry.text,
-      entry.unitPriceEuro,
-      entry.netPriceEuro,
+      this.unitPriceToEuros(entry.unitPrice, entry.type, entry.unit),
+      NumberUtil.toEuros(entry.netPrice),
       entry.manuallySet,
       entry.tag,
       entry.referredTag,
@@ -83,10 +77,40 @@ export class ChargeBasisEntryForm {
     );
   }
 
+  private static explanationFromForm(form: ChargeBasisEntryForm): string[] {
+    if (manualChargeBasisTypes.includes(form.type)) {
+      return this.splitExplanation(form.manualExplanation);
+    } else {
+      return form.explanation;
+    }
+  }
+
   private static splitExplanation(explanation: string): string[] {
     if (!explanation) {
       return undefined;
     }
     return explanation.split('\n').filter(line => line.trim().length > 0);
+  }
+
+  private static quantity(quantity: number, type: ChargeBasisType, unit: ChargeBasisUnit): number {
+    return this.negateQuantity(type, unit) ? -quantity : quantity;
+  }
+
+  private static negateQuantity(type: ChargeBasisType, unit: ChargeBasisUnit): boolean {
+    return type === ChargeBasisType.DISCOUNT && unit === ChargeBasisUnit.PERCENT;
+  }
+
+  private static unitPriceToEuros(priceInCents: number, type: ChargeBasisType, unit: ChargeBasisUnit) {
+    const unitPrice = NumberUtil.toEuros(priceInCents);
+    return this.negatePrice(type, unit) ? -unitPrice : unitPrice;
+  }
+
+  private static unitPriceToCents(priceInEuros: number, type: ChargeBasisType, unit: ChargeBasisUnit) {
+    const unitPrice = NumberUtil.toCents(priceInEuros);
+    return this.negatePrice(type, unit) ? -unitPrice : unitPrice;
+  }
+
+  private static negatePrice(type: ChargeBasisType, unit: ChargeBasisUnit) {
+    return type === ChargeBasisType.DISCOUNT && unit === ChargeBasisUnit.PIECE;
   }
 }

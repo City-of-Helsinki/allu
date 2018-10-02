@@ -67,7 +67,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   private onApplicationChange(app: Application): void {
-    this.calculatedPrice = NumberUtil.toEuros(app.calculatedPrice);
+    this.calculatedPrice = app.calculatedPrice;
   }
 
   private openModal(entry?: ChargeBasisEntry): Observable<ChargeBasisEntry> {

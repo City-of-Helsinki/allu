@@ -27,17 +27,18 @@ import {
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MaterializeModule} from 'angular2-materialize';
 import {FieldErrorComponent} from './field-error/field-error.component';
-import {TranslationPipe} from '../../pipe/translation.pipe';
+import {TranslationPipe} from '@app/pipe/translation.pipe';
 import {FileDropDirective} from './file-drop/file-drop.directive';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
-import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
+import {CommaSeparatedPipe} from '@app/pipe/comma-separated.pipe';
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
 import {InputBoxComponent, InputBoxInputDirective} from './input-box/input-box.component';
 import {InputWarningDirective} from './validation/input-warning.directive';
-import {AvailableToDirective} from '../../service/authorization/available-to.directive';
+import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 import {AlluCardComponent} from './card/allu-card.component';
-import {KeysPipe} from '../../pipe/keys-pipe';
+import {KeysPipe} from '@app/pipe/keys-pipe';
+import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
 
 @NgModule({
   imports: [
@@ -54,6 +55,7 @@ import {KeysPipe} from '../../pipe/keys-pipe';
     ConfirmDialogComponent,
     CommaSeparatedPipe,
     KeysPipe,
+    CentsToEurosPipe,
     InputBoxComponent,
     InputBoxInputDirective,
     InputWarningDirective,
@@ -99,7 +101,8 @@ import {KeysPipe} from '../../pipe/keys-pipe';
     AvailableToDirective,
     BottomBarComponent,
     AlluCardComponent,
-    KeysPipe
+    KeysPipe,
+    CentsToEurosPipe
   ],
   entryComponents: [
     ConfirmDialogComponent

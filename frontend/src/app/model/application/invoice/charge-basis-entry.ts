@@ -1,4 +1,3 @@
-import {NumberUtil} from '@util/number.util';
 import {ChargeBasisUnit} from './charge-basis-unit';
 import {ChargeBasisType} from './charge-basis-type';
 
@@ -18,45 +17,4 @@ export class ChargeBasisEntry {
     public locked?: boolean,
     public referrable?: boolean
   ) {}
-
-  get uiQuantity(): number {
-    return this.negateQuantity() ? -this.quantity : this.quantity;
-  }
-
-  set uiQuantity(quantity: number) {
-    this.quantity = this.negateQuantity() ? -quantity : quantity;
-    this.netPrice = this.quantity * this.unitPrice;
-  }
-
-  get unitPriceEuro(): number {
-    const unitPrice = NumberUtil.toEuros(this.unitPrice);
-    return this.negatePrice() ? -unitPrice : unitPrice;
-  }
-
-  set unitPriceEuro(euros: number) {
-    const unitPrice = NumberUtil.toCents(euros);
-    this.unitPrice = this.negatePrice() ? -unitPrice : unitPrice;
-    this.netPrice = this.quantity * this.unitPrice;
-  }
-
-  get netPriceEuro(): number {
-    return NumberUtil.toEuros(this.netPrice);
-  }
-
-  private negatePrice(): boolean {
-    return this.type === ChargeBasisType.DISCOUNT && this.unit === ChargeBasisUnit.PIECE;
-  }
-
-  private negateQuantity(): boolean {
-    return this.type === ChargeBasisType.DISCOUNT && this.unit === ChargeBasisUnit.PERCENT;
-  }
-}
-
-export function unitPriceEuro(entry: ChargeBasisEntry) {
-  const unitPrice = NumberUtil.toEuros(entry.unitPrice);
-  return negatePrice(entry.type, entry.unit) ? -unitPrice : unitPrice;
-}
-
-export function negatePrice(type: ChargeBasisType, unit: ChargeBasisUnit) {
-  return type === ChargeBasisType.DISCOUNT && unit === ChargeBasisUnit.PIECE;
 }

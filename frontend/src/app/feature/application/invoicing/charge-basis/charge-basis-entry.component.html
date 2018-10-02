@@ -22,11 +22,11 @@
   </div>
   <div fxFlex="15" fxFlexOffset.gt-sm="30" class="text-highlighted" *ngIf="showMinimal(entry); else normalEntry">
     <span *ngIf="entry.unit==='PERCENT'">{{entryValue(entry)}} %</span>
-    <span *ngIf="entry.unit==='PIECE'">{{entryValue(entry)}} €</span>
+    <span *ngIf="entry.unit==='PIECE'">{{entryValue(entry) | centsToEuros}}</span>
   </div>
   <ng-template #normalEntry>
     <div fxFlex="15">{{entry.quantity}} {{['chargeBasis.unit', entry.unit] | translation}}</div>
-    <div fxFlex="15">à {{entry.unitPriceEuro}} €</div>
-    <div fxFlex="15" class="text-highlighted">{{entry.netPriceEuro}} €</div>
+    <div fxFlex="15">à {{entry.unitPrice | centsToEuros}}</div>
+    <div fxFlex="15" class="text-highlighted">{{entry.netPrice | centsToEuros}}</div>
   </ng-template>
 </div>

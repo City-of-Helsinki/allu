@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {ChargeBasisEntry, unitPriceEuro} from '@model/application/invoice/charge-basis-entry';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 import {ChargeBasisType} from '@model/application/invoice/charge-basis-type';
 import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
 
@@ -25,20 +25,11 @@ export class ChargeBasisEntryComponent {
       || entry.unit === ChargeBasisUnit.PERCENT;
   }
 
-  entryValue(entry: ChargeBasisEntry): string {
-    let prefix = '';
-    let value = unitPriceEuro(entry);
-
+  entryValue(entry: ChargeBasisEntry): number {
+    let value = entry.unitPrice;
     if (entry.unit === ChargeBasisUnit.PERCENT) {
       value = entry.quantity;
-    } else if (entry.type === ChargeBasisType.DISCOUNT) {
-      if (value < 0) {
-        prefix = '+';
-        value = -value;
-      } else {
-        prefix = '-';
-      }
     }
-    return prefix + value;
+    return value;
   }
 }

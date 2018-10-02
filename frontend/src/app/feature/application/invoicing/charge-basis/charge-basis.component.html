@@ -24,7 +24,7 @@
     <div fxLayout="row" fxLayoutAlign="start center">
       <div fxFlex="95px"></div>
       <div fxFlex="15" fxFlexOffset="70" class="text-highlighted">
-        {{'chargeBasis.totalPrice' | translation}}: {{calculatedPrice}} €
+        {{'chargeBasis.totalPrice' | translation}}: {{calculatedPrice | centsToEuros}}
       </div>
     </div>
   </mat-card-footer>
