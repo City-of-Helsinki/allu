@@ -26,12 +26,16 @@ export class MapDataService {
     this.groupedStatuses.set(ApplicationStatusGroup.PRELIMINARY, [
       ApplicationStatus.PRE_RESERVED,
       ApplicationStatus.PENDING_CLIENT,
-      ApplicationStatus.PENDING]);
+      ApplicationStatus.PENDING
+    ]);
 
     this.groupedStatuses.set(ApplicationStatusGroup.HANDLING, [
       ApplicationStatus.HANDLING,
       ApplicationStatus.RETURNED_TO_PREPARATION,
-      ApplicationStatus.DECISIONMAKING
+      ApplicationStatus.DECISIONMAKING,
+      ApplicationStatus.WAITING_CONTRACT_APPROVAL,
+      ApplicationStatus.WAITING_INFORMATION,
+      ApplicationStatus.INFORMATION_RECEIVED
     ]);
 
     this.groupedStatuses.set(ApplicationStatusGroup.DECISION, [
