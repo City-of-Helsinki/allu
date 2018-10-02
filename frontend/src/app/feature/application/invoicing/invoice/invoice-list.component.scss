@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+ul {
+  margin: 0;
+}
+
+ul li {
+  margin-top: 0px;
+}
+
+ul li:not(:last-of-type) {
+  margin-bottom: 5px;
+}

@@ -18,8 +18,11 @@ import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import {catchError, map, switchMap, take} from 'rxjs/internal/operators';
 import {applicationCanBeEdited} from '@model/application/application-status';
 import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromInvoicing from '@feature/application/invoicing/reducers';
 import * as fromApplication from '../reducers';
 import {SetRecipient} from '@feature/application/invoicing/actions/invoicing-customer-actions';
+import {Invoice} from '@model/application/invoice/invoice';
 
 @Component({
   selector: 'invoicing',
@@ -31,6 +34,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
   applicationId: number;
   infoForm: FormGroup;
   reset = new Subject<boolean>();
+  invoices$: Observable<Invoice[]>;
 
   private recipientForm: FormGroup;
   private notBillableCtrl: FormControl;
@@ -41,7 +45,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
               private dialog: MatDialog,
               private currentUser: CurrentUser,
               private notification: NotificationService,
-              private store: Store<fromApplication.State>) {
+              private store: Store<fromRoot.State>) {
   }
 
   ngOnInit(): void {
@@ -57,6 +61,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
             this.infoForm.disable();
           }
         });
+    this.invoices$ = this.store.select(fromInvoicing.getAllInvoices);
   }
 
   onSubmit(): void {

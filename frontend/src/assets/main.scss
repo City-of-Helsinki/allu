@@ -28,6 +28,7 @@
 @import '../app/feature/information-request/information-request-theme';
 @import '../app/feature/application/notification/application-notification-theme';
 @import '../app/feature/application/invoicing/charge-basis/charge-basis.theme';
+@import '../app/feature/application/invoicing/invoice/invoice.theme';
 @import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
 @import "~ngx-toastr/toastr.css";
 
@@ -54,6 +55,7 @@
 @include information-request-theme($allu-theme);
 @include application-notification-theme($allu-theme);
 @include charge-basis-theme($allu-theme);
+@include invoice-theme($allu-theme);
 
 // Reset
 html,

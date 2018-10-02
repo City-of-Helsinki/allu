@@ -1401,6 +1401,9 @@ export const translations = {
     }
   },
   invoice: {
+    title: 'Lasku',
+    invoiced: 'Laskutettu',
+    notInvoiced: 'Ei laskutettu',
     info: {
       address: 'Laskutusosoite',
       depositAndOthers: 'Vakuus ja muut tiedot',

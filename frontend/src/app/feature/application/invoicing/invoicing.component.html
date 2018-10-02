@@ -11,6 +11,14 @@
   </div>
   <div fxLayout="row wrap">
     <div fxFlex="100">
+      <invoice-list
+        *ngIf="!infoForm.value.notBillable"
+        [invoices]="invoices$ | async"
+      ></invoice-list>
+    </div>
+  </div>
+  <div fxLayout="row wrap">
+    <div fxFlex="100">
       <invoice-comments [applicationId]="applicationId"></invoice-comments>
     </div>
   </div>
