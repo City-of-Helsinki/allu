@@ -65,11 +65,15 @@ public class ExcavationPricing extends Pricing {
     if (extension.getWinterTimeOperation() != null) {
       days = getDaysBetweenStartAndWintertimeOperation();
     } else {
-      days = daysBetweenDates(application.getStartTime(), application.getEndTime());
+      days = daysBetweenDates(application.getStartTime(), getEndDateForNoWintertimeOperation());
     }
     return days;
   }
 
+  private ZonedDateTime getEndDateForNoWintertimeOperation() {
+    ZonedDateTime end = extension.getWorkFinished() != null ? extension.getWorkFinished() : application.getEndTime();
+    return end != null ? end.withZoneSameInstant(TimeUtil.HelsinkiZoneId) : null;
+  }
 
   private int getDaysBetweenStartAndWintertimeOperation() {
     ZonedDateTime endTime;
