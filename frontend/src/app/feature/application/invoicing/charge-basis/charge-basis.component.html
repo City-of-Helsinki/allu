@@ -11,7 +11,7 @@
   </mat-card-title>
   <mat-card-content class="bordered">
     <ul class="charge-basis-entries">
-      <li *ngFor="let entry of chargeBasisEntries$ | async; let i=index;" class="charge-basis-entry">
+      <li *ngFor="let entry of chargeBasisEntries$ | async; let i=index;" class="charge-basis-entry-container">
         <charge-basis-entry
           [entry]="entry"
           [changesAllowed]="changesAllowed"

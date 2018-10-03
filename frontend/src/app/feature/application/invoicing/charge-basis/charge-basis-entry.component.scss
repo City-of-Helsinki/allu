@@ -2,6 +2,11 @@
   font-weight: bold;
 }
 
+.entry-content {
+  min-height: 42px;
+  padding: 4px 0px;
+}
+
 .referring-entry {
   padding-left: 1em;
   border-style: dashed;
@@ -9,5 +14,5 @@
   height: 1.5em;
   top: -0.75em;
   position: relative;
-  margin-right: 0.5em;
+  margin: 0 0.5em;
 }
