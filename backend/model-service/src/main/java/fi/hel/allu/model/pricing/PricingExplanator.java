@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Helper class for generating pricing explanation lines based on location.
@@ -44,7 +43,7 @@ public class PricingExplanator {
     location.getFixedLocationIds().forEach((id) -> locationDao.findFixedLocation(id).map(fl -> fixedLocations.add(fl)));
     final String fixedLocation = Printable.forFixedLocations(fixedLocations);
     final String locationAddress = Printable.forPostalAddress(location.getPostalAddress());
-    final String address = Optional.ofNullable(fixedLocation).orElse(locationAddress);
+    final String address = fixedLocation.length() > 0 ? fixedLocation : locationAddress;
 
     final String period = Printable.forDayPeriod(application.getStartTime(), application.getEndTime());
 
