@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.SupervisionTaskToTag;
@@ -81,11 +83,36 @@ public class SupervisionTaskService {
 
   @Transactional
   public SupervisionTask approve(SupervisionTask supervisionTask) {
+    if (isExcavationAnnouncement(supervisionTask.getApplicationId())
+        && supervisionTask.getType() == SupervisionTaskType.FINAL_SUPERVISION) {
+      handleExcavationAnnouncementFinalSupervisionApproval(supervisionTask.getApplicationId());
+    }
+
     supervisionTask.setStatus(APPROVED);
     supervisionTask.setActualFinishingTime(ZonedDateTime.now());
     SupervisionTask updated = supervisionTaskDao.update(supervisionTask);
     updateTags(updated);
     return updated;
+  }
+
+  /**
+   * If excavation announcement final supervision is approved before operational condition task
+   * -> remove operational condition tasks and remove operational condition date from application
+   */
+  private void handleExcavationAnnouncementFinalSupervisionApproval(Integer applicationId) {
+    List<SupervisionTask> openOperationalConditionTasks = supervisionTaskDao
+        .findByApplicationIdAndType(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION).stream()
+        .filter(t -> t.getStatus() == OPEN).collect(Collectors.toList());
+    if (!openOperationalConditionTasks.isEmpty()) {
+      // Clear operational condition date from application
+      applicationDao.setOperationalConditionDate(applicationId, null);
+      // Remove open operation condition supervision tasks
+      openOperationalConditionTasks.forEach(o -> supervisionTaskDao.delete(o.getId()));
+    }
+  }
+
+  private boolean isExcavationAnnouncement(Integer applicationId) {
+    return ApplicationType.EXCAVATION_ANNOUNCEMENT == applicationDao.getType(applicationId);
   }
 
   @Transactional

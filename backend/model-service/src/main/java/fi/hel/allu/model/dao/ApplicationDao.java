@@ -883,4 +883,16 @@ public class ApplicationDao {
     return findById(applicationId);
   }
 
+  public ApplicationType getType(Integer applicationId) {
+    ApplicationType type = queryFactory
+        .select(application.type)
+        .from(application)
+        .where(application.id.eq(applicationId))
+        .fetchOne();
+    if (type == null) {
+      throw new NoSuchEntityException("No application type found for ID {}", applicationId);
+    }
+    return type;
+  }
+
 }
