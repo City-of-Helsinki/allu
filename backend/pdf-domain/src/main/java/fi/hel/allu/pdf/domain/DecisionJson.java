@@ -112,6 +112,8 @@ public class DecisionJson {
   private String customerWinterTimeOperation;
   private String workFinished;
   private String customerWorkFinished;
+  private Boolean qualityAssuranceTest;
+  private Boolean compactionAndBearingCapacityMeasurement;
 
   private String ovt;
   private String invoicingOperator;
@@ -751,6 +753,22 @@ public class DecisionJson {
 
   public void setCustomerWorkFinished(String customerWorkFinished) {
     this.customerWorkFinished = customerWorkFinished;
+  }
+
+  public Boolean isQualityAssuranceTest() {
+    return qualityAssuranceTest;
+  }
+
+  public void setQualityAssuranceTest(Boolean qualityAssuranceTest) {
+    this.qualityAssuranceTest = qualityAssuranceTest;
+  }
+
+  public Boolean isCompactionAndBearingCapacityMeasurement() {
+    return compactionAndBearingCapacityMeasurement;
+  }
+
+  public void setCompactionAndBearingCapacityMeasurement(Boolean compactionAndBearingCapacityMeasurement) {
+    this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
   }
 
   public String getOvt() {

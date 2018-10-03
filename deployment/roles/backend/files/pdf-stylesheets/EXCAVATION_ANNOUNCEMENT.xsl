@@ -155,7 +155,7 @@
         </p>
       </section>
 
-      <xsl:if test="data/additionalConditions">
+      <xsl:if test="data/additionalConditions or (data/qualityAssuranceTest = 'true')">
         <section class="unboxed">
           <h2>Päätösehdot</h2>
           <xsl:for-each select="data/additionalConditions">
@@ -167,7 +167,55 @@
               </xsl:if>
             </p>
           </xsl:for-each>
+          <xsl:if test="data/qualityAssuranceTest = 'true'">
+            <p>
+              <xsl:if test="data/additionalConditions">
+                <br/>
+              </xsl:if>
+              Luvansaaja on velvollinen teettämään kohteessa laadunvarmistuskokeet sekä toimittamaan niiden tulokset
+              lausuntoineen luvan myöntäjälle työn valmistumisilmoituksen liitteenä. Luvansaajan tulee tilata vaaditut
+              laadunvarmistuskokeet sertifioidulta taholta.
+            </p>
+          </xsl:if>
         </section>
+      </xsl:if>
+
+      <xsl:if test="data/qualityAssuranceTest = 'true' or data/compactionAndBearingCapacityMeasurement = 'true'">
+        <div class="unboxed">
+          <h2>Päätöksen saada on velvollinen teettämään seuraavat kaivannon laadunvarmistustoimenpiteet</h2>
+
+          <section class="half-left">
+            <div style="margin-top: 5px; height: 22px;">
+              <xsl:choose>
+                <xsl:when test="data/qualityAssuranceTest = 'true'">
+                  <img src="checkbox-c.png" class="checkbox"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <img src="checkbox.png" class="checkbox"/>
+                </xsl:otherwise>
+              </xsl:choose>
+              <p style="height: 22px; line-height: 22px;">
+                Päällysteen laadunvarmistuskoe
+              </p>
+            </div>
+          </section>
+
+          <section class="half-right">
+            <div style="margin-top: 5px; height: 22px;">
+              <xsl:choose>
+                <xsl:when test="data/compactionAndBearingCapacityMeasurement = 'true'">
+                  <img src="checkbox-c.png" class="checkbox"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <img src="checkbox.png" class="checkbox"/>
+                </xsl:otherwise>
+              </xsl:choose>
+              <p style="height: 22px; line-height: 22px;">
+                Kantavuus- ja tiiveysmittaus
+              </p>
+            </div>
+          </section>
+        </div>
       </xsl:if>
 
       <section class="unboxed">
