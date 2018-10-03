@@ -169,7 +169,7 @@ describe('SupervisionTaskComponent', () => {
     spyOn(onRemove, 'emit');
     spyOn(store, 'dispatch').and.callThrough();
 
-    patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
+    patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType.OPEN});
     const removeBtn = getButtonWithText(de, findTranslation('common.button.remove'));
     removeBtn.click();
     detectAndTick();
@@ -216,7 +216,7 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should show approval buttons only for owner which the task is assigned to', fakeAsync(() => {
-    patchValueAndInit({status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
+    patchValueAndInit({status: SupervisionTaskStatusType.OPEN});
     expect(de.query(By.css('#approve'))).toBeDefined();
     expect(de.query(By.css('#reject'))).toBeDefined();
 

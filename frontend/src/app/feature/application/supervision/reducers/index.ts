@@ -1,5 +1,9 @@
 import * as fromSupervisionTask from './supervision-task-reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
+import {SupervisionTask} from '@model/application/supervision/supervision-task';
+import {ArrayUtil} from '@util/array-util';
+import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
+import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
 
 export interface State {
   supervisionTasks: fromSupervisionTask.State;
@@ -26,4 +30,10 @@ export const {
 export const getSaving = createSelector(
   getSupervisionTasksEntityState,
   fromSupervisionTask.getSaving
+);
+
+export const getOpenOperationalConditionTask = createSelector(
+  getAllSupervisionTasks,
+  (tasks: SupervisionTask[]) => ArrayUtil.first(tasks, task =>
+    task.type === SupervisionTaskType.OPERATIONAL_CONDITION && task.status === SupervisionTaskStatusType.OPEN)
 );

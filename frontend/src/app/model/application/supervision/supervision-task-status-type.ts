@@ -2,18 +2,18 @@ export enum SupervisionTaskStatusType {
   /**
    * Approved task.
    */
-  APPROVED,
+  APPROVED = 'APPROVED',
   /**
    * Rejected task.
    */
-  REJECTED,
+  REJECTED = 'REJECTED',
   /**
    * Task state is open.
    */
-  OPEN,
+  OPEN = 'OPEN',
 
   /**
    * Task is cancelled
    */
-  CANCELLED
+  CANCELLED = 'CANCELLED'
 }

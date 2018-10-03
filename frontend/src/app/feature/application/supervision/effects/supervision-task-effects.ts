@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
+import * as fromSupervision from '@feature/application/supervision/reducers';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {SupervisionTaskService} from '@service/supervision/supervision-task.service';
 import {from, Observable, of} from 'rxjs/index';
@@ -11,7 +12,8 @@ import {
   Load,
   LoadFailed,
   LoadSuccess,
-  Reject, RejectSuccess,
+  Reject,
+  RejectSuccess,
   Remove,
   RemoveSuccess,
   Save,
@@ -101,5 +103,12 @@ export class SupervisionTaskEffects {
   reloadTags: Observable<Action> = this.actions.pipe(
     ofType<Action>(...requiresTagReload),
     map(() => new TagActions.Load())
+  );
+
+  @Effect()
+  removeDanglingOperationalConditionTask: Observable<Action> = this.actions.pipe(
+    ofType<ApproveSuccess>(SupervisionTaskActionType.ApproveSuccess),
+    withLatestExisting(this.store.select(fromSupervision.getOpenOperationalConditionTask)),
+    map(([action, task]) => new RemoveSuccess(task.id))
   );
 }
