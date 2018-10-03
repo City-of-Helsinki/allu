@@ -146,4 +146,9 @@ public class ChargeBasisDao {
   public void lockEntries(Integer applicationId) {
     queryFactory.update(chargeBasis).set(chargeBasis.locked, true).where(chargeBasis.applicationId.eq(applicationId)).execute();
   }
+
+  @Transactional(readOnly = true)
+  public List<Integer> getLockedChargeBasisIds(int applicationId) {
+    return queryFactory.select(chargeBasis.id).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId), chargeBasis.locked.isTrue()).fetch();
+  }
 }

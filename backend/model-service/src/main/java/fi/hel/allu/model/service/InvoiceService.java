@@ -3,6 +3,7 @@ package fi.hel.allu.model.service;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +60,7 @@ public class InvoiceService {
 
   @Transactional
   public void createInvoices(int applicationId, boolean sapIdPending) {
-    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(applicationId)
-        .stream().filter(c -> !c.isInvoiced()).collect(Collectors.toList());
+    List<ChargeBasisEntry> chargeBasisEntries = getChargeBasisEntriesToInvoice(applicationId);
     List<InvoiceRow> invoiceRows = pricingService.toSingleInvoice(chargeBasisEntries);
     Application application = applicationDao.findById(applicationId);
     ZonedDateTime invoicingDate = getInvoicingDate(application);
@@ -75,6 +75,14 @@ public class InvoiceService {
     Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId);
     invoiceDao.deleteOpenInvoicesByApplication(applicationId);
     invoiceDao.insert(applicationId, invoice);
+  }
+
+  // Gets charge basis entries that aren't in previously locked invoice
+  private List<ChargeBasisEntry> getChargeBasisEntriesToInvoice(int applicationId) {
+    List<Integer> entryIdsInLockedInvoice = invoiceDao.getChargeBasisIdsInLockedInvoice(applicationId);
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(applicationId)
+        .stream().filter(c -> !entryIdsInLockedInvoice.contains(c.getId())).collect(Collectors.toList());
+    return chargeBasisEntries;
   }
 
   private ZonedDateTime getInvoicingDate(Application application) {
@@ -142,5 +150,9 @@ public class InvoiceService {
 
   public boolean hasInvoices(int applicationId) {
     return invoiceDao.hasInvoices(applicationId);
+  }
+
+  public void lockInvoices(int applicationId) {
+    invoiceDao.lockInvoices(applicationId);
   }
 }

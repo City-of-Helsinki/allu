@@ -19,10 +19,8 @@ import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.ChargeBasisModification;
-import fi.hel.allu.model.dao.InvoiceDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.event.InvoicingChangeListener;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,8 +32,6 @@ public class AreaUsageTagTest {
   @Mock
   private ChargeBasisDao chargeBasisDao;
   @Mock
-  private InvoiceDao invoiceDao;
-  @Mock
   private ApplicationDao applicationDao;
   @Mock
   private ApplicationEventPublisher eventPublisher;
@@ -44,7 +40,7 @@ public class AreaUsageTagTest {
 
   @Before
   public void setUp() {
-    chargeBasisService = new ChargeBasisService(chargeBasisDao, invoiceDao, applicationDao, eventPublisher);
+    chargeBasisService = new ChargeBasisService(chargeBasisDao, applicationDao, eventPublisher);
   }
 
   @Test

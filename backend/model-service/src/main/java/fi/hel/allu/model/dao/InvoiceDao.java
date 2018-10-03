@@ -134,7 +134,8 @@ public class InvoiceDao {
    */
   @Transactional
   public void deleteOpenInvoicesByApplication(int applicationId) {
-    queryFactory.select(invoice.id).from(invoice).where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse()).fetch()
+    queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.eq(applicationId), invoice.locked.isFalse(), invoice.invoiced.isFalse()).fetch()
         .forEach(id -> delete(id));
   }
 
@@ -217,13 +218,17 @@ public class InvoiceDao {
         .fetchCount() > 0;
   }
 
-  public List<Integer> getInvoicedChargeBasisIds(int applicationId) {
-    return queryFactory
-        .select(invoiceRow.chargeBasisId)
-        .from(invoiceRow)
-        .join(invoice).on(invoice.id.eq(invoiceRow.invoiceId))
-        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isTrue())
-        .fetch();
+  @Transactional
+  public void lockInvoices(int applicationId) {
+    queryFactory.update(invoice).set(invoice.locked, true).where(invoice.applicationId.eq(applicationId)).execute();
   }
 
+  public List<Integer> getChargeBasisIdsInLockedInvoice(int applicationId) {
+      return queryFactory
+          .select(invoiceRow.chargeBasisId)
+          .from(invoiceRow)
+          .join(invoice).on(invoice.id.eq(invoiceRow.invoiceId))
+          .where(invoice.applicationId.eq(applicationId), invoice.locked.isTrue())
+          .fetch();
+  }
 }

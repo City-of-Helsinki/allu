@@ -105,19 +105,21 @@ public class ApplicationStatusChangeListener {
 
   private void finishInvoicing(Application application, StatusType status) {
     applicationDao.setInvoicingChanged(application.getId(), false);
-    // Charge basis entries cannot be modified after decision
-    chargeBasisService.lockEntries(application.getId());
     if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       setExcavationAnnouncementInvoicable(application, status);
     }
+    // Charge basis entries cannot be modified after decision
+    chargeBasisService.lockEntries(application.getId());
+
   }
 
   protected void setExcavationAnnouncementInvoicable(Application application, StatusType status) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
-    if (status == StatusType.OPERATIONAL_CONDITION) {
-      invoiceService.setInvoicableTime(application.getId(), extension.getWinterTimeOperation());
-    } else if (status == StatusType.FINISHED) {
-      invoiceService.setInvoicableTime(application.getId(), extension.getWorkFinished());
+    if (status == StatusType.OPERATIONAL_CONDITION || status == StatusType.FINISHED) {
+      ZonedDateTime invoicableTime = status == StatusType.OPERATIONAL_CONDITION ? extension.getWinterTimeOperation()
+          : extension.getWorkFinished();
+      invoiceService.lockInvoices(application.getId());
+      invoiceService.setInvoicableTime(application.getId(), invoicableTime);
     }
   }
 

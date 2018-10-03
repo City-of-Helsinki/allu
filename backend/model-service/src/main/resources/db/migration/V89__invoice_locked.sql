@@ -1,0 +1,1 @@
+alter table allu.invoice add column locked boolean default false;

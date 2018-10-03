@@ -240,14 +240,6 @@ public class ChargeBasisEntry {
     return true;
   }
 
-  public boolean isInvoiced() {
-    return isInvoiced;
-  }
-
-  public void setInvoiced(boolean isInvoiced) {
-    this.isInvoiced = isInvoiced;
-  }
-
   public ZonedDateTime getModificationTime() {
     return modificationTime;
   }

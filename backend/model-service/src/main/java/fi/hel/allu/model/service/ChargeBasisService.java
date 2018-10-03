@@ -26,17 +26,15 @@ import fi.hel.allu.model.service.event.InvoicingChangeEvent;
 public class ChargeBasisService {
 
   private final ChargeBasisDao chargeBasisDao;
-  private final InvoiceDao invoiceDao;
   private final ApplicationDao applicationDao;
   private final ApplicationEventPublisher invoicingChangeEventPublisher;
 
 
 
   @Autowired
-  public ChargeBasisService(ChargeBasisDao chargeBasisDao, InvoiceDao invoiceDao, ApplicationDao applicationDao,
+  public ChargeBasisService(ChargeBasisDao chargeBasisDao, ApplicationDao applicationDao,
       ApplicationEventPublisher invoicingChangeEventPublisher) {
     this.chargeBasisDao = chargeBasisDao;
-    this.invoiceDao = invoiceDao;
     this.applicationDao = applicationDao;
     this.invoicingChangeEventPublisher = invoicingChangeEventPublisher;
   }
@@ -110,15 +108,13 @@ public class ChargeBasisService {
   @Transactional(readOnly = true)
   public List<ChargeBasisEntry> getChargeBasis(int applicationId) {
     List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(applicationId);
-    List<Integer> invoicedEntryIds = invoiceDao.getInvoicedChargeBasisIds(applicationId);
-    entries.forEach(e -> e.setInvoiced(invoicedEntryIds.contains(e.getId())));
     return entries;
   }
 
   private void validateModificationsAllowed(ChargeBasisModification modification) {
     Set<Integer> modifiedEntries = modification.getModifiedEntryIds();
-    if (containsInvoicedEntries(modifiedEntries, modification.getApplicationId())) {
-      throw new IllegalOperationException("chargebasis.invoiced");
+    if (containsLockedEntries(modifiedEntries, modification.getApplicationId())) {
+      throw new IllegalOperationException("chargebasis.locked");
     }
   }
 
@@ -131,9 +127,9 @@ public class ChargeBasisService {
     }
   }
 
-  private boolean containsInvoicedEntries(Set<Integer> modifiedEntries, int applicationId) {
-    List<Integer> invoicedChargeBasisIds= invoiceDao.getInvoicedChargeBasisIds(applicationId);
-    return modifiedEntries.stream().anyMatch(invoicedChargeBasisIds::contains);
+  private boolean containsLockedEntries(Set<Integer> modifiedEntries, int applicationId) {
+    List<Integer> lockedChargeBasisIds = chargeBasisDao.getLockedChargeBasisIds(applicationId);
+    return modifiedEntries.stream().anyMatch(lockedChargeBasisIds::contains);
   }
 
   @Transactional
