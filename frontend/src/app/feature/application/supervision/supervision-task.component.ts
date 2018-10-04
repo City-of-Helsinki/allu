@@ -328,9 +328,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const notificationKey = `application.statusChange.${status}`;
     this.applicationStore.changeStatus(this.application.id, status, changeInfo)
       .subscribe(app => {
-        this.store.dispatch(new Load(ActionTargetType.Application));
         this.store.dispatch(new NotifySuccess(findTranslation(notificationKey)));
-        this.applicationStore.applicationChange(app);
+        this.store.dispatch(this.applicationStore.setAndDispatch(app));
       }, err => this.store.dispatch(new NotifyFailure(err)));
   }
 }

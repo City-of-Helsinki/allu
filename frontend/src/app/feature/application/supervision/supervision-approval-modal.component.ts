@@ -6,11 +6,12 @@ import {ComplexValidator} from '@util/complex-validator';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ReportedDateType} from '@feature/application/date-reporting/date-reporting-modal.component';
-import {map, startWith, take, takeUntil} from 'rxjs/internal/operators';
-import {combineLatest, Observable, of, Subject} from 'rxjs/index';
+import {map, startWith, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {Observable, of, Subject} from 'rxjs/index';
 import {Application} from '@model/application/application';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import * as fromRoot from '@feature/allu/reducers';
+import * as fromSupervision from '@feature/application/supervision/reducers';
 import {Store} from '@ngrx/store';
 import {ApplicationStatus} from '@model/application/application-status';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
@@ -125,7 +126,7 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
 
     reportedDateCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
-      startWith(this.data.reportedDate)
+      startWith(this.data.reportedDate),
     ).subscribe(date => this.onReportedDateChange(date));
   }
 
@@ -157,8 +158,9 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
     const isWinterTimeOperation = !!excavation.winterTimeOperation;
 
     return this.configurationHelper.inWinterTime(date).pipe(
+        withLatestFrom(this.hasOpenOperationalConditionTask()),
         take(1),
-        map(finishesInWinter => dateChange && !(isWinterTimeOperation && finishesInWinter))
+        map(([finishesInWinter, openTask]) => openTask || (dateChange && !(isWinterTimeOperation && finishesInWinter)))
     );
   }
 
@@ -186,5 +188,11 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
     } else {
       return undefined;
     }
+  }
+
+  private hasOpenOperationalConditionTask(): Observable<boolean> {
+    return this.store.select(fromSupervision.getOpenOperationalConditionTask).pipe(
+      map(task => !!task)
+    );
   }
 }
