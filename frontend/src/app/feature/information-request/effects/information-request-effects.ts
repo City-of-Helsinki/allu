@@ -53,10 +53,7 @@ export class InformationRequestEffects {
     ofType<InformationRequestAction.SaveAndSendRequest>(InformationRequestActionType.SaveAndSendRequest),
     switchMap(action => this.informationRequestService.save(action.payload)),
     switchMap(request => this.applicationStore.changeStatus(request.applicationId, ApplicationStatus.WAITING_INFORMATION).pipe(
-      switchMap((app) => [
-        new InformationRequestAction.SaveRequestSuccess(request),
-        new ApplicationAction.LoadSuccess(app)
-      ]),
+      map(() => new InformationRequestAction.SaveRequestSuccess(request)),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );

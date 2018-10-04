@@ -29,7 +29,7 @@ export class ExcavationAnnouncementEffects {
     withLatestExisting<ReportOperationalCondition>(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportOperationalCondition(app.id, action.payload).pipe(
       switchMap(updated => [
-        this.applicationStore.setAndDispatch(updated),
+        this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportOperationalCondition'))
       ]),
       catchError(error => of(new NotifyFailure(error)))
@@ -42,7 +42,7 @@ export class ExcavationAnnouncementEffects {
     withLatestExisting<ReportWorkFinished>(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportWorkFinished(app.id, action.payload).pipe(
       switchMap(updated => [
-        this.applicationStore.setAndDispatch(updated),
+        this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportWorkFinished'))
       ]),
       catchError(error => of(new NotifyFailure(error)))
@@ -55,7 +55,7 @@ export class ExcavationAnnouncementEffects {
     withLatestExisting<ReportCustomerDates>(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerDates(app.id, action.payload).pipe(
       switchMap(updated => [
-        this.applicationStore.setAndDispatch(updated),
+        this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerDates')),
         new SupervisionTaskActions.Load()
       ]),
@@ -68,7 +68,7 @@ export class ExcavationAnnouncementEffects {
     ofType<SetRequiredTasks>(ExcavationAnnouncementActionType.SetRequiredTasks),
     withLatestExisting<SetRequiredTasks>(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.excavationAnnouncementService.setRequiredTasks(app.id, action.payload).pipe(
-      map(updated => this.applicationStore.setAndDispatch(updated)),
+      map(updated => this.applicationStore.setAndAction(updated)),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );

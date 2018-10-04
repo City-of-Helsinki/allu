@@ -116,10 +116,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   private proposalConfirmed(changeInfo: StatusChangeInfo) {
     if (changeInfo) {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
-        .subscribe(app => {
+        .subscribe(() => {
           this.store.dispatch(new Load(ActionTargetType.Application));
           this.notification.success(findTranslation('application.statusChange.DECISIONMAKING'));
-          this.applicationStore.applicationChange(app);
           this.onDecisionConfirm.emit(changeInfo);
         }, err => this.notification.error(findTranslation('application.error.toDecisionmaking')));
     }

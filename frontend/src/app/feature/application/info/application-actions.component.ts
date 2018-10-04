@@ -131,8 +131,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.HANDLING)
       .subscribe(app => {
           this.notification.translateSuccess('application.statusChange.HANDLING');
-          this.applicationStore.applicationChange(app);
-          this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'edit']);
+          this.router.navigate(['/applications', app.id, 'edit']);
         },
         err => this.notification.translateErrorMessage('application.error.toHandling'));
   }
@@ -177,9 +176,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private cancelApplication(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.CANCELLED)
-      .subscribe(app => {
+      .subscribe(() => {
           this.notification.translateSuccess('application.statusChange.CANCELLED');
-          this.applicationStore.applicationChange(app);
           this.router.navigate(['/workqueue']);
         },
         err => this.notification.translateErrorMessage('application.error.cancel'));
@@ -190,7 +188,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING).pipe(
         map(app => {
           this.notification.translateSuccess('application.statusChange.DECISIONMAKING');
-          this.applicationStore.applicationChange(app);
           return app;
         })
       );

@@ -164,15 +164,20 @@ export class ApplicationStore {
     );
   }
 
-  public setAndDispatch(app: Application): Action {
+  public setAndAction(app: Application): Action {
     this.setApplication(app);
     return new LoadSuccess(app);
+  }
+
+  public setAndDispatch(app: Application): void {
+    this.store.dispatch(this.setAndAction(app));
   }
 
   setApplication(application: Application): void {
     this.appStore.next({
       ...this.current,
       application,
+      processing: false,
       attachments: application.attachmentList,
       draft: application.status === ApplicationStatus.PRE_RESERVED
     });
@@ -207,7 +212,7 @@ export class ApplicationStore {
     const appId = id || this.snapshot.application.id;
     this.appStore.next({...this.current, processing: true});
     return this.applicationService.changeStatus(appId, status, changeInfo).pipe(
-      tap(application => this.applicationChange(application)),
+      tap(application => this.setAndDispatch(application)),
       catchError(err => {
         this.appStore.next({...this.current, processing: false});
         return observableThrowError(err);
