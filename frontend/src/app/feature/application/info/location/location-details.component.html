@@ -54,6 +54,19 @@
                      [disabled]="readonly" [placeholder]="'location.cityDistrictOverride' | translation"/>
             </mat-form-field>
           </div>
+          <div class="col m2" *ngIf="showPaymentTariff()">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" [ngModel]="paymentTariff()"
+                     [disabled]="readonly" [placeholder]="'location.paymentTariff' | translation"/>
+              </mat-form-field>
+          </div>
+          <div class="col m2" *ngIf="showPaymentTariff()">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" [ngModel]="paymentTariffOverride()"
+                     [disabled]="readonly" [placeholder]="'location.paymentTariffOverride' | translation"/>
+              </mat-form-field>
+          </div>
+
         </div>
       </div>
       <div class="col m2 offset-m2" *ngIf="canBeEdited">

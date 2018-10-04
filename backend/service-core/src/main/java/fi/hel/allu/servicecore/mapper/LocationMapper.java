@@ -35,7 +35,6 @@ public class LocationMapper {
     location.setFixedLocationIds(locationJson.getFixedLocationIds());
     location.setCityDistrictId(locationJson.getCityDistrictId());
     location.setCityDistrictIdOverride(locationJson.getCityDistrictIdOverride());
-    location.setPaymentTariff(locationJson.getPaymentTariff());
     location.setPaymentTariffOverride(locationJson.getPaymentTariffOverride());
     location.setUnderpass(locationJson.getUnderpass());
     return location;

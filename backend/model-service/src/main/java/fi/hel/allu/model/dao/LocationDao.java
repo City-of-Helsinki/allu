@@ -48,9 +48,12 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 
 @Repository
 public class LocationDao {
-  private static final Logger logger = LoggerFactory.getLogger(LocationDao.class);
 
+  private static final Logger logger = LoggerFactory.getLogger(LocationDao.class);
   public static final Integer ALLU_SRID = Integer.valueOf(3879);
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
+      Arrays.asList(location.paymentTariff);
+
 
   @Autowired
   private SQLQueryFactory queryFactory;
@@ -119,6 +122,7 @@ public class LocationDao {
     setGeometry(id, locationData.getGeometry());
     setFixedLocationIds(id, locationData.getFixedLocationIds());
     updateApplicationDate(locationData.getApplicationId());
+    updateLocationPaymentTariff(id);
     return findById(id).get();
   }
 
@@ -153,6 +157,7 @@ public class LocationDao {
     setGeometry(id, locationData.getGeometry());
     queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(id)).execute();
     setFixedLocationIds(id, locationData.getFixedLocationIds());
+    updateLocationPaymentTariff(id);
     return findById(id).get();
   }
 
@@ -473,14 +478,23 @@ public class LocationDao {
    * @param id location's DB id
    * @return the payment class (1, 2, or 3)
    */
-  public int getPaymentClass(Integer id) {
+  public int getPaymentClass(Location location) {
+    if (location.getPaymentTariffOverride() != null) {
+      return location.getPaymentTariffOverride();
+    }
+    return location.getPaymentTariff() != null ? location.getPaymentTariff() : updateLocationPaymentTariff(location.getId());
+  }
+
+  private int updateLocationPaymentTariff(Integer locationId) {
     QLocationGeometry geo = new QLocationGeometry("lg", "allu", "location_geometry");
-    Integer paymentClass = queryFactory.select(paymentClass1.paymentClass).from(paymentClass1)
+    Integer paymentTariff = queryFactory.select(paymentClass1.paymentClass).from(paymentClass1)
         .where(paymentClass1.geometry.intersects(
             SQLExpressions.select(geometryUnion()).from(geo)
-                .where(geo.locationId.eq(id))))
+                .where(geo.locationId.eq(locationId))))
         .orderBy(paymentClass1.paymentClass.asc()).fetchFirst();
-    return Optional.ofNullable(paymentClass).orElse(3); // Payment class undefined -> default to lowest
+    paymentTariff = Optional.ofNullable(paymentTariff).orElse(3); // Payment tariff undefined -> default to lowest
+    queryFactory.update(location).set(location.paymentTariff, paymentTariff).where(location.id.eq(locationId)).execute();
+    return paymentTariff;
   }
 
   private void transformCoordinates(Location locationData, Integer targetSrId) {

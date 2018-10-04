@@ -1023,6 +1023,9 @@ export const translations = {
     cityDistrict: 'Kaupunginosa',
     cityDistrictOverride: 'Käsittelijän valitsema kaupunginosa',
     underpass: 'Altakuljettava',
+    paymentTariff: 'Maksuluokka',
+    paymentTariffOverride: 'Käsittelijän valitsema maksuluokka',
+    paymentTariffValue: 'Maksuluokka {{tariff}}',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
       fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',

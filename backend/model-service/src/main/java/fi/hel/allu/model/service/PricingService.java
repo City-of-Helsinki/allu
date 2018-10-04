@@ -175,7 +175,7 @@ public class PricingService {
       locations = locationDao.findByApplication(application.getId());
     }
     for (Location l : locations) {
-      pricing.addLocationPrice(l.getLocationKey(), l.getEffectiveArea(), locationDao.getPaymentClass(l.getId()));
+      pricing.addLocationPrice(l.getLocationKey(), l.getEffectiveArea(), locationDao.getPaymentClass(l));
     }
     return pricing.getChargeBasisEntries();
   }

@@ -13,6 +13,7 @@ import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 import * as fromRoot from '../../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {map} from 'rxjs/internal/operators';
+import { findTranslation } from '@app/util/translations';
 
 @Component({
   selector: 'location-details',
@@ -63,6 +64,27 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnDestroy(): void {
     this.mapStore.reset();
+  }
+
+  showPaymentTariff() {
+    return [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(this.application.type) >= 0;
+  }
+
+  paymentTariff() {
+    return this.paymentTariffText(this.location.paymentTariff);
+  }
+
+  paymentTariffOverride() {
+    return this.paymentTariffText(this.location.paymentTariffOverride);
+  }
+
+  paymentTariffText(paymentTariff) {
+    if (paymentTariff) {
+      const tariff = paymentTariff.toString();
+      return findTranslation('location.paymentTariffValue', {tariff});
+    } else {
+      return '';
+    }
   }
 
   districtName(id: number): Observable<string> {

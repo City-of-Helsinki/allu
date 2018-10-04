@@ -58,6 +58,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   districts: Observable<Array<CityDistrict>>;
   multipleLocations = false;
   invalidGeometry = false;
+  showPaymentTariff = false;
+  paymentTariffs = [1, 2, 3];
 
   private destroy = new Subject<boolean>();
 
@@ -93,7 +95,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       cityDistrictName: [{value: undefined, disabled: true}],
       cityDistrictIdOverride: [undefined],
       underpass: [false],
-      info: ['']
+      info: [''],
+      paymentTariff: [{value: undefined, disabled: true}],
+      paymentTariffOverride: [{value: undefined}]
     });
   }
 
@@ -108,6 +112,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.application = this.applicationStore.snapshot.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     this.kindsSelected = this.application.kinds.length > 0;
+    this.showPaymentTariff = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL]
+      .indexOf(this.application.type) >= 0;
     this.loadFixedLocations();
 
     this.mapStore.locationSearchFilter.pipe(takeUntil(this.destroy))
@@ -157,6 +163,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.application.extension = this.createExtension(type);
       this.multipleLocations = type === ApplicationType.AREA_RENTAL;
       this.setInitialDates();
+      this.showPaymentTariff = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(type) >= 0;
     }
   }
 

@@ -73,6 +73,21 @@
                 </mat-select>
               </mat-form-field>
             </div>
+            <div class="col m2" *ngIf="showPaymentTariff">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" [value]="'location.paymentTariffValue' | translation:{tariff: locationForm.getRawValue().paymentTariff}"
+                [placeholder]="'location.paymentTariff' | translation"/>
+              </mat-form-field>
+            </div>
+            <div class="col m2" *ngIf="showPaymentTariff">
+              <mat-form-field class="input-full-width">
+                  <mat-select formControlName="paymentTariffOverride" [placeholder]="'location.paymentTariffOverride' | translation"
+                              class="input-full-width">
+                    <mat-option>-</mat-option>
+                    <mat-option *ngFor="let tariff of paymentTariffs" [value]="tariff">{{'location.paymentTariffValue' | translation:{tariff: tariff} }}</mat-option>
+                  </mat-select>
+              </mat-form-field>
+            </div>
             <div class="col m2" *ngIf="application.type==='AREA_RENTAL'">
               <mat-checkbox formControlName="underpass" class="checkbox-matching-height">
                 Altakuljettava

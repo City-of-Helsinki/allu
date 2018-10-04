@@ -17,7 +17,9 @@ export class LocationForm {
     public cityDistrictId?: number,
     public cityDistrictIdOverride?: number,
     public underpass?: boolean,
-    public info?: string) {}
+    public info?: string,
+    public paymentTariff?: number,
+    public paymentTariffOverride?: number) {}
 
   static from(location: Location): LocationForm {
     const form = new LocationForm();
@@ -39,6 +41,8 @@ export class LocationForm {
     form.cityDistrictIdOverride = location.cityDistrictIdOverride;
     form.underpass = location.underpass;
     form.info = location.info;
+    form.paymentTariff = location.paymentTariff;
+    form.paymentTariffOverride = location.paymentTariffOverride;
     return form;
   }
 
@@ -62,6 +66,8 @@ export class LocationForm {
     location.cityDistrictIdOverride = form.cityDistrictIdOverride;
     location.underpass = form.underpass;
     location.info = form.info;
+    location.paymentTariff = form.paymentTariff;
+    location.paymentTariffOverride = form.paymentTariffOverride;
     return location;
   }
 }
