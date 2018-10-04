@@ -10,10 +10,10 @@ import {map, startWith, take, takeUntil} from 'rxjs/internal/operators';
 import {combineLatest, Observable, of, Subject} from 'rxjs/index';
 import {Application} from '@model/application/application';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
-import {ConfigurationKey} from '@model/config/configuration-key';
 import * as fromRoot from '@feature/allu/reducers';
 import {Store} from '@ngrx/store';
 import {ApplicationStatus} from '@model/application/application-status';
+import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 
 export const SUPERVISION_APPROVAL_MODAL_CONFIG = {width: '600px', data: {}};
 
@@ -67,7 +67,8 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: SupervisionApprovalModalData,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<SupervisionApprovalModalComponent>,
-    private store: Store<fromRoot.State>) {
+    private store: Store<fromRoot.State>,
+    private configurationHelper: ConfigurationHelperService) {
   }
 
   ngOnInit(): void {
@@ -155,13 +156,10 @@ export class SupervisionApprovalModalComponent implements OnInit, OnDestroy {
     const dateChange = !TimeUtil.isSame(date, this.data.comparedDate, 'day');
     const isWinterTimeOperation = !!excavation.winterTimeOperation;
 
-    return combineLatest(
-      this.store.select(fromRoot.getConfiguration(ConfigurationKey.WINTER_TIME_START)),
-      this.store.select(fromRoot.getConfiguration(ConfigurationKey.WINTER_TIME_END))).pipe(
+    return this.configurationHelper.inWinterTime(date).pipe(
         take(1),
-        map(([start, end]) => TimeUtil.isInWinterTime(date, start.value, end.value)),
         map(finishesInWinter => dateChange && !(isWinterTimeOperation && finishesInWinter))
-      );
+    );
   }
 
   private createConfirmation(): SupervisionApprovalResult {

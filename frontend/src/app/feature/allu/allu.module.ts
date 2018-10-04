@@ -56,6 +56,7 @@ import {CodeSetEffects} from './effects/code-set-effects';
 import {NotificationModule} from '@feature/notification/notification.module';
 import {ConfigurationService} from '@service/config/configuration.service';
 import {ConfigurationEffects} from './effects/configuration-effects';
+import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 
 @NgModule({
   imports: [
@@ -116,6 +117,7 @@ import {ConfigurationEffects} from './effects/configuration-effects';
     ConfigService,
     CodeSetService,
     ConfigurationService,
+    ConfigurationHelperService,
     CustomIconRegistry,
     MetadataService,
     { provide: APP_BASE_HREF,  useValue: '/' },
