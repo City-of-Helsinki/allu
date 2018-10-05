@@ -75,8 +75,8 @@
             </div>
             <div class="col m2" *ngIf="showPaymentTariff">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" [value]="'location.paymentTariffValue' | translation:{tariff: locationForm.getRawValue().paymentTariff}"
-                [placeholder]="'location.paymentTariff' | translation"/>
+                <input matInput type="text" [value]="paymentTariff()"
+                [disabled]="true" [placeholder]="'location.paymentTariff' | translation"/>
               </mat-form-field>
             </div>
             <div class="col m2" *ngIf="showPaymentTariff">

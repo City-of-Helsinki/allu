@@ -1714,6 +1714,15 @@ export const findTranslation = (path: Path, params?: Params, from: any = transla
   return params ? replaceParams(translated, params) : translated;
 };
 
+
+export const findTranslationWithDefault = (path: Path, key: string, value: string, defaultTranslation: string = ''): string => {
+  if (value) {
+    return findTranslation(path, {[key]: value});
+  } else {
+    return defaultTranslation;
+  }
+};
+
 /**
  * Translates array of key values with given prefix to array of translated values
  *

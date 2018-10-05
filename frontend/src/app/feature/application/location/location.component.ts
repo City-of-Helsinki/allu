@@ -20,7 +20,7 @@ import {TrafficArrangement} from '../../../model/application/traffic-arrangement
 import {PlacementContract} from '../../../model/application/placement-contract/placement-contract';
 import {ArrayUtil} from '../../../util/array-util';
 import {NotificationService} from '../../notification/notification.service';
-import {findTranslation} from '../../../util/translations';
+import {findTranslation, findTranslationWithDefault} from '../../../util/translations';
 import {AreaRental} from '../../../model/application/area-rental/area-rental';
 import {FixedLocationArea} from '../../../model/common/fixed-location-area';
 import {FixedLocationSection} from '../../../model/common/fixed-location-section';
@@ -97,7 +97,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       underpass: [false],
       info: [''],
       paymentTariff: [{value: undefined, disabled: true}],
-      paymentTariffOverride: [{value: undefined}]
+      paymentTariffOverride: [undefined]
     });
   }
 
@@ -247,6 +247,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const validGeometry = !this.invalidGeometry;
 
     return nothingEdited || (formValid && validGeometry);
+  }
+
+  paymentTariff() {
+    return findTranslationWithDefault('location.paymentTariffValue', 'tariff', this.locationForm.getRawValue().paymentTariff);
   }
 
   private editLocation(loc: Location): void {
