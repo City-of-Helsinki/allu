@@ -74,27 +74,3 @@ export const getTab = createSelector(
   getDocumentEntitiesState,
   fromDocument.getTab
 );
-
-export const getPdf = createSelector(
-  getTab,
-  getDecisionPdf,
-  getContractPdf,
-  (tab, decision, contract) => tab === DecisionTab.DECISION ? decision : contract
-);
-
-export const getLoading = createSelector(
-  getTab,
-  getDecisionLoading,
-  getContractLoading,
-  (tab, decision, contract) => tab === DecisionTab.DECISION ? decision : contract
-);
-
-export const showDecisionActions = createSelector(
-  getTab,
-  (tab) => tab === DecisionTab.DECISION
-);
-
-export const showContractActions = createSelector(
-  getTab,
-  (tab) => tab === DecisionTab.CONTRACT
-);

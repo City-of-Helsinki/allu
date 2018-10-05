@@ -1,16 +1,16 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
-import {combineLatest, Observable, Subject} from 'rxjs/index';
+import {Observable, Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
-import {map, takeUntil} from 'rxjs/internal/operators';
+import {map, take, takeUntil} from 'rxjs/internal/operators';
 import {Application} from '@model/application/application';
 import {Load} from '@feature/decision/actions/decision-actions';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
 import {ActivatedRoute} from '@angular/router';
-import {DecisionTab} from '@feature/decision/documents/decision-tab';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
+import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 @Component({
   selector: 'decision-document',
@@ -23,7 +23,6 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   pdf$: Observable<Blob>;
   loading$: Observable<boolean>;
   processing$: Observable<boolean>;
-  tab$: Observable<DecisionTab>;
   showDecisionActions$: Observable<boolean>;
   showContractActions$: Observable<boolean>;
 
@@ -36,23 +35,11 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.application$ = this.store.select(fromApplication.getCurrentApplication);
-    this.pdf$ = this.store.select(fromDecision.getPdf);
-    this.loading$ = this.store.select(fromDecision.getLoading);
-    this.tab$ = this.store.select(fromDecision.getTab);
+    this.store.select(fromDecision.getTab).pipe(take(1)).subscribe(tab => this.initContentByTab(tab));
     this.processing$ = this.applicationStore.changes.pipe(
       map(change => change.processing),
       takeUntil(this.destroy)
     );
-
-    this.showDecisionActions$ = combineLatest(
-      this.store.select(fromDecision.showDecisionActions),
-      this.application$
-    ).pipe(map(([show, app]) => this.showDecisionActions(show, app)));
-
-    this.showContractActions$ = combineLatest(
-      this.store.select(fromDecision.showContractActions),
-      this.application$
-    ).pipe(map(([show, app]) => this.showContractActions(show, app)));
   }
 
   ngOnDestroy(): void {
@@ -60,19 +47,37 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
+  initContentByTab(tab: DecisionTab): void {
+    switch (tab) {
+      case DecisionTab.CONTRACT: {
+        this.pdf$ = this.store.select(fromDecision.getContractPdf);
+        this.loading$ = this.store.select(fromDecision.getContractLoading);
+        this.showContractActions$ = this.application$.pipe(map(app => this.showContractActions(app)));
+        break;
+      }
+
+      default: {
+        this.pdf$ = this.store.select(fromDecision.getDecisionPdf);
+        this.loading$ = this.store.select(fromDecision.getDecisionLoading);
+        this.showDecisionActions$ = this.application$.pipe(map(app => this.showDecisionActions(app)));
+        break;
+      }
+    }
+  }
+
   onDecisionConfirm(): void {
     this.store.dispatch(new Load());
   }
 
-  private showDecisionActions(show: boolean, app: Application): boolean {
+  private showDecisionActions(app: Application): boolean {
     const showByType = app.type !== ApplicationType.PLACEMENT_CONTRACT;
     const showByStatus = isSameOrAfter(app.status, ApplicationStatus.DECISIONMAKING);
-    return show && (showByType || showByStatus);
+    return showByType || showByStatus;
   }
 
-  private showContractActions(show: boolean, app: Application): boolean {
+  private showContractActions(app: Application): boolean {
     const showByType = app.type === ApplicationType.PLACEMENT_CONTRACT;
     const showByStatus = [ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION].indexOf(app.status) >= 0;
-    return show && showByType && showByStatus;
+    return showByType && showByStatus;
   }
 }

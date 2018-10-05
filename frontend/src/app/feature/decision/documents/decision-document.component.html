@@ -4,15 +4,13 @@
   [processing]="processing$ | async">
 </pdf-view>
 <div class="document-footer">
-  <div *ngIf="tab$ | async as tab">
-    <decision-actions
-      *ngIf="showDecisionActions$ | async"
-      pdfViewFooter
-      [application]="application$ | async"
-      (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
+  <decision-actions
+    *ngIf="showDecisionActions$ | async"
+    pdfViewFooter
+    [application]="application$ | async"
+    (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
 
-    <contract-actions
-      *ngIf="showContractActions$ | async"
-      pdfViewFooter></contract-actions>
-  </div>
+  <contract-actions
+    *ngIf="showContractActions$ | async"
+    pdfViewFooter></contract-actions>
 </div>
