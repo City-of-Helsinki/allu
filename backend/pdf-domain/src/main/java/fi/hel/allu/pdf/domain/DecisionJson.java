@@ -109,6 +109,7 @@ public class DecisionJson {
   private String contractSigningDate;
 
   private String winterTimeOperation;
+  private String customerWinterTimeOperation;
 
   private String ovt;
   private String invoicingOperator;
@@ -724,6 +725,14 @@ public class DecisionJson {
 
   public void setWinterTimeOperation(String winterTimeOperation) {
     this.winterTimeOperation = winterTimeOperation;
+  }
+
+  public String getCustomerWinterTimeOperation() {
+    return customerWinterTimeOperation;
+  }
+
+  public void setCustomerWinterTimeOperation(String customerWinterTimeOperation) {
+    this.customerWinterTimeOperation = customerWinterTimeOperation;
   }
 
   public String getOvt() {

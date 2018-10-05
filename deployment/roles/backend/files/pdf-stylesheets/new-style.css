@@ -168,6 +168,9 @@ div.indented {
 h2.new-page {
     page-break-before: always;
   }
+section.new-page {
+    page-break-before: always;
+  }
 
 .footer {
   padding-bottom: 30px;

@@ -7,11 +7,14 @@ import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.NoSuchElementException;
 
 @Service
 public class ApprovalDocumentService {
@@ -20,25 +23,35 @@ public class ApprovalDocumentService {
   private final RestTemplate restTemplate;
   private final DecisionJsonMapper decisionJsonMapper;
   private final ApplicationServiceComposer applicationServiceComposer;
+  private final UserService userService;
 
   @Autowired
   public ApprovalDocumentService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
       DecisionJsonMapper decisionJsonMapper,
-      ApplicationServiceComposer applicationServiceComposer) {
+      ApplicationServiceComposer applicationServiceComposer,
+      UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.decisionJsonMapper = decisionJsonMapper;
     this.applicationServiceComposer = applicationServiceComposer;
+    this.userService = userService;
   }
 
   public byte[] getApprovalDocument(Integer applicationId, ApprovalDocumentType type) {
     final ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
-    if (application.getStatus().isBeforeDecision()) {
-      return generateApprovalDocumentPreview(application, type);
+    if ((type == ApprovalDocumentType.OPERATIONAL_CONDITION &&
+        (application.getStatus().ordinal() >= StatusType.OPERATIONAL_CONDITION.ordinal() ||
+        (application.getStatus()== StatusType.DECISIONMAKING && application.getTargetState() == StatusType.FINISHED))) ||
+        (type == ApprovalDocumentType.WORK_FINISHED && application.getStatus().ordinal() >= StatusType.FINISHED.ordinal())) {
+      try {
+        return restTemplate.getForObject(applicationProperties.getApprovalDocumentUrl(), byte[].class, applicationId, type);
+      } catch (NoSuchElementException e) {
+        return generateApprovalDocumentPreview(application, type);
+      }
     } else {
-      return restTemplate.getForObject(applicationProperties.getApprovalDocumentUrl(), byte[].class, applicationId, type);
+      return generateApprovalDocumentPreview(application, type);
     }
   }
 
@@ -54,13 +67,18 @@ public class ApprovalDocumentService {
 
   private byte[] generateApprovalDocumentPreview(ApplicationJson application, ApprovalDocumentType type) {
     final DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, true);
+    clearDeciderData(decisionJson);
     return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application, type));
   }
 
   private void generateFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application, ApprovalDocumentType type) {
     final DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, false);
-    setApprovalDocumentData(decisionJson, prevApplication, application);
+    if (prevApplication.getStatus() != StatusType.DECISIONMAKING) {
+      clearDeciderData(decisionJson);
+    } else {
+      setDeciderData(decisionJson);
+    }
     final byte[] document = restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application, type));
     restTemplate.exchange(
@@ -72,7 +90,15 @@ public class ApprovalDocumentService {
     return application.getType() + "-" + documentType;
   }
 
-  private void setApprovalDocumentData(DecisionJson decision, ApplicationJson prevApplication, ApplicationJson application) {
-    // Todo: Set approver, approving time etc. what is needed in Approval document (which is not yet defined).
+  private void clearDeciderData(DecisionJson decision) {
+    decision.setDeciderName(null);
+    decision.setDeciderTitle(null);
+    decision.setDecisionTimestamp(null);
+  }
+
+  private void setDeciderData(DecisionJson decision) {
+    final UserJson user = userService.getCurrentUser();
+    decision.setDeciderName(user.getRealName());
+    decision.setDeciderTitle(user.getTitle());
   }
 }
