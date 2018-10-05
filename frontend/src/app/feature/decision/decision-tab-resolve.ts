@@ -11,8 +11,8 @@ export class DecisionTabResolve implements Resolve<boolean> {
   constructor(private store: Store<fromDecision.State>) {}
 
   resolve(route: ActivatedRouteSnapshot): boolean {
-    const tab = DecisionTab[route.routeConfig.path.toUpperCase()];
+    const tab = <DecisionTab>route.routeConfig.path.toUpperCase();
     this.store.dispatch(new SetTab(tab));
-    return tab;
+    return true;
   }
 }

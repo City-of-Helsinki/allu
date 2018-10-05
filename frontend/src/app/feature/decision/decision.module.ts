@@ -20,7 +20,6 @@ import {DecisionEffects} from '@feature/decision/effects/decision-effects';
 import {DecisionDocumentComponent} from '@feature/decision/documents/decision-document.component';
 import {RouterModule} from '@angular/router';
 import {DecisionDocumentsComponent} from '@feature/decision/documents/decision-documents.component';
-import {DecisionResolve} from '@feature/decision/decision-resolve';
 import {ContractEffects} from '@feature/decision/effects/contract-effects';
 import {DecisionTabResolve} from '@feature/decision/decision-tab-resolve';
 import {ContractGuard} from '@feature/decision/documents/contract-guard';
@@ -58,7 +57,6 @@ import {ContractApprovalModalComponent} from '@feature/decision/contract/contrac
   providers: [
     DecisionService,
     ContractService,
-    DecisionResolve,
     DecisionTabResolve,
     ContractGuard
   ],

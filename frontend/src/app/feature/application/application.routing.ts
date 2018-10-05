@@ -14,7 +14,6 @@ import {SupervisionComponent} from './supervision/supervision.component';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 import {ApplicationCommentsComponent} from './comment/application-comments.component';
 import {DecisionDocumentComponent} from '@feature/decision/documents/decision-document.component';
-import {DecisionResolve} from '@feature/decision/decision-resolve';
 import {DecisionTabResolve} from '@feature/decision/decision-tab-resolve';
 import {ContractGuard} from '@feature/decision/documents/contract-guard';
 
@@ -32,8 +31,7 @@ export const applicationTabs: Routes = [
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'comments', component: ApplicationCommentsComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
-  { path: 'decision', component: DecisionComponent, canActivate: [AuthGuard], resolve: {decision: DecisionResolve},
-    children: decisionTabs },
+  { path: 'decision', component: DecisionComponent, canActivate: [AuthGuard], children: decisionTabs },
   { path: 'supervision', component: SupervisionComponent, canActivate: [AuthGuard] },
   { path: 'invoicing', component: InvoicingComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] }
 ];

@@ -70,11 +70,6 @@ export const getDocumentEntitiesState = createSelector(
   (state: DecisionState) => state.document
 );
 
-export const getShowActions = createSelector(
-  getDocumentEntitiesState,
-  fromDocument.getShowActions
-);
-
 export const getTab = createSelector(
   getDocumentEntitiesState,
   fromDocument.getTab
@@ -95,13 +90,11 @@ export const getLoading = createSelector(
 );
 
 export const showDecisionActions = createSelector(
-  getShowActions,
   getTab,
-  (show, tab) => show && tab === DecisionTab.DECISION
+  (tab) => tab === DecisionTab.DECISION
 );
 
 export const showContractActions = createSelector(
-  getShowActions,
   getTab,
-  (show, tab) => show && tab === DecisionTab.CONTRACT
+  (tab) => tab === DecisionTab.CONTRACT
 );
