@@ -21,7 +21,9 @@ import {ContractGuard} from '@feature/decision/documents/contract-guard';
 export const decisionTabs: Routes = [
   { path: '', redirectTo: 'contract', pathMatch: 'full'},
   { path: 'contract', component: DecisionDocumentComponent, canActivate: [AuthGuard, ContractGuard], resolve: {tab: DecisionTabResolve} },
-  { path: 'decision', component: DecisionDocumentComponent, canActivate: [AuthGuard], resolve: {tab: DecisionTabResolve} }
+  { path: 'decision', component: DecisionDocumentComponent, canActivate: [AuthGuard], resolve: {tab: DecisionTabResolve} },
+  { path: 'operational_condition', component: DecisionDocumentComponent, canActivate: [AuthGuard], resolve: {tab: DecisionTabResolve} },
+  { path: 'work_finished', component: DecisionDocumentComponent, canActivate: [AuthGuard], resolve: {tab: DecisionTabResolve} }
 ];
 
 export const applicationTabs: Routes = [

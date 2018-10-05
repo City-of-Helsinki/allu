@@ -5,6 +5,7 @@ import {Store} from '@ngrx/store';
 import {map, takeUntil} from 'rxjs/internal/operators';
 import {Application} from '@model/application/application';
 import {Load} from '@feature/decision/actions/decision-actions';
+import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
@@ -17,12 +18,12 @@ import {ApplicationStatus, isSameOrAfter} from '@model/application/application-s
   styleUrls: ['./decision-document.component.scss']
 })
 export class DecisionDocumentComponent implements OnInit, OnDestroy {
-  applicationChanges$: Observable<Application>;
+  application$: Observable<Application>;
 
   pdf$: Observable<Blob>;
   loading$: Observable<boolean>;
   processing$: Observable<boolean>;
-  tab$: Observable<string>;
+  tab$: Observable<DecisionTab>;
   showDecisionActions$: Observable<boolean>;
   showContractActions$: Observable<boolean>;
 
@@ -34,10 +35,10 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
     private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
-    this.applicationChanges$ = this.applicationStore.application;
+    this.application$ = this.store.select(fromApplication.getCurrentApplication);
     this.pdf$ = this.store.select(fromDecision.getPdf);
     this.loading$ = this.store.select(fromDecision.getLoading);
-    this.tab$ = this.store.select(fromDecision.getTab).pipe(map(tab => DecisionTab[tab]));
+    this.tab$ = this.store.select(fromDecision.getTab);
     this.processing$ = this.applicationStore.changes.pipe(
       map(change => change.processing),
       takeUntil(this.destroy)
@@ -45,12 +46,12 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
 
     this.showDecisionActions$ = combineLatest(
       this.store.select(fromDecision.showDecisionActions),
-      this.applicationChanges$
+      this.application$
     ).pipe(map(([show, app]) => this.showDecisionActions(show, app)));
 
     this.showContractActions$ = combineLatest(
       this.store.select(fromDecision.showContractActions),
-      this.applicationChanges$
+      this.application$
     ).pipe(map(([show, app]) => this.showContractActions(show, app)));
   }
 
