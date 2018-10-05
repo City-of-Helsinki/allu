@@ -19,6 +19,8 @@ import java.util.NoSuchElementException;
 @Service
 public class ApprovalDocumentService {
 
+  private static final String TEMPLATE_NAME_POSTFIX = "-approval";
+
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final DecisionJsonMapper decisionJsonMapper;
@@ -87,7 +89,7 @@ public class ApprovalDocumentService {
 
   }
   private String styleSheetName(ApplicationJson application, ApprovalDocumentType documentType) {
-    return application.getType() + "-" + documentType;
+    return application.getType() + TEMPLATE_NAME_POSTFIX;
   }
 
   private void clearDeciderData(DecisionJson decision) {
