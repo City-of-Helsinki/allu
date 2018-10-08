@@ -38,6 +38,13 @@ public class ChargeBasisService {
     return sortEntries(Arrays.asList(restResult.getBody()));
   }
 
+  public List<ChargeBasisEntry> getUnlockedChargeBasis(int applicationId) {
+    ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.getForEntity(applicationProperties.getChargeBasisUrl(),
+        ChargeBasisEntry[].class, applicationId);
+    return sortEntries(Arrays.asList(restResult.getBody()))
+        .stream().filter(e -> !Boolean.TRUE.equals(e.getLocked())).collect(Collectors.toList());
+  }
+
   /**
    * Set the manual charge basis entries for an application
    *

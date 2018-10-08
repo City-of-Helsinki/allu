@@ -4,16 +4,18 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
+import fi.hel.allu.servicecore.mapper.ApprovalDocumentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -23,7 +25,7 @@ public class ApprovalDocumentService {
 
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
-  private final DecisionJsonMapper decisionJsonMapper;
+  private final ApprovalDocumentMapper approvalDocumentMapper;
   private final ApplicationServiceComposer applicationServiceComposer;
   private final UserService userService;
 
@@ -31,17 +33,17 @@ public class ApprovalDocumentService {
   public ApprovalDocumentService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
-      DecisionJsonMapper decisionJsonMapper,
+      ApprovalDocumentMapper approvalDocumentMapper,
       ApplicationServiceComposer applicationServiceComposer,
       UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
-    this.decisionJsonMapper = decisionJsonMapper;
+    this.approvalDocumentMapper = approvalDocumentMapper;
     this.applicationServiceComposer = applicationServiceComposer;
     this.userService = userService;
   }
 
-  public byte[] getApprovalDocument(Integer applicationId, ApprovalDocumentType type) {
+  public byte[] getApprovalDocument(Integer applicationId, ApprovalDocumentType type, List<ChargeBasisEntry> chargeBasisEntries) {
     final ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     if ((type == ApprovalDocumentType.OPERATIONAL_CONDITION &&
         (application.getStatus().ordinal() >= StatusType.OPERATIONAL_CONDITION.ordinal() ||
@@ -50,32 +52,32 @@ public class ApprovalDocumentService {
       try {
         return restTemplate.getForObject(applicationProperties.getApprovalDocumentUrl(), byte[].class, applicationId, type);
       } catch (NoSuchElementException e) {
-        return generateApprovalDocumentPreview(application, type);
+        return generateApprovalDocumentPreview(application, type, chargeBasisEntries);
       }
     } else {
-      return generateApprovalDocumentPreview(application, type);
+      return generateApprovalDocumentPreview(application, type, chargeBasisEntries);
     }
   }
 
-  public void createFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application) {
+  public void createFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application, List<ChargeBasisEntry> chargeBasisEntries) {
     if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       if (application.getStatus()== StatusType.OPERATIONAL_CONDITION) {
-        generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.OPERATIONAL_CONDITION);
+        generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.OPERATIONAL_CONDITION, chargeBasisEntries);
       } else if (application.getStatus() == StatusType.FINISHED) {
-        generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.WORK_FINISHED);
+        generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.WORK_FINISHED, chargeBasisEntries);
       }
     }
   }
 
-  private byte[] generateApprovalDocumentPreview(ApplicationJson application, ApprovalDocumentType type) {
-    final DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, true);
+  private byte[] generateApprovalDocumentPreview(ApplicationJson application, ApprovalDocumentType type, List<ChargeBasisEntry> chargeBasisEntries) {
+    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, true);
     clearDeciderData(decisionJson);
     return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application, type));
   }
 
-  private void generateFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application, ApprovalDocumentType type) {
-    final DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, false);
+  private void generateFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application, ApprovalDocumentType type, List<ChargeBasisEntry> chargeBasisEntries) {
+    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, false);
     if (prevApplication.getStatus() != StatusType.DECISIONMAKING) {
       clearDeciderData(decisionJson);
     } else {

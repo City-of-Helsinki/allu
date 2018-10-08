@@ -2,6 +2,7 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
+import fi.hel.allu.servicecore.service.ChargeBasisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApprovalDocumentController {
 
   private final ApprovalDocumentService approvalDocumentService;
+  private final ChargeBasisService chargeBasisService;
 
   @Autowired
-  public ApprovalDocumentController(ApprovalDocumentService approvalDocumentService) {
+  public ApprovalDocumentController(ApprovalDocumentService approvalDocumentService,
+      ChargeBasisService chargeBasisService) {
     this.approvalDocumentService = approvalDocumentService;
+    this.chargeBasisService = chargeBasisService;
   }
 
   @RequestMapping(value = "/{applicationId}/approvalDocument/{type}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getApprovalDocument(@PathVariable Integer applicationId, @PathVariable ApprovalDocumentType type) {
-    return pdfResult(approvalDocumentService.getApprovalDocument(applicationId, type));
+    return pdfResult(approvalDocumentService.getApprovalDocument(applicationId, type, chargeBasisService.getUnlockedChargeBasis(applicationId)));
   }
 
   protected ResponseEntity<byte[]> pdfResult(byte[] data) {

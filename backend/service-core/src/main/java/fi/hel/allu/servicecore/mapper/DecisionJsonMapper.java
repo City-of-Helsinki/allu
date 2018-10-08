@@ -222,6 +222,10 @@ public class DecisionJsonMapper {
       return;
     }
     List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(application.getId());
+    fillCargeBasisInfo(decisionJson, chargeBasisEntries);
+  }
+
+  protected void fillCargeBasisInfo(DecisionJson decisionJson, List<ChargeBasisEntry> chargeBasisEntries) {
     Map<String, List<ChargeBasisEntry>> entriesByReferred = chargeBasisEntries.stream()
         .collect(Collectors.groupingBy(cbe -> StringUtils.defaultString(cbe.getReferredTag())));
     List<Pair<Integer, ChargeBasisEntry>> orderedEntries = listReferringEntries(entriesByReferred, "", 0);

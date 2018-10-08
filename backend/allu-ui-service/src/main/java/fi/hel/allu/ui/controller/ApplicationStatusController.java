@@ -8,14 +8,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
+import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.ContractService;
 import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.ui.security.DecisionSecurityService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -26,6 +30,7 @@ public class ApplicationStatusController {
   private final DecisionService decisionService;
   private final ContractService contractService;
   private final ApprovalDocumentService approvalDocumentService;
+  private final ChargeBasisService chargeBasisService;
 
   @Autowired
   public ApplicationStatusController(
@@ -34,13 +39,15 @@ public class ApplicationStatusController {
       DecisionSecurityService decisionSecurityService,
       DecisionService decisionService,
       ContractService contractService,
-      ApprovalDocumentService approvalDocumentService) {
+      ApprovalDocumentService approvalDocumentService,
+      ChargeBasisService chargeBasisService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.commentService = commentService;
     this.decisionSecurityService = decisionSecurityService;
     this.decisionService = decisionService;
     this.contractService = contractService;
     this.approvalDocumentService = approvalDocumentService;
+    this.chargeBasisService = chargeBasisService;
   }
 
   @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
@@ -107,8 +114,9 @@ public class ApplicationStatusController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToOperationalCondition(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedChargeBasis(id);
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.OPERATIONAL_CONDITION);
-    approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson);
+    approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson, chargeBasisEntries);
     return ResponseEntity.ok(applicationJson);
   }
 
@@ -124,8 +132,9 @@ public class ApplicationStatusController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToFinished(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedChargeBasis(id);
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.FINISHED);
-    approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson);
+    approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson, chargeBasisEntries);
     return ResponseEntity.ok(applicationJson);
   }
 }
