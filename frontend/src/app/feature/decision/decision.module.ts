@@ -14,7 +14,7 @@ import {DecisionProposalComponent} from './proposal/decision-proposal.component'
 import {AttachmentThumbnailsComponent} from './attachment-thumbnails.component';
 import {PdfModule} from '@feature/pdf/pdf.module';
 import {StoreModule} from '@ngrx/store';
-import {reducers} from './reducers';
+import {reducersProvider, reducersToken} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {DecisionEffects} from '@feature/decision/effects/decision-effects';
 import {DecisionDocumentComponent} from '@feature/decision/documents/decision-document.component';
@@ -25,16 +25,19 @@ import {DecisionTabResolve} from '@feature/decision/decision-tab-resolve';
 import {ContractGuard} from '@feature/decision/documents/contract-guard';
 import {ContractActionsComponent} from '@feature/decision/contract-actions.component';
 import {ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
+import {ApprovalDocumentService} from '@service/decision/approval-document.service';
+import {ApprovalDocumentEffects} from '@feature/decision/effects/approval-document-effects';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    StoreModule.forFeature('decision', reducers),
+    StoreModule.forFeature('decision', reducersToken),
     EffectsModule.forFeature([
       DecisionEffects,
-      ContractEffects
+      ContractEffects,
+      ApprovalDocumentEffects
     ]),
     AlluCommonModule,
     ProgressBarModule,
@@ -57,8 +60,10 @@ import {ContractApprovalModalComponent} from '@feature/decision/contract/contrac
   providers: [
     DecisionService,
     ContractService,
+    ApprovalDocumentService,
     DecisionTabResolve,
-    ContractGuard
+    ContractGuard,
+    reducersProvider
   ],
   entryComponents: [
     DecisionModalComponent,

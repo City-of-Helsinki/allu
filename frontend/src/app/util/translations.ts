@@ -916,6 +916,11 @@ export const translations = {
       approveFailed: 'Sopimuksen hyväksyntä epäonnistui'
     }
   },
+  approvalDocument: {
+    error: {
+      fetchFailed: 'Hyväksyntädokumentin hakeminen epäonnistui'
+    }
+  },
   user: {
     role: {
       ROLE_CREATE_APPLICATION: 'Hakemuksen luominen',

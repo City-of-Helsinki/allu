@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
-import {Observable, Subject} from 'rxjs/index';
+import {Observable, of, Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
 import {map, take, takeUntil} from 'rxjs/internal/operators';
 import {Application} from '@model/application/application';
@@ -53,6 +53,20 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
         this.pdf$ = this.store.select(fromDecision.getContractPdf);
         this.loading$ = this.store.select(fromDecision.getContractLoading);
         this.showContractActions$ = this.application$.pipe(map(app => this.showContractActions(app)));
+        break;
+      }
+
+      case DecisionTab.OPERATIONAL_CONDITION: {
+        this.pdf$ = this.store.select(fromDecision.getOperationalConditionApprovalPdf);
+        this.loading$ = this.store.select(fromDecision.getOperationalConditionApprovalLoading);
+        this.showContractActions$ = of(false);
+        break;
+      }
+
+      case DecisionTab.WORK_FINISHED: {
+        this.pdf$ = this.store.select(fromDecision.getWorkFinishedApprovalPdf);
+        this.loading$ = this.store.select(fromDecision.getWorkFinishedApprovaLoading);
+        this.showContractActions$ = of(false);
         break;
       }
 
