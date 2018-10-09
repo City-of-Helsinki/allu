@@ -129,12 +129,27 @@
           <section class="half-left">
             <h2>Toiminnallinen kunto</h2>
             <p>Ilmoitettu toiminnallisen kunnon päivä</p>
-            <p><xsl:value-of select="data/winterTimeOperation"/></p>
+            <p><xsl:value-of select="data/customerWinterTimeOperation"/></p>
           </section>
           <section class="half-right">
             <h2>&#160;</h2>
             <p>Hyväksytty toiminnallisen kunnon päivä</p>
-            <p><xsl:value-of select="data/customerWinterTimeOperation"/></p>
+            <p><xsl:value-of select="data/winterTimeOperation"/></p>
+          </section>
+        </div>
+      </xsl:if>
+
+      <xsl:if test="data/workFinished != '' or data/customerWorkFinished != ''">
+        <div class="unboxed">
+          <section class="half-left">
+            <h2>Työn valmistuminen</h2>
+            <p>Ilmoitettu valmistumispäivä</p>
+            <p><xsl:value-of select="data/customerWorkFinished"/></p>
+          </section>
+          <section class="half-right">
+            <h2>&#160;</h2>
+            <p>Hyväksytty valmistumispäivä</p>
+            <p><xsl:value-of select="data/workFinished"/></p>
           </section>
         </div>
       </xsl:if>

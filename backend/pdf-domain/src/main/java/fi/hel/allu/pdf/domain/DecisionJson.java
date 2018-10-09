@@ -110,6 +110,8 @@ public class DecisionJson {
 
   private String winterTimeOperation;
   private String customerWinterTimeOperation;
+  private String workFinished;
+  private String customerWorkFinished;
 
   private String ovt;
   private String invoicingOperator;
@@ -733,6 +735,22 @@ public class DecisionJson {
 
   public void setCustomerWinterTimeOperation(String customerWinterTimeOperation) {
     this.customerWinterTimeOperation = customerWinterTimeOperation;
+  }
+
+  public String getWorkFinished() {
+    return workFinished;
+  }
+
+  public void setWorkFinished(String workFinished) {
+    this.workFinished = workFinished;
+  }
+
+  public String getCustomerWorkFinished() {
+    return customerWorkFinished;
+  }
+
+  public void setCustomerWorkFinished(String customerWorkFinished) {
+    this.customerWorkFinished = customerWorkFinished;
   }
 
   public String getOvt() {

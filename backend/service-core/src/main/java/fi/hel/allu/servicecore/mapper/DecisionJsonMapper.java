@@ -468,6 +468,8 @@ public class DecisionJsonMapper {
     decision.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
     decision.setWinterTimeOperation(formatDateWithDelta(excavationAnnouncement.getWinterTimeOperation(), 0));
     decision.setCustomerWinterTimeOperation(formatDateWithDelta(excavationAnnouncement.getCustomerWinterTimeOperation(), 0));
+    decision.setWorkFinished(formatDateWithDelta(excavationAnnouncement.getWorkFinished(), 0));
+    decision.setCustomerWorkFinished(formatDateWithDelta(excavationAnnouncement.getCustomerWorkFinished(), 0));
     decision.setTrafficArrangements(splitToList(Optional.ofNullable(excavationAnnouncement.getTrafficArrangements())));
   }
 

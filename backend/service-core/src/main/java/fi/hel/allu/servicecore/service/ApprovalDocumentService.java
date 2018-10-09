@@ -70,14 +70,14 @@ public class ApprovalDocumentService {
   }
 
   private byte[] generateApprovalDocumentPreview(ApplicationJson application, ApprovalDocumentType type, List<ChargeBasisEntry> chargeBasisEntries) {
-    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, true);
+    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, true, type);
     clearDeciderData(decisionJson);
     return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application, type));
   }
 
   private void generateFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application, ApprovalDocumentType type, List<ChargeBasisEntry> chargeBasisEntries) {
-    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, false);
+    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, false, type);
     if (prevApplication.getStatus() != StatusType.DECISIONMAKING) {
       clearDeciderData(decisionJson);
     } else {

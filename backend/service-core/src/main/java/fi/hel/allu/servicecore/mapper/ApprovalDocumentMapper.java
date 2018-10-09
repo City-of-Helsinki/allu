@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.mapper;
 
+import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -27,9 +28,19 @@ public class ApprovalDocumentMapper extends DecisionJsonMapper {
     super(locationService, applicationServiceComposer, customerService, contactService, chargeBasisService, metaService);
   }
 
-  public DecisionJson mapApprovalDocument(ApplicationJson application, List<ChargeBasisEntry> chargeBasisEntries, boolean draft) {
-    DecisionJson approvalDocument = super.mapDecisionJson(application, draft);
+  public DecisionJson mapApprovalDocument(ApplicationJson application,
+      List<ChargeBasisEntry> chargeBasisEntries, boolean draft, ApprovalDocumentType type) {
+
+    final DecisionJson approvalDocument = super.mapDecisionJson(application, draft);
     fillCargeBasisInfo(approvalDocument, chargeBasisEntries);
+
+    if (type == ApprovalDocumentType.OPERATIONAL_CONDITION) {
+      approvalDocument.setWorkFinished(null);
+      approvalDocument.setCustomerWorkFinished(null);
+    } else if (type == ApprovalDocumentType.WORK_FINISHED) {
+      approvalDocument.setWinterTimeOperation(null);
+      approvalDocument.setCustomerWinterTimeOperation(null);
+    }
     return approvalDocument;
   }
 }
