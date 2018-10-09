@@ -9,7 +9,7 @@ import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationType} from '@model/application/type/application-type';
-import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
+import {ApplicationStatus, contains, isSameOrAfter} from '@model/application/application-status';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 @Component({
@@ -59,14 +59,14 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
       case DecisionTab.OPERATIONAL_CONDITION: {
         this.pdf$ = this.store.select(fromDecision.getOperationalConditionApprovalPdf);
         this.loading$ = this.store.select(fromDecision.getOperationalConditionApprovalLoading);
-        this.showContractActions$ = of(false);
+        this.showDecisionActions$ = this.application$.pipe(map(app => this.showOperationalConditionActions(app)));
         break;
       }
 
       case DecisionTab.WORK_FINISHED: {
         this.pdf$ = this.store.select(fromDecision.getWorkFinishedApprovalPdf);
         this.loading$ = this.store.select(fromDecision.getWorkFinishedApprovaLoading);
-        this.showContractActions$ = of(false);
+        this.showDecisionActions$ = this.application$.pipe(map(app => this.showWorkFinishedActions(app)));
         break;
       }
 
@@ -84,14 +84,25 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   }
 
   private showDecisionActions(app: Application): boolean {
-    const showByType = app.type !== ApplicationType.PLACEMENT_CONTRACT;
-    const showByStatus = isSameOrAfter(app.status, ApplicationStatus.DECISIONMAKING);
-    return showByType || showByStatus;
+    const showByStatus = contains([app.status, app.targetState], ApplicationStatus.DECISION);
+    return showByStatus;
+  }
+
+  private showOperationalConditionActions(app: Application): boolean {
+    const showByType = app.type === ApplicationType.EXCAVATION_ANNOUNCEMENT;
+    const showByStatus = contains([app.status, app.targetState], ApplicationStatus.OPERATIONAL_CONDITION);
+    return showByType && showByStatus;
+  }
+
+  private showWorkFinishedActions(app: Application): boolean {
+    const showByType = app.type === ApplicationType.EXCAVATION_ANNOUNCEMENT;
+    const showByStatus = contains([app.status, app.targetState], ApplicationStatus.FINISHED);
+    return showByType && showByStatus;
   }
 
   private showContractActions(app: Application): boolean {
     const showByType = app.type === ApplicationType.PLACEMENT_CONTRACT;
-    const showByStatus = [ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION].indexOf(app.status) >= 0;
+    const showByStatus = contains([ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION], app.status);
     return showByType && showByStatus;
   }
 }

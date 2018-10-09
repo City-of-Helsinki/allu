@@ -68,6 +68,10 @@ export function isSameOrAfter(first: ApplicationStatus, second: ApplicationStatu
   return !isBefore(first, second);
 }
 
+export function contains(included: ApplicationStatus[], tested: ApplicationStatus): boolean {
+  return included.indexOf(tested) >= 0;
+}
+
 export const searchable = [
   ApplicationStatus.PENDING_CLIENT,
   ApplicationStatus.PRE_RESERVED,
