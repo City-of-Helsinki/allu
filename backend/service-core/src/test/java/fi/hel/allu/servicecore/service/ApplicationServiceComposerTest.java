@@ -35,7 +35,6 @@ public class ApplicationServiceComposerTest {
   private static final int ownerId = 4;
 
   private ProjectJson projectJson = Mockito.mock(ProjectJson.class);
-  private QueryParametersJson queryParametersJson = Mockito.mock(QueryParametersJson.class);
 
   @Before
   public void init() {

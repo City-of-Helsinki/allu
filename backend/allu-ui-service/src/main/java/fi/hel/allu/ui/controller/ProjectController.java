@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -14,22 +15,16 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ProjectJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.ProjectService;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
-
-import java.util.stream.Collectors;
 
 /**
  * Controller for managing projects.
@@ -47,7 +42,7 @@ public class ProjectController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Page<ProjectJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
+  public ResponseEntity<Page<ProjectJson>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort = "creationTime", direction = Direction.DESC)
       Pageable pageRequest) {
     return new ResponseEntity<>(projectServiceComposer.search(queryParameters, pageRequest), HttpStatus.OK);

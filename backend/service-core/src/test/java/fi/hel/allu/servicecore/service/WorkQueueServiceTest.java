@@ -15,9 +15,7 @@ import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.QueryParameterJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.UserJson;
 
 public class WorkQueueServiceTest {
@@ -40,7 +38,7 @@ public class WorkQueueServiceTest {
   private UserService userService;
   private WorkQueueService workQueueService;
 
-  private ArgumentCaptor<QueryParametersJson> queryParametersArgumentCaptor = ArgumentCaptor.forClass(QueryParametersJson.class);
+  private ArgumentCaptor<QueryParameters> queryParametersArgumentCaptor = ArgumentCaptor.forClass(QueryParameters.class);
   private List<ApplicationES> emptyList = Collections.emptyList();
 
   @Before
@@ -52,7 +50,7 @@ public class WorkQueueServiceTest {
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
     userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
-    Mockito.when(applicationServiceComposer.search(Mockito.any(QueryParametersJson.class), Mockito.any(Pageable.class), Mockito.eq(false)))
+    Mockito.when(applicationServiceComposer.search(Mockito.any(QueryParameters.class), Mockito.any(Pageable.class), Mockito.eq(false)))
         .thenReturn(new PageImpl<>(emptyList));
   }
 
@@ -61,16 +59,16 @@ public class WorkQueueServiceTest {
 
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
 
-    List<ApplicationES> result = workQueueService.searchSharedByGroup(new QueryParametersJson(), null).getContent();
+    List<ApplicationES> result = workQueueService.searchSharedByGroup(new QueryParameters(), null).getContent();
 
     Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any(), Mockito.eq(false));
-    QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
+    QueryParameters searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);
     Assert.assertEquals(2, searchQuery.getQueryParameters().size());
     Assert.assertTrue(searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_APPLICATION_TYPE)).findFirst() != null);
-    QueryParameterJson queryParameterJson = searchQuery.getQueryParameters().stream().filter(
+    QueryParameter queryParameterJson = searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_APPLICATION_TYPE)).findFirst()
         .orElseThrow(() -> new RuntimeException("value not set"));
     Assert.assertEquals(ApplicationType.EVENT.name(), queryParameterJson.getFieldMultiValue().get(0));
@@ -89,14 +87,14 @@ public class WorkQueueServiceTest {
   @Test
   public void testSearchSharedByGroupWithParameters() {
 
-    QueryParametersJson queryParametersJson = new QueryParametersJson();
-    QueryParameterJson dummyParameter = new QueryParameterJson("dummy", Collections.emptyList());
-    QueryParameterJson typeParameter = new QueryParameterJson(QueryParameter.FIELD_NAME_STATUS, Collections.singletonList(StatusType.REJECTED.name()));
+    QueryParameters queryParametersJson = new QueryParameters();
+    QueryParameter dummyParameter = new QueryParameter("dummy", Collections.emptyList());
+    QueryParameter typeParameter = new QueryParameter(QueryParameter.FIELD_NAME_STATUS, Collections.singletonList(StatusType.REJECTED.name()));
     queryParametersJson.setQueryParameters(new ArrayList<>(Arrays.asList(dummyParameter, typeParameter)));
     List<ApplicationES> result = workQueueService.searchSharedByGroup(queryParametersJson, null).getContent();
 
     Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture(), Mockito.any(), Mockito.eq(false));
-    QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
+    QueryParameters searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);
     Assert.assertEquals(3, searchQuery.getQueryParameters().size());
@@ -108,7 +106,7 @@ public class WorkQueueServiceTest {
     Assert.assertTrue(searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_APPLICATION_TYPE)).findFirst()
         .orElseThrow(() -> new RuntimeException("value not set")) != null);
-    QueryParameterJson queryParameterJson = searchQuery.getQueryParameters().stream().filter(
+    QueryParameter queryParameterJson = searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_APPLICATION_TYPE)).findFirst()
         .orElseThrow(() -> new RuntimeException("value not set"));
     Assert.assertEquals(ApplicationType.EVENT.name(), queryParameterJson.getFieldMultiValue().get(0));

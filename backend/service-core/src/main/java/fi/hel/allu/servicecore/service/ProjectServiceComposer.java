@@ -1,19 +1,18 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ProjectJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
-import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
 
 /**
  * Service for composing different project related services together. The main purpose of this class is to avoid circular references
@@ -45,8 +44,8 @@ public class ProjectServiceComposer {
    * @param   queryParameters   Parameters for search query.
    * @return  found projects in the order defined by query.
    */
-  public Page<ProjectJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    return searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
+  public Page<ProjectJson> search(QueryParameters queryParameters, Pageable pageRequest) {
+    return searchService.searchProject(queryParameters, pageRequest,
         idlist -> {
           List<ProjectJson> resultList = projectService.findByIds(idlist);
           SearchService.orderByIdList(idlist, resultList, (projectJson) -> projectJson.getId());

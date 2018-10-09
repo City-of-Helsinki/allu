@@ -21,8 +21,8 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
@@ -206,9 +206,9 @@ public class ApplicationServiceComposer {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public Page<ApplicationES> search(QueryParametersJson queryParameters, Pageable pageRequest, Boolean matchAny) {
+  public Page<ApplicationES> search(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
     return searchService.searchApplication(
-        QueryParameterMapper.mapToQueryParameters(queryParameters),
+        queryParameters,
         pageRequest,
         matchAny);
   }

@@ -19,7 +19,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 
@@ -69,7 +73,7 @@ public class CustomerController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Page<CustomerJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
+  public ResponseEntity<Page<CustomerJson>> search(@Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort="name", direction=Direction.ASC) Pageable pageRequest) {
     return new ResponseEntity<>(customerService.search(queryParameters, pageRequest), HttpStatus.OK);
   }
@@ -78,7 +82,7 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<CustomerJson>> searchByType(
       @PathVariable CustomerType type,
-      @Valid @RequestBody QueryParametersJson queryParameters,
+      @Valid @RequestBody QueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort="name", direction=Direction.ASC) Pageable pageRequest,
       @RequestParam(defaultValue = "false") Boolean matchAny) {
     return new ResponseEntity<>(customerService.searchByType(type, queryParameters, pageRequest, matchAny), HttpStatus.OK);

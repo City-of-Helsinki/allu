@@ -1,15 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.CustomerChange;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
-import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,8 +13,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.CustomerChange;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 @Service
 public class CustomerService {
@@ -203,15 +206,15 @@ public class CustomerService {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public Page<CustomerJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    Page<CustomerJson> customers = searchService.searchCustomer(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
+  public Page<CustomerJson> search(QueryParameters queryParameters, Pageable pageRequest) {
+    Page<CustomerJson> customers = searchService.searchCustomer(queryParameters, pageRequest,
         ids -> getCustomersById(ids));
     customers.forEach(c -> personAuditLogService.log(c, "CustomerService"));
     return customers;
   }
 
-  public Page<CustomerJson> searchByType(CustomerType type, QueryParametersJson queryParameters, Pageable pageRequest, Boolean matchAny) {
-    Page<CustomerJson> customers = searchService.searchCustomerByType(type, QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest, matchAny,
+  public Page<CustomerJson> searchByType(CustomerType type, QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+    Page<CustomerJson> customers = searchService.searchCustomerByType(type, queryParameters, pageRequest, matchAny,
         ids -> getCustomersById(ids));
     customers.forEach(c -> personAuditLogService.log(c, "CustomerService"));
     return customers;

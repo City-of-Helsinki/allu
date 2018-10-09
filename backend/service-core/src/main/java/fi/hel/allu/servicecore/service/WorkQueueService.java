@@ -12,8 +12,7 @@ import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.servicecore.domain.QueryParameterJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.UserJson;
 
 /**
@@ -51,16 +50,16 @@ public class WorkQueueService {
    * @param   queryParametersJson   Original query, which will get user specific filtering added.
    * @return  List of applications matching the given search query.
    */
-  public Page<ApplicationES> searchSharedByGroup(QueryParametersJson queryParametersJson, Pageable pageRequest) {
+  public Page<ApplicationES> searchSharedByGroup(QueryParameters queryParametersJson, Pageable pageRequest) {
     // find application type and status query parameters, if any
-    Map<Boolean, List<QueryParameterJson>> partitionedByType =
+    Map<Boolean, List<QueryParameter>> partitionedByType =
         partitionByField(queryParametersJson.getQueryParameters(), QueryParameter.FIELD_NAME_APPLICATION_TYPE);
-    Map<Boolean, List<QueryParameterJson>> partitionedByStatus =
+    Map<Boolean, List<QueryParameter>> partitionedByStatus =
         partitionByField(partitionedByType.get(Boolean.FALSE), QueryParameter.FIELD_NAME_STATUS);
-    QueryParameterJson applicationTypeParameter =
+    QueryParameter applicationTypeParameter =
         getOrCreateParameter(partitionedByType.get(Boolean.TRUE), QueryParameter.FIELD_NAME_APPLICATION_TYPE);
-    QueryParameterJson statusParameter = getOrCreateParameter(partitionedByStatus.get(Boolean.TRUE), QueryParameter.FIELD_NAME_STATUS);
-    List<QueryParameterJson> otherParameters = partitionedByStatus.get(Boolean.FALSE);
+    QueryParameter statusParameter = getOrCreateParameter(partitionedByStatus.get(Boolean.TRUE), QueryParameter.FIELD_NAME_STATUS);
+    List<QueryParameter> otherParameters = partitionedByStatus.get(Boolean.FALSE);
 
     // merge given parameters with the ones extracted from user information
     UserJson user = userService.getCurrentUser();
@@ -81,13 +80,13 @@ public class WorkQueueService {
     return applicationServiceComposer.search(queryParametersJson, pageRequest, false);
   }
 
-  private Map<Boolean, List<QueryParameterJson>> partitionByField(List<QueryParameterJson> queryParameters, String fieldName) {
+  private Map<Boolean, List<QueryParameter>> partitionByField(List<QueryParameter> queryParameters, String fieldName) {
     return queryParameters.stream().collect(Collectors.partitioningBy(qp -> qp.getFieldName().equals(fieldName)));
   }
 
-  private QueryParameterJson getOrCreateParameter(List<QueryParameterJson> queryParameters, String fieldName) {
+  private QueryParameter getOrCreateParameter(List<QueryParameter> queryParameters, String fieldName) {
     return queryParameters.stream().filter(qp -> qp.getFieldName().equals(fieldName)).findFirst()
-        .orElse(new QueryParameterJson(fieldName, Collections.emptyList()));
+        .orElse(new QueryParameter(fieldName, Collections.emptyList()));
   }
 
   private <T> List<T> mergeLists(List<T> a, List<T> b) {

@@ -1,15 +1,8 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.ApplicationWithContacts;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.ContactChange;
-import fi.hel.allu.search.domain.ApplicationWithContactsES;
-import fi.hel.allu.search.domain.ContactES;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
-import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,9 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import fi.hel.allu.model.domain.ApplicationWithContacts;
+import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.ContactChange;
+import fi.hel.allu.search.domain.ApplicationWithContactsES;
+import fi.hel.allu.search.domain.ContactES;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 @Service
 public class ContactService {
@@ -76,8 +75,8 @@ public class ContactService {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public Page<ContactJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
-    return searchService.searchContact(QueryParameterMapper.mapToQueryParameters(queryParameters), pageRequest,
+  public Page<ContactJson> search(QueryParameters queryParameters, Pageable pageRequest) {
+    return searchService.searchContact(queryParameters, pageRequest,
         ids -> getContactsById(ids));
   }
 
