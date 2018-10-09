@@ -53,7 +53,7 @@ export function reducer(state: State = initialState, action: ApprovalDocumentAct
 export function reducerFor(documentType: ApprovalDocumentType) {
   return function(state: State = initialState, action: ApprovalDocumentActions | ApplicationActions) {
     switch (action.type) {
-      case ApplicationActionType.Load: {
+      case ApplicationActionType.LoadSuccess: {
         return reducer(state, action);
       }
 
