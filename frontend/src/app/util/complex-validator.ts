@@ -55,6 +55,9 @@ export class ComplexValidator {
   static inWinterTime(winterStart: string, winterEnd: string): ValidatorFn {
     const validationFn = (fc: AbstractControlWarn) => {
       const date = fc.value;
+      if (!date) {
+        return undefined;
+      }
 
       fc.warnings = fc.warnings || {};
       if (fc.dirty && TimeUtil.isInWinterTime(date, winterStart, winterEnd)) {
