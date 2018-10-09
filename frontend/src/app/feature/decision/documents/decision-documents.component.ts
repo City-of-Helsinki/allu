@@ -26,23 +26,25 @@ export class DecisionDocumentsComponent implements OnInit {
   }
 
   private getAvailableTabs(application: Application): DecisionTab[] {
+    let tabs = [DecisionTab.DECISION];
     switch (application.type) {
       case ApplicationType.PLACEMENT_CONTRACT: {
-        return [DecisionTab.CONTRACT, DecisionTab.DECISION];
+        tabs = [DecisionTab.CONTRACT].concat(tabs);
+        break;
       }
 
       case ApplicationType.EXCAVATION_ANNOUNCEMENT: {
         const excavation = <ExcavationAnnouncement>application.extension;
         if (excavation.winterTimeOperation) {
-          return [DecisionTab.DECISION, DecisionTab.OPERATIONAL_CONDITION, DecisionTab.WORK_FINISHED];
-        } else {
-          return [DecisionTab.DECISION, DecisionTab.WORK_FINISHED];
+          tabs = tabs.concat(DecisionTab.OPERATIONAL_CONDITION);
         }
-      }
 
-      default: {
-        return [DecisionTab.DECISION];
+        if (excavation.workFinished) {
+          tabs = tabs.concat(DecisionTab.WORK_FINISHED);
+        }
+        break;
       }
     }
+    return tabs;
   }
 }
