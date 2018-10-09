@@ -24,12 +24,14 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.util.EventDayUtil;
+import fi.hel.allu.model.domain.util.PriceUtil;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
 import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.pdf.domain.KindWithSpecifiers;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.*;
+
 
 @Component
 public class DecisionJsonMapper {
@@ -180,11 +182,6 @@ public class DecisionJsonMapper {
     decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
     decisionJson.setNotBillable(Boolean.TRUE.equals(application.getNotBillable()));
     decisionJson.setNotBillableReason(application.getNotBillableReason());
-    Integer priceInCents = application.getCalculatedPrice();
-    if (priceInCents != null) {
-      decisionJson.setTotalRent(currencyFormat.format(priceInCents / 100.0));
-      decisionJson.setSeparateBill(priceInCents > 0);
-    }
     fillCargeBasisInfo(decisionJson, application);
     decisionJson.setIdentificationNumber(application.getIdentificationNumber());
     decisionJson.setReplacingDecision(application.getReplacesApplicationId() != null);
@@ -233,6 +230,12 @@ public class DecisionJsonMapper {
         p.getRight().getText(), p.getRight().getExplanation(),
         chargeQuantity(p.getRight()), chargeUnitPrice(p.getRight()), chargeNetPrice(p.getRight())))
         .collect(Collectors.toList()));
+
+    if (!orderedEntries.isEmpty()) {
+      final int priceInCents = PriceUtil.totalPrice(chargeBasisEntries);
+      decisionJson.setTotalRent(currencyFormat.format(priceInCents / 100.0));
+      decisionJson.setSeparateBill(priceInCents > 0);
+    }
   }
 
   /*

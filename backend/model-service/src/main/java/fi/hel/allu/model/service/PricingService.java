@@ -1,7 +1,7 @@
 package fi.hel.allu.model.service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import fi.hel.allu.model.domain.ChargeBasisCalc;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -27,6 +27,7 @@ import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.EventDayUtil;
+import fi.hel.allu.model.domain.util.PriceUtil;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.pricing.*;
 
@@ -101,10 +102,7 @@ public class PricingService {
    * @return total price in cents
    */
   public int totalPrice(List<ChargeBasisEntry> chargeBasisEntries) {
-    return new ChargeBasisCalc(chargeBasisEntries).toInvoiceRows().stream()
-        .map(row -> BigDecimal.valueOf(row.getNetPrice()))
-        .reduce((b1, b2) -> b1.add(b2)).orElse(BigDecimal.ZERO)
-        .setScale(0, RoundingMode.UP).intValue();
+    return PriceUtil.totalPrice(chargeBasisEntries);
   }
 
   /**
