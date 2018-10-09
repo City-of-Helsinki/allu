@@ -8,7 +8,7 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.pricing.ChargeBasisCalc;
+import fi.hel.allu.model.domain.ChargeBasisCalc;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.apache.commons.lang3.tuple.Triple;

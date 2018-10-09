@@ -1,4 +1,4 @@
-package fi.hel.allu.model.pricing;
+package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
