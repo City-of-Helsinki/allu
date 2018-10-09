@@ -3,6 +3,7 @@
     <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
       <div class="action-item">
         <button mat-raised-button type="button" color="primary"
+                [disabled]="!isValidForDecision"
                 (click)="decisionProposal('PROPOSE_APPROVAL')">
           {{'decision.proposal.type.PROPOSE_APPROVAL' | translation | uppercase}}
         </button>
@@ -12,7 +13,9 @@
   <ng-container *ngIf="skipProposal">
     <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
       <div class="action-item">
-        <button mat-raised-button type="button" color="primary" (click)="decisionMaking()">
+        <button mat-raised-button type="button" color="primary"
+                [disabled]="!isValidForDecision"
+                (click)="decisionMaking()">
           {{'decision.type.DECISIONMAKING.confirmText' | translation | uppercase}}
         </button>
       </div>

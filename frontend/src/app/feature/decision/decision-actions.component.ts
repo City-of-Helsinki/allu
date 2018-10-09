@@ -20,6 +20,7 @@ import * as tagActions from '@feature/application/actions/application-tag-action
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, switchMap, tap} from 'rxjs/internal/operators';
 import {automaticDecisionMaking} from '@model/application/type/application-type';
+import {NumberUtil} from '@util/number.util';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -40,6 +41,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   skipProposal = false;
   showDecision = false;
   showResend = false;
+  isValidForDecision = false;
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromApplication.State>,
@@ -58,6 +60,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     this.skipProposal = inHandling(status) && automaticDecisionMaking(this.application.type);
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
+    this.isValidForDecision = this.validForDecision(this.application);
   }
 
   public decisionProposal(proposalType: string): void {
@@ -157,5 +160,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
         catchError(error => this.notification.errorCatch(error, {}))
       ))
       .orElseGet(() => of({}));
+  }
+
+  private validForDecision(app: Application): boolean {
+    return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
   }
 }

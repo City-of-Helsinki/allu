@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
-import {Observable, of, Subject} from 'rxjs/index';
+import {Observable, Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
 import {map, take, takeUntil} from 'rxjs/internal/operators';
 import {Application} from '@model/application/application';
@@ -9,7 +9,7 @@ import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationType} from '@model/application/type/application-type';
-import {ApplicationStatus, contains, isSameOrAfter} from '@model/application/application-status';
+import {ApplicationStatus, contains} from '@model/application/application-status';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 @Component({
@@ -84,8 +84,9 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   }
 
   private showDecisionActions(app: Application): boolean {
+    const inHandling = ApplicationStatus.HANDLING === app.status;
     const showByStatus = contains([app.status, app.targetState], ApplicationStatus.DECISION);
-    return showByStatus;
+    return inHandling || showByStatus;
   }
 
   private showOperationalConditionActions(app: Application): boolean {
