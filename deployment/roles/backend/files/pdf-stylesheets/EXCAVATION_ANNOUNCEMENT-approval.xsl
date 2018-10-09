@@ -154,45 +154,40 @@
         </div>
       </xsl:if>
 
-      <section class="unboxed">
-        <h2>Perittävät maksut</h2>
-
-          <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
-            <div class="indented">
-              <div class="charge-info">
-                <xsl:for-each select="data/chargeInfoEntries">
-                  <div class="row">
-                    <span class="c1">
-                      <xsl:if test="./level > 0">
-                        <span class="up-arrow" style="padding-left: {level}em"></span>
-                      </xsl:if>
-                      <xsl:value-of select="text"/>
-                      <xsl:for-each select="explanation">
-                        <div class="explanation"><xsl:value-of select="."/></div>
-                      </xsl:for-each>
-                    </span>
-                    <span class="c2">
-                      <xsl:value-of select="quantity"/>
-                    </span>
-                    <span class="c3">
-                      <xsl:value-of select="unitPrice"/>
-                    </span>
-                    <span class="c4">
-                      <xsl:value-of select="netPrice"/>
-                    </span>
-                  </div>
-                </xsl:for-each>
-
-                <div class="sum-row">
-                  <span class="c1">YHTEENSÄ</span>
-                  <span class="c2"></span>
-                  <span class="c3"></span>
-                  <span class="c4"><xsl:value-of select="data/totalRent"/></span>
+      <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
+        <section class="unboxed">
+          <h2>Perittävät maksut</h2>
+          <div class="indented">
+            <div class="charge-info">
+              <xsl:for-each select="data/chargeInfoEntries">
+                <div class="row">
+                  <span class="c1">
+                    <xsl:if test="./level > 0">
+                      <span class="up-arrow" style="padding-left: {level}em"></span>
+                    </xsl:if>
+                    <xsl:value-of select="text"/>
+                    <xsl:for-each select="explanation">
+                      <div class="explanation"><xsl:value-of select="."/></div>
+                    </xsl:for-each>
+                  </span>
+                  <span class="c2">
+                    <xsl:value-of select="quantity"/>
+                  </span>
+                  <span class="c3">
+                    <xsl:value-of select="unitPrice"/>
+                  </span>
+                  <span class="c4">
+                    <xsl:value-of select="netPrice"/>
+                  </span>
                 </div>
+              </xsl:for-each>
+
+              <div class="sum-row">
+                <span class="c1">YHTEENSÄ</span>
+                <span class="c2"></span>
+                <span class="c3"></span>
+                <span class="c4"><xsl:value-of select="data/totalRent"/></span>
               </div>
-              <p class="space-above">
-                Maksut perustuvat yleisten töiden lautakunnan päätökseen 11.11.2014 §431.
-              </p>
             </div>
             <p class="space-above">
               Maksut perustuvat yleisten töiden lautakunnan päätökseen 11.11.2014 §431.
@@ -200,14 +195,18 @@
             <p>
               Lasku lähetetään erikseen.
             </p>
-          </xsl:if>
-          <xsl:if test="data/notBillable = 'true'">
-            <p>Korvauksetta.</p>
-            <p class="space-above">
-              Korvauksettomuuden peruste: <xsl:value-of select="data/notBillableReason"/>
-            </p>
-          </xsl:if>
-      </section>
+          </div>
+        </section>
+      </xsl:if>
+      <xsl:if test="data/notBillable = 'true'">
+        <section class="unboxed">
+          <h2>Perittävät maksut</h2>
+          <p>Korvauksetta.</p>
+          <p class="space-above">
+            Korvauksettomuuden peruste: <xsl:value-of select="data/notBillableReason"/>
+          </p>
+        </section>
+      </xsl:if>
 
       <section class="unboxed new-page">
         <h2>Muutoksenhaku</h2>
