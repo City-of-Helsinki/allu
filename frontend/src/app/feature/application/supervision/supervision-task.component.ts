@@ -12,13 +12,14 @@ import {RoleType} from '@model/user/role-type';
 import {ArrayUtil} from '@util/array-util';
 import {
   SUPERVISION_APPROVAL_MODAL_CONFIG,
-  SupervisionApprovalModalComponent, SupervisionApprovalModalData,
+  SupervisionApprovalModalComponent,
+  SupervisionApprovalModalData,
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
-import {filter, map, startWith, switchMap, take, takeUntil} from 'rxjs/internal/operators';
+import {filter, map, take} from 'rxjs/internal/operators';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
@@ -28,20 +29,13 @@ import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {Some} from '@util/option';
-import {
-  ReportOperationalCondition,
-  ReportWorkFinished,
-  SetRequiredTasks
-} from '@feature/application/actions/excavation-announcement-actions';
+import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
 import {Observable, Subject} from 'rxjs/index';
-import {RequiredTasks} from '@model/application/required-tasks';
 import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
 import {CommentType} from '@model/application/comment/comment-type';
 import {ApplicationStatus} from '@model/application/application-status';
 import {findTranslation} from '@util/translations';
-import {Load} from '@feature/comment/actions/comment-actions';
-import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {StatusChangeInfo} from '@model/application/status-change-info';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 
@@ -53,6 +47,7 @@ import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notifi
   ]
 })
 export class SupervisionTaskComponent implements OnInit, OnDestroy {
+  @Input() application: Application;
   @Input() form: FormGroup;
   @Input() supervisors: Array<User> = [];
   @Output() onRemove = new EventEmitter<void>();
@@ -62,12 +57,10 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   canEdit = false;
   canApprove = false;
   canRemove = false;
-  showRequiredTasks = false;
   editing = false;
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
-  private _application: Application;
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromRoot.State>,
@@ -94,27 +87,11 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUserCanEdit(formValue.creatorId);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
-
-    this.form.get('type').valueChanges.pipe(
-      takeUntil(this.destroy),
-      startWith(formValue.type)
-    ).subscribe(type => this.onTypeChange(type, this.application));
   }
 
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
-  }
-
-  @Input() set application(application: Application) {
-    this._application = application;
-    Some(this.form)
-      .map(form => form.get('type').value)
-      .do(type => this.onTypeChange(type, application));
-  }
-
-  get application() {
-    return this._application;
   }
 
   remove(): void {
@@ -127,7 +104,6 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   save(): void {
     const formValue = <SupervisionTaskForm>this.form.getRawValue();
-    const requiredTasks: RequiredTasks = SupervisionTaskForm.requiredTasks(formValue);
     this.store.select(fromApplication.getCurrentApplication).pipe(
       map(app => {
         const task = SupervisionTaskForm.to(formValue);
@@ -135,7 +111,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
         return task;
       }),
       take(1)
-    ).subscribe(task => this.handleSave(task, requiredTasks));
+    ).subscribe(task => this.handleSave(task));
   }
 
   cancel(): void {
@@ -277,27 +253,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     };
   }
 
-  private onTypeChange(type: SupervisionTaskType, application: Application): void {
-    this.showRequiredTasks = type === SupervisionTaskType.PRELIMINARY_SUPERVISION
-      && application.type === ApplicationType.EXCAVATION_ANNOUNCEMENT;
-
-    if (this.showRequiredTasks) {
-      const excavation = <ExcavationAnnouncement>application.extension;
-      this.form.patchValue({
-        compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,
-        qualityAssuranceTest: excavation.qualityAssuranceTest
-      });
-    } else {
-      this.form.patchValue({
-        compactionAndBearingCapacityMeasurement: undefined,
-        qualityAssuranceTest: undefined
-      });
-    }
-  }
-
-  private handleSave(task: SupervisionTask, requiredTasks?: RequiredTasks): void {
+  private handleSave(task: SupervisionTask): void {
     this.store.dispatch(new Save(task));
-    Some(requiredTasks).do(tasks => this.store.dispatch(new SetRequiredTasks(tasks)));
     this.editing = false;
   }
 
