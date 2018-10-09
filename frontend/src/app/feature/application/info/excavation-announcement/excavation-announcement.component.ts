@@ -30,7 +30,6 @@ import {
 } from '@feature/application/date-reporting/date-reporting-modal.component';
 import {ReportCustomerDates} from '@feature/application/actions/excavation-announcement-actions';
 import {ApplicationStatus} from '@model/application/application-status';
-import {DateReport} from '@feature/application/date-reporting/date-report';
 
 @Component({
   selector: 'excavation-announcement',
@@ -70,7 +69,13 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   onValidityEndTimePickerClick(picker: MatDatepicker<Date>): void {
     if (this.validityEndTimeCtrl.warnings.inWinterTime) {
       Some(this.validityEndTimeCtrl.value).do(date => {
-        this.validityEndTimeCtrl.patchValue(TimeUtil.toSummerTimeStart(date, this.winterTimeEnd));
+        // Clear errors and disable validators temporarily because otherwise if end date is same as
+        // winter end date the control would immediately become invalid again.
+        this.validityEndTimeCtrl.clearValidators();
+        this.validityEndTimeCtrl.warnings = [];
+        this.validityEndTimeCtrl.patchValue(TimeUtil.toWinterTimeEnd(date, this.winterTimeEnd));
+        this.setEndTimeCtrlValidators();
+
         this.winterTimeOperationCtrl.patchValue(date);
       });
     } else {
@@ -150,10 +155,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
         .pipe(take(1)).subscribe(([start, end]) => {
           this.winterTimeStart = start.value;
           this.winterTimeEnd = end.value;
-          this.validityEndTimeCtrl.setValidators(
-            [Validators.required, ComplexValidator.inWinterTime(this.winterTimeStart, this.winterTimeEnd)]);
+          this.setEndTimeCtrlValidators();
         });
-
   }
 
   protected onApplicationChange(application: Application): void {
@@ -201,5 +204,10 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     } else {
       return [];
     }
+  }
+
+  private setEndTimeCtrlValidators(): void {
+    this.validityEndTimeCtrl.setValidators(
+        [Validators.required, ComplexValidator.inWinterTime(this.winterTimeStart, this.winterTimeEnd)]);
   }
 }

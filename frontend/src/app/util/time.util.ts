@@ -168,10 +168,6 @@ export class TimeUtil {
     return moment(end).year(year).toDate();
   }
 
-  public static toSummerTimeStart(date: Date, winterEnd: string): Date {
-    return this.add(this.toWinterTimeEnd(date, winterEnd), 1, 'day');
-  }
-
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
     if (dateString) {
       const m = moment(dateString, format);
