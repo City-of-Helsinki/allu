@@ -11,6 +11,9 @@ import {SupervisionTaskEffects} from '@feature/application/supervision/effects/s
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {RouterModule} from '@angular/router';
+import {
+  ExcavationSupervisionApprovalModalComponent
+} from '@feature/application/supervision/excavation-supervision-approval-modal.component';
 
 @NgModule({
   imports: [
@@ -26,13 +29,15 @@ import {RouterModule} from '@angular/router';
   declarations: [
     SupervisionComponent,
     SupervisionTaskComponent,
-    SupervisionApprovalModalComponent
+    SupervisionApprovalModalComponent,
+    ExcavationSupervisionApprovalModalComponent
   ],
   providers: [
     SupervisionTaskService
   ],
   entryComponents: [
-    SupervisionApprovalModalComponent
+    SupervisionApprovalModalComponent,
+    ExcavationSupervisionApprovalModalComponent
   ]
 })
 export class SupervisionModule {}

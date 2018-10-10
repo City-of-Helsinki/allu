@@ -38,6 +38,10 @@ import {ApplicationStatus} from '@model/application/application-status';
 import {findTranslation} from '@util/translations';
 import {StatusChangeInfo} from '@model/application/status-change-info';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
+import {
+  ExcavationSupervisionApprovalModalComponent,
+  ExcavationSupervisionApprovalModalData
+} from '@feature/application/supervision/excavation-supervision-approval-modal.component';
 
 @Component({
   selector: 'supervision-task',
@@ -184,12 +188,33 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private openModal(type: SupervisionApprovalResolutionType): MatDialogRef<SupervisionApprovalModalComponent> {
     const task = SupervisionTaskForm.to(this.form.value);
+    if (this.application.type === ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      return this.openExcavationApprovalModal(type, task);
+    } else {
+      return this.openApprovalModal(type, task);
+    }
+  }
+
+  private openApprovalModal(type: SupervisionApprovalResolutionType, task: SupervisionTask):
+    MatDialogRef<SupervisionApprovalModalComponent> {
     const config = {
       ...SUPERVISION_APPROVAL_MODAL_CONFIG,
       data: this.approvalModalData(type, task)
     };
 
     return this.dialog.open(SupervisionApprovalModalComponent, config);
+  }
+
+  private openExcavationApprovalModal(type: SupervisionApprovalResolutionType, task: SupervisionTask):
+    MatDialogRef<SupervisionApprovalModalComponent> {
+    const baseData = this.approvalModalData(type, task);
+
+    const config = {
+      ...SUPERVISION_APPROVAL_MODAL_CONFIG,
+      data: this.excavationApprovalModalData(baseData)
+    };
+
+    return this.dialog.open(ExcavationSupervisionApprovalModalComponent, config);
   }
 
   private currentUserCanEdit(creatorId: number): void {
@@ -211,7 +236,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private preferredSupervisor(): void {
-    const app = this.applicationStore.snapshot.application;
+    const app = this.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.type, app.firstLocation.effectiveCityDistrictId);
     this.userService.search(criteria).pipe(
       map(preferred => ArrayUtil.first(preferred)),
@@ -220,20 +245,14 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private approvalModalData(resolutionType: SupervisionApprovalResolutionType, task: SupervisionTask): SupervisionApprovalModalData {
-    const data = {
+    return {
       resolutionType: resolutionType,
       taskType: task.type,
       application: this.application
     };
-
-    if (ApplicationType.EXCAVATION_ANNOUNCEMENT === this.application.type) {
-      return this.excavationApprovalModalData(data);
-    } else {
-      return data;
-    }
   }
 
-  private excavationApprovalModalData(baseData: SupervisionApprovalModalData): SupervisionApprovalModalData {
+  private excavationApprovalModalData(baseData: SupervisionApprovalModalData): ExcavationSupervisionApprovalModalData {
     let reportedDate: Date;
     let comparedDate: Date;
 
