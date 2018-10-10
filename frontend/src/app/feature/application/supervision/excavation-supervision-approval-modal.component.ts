@@ -18,10 +18,13 @@ import {
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from '@feature/application/supervision/supervision-approval-modal.component';
+import {RequiredTasks} from '@model/application/required-tasks';
 
 export interface ExcavationSupervisionApprovalModalData extends SupervisionApprovalModalData {
   reportedDate?: Date;
   comparedDate?: Date;
+  compactionAndBearingCapacityMeasurement?: boolean;
+  qualityAssuranceTest?: boolean;
 }
 
 const taskTypeToReportedDateType = {
@@ -42,10 +45,11 @@ const taskTypeToApplicationStatus = {
 export class ExcavationSupervisionApprovalModalComponent extends SupervisionApprovalModalComponent implements OnInit {
   showToDecisionMaking = false;
   showDateReporting = false;
+  showRequiredTasks = false;
   reportedDateType: ReportedDateType;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) data: ExcavationSupervisionApprovalModalData,
+    @Inject(MAT_DIALOG_DATA) public data: ExcavationSupervisionApprovalModalData,
     fb: FormBuilder,
     dialogRef: MatDialogRef<SupervisionApprovalModalComponent>,
     private store: Store<fromRoot.State>,
@@ -56,8 +60,14 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
   ngOnInit(): void {
     super.ngOnInit();
     this.showDateReporting = this.needDateReporting(this.data.taskType, this.resolutionType);
+    this.showRequiredTasks = SupervisionTaskType.PRELIMINARY_SUPERVISION === this.data.taskType;
+
     if (this.showDateReporting) {
-      this.initReportedDate();
+      this.initDateReporting();
+    }
+
+    if (this.showRequiredTasks) {
+      this.initRequiredTasks();
     }
   }
 
@@ -73,11 +83,12 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
     const confirmation = super.createConfirmation();
     return {
       ...confirmation,
-      statusChange: this.getStatusChange()
+      statusChange: this.getStatusChange(),
+      requiredTasks: this.getRequiredTasks()
     };
   }
 
-  private initReportedDate(): void {
+  private initDateReporting(): void {
     const reportedDateCtrl = this.fb.control(this.data.reportedDate, Validators.required);
     this.form.addControl('reportedDate', reportedDateCtrl);
     this.reportedDateType = taskTypeToReportedDateType[this.data.taskType];
@@ -128,9 +139,28 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
     return validTaskType && validResolutionType;
   }
 
+  private initRequiredTasks(): void {
+    const measurementCtrl = this.fb.control(this.data.compactionAndBearingCapacityMeasurement, Validators.required);
+    const qualityAssuranceTest = this.fb.control(this.data.qualityAssuranceTest, Validators.required);
+    this.form.addControl('compactionAndBearingCapacityMeasurement', measurementCtrl);
+    this.form.addControl('qualityAssuranceTest', qualityAssuranceTest);
+  }
+
   private getStatusChange(): ApplicationStatus {
     if (this.showDateReporting) {
       return taskTypeToApplicationStatus[this.data.taskType];
+    } else {
+      return undefined;
+    }
+  }
+
+  private getRequiredTasks(): RequiredTasks {
+    const formValue = this.form.value;
+    if (formValue.qualityAssuranceTest || formValue.compactionAndBearingCapacityMeasurement) {
+      return {
+        qualityAssuranceTest: formValue.qualityAssuranceTest,
+        compactionAndBearingCapacityMeasurement: formValue.compactionAndBearingCapacityMeasurement
+      };
     } else {
       return undefined;
     }

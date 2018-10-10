@@ -7,6 +7,7 @@ import {SupervisionTaskType} from '@model/application/supervision/supervision-ta
 import {Subject} from 'rxjs/index';
 import {Application} from '@model/application/application';
 import {ApplicationStatus} from '@model/application/application-status';
+import {RequiredTasks} from '@model/application/required-tasks';
 
 export const SUPERVISION_APPROVAL_MODAL_CONFIG = {width: '600px', data: {}};
 
@@ -19,8 +20,6 @@ export interface SupervisionApprovalModalData {
   resolutionType: SupervisionApprovalResolutionType;
   taskType: SupervisionTaskType;
   application: Application;
-  reportedDate?: Date;
-  comparedDate?: Date;
 }
 
 export interface SupervisionApprovalResult {
@@ -28,6 +27,7 @@ export interface SupervisionApprovalResult {
   newSupervisionDate?: Date;
   reportedDate?: Date;
   statusChange?: ApplicationStatus;
+  requiredTasks?: RequiredTasks;
 }
 
 @Component({

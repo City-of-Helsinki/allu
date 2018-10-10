@@ -43,6 +43,19 @@
             {{'dateReporting.field.reportedDateMissing' | translation}}
           </mat-error>
         </mat-form-field>
+
+        <div fxLayout="row" *ngIf="showRequiredTasks" class="form-group">
+          <div fxFlex>
+            <mat-checkbox class="input-field-checkbox" formControlName="compactionAndBearingCapacityMeasurement">
+              {{'application.excavationAnnouncement.compactionAndBearingCapacityMeasurement' | translation}}
+            </mat-checkbox>
+          </div>
+          <div fxFlex>
+            <mat-checkbox class="input-field-checkbox" formControlName="qualityAssuranceTest">
+              {{'application.excavationAnnouncement.qualityAssuranceTest' | translation}}
+            </mat-checkbox>
+          </div>
+        </div>
       </div>
     </div>
   </mat-dialog-content>

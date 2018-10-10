@@ -29,7 +29,11 @@ import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {Some} from '@util/option';
-import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
+import {
+  ReportOperationalCondition,
+  ReportWorkFinished,
+  SetRequiredTasks
+} from '@feature/application/actions/excavation-announcement-actions';
 import {Observable, Subject} from 'rxjs/index';
 import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
@@ -166,6 +170,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const task = this.taskWithResult(SupervisionTaskStatusType.APPROVED, result);
     this.store.dispatch(new Approve(task));
     Some(result.reportedDate).do(date => this.reportDatesOnApproval(date, task.type));
+    Some(result.requiredTasks).do(tasks => this.store.dispatch(new SetRequiredTasks(tasks)));
     this.handleStatusChange(result, changeInfo);
   }
 
@@ -268,7 +273,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     return {
       ...baseData,
       reportedDate,
-      comparedDate
+      comparedDate,
+      compactionAndBearingCapacityMeasurement: extension.compactionAndBearingCapacityMeasurement,
+      qualityAssuranceTest: extension.qualityAssuranceTest
     };
   }
 

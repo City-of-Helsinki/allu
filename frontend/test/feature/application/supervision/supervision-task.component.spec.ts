@@ -26,6 +26,7 @@ import {SupervisionTaskForm} from '@feature/application/supervision/supervision-
 import {ApplicationType} from '@model/application/type/application-type';
 import {getButtonWithText} from '../../../selector-helpers';
 import {UserService} from '@service/user/user-service';
+import {Location} from '@model/common/location';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -95,6 +96,7 @@ describe('SupervisionTaskComponent', () => {
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
+    currentApplication.locations = [new Location(1)];
     store.dispatch(new ApplicationActions.LoadSuccess(currentApplication));
     comp.form = new FormBuilder().group(taskForm);
     comp.supervisors = [supervisor];
