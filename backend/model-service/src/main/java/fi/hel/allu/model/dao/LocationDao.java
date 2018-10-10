@@ -9,6 +9,8 @@ import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
+import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
@@ -97,7 +100,7 @@ public class LocationDao {
     List<Location> locations = locationIds.stream()
         .map(id -> findById(id).get())
         .collect(Collectors.toList());
-    locations.forEach(l -> transformCoordinates(l, srId));
+    locations.forEach(l -> transformAndCleanupCoordinates(l, srId));
     return locations;
   }
 
@@ -108,7 +111,7 @@ public class LocationDao {
 
   @Transactional
   public Location insert(Location locationData) {
-    transformCoordinates(locationData, ALLU_SRID);
+    transformAndCleanupCoordinates(locationData, ALLU_SRID);
     locationData.setId(null);
     Integer maxLocationKey = queryFactory.select(SQLExpressions.max(location.locationKey))
         .from(location).where(location.applicationId.eq(locationData.getApplicationId())).fetchOne();
@@ -134,7 +137,7 @@ public class LocationDao {
   }
 
   private Location update(Location locationData) {
-    transformCoordinates(locationData, ALLU_SRID);
+    transformAndCleanupCoordinates(locationData, ALLU_SRID);
     int id = locationData.getId();
     Optional<Location> currentLocationOpt = findById(id);
     if (!currentLocationOpt.isPresent()) {
@@ -497,6 +500,20 @@ public class LocationDao {
     return paymentTariff;
   }
 
+  private void transformAndCleanupCoordinates(Location locationData, Integer targetSrId) {
+    transformCoordinates(locationData, targetSrId);
+    removeRepeatedPoints(locationData);
+  }
+
+  private void removeRepeatedPoints(Location locationData) {
+    if (locationData.getGeometry() != null) {
+      Geometry geometry = queryFactory
+          .select(Expressions.simpleTemplate(Geometry.class, "ST_RemoveRepeatedPoints({0})", locationData.getGeometry()))
+          .fetchFirst();
+      locationData.setGeometry(geometry);
+    }
+  }
+
   private void transformCoordinates(Location locationData, Integer targetSrId) {
     locationData.setGeometry(coordinateTransformation.transformCoordinates(locationData.getGeometry(), targetSrId));
   }
@@ -507,6 +524,11 @@ public class LocationDao {
 
   private void transformCoordinates(List<FixedLocation> fixedLocations, Integer targetSrId) {
     fixedLocations.forEach(f -> f.setGeometry(coordinateTransformation.transformCoordinates(f.getGeometry(), targetSrId)));
+  }
+
+  @Transactional(readOnly = true)
+  public Geometry transformCoordinates(Geometry geometry, Integer targetSrid) {
+     return coordinateTransformation.transformCoordinates(geometry, targetSrid);
   }
 
 }
