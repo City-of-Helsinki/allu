@@ -1,5 +1,13 @@
 package fi.hel.allu.search.domain;
 
+import org.geolatte.geom.Geometry;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
+import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
+
 /**
  * ElasticSearch mapping for location.
  */
@@ -10,6 +18,18 @@ public class LocationES {
   private Integer cityDistrictId;
   private String additionalInfo;
   private String address;
+  @JsonSerialize(using = GeometrySerializerProxy.class)
+  @JsonDeserialize(using = GeometryDeserializerProxy.class)
+  private Geometry geometry;
+
+  /**
+   * ElasticSearch uses different coordinate system. Save search coordinates
+   * in separate field to avoid need to transform result coordinates back to Allu coordinate system
+   */
+  @JsonSerialize(using = GeometrySerializerProxy.class)
+  @JsonDeserialize(using = GeometryDeserializerProxy.class)
+  private Geometry searchGeometry;
+
 
   public LocationES() {
     // for JSON serialization
@@ -70,5 +90,21 @@ public class LocationES {
 
   public void setAddress(String address) {
     this.address = address;
+  }
+
+  public Geometry getGeometry() {
+    return geometry;
+  }
+
+  public void setGeometry(Geometry geometry) {
+    this.geometry = geometry;
+  }
+
+  public Geometry getSearchGeometry() {
+    return searchGeometry;
+  }
+
+  public void setSearchGeometry(Geometry searchGeometry) {
+    this.searchGeometry = searchGeometry;
   }
 }

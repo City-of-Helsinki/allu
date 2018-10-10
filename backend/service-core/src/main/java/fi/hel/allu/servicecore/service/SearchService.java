@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
+import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -31,11 +32,15 @@ import fi.hel.allu.servicecore.util.RestResponsePage;
 
 @Service
 public class SearchService {
+
+  private static final int ES_SRID = 4326;
+
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private ApplicationMapper applicationMapper;
   private CustomerMapper customerMapper;
   private ProjectMapper projectMapper;
+  private LocationService locationService;
 
   @Autowired
   public SearchService(
@@ -43,12 +48,14 @@ public class SearchService {
       RestTemplate restTemplate,
       ApplicationMapper applicationMapper,
       CustomerMapper customerMapper,
-      ProjectMapper projectMapper) {
+      ProjectMapper projectMapper,
+      LocationService locationService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
     this.customerMapper = customerMapper;
     this.projectMapper = projectMapper;
+    this.locationService = locationService;
   }
 
   public void insertApplication(ApplicationJson applicationJson) {
@@ -201,7 +208,12 @@ public class SearchService {
    *          applications.
    * @return List of found applications.
    */
-  public Page<ApplicationES> searchApplication(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+  public Page<ApplicationES> searchApplication(ApplicationQueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+    if (queryParameters.getIntersectingGeometry() != null) {
+      Geometry intersectingGeometry = locationService.transformCoordinates(queryParameters.getIntersectingGeometry(), ES_SRID);
+      queryParameters.setIntersectingGeometry(intersectingGeometry);
+
+    }
     return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest, matchAny, Function.identity());
   }
 

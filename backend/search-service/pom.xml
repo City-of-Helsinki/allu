@@ -11,7 +11,7 @@
 
     <artifactId>search-service</artifactId>
     <properties>
-        <elasticsearch.version>5.4.1</elasticsearch.version>
+        <elasticsearch.version>5.6.0</elasticsearch.version>
     </properties>
 
     <dependencies>
@@ -64,6 +64,22 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.locationtech.spatial4j</groupId>
+            <artifactId>spatial4j</artifactId>
+            <version>0.6</version>
+        </dependency>
+        <dependency>
+          <groupId>org.locationtech.jts</groupId>
+          <artifactId>jts-core</artifactId>
+          <version>1.15.0</version>
+          <exclusions>
+            <exclusion>
+              <groupId>xerces</groupId>
+              <artifactId>xercesImpl</artifactId>
+            </exclusion>
+          </exclusions>
+      </dependency>
     </dependencies>
 
     <build>

@@ -67,7 +67,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insert(applicationES);
 
-    QueryParameters params = SearchTestUtil.createQueryParameters("name", "testi");
+    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("name", "testi");
     applicationSearchService.refreshIndex();
     List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
     assertNotNull(appList);
@@ -81,12 +81,12 @@ public class ApplicationSearchTest {
     applicationSearchService.insert(applicationES);
     applicationSearchService.refreshIndex();
 
-    QueryParameters params = SearchTestUtil.createQueryParameters("applicationId", "TP00");
+    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("applicationId", "TP00");
     List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
     assertNotNull(appList);
     assertEquals(1, appList.size());
 
-    params = SearchTestUtil.createQueryParameters("applicationId", "TP000001");
+    params = SearchTestUtil.createApplicationQueryParameters("applicationId", "TP000001");
     appList = applicationSearchService.findByField(params, null).getContent();
     assertNotNull(appList);
     assertEquals(1, appList.size());
@@ -106,7 +106,7 @@ public class ApplicationSearchTest {
     applicationSearchService.insert(applicationES2);
     applicationSearchService.insert(applicationES3);
 
-    QueryParameters params = new QueryParameters();
+    ApplicationQueryParameters params = new ApplicationQueryParameters();
     QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
@@ -132,7 +132,7 @@ public class ApplicationSearchTest {
       applicationSearchService.insert(applicationES);
     }
     applicationSearchService.refreshIndex();
-    QueryParameters parameters = new QueryParameters();
+    ApplicationQueryParameters parameters = new ApplicationQueryParameters();
     parameters.setQueryParameters(Collections.singletonList(new QueryParameter("owner.userName", USERNAME)));
     Page<Integer> appPage = applicationSearchService.findByField(parameters,
         new PageRequest(2, 10, Direction.ASC, "name"));
@@ -185,7 +185,7 @@ public class ApplicationSearchTest {
     applicationSearchService.insert(applicationES3);
     applicationSearchService.refreshIndex();
 
-    QueryParameters params = new QueryParameters();
+    ApplicationQueryParameters params = new ApplicationQueryParameters();
     QueryParameter nameParameter = new QueryParameter("name", USERNAME);
     QueryParameter ownerNameParameter = new QueryParameter("owner.userName", Arrays.asList(USERNAME));
     QueryParameter customerNameParameter = new QueryParameter("customers.applicant.customer.name", Arrays.asList(USERNAME));
@@ -232,7 +232,7 @@ public class ApplicationSearchTest {
     applicationSearchService.insert(applicationES2);
     applicationSearchService.insert(applicationES3);
 
-    QueryParameters params = new QueryParameters();
+    ApplicationQueryParameters params = new ApplicationQueryParameters();
     QueryParameter parameter = new QueryParameter(
         "status.value", Arrays.asList(StatusType.FINISHED.name(), StatusType.HANDLING.name(), StatusType.DECISION.name()));
     List<QueryParameter> parameterList = new ArrayList<>();
@@ -262,7 +262,7 @@ public class ApplicationSearchTest {
     applicationES.setCustomers(roleTypedCustomerES);
     applicationSearchService.insert(applicationES);
 
-    QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "kontakti");
+    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("customers.applicant.contacts.name", "kontakti");
     applicationSearchService.refreshIndex();
     List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
     assertNotNull(appList);
@@ -275,7 +275,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insert(applicationES);
 
-    QueryParameters params = new QueryParameters();
+    ApplicationQueryParameters params = new ApplicationQueryParameters();
     QueryParameter parameter = new QueryParameter("owner.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
@@ -292,7 +292,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insert(applicationES);
 
-    QueryParameters params = new QueryParameters();
+    ApplicationQueryParameters params = new ApplicationQueryParameters();
     QueryParameter parameter = new QueryParameter("status.value", Arrays.asList(StatusType.PENDING.name(), StatusType.CANCELLED.name()));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
@@ -310,7 +310,7 @@ public class ApplicationSearchTest {
     applicationSearchService.insert(applicationES);
     applicationSearchService.refreshIndex();
 
-    QueryParameters params = new QueryParameters();
+    ApplicationQueryParameters params = new ApplicationQueryParameters();
     ZonedDateTime testStartTime = ZonedDateTime.parse("2016-07-05T06:10:10.000Z");
     ZonedDateTime testEndTime = ZonedDateTime.parse(  "2016-07-06T05:10:10.000Z");
     QueryParameter parameter = new QueryParameter("creationTime", testStartTime, testEndTime);
@@ -345,7 +345,7 @@ public class ApplicationSearchTest {
     applicationSearchService.bulkUpdate(Collections.singletonList(applicationES));
     applicationSearchService.refreshIndex();
 
-    QueryParameters params = SearchTestUtil.createQueryParameters("name", newName);
+    ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("name", newName);
     List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
     assertEquals(1, appList.size());
     applicationSearchService.delete("100");
@@ -538,9 +538,9 @@ public class ApplicationSearchTest {
     applicationSearchService.delete("100");
   }
 
-  public static QueryParameters createRecurringQuery(ZonedDateTime begin, ZonedDateTime end) {
+  public static ApplicationQueryParameters createRecurringQuery(ZonedDateTime begin, ZonedDateTime end) {
     QueryParameter recurringQP = new QueryParameter(QueryParameter.FIELD_NAME_RECURRING_APPLICATION, begin, end);
-    QueryParameters params = new QueryParameters();
+    ApplicationQueryParameters params = new ApplicationQueryParameters();
     params.setQueryParameters(Collections.singletonList(recurringQP));
     return params;
   }

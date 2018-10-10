@@ -182,6 +182,11 @@ public class ElasticSearchMappingConfig {
                     .field("type", "text")
                     .field("fields").copyCurrentStructure(parser(alphasort()))
                   .endObject()
+                  .startObject("searchGeometry")
+                    .field("type", "geo_shape")
+                    .field("tree", "quadtree")
+                    .field("precision", "1m")
+                  .endObject()
                 .endObject()
               .endObject()
               .startObject("project") // alphabetical sorting for project.identifier

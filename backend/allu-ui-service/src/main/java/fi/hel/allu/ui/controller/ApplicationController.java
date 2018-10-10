@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
@@ -118,7 +118,7 @@ public class ApplicationController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Page<ApplicationES>> search(@Valid @RequestBody QueryParameters queryParameters,
+  public ResponseEntity<Page<ApplicationES>> search(@Valid @RequestBody ApplicationQueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE, sort = "creationTime", direction = Direction.DESC)
       Pageable pageRequest,
       @RequestParam(defaultValue = "false") Boolean matchAny) {

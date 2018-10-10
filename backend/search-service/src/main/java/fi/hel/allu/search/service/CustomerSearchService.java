@@ -18,7 +18,7 @@ import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
 
 @Service
-public class CustomerSearchService extends GenericSearchService<CustomerES> {
+public class CustomerSearchService extends GenericSearchService<CustomerES, QueryParameters> {
 
   private static final Logger logger = LoggerFactory.getLogger(CustomerSearchService.class);
 

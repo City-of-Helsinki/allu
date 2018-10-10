@@ -166,7 +166,7 @@ public class ContactSearchSpec {
         });
 
         it("should find contacts stored in ElasticSearch", ()-> {
-          QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "kontakti");
+          ApplicationQueryParameters params = SearchTestUtil.createApplicationQueryParameters("customers.applicant.contacts.name", "kontakti");
           List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
           assertNotNull(appList);
           assertEquals(1, appList.size());
@@ -187,15 +187,15 @@ public class ContactSearchSpec {
           });
 
           it("should find applications updated contact of a customer", () -> {
-            params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "updated 1");
-            List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+            ApplicationQueryParameters appParams = SearchTestUtil.createApplicationQueryParameters("customers.applicant.contacts.name", "updated 1");
+            List<Integer> appList = applicationSearchService.findByField(appParams, null).getContent();
             assertNotNull(appList);
             assertEquals(1, appList.size());
           });
 
           it("should find applications freshly inserted contact of a customer", () -> {
-            params = SearchTestUtil.createQueryParameters("customers.contractor.contacts.name", "kontraktori");
-            List<Integer> appList = applicationSearchService.findByField(params, null).getContent();
+            ApplicationQueryParameters appParams = SearchTestUtil.createApplicationQueryParameters("customers.contractor.contacts.name", "kontraktori");
+            List<Integer> appList = applicationSearchService.findByField(appParams, null).getContent();
             assertNotNull(appList);
             assertEquals(1, appList.size());
           });

@@ -15,13 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
@@ -206,7 +205,7 @@ public class ApplicationServiceComposer {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public Page<ApplicationES> search(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+  public Page<ApplicationES> search(ApplicationQueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
     return searchService.searchApplication(
         queryParameters,
         pageRequest,

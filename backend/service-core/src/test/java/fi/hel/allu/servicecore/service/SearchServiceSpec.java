@@ -2,8 +2,6 @@ package fi.hel.allu.servicecore.service;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -19,10 +17,9 @@ import org.springframework.web.client.RestTemplate;
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
@@ -43,6 +40,9 @@ public class SearchServiceSpec {
   private CustomerMapper customerMapper;
   @Mock
   private ProjectMapper projectMapper;
+  @Mock
+  private LocationService locationService;
+
 
   private SearchService searchService;
 
@@ -51,12 +51,12 @@ public class SearchServiceSpec {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
         searchService = new SearchService(applicationProperties, restTemplate, applicationMapper, customerMapper,
-            projectMapper);
+            projectMapper, locationService);
       });
       it("Finds applications", () -> {
         final String APPLICATION_SEARCH = "APPLICATION_SEARCH";
         Mockito.when(applicationProperties.getApplicationSearchUrl()).thenReturn(APPLICATION_SEARCH);
-        QueryParameters queryParameters = new QueryParameters();
+        ApplicationQueryParameters queryParameters = new ApplicationQueryParameters();
         queryParameters.setQueryParameters(Arrays.asList(new QueryParameter()));
         RestResponsePage<Integer> response = new RestResponsePage<>();
         response.setContent(Arrays.asList(1, 2, 3));

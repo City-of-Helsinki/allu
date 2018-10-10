@@ -9,6 +9,8 @@ import org.geolatte.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,10 +19,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.CityDistrictInfo;
+import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.FixedLocationArea;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
+import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
+import fi.hel.allu.servicecore.domain.FixedLocationJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.LocationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
 
@@ -96,5 +103,12 @@ public class LocationService {
     final ResponseEntity<User> queryResult = restTemplate
         .getForEntity(applicationProperties.getFindSupervisionTaskOwnerUrl(), User.class, cityDistrictId, type);
     return UserMapper.mapToUserJson(queryResult.getBody());
+  }
+
+  public Geometry transformCoordinates(Geometry geometry, int srId) {
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getTransformGeometryUrl())
+        .queryParam("srid", srId)
+        .buildAndExpand().toUri();
+    return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(new GeometryWrapper(geometry)), GeometryWrapper.class).getBody().getGeometry();
   }
 }

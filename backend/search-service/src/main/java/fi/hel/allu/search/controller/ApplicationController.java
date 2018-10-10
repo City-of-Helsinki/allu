@@ -1,9 +1,9 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.ApplicationSearchService;
-import fi.hel.allu.search.service.CustomerSearchService;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,10 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-import java.util.List;
-import java.util.Map;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ApplicationQueryParameters;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerSearchService;
 
 @RestController
 @RequestMapping("/applications")
@@ -70,7 +70,7 @@ public class ApplicationController {
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
-  public ResponseEntity<Page<ApplicationES>> search(@Valid @RequestBody QueryParameters queryParameters,
+  public ResponseEntity<Page<ApplicationES>> search(@Valid @RequestBody ApplicationQueryParameters queryParameters,
       @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest,
       @RequestParam(defaultValue = "false") Boolean matchAny) {
     return new ResponseEntity<>(applicationSearchService.findApplicationByField(queryParameters, pageRequest, matchAny), HttpStatus.OK);

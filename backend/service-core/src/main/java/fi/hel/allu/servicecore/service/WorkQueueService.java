@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.UserJson;
 
 /**
@@ -50,7 +50,7 @@ public class WorkQueueService {
    * @param   queryParametersJson   Original query, which will get user specific filtering added.
    * @return  List of applications matching the given search query.
    */
-  public Page<ApplicationES> searchSharedByGroup(QueryParameters queryParametersJson, Pageable pageRequest) {
+  public Page<ApplicationES> searchSharedByGroup(ApplicationQueryParameters queryParametersJson, Pageable pageRequest) {
     // find application type and status query parameters, if any
     Map<Boolean, List<QueryParameter>> partitionedByType =
         partitionByField(queryParametersJson.getQueryParameters(), QueryParameter.FIELD_NAME_APPLICATION_TYPE);

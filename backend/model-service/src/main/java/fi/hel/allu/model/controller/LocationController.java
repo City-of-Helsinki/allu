@@ -1,25 +1,25 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.service.LocationService;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
+import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.GeometryWrapper;
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
-
-import javax.validation.Valid;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import fi.hel.allu.model.service.LocationService;
 
 @RestController
 @RequestMapping("/locations")
@@ -122,6 +122,11 @@ public class LocationController {
   @RequestMapping(value = "/geometry/isvalid", method = RequestMethod.POST)
   public ResponseEntity<Boolean> hasValidGeometry(@RequestBody GeometryWrapper geometryWrapper) {
     return new ResponseEntity<>(locationDao.isValidGeometry(geometryWrapper.getGeometry()), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/geometry/transform", method = RequestMethod.POST)
+  public ResponseEntity<GeometryWrapper> transfomGeometry(@RequestBody GeometryWrapper geometryWrapper, @RequestParam(value="srid") Integer srId) {
+    return ResponseEntity.ok(new GeometryWrapper(locationDao.transformCoordinates(geometryWrapper.getGeometry(), srId)));
   }
 
   // Make a stripped-down view of a city district: only the district ID + name.

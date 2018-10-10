@@ -1,12 +1,16 @@
 package fi.hel.allu.servicecore.service;
 
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import fi.hel.allu.servicecore.mapper.CustomerMapper;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,20 +27,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
+import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -51,6 +49,8 @@ public class ApplicationServiceTest extends MockServices {
   protected ContactService contactService;
   @Mock
   protected UserService userService;
+  @Mock
+  protected LocationService locationService;
   @Mock
   private CustomerMapper customerMapper;
   @Mock
@@ -69,7 +69,7 @@ public class ApplicationServiceTest extends MockServices {
 
   @Before
   public void setUp() {
-    applicationMapper = new ApplicationMapper(customerMapper, userService);
+    applicationMapper = new ApplicationMapper(customerMapper, userService, locationService);
 
     initSaveMocks();
     initSearchMocks();

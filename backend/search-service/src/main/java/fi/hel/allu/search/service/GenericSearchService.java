@@ -1,15 +1,11 @@
 package fi.hel.allu.search.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import fi.hel.allu.common.exception.SearchException;
-import fi.hel.allu.common.util.RecurringApplication;
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.search.domain.QueryParameters;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -44,18 +40,22 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import fi.hel.allu.common.exception.SearchException;
+import fi.hel.allu.common.util.RecurringApplication;
+import fi.hel.allu.search.config.ElasticSearchMappingConfig;
+import fi.hel.allu.search.domain.QueryParameter;
+import fi.hel.allu.search.domain.QueryParameters;
 
 
 /**
  * Generic ElasticSearch functionality for different kinds of searches.
  */
-public class GenericSearchService<T> {
+public class GenericSearchService<T, Q extends QueryParameters> {
   private static final Logger logger = LoggerFactory.getLogger(GenericSearchService.class);
   private static final int DEFAULT_PAGE = 0;
   private static final int DEFAULT_PAGESIZE = 100;
@@ -296,7 +296,7 @@ public class GenericSearchService<T> {
    * @return A page of matching application IDs. Results are ordered as
    *         specified by the query parameters.
    */
-  public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
+  public Page<Integer> findByField(Q queryParameters, Pageable pageRequest, Boolean matchAny) {
     if (pageRequest == null) {
       pageRequest = DEFAULT_PAGEREQUEST;
     }
@@ -315,11 +315,11 @@ public class GenericSearchService<T> {
     }
   }
 
-  public SearchRequestBuilder buildSearchRequest(QueryParameters queryParameters, Pageable pageRequest,
+  public SearchRequestBuilder buildSearchRequest(Q queryParameters, Pageable pageRequest,
       Boolean matchAny) {
     BoolQueryBuilder qb = QueryBuilders.boolQuery();
     addQueryParameters(queryParameters, matchAny, qb);
-    addAdditionalQueryParameters(qb);
+    addAdditionalQueryParameters(qb, queryParameters);
     SearchRequestBuilder srBuilder = prepareSearch(pageRequest, qb);
     addSearchOrder(pageRequest, srBuilder);
 
@@ -338,7 +338,7 @@ public class GenericSearchService<T> {
     }
   }
 
-  protected SearchRequestBuilder prepareSearch(Pageable pageRequest, BoolQueryBuilder qb) {
+  protected SearchRequestBuilder prepareSearch(Pageable pageRequest, QueryBuilder qb) {
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
         .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
         .setTypes(indexTypeName).setQuery(qb);
@@ -357,10 +357,10 @@ public class GenericSearchService<T> {
     }));
   }
 
-  protected void addAdditionalQueryParameters(BoolQueryBuilder qb) {
+  protected void addAdditionalQueryParameters(BoolQueryBuilder qb, Q queryParameters) {
   }
 
-  public Page<Integer> findByField(QueryParameters queryParameters, Pageable pageRequest) {
+  public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {
     return findByField(queryParameters, pageRequest, false);
   }
 

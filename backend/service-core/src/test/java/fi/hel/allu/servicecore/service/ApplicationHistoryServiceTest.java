@@ -39,6 +39,8 @@ public class ApplicationHistoryServiceTest extends MockServices {
   @Mock
   private UserService mockUserService;
   @Mock
+  private LocationService mockLocationService;
+  @Mock
   private UserJson mockUserJson;
   @Mock
   private ChangeHistoryMapper changeHistoryMapper;
@@ -62,7 +64,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    applicationMapper = new ApplicationMapper(customerMapper, mockUserService);
+    applicationMapper = new ApplicationMapper(customerMapper, mockUserService, mockLocationService);
     Mockito.when(mockApplicationProperties.getApplicationHistoryUrl()).thenReturn(APPLICATION_HISTORY_URL);
     Mockito.when(mockApplicationProperties.getAddApplicationHistoryUrl()).thenReturn(ADD_APPLICATION_HISTORY_URL);
     Mockito.when(mockUserService.getCurrentUser()).thenReturn(mockUserJson);

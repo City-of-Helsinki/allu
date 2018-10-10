@@ -1,5 +1,18 @@
 package fi.hel.allu.servicecore.mapper;
 
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.geolatte.geom.Geometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -15,31 +28,24 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.extension.*;
+import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.UserService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
 
+  private static final int ES_SRID = 4326;
+
   private final CustomerMapper customerMapper;
   private final UserService userService;
+  private final LocationService locationService;
 
   @Autowired
-  public ApplicationMapper(CustomerMapper customerMapper, UserService userService) {
+  public ApplicationMapper(CustomerMapper customerMapper, UserService userService, LocationService locationService) {
     this.customerMapper = customerMapper;
     this.userService = userService;
+    this.locationService = locationService;
   }
 
   /**
@@ -401,6 +407,9 @@ public class ApplicationMapper {
     locationEs.setAddress(json.getAddress());
     locationEs.setCityDistrictId(getCityDistrictId(json));
     locationEs.setAdditionalInfo(json.getAdditionalInfo());
+    locationEs.setGeometry(json.getGeometry());
+    Geometry searchGeometry = locationService.transformCoordinates(json.getGeometry(), ES_SRID);
+    locationEs.setSearchGeometry(searchGeometry);
     return locationEs;
   }
 

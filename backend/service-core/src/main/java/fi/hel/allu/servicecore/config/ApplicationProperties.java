@@ -458,6 +458,15 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/geometry/isvalid");
   }
 
+
+  /**
+   * @return url for transforming geometry coordinates
+   */
+  public String getTransformGeometryUrl() {
+    return getModelServiceUrl("/locations/geometry/transform");
+  }
+
+
   /**
    * @return url for fetching fixed locations (such as Narinkka) for given application type.
    */

@@ -1,11 +1,9 @@
 package fi.hel.allu.servicecore.mapper;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.CustomerWithContactsES;
-import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.service.UserService;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,10 +12,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.CustomerWithContactsES;
+import fi.hel.allu.search.domain.ESFlatValue;
+import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.LocationService;
+import fi.hel.allu.servicecore.service.UserService;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -29,12 +33,14 @@ public class ApplicationMapperTest {
   private CustomerMapper customerMapper;
   @Mock
   private UserService userService;
+  @Mock
+  private LocationService locationService;
 
   private ApplicationMapper applicationMapper;
 
   @Before
   public void setup() {
-    applicationMapper = new ApplicationMapper(customerMapper, userService);
+    applicationMapper = new ApplicationMapper(customerMapper, userService, locationService);
     when(customerMapper.createWithContactsES(any(CustomerWithContactsJson.class))).thenReturn(new CustomerWithContactsES());
   }
 
