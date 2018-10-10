@@ -31,7 +31,10 @@ public class AlluMailServiceSpec {
   @Mock
   private ContractService contractService;
   @Mock
+  private ApprovalDocumentService approvalDocumentService;
+  @Mock
   private JavaMailSender javaMailSender;
+
 
   private AlluMailService alluMailService;
 
@@ -39,7 +42,7 @@ public class AlluMailServiceSpec {
     describe("Mail sending service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
-        alluMailService = new AlluMailService(applicationProperties, decisionService, contractService, javaMailSender);
+        alluMailService = new AlluMailService(applicationProperties, decisionService, contractService, approvalDocumentService, javaMailSender);
       });
 
       final Supplier<MimeMessage> mockMimeMessage = let(()->Mockito.mock(MimeMessage.class));

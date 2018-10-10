@@ -289,7 +289,25 @@ public class ApplicationController {
   public ResponseEntity<Void> sendDecision(
       @PathVariable int applicationId,
       @RequestBody DecisionDetailsJson decisionDetailsJson) {
-    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson);
+    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.DECISION);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{applicationId}/operational_condition/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<Void> sendOperationalCondition(
+      @PathVariable int applicationId,
+      @RequestBody DecisionDetailsJson decisionDetailsJson) {
+    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.OPERATIONAL_CONDITION);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{applicationId}/work_finished/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<Void> sendWorkFinished(
+      @PathVariable int applicationId,
+      @RequestBody DecisionDetailsJson decisionDetailsJson) {
+    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.WORK_FINISHED);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

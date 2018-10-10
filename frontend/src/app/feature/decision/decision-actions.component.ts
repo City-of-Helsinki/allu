@@ -152,14 +152,25 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<{}> {
+    console.log(confirmation);
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
-      .map(details => this.decisionService.sendDecision(appId, details).pipe(
+      .map(details => this.sendDecisionDocument(appId, details, confirmation.status).pipe(
         tap(() => this.application.decisionDistributionList = details.decisionDistributionList),
         catchError(error => this.notification.errorCatch(error, {}))
       ))
       .orElseGet(() => of({}));
+  }
+
+  private sendDecisionDocument(appId: number, details: DecisionDetails, status: ApplicationStatus): Observable<{}> {
+    if (status == ApplicationStatus.OPERATIONAL_CONDITION) {
+      return this.decisionService.sendOperationalCondition(appId, details);
+    } else if (status == ApplicationStatus.FINISHED) {
+      return this.decisionService.sendWorkFinished(appId, details);
+    } else {
+      return this.decisionService.sendDecision(appId, details);
+    }
   }
 
   private validForDecision(app: Application): boolean {

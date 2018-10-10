@@ -121,8 +121,8 @@ public class ApplicationServiceComposerTest {
         .thenReturn(applicationJson);
     DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
 
-    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson);
-    Mockito.verify(mailComposerService).sendDecision(applicationJson, decisionDetailsJson);
+    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.DECISION);
+    Mockito.verify(mailComposerService).sendDecision(applicationJson, decisionDetailsJson, DecisionDocumentType.DECISION);
   }
 
 }

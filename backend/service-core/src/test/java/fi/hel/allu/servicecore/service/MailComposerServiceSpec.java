@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import fi.hel.allu.servicecore.domain.DecisionDocumentType;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Spectrum.class)
@@ -84,7 +85,7 @@ public class MailComposerServiceSpec {
           DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
           decisionDetailsJson.setDecisionDistributionList(distribution);
           decisionDetailsJson.setMessageBody("MessageBody");
-          mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson);
+          mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson, DecisionDocumentType.DECISION);
 
           Mockito.verify(alluMailService).newMailTo(Mockito.anyListOf(String.class));
           Mockito.verify(mailBuilder).withSubject(Mockito.anyString());

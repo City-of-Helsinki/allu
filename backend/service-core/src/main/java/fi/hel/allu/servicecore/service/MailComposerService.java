@@ -81,7 +81,6 @@ public class MailComposerService {
   private final LogService logService;
   private final ApplicationService applicationService;
 
-
   @Autowired
   public MailComposerService(AlluMailService alluMailService, AttachmentService attachmentService,
       LogService logService, ApplicationService applicationService) {
@@ -91,7 +90,7 @@ public class MailComposerService {
     this.applicationService = applicationService;
   }
 
-  public void sendDecision(ApplicationJson applicationJson, DecisionDetailsJson decisionDetailsJson) {
+  public void sendDecision(ApplicationJson applicationJson, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
     String subject = String.format(subjectFor(applicationJson.getType()), applicationJson.getApplicationId());
     subject += getApplicationNameForSubject(applicationJson);
     subject += getAddressForSubject(applicationJson);
@@ -118,6 +117,18 @@ public class MailComposerService {
 
         if (applicationJson.getType() == ApplicationType.PLACEMENT_CONTRACT) {
           mailBuilder.withContract(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+        } else if (applicationJson.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+          switch (type) {
+            case DECISION:
+              mailBuilder.withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              break;
+            case OPERATIONAL_CONDITION:
+              mailBuilder.withOperationalCondition(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              break;
+            case WORK_FINISHED:
+              mailBuilder.withWorkFinished(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              break;
+          }
         } else {
           mailBuilder.withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
         }

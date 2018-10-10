@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.MailSenderLog;
+import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.mail.model.MailMessage;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.mail.model.MailMessage.InlineResource;
@@ -8,6 +9,7 @@ import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +31,20 @@ public class AlluMailService {
   private final ApplicationProperties applicationProperties;
   private final DecisionService decisionService;
   private final ContractService contractService;
+  private final ApprovalDocumentService approvalDocumentService;
   private final MailService mailService;
   private Pattern emailAcceptPattern = null;
 
   @Autowired
-  public AlluMailService(ApplicationProperties applicationProperties, DecisionService decisionService,
-      ContractService contractService, JavaMailSender javaMailSender) {
+  public AlluMailService(ApplicationProperties applicationProperties,
+                         DecisionService decisionService,
+                         ContractService contractService,
+                         ApprovalDocumentService approvalDocumentService,
+                         JavaMailSender javaMailSender) {
     this.applicationProperties = applicationProperties;
     this.decisionService = decisionService;
     this.contractService = contractService;
+    this.approvalDocumentService = approvalDocumentService;
     mailService = new MailService(javaMailSender);
   }
 
@@ -86,12 +93,24 @@ public class AlluMailService {
     }
 
     public MailBuilder withDecision(String decisionPdfName, int applicationId) {
-      decisionAttachment = new Attachment(decisionPdfName, "application/pdf", decisionService.getDecision(applicationId));
+      decisionAttachment = new Attachment(decisionPdfName, MediaType.APPLICATION_PDF_VALUE, decisionService.getDecision(applicationId));
       return this;
     }
 
     public MailBuilder withContract(String contractPdfName, int applicationId) {
-      contractAttachment = new Attachment(contractPdfName, "application/pdf", contractService.getContract(applicationId));
+      contractAttachment = new Attachment(contractPdfName, MediaType.APPLICATION_PDF_VALUE, contractService.getContract(applicationId));
+      return this;
+    }
+
+    public MailBuilder withWorkFinished(String contractPdfName, int applicationId) {
+      contractAttachment = new Attachment(contractPdfName, MediaType.APPLICATION_PDF_VALUE,
+          approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED));
+      return this;
+    }
+
+    public MailBuilder withOperationalCondition(String contractPdfName, int applicationId) {
+      contractAttachment = new Attachment(contractPdfName, MediaType.APPLICATION_PDF_VALUE,
+          approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.OPERATIONAL_CONDITION));
       return this;
     }
 

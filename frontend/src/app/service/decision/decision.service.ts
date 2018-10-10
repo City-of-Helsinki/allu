@@ -10,6 +10,8 @@ import {catchError, map} from 'rxjs/internal/operators';
 
 const DECISION_URL = '/api/applications/:appId/decision';
 const DECISION_DISTRIBUTION_URL = '/api/applications/:appId/decision/send';
+const WORK_FINISHED_DISTRIBUTION_URL = '/api/applications/:appId/work_finished/send';
+const OPERATIONAL_CONDITION_DISTRIBUTION_URL = '/api/applications/:appId/operational_condition/send';
 
 @Injectable()
 export class DecisionService {
@@ -27,6 +29,20 @@ export class DecisionService {
 
   public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = DECISION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
+    return this.sendToUrl(url, emailDetails);
+  }
+
+  public sendWorkFinished(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
+    const url = WORK_FINISHED_DISTRIBUTION_URL.replace(':appId', String(applicationId));
+    return this.sendToUrl(url, emailDetails);
+  }
+
+  public sendOperationalCondition(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
+    const url = OPERATIONAL_CONDITION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
+    return this.sendToUrl(url, emailDetails);
+  }
+
+  private sendToUrl(url: string, emailDetails: DecisionDetails): Observable<{}> {
     return this.http.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails))).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('decision.error.send')))
     );

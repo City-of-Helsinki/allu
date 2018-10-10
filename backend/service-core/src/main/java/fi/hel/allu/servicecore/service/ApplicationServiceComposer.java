@@ -322,7 +322,7 @@ public class ApplicationServiceComposer {
    * @param applicationId        the application's Id.
    * @param decisionDetailsJson  details about the decision
    */
-  public void sendDecision(int applicationId, DecisionDetailsJson decisionDetailsJson) {
+  public void sendDecision(int applicationId, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
     ApplicationJson applicationJson = replaceDistributionList(applicationId,
         decisionDetailsJson.getDecisionDistributionList());
 
@@ -330,7 +330,7 @@ public class ApplicationServiceComposer {
       ApplicationTagJson tag = new ApplicationTagJson(null, ApplicationTagType.DECISION_NOT_SENT, ZonedDateTime.now());
       applicationService.addTag(applicationId, tag);
     }
-    mailComposerService.sendDecision(applicationJson, decisionDetailsJson);
+    mailComposerService.sendDecision(applicationJson, decisionDetailsJson, type);
   }
 
   private void onTagsChange(int id, List<ApplicationTagJson> oldTags, List<ApplicationTagJson> newTags) {
