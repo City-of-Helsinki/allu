@@ -66,6 +66,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   canApprove = false;
   canRemove = false;
   editing = false;
+  approveDisabled = false;
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
@@ -95,6 +96,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUserCanEdit(formValue.creatorId);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
+    this.approveDisabled = this.application.status === ApplicationStatus.DECISIONMAKING;
   }
 
   ngOnDestroy(): void {

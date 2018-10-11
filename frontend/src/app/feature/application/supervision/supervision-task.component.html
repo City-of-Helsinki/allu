@@ -81,7 +81,7 @@
         <div fxFlex="100%">
           <ng-container *ngIf="canApprove && !editing">
             <ng-container *availableTo="['ROLE_SUPERVISE']">
-              <button mat-raised-button type="button" color="primary" (click)="approve()">
+              <button mat-raised-button type="button" color="primary" [disabled]="approveDisabled" (click)="approve()">
                 {{'supervision.task.approve' | translation}}
               </button>
               <button mat-raised-button type="button" color="primary" (click)="reject()">
