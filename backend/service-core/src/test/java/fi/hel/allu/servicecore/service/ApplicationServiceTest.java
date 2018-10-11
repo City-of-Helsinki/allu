@@ -203,25 +203,4 @@ public class ApplicationServiceTest extends MockServices {
     List<Application> response = applicationService.findApplicationsById(Collections.singletonList(123));
     assertEquals(2, response.size());
   }
-
-  @Test
-  public void testFindApplicationByLocation() {
-    LocationQueryJson query = new LocationQueryJson();
-    query.setIntersectingGeometry(polygon(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
-    List<Application> response = applicationService.findApplicationByLocation(query);
-
-    assertNotNull(response);
-    assertEquals(2, response.size());
-
-    assertNotNull(response.get(0).getProjectId());
-    assertNotNull(response.get(0).getCustomersWithContacts().get(0).getCustomer().getId());
-    assertNotNull(response.get(0).getExtension());
-    assertEquals(100, (long) response.get(0).getProjectId());
-    assertNotNull(response.get(0).getCustomersWithContacts().get(0).getCustomer().getId());
-    assertEquals(103, (long) response.get(0).getCustomersWithContacts().get(0).getCustomer().getId());
-    assertNotNull(response.get(1));
-    assertNotNull(response.get(1).getProjectId());
-    assertNotNull(response.get(1).getCustomersWithContacts().get(0).getCustomer().getId());
-    assertEquals("MockName2", response.get(1).getName());
-  }
 }

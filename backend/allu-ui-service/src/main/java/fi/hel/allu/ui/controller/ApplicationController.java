@@ -107,15 +107,6 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationServiceComposer.findApplicationById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search_location", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationMapItemJson>> findByLocation(@RequestBody final LocationQueryJson query) {
-    return new ResponseEntity<>(applicationServiceComposer.findApplicationByLocation(query), HttpStatus.OK);
-
-
-
-  }
-
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<ApplicationES>> search(@Valid @RequestBody ApplicationQueryParameters queryParameters,

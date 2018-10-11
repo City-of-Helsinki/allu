@@ -47,11 +47,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_BY_ID = "/applications/{applicationId}";
 
   /**
-   * Model-service path to find applications by location
-   */
-  public static final String PATH_MODEL_APPLICATION_FIND_BY_LOCATION = "/applications/search";
-
-  /**
    * Model-service path to find attachments by application
    */
   public static final String PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION = "/applications/{applicationId}/attachments";

@@ -82,21 +82,6 @@ public class ApplicationService {
   }
 
   /**
-   * Find applications using given location query.
-   *
-   * @param query   the location query
-   * @return list of found applications with details
-   */
-  public List<Application> findApplicationByLocation(LocationQueryJson query) {
-    LocationSearchCriteria lsc = applicationMapper.createLocationSearchCriteria(query);
-    ResponseEntity<Application[]> applicationResult = restTemplate.postForEntity(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_LOCATION),
-        lsc,
-        Application[].class);
-    return Arrays.asList(applicationResult.getBody());
-  }
-
-  /**
    * Replaces distribution list of the given application.
    *
    * @param id                      Id of the application.

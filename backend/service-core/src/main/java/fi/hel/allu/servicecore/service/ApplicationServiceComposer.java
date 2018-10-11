@@ -82,17 +82,6 @@ public class ApplicationServiceComposer {
   }
 
   /**
-   * Find applications using given location query.
-   *
-   * @param query   the location query
-   * @return list of found applications with details
-   */
-  public List<ApplicationMapItemJson> findApplicationByLocation(LocationQueryJson query) {
-    return applicationService.findApplicationByLocation(query)
-        .stream().map(a -> applicationJsonService.getApplicationMapItemJson(a)).collect(Collectors.toList());
-  }
-
-  /**
    * Create applications by calling backend service.
    *
    * @param applicationJson Application that are going to be created

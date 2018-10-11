@@ -78,17 +78,6 @@ public class ApplicationService {
   }
 
   /**
-   * Find applications within an area
-   *
-   * @param   lsc the location search criteria
-   * @return  All intersecting applications
-   */
-  @Transactional(readOnly = true)
-  public List<Application> findByLocation(LocationSearchCriteria lsc) {
-    return applicationDao.findActiveByLocation(lsc);
-  }
-
-  /**
    * Find all applications, with paging
    *
    * @param pageRequest the paging request

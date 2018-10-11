@@ -372,15 +372,6 @@ public class ApplicationMapper {
     return tagJsons.stream().map(tag -> tag.getType().toString()).collect(Collectors.toList());
   }
 
-  public LocationSearchCriteria createLocationSearchCriteria(LocationQueryJson query) {
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    lsc.setIntersects(query.getIntersectingGeometry());
-    lsc.setAfter(query.getAfter());
-    lsc.setBefore(query.getBefore());
-    lsc.setStatusTypes(query.getStatusTypes());
-    return lsc;
-  }
-
   public ApplicationIdentifierJson mapApplicationIdentifierToJson(ApplicationIdentifier applicationIdentifier) {
     return new ApplicationIdentifierJson(applicationIdentifier.getId(),
                                          applicationIdentifier.getApplicationId(),

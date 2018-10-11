@@ -1,7 +1,6 @@
 package fi.hel.allu.model.controller;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -75,18 +74,6 @@ public class ApplicationController {
   @RequestMapping(value = "/find", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByIds(@RequestBody List<Integer> ids) {
     return new ResponseEntity<>(applicationService.findByIds(ids), HttpStatus.OK);
-  }
-
-  /**
-   * Find applications within an area
-   *
-   * @param lsc
-   *          the location search criteria
-   * @return All intersecting applications
-   */
-  @RequestMapping(value = "/search", method = RequestMethod.POST)
-  public ResponseEntity<List<Application>> findByLocation(@Valid @RequestBody LocationSearchCriteria lsc) {
-    return new ResponseEntity<>(applicationService.findByLocation(lsc), HttpStatus.OK);
   }
 
   /**

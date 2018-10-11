@@ -1,17 +1,7 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.domain.user.User;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.testUtils.TestCommon;
-import fi.hel.allu.model.testUtils.WebTestCommon;
+import java.time.ZonedDateTime;
+import java.util.Collections;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
@@ -25,16 +15,21 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.model.service.LocationService;
+import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -183,84 +178,6 @@ public class ApplicationControllerTest {
     wtc.perform(put("/applications/314159?userId=" + testUser.getId()), app).andExpect(status().isNotFound());
   }
 
-  @Test
-  public void testFindIntersecting() throws Exception {
-    testCommon.deleteAllData();
-    testUser = testCommon.insertUser("testUser");
-    createLocationTestApplications();
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    lsc.setIntersects(bigArea);
-    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
-    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
-    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(3, results.length);
-  }
-
-  @Test
-  public void testFindIntersectingWithTime() throws Exception {
-    createLocationTestApplications();
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    lsc.setIntersects(bigArea);
-    lsc.setAfter(ZonedDateTime.parse("2016-11-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2016-11-03T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
-    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
-    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(1, results.length);
-    assertEquals("Small application 1", results[0].getName());
-  }
-
-  @Test
-  public void testFindByStatus() throws Exception {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application1", "Test Owner1");
-    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
-    newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
-    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
-    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
-    Application inserted = insertApplicationWithGeometry(newApplication, geometryCollection, "katu 1",
-        newApplication.getStartTime(), newApplication.getEndTime());
-    setApplicationToFinished(inserted.getId());
-
-    Application withNonMatchinStatus = testCommon.dummyOutdoorApplication("Test Application2", "Test Owner2");
-    withNonMatchinStatus.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
-    withNonMatchinStatus.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
-    Application insertedNonMatching = insertApplicationWithGeometry(withNonMatchinStatus, geometryCollection, "katu 1",
-        withNonMatchinStatus.getStartTime(), withNonMatchinStatus.getEndTime());
-
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    lsc.setIntersects(geometry);
-    lsc.setAfter(ZonedDateTime.parse("2015-01-01T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-12-24T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setStatusTypes(Arrays.asList(StatusType.FINISHED));
-    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
-    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(1, results.length);
-    assertEquals(newApplication.getName(), results[0].getName());
-  }
-
-  @Test
-  public void testFindWhenOverlappingDates() throws Exception {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
-    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
-    newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
-    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
-    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
-
-    // Inserted application has PENDING status
-    insertApplicationWithGeometry(newApplication, geometryCollection, "katu 1",
-        newApplication.getStartTime(), newApplication.getEndTime());
-
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    lsc.setIntersects(geometry);
-    lsc.setAfter(ZonedDateTime.parse("2015-06-01T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-07-01T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
-
-    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
-    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals("Pending application was not found after end time", 1, results.length);
-  }
-
   /**
    * Test that reading an application's attachment list works
    *
@@ -321,188 +238,12 @@ public class ApplicationControllerTest {
     assertEquals(expectedPrice, (int) application.getCalculatedPrice());
   }
 
-  @Test
-  public void testRecurringWithinCalendarYear() throws Exception {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
-    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
-    newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
-    newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-08-03T10:15:30+02:00"));
-    newApplication.setStatus(StatusType.FINISHED);
-    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
-    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
-    Application inserted = insertApplicationWithGeometry(
-        newApplication,
-        geometryCollection,
-        "katu 1",
-        newApplication.getStartTime(),
-        newApplication.getEndTime());
-    setApplicationToFinished(inserted.getId());
-
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    lsc.setIntersects(geometry);
-    lsc.setStatusTypes(Arrays.asList(StatusType.FINISHED));
-
-    // test period completely outside recurring period, before recurring period
-    lsc.setAfter(ZonedDateTime.parse("2015-01-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-05-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 0);
-    // test period completely outside recurring period, after recurring period
-    lsc.setAfter(ZonedDateTime.parse("2015-09-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-10-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 0);
-    // test period completely within recurring period
-    lsc.setAfter(ZonedDateTime.parse("2015-07-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-07-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period partially within recurring period
-    lsc.setAfter(ZonedDateTime.parse("2015-08-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-09-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period partially within recurring period (beginning of test period) and that overlaps with two calendar years.
-    lsc.setAfter(ZonedDateTime.parse("2014-01-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-06-04T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period partially within recurring period (end of test period) and that overlaps with two calendar years
-    lsc.setAfter(ZonedDateTime.parse("2015-08-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2017-06-04T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period within recurring period, year after first year
-    lsc.setAfter(ZonedDateTime.parse("2016-07-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2016-07-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period partially within recurring period, year after first year
-    lsc.setAfter(ZonedDateTime.parse("2016-07-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2016-07-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test open period, no end defined
-    lsc.setAfter(ZonedDateTime.parse("2015-04-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(null);
-    testRecurring(lsc, 1);
-    lsc.setAfter(ZonedDateTime.parse("2016-04-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(null);
-    testRecurring(lsc, 1);
-    lsc.setAfter(ZonedDateTime.parse("2020-10-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(null);
-    testRecurring(lsc, 0);
-    // test open period, no begin defined
-    lsc.setAfter(null);
-    lsc.setBefore(ZonedDateTime.parse("2015-04-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 0);
-    lsc.setAfter(null);
-    lsc.setBefore(ZonedDateTime.parse("2015-07-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    lsc.setAfter(null);
-    lsc.setBefore(ZonedDateTime.parse("2030-04-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-  }
-
-  @Test
-  public void testRecurringWithinTwoCalendarYears() throws Exception {
-
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
-    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
-    newApplication.setEndTime(ZonedDateTime.parse("2016-03-03T10:15:30+02:00"));
-    newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-03-03T10:15:30+02:00"));
-    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
-    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
-    insertApplicationWithGeometry(
-        newApplication,
-        geometryCollection,
-        "katu 1",
-        newApplication.getStartTime(),
-        newApplication.getEndTime());
-
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    lsc.setIntersects(geometry);
-    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
-    // test period completely outside recurring period
-    lsc.setAfter(ZonedDateTime.parse("2015-01-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-05-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 0);
-    // test period completely within recurring period, in the first period
-    lsc.setAfter(ZonedDateTime.parse("2015-06-04T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-07-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period completely within recurring period, in the second period
-    lsc.setAfter(ZonedDateTime.parse("2016-01-04T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2016-02-03T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period longer than one year, match in the end of long period
-    lsc.setAfter(ZonedDateTime.parse("2012-01-04T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2015-06-04T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-    // test period longer than one year, match in the beginning of long period
-    lsc.setAfter(ZonedDateTime.parse("2020-03-02T08:00:00+02:00[Europe/Helsinki]"));
-    lsc.setBefore(ZonedDateTime.parse("2025-03-02T08:00:00+02:00[Europe/Helsinki]"));
-    testRecurring(lsc, 1);
-  }
-
-  private void testRecurring(LocationSearchCriteria lsc, int matchCount) throws Exception {
-    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
-    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(matchCount, results.length);
-  }
-
-  private static Geometry bigArea = polygon(3879, ring(c(25490000, 6670000), c(25500000, 6670000), c(25500000, 6675000),
-      c(25490000, 6675000), c(25490000, 6670000)));
-
-  private static class TestAppParam {
-    public Geometry geometry;
-    public ZonedDateTime startTime;
-    public ZonedDateTime endTime;
-
-    public TestAppParam(Geometry geo, ZonedDateTime st, ZonedDateTime et) {
-      geometry = geo;
-      startTime = st;
-      endTime = et;
-    }
-  }
-
-  private static TestAppParam T(Geometry geo, ZonedDateTime st, ZonedDateTime et) {
-    return new TestAppParam(geo, st, et);
-  }
-
-  private static TestAppParam[] testAppParams = {
-      // completely inside, Dec. 2016:
-      T(polygon(3879,
-          ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000))),
-        ZonedDateTime.parse("2016-12-03T10:15:30+02:00[Europe/Helsinki]"),
-        ZonedDateTime.parse("2016-12-08T10:15:30+02:00[Europe/Helsinki]")
-        ),
-      // partially inside: Feb..Dec 2016
-      T(polygon(3879,
-          ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
-        ZonedDateTime.parse("2016-02-03T10:15:30+02:00[Europe/Helsinki]"),
-        ZonedDateTime.parse("2016-12-08T10:15:30+02:00[Europe/Helsinki]")
-        ),
-      // completely outside, Dec. 2016:
-      T(polygon(3879,
-          ring(c(25480000, 6672000), c(25485000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
-        ZonedDateTime.parse("2016-12-03T10:15:30+02:00[Europe/Helsinki]"),
-        ZonedDateTime.parse("2016-12-08T10:15:30+02:00[Europe/Helsinki]")
-        ),
-      // completely inside again, Mar 2017:
-      T(polygon(3879, ring(c(25495000, 6671000), c(25496000, 6671000), c(25495100, 6671500), c(25495000, 6671000))),
-          ZonedDateTime.parse("2017-03-03T10:15:30+02:00[Europe/Helsinki]"),
-          ZonedDateTime.parse("2017-03-08T10:15:30+02:00[Europe/Helsinki]")) };
-
   // Helper to insert an application. Returns the result application.
   private Application insertApplication(Application appIn) throws Exception {
     Integer userId = testCommon.insertUser("dummyUser" + System.currentTimeMillis()).getId();
     ControllerHelper.addDummyCustomer(wtc, appIn, userId, testCommon.getCountryIdOfFinland());
     ResultActions resultActions = wtc.perform(post("/applications?userId=" + testUser.getId()), appIn).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Application.class);
-  }
-
-  private Application createLocationTestApplication(
-      TestAppParam tap,
-      String streetAddress,
-      String applicationName,
-      int count)
-      throws Exception {
-    Application app = testCommon.dummyOutdoorApplication(applicationName, "locationUserName" + count);
-    return insertApplicationWithGeometry(
-        app, new GeometryCollection(new Geometry[] { tap.geometry }), streetAddress, tap.startTime, tap.endTime);
   }
 
   private Application insertApplicationWithGeometry(
@@ -517,19 +258,4 @@ public class ApplicationControllerTest {
     return insertedApp;
   }
 
-  private void createLocationTestApplications() throws Exception {
-    // Create a test application for each of the small areas
-    for (int i = 0; i < testAppParams.length; ++i) {
-      createLocationTestApplication(
-          testAppParams[i],
-          String.format("Smallstreet %d", i),
-          String.format("Small application %d", i),
-          i);
-    }
-  }
-
-  private void setApplicationToFinished(Integer id) throws Exception {
-    String uri = "/applications/{id}/status/finished".replace("{id}", id.toString());
-    wtc.perform(put(uri)).andExpect(status().isOk());
-  }
 }
