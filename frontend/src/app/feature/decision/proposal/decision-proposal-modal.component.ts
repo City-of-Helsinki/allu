@@ -15,6 +15,7 @@ export const DECISION_PROPOSAL_MODAL_CONFIG = {width: '800px'};
 export interface DecisionProposalData {
   proposalType: string;
   cityDistrict: number;
+  comment?: string;
 }
 
 @Component({
@@ -34,7 +35,7 @@ export class DecisionProposalModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.proposalForm = this.fb.group({
-      comment: ['', Validators.required],
+      comment: [this.data.comment, Validators.required],
       handler: [undefined, Validators.required]
     });
 

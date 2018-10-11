@@ -162,7 +162,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private approveWithState(result: SupervisionApprovalResult): void {
     if (ApplicationStatus.DECISIONMAKING === result.statusChange) {
-      this.toDecisionMaking().subscribe(changeInfo => this.handleApproval(result, changeInfo));
+      this.toDecisionMaking(result.result).subscribe(changeInfo => this.handleApproval(result, changeInfo));
     } else {
       this.handleApproval(result);
     }
@@ -295,12 +295,13 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     }
   }
 
-  private toDecisionMaking(): Observable<StatusChangeInfo> {
+  private toDecisionMaking(comment?: string): Observable<StatusChangeInfo> {
     const config = {
       ...DECISION_PROPOSAL_MODAL_CONFIG,
       data: {
         proposalType: CommentType[CommentType.PROPOSE_APPROVAL],
-        cityDistrict: this.application.firstLocation.effectiveCityDistrictId
+        cityDistrict: this.application.firstLocation.effectiveCityDistrictId,
+        comment
       }
     };
 
