@@ -1,5 +1,6 @@
 export interface BackendQueryParameters {
   queryParameters: Array<BackendQueryParameter>;
+  intersectingGeometry?: GeoJSON.GeometryObject;
 }
 
 export interface BackendQueryParameter {

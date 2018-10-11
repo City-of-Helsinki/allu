@@ -23,4 +23,5 @@ export interface BackendLocation {
 export interface SearchResultLocation {
   address: string;
   cityDistrictId: number;
+  geometry: GeoJSON.GeometryCollection;
 }

@@ -50,6 +50,7 @@ export class LocationMapper {
       const location = new Location();
       location.address = backendLocation.address;
       location.cityDistrictId = backendLocation.cityDistrictId;
+      location.geometry = backendLocation.geometry;
       return location;
     } else {
       return undefined;

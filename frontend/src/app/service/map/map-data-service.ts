@@ -11,10 +11,17 @@ import {MapSearchFilter} from '../map-search-filter';
 import {ApplicationStatus, ApplicationStatusGroup} from '../../model/application/application-status';
 import {ArrayUtil} from '../../util/array-util';
 import {HttpClient} from '@angular/common/http';
-import {BackendApplication} from '../backend-model/backend-application';
+import {SearchResultApplication} from '../backend-model/backend-application';
 import {catchError, map} from 'rxjs/internal/operators';
+import {QueryParametersMapper} from '@app/service/mapper/query/query-parameters-mapper';
+import {BackendQueryParameter, BackendQueryParameters} from '@app/service/backend-model/backend-query-parameters';
+import {PageMapper} from '@app/service/common/page-mapper';
+import {BackendPage} from '@app/service/backend-model/backend-page';
+import {PageRequest} from '@app/model/common/page-request';
+import {Sort} from '@app/model/common/sort';
 
-const APPLICATION_SEARCH_URL = '/api/applications/search_location';
+
+const APPLICATION_SEARCH_URL = '/api/applications/search';
 
 @Injectable()
 export class MapDataService {
@@ -51,13 +58,16 @@ export class MapDataService {
     ]);
   }
 
-  applicationsByLocation(filter: MapSearchFilter): Observable<Array<Application>> {
+  applicationsByLocation(filter: MapSearchFilter): Observable<Application[]> {
     if (filter.statuses && filter.statuses.length) {
       const query = this.toApplicationLocationQuery(filter);
-      return this.http.post<BackendApplication[]>(
+      return this.http.post<BackendPage<SearchResultApplication>>(
         APPLICATION_SEARCH_URL,
-        JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query))).pipe(
-        map(applications => applications.map(app => ApplicationMapper.mapCommon(app))),
+        JSON.stringify(query),
+        {params: QueryParametersMapper.mapPageRequest(new PageRequest(), new Sort('applicationId', 'asc'))})
+        .pipe(
+          map(backendPage => PageMapper.mapBackend(backendPage, ApplicationMapper.mapSearchResult)),
+          map(page => page.content),
         catchError(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')))
       );
     } else {
@@ -65,20 +75,26 @@ export class MapDataService {
     }
   }
 
-  private toApplicationLocationQuery(filter: MapSearchFilter) {
+  private toApplicationLocationQuery(filter: MapSearchFilter): BackendQueryParameters {
     const viewPoly = this.mapUtil.polygonFromBounds(filter.geometry);
     const geometry = this.mapUtil.featureToGeometry(viewPoly.toGeoJSON());
-    const statuses = this.statusesFromGroup(filter.statuses.map(sg => ApplicationStatusGroup[sg]));
+    return {
+      queryParameters: this.mapSearchParameters(filter),
+      intersectingGeometry: geometry
+    };
+  }
 
-    return new ApplicationLocationQuery(
-      filter.startDate,
-      filter.endDate,
-      statuses,
-      geometry);
+  private  mapSearchParameters(filter: MapSearchFilter): Array<BackendQueryParameter> {
+    const queryParameters: Array<BackendQueryParameter> = [];
+    const statuses = this.statusesFromGroup(filter.statuses.map(sg => ApplicationStatusGroup[sg]));
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'status', statuses);
+    QueryParametersMapper.mapDateParameter(queryParameters, 'recurringApplication', filter.startDate, filter.endDate, true);
+    return queryParameters;
   }
 
   private statusesFromGroup(groups: ApplicationStatusGroup[]): ApplicationStatus[] {
     return ArrayUtil.flatten(groups.map(group => this.groupedStatuses.get(group)))
       .filter(s => s !== undefined);
   }
+
 }
