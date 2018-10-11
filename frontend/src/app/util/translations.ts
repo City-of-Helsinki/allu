@@ -1331,8 +1331,8 @@ export const translations = {
       approve: 'HYVÄKSY',
       reject: 'HYLKÄÄ',
       newSupervisionDate: 'Uusi valvonta-aika',
-      needsInvoicingChanges: 'Jos laskutusta tarvitsee muokata ennen hyväksyntää',
-      toInvoicing:  'siirry laskutukseen.',
+      needsInvoicingChanges: 'Lisää ylimääräisiä maksuja ',
+      toInvoicing:  'laskutuksen kautta.',
       type: {
         title: 'Toimenpide',
         PRELIMINARY_SUPERVISION: 'Aloitusvalvonta',
