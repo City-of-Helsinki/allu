@@ -3,6 +3,8 @@ package fi.hel.allu.search.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Class for defining a single search query parameter. It's worth noticing that due to JSON serialization constraints, this class has
  * not been split up into specialized classes such as <code>QueryParameter</code> and <code>QueryMultiParameter</code>.
@@ -105,5 +107,11 @@ public class QueryParameter {
 
   public void setEndDateValue(ZonedDateTime endDateValue) {
     this.endDateValue = endDateValue;
+  }
+
+  @JsonIgnore
+  public boolean hasValue() {
+    return fieldValue != null || fieldMultiValue != null || startDateValue != null || endDateValue != null;
+
   }
 }

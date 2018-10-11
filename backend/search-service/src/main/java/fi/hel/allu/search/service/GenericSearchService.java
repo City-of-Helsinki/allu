@@ -329,7 +329,9 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   }
 
   protected void addQueryParameters(QueryParameters queryParameters, Boolean matchAny, BoolQueryBuilder qb) {
-    for (QueryParameter param : queryParameters.getQueryParameters()) {
+    List<QueryParameter> parameters = queryParameters.getQueryParameters().stream().filter(QueryParameter::hasValue)
+        .collect(Collectors.toList());
+    for (QueryParameter param : parameters) {
       if (matchAny) {
         qb.should(createQueryBuilder(param));
       } else {
