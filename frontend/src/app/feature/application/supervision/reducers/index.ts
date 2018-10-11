@@ -32,8 +32,14 @@ export const getSaving = createSelector(
   fromSupervisionTask.getSaving
 );
 
-export const getOpenOperationalConditionTask = createSelector(
+export const getTaskBy = (type: SupervisionTaskType, status: SupervisionTaskStatusType) => createSelector(
   getAllSupervisionTasks,
-  (tasks: SupervisionTask[]) => ArrayUtil.first(tasks, task =>
-    task.type === SupervisionTaskType.OPERATIONAL_CONDITION && task.status === SupervisionTaskStatusType.OPEN)
+  (tasks: SupervisionTask[]) => ArrayUtil.first(tasks, task => task.type === type && task.status === status)
+);
+
+export const getOpenOperationalConditionTask = getTaskBy(SupervisionTaskType.OPERATIONAL_CONDITION, SupervisionTaskStatusType.OPEN);
+
+export const hasTask = (type: SupervisionTaskType, status: SupervisionTaskStatusType) => createSelector(
+  getTaskBy(type, status),
+  task => !!task
 );
