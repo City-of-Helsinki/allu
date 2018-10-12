@@ -107,9 +107,10 @@ public class ApplicationStatusChangeListener {
     applicationDao.setInvoicingChanged(application.getId(), false);
     if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       setExcavationAnnouncementInvoicable(application, status);
+    } else {
+      // Charge basis entries cannot be modified after decision
+      chargeBasisService.lockEntries(application.getId());
     }
-    // Charge basis entries cannot be modified after decision
-    chargeBasisService.lockEntries(application.getId());
 
   }
 
@@ -120,6 +121,7 @@ public class ApplicationStatusChangeListener {
           : extension.getWorkFinished();
       invoiceService.lockInvoices(application.getId());
       invoiceService.setInvoicableTime(application.getId(), invoicableTime);
+      chargeBasisService.lockEntries(application.getId());
     }
   }
 

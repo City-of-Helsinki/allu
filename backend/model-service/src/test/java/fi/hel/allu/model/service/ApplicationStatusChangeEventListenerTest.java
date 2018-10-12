@@ -93,7 +93,7 @@ public class ApplicationStatusChangeEventListenerTest {
 
   @Test
   public void onDecisionShouldLockChargeBasisEntries() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    application.setType(ApplicationType.EVENT);
     application.setExtension(new ExcavationAnnouncement());
     statusChangeListener.onApplicationStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
