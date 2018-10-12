@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 
+import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.EventNature;
@@ -34,8 +35,6 @@ import fi.hel.allu.servicecore.service.UserService;
 @Component
 public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
-
-  private static final int ES_SRID = 4326;
 
   private final CustomerMapper customerMapper;
   private final UserService userService;
@@ -399,7 +398,7 @@ public class ApplicationMapper {
     locationEs.setCityDistrictId(getCityDistrictId(json));
     locationEs.setAdditionalInfo(json.getAdditionalInfo());
     locationEs.setGeometry(json.getGeometry());
-    Geometry searchGeometry = locationService.transformCoordinates(json.getGeometry(), ES_SRID);
+    Geometry searchGeometry = locationService.transformCoordinates(json.getGeometry(), Constants.ELASTIC_SEARCH_SRID);
     locationEs.setSearchGeometry(searchGeometry);
     return locationEs;
   }

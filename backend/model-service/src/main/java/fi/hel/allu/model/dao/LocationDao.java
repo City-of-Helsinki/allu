@@ -28,6 +28,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.domain.GeometryWrapper;
+import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
@@ -53,7 +54,6 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 public class LocationDao {
 
   private static final Logger logger = LoggerFactory.getLogger(LocationDao.class);
-  public static final Integer ALLU_SRID = Integer.valueOf(3879);
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
       Arrays.asList(location.paymentTariff);
 
@@ -91,7 +91,7 @@ public class LocationDao {
 
   @Transactional(readOnly = true)
   public List<Location> findByApplication(int applicationId) {
-    return findByApplication(applicationId, ALLU_SRID);
+    return findByApplication(applicationId, Constants.ALLU_DEFAULT_SRID);
   }
 
   @Transactional(readOnly = true)
@@ -111,7 +111,7 @@ public class LocationDao {
 
   @Transactional
   public Location insert(Location locationData) {
-    transformAndCleanupCoordinates(locationData, ALLU_SRID);
+    transformAndCleanupCoordinates(locationData, Constants.ALLU_DEFAULT_SRID);
     locationData.setId(null);
     Integer maxLocationKey = queryFactory.select(SQLExpressions.max(location.locationKey))
         .from(location).where(location.applicationId.eq(locationData.getApplicationId())).fetchOne();
@@ -137,7 +137,7 @@ public class LocationDao {
   }
 
   private Location update(Location locationData) {
-    transformAndCleanupCoordinates(locationData, ALLU_SRID);
+    transformAndCleanupCoordinates(locationData, Constants.ALLU_DEFAULT_SRID);
     int id = locationData.getId();
     Optional<Location> currentLocationOpt = findById(id);
     if (!currentLocationOpt.isPresent()) {

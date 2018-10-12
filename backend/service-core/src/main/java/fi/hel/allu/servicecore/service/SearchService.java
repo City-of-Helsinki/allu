@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.search.domain.*;
@@ -33,7 +34,6 @@ import fi.hel.allu.servicecore.util.RestResponsePage;
 @Service
 public class SearchService {
 
-  private static final int ES_SRID = 4326;
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
@@ -210,7 +210,7 @@ public class SearchService {
    */
   public Page<ApplicationES> searchApplication(ApplicationQueryParameters queryParameters, Pageable pageRequest, Boolean matchAny) {
     if (queryParameters.getIntersectingGeometry() != null) {
-      Geometry intersectingGeometry = locationService.transformCoordinates(queryParameters.getIntersectingGeometry(), ES_SRID);
+      Geometry intersectingGeometry = locationService.transformCoordinates(queryParameters.getIntersectingGeometry(), Constants.ELASTIC_SEARCH_SRID);
       queryParameters.setIntersectingGeometry(intersectingGeometry);
 
     }
