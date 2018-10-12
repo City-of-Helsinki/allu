@@ -41,7 +41,7 @@ public class ElasticSearchMappingConfig {
   private static final String FILTER_AUTOCOMPLETE = "autocomplete_filter";
 
   // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
-  private static final String MAPPINGS_VERSION_NUMBER = "10";
+  private static final String MAPPINGS_VERSION_NUMBER = "11";
 
   private static final String VERSION_INDEX_NAME = "versions";
   private static final String VERSION_TYPE_NAME = "version";
