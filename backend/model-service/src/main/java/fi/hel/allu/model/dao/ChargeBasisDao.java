@@ -1,12 +1,12 @@
 package fi.hel.allu.model.dao;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,6 @@ import com.google.common.base.Objects;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
@@ -55,10 +54,32 @@ public class ChargeBasisDao {
   public ChargeBasisModification getModifications(int applicationId, List<ChargeBasisEntry> entries, boolean manuallySet) {
     List<ChargeBasisEntry> oldEntries = getChargeBasis(applicationId).stream()
         .filter(e -> e.getManuallySet() == manuallySet).collect(Collectors.toList());
-    Set<ChargeBasisEntry> entriesToUpdate = entries.stream().filter(l -> isExistingEntry(l, oldEntries) && hasChanges(l, oldEntries)).collect(Collectors.toSet());
+    Map<Integer, ChargeBasisEntry> entriesToUpdate = getEntriesToUpdate(entries, oldEntries);
     List<ChargeBasisEntry> entriesToAdd = entries.stream().filter(e -> !hasEntryWithKey(oldEntries, e)).collect(Collectors.toList());
     Set<Integer> entryIdsToDelete = oldEntries.stream().filter(oe -> !hasEntryWithKey(entries, oe)).map(e -> e.getId()).collect(Collectors.toSet());
     return new ChargeBasisModification(applicationId, entriesToAdd, entryIdsToDelete, entriesToUpdate, manuallySet);
+  }
+
+  /**
+   * Returns map containing entries to update - existing entry ID as key and new entry as value
+   */
+  private Map<Integer, ChargeBasisEntry> getEntriesToUpdate(List<ChargeBasisEntry> entries,
+      List<ChargeBasisEntry> oldEntries) {
+    Map<Integer, ChargeBasisEntry> result = new HashMap<>();
+    for (ChargeBasisEntry e : entries) {
+      ChargeBasisEntry existing = getExistingEntry(e, oldEntries);
+      if (existing != null && hasChanges(e, existing)) {
+         result.put(existing.getId(), e);
+      }
+    }
+    return result;
+  }
+
+  private ChargeBasisEntry getExistingEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> oldEntries) {
+    return oldEntries.stream()
+        .filter(oe -> hasSameKey(oe, entry))
+        .findFirst()
+        .orElse(null);
   }
 
   private boolean hasEntryWithKey(List<ChargeBasisEntry> entries, ChargeBasisEntry entry) {
@@ -76,27 +97,24 @@ public class ChargeBasisDao {
    */
   @Transactional
   public void setChargeBasis(ChargeBasisModification modification) {
-    updateEntries(modification.getApplicationId(), modification.getEntriesToUpdate());
+    updateEntries(modification.getEntriesToUpdate());
     deleteEntries(modification.getEntryIdsToDelete(), modification.getApplicationId());
     insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(), nextEntryNumber(modification.getApplicationId(), modification.isManuallySet()));
     deleteDanglingEntries(modification.getApplicationId());
   }
 
-  private void updateEntries(Integer applicationId, Set<ChargeBasisEntry> entriesToUpdate) {
+  private void updateEntries(Map<Integer, ChargeBasisEntry> entriesToUpdate) {
     ZonedDateTime modificationTime = ZonedDateTime.now();
-    for (ChargeBasisEntry entry : entriesToUpdate) {
-      entry.setModificationTime(modificationTime);
-      BooleanExpression eqExp = entry.getManuallySet() ? chargeBasis.id.eq(entry.getId()) : chargeBasis.tag.eq(entry.getTag());
+    for (Entry<Integer, ChargeBasisEntry> entry : entriesToUpdate.entrySet()) {
+      entry.getValue().setModificationTime(modificationTime);
       queryFactory.update(chargeBasis)
-      .populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
-      .where(eqExp, chargeBasis.applicationId.eq(applicationId)).execute();
+      .populate(entry.getValue(), new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
+      .where(chargeBasis.id.eq(entry.getKey())).execute();
     }
   }
 
-  private boolean hasChanges(ChargeBasisEntry entry, List<ChargeBasisEntry> oldEntries) {
-    ChargeBasisEntry old = oldEntries.stream().filter(oe -> hasSameKey(entry, oe)).findFirst().get();
+  private boolean hasChanges(ChargeBasisEntry entry, ChargeBasisEntry old) {
     return !entry.equals(old);
-
   }
 
   private int nextEntryNumber(int applicationId, boolean manuallySet) {
@@ -136,10 +154,6 @@ public class ChargeBasisDao {
     queryFactory.delete(chargeBasis)
     .where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.referredTag.isNotNull()).and(chargeBasis.referredTag.notIn(
         select(chargeBasis.tag).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId).and(chargeBasis.tag.isNotNull()))))).execute();
-  }
-
-  private boolean isExistingEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> oldEntries) {
-    return oldEntries.stream().anyMatch(oe -> hasSameKey(oe, entry));
   }
 
   @Transactional

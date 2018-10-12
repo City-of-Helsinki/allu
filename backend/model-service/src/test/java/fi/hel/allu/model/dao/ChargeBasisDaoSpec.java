@@ -243,7 +243,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
   }
 
   private ChargeBasisModification modification(int applicationId, List<ChargeBasisEntry> newEntries, boolean manuallySet) {
-    return new ChargeBasisModification(applicationId, newEntries, Collections.emptySet(), Collections.emptySet(), manuallySet);
+    return new ChargeBasisModification(applicationId, newEntries, Collections.emptySet(), Collections.emptyMap(), manuallySet);
   }
 
 }

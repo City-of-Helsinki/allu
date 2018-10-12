@@ -1,8 +1,9 @@
 package fi.hel.allu.model.dao;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 
@@ -10,12 +11,12 @@ public class ChargeBasisModification {
 
   private List<ChargeBasisEntry> entriesToInsert;
   private Set<Integer> entryIdsToDelete;
-  private Set<ChargeBasisEntry> entriesToUpdate;
+  private Map<Integer, ChargeBasisEntry> entriesToUpdate;
   private boolean manuallySet;
   private int applicationId;
 
   public ChargeBasisModification(int applicationId, List<ChargeBasisEntry> entriesToInsert, Set<Integer> entryIdsToDelete,
-      Set<ChargeBasisEntry> entriesToUpdate, boolean manuallySet) {
+      Map<Integer, ChargeBasisEntry> entriesToUpdate, boolean manuallySet) {
     super();
     this.applicationId = applicationId;
     this.entriesToInsert = entriesToInsert;
@@ -32,7 +33,7 @@ public class ChargeBasisModification {
     return entryIdsToDelete;
   }
 
-  public Set<ChargeBasisEntry> getEntriesToUpdate() {
+  public Map<Integer, ChargeBasisEntry> getEntriesToUpdate() {
     return entriesToUpdate;
   }
 
@@ -52,7 +53,7 @@ public class ChargeBasisModification {
    * Returns IDs of charge basis entries that have been modified or deleted.
    */
   public Set<Integer> getModifiedEntryIds() {
-    Set<Integer> ids = entriesToUpdate.stream().map(ChargeBasisEntry::getId).collect(Collectors.toSet());
+    Set<Integer> ids = new HashSet<>(entriesToUpdate.keySet());
     ids.addAll(entryIdsToDelete);
     return ids;
   }

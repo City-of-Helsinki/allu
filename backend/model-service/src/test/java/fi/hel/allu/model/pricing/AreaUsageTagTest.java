@@ -49,7 +49,7 @@ public class AreaUsageTagTest {
         ChargeBasisUnit.PIECE, 1, "Entry 1", new String[] { "One entry", "Item" }, 1, 1);
     List<ChargeBasisEntry> entries = Arrays.asList(e1);
     Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
-        .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptySet(), false));
+        .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptyMap(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
     final List<ChargeBasisEntry> savedEntries = captor.getValue();
     assertEquals(1, savedEntries.size());
@@ -66,7 +66,7 @@ public class AreaUsageTagTest {
 
     List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
     Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
-        .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptySet(), false));
+        .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptyMap(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
     final List<ChargeBasisEntry> savedEntries = captor.getValue();
     assertEquals(2, savedEntries.size());
@@ -86,7 +86,7 @@ public class AreaUsageTagTest {
 
     List<ChargeBasisEntry> entries = Arrays.asList(e1, e2);
     Mockito.when(chargeBasisDao.getModifications(Mockito.eq(1), captor.capture(), Mockito.eq(true)))
-    .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptySet(), false));
+    .thenReturn(new ChargeBasisModification(0, entries, Collections.emptySet(), Collections.emptyMap(), false));
     chargeBasisService.setManualChargeBasis(1, entries);
 
     final List<ChargeBasisEntry> savedEntries = captor.getValue();

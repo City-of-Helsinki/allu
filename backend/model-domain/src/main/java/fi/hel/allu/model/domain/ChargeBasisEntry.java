@@ -24,7 +24,6 @@ public class ChargeBasisEntry {
   private String[] explanation;
   private int unitPrice;
   private int netPrice;
-  private boolean isInvoiced;
   private ZonedDateTime modificationTime;
   private Boolean locked;
   private boolean referrable;
@@ -174,17 +173,41 @@ public class ChargeBasisEntry {
     this.netPrice = netPrice;
   }
 
+  public ZonedDateTime getModificationTime() {
+    return modificationTime;
+  }
+
+  public void setModificationTime(ZonedDateTime modificationTime) {
+    this.modificationTime = modificationTime;
+  }
+
+  public Boolean getLocked() {
+    return locked;
+  }
+
+  public void setLocked(Boolean locked) {
+    this.locked = locked;
+  }
+
+  public boolean isReferrable() {
+     return referrable;
+  }
+
+  public void setReferrable(boolean referrable) {
+      this.referrable = referrable;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + Arrays.hashCode(explanation);
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + (manuallySet ? 1231 : 1237);
     result = prime * result + netPrice;
     long temp;
     temp = Double.doubleToLongBits(quantity);
     result = prime * result + (int) (temp ^ (temp >>> 32));
+    result = prime * result + (referrable ? 1231 : 1237);
     result = prime * result + ((referredTag == null) ? 0 : referredTag.hashCode());
     result = prime * result + ((tag == null) ? 0 : tag.hashCode());
     result = prime * result + ((text == null) ? 0 : text.hashCode());
@@ -205,16 +228,13 @@ public class ChargeBasisEntry {
     ChargeBasisEntry other = (ChargeBasisEntry) obj;
     if (!Arrays.equals(explanation, other.explanation))
       return false;
-    if (id == null) {
-      if (other.id != null)
-        return false;
-    } else if (!id.equals(other.id))
-      return false;
     if (manuallySet != other.manuallySet)
       return false;
     if (netPrice != other.netPrice)
       return false;
     if (Double.doubleToLongBits(quantity) != Double.doubleToLongBits(other.quantity))
+      return false;
+    if (referrable != other.referrable)
       return false;
     if (referredTag == null) {
       if (other.referredTag != null)
@@ -238,29 +258,5 @@ public class ChargeBasisEntry {
     if (unitPrice != other.unitPrice)
       return false;
     return true;
-  }
-
-  public ZonedDateTime getModificationTime() {
-    return modificationTime;
-  }
-
-  public void setModificationTime(ZonedDateTime modificationTime) {
-    this.modificationTime = modificationTime;
-  }
-
-  public Boolean getLocked() {
-    return locked;
-  }
-
-  public void setLocked(Boolean locked) {
-    this.locked = locked;
-  }
-
-  public boolean isReferrable() {
-     return referrable;
-  }
-
-  public void setReferrable(boolean referrable) {
-      this.referrable = referrable;
   }
 }
