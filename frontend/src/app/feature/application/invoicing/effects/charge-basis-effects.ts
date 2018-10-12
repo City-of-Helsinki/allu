@@ -21,7 +21,7 @@ export class ChargeBasisEffects {
   @Effect()
   load: Observable<Action> = this.actions.pipe(
     ofType<Load>(ChargeBasisActionType.Load),
-    withLatestExisting<Load>(this.store.select(fromApplication.getCurrentApplication)),
+    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.invoiceService.getChargeBasisEntries(app.id).pipe(
       map(entries => new LoadSuccess(entries)),
       catchError(error => of(new NotifyFailure(error)))
@@ -31,7 +31,7 @@ export class ChargeBasisEffects {
   @Effect()
   save: Observable<Action> = this.actions.pipe(
     ofType<Save>(ChargeBasisActionType.Save),
-    withLatestExisting<Save>(this.store.select(fromApplication.getCurrentApplication)),
+    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.invoiceService.saveChargeBasisEntries(app.id, action.payload).pipe(
       switchMap(entries => [new LoadSuccess(entries), new ApplicationActions.Load(app.id)]),
       catchError(error => of(new NotifyFailure(error)))

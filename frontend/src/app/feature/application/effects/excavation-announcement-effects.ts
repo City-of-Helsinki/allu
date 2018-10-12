@@ -29,7 +29,7 @@ export class ExcavationAnnouncementEffects {
   @Effect()
   reportOperationalCondition: Observable<Action> = this.actions.pipe(
     ofType<ReportOperationalCondition>(ExcavationAnnouncementActionType.ReportOperationalCondition),
-    withLatestExisting<ReportOperationalCondition>(this.store.select(fromApplication.getCurrentApplication)),
+    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportOperationalCondition(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
@@ -55,7 +55,7 @@ export class ExcavationAnnouncementEffects {
   @Effect()
   reportCustomerOperationalCondition: Observable<Action> = this.actions.pipe(
     ofType<ReportCustomerOperationalCondition>(ExcavationAnnouncementActionType.ReportCustomerOperationalCondition),
-    withLatestExisting<ReportCustomerOperationalCondition>(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerOperationalCondition(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
@@ -69,7 +69,7 @@ export class ExcavationAnnouncementEffects {
   @Effect()
   reportCustomerWorkFinished: Observable<Action> = this.actions.pipe(
     ofType<ReportCustomerWorkFinished>(ExcavationAnnouncementActionType.ReportCustomerWorkFinished),
-    withLatestExisting<ReportCustomerWorkFinished>(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerWorkFinished(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
@@ -83,7 +83,7 @@ export class ExcavationAnnouncementEffects {
   @Effect()
   setRequiredTasks: Observable<Action> = this.actions.pipe(
     ofType<SetRequiredTasks>(ExcavationAnnouncementActionType.SetRequiredTasks),
-    withLatestExisting<SetRequiredTasks>(this.store.select(fromApplication.getCurrentApplication)),
+    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.excavationAnnouncementService.setRequiredTasks(app.id, action.payload).pipe(
       map(updated => this.applicationStore.setAndAction(updated)),
       catchError(error => of(new NotifyFailure(error)))

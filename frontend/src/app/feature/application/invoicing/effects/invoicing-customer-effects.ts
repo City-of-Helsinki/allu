@@ -28,7 +28,7 @@ export class InvoicingCustomerEffects {
   @Effect()
   load: Observable<Action> = this.actions.pipe(
     ofType<Load>(InvoicingCustomerActionType.Load),
-    withLatestExisting<Load>(this.store.select(fromApplication.getCurrentApplication)),
+    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
     switchMap(([action, app]) => this.findInvoicingCustomer(app.invoiceRecipientId))
   );
 
