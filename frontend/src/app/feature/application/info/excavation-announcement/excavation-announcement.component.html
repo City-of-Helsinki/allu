@@ -144,8 +144,7 @@
                   <input matInput type="text" formControlName="startTime"
                          [placeholder]="'application.common.startTime' | translation"
                          [matDatepicker]="customerStartTimePicker"/>
-                  <mat-datepicker-toggle matSuffix [for]="customerStartTimePicker"
-                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker-toggle matSuffix [for]="customerStartTimePicker"></mat-datepicker-toggle>
                   <mat-datepicker #customerStartTimePicker></mat-datepicker>
                   <mat-hint>
                     <field-error [form]="applicationForm" field="customerValidityTimes" hasError="startBeforeEnd">
@@ -159,8 +158,7 @@
                   <input matInput type="text" formControlName="endTime"
                          [placeholder]="'application.common.endTime' | translation"
                          [matDatepicker]="customerEndTimePicker"/>
-                  <mat-datepicker-toggle matSuffix [for]="customerEndTimePicker"
-                                         [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker-toggle matSuffix [for]="customerEndTimePicker"></mat-datepicker-toggle>
                   <mat-datepicker #customerEndTimePicker></mat-datepicker>
                 </mat-form-field>
               </div>
@@ -172,8 +170,14 @@
                 <input matInput type="text" formControlName="customerWinterTimeOperation"
                        [placeholder]="'application.excavationAnnouncement.winterTimeOperation' | translation"
                        [matDatepicker]="customerWinterTimeOperationPicker"/>
-                <mat-datepicker-toggle matSuffix [for]="customerWinterTimeOperationPicker"
-                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <button type="button" mat-icon-button matSuffix
+                        *ngIf="showReportCustomerDates; else customerWinterTimeOperationPickerToggle"
+                        (click)="reportCustomerOperationalCondition(application.extension)">
+                  <mat-icon>event</mat-icon>
+                </button>
+                <ng-template #customerWinterTimeOperationPickerToggle>
+                  <mat-datepicker-toggle matSuffix [for]="customerWinterTimeOperationPicker"></mat-datepicker-toggle>
+                </ng-template>
                 <mat-datepicker #customerWinterTimeOperationPicker></mat-datepicker>
               </mat-form-field>
             </div>
@@ -182,17 +186,16 @@
                 <input matInput type="text" formControlName="customerWorkFinished"
                        [placeholder]="'application.excavationAnnouncement.workFinished' | translation"
                        [matDatepicker]="customerWorkFinishedPicker"/>
-                <mat-datepicker-toggle matSuffix [for]="customerWorkFinishedPicker"
-                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <button type="button" mat-icon-button matSuffix
+                        *ngIf="showReportCustomerDates; else customerWorkFinishedPickerToggle"
+                        (click)="reportCustomerWorkFinished(application.extension)">
+                  <mat-icon>event</mat-icon>
+                </button>
+                <ng-template #customerWorkFinishedPickerToggle>
+                  <mat-datepicker-toggle matSuffix [for]="customerWorkFinishedPicker"></mat-datepicker-toggle>
+                </ng-template>
                 <mat-datepicker #customerWorkFinishedPicker></mat-datepicker>
               </mat-form-field>
-            </div>
-          </div>
-          <div fxLayout="row" *ngIf="showReportCustomerDates">
-            <div fxFlex>
-              <button mat-raised-button type="button" color="primary" (click)="reportCustomerDates(application.status)">
-                {{'dateReporting.report' | translation | uppercase}}
-              </button>
             </div>
           </div>
         </mat-card-content>

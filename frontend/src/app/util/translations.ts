@@ -406,7 +406,8 @@ export const translations = {
       action: {
         reportOperationalCondition: 'Toiminnallinen kunto ilmoitettu',
         reportWorkFinished: 'Työn valmistuminen ilmoitettu',
-        reportCustomerDates: 'Asiakkaan ilmoittamat päivät päivitetty',
+        reportCustomerOperationalCondition: 'Asiakkaan ilmoittama toiminnallinen kunto päivitetty',
+        reportCustomerWorkFinished: 'Asiakkaan ilmoittama työn valmistuminen päivitetty',
       }
     },
     note: {
@@ -483,10 +484,15 @@ export const translations = {
     handler: 'Käsittelijä'
   },
   dateReporting: {
-    report: 'Ilmoita päivät',
     title: {
-      customer: 'Asiakkaan ilmoittamat päivät',
-      official: 'Viralliset päivät'
+      customer: {
+        winterTimeOperation: 'Asiakkaan ilmoittama toiminnallinen kunto',
+        workFinished: 'Asiakkaan ilmoittama työ valmis',
+      },
+      official: {
+        winterTimeOperation: 'Virallinen toiminnallinen kunto',
+        workFinished: 'Virallinen työ valmis'
+      }
     },
     reportedInfo: {
       winterTimeOperation: 'Talvityön toiminnallinen kunto',

@@ -1,11 +1,12 @@
 import {Action} from '@ngrx/store';
-import {DateReport} from '@feature/application/date-reporting/date-report';
 import {RequiredTasks} from '@model/application/required-tasks';
+import {ApplicationDateReport} from '@model/application/application-date-report';
 
 export enum ExcavationAnnouncementActionType {
   ReportOperationalCondition = '[ExcavationAnnouncement] Report operational condition date',
   ReportWorkFinished = '[ExcavationAnnouncement] Report work finished date',
-  ReportCustomerDates = '[ExcavationAnnouncement] Report customer reported dates',
+  ReportCustomerOperationalCondition = '[ExcavationAnnouncement] Report customers operational condition date',
+  ReportCustomerWorkFinished = '[ExcavationAnnouncement] Report customers work finished date',
   SetRequiredTasks = '[ExcavationAnnouncement] Set required tasks'
 }
 
@@ -19,9 +20,14 @@ export class ReportWorkFinished implements Action {
   constructor(public payload: Date) {}
 }
 
-export class ReportCustomerDates implements Action {
-  readonly type = ExcavationAnnouncementActionType.ReportCustomerDates;
-  constructor(public payload: DateReport) {}
+export class ReportCustomerOperationalCondition implements Action {
+  readonly type = ExcavationAnnouncementActionType.ReportCustomerOperationalCondition;
+  constructor(public payload: ApplicationDateReport) {}
+}
+
+export class ReportCustomerWorkFinished implements Action {
+  readonly type = ExcavationAnnouncementActionType.ReportCustomerWorkFinished;
+  constructor(public payload: ApplicationDateReport) {}
 }
 
 export class SetRequiredTasks implements Action {
@@ -32,5 +38,6 @@ export class SetRequiredTasks implements Action {
 export type ExcavationAnnouncementActions =
   | ReportOperationalCondition
   | ReportWorkFinished
-  | ReportCustomerDates
+  | ReportCustomerOperationalCondition
+  | ReportCustomerWorkFinished
   | SetRequiredTasks;

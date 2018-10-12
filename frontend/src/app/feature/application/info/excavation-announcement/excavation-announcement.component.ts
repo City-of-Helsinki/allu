@@ -24,12 +24,13 @@ import {ApplicationStore} from '@service/application/application-store';
 import {Store} from '@ngrx/store';
 import {
   DATE_REPORTING_MODAL_CONFIG,
-  DateReportingModalComponent,
+  DateReportingModalComponent, DateReportingModalData,
   ReportedDateType,
   ReporterType
 } from '@feature/application/date-reporting/date-reporting-modal.component';
-import {ReportCustomerDates} from '@feature/application/actions/excavation-announcement-actions';
-import {ApplicationStatus} from '@model/application/application-status';
+import {ApplicationStatus, contains} from '@model/application/application-status';
+import {ApplicationDateReport} from '@model/application/application-date-report';
+import {ReportCustomerOperationalCondition, ReportCustomerWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
 
 @Component({
   selector: 'excavation-announcement',
@@ -83,18 +84,33 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     }
   }
 
-  reportCustomerDates(status: string): void {
-    const data = {
+  reportCustomerOperationalCondition(excavation: ExcavationAnnouncement): void {
+    const data: DateReportingModalData = {
       reporterType: ReporterType.CUSTOMER,
-      reportedDates: this.getReportedDatesByStatus(ApplicationStatus[status])
+      dateType: ReportedDateType.WINTER_TIME_OPERATION,
+      date: excavation.customerWinterTimeOperation,
+      reported: excavation.operationalConditionReported
     };
+    this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerOperationalCondition(dateReport)));
+  }
 
-    this.dialog.open(DateReportingModalComponent, {
+  reportCustomerWorkFinished(excavation: ExcavationAnnouncement): void {
+    const data: DateReportingModalData = {
+      reporterType: ReporterType.CUSTOMER,
+      dateType: ReportedDateType.WORK_FINISHED,
+      date: excavation.workFinished,
+      reported: excavation.workFinishedReported
+    };
+    this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerWorkFinished(dateReport)));
+  }
+
+  private openDateReporting(data: DateReportingModalData): Observable<ApplicationDateReport> {
+    return this.dialog.open(DateReportingModalComponent, {
       ...DATE_REPORTING_MODAL_CONFIG,
       data
     }).afterClosed().pipe(
       filter(result => !!result)
-    ).subscribe(result => this.store.dispatch(new ReportCustomerDates(result)));
+    );
   }
 
   protected initForm() {
@@ -166,8 +182,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     const form = ExcavationAnnouncementForm.from(application, excavation);
     this.applicationForm.patchValue(form);
     this.patchRelatedCableReport(excavation);
-    this.showReportCustomerDates =
-      [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(application.status) >= 0;
+    this.showReportCustomerDates = contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], application.status);
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {

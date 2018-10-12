@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
-import {concat, EMPTY, Observable} from 'rxjs/index';
+import {Observable} from 'rxjs/index';
 import {Application} from '@model/application/application';
 import {ApplicationDateReport} from '@model/application/application-date-report';
 import {ApplicationDateReportMapper} from '@service/mapper/application-date-report-mapper';
@@ -10,7 +10,6 @@ import {ApplicationMapper} from '@service/mapper/application-mapper';
 import {catchError, map} from 'rxjs/internal/operators';
 import {findTranslation} from '@util/translations';
 import {TimeUtil} from '@util/time.util';
-import {DateReport} from '@feature/application/date-reporting/date-report';
 import {RequiredTasks} from '@model/application/required-tasks';
 
 const baseUrl = '/api/excavationannouncements';
@@ -19,18 +18,6 @@ const baseUrl = '/api/excavationannouncements';
 export class ExcavationAnnouncementService {
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandler) {}
-
-  reportCustomerDates(applicationId: number, dateReport: DateReport): Observable<Application> {
-    const operational = dateReport.winterTimeOperation
-      ? this.reportCustomerOperationalCondition(applicationId, dateReport.winterTimeOperation)
-      : EMPTY;
-
-    const workFinished = dateReport.workFinished
-      ? this.reportCustomerWorkFinished(applicationId, dateReport.workFinished)
-      : EMPTY;
-
-    return concat(operational, workFinished);
-  }
 
   reportOperationalCondition(applicationId: number, date: Date): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/operationalcondition`;
