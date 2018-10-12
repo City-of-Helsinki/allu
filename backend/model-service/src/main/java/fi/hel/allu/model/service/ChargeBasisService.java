@@ -96,6 +96,7 @@ public class ChargeBasisService {
   private ChargeBasisEntry setAreaUsageTagIfMissing(ChargeBasisEntry entry, AtomicInteger i) {
     if (entry.getTag() == null && entry.getType() == ChargeBasisType.AREA_USAGE_FEE) {
       entry.setTag(ChargeBasisTag.AreaUsageTag().toString() + i.addAndGet(1));
+      entry.setReferrable(true);
     }
     return entry;
   }
