@@ -72,9 +72,11 @@ public class InvoiceService {
     final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
     final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
 
-    Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId);
     invoiceDao.deleteOpenInvoicesByApplication(applicationId);
-    invoiceDao.insert(applicationId, invoice);
+    if (!invoiceRows.isEmpty()) {
+      Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId);
+      invoiceDao.insert(applicationId, invoice);
+    }
   }
 
   // Gets charge basis entries that aren't in previously locked invoice
