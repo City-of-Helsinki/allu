@@ -76,20 +76,20 @@ public class ChargeBasisDao {
    */
   @Transactional
   public void setChargeBasis(ChargeBasisModification modification) {
-    updateEntries(modification.getEntriesToUpdate());
+    updateEntries(modification.getApplicationId(), modification.getEntriesToUpdate());
     deleteEntries(modification.getEntryIdsToDelete(), modification.getApplicationId());
     insertEntries(modification.getApplicationId(), modification.getEntriesToInsert(), modification.isManuallySet(), nextEntryNumber(modification.getApplicationId(), modification.isManuallySet()));
     deleteDanglingEntries(modification.getApplicationId());
   }
 
-  private void updateEntries(Set<ChargeBasisEntry> entriesToUpdate) {
+  private void updateEntries(Integer applicationId, Set<ChargeBasisEntry> entriesToUpdate) {
     ZonedDateTime modificationTime = ZonedDateTime.now();
     for (ChargeBasisEntry entry : entriesToUpdate) {
       entry.setModificationTime(modificationTime);
       BooleanExpression eqExp = entry.getManuallySet() ? chargeBasis.id.eq(entry.getId()) : chargeBasis.tag.eq(entry.getTag());
       queryFactory.update(chargeBasis)
       .populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
-      .where(eqExp).execute();
+      .where(eqExp, chargeBasis.applicationId.eq(applicationId)).execute();
     }
   }
 
