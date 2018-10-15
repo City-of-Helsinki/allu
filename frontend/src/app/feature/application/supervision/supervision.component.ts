@@ -7,12 +7,13 @@ import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {ComplexValidator} from '@util/complex-validator';
 import {SupervisionTaskForm} from './supervision-task-form';
 import {Observable, Subscription} from 'rxjs';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromSupervisionTask from './reducers';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Application} from '@model/application/application';
 import {UserService} from '@service/user/user-service';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   supervisionTasks: FormArray;
   supervisors: Array<User> = [];
   application$: Observable<Application>;
+  hasDisablingTags$: Observable<boolean>;
 
   private supervisionTaskSubscription: Subscription;
 
@@ -41,6 +43,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
     this.application$ = this.store.select(fromApplication.getCurrentApplication);
 
     this.userService.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
+    this.hasDisablingTags$ = this.store.pipe(select(fromApplication.hasTag(ApplicationTagType.DATE_CHANGE)));
   }
 
   ngOnDestroy(): void {

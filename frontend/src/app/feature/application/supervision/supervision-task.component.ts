@@ -78,6 +78,14 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
               private dialog: MatDialog) {
   }
 
+  @Input() set hasDisablingTags(disablingTags: boolean) {
+    const disabledStatus = ApplicationStatus.DECISIONMAKING === this.application.status;
+    const disabledTaskType = [SupervisionTaskType.OPERATIONAL_CONDITION, SupervisionTaskType.FINAL_SUPERVISION]
+      .indexOf(this.form.value.type) >= 0;
+
+    this.approveDisabled = disabledTaskType && (disabledStatus || disablingTags);
+  }
+
   ngOnInit(): void {
     const formValue = this.form.value;
     if (formValue.id) {
@@ -96,7 +104,6 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUserCanEdit(formValue.creatorId);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
-    this.approveDisabled = this.application.status === ApplicationStatus.DECISIONMAKING;
   }
 
   ngOnDestroy(): void {

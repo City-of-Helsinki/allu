@@ -19,6 +19,7 @@
             [form]="task"
             [application]="application"
             [supervisors]="supervisors"
+            [hasDisablingTags]="hasDisablingTags$ | async"
             (onRemove)="remove(i)"></supervision-task>
         </div>
       </div>

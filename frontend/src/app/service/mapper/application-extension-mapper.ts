@@ -79,9 +79,9 @@ export class ApplicationExtensionMapper {
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,
           backendExtension.terms,
-          backendExtension.operationalConditionReported,
-          backendExtension.workFinishedReported,
-          backendExtension.validityReported,
+          TimeUtil.dateFromBackend(backendExtension.operationalConditionReported),
+          TimeUtil.dateFromBackend(backendExtension.workFinishedReported),
+          TimeUtil.dateFromBackend(backendExtension.validityReported),
           backendExtension.compactionAndBearingCapacityMeasurement,
           backendExtension.qualityAssuranceTest
         );

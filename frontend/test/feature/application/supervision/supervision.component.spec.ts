@@ -28,6 +28,7 @@ class MockSupervisionTaskComponent {
   @Input() form: FormGroup;
   @Input() supervisors: Array<User> = [];
   @Input() application: Application;
+  @Input() hasDisablingTags: boolean;
   @Output() onRemove = new EventEmitter<void>();
 }
 
