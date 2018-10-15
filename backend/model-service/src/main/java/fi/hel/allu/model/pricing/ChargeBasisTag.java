@@ -67,6 +67,11 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.EADF, areaId);
   }
 
+  public static ChargeBasisTag ExcavationAnnouncementDailyFeeAdd(String areaId) {
+    return new ChargeBasisTag(TagText.EADFADD, areaId);
+  }
+
+
   public static ChargeBasisTag ExcavationAnnonuncementHandlingFee() {
     return new ChargeBasisTag(TagText.EAHF);
   }
@@ -175,6 +180,8 @@ private enum TagText {
     ARHF,
     // Excavation announcement, Daily fee
     EADF,
+    // Excavation announcement, Daily fee for additional period
+    EADFADD,
     // Excavation announcement, Handling fee
     EAHF,
     // Short term rental, Art
