@@ -81,6 +81,7 @@ export class ApplicationExtensionMapper {
           backendExtension.terms,
           backendExtension.operationalConditionReported,
           backendExtension.workFinishedReported,
+          backendExtension.validityReported,
           backendExtension.compactionAndBearingCapacityMeasurement,
           backendExtension.qualityAssuranceTest
         );

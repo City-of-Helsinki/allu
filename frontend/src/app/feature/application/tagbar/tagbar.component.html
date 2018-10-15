@@ -16,7 +16,7 @@
       </div>
       <div *availableTo="MODIFY_ROLES" fxFlex="initial">
         <mat-chip *ngIf="(availableTagCount | async)" class="slim-chip chip-outline" color="primary" selected="true">
-          Lisää tunniste
+          {{'application.tag.add' | translation}}
           <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>
         </mat-chip>
       </div>

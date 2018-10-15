@@ -29,6 +29,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private ZonedDateTime customerWorkFinished;
   private ZonedDateTime operationalConditionReported;
   private ZonedDateTime workFinishedReported;
+  private ZonedDateTime validityReported;
   private Integer cableReportId;
   @NotNull(message = "{application.excavationAnnouncement.workPurpose}")
   private String workPurpose;
@@ -276,5 +277,16 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
 
   public void setWorkFinishedReported(ZonedDateTime workFinishedReported) {
     this.workFinishedReported = workFinishedReported;
+  }
+
+  /**
+   * Date when customer reported validity dates
+   */
+  public ZonedDateTime getValidityReported() {
+    return validityReported;
+  }
+
+  public void setValidityReported(ZonedDateTime validityReported) {
+    this.validityReported = validityReported;
   }
 }

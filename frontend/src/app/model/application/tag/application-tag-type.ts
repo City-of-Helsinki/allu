@@ -42,10 +42,12 @@ export enum ApplicationTagType {
   // Päätös lähettämättä
   DECISION_NOT_SENT,
   // Sopimusta ei hyväksytty
-  CONTRACT_REJECTED
+  CONTRACT_REJECTED,
+  // Aikamuutos
+  DATE_CHANGE
 }
 
-export const manualTagTypes = [
+export const manuallyAddedTagTypes = [
   ApplicationTagType.WAITING,
   ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
   ApplicationTagType.STATEMENT_REQUESTED,
@@ -54,3 +56,7 @@ export const manualTagTypes = [
   ApplicationTagType.DECISION_NOT_SENT,
   ApplicationTagType.CONTRACT_REJECTED
 ];
+
+export const removableTagTypes = manuallyAddedTagTypes.concat([
+  ApplicationTagType.DATE_CHANGE
+]);

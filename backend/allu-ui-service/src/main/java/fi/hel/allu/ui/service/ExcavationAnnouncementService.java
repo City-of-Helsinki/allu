@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.ExcavationAnnouncementDates;
@@ -17,6 +18,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ConfigurationKey;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.service.*;
 
@@ -31,6 +33,9 @@ public class ExcavationAnnouncementService {
 
   @Autowired
   private SupervisionTaskService supervisionTaskService;
+
+  @Autowired
+  private ApplicationServiceComposer applicationServiceComposer;
 
   public ApplicationJson reportCustomerOperationalCondition(Integer id, ApplicationDateReport dateReport) {
     Application application = applicationService.setCustomerOperationalConditionDates(id, dateReport);
@@ -48,8 +53,8 @@ public class ExcavationAnnouncementService {
   }
 
   public ApplicationJson reportCustomerValidity(Integer id, ApplicationDateReport dateReport) {
-    Application application = applicationService.setCustomerValidityDates(id,
-        dateReport);
+    Application application = applicationService.setCustomerValidityDates(id, dateReport);
+    applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.DATE_CHANGE, null));
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 

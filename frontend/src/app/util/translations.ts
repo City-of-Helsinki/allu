@@ -232,6 +232,7 @@ export const translations = {
     },
     tag: {
       listTitle: 'Tunnisteet',
+      add: 'Lisää tunniste',
       type: {
         ADDITIONAL_INFORMATION_REQUESTED: 'Täydennyspyyntö lähetetty',
         STATEMENT_REQUESTED: 'Lausunnolla',
@@ -254,7 +255,8 @@ export const translations = {
         FINAL_SUPERVISION_REJECTED: 'Loppuvalvonta hylätty',
         SAP_ID_MISSING: 'Laskutettavan SAP-tunnus puuttuu',
         DECISION_NOT_SENT: 'Päätös lähettämättä',
-        CONTRACT_REJECTED: 'Sopimusta ei hyväksytty'
+        CONTRACT_REJECTED: 'Sopimusta ei hyväksytty',
+        DATE_CHANGE: 'Aikamuutos'
       },
       action: {
         PRELIMINARY_SUPERVISION_REQUESTED: 'Aloitusvalvontapyyntö',

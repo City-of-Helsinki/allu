@@ -19,6 +19,7 @@ import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {findTranslation} from '@util/translations';
+import * as TagAction from '@feature/application/actions/application-tag-actions';
 
 @Injectable()
 export class ExcavationAnnouncementEffects {
@@ -89,7 +90,7 @@ export class ExcavationAnnouncementEffects {
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerValidity')),
-        new SupervisionTaskActions.Load()
+        new TagAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
