@@ -58,6 +58,8 @@ public class ApplicationStatusChangeEventListenerTest {
   private ChargeBasisService chargeBasisService;
   @Mock
   private InvoiceService invoiceService;
+  @Mock
+  private WinterTimeService winterTimeService;
 
 
   @Captor
@@ -73,7 +75,7 @@ public class ApplicationStatusChangeEventListenerTest {
     supervisor = new User();
     supervisor.setId(228);
     statusChangeListener = new ApplicationStatusChangeListener(decisionDao, applicationService, locationService,
-        supervisionTaskService, applicationDao, chargeBasisService, invoiceService);
+        supervisionTaskService, applicationDao, chargeBasisService, invoiceService, winterTimeService);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);
@@ -101,6 +103,7 @@ public class ApplicationStatusChangeEventListenerTest {
 
   @Test
   public void onOperationalConditionShouldLockChargeBasisEntries() {
+    when(winterTimeService.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     application.setExtension(new ExcavationAnnouncement());
     statusChangeListener.onApplicationStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
@@ -109,6 +112,7 @@ public class ApplicationStatusChangeEventListenerTest {
 
   @Test
   public void onOperationalConditionShouldSetInvoicable() {
+    when(winterTimeService.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     ZonedDateTime operationalConditionDate = LocalDate.parse("2018-12-22").atStartOfDay(TimeUtil.HelsinkiZoneId);
     ExcavationAnnouncement extension = new ExcavationAnnouncement();

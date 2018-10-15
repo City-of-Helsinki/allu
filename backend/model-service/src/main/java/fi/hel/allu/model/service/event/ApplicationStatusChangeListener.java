@@ -34,12 +34,13 @@ public class ApplicationStatusChangeListener {
   private final ApplicationDao applicationDao;
   private final ChargeBasisService chargeBasisService;
   private final InvoiceService invoiceService;
+  private final WinterTimeService winterTimeService;
 
 
   @Autowired
   public ApplicationStatusChangeListener(DecisionDao decisionDao, ApplicationService applicationService,
       LocationService locationService, SupervisionTaskService supervisionTaskService, ApplicationDao applicationDao,
-      ChargeBasisService chargeBasisService, InvoiceService invoiceService) {
+      ChargeBasisService chargeBasisService, InvoiceService invoiceService, WinterTimeService winterTimeService) {
     this.decisionDao = decisionDao;
     this.applicationService = applicationService;
     this.locationService = locationService;
@@ -47,6 +48,7 @@ public class ApplicationStatusChangeListener {
     this.applicationDao = applicationDao;
     this.chargeBasisService = chargeBasisService;
     this.invoiceService = invoiceService;
+    this.winterTimeService = winterTimeService;
 
   }
 
@@ -116,7 +118,8 @@ public class ApplicationStatusChangeListener {
 
   protected void setExcavationAnnouncementInvoicable(Application application, StatusType status) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
-    if (status == StatusType.OPERATIONAL_CONDITION || status == StatusType.FINISHED) {
+    if (( status == StatusType.OPERATIONAL_CONDITION  &&  winterTimeService.isInWinterTime(extension.getWinterTimeOperation()))
+         || status == StatusType.FINISHED) {
       ZonedDateTime invoicableTime = status == StatusType.OPERATIONAL_CONDITION ? extension.getWinterTimeOperation()
           : extension.getWorkFinished();
       invoiceService.lockInvoices(application.getId());

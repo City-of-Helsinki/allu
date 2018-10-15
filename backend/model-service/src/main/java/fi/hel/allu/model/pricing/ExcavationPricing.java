@@ -1,13 +1,10 @@
 package fi.hel.allu.model.pricing;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.naming.spi.DirStateFactory.Result;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.util.CalendarUtil;
@@ -15,6 +12,7 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.service.WinterTimeService;
 
 public class ExcavationPricing extends Pricing {
 
@@ -34,9 +32,9 @@ public class ExcavationPricing extends Pricing {
   private static final int MEDIUM_AREA_DAILY_FEE = 6500;
   private static final int LARGE_AREA_DAILY_FEE = 8000;
 
-  public ExcavationPricing(Application application, WinterTime winterTime) {
+  public ExcavationPricing(Application application, WinterTimeService winterTimeService) {
     this.application = application;
-    this.winterTime = winterTime;
+    this.winterTime = winterTimeService.getWinterTime();
     this.extension = (ExcavationAnnouncement)application.getExtension();
     setPriceInCents(HANDLING_FEE);
     addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, HANDLING_FEE,
@@ -119,7 +117,7 @@ public class ExcavationPricing extends Pricing {
       endTime = winterTime.getWinterTimeStart(winterTimeOperation).atStartOfDay(TimeUtil.HelsinkiZoneId).minusDays(1);
       if (extension.getWorkFinished() != null && extension.getWorkFinished().isBefore(endTime)) {
         // Work finished before winter start
-        endTime = extension.getWorkFinished();
+        endTime = extension.getWorkFinished().withZoneSameInstant(TimeUtil.HelsinkiZoneId);
       }
     } else {
       endTime = winterTimeOperation;

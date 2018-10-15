@@ -1,15 +1,15 @@
 package fi.hel.allu.model.pricing;
 
-import com.greghaskins.spectrum.Spectrum;
-
-import fi.hel.allu.common.util.WinterTime;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import java.time.ZonedDateTime;
 
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.service.WinterTimeService;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Spectrum.class)
 public class ExcavationPricingSpec {
 
+  WinterTimeService winterTimeService;
   Application app;
   ExcavationPricing exc;
 
@@ -25,11 +26,13 @@ public class ExcavationPricingSpec {
 
       context("with a three-day application", () -> {
         beforeEach(()-> {
+          winterTimeService = Mockito.mock(WinterTimeService.class);
+
           app = new Application();
           app.setExtension(new ExcavationAnnouncement());
           app.setStartTime(ZonedDateTime.parse("2017-04-20T08:00:00+03:00"));
           app.setEndTime(ZonedDateTime.parse("2017-04-22T17:00:00+03:00"));
-          exc = new ExcavationPricing(app, new WinterTime(LocalDate.parse("1972-12-01"), LocalDate.parse("1972-05-14")));
+          exc = new ExcavationPricing(app, winterTimeService);
         });
         context("On price class 2, with area of 65 sqm", () -> {
           it("should cost 3 * 32.50 +  180 EUR", () -> {

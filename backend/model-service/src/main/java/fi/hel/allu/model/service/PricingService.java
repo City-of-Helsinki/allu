@@ -43,7 +43,7 @@ public class PricingService {
   private final LocationDao locationDao;
   private final CustomerDao customerDao;
   private final PricingExplanator pricingExplanator;
-  private final ConfigurationDao configurationDao;
+  private final WinterTimeService winterTimeService;
 
   private static final Location EMPTY_LOCATION;
 
@@ -53,12 +53,12 @@ public class PricingService {
   }
 
   @Autowired
-  public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao, ConfigurationDao configurationDao) {
+  public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao, WinterTimeService winterTimeService) {
     this.pricingDao = pricingDao;
     this.locationDao = locationDao;
     this.customerDao = customerDao;
     this.pricingExplanator = new PricingExplanator(locationDao);
-    this.configurationDao = configurationDao;
+    this.winterTimeService = winterTimeService;
   }
 
   /**
@@ -76,23 +76,12 @@ public class PricingService {
     } else if (application.getType() == ApplicationType.EVENT) {
       return updateEventPrice(application);
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      return updateExcavationAnnouncementPrice(application, getWinterTime());
+      return updateExcavationAnnouncementPrice(application);
     } else if (application.getType() == ApplicationType.AREA_RENTAL) {
       return updateAreaRentalPrice(application);
     } else {
       return Collections.emptyList();
     }
-  }
-
-  private WinterTime getWinterTime() {
-    return new WinterTime(
-        LocalDate.parse(getConfigurationValue(ConfigurationKey.WINTER_TIME_START)),
-        LocalDate.parse(getConfigurationValue(ConfigurationKey.WINTER_TIME_END)));
-  }
-
-  private String getConfigurationValue(ConfigurationKey key) {
-    return configurationDao.findByKey(key).stream().findFirst().map(Configuration::getValue)
-        .orElseThrow(() -> new NoSuchEntityException("Required configuration " + key + " not found."));
   }
 
   /**
@@ -160,8 +149,8 @@ public class PricingService {
   /*
    * Calculate price for excavation announcement
    */
-  private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application, WinterTime winterTime) {
-    return calculateChargeBasis(application, new ExcavationPricing(application, winterTime));
+  private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application) {
+    return calculateChargeBasis(application, new ExcavationPricing(application, winterTimeService));
   }
 
   /*
