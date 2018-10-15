@@ -47,6 +47,12 @@ public class ExcavationAnnouncementService {
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
+  public ApplicationJson reportCustomerValidity(Integer id, ApplicationDateReport dateReport) {
+    Application application = applicationService.setCustomerValidityDates(id,
+        dateReport);
+    return applicationJsonService.getFullyPopulatedApplication(application);
+  }
+
   public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate) {
     Application application = applicationService.findApplicationById(id);
     applicationService.setOperationalConditionDate(id, operationalConditionDate);

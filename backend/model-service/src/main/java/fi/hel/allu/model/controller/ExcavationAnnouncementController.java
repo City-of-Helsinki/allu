@@ -33,6 +33,11 @@ public class ExcavationAnnouncementController {
    return ResponseEntity.ok(applicationService.setCustomerWorkFinishedDates(id, dateReport));
   }
 
+  @RequestMapping(value = "/{id}/customervalidity", method = RequestMethod.PUT)
+  public ResponseEntity<Application> reportCustomerValidity(@PathVariable Integer id, @RequestBody ApplicationDateReport dateReport) {
+    return ResponseEntity.ok(applicationService.setCustomerValidityDates(id, dateReport));
+  }
+
   @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
   public ResponseEntity<Void> reportOperationalCondition(@PathVariable Integer id, @RequestBody ZonedDateTime operationalConditionDate) {
     applicationService.setOperationalConditionDate(id, operationalConditionDate);

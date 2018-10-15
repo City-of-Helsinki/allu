@@ -364,6 +364,13 @@ public class ApplicationService {
     return responseEntity.getBody();
   }
 
+  public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getExcavationAnnouncementCustomerValidityUrl(),
+        HttpMethod.PUT, new HttpEntity<>(dateReport), Application.class, id);
+    return responseEntity.getBody();
+  }
+
   public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
     restTemplate.exchange(
         applicationProperties.getExcavationAnnouncementOperationalConditionUrl(),

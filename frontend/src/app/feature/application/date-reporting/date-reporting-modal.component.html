@@ -5,8 +5,8 @@
   <div fxLayout="row">
     <div fxFlex>
       <form [formGroup]="form">
-          <div fxLayout="row" fxLayoutGap="18px">
-            <div fxFlex="50">
+          <div fxLayout="row wrap" fxLayoutGap="18px">
+            <div fxFlex="calc(50% - 18px)">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="reportedDate" required
                        [placeholder]="'dateReporting.dateField.reportedDate' | translation"
@@ -19,7 +19,20 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <div fxFlex="50">
+            <div fxFlex="calc(50% - 18px)" *ngIf="data.dateType==='validity'">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="reportedEndDate"
+                       [placeholder]="'dateReporting.dateField.reportedEndDate' | translation"
+                       [matDatepicker]="reportedEndDatePicker"/>
+                <mat-datepicker-toggle matSuffix [for]="reportedEndDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #reportedEndDatePicker></mat-datepicker>
+
+                <mat-error *ngIf="form.get('reportedDate').hasError('required')">
+                  {{'dateReporting.field.reportedDateMissing' | translation}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div fxFlex="0 1 calc(50% - 18px)">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="reportingDate" required
                        [placeholder]="'dateReporting.dateField.reportingDate' | translation"

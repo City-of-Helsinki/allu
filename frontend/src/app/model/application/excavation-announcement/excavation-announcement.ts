@@ -25,6 +25,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public terms?: string,
     public operationalConditionReported?: Date,
     public workFinishedReported?: Date,
+    public validityReported?: Date,
     public compactionAndBearingCapacityMeasurement?: boolean,
     public qualityAssuranceTest?: boolean
   ) {

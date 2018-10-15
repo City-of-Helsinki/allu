@@ -401,6 +401,7 @@ export const translations = {
         reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui',
         reportCustomerOperationalCondition: 'Asiakkaan ilmoittaman toiminnallisen kunnon päivittäminen epäonnistui',
         reportCustomerWorkFinished: 'Asiakkaan ilmoittaman työn valmistumisen päivittäminen epäonnistui',
+        reportCustomerValidity: 'Asiakkaan ilmoittaman voimassaolon päivittäminen epäonnistui',
         setRequiredTasks: 'Vaadittujen toimenpiteiden päivittäminen epäonnistui',
       },
       action: {
@@ -408,6 +409,7 @@ export const translations = {
         reportWorkFinished: 'Työn valmistuminen ilmoitettu',
         reportCustomerOperationalCondition: 'Asiakkaan ilmoittama toiminnallinen kunto päivitetty',
         reportCustomerWorkFinished: 'Asiakkaan ilmoittama työn valmistuminen päivitetty',
+        reportCustomerValidity: 'Asiakkaan ilmoittama voimassaolo päivitetty',
       }
     },
     note: {
@@ -488,6 +490,7 @@ export const translations = {
       customer: {
         winterTimeOperation: 'Asiakkaan ilmoittama toiminnallinen kunto',
         workFinished: 'Asiakkaan ilmoittama työ valmis',
+        validity: 'Asiakkaan ilmoittama voimassaolo'
       },
       official: {
         winterTimeOperation: 'Virallinen toiminnallinen kunto',
@@ -500,6 +503,8 @@ export const translations = {
     },
     dateField: {
       reportedDate: 'Päivä',
+      reportedStartDate: 'Voimassaolon aloitus',
+      reportedEndDate: 'Voimassaolon lopetus',
       reportingDate: 'Ilmoituspäivä'
     },
     field: {

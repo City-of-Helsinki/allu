@@ -8,6 +8,7 @@ import {Observable, of} from 'rxjs/index';
 import {
   ExcavationAnnouncementActionType,
   ReportCustomerOperationalCondition,
+  ReportCustomerValidity,
   ReportCustomerWorkFinished,
   ReportOperationalCondition,
   ReportWorkFinished,
@@ -74,6 +75,20 @@ export class ExcavationAnnouncementEffects {
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerWorkFinished')),
+        new SupervisionTaskActions.Load()
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  reportCustomerValidity: Observable<Action> = this.actions.pipe(
+    ofType<ReportCustomerValidity>(ExcavationAnnouncementActionType.ReportCustomerValidity),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerValidity(app.id, action.payload).pipe(
+      switchMap(updated => [
+        this.applicationStore.setAndAction(updated),
+        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerValidity')),
         new SupervisionTaskActions.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))

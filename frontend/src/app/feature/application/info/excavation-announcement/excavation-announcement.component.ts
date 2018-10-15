@@ -30,7 +30,11 @@ import {
 } from '@feature/application/date-reporting/date-reporting-modal.component';
 import {ApplicationStatus, contains} from '@model/application/application-status';
 import {ApplicationDateReport} from '@model/application/application-date-report';
-import {ReportCustomerOperationalCondition, ReportCustomerWorkFinished} from '@feature/application/actions/excavation-announcement-actions';
+import {
+  ReportCustomerOperationalCondition,
+  ReportCustomerValidity,
+  ReportCustomerWorkFinished
+} from '@feature/application/actions/excavation-announcement-actions';
 
 @Component({
   selector: 'excavation-announcement',
@@ -84,12 +88,23 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     }
   }
 
+  reportCustomerValidity(excavation: ExcavationAnnouncement): void {
+    const data: DateReportingModalData = {
+      reporterType: ReporterType.CUSTOMER,
+      dateType: ReportedDateType.VALIDITY,
+      reportedDate: excavation.customerStartTime,
+      reportedEndDate: excavation.customerEndTime,
+      reportingDate: excavation.validityReported
+    };
+    this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerValidity(dateReport)));
+  }
+
   reportCustomerOperationalCondition(excavation: ExcavationAnnouncement): void {
     const data: DateReportingModalData = {
       reporterType: ReporterType.CUSTOMER,
       dateType: ReportedDateType.WINTER_TIME_OPERATION,
-      date: excavation.customerWinterTimeOperation,
-      reported: excavation.operationalConditionReported
+      reportedDate: excavation.customerWinterTimeOperation,
+      reportingDate: excavation.operationalConditionReported
     };
     this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerOperationalCondition(dateReport)));
   }
@@ -98,8 +113,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     const data: DateReportingModalData = {
       reporterType: ReporterType.CUSTOMER,
       dateType: ReportedDateType.WORK_FINISHED,
-      date: excavation.workFinished,
-      reported: excavation.workFinishedReported
+      reportedDate: excavation.workFinished,
+      reportingDate: excavation.workFinishedReported
     };
     this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerWorkFinished(dateReport)));
   }

@@ -27,6 +27,7 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   private ZonedDateTime customerWorkFinished;
   private ZonedDateTime operationalConditionReported;
   private ZonedDateTime workFinishedReported;
+  private ZonedDateTime validityReported;
   private Integer cableReportId;
   private String workPurpose;
   private String trafficArrangements;
@@ -273,5 +274,16 @@ public class ExcavationAnnouncement extends ApplicationExtension {
 
   public void setWorkFinishedReported(ZonedDateTime workFinishedReported) {
     this.workFinishedReported = workFinishedReported;
+  }
+
+  /**
+   * Date when customer reported validity dates
+   */
+  public ZonedDateTime getValidityReported() {
+    return validityReported;
+  }
+
+  public void setValidityReported(ZonedDateTime validityReported) {
+    this.validityReported = validityReported;
   }
 }

@@ -13,6 +13,7 @@ public class ApplicationDateReport {
   private ZonedDateTime reportingDate;
   @NotNull
   private ZonedDateTime reportedDate;
+  private ZonedDateTime reportedEndDate;
 
   /**
    * Date when date was reported
@@ -36,4 +37,15 @@ public class ApplicationDateReport {
     this.reportedDate = reportedDate;
   }
 
+
+  /**
+   * Reported end date for date period support
+   */
+  public ZonedDateTime getReportedEndDate() {
+    return reportedEndDate;
+  }
+
+  public void setReportedEndDate(ZonedDateTime reportedEndDate) {
+    this.reportedEndDate = reportedEndDate;
+  }
 }

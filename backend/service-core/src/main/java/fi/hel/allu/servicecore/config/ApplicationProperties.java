@@ -1290,6 +1290,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/excavationannouncements/{id}/customeroperationalcondition");
   }
 
+  public String getExcavationAnnouncementCustomerValidityUrl() {
+    return getModelServiceUrl("/excavationannouncements/{id}/customervalidity");
+  }
+
   public String getExcavationAnnouncementCustomerWorkFinishedUrl() {
     return getModelServiceUrl("/excavationannouncements/{id}/customerworkfinished");
   }

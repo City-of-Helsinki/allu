@@ -463,6 +463,14 @@ public class ApplicationService {
   }
 
   /**
+   * Sets excavation announcement validity dates reported by customer
+   */
+  @Transactional
+  public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
+    return applicationDao.setCustomerValidityDates(id, dateReport);
+  }
+
+  /**
    * Sets excavation announcement operational condition date and updates pricing of application
    */
   @Transactional

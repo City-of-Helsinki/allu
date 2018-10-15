@@ -11,13 +11,15 @@ export enum ReporterType {
 export enum ReportedDateType {
   WINTER_TIME_OPERATION = 'winterTimeOperation',
   WORK_FINISHED = 'workFinished',
+  VALIDITY = 'validity'
 }
 
 export interface DateReportingModalData {
   reporterType: ReporterType;
   dateType: ReportedDateType;
-  date?: Date;
-  reported?: Date;
+  reportedDate?: Date;
+  reportedEndDate?: Date;
+  reportingDate?: Date;
 }
 
 export const DATE_REPORTING_MODAL_CONFIG = {width: '600px'};
@@ -29,6 +31,8 @@ export const DATE_REPORTING_MODAL_CONFIG = {width: '600px'};
 })
 export class DateReportingModalComponent implements OnInit {
   form: FormGroup;
+  reportedDateTranslationKey: string;
+  reportedEndDateTranslationKey: string;
 
   constructor(public dialogRef: MatDialogRef<DateReportingModalComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DateReportingModalData,
@@ -37,17 +41,29 @@ export class DateReportingModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      reportingDate: [this.data.date, Validators.required],
-      reportedDate: [this.data.reported, Validators.required]
+      reportedDate: [this.data.reportedDate, Validators.required],
+      reportedEndDate: [this.data.reportedEndDate],
+      reportingDate: [this.data.reportingDate, Validators.required]
     });
+
+    this.initDateTranslations();
   }
 
   save(): void {
     const formValues = this.form.value;
-    this.dialogRef.close(new ApplicationDateReport(formValues.reportedDate, formValues.reportingDate));
+    this.dialogRef.close(new ApplicationDateReport(formValues.reportingDate, formValues.reportedDate, formValues.reportedEndDate));
   }
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  private initDateTranslations(): void {
+    if (this.data.dateType === ReportedDateType.VALIDITY) {
+      this.reportedDateTranslationKey = 'dateReporting.dateField.reportedStartDate';
+      this.reportedEndDateTranslationKey = 'dateReporting.dateField.reportedEndDate';
+    } else {
+      this.reportedDateTranslationKey = 'dateReporting.dateField.reportedDate';
+    }
   }
 }

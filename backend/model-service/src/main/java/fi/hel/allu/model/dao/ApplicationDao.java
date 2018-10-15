@@ -737,6 +737,15 @@ public class ApplicationDao {
     return findById(id);
   }
 
+  public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
+    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    excavationAnnouncement.setValidityReported(dateReport.getReportingDate());
+    excavationAnnouncement.setCustomerStartTime(dateReport.getReportedDate());
+    excavationAnnouncement.setCustomerEndTime(dateReport.getReportedEndDate());
+    updateExtension(id, excavationAnnouncement);
+    return findById(id);
+  }
+
   public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
     ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
     excavationAnnouncement.setWinterTimeOperation(operationalConditionDate);
@@ -818,5 +827,4 @@ public class ApplicationDao {
     }
     return type;
   }
-
 }

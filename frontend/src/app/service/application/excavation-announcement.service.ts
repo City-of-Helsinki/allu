@@ -51,6 +51,14 @@ export class ExcavationAnnouncementService {
     );
   }
 
+  reportCustomerValidity(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
+    const url = `${baseUrl}/${applicationId}/customervalidity`;
+    return this.reportCustomer(url, dateReport).pipe(
+      catchError(error =>
+        this.errorHandler.handle(error, findTranslation('application.excavationAnnouncement.error.reportCustomerValidity')))
+    );
+  }
+
   setRequiredTasks(applicationId: number, tasks: RequiredTasks): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/requiredtasks`;
     return this.http.put<BackendApplication>(url, JSON.stringify(tasks)).pipe(

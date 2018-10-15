@@ -37,6 +37,13 @@ public class ExcavationAnnouncementController {
     return ResponseEntity.ok(excavationAnnouncementService.reportCustomerWorkFinished(id, dateReport));
   }
 
+  @RequestMapping(value = "/{id}/customervalidity", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> reportWorkFinished(@PathVariable Integer id,
+                                                            @RequestBody @Valid ApplicationDateReport dateReport) {
+    return ResponseEntity.ok(excavationAnnouncementService.reportCustomerValidity(id, dateReport));
+  }
+
   @RequestMapping(value = "/{id}/operationalcondition", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> reportOperationalCondition(@PathVariable Integer id,

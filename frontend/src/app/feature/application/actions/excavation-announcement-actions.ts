@@ -7,6 +7,7 @@ export enum ExcavationAnnouncementActionType {
   ReportWorkFinished = '[ExcavationAnnouncement] Report work finished date',
   ReportCustomerOperationalCondition = '[ExcavationAnnouncement] Report customers operational condition date',
   ReportCustomerWorkFinished = '[ExcavationAnnouncement] Report customers work finished date',
+  ReportCustomerValidity = '[ExcavationAnnouncement] Report customers validity dates',
   SetRequiredTasks = '[ExcavationAnnouncement] Set required tasks'
 }
 
@@ -30,6 +31,11 @@ export class ReportCustomerWorkFinished implements Action {
   constructor(public payload: ApplicationDateReport) {}
 }
 
+export class ReportCustomerValidity implements Action {
+  readonly type = ExcavationAnnouncementActionType.ReportCustomerValidity;
+  constructor(public payload: ApplicationDateReport) {}
+}
+
 export class SetRequiredTasks implements Action {
   readonly type = ExcavationAnnouncementActionType.SetRequiredTasks;
   constructor(public payload: RequiredTasks) {}
@@ -40,4 +46,5 @@ export type ExcavationAnnouncementActions =
   | ReportWorkFinished
   | ReportCustomerOperationalCondition
   | ReportCustomerWorkFinished
+  | ReportCustomerValidity
   | SetRequiredTasks;
