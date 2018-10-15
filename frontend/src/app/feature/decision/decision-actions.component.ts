@@ -164,9 +164,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   private sendDecisionDocument(appId: number, details: DecisionDetails, status: ApplicationStatus): Observable<{}> {
-    if (status == ApplicationStatus.OPERATIONAL_CONDITION) {
+    if (status === ApplicationStatus.OPERATIONAL_CONDITION) {
       return this.decisionService.sendOperationalCondition(appId, details);
-    } else if (status == ApplicationStatus.FINISHED) {
+    } else if (status === ApplicationStatus.FINISHED) {
       return this.decisionService.sendWorkFinished(appId, details);
     } else {
       return this.decisionService.sendDecision(appId, details);
