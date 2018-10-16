@@ -46,4 +46,20 @@ public class ChargeBasisController {
                                                                @Valid @RequestBody ValidList<ChargeBasisEntry> chargeBasisEntries) {
     return new ResponseEntity<>(chargeBasisService.setChargeBasis(id, chargeBasisEntries), HttpStatus.OK);
   }
+
+  /**
+   * Set the charge basis entry invoicable / non-invoicable
+   *
+   * @param id the application ID
+   * @param entryId id of the charge basis entry
+   * @param invoicable whether entry should be invoicable
+   *
+   * @return updated charge basis entry
+   */
+  @RequestMapping(value = "/charge-basis/{entryId}/invoicable", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ChargeBasisEntry> setInvoicable(@PathVariable int id, @PathVariable int entryId,
+                                                        @RequestParam("invoicable") boolean invoicable) {
+    return new ResponseEntity<>(chargeBasisService.setInvoicable(id, entryId, invoicable), HttpStatus.OK);
+  }
 }

@@ -14,7 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.*;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.dao.InvoiceDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Invoice;
+import fi.hel.allu.model.domain.InvoiceRecipient;
+import fi.hel.allu.model.domain.InvoiceRow;
+
+import java.util.Optional;
 
 /**
  * The service class responsible for managing invoices
@@ -77,12 +88,13 @@ public class InvoiceService {
     }
   }
 
-  // Gets charge basis entries that aren't in previously locked invoice
+  // Gets charge basis entries that are invoiceable and aren't in previously locked invoice
   private List<ChargeBasisEntry> getChargeBasisEntriesToInvoice(int applicationId) {
     List<Integer> entryIdsInLockedInvoice = invoiceDao.getChargeBasisIdsInLockedInvoice(applicationId);
-    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(applicationId)
-        .stream().filter(c -> !entryIdsInLockedInvoice.contains(c.getId())).collect(Collectors.toList());
-    return chargeBasisEntries;
+    return chargeBasisService.getChargeBasis(applicationId).stream()
+        .filter(c -> !entryIdsInLockedInvoice.contains(c.getId()))
+        .filter(c -> c.isInvoicable())
+        .collect(Collectors.toList());
   }
 
   private ZonedDateTime getInvoicingDate(Application application) {

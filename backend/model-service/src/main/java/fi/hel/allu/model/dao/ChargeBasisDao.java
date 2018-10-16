@@ -30,8 +30,9 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 
 @Repository
 public class ChargeBasisDao {
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
-      Arrays.asList(chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber, chargeBasis.referrable, chargeBasis.locked);
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(
+      chargeBasis.applicationId, chargeBasis.id, chargeBasis.entryNumber, chargeBasis.referrable,
+      chargeBasis.locked, chargeBasis.invoicable);
 
   @Autowired
   private SQLQueryFactory queryFactory;
@@ -164,5 +165,18 @@ public class ChargeBasisDao {
   @Transactional(readOnly = true)
   public List<Integer> getLockedChargeBasisIds(int applicationId) {
     return queryFactory.select(chargeBasis.id).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId), chargeBasis.locked.isTrue()).fetch();
+  }
+
+  @Transactional
+  public ChargeBasisEntry setInvoicable(int id, boolean invoicable) {
+    queryFactory.update(chargeBasis).set(chargeBasis.invoicable, invoicable).where(chargeBasis.id.eq(id)).execute();
+    return findChargeBasisEntry(id);
+  }
+
+  private ChargeBasisEntry findChargeBasisEntry(int id) {
+    return queryFactory.select(chargeBasisBean)
+        .from(chargeBasis)
+        .where(chargeBasis.id.eq(id))
+        .fetchOne();
   }
 }

@@ -586,6 +586,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/charge-basis");
   }
 
+  public String getSetChargeBasisInvoicableUrl() {
+    return getModelServiceUrl("/applications/{id}/charge-basis/{entryId}/invoicable");
+  }
+
   /**
    * @return url for deleting attachment from application.
    */

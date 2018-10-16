@@ -8,7 +8,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -58,6 +60,22 @@ public class ChargeBasisService {
     ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.exchange(applicationProperties.setChargeBasisUrl(),
         HttpMethod.PUT, requestEntity, ChargeBasisEntry[].class, applicationId);
     return sortEntries(Arrays.asList(restResult.getBody()));
+  }
+
+  /**
+   * Set whether charge basis entry is invoicable or not
+   *
+   */
+  public ChargeBasisEntry setInvoicable(int applicationId, int entryId, boolean invoicable) {
+    Map<String, Integer> pathVariables = new HashMap<>();
+    pathVariables.put("id", applicationId);
+    pathVariables.put("entryId", entryId);
+
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getSetChargeBasisInvoicableUrl())
+        .queryParam("invoicable", invoicable)
+        .buildAndExpand(pathVariables).toUri();
+
+    return restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(null), ChargeBasisEntry.class).getBody();
   }
 
   /**

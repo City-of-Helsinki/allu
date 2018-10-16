@@ -27,9 +27,11 @@ public class ChargeBasisEntry {
   private ZonedDateTime modificationTime;
   private Boolean locked;
   private boolean referrable;
+  private boolean invoicable;
 
   public ChargeBasisEntry() {
     // for deserialization
+    this.invoicable = true;
   }
 
   public ChargeBasisEntry(String tag, String referredTag, boolean manuallySet, ChargeBasisType type,
@@ -44,6 +46,7 @@ public class ChargeBasisEntry {
     this.explanation = explanation;
     this.unitPrice = unitPrice;
     this.netPrice = netPrice;
+    this.invoicable = true;
   }
 
   public Integer getId() {
@@ -195,6 +198,14 @@ public class ChargeBasisEntry {
 
   public void setReferrable(boolean referrable) {
       this.referrable = referrable;
+  }
+
+  public boolean isInvoicable() {
+    return invoicable;
+  }
+
+  public void setInvoicable(boolean invoicable) {
+    this.invoicable = invoicable;
   }
 
   @Override

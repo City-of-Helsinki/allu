@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -114,7 +115,11 @@ public class ChargeBasisService {
 
   private void validateModificationsAllowed(ChargeBasisModification modification) {
     Set<Integer> modifiedEntries = modification.getModifiedEntryIds();
-    if (containsLockedEntries(modifiedEntries, modification.getApplicationId())) {
+    validateModificationsAllowed(modifiedEntries, modification.getApplicationId());
+  }
+
+  private void validateModificationsAllowed(Set<Integer> modifiedEntries, int applicationId) {
+    if (containsLockedEntries(modifiedEntries, applicationId)) {
       throw new IllegalOperationException("chargebasis.locked");
     }
   }
@@ -138,4 +143,9 @@ public class ChargeBasisService {
     chargeBasisDao.lockEntries(applicationId);
   }
 
+  @Transactional
+  public ChargeBasisEntry setInvoicable(int applicationId, int entryId, boolean invoiced) {
+    validateModificationsAllowed(Collections.singleton(entryId), applicationId);
+    return chargeBasisDao.setInvoicable(entryId, invoiced);
+  }
 }

@@ -31,6 +31,7 @@ public abstract class Pricing {
     entry.setNetPrice(netPrice);
     entry.setReferrable(tag != null && tag.isReferrable());
     Optional.ofNullable(explanation).ifPresent(e -> entry.setExplanation(e.toArray(new String[e.size()])));
+    entry.setInvoicable(true);
     chargeBasisEntries.add(entry);
   }
 

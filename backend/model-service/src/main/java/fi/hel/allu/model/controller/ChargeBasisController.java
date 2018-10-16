@@ -48,4 +48,12 @@ public class ChargeBasisController {
     applicationService.updateApplicationPricing(id);
     return new ResponseEntity<>(chargeBasisService.getChargeBasis(id), HttpStatus.OK);
   }
+
+  @Transactional
+  @RequestMapping(value = "/charge-basis/{entryId}/invoicable", method = RequestMethod.PUT)
+  public ResponseEntity<ChargeBasisEntry> setInvoicable(@PathVariable int id, @PathVariable int entryId,
+                                                        @RequestParam boolean invoicable) {
+    return new ResponseEntity<>(chargeBasisService.setInvoicable(id, entryId, invoicable), HttpStatus.OK);
+
+  }
 }
