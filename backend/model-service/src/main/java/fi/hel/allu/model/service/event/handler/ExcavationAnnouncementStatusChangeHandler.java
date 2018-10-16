@@ -14,8 +14,8 @@ import fi.hel.allu.model.service.*;
 @Service
 public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatusChangeHandler {
 
-  private WinterTimeService winterTimeService;
-  private InvoiceService invoiceService;
+  private final WinterTimeService winterTimeService;
+  private final InvoiceService invoiceService;
 
   public ExcavationAnnouncementStatusChangeHandler(ApplicationService applicationService,
       SupervisionTaskService supervisionTaskService, LocationService locationService, ApplicationDao applicationDao,
@@ -31,15 +31,20 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     clearTargetState(application);
 
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
-    if (extension.getWinterTimeOperation() != null) {
+    if (extension.getWinterTimeOperation() != null &&
+        !hasSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION)) {
       createSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION, userId,
           ExcavationAnnouncementDates.operationalConditionSupervisionDate(extension.getWinterTimeOperation()));
     }
     if (application.getEndTime() != null) {
-      createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
-          ExcavationAnnouncementDates.finalSupervisionDate(application.getEndTime()));
-      createSupervisionTask(application, SupervisionTaskType.WARRANTY, userId,
-          ExcavationAnnouncementDates.warrantySupervisionDate(application.getEndTime()));
+      if (!hasSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION)) {
+        createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
+            ExcavationAnnouncementDates.finalSupervisionDate(application.getEndTime()));
+      }
+      if (!hasSupervisionTask(application, SupervisionTaskType.WARRANTY)) {
+        createSupervisionTask(application, SupervisionTaskType.WARRANTY, userId,
+            ExcavationAnnouncementDates.warrantySupervisionDate(application.getEndTime()));
+      }
     }
   }
 

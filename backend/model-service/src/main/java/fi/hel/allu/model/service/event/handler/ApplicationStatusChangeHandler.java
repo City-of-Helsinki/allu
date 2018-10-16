@@ -123,6 +123,10 @@ public class ApplicationStatusChangeHandler {
     supervisionTaskService.insert(supervisionTask);
   }
 
+  protected boolean hasSupervisionTask(Application application, SupervisionTaskType type) {
+    return !supervisionTaskService.findByApplicationIdAndType(application.getId(), type).isEmpty();
+  }
+
   private Integer getSupervisionTaskOwner(Application application) {
     Integer cityDistrict = application.getLocations().get(0).getCityDistrictId();
     Integer supervisionTaskOwner = null;
