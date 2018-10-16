@@ -24,6 +24,8 @@ import * as TagActions from '@feature/application/actions/application-tag-action
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
+import {Load as LoadInvoices} from '@feature/application/invoicing/actions/invoice-actions';
+import {Load as LoadChargeBasis} from '@feature/application/invoicing/actions/charge-basis-actions';
 
 const requiresTagReload = [
   SupervisionTaskActionType.SaveSuccess,
@@ -103,6 +105,12 @@ export class SupervisionTaskEffects {
   reloadTags: Observable<Action> = this.actions.pipe(
     ofType<Action>(...requiresTagReload),
     map(() => new TagActions.Load())
+  );
+
+  @Effect()
+  reloadInvoicing: Observable<Action> = this.actions.pipe(
+    ofType<Action>(SupervisionTaskActionType.ApproveSuccess),
+    switchMap(() => [new LoadChargeBasis(), new LoadInvoices()])
   );
 
   @Effect()
