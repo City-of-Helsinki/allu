@@ -1,32 +1,20 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.ChargeBasisDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
-import fi.hel.allu.model.dao.InvoiceDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.Invoice;
-import fi.hel.allu.model.domain.InvoiceRecipient;
-import fi.hel.allu.model.domain.InvoiceRow;
-
-import java.util.Optional;
-import java.util.stream.Collectors;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
 
 /**
  * The service class responsible for managing invoices
@@ -41,21 +29,31 @@ public class InvoiceService {
   private final ApplicationDao applicationDao;
   private final InvoiceRecipientDao invoiceRecipientDao;
   private final CustomerDao customerDao;
+  private final HistoryDao historyDao;
 
   @Autowired
   public InvoiceService(ChargeBasisService chargeBasisService, InvoiceDao invoiceDao, PricingService pricingService,
-                        ApplicationDao applicationDao, InvoiceRecipientDao invoiceRecipientDao, CustomerDao customerDao) {
+                        ApplicationDao applicationDao, InvoiceRecipientDao invoiceRecipientDao, CustomerDao customerDao,
+                        HistoryDao historyDao) {
     this.chargeBasisService = chargeBasisService;
     this.invoiceDao = invoiceDao;
     this.pricingService = pricingService;
     this.applicationDao = applicationDao;
     this.invoiceRecipientDao = invoiceRecipientDao;
     this.customerDao = customerDao;
+    this.historyDao = historyDao;
   }
 
   @Transactional(readOnly = true)
   public List<Invoice> findByApplication(int id) {
-    return invoiceDao.findByApplication(id);
+    List<Invoice> invoices = invoiceDao.findByApplication(id);
+    List<Integer> replacedApplicationIds = new ArrayList<>();
+    historyDao.getReplacedApplicationIds(id, replacedApplicationIds);
+    List<Invoice> replacedApplicationInvoices = invoiceDao.findInvoicedInvoices(replacedApplicationIds);
+    return Stream.of(invoices, replacedApplicationInvoices)
+        .flatMap(Collection::stream)
+        .sorted(Comparator.comparing(Invoice::getInvoicableTime, Comparator.nullsFirst(Comparator.reverseOrder())))
+        .collect(Collectors.toList());
   }
 
   @Transactional
@@ -146,7 +144,7 @@ public class InvoiceService {
 
   @Transactional(readOnly = true)
   public boolean applicationHasInvoiced(int applicationId) {
-    return findByApplication(applicationId).stream()
+    return invoiceDao.findByApplication(applicationId).stream()
         .anyMatch(invoice -> invoice.isInvoiced());
   }
 

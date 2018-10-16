@@ -95,6 +95,17 @@ public class InvoiceDao {
         .collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
+  public List<Invoice> findInvoicedInvoices(List<Integer> applicationIds) {
+    return queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.in(applicationIds), invoice.invoiced.isTrue()).fetch()
+        .stream()
+        .map(id -> find(id))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
+  }
+
   /**
    * Update an invoice.
    *

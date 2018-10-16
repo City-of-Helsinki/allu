@@ -2,9 +2,6 @@ package fi.hel.allu.model.service;
 
 import com.greghaskins.spectrum.Spectrum;
 
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.ChargeBasisDao;
-import fi.hel.allu.model.dao.InvoiceDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.model.domain.InvoiceRow;
@@ -23,8 +20,7 @@ import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEac
 import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRecipient;
@@ -39,6 +35,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
   private ApplicationDao applicationDao;
   private InvoiceRecipientDao invoiceRecipientDao;
   private CustomerDao customerDao;
+  private HistoryDao historyDao;
 
   private InvoiceService invoiceService;
 
@@ -50,7 +47,8 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
       applicationDao = Mockito.mock(ApplicationDao.class);
       invoiceRecipientDao = Mockito.mock(InvoiceRecipientDao.class);
       customerDao = Mockito.mock(CustomerDao.class);
-      invoiceService = new InvoiceService(chargeBasisService, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao);
+      historyDao = Mockito.mock(HistoryDao.class);
+      invoiceService = new InvoiceService(chargeBasisService, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao, historyDao);
     });
 
     describe("InvoiceService", () -> {

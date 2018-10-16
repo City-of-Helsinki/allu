@@ -62,7 +62,8 @@ public class HistoryDao {
   }
 
   // Gets recursively all application ids replaced by application with given application ID
-  private void getReplacedApplicationIds(int applicationId, List<Integer> applicationIds) {
+  @Transactional(readOnly = true)
+  public void getReplacedApplicationIds(int applicationId, List<Integer> applicationIds) {
     Integer replacedId = getReplacedApplicationId(applicationId);
     if (replacedId != null) {
       applicationIds.add(replacedId);
