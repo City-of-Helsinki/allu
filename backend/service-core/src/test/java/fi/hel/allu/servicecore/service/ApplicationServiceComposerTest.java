@@ -10,11 +10,15 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import static org.junit.Assert.assertEquals;
+
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 
 
 public class ApplicationServiceComposerTest {
@@ -29,12 +33,19 @@ public class ApplicationServiceComposerTest {
   private UserService userService;
   private InvoiceService invoiceService;
   private CustomerService customerService;
+  private SupervisionTaskService supervisionTaskService;
 
   private static final int applicationId = 1;
   private static final int projectId = 12;
   private static final int ownerId = 4;
 
-  private ProjectJson projectJson = Mockito.mock(ProjectJson.class);
+  private final ProjectJson projectJson = Mockito.mock(ProjectJson.class);
+
+  private StatusChangeInfoJson info;
+  private Application applicationWithOwner;
+  private UserJson user;
+  private Application updatedApplication;
+  private ApplicationJson updatedApplicationJson;
 
   @Before
   public void init() {
@@ -47,6 +58,7 @@ public class ApplicationServiceComposerTest {
     userService = Mockito.mock(UserService.class);
     invoiceService = Mockito.mock(InvoiceService.class);
     customerService = Mockito.mock(CustomerService.class);
+    supervisionTaskService = Mockito.mock(SupervisionTaskService.class);
 
     applicationServiceComposer = new ApplicationServiceComposer(
         applicationService,
@@ -57,8 +69,28 @@ public class ApplicationServiceComposerTest {
         mailComposerService,
         userService,
         invoiceService,
-        customerService
+        customerService,
+        supervisionTaskService
     );
+
+    info = new StatusChangeInfoJson();
+    info.setOwner(ownerId);
+
+    applicationWithOwner = new Application();
+    applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
+    applicationWithOwner.setProjectId(projectJson.getId());
+    applicationWithOwner.setOwner(ownerId);
+
+    user = new UserJson();
+    user.setId(ownerId);
+
+    updatedApplicationJson = new ApplicationJson();
+    updatedApplicationJson.setOwner(user);
+    updatedApplicationJson.setProject(projectJson);
+
+    updatedApplication = new Application();
+    updatedApplication.setStatus(StatusType.DECISIONMAKING);
+    updatedApplication.setProjectId(projectJson.getId());
   }
 
 
@@ -83,25 +115,6 @@ public class ApplicationServiceComposerTest {
 
   @Test
   public void testChangeStatus() {
-    final StatusChangeInfoJson info = new StatusChangeInfoJson();
-    info.setOwner(ownerId);
-
-    final UserJson user = new UserJson();
-    user.setId(ownerId);
-
-    final Application updatedApplication = new Application();
-    updatedApplication.setStatus(StatusType.DECISIONMAKING);
-    updatedApplication.setProjectId(projectJson.getId());
-
-    final ApplicationJson updatedApplicationJson = new ApplicationJson();
-    updatedApplicationJson.setOwner(user);
-    updatedApplicationJson.setProject(projectJson);
-
-    final Application applicationWithOwner = new Application();
-    applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
-    applicationWithOwner.setProjectId(projectJson.getId());
-    applicationWithOwner.setOwner(ownerId);
-
     Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
     Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISIONMAKING)).thenReturn(updatedApplication);
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
@@ -123,6 +136,57 @@ public class ApplicationServiceComposerTest {
 
     applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.DECISION);
     Mockito.verify(mailComposerService).sendDecision(applicationJson, decisionDetailsJson, DecisionDocumentType.DECISION);
+  }
+
+  @Test
+  public void testReturnToEditingFromFinishedToOperationalCondition() {
+    ChangeHistoryItemJson[] history = {
+      new ChangeHistoryItemJson(user, new ChangeHistoryItemInfoJson(), ChangeType.STATUS_CHANGED,
+          StatusType.OPERATIONAL_CONDITION.name(), ZonedDateTime.now(), null)
+    };
+    applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
+    applicationWithOwner.setTargetState(StatusType.FINISHED);
+    updatedApplication.setStatus(StatusType.OPERATIONAL_CONDITION);
+    updatedApplicationJson.setStatus(StatusType.OPERATIONAL_CONDITION);
+    Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
+    Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.OPERATIONAL_CONDITION)).thenReturn(updatedApplication);
+    Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
+
+    ApplicationJson json = applicationServiceComposer.returnToEditing(applicationId, info);
+    assertEquals(StatusType.OPERATIONAL_CONDITION, json.getStatus());
+  }
+
+  @Test
+  public void testReturnToEditingFromFinishedToDecision() {
+    ChangeHistoryItemJson[] history = {};
+    applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
+    applicationWithOwner.setTargetState(StatusType.FINISHED);
+    updatedApplication.setStatus(StatusType.DECISION);
+    updatedApplicationJson.setStatus(StatusType.DECISION);
+    Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
+    Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
+    Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
+
+    ApplicationJson json = applicationServiceComposer.returnToEditing(applicationId, info);
+    assertEquals(StatusType.DECISION, json.getStatus());
+  }
+
+  @Test
+  public void testReturnToEditingFromOperationalConditionToDecision() {
+    ChangeHistoryItemJson[] history = {};
+    applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
+    applicationWithOwner.setTargetState(StatusType.OPERATIONAL_CONDITION);
+    updatedApplication.setStatus(StatusType.DECISION);
+    updatedApplicationJson.setStatus(StatusType.DECISION);
+    Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
+    Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
+    Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
+
+    ApplicationJson json = applicationServiceComposer.returnToEditing(applicationId, info);
+    assertEquals(StatusType.DECISION, json.getStatus());
   }
 
 }

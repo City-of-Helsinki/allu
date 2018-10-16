@@ -27,6 +27,7 @@ import {catchError, map} from 'rxjs/internal/operators';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
+const RETURN_TO_EDITING_URL = '/api/applications/:appId/status/returnToEditing';
 const TAGS_URL = '/api/applications/:appId/tags';
 const ATTACHMENTS_URL = '/api/applications/:appId/attachments';
 const SEARCH = '/search';
@@ -137,6 +138,17 @@ export class ApplicationService {
     const url = APPLICATIONS_URL + '/note/' + id;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeFailed')))
+    );
+  }
+
+  /**
+   * Returns application back to editing state. New state is based on current state.
+   */
+  public returnToEditing(appId: number, changeInfo?: StatusChangeInfo): Observable<Application> {
+    const url = RETURN_TO_EDITING_URL.replace(':appId', String(appId));
+    return this.http.put<BackendApplication>(url, JSON.stringify(StatusChangeInfoMapper.mapFrontEnd(changeInfo))).pipe(
+      map(app => ApplicationMapper.mapBackend(app)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.statusChangeFailed')))
     );
   }
 

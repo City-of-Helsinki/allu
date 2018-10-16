@@ -137,4 +137,12 @@ public class ApplicationStatusController {
     approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson, chargeBasisEntries);
     return ResponseEntity.ok(applicationJson);
   }
+
+  @RequestMapping(value = "/{id}/status/returnToEditing", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_DECISION')")
+  public ResponseEntity<ApplicationJson> returnToEditing(@PathVariable int id, @RequestBody StatusChangeInfoJson info) {
+    commentService.addReturnComment(id, info.getComment());
+    return ResponseEntity.ok(applicationServiceComposer.returnToEditing(id, info));
+  }
+
 }

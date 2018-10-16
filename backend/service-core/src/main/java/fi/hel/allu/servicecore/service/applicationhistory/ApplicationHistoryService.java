@@ -84,6 +84,14 @@ public class ApplicationHistoryService {
         .collect(Collectors.toList());
   }
 
+  public List<ChangeHistoryItemJson> getStatusChanges(Integer applicationId) {
+    return Arrays.stream(restTemplate.getForObject(applicationProperties.getApplicationHistoryUrl(),
+        ChangeHistoryItem[].class, applicationId))
+          .filter(c -> c.getChangeType() == ChangeType.STATUS_CHANGED)
+          .map(c -> changeHistoryMapper.mapToJson(c))
+          .collect(Collectors.toList());
+  }
+
   public void addInvoiceRecipientChange(Integer applicationId, CustomerJson oldInvoiceRecipient, CustomerJson newInvoiceRecipient) {
     final Integer userId = userService.getCurrentUser().getId();
     final Integer oldCustomerId = oldInvoiceRecipient != null ? oldInvoiceRecipient.getId() : null;

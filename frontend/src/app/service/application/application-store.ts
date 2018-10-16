@@ -211,13 +211,23 @@ export class ApplicationStore {
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     const appId = id || this.snapshot.application.id;
     this.appStore.next({...this.current, processing: true});
-    return this.applicationService.changeStatus(appId, status, changeInfo).pipe(
-      tap(application => this.setAndDispatch(application)),
-      catchError(err => {
-        this.appStore.next({...this.current, processing: false});
-        return observableThrowError(err);
-      })
-    );
+    if (status === ApplicationStatus.RETURNED_TO_PREPARATION) {
+      return this.applicationService.returnToEditing(appId, changeInfo).pipe(
+        tap(application => this.setAndDispatch(application)),
+        catchError(err => {
+          this.appStore.next({...this.current, processing: false});
+          return observableThrowError(err);
+        })
+      );
+    } else {
+      return this.applicationService.changeStatus(appId, status, changeInfo).pipe(
+        tap(application => this.setAndDispatch(application)),
+        catchError(err => {
+          this.appStore.next({...this.current, processing: false});
+          return observableThrowError(err);
+        })
+      );
+    }
   }
 
   changeRelatedProject(projectId: number) {

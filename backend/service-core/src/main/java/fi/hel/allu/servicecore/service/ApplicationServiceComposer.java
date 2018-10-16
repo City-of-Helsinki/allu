@@ -17,11 +17,14 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
@@ -42,6 +45,7 @@ public class ApplicationServiceComposer {
   private final UserService userService;
   private final InvoiceService invoiceService;
   private final CustomerService customerService;
+  private final SupervisionTaskService supervisionTaskService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -53,7 +57,8 @@ public class ApplicationServiceComposer {
       @Lazy MailComposerService mailComposerService,
       UserService userService,
       InvoiceService invoiceService,
-      CustomerService customerService) {
+      CustomerService customerService,
+      @Lazy SupervisionTaskService supervisionTaskService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
@@ -63,6 +68,7 @@ public class ApplicationServiceComposer {
     this.userService = userService;
     this.invoiceService = invoiceService;
     this.customerService = customerService;
+    this.supervisionTaskService = supervisionTaskService;
   }
 
   /**
@@ -239,6 +245,34 @@ public class ApplicationServiceComposer {
     }
     searchService.updateApplications(applicationsUpdated);
     return applicationJson;
+  }
+
+  public ApplicationJson returnToEditing(int applicationId, StatusChangeInfoJson info) {
+    final Application application = applicationService.findApplicationById(applicationId);
+    switch (application.getTargetState()) {
+      case OPERATIONAL_CONDITION:
+        reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION);
+        return changeStatus(applicationId, StatusType.DECISION, info);
+      case FINISHED:
+        reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION);
+        final List<ChangeHistoryItemJson> history = applicationHistoryService.getStatusChanges(applicationId);
+        if (history.stream().filter(c -> StatusType.OPERATIONAL_CONDITION.name().equals(c.getChangeSpecifier())).count() > 0) {
+          return changeStatus(applicationId, StatusType.OPERATIONAL_CONDITION, info);
+        } else {
+          return changeStatus(applicationId, StatusType.DECISION, info);
+        }
+      default:
+        return changeStatus(applicationId, StatusType.RETURNED_TO_PREPARATION, info);
+    }
+  }
+
+  private void reopenSupervisionTask(int applicationId, SupervisionTaskType taskType) {
+    final List<SupervisionTaskJson> tasks = supervisionTaskService.findByApplicationId(applicationId);
+    tasks.stream().filter(s -> s.getType() == taskType).forEach(s -> {
+      s.setStatus(SupervisionTaskStatusType.OPEN);
+      s.setActualFinishingTime(null);
+      supervisionTaskService.update(s);
+    });
   }
 
   /**
