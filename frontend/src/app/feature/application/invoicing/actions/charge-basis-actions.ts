@@ -7,7 +7,9 @@ export enum ChargeBasisActionType {
   Save = '[Charge basis] Save charge basis entries',
   AddEntry = '[Charge basis] Add charge basis entry',
   UpdateEntry = '[Charge basis] Update charge basis entry',
-  RemoveEntry = '[Charge basis] Remove charge basis entry'
+  RemoveEntry = '[Charge basis] Remove charge basis entry',
+  SetInvoicable = '[Charge basis] Set charge basis entry invoicable or not',
+  SetInvoicableFailed = '[Charge basis] Setting charge basis entry invoicable failed',
 }
 
 export class Load implements Action {
@@ -39,11 +41,29 @@ export class RemoveEntry implements Action {
   constructor(public payload: number) {}
 }
 
+export class SetInvoicable implements Action {
+  readonly type = ChargeBasisActionType.SetInvoicable;
+  readonly payload: {id: number, invoicable: boolean};
+  constructor(private id: number, private invoicable: boolean) {
+    this.payload = {id, invoicable};
+  }
+}
+
+export class SetInvoicableFailed implements Action {
+  readonly type = ChargeBasisActionType.SetInvoicableFailed;
+  readonly payload: {id: number, invoicable: boolean};
+  constructor(private id: number, private invoicable: boolean) {
+    this.payload = {id, invoicable};
+  }
+}
+
 export type ChargeBasisActions =
   | Load
   | LoadSuccess
   | Save
   | AddEntry
   | UpdateEntry
-  | RemoveEntry;
+  | RemoveEntry
+  | SetInvoicable
+  | SetInvoicableFailed;
 

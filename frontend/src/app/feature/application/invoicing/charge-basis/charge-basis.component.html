@@ -10,19 +10,27 @@
     </div>
   </mat-card-title>
   <mat-card-content class="bordered">
+    <div fxLayout="row wrap" fxLayout.sm="column" fxLayoutAlign="start center" class="header-row">
+      <div fxFlex="none" fxFlexAlign="center">
+        <mat-card-subtitle>
+          {{'chargeBasis.invoicable' | translation}}
+        </mat-card-subtitle>
+      </div>
+    </div>
     <ul class="charge-basis-entries">
-      <li *ngFor="let entry of chargeBasisEntries$ | async; let i=index;" class="charge-basis-entry-container">
+      <li *ngFor="let entry of chargeBasisEntries$ | async; let i=index; trackBy: trackById" class="charge-basis-entry-container">
         <charge-basis-entry
           [entry]="entry"
           [changesAllowed]="changesAllowed"
           (onEdit)="editEntry($event)"
-          (onRemove)="removeEntry(entry.id)"></charge-basis-entry>
+          (onRemove)="removeEntry(entry.id)"
+          (invoicableChange)="setInvoicable(entry.id, $event)"></charge-basis-entry>
       </li>
     </ul>
   </mat-card-content>
   <mat-card-footer>
     <div fxLayout="row" fxLayoutAlign="start center">
-      <div fxFlex="95px"></div>
+      <div fxFlex="115px"></div>
       <div fxFlex="15" fxFlexOffset="70" class="text-highlighted">
         {{'chargeBasis.totalPrice' | translation}}: {{calculatedPrice | centsToEuros}}
       </div>

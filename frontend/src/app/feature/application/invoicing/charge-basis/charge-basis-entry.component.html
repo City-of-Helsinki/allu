@@ -1,13 +1,9 @@
-<div fxLayout="row wrap" fxLayout.sm="column" fxLayoutAlign="start center" class="slim entry-content">
-  <div fxFlex.gt-sm="100px">
-    <ng-container *ngIf="editAllowed(entry)">
-      <button type="button" mat-icon-button (click)="onEdit.emit(entry)">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button type="button" mat-icon-button (click)="onRemove.emit()">
-        <mat-icon>clear</mat-icon>
-      </button>
-    </ng-container>
+ <div fxLayout="row wrap" fxLayout.sm="column" fxLayoutAlign="start center" class="slim entry-content">
+  <div fxFlex.gt-sm="120px" fxFlexAlign="center" class="centered">
+    <mat-checkbox
+      [disabled]="entry.locked"
+      [checked]="entry.invoicable"
+      (change)="invoicableChange.emit($event.checked)"></mat-checkbox>
   </div>
   <div fxFlex="40">
     <div *ngIf="entry.referredTag" class="referring-entry" fxFlex="3em"></div>
@@ -29,4 +25,14 @@
     <div fxFlex="15">à {{entry.unitPrice | centsToEuros}}</div>
     <div fxFlex="15" class="text-highlighted">{{entry.netPrice | centsToEuros}}</div>
   </ng-template>
+  <div fxFlex.gt-sm="100px">
+    <ng-container *ngIf="editAllowed(entry)">
+      <button type="button" mat-icon-button (click)="onEdit.emit(entry)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button type="button" mat-icon-button (click)="onRemove.emit()">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </ng-container>
+  </div>
 </div>

@@ -2,10 +2,17 @@ import {Injectable} from '@angular/core';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromInvoicing from '@feature/application/invoicing/reducers';
-import {Action, Store} from '@ngrx/store';
+import {Action, select, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Observable, of} from 'rxjs/index';
-import {ChargeBasisActionType, Load, LoadSuccess, Save} from '@feature/application/invoicing/actions/charge-basis-actions';
+import {from, Observable, of} from 'rxjs/index';
+import {
+  ChargeBasisActionType,
+  Load,
+  LoadSuccess,
+  Save,
+  SetInvoicable,
+  SetInvoicableFailed, UpdateEntry
+} from '@feature/application/invoicing/actions/charge-basis-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {InvoiceService} from '@service/application/invoice/invoice.service';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
@@ -35,6 +42,16 @@ export class ChargeBasisEffects {
     switchMap(([action, app]) => this.invoiceService.saveChargeBasisEntries(app.id, action.payload).pipe(
       switchMap(entries => [new LoadSuccess(entries), new ApplicationActions.Load(app.id)]),
       catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  setInvoicable: Observable<Action> = this.actions.pipe(
+    ofType<SetInvoicable>(ChargeBasisActionType.SetInvoicable),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([action, app]) => this.invoiceService.setInvoicable(app.id, action.payload.id, action.payload.invoicable).pipe(
+      map(entry => new UpdateEntry(entry)),
+      catchError(error => from([new NotifyFailure(error), new SetInvoicableFailed(action.payload.id, action.payload.invoicable)]))
     ))
   );
 

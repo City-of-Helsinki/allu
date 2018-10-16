@@ -15,4 +15,5 @@ export interface BackendChargeBasisEntry {
   explanation: string[];
   locked?: boolean;
   referrable?: boolean;
+  invoicable?: boolean;
 }

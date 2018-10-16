@@ -22,7 +22,8 @@ export class ChargeBasisEntryForm {
     public referredTag: string = EMPTY,
     public explanation: string[] = [],
     public manualExplanation: string = EMPTY,
-    public locked?: boolean
+    public locked?: boolean,
+    public invoicable: boolean = true
   ) {
     this.referredTag = referredTag || EMPTY;
   }
@@ -42,7 +43,8 @@ export class ChargeBasisEntryForm {
       referredTag: [formValue.referredTag],
       explanation: [formValue.explanation],
       manualExplanation: [formValue.manualExplanation, [ComplexValidator.maxRows(5), ComplexValidator.maxRowLength(70)]],
-      locked: [formValue.locked]
+      locked: [formValue.locked],
+      invoicable: [formValue.invoicable]
     });
   }
 
@@ -56,6 +58,7 @@ export class ChargeBasisEntryForm {
     entry.explanation = this.explanationFromForm(form);
     entry.tag = form.tag;
     entry.referredTag = StringUtil.isEmpty(form.referredTag) ? undefined : form.referredTag;
+    entry.invoicable = form.invoicable;
     return entry;
   }
 
@@ -73,7 +76,8 @@ export class ChargeBasisEntryForm {
       entry.referredTag,
       entry.explanation,
       entry.explanation ? entry.explanation.join('\n') : undefined,
-      entry.locked
+      entry.locked,
+      entry.invoicable
     );
   }
 

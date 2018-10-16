@@ -1,8 +1,6 @@
-import {BackendChargeBasisEntry} from '../backend-model/backend-charge-basis-entry';
-import {ChargeBasisEntry} from '../../model/application/invoice/charge-basis-entry';
-import {ChargeBasisUnit} from '../../model/application/invoice/charge-basis-unit';
-import {Some} from '../../util/option';
-import {ChargeBasisType} from '../../model/application/invoice/charge-basis-type';
+import {BackendChargeBasisEntry} from '@service/backend-model/backend-charge-basis-entry';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+
 export class ChargeBasisEntryMapper {
 
   public static mapBackendArray(entries: Array<BackendChargeBasisEntry> = []): Array<ChargeBasisEntry> {
@@ -27,7 +25,8 @@ export class ChargeBasisEntryMapper {
       backendChargeBasisEntry.referredTag,
       backendChargeBasisEntry.explanation,
       backendChargeBasisEntry.locked,
-      backendChargeBasisEntry.referrable
+      backendChargeBasisEntry.referrable,
+      backendChargeBasisEntry.invoicable
     );
   }
 
@@ -43,7 +42,8 @@ export class ChargeBasisEntryMapper {
       manuallySet: chargeBasisEntry.manuallySet,
       tag: chargeBasisEntry.tag,
       referredTag: chargeBasisEntry.referredTag,
-      explanation: chargeBasisEntry.explanation || []
+      explanation: chargeBasisEntry.explanation || [],
+      invoicable: chargeBasisEntry.invoicable
     };
   }
 }

@@ -15,6 +15,7 @@ export class ChargeBasisEntryComponent {
 
   @Output() onEdit: EventEmitter<ChargeBasisEntry> = new EventEmitter<ChargeBasisEntry>();
   @Output() onRemove: EventEmitter<void> = new EventEmitter<void>();
+  @Output() invoicableChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   editAllowed(entry: ChargeBasisEntry): boolean {
     return !entry.locked && entry.manuallySet && this.changesAllowed;

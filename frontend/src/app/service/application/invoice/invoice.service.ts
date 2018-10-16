@@ -48,6 +48,16 @@ export class InvoiceService {
     );
   }
 
+  setInvoicable(applicationId: number, entryId: number, invoicable: boolean): Observable<ChargeBasisEntry> {
+    const url = `${APPLICATIONS_URL}/${applicationId}/charge-basis/${entryId}/invoicable`;
+    const params = new HttpParams().append('invoicable', String(invoicable));
+
+    return this.http.put<BackendChargeBasisEntry>(url, undefined, {params}).pipe(
+      map(updated => ChargeBasisEntryMapper.mapBackend(updated)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('chargeBasis.error.setInvoicable')))
+    );
+  }
+
   getInvoices(applicationId: number): Observable<Invoice[]> {
     const url = `${APPLICATIONS_URL}/${applicationId}/invoices`;
     return this.http.get<BackendInvoice[]>(url).pipe(

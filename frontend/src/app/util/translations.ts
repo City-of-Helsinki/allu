@@ -1512,6 +1512,7 @@ export const translations = {
     title: 'Laskuperusteet',
     newEntry: 'Uusi laskuperuste',
     totalPrice: 'Kokonaissumma',
+    invoicable: 'Laskutettava',
     type: {
       title: 'Laskuperusteen tyyppi',
       CALCULATED: 'Laskettu',
@@ -1568,7 +1569,8 @@ export const translations = {
     },
     error: {
       fetch: 'Laskuperusteiden hakeminen epäonnistui',
-      save: 'Laskuperusteiden tallentaminen epäonnistui'
+      save: 'Laskuperusteiden tallentaminen epäonnistui',
+      setInvoicable: 'Laskuperusteen laskutettavuuden päivitys epäonnistui'
     }
   },
   workqueue: {

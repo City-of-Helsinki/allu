@@ -8,13 +8,12 @@ import {Application} from '@model/application/application';
 import {invoicingChangesAllowedForType} from '@model/application/application-status';
 import {CurrentUser} from '@service/user/current-user';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, take, takeUntil, tap, withLatestFrom} from 'rxjs/internal/operators';
-import {NumberUtil} from '@util/number.util';
-import {Store} from '@ngrx/store';
+import {filter, map, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromInvoicing from '@feature/application/invoicing/reducers';
-import {AddEntry, Load, RemoveEntry, UpdateEntry} from '@feature/application/invoicing/actions/charge-basis-actions';
+import {AddEntry, Load, RemoveEntry, SetInvoicable, UpdateEntry} from '@feature/application/invoicing/actions/charge-basis-actions';
 
 @Component({
   selector: 'charge-basis',
@@ -42,7 +41,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.store.select(fromApplication.getCurrentApplication).pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));
 
-    this.chargeBasisEntries$ = this.store.select(fromInvoicing.getAllChargeBasisEntries);
+    this.chargeBasisEntries$ = this.store.pipe(select(fromInvoicing.getAllChargeBasisEntries));
 
     this.store.dispatch(new Load());
 
@@ -64,6 +63,14 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   removeEntry(id: number): void {
     this.store.dispatch(new RemoveEntry(id));
+  }
+
+  setInvoicable(id: number, invoicable: boolean): void {
+    this.store.dispatch(new SetInvoicable(id, invoicable));
+  }
+
+  trackById(index: number, entry: ChargeBasisEntry): number {
+    return entry.id;
   }
 
   private onApplicationChange(app: Application): void {

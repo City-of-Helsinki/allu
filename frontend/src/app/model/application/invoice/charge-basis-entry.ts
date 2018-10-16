@@ -15,6 +15,7 @@ export class ChargeBasisEntry {
     public referredTag?: string,
     public explanation: string[] = [],
     public locked?: boolean,
-    public referrable?: boolean
+    public referrable?: boolean,
+    public invoicable?: boolean
   ) {}
 }
