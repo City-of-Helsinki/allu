@@ -36,6 +36,14 @@ export class ArrayUtil {
     }
   }
 
+  static anyMatch<T>(left: T[], right: T[]): boolean {
+    if (left === right) {
+      return true;
+    } else {
+      return left.some(l => right.some(r => r === l));
+    }
+  }
+
   static containSame(left: Array<any>, right: Array<any>): boolean {
     const lengthEqual = left.length === right.length;
     const allItems = left.every(lItem => right.indexOf(lItem) >= 0);

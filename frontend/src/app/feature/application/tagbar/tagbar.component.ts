@@ -8,6 +8,7 @@ import {select, Store} from '@ngrx/store';
 import * as fromApplication from '../reducers';
 import {Add, Remove} from '../actions/application-tag-actions';
 import {map, startWith} from 'rxjs/internal/operators';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'tagbar',
@@ -24,8 +25,8 @@ export class TagBarComponent implements OnInit {
   tags: Observable<Array<ApplicationTag>>;
   availableTagTypes: Observable<string[]>;
   availableTagCount: Observable<number>;
-  manuallyAddedTags: string[] = manuallyAddedTagTypes.map(type => ApplicationTagType[type]);
-  removableTags: string[] = removableTagTypes.map(type => ApplicationTagType[type]);
+  manuallyAddedTags: ApplicationTagType[] = manuallyAddedTagTypes;
+  removableTags: ApplicationTagType[] = removableTagTypes;
 
 
   constructor(private notification: NotificationService,
@@ -36,20 +37,21 @@ export class TagBarComponent implements OnInit {
     this.availableTagTypes = this.tags.pipe(
       map(tags => tags.map(tag => tag.type)),
       startWith(this.manuallyAddedTags),
-      map(current => this.manuallyAddedTags.filter(type => !current.some(c => type === c)))
+      map(current => this.manuallyAddedTags.filter(type => !current.some(c => type === c))),
+      map(tags => tags.sort(ArrayUtil.naturalSortTranslated(['application.tag.type'], tag => tag)))
     );
     this.availableTagCount = this.availableTagTypes.pipe(map(types => types.length));
   }
 
-  canBeRemoved(typeName: string) {
-    return this.removableTags.indexOf(typeName) >= 0;
+  canBeRemoved(type: ApplicationTagType) {
+    return this.removableTags.indexOf(type) >= 0;
   }
 
   remove(tag: ApplicationTag): void {
     this.store.dispatch(new Remove(tag));
   }
 
-  add(type: string): void {
+  add(type: ApplicationTagType): void {
     this.store.dispatch(new Add(new ApplicationTag(type, undefined, new Date())));
   }
 }

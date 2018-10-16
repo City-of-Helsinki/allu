@@ -14,6 +14,7 @@ import * as fromApplication from '@feature/application/reducers';
 import {Application} from '@model/application/application';
 import {UserService} from '@service/user/user-service';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 
 
 @Component({
@@ -36,14 +37,16 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.supervisionTaskSubscription = this.store.select(fromSupervisionTask.getAllSupervisionTasks).subscribe(tasks => {
+    this.supervisionTaskSubscription = this.store.pipe(select(fromSupervisionTask.getAllSupervisionTasks)).subscribe(tasks => {
       FormUtil.clearArray(this.supervisionTasks);
       tasks.forEach(task => this.addNew(task));
     });
-    this.application$ = this.store.select(fromApplication.getCurrentApplication);
+    this.application$ = this.store.pipe(select(fromApplication.getCurrentApplication));
 
     this.userService.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
-    this.hasDisablingTags$ = this.store.pipe(select(fromApplication.hasTag(ApplicationTagType.DATE_CHANGE)));
+    this.hasDisablingTags$ = this.store.pipe(
+      select(fromApplication.hasTags([ApplicationTagType.DATE_CHANGE, ApplicationTagType.OTHER_CHANGES]))
+    );
   }
 
   ngOnDestroy(): void {

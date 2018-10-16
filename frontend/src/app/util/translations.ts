@@ -256,7 +256,8 @@ export const translations = {
         SAP_ID_MISSING: 'Laskutettavan SAP-tunnus puuttuu',
         DECISION_NOT_SENT: 'Päätös lähettämättä',
         CONTRACT_REJECTED: 'Sopimusta ei hyväksytty',
-        DATE_CHANGE: 'Aikamuutos'
+        DATE_CHANGE: 'Aikamuutos',
+        OTHER_CHANGES: 'Muut muutokset'
       },
       action: {
         PRELIMINARY_SUPERVISION_REQUESTED: 'Aloitusvalvontapyyntö',

@@ -13,6 +13,7 @@ import * as fromApplicationHistory from '../reducers/application-history-reducer
 import {ClientApplicationData} from '@model/application/client-application-data';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {NumberUtil} from '@util/number.util';
+import {ArrayUtil} from '@util/array-util';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -176,7 +177,15 @@ export const getTags = createSelector(
 
 export const hasTag = (tagType: ApplicationTagType) => createSelector(
   getTags,
-  (tags: ApplicationTag[]) => tags.some(tag => tagType === ApplicationTagType[tag.type])
+  (tags: ApplicationTag[]) => tags.some(tag => tagType === tag.type)
+);
+
+export const hasTags = (tagTypes: ApplicationTagType[]) => createSelector(
+  getTags,
+  (tags: ApplicationTag[]) => {
+    const types = tags.map(tag => tag.type);
+    return ArrayUtil.anyMatch(tagTypes, types);
+  }
 );
 
 // History selectors

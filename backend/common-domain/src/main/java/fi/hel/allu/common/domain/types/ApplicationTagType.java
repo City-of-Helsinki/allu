@@ -53,7 +53,9 @@ public enum ApplicationTagType {
   // Sopimusehdotus hylätty asiakasjärjestelmässä
   CONTRACT_REJECTED,
   // Aikamuutos
-  DATE_CHANGE;
+  DATE_CHANGE,
+  // Muut muutokset
+  OTHER_CHANGES;
 
   private final List<ApplicationTagType> replaces;
 

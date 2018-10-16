@@ -1,6 +1,7 @@
-import {ApplicationTag} from '../../model/application/tag/application-tag';
-import {TimeUtil} from '../../util/time.util';
-import {Some} from '../../util/option';
+import {ApplicationTag} from '@model/application/tag/application-tag';
+import {TimeUtil} from '@util/time.util';
+import {Some} from '@util/option';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 
 export class ApplicationTagMapper {
 
@@ -18,7 +19,7 @@ export class ApplicationTagMapper {
     );
   }
 
-  public static mapSearchResultList(tags: Array<string>): Array<ApplicationTag> {
+  public static mapSearchResultList(tags: ApplicationTagType[]): Array<ApplicationTag> {
     return (tags)
       ? tags.map(tag => new ApplicationTag(tag))
       : [];
@@ -40,7 +41,7 @@ export class ApplicationTagMapper {
 }
 
 export interface BackendApplicationTag {
-  type: string;
+  type: ApplicationTagType;
   addedBy: number;
   creationTime: string;
 }

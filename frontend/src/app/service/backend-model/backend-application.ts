@@ -11,6 +11,7 @@ import {BackendClientApplicationData} from '../mapper/client-application-data-ma
 import {SearchResultEnumType} from './search-result-enum-type';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 
 export interface BackendApplication {
   id: number;
@@ -67,5 +68,5 @@ export interface SearchResultApplication {
   customers: SearchResultCustomersWithContacts;
   locations: Array<SearchResultLocation>;
   nrOfComments: number;
-  applicationTags: Array<string>;
+  applicationTags: ApplicationTagType[];
 }
