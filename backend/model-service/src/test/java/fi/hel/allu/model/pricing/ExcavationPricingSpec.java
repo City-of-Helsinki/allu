@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class ExcavationPricingSpec {
 
   WinterTimeService winterTimeService;
+  PricingExplanator pricingExplanator;
   Application app;
   ExcavationPricing exc;
 
@@ -27,12 +28,13 @@ public class ExcavationPricingSpec {
       context("with a three-day application", () -> {
         beforeEach(()-> {
           winterTimeService = Mockito.mock(WinterTimeService.class);
+          pricingExplanator = Mockito.mock(PricingExplanator.class);
 
           app = new Application();
           app.setExtension(new ExcavationAnnouncement());
           app.setStartTime(ZonedDateTime.parse("2017-04-20T08:00:00+03:00"));
           app.setEndTime(ZonedDateTime.parse("2017-04-22T17:00:00+03:00"));
-          exc = new ExcavationPricing(app, winterTimeService);
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator);
         });
         context("On price class 2, with area of 65 sqm", () -> {
           it("should cost 3 * 32.50 +  180 EUR", () -> {

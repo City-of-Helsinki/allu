@@ -1,7 +1,6 @@
 package fi.hel.allu.model.pricing;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,18 +11,18 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
 
 public class ExcavationPricing extends Pricing {
 
-
-  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
   private final Application application;
   private final ExcavationAnnouncement extension;
   private final WinterTime winterTime;
+  private final PricingExplanator pricingExplanator;
 
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
-  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %d, %s - %s";
+  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %d";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
@@ -32,10 +31,11 @@ public class ExcavationPricing extends Pricing {
   private static final int MEDIUM_AREA_DAILY_FEE = 6500;
   private static final int LARGE_AREA_DAILY_FEE = 8000;
 
-  public ExcavationPricing(Application application, WinterTimeService winterTimeService) {
+  public ExcavationPricing(Application application, WinterTimeService winterTimeService, PricingExplanator pricingExplanator) {
     this.application = application;
     this.winterTime = winterTimeService.getWinterTime();
     this.extension = (ExcavationAnnouncement)application.getExtension();
+    this.pricingExplanator = pricingExplanator;
     setPriceInCents(HANDLING_FEE);
     addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, HANDLING_FEE,
         HANDLING_FEE_TEXT, HANDLING_FEE);
@@ -68,12 +68,14 @@ public class ExcavationPricing extends Pricing {
 
   }
 
-  protected void addChargeBasisEntryForPeriod(int locationKey, int paymentClass, int dailyFee,
+  private void addChargeBasisEntryForPeriod(int locationKey, int paymentClass, int dailyFee,
       PricedPeriod invoicedPeriod, ChargeBasisTag tag) {
-    String rowText = String.format(AREA_FEE_TEXT, paymentClass, FORMATTER.format(invoicedPeriod.start), FORMATTER.format(invoicedPeriod.end));
+    String rowText = String.format(AREA_FEE_TEXT, paymentClass);
     int totalPrice = invoicedPeriod.getNumberOfDays() * dailyFee;
     addChargeBasisEntry(tag, ChargeBasisUnit.DAY, invoicedPeriod.getNumberOfDays(),
-        dailyFee, rowText, totalPrice);
+        dailyFee, rowText, totalPrice,
+        pricingExplanator.getExplanationWithCustomPeriod(
+          application, Printable.forDayPeriod(invoicedPeriod.start, invoicedPeriod.end)));
     setPriceInCents(totalPrice + getPriceInCents());
   }
 

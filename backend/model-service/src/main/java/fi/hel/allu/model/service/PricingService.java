@@ -2,7 +2,6 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.model.domain.ChargeBasisCalc;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -18,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.common.util.WinterTime;
-import fi.hel.allu.model.dao.ConfigurationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
@@ -150,7 +146,7 @@ public class PricingService {
    * Calculate price for excavation announcement
    */
   private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application) {
-    return calculateChargeBasis(application, new ExcavationPricing(application, winterTimeService));
+    return calculateChargeBasis(application, new ExcavationPricing(application, winterTimeService, pricingExplanator));
   }
 
   /*
