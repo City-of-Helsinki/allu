@@ -87,7 +87,10 @@ public class PricingService {
    * @return total price in cents
    */
   public int totalPrice(List<ChargeBasisEntry> chargeBasisEntries) {
-    return PriceUtil.totalPrice(chargeBasisEntries);
+    List<ChargeBasisEntry> invoicable = chargeBasisEntries.stream()
+        .filter(entry -> entry.isInvoicable())
+        .collect(Collectors.toList());
+    return PriceUtil.totalPrice(invoicable);
   }
 
   /**
