@@ -22,7 +22,7 @@ public class ExcavationPricing extends Pricing {
   private final ExcavationAnnouncement extension;
   private final WinterTime winterTime;
 
-  private static final String HANDLING_FEE_TEXT = "Käsittelymaksu";
+  private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
   private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %d, %s - %s";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
