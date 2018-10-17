@@ -1,11 +1,7 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -111,6 +107,15 @@ public class ApplicationReplacementServiceTest {
   }
 
   @Test
+  public void shouldCopyApprovedSupervisionTasks() {
+    insertSupervisionTasks();
+    Application application = replaceApplication();
+    List<SupervisionTask> replacing = supervisionTaskDao.findByApplicationId(application.getId());
+    assertFalse(replacing.isEmpty());
+    replacing.forEach(r -> assertEquals(SupervisionTaskStatusType.APPROVED, r.getStatus()));
+  }
+
+  @Test
   public void shouldCopyLocations() {
     Application application = replaceApplication();
     Location replacing = locationService.findByApplicationId(application.getId()).get(0);
@@ -168,12 +173,17 @@ public class ApplicationReplacementServiceTest {
     attachmentDao.insert(originalApplication.getId(), attachment, data);
   }
 
-  private void insertSupervisionTask() {
+  private void insertSupervisionTasks() {
     SupervisionTask supervisionTask = new SupervisionTask();
     supervisionTask.setOwnerId(testCommon.insertUser("supervision").getId());
     supervisionTask.setDescription("Description");
-    supervisionTask.setStatus(SupervisionTaskStatusType.OPEN);
     supervisionTask.setApplicationId(originalApplication.getId());
+    supervisionTask.setType(SupervisionTaskType.PRELIMINARY_SUPERVISION);
+    supervisionTask.setPlannedFinishingTime(ZonedDateTime.now().plusDays(2));
+    SupervisionTask t = supervisionTaskDao.insert(supervisionTask);
+    t.setStatus(SupervisionTaskStatusType.APPROVED);
+    supervisionTaskDao.update(t);
+    supervisionTask.setId(null);
     supervisionTask.setType(SupervisionTaskType.FINAL_SUPERVISION);
     supervisionTask.setPlannedFinishingTime(ZonedDateTime.now().plusDays(2));
     supervisionTaskDao.insert(supervisionTask);

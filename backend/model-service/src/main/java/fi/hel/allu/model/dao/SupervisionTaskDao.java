@@ -246,4 +246,17 @@ public class SupervisionTaskDao {
         .where(supervisionTask.applicationId.eq(applicationId), supervisionTask.status.eq(SupervisionTaskStatusType.OPEN))
         .execute();
   }
+
+  public void copyApprovedSupervisionTasks(int fromApplicationId, Integer toApplicationId) {
+    List<SupervisionTask> tasks = queryFactory.select(supervisionTaskBean).from(supervisionTask)
+            .where(supervisionTask.applicationId.eq(fromApplicationId), supervisionTask.status.eq(SupervisionTaskStatusType.APPROVED))
+            .fetch();
+    tasks.forEach(t -> insertCopyForApplication(t, toApplicationId));
+  }
+
+  private void insertCopyForApplication(SupervisionTask task, Integer toApplicationId) {
+    task.setId(null);
+    task.setApplicationId(toApplicationId);
+    queryFactory.insert(supervisionTask).populate(task).execute();
+  }
 }

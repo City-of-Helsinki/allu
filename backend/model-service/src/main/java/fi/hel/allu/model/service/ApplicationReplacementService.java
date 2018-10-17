@@ -32,7 +32,7 @@ public class ApplicationReplacementService {
       // If SAP ID missing also from replacing application,
       // this is generated when its' moved to decision state
       SAP_ID_MISSING,
-      // Supervision tasks not copied to replacing application
+      // Open supervision tasks not copied to replacing application
       // so don't copy supervision task related tags either.
       PRELIMINARY_SUPERVISION_REQUESTED,
       PRELIMINARY_SUPERVISION_REJECTED,
@@ -54,15 +54,17 @@ public class ApplicationReplacementService {
   private final CommentDao commentDao;
   private final LocationService locationService;
   private final DepositDao depositDao;
+  private final SupervisionTaskDao supervisionTaskDao;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
-      LocationService locationService, DepositDao depositDao) {
+      LocationService locationService, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
     this.commentDao = commentDao;
     this.depositDao = depositDao;
+    this.supervisionTaskDao = supervisionTaskDao;
   }
 
   /**
@@ -109,6 +111,7 @@ public class ApplicationReplacementService {
     commentDao.copyApplicationComments(applicationId, replacingApplication.getId(), COMMENT_TYPES_NOT_COPIED);
     applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
+    supervisionTaskDao.copyApprovedSupervisionTasks(applicationId, replacingApplication.getId());
   }
 
   private Application addReplacingApplication(Application applicationToReplace, int userId) {
