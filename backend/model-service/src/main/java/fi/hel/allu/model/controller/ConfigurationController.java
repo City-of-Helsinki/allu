@@ -32,4 +32,9 @@ public class ConfigurationController {
   public ResponseEntity<List<Configuration>> find(@PathVariable ConfigurationKey key) {
     return ResponseEntity.ok(configurationDao.findByKey(key));
   }
+
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  public ResponseEntity<Configuration> update(@PathVariable int id, Configuration configuration) {
+    return ResponseEntity.ok(configurationDao.update(id, configuration));
+  }
 }

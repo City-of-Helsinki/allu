@@ -14,7 +14,8 @@ import fi.hel.allu.model.domain.ConfigurationKey;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 
 @Service
 public class ConfigurationService {
@@ -43,6 +44,17 @@ public class ConfigurationService {
 
   public List<String> getValues(ConfigurationKey key) {
     return getConfigurations(key).stream().map(Configuration::getValue).collect(Collectors.toList());
+  }
+
+  public Configuration updateConfiguration(int id, Configuration configuration) {
+    final HttpEntity<Configuration> requestEntity = new HttpEntity<>(configuration);
+    final ResponseEntity<Configuration> responseEntity = restTemplate.exchange(
+        applicationProperties.getConfigurationUrl(),
+        HttpMethod.PUT,
+        requestEntity,
+        Configuration.class,
+        id);
+    return responseEntity.getBody();
   }
 
   private List<Configuration> getConfigurations(ConfigurationKey key) {
