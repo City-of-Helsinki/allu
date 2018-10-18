@@ -101,7 +101,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.taskTypes = EnumUtil.enumValues(SupervisionTaskType)
         .filter(type => !isAutomaticSupervisionTaskType(SupervisionTaskType[type]));
     }
-    this.currentUserCanEdit(formValue.creatorId);
+    this.currentUserCanEdit(formValue.creatorId, formValue.status);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
   }
@@ -231,12 +231,11 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     return this.dialog.open(ExcavationSupervisionApprovalModalComponent, config);
   }
 
-  private currentUserCanEdit(creatorId: number): void {
-    if (creatorId === undefined) {
-      this.canEdit = true;
-    } else {
-      this.currentUser.isCurrentUser(creatorId).subscribe(isCurrent => this.canEdit = isCurrent);
-    }
+  private currentUserCanEdit(creatorId: number, status: SupervisionTaskStatusType): void {
+    this.currentUser.isCurrentUser(creatorId).subscribe(isCurrent => {
+      const editableStatus = SupervisionTaskStatusType.APPROVED !== status;
+      this.canEdit = (creatorId === undefined || isCurrent) && editableStatus;
+    });
   }
 
   private currentUserCanApprove(ownerId: number, status: SupervisionTaskStatusType): void {
