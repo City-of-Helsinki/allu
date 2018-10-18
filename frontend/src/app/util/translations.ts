@@ -1426,9 +1426,9 @@ export const translations = {
     }
   },
   invoice: {
-    title: 'Lasku',
     invoiced: 'Laskutettu',
     notInvoiced: 'Ei laskutettu',
+    open: 'Avoin',
     info: {
       address: 'Laskutusosoite',
       depositAndOthers: 'Vakuus ja muut tiedot',
@@ -1437,6 +1437,11 @@ export const translations = {
       customerReference: 'Asiakkaan viite',
       invoicingDate: 'Laskutuspäivä',
       skipPriceCalculation: 'Ei automaattista hinnanlaskentaa'
+    },
+    group: {
+      open: 'Avoimet laskut',
+      pending: 'Odottaa laskutusta',
+      invoiced: 'Laskutetut'
     },
     negligenceFeeType: {
       START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',

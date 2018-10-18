@@ -1,17 +1,11 @@
 <allu-card class="full-width">
   <mat-card-title class="allu-card-title">
-    <div fxLayout="row" fxLayoutGap="4px">
-      <div fxFlex="none">{{'invoice.title' | translation}}</div>
-      <ng-container *ngIf="invoice.invoicableTime">
-        <div fxFlex="none">-</div>
-        <div fxFlex="none">{{invoice.invoicableTime | date:'shortDate'}}</div>
-      </ng-container>
-      <div fxFlex="none">-</div>
-      <div fxFlex="none">
-        <ng-container *ngIf="invoice.invoiced; else notInvoiced">{{'invoice.invoiced' | translation}}</ng-container>
-        <ng-template #notInvoiced>{{'invoice.notInvoiced' | translation}}</ng-template>
-      </div>
-    </div>
+    <ng-container *ngIf="invoice.invoicableTime; else openInvoice">
+      {{invoice.invoicableTime | date:'shortDate'}}
+    </ng-container>
+    <ng-template #openInvoice>
+      {{'invoice.open' | translation}}
+    </ng-template>
   </mat-card-title>
   <mat-card-content class="bordered">
     <ul>
