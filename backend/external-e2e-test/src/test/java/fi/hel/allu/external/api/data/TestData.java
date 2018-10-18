@@ -48,6 +48,30 @@ public class TestData {
     setContacts(Collections.singletonList(CONTACT));
  }};
 
+ public static final CustomerExt CONTRACTOR = new CustomerExt() {{
+   setType(CustomerType.COMPANY);
+   setRegistryKey("131313-1");
+   setCountry("FI");
+   setEmail("tyonsuorittaja@foo.bar.fi");
+   setInvoicingOperator("operator");
+   setName("Severi Suorittaja");
+   setOvt("ovt");
+   setPhone("12312312");
+   setPostalAddress(POSTAL_ADDRESS);
+ }};
+
+ public static final ContactExt CONTRACTOR_CONTACT = new ContactExt() {{
+   setEmail("ville.vastuullinen@foo.bar.fi");
+   setName("Ville Vastuullinen");
+   setPhone("12121233");
+   setPostalAddress(POSTAL_ADDRESS);
+ }};
+
+ public static final CustomerWithContactsExt CONTRACTOR_WITH_CONTACTS = new CustomerWithContactsExt() {{
+   setCustomer(CONTRACTOR);
+   setContacts(Collections.singletonList(CONTRACTOR_CONTACT));
+}};
+
  public static final ZonedDateTime START_TIME = ZonedDateTime.now().plusDays(2);
  public static final ZonedDateTime END_TIME = ZonedDateTime.now().plusDays(11);
  public static final String CUSTOMER_REFERENCE = "Asiakkaan viite";
@@ -76,4 +100,18 @@ public class TestData {
      c(2.54962871875E7,6673379.374999997),
      c(2.5496289375E7,6673376.749999999))));
 
+ public static final Geometry EXCAVATION_ANNOUNCEMENT_GEOMETRY = geometrycollection(3879, polygon(ring(
+     c(2.5499019881E7, 6673529.359827016),
+     c(2.5499019914E7, 6673653.810669076),
+     c(2.5499139969E7, 6673653.780535805),
+     c(2.5499139939E7, 6673529.329693058),
+     c(2.5499019881E7, 6673529.359827016))));
+
+ public static final Geometry CABLE_REPORT_GEOMETRY = geometrycollection(3879, polygon(ring(
+     c(2.5499139417E7, 6673434.515440254),
+     c(2.5499155530E7, 6673499.57819621),
+     c(2.5499173306E7, 6673561.74385622),
+     c(2.5499287751E7, 6673528.183841352),
+     c(2.5499250537E7, 6673404.520340249),
+     c(2.5499139417E7, 6673434.515440254))));
 }
