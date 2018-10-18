@@ -87,7 +87,7 @@ public class PlacementContractController extends BaseApplicationController<Place
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> approve(@ApiParam(value = "Application ID of the contract") @PathVariable Integer id,
                                       @ApiParam(value = "Signing information")
-                                      @Valid @RequestBody ContractSigningInfoExt signingInfo) throws IOException {
+                                      @Valid @RequestBody ContractSigningInfoExt signingInfo) {
     applicationService.validateOwnedByExternalUser(id);
     contractService.approveContract(id, signingInfo.getSigner(), signingInfo.getSigningTime());
     return new ResponseEntity<>(HttpStatus.OK);

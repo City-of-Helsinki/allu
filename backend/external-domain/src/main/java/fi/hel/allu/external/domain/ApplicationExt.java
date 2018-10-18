@@ -63,7 +63,7 @@ public abstract class ApplicationExt {
     this.name = name;
   }
 
-  @ApiModelProperty(value="Applicant of the application", required = true)
+  @ApiModelProperty(value="Applicant (hakija) of the application", required = true)
   public CustomerWithContactsExt getCustomerWithContacts() {
     return customerWithContacts;
   }
@@ -72,7 +72,7 @@ public abstract class ApplicationExt {
     this.customerWithContacts = customerWithContacts;
   }
 
-  @ApiModelProperty(value = "Representative of the customer")
+  @ApiModelProperty(value = "Representative (asiamies) of the customer")
   public CustomerWithContactsExt getRepresentativeWithContacts() {
     return representativeWithContacts;
   }

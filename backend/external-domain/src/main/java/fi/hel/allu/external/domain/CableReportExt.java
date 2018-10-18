@@ -1,8 +1,5 @@
 package fi.hel.allu.external.domain;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
