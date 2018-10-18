@@ -10,7 +10,7 @@ export interface State extends EntityState<SupervisionTask> {
 }
 
 export function sortByCreationTime(left: SupervisionTask, right: SupervisionTask): number {
-  return TimeUtil.compareTo(right.creationTime, left.creationTime); // latest first
+  return TimeUtil.compareTo(left.plannedFinishingTime, right.plannedFinishingTime);
 }
 
 export const adapter: EntityAdapter<SupervisionTask> = createEntityAdapter<SupervisionTask>({
