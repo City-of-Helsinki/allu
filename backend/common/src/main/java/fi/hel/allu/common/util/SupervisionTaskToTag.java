@@ -1,14 +1,12 @@
 package fi.hel.allu.common.util;
 
+import java.util.*;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static fi.hel.allu.common.domain.types.ApplicationTagType.*;
 import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
@@ -20,8 +18,8 @@ import static fi.hel.allu.common.domain.types.SupervisionTaskType.*;
 public class SupervisionTaskToTag {
   private static final Map<Pair<SupervisionTaskType, SupervisionTaskStatusType>, ApplicationTagType> taskToTag = createMapping();
 
-  public static ApplicationTagType getBy(SupervisionTaskType type, SupervisionTaskStatusType status) {
-    return taskToTag.get(Pair.of(type, status));
+  public static Optional<ApplicationTagType> getBy(SupervisionTaskType type, SupervisionTaskStatusType status) {
+    return Optional.ofNullable(taskToTag.get(Pair.of(type, status)));
   }
 
   /**
@@ -58,7 +56,6 @@ public class SupervisionTaskToTag {
     map.put(Pair.of(WARRANTY, REJECTED), SUPERVISION_REJECTED);
     map.put(Pair.of(WARRANTY, APPROVED), SUPERVISION_DONE);
 
-    map.put(Pair.of(OPERATIONAL_CONDITION, OPEN), OPERATIONAL_CONDITION_REPORTED);
     map.put(Pair.of(OPERATIONAL_CONDITION, REJECTED), OPERATIONAL_CONDITION_REJECTED);
     map.put(Pair.of(OPERATIONAL_CONDITION, APPROVED), OPERATIONAL_CONDITION_ACCEPTED);
 

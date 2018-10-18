@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,10 +153,14 @@ public class SupervisionTaskService {
   }
 
   private void updateTags(SupervisionTask task) {
-    ApplicationTagType tagType = SupervisionTaskToTag.getBy(task.getType(), task.getStatus());
-    ApplicationTag tag = new ApplicationTag(task.getCreatorId(), tagType, ZonedDateTime.now());
-    applicationDao.addTag(task.getApplicationId(), tag);
-    tag.getType().getReplaces().forEach(type -> applicationDao.removeTagByType(task.getApplicationId(), type));
+    Optional<ApplicationTagType> tagType = SupervisionTaskToTag.getBy(task.getType(), task.getStatus());
+    tagType.ifPresent(t -> createTag(t, task.getApplicationId(), task.getCreatorId()));
+  }
+
+  private void createTag(ApplicationTagType tagType, Integer applicationId, Integer creatorId) {
+    ApplicationTag tag = new ApplicationTag(creatorId, tagType, ZonedDateTime.now());
+    applicationDao.addTag(applicationId, tag);
+    tag.getType().getReplaces().forEach(type -> applicationDao.removeTagByType(applicationId, type));
   }
 
   @Transactional

@@ -41,6 +41,7 @@ public class ExcavationAnnouncementService {
     Application application = applicationService.setCustomerOperationalConditionDates(id, dateReport);
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.OPERATIONAL_CONDITION,
         ExcavationAnnouncementDates.operationalConditionSupervisionDate(dateReport.getReportedDate()));
+    applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.OPERATIONAL_CONDITION_REPORTED, null));
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 

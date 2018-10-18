@@ -62,7 +62,8 @@ export class ExcavationAnnouncementEffects {
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerOperationalCondition')),
-        new SupervisionTaskActions.Load()
+        new SupervisionTaskActions.Load(),
+        new TagAction.Load()
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
