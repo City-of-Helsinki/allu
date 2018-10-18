@@ -70,18 +70,17 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     return [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(this.application.type) >= 0;
   }
 
-  paymentTariff() {
+  paymentTariff(): string {
     return this.paymentTariffText(this.location.paymentTariff);
   }
 
-  paymentTariffOverride() {
+  paymentTariffOverride(): string {
     return this.paymentTariffText(this.location.paymentTariffOverride);
   }
 
-  paymentTariffText(paymentTariff) {
+  paymentTariffText(paymentTariff: string): string {
     if (paymentTariff) {
-      const tariff = paymentTariff.toString();
-      return findTranslation('location.paymentTariffValue', {tariff});
+      return findTranslation('location.paymentTariffValue', {paymentTariff});
     } else {
       return '';
     }

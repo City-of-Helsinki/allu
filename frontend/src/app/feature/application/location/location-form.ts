@@ -18,8 +18,8 @@ export class LocationForm {
     public cityDistrictIdOverride?: number,
     public underpass?: boolean,
     public info?: string,
-    public paymentTariff?: number,
-    public paymentTariffOverride?: number) {}
+    public paymentTariff?: string,
+    public paymentTariffOverride?: string) {}
 
   static from(location: Location): LocationForm {
     const form = new LocationForm();

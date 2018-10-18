@@ -38,21 +38,21 @@ public class AreaRentalPricingSpec {
 
         context("On price class 2, with area of 85 sqm", () -> {
           it("Should cost 5 * 6 * 3.00 EUR +  60 EUR", () -> {
-            arp.addLocationPrice(1, 85.0, 2);
+            arp.addLocationPrice(1, 85.0, "2");
             assertEquals(5 * 6 * 300 + 6000, arp.getPriceInCents());
           });
         });
 
         context("On price class 3, with area of 45 sqm", () -> {
           it("Should cost 5 * 3 * 1.30 EUR +  60 EUR", () -> {
-            arp.addLocationPrice(1, 45.0, 3);
+            arp.addLocationPrice(1, 45.0, "3");
             assertEquals(5 * 3 * 130 + 6000, arp.getPriceInCents());
           });
         });
 
         context("On price class 1, with area of 45.1 sqm", () -> {
           it("Should cost 5 * 4 * 6.00 EUR +  60 EUR", () -> {
-            arp.addLocationPrice(1, 45.1, 1);
+            arp.addLocationPrice(1, 45.1, "1");
             assertEquals(5 * 4 * 600 + 6000, arp.getPriceInCents());
           });
         });
@@ -70,7 +70,7 @@ public class AreaRentalPricingSpec {
 
         context("On price class 2, with area of 1000 sqm", () -> {
           it("Should cost 30 * 67 * 3.00 EUR +  1800 EUR", () -> {
-            arp.addLocationPrice(1, 1000.0, 2);
+            arp.addLocationPrice(1, 1000.0, "2");
             assertEquals(30 * 67 * 300 + 18000, arp.getPriceInCents());
           });
         });

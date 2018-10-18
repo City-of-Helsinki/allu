@@ -14,8 +14,8 @@ export interface BackendLocation {
   fixedLocationIds: Array<number>;
   cityDistrictId: number;
   cityDistrictIdOverride: number;
-  paymentTariff: number;
-  paymentTariffOverride: number;
+  paymentTariff: string;
+  paymentTariffOverride: string;
   underpass: boolean;
   additionalInfo: string;
 }

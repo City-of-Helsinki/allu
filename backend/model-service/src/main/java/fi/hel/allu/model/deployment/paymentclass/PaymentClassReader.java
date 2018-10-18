@@ -31,7 +31,7 @@ import static fi.hel.allu.QPaymentClass.paymentClass1;
 /**
  * Converts WFS city district data to SQL, which can be used to insert the data
  * to database. To get the input XML file, download it from here:
- * http://kartta.hel.fi/ws/geoserver/helsinki/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=helsinki:Allu_maksuvyohykkeet_testi&SRSNAME=EPSG:3879
+ * https://kartta.hel.fi/ws/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=helsinki:Allu_maksuvyohykkeet_testi&SRSNAME=EPSG:3879
  */
 public class PaymentClassReader {
 
@@ -92,7 +92,7 @@ public class PaymentClassReader {
     Polygon polygon = DSL.polygon(3879, rings.toArray(new LinearRing2DToken[0]));
 
     String insert = queryFactory.insert(paymentClass1).set(paymentClass1.geometry, polygon)
-        .set(paymentClass1.paymentClass, PaymentClass.valueOf(xmlPaymentClass.paymentClass).getValue())
+        .set(paymentClass1.paymentClass, xmlPaymentClass.paymentClass)
         .getSQL().get(0).getSQL();
     return insert;
   }
@@ -109,27 +109,10 @@ public class PaymentClassReader {
   private static String getCmdline() {
     RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
     StringBuilder cmdLine = new StringBuilder("java");
-    for (String arg : bean.getInputArguments()) {
-      cmdLine.append(" " + arg);
-    }
-    cmdLine.append(" -classpath " + System.getProperty("java.class.path"));
-    cmdLine.append(" " + System.getProperty("sun.java.command"));
+    bean.getInputArguments().forEach(arg -> cmdLine.append(" ").append(arg));
+    cmdLine.append(" -classpath ").append(System.getProperty("java.class.path"));
+    cmdLine.append(" ").append(System.getProperty("sun.java.command"));
     return cmdLine.toString();
-  }
-
-  // Map payment class names to values:
-  enum PaymentClass {
-    ML1(1), ML2(2), ML3(3);
-
-    final private int value;
-
-    private PaymentClass(int value) {
-      this.value = value;
-    }
-
-    int getValue() {
-      return value;
-    }
   }
 }
 

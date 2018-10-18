@@ -22,7 +22,7 @@ public class ExcavationPricing extends Pricing {
   private final PricingExplanator pricingExplanator;
 
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
-  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %d";
+  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
@@ -43,7 +43,7 @@ public class ExcavationPricing extends Pricing {
 
 
   @Override
-  public void addLocationPrice(int locationKey, double locationArea, int paymentClass) {
+  public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
     int dailyFee;
     if (locationArea < SMALL_AREA_LIMIT) {
       dailyFee = SMALL_AREA_DAILY_FEE;
@@ -53,9 +53,9 @@ public class ExcavationPricing extends Pricing {
       dailyFee = MEDIUM_AREA_DAILY_FEE;
     }
     // Factor in the payment class.
-    if (paymentClass == 2) {
+    if ("2".equals(paymentClass)) {
       dailyFee /= 2;
-    } else if (paymentClass == 3) {
+    } else if ("3".equals(paymentClass)) {
       dailyFee /= 4;
     }
     List<PricedPeriod> pricedPeriods = getPricedPeriods();
@@ -68,7 +68,7 @@ public class ExcavationPricing extends Pricing {
 
   }
 
-  private void addChargeBasisEntryForPeriod(int locationKey, int paymentClass, int dailyFee,
+  private void addChargeBasisEntryForPeriod(int locationKey, String paymentClass, int dailyFee,
       PricedPeriod invoicedPeriod, ChargeBasisTag tag) {
     String rowText = String.format(AREA_FEE_TEXT, paymentClass);
     int totalPrice = invoicedPeriod.getNumberOfDays() * dailyFee;

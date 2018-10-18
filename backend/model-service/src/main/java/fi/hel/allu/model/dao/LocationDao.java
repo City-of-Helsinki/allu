@@ -9,8 +9,6 @@ import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +25,6 @@ import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
-import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -481,21 +478,21 @@ public class LocationDao {
    * @param id location's DB id
    * @return the payment class (1, 2, or 3)
    */
-  public int getPaymentClass(Location location) {
+  public String getPaymentClass(Location location) {
     if (location.getPaymentTariffOverride() != null) {
       return location.getPaymentTariffOverride();
     }
     return location.getPaymentTariff() != null ? location.getPaymentTariff() : updateLocationPaymentTariff(location.getId());
   }
 
-  private int updateLocationPaymentTariff(Integer locationId) {
+  private String updateLocationPaymentTariff(Integer locationId) {
     QLocationGeometry geo = new QLocationGeometry("lg", "allu", "location_geometry");
-    Integer paymentTariff = queryFactory.select(paymentClass1.paymentClass).from(paymentClass1)
+    String paymentTariff = queryFactory.select(paymentClass1.paymentClass).from(paymentClass1)
         .where(paymentClass1.geometry.intersects(
             SQLExpressions.select(geometryUnion()).from(geo)
                 .where(geo.locationId.eq(locationId))))
         .orderBy(paymentClass1.paymentClass.asc()).fetchFirst();
-    paymentTariff = Optional.ofNullable(paymentTariff).orElse(3); // Payment tariff undefined -> default to lowest
+    paymentTariff = Optional.ofNullable(paymentTariff).orElse("3"); // Payment tariff undefined -> default to lowest
     queryFactory.update(location).set(location.paymentTariff, paymentTariff).where(location.id.eq(locationId)).execute();
     return paymentTariff;
   }

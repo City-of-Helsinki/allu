@@ -36,8 +36,8 @@ public class PaymentClassReaderSpec {
         });
 
         it("Can map every payment class name to valid payment class", () -> {
-          List<PaymentClassReader.PaymentClass> pcs = paymentClassXml.featureMember.stream()
-              .map(fm -> PaymentClassReader.PaymentClass.valueOf(fm.paymentClass.paymentClass))
+          List<String> pcs = paymentClassXml.featureMember.stream()
+              .map(fm -> fm.paymentClass.paymentClass)
               .collect(Collectors.toList());
           assertFalse(pcs.isEmpty());
         });

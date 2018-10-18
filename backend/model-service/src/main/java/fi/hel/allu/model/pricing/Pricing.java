@@ -55,7 +55,7 @@ public abstract class Pricing {
    * @param locationArea Location's area in square meters
    * @param paymentClass Payment class: 1,2, or 3.
    */
-  public void addLocationPrice(int locationKey, double locationArea, int paymentClass) {
+  public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
     throw new NotImplementedException("Location price with payment class not implemented in " + this.getClass());
   }
 

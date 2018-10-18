@@ -40,8 +40,8 @@ public class LocationJson {
   private List<Integer> fixedLocationIds;
   private Integer cityDistrictId;
   private Integer cityDistrictIdOverride;
-  private Integer paymentTariff;
-  private Integer paymentTariffOverride;
+  private String paymentTariff;
+  private String paymentTariffOverride;
   private Boolean underpass;
 
   public Integer getId() {
@@ -200,11 +200,11 @@ public class LocationJson {
    *
    * @return  the calculated payment tariff (maksuluokka) of the location or <code>null</code>.
    */
-  public Integer getPaymentTariff() {
+  public String getPaymentTariff() {
     return paymentTariff;
   }
 
-  public void setPaymentTariff(Integer paymentTariff) {
+  public void setPaymentTariff(String paymentTariff) {
     this.paymentTariff = paymentTariff;
   }
 
@@ -213,11 +213,11 @@ public class LocationJson {
    *
    * @return  the user overridden payment tariff (maksuluokka) of the location or <code>null</code>.
    */
-  public Integer getPaymentTariffOverride() {
+  public String getPaymentTariffOverride() {
     return paymentTariffOverride;
   }
 
-  public void setPaymentTariffOverride(Integer paymentTariffOverride) {
+  public void setPaymentTariffOverride(String paymentTariffOverride) {
     this.paymentTariffOverride = paymentTariffOverride;
   }
 
