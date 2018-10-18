@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Invoice} from '@model/application/invoice/invoice';
+import {InvoiceStatus} from '@feature/application/invoicing/invoice/invoice.component';
 
 @Component({
   selector: 'invoice-group',
@@ -8,6 +9,6 @@ import {Invoice} from '@model/application/invoice/invoice';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceGroupComponent {
-  @Input() title: string;
+  @Input() status: InvoiceStatus = InvoiceStatus.open;
   @Input() invoices: Invoice[] = [];
 }

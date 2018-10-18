@@ -1,14 +1,14 @@
 <invoice-group
   *ngIf="open.length"
   [invoices]="open"
-  [title]="'invoice.group.open' | translation"></invoice-group>
+  status="open"></invoice-group>
 
 <invoice-group
   *ngIf="pending.length"
   [invoices]="pending"
-  [title]="'invoice.group.pending' | translation"></invoice-group>
+  status="pending"></invoice-group>
 
 <invoice-group
   *ngIf="invoiced.length"
   [invoices]="invoiced"
-  [title]="'invoice.group.invoiced' | translation"></invoice-group>
+  status="invoiced"></invoice-group>

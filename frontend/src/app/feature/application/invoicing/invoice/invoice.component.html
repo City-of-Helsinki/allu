@@ -1,4 +1,4 @@
-<allu-card class="full-width">
+<allu-card class="full-width" borderSide="left" [borderColor]="color">
   <mat-card-title class="allu-card-title">
     <ng-container *ngIf="invoice.invoicableTime; else openInvoice">
       {{invoice.invoicableTime | date:'shortDate'}}

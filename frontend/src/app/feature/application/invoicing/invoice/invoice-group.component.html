@@ -1,8 +1,8 @@
 <h1 class="light">
-  {{title}}
+  {{['invoice.group', status] | translation}}
 </h1>
 <ul>
   <li *ngFor="let invoice of invoices">
-    <invoice [invoice]="invoice"></invoice>
+    <invoice [invoice]="invoice" [status]="status"></invoice>
   </li>
 </ul>

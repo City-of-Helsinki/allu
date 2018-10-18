@@ -1,5 +1,18 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Invoice} from '@model/application/invoice/invoice';
+import {AlluThemeColor} from '@model/common/allu-theme-color';
+
+export enum InvoiceStatus {
+  open = 'open',
+  pending = 'pending',
+  invoiced = 'invoiced'
+}
+
+const statusToColor = {
+  open: AlluThemeColor.basic,
+  pending: AlluThemeColor.accent,
+  invoiced: AlluThemeColor.success
+};
 
 @Component({
   selector: 'invoice',
@@ -9,4 +22,10 @@ import {Invoice} from '@model/application/invoice/invoice';
 })
 export class InvoiceComponent {
   @Input() invoice: Invoice;
+
+  color: AlluThemeColor;
+
+  @Input() set status(status: InvoiceStatus) {
+    this.color = status ? statusToColor[status] : statusToColor.open;
+  }
 }
