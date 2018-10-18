@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.ui.service.ExcavationAnnouncementService;
+import fi.hel.allu.servicecore.service.ExcavationAnnouncementService;
 
 @RestController
 @RequestMapping("/excavationannouncements")

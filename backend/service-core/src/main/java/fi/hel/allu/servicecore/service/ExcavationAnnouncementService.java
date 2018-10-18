@@ -1,6 +1,5 @@
-package fi.hel.allu.ui.service;
+package fi.hel.allu.servicecore.service;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +11,9 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.ExcavationAnnouncementDates;
-import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ConfigurationKey;
-import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
-import fi.hel.allu.servicecore.service.*;
 
 @Service
 public class ExcavationAnnouncementService {

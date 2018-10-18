@@ -15,6 +15,15 @@ public class ApplicationDateReport {
   private ZonedDateTime reportedDate;
   private ZonedDateTime reportedEndDate;
 
+  public ApplicationDateReport() {
+  }
+
+  public ApplicationDateReport(ZonedDateTime reportingDate, ZonedDateTime reportedDate, ZonedDateTime reportedEndDate) {
+    this.reportingDate = reportingDate;
+    this.reportedDate = reportedDate;
+    this.reportedEndDate = reportedEndDate;
+  }
+
   /**
    * Date when date was reported
    */
