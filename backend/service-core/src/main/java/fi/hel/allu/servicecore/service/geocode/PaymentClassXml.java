@@ -1,6 +1,4 @@
-package fi.hel.allu.model.deployment.paymentclass;
-
-import fi.hel.allu.model.deployment.helsinkixml.HelsinkiGeom;
+package fi.hel.allu.servicecore.service.geocode;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,24 +28,21 @@ public class PaymentClassXml {
   }
 
   public static class HelsinkiAlluMaksuvyohyke {
-    @XmlElement(name = "id", namespace = HELSINKI_NAMESPACE)
+    @XmlElement(name = "tietopalvelu_id", namespace = HELSINKI_NAMESPACE)
     public int id;
-    @XmlElement(name = "maksuvyohyke", namespace = HELSINKI_NAMESPACE)
+    @XmlElement(name = "maksuluokka", namespace = HELSINKI_NAMESPACE)
     public String paymentClass;
-    @XmlElement(name = "muokattu", namespace = HELSINKI_NAMESPACE)
-    public String modificationDate;
-    @XmlElement(name = "geom", namespace = HELSINKI_NAMESPACE)
-    public HelsinkiGeom geometry;
+
+    public String getPaymentClass() {
+      return paymentClass;
+    }
 
     @Override
     public String toString() {
       return "HelsinkiAlluMaksuvuohyke{" +
           "id=" + id +
           ", paymentClass='" + paymentClass + '\'' +
-          ", modificationDate='" + modificationDate + '\'' +
-          ", geometry=" + geometry +
           '}';
     }
   }
-
 }

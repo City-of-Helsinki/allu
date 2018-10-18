@@ -34,7 +34,6 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
-import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -55,6 +54,8 @@ public class ApplicationServiceTest extends MockServices {
   private CustomerMapper customerMapper;
   @Mock
   private PersonAuditLogService personAuditLogService;
+  @Mock
+  private PaymentClassServiceImpl paymentClassService;
 
   private ApplicationService applicationService;
 
@@ -84,7 +85,7 @@ public class ApplicationServiceTest extends MockServices {
     userJson = new UserJson(USER_ID, null, null, null, null, null, true, null, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
-    applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService, personAuditLogService);
+    applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService, personAuditLogService, paymentClassService);
   }
 
   @Test

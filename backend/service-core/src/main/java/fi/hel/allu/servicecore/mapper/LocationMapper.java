@@ -1,6 +1,5 @@
 package fi.hel.allu.servicecore.mapper;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +34,7 @@ public class LocationMapper {
     location.setFixedLocationIds(locationJson.getFixedLocationIds());
     location.setCityDistrictId(locationJson.getCityDistrictId());
     location.setCityDistrictIdOverride(locationJson.getCityDistrictIdOverride());
+    location.setPaymentTariff(locationJson.getPaymentTariff());
     location.setPaymentTariffOverride(locationJson.getPaymentTariffOverride());
     location.setUnderpass(locationJson.getUnderpass());
     return location;

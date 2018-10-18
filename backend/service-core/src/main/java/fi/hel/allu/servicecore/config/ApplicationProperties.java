@@ -17,6 +17,9 @@ public class ApplicationProperties {
   private final List<String> emailAllowedAddresses;
   private final String emailSenderAddress;
   private final List<String> anonymousAccessPaths;
+  private final String paymentClassUrl;
+  private final String paymentClassUsername;
+  private final String paymentClassPassword;
 
   public ApplicationProperties(
       String modelServiceHost,
@@ -27,7 +30,10 @@ public class ApplicationProperties {
       String pdfServicePort,
       List<String> emailAllowedAddresses,
       String emailSenderAddress,
-      List<String> anonymousAccessPaths) {
+      List<String> anonymousAccessPaths,
+      String paymentClassUrl,
+      String paymentClassUsername,
+      String paymentClassPassword) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -37,6 +43,9 @@ public class ApplicationProperties {
     this.emailAllowedAddresses = emailAllowedAddresses;
     this.emailSenderAddress = emailSenderAddress;
     this.anonymousAccessPaths = anonymousAccessPaths;
+    this.paymentClassUrl = paymentClassUrl;
+    this.paymentClassUsername = paymentClassUsername;
+    this.paymentClassPassword = paymentClassPassword;
   }
 
   public static final String PATH_PREFIX = "http://";
@@ -1321,5 +1330,17 @@ public class ApplicationProperties {
 
   public String getSetRequiredTasksUrl() {
     return getModelServiceUrl("/excavationannouncements/{id}/requiredtasks");
+  }
+
+  public String getPaymentClassUrl() {
+    return paymentClassUrl;
+  }
+
+  public String getPaymentClassUsername() {
+    return paymentClassUsername;
+  }
+
+  public String getPaymentClassPassword() {
+    return paymentClassPassword;
   }
 }

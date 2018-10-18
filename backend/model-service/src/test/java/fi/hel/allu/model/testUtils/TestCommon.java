@@ -80,6 +80,7 @@ public class TestCommon {
     location.setUnderpass(false);
     location.setStartTime(app.getStartTime());
     location.setEndTime(app.getEndTime());
+    location.setPaymentTariff("3");
     app.setLocations(Collections.singletonList(location));
   }
 

@@ -36,6 +36,8 @@ public class AreaRentalPricing extends Pricing {
     UNIT_PRICE.put("1", 600);
     UNIT_PRICE.put("2", 300);
     UNIT_PRICE.put("3", 130);
+    UNIT_PRICE.put("4a", 80);
+    UNIT_PRICE.put("4b", 80);
   }
 
   private void setHandlingFee() {

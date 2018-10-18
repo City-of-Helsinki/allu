@@ -270,6 +270,14 @@ public class Location implements PostalAddressItem {
     this.paymentTariffOverride = paymentTariffOverride;
   }
 
+  @JsonIgnore
+  public String getEffectivePaymentTariff() {
+    if (paymentTariffOverride != null) {
+      return paymentTariffOverride;
+    }
+    return paymentTariff;
+  }
+
   /**
    * Returns true if it's possible to pass through the reserved area without obstacles (altakuljettava).
    *

@@ -59,7 +59,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   multipleLocations = false;
   invalidGeometry = false;
   showPaymentTariff = false;
-  paymentTariffs = ['1', '2', '3'];
+  paymentTariffs = ['1', '2', '3', '4a', '4b'];
 
   private destroy = new Subject<boolean>();
 

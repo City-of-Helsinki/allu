@@ -21,7 +21,10 @@ public class ServiceCoreAppConfig {
       @Value("${pdf.service.port}") @NotEmpty String pdfServicePort,
       @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
-      @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
+      @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths,
+      @Value("${wfs.paymentclass.url}") @NotEmpty String paymentClassUrl,
+      @Value("${wfs.username}") @NotEmpty String paymentClassUsername,
+      @Value("${wfs.password}") @NotEmpty String paymentClassPassword) {
     return new ApplicationProperties(
         modelServiceHost,
         modelServicePort,
@@ -31,6 +34,9 @@ public class ServiceCoreAppConfig {
         pdfServicePort,
         emailAllowedAddresses,
         emailSenderAddress,
-        anonymousAccessPaths);
+        anonymousAccessPaths,
+        paymentClassUrl,
+        paymentClassUsername,
+        paymentClassPassword);
   }
 }

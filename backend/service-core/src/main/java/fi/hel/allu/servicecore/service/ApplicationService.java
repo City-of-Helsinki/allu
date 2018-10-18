@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.util.ApplicationIdUtil;
@@ -35,7 +36,7 @@ public class ApplicationService {
   private final ApplicationMapper applicationMapper;
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
-
+  private final PaymentClassService paymentClassService;
 
   @Autowired
   public ApplicationService(
@@ -43,12 +44,14 @@ public class ApplicationService {
       RestTemplate restTemplate,
       ApplicationMapper applicationMapper,
       UserService userService,
-      PersonAuditLogService personAuditLogService) {
+      PersonAuditLogService personAuditLogService,
+      PaymentClassService paymentClassService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
     this.userService = userService;
     this.personAuditLogService = personAuditLogService;
+    this.paymentClassService = paymentClassService;
   }
 
 
@@ -157,6 +160,7 @@ public class ApplicationService {
    */
   Application createApplication(ApplicationJson newApplication) {
     newApplication.setApplicationTags(tagsWithUserInfo(newApplication.getApplicationTags()));
+    setPaymentClasses(newApplication);
     Application applicationModel = restTemplate.postForObject(
         applicationProperties.getApplicationCreateUrl(),
         applicationMapper.createApplicationModel(newApplication),
@@ -175,6 +179,7 @@ public class ApplicationService {
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicationJson.setId(applicationId);
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
+    setPaymentClasses(applicationJson);
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
         HttpMethod.PUT, requestEntity, Application.class, applicationId, userService.getCurrentUser().getId());
@@ -234,6 +239,13 @@ public class ApplicationService {
     return responseEntity.getBody();
   }
 
+  private void setPaymentClasses(ApplicationJson application) {
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT ||
+        application.getType() == ApplicationType.AREA_RENTAL) {
+      final List<LocationJson> locations = application.getLocations();
+      locations.forEach(l -> l.setPaymentTariff(paymentClassService.getPaymentClass(l)));
+    }
+  }
 
   private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
     HttpEntity<Integer> requestEntity;

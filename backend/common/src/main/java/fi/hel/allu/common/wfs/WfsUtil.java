@@ -2,12 +2,12 @@ package fi.hel.allu.common.wfs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
 import java.io.StringReader;
 import java.util.Base64;
 
@@ -29,14 +29,12 @@ public class WfsUtil {
     }
   }
 
-  public static HttpEntity<String> createAuthRequestEntity(String wfsUsername, String wfsPassword) {
-    HttpHeaders httpHeaders = new HttpHeaders();
-
-    String auth = wfsUsername + ":" + wfsPassword;
-    byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
-    String authHeader = "Basic " + new String( encodedAuth );
+  public static HttpHeaders createAuthHeaders(String wfsUsername, String wfsPassword) {
+    final HttpHeaders httpHeaders = new HttpHeaders();
+    final String auth = wfsUsername + ":" + wfsPassword;
+    final byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
+    final String authHeader = "Basic " + new String( encodedAuth );
     httpHeaders.set(HttpHeaders.AUTHORIZATION, authHeader);
-    return new HttpEntity<>(httpHeaders);
+    return httpHeaders;
   }
-
 }
