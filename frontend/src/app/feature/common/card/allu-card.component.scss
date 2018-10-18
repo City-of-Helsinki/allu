@@ -88,3 +88,23 @@
     }
   }
 }
+
+:host(.allu-card-border-left) mat-card {
+  border-left-style: solid;
+  border-left-width: 10px;
+}
+
+:host(.allu-card-border-right) mat-card {
+  border-right-style: solid;
+  border-right-width: 10px;
+}
+
+:host(.allu-card-border-top) mat-card {
+  border-top-style: solid;
+  border-top-width: 10px;
+}
+
+:host(.allu-card-border-bottom) mat-card {
+  border-bottom-style: solid;
+  border-bottom-width: 10px;
+}

@@ -44,7 +44,7 @@
 @include buttons-theme($allu-theme);
 @include toggle-buttons-theme($allu-theme);
 @include modal-theme($allu-theme);
-@include allu-card-theme($allu-theme);
+@include allu-card-theme($allu-theme, $allu-success, $allu-basic);
 @include table-theme($allu-theme);
 @include bottom-bar-theme($allu-theme);
 @include project-header-theme($allu-theme);

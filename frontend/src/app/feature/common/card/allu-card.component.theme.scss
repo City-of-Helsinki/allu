@@ -1,5 +1,7 @@
-@mixin allu-card-theme($theme) {
+@mixin allu-card-theme($theme, $success, $basic) {
   $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
 
   allu-card mat-card {
     background: $allu-card-background;
@@ -16,6 +18,26 @@
     &.mat-card .mat-divider .divider-primary {
       border-top-color: mat-color($primary, 200);
     }
+  }
+
+  allu-card.allu-primary mat-card {
+    border-color: mat-color($primary, 500);
+  }
+
+  allu-card.allu-accent  mat-card {
+    border-color: mat-color($accent, 500);
+  }
+
+  allu-card.allu-warn mat-card {
+    border-color: mat-color($warn, 500);
+  }
+
+  allu-card.allu-success  mat-card {
+    border-color: map-get($success, 500);
+  }
+
+  allu-card.allu-basic  mat-card {
+    border-color: map-get($basic, 500);
   }
 }
 
