@@ -875,7 +875,8 @@ export const translations = {
       WORK_FINISHED: 'Työ valmis'
     },
     field: {
-      handlerMissing: 'Käsittelijä puuttuuu'
+      handlerMissing: 'Käsittelijä puuttuuu',
+      commentMissing: 'Perustelut puuttuvat'
     },
     proposal: {
       selectDecisionMaker: 'Valitse päättäjä',
