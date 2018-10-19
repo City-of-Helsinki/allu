@@ -557,6 +557,11 @@
                             <column>status</column>
                             <type>fi.hel.allu.model.querydsl.StringToContractStatus</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>pricing</table>
+                            <column>application_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

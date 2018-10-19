@@ -1,5 +1,7 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -9,8 +11,10 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
+import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.domain.PricingKey;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
 
@@ -20,43 +24,36 @@ public class ExcavationPricing extends Pricing {
   private final ExcavationAnnouncement extension;
   private final WinterTime winterTime;
   private final PricingExplanator pricingExplanator;
+  private final PricingDao pricingDao;
 
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
   private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
-  private static final int HANDLING_FEE = 18000;
-  private static final int SMALL_AREA_DAILY_FEE = 5000;
-  private static final int MEDIUM_AREA_DAILY_FEE = 6500;
-  private static final int LARGE_AREA_DAILY_FEE = 8000;
 
-  public ExcavationPricing(Application application, WinterTimeService winterTimeService, PricingExplanator pricingExplanator) {
+  public ExcavationPricing(Application application,
+      WinterTimeService winterTimeService, PricingExplanator pricingExplanator, PricingDao pricingDao) {
     this.application = application;
     this.winterTime = winterTimeService.getWinterTime();
     this.extension = (ExcavationAnnouncement)application.getExtension();
     this.pricingExplanator = pricingExplanator;
-    setPriceInCents(HANDLING_FEE);
-    addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, HANDLING_FEE,
-        HANDLING_FEE_TEXT, HANDLING_FEE);
+    this.pricingDao = pricingDao;
+    final int handlingFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE);
+    setPriceInCents(handlingFee);
+    addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, handlingFee,
+        HANDLING_FEE_TEXT, handlingFee);
   }
-
 
   @Override
   public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
     int dailyFee;
     if (locationArea < SMALL_AREA_LIMIT) {
-      dailyFee = SMALL_AREA_DAILY_FEE;
+      dailyFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.SMALL_AREA_DAILY_FEE, paymentClass);
     } else if (locationArea > LARGE_AREA_LIMIT) {
-      dailyFee = LARGE_AREA_DAILY_FEE;
+      dailyFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.LARGE_AREA_DAILY_FEE, paymentClass);
     } else {
-      dailyFee = MEDIUM_AREA_DAILY_FEE;
-    }
-    // Factor in the payment class.
-    if ("2".equals(paymentClass)) {
-      dailyFee /= 2;
-    } else if ("3".equals(paymentClass)) {
-      dailyFee /= 4;
+      dailyFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass);
     }
     List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
@@ -65,7 +62,6 @@ public class ExcavationPricing extends Pricing {
     if (pricedPeriods.size() > 1) {
       addChargeBasisEntryForPeriod(locationKey, paymentClass, dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
     }
-
   }
 
   private void addChargeBasisEntryForPeriod(int locationKey, String paymentClass, int dailyFee,

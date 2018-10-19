@@ -149,7 +149,8 @@ public class PricingService {
    * Calculate price for excavation announcement
    */
   private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application) {
-    return calculateChargeBasis(application, new ExcavationPricing(application, winterTimeService, pricingExplanator));
+    return calculateChargeBasis(application, new ExcavationPricing(
+        application, winterTimeService, pricingExplanator, pricingDao));
   }
 
   /*

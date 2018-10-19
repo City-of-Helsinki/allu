@@ -12,6 +12,9 @@ import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.service.WinterTimeService;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.domain.PricingKey;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Spectrum.class)
@@ -19,6 +22,7 @@ public class ExcavationPricingSpec {
 
   WinterTimeService winterTimeService;
   PricingExplanator pricingExplanator;
+  PricingDao pricingDao;
   Application app;
   ExcavationPricing exc;
 
@@ -29,12 +33,17 @@ public class ExcavationPricingSpec {
         beforeEach(()-> {
           winterTimeService = Mockito.mock(WinterTimeService.class);
           pricingExplanator = Mockito.mock(PricingExplanator.class);
+          pricingDao = Mockito.mock(PricingDao.class);
+          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE)).thenReturn(18000);
+          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.SMALL_AREA_DAILY_FEE, "3")).thenReturn(1250);
+          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.MEDIUM_AREA_DAILY_FEE, "2")).thenReturn(3250);
+          Mockito.when(pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.LARGE_AREA_DAILY_FEE, "1")).thenReturn(8000);
 
           app = new Application();
           app.setExtension(new ExcavationAnnouncement());
           app.setStartTime(ZonedDateTime.parse("2017-04-20T08:00:00+03:00"));
           app.setEndTime(ZonedDateTime.parse("2017-04-22T17:00:00+03:00"));
-          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator);
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao);
         });
         context("On price class 2, with area of 65 sqm", () -> {
           it("should cost 3 * 32.50 +  180 EUR", () -> {
