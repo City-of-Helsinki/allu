@@ -4,7 +4,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.pricing.PricingConfiguration;
+import fi.hel.allu.model.pricing.OutdoorPricingConfiguration;
 import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,16 +58,16 @@ public class PricingDaoTest {
   // Check that the pricing configuration can be read:
   @Test
   public void testWithExistingFixedLocation() {
-    Optional<PricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID,
+    Optional<OutdoorPricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID,
         EventNature.PUBLIC_FREE);
     assertTrue(opt_pc.isPresent());
-    PricingConfiguration pc = opt_pc.get();
+    OutdoorPricingConfiguration pc = opt_pc.get();
     assertEquals(TEST_BASE_CHARGE, pc.getBaseCharge());
   }
 
   @Test
   public void testWithBadFixedLocation() {
-    Optional<PricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID + 1, EventNature.PUBLIC_FREE);
+    Optional<OutdoorPricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID + 1, EventNature.PUBLIC_FREE);
     assertFalse(opt_pc.isPresent());
   }
 
@@ -83,7 +83,7 @@ public class PricingDaoTest {
     queryFactory.insert(outdoorPricing).set(outdoorPricing.zoneId, ZONE_ID).set(outdoorPricing.nature, "PUBLIC_FREE")
         .set(outdoorPricing.baseCharge, TEST_BASE_CHARGE).set(outdoorPricing.buildDiscountPercent, 0)
         .set(outdoorPricing.durationDiscountPercent, 0).set(outdoorPricing.durationDiscountLimit, 0).execute();
-    Optional<PricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(cityDistrictId, EventNature.PUBLIC_FREE);
+    Optional<OutdoorPricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(cityDistrictId, EventNature.PUBLIC_FREE);
     assertTrue(opt_pc.isPresent());
     assertEquals(TEST_BASE_CHARGE, opt_pc.get().getBaseCharge());
   }

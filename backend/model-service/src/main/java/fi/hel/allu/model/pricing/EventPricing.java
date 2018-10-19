@@ -34,7 +34,7 @@ public class EventPricing extends Pricing {
    * @param structureArea
    * @param area
    */
-  public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
+  public void accumulatePrice(OutdoorPricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area, InfoTexts infoTexts) {
     List<String> explanation = new ArrayList<>();
     final String address = Optional.ofNullable(infoTexts.fixedLocation).orElse(infoTexts.locationAddress);
@@ -93,7 +93,7 @@ public class EventPricing extends Pricing {
     return priceInCents(fullPrice.multiply(BigDecimal.valueOf(paymentPercentage, 2)));
   }
 
-  private BigDecimal calculateStructureExtras(PricingConfiguration pricingConfig, double structureArea) {
+  private BigDecimal calculateStructureExtras(OutdoorPricingConfiguration pricingConfig, double structureArea) {
     Long[] structureExtraCharges = pricingConfig.getStructureExtraCharges();
     if (structureExtraCharges == null) {
       return BigDecimal.ZERO; // No extra charges for structures
@@ -117,7 +117,7 @@ public class EventPricing extends Pricing {
     return total;
   }
 
-  private BigDecimal calculateAreaExtras(PricingConfiguration pricingConfig, double area) {
+  private BigDecimal calculateAreaExtras(OutdoorPricingConfiguration pricingConfig, double area) {
     Long[] areaExtraCharges = pricingConfig.getAreaExtraCharges();
     if (areaExtraCharges == null) {
       return BigDecimal.ZERO; // no extra tax for areas

@@ -3,7 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.model.pricing.PricingConfiguration;
+import fi.hel.allu.model.pricing.OutdoorPricingConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,19 +19,19 @@ public class PricingDao {
   @Autowired
   private SQLQueryFactory queryFactory;
 
-  final QBean<PricingConfiguration> pricingBean = bean(PricingConfiguration.class, outdoorPricing.all());
+  final QBean<OutdoorPricingConfiguration> outdoorPricingBean = bean(OutdoorPricingConfiguration.class, outdoorPricing.all());
 
   @Transactional(readOnly = true)
-  public Optional<PricingConfiguration> findByFixedLocationAndNature(int fixedLocationId, EventNature nature) {
-    PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing)
+  public Optional<OutdoorPricingConfiguration> findByFixedLocationAndNature(int fixedLocationId, EventNature nature) {
+    OutdoorPricingConfiguration pc = queryFactory.select(outdoorPricingBean).from(outdoorPricing)
         .where(outdoorPricing.fixedLocationId.eq(fixedLocationId).and(outdoorPricing.nature.eq(nature.toString())))
         .fetchFirst();
     return Optional.ofNullable(pc);
   }
 
   @Transactional(readOnly = true)
-  public Optional<PricingConfiguration> findByDisctrictAndNature(int cityDistrictId, EventNature nature) {
-    PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing).innerJoin(cityDistrict)
+  public Optional<OutdoorPricingConfiguration> findByDisctrictAndNature(int cityDistrictId, EventNature nature) {
+    OutdoorPricingConfiguration pc = queryFactory.select(outdoorPricingBean).from(outdoorPricing).innerJoin(cityDistrict)
         .on(outdoorPricing.zoneId.eq(cityDistrict.zoneId))
         .where(cityDistrict.id.eq(cityDistrictId).and(outdoorPricing.nature.eq(nature.toString()))).fetchFirst();
     return Optional.ofNullable(pc);

@@ -188,7 +188,7 @@ public class PricingService {
       }
     }
 
-    List<PricingConfiguration> pricingConfigs = getEventPricing(location, nature);
+    List<OutdoorPricingConfiguration> pricingConfigs = getEventPricing(location, nature);
 
     final int eventDays = EventDayUtil.eventDays(event.getEventStartTime(), event.getEventEndTime());
     final int buildDays = EventDayUtil.buildDays(event.getEventStartTime(), event.getEventEndTime(),
@@ -203,7 +203,7 @@ public class PricingService {
     double structureArea = event.getStructureArea();
     double area = location.getEffectiveArea();
 
-    for(PricingConfiguration pricingConfig : pricingConfigs) {
+    for(OutdoorPricingConfiguration pricingConfig : pricingConfigs) {
       infoTexts.fixedLocation = Optional.ofNullable(pricingConfig.getFixedLocationId())
           .flatMap(id -> locationDao.findFixedLocation(id)).map(Printable::forFixedLocation).orElse(null);
       // Calculate price per location...
@@ -232,7 +232,7 @@ public class PricingService {
    * Get event pricings for given location and nature.
    * May return multiple pricings if location consists of fixed locations.
    */
-  private List<PricingConfiguration> getEventPricing(Location location, EventNature nature) {
+  private List<OutdoorPricingConfiguration> getEventPricing(Location location, EventNature nature) {
     List<Integer> fixedLocationIds = location.getFixedLocationIds();
     if (fixedLocationIds != null && !fixedLocationIds.isEmpty()) {
       // fixed locations exist, so they define the pricing

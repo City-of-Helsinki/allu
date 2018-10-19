@@ -2,7 +2,7 @@ package fi.hel.allu.model.pricing;
 
 import java.util.Arrays;
 
-public class PricingConfiguration {
+public class OutdoorPricingConfiguration {
 
 
   private long baseCharge;
@@ -15,11 +15,11 @@ public class PricingConfiguration {
   private Double[] areaExtraChargeLimits;
   private Integer fixedLocationId;
 
-  public PricingConfiguration() {
+  public OutdoorPricingConfiguration() {
     // for beans
   }
 
-  public PricingConfiguration(long baseCharge, int buildDiscountPercent, int durationDiscountPercent, int durationDiscountLimit,
+  public OutdoorPricingConfiguration(long baseCharge, int buildDiscountPercent, int durationDiscountPercent, int durationDiscountLimit,
       long[] structureExtraCharges, double[] structureExtraChargeLimits, long[] areaExtraCharges, double[] areaExtraChargeLimits) {
     super();
     this.baseCharge = baseCharge;

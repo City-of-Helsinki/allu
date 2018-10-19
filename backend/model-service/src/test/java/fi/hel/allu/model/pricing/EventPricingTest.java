@@ -26,7 +26,7 @@ public class EventPricingTest {
   @Test
   public void testOpenEvent() {
     // EventPricing configuration for open event at Narinkka
-    PricingConfiguration bc = new PricingConfiguration(6000000L, 50, 50, 14, null, null, null, null);
+    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(6000000L, 50, 50, 14, null, null, null, null);
     EventPricing bill = new EventPricing();
     // Calculate a bill for 5-day event with two build days and some structures + area:
     bill.accumulatePrice(bc, 5, 2, 30.5, 300, infoTexts);
@@ -41,7 +41,7 @@ public class EventPricingTest {
   @Test
   public void testAreaExtraFee() {
     // EventPricing configuration for non-free open event at Zone 2
-    PricingConfiguration bc = new PricingConfiguration(2500000, 50, 50, 14, null, null, new long[] { 5000, 2500, 1250 },
+    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(2500000, 50, 50, 14, null, null, new long[] { 5000, 2500, 1250 },
         new double[] { 0.0, 2000.0, 4000.0 });
     EventPricing bill = new EventPricing();
     // Calculate price for 20-day event with four build days and a 5000 sq.m.
@@ -56,7 +56,7 @@ public class EventPricingTest {
   @Test
   public void testStructureExtraFee() {
     // EventPricing configuration for open event at Zone 3
-    PricingConfiguration bc = new PricingConfiguration(1250000, 50, 50, 14, new long[] { 125000, 62500 },
+    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(1250000, 50, 50, 14, new long[] { 125000, 62500 },
         new double[] { 100.0, 300.0 },
         null, null);
     EventPricing bill = new EventPricing();
@@ -70,14 +70,14 @@ public class EventPricingTest {
 
   @Test(expected = IllegalStateException.class)
   public void testAreaExtraChargeValidation() {
-    PricingConfiguration pricingConfiguration = new PricingConfiguration();
+    OutdoorPricingConfiguration pricingConfiguration = new OutdoorPricingConfiguration();
     pricingConfiguration.setAreaExtraChargeLimits(new Double[] { Double.valueOf(1020.0), Double.valueOf(2204.2) });
     pricingConfiguration.setAreaExtraCharges(new Long[] { Long.valueOf(1234L) });
   }
 
   @Test(expected = IllegalStateException.class)
   public void testStructureExtraChargeValidation() {
-    PricingConfiguration pricingConfiguration = new PricingConfiguration();
+    OutdoorPricingConfiguration pricingConfiguration = new OutdoorPricingConfiguration();
     pricingConfiguration.setStructureExtraChargeLimits(new Double[] { Double.valueOf(1020.0), Double.valueOf(2204.2) });
     pricingConfiguration.setStructureExtraCharges(new Long[] { Long.valueOf(1234L) });
   }

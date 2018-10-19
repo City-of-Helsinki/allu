@@ -4,7 +4,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QOutdoorPricing;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.pricing.PricingConfiguration;
+import fi.hel.allu.model.pricing.OutdoorPricingConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +34,13 @@ public class PricingValuesTest {
   @Autowired
   private SQLQueryFactory queryFactory;
 
-  final QBean<PricingConfiguration> pricingBean = bean(PricingConfiguration.class, outdoorPricing.all());
+  final QBean<OutdoorPricingConfiguration> pricingBean = bean(OutdoorPricingConfiguration.class, outdoorPricing.all());
 
   @Test
   public void testDatabaseValues() {
     // Read all pricing configurations from DB. There should not be any
     // validation errors
-    List<PricingConfiguration> prices = queryFactory.select(pricingBean).from(QOutdoorPricing.outdoorPricing).fetch();
+    List<OutdoorPricingConfiguration> prices = queryFactory.select(pricingBean).from(QOutdoorPricing.outdoorPricing).fetch();
     // Make sure something got actually read in
     assertTrue(prices.size() > 0);
   }
