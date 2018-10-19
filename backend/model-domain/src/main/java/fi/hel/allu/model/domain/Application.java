@@ -77,6 +77,8 @@ public class Application {
   private boolean invoicingChanged;
   private StatusType targetState;
 
+  private ZonedDateTime receivedTime;
+
   /**
    * in Finnish: Hakemuksen tunniste
    * <p>This is the database id.
@@ -542,5 +544,13 @@ public class Application {
 
   public void setTargetState(StatusType targetState) {
     this.targetState = targetState;
+  }
+
+  public ZonedDateTime getReceivedTime() {
+    return receivedTime;
+  }
+
+  public void setReceivedTime(ZonedDateTime receivedTime) {
+    this.receivedTime = receivedTime;
   }
 }

@@ -37,6 +37,7 @@ export class ApplicationMapper {
     application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
     application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
+    application.receivedTime = TimeUtil.dateFromBackend(backendApplication.receivedTime);
     application.nrOfComments = backendApplication.nrOfComments;
     application.applicationTags = ApplicationTagMapper.mapSearchResultList(backendApplication.applicationTags);
     return application;
@@ -53,6 +54,7 @@ export class ApplicationMapper {
     application.project = ProjectMapper.mapBackend(backendApplication.project);
     application.locations = LocationMapper.mapBackendList(backendApplication.locations);
     application.status = backendApplication.status;
+    application.receivedTime = TimeUtil.dateFromBackend(backendApplication.receivedTime);
     return application;
   }
 
@@ -64,6 +66,7 @@ export class ApplicationMapper {
     application.kindsWithSpecifiers = backendApplication.kindsWithSpecifiers;
     application.metadataVersion = backendApplication.metadataVersion;
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
+    application.receivedTime = TimeUtil.dateFromBackend(backendApplication.receivedTime);
     application.recurringEndTime = TimeUtil.dateFromBackend(backendApplication.recurringEndTime);
     application.customersWithContacts = CustomerMapper.mapBackendCustomersWithContacts(backendApplication.customersWithContacts);
     application.extension = ApplicationExtensionMapper.mapBackend(backendApplication.extension);
@@ -107,6 +110,7 @@ export class ApplicationMapper {
       metadataVersion: application.metadataVersion,
       name: application.name,
       creationTime: TimeUtil.dateToBackend(application.creationTime),
+      receivedTime: TimeUtil.dateToBackend(application.receivedTime),
       startTime: TimeUtil.dateToBackend(application.startTime),
       endTime: TimeUtil.dateToBackend(application.endTime),
       recurringEndTime: TimeUtil.dateToBackend(application.recurringEndTime),

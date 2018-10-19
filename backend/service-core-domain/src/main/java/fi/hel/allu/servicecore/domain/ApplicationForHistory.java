@@ -28,6 +28,7 @@ public class ApplicationForHistory {
   private Integer metadataVersion;
   private String name;
   private ZonedDateTime creationTime;
+  private ZonedDateTime receivedTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ZonedDateTime recurringEndTime;
@@ -344,5 +345,13 @@ public class ApplicationForHistory {
 
   public void setIdentificationNumber(String identificationNumber) {
     this.identificationNumber = identificationNumber;
+  }
+
+  public ZonedDateTime getReceivedTime() {
+    return receivedTime;
+  }
+
+  public void setReceivedTime(ZonedDateTime receivedTime) {
+    this.receivedTime = receivedTime;
   }
 }

@@ -25,6 +25,7 @@ export interface BackendApplication {
   metadataVersion: number;
   name: string;
   creationTime: string;
+  receivedTime: string;
   startTime: string;
   endTime: string;
   recurringEndTime: string;
@@ -64,6 +65,7 @@ export interface SearchResultApplication {
   type: SearchResultEnumType;
   name: string;
   creationTime: string;
+  receivedTime: string;
   startTime: string;
   endTime: string;
   customers: SearchResultCustomersWithContacts;

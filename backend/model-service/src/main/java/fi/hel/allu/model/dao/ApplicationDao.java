@@ -257,6 +257,9 @@ public class ApplicationDao {
     // Use application id from application if present, otherwise generate id.
     appl.setApplicationId(Optional.ofNullable(appl.getApplicationId()).orElse(createApplicationId(appl.getType())));
     appl.setCreationTime(ZonedDateTime.now());
+    if (appl.getReceivedTime() == null) {
+      appl.setReceivedTime(appl.getCreationTime());
+    }
     // Do not overwrite given status
     if (appl.getStatus() == null) {
       appl.setStatus(StatusType.PENDING);

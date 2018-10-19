@@ -21,6 +21,7 @@ public class ApplicationES {
   private List<String> applicationTags;
   private String name;
   private Long creationTime;
+  private Long receivedTime;
   private Long startTime;
   private Long endTime;
   private List<ESFlatValue> applicationTypeData;
@@ -165,6 +166,14 @@ public class ApplicationES {
 
   public void setNrOfComments(Integer nrOfComments) {
     this.nrOfComments = nrOfComments;
+  }
+
+  public Long getReceivedTime() {
+    return receivedTime;
+  }
+
+  public void setReceivedTime(Long receivedTime) {
+    this.receivedTime = receivedTime;
   }
 
 }

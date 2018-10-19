@@ -63,6 +63,7 @@ public class ApplicationMapper {
       applicationDomain.setProjectId(applicationJson.getProject().getId());
     }
     applicationDomain.setCreationTime(applicationJson.getCreationTime());
+    applicationDomain.setReceivedTime(applicationJson.getReceivedTime());
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
     applicationDomain.setRecurringEndTime(applicationJson.getRecurringEndTime());
@@ -108,6 +109,7 @@ public class ApplicationMapper {
     applicationES.setApplicationId(applicationJson.getApplicationId());
     applicationES.setName(applicationJson.getName());
     applicationES.setCreationTime(TimeUtil.dateToMillis(applicationJson.getCreationTime()));
+    applicationES.setReceivedTime(TimeUtil.dateToMillis(applicationJson.getReceivedTime()));
     applicationES.setStartTime(TimeUtil.dateToMillis(applicationJson.getStartTime()));
     applicationES.setEndTime(TimeUtil.dateToMillis(applicationJson.getEndTime()));
     if (applicationJson.getStartTime() != null && applicationJson.getEndTime() != null) {
@@ -155,6 +157,7 @@ public class ApplicationMapper {
     applicationJson.setApplicationTags(createTagsJson(application.getApplicationTags()));
     applicationJson.setMetadataVersion(application.getMetadataVersion());
     applicationJson.setCreationTime(application.getCreationTime());
+    applicationJson.setReceivedTime(application.getReceivedTime());
     applicationJson.setStartTime(application.getStartTime());
     applicationJson.setEndTime(application.getEndTime());
     applicationJson.setRecurringEndTime(application.getRecurringEndTime());
@@ -205,6 +208,7 @@ public class ApplicationMapper {
     history.setApplicationTags(application.getApplicationTags());
     history.setMetadataVersion(application.getMetadataVersion());
     history.setCreationTime(application.getCreationTime());
+    history.setReceivedTime(application.getReceivedTime());
     history.setStartTime(application.getStartTime());
     history.setEndTime(application.getEndTime());
     history.setRecurringEndTime(application.getRecurringEndTime());

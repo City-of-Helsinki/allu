@@ -180,7 +180,7 @@
 
         <ng-container matColumnDef="creationTime">
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.creationTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.creationTime | date:'shortDate'}}</mat-cell>
+          <mat-cell *matCellDef="let row">{{row.receivedTime | date:'shortDate'}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="startTime">

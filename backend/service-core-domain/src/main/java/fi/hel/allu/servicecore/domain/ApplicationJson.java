@@ -53,6 +53,7 @@ public class ApplicationJson {
   @NotBlank(message = "{application.name}", groups = {Draft.class, Default.class})
   private String name;
   private ZonedDateTime creationTime;
+  private ZonedDateTime receivedTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ZonedDateTime recurringEndTime;
@@ -599,5 +600,13 @@ public class ApplicationJson {
 
   public void setTargetState(StatusType targetState) {
     this.targetState = targetState;
+  }
+
+  public ZonedDateTime getReceivedTime() {
+    return receivedTime;
+  }
+
+  public void setReceivedTime(ZonedDateTime receivedTime) {
+    this.receivedTime= receivedTime;
   }
 }

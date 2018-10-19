@@ -23,7 +23,8 @@ INSERT INTO allureport.hakemus (
   asiakkaan_viite,
   laskutuspaiva,
   asiointitunnus,
-  asiakasjarjestelma_kayttaja
+  asiakasjarjestelma_kayttaja,
+  hakemus_saapunut
 )
 SELECT
     a.id AS id,
@@ -82,7 +83,8 @@ SELECT
     a.customer_reference AS asiakkaan_viite,
     a.invoicing_date AS laskutuspaiva,
     a.identification_number AS asiointitunnus,
-    eu.user_name AS asiakasjarjestelma_kayttaja
+    eu.user_name AS asiakasjarjestelma_kayttaja,
+    a.received_time AS hakemus_saapunut
 FROM allu_operative.application a
 LEFT JOIN allu_operative.user h ON a.handler = h.id
 LEFT JOIN allu_operative.user o ON a.owner = o.id
@@ -112,7 +114,8 @@ ON CONFLICT (id) DO UPDATE SET
     asiakkaan_viite = EXCLUDED.asiakkaan_viite,
     laskutuspaiva = EXCLUDED.laskutuspaiva,
     asiointitunnus = EXCLUDED.asiointitunnus,
-    asiakasjarjestelma_kayttaja = EXCLUDED.asiakasjarjestelma_kayttaja
+    asiakasjarjestelma_kayttaja = EXCLUDED.asiakasjarjestelma_kayttaja,
+    hakemus_saapunut = EXCLUDED.hakemus_saapunut
 ;
 
 INSERT INTO allureport.tapahtuma (
