@@ -1,12 +1,6 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
@@ -17,6 +11,11 @@ import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.domain.PricingKey;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
+
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExcavationPricing extends Pricing {
 
@@ -105,7 +104,7 @@ public class ExcavationPricing extends Pricing {
 
   private ZonedDateTime getEndTimeForApplication() {
     ZonedDateTime endTime = extension.getWorkFinished() != null ? extension.getWorkFinished() : application.getEndTime();
-    return endTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId);
+    return endTime != null ? endTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId) : null;
   }
 
   private void addWinterTimePeriod(List<PricedPeriod> periods) {
