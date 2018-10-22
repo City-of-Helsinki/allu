@@ -218,7 +218,7 @@ public class DecisionJsonMapper {
     if (application.getId() == null) {
       return;
     }
-    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(application.getId());
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getInvoicableChargeBasis(application.getId());
     fillCargeBasisInfo(decisionJson, chargeBasisEntries);
   }
 

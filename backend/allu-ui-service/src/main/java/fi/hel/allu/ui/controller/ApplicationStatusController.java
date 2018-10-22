@@ -114,7 +114,7 @@ public class ApplicationStatusController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToOperationalCondition(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
-    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedChargeBasis(id);
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedAndInvoicableChargeBasis(id);
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.OPERATIONAL_CONDITION);
     approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson, chargeBasisEntries);
     return ResponseEntity.ok(applicationJson);
@@ -132,7 +132,7 @@ public class ApplicationStatusController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> changeStatusToFinished(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
-    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedChargeBasis(id);
+    List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedAndInvoicableChargeBasis(id);
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.FINISHED);
     approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson, chargeBasisEntries);
     return ResponseEntity.ok(applicationJson);

@@ -31,7 +31,7 @@ public class ApprovalDocumentController {
   @RequestMapping(value = "/{applicationId}/approvalDocument/{type}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getApprovalDocument(@PathVariable Integer applicationId, @PathVariable ApprovalDocumentType type) {
-    return pdfResult(approvalDocumentService.getApprovalDocument(applicationId, type, chargeBasisService.getUnlockedChargeBasis(applicationId)));
+    return pdfResult(approvalDocumentService.getApprovalDocument(applicationId, type, chargeBasisService.getUnlockedAndInvoicableChargeBasis(applicationId)));
   }
 
   protected ResponseEntity<byte[]> pdfResult(byte[] data) {

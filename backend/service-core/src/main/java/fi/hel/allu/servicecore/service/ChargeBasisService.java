@@ -19,8 +19,8 @@ import java.util.stream.Stream;
 @Service
 public class ChargeBasisService {
 
-  private ApplicationProperties applicationProperties;
-  private RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final RestTemplate restTemplate;
 
   @Autowired
   public ChargeBasisService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
@@ -35,16 +35,19 @@ public class ChargeBasisService {
    * @return the charge basis entries for the application
    */
   public List<ChargeBasisEntry> getChargeBasis(int applicationId) {
-    ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.getForEntity(applicationProperties.getChargeBasisUrl(),
-        ChargeBasisEntry[].class, applicationId);
-    return sortEntries(Arrays.asList(restResult.getBody()));
+    return sortEntries(loadChargeBasis(applicationId));
   }
 
-  public List<ChargeBasisEntry> getUnlockedChargeBasis(int applicationId) {
-    ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.getForEntity(applicationProperties.getChargeBasisUrl(),
-        ChargeBasisEntry[].class, applicationId);
-    return sortEntries(Arrays.asList(restResult.getBody()))
-        .stream().filter(e -> !Boolean.TRUE.equals(e.getLocked())).collect(Collectors.toList());
+  public List<ChargeBasisEntry> getInvoicableChargeBasis(int applicationId) {
+    return sortEntries(loadChargeBasis(applicationId).stream()
+        .filter(e -> e.isInvoicable())
+        .collect(Collectors.toList()));
+  }
+
+  public List<ChargeBasisEntry> getUnlockedAndInvoicableChargeBasis(int applicationId) {
+    return sortEntries(loadChargeBasis(applicationId).stream()
+        .filter(e -> !Boolean.TRUE.equals(e.getLocked()) && e.isInvoicable())
+        .collect(Collectors.toList()));
   }
 
   /**
@@ -76,6 +79,11 @@ public class ChargeBasisService {
         .buildAndExpand(pathVariables).toUri();
 
     return restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(null), ChargeBasisEntry.class).getBody();
+  }
+
+  private List<ChargeBasisEntry> loadChargeBasis(int applicationId) {
+    return Arrays.asList(restTemplate.getForEntity(
+        applicationProperties.getChargeBasisUrl(), ChargeBasisEntry[].class, applicationId).getBody());
   }
 
   /**

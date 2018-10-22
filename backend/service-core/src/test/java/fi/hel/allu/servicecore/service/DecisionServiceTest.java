@@ -151,7 +151,7 @@ public class DecisionServiceTest {
             "10% discount", null, 0, 0),
         new ChargeBasisEntry("TAG3", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.SQUARE_METER, 1.0,
             "One sqm", null, 100, 100));
-    Mockito.when(chargeBasisService.getChargeBasis(Mockito.anyInt())).thenReturn(ENTRIES);
+    Mockito.when(chargeBasisService.getInvoicableChargeBasis(Mockito.anyInt())).thenReturn(ENTRIES);
 
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
