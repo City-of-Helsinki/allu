@@ -48,6 +48,11 @@ public class ApplicationReplacementService {
       FINAL_SUPERVISION_ACCEPTED
   ));
 
+  private static final Set<StatusType> REPLACEMENT_IS_ALLOWED = new HashSet<>(Arrays.asList(
+      StatusType.DECISION,
+      StatusType.OPERATIONAL_CONDITION
+  ));
+
 
   private final ApplicationService applicationService;
   private final ApplicationDao applicationDao;
@@ -122,7 +127,7 @@ public class ApplicationReplacementService {
   }
 
   private void validateReplacementAllowed(Application applicationToReplace) {
-    if (!StatusType.DECISION.equals(applicationToReplace.getStatus())) {
+    if (!REPLACEMENT_IS_ALLOWED.contains(applicationToReplace.getStatus())) {
       throw new IllegalArgumentException("Application in invalid state, replacement not allowed");
     }
   }

@@ -104,7 +104,8 @@ public class ExcavationPricing extends Pricing {
   }
 
   private ZonedDateTime getEndTimeForApplication() {
-    return extension.getWorkFinished() != null ? extension.getWorkFinished() : application.getEndTime();
+    ZonedDateTime endTime = extension.getWorkFinished() != null ? extension.getWorkFinished() : application.getEndTime();
+    return endTime.withZoneSameInstant(TimeUtil.HelsinkiZoneId);
   }
 
   private void addWinterTimePeriod(List<PricedPeriod> periods) {
