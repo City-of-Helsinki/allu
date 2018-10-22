@@ -7,6 +7,7 @@ export interface BackendInvoiceRow {
   unit: ChargeBasisUnit;
   quantity: number;
   text: string;
+  explanation: string[];
   unitPrice: number;
   netPrice: number;
 }
@@ -45,6 +46,7 @@ export class InvoiceMapper {
       invoiceRow.unit,
       invoiceRow.quantity,
       invoiceRow.text,
+      invoiceRow.explanation,
       invoiceRow.unitPrice,
       invoiceRow.netPrice
     );

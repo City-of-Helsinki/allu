@@ -6,13 +6,15 @@ public class InvoiceRowJson {
   private ChargeBasisUnit unit;
   private double quantity;
   private String text;
+  private String[] explanation;
   private int unitPrice;
   private int netPrice;
 
-  public InvoiceRowJson(ChargeBasisUnit unit, double quantity, String text, int unitPrice, int netPrice) {
+  public InvoiceRowJson(ChargeBasisUnit unit, double quantity, String text, String[] explanation, int unitPrice, int netPrice) {
     this.unit = unit;
     this.quantity = quantity;
     this.text = text;
+    this.explanation = explanation;
     this.unitPrice = unitPrice;
     this.netPrice = netPrice;
   }
@@ -54,6 +56,17 @@ public class InvoiceRowJson {
 
   public void setText(String text) {
     this.text = text;
+  }
+
+  /**
+   * Get the explanation texts for the row
+   */
+  public String[] getExplanation() {
+    return explanation == null ? new String[0] : explanation;
+  }
+
+  public void setExplanation(String[] explanation) {
+    this.explanation = explanation;
   }
 
   /**

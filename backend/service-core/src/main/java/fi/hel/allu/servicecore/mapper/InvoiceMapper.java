@@ -35,6 +35,7 @@ public class InvoiceMapper {
             r.getUnit(),
             r.getQuantity(),
             r.getText(),
+            r.getExplanation(),
             r.getUnitPrice(),
             r.getNetPrice()))
         .collect(Collectors.toList());

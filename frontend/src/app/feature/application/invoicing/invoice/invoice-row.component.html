@@ -4,6 +4,11 @@
   <div fxFlex="40">
     <div fxLayout="column">
       <div fxFlex class="entry-header text-highlighted">{{row.text}}</div>
+      <div fxFlex>
+        <span *ngFor="let explanation of row.explanation; let last=last;">
+          {{explanation | commaSeparated:last}}
+        </span>
+      </div>
     </div>
   </div>
   <div fxFlex="15">{{row.quantity}} {{['chargeBasis.unit', row.unit] | translation}}</div>
