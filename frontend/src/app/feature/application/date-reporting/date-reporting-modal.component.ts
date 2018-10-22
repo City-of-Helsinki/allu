@@ -2,6 +2,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {ApplicationDateReport} from '@model/application/application-date-report';
+import {ComplexValidator} from '@util/complex-validator';
+import {FormUtil} from '@util/form.util';
 
 export enum ReporterType {
   CUSTOMER = 'customer',
@@ -56,6 +58,14 @@ export class DateReportingModalComponent implements OnInit {
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  get maxReportedDate() {
+    return FormUtil.getValue(this.form, 'reportedEndDate');
+  }
+
+  get minReportedEndDate() {
+    return FormUtil.getValue(this.form, 'reportedDate');
   }
 
   private initDateTranslations(): void {

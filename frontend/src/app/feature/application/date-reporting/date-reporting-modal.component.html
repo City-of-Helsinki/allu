@@ -5,47 +5,49 @@
   <div fxLayout="row">
     <div fxFlex>
       <form [formGroup]="form">
-          <div fxLayout="row wrap" fxLayoutGap="18px">
-            <div fxFlex="calc(50% - 18px)">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="reportedDate" required
-                       [placeholder]="'dateReporting.dateField.reportedDate' | translation"
-                       [matDatepicker]="reportedDatePicker"/>
-                <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #reportedDatePicker></mat-datepicker>
+        <div fxLayout="row wrap" fxLayoutGap="18px">
+          <div fxFlex="calc(50% - 18px)">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" formControlName="reportedDate" required
+                     [placeholder]="'dateReporting.dateField.reportedDate' | translation"
+                     [matDatepicker]="reportedDatePicker"
+                     [max]="maxReportedDate"/>
+              <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #reportedDatePicker></mat-datepicker>
 
-                <mat-error *ngIf="form.get('reportedDate').hasError('required')">
-                  {{'dateReporting.field.reportedDateMissing' | translation}}
-                </mat-error>
-              </mat-form-field>
-            </div>
-            <div fxFlex="calc(50% - 18px)" *ngIf="data.dateType==='validity'">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="reportedEndDate"
-                       [placeholder]="'dateReporting.dateField.reportedEndDate' | translation"
-                       [matDatepicker]="reportedEndDatePicker"/>
-                <mat-datepicker-toggle matSuffix [for]="reportedEndDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #reportedEndDatePicker></mat-datepicker>
-
-                <mat-error *ngIf="form.get('reportedDate').hasError('required')">
-                  {{'dateReporting.field.reportedDateMissing' | translation}}
-                </mat-error>
-              </mat-form-field>
-            </div>
-            <div fxFlex="0 1 calc(50% - 18px)">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="reportingDate" required
-                       [placeholder]="'dateReporting.dateField.reportingDate' | translation"
-                       [matDatepicker]="reportingDatePicker"/>
-                <mat-datepicker-toggle matSuffix [for]="reportingDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #reportingDatePicker></mat-datepicker>
-
-                <mat-error *ngIf="form.get('reportingDate').hasError('required')">
-                  {{'dateReporting.field.reportingDateMissing' | translation}}
-                </mat-error>
-              </mat-form-field>
-            </div>
+              <mat-error *ngIf="form.get('reportedDate').hasError('required')">
+                {{'dateReporting.field.reportedDateMissing' | translation}}
+              </mat-error>
+            </mat-form-field>
           </div>
+          <div fxFlex="calc(50% - 18px)" *ngIf="data.dateType==='validity'">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" formControlName="reportedEndDate"
+                     [placeholder]="'dateReporting.dateField.reportedEndDate' | translation"
+                     [matDatepicker]="reportedEndDatePicker"
+                     [min]="minReportedEndDate"/>
+              <mat-datepicker-toggle matSuffix [for]="reportedEndDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #reportedEndDatePicker></mat-datepicker>
+
+              <mat-error *ngIf="form.get('reportedDate').hasError('required')">
+                {{'dateReporting.field.reportedDateMissing' | translation}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div fxFlex="0 1 calc(50% - 18px)">
+            <mat-form-field class="input-full-width">
+              <input matInput type="text" formControlName="reportingDate" required
+                     [placeholder]="'dateReporting.dateField.reportingDate' | translation"
+                     [matDatepicker]="reportingDatePicker"/>
+              <mat-datepicker-toggle matSuffix [for]="reportingDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #reportingDatePicker></mat-datepicker>
+
+              <mat-error *ngIf="form.get('reportingDate').hasError('required')">
+                {{'dateReporting.field.reportingDateMissing' | translation}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
       </form>
     </div>
   </div>

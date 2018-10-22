@@ -1,4 +1,5 @@
-import {AbstractControl, FormArray} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
+import {Some} from '@util/option';
 
 export class FormUtil {
   public static clearArray(formArray: FormArray) {
@@ -38,5 +39,12 @@ export class FormUtil {
       }
     }
     return false;
+  }
+
+  public static getValue(form: FormGroup, path: string): any {
+    return Some(form)
+      .map(f => f.get(path))
+      .map(ctrl => ctrl.value)
+      .orElse(undefined);
   }
 }
