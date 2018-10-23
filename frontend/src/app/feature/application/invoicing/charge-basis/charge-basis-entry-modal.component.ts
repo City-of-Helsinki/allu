@@ -9,6 +9,7 @@ import {ArrayUtil} from '../../../../util/array-util';
 import {ChargeBasisType, manualChargeBasisTypes} from '../../../../model/application/invoice/charge-basis-type';
 import {Subject} from 'rxjs';
 import {distinctUntilChanged, takeUntil} from 'rxjs/internal/operators';
+import {FormUtil} from '@util/form.util';
 
 export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};
 
@@ -71,8 +72,9 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
   }
 
   private typeChanges(typeName: string): void {
+    const invoicable = FormUtil.getValue(this.chargeBasisEntryForm, 'invoicable');
     this.chargeBasisEntryForm.get('unitPrice').setValidators([Validators.required]); // this might be disabled by discount component
-    this.chargeBasisEntryForm.reset({type: typeName});
+    this.chargeBasisEntryForm.reset({type: typeName, invoicable});
   }
 }
 
