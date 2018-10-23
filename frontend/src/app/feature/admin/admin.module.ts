@@ -11,15 +11,16 @@ import {AdminComponent} from './admin.component';
 import {AdminNavComponent} from './nav/admin-nav.component';
 import {DefaultAttachmentsComponent} from './default-attachment/default-attachments.component';
 import {DefaultAttachmentComponent} from './default-attachment/default-attachment.component';
-import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
+import {SelectionGroupModule} from '@feature/common/selection-group/selection-group.module';
 import {DefaultRecipientsComponent} from './default-recipients/default-recipients.component';
 import {RecipientsByTypeComponent} from './default-recipients/recipients-by-type.component';
-import {DefaultRecipientService} from '../../service/recipients/default-recipient.service';
-import {DefaultRecipientHub} from '../../service/recipients/default-recipient-hub';
+import {DefaultRecipientService} from '@service/recipients/default-recipient.service';
+import {DefaultRecipientHub} from '@service/recipients/default-recipient-hub';
 import {ExternalUserListComponent} from './external-user/external-user-list.component';
-import {ExternalUserHub} from '../../service/user/external-user-hub';
-import {ExternalUserService} from '../../service/user/external-user-service';
+import {ExternalUserHub} from '@service/user/external-user-hub';
+import {ExternalUserService} from '@service/user/external-user-service';
 import {ExternalUserComponent} from './external-user/external-user.component';
+import {ConfigurationModule} from '@feature/admin/configuration/configuration.module';
 
 @NgModule({
   imports: [
@@ -30,7 +31,8 @@ import {ExternalUserComponent} from './external-user/external-user.component';
     MatCardModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    SelectionGroupModule
+    SelectionGroupModule,
+    ConfigurationModule
   ],
   declarations: [
     AdminComponent,

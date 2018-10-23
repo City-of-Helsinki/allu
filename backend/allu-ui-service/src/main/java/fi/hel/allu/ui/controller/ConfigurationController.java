@@ -5,10 +5,7 @@ import fi.hel.allu.servicecore.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,7 +30,7 @@ public class ConfigurationController {
 
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Configuration> updateConfiguration(@PathVariable int id, @Valid Configuration configuration) {
+  public ResponseEntity<Configuration> updateConfiguration(@PathVariable int id, @RequestBody @Valid Configuration configuration) {
     return ResponseEntity.ok(configurationService.updateConfiguration(id, configuration));
   }
 

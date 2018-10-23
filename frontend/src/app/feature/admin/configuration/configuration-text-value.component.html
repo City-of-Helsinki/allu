@@ -1,0 +1,4 @@
+<mat-form-field>
+  <input type="text" matInput [formControl]="valueCtrl"/>
+  <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
+</mat-form-field>

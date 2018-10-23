@@ -1,0 +1,19 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div fxLayout="row" fxLayoutAlign="start baseline">
+    <div fxFlex>
+      {{['configuration.key', configuration.key] | translation}}
+    </div>
+    <div fxFlex>
+      <ng-container [ngSwitch]="configuration.type">
+        <configuration-text-value
+          *ngSwitchDefault
+          formControlName="value"></configuration-text-value>
+      </ng-container>
+    </div>
+    <div fxFlex>
+      <button type="submit" mat-icon-button *ngIf="form.dirty" [disabled]="!form.valid">
+        <mat-icon>save</mat-icon>
+      </button>
+    </div>
+  </div>
+</form>

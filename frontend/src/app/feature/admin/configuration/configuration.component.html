@@ -1,0 +1,12 @@
+<div class="main-content">
+  <allu-card>
+    <mat-card-content>
+      <ul>
+        <li *ngFor="let configuration of configurations$ | async; last as isLast">
+          <configuration-entry [configuration]="configuration"></configuration-entry>
+          <mat-divider *ngIf="!isLast"></mat-divider>
+        </li>
+      </ul>
+    </mat-card-content>
+  </allu-card>
+</div>

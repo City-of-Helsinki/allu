@@ -20,6 +20,10 @@ export function reducer(state: State = initialState, action: ConfigurationAction
       return adapter.addAll(action.payload, state);
     }
 
+    case ConfigurationActionType.SaveSuccess: {
+      return adapter.upsertOne(action.payload, state);
+    }
+
     default: {
       return {...state};
     }

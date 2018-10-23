@@ -963,7 +963,6 @@ export const translations = {
     }
   },
   externalUser: {
-    nav: 'RAJAPINTAKÄYTTÄJÄT',
     username: 'Käyttäjänimi',
     name: 'Nimi',
     email: 'Sähköposti',
@@ -1681,6 +1680,9 @@ export const translations = {
     }
   },
   config: {
+    action: {
+      save: 'Asetus tallennettu'
+    },
     error: {
       fetch: 'Sovelluksen asetusten hakeminen epäonnistui'
     }
@@ -1698,6 +1700,28 @@ export const translations = {
     time: {
       asc: 'Vanhimmat ensin',
       desc: 'Uusimmat ensin'
+    }
+  },
+  admin: {
+    nav: {
+      users: 'Käyttäjät',
+      externalUsers: 'Rajapintakäyttäjät',
+      defaultAttachments: 'Vakioliitteet',
+      defaultImages: 'Tyyppikuvat',
+      defaultRecipients: 'Päätöksen vastaanottajat',
+      configuration: 'Asetukset',
+    }
+  },
+  configuration: {
+    key: {
+      CUSTOMER_NOTIFICATION_RECEIVER_EMAIL: ' Sähköpostiosoite uusista asiakkaista ilmoittamiseen',
+      INVOICE_NOTIFICATION_RECEIVER_EMAIL: 'Sähköpostiosoite laskuista ilmoittamiseen',
+      PLACEMENT_CONTRACT_DECISION_MAKER: 'Sijoittussopimuksen oletuspäättäjä',
+      WINTER_TIME_START: 'Talviajan alkupäivä',
+      WINTER_TIME_END: 'Talviajan loppupäivä'
+    },
+    field: {
+      valueMissing: 'Arvo puuttuu'
     }
   }
 };

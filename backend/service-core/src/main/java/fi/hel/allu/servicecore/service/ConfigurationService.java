@@ -49,7 +49,7 @@ public class ConfigurationService {
   public Configuration updateConfiguration(int id, Configuration configuration) {
     final HttpEntity<Configuration> requestEntity = new HttpEntity<>(configuration);
     final ResponseEntity<Configuration> responseEntity = restTemplate.exchange(
-        applicationProperties.getConfigurationUrl(),
+        applicationProperties.getConfigurationUpdateUrl(),
         HttpMethod.PUT,
         requestEntity,
         Configuration.class,

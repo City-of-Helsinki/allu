@@ -8,6 +8,7 @@ import {DefaultAttachmentComponent} from './default-attachment/default-attachmen
 import {DefaultRecipientsComponent} from './default-recipients/default-recipients.component';
 import {ExternalUserListComponent} from './external-user/external-user-list.component';
 import {ExternalUserComponent} from './external-user/external-user.component';
+import {ConfigurationComponent} from '@feature/admin/configuration/configuration.component';
 
 const attachmentChildRoutes = [
   { path: '', component: DefaultAttachmentsComponent },
@@ -30,6 +31,7 @@ export const adminRoutes: Routes = [
     ]},
     { path: 'default-attachments', data: {attachmentType: 'DEFAULT'}, children: attachmentChildRoutes },
     { path: 'default-images', data: {attachmentType: 'DEFAULT_IMAGE'}, children: attachmentChildRoutes },
-    { path: 'default-recipients', component: DefaultRecipientsComponent}
+    { path: 'default-recipients', component: DefaultRecipientsComponent},
+    { path: 'configuration', component: ConfigurationComponent }
   ]}
 ];

@@ -1,7 +1,8 @@
 <nav class="nav-bar-secondary">
-  <a [routerLink]="['users']" routerLinkActive="active">KÄYTTÄJÄT</a>
-  <a [routerLink]="['external-users']" routerLinkActive="active">{{'externalUser.nav' | translation}}</a>
-  <a [routerLink]="['default-attachments']" routerLinkActive="active">VAKIOLIITTEET</a>
-  <a [routerLink]="['default-images']" routerLinkActive="active">TYYPPIKUVAT</a>
-  <a [routerLink]="['default-recipients']" routerLinkActive="active">PÄÄTÖKSEN VASTAANOTTAJAT</a>
+  <a [routerLink]="['users']" routerLinkActive="active">{{'admin.nav.users' | translation | uppercase}}</a>
+  <a [routerLink]="['external-users']" routerLinkActive="active">{{'admin.nav.externalUsers' | translation | uppercase}}</a>
+  <a [routerLink]="['default-attachments']" routerLinkActive="active">{{'admin.nav.defaultAttachments' | translation | uppercase}}</a>
+  <a [routerLink]="['default-images']" routerLinkActive="active">{{'admin.nav.defaultImages' | translation | uppercase}}</a>
+  <a [routerLink]="['default-recipients']" routerLinkActive="active">{{'admin.nav.defaultRecipients' | translation | uppercase}}</a>
+  <a [routerLink]="['configuration']" routerLinkActive="active">{{'admin.nav.configuration' | translation | uppercase}}</a>
 </nav>
