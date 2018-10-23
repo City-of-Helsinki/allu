@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Invoice} from '@model/application/invoice/invoice';
 import {AlluThemeColor} from '@model/common/allu-theme-color';
+import {InvoiceRow} from '@model/application/invoice/invoice-row';
 
 export enum InvoiceStatus {
   open = 'open',
@@ -27,5 +28,9 @@ export class InvoiceComponent {
 
   @Input() set status(status: InvoiceStatus) {
     this.color = status ? statusToColor[status] : statusToColor.open;
+  }
+
+  get totalPrice() {
+    return this.invoice ? this.invoice.rows.reduce((total: number, current: InvoiceRow) => total + current.netPrice, 0) : 0;
   }
 }

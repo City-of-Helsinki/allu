@@ -14,6 +14,14 @@
       </li>
     </ul>
   </mat-card-content>
+  <mat-card-footer>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div fxFlex="100px"></div>
+      <div fxFlex="15" fxFlexOffset="70" class="text-highlighted">
+        {{'common.totalPrice' | translation}}: {{totalPrice | centsToEuros}}
+      </div>
+    </div>
+  </mat-card-footer>
 </allu-card>
 
 

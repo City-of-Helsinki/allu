@@ -1107,7 +1107,8 @@ export const translations = {
       previousPage: 'Edellinen',
       of: '/'
     },
-    fromHere: 'tästä'
+    fromHere: 'tästä',
+    totalPrice: 'Kokonaissumma'
   },
   map: {
     zoomIn: 'Lähennä',
@@ -1517,7 +1518,6 @@ export const translations = {
   chargeBasis: {
     title: 'Laskuperusteet',
     newEntry: 'Uusi laskuperuste',
-    totalPrice: 'Kokonaissumma',
     invoicable: 'Laskutettava',
     type: {
       title: 'Laskuperusteen tyyppi',
