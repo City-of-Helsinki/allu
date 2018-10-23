@@ -146,6 +146,9 @@ public class ChargeBasisService {
   @Transactional
   public ChargeBasisEntry setInvoicable(int applicationId, int entryId, boolean invoiced) {
     validateModificationsAllowed(Collections.singleton(entryId), applicationId);
-    return chargeBasisDao.setInvoicable(entryId, invoiced);
+    ChargeBasisEntry entry = chargeBasisDao.setInvoicable(entryId, invoiced);
+    handleInvoicingChanged(applicationId);
+    return entry;
+
   }
 }
