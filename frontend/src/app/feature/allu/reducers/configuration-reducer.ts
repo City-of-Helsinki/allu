@@ -1,18 +1,23 @@
-import {ConfigurationKeyMap} from '@model/config/configuration';
+import {Configuration} from '@model/config/configuration';
 import {ConfigurationActions, ConfigurationActionType} from '../actions/configuration-actions';
+import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 
-export interface State {
-  configuration: ConfigurationKeyMap;
+export interface State extends EntityState<Configuration> {
+  loading: boolean;
 }
 
-const initialState: State = {
-  configuration: {}
-};
+export const adapter: EntityAdapter<Configuration> = createEntityAdapter<Configuration>({
+  selectId: (configuration: Configuration) => configuration.id
+});
+
+const initialState: State = adapter.getInitialState({
+  loading: false
+});
 
 export function reducer(state: State = initialState, action: ConfigurationActions) {
   switch (action.type) {
     case ConfigurationActionType.LoadSuccess: {
-      return {...state, configuration: action.payload};
+      return adapter.addAll(action.payload, state);
     }
 
     default: {
@@ -20,5 +25,3 @@ export function reducer(state: State = initialState, action: ConfigurationAction
     }
   }
 }
-
-export const getConfiguration = (state: State) => state.configuration;

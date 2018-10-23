@@ -35,6 +35,7 @@ import {
   ReportCustomerValidity,
   ReportCustomerWorkFinished
 } from '@feature/application/actions/excavation-announcement-actions';
+import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 
 @Component({
   selector: 'excavation-announcement',
@@ -63,7 +64,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
               router: Router,
               projectService: ProjectService,
               store: Store<fromRoot.State>,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private configurationHelper: ConfigurationHelperService) {
     super(fb, route, applicationStore, applicationService, notification, router, projectService, store);
   }
 
@@ -181,8 +183,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     );
 
     combineLatest(
-      this.store.select(fromRoot.getConfiguration(ConfigurationKey.WINTER_TIME_START)),
-      this.store.select(fromRoot.getConfiguration(ConfigurationKey.WINTER_TIME_END)))
+      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_START),
+      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_END))
         .pipe(take(1)).subscribe(([start, end]) => {
           this.winterTimeStart = start.value;
           this.winterTimeEnd = end.value;
@@ -224,16 +226,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.validityEndTimeIcon = this.validityEndTimeCtrl.warnings.inWinterTime
       ? new IconConfig('accent', false, 'warning')
       : new IconConfig(undefined, true, 'today');
-  }
-
-  private getReportedDatesByStatus(status: ApplicationStatus): ReportedDateType[] {
-    if (status === ApplicationStatus.DECISION) {
-      return [ReportedDateType.WINTER_TIME_OPERATION, ReportedDateType.WORK_FINISHED];
-    } else if (status === ApplicationStatus.OPERATIONAL_CONDITION) {
-      return [ReportedDateType.WORK_FINISHED];
-    } else {
-      return [];
-    }
   }
 
   private setEndTimeCtrlValidators(): void {

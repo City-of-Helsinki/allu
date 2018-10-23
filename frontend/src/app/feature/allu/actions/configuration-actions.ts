@@ -1,17 +1,17 @@
 import {Action} from '@ngrx/store';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ErrorInfo} from '@service/error/error-info';
-import {ConfigurationKeyMap} from '@model/config/configuration';
+import {Configuration} from '@model/config/configuration';
 
 export enum ConfigurationActionType {
-  LoadSuccess = '[Configuration] Load code set success',
-  LoadFailed = '[Configuration] Load code set failed',
+  LoadSuccess = '[Configuration] Load configurations success',
+  LoadFailed = '[Configuration] Load configurations failed'
 }
 
 export class LoadSuccess implements Action {
   readonly type = ConfigurationActionType.LoadSuccess;
 
-  constructor(public payload: ConfigurationKeyMap) {}
+  constructor(public payload: Configuration[]) {}
 }
 
 export class LoadFailed implements ActionWithPayload<ErrorInfo> {

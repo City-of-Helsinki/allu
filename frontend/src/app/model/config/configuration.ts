@@ -5,7 +5,3 @@ export class Configuration {
     public key: string,
     public value: string) {}
 }
-
-export interface ConfigurationKeyMap {
-  [key: string]: Configuration;
-}
