@@ -227,15 +227,16 @@ public class ApplicationServiceComposer {
   public ApplicationJson changeStatus(int applicationId, StatusType newStatus, StatusChangeInfoJson info) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
+    changeOwnerOnStatusChange(application, info);
+    return updateSearchServiceOnStatusChange(application, newStatus);
+  }
 
-    Integer owner = Optional.ofNullable(info).map(i -> i.getOwner()).orElse(null);
-    changeOwnerOnStatusChange(application, owner);
-
+  private ApplicationJson updateSearchServiceOnStatusChange(Application application, StatusType newStatus) {
     // Get application again so that updated owner is included
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(
-        applicationService.findApplicationById(applicationId));
+        applicationService.findApplicationById(application.getId()));
 
-    applicationHistoryService.addStatusChange(applicationId, newStatus);
+    applicationHistoryService.addStatusChange(application.getId(), newStatus);
     List<ApplicationJson> applicationsUpdated = new ArrayList<>();
     applicationsUpdated.add(applicationJson);
     // Update possible replaced applications to search service, also status of those might have changed
@@ -248,22 +249,28 @@ public class ApplicationServiceComposer {
   }
 
   public ApplicationJson returnToEditing(int applicationId, StatusChangeInfoJson info) {
-    final Application application = applicationService.findApplicationById(applicationId);
+    Application application = applicationService.findApplicationById(applicationId);
+    StatusType statusToReturn = null;
     switch (application.getTargetState()) {
       case OPERATIONAL_CONDITION:
         reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION);
-        return changeStatus(applicationId, StatusType.DECISION, info);
+        statusToReturn = StatusType.DECISION;
+        break;
       case FINISHED:
         reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION);
         final List<ChangeHistoryItemJson> history = applicationHistoryService.getStatusChanges(applicationId);
         if (history.stream().filter(c -> StatusType.OPERATIONAL_CONDITION.name().equals(c.getChangeSpecifier())).count() > 0) {
-          return changeStatus(applicationId, StatusType.OPERATIONAL_CONDITION, info);
+          statusToReturn = StatusType.OPERATIONAL_CONDITION;
         } else {
-          return changeStatus(applicationId, StatusType.DECISION, info);
+          statusToReturn = StatusType.DECISION;
         }
+        break;
       default:
-        return changeStatus(applicationId, StatusType.RETURNED_TO_PREPARATION, info);
+        statusToReturn = StatusType.RETURNED_TO_PREPARATION;
     }
+    application = applicationService.returnToStatus(applicationId, statusToReturn);
+    changeOwnerOnStatusChange(application, info);
+    return updateSearchServiceOnStatusChange(application, statusToReturn);
   }
 
   private void reopenSupervisionTask(int applicationId, SupervisionTaskType taskType) {
@@ -400,7 +407,8 @@ public class ApplicationServiceComposer {
   }
 
 
-  private void changeOwnerOnStatusChange(Application application, Integer newOwner) {
+  private void changeOwnerOnStatusChange(Application application, StatusChangeInfoJson info) {
+    Integer newOwner = Optional.ofNullable(info).map(i -> i.getOwner()).orElse(null);
     if (newOwner != null) {
       updateApplicationOwner(newOwner, Collections.singletonList(application.getId()));
     } else if (StatusType.HANDLING.equals(application.getStatus())) {

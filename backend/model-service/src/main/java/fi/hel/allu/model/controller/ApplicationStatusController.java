@@ -100,4 +100,9 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.getApplicationStatus(id), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/status/return", method = RequestMethod.PUT)
+  public ResponseEntity<Application> returnToStatus(@PathVariable int id, @RequestBody StatusType status) {
+    return new ResponseEntity<>(applicationStatusService.returnToStatus(id, status), HttpStatus.OK);
+  }
+
 }

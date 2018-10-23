@@ -224,6 +224,17 @@ public class ApplicationService {
     return responseEntity.getBody();
   }
 
+  Application returnToStatus(int applicationId, StatusType statusType) {
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getApplicationStatusReturnUrl(),
+        HttpMethod.PUT,
+        new HttpEntity<>(statusType),
+        Application.class,
+        applicationId);
+    return responseEntity.getBody();
+  }
+
+
   private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
     HttpEntity<Integer> requestEntity;
     if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType) || StatusType.DECISIONMAKING.equals(statusType)) {

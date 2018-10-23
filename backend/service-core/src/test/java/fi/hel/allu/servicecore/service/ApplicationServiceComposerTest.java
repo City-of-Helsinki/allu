@@ -80,6 +80,7 @@ public class ApplicationServiceComposerTest {
     applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
     applicationWithOwner.setProjectId(projectJson.getId());
     applicationWithOwner.setOwner(ownerId);
+    applicationWithOwner.setId(applicationId);
 
     user = new UserJson();
     user.setId(ownerId);
@@ -91,6 +92,7 @@ public class ApplicationServiceComposerTest {
     updatedApplication = new Application();
     updatedApplication.setStatus(StatusType.DECISIONMAKING);
     updatedApplication.setProjectId(projectJson.getId());
+    updatedApplication.setId(applicationId);
   }
 
 
@@ -149,7 +151,7 @@ public class ApplicationServiceComposerTest {
     updatedApplication.setStatus(StatusType.OPERATIONAL_CONDITION);
     updatedApplicationJson.setStatus(StatusType.OPERATIONAL_CONDITION);
     Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
-    Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.OPERATIONAL_CONDITION)).thenReturn(updatedApplication);
+    Mockito.when(applicationService.returnToStatus(applicationId, StatusType.OPERATIONAL_CONDITION)).thenReturn(updatedApplication);
     Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
 
@@ -165,7 +167,7 @@ public class ApplicationServiceComposerTest {
     updatedApplication.setStatus(StatusType.DECISION);
     updatedApplicationJson.setStatus(StatusType.DECISION);
     Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
-    Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
+    Mockito.when(applicationService.returnToStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
     Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
 
@@ -181,7 +183,7 @@ public class ApplicationServiceComposerTest {
     updatedApplication.setStatus(StatusType.DECISION);
     updatedApplicationJson.setStatus(StatusType.DECISION);
     Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
-    Mockito.when(applicationService.changeApplicationStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
+    Mockito.when(applicationService.returnToStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
     Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
 

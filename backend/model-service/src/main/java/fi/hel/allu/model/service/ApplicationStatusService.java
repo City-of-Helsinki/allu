@@ -51,8 +51,12 @@ public class ApplicationStatusService {
     return applicationService.findById(applicationId);
   }
 
-
   public StatusType getApplicationStatus(int id) {
     return applicationDao.getStatus(id);
   }
+
+  public Application returnToStatus(int applicationId, StatusType status) {
+    return applicationDao.updateStatus(applicationId, status);
+  }
+
 }

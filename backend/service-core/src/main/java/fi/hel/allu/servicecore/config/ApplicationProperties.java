@@ -316,6 +316,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/status");
   }
 
+  public String getApplicationStatusReturnUrl() {
+    return getModelServiceUrl("/applications/{id}/status/return");
+  }
+
+
   public String getApplicationExternalOwnerUrl() {
     return getModelServiceUrl("/applications/{id}/externalowner");
   }
