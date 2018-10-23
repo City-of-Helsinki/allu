@@ -20,6 +20,8 @@ import {InformationRequestModalEvents} from '@feature/information-request/inform
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
+import {ApplicationExtension} from '@app/model/application/type/application-extension';
+import {ExcavationAnnouncement} from '@app/model/application/excavation-announcement/excavation-announcement';
 
 @Component({
   selector: 'application-actions',
@@ -105,11 +107,20 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     application.applicationTags = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
     application.project = undefined;
+    application.extension = this.copyExtension(application.extension);
+
     this.findDefaultRegionalOwner(application).subscribe(owner => {
       application.owner = owner;
       this.applicationStore.applicationCopyChange(application);
       this.router.navigate(['/applications/edit']);
     });
+  }
+
+  private copyExtension(extension: ApplicationExtension): ApplicationExtension {
+    if (extension instanceof ExcavationAnnouncement) {
+      extension.workFinished = undefined;
+    }
+    return extension;
   }
 
   replace(): void {
