@@ -157,7 +157,7 @@
       <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
         <section class="unboxed">
           <h2>Perittävät maksut</h2>
-          <div class="indented">
+          <div class="indented-charge-info">
             <div class="charge-info">
               <xsl:for-each select="data/chargeInfoEntries">
                 <div class="row">
@@ -190,7 +190,7 @@
               </div>
             </div>
             <p class="space-above">
-              Maksut perustuvat yleisten töiden lautakunnan päätökseen 11.11.2014 §431.
+              Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 28.9.2018 § 176.
             </p>
             <p>
               Lasku lähetetään erikseen.

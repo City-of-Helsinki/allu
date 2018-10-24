@@ -125,10 +125,6 @@
             <xsl:value-of select="data/reservationStartDate"/>-
             <xsl:value-of select="data/reservationEndDate"/>
           </p>
-          <p>
-            Kesto päivinä:
-            <xsl:value-of select="data/numReservationDays"/>
-          </p>
           <xsl:if test="data/winterTimeOperation != ''">
             <p class="space-above">
               Päällystettävä väliaikaisesti viimeistään:
@@ -204,7 +200,7 @@
       <section class="unboxed">
         <h2>Arvio perittävistä maksuista</h2>
           <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
-            <div class="indented">
+            <div class="indented-charge-info">
               <div class="charge-info">
                 <xsl:for-each select="data/chargeInfoEntries">
                   <div class="row">
@@ -237,7 +233,7 @@
                 </div>
               </div>
               <p class="space-above">
-                Maksut perustuvat yleisten töiden lautakunnan päätökseen 11.11.2014 §431.
+                Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 28.9.2018 § 176.
               </p>
             </div>
             <p class="space-above">
@@ -274,7 +270,7 @@
                 Välittäjän tunnus: <xsl:value-of select="data/invoicingOperator"/>
               </p>
             </xsl:if>
-            <xsl:if test="data/invoicingOperator != ''">
+            <xsl:if test="data/customerReference != ''">
               <p>
                 Laskutusviite: <xsl:value-of select="data/customerReference"/>
               </p>
