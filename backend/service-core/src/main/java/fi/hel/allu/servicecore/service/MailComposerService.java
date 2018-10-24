@@ -123,10 +123,10 @@ public class MailComposerService {
               mailBuilder.withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
               break;
             case OPERATIONAL_CONDITION:
-              mailBuilder.withOperationalCondition(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              mailBuilder.withOperationalCondition(String.format("%s_toiminnallinen_kunto.pdf", applicationJson.getApplicationId()), applicationJson.getId());
               break;
             case WORK_FINISHED:
-              mailBuilder.withWorkFinished(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              mailBuilder.withWorkFinished(String.format("%s_valmis.pdf", applicationJson.getApplicationId()), applicationJson.getId());
               break;
           }
         } else {
