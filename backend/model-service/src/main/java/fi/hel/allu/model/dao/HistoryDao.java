@@ -196,6 +196,7 @@ public class HistoryDao {
     BooleanBuilder builder = new BooleanBuilder();
     builder.and(application.externalOwnerId.eq(externalOwnerId));
     builder.and(changeHistory.changeSpecifier.isNotNull());
+    builder.and(changeHistory.changeType.eq(ChangeType.STATUS_CHANGED));
     if (eventsAfter != null) {
       builder.and(changeHistory.changeTime.after(eventsAfter));
     }
