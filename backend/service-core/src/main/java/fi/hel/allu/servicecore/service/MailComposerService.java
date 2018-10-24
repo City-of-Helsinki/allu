@@ -31,7 +31,7 @@ public class MailComposerService {
   // E-mail subjects for various application types:
   private static final String SUBJECT_GENERIC = "Päätös %s";
   private static final String SUBJECT_PLACEMENT_CONTR = "Sijoitussopimus %s";
-  private static final String SUBJECT_EXCAVATION_ANN = "Kaivuilmoitus %s";
+  private static final String SUBJECT_EXCAVATION_ANN = "Kaivuilmoitukseen liittyvä päätös %s";
   private static final String SUBJECT_EVENT = "Tapahtumapäätös %s";
   private static final String SUBJECT_CABLE_REPORT = "Johtoselvitys %s";
   private static final String SUBJECT_AREA_RENTAL = "Aluevuokrauspäätös %s";
@@ -44,6 +44,7 @@ public class MailComposerService {
   private static final String TEMPLATE_EVENT = "tapahtuma";
   private static final String TEMPLATE_STREET_WORK = "katutyo";
   private static final String TEMPLATE_PLACEMENT_CONTRACT = "sijoitussopimus";
+  private static final String TEMPLATE_EXCAVATION_ANN = "kaivuilmoitus";
 
   private static final String DECISION_TYPE_TRAFFIC_ARRANGEMENT = "liikennejärjestelypäätös";
   private static final String DECISION_TYPE_AREA_RENTAL = "aluevuokrauspäätös";
@@ -91,9 +92,7 @@ public class MailComposerService {
   }
 
   public void sendDecision(ApplicationJson applicationJson, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
-    String subject = String.format(subjectFor(applicationJson.getType()), applicationJson.getApplicationId());
-    subject += getApplicationNameForSubject(applicationJson);
-    subject += getAddressForSubject(applicationJson);
+    final String subject = subject(applicationJson, type);
     List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
         .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
 
@@ -107,30 +106,31 @@ public class MailComposerService {
 
       MailSenderLog log;
       try {
+        final String attachmentName = attachmentName(type, applicationJson.getApplicationId());
         final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipients)
           .withSubject(subject)
           .withBody(textBodyFor(applicationJson))
           .withHtmlBody(htmlBodyFor(applicationJson))
           .withAttachments(attachments)
           .withInlineResources(inlineResources)
-          .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType())));
+          .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType()), attachmentName));
 
         if (applicationJson.getType() == ApplicationType.PLACEMENT_CONTRACT) {
-          mailBuilder.withContract(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+          mailBuilder.withContract(attachmentName, applicationJson.getId());
         } else if (applicationJson.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
           switch (type) {
             case DECISION:
-              mailBuilder.withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              mailBuilder.withDecision(String.format(attachmentName, applicationJson.getApplicationId()), applicationJson.getId());
               break;
             case OPERATIONAL_CONDITION:
-              mailBuilder.withOperationalCondition(String.format("%s_toiminnallinen_kunto.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              mailBuilder.withOperationalCondition(attachmentName, applicationJson.getId());
               break;
             case WORK_FINISHED:
-              mailBuilder.withWorkFinished(String.format("%s_valmis.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+              mailBuilder.withWorkFinished(attachmentName, applicationJson.getId());
               break;
           }
         } else {
-          mailBuilder.withDecision(String.format("%s.pdf", applicationJson.getApplicationId()), applicationJson.getId());
+          mailBuilder.withDecision(attachmentName, applicationJson.getId());
         }
 
         log = mailBuilder.send();
@@ -186,7 +186,7 @@ public class MailComposerService {
     }
   }
 
-  private Map<String, Object> mailModel(ApplicationJson applicationJson, String accompanyingMessage, String decisionType) {
+  private Map<String, Object> mailModel(ApplicationJson applicationJson, String accompanyingMessage, String decisionType, String attachmentName) {
     Map<String, Object> result = new HashMap<>();
     result.put("applicationId", applicationJson.getApplicationId());
     result.put("decisionType", decisionType);
@@ -194,6 +194,7 @@ public class MailComposerService {
     result.put("handlerName", Optional.ofNullable(applicationJson.getHandler()).map(h -> h.getRealName()).orElse(null));
     result.put("totalPrice", applicationJson.getCalculatedPrice());
     result.put("inlineImageName", "cid:" + INLINE_LOGO_CID);
+    result.put("attachmentName", attachmentName);
     return result;
   }
 
@@ -207,14 +208,27 @@ public class MailComposerService {
         return TEMPLATE_EVENT;
       case TEMPORARY_TRAFFIC_ARRANGEMENTS:
       case AREA_RENTAL:
-      case EXCAVATION_ANNOUNCEMENT:
-        // Same template for temporary traffic arrangement, area rental and excavation announcement
+        // Same template for temporary traffic arrangement, area rental
         return TEMPLATE_STREET_WORK;
+      case EXCAVATION_ANNOUNCEMENT:
+        return TEMPLATE_EXCAVATION_ANN;
       case PLACEMENT_CONTRACT:
         return TEMPLATE_PLACEMENT_CONTRACT;
       default:
         return TEMPLATE_GENERIC;
     }
+  }
+
+  private String subject(ApplicationJson application, DecisionDocumentType type) {
+    StringBuilder subject = new StringBuilder();
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      subject.append(String.format(subjectFor(application.getType()), attachmentName(type, application.getApplicationId())));
+    } else {
+      subject.append(String.format(subjectFor(application.getType()), application.getApplicationId()));
+    }
+    subject.append(getApplicationNameForSubject(application));
+    subject.append(getAddressForSubject(application));
+    return subject.toString();
   }
 
   private String subjectFor(ApplicationType type) {
@@ -276,5 +290,16 @@ public class MailComposerService {
       }
     }
     return "";
+  }
+
+  private String attachmentName(DecisionDocumentType type, String applicationId) {
+    switch (type) {
+      case OPERATIONAL_CONDITION:
+        return String.format("%s_toiminnallinen_kunto.pdf", applicationId);
+      case WORK_FINISHED:
+        return String.format("%s_valmis.pdf", applicationId);
+      default:
+        return String.format("%s.pdf", applicationId);
+    }
   }
 }
