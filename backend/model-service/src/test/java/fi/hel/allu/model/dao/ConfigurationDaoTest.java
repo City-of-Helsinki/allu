@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.model.domain.ConfigurationKey;
+import fi.hel.allu.model.domain.ConfigurationType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -52,5 +53,18 @@ public class ConfigurationDaoTest {
     Optional<Configuration> configOpt = configurationDao.findById(config.getId());
     assertTrue(configOpt.isPresent());
     assertEquals(ConfigurationKey.WINTER_TIME_END, configOpt.get().getKey());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void readonlyConfigurationCantBeUpdated() {
+    final Configuration config = new Configuration(
+        ConfigurationType.TEXT,
+        ConfigurationKey.PLACEMENT_CONTRACT_SECTION_NUMBER_YEAR,
+        "2018");
+    config.setReadonly(true);
+    final Configuration savedConfig = configurationDao.insert(config);
+    config.setValue("2020");
+    configurationDao.update(savedConfig.getId(), config);
+
   }
 }

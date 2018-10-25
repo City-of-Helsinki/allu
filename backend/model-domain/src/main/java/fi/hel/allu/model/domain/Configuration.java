@@ -11,6 +11,7 @@ public class Configuration {
   private ConfigurationKey key;
   @NotNull
   private String value;
+  private boolean readonly;
 
   public Configuration(ConfigurationType type, ConfigurationKey key, String value) {
     this.type = type;
@@ -51,5 +52,13 @@ public class Configuration {
 
   public void setValue(String value) {
     this.value = value;
+  }
+
+  public boolean isReadonly() {
+    return readonly;
+  }
+
+  public void setReadonly(boolean readonly) {
+    this.readonly = readonly;
   }
 }

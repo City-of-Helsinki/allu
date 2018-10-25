@@ -48,6 +48,8 @@ public class ConfigurationDao {
 
   @Transactional
   public Configuration update(int configurationId, Configuration config) {
+    findById(configurationId).map(c -> checkUpdateIsAllowed(c));
+
     final long changed = queryFactory.update(configuration)
         .set(configuration.value, config.getValue())
         .where(configuration.id.eq(configurationId)).execute();
@@ -63,5 +65,12 @@ public class ConfigurationDao {
     if (count == 0) {
       throw new NoSuchEntityException("Deleting configuration failed", Integer.toString(configurationId));
     }
+  }
+
+  private boolean checkUpdateIsAllowed(Configuration config) {
+    if (config.isReadonly()) {
+      throw new IllegalArgumentException("configuration.readonly.update");
+    }
+    return true;
   }
 }
