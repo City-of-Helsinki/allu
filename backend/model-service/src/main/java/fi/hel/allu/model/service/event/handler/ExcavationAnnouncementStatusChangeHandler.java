@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.ExcavationAnnouncementDates;
+import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
@@ -57,9 +59,17 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   @Override
   protected void handleOperationalConditionStatus(Application application) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
-    if (winterTimeService.isInWinterTime(extension.getWinterTimeOperation()))  {
-      setExcavationAnnouncementInvoicable(application, extension.getWinterTimeOperation());
+    ZonedDateTime invoicableTime = getInvoicableTimeForOperationalCondition(extension);
+    setExcavationAnnouncementInvoicable(application, invoicableTime);
+  }
+
+  private ZonedDateTime getInvoicableTimeForOperationalCondition(ExcavationAnnouncement extension) {
+    // If operational condition is before winter start it's invoiced on first day of winter
+    WinterTime winterTime = winterTimeService.getWinterTime();
+    if (!winterTime.isInWinterTime(extension.getWinterTimeOperation())) {
+      return winterTime.getWinterTimeStart(extension.getWinterTimeOperation()).atStartOfDay(TimeUtil.HelsinkiZoneId);
     }
+    return extension.getWinterTimeOperation();
   }
 
   @Override
