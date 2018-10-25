@@ -13,7 +13,11 @@ public class ApplicationExtensionMapper {
 
   public static <MODEL extends ApplicationExtension> MODEL jsonToModel(ApplicationExtensionJson json,
       MODEL model) {
-    model.setTerms(json.getTerms());
+    if (json.getTerms() != null && json.getTerms().trim().length() > 0) {
+      model.setTerms(json.getTerms());
+    } else {
+      model.setTerms(null);
+    }
     return model;
   }
 }
