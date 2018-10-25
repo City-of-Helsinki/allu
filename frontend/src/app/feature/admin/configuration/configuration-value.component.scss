@@ -1,0 +1,10 @@
+.configuration-entry-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.configuration-entry-control {
+  flex: 1;
+  max-width: 50%;
+}

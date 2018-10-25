@@ -1,4 +1,13 @@
-<mat-form-field>
-  <input type="text" matInput [formControl]="valueCtrl"/>
-  <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
-</mat-form-field>
+<div class="configuration-entry-controls">
+  <mat-form-field class="configuration-entry-control">
+    <input type="text" matInput [formControl]="valueCtrl"/>
+    <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
+  </mat-form-field>
+  <button type="submit" mat-icon-button
+          class="configuration-entry-control"
+          *ngIf="valueCtrl.dirty"
+          [disabled]="!valueCtrl.valid"
+          (click)="submit()">
+    <mat-icon>save</mat-icon>
+  </button>
+</div>

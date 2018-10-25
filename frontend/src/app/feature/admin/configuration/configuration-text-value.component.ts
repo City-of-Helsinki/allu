@@ -1,44 +1,36 @@
-import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs';
-
-const CONFIGURATION_TEXT_VALUE_ACCESSOR = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => ConfigurationTextValueComponent),
-  multi: true
-};
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {Configuration} from '@model/config/configuration';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import {Save} from '@feature/allu/actions/configuration-actions';
 
 @Component({
   selector: 'configuration-text-value',
   templateUrl: './configuration-text-value.component.html',
-  styleUrls: [],
-  providers: [CONFIGURATION_TEXT_VALUE_ACCESSOR]
+  styleUrls: ['./configuration-value.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfigurationTextValueComponent implements ControlValueAccessor, OnInit, OnDestroy {
+export class ConfigurationTextValueComponent implements OnInit {
 
-  @Input() placeholder: string;
+  @Input() configuration: Configuration;
 
-  valueCtrl: FormControl = new FormControl('', Validators.required);
+  valueCtrl: FormControl;
 
-  private valueSub: Subscription;
+  constructor(
+    private fb: FormBuilder,
+    private store: Store<fromRoot.State>
+  ) {}
 
   ngOnInit(): void {
-    this.valueSub = this.valueCtrl.valueChanges.subscribe(val => this._onChange(val));
+    this.valueCtrl = this.fb.control(this.configuration.value, Validators.required);
   }
 
-  ngOnDestroy(): void {
-    this.valueSub.unsubscribe();
+  submit(): void {
+    const configuration: Configuration = {
+      ...this.configuration,
+      value: this.valueCtrl.value
+    };
+    this.store.dispatch(new Save(configuration));
   }
-
-  registerOnChange(fn: any): void {
-    this._onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {}
-
-  writeValue(value: string): void {
-    this.valueCtrl.setValue(value);
-  }
-
-  private _onChange = (_: any) => {};
 }
