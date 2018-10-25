@@ -415,7 +415,7 @@ describe('ApplicationActionsComponent', () => {
     decisionBtn.click();
     tickAndDetect();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'summary','decision']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'summary', 'decision']);
   }));
 
   function setAndInit(readonly: boolean) {

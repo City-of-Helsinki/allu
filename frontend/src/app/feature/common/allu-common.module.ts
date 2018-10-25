@@ -25,7 +25,6 @@ import {
   MatTooltipModule,
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {MaterializeModule} from 'angular2-materialize';
 import {FieldErrorComponent} from './field-error/field-error.component';
 import {TranslationPipe} from '@app/pipe/translation.pipe';
 import {FileDropDirective} from './file-drop/file-drop.directive';
@@ -88,7 +87,6 @@ import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
     MatBadgeModule,
     MatSlideToggleModule,
     FlexLayoutModule,
-    MaterializeModule,
     FieldErrorComponent,
     TranslationPipe,
     FileSelectDirective,

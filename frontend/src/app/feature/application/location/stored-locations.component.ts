@@ -19,8 +19,9 @@ export class StoredLocationsComponent implements OnInit, OnDestroy {
 
   locations: Observable<Array<Location>>;
 
-  constructor(private store: Store<fromRoot.State>,
-              private locationState: LocationState) {
+  constructor(
+    public locationState: LocationState,
+    private store: Store<fromRoot.State>) {
   }
 
   ngOnInit(): void {

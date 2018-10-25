@@ -31,7 +31,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptance<Contact> impl
   }
 
   protected resultChanges(result: FieldValues): void {
-    const contact = {...this._oldContact};
+    const contact: Contact = {...this._oldContact};
     contact.name = result.name;
     contact.streetAddress = result.streetAddress;
     contact.postalCode = result.postalCode;

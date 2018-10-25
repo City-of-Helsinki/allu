@@ -153,7 +153,7 @@ export class ContactComponent implements OnInit {
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
     if (!!term) {
       return this.availableContacts.pipe(
-        map(contacts => contacts.filter(c => c.nameLowercase.indexOf(term.toLowerCase()) >= 0))
+        map(contacts => contacts.filter(c => c.name.toLowerCase().indexOf(term.toLowerCase()) >= 0))
       );
     } else {
       return this.availableContacts;

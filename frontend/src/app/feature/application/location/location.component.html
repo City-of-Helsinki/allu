@@ -128,8 +128,8 @@
               <a mat-raised-button type="button" color="primary" [routerLink]="cancelLink()">PERUUTA</a>
             </div>
             <div class="col m4 offset-m6">
-              <button mat-raised-button type="submit" color="primary" [disabled]="!submitAllowed">{{id ? "YHTEENVETOON"
-                : "PERUSTIEDOT"}}
+              <button mat-raised-button type="submit" color="primary" [disabled]="!submitAllowed">
+                {{locationForm.value.id ? "YHTEENVETOON" : "PERUSTIEDOT"}}
               </button>
             </div>
           </div>

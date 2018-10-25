@@ -16,7 +16,7 @@
       [class.selected]="i===locationState.editIndex" class="clickable row-highlight"
       (click)="editLocation(i)">
     <th>
-      <button type="button" *ngIf="!readonly" mat-icon-button (click)="remove()">
+      <button type="button" *ngIf="!readonly" mat-icon-button (click)="remove(i)">
         <mat-icon>clear</mat-icon>
       </button>
       <mat-icon class="icon-middle" *ngIf="location.underpass"

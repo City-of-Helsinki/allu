@@ -26,8 +26,4 @@ export class Contact {
       active: [contact.active]
     });
   }
-
-  get nameLowercase(): string {
-    return this.name ? this.name.toLowerCase() : '';
-  }
 }

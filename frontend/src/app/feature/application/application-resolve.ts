@@ -6,7 +6,7 @@ import {Application} from '@model/application/application';
 import {Some} from '@util/option';
 import {ApplicationStore} from '@service/application/application-store';
 import {NotificationService} from '@feature/notification/notification.service';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromApplication from './reducers';
 import {Load, LoadSuccess} from './actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
@@ -46,28 +46,25 @@ export class ApplicationResolve implements Resolve<Application> {
   }
 
   private waitForApplication(): Observable<Application> {
-    return this.store.select(fromApplication.getApplicationLoaded).pipe(
+    return this.store.pipe(
+      select(fromApplication.getApplicationLoaded),
       filter(loaded => loaded),
-      switchMap(() => this.store.select(fromApplication.getCurrentApplication)),
+      switchMap(() => this.store.pipe(select(fromApplication.getCurrentApplication))),
       tap(app => this.store.dispatch(new LoadSuccess(app))),
-      tap(() => this.loadComments()),
-      tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Application))),
-      tap(() => this.store.dispatch(new metaActions.Load())),
-      tap(() => this.store.dispatch(new supervisionTaskActions.Load())),
-      tap(() => this.store.dispatch(new invoicingCustomerActions.Load())),
-      tap(() => this.loadInformationRequest()),
-      tap((app) => this.loadInformationRequestResponse(app.status)),
+      tap(app => this.loadRelatedInfo(app)),
       take(1),
       catchError(err => this.handleError(err))
     );
   }
 
-  private loadComments() {
+  private loadRelatedInfo(app: Application): void {
     this.store.dispatch(new commentActions.Load(ActionTargetType.Application));
-  }
-
-  private loadInformationRequest() {
+    this.store.dispatch(new historyActions.Load(ActionTargetType.Application));
+    this.store.dispatch(new metaActions.Load());
+    this.store.dispatch(new supervisionTaskActions.Load());
+    this.store.dispatch(new invoicingCustomerActions.Load());
     this.store.dispatch(new informationRequestActions.LoadLatestRequest());
+    this.loadInformationRequestResponse(app.status);
   }
 
   private loadInformationRequestResponse(status: ApplicationStatus) {

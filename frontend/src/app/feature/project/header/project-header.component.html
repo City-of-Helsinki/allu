@@ -10,7 +10,7 @@
         <h1 class="project-header-container">
           <div>{{'project.title' | translation | uppercase}} {{project.identifier}}</div>
           <div *ngIf="project.name" class="project-header-details">({{project.name}})</div>
-          <div class="project-header-details"> - {{['project.active', project.active] | translation}}</div>
+          <div class="project-header-details"> - {{['project.active', project.active.toString()] | translation}}</div>
         </h1>
       </div>
       <div fxFlex class="project-header-item">

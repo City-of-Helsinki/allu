@@ -8,7 +8,7 @@
         <mat-autocomplete #applicationSearch="matAutocomplete"
                           [displayWith]="displayName"
                           (optionSelected)="add($event.option)">
-          <mat-option *ngFor="let application of matchingApplications | async"
+          <mat-option *ngFor="let application of matchingApplications"
                       [value]="application">
             {{ displayName(application) }}
             <mat-icon *ngIf="application.project as project"

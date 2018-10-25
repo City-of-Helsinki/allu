@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Action, Store} from '@ngrx/store';
+import {Action, select, Store} from '@ngrx/store';
 import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {ApprovalDocumentService} from '@service/decision/approval-document.service';
@@ -59,12 +59,13 @@ export class ApprovalDocumentEffects {
   private getRelatedDocument() {
     return (source: Observable<ApprovalDocumentType>) => source.pipe(
       switchMap(documentType => {
+        const documentTypeObs = of(documentType);
         if (documentType === ApprovalDocumentType.OPERATIONAL_CONDITION) {
-          return of(documentType).pipe(withLatestFrom(this.store.select(fromDecision.getOperationalConditionApproval)));
+          return documentTypeObs.pipe(withLatestFrom(this.store.pipe(select(fromDecision.getOperationalConditionApproval))));
         } else if (documentType === ApprovalDocumentType.WORK_FINISHED) {
-          return of(documentType).pipe(withLatestFrom(this.store.select(fromDecision.getWorkFinishedApproval)));
+          return documentTypeObs.pipe(withLatestFrom(this.store.pipe(select(fromDecision.getWorkFinishedApproval))));
         } else {
-          return of(documentType).pipe(withLatestFrom(EMPTY));
+          return documentTypeObs.pipe(withLatestFrom(EMPTY));
         }
       })
     );
