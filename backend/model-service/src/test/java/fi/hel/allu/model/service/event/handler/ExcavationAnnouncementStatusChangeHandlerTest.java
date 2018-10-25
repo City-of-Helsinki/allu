@@ -12,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.Application;
@@ -46,6 +47,8 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   private InvoiceService invoiceService;
   @Mock
   private WinterTimeService winterTimeService;
+  @Mock
+  private WinterTime winterTime;
 
   @Before
   public void setup() {
@@ -53,11 +56,13 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
         supervisionTaskService, locationService, applicationDao, chargeBasisService, invoiceService,
         winterTimeService);
     createApplication();
+    when(winterTimeService.getWinterTime()).thenReturn(winterTime);
+    when(winterTime.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
+
   }
 
   @Test
   public void onDecisionShouldNotLockChargeBasisEntries() {
-    when(winterTimeService.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
@@ -66,7 +71,6 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
 
   @Test
   public void onOperationalConditionShouldLockChargeBasisEntries() {
-    when(winterTimeService.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
@@ -83,7 +87,6 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
 
   @Test
   public void onOperationalConditionShouldSetInvoicable() {
-    when(winterTimeService.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     ZonedDateTime operationalConditionDate = LocalDate.parse("2018-12-22").atStartOfDay(TimeUtil.HelsinkiZoneId);
     ExcavationAnnouncement extension = new ExcavationAnnouncement();
