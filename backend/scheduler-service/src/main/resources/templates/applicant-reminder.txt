@@ -1,0 +1,23 @@
+Hyvä asiakkaamme,
+
+Päätöksen ${applicationId} ${address} voimassaolo on päättymässä.
+Hakemukseenne merkitty päättymispäivä on ${endDate}.
+
+Tehkää ilmoitus https://www.hel.fi/static/hkr/luvat/ilmoituskaavake.pdf lisäajasta,
+työn valmistumisesta tai toiminnallisesta kunnosta osoitteeseen luvat@hel.fi.
+Luvan voimassaoloon liittyvät muutosilmoitukset tulee tehdä luvan voimassaoloaikana.
+
+Jos olette jo toimittaneet ilmoituksen, tämä viesti on aiheeton ja se ei edellytä teiltä toimenpiteitä.
+
+Miten onnistuimme? Kerro mielipiteesi täällä(linkki: https://response.questback.com/isa/qbv.dll/ShowQuest?QuestID=5056528&sid=CXyRupE4hY).
+
+Tämän sähköpostin lähettäjä on tekninen osoite.
+
+Terveisin
+
+Helsingin kaupunki
+Kaupunkiympäristön asukas- ja yrityspalvelut
+Alueidenkäyttö
+Puh. 09 310 22111
+luvat@hel.fi
+www.hel.fi/luvat/yleisetalueet

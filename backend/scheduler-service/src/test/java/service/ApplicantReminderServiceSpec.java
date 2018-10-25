@@ -57,7 +57,7 @@ public class ApplicantReminderServiceSpec {
             applicantReminderService.sendReminders();
           });
           it("should not send any email", () -> {
-            verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString());
+            verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString(), anyString(), anyList());
           });
           it("should not mark any reminders as sent", () -> {
             verify(restTemplate, never()).postForObject(eq(MARK_REMINDER_SENT_URL), any(), eq(Void.class));
@@ -76,7 +76,7 @@ public class ApplicantReminderServiceSpec {
           });
           it("should send email to the applicant", () -> {
             ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-            verify(alluMailService, times(1)).sendEmail(captor.capture(), anyString(), anyString());
+            verify(alluMailService, times(1)).sendEmail(captor.capture(), anyString(), anyString(), anyString(), anyList());
             List<String> captured = captor.<List<String>> getValue();
             assertEquals(1, captured.size());
             assertEquals(EMAIL, captured.get(0));

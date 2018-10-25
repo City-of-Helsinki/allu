@@ -64,7 +64,7 @@ public class SapCustomerNotificationService {
     try {
       String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
       String body = StrSubstitutor.replace(mailTemplate, mailVariables(numberOfCustomersWaitingSapNumber));
-      alluMailService.sendEmail(receiverEmails, subject, body);
+      alluMailService.sendEmail(receiverEmails, subject, body, null, null);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }

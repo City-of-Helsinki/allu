@@ -2,6 +2,7 @@ package fi.hel.allu.scheduler.service;
 
 import fi.hel.allu.common.domain.MailSenderLog;
 import fi.hel.allu.mail.model.MailMessage;
+import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
@@ -12,7 +13,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.mail.MessagingException;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -61,7 +61,7 @@ public class AlluMailService {
    * @param body the e-mails body
    * @return
    */
-  public void sendEmail(List<String> recipients, String subject, String body) {
+  public void sendEmail(List<String> recipients, String subject, String body, String htmlBody, List<InlineResource> inlineResources) {
     MailSenderLog log;
     List<String> forbiddenAddresses = getForbiddenEmailAddresses(recipients);
     if (!forbiddenAddresses.isEmpty() ) {
@@ -71,9 +71,13 @@ public class AlluMailService {
     } else {
       MailMessage message = new MailMessage();
       message.setBody(body);
+      message.setHtmlBody(htmlBody);
       message.setSubject(subject);
       message.setTo(recipients);
       message.setFrom(applicationProperties.getEmailSenderAddress());
+      if (inlineResources != null) {
+        message.setInlineResources(inlineResources);
+      }
       log =  mailService.send(message);
     }
     logService.addMailSenderLog(log);

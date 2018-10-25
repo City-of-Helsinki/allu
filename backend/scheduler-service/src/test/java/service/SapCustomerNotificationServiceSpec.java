@@ -74,7 +74,7 @@ public class SapCustomerNotificationServiceSpec {
           List<Configuration> configs = new ArrayList<>();
           when(restTemplate.exchange(eq(CUSTOMER_NOTIFICATION_EMAIL_URL), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class))).thenReturn(new ResponseEntity<>(configs, HttpStatus.OK));
           notificationService.sendSapCustomerNotificationEmails();
-          verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString());
+          verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString(), anyString(), anyList());
         });
         it("should not send email if no customers without sap number", () -> {
           List<Configuration> configs = new ArrayList<>();
@@ -83,7 +83,7 @@ public class SapCustomerNotificationServiceSpec {
           notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
           when(restTemplate.exchange(eq(COUNT_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(0));
           notificationService.sendSapCustomerNotificationEmails();
-                 verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString());
+                 verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString(), anyString(), anyList());
         });
         it("should send email if customers without sap number", () -> {
           ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
@@ -93,7 +93,7 @@ public class SapCustomerNotificationServiceSpec {
           notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
           when(restTemplate.exchange(eq(COUNT_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(7));
           notificationService.sendSapCustomerNotificationEmails();
-          verify(alluMailService, times(1)).sendEmail(eq(Collections.singletonList(CUSTOMER_NOTIFICATION_RECEIVER)), eq(CUSTOMER_NOTIFICATION_SUBJECT), captor.capture());
+          verify(alluMailService, times(1)).sendEmail(eq(Collections.singletonList(CUSTOMER_NOTIFICATION_RECEIVER)), eq(CUSTOMER_NOTIFICATION_SUBJECT), captor.capture(), eq(null), eq(null));
           assertTrue(captor.getValue().contains(CUSTOMER_DOWNLOAD_URL));
         });
     });

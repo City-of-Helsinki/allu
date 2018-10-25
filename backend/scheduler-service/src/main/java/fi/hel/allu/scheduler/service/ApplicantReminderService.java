@@ -18,6 +18,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.ResourceUtil;
+import fi.hel.allu.mail.model.MailMessage.InlineResource;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
@@ -32,13 +33,17 @@ public class ApplicantReminderService {
   /* Application statuses that we care of: */
   private static final List<StatusType> STATUS_TYPES = Arrays.asList(StatusType.DECISION);
   /* How many times before application's end should the notification be sent? */
-  private static final int DAYS_BEFORE = 14;
+  private static final int DAYS_BEFORE = 2;
 
-  private static final String MAIL_SUBJECT = "Muistutus luvasta %s";
-  private static final String MAIL_TEMPLATE = "/templates/mail-template.txt";
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private AlluMailService alluMailService;
+  private static final String INLINE_LOGO_FILE = "logo-hki-color-fi.png";
+  private static final String INLINE_LOGO_CID = "logoHkiColorFi";
+  private static final String TEMPLATE_PATH = "/templates/";
+
+  private static final String MAIL_SUBJECT = "Päätöksenne %s voimassaolo on päättymässä";
+  private static final String MAIL_TEMPLATE = "/templates/applicant-reminder";
+  private final RestTemplate restTemplate;
+  private final ApplicationProperties applicationProperties;
+  private final AlluMailService alluMailService;
 
   @Autowired()
   public ApplicantReminderService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
@@ -76,12 +81,15 @@ public class ApplicantReminderService {
   }
 
   private void sendEmail(String email, Application application) {
-    String subject = String.format(MAIL_SUBJECT, application.getApplicationId());
-    String mailTemplate = null;
+    final String subject = String.format(MAIL_SUBJECT, idAndAddress(application));
     try {
-      mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
-      String body = StrSubstitutor.replace(mailTemplate, mailVariables(application));
-      alluMailService.sendEmail(Collections.singletonList(email), subject, body);
+      final Map<String, String> mailVariables = mailVariables(application);
+      final String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE + ".txt");
+      final String body = StrSubstitutor.replace(mailTemplate, mailVariables);
+      final String htmlMailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE + ".html");
+      final String htmlBody = StrSubstitutor.replace(htmlMailTemplate, mailVariables);
+      final List<InlineResource> inlineResources = inlineResources();
+      alluMailService.sendEmail(Collections.singletonList(email), subject, body, htmlBody, inlineResources);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
@@ -91,7 +99,37 @@ public class ApplicantReminderService {
     Map<String, String> result = new HashMap<>();
     result.put("applicationId", application.getApplicationId());
     result.put("endDate", application.getEndTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+    result.put("address", address(application));
+    result.put("inlineImageName", "cid:" + INLINE_LOGO_CID);
     return result;
   }
 
+  private String address(Application application) {
+    final List<Location> locations = application.getLocations();
+    if (locations != null && !locations.isEmpty()) {
+      final Location location = locations.get(0);
+      if (location.getPostalAddress() != null) {
+        return location.getPostalAddress().getStreetAddress();
+      }
+    }
+    return null;
+  }
+
+  private String idAndAddress(Application application) {
+    final String address = address(application);
+    if (address != null) {
+      return application.getApplicationId() + " " + address;
+    } else {
+      return application.getApplicationId();
+    }
+  }
+
+  private List<InlineResource> inlineResources() {
+    try {
+      return Arrays.asList(new InlineResource(INLINE_LOGO_FILE, INLINE_LOGO_CID,
+          ResourceUtil.readClassPathResourceAsBytes(TEMPLATE_PATH + INLINE_LOGO_FILE)));
+    } catch (IOException e) {
+      return Collections.emptyList();
+    }
+  }
 }
