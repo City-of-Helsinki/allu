@@ -1,13 +1,17 @@
 <div class="configuration-entry-controls">
-  <mat-form-field class="configuration-entry-control">
-    <input type="text" matInput [formControl]="valueCtrl"/>
-    <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
-  </mat-form-field>
-  <button type="submit" mat-icon-button
-          class="configuration-entry-control"
-          *ngIf="valueCtrl.dirty"
-          [disabled]="!valueCtrl.valid"
-          (click)="submit()">
-    <mat-icon>save</mat-icon>
-  </button>
+  <div class="configuration-entry-control">
+    <mat-form-field>
+      <input type="text" matInput [formControl]="valueCtrl"/>
+      <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
+      <mat-error *ngIf="valueCtrl.hasError('email')">{{'common.field.emailInvalid' | translation}}</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="configuration-entry-control">
+    <button type="submit" mat-icon-button
+            *ngIf="valueCtrl.dirty"
+            [disabled]="!valueCtrl.valid"
+            (click)="submit()">
+      <mat-icon>save</mat-icon>
+    </button>
+  </div>
 </div>
