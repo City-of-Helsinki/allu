@@ -12,10 +12,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.types.ApprovalDocumentType;
+import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.domain.ExcavationAnnouncementExt;
 import fi.hel.allu.external.domain.ValidityPeriodExt;
 import fi.hel.allu.external.mapper.ExcavationAnnouncementExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.servicecore.service.ApprovalDocumentService;
+import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.servicecore.service.ExcavationAnnouncementService;
 import io.swagger.annotations.*;
 
@@ -33,6 +37,13 @@ public class ExcavationAnnouncementController
 
   @Autowired
   private ApplicationServiceExt applicationService;
+
+  @Autowired
+  private ApprovalDocumentService approvalDocumentService;
+
+  @Autowired
+  private DecisionService decisionService;
+
 
   @Override
   protected ExcavationAnnouncementExtMapper getMapper() {
@@ -86,5 +97,53 @@ public class ExcavationAnnouncementController
         validityPeriod.getValidityPeriodStart(), validityPeriod.getValidityPeriodEnd());
     excavationAnnouncementService.reportCustomerValidity(id, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "Gets operational condition approval document for application with given ID",
+      authorizations = @Authorization(value ="api_key"),
+      response = byte.class,
+      responseContainer = "Array")
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Approval document retrieved successfully", response = byte.class, responseContainer = "Array"),
+      @ApiResponse(code = 404, message = "No approval document found for given application", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}/approval/operationalcondition", method = RequestMethod.GET, produces = "application/pdf")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<byte[]> getOperationalConditionApprovalDocument(@PathVariable Integer id) {
+    applicationService.validateOwnedByExternalUser(id);
+    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(id, ApprovalDocumentType.OPERATIONAL_CONDITION);
+    return returnPdfResponse(bytes);
+  }
+
+  @ApiOperation(value = "Gets work finished approval document for application with given ID",
+      authorizations = @Authorization(value ="api_key"),
+      response = byte.class,
+      responseContainer = "Array")
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Approval document retrieved successfully", response = byte.class, responseContainer = "Array"),
+      @ApiResponse(code = 404, message = "No approval document found for given application", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}/approval/workfinished", method = RequestMethod.GET, produces = "application/pdf")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<byte[]> getWorkFinishedApprovalDocument(@PathVariable Integer id) {
+    applicationService.validateOwnedByExternalUser(id);
+    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(id, ApprovalDocumentType.WORK_FINISHED);
+    return returnPdfResponse(bytes);
+  }
+
+  @ApiOperation(value = "Gets decision document for application with given ID",
+      authorizations = @Authorization(value ="api_key"),
+      response = byte.class,
+      responseContainer = "Array")
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Decision document retrieved successfully", response = byte.class, responseContainer = "Array"),
+      @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = "application/pdf")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) {
+    applicationService.validateOwnedByExternalUser(id);
+    byte[] bytes = decisionService.getFinalDecision(id);
+    return returnPdfResponse(bytes);
   }
 }

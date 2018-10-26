@@ -68,12 +68,6 @@ public class PlacementContractController extends BaseApplicationController<Place
     return returnPdfResponse(bytes);
   }
 
-  protected ResponseEntity<byte[]> returnPdfResponse(byte[] bytes) {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
-    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
-  }
-
   @ApiOperation(value = "Approve contract",
       produces = "application/json",
       consumes = "application/json",

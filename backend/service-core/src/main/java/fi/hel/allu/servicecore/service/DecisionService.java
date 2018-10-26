@@ -68,10 +68,14 @@ public class DecisionService {
   public byte[] getDecision(int applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     if (isDecisionDone(application)) {
-      return restTemplate.getForObject(applicationProperties.getDecisionUrl(), byte[].class, applicationId);
+      return getFinalDecision(applicationId);
     } else {
       return getDecisionPreview(application);
     }
+  }
+
+  public byte[] getFinalDecision(int applicationId) {
+    return restTemplate.getForObject(applicationProperties.getDecisionUrl(), byte[].class, applicationId);
   }
 
   private boolean isDecisionDone(ApplicationJson application) {

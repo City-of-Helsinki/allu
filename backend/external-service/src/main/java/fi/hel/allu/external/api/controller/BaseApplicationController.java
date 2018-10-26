@@ -3,7 +3,9 @@ package fi.hel.allu.external.api.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
@@ -92,5 +94,12 @@ public abstract class BaseApplicationController<T extends ApplicationExt, M exte
     applicationService.addInformationRequestResponse(applicationId, requestId, response, getMapper());
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  protected ResponseEntity<byte[]> returnPdfResponse(byte[] bytes) {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
+    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+  }
+
 
 }
