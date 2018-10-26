@@ -37,6 +37,7 @@ public class ApprovalDocumentMapper extends DecisionJsonMapper {
     if (type == ApprovalDocumentType.OPERATIONAL_CONDITION) {
       approvalDocument.setWorkFinished(null);
       approvalDocument.setCustomerWorkFinished(null);
+      approvalDocument.setGuaranteeEndTime(null);
     } else if (type == ApprovalDocumentType.WORK_FINISHED) {
       approvalDocument.setWinterTimeOperation(null);
       approvalDocument.setCustomerWinterTimeOperation(null);

@@ -476,6 +476,7 @@ public class DecisionJsonMapper {
     decision.setTrafficArrangements(splitToList(Optional.ofNullable(excavationAnnouncement.getTrafficArrangements())));
     decision.setCompactionAndBearingCapacityMeasurement(excavationAnnouncement.getCompactionAndBearingCapacityMeasurement());
     decision.setQualityAssuranceTest(excavationAnnouncement.getQualityAssuranceTest());
+    decision.setGuaranteeEndTime(formatDateWithDelta(excavationAnnouncement.getGuaranteeEndTime(), 0));
   }
 
   /*

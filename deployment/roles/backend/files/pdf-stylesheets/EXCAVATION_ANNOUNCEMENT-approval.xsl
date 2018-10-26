@@ -145,6 +145,9 @@
             <h2>Työn valmistuminen</h2>
             <p>Ilmoitettu valmistumispäivä</p>
             <p><xsl:value-of select="data/customerWorkFinished"/></p>
+            <xsl:if test="data/guaranteeEndTime">
+              <p class="space-above">Työn takuu voimassa <xsl:value-of select="data/guaranteeEndTime"/> asti.</p>
+            </xsl:if>
           </section>
           <section class="half-right">
             <h2>&#160;</h2>

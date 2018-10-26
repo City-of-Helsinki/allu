@@ -114,6 +114,7 @@ public class DecisionJson {
   private String customerWorkFinished;
   private Boolean qualityAssuranceTest;
   private Boolean compactionAndBearingCapacityMeasurement;
+  private String guaranteeEndTime;
 
   private String ovt;
   private String invoicingOperator;
@@ -769,6 +770,14 @@ public class DecisionJson {
 
   public void setCompactionAndBearingCapacityMeasurement(Boolean compactionAndBearingCapacityMeasurement) {
     this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
+  }
+
+  public String getGuaranteeEndTime() {
+    return guaranteeEndTime;
+  }
+
+  public void setGuaranteeEndTime(String guaranteeEndTime) {
+    this.guaranteeEndTime = guaranteeEndTime;
   }
 
   public String getOvt() {
