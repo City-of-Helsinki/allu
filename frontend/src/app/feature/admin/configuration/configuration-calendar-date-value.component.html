@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="configuration-entry-controls">
+    <div class="configuration-entry-control">
+      <div fxLayout="row">
+        <mat-form-field fxFlex="50%">
+          <input type="number" matInput formControlName="day" placeholder="päivä" min="1" [max]="maxDay"/>
+          <mat-error *ngIf="form.get('day').hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
+          <mat-error *ngIf="form.get('day').hasError('min') || form.get('day').hasError('max')">
+            {{'common.field.dayInvalid' | translation}}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex="50%">
+          <input type="number" matInput formControlName="month" placeholder="kuukausi" min="1" max="12"/>
+          <mat-error *ngIf="form.get('month').hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
+          <mat-error *ngIf="form.get('month').hasError('min') || form.get('month').hasError('max')">
+            {{'common.field.monthInvalid' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="configuration-entry-control">
+      <button type="submit" mat-icon-button
+              *ngIf="form.dirty"
+              [disabled]="!form.valid">
+        <mat-icon>save</mat-icon>
+      </button>
+    </div>
+  </div>
+</form>

@@ -1068,7 +1068,9 @@ export const translations = {
       usernameMissing: 'Käyttäjänimi puuttuu',
       nameMissing: 'Nimi puuttuu',
       emailInvalid: 'Virheellinen sähköpostiosoite',
-      postalCode: 'Tarkista postinumero'
+      postalCode: 'Tarkista postinumero',
+      dayInvalid: 'Virheellinen päivä',
+      monthInvalid: 'Virheellinen kuukausi'
     },
     boolean: {
       'true': 'Kyllä',

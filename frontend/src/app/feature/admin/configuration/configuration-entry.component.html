@@ -4,6 +4,10 @@
   </div>
   <div fxFlex>
     <ng-container [ngSwitch]="configuration.type">
+      <configuration-calendar-date-value
+        *ngSwitchCase="'CALENDAR_DATE'"
+        [configuration]="configuration"
+      ></configuration-calendar-date-value>
       <configuration-text-value
         *ngSwitchDefault
         [configuration]="configuration"></configuration-text-value>

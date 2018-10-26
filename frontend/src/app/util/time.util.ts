@@ -17,6 +17,18 @@ const DAYS_IN_WEEK = 7;
  * Helpers for time related UI functionality.
  */
 export class TimeUtil {
+  public static getDateString(date: Date, format: string): string {
+    return date ? moment(date).format(format).toString() : undefined;
+  }
+
+  public static getUiMonth(date: Date): number {
+    return date ? date.getMonth() + 1 : 1;
+  }
+
+  public static fromUiMonth(number): number {
+    return number - 1;
+  }
+
   public static getUiDateString(time: Date): string {
     return time ? moment(time).format(UI_DATE_FORMAT).toString() : undefined;
   }
@@ -96,6 +108,11 @@ export class TimeUtil {
 
   public static subract(baseDate: Date = new Date(), amount: number, unit: unitOfTime.DurationConstructor): Date {
     return moment(baseDate).subtract(amount, unit).toDate();
+  }
+
+  public static getEndOfMonth(month: number): number {
+    const endOfMonth = moment([MIN_YEAR, this.fromUiMonth(month), 1]).endOf('month');
+    return endOfMonth.date();
   }
 
   /**
