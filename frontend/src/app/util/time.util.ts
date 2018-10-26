@@ -1,9 +1,9 @@
 import * as moment from 'moment';
 import {unitOfTime} from 'moment';
 
-export const MIN_YEAR = 1972;
+export const MIN_YEAR = 1973;
 export const MAX_YEAR = 9999;
-export const MIN_DATE: Date = new Date('1972-01-01T00:00:00');
+export const MIN_DATE: Date = new Date('1973-01-01T00:00:00');
 export const MAX_DATE: Date = new Date('9999-12-31T23:59:59');
 export const UI_PIPE_DATE_FORMAT = 'dd.MM.yyyy'; // Used by angular date pipe
 export const UI_DATE_FORMAT = 'DD.MM.YYYY';
