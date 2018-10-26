@@ -831,6 +831,7 @@ export const translations = {
     emailMessage: 'Sähköpostiviesti',
     sendDecision: 'Lähetä päätös',
     cannotShow: 'Päätöksen näyttäminen ei onnistu selaimellasi.',
+    toOperationalCondition: 'Päätä toiminnalliseen kuntoon',
     type: {
       DECISIONMAKING: {
         title: 'Siirrä odottamaan päätöstä',

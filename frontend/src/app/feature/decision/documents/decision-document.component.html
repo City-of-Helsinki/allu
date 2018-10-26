@@ -8,6 +8,7 @@
     *ngIf="showDecisionActions$ | async"
     pdfViewFooter
     [application]="application$ | async"
+    [approvedOperationalCondition]="approvedOperationalCondition$ | async"
     (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
 
   <contract-actions

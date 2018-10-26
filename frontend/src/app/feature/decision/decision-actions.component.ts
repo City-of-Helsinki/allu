@@ -18,7 +18,7 @@ import {Store} from '@ngrx/store';
 import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {catchError, filter, switchMap, tap} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 import {automaticDecisionMaking} from '@model/application/type/application-type';
 import {NumberUtil} from '@util/number.util';
 
@@ -35,11 +35,13 @@ const RESEND_ALLOWED = [
 })
 export class DecisionActionsComponent implements OnInit, OnChanges {
   @Input() application: Application;
+  @Input() approvedOperationalCondition = false;
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
   showProposal = false;
   skipProposal = false;
   showDecision = false;
+  showToOperationalCondition = false;
   showResend = false;
   isValidForDecision = false;
 
@@ -60,6 +62,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     this.skipProposal = inHandling(status) && automaticDecisionMaking(this.application.type);
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
+    this.showToOperationalCondition = this.approvedOperationalCondition && this.application.targetState === ApplicationStatus.DECISION;
     this.isValidForDecision = this.validForDecision(this.application);
   }
 
@@ -82,6 +85,13 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       .subscribe(result => this.decisionConfirmed(result));
   }
 
+  public operationalCondition(): void {
+    const status = ApplicationStatus.DECISION;
+    this.confirmDecisionSend(status, status).pipe(
+      switchMap(confirmation => this.toOperationalCondition(confirmation))
+    ).subscribe(confirmation => this.changeStatus(confirmation));
+  }
+
   public decisionMaking(): void {
     this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING).subscribe(
       (application) => this.statusChanged(application),
@@ -95,13 +105,11 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   public decisionConfirmed(confirmation: DecisionConfirmation) {
-    if (!!confirmation) {
-      this.changeStatus(confirmation).pipe(
-        switchMap(app => this.sendDecision(app.id, confirmation))
-      ).subscribe(
-          () => this.router.navigateByUrl('/workqueue'),
-          error => this.notification.errorInfo(error));
-    }
+    this.changeStatus(confirmation).pipe(
+      switchMap(app => this.sendDecision(app.id, confirmation))
+    ).subscribe(
+      () => this.router.navigateByUrl('/workqueue'),
+      error => this.notification.errorInfo(error));
   }
 
   public resendDecision(): void {
@@ -136,7 +144,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
         distributionList: this.application.decisionDistributionList
       }
     };
-    return this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config).afterClosed();
+    return this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config)
+      .afterClosed().pipe(filter(result => !!result));
   }
 
   private changeStatus(confirmation?: DecisionConfirmation): Observable<Application> {
@@ -152,7 +161,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   }
 
   private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<{}> {
-    console.log(confirmation);
     return Some(confirmation.distributionList)
       .filter(distribution => distribution.length > 0)
       .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
@@ -175,5 +183,22 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   private validForDecision(app: Application): boolean {
     return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
+  }
+
+  /**
+   * Change application status first to decision so all automatic operations related to that state change are handled.
+   * After successful status change send decision document.
+   * After successful document send return confirmation for operational condition change
+   */
+  private toOperationalCondition(confirmation: DecisionConfirmation): Observable<DecisionConfirmation> {
+    return this.changeStatus(confirmation).pipe(
+      switchMap(app => this.sendDecision(app.id, confirmation)),
+      map(() => ({
+          ...confirmation,
+          status: ApplicationStatus.OPERATIONAL_CONDITION,
+          comment: undefined
+        })
+      )
+    );
   }
 }

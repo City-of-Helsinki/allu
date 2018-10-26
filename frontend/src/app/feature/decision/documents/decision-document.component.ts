@@ -1,16 +1,19 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
 import {Observable, Subject} from 'rxjs/index';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {map, take, takeUntil} from 'rxjs/internal/operators';
 import {Application} from '@model/application/application';
 import {Load} from '@feature/decision/actions/decision-actions';
 import * as fromApplication from '@feature/application/reducers';
+import * as fromSupervision from '@feature/application/supervision/reducers';
 import * as fromDecision from '@feature/decision/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus, contains} from '@model/application/application-status';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
+import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
 
 @Component({
   selector: 'decision-document',
@@ -25,6 +28,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   processing$: Observable<boolean>;
   showDecisionActions$: Observable<boolean>;
   showContractActions$: Observable<boolean>;
+  approvedOperationalCondition$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
 
@@ -34,11 +38,14 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
     private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
-    this.application$ = this.store.select(fromApplication.getCurrentApplication);
-    this.store.select(fromDecision.getTab).pipe(take(1)).subscribe(tab => this.initContentByTab(tab));
+    this.application$ = this.store.pipe(select(fromApplication.getCurrentApplication));
+    this.store.pipe(select(fromDecision.getTab), take(1)).subscribe(tab => this.initContentByTab(tab));
     this.processing$ = this.applicationStore.changes.pipe(
       map(change => change.processing),
       takeUntil(this.destroy)
+    );
+    this.approvedOperationalCondition$ = this.store.pipe(
+      select(fromSupervision.hasTask(SupervisionTaskType.OPERATIONAL_CONDITION, SupervisionTaskStatusType.APPROVED))
     );
   }
 
