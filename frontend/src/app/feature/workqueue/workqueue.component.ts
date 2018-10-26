@@ -16,6 +16,8 @@ import * as fromRoot from '@feature/allu/reducers';
 import {AddMultiple} from '@feature/project/actions/application-basket-actions';
 import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 import {UserService} from '@service/user/user-service';
+import {ArrayUtil} from '@util/array-util';
+import {RoleType} from '@model/user/role-type';
 
 @Component({
   selector: 'workqueue',
@@ -30,6 +32,10 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   noneSelected = true;
 
   private destroy = new Subject<boolean>();
+  private editRoles = [
+      RoleType.ROLE_CREATE_APPLICATION,
+      RoleType.ROLE_PROCESS_APPLICATION,
+      RoleType.ROLE_DECISION];
 
   constructor(private itemStore: ApplicationWorkItemStore,
               private dialog: MatDialog,
@@ -67,11 +73,16 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   openHandlerModal() {
+    const applicationTypes = this.itemStore.snapshot.page.content
+        .filter(a => this.itemStore.snapshot.selectedItems.indexOf(a.id) >= 0)
+        .map(a => a.type);
     const config = {
       ...OWNER_MODAL_CONFIG,
       data: {
         type: 'OWNER',
-        users : this.owners
+        users: this.owners
+            .filter(o => ArrayUtil.anyMatch(this.editRoles, o.roles))
+            .filter(o => applicationTypes.every(lItem => o.allowedApplicationTypes.indexOf(lItem) >= 0))
       }
     };
 
