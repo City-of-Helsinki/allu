@@ -2,6 +2,8 @@ import {BackendUser, SearchResultUser} from '../backend-model/backend-user';
 import {User} from '../../model/user/user';
 import {TimeUtil} from '../../util/time.util';
 import {UserSearchCriteria} from '../../model/user/user-search-criteria';
+import {ApplicationType} from '@app/model/application/type/application-type';
+import {RoleType} from '@app/model/user/role-type';
 
 export class UserMapper {
 
@@ -27,8 +29,8 @@ export class UserMapper {
         backendUser.title,
         backendUser.active,
         TimeUtil.dateFromBackend(backendUser.lastLogin),
-        backendUser.allowedApplicationTypes,
-        backendUser.assignedRoles,
+        backendUser.allowedApplicationTypes.map(a => ApplicationType[a]),
+        backendUser.assignedRoles.map(r => RoleType[r]),
         backendUser.cityDistrictIds
         ) : undefined;
   }

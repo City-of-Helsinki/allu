@@ -1,4 +1,7 @@
 import {TimeUtil} from '../../util/time.util';
+import {ApplicationType} from '@app/model/application/type/application-type';
+import {RoleType} from '@app/model/user/role-type';
+
 export class User {
   constructor(
     public id?: number,
@@ -9,19 +12,19 @@ export class User {
     public title?: string,
     public isActive?: boolean,
     public lastLogin?: Date,
-    public allowedApplicationTypes: Array<string> = [],
-    public assignedRoles: Array<string> = [],
+    public allowedApplicationTypes: Array<ApplicationType> = [],
+    public assignedRoles: Array<RoleType> = [],
     public cityDistrictIds: Array<number> = []) {}
 
-  hasRole(role: string): boolean {
+  hasRole(role: RoleType): boolean {
     return this.assignedRoles.indexOf(role) >= 0;
   }
 
   get isAdmin(): boolean {
-    return this.hasRole('ROLE_ADMIN');
+    return this.hasRole(RoleType.ROLE_ADMIN);
   }
 
-  get roles(): Array<string> {
+  get roles(): Array<RoleType> {
     return this.assignedRoles;
   }
 
