@@ -1,0 +1,14 @@
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'BENJI_DAILY_PRICE', null, 32000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL', null, 75000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL', null, 15000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'CIRCUS_DAILY_PRICE', null, 20000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'DOG_TRAINING_EVENT_ASSOCIATION_PRICE', null, 5000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'DOG_TRAINING_EVENT_COMPANY_PRICE', null, 10000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'DOG_TRAINING_FIELD_YEARLY_COMPANY', null, 30000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'DOG_TRAINING_FIELD_YEARLY_ASSOCIATION', null, 10000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'KESKUSKATU_SALES_TEN_SQM_PRICE', null, 5000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'PROMOTION_OR_SALES_MONTHLY', null, 200);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'SEASON_SALE_TEN_SQM_PRICE', null, 5000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'STORAGE_AREA_MONTHLY_PRICE', null, 50);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'SUMMER_THEATER_YEARLY_PRICE', null, 12000);
+insert into allu.pricing (application_type, key, payment_class, value) values ('SHORT_TERM_RENTAL', 'URBAN_FARMING_TERM_PRICE', null, 200);

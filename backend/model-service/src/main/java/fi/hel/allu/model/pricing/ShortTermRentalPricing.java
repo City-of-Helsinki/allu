@@ -2,39 +2,27 @@ package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.PricingKey;
 import fi.hel.allu.model.domain.ShortTermRental;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 public class ShortTermRentalPricing extends Pricing {
   private final Application application;
   private final PricingExplanator explanationService;
+  private final PricingDao pricingDao;
   private final double applicationArea;
   private final boolean customerIsCompany;
+  private final DecimalFormat decimalFormat;
 
   // Various price constants for short term rental
-  private static final int BENJI_DAILY_PRICE = 32000; // 320 EUR/day
-  private static final int BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL = 75000; // 750
-                                                                          // EUR/week
-  private static final int BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL = 15000; // 150
-                                                                             // EUR/week
-  private static final int CIRCUS_DAILY_PRICE = 20000; // 200 EUR/day
-  private static final int DOG_TRAINING_EVENT_ASSOCIATION_PRICE = 5000; // 50
-                                                                        // EUR
-  private static final int DOG_TRAINING_EVENT_COMPANY_PRICE = 10000; // 100 EUR
-  private static final int DOG_TRAINING_FIELD_YEARLY_COMPANY = 30000; // 300 EUR/year
-  private static final int DOG_TRAINING_FIELD_YEARLY_ASSOCIATION = 10000; // 100
-                                                                          // EUR/year
-  private static final int KESKUSKATU_SALES_TEN_SQM_PRICE = 5000; // 50
-                                                                  // EUR/10sqm/day
-  private static final int PROMOTION_OR_SALES_MONTHLY = 200; // 2 EUR/sqm/kk
-  private static final int SEASON_SALE_TEN_SQM_PRICE = 5000; // 50 EUR/10sqm/day
-  private static final int STORAGE_AREA_MONTHLY_PRICE = 50;  // 0.50 EUR/sqm/month
-  private static final int SUMMER_THEATER_YEARLY_PRICE = 12000; // 120 EUR/year
-  private static final int URBAN_FARMING_TERM_PRICE = 200; // 2.00 EUR/sqm/term
   private static final int LONG_TERM_DISCOUNT_LIMIT = 14; // how many days
                                                           // before discount?
 
@@ -48,26 +36,31 @@ public class ShortTermRentalPricing extends Pricing {
     static final String BENJI = "Benji-hyppylaite";
     static final String OTHER_SHORT_TERM_RENTAL = "Muu lyhytaikainen maanvuokraus";
     static final String PROMOTION_OR_SALES_SMALL = "Korkeintaan 0,8 m seinästä";
-    static final String PROMOTION_OR_SALES_LARGE = "2€/m2/kk + alv, yli 0,8 m seinästä";
+    static final String PROMOTION_OR_SALES_LARGE = "%s €/m²/kk + alv, yli 0,8 m seinästä";
     static final String STORAGE_AREA = "Varastoalue";
     static final String URBAN_FARMING = "Kaupunkiviljelypaikka yhdistyksille ja yhteisöille";
-    static final String KESKUSKATU_SALES = "50 €/päivä/alkava 10 m² + alv";
-    static final String SUMMER_THEATER = "120 €/toimintakuukausi";
-    static final String DOG_TRAINING_FIELD_ORG = "Vuosivuokra yhdistyksille 100 €/vuosi (2h/vk)";
-    static final String DOG_TRAINING_FIELD_COM = "Vuosivuokra yrityksille 300 €/vuosi (2h/vk)";
+    static final String KESKUSKATU_SALES = "%s €/päivä/alkava 10 m² + alv";
+    static final String SUMMER_THEATER = "%s €/toimintakuukausi";
+    static final String DOG_TRAINING_FIELD_ORG = "Vuosivuokra yhdistyksille %s €/vuosi (2h/vk)";
+    static final String DOG_TRAINING_FIELD_COM = "Vuosivuokra yrityksille %s €/vuosi (2h/vk)";
     static final String DOG_TRAINING_EVENT_ORG = "Koirankoulutustapahtuma, järjestäjänä yhdistys";
     static final String DOG_TRAINING_EVENT_COM = "Koirankoulutustapahtuma, järjestäjänä yritys";
     static final String SMALL_ART_AND_CULTURE = "Pienimuotoinen kaupallinen taide- ja kulttuuritoiminta";
-    static final String SEASON_SALES = "50 €/päivä/alkava 10 m² + alv";
-    static final String CIRCUS = "200 €/päivä + alv";
+    static final String SEASON_SALES = "%s €/päivä/alkava 10 m² + alv";
+    static final String CIRCUS = "%s €/päivä + alv";
   }
 
-  public ShortTermRentalPricing(Application application, PricingExplanator explanationService, double applicationArea, boolean customerIsCompany) {
+  public ShortTermRentalPricing(Application application, PricingExplanator explanationService, PricingDao pricingDao, double applicationArea, boolean customerIsCompany) {
     super();
     this.application = application;
     this.applicationArea = applicationArea;
     this.customerIsCompany = customerIsCompany;
     this.explanationService = explanationService;
+    this.pricingDao = pricingDao;
+    this.decimalFormat = new DecimalFormat("#.00");
+    final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+    symbols.setDecimalSeparator(',');
+    decimalFormat.setDecimalFormatSymbols(symbols);
   }
 
 
@@ -94,57 +87,62 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case BENJI:
       // 320 EUR/day
-        updatePricePerUnit(ChargeBasisTag.ShortTermRentalBenji(), ChronoUnit.DAYS, BENJI_DAILY_PRICE,
-            InvoiceLines.BENJI);
+      updatePricePerUnit(ChargeBasisTag.ShortTermRentalBenji(), ChronoUnit.DAYS,
+          getPrice(PricingKey.BENJI_DAILY_PRICE), InvoiceLines.BENJI);
       break;
     case BRIDGE_BANNER:
       // Non-commercial organizer: 150 EUR/week
       // Commercial organizer: 750 EUR/week
       if (isCommercial()) {
-          updatePricePerUnit(ChargeBasisTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
-              BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL, InvoiceLines.BANDEROL_COMMERCIAL);
+        updatePricePerUnit(ChargeBasisTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
+            getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL), InvoiceLines.BANDEROL_COMMERCIAL);
       } else {
-          updatePricePerUnit(ChargeBasisTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
-              BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL,
+        updatePricePerUnit(ChargeBasisTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
+            getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL),
             InvoiceLines.BANDEROL_NONCOMMERCIAL);
       }
       break;
-    case CIRCUS:
-        updatePricePerUnit(ChargeBasisTag.ShortTermRentalCircus(), ChronoUnit.DAYS, CIRCUS_DAILY_PRICE,
-            InvoiceLines.CIRCUS);
+    case CIRCUS: {
+      final int price = getPrice(PricingKey.CIRCUS_DAILY_PRICE);
+      updatePricePerUnit(ChargeBasisTag.ShortTermRentalCircus(), ChronoUnit.DAYS,
+          price, priceText(price, InvoiceLines.CIRCUS));
       break;
+    }
     case DOG_TRAINING_EVENT:
       // Associations: 50 EUR/event
       // Companies: 100 EUR/event
       if (customerIsCompany) {
-        setPriceInCents(DOG_TRAINING_EVENT_COMPANY_PRICE);
-          addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
-              DOG_TRAINING_EVENT_COMPANY_PRICE, InvoiceLines.DOG_TRAINING_EVENT_COM,
-            DOG_TRAINING_EVENT_COMPANY_PRICE, explanationService.getExplanation(application));
+        final int price = getPrice(PricingKey.DOG_TRAINING_EVENT_COMPANY_PRICE);
+        setPriceInCents(price);
+        addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
+            price, InvoiceLines.DOG_TRAINING_EVENT_COM, price, explanationService.getExplanation(application));
       } else {
-        setPriceInCents(DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
-          addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
-              DOG_TRAINING_EVENT_ASSOCIATION_PRICE, InvoiceLines.DOG_TRAINING_EVENT_ORG,
-            DOG_TRAINING_EVENT_ASSOCIATION_PRICE, explanationService.getExplanation(application));
+        final int price = getPrice(PricingKey.DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
+        setPriceInCents(price);
+        addChargeBasisEntry(ChargeBasisTag.ShortTermRentalDogTrainingEvent(), ChargeBasisUnit.PIECE, 1,
+            price, InvoiceLines.DOG_TRAINING_EVENT_ORG, price, explanationService.getExplanation(application));
       }
       break;
     case DOG_TRAINING_FIELD:
       // Associations: 100 EUR/year
       // Companies: 300 EUR/year
       if (customerIsCompany) {
-          updatePricePerUnit(ChargeBasisTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
-              DOG_TRAINING_FIELD_YEARLY_COMPANY, InvoiceLines.DOG_TRAINING_FIELD_COM);
+        final int price = getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_COMPANY);
+        updatePricePerUnit(ChargeBasisTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
+            price, priceText(price, InvoiceLines.DOG_TRAINING_FIELD_COM));
       } else {
-          updatePricePerUnit(ChargeBasisTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
-              DOG_TRAINING_FIELD_YEARLY_ASSOCIATION,
-            InvoiceLines.DOG_TRAINING_FIELD_ORG);
+        final int price = getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
+        updatePricePerUnit(ChargeBasisTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
+            price, priceText(price, InvoiceLines.DOG_TRAINING_FIELD_ORG));
       }
       break;
-    case KESKUSKATU_SALES:
+    case KESKUSKATU_SALES: {
       // 50 EUR/day/starting 10 sqm
-      updatePriceByTimeAndArea(KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, false,
-            InvoiceLines.KESKUSKATU_SALES, null, ChargeBasisTag.ShortTermRentalKeskuskatuSales(), null);
+      final int price = getPrice(PricingKey.KESKUSKATU_SALES_TEN_SQM_PRICE);
+      updatePriceByTimeAndArea(price, ChronoUnit.DAYS, 10, false,
+          priceText(price, InvoiceLines.KESKUSKATU_SALES), null, ChargeBasisTag.ShortTermRentalKeskuskatuSales(), null);
       break;
+    }
     case OTHER:
       // Handler should set the price override
       break;
@@ -153,32 +151,36 @@ public class ShortTermRentalPricing extends Pricing {
       // over 0.8m from a wall: 2 EUR/sqm/kk
       ShortTermRental str = (ShortTermRental) application.getExtension();
       if (str != null && Optional.ofNullable(str.getBillableSalesArea()).orElse(false) == true) {
-        updatePriceByTimeAndArea(PROMOTION_OR_SALES_MONTHLY, ChronoUnit.MONTHS, 1, false,
-              InvoiceLines.PROMOTION_OR_SALES_LARGE, null,
-              ChargeBasisTag.ShortTermRentalPromotionOrSales(), null);
+        final int price = getPrice(PricingKey.PROMOTION_OR_SALES_MONTHLY);
+        updatePriceByTimeAndArea(price, ChronoUnit.MONTHS, 1, false,
+            priceText(price, InvoiceLines.PROMOTION_OR_SALES_LARGE), null,
+            ChargeBasisTag.ShortTermRentalPromotionOrSales(), null);
       } else {
         // free of charge
-          addChargeBasisEntry(ChargeBasisTag.ShortTermRentalPromotionOrSales(), ChargeBasisUnit.PIECE, 1, 0,
-              InvoiceLines.PROMOTION_OR_SALES_SMALL, 0, explanationService.getExplanation(application));
+        addChargeBasisEntry(ChargeBasisTag.ShortTermRentalPromotionOrSales(), ChargeBasisUnit.PIECE, 1, 0,
+            InvoiceLines.PROMOTION_OR_SALES_SMALL, 0, explanationService.getExplanation(application));
         setPriceInCents(0);
       }
       break;
-    case SEASON_SALE:
+    case SEASON_SALE: {
       // 50 EUR/day/starting 10 sqm
-      updatePriceByTimeAndArea(SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, false, InvoiceLines.SEASON_SALES,
-            null, ChargeBasisTag.ShortTermRentalSeasonSale(), null);
+      final int price = getPrice(PricingKey.SEASON_SALE_TEN_SQM_PRICE);
+      updatePriceByTimeAndArea(price, ChronoUnit.DAYS, 10, false, priceText(price, InvoiceLines.SEASON_SALES),
+          null, ChargeBasisTag.ShortTermRentalSeasonSale(), null);
       break;
+    }
     case STORAGE_AREA:
       // 0.50 EUR/sqm/month
-        updatePriceByTimeAndArea(STORAGE_AREA_MONTHLY_PRICE, ChronoUnit.MONTHS, 1, false, InvoiceLines.STORAGE_AREA,
-            null,
-            ChargeBasisTag.ShortTermRentalStorageArea(), null);
+      updatePriceByTimeAndArea(getPrice(PricingKey.STORAGE_AREA_MONTHLY_PRICE), ChronoUnit.MONTHS, 1, false,
+          InvoiceLines.STORAGE_AREA, null, ChargeBasisTag.ShortTermRentalStorageArea(), null);
       break;
-    case SUMMER_THEATER:
+    case SUMMER_THEATER: {
       // 120 EUR/month
-        updatePricePerUnit(ChargeBasisTag.ShortTermRentalSummerTheater(), ChronoUnit.MONTHS, SUMMER_THEATER_YEARLY_PRICE,
-            InvoiceLines.SUMMER_THEATER);
+      final int price = getPrice(PricingKey.SUMMER_THEATER_YEARLY_PRICE);
+      updatePricePerUnit(ChargeBasisTag.ShortTermRentalSummerTheater(), ChronoUnit.MONTHS,
+          price, priceText(price, InvoiceLines.SUMMER_THEATER));
       break;
+    }
     case URBAN_FARMING:
       updateUrbanFarmingPrice();
       break;
@@ -258,13 +260,26 @@ public class ShortTermRentalPricing extends Pricing {
       numTerms = application.getEndTime().getYear() - application.getStartTime().getYear() + 1;
     }
 
+    final int urbanFarmingTermPrice = getPrice(PricingKey.URBAN_FARMING_TERM_PRICE);
     double billableArea = applicationArea == 0.0 ? 0.0 : Math.ceil(applicationArea);
-    int netPrice = URBAN_FARMING_TERM_PRICE * (int) billableArea * numTerms;
+    int netPrice = urbanFarmingTermPrice * (int) billableArea * numTerms;
 
     addChargeBasisEntry(ChargeBasisTag.ShortTermRentalUrbanFarming(), ChargeBasisUnit.SQUARE_METER, billableArea,
-        URBAN_FARMING_TERM_PRICE * numTerms,
+        urbanFarmingTermPrice * numTerms,
         InvoiceLines.URBAN_FARMING, netPrice, explanationService.getExplanation(application));
     setPriceInCents(netPrice);
   }
 
+  private int getPrice(PricingKey key) {
+    return pricingDao.findValue(ApplicationType.SHORT_TERM_RENTAL, key);
+  }
+
+  private String priceText(int priceInCents, String text) {
+    final double euroPrice = priceInCents / 100.0;
+    String priceText = decimalFormat.format(euroPrice);
+    if (priceText.endsWith(",00")) {
+      priceText = priceText.substring(0, priceText.length() - 3);
+    }
+    return String.format(text, priceText);
+  }
 }
