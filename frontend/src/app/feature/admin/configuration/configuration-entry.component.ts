@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Configuration} from '@model/config/configuration';
+import {User} from '@model/user/user';
 
 @Component({
   selector: 'configuration-entry',
@@ -9,5 +10,6 @@ import {Configuration} from '@model/config/configuration';
 })
 export class ConfigurationEntryComponent {
   @Input() configuration: Configuration;
+  @Input() users: User[] = [];
 }
 

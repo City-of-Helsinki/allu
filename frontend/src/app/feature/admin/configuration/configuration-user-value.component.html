@@ -1,0 +1,20 @@
+<div class="configuration-entry-controls">
+  <div class="configuration-entry-control">
+    <mat-form-field class="input-full-width">
+      <mat-select [formControl]="valueCtrl">
+        <mat-option *ngFor="let user of users" [value]="user.userName">
+          {{user.userName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="configuration-entry-control">
+    <button type="submit" mat-icon-button
+            *ngIf="valueCtrl.dirty"
+            [disabled]="!valueCtrl.valid"
+            (click)="submit()">
+      <mat-icon>save</mat-icon>
+    </button>
+  </div>
+</div>

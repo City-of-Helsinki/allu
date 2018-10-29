@@ -1,20 +1,24 @@
 import * as fromCityDistricts from './city-district-reducer';
 import * as fromCodeSets from './code-set-reducer';
 import * as fromConfigurations from './configuration-reducer';
+import * as fromUsers from './user-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {Some} from '@util/option';
 import {CodeSetTypeMap} from '@model/codeset/codeset';
+import {User} from '@model/user/user';
 
 export interface State {
   cityDistricts: fromCityDistricts.State;
   codeSets: fromCodeSets.State;
   configurations: fromConfigurations.State;
+  users: fromUsers.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
   cityDistricts: fromCityDistricts.reducer,
   codeSets: fromCodeSets.reducer,
-  configurations: fromConfigurations.reducer
+  configurations: fromConfigurations.reducer,
+  users: fromUsers.reducer
 };
 
 export const getCityDistrictsState = createFeatureSelector<fromCityDistricts.State>('cityDistricts');
@@ -61,3 +65,17 @@ export const {
   selectAll: getAllConfigurations,
   selectTotal: getConfigurationsTotal
 } = fromConfigurations.adapter.getSelectors(getConfigurationState);
+
+export const getUsersState = createFeatureSelector<fromUsers.State>('users');
+
+export const {
+  selectIds: getUserIds,
+  selectEntities: getUserEntities,
+  selectAll: getAllUsers,
+  selectTotal: getUsersTotal
+} = fromUsers.adapter.getSelectors(getUsersState);
+
+export const getActiveUsers = createSelector(
+  getAllUsers,
+  (users: User[]) => users.filter(user => user.isActive)
+);

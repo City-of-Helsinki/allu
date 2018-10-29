@@ -57,6 +57,7 @@ import {NotificationModule} from '@feature/notification/notification.module';
 import {ConfigurationService} from '@service/config/configuration.service';
 import {ConfigurationEffects} from './effects/configuration-effects';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
+import {UserEffects} from '@feature/allu/effects/user-effects';
 
 @NgModule({
   imports: [
@@ -69,7 +70,8 @@ import {ConfigurationHelperService} from '@service/config/configuration-helper.s
     EffectsModule.forRoot([
       CityDistrictEffects,
       CodeSetEffects,
-      ConfigurationEffects
+      ConfigurationEffects,
+      UserEffects
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

@@ -1,9 +1,11 @@
 <div class="main-content">
   <allu-card>
     <mat-card-content>
-      <ul>
+      <ul *ngIf="users$ | async as users">
         <li *ngFor="let configuration of configurations$ | async; last as isLast">
-          <configuration-entry [configuration]="configuration"></configuration-entry>
+          <configuration-entry
+            [configuration]="configuration"
+            [users]="users"></configuration-entry>
           <mat-divider *ngIf="!isLast"></mat-divider>
         </li>
       </ul>

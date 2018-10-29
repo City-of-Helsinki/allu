@@ -8,6 +8,11 @@
         *ngSwitchCase="'CALENDAR_DATE'"
         [configuration]="configuration"
       ></configuration-calendar-date-value>
+      <configuration-user-value
+        *ngSwitchCase="'USER'"
+        [configuration]="configuration"
+        [users]="users"
+      ></configuration-user-value>
       <configuration-text-value
         *ngSwitchDefault
         [configuration]="configuration"></configuration-text-value>
