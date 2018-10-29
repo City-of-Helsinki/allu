@@ -395,14 +395,11 @@ public class ApplicationDao {
    * Update application status.
    *
    * @param applicationId   Application to be updated
-   * @param status          New status (cannot change status to either decision state).
+   * @param status          New status
    * @return  Updated application.
    */
   @Transactional
   public Application updateStatus(int applicationId, StatusType status) {
-    if (StatusType.DECISION.equals(status) || StatusType.REJECTED.equals(status)) {
-      throw new IllegalArgumentException("Cannot set status to any decision state. Use updateDecision()");
-    }
     int updated = (int) queryFactory
         .update(application)
         .set(application.status, status)
