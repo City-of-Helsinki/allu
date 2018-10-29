@@ -6,6 +6,7 @@ import {ConfigurationEntryComponent} from '@feature/admin/configuration/configur
 import {ConfigurationTextValueComponent} from '@feature/admin/configuration/configuration-text-value.component';
 import {ConfigurationCalendarDateValueComponent} from '@feature/admin/configuration/configuration-calendar-date-value.component';
 import {ConfigurationUserValueComponent} from '@feature/admin/configuration/configuration-user-value.component';
+import {ConfigurationDateValueComponent} from '@feature/admin/configuration/configuration-date-value.component';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import {ConfigurationUserValueComponent} from '@feature/admin/configuration/conf
     ConfigurationEntryComponent,
     ConfigurationTextValueComponent,
     ConfigurationCalendarDateValueComponent,
-    ConfigurationUserValueComponent
+    ConfigurationUserValueComponent,
+    ConfigurationDateValueComponent
   ],
   providers: [],
   exports: [

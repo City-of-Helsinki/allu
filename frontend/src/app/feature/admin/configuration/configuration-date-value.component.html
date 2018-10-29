@@ -1,9 +1,10 @@
 <div class="configuration-entry-controls">
   <div class="configuration-entry-control">
     <mat-form-field class="input-full-width">
-      <input type="text" matInput [formControl]="valueCtrl"/>
+      <input type="text" matInput [formControl]="valueCtrl" [matDatepicker]="datePicker"/>
+      <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+      <mat-datepicker #datePicker></mat-datepicker>
       <mat-error *ngIf="valueCtrl.hasError('required')">{{'configuration.field.valueMissing' | translation}}</mat-error>
-      <mat-error *ngIf="valueCtrl.hasError('email')">{{'common.field.emailInvalid' | translation}}</mat-error>
     </mat-form-field>
   </div>
   <div class="configuration-entry-control">
