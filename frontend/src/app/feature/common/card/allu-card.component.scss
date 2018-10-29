@@ -86,6 +86,12 @@
     .card-item-align-right {
       margin-left: auto;
     }
+
+    mat-card-title {
+      white-space: nowrap;
+      margin-right: 18px;
+      margin-bottom: 0px;
+    }
   }
 }
 

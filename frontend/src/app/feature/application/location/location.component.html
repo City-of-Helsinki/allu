@@ -1,140 +1,142 @@
-<progressbar [application]="application"></progressbar>
-<application-type
-  [typeChangeDisabled]="application.id !== undefined"></application-type>
+<div class="main-content">
+  <progressbar [application]="application"></progressbar>
+  <application-type
+    [typeChangeDisabled]="application.id !== undefined"></application-type>
 
-<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="kindsSelected">
-  <div class="row">
-    <div class="col m12">
-      <allu-card>
-        <mat-card-title>Sijainti</mat-card-title>
-        <mat-card-content>
-          <div class="row">
-            <div class="mapcontainer">
-              <div class="map-overlay">
-                <searchbar [datesRequired]="true">Loading searchbar</searchbar>
-              </div>
-              <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
-                   [applicationId]="application.id"
-                   role="LOCATION"
-                   (editedItemCountChanged)="editedItemCountChanged($event)"></map>
-            </div>
-          </div>
-          <div class="row form-group">
-            <ng-container *ngIf="areas.length > 0">
-              <div *ngIf="editedItemCount > 0" class="col m6">
-                <div class="input-field-info-text">
-                  Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+  <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="kindsSelected">
+    <div class="row">
+      <div class="col m12">
+        <allu-card>
+          <mat-card-title>Sijainti</mat-card-title>
+          <mat-card-content>
+            <div class="row">
+              <div class="mapcontainer">
+                <div class="map-overlay">
+                  <searchbar [datesRequired]="true">Loading searchbar</searchbar>
                 </div>
+                <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
+                     [applicationId]="application.id"
+                     role="LOCATION"
+                     (editedItemCountChanged)="editedItemCountChanged($event)"></map>
               </div>
-              <div class="col m6" *ngIf="editedItemCount === 0">
-                <mat-form-field class="input-full-width">
-                  <mat-select placeholder="Alue" class="input-full-width" formControlName="area">
-                    <mat-option value="" selected>Ei tapahtuma-aluetta</mat-option>
-                    <mat-option *ngFor="let area of areas" [value]="area.id">{{area.name}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="col m2">
-                <div *ngIf="areaSections.length">
+            </div>
+            <div class="row form-group">
+              <ng-container *ngIf="areas.length > 0">
+                <div *ngIf="editedItemCount > 0" class="col m6">
+                  <div class="input-field-info-text">
+                    Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+                  </div>
+                </div>
+                <div class="col m6" *ngIf="editedItemCount === 0">
                   <mat-form-field class="input-full-width">
-                    <mat-select formControlName="sections" class="input-full-width" multiple placeholder="Lohko">
-                      <mat-option *ngFor="let section of areaSections" [value]="section.id">{{section.name}}
-                      </mat-option>
+                    <mat-select placeholder="Alue" class="input-full-width" formControlName="area">
+                      <mat-option value="" selected>Ei tapahtuma-aluetta</mat-option>
+                      <mat-option *ngFor="let area of areas" [value]="area.id">{{area.name}}</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
+                <div class="col m2">
+                  <div *ngIf="areaSections.length">
+                    <mat-form-field class="input-full-width">
+                      <mat-select formControlName="sections" class="input-full-width" multiple placeholder="Lohko">
+                        <mat-option *ngFor="let section of areaSections" [value]="section.id">{{section.name}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div class="row form-group">
+              <div class="col m2">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="number" formControlName="areaSize" placeholder="Alueen pinta-ala"/>
+                </mat-form-field>
               </div>
-            </ng-container>
-          </div>
-          <div class="row form-group">
-            <div class="col m2">
-              <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="areaSize" placeholder="Alueen pinta-ala"/>
-              </mat-form-field>
-            </div>
-            <div class="col m2">
-              <mat-form-field class="input-full-width">
-                <input matInput type="number" formControlName="areaOverride"
-                       placeholder="Käsittelijän syöttämä pinta-ala"/>
-              </mat-form-field>
-            </div>
-            <div class="col m2">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="cityDistrictName" placeholder="Kaupunginosa"/>
-              </mat-form-field>
-            </div>
-            <div class="col m2">
-              <mat-form-field class="input-full-width">
-                <mat-select formControlName="cityDistrictIdOverride" class="input-full-width"
-                            placeholder="Käsittelijän valitsema kaupunginosa">
-                  <mat-option value="" selected>-</mat-option>
-                  <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div class="col m2" *ngIf="showPaymentTariff">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" [value]="paymentTariff()"
-                [disabled]="true" [placeholder]="'location.paymentTariff' | translation"/>
-              </mat-form-field>
-            </div>
-            <div class="col m2" *ngIf="showPaymentTariff">
-              <mat-form-field class="input-full-width">
+              <div class="col m2">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="number" formControlName="areaOverride"
+                         placeholder="Käsittelijän syöttämä pinta-ala"/>
+                </mat-form-field>
+              </div>
+              <div class="col m2">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="cityDistrictName" placeholder="Kaupunginosa"/>
+                </mat-form-field>
+              </div>
+              <div class="col m2">
+                <mat-form-field class="input-full-width">
+                  <mat-select formControlName="cityDistrictIdOverride" class="input-full-width"
+                              placeholder="Käsittelijän valitsema kaupunginosa">
+                    <mat-option value="" selected>-</mat-option>
+                    <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col m2" *ngIf="showPaymentTariff">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" [value]="paymentTariff()"
+                         [disabled]="true" [placeholder]="'location.paymentTariff' | translation"/>
+                </mat-form-field>
+              </div>
+              <div class="col m2" *ngIf="showPaymentTariff">
+                <mat-form-field class="input-full-width">
                   <mat-select formControlName="paymentTariffOverride" [placeholder]="'location.paymentTariffOverride' | translation"
                               class="input-full-width">
                     <mat-option>-</mat-option>
                     <mat-option *ngFor="let tariff of paymentTariffs" [value]="tariff">{{'location.paymentTariffValue' | translation:{tariff: tariff} }}</mat-option>
                   </mat-select>
-              </mat-form-field>
+                </mat-form-field>
+              </div>
+              <div class="col m2" *ngIf="application.type==='AREA_RENTAL'">
+                <mat-checkbox formControlName="underpass" class="checkbox-matching-height">
+                  Altakuljettava
+                </mat-checkbox>
+              </div>
             </div>
-            <div class="col m2" *ngIf="application.type==='AREA_RENTAL'">
-              <mat-checkbox formControlName="underpass" class="checkbox-matching-height">
-                Altakuljettava
-              </mat-checkbox>
+            <div class="row" form-group>
+              <div class="col m10">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="info" placeholder="Lisätietoja paikasta"/>
+                </mat-form-field>
+              </div>
             </div>
-          </div>
-          <div class="row" form-group>
-            <div class="col m10">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="info" placeholder="Lisätietoja paikasta"/>
-              </mat-form-field>
+            <div class="row" form-group>
+              <div class="col m12" *ngIf="multipleLocations">
+                <button mat-raised-button type="button" color="primary" [disabled]="!locationForm.valid"
+                        (click)="storeLocation(locationForm.value)">TALLENNA
+                </button>
+                <button mat-raised-button type="button" color="primary" (click)="cancelArea()">PERUUTA</button>
+              </div>
             </div>
-          </div>
-          <div class="row" form-group>
-            <div class="col m12" *ngIf="multipleLocations">
-              <button mat-raised-button type="button" color="primary" [disabled]="!locationForm.valid"
-                      (click)="storeLocation(locationForm.value)">TALLENNA
-              </button>
-              <button mat-raised-button type="button" color="primary" (click)="cancelArea()">PERUUTA</button>
+            <div class="row" *ngIf="multipleLocations">
+              <div class="col m12">
+                <stored-locations></stored-locations>
+              </div>
             </div>
-          </div>
-          <div class="row" *ngIf="multipleLocations">
-            <div class="col m12">
-              <stored-locations></stored-locations>
-            </div>
-          </div>
-        </mat-card-content>
-      </allu-card>
+          </mat-card-content>
+        </allu-card>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col m12">
-      <allu-card>
-        <mat-card-title>Tallennus</mat-card-title>
-        <mat-card-content>
-          <div class="row">
-            <div class="col m2">
-              <a mat-raised-button type="button" color="primary" [routerLink]="cancelLink()">PERUUTA</a>
+    <div class="row">
+      <div class="col m12">
+        <allu-card>
+          <mat-card-title>Tallennus</mat-card-title>
+          <mat-card-content>
+            <div class="row">
+              <div class="col m2">
+                <a mat-raised-button type="button" color="primary" [routerLink]="cancelLink()">PERUUTA</a>
+              </div>
+              <div class="col m4 offset-m6">
+                <button mat-raised-button type="submit" color="primary" [disabled]="!submitAllowed">
+                  {{locationForm.value.id ? "YHTEENVETOON" : "PERUSTIEDOT"}}
+                </button>
+              </div>
             </div>
-            <div class="col m4 offset-m6">
-              <button mat-raised-button type="submit" color="primary" [disabled]="!submitAllowed">
-                {{locationForm.value.id ? "YHTEENVETOON" : "PERUSTIEDOT"}}
-              </button>
-            </div>
-          </div>
-        </mat-card-content>
-      </allu-card>
+          </mat-card-content>
+        </allu-card>
+      </div>
     </div>
-  </div>
-</form>
+  </form>
+</div>

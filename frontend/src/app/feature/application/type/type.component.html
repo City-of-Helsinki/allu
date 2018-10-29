@@ -1,5 +1,5 @@
-<div class="row">
-  <div class="col m6">
+<div fxLayout="row">
+  <div fxFlex>
     <allu-card>
       <mat-card-content *ngIf="pendingKind$ | async as pendingKind">
         <div fxLayout="row" fxLayoutGap=2px fxLayoutAlign="start center">
@@ -11,8 +11,8 @@
       <mat-card-title>{{'application.type.titleLong' | translation}}</mat-card-title>
       <mat-card-content>
         <form [formGroup]="form">
-          <div fxLayout="row wrap">
-            <div fxFlex="100%" class="type-select">
+          <div fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start center" class="inner-row">
+            <div fxFlex="0 1 calc(20% - 18px)" class="type-select">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="type" class="input-full-width" required
                             [placeholder]="'application.type.titleLong' | translation">
@@ -22,7 +22,7 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div fxFlex="100%" class="type-select" *ngIf="multipleKinds">
+            <div fxFlex="0 1 calc(20% - 18px)" class="type-select" *ngIf="multipleKinds">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="kinds" multiple required
                             class="input-full-width"
@@ -36,7 +36,7 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <div fxFlex="100%" class="type-select" *ngIf="!multipleKinds">
+            <div fxFlex="0 1 calc(20% - 18px)" class="type-select" *ngIf="!multipleKinds">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="kinds" required
                             class="input-full-width"
@@ -50,7 +50,7 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <div fxFlex="100%" class="type-select" *ngIf="showSpecifierSelection()">
+            <div fxFlex="0 1 calc(20% - 18px)" class="type-select" *ngIf="showSpecifierSelection()">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="specifiers" multiple
                             [placeholder]="'application.specifier.placeholder' | translation"
@@ -65,7 +65,7 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div fxFlex="100%" *ngIf="showDraftSelection">
+            <div fxFlex *ngIf="showDraftSelection">
               <mat-slide-toggle formControlName="draft">
                 {{'application.draft' | translation}}
               </mat-slide-toggle>
