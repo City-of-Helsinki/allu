@@ -18,23 +18,23 @@ import {map, take} from 'rxjs/internal/operators';
 export class ProjectApplicationsComponent implements OnInit {
   @Input() projectId: number;
 
-  applications: Observable<Application[]>;
-  applicationsLoading: Observable<boolean>;
-  applicationsInBasket: Observable<number>;
-  matchingApplications: Observable<Application[]>;
+  applications$: Observable<Application[]>;
+  applicationsLoading$: Observable<boolean>;
+  applicationsInBasket$: Observable<number>;
+  matchingApplications$: Observable<Application[]>;
 
   constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
 
   ngOnInit(): void {
     this.store.dispatch(new application.Load());
-    this.applications = this.store.select(fromProject.getApplications);
-    this.applicationsLoading = this.store.select(fromProject.getApplicationsLoading);
-    this.applicationsInBasket = this.store.select(fromProject.getApplicationCountInBasket);
+    this.applications$ = this.store.select(fromProject.getApplications);
+    this.applicationsLoading$ = this.store.select(fromProject.getApplicationsLoading);
+    this.applicationsInBasket$ = this.store.select(fromProject.getApplicationCountInBasket);
   }
 
   applicationSelectSearchChange(term: string): void {
     this.store.dispatch(new Search(term));
-    this.matchingApplications = this.store.select(fromProject.getMatchingApplications).pipe(
+    this.matchingApplications$ = this.store.select(fromProject.getMatchingApplications).pipe(
       map(applications => this.filterAlreadyIncludedApplications(applications))
     );
   }

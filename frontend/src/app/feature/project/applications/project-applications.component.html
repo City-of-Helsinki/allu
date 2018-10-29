@@ -3,7 +3,7 @@
     <h1>{{'project.applications.title' | translation}}</h1>
   </div>
   <div fxFlex="none">
-    <button *ngIf="applicationsInBasket | async as itemCount"
+    <button *ngIf="applicationsInBasket$ | async as itemCount"
             mat-raised-button color="primary"
             (click)="addFromBasket()">
       <mat-icon svgIcon="bring_from_basket"></mat-icon>
@@ -13,7 +13,7 @@
   </div>
   <div fxFlex="none">
     <application-select
-      [matchingApplications]="matchingApplications"
+      [matchingApplications]="matchingApplications$ | async"
       (searchChange)="applicationSelectSearchChange($event)"
       (selectedChange)="applicationSelected($event)">
     </application-select>
@@ -21,8 +21,8 @@
 </div>
 
 <project-application-list
-  [applications]="applications | async"
-  [loading]="applicationsLoading | async"
+  [applications]="applications$ | async"
+  [loading]="applicationsLoading$ | async"
   [controls]="true"
   (applicationRemove)="removeApplication($event)">
 </project-application-list>
