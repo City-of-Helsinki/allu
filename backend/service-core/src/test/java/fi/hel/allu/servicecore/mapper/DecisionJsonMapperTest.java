@@ -1,10 +1,14 @@
 package fi.hel.allu.servicecore.mapper;
 
+import fi.hel.allu.pdf.domain.DecisionJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class DecisionJsonMapperTest {
 
@@ -29,4 +33,15 @@ public class DecisionJsonMapperTest {
     Assert.assertEquals("", decisionMapper.postalAddress(postalAddressJson));
   }
 
+  @Test
+  public void nonBreakingSpaces() {
+    final DecisionJson decision = new DecisionJson();
+    decision.setEventDescription("Event\u00A0Description");
+    final List<String> additionalConditions = Arrays.asList("Condition\u00A01", "Condition\u00A02", null);
+    decision.setAdditionalConditions(additionalConditions);
+    decisionMapper.convertNonBreakingSpacesToSpaces(decision);
+    Assert.assertEquals("Event Description", decision.getEventDescription());
+    final String[] expected = {"Condition 1", "Condition 2", null};
+    Assert.assertArrayEquals(expected, decision.getAdditionalConditions().toArray());
+  }
 }

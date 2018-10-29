@@ -32,6 +32,9 @@ import fi.hel.allu.pdf.domain.KindWithSpecifiers;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.*;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 @Component
 public class DecisionJsonMapper {
@@ -185,6 +188,7 @@ public class DecisionJsonMapper {
     fillCargeBasisInfo(decisionJson, application);
     decisionJson.setIdentificationNumber(application.getIdentificationNumber());
     decisionJson.setReplacingDecision(application.getReplacesApplicationId() != null);
+    convertNonBreakingSpacesToSpaces(decisionJson);
     return decisionJson;
   }
 
@@ -769,5 +773,55 @@ public class DecisionJsonMapper {
     return metaService.findTranslation("ApplicationSpecifier", specifier.name());
   }
 
+  void convertNonBreakingSpacesToSpaces(DecisionJson decision) {
+    final Field[] fields = decision.getClass().getDeclaredFields();
+    for (Field field : fields) {
+      if (field.getType().equals(String.class)) {
+        try {
+          final boolean accessible = field.isAccessible();
+          field.setAccessible(true);
+          String value = (String)field.get(decision);
+          value = convertNonBreakingSpaceToSpace(value);
+          field.set(decision, value);
+          field.setAccessible(accessible);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+          logger.error("Error while converting non-breaking spaces", e);
+        }
+      } else if (field.getType().equals(List.class)) {
+        final Type genericFieldType = field.getGenericType();
+        if (genericFieldType instanceof ParameterizedType){
+          final ParameterizedType aType = (ParameterizedType)genericFieldType;
+          final Type[] fieldArgTypes = aType.getActualTypeArguments();
+          if (fieldArgTypes.length == 1) {
+            final Class fieldArgClass = (Class)fieldArgTypes[0];
+            if (fieldArgClass.equals(String.class)) {
+              try {
+                final boolean accessible = field.isAccessible();
+                field.setAccessible(true);
+                final List<String> values = (List<String>)field.get(decision);
+                if (values != null) {
+                  final List<String> newValues = new ArrayList<>();
+                  for (String value : values) {
+                      newValues.add(convertNonBreakingSpaceToSpace(value));
+                  }
+                  field.set(decision, newValues);
+                  field.setAccessible(accessible);
+                }
+              } catch (IllegalArgumentException | IllegalAccessException e) {
+                logger.error("Error while converting non-breaking spaces", e);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
+  private String convertNonBreakingSpaceToSpace(String value) {
+    if (value != null) {
+      return value.replace('\u00A0',' ');
+    } else {
+      return null;
+    }
+  }
 }
