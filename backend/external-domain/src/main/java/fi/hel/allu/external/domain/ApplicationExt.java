@@ -95,7 +95,7 @@ public abstract class ApplicationExt {
       "Application geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a> with following limitations:"
       +"<ul>"
       +"<li>Feature / FeatureCollection is currently not supported, geometry should be given as <a href=\"https://tools.ietf.org/html/rfc7946#section-3.1.8\">GeometryCollection</a>.</li>"
-     + "<li>Only named CRS is supported, the given name must either be of the form: urn:ogc:def:EPSG:x.y:4326 (x.y: the version of the EPSG) or of the form EPSG:4326</li>"
+     + "<li>Only named CRS is supported, the given name must either be of the form: urn:ogc:def:crs:EPSG:x.y:4326 (x.y: the version of the EPSG) or of the form EPSG:4326</li>"
       +"</ul>",
   required = true)
   public Geometry getGeometry() {
