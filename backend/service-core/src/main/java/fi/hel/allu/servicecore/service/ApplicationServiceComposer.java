@@ -254,6 +254,7 @@ public class ApplicationServiceComposer {
     switch (application.getTargetState()) {
       case OPERATIONAL_CONDITION:
         reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION);
+        applicationService.removeTag(applicationId, ApplicationTagType.OPERATIONAL_CONDITION_ACCEPTED);
         statusToReturn = StatusType.DECISION;
         break;
       case FINISHED:
