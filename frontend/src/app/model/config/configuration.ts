@@ -5,5 +5,6 @@ export class Configuration {
     public id: number,
     public type: ConfigurationType,
     public key: string,
-    public value: string) {}
+    public value: string,
+    public editable: boolean) {}
 }

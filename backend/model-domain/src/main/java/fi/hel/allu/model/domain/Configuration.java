@@ -61,4 +61,8 @@ public class Configuration {
   public void setReadonly(boolean readonly) {
     this.readonly = readonly;
   }
+
+  public boolean isEditable() {
+    return !readonly;
+  }
 }

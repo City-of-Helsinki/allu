@@ -19,7 +19,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.configurations$ = this.store.pipe(select(fromRoot.getAllConfigurations));
+    this.configurations$ = this.store.pipe(select(fromRoot.getEditableConfigurations));
     this.users$ = this.store.pipe(select(fromRoot.getActiveUsers));
   }
 }

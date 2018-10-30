@@ -6,6 +6,7 @@ import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/sto
 import {Some} from '@util/option';
 import {CodeSetTypeMap} from '@model/codeset/codeset';
 import {User} from '@model/user/user';
+import {Configuration} from '@model/config/configuration';
 
 export interface State {
   cityDistricts: fromCityDistricts.State;
@@ -65,6 +66,11 @@ export const {
   selectAll: getAllConfigurations,
   selectTotal: getConfigurationsTotal
 } = fromConfigurations.adapter.getSelectors(getConfigurationState);
+
+export const getEditableConfigurations = createSelector(
+  getAllConfigurations,
+  (configurations: Configuration[]) => configurations.filter(c => c.editable)
+);
 
 export const getUsersState = createFeatureSelector<fromUsers.State>('users');
 
