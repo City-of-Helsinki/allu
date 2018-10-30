@@ -46,7 +46,8 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userService.getActiveUsers().subscribe(users => this.owners = users);
+    this.userService.getActiveUsers().subscribe(
+        users => this.owners = users.filter(o => ArrayUtil.anyMatch(this.editRoles, o.roles)));
 
     this.itemStore.changes.pipe(
       map(state => state.selectedItems),
@@ -81,7 +82,6 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       data: {
         type: 'OWNER',
         users: this.owners
-            .filter(o => ArrayUtil.anyMatch(this.editRoles, o.roles))
             .filter(o => applicationTypes.every(lItem => o.allowedApplicationTypes.indexOf(lItem) >= 0))
       }
     };
