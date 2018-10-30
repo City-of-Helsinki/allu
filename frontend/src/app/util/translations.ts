@@ -506,6 +506,9 @@ export const translations = {
     },
     dateField: {
       reportedDate: 'Päivä',
+      winterTimeOperation: 'Toiminnallinen kunto',
+      workFinished: 'Työ valmis',
+      validity: 'Voimassaolon aloitus',
       reportedStartDate: 'Voimassaolon aloitus',
       reportedEndDate: 'Voimassaolon lopetus',
       reportingDate: 'Ilmoituspäivä'

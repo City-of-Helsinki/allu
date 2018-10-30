@@ -9,7 +9,7 @@
           <div fxFlex="calc(50% - 18px)">
             <mat-form-field class="input-full-width">
               <input matInput type="text" formControlName="reportedDate" required
-                     [placeholder]="'dateReporting.dateField.reportedDate' | translation"
+                     [placeholder]="['dateReporting.dateField', data.dateType] | translation"
                      [matDatepicker]="reportedDatePicker"
                      [max]="maxReportedDate"/>
               <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"></mat-datepicker-toggle>
