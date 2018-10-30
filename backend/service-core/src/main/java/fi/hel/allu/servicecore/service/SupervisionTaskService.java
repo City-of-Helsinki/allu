@@ -215,4 +215,9 @@ public class SupervisionTaskService {
     return null;
   }
 
+
+  public boolean hasSupervisionTask(Integer applicationId, SupervisionTaskType taskType) {
+    return findByApplicationIdAndType(applicationId, taskType) != null;
+  }
+
 }
