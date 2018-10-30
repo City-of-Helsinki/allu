@@ -1,11 +1,16 @@
-$baseHeight: 9.4rem;
+$baseHeight: 11.4rem;
 
 .col.contact-card {
   padding-bottom: 5px;
+  padding-left: 18px;
 }
 
 .col.contact-card:not(:first-of-type) {
   padding-top: 5px;
+}
+
+.contact-card:first-of-type allu-card {
+  min-height: 17rem;
 }
 
 @mixin contact-card-height($typeHeight, $additionalHeight) {
