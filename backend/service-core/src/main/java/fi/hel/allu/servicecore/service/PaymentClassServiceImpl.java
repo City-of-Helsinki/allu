@@ -4,7 +4,10 @@ import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.service.geocode.PaymentClassXml;
-import fi.hel.allu.servicecore.util.WfsRestTemplate;
+import fi.hel.allu.servicecore.util.AsyncWfsRestTemplate;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryCollection;
+import org.geolatte.geom.GeometryType;
 import org.geolatte.geom.PointCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +18,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
 
 @Profile("!DEV")
 @Service
@@ -51,47 +58,86 @@ public class PaymentClassServiceImpl implements PaymentClassService {
 
   private static final Logger logger = LoggerFactory.getLogger(PaymentClassServiceImpl.class);
   private final ApplicationProperties applicationProperties;
-  private final WfsRestTemplate restTemplate;
+  private final AsyncWfsRestTemplate restTemplate;
 
   @Autowired
-  public PaymentClassServiceImpl(ApplicationProperties applicationProperties, WfsRestTemplate restTemplate) {
+  public PaymentClassServiceImpl(ApplicationProperties applicationProperties, AsyncWfsRestTemplate restTemplate) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
-    this.restTemplate.setDefaultResponseContentType("text/xml; subtype=\"gml/2.1.2\"");
   }
 
   @Override
   public String getPaymentClass(LocationJson location) {
-    final HttpHeaders headers = WfsUtil.createAuthHeaders(
-        applicationProperties.getPaymentClassUsername(),
-        applicationProperties.getPaymentClassPassword());
-    final String request = REQUEST.replaceFirst(COORDINATES, getCoordinates(location));
-    final HttpEntity<String> requestEntity = new HttpEntity<>(request, headers);
-
+    final List<String> coordinateArray = getCoordinates(location);
+    final List<String> requests = coordinateArray.stream()
+        .map(c -> REQUEST.replaceFirst(COORDINATES, c)).collect(Collectors.toList());
 
     try {
-      final ResponseEntity<String> response = restTemplate.exchange(
-          applicationProperties.getPaymentClassUrl(),
-          HttpMethod.POST,
-          requestEntity,
-          String.class);
-      final PaymentClassXml paymentClass = WfsUtil.unmarshalWfs(response.getBody(), PaymentClassXml.class);
-      final List<PaymentClassXml.FeatureMember> paymentClasses = paymentClass.featureMember.stream()
-          .sorted(Comparator.comparing(f -> f.paymentClass.getPaymentClass()))
-          .collect(Collectors.toList());
-      if (paymentClasses.isEmpty()) {
-        return "4a"; // Payment tariff undefined -> default to lowest
-      } else {
-        return paymentClasses.get(0).paymentClass.getPaymentClass();
-      }
+      final List<ListenableFuture<ResponseEntity<String>>> responseFutures = sendRequests(requests);
+      final List<String> responses = collectResponses(responseFutures);
+      return parsePaymentClass(responses);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       throw new RuntimeException("paymentClass.error");
     }
   }
 
-  private String getCoordinates(LocationJson location) {
-    final PointCollection points = location.getGeometry().getPoints();
+  private List<ListenableFuture<ResponseEntity<String>>> sendRequests(List<String> requests) {
+    final HttpHeaders headers = WfsUtil.createAuthHeaders(
+        applicationProperties.getPaymentClassUsername(),
+        applicationProperties.getPaymentClassPassword());
+    final List<ListenableFuture<ResponseEntity<String>>> responseFutures = new ArrayList<>();
+    requests.stream().map((request) -> new HttpEntity<>(request, headers))
+      .map((requestEntity) -> restTemplate.exchange(
+          applicationProperties.getPaymentClassUrl(),
+          HttpMethod.POST,
+          requestEntity,
+          String.class)).forEachOrdered(response -> responseFutures.add(response));
+    return responseFutures;
+  }
+
+  private List<String> collectResponses(List<ListenableFuture<ResponseEntity<String>>> responses)
+      throws InterruptedException, ExecutionException {
+    final List<String> listOfResponses = new ArrayList<>();
+    for (ListenableFuture<ResponseEntity<String>> future: responses) {
+      final String respBody = future.get().getBody();
+      listOfResponses.add(respBody);
+    }
+    return listOfResponses;
+  }
+
+  private String parsePaymentClass(List<String> responses) {
+    String paymentClass = "4a"; // If payment tariff undefined -> default to lowest
+    for (String response : responses) {
+      final PaymentClassXml paymentClassXml = WfsUtil.unmarshalWfs(response, PaymentClassXml.class);
+      final List<PaymentClassXml.FeatureMember> paymentClasses = paymentClassXml.featureMember.stream()
+          .sorted(Comparator.comparing(f -> f.paymentClass.getPaymentClass()))
+          .collect(Collectors.toList());
+      if (!paymentClasses.isEmpty()) {
+        final String pc = paymentClasses.get(0).paymentClass.getPaymentClass();
+        if (pc.compareTo(paymentClass) < 0) {
+          paymentClass = pc;
+        }
+      }
+    }
+    return paymentClass;
+  }
+
+  private List<String> getCoordinates(LocationJson location) {
+    if (location.getGeometry().getGeometryType() == GeometryType.GEOMETRY_COLLECTION) {
+      final GeometryCollection gc = (GeometryCollection)location.getGeometry();
+      final List<String> coordinateArray = new ArrayList<>();
+      for (int i = 0; i < gc.getNumGeometries(); i++) {
+        coordinateArray.add(getCoordinates(gc.getGeometryN(i)));
+      }
+      return coordinateArray;
+    } else {
+      return Arrays.asList(getCoordinates(location.getGeometry()));
+    }
+  }
+
+  private String getCoordinates(Geometry geometry) {
+    final PointCollection points = geometry.getPoints();
     final StringBuilder coordinatesBuilder = new StringBuilder();
     for (int i = 0; i < points.size(); i++) {
       if (coordinatesBuilder.length() > 0) {
