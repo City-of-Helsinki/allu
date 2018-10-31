@@ -20,6 +20,7 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 @Service
 public class ExcavationAnnouncementService {
@@ -40,6 +41,9 @@ public class ExcavationAnnouncementService {
 
   @Autowired
   private LocationService locationService;
+
+  @Autowired
+  private ApplicationHistoryService applicationHistoryService;
 
   public ApplicationJson reportCustomerOperationalCondition(Integer id, ApplicationDateReport dateReport) {
     Application application = applicationService.setCustomerOperationalConditionDates(id, dateReport);
@@ -62,24 +66,29 @@ public class ExcavationAnnouncementService {
   }
 
   public ApplicationJson reportCustomerValidity(Integer id, ApplicationDateReport dateReport) {
-    Application application = applicationService.setCustomerValidityDates(id, dateReport);
+    final Application oldApplication = applicationService.findApplicationById(id);
+    final ApplicationJson oldApplicationJson = applicationJsonService.getFullyPopulatedApplication(oldApplication);
+
+    final Application newApplication = applicationService.setCustomerValidityDates(id, dateReport);
+    final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
+
     applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.DATE_CHANGE, null));
-    return applicationJsonService.getFullyPopulatedApplication(application);
+    applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+
+    return newApplicationJson;
   }
 
   public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate) {
-    Application application = applicationService.findApplicationById(id);
     applicationService.setOperationalConditionDate(id, operationalConditionDate);
-    application = applicationService.setTargetState(id, StatusType.OPERATIONAL_CONDITION);
+    Application application = applicationService.setTargetState(id, StatusType.OPERATIONAL_CONDITION);
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
   public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate) {
-    Application application = applicationService.findApplicationById(id);
     applicationService.setWorkFinishedDate(id, workFinishedDate);
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.WARRANTY,
         ExcavationAnnouncementDates.warrantySupervisionDate(workFinishedDate));
-    application = applicationService.setTargetState(id, StatusType.FINISHED);
+    Application application = applicationService.setTargetState(id, StatusType.FINISHED);
     return applicationJsonService.getFullyPopulatedApplication(application);
   }
 
