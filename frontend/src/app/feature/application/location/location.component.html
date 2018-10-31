@@ -4,8 +4,8 @@
     [typeChangeDisabled]="application.id !== undefined"></application-type>
 
   <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="kindsSelected">
-    <div class="row">
-      <div class="col m12">
+    <div fxLayout="row">
+      <div fxFlex>
         <allu-card>
           <mat-card-title>Sijainti</mat-card-title>
           <mat-card-content>
@@ -119,8 +119,8 @@
         </allu-card>
       </div>
     </div>
-    <div class="row">
-      <div class="col m12">
+    <div fxLayout="row">
+      <div fxFlex>
         <allu-card>
           <mat-card-title>Tallennus</mat-card-title>
           <mat-card-content>

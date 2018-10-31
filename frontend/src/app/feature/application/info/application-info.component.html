@@ -7,6 +7,7 @@
 <application-type typeChangeDisabled="true"
                   [showDraftSelection]="showDraftSelection"
                   [readonly]="readonly"></application-type>
+
 <div [ngSwitch]="type">
   <event *ngSwitchCase="'EVENT'" (formDirty)="formDirtyChanged($event)"></event>
   <short-term-rental *ngSwitchCase="'SHORT_TERM_RENTAL'" (formDirty)="formDirtyChanged($event)"></short-term-rental>

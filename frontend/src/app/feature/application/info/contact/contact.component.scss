@@ -1,8 +1,7 @@
 $baseHeight: 11.4rem;
 
 .col.contact-card {
-  padding-bottom: 5px;
-  padding-left: 18px;
+  padding: 0 9px 5px 9px;
 }
 
 .col.contact-card:not(:first-of-type) {
@@ -42,4 +41,9 @@ $baseHeight: 11.4rem;
 .col.contact-card:last-of-type:not(:first-of-type),
 .col.contact-card:nth-last-of-type(2):nth-of-type(even) {
   padding-bottom: 0;
+}
+
+/* Last card in the row should not have right padding */
+.col.contact-card:nth-of-type(odd) {
+  padding-right: 0px;
 }
