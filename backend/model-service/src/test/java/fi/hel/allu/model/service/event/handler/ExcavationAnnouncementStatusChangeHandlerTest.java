@@ -15,6 +15,7 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.service.*;
@@ -49,11 +50,14 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   private WinterTimeService winterTimeService;
   @Mock
   private WinterTime winterTime;
+  @Mock
+  private HistoryDao historyDao;
+
 
   @Before
   public void setup() {
     statusChangeHandler = new ExcavationAnnouncementStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService, invoiceService,
+        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao, invoiceService,
         winterTimeService);
     createApplication();
     when(winterTimeService.getWinterTime()).thenReturn(winterTime);

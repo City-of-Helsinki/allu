@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.ChargeBasisService;
@@ -17,13 +18,13 @@ public class TrafficArrangementStatusChangeHandler extends ApplicationStatusChan
 
   public TrafficArrangementStatusChangeHandler(ApplicationService applicationService,
       SupervisionTaskService supervisionTaskService, LocationService locationService,
-      ApplicationDao applicationDao, ChargeBasisService chargeBasisService) {
-    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService);
+      ApplicationDao applicationDao, ChargeBasisService chargeBasisService, HistoryDao historyDao) {
+    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
   }
 
   @Override
   protected void handleDecisionStatus(Application application, Integer userId) {
-    cancelDanglingSupervisionTasks(application);
+    handleReplacedApplicationOnDecision(application, userId);
     clearTargetState(application);
     createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId, getNextDay(application.getEndTime()));
   }

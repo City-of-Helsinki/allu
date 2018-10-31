@@ -1,15 +1,19 @@
 package fi.hel.allu.model.service.event.handler;
 
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.service.ApplicationService;
@@ -41,11 +45,13 @@ public class ApplicationStatusChangeHandlerTest {
   private ApplicationDao applicationDao;
   @Mock
   private ChargeBasisService chargeBasisService;
+  @Mock
+  private HistoryDao historyDao;
 
   @Before
   public void setup() {
     statusChangeHandler = new ApplicationStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService);
+        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
     application = createApplication();
   }
 
@@ -65,6 +71,16 @@ public class ApplicationStatusChangeHandlerTest {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(supervisionTaskService, times(1)).cancelOpenTasksOfApplication(replacedApplicationId);
   }
+
+  @Test
+  public void onDecisionUpdatesReplacedApplicationStatus() {
+    Integer replacedApplicationId = Integer.valueOf(999);
+    application.setReplacesApplicationId(replacedApplicationId);
+    application.setType(ApplicationType.EVENT);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    Mockito.verify(applicationDao).updateStatus(replacedApplicationId, StatusType.REPLACED);
+  }
+
 
   private Application createApplication() {
     application = new Application();

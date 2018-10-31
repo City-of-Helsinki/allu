@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.ChargeBasisService;
@@ -32,16 +35,21 @@ public class ApplicationStatusChangeHandler {
   private final LocationService locationService;
   private final ApplicationDao applicationDao;
   private final ChargeBasisService chargeBasisService;
+  private final HistoryDao historyDao;
+
 
   @Autowired
   public ApplicationStatusChangeHandler(ApplicationService applicationService,
       SupervisionTaskService supervisionTaskService, LocationService locationService,
-      ApplicationDao applicationDao, ChargeBasisService chargeBasisService) {
+      ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
+      HistoryDao historyDao) {
     this.applicationService = applicationService;
     this.supervisionTaskService = supervisionTaskService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
     this.chargeBasisService = chargeBasisService;
+    this.historyDao = historyDao;
+
   }
 
   public void handleStatusChange(ApplicationStatusChangeEvent statusChangeEvent) {
@@ -69,7 +77,7 @@ public class ApplicationStatusChangeHandler {
   }
 
   protected void handleDecisionStatus(Application application, Integer userId) {
-    cancelDanglingSupervisionTasks(application);
+    handleReplacedApplicationOnDecision(application, userId);
     // Clear target state on decision
     clearTargetState(application);
     finishInvoicing(application);
@@ -101,19 +109,34 @@ public class ApplicationStatusChangeHandler {
     supervisionTaskService.cancelOpenTasksOfApplication(application.getId());
   }
 
+  protected void handleReplacedApplicationOnDecision(Application application, Integer userId) {
+    if (application.getReplacesApplicationId() != null) {
+      changeReplacedApplicationStatus(application.getReplacesApplicationId(), userId);
+      cancelDanglingSupervisionTasks(application.getReplacesApplicationId());
+    }
+  }
+
   /**
    * Cancels open supervision tasks from applications replaced by
    * this application.
    */
-  protected void cancelDanglingSupervisionTasks(Application application) {
-    if (application.getReplacesApplicationId() != null) {
-      supervisionTaskService.cancelOpenTasksOfApplication(application.getReplacesApplicationId());
-    }
+  private void cancelDanglingSupervisionTasks(Integer replacedApplicationId) {
+    supervisionTaskService.cancelOpenTasksOfApplication(replacedApplicationId);
   }
+
+  private void changeReplacedApplicationStatus(Integer replacedApplicationId, Integer userId) {
+    applicationDao.updateStatus(replacedApplicationId, StatusType.REPLACED);
+    ChangeHistoryItem change = new ChangeHistoryItem();
+    change.setChangeType(ChangeType.STATUS_CHANGED);
+    change.setChangeSpecifier(StatusType.REPLACED.name());
+    change.setChangeTime(ZonedDateTime.now());
+    change.setUserId(userId);
+    historyDao.addApplicationChange(replacedApplicationId, change);
+  }
+
 
   protected void lockChargeBasisEntries(Integer applicationId) {
     chargeBasisService.lockEntries(applicationId);
-
   }
 
   protected void createSupervisionTask(Application application, SupervisionTaskType type, Integer userId, ZonedDateTime plannedTime) {

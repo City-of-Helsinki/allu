@@ -18,6 +18,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
@@ -53,6 +54,9 @@ public class PlacementContractStatusChangeHandlerTest {
   private ApplicationDao applicationDao;
   @Mock
   private ChargeBasisService chargeBasisService;
+  @Mock
+  private HistoryDao historyDao;
+
 
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
@@ -62,7 +66,7 @@ public class PlacementContractStatusChangeHandlerTest {
   @Before
   public void setup() {
     statusChangeHandler = new PlacementContractStatusChangeHandler(applicationService, supervisionTaskService,
-        locationService, applicationDao, chargeBasisService, decisionDao);
+        locationService, applicationDao, chargeBasisService, historyDao, decisionDao);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);

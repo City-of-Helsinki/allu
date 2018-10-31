@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
@@ -24,15 +25,16 @@ public class PlacementContractStatusChangeHandler extends ApplicationStatusChang
   private final DecisionDao decisionDao;
 
   @Autowired
-  public PlacementContractStatusChangeHandler(ApplicationService applicationService, SupervisionTaskService supervisionTaskService,
-      LocationService locationService, ApplicationDao applicationDao, ChargeBasisService chargeBasisService, DecisionDao decisionDao) {
-    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService);
+  public PlacementContractStatusChangeHandler(ApplicationService applicationService,
+      SupervisionTaskService supervisionTaskService, LocationService locationService, ApplicationDao applicationDao,
+      ChargeBasisService chargeBasisService, HistoryDao historyDao, DecisionDao decisionDao) {
+    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
     this.decisionDao = decisionDao;
   }
 
   @Override
   protected void handleDecisionStatus(Application application, Integer userId) {
-    cancelDanglingSupervisionTasks(application);
+    handleReplacedApplicationOnDecision(application, userId);
     clearTargetState(application);
     finishInvoicing(application);
     PlacementContract pc = (PlacementContract)application.getExtension();

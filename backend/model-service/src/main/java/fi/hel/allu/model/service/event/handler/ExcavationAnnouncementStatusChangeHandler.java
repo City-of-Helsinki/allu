@@ -9,6 +9,7 @@ import fi.hel.allu.common.util.ExcavationAnnouncementDates;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.service.*;
@@ -21,15 +22,16 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
 
   public ExcavationAnnouncementStatusChangeHandler(ApplicationService applicationService,
       SupervisionTaskService supervisionTaskService, LocationService locationService, ApplicationDao applicationDao,
-      ChargeBasisService chargeBasisService, InvoiceService invoiceService, WinterTimeService winterTimeService) {
-    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService);
+      ChargeBasisService chargeBasisService, HistoryDao historyDao, InvoiceService invoiceService,
+      WinterTimeService winterTimeService) {
+    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
     this.invoiceService = invoiceService;
     this.winterTimeService = winterTimeService;
   }
 
   @Override
   protected void handleDecisionStatus(Application application, Integer userId) {
-    cancelDanglingSupervisionTasks(application);
+    handleReplacedApplicationOnDecision(application, userId);
     clearTargetState(application);
 
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();

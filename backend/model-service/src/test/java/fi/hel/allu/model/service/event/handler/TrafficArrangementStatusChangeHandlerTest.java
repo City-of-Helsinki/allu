@@ -19,6 +19,7 @@ import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.SupervisionTask;
@@ -55,6 +56,9 @@ public class TrafficArrangementStatusChangeHandlerTest {
   private InvoiceService invoiceService;
   @Mock
   private WinterTimeService winterTimeService;
+  @Mock
+  private HistoryDao historyDao;
+
 
   @Captor
   ArgumentCaptor<SupervisionTask> supervisionTaskCaptor;
@@ -65,7 +69,7 @@ public class TrafficArrangementStatusChangeHandlerTest {
     supervisor.setId(228);
     createApplicationWithLocation();
     statusChangeHandler = new TrafficArrangementStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService);
+        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
     when(locationService.findSupervisionTaskOwner(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
         location.getCityDistrictId())).thenReturn(Optional.of(supervisor));
   }

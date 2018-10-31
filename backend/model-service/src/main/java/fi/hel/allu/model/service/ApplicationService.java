@@ -244,7 +244,6 @@ public class ApplicationService {
         // the fall-through is intentional here
       case REJECTED:
         final Application application = findById(applicationId);
-        changeReplacedApplicationStatus(application);
         return applicationDao.updateDecision(applicationId, statusType, userId, application.getHandler());
       case DECISIONMAKING:
         return applicationDao.startDecisionMaking(applicationId, statusType, getHandlerId(applicationId, userId));
@@ -410,13 +409,6 @@ public class ApplicationService {
         .orElseThrow(() -> new NoSuchEntityException("application.customer.notFound"));
     final boolean sapIdPending = StringUtils.isEmpty(invoicee.getSapCustomerNumber());
     return sapIdPending;
-  }
-
-  private void changeReplacedApplicationStatus(Application application) {
-    final Integer replacedAppId = application.getReplacesApplicationId();
-    if (replacedAppId != null) {
-      applicationDao.updateStatus(replacedAppId, StatusType.REPLACED);
-    }
   }
 
   private void verifyApplicationIsUpdatable(Integer id) throws IllegalOperationException {

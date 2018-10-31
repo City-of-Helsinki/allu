@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableReport;
 import fi.hel.allu.model.service.ApplicationService;
@@ -19,13 +20,13 @@ public class CableReportStatusChangeHandler extends ApplicationStatusChangeHandl
   @Autowired
   public CableReportStatusChangeHandler(ApplicationService applicationService,
       SupervisionTaskService supervisionTaskService, LocationService locationService,
-      ApplicationDao applicationDao, ChargeBasisService chargeBasisService) {
-    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService);
+      ApplicationDao applicationDao, ChargeBasisService chargeBasisService, HistoryDao historyDao) {
+    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
   }
 
   @Override
   protected void handleDecisionStatus(Application application, Integer userId) {
-    cancelDanglingSupervisionTasks(application);
+    handleReplacedApplicationOnDecision(application, userId);
     clearTargetState(application);
     // Validity time of cable report to decision time + one month
     ZonedDateTime validityTime = ZonedDateTime.now().plusMonths(1);
