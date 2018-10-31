@@ -1,13 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {Application} from '../../../../model/application/application';
-import {EventForm} from './event.form';
-import {ApplicationType} from '../../../../model/application/type/application-type';
-import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {Event} from '../../../../model/application/event/event';
-import {ApplicationKind} from '../../../../model/application/type/application-kind';
-import {EventNature} from '../../../../model/application/event/event-nature';
-import {TimeUtil} from '../../../../util/time.util';
-import {ComplexValidator} from '../../../../util/complex-validator';
+import {Application} from '@model/application/application';
+import {eventDraft, EventForm, eventForm, fromEvent, outdoorEventDraft, outdoorEventForm, toEvent} from './event.form';
+import {ApplicationType} from '@model/application/type/application-type';
+import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
+import {Event} from '@model/application/event/event';
+import {ApplicationKind} from '@model/application/type/application-kind';
+import {EventNature} from '@model/application/event/event-nature';
+import {TimeUtil} from '@util/time.util';
+import {ComplexValidator} from '@util/complex-validator';
+import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'event',
@@ -40,38 +41,46 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   }
 
   protected initForm() {
+    super.initForm();
     const snapshot = this.applicationStore.snapshot;
 
-    if (snapshot.application.kind === ApplicationKind.OUTDOOREVENT) {
-      this.completeFormStructure = EventForm.outdoorEventForm(this.fb);
-      this.draftFormStructure = EventForm.outdoorEventDraft(this.fb);
-    } else {
-      this.completeFormStructure = EventForm.eventForm(this.fb);
-      this.draftFormStructure = EventForm.eventDraft(this.fb);
-    }
+    this.initFormStructures(snapshot.application);
 
-    this.applicationForm = snapshot.draft
-      ? this.fb.group(this.draftFormStructure)
-      : this.fb.group(this.completeFormStructure);
-
+    const extensionForm = this.fb.group(this.getExtensionFormStructure(snapshot.draft));
+    FormUtil.addControls(this.applicationForm, extensionForm.controls);
     this.setStructureTimeValidation();
+  }
+
+  private initFormStructures(application: Application) {
+    if (application.kind === ApplicationKind.OUTDOOREVENT) {
+      this.completeFormStructure = outdoorEventForm(this.fb);
+      this.draftFormStructure = outdoorEventDraft(this.fb);
+    } else {
+      this.completeFormStructure = eventForm(this.fb);
+      this.draftFormStructure = eventDraft(this.fb);
+    }
+  }
+
+  private getExtensionFormStructure(draft: boolean): ({ [key: string]: any; }) {
+    return draft
+      ? this.draftFormStructure
+      : this.completeFormStructure;
   }
 
   protected onApplicationChange(application: Application): void {
     super.onApplicationChange(application);
     const event = this.event(application);
-    this.applicationForm.patchValue(EventForm.fromEvent(application, event));
+    this.applicationForm.patchValue(fromEvent(application, event));
   }
 
   protected update(form: EventForm): Application {
     const application = super.update(form);
-    application.name = form.name;
     application.startTime = TimeUtil.toStartDate(form.structureTimes.startTime || form.eventTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.structureTimes.endTime || form.eventTimes.endTime);
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;
-    application.type = ApplicationType[ApplicationType.EVENT];
-    application.extension = EventForm.toEvent(form, ApplicationType.EVENT);
+    application.type = ApplicationType.EVENT;
+    application.extension = toEvent(form, ApplicationType.EVENT);
     return application;
   }
 

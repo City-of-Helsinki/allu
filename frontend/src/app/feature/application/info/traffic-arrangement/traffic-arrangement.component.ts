@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {Validators} from '@angular/forms';
-import {Application} from '../../../../model/application/application';
-import {ComplexValidator} from '../../../../util/complex-validator';
-import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
-import {TrafficArrangementForm} from './traffic-arrangement.form';
-import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {TimeUtil} from '../../../../util/time.util';
-import {ApplicationStatus, isSameOrAfter} from '../../../../model/application/application-status';
+import {Application} from '@model/application/application';
+import {ComplexValidator} from '@util/complex-validator';
+import {TrafficArrangement} from '@model/application/traffic-arrangement/traffic-arrangement';
+import {from, to, TrafficArrangementForm} from './traffic-arrangement.form';
+import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
+import {TimeUtil} from '@util/time.util';
+import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
+import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'traffic-arrangement',
@@ -19,7 +20,8 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
   showImpedimentType = false;
 
   protected initForm() {
-    this.applicationForm = this.fb.group({
+    super.initForm();
+    const extensionForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
@@ -29,14 +31,14 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
       trafficArrangementImpedimentType: ['', Validators.required],
       workPurpose: ['']
     });
+    FormUtil.addControls(this.applicationForm, extensionForm.controls);
   }
 
   protected update(form: TrafficArrangementForm): Application {
     const application = super.update(form);
-    application.name = 'Liikennejärjestely'; // Traffic arrangements have no name so set default
     application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
-    application.extension = TrafficArrangementForm.to(form);
+    application.extension = to(form);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;
@@ -48,7 +50,7 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
     super.onApplicationChange(application);
 
     const arrangement = <TrafficArrangement>application.extension || new TrafficArrangement();
-    this.applicationForm.patchValue(TrafficArrangementForm.from(application, arrangement));
+    this.applicationForm.patchValue(from(application, arrangement));
 
     this.showImpedimentType = isSameOrAfter(application.status, ApplicationStatus.HANDLING);
   }

@@ -1,4 +1,5 @@
-<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)"
+<form [formGroup]="applicationForm"
+      (ngSubmit)="onSubmit(applicationForm)"
       *ngIf="applicationChanges | async as application">
   <customer [parentForm]="applicationForm"
             [customerWithContacts]="application.applicant"
@@ -98,9 +99,10 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="showCableInfo">
-    <div class="col m12">
-      <cable-info [parentForm]="applicationForm" [cableReport]="application.extension"
+  <div fxLayout="row" *ngIf="showCableInfo">
+    <div fxFlex>
+      <cable-info [parentForm]="applicationForm"
+                  [cableReport]="application.extension"
                   [readonly]="readonly"></cable-info>
     </div>
   </div>

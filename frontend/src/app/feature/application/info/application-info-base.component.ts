@@ -4,7 +4,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
-import {ApplicationForm} from './application-form';
+import {applicationForm, ApplicationForm} from './application-form';
 import {applicationCanBeEdited, ApplicationStatus, isAfter, isSameOrAfter} from '../../../model/application/application-status';
 import {NotificationService} from '../../notification/notification.service';
 import {findTranslation} from '../../../util/translations';
@@ -125,7 +125,9 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   /**
    * Initializes application form
    */
-  protected initForm() {}
+  protected initForm() {
+    this.applicationForm = this.fb.group(applicationForm(this.fb));
+  }
 
   /**
    * Handles application changes
@@ -133,6 +135,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   protected onApplicationChange(application: Application): void {
     this.showTerms = isSameOrAfter(application.status, ApplicationStatus.HANDLING);
     this.applicationForm.patchValue({
+      name: application.name,
       hasPropertyDeveloper: application.propertyDeveloper.customerId,
       hasRepresentative: application.representative.customerId,
       invoiceRecipientId: application.invoiceRecipientId
@@ -160,6 +163,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
    */
   protected update(form: ApplicationForm): Application {
     const application = this.applicationStore.snapshot.application;
+    application.name = form.name;
     application.customersWithContacts = this.getCustomers(form);
 
     Some(form.communication).map(c => {

@@ -8,13 +8,14 @@ import {CustomerWithContactsForm} from '../../../customerregistry/customer/custo
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {OrdererIdForm} from '../cable-report/cable-report.form';
+import {createDefaultOrdererId, fromOrdererId, toOrdererId} from '../cable-report/cable-report.form';
 import {FormUtil} from '../../../../util/form.util';
 import {CustomerService} from '../../../../service/customer/customer.service';
 import {debounceTime, map, switchMap, tap} from 'rxjs/internal/operators';
 import {DistributionListEvents} from '../../distribution/distribution-list/distribution-list-events';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {DistributionType} from '@model/common/distribution-type';
+import {OrdererId} from '@model/application/cable-report/orderer-id';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -71,13 +72,14 @@ export class ContactComponent implements OnInit {
 
   selectOrderer(index: number): void {
     const contact = this.contacts.at(index).value;
-    this.parentForm.patchValue({ordererId: new OrdererIdForm(contact.id, this.customerRoleType, index)});
+    const ordererId = OrdererId.of(contact.id, this.customerRoleType, index);
+    this.parentForm.patchValue({ordererId: fromOrdererId(ordererId)});
   }
 
   isOrderer(index: number): boolean {
     const contact = this.contacts.at(index).value;
     return Some(this.parentForm.getRawValue().ordererId)
-      .map(form => OrdererIdForm.to(form))
+      .map(form => toOrdererId(form))
       .map(currentOrderer => currentOrderer.matches(contact.id, this.customerRoleType, index))
       .orElse(false);
   }
@@ -125,14 +127,14 @@ export class ContactComponent implements OnInit {
    */
   onCustomerRemove() {
     Some(this.parentForm.value.ordererId)
-      .map(form => OrdererIdForm.to(form))
+      .map(form => toOrdererId(form))
       .filter(ordererId => this.contacts.value.some(contact => ordererId.idOrRoleTypeMatches(contact.id, this.customerRoleType)))
-      .do(ordererId => this.parentForm.patchValue({ordererId: OrdererIdForm.createDefault()}));
+      .do(ordererId => this.parentForm.patchValue({ordererId: createDefaultOrdererId()}));
   }
 
   remove(index: number): void {
     if (this.isOrderer(index)) {
-      this.parentForm.patchValue({ordererId: OrdererIdForm.createDefault()});
+      this.parentForm.patchValue({ordererId: createDefaultOrdererId()});
     }
 
     this.contacts.removeAt(index);

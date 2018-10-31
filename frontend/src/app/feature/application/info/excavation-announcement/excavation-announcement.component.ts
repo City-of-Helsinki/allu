@@ -5,7 +5,7 @@ import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, 
 import {MatDatepicker, MatDialog} from '@angular/material';
 import {Application} from '@model/application/application';
 import {AbstractControlWarn, ComplexValidator} from '@util/complex-validator';
-import {ExcavationAnnouncementForm} from './excavation-announcement.form';
+import {ExcavationAnnouncementForm, from, to} from './excavation-announcement.form';
 import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {ApplicationType} from '@model/application/type/application-type';
@@ -36,6 +36,7 @@ import {
   ReportCustomerWorkFinished
 } from '@feature/application/actions/excavation-announcement-actions';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
+import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'excavation-announcement',
@@ -131,7 +132,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   }
 
   protected initForm() {
-    this.applicationForm = this.fb.group({
+    super.initForm();
+    const extensionForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, [Validators.required]]
@@ -163,6 +165,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       compactionAndBearingCapacityMeasurement: [false],
       qualityAssuranceTest: [false]
     });
+    FormUtil.addControls(this.applicationForm, extensionForm.controls);
 
     this.validityEndTimeCtrl = <AbstractControlWarn>this.applicationForm.get(['validityTimes', 'endTime']);
     this.validityEndTimeCtrl.statusChanges.subscribe(status => this.onValidityEndTimeChange(status));
@@ -196,7 +199,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     super.onApplicationChange(application);
 
     const excavation = <ExcavationAnnouncement>application.extension || new ExcavationAnnouncement();
-    const form = ExcavationAnnouncementForm.from(application, excavation);
+    const form = from(application, excavation);
     this.applicationForm.patchValue(form);
     this.patchRelatedCableReport(excavation);
     this.showReportCustomerDates = contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], application.status);
@@ -204,10 +207,9 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   protected update(form: ExcavationAnnouncementForm): Application {
     const application = super.update(form);
-    application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
     application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
-    application.extension = ExcavationAnnouncementForm.to(form, <ExcavationAnnouncement>application.extension);
+    application.extension = to(form, <ExcavationAnnouncement>application.extension);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

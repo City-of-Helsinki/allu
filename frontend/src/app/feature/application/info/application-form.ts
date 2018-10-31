@@ -1,5 +1,6 @@
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
+import {FormBuilder, Validators} from '@angular/forms';
 
 export interface ApplicationForm {
   name?: string;
@@ -8,7 +9,6 @@ export interface ApplicationForm {
   propertyDeveloper?: CustomerWithContactsForm;
   representative?: CustomerWithContactsForm;
   invoiceRecipientId?: number;
-  terms?: string;
   calculatedPrice?: number;
   communication?: CommunicationForm;
 }
@@ -16,4 +16,10 @@ export interface ApplicationForm {
 export interface CommunicationForm {
   publicityType?: string;
   distributionRows?: Array<DistributionEntryForm>;
+}
+
+export function applicationForm(fb: FormBuilder): { [key: string]: any; } {
+  return {
+    name: ['', [Validators.required, Validators.minLength(2)]]
+  };
 }

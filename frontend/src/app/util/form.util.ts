@@ -47,4 +47,10 @@ export class FormUtil {
       .map(ctrl => ctrl.value)
       .orElse(undefined);
   }
+
+  public static addControls(form: FormGroup, controls: {[name: string]: AbstractControl}): void {
+    if (form && controls) {
+      Object.keys(controls).map(name => form.addControl(name, controls[name]));
+    }
+  }
 }

@@ -1,63 +1,57 @@
 import {TimePeriod} from '../time-period';
-import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
-import {Application} from '../../../../model/application/application';
-import {ApplicationForm} from '../application-form';
+import {ShortTermRental} from '@model/application/short-term-rental/short-term-rental';
+import {Application} from '@model/application/application';
+import {ApplicationForm} from '@feature/application/info/application-form';
 import {FormBuilder, Validators} from '@angular/forms';
-import {ComplexValidator} from '../../../../util/complex-validator';
-import {NumberUtil} from '../../../../util/number.util';
+import {ComplexValidator} from '@util/complex-validator';
 
-export class ShortTermRentalForm implements ApplicationForm {
-  constructor(
-    public name?: string,
-    public description?: string,
-    public rentalTimes?: TimePeriod,
-    public commercial?: boolean,
-    public billableSalesArea?: boolean,
-    public calculatedPrice?: number,
-    public TERMS?: string) {}
+export interface ShortTermRentalForm extends ApplicationForm {
+  description?: string;
+  rentalTimes?: TimePeriod;
+  commercial?: boolean;
+  billableSalesArea?: boolean;
+  terms?: string;
+}
 
-  static from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
-    return new ShortTermRentalForm(
-      application.name,
-      rental.description,
-      new TimePeriod(application.startTime, application.endTime),
-      rental.commercial,
-      rental.billableSalesArea,
-      NumberUtil.toEuros(application.calculatedPrice),
-      rental.terms
-    );
-  }
+export function from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
+  return {
+    name: application.name,
+    description: rental.description,
+    rentalTimes: new TimePeriod(application.startTime, application.endTime),
+    commercial: rental.commercial,
+    billableSalesArea: rental.billableSalesArea,
+    terms: rental.terms
+  };
+}
 
-  static to(form: ShortTermRentalForm): ShortTermRental {
-    const rental =  new ShortTermRental();
-    rental.description = form.description;
-    rental.commercial = form.commercial;
-    rental.billableSalesArea = form.billableSalesArea;
-    rental.terms = form.TERMS;
-    return rental;
-  }
+export function to(form: ShortTermRentalForm): ShortTermRental {
+  const rental =  new ShortTermRental();
+  rental.description = form.description;
+  rental.commercial = form.commercial;
+  rental.billableSalesArea = form.billableSalesArea;
+  rental.terms = form.terms;
+  return rental;
+}
 
-  static createStructure(fb: FormBuilder): { [key: string]: any; } {
-    return {
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      description: [''],
-      commercial: [false],
-      billableSalesArea: [false],
-      calculatedPrice: [0],
-      rentalTimes: fb.group({
-        startTime: [undefined, Validators.required],
-        endTime: [undefined, Validators.required]
-      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') })
-    };
-  }
-
-  static createDraftStructure(fb: FormBuilder): { [key: string]: any; } {
-    const form = ShortTermRentalForm.createStructure(fb);
-    form.description = [''];
-    form.rentalTimes = fb.group({
+export function createStructure(fb: FormBuilder): { [key: string]: any; } {
+  return {
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    description: [''],
+    commercial: [false],
+    billableSalesArea: [false],
+    rentalTimes: fb.group({
       startTime: [undefined, Validators.required],
       endTime: [undefined, Validators.required]
-    }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') });
-    return form;
-  }
+    }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') })
+  };
+}
+
+export function createDraftStructure(fb: FormBuilder): { [key: string]: any; } {
+  const form = createStructure(fb);
+  form.description = [''];
+  form.rentalTimes = fb.group({
+    startTime: [undefined, Validators.required],
+    endTime: [undefined, Validators.required]
+  }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') });
+  return form;
 }

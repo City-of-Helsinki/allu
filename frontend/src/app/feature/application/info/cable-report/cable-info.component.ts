@@ -15,17 +15,20 @@ import {NotificationService} from '../../../notification/notification.service';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {DefaultTextService} from '../../../../service/application/default-text.service';
 import {switchMap} from 'rxjs/internal/operators';
+import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'cable-info',
-  templateUrl: './cable-info.component.html'
+  templateUrl: './cable-info.component.html',
+  styles: [
+    'h3 {margin-bottom: 2px}'
+  ]
 })
 export class CableInfoComponent implements OnInit {
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
   @Input() cableReport: CableReport;
 
-  cableInfoForm: FormGroup;
   cableInfoEntries: FormArray;
   translations = translations;
   cableInfoTypes = ['TELECOMMUNICATION', 'ELECTRICITY', 'WATER_AND_SEWAGE', 'DISTRICT_HEATING_COOLING',
@@ -44,14 +47,10 @@ export class CableInfoComponent implements OnInit {
     this.cableInfoEntries = Some(this.cableInfoEntries).orElse(this.fb.array([]));
     this.initForm();
     this.defaultTextService.load(ApplicationType.CABLE_REPORT).subscribe(texts => this.setDefaultTexts(texts));
-
-    if (this.readonly) {
-      this.cableInfoForm.disable();
-    }
   }
 
   isSelected(type: string) {
-    return this.cableInfoForm.value.selectedCableInfoTypes.indexOf(DefaultTextType[type]) >= 0;
+    return this.parentForm.getRawValue().selectedCableInfoTypes.indexOf(DefaultTextType[type]) >= 0;
   }
 
   addDefaultText(entryIndex: number, text: string) {
@@ -81,7 +80,7 @@ export class CableInfoComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.cableInfoForm = this.fb.group({
+    const cableInfoForm = this.fb.group({
       selectedCableInfoTypes: [this.cableReport.infoEntries.map(entry => entry.type)],
       mapExtractCount: [Some(this.cableReport.mapExtractCount).orElse(0), ComplexValidator.greaterThanOrEqual(0)]
     });
@@ -89,8 +88,12 @@ export class CableInfoComponent implements OnInit {
     this.cableInfoEntries = this.fb.array([]);
     this.cableInfoTypes.forEach(type => this.cableInfoEntries.push(this.createCableInfoEntry(type)));
 
-    this.cableInfoForm.addControl('cableInfoEntries', this.cableInfoEntries);
-    this.parentForm.addControl('cableInfo', this.cableInfoForm);
+    cableInfoForm.addControl('cableInfoEntries', this.cableInfoEntries);
+    FormUtil.addControls(this.parentForm, cableInfoForm.controls);
+
+    if (this.readonly) {
+      cableInfoForm.disable();
+    }
   }
 
   private createCableInfoEntry(type: string) {

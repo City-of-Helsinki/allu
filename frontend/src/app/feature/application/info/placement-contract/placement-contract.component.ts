@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {Validators} from '@angular/forms';
 
-import {Application} from '../../../../model/application/application';
-import {ComplexValidator} from '../../../../util/complex-validator';
-import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
-import {PlacementContractForm} from './placement-contract.form';
-import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {TimeUtil} from '../../../../util/time.util';
+import {Application} from '@model/application/application';
+import {ComplexValidator} from '@util/complex-validator';
+import {PlacementContract} from '@model/application/placement-contract/placement-contract';
+import {from, PlacementContractForm, to} from './placement-contract.form';
+import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
+import {TimeUtil} from '@util/time.util';
+import {FormUtil} from '@util/form.util';
 
 
 @Component({
@@ -18,7 +19,8 @@ import {TimeUtil} from '../../../../util/time.util';
 export class PlacementContractComponent extends ApplicationInfoBaseComponent implements OnInit {
 
   protected initForm() {
-    this.applicationForm = this.fb.group({
+    super.initForm();
+    const extensionForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
@@ -29,20 +31,20 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
       additionalInfo: [''],
       contractText: ['']
     });
+    FormUtil.addControls(this.applicationForm, extensionForm.controls);
   }
 
   protected onApplicationChange(application: Application): void {
     super.onApplicationChange(application);
     const contract = <PlacementContract>application.extension || new PlacementContract();
-    this.applicationForm.patchValue(PlacementContractForm.from(application, contract));
+    this.applicationForm.patchValue(from(application, contract));
   }
 
   protected update(form: PlacementContractForm): Application {
     const application = super.update(form);
-    application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
     application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
-    application.extension = PlacementContractForm.to(form);
+    application.extension = to(form);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

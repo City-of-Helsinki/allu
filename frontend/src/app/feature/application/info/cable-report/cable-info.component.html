@@ -1,9 +1,9 @@
 <allu-card>
   <mat-card-title>Johtotiedot</mat-card-title>
   <mat-card-content>
-    <div [formGroup]="cableInfoForm">
-      <div class="row form-group">
-        <div class="col m4">
+    <div [formGroup]="parentForm">
+      <div fxLayout="row" fxLayoutGap="18px" class="form-group">
+        <div fxFlex="0 1 calc(25% - 18px)">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="selectedCableInfoTypes" [multiple]="true"
                         placeholder="Valitse tyyppi*" class="input-full-width">
@@ -13,38 +13,42 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col m2">
+        <div fxFlex="0 1 calc(15% - 18px)">
           <mat-form-field class="input-full-width">
             <input matInput type="number" formControlName="mapExtractCount" placeholder="Karttaotteiden määrä"/>
           </mat-form-field>
         </div>
       </div>
-      <div formArrayName="cableInfoEntries" class="row form-group">
-        <div class="col m8" *ngFor="let infoEntry of cableInfoEntries.controls; let index=index">
+      <div formArrayName="cableInfoEntries" class="form-group">
+        <div *ngFor="let infoEntry of cableInfoEntries.controls; let index=index">
           <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
-            <mat-card-subtitle>{{['defaultText.type', infoEntry.value.type] | translation}}</mat-card-subtitle>
+            <h3>{{['defaultText.type', infoEntry.value.type] | translation}}</h3>
 
-            <div *ngIf="!readonly" class="col m10">
-              <mat-form-field class="input-full-width">
-                <mat-select class="input-full-width" placeholder="Vakiotekstit"
-                            (selectionChange)="addDefaultText(index, $event.value)">
-                  <mat-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]" [value]="defaultText.text">
-                    {{defaultText.text}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div *ngIf="!readonly" class="col m2">
-              <button mat-raised-button type="button" color="primary"
-                      (click)="editDefaultTexts(infoEntry.value.type)">MUOKKAA
-              </button>
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div *ngIf="!readonly" fxFlex="0 1 calc(50% - 18px)">
+                <mat-form-field class="input-full-width">
+                  <mat-select class="input-full-width" placeholder="Vakiotekstit"
+                              (selectionChange)="addDefaultText(index, $event.value)">
+                    <mat-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]" [value]="defaultText.text">
+                      {{defaultText.text}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div *ngIf="!readonly" fxFlex="0 1 calc(20% - 18px)">
+                <button mat-raised-button type="button" color="primary" (click)="editDefaultTexts(infoEntry.value.type)">
+                  MUOKKAA
+                </button>
+              </div>
             </div>
 
-            <div class="col m12">
-              <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize formControlName="additionalInfo"
-                          placeholder="Lisätietoja"></textarea>
-              </mat-form-field>
+            <div fxLayout="row">
+              <div fxFlex>
+                <mat-form-field class="input-full-width">
+                  <textarea matInput matTextareaAutosize formControlName="additionalInfo"
+                            placeholder="Lisätietoja"></textarea>
+                </mat-form-field>
+              </div>
             </div>
           </div>
         </div>

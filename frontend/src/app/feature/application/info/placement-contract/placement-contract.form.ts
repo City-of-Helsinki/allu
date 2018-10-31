@@ -1,41 +1,38 @@
-import {TimePeriod} from '../time-period';
-import {Application} from '../../../../model/application/application';
-import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
-import {ApplicationForm} from '../application-form';
-import {NumberUtil} from '../../../../util/number.util';
+import {TimePeriod} from '@feature/application/info/time-period';
+import {Application} from '@model/application/application';
+import {PlacementContract} from '@model/application/placement-contract/placement-contract';
+import {ApplicationForm} from '@feature/application/info/application-form';
 
-export class PlacementContractForm implements ApplicationForm {
-  constructor(
-    public validityTimes?: TimePeriod,
-    public propertyIdentificationNumber?: string,
-    public calculatedPrice?: number,
-    public additionalInfo?: string,
-    public contractText?: string,
-    public TERMS?: string,
-    public terminationDate?: Date,
-    public OTHER?: string
-  ) {}
+export interface PlacementContractForm extends ApplicationForm {
+  validityTimes?: TimePeriod;
+  propertyIdentificationNumber?: string;
+  additionalInfo?: string;
+  contractText?: string;
+  terms?: string;
+  terminationDate?: Date;
+  other?: string;
+}
 
-  static to(form: PlacementContractForm): PlacementContract {
-    const placementContract = new PlacementContract();
-    placementContract.propertyIdentificationNumber = form.propertyIdentificationNumber,
+export function to(form: PlacementContractForm): PlacementContract {
+  const placementContract = new PlacementContract();
+  placementContract.propertyIdentificationNumber = form.propertyIdentificationNumber,
     placementContract.additionalInfo = form.additionalInfo;
-    placementContract.contractText = form.contractText;
-    placementContract.terms = form.TERMS;
-    placementContract.terminationDate = form.terminationDate;
-    placementContract.rationale = form.OTHER;
-    return placementContract;
-  }
+  placementContract.contractText = form.contractText;
+  placementContract.terms = form.terms;
+  placementContract.terminationDate = form.terminationDate;
+  placementContract.rationale = form.other;
+  return placementContract;
+}
 
-  static from(application: Application, contract: PlacementContract) {
-    return new PlacementContractForm(
-      new TimePeriod(application.startTime, application.endTime),
-      contract.propertyIdentificationNumber,
-      NumberUtil.toEuros(application.calculatedPrice),
-      contract.additionalInfo,
-      contract.contractText,
-      contract.terms,
-      contract.terminationDate,
-      contract.rationale);
-  }
+export function from(application: Application, contract: PlacementContract) {
+  return {
+    name: application.name || 'Sijoitussopimus', // Placement contracts have no name so set default
+    validityTimes: new TimePeriod(application.startTime, application.endTime),
+    propertyIdentificationNumber: contract.propertyIdentificationNumber,
+    additionalInfo: contract.additionalInfo,
+    contractText: contract.contractText,
+    terms: contract.terms,
+    terminationDate: contract.terminationDate,
+    other: contract.rationale
+  };
 }

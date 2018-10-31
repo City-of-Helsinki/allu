@@ -1,14 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
-import {Application} from '../../../../model/application/application';
-import {ShortTermRentalForm} from './short-term-rental.form';
-import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
+import {Application} from '@model/application/application';
+import {createDraftStructure, createStructure, from, ShortTermRentalForm, to} from './short-term-rental.form';
+import {ShortTermRental} from '@model/application/short-term-rental/short-term-rental';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {ApplicationKind} from '../../../../model/application/type/application-kind';
-import {TimeUtil} from '../../../../util/time.util';
+import {ApplicationKind} from '@model/application/type/application-kind';
+import {TimeUtil} from '@util/time.util';
 import {takeUntil} from 'rxjs/internal/operators';
 import {findTranslation} from '@util/translations';
+import {FormUtil} from '@util/form.util';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -32,16 +33,18 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   }
 
   protected initForm() {
+    super.initForm();
     const draft = this.applicationStore.snapshot.draft;
-    this.completeFormStructure = ShortTermRentalForm.createStructure(this.fb);
-    this.draftFormStructure = ShortTermRentalForm.createDraftStructure(this.fb);
+    this.completeFormStructure = createStructure(this.fb);
+    this.draftFormStructure = createDraftStructure(this.fb);
 
-    this.applicationForm = draft
+    const extensionForm = draft
       ? this.fb.group(this.draftFormStructure)
       : this.fb.group(this.completeFormStructure);
 
-    this.commercialCtrl = <FormControl>this.applicationForm.get('commercial');
+    FormUtil.addControls(this.applicationForm, extensionForm.controls);
 
+    this.commercialCtrl = <FormControl>this.applicationForm.get('commercial');
     this.commercialCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(value => this.updateCommercialLabel(value));
   }
@@ -50,7 +53,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     super.onApplicationChange(application);
 
     const rental = <ShortTermRental>application.extension || new ShortTermRental();
-    const formValue = ShortTermRentalForm.from(application, rental);
+    const formValue = from(application, rental);
     this.applicationForm.patchValue(formValue);
     this.showCommercial = application.kinds.some(kind => ApplicationKind.BRIDGE_BANNER === kind);
     this.updateCommercialLabel(rental.commercial);
@@ -65,10 +68,9 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   protected update(form: ShortTermRentalForm): Application {
     const application = super.update(form);
-    application.name = form.name;
     application.startTime = TimeUtil.toStartDate(form.rentalTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.rentalTimes.endTime);
-    application.extension = ShortTermRentalForm.to(form);
+    application.extension = to(form);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

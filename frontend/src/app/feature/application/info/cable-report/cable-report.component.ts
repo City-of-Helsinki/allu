@@ -1,13 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {Validators} from '@angular/forms';
 
-import {Application} from '../../../../model/application/application';
-import {ComplexValidator} from '../../../../util/complex-validator';
-import {CableReportForm, OrdererIdForm} from './cable-report.form';
-import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {CableReport} from '../../../../model/application/cable-report/cable-report';
-import {ApplicationStatus, isSameOrAfter} from '../../../../model/application/application-status';
-import {TimeUtil} from '../../../../util/time.util';
+import {Application} from '@model/application/application';
+import {ComplexValidator} from '@util/complex-validator';
+import {CableReportForm, createDefaultOrdererId, from, to} from './cable-report.form';
+import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
+import {CableReport} from '@model/application/cable-report/cable-report';
+import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
+import {TimeUtil} from '@util/time.util';
+import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'cable-report',
@@ -20,7 +21,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   showCableInfo = false;
 
   protected initForm() {
-    this.applicationForm = this.fb.group({
+    super.initForm();
+    const extensionForm = this.fb.group({
       validityTime: [{value: undefined, disabled: true}],
       cableSurveyRequired: [false],
       mapUpdated: [false],
@@ -33,24 +35,25 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
         endTime: [undefined, Validators.required]
       }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       workDescription: [''],
-      ordererId: [OrdererIdForm.createDefault(), Validators.required]
+      ordererId: [createDefaultOrdererId(), Validators.required]
     });
+
+    FormUtil.addControls(this.applicationForm, extensionForm.controls);
   }
 
   protected onApplicationChange(application: Application): void {
     super.onApplicationChange(application);
 
-    this.applicationForm.patchValue(CableReportForm.from(application));
+    this.applicationForm.patchValue(from(application));
     this.showCableInfo = isSameOrAfter(application.status, ApplicationStatus.HANDLING);
   }
 
   protected update(form: CableReportForm): Application {
     const application = super.update(form);
-    application.name = 'Johtoselvitys'; // Cable reports have no name so set default
     application.startTime = TimeUtil.toStartDate(form.reportTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.reportTimes.endTime);
     const extension = <CableReport>application.extension;
-    application.extension = CableReportForm.to(form, extension.validityTime);
+    application.extension = to(form, extension.validityTime);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

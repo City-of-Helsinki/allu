@@ -13,7 +13,7 @@ import {Contact} from '../../../../../src/app/model/customer/contact';
 import {getMatIconButton} from '../../../../selector-helpers';
 import {ApplicationType} from '../../../../../src/app/model/application/type/application-type';
 import {Application} from '../../../../../src/app/model/application/application';
-import {OrdererIdForm} from '../../../../../src/app/feature/application/info/cable-report/cable-report.form';
+import {createDefaultOrdererId, OrdererIdForm} from '../../../../../src/app/feature/application/info/cable-report/cable-report.form';
 import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
@@ -166,7 +166,7 @@ describe('ContactComponent', () => {
     form.addControl(
       CustomerWithContactsForm.formName(CustomerRoleType.APPLICANT),
       CustomerWithContactsForm.initialForm(fb, CustomerRoleType.APPLICANT));
-    form.addControl('ordererId', fb.group(OrdererIdForm.createDefault()));
+    form.addControl('ordererId', fb.group(createDefaultOrdererId()));
     return form;
   }
 });
