@@ -20,7 +20,6 @@ public class ShortTermRentalExt extends ApplicationExt {
   private String description;
   @NotNull(message = "{application.kind}")
   private ApplicationKind applicationKind;
-  private Integer area;
 
   @ApiModelProperty(value = "ID of the fixed location. Should be set if geometry of the application is selected from fixed locations.")
   public Integer getFixedLocationId() {
@@ -47,15 +46,6 @@ public class ShortTermRentalExt extends ApplicationExt {
 
   public void setApplicationKind(ApplicationKind applicationKind) {
     this.applicationKind = applicationKind;
-  }
-
-  @ApiModelProperty(value = "Area in square meters")
-  public Integer getArea() {
-    return area;
-  }
-
-  public void setArea(Integer area) {
-    this.area = area;
   }
 
   @JsonIgnore

@@ -60,12 +60,12 @@ public abstract class ApplicationExtMapper<T extends ApplicationExt> {
     location.setStartTime(application.getStartTime());
     location.setEndTime(application.getEndTime());
     location.setFixedLocationIds(getFixedLocationIds(application));
-    location.setArea(getArea(application));
+    location.setAreaOverride(getArea(application));
     return location;
   }
 
   protected Double getArea(T application) {
-    return null;
+    return application.getArea();
   }
 
   protected ApplicationKind getApplicationKind(T application) {

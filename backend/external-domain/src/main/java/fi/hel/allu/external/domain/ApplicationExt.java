@@ -44,6 +44,9 @@ public abstract class ApplicationExt {
   @NotBlank(message = "{application.identificationNumber}")
   private String identificationNumber;
   private String customerReference;
+  private Double area;
+
+
 
   @ApiModelProperty(value = "Postal address")
   public PostalAddressExt getPostalAddress() {
@@ -149,6 +152,15 @@ public abstract class ApplicationExt {
 
   public void setCustomerReference(String customerReference) {
     this.customerReference = customerReference;
+  }
+
+  @ApiModelProperty(value = "Area in square meters")
+  public Double getArea() {
+    return area;
+  }
+
+  public void setArea(Double area) {
+    this.area = area;
   }
 
 }
