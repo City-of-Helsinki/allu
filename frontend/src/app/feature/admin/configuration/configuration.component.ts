@@ -4,6 +4,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import {Observable} from 'rxjs';
 import {Configuration} from '@model/config/configuration';
 import {User} from '@model/user/user';
+import {Load} from '@feature/allu/actions/user-actions';
 
 @Component({
   selector: 'configuration',
@@ -19,6 +20,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(new Load());
     this.configurations$ = this.store.pipe(select(fromRoot.getEditableConfigurations));
     this.users$ = this.store.pipe(select(fromRoot.getActiveUsers));
   }
