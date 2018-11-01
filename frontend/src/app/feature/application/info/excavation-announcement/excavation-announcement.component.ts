@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormControl, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, take} from 'rxjs/internal/operators';
 import {MatDatepicker, MatDialog} from '@angular/material';
@@ -36,7 +36,6 @@ import {
   ReportCustomerWorkFinished
 } from '@feature/application/actions/excavation-announcement-actions';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
-import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'excavation-announcement',
@@ -133,7 +132,37 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   protected initForm() {
     super.initForm();
-    const extensionForm = this.fb.group({
+
+    this.validityEndTimeCtrl = <AbstractControlWarn>this.applicationForm.get(['validityTimes', 'endTime']);
+    this.validityEndTimeCtrl.statusChanges.subscribe(status => this.onValidityEndTimeChange(status));
+
+    if (this.applicationStore.isNew) {
+      this.validityEndTimeCtrl.markAsDirty(); // To trigger validation
+    }
+
+    this.cableReportIdentifierCtrl = this.fb.control(undefined);
+    this.winterTimeOperationCtrl = this.applicationForm.controls['winterTimeOperation'];
+
+    this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]])),
+      switchMap(search => this.applicationService.search(search)),
+      catchError(err => this.notification.errorCatch(err, []))
+    );
+
+    combineLatest(
+      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_START),
+      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_END))
+        .pipe(take(1)).subscribe(([start, end]) => {
+          this.winterTimeStart = start.value;
+          this.winterTimeEnd = end.value;
+          this.setEndTimeCtrlValidators();
+        });
+  }
+
+  protected createExtensionForm(): FormGroup {
+    return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, [Validators.required]]
@@ -165,34 +194,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       compactionAndBearingCapacityMeasurement: [false],
       qualityAssuranceTest: [false]
     });
-    FormUtil.addControls(this.applicationForm, extensionForm.controls);
-
-    this.validityEndTimeCtrl = <AbstractControlWarn>this.applicationForm.get(['validityTimes', 'endTime']);
-    this.validityEndTimeCtrl.statusChanges.subscribe(status => this.onValidityEndTimeChange(status));
-
-    if (this.applicationStore.isNew) {
-      this.validityEndTimeCtrl.markAsDirty(); // To trigger validation
-    }
-
-    this.cableReportIdentifierCtrl = this.fb.control(undefined);
-    this.winterTimeOperationCtrl = this.applicationForm.controls['winterTimeOperation'];
-
-    this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]])),
-      switchMap(search => this.applicationService.search(search)),
-      catchError(err => this.notification.errorCatch(err, []))
-    );
-
-    combineLatest(
-      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_START),
-      this.configurationHelper.getSingleConfiguration(ConfigurationKey.WINTER_TIME_END))
-        .pipe(take(1)).subscribe(([start, end]) => {
-          this.winterTimeStart = start.value;
-          this.winterTimeEnd = end.value;
-          this.setEndTimeCtrlValidators();
-        });
   }
 
   protected onApplicationChange(application: Application): void {

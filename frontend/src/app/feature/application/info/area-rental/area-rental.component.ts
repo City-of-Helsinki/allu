@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {ComplexValidator} from '@util/complex-validator';
@@ -7,7 +7,6 @@ import {ApplicationInfoBaseComponent} from '@feature/application/info/applicatio
 import {AreaRental} from '@model/application/area-rental/area-rental';
 import {AreaRentalForm, from, to} from './area-rental.form';
 import {TimeUtil} from '@util/time.util';
-import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'area-rental',
@@ -16,10 +15,8 @@ import {FormUtil} from '@util/form.util';
   styleUrls: []
 })
 export class AreaRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
-
-  protected initForm() {
-    super.initForm();
-    const extensionForm = this.fb.group({
+  protected createExtensionForm(): FormGroup {
+    return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
@@ -31,7 +28,6 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
       trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']
     });
-    FormUtil.addControls(this.applicationForm, extensionForm.controls);
   }
 
   protected onApplicationChange(application: Application): void {

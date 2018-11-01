@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {ComplexValidator} from '@util/complex-validator';
@@ -8,7 +8,6 @@ import {ApplicationInfoBaseComponent} from '@feature/application/info/applicatio
 import {CableReport} from '@model/application/cable-report/cable-report';
 import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
 import {TimeUtil} from '@util/time.util';
-import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'cable-report',
@@ -20,9 +19,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
 
   showCableInfo = false;
 
-  protected initForm() {
-    super.initForm();
-    const extensionForm = this.fb.group({
+  protected createExtensionForm(): FormGroup {
+    return this.fb.group({
       validityTime: [{value: undefined, disabled: true}],
       cableSurveyRequired: [false],
       mapUpdated: [false],
@@ -37,8 +35,6 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
       workDescription: [''],
       ordererId: [createDefaultOrdererId(), Validators.required]
     });
-
-    FormUtil.addControls(this.applicationForm, extensionForm.controls);
   }
 
   protected onApplicationChange(application: Application): void {

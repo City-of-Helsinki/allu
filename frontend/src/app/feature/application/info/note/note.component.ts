@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 
 import {ComplexValidator} from '@util/complex-validator';
@@ -7,7 +7,6 @@ import {from, NoteForm, to} from './note.form';
 import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
 import {MAX_YEAR, MIN_YEAR, TimeUtil} from '@util/time.util';
 import {Application} from '@model/application/application';
-import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'note',
@@ -27,7 +26,13 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
   protected initForm() {
     super.initForm();
 
-    const extensionForm = this.fb.group({
+    this.validityTimesControl = <FormControl>this.applicationForm.controls['validityTimes'];
+    this.recurringEndYearSubscription = this.applicationForm.controls['recurringEndYear'].valueChanges
+        .subscribe(val => this.onRecurringEndYearChanged(val));
+  }
+
+  protected createExtensionForm(): FormGroup {
+    return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined]
@@ -35,12 +40,6 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
       description: [''],
       recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
     });
-
-    FormUtil.addControls(this.applicationForm, extensionForm.controls);
-
-    this.validityTimesControl = <FormControl>this.applicationForm.controls['validityTimes'];
-    this.recurringEndYearSubscription = this.applicationForm.controls['recurringEndYear'].valueChanges
-        .subscribe(val => this.onRecurringEndYearChanged(val));
   }
 
   protected onApplicationChange(application: Application): void {

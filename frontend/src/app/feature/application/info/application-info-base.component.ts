@@ -127,6 +127,15 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
    */
   protected initForm() {
     this.applicationForm = this.fb.group(applicationForm(this.fb));
+    const extensionForm = this.createExtensionForm();
+    FormUtil.addControls(this.applicationForm, extensionForm.controls);
+  }
+
+  /**
+   * Create application type specific form
+   */
+  protected createExtensionForm(): FormGroup {
+    return this.fb.group({});
   }
 
   /**

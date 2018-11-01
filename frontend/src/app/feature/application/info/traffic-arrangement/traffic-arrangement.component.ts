@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
 import {ComplexValidator} from '@util/complex-validator';
 import {TrafficArrangement} from '@model/application/traffic-arrangement/traffic-arrangement';
@@ -7,7 +7,6 @@ import {from, to, TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
 import {TimeUtil} from '@util/time.util';
 import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
-import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'traffic-arrangement',
@@ -19,9 +18,8 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
 
   showImpedimentType = false;
 
-  protected initForm() {
-    super.initForm();
-    const extensionForm = this.fb.group({
+  protected createExtensionForm(): FormGroup {
+    return this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
@@ -31,7 +29,6 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
       trafficArrangementImpedimentType: ['', Validators.required],
       workPurpose: ['']
     });
-    FormUtil.addControls(this.applicationForm, extensionForm.controls);
   }
 
   protected update(form: TrafficArrangementForm): Application {

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {createDraftStructure, createStructure, from, ShortTermRentalForm, to} from './short-term-rental.form';
@@ -9,7 +9,6 @@ import {ApplicationKind} from '@model/application/type/application-kind';
 import {TimeUtil} from '@util/time.util';
 import {takeUntil} from 'rxjs/internal/operators';
 import {findTranslation} from '@util/translations';
-import {FormUtil} from '@util/form.util';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -34,19 +33,20 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   protected initForm() {
     super.initForm();
-    const draft = this.applicationStore.snapshot.draft;
-    this.completeFormStructure = createStructure(this.fb);
-    this.draftFormStructure = createDraftStructure(this.fb);
-
-    const extensionForm = draft
-      ? this.fb.group(this.draftFormStructure)
-      : this.fb.group(this.completeFormStructure);
-
-    FormUtil.addControls(this.applicationForm, extensionForm.controls);
 
     this.commercialCtrl = <FormControl>this.applicationForm.get('commercial');
     this.commercialCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(value => this.updateCommercialLabel(value));
+  }
+
+  protected createExtensionForm(): FormGroup {
+    const draft = this.applicationStore.snapshot.draft;
+    this.completeFormStructure = createStructure(this.fb);
+    this.draftFormStructure = createDraftStructure(this.fb);
+
+    return draft
+      ? this.fb.group(this.draftFormStructure)
+      : this.fb.group(this.completeFormStructure);
   }
 
   protected onApplicationChange(application: Application): any {
