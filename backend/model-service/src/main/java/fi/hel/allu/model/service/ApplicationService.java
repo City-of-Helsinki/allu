@@ -491,4 +491,9 @@ public class ApplicationService {
   public Application setTargetState(Integer id, StatusType targetState) {
     return applicationDao.setTargetState(id, targetState);
   }
+
+  @Transactional(readOnly = true)
+  public Integer getReplacingApplicationId(int id) {
+    return applicationDao.getReplacingApplicationId(id);
+  }
 }

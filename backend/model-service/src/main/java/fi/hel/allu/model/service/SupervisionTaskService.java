@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -166,5 +167,11 @@ public class SupervisionTaskService {
   @Transactional
   public void cancelOpenTasksOfApplication(Integer applicationId) {
     supervisionTaskDao.cancelOpenTasksOfApplication(applicationId);
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,
+      ZonedDateTime eventsAfter, List<Integer> includedApplicationIds) {
+    return supervisionTaskDao.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedApplicationIds);
   }
 }

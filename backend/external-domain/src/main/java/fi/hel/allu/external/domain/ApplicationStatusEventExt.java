@@ -6,18 +6,20 @@ import fi.hel.allu.common.domain.types.StatusType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Application history event")
-public class ApplicationHistoryEventExt implements Comparable<ApplicationHistoryEventExt>{
+@ApiModel(value = "Application status change event")
+public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEventExt> {
 
   private ZonedDateTime eventTime;
   private StatusType newStatus;
+  private Integer replacingApplicationId;
 
-  public ApplicationHistoryEventExt() {
+  public ApplicationStatusEventExt() {
   }
 
-  public ApplicationHistoryEventExt(ZonedDateTime eventTime, StatusType newStatus) {
+  public ApplicationStatusEventExt(ZonedDateTime eventTime, StatusType newStatus, Integer replacingApplicationId) {
     this.eventTime = eventTime;
     this.newStatus = newStatus;
+    this.replacingApplicationId = replacingApplicationId;
   }
 
   @ApiModelProperty(value = "Time of the application event")
@@ -38,8 +40,17 @@ public class ApplicationHistoryEventExt implements Comparable<ApplicationHistory
     this.newStatus = newStatus;
   }
 
+  @ApiModelProperty(value = "ID of the replacing application ID if status is changed to REPLACED. Otherwise null.")
+  public Integer getReplacingApplicationId() {
+    return replacingApplicationId;
+  }
+
+  public void setReplacingApplicationId(Integer replacingApplicationId) {
+    this.replacingApplicationId = replacingApplicationId;
+  }
+
   @Override
-  public int compareTo(ApplicationHistoryEventExt o) {
+  public int compareTo(ApplicationStatusEventExt o) {
     int result = this.getEventTime().compareTo(o.getEventTime());
     return result == 0 ? this.newStatus.name().compareTo(o.newStatus.name()) : result;
   }

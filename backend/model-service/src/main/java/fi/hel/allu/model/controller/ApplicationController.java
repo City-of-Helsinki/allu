@@ -371,5 +371,10 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/replacing", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getReplacingApplicationId(@PathVariable int id) {
+    return new ResponseEntity<>(applicationService.getReplacingApplicationId(id), HttpStatus.OK);
+  }
+
 
 }

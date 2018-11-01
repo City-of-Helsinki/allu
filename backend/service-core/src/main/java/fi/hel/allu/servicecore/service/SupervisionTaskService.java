@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -220,4 +221,14 @@ public class SupervisionTaskService {
     return findByApplicationIdAndType(applicationId, taskType) != null;
   }
 
+  public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,
+      ZonedDateTime eventsAfter, List<Integer> includedApplicationIds) {
+    Map<String, Integer> uriParams = new HashMap<>();
+    uriParams.put("externalownerid", externalOwnerId);
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getExternalOwnerSupervisionTaskHistoryUrl())
+        .queryParam("eventsafter", eventsAfter)
+        .buildAndExpand(uriParams).toUri();
+    ParameterizedTypeReference<Map<Integer, List<SupervisionTask>>> typeRef = new ParameterizedTypeReference<Map<Integer, List<SupervisionTask>>>() {};
+    return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(includedApplicationIds), typeRef).getBody();
+  }
 }

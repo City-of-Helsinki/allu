@@ -11,14 +11,18 @@ import io.swagger.annotations.ApiModelProperty;
 public class ApplicationHistoryExt {
 
   private Integer applicationId;
-  private Set<ApplicationHistoryEventExt> events = new TreeSet<>();
+  private Set<ApplicationStatusEventExt> events = new TreeSet<>();
+  private Set<SupervisionEventExt> supervisionEvents = new TreeSet<>();
+
 
   public ApplicationHistoryExt() {
   }
 
-  public ApplicationHistoryExt(Integer applicationId, Collection<ApplicationHistoryEventExt> events) {
+  public ApplicationHistoryExt(Integer applicationId, Collection<ApplicationStatusEventExt> events,
+      Collection<SupervisionEventExt> supervisionEvents) {
     this.applicationId = applicationId;
     this.events = new TreeSet<>(events);
+    this.supervisionEvents = new TreeSet<>(supervisionEvents);
   }
 
   @ApiModelProperty(value = "ID of the application")
@@ -30,13 +34,21 @@ public class ApplicationHistoryExt {
     this.applicationId = applicationId;
   }
 
-  @ApiModelProperty(value = "Events of the application sorted on event time.")
-  public Set<ApplicationHistoryEventExt> getEvents() {
+  @ApiModelProperty(value = "Status change events of the application sorted on event time.")
+  public Set<ApplicationStatusEventExt> getEvents() {
     return events;
   }
 
-  public void setEvents(Set<ApplicationHistoryEventExt> events) {
+  public void setEvents(Set<ApplicationStatusEventExt> events) {
     this.events = events;
+  }
+
+  public Set<SupervisionEventExt> getSupervisionEvents() {
+    return supervisionEvents;
+  }
+
+  public void setSupervisionEvents(Set<SupervisionEventExt> supervisionEvents) {
+    this.supervisionEvents = supervisionEvents;
   }
 
 }

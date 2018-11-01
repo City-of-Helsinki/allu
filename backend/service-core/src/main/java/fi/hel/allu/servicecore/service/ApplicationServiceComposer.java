@@ -501,4 +501,8 @@ public class ApplicationServiceComposer {
     }
     return customerService.findCustomerById(id);
   }
+
+  public Integer getReplacingApplicationId(Integer applicationId) {
+    return applicationService.getReplacingApplicationId(applicationId);
+  }
 }

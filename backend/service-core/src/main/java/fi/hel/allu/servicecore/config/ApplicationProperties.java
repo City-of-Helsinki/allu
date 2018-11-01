@@ -325,6 +325,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/status");
   }
 
+  public String getReplacingApplicationIdUrl() {
+    return getModelServiceUrl("/applications/{id}/replacing");
+  }
+
+
   public String getApplicationStatusReturnUrl() {
     return getModelServiceUrl("/applications/{id}/status/return");
   }
@@ -675,7 +680,11 @@ public class ApplicationProperties {
   }
 
   public String getExternalOwnerApplicationHistoryUrl() {
-    return getModelServiceUrl("/{externalownerid}/applications/history");
+    return getModelServiceUrl("/externalowner/{externalownerid}/applications/history");
+  }
+
+  public String getExternalOwnerSupervisionTaskHistoryUrl() {
+    return getModelServiceUrl("/supervisiontask/externalowner/{externalownerid}/history");
   }
 
 
@@ -965,7 +974,6 @@ public class ApplicationProperties {
   public String getSupervisionTaskByApplicationIdAndTypeUrl() {
     return getModelServiceUrl("/supervisiontask/application/{id}/type/{type}");
   }
-
 
   /**
    * @return url for creating new supervision task-

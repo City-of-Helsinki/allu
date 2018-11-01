@@ -824,4 +824,12 @@ public class ApplicationDao {
     }
     return type;
   }
+
+  public Integer getReplacingApplicationId(int id) {
+    return queryFactory
+      .select(application.replacedByApplicationId)
+      .from(application)
+      .where(application.id.eq(id))
+      .fetchOne();
+  }
 }

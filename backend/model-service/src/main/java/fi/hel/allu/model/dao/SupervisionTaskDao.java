@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
@@ -23,6 +24,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.QApplication;
 import fi.hel.allu.QAttributeMeta;
 import fi.hel.allu.QStructureMeta;
 import fi.hel.allu.QUser;
@@ -30,12 +32,17 @@ import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.common.PathUtil;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QChangeHistory.changeHistory;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.QProject.project;
@@ -258,5 +265,27 @@ public class SupervisionTaskDao {
     task.setId(null);
     task.setApplicationId(toApplicationId);
     queryFactory.insert(supervisionTask).populate(task).execute();
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,
+      ZonedDateTime eventsAfter, List<Integer> includedApplicationIds) {
+    QApplication application = QApplication.application;
+    BooleanBuilder builder = new BooleanBuilder();
+    builder.and(application.externalOwnerId.eq(externalOwnerId));
+    builder.and(supervisionTask.status.in(SupervisionTaskStatusType.APPROVED, SupervisionTaskStatusType.REJECTED));
+    if (eventsAfter != null) {
+      builder.and(supervisionTask.actualFinishingTime.after(eventsAfter));
+    }
+    if (!includedApplicationIds.isEmpty()) {
+      builder.and(application.id.in(includedApplicationIds));
+    }
+    Map<Integer, List<SupervisionTask>> result = queryFactory.select(supervisionTask.all())
+        .from(supervisionTask)
+        .join(application).on(application.id.eq(supervisionTask.applicationId))
+        .where(builder)
+        .transform(groupBy(supervisionTask.applicationId).as(list(supervisionTaskBean)));
+    return result;
+
   }
 }

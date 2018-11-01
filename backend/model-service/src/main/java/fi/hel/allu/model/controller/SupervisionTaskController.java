@@ -2,6 +2,7 @@ package fi.hel.allu.model.controller;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.SupervisionTaskService;
 
@@ -98,4 +100,12 @@ public class SupervisionTaskController {
     supervisionTask.setId(id);
     return new ResponseEntity<>(supervisionTaskService.reject(supervisionTask, newDate), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/externalowner/{externalownerid}/history", method = RequestMethod.POST)
+  public ResponseEntity<Map<Integer, List<SupervisionTask>>> getSupervisionTaskHistoryForExternalOwner(
+      @PathVariable(value = "externalownerid") Integer externalOwnerId, @RequestParam(value = "eventsafter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime eventsAfter, @RequestBody List<Integer> includedApplicationIds) {
+    Map<Integer, List<SupervisionTask>> result = supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedApplicationIds);
+    return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
 }

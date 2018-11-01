@@ -1,8 +1,7 @@
 package fi.hel.allu.external.service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.collect.Sets;
 
 import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
@@ -23,14 +23,12 @@ import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.InformationRequest;
+import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.AttachmentService;
-import fi.hel.allu.servicecore.service.ExternalUserService;
-import fi.hel.allu.servicecore.service.InformationRequestService;
+import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 /**
@@ -53,6 +51,8 @@ public class ApplicationServiceExt {
   @Autowired
   private RestTemplate restTemplate;
   @Autowired
+  private SupervisionTaskService supervisionTaskService;
+  @Autowired
   private InformationRequestService informationRequestService;
 
   public <T extends ApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
@@ -65,15 +65,38 @@ public class ApplicationServiceExt {
   }
 
   public List<ApplicationHistoryExt> searchApplicationHistory(ApplicationHistorySearchExt searchParameters) {
-    Map<Integer, List<ChangeHistoryItem>> changeHistory = applicationHistoryService.getExternalOwnerApplicationHistory(getExternalUserId(),
+    Integer externalUserId = getExternalUserId();
+    Map<Integer, List<ChangeHistoryItem>> changeHistory = applicationHistoryService.getExternalOwnerApplicationHistory(externalUserId,
         searchParameters.getEventsAfter(), searchParameters.getApplicationIds());
-    return changeHistory.entrySet().stream().map(e -> new ApplicationHistoryExt(e.getKey(), toHistoryEvents(e.getValue()))).collect(Collectors.toList());
-
+    Map<Integer, List<SupervisionTask>> supervisionTaskHistory = supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(externalUserId, searchParameters.getEventsAfter(), searchParameters.getApplicationIds());
+    return Sets.union(changeHistory.keySet(), supervisionTaskHistory.keySet()).stream()
+      .map(id -> new ApplicationHistoryExt(id, toStatusEvents(id, changeHistory.get(id)), toSupervisionEvents(id, supervisionTaskHistory.get(id))))
+      .collect(Collectors.toList());
   }
 
-  private List<ApplicationHistoryEventExt> toHistoryEvents(List<ChangeHistoryItem> items) {
-    return items.stream().map(i ->
-    new ApplicationHistoryEventExt(i.getChangeTime(), StatusType.valueOf(i.getChangeSpecifier()))).collect(Collectors.toList());
+  private List<SupervisionEventExt> toSupervisionEvents(Integer id, List<SupervisionTask> tasks) {
+    return Optional.ofNullable(tasks).orElse(Collections.emptyList())
+            .stream()
+            .map(t -> new SupervisionEventExt(t.getActualFinishingTime(), t.getType(), t.getStatus(), t.getResult()))
+            .collect(Collectors.toList());
+  }
+
+  private List<ApplicationStatusEventExt> toStatusEvents(Integer applicationId, List<ChangeHistoryItem> items) {
+    return Optional.ofNullable(items).orElse(Collections.emptyList())
+            .stream()
+            .map(i -> new ApplicationStatusEventExt(i.getChangeTime(), StatusType.valueOf(i.getChangeSpecifier()), getReplacingApplicationId(i, applicationId)))
+            .collect(Collectors.toList());
+  }
+
+  private Integer getReplacingApplicationId(ChangeHistoryItem item, Integer applicationId) {
+    if (StatusType.valueOf(item.getChangeSpecifier()) == StatusType.REPLACED) {
+      return getReplacingApplicationId(applicationId);
+    }
+    return null;
+  }
+
+  private Integer getReplacingApplicationId(Integer applicationId) {
+    return applicationServiceComposer.getReplacingApplicationId(applicationId);
   }
 
   public <T extends ApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
