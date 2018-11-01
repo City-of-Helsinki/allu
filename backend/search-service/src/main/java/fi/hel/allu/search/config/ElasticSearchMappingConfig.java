@@ -38,10 +38,11 @@ public class ElasticSearchMappingConfig {
 
   private static final String ANALYZER_CASE_INSENSITIVE_SORT = "case_insensitive_sort";
   private static final String ANALYZER_AUTOCOMPLETE = "autocomplete";
+  private static final String ANALYZER_AUTOCOMPLETE_KEYWORD = "autocomplete_keyword";
   private static final String FILTER_AUTOCOMPLETE = "autocomplete_filter";
 
   // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
-  private static final String MAPPINGS_VERSION_NUMBER = "11";
+  private static final String MAPPINGS_VERSION_NUMBER = "12";
 
   private static final String VERSION_INDEX_NAME = "versions";
   private static final String VERSION_TYPE_NAME = "version";
@@ -271,7 +272,7 @@ public class ElasticSearchMappingConfig {
       XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
           .startObject()
             .startObject("properties")
-              .field("registryKey").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
+              .field("registryKey").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzerAndKeywordSearchAnalyzer()))
             .endObject()
           .endObject();
       logger.debug("Customers mapping: " + mappingBuilder.string());
@@ -319,6 +320,16 @@ public class ElasticSearchMappingConfig {
     return builder;
   }
 
+  private XContentBuilder autocompleteSettingsAnalyzerWithKeywordTokenizer() throws IOException {
+    XContentBuilder builder =  XContentFactory.jsonBuilder()
+      .startObject()
+        .field("type", "custom")
+        .field("tokenizer", "keyword")
+        .array("filter", "lowercase", FILTER_AUTOCOMPLETE)
+      .endObject();
+    return builder;
+  }
+
   /**
    * ElasticSearch analyzer settings for mapping with autocomplete and alphabetical sorting.
    */
@@ -328,6 +339,17 @@ public class ElasticSearchMappingConfig {
           .field("type", "text")
           .field("analyzer", ANALYZER_AUTOCOMPLETE)
           .field("search_analyzer", "standard")
+          .field("fields").copyCurrentStructure(parser(alphasort()))
+        .endObject();
+    return builder;
+  }
+
+  private XContentBuilder autocompleteWithAlphaSortingMappingAnalyzerAndKeywordSearchAnalyzer() throws IOException {
+    XContentBuilder builder =  XContentFactory.jsonBuilder()
+        .startObject()
+          .field("type", "text")
+          .field("analyzer", ANALYZER_AUTOCOMPLETE_KEYWORD)
+          .field("search_analyzer", "keyword")
           .field("fields").copyCurrentStructure(parser(alphasort()))
         .endObject();
     return builder;
@@ -363,6 +385,9 @@ public class ElasticSearchMappingConfig {
             .endObject()
             .startObject("analyzer")
               .field(ANALYZER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsAnalyzer()))
+            .endObject()
+            .startObject("analyzer")
+              .field(ANALYZER_AUTOCOMPLETE_KEYWORD).copyCurrentStructure(parser(autocompleteSettingsAnalyzerWithKeywordTokenizer()))
             .endObject()
             .startObject("normalizer")
               .field(ANALYZER_CASE_INSENSITIVE_SORT).copyCurrentStructure(parser(caseInsensitiveSortAnalyzer()))

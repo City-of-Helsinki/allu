@@ -150,6 +150,34 @@ public class CustomerSearchTest {
   }
 
   @Test
+  public void registryKey() {
+    CustomerES customerES1 = createCustomer("1", 1);
+    customerES1.setRegistryKey("123456");
+    CustomerES customerES2 = createCustomer("2", 2);
+    customerES2.setRegistryKey("123456-1");
+    CustomerES customerES3 = createCustomer("3", 3);
+    customerES3.setRegistryKey("1234567-1");
+    customerSearchService.insert(customerES1);
+    customerSearchService.insert(customerES2);
+    customerSearchService.insert(customerES3);
+
+    customerSearchService.refreshIndex();
+
+    QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "123456");
+
+    List<Integer> appList = customerSearchService.findByField(params,
+        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
+    assertEquals(3, appList.size());
+
+    params = SearchTestUtil.createQueryParameters("registryKey", "123456-1");
+
+    appList = customerSearchService.findByField(params,
+        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
+    assertEquals(1, appList.size());
+    assertEquals(Arrays.asList(2), appList);
+  }
+
+  @Test
   public void testUpdateApplicationCustomerPartially() throws IOException {
     ApplicationES applicationES = ApplicationSearchTest.createApplication(100);
     CustomerES customerES = createCustomer(TEST_NAME, 123);
