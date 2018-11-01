@@ -42,7 +42,8 @@ export function createStructure(fb: FormBuilder): { [key: string]: any; } {
     rentalTimes: fb.group({
       startTime: [undefined, Validators.required],
       endTime: [undefined, Validators.required]
-    }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') })
+    }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
+    terms: [undefined]
   };
 }
 

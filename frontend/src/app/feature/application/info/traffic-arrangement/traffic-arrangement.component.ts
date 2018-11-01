@@ -27,7 +27,8 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
       calculatedPrice: [0],
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required],
-      workPurpose: ['']
+      workPurpose: [''],
+      terms: [undefined]
     });
   }
 

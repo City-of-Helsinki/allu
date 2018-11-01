@@ -10,7 +10,7 @@ export interface PlacementContractForm extends ApplicationForm {
   contractText?: string;
   terms?: string;
   terminationDate?: Date;
-  other?: string;
+  rationale?: string;
 }
 
 export function to(form: PlacementContractForm): PlacementContract {
@@ -20,7 +20,7 @@ export function to(form: PlacementContractForm): PlacementContract {
   placementContract.contractText = form.contractText;
   placementContract.terms = form.terms;
   placementContract.terminationDate = form.terminationDate;
-  placementContract.rationale = form.other;
+  placementContract.rationale = form.rationale;
   return placementContract;
 }
 
@@ -33,6 +33,6 @@ export function from(application: Application, contract: PlacementContract) {
     contractText: contract.contractText,
     terms: contract.terms,
     terminationDate: contract.terminationDate,
-    other: contract.rationale
+    rationale: contract.rationale
   };
 }

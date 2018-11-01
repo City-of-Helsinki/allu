@@ -92,7 +92,8 @@ export function eventForm(fb: FormBuilder): { [key: string]: any; } {
     structureTimes: fb.group({
       startTime: [undefined],
       endTime: [undefined]
-    }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') })
+    }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
+    terms: [undefined]
   };
 }
 

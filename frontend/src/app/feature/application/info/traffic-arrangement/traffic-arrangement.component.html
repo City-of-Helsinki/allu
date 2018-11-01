@@ -129,9 +129,8 @@
       <allu-card>
         <mat-card-title>{{'TERMS.title' | translation}}</mat-card-title>
         <mat-card-content>
-          <default-text [form]="applicationForm"
+          <default-text formControlName="terms"
                         [applicationType]="application.type"
-                        [texts]="application.extension.terms"
                         [readonly]="readonly"
                         [textType]="'TERMS'"
                         [includeTypes]="['TERMS']"></default-text>

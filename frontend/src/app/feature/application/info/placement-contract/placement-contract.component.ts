@@ -26,7 +26,9 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
       propertyIdentificationNumber: [''],
       calculatedPrice: [0],
       additionalInfo: [''],
-      contractText: ['']
+      contractText: [''],
+      terms: [''],
+      rationale: ['']
     });
   }
 

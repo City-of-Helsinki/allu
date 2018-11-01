@@ -192,7 +192,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required],
       compactionAndBearingCapacityMeasurement: [false],
-      qualityAssuranceTest: [false]
+      qualityAssuranceTest: [false],
+      terms: [undefined]
     });
   }
 
