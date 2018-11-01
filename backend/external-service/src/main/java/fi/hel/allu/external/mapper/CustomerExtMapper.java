@@ -53,6 +53,7 @@ public class CustomerExtMapper {
     customerJson.setPhone(customerExt.getPhone());
     customerJson.setInvoicingOperator(customerExt.getInvoicingOperator());
     customerJson.setCountry(customerExt.getCountry());
+    customerJson.setSapCustomerNumber(customerExt.getSapCustomerNumber());
     if (customerExt.getPostalAddress() != null) {
       customerJson.setPostalAddress(new PostalAddressJson(
           customerExt.getPostalAddress().getStreetAddressAsString(),

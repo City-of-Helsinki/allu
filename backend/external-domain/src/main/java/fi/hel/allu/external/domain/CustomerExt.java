@@ -30,6 +30,7 @@ public class CustomerExt {
   @NotBlank(message = "{customer.country}")
   @Size(min = 2, max = 2, message = "{customer.country.format}" )
   private String country;
+  private String sapCustomerNumber;
 
   public Integer getId() {
     return id;
@@ -118,5 +119,14 @@ public class CustomerExt {
 
   public void setCountry(String country) {
     this.country = country;
+  }
+
+  @ApiModelProperty(value = "Customer's SAP number")
+  public String getSapCustomerNumber() {
+    return sapCustomerNumber;
+  }
+
+  public void setSapCustomerNumber(String sapCustomerNumber) {
+    this.sapCustomerNumber = sapCustomerNumber;
   }
 }
