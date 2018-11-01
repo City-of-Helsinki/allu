@@ -9,12 +9,12 @@
                   [readonly]="readonly"></application-type>
 
 <div [ngSwitch]="type">
-  <event *ngSwitchCase="'EVENT'" (formDirty)="formDirtyChanged($event)"></event>
-  <short-term-rental *ngSwitchCase="'SHORT_TERM_RENTAL'" (formDirty)="formDirtyChanged($event)"></short-term-rental>
-  <cable-report *ngSwitchCase="'CABLE_REPORT'" (formDirty)="formDirtyChanged($event)"></cable-report>
-  <excavation-announcement *ngSwitchCase="'EXCAVATION_ANNOUNCEMENT'" (formDirty)="formDirtyChanged($event)"></excavation-announcement>
-  <note *ngSwitchCase="'NOTE'" (formDirty)="formDirtyChanged($event)"></note>
-  <traffic-arrangement *ngSwitchCase="'TEMPORARY_TRAFFIC_ARRANGEMENTS'" (formDirty)="formDirtyChanged($event)"></traffic-arrangement>
-  <placement-contract *ngSwitchCase="'PLACEMENT_CONTRACT'" (formDirty)="formDirtyChanged($event)"></placement-contract>
-  <area-rental *ngSwitchCase="'AREA_RENTAL'" (formDirty)="formDirtyChanged($event)"></area-rental>
+  <event *ngSwitchCase="'EVENT'" [applicationForm]="form"></event>
+  <short-term-rental *ngSwitchCase="'SHORT_TERM_RENTAL'" [applicationForm]="form"></short-term-rental>
+  <cable-report *ngSwitchCase="'CABLE_REPORT'" [applicationForm]="form"></cable-report>
+  <excavation-announcement *ngSwitchCase="'EXCAVATION_ANNOUNCEMENT'" [applicationForm]="form"></excavation-announcement>
+  <note *ngSwitchCase="'NOTE'"  [applicationForm]="form"></note>
+  <traffic-arrangement *ngSwitchCase="'TEMPORARY_TRAFFIC_ARRANGEMENTS'" [applicationForm]="form"></traffic-arrangement>
+  <placement-contract *ngSwitchCase="'PLACEMENT_CONTRACT'" [applicationForm]="form"></placement-contract>
+  <area-rental *ngSwitchCase="'AREA_RENTAL'" [applicationForm]="form"></area-rental>
 </div>

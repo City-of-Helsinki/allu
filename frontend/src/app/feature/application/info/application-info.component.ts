@@ -33,6 +33,8 @@ import {
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
 import {ApplicationNotificationService} from '@feature/application/notification/application-notification.service';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {applicationForm} from '@feature/application/info/application-form';
 
 @Component({
   selector: 'application-info',
@@ -42,6 +44,7 @@ import {ApplicationNotificationService} from '@feature/application/notification/
 })
 export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate, OnDestroy {
 
+  form: FormGroup;
   type: string;
   showDraftSelection: boolean;
   readonly: boolean;
@@ -55,9 +58,11 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
               private store: Store<fromApplication.State>,
               private dialog: MatDialog,
               private modalState: InformationRequestModalEvents,
-              private applicationNotificationService: ApplicationNotificationService) {}
+              private applicationNotificationService: ApplicationNotificationService,
+              private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    this.form = this.fb.group(applicationForm());
     const application = this.applicationStore.snapshot.application;
     this.type = application.type;
     this.showDraftSelection = this.shouldShowDraftSelection();
@@ -82,12 +87,8 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     this.destroy.unsubscribe();
   }
 
-  formDirtyChanged(dirty: boolean): void {
-    this.formDirty = dirty;
-  }
-
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.formDirty) {
+    if (this.form.dirty) {
       return this.confirmChanges();
     } else {
       return true;

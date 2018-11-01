@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterContentInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
@@ -33,10 +33,7 @@ import {InformationRequest} from '@model/information-request/information-request
   template: ''
 })
 export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
-
-  @Output() formDirty: EventEmitter<boolean> = new EventEmitter();
-
-  applicationForm: FormGroup;
+  @Input() applicationForm: FormGroup;
   readonly: boolean;
   submitPending = false;
   showTerms = false;
@@ -66,7 +63,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   ngOnInit(): void {
     this.initForm();
-    this.applicationForm.valueChanges.subscribe(val => this.formDirty.emit(this.applicationForm.dirty));
     this.hasPropertyDeveloperCtrl = this.fb.control(false);
     this.hasRepresentativeCtrl = this.fb.control(false);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
@@ -123,10 +119,9 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   }
 
   /**
-   * Initializes application form
+   * Initializes application form with type specific data
    */
   protected initForm() {
-    this.applicationForm = this.fb.group(applicationForm(this.fb));
     const extensionForm = this.createExtensionForm();
     FormUtil.addControls(this.applicationForm, extensionForm.controls);
   }
@@ -199,19 +194,17 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   }
 
   private save(application: Application) {
-    this.applicationStore.save(application)
-      .subscribe(
-        app => {
-          this.applicationSaved(app);
-          this.formDirty.emit(false);
-        },
-        err => {
-          this.notification.errorInfo(err);
-          this.submitPending = false;
-        });
+    this.applicationStore.save(application).subscribe(
+      app => this.applicationSaved(app),
+      err => {
+        this.notification.errorInfo(err);
+        this.submitPending = false;
+      }
+    );
   }
 
   private applicationSaved(application: Application): void {
+    this.applicationForm.markAsPristine();
     this.notification.success(findTranslation('application.action.saved'));
     this.submitPending = false;
 
