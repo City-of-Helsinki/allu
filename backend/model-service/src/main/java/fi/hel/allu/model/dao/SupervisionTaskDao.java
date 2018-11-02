@@ -84,6 +84,11 @@ public class SupervisionTaskDao {
   }
 
   @Transactional(readOnly = true)
+  public List<SupervisionTask> findByLocationId(int locationId) {
+    return queryFactory.select(supervisionTaskBean).from(supervisionTask).where(supervisionTask.locationId.eq(locationId)).fetch();
+  }
+
+  @Transactional(readOnly = true)
   public List<SupervisionTask> findByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
     return queryFactory.select(supervisionTaskBean).from(supervisionTask)
         .where(supervisionTask.applicationId.eq(applicationId), supervisionTask.type.eq(type))

@@ -40,6 +40,12 @@ public class SupervisionTaskController {
     return new ResponseEntity<>(supervisionTaskService.findByApplicationId(applicationId), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/location/{locationId}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE','ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<SupervisionTaskJson>> findByLocationId(@PathVariable int locationId) {
+    return new ResponseEntity<>(supervisionTaskService.findByLocationId(locationId), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<SupervisionTaskJson> update(@PathVariable int id, @Valid @RequestBody SupervisionTaskJson supervisionTask) {

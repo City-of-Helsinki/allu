@@ -1,0 +1,1 @@
+alter table allu.supervision_task add column location_id integer references allu.location(id);

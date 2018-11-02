@@ -19,7 +19,8 @@ export class SupervisionTaskForm {
     public status?: SupervisionTaskStatusType,
     public description?: string,
     public result?: string,
-    public automatic?: boolean
+    public automatic?: boolean,
+    public locationId?: number
   ) {}
 
   static from(task: SupervisionTask): SupervisionTaskForm {
@@ -42,6 +43,7 @@ export class SupervisionTaskForm {
     form.description = task.description;
     form.result = task.result;
     form.automatic = isAutomaticSupervisionTaskType(task.type);
+    form.locationId = task.locationId;
     return form;
   }
 
@@ -58,6 +60,7 @@ export class SupervisionTaskForm {
     task.status = form.status;
     task.description = form.description;
     task.result = form.result;
+    task.locationId = form.locationId;
     return task;
   }
 }

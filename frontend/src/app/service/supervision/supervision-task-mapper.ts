@@ -25,7 +25,8 @@ export class SupervisionTaskMapper {
       TimeUtil.dateFromBackend(task.actualFinishingTime),
       task.status,
       task.description,
-      task.result
+      task.result,
+      task.locationId
     );
   }
 
@@ -42,7 +43,8 @@ export class SupervisionTaskMapper {
         actualFinishingTime: TimeUtil.dateToBackend(task.actualFinishingTime),
         status: task.status,
         description: task.description,
-        result: task.result
+        result: task.result,
+        locationId: task.locationId
       }
       : undefined;
   }

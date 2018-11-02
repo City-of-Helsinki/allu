@@ -332,6 +332,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         null,
         SupervisionTaskStatusType.OPEN,
         "just testing",
+        null,
         null);
   }
 }

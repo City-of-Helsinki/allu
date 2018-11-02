@@ -20,6 +20,7 @@ public class SupervisionTask {
   private SupervisionTaskStatusType status;
   private String description;
   private String result;
+  private Integer locationId;
 
   public SupervisionTask() {
     // for deserialization
@@ -36,7 +37,8 @@ public class SupervisionTask {
       ZonedDateTime actualFinishingTime,
       SupervisionTaskStatusType status,
       String description,
-      String result) {
+      String result,
+      Integer locationId) {
     this.id = id;
     this.applicationId = applicationId;
     this.type = type;
@@ -48,6 +50,7 @@ public class SupervisionTask {
     this.status = status;
     this.description = description;
     this.result = result;
+    this.locationId = locationId;
   }
 
   /**
@@ -191,5 +194,13 @@ public class SupervisionTask {
 
   public void setResult(String result) {
     this.result = result;
+  }
+
+  public Integer getLocationId() {
+    return locationId;
+  }
+
+  public void setLocationId(Integer locationId) {
+    this.locationId = locationId;
   }
 }

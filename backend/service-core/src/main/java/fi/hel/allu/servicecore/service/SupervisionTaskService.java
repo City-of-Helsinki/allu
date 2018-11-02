@@ -66,6 +66,13 @@ public class SupervisionTaskService {
     return getFullyPopulatedJson(Arrays.asList(supervisionTasksResult.getBody()));
   }
 
+  public List<SupervisionTaskJson> findByLocationId(int locationId) {
+    ResponseEntity<SupervisionTask[]> supervisionTasksResult = restTemplate.getForEntity(
+        applicationProperties.getSupervisionTaskByLocationIdUrl(), SupervisionTask[].class, locationId);
+    return getFullyPopulatedJson(Arrays.asList(supervisionTasksResult.getBody()));
+  }
+
+
   public SupervisionTaskJson update(SupervisionTaskJson supervisionTask) {
     ResponseEntity<SupervisionTask> supervisionTasksResult = update(supervisionTask.getId(), SupervisionTaskMapper.mapToModel(supervisionTask));
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);

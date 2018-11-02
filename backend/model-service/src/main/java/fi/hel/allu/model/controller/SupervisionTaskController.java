@@ -43,6 +43,11 @@ public class SupervisionTaskController {
     return new ResponseEntity<>(supervisionTaskService.findByApplicationId(applicationId), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/location/{locationId}", method = RequestMethod.GET)
+  public ResponseEntity<List<SupervisionTask>> findByLocationId(@PathVariable int locationId) {
+    return new ResponseEntity<>(supervisionTaskService.findByLocationId(locationId), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/application/{applicationId}/type/{type}", method = RequestMethod.GET)
   public ResponseEntity<List<SupervisionTask>> findByApplicationIdAndType(
       @PathVariable(value = "applicationId") int applicationId,

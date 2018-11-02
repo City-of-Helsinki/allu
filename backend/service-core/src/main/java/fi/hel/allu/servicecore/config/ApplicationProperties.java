@@ -968,6 +968,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/supervisiontask/application/{id}");
   }
 
+  public String getSupervisionTaskByLocationIdUrl() {
+    return getModelServiceUrl("/supervisiontask/location/{id}");
+  }
+
   /**
    * @return url for retrieving supervision tasks by application id.
    */

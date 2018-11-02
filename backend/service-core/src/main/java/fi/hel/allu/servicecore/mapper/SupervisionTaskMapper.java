@@ -28,7 +28,8 @@ public class SupervisionTaskMapper {
         supervisionTask.getActualFinishingTime(),
         supervisionTask.getStatus(),
         supervisionTask.getDescription(),
-        supervisionTask.getResult());
+        supervisionTask.getResult(),
+        supervisionTask.getLocationId());
   }
 
   public static SupervisionTask mapToModel(SupervisionTaskJson supervisionTaskJson) {
@@ -43,7 +44,8 @@ public class SupervisionTaskMapper {
         supervisionTaskJson.getActualFinishingTime(),
         supervisionTaskJson.getStatus(),
         supervisionTaskJson.getDescription(),
-        supervisionTaskJson.getResult()
+        supervisionTaskJson.getResult(),
+        supervisionTaskJson.getLocationId()
     );
   }
 

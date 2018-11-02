@@ -14,6 +14,7 @@ export class SupervisionTask {
     public actualFinishingTime?: Date,
     public status: SupervisionTaskStatusType = SupervisionTaskStatusType.OPEN,
     public description?: string,
-    public result?: string) {
+    public result?: string,
+    public locationId?: number) {
   }
 }

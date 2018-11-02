@@ -51,6 +51,11 @@ public class SupervisionTaskService {
   }
 
   @Transactional(readOnly = true)
+  public List<SupervisionTask> findByLocationId(int locationId) {
+    return supervisionTaskDao.findByLocationId(locationId);
+  }
+
+  @Transactional(readOnly = true)
   public List<SupervisionTask> findByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
     return supervisionTaskDao.findByApplicationIdAndType(applicationId, type);
   }
@@ -149,7 +154,8 @@ public class SupervisionTaskService {
         null,
         OPEN,
         rejected.getResult(),
-        null
+        null,
+        rejected.getLocationId()
     );
   }
 

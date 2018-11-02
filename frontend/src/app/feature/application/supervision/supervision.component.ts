@@ -72,6 +72,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
       automatic: [undefined],
       compactionAndBearingCapacityMeasurement: [undefined],
       qualityAssuranceTest: [undefined],
+      locationId: [undefined]
     });
 
     formGroup.patchValue(SupervisionTaskForm.from(task));

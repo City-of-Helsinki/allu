@@ -102,7 +102,7 @@ public class ExcavationAnnouncementService {
     UserJson supervisionTaskOwner = getSupervisionTaskOwner(application);
     supervisionTaskService.insert(new SupervisionTaskJson(null, application.getId(), SupervisionTaskType.OPERATIONAL_CONDITION, null,
             supervisionTaskOwner, null, ExcavationAnnouncementDates.operationalConditionSupervisionDate(reportedDate),
-            null, SupervisionTaskStatusType.OPEN, null, null));
+            null, SupervisionTaskStatusType.OPEN, null, null, null));
   }
 
   private UserJson getSupervisionTaskOwner(Application application) {

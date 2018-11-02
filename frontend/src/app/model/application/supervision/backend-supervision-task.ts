@@ -14,4 +14,5 @@ export interface BackendSupervisionTask {
   status: SupervisionTaskStatusType;
   description: string;
   result: string;
+  locationId: number;
 }
