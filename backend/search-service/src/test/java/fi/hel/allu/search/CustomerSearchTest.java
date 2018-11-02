@@ -140,13 +140,6 @@ public class CustomerSearchTest {
         new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(1), appList);
-
-    // test searching beginning of word after dash
-    params = SearchTestUtil.createQueryParameters("registryKey", "23");
-
-    appList = customerSearchService.findByField(params,
-        new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
-    assertEquals(1, appList.size());
   }
 
   @Test
