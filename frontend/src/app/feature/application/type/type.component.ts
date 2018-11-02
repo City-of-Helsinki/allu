@@ -5,15 +5,14 @@ import {
   getAvailableKinds,
   getAvailableSpecifiers,
   hasMultipleKinds
-} from '../../../model/application/type/application-type';
-import {ApplicationStore} from '../../../service/application/application-store';
-import {EnumUtil} from '../../../util/enum.util';
-import {ArrayUtil} from '../../../util/array-util';
-import {combineLatest, Observable, of, Subject} from 'rxjs';
+} from '@model/application/type/application-type';
+import {ApplicationStore} from '@service/application/application-store';
+import {ArrayUtil} from '@util/array-util';
+import {Observable, of, Subject} from 'rxjs';
 import {map, take, takeUntil} from 'rxjs/internal/operators';
-import {Store} from '@ngrx/store';
-import * as fromRoot from '../../allu/reducers';
-import * as fromAuth from '../../auth/reducers';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers/index';
+import * as fromAuth from '@feature/auth/reducers';
 import * as fromApplication from '../reducers';
 import {
   fromKindsWithSpecifiers,
@@ -21,9 +20,10 @@ import {
   KindsWithSpecifiers,
   SpecifierEntry,
   toKindsWithSpecifiers
-} from '../../../model/application/type/application-specifier';
-import {SetKindsWithSpecifiers, SetType} from '../actions/application-actions';
-import {InformationRequestModalEvents} from '../../information-request/information-request-modal-events';
+} from '@model/application/type/application-specifier';
+import {SetKindsWithSpecifiers, SetType} from '@feature/application/actions/application-actions';
+import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
+import {Application} from '@model/application/application';
 
 @Component({
   selector: 'application-type',
@@ -57,20 +57,16 @@ export class TypeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): any {
-    combineLatest(
-      this.store.select(fromApplication.getType),
-      this.store.select(fromApplication.getKindsWithSpecifiers)
-    ).pipe(
+    this.store.pipe(
+      select(fromApplication.getCurrentApplication),
       take(1)
-    ).subscribe(([type, kindsWithSpecifiers]) => {
-      const typeName = ApplicationType[type];
-      const kinds = kindsWithSpecifiers ? Object.keys(kindsWithSpecifiers) : [];
-      this.availableKinds = getAvailableKinds(typeName);
-      this.multipleKinds = hasMultipleKinds(typeName);
-
-      this.initForm(typeName, kinds, kindsWithSpecifiers);
-      this.applicationTypes = this.getAvailableTypes()
-        .pipe(map(types => types.sort(ArrayUtil.naturalSortTranslated(['application.type'], (t: string) => t))));
+    ).subscribe(app => {
+      this.availableKinds = getAvailableKinds(app.type);
+      this.multipleKinds = hasMultipleKinds(app.type);
+      this.initForm(app);
+      this.applicationTypes = this.getAvailableTypes().pipe(
+        map(types => types.sort(ArrayUtil.naturalSortTranslated(['application.type'], (t: string) => t)))
+      );
 
       this.initEvents();
     });
@@ -122,11 +118,12 @@ export class TypeComponent implements OnInit, OnDestroy {
     this.modalEvents.openAcceptance();
   }
 
-  private initForm(type: string, selectedKinds: string[], kindsWithSpecifiers: KindsWithSpecifiers) {
-    const selectedSpecifiers = fromKindsWithSpecifiers(kindsWithSpecifiers);
+  private initForm(app: Application) {
+    const selectedKinds = app.kindsWithSpecifiers ? Object.keys(app.kindsWithSpecifiers) : [];
+    const selectedSpecifiers = fromKindsWithSpecifiers(app.kindsWithSpecifiers);
 
     const kinds = this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds);
-    this.typeCtrl = this.fb.control({ value: type, disabled: this.typeChangeDisabled });
+    this.typeCtrl = this.fb.control({ value: app.type, disabled: this.typeChangeDisabled });
     this.kindsCtrl = this.fb.control(kinds, Validators.required);
     this.specifiersCtrl = this.fb.control(selectedSpecifiers);
     this.draftCtrl = this.fb.control(this.applicationStore.snapshot.draft);
@@ -139,7 +136,7 @@ export class TypeComponent implements OnInit, OnDestroy {
     });
 
     this.kindsCtrl.updateValueAndValidity();
-    this.setFormMode(ApplicationType[type]);
+    this.setFormMode(app.type);
   }
 
   private initEvents(): void {
@@ -150,7 +147,8 @@ export class TypeComponent implements OnInit, OnDestroy {
       map((type: string) => ApplicationType[type]),
     ).subscribe(type => this.store.dispatch(new SetType(type)));
 
-    this.store.select(fromApplication.getType).pipe(
+    this.store.pipe(
+      select(fromApplication.getType),
       takeUntil(this.destroy),
       map((type: ApplicationType) => ApplicationType[type])
     ).subscribe(type => this.typeChange(type));
@@ -161,7 +159,8 @@ export class TypeComponent implements OnInit, OnDestroy {
     this.specifiersCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(specifiers => this.specifierSelection(specifiers));
 
-    this.store.select(fromApplication.getKindsWithSpecifiers).pipe(
+    this.store.pipe(
+      select(fromApplication.getKindsWithSpecifiers),
       takeUntil(this.destroy)
     ).subscribe(kws => this.kindsWithSpecifierChange(kws));
 
