@@ -35,6 +35,7 @@ export class ApplicationMapper {
     application.customersWithContacts = CustomerMapper.mapSearchResultsWithContacts(backendApplication.customers);
     application.project = ProjectMapper.mapSearchResult(backendApplication.project);
     application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
+    application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
     application.nrOfComments = backendApplication.nrOfComments;
     application.applicationTags = ApplicationTagMapper.mapSearchResultList(backendApplication.applicationTags);

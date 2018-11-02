@@ -65,6 +65,7 @@ export interface SearchResultApplication {
   name: string;
   creationTime: string;
   startTime: string;
+  endTime: string;
   customers: SearchResultCustomersWithContacts;
   locations: Array<SearchResultLocation>;
   nrOfComments: number;
