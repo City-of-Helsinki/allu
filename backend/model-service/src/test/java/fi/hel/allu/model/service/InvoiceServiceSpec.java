@@ -25,6 +25,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRecipient;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Spectrum.class)
 public class InvoiceServiceSpec extends SpeccyTestBase {
@@ -81,7 +82,9 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         customer.setName("The Company");
         final int INVOICE_RECIPIENT_ID = 33;
         final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
-        final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(new InvoiceRow());
+        InvoiceRow row = new InvoiceRow();
+        row.setNetPrice(10);
+        final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
         Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID);
         List<Invoice> pendingInvoices = Collections.singletonList(invoice);
         Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
@@ -93,6 +96,23 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         assertEquals(invoiceRecipient.getName(), foundInvoice.getInvoiceRecipient().getName());
         assertEquals(invoiceRecipient.getType(), foundInvoice.getInvoiceRecipient().getType());
       });
+      it("Filters invoices if sum is zero", () -> {
+        final Customer customer = new Customer();
+        customer.setType(CustomerType.COMPANY);
+        customer.setName("The Company");
+        final int INVOICE_RECIPIENT_ID = 33;
+        final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
+        InvoiceRow row = new InvoiceRow();
+        row.setNetPrice(0);
+        final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
+        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID);
+        List<Invoice> pendingInvoices = Collections.singletonList(invoice);
+        Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
+        Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
+        List<Invoice> foundPendingInvoices = invoiceService.findPending();
+        assertTrue(foundPendingInvoices.isEmpty());
+      });
+
     });
   }
 }

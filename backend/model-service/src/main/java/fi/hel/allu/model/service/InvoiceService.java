@@ -127,7 +127,15 @@ public class InvoiceService {
         logger.error("Invoice recipient not found with ID {}", i.getRecipientId());
       }
     });
-    return invoices;
+    return filterZeroInvoices(invoices);
+  }
+
+  private List<Invoice> filterZeroInvoices(List<Invoice> invoices) {
+    return invoices.stream().filter(i -> getInvoiceTotal(i) != 0).collect(Collectors.toList());
+  }
+
+  private int getInvoiceTotal(Invoice i) {
+    return i.getRows().stream().mapToInt(InvoiceRow::getNetPrice).sum();
   }
 
   /**
