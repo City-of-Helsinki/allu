@@ -17,8 +17,6 @@ public class ShortTermRentalTest extends BaseApplicationTest<ShortTermRentalExt>
   private static final String NAME = "Lyhyt vuokraus - ext";
   private static final String DESCRIPTION = "Vuokrauksen kuvaus";
   private static final ApplicationKind KIND = ApplicationKind.BENJI;
-  private static final Integer AREA = Integer.valueOf(400);
-
 
   @Test
   public void shouldCreateShortTermRental() {
@@ -35,7 +33,6 @@ public class ShortTermRentalTest extends BaseApplicationTest<ShortTermRentalExt>
     ShortTermRentalExt shortTermRental = new ShortTermRentalExt();
     shortTermRental.setDescription(DESCRIPTION);
     shortTermRental.setApplicationKind(KIND);
-    shortTermRental.setArea(AREA);
     setCommonFields(shortTermRental);
     return shortTermRental;
   }

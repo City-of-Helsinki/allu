@@ -76,6 +76,7 @@ public class TestData {
  public static final ZonedDateTime END_TIME = ZonedDateTime.now().plusDays(11);
  public static final String CUSTOMER_REFERENCE = "Asiakkaan viite";
  public static final String IDENTIFICATION_NUMBER = "Asiakasjärjestelmän tunniste";
+ public static final Double AREA = Double.valueOf(48.0);
 
  public static final Geometry EVENT_GEOMETRY = geometrycollection(3879, polygon(ring(
      c(2.5494887994040444E7,6673140.94535369),

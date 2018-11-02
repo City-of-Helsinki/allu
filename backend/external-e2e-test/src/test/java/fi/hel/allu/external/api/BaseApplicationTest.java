@@ -56,5 +56,6 @@ public abstract class BaseApplicationTest <T extends ApplicationExt> extends Bas
     application.setPostalAddress(POSTAL_ADDRESS);
     application.setStartTime(START_TIME);
     application.setPendingOnClient(false);
+    application.setArea(AREA);
   }
 }

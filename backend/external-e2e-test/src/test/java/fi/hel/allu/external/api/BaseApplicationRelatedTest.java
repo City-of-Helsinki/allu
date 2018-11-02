@@ -21,7 +21,6 @@ public abstract class BaseApplicationRelatedTest extends BaseApplicationTest<Sho
   private static final String RESOURCE_PATH = "/shorttermrentals";
   private static final ApplicationKind KIND = ApplicationKind.BRIDGE_BANNER;
   private static final String DESCRIPTION = "Vuokrauksen kuvaus";
-  private static final Integer AREA = Integer.valueOf(10);
 
   private Integer applicationId;
 
@@ -39,7 +38,6 @@ public abstract class BaseApplicationRelatedTest extends BaseApplicationTest<Sho
     ShortTermRentalExt shortTermRental = new ShortTermRentalExt();
     shortTermRental.setDescription(DESCRIPTION);
     shortTermRental.setApplicationKind(KIND);
-    shortTermRental.setArea(AREA);
     setCommonFields(shortTermRental);
     return shortTermRental;
   }
