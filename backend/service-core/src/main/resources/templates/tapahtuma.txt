@@ -4,10 +4,6 @@ Viestin liitteenä on tapahtumanne maankäyttöön liittyvä vuokrauspäätös $
 
 ${accompanyingMessage}
 
-<#if totalPrice gt 0 >
-Lähetämme laskun erikseen.
-
-</#if>
 Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/i2ridc3ydx
 
 Ystävällisin terveisin
