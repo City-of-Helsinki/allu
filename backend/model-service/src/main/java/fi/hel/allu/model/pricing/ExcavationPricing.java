@@ -38,7 +38,7 @@ public class ExcavationPricing extends Pricing {
     this.extension = (ExcavationAnnouncement)application.getExtension();
     this.pricingExplanator = pricingExplanator;
     this.pricingDao = pricingDao;
-    final int handlingFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE);
+    final int handlingFee = getHandlingFee(extension);
     setPriceInCents(handlingFee);
     addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, handlingFee,
         HANDLING_FEE_TEXT, handlingFee);
@@ -132,6 +132,14 @@ public class ExcavationPricing extends Pricing {
     }
     int getNumberOfDays() {
       return (int) CalendarUtil.startingUnitsBetween(start, end, ChronoUnit.DAYS);
+    }
+  }
+
+  private int getHandlingFee(ExcavationAnnouncement excavationAnnouncement) {
+    if (Boolean.TRUE.equals(excavationAnnouncement.getSelfSupervision())) {
+      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE_SELF_SUPERVISION);
+    } else {
+      return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE);
     }
   }
 }
