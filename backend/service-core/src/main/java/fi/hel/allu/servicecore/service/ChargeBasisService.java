@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class ChargeBasisService {
 
   public List<ChargeBasisEntry> getInvoicableChargeBasis(int applicationId) {
     return sortEntries(loadChargeBasis(applicationId).stream()
-        .filter(e -> e.isInvoicable())
+        .filter(e -> e.isInvoicable() && (e.getNetPrice() != 0 || e.getUnit() == ChargeBasisUnit.PERCENT))
         .collect(Collectors.toList()));
   }
 

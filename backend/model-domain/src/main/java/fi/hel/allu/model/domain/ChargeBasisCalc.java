@@ -32,7 +32,7 @@ public class ChargeBasisCalc {
       if (e.getUnit() == ChargeBasisUnit.PERCENT) {
         String referredTag = Optional.ofNullable(e.getReferredTag()).orElse(EMPTY_TAG);
         percentEntries.computeIfAbsent(referredTag, k -> new ArrayList<>()).add(e);
-      } else {
+      } else if (e.getNetPrice() != 0) {
         simpleEntries.add(e);
       }
     });
