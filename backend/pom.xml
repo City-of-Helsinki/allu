@@ -43,6 +43,7 @@
         <module>external-domain</module>
         <module>sap-import</module>
         <module>allu-etl</module>
+        <module>supervision-api</module>
     </modules>
 
     <build>
