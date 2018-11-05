@@ -34,6 +34,7 @@ export const translations = {
     pricingBasis: 'Hinnoitteluperusteet',
     replaced: 'Korvatut',
     invoiced: 'Laskutettu',
+    receivedTime: 'Hakemus jätetty',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',

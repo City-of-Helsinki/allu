@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {
   ApplicationType,
@@ -36,6 +36,9 @@ export class TypeComponent implements OnInit, OnDestroy {
   @Input() readonly  = false;
   @Input() typeChangeDisabled = false;
   @Input() showDraftSelection = false;
+  @Input() receivedTime: Date = new Date();
+
+  @Output() receivedTimeChange: EventEmitter<Date> = new EventEmitter<Date>();
 
   multipleKinds = false;
   applicationTypes: Observable<string[]>;
@@ -132,7 +135,8 @@ export class TypeComponent implements OnInit, OnDestroy {
       type: this.typeCtrl,
       kinds: this.kindsCtrl,
       specifiers: this.specifiersCtrl,
-      draft: this.draftCtrl
+      draft: this.draftCtrl,
+      receivedTime: [app.receivedTime, Validators.required]
     });
 
     this.kindsCtrl.updateValueAndValidity();
@@ -166,6 +170,9 @@ export class TypeComponent implements OnInit, OnDestroy {
 
     this.draftCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(draft => this.applicationStore.changeDraft(draft));
+
+    this.form.get('receivedTime').valueChanges.pipe(takeUntil(this.destroy))
+      .subscribe(date => this.receivedTimeChange.emit(date));
   }
 
   private getAvailableTypes() {
