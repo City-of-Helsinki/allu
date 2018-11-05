@@ -175,6 +175,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.resetFixedLocations();
   }
 
+  updateReceivedTime(date: Date): void {
+    this.application.receivedTime = date;
+  }
+
   searchUpdated(searchFilter: MapSearchFilter) {
     this.locationForm.patchValue({
       streetAddress: searchFilter.address,

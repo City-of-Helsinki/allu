@@ -136,7 +136,7 @@ export class TypeComponent implements OnInit, OnDestroy {
       kinds: this.kindsCtrl,
       specifiers: this.specifiersCtrl,
       draft: this.draftCtrl,
-      receivedTime: [app.receivedTime, Validators.required]
+      receivedTime: [this.receivedTime, Validators.required]
     });
 
     this.kindsCtrl.updateValueAndValidity();

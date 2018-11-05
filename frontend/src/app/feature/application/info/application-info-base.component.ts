@@ -169,6 +169,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     const application = this.applicationStore.snapshot.application;
     application.name = form.name;
     application.customersWithContacts = this.getCustomers(form);
+    application.receivedTime = form.receivedTime;
 
     Some(form.communication).map(c => {
       application.decisionPublicityType = c.publicityType;

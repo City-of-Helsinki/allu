@@ -48,7 +48,6 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   type: string;
   showDraftSelection: boolean;
   readonly: boolean;
-  formDirty: boolean;
   notificationType$: Observable<ApplicationNotificationType>;
 
   private destroy = new Subject<boolean>();
@@ -62,13 +61,12 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.form = this.fb.group(applicationForm());
     const application = this.applicationStore.snapshot.application;
+    this.form = this.fb.group(applicationForm(application));
     this.type = application.type;
     this.showDraftSelection = this.shouldShowDraftSelection();
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary');
-    this.formDirty = false;
     this.notificationType$ = this.applicationNotificationService.getNotificationType();
 
     this.modalState.isAcceptanceOpen$.pipe(
@@ -93,6 +91,10 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     } else {
       return true;
     }
+  }
+
+  updateReceivedTime(date: Date): void {
+    this.form.patchValue({receivedTime: date});
   }
 
   private confirmChanges(): Observable<boolean> {

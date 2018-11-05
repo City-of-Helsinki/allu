@@ -1,7 +1,10 @@
 <div class="main-content">
   <progressbar [application]="application"></progressbar>
   <application-type
-    [typeChangeDisabled]="application.id !== undefined"></application-type>
+    [typeChangeDisabled]="application.id !== undefined"
+    [receivedTime]="application.receivedTime"
+    (receivedTimeChange)="updateReceivedTime($event)"
+  ></application-type>
 
   <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="kindsSelected">
     <div fxLayout="row">

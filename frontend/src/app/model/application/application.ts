@@ -30,7 +30,7 @@ export class Application {
     public metadataVersion?: number,
     public name?: string,
     public creationTime?: Date,
-    public receivedTime?: Date,
+    public receivedTime: Date = new Date(),
     public startTime?: Date,
     public endTime?: Date,
     public recurringEndTime?: Date,

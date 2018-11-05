@@ -6,7 +6,9 @@
 
 <application-type typeChangeDisabled="true"
                   [showDraftSelection]="showDraftSelection"
-                  [readonly]="readonly"></application-type>
+                  [readonly]="readonly"
+                  [receivedTime]="form.getRawValue().receivedTime"
+                  (receivedTimeChange)="updateReceivedTime($event)"></application-type>
 
 <div [ngSwitch]="type">
   <event *ngSwitchCase="'EVENT'" [applicationForm]="form"></event>
