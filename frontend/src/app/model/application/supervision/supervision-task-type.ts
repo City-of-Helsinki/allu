@@ -12,6 +12,10 @@ export enum SupervisionTaskType {
    */
   SUPERVISION = 'SUPERVISION',
   /**
+   * Työnaikainen valvonta
+   */
+  WORK_TIME_SUPERVISION = 'WORK_TIME_SUPERVISION',
+  /**
    * Loppuvalvonta
    */
   FINAL_SUPERVISION = 'FINAL_SUPERVISION',

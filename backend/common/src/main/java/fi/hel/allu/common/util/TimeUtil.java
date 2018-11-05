@@ -70,4 +70,8 @@ public class TimeUtil {
   public static boolean isSameDate(ZonedDateTime date1, ZonedDateTime date2) {
     return homeTime(date1).truncatedTo(ChronoUnit.DAYS).equals(homeTime(date2).truncatedTo(ChronoUnit.DAYS));
   }
+
+  public static ZonedDateTime nextDay(ZonedDateTime dateTime) {
+    return dateTime != null ? dateTime.plusDays(1) : null;
+  }
 }

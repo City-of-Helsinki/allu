@@ -140,9 +140,14 @@ public class ApplicationStatusChangeHandler {
   }
 
   protected void createSupervisionTask(Application application, SupervisionTaskType type, Integer userId, ZonedDateTime plannedTime) {
+    createSupervisionTask(application, type, userId, plannedTime, null);
+  }
+
+  protected void createSupervisionTask(Application application, SupervisionTaskType type, Integer userId,
+      ZonedDateTime plannedTime, Integer locationId) {
     SupervisionTask supervisionTask = new SupervisionTask(null,
         application.getId(), type, userId, getSupervisionTaskOwner(application), null,
-        plannedTime, null, SupervisionTaskStatusType.OPEN, null, null, null);
+        plannedTime, null, SupervisionTaskStatusType.OPEN, null, null, locationId);
     supervisionTaskService.insert(supervisionTask);
   }
 

@@ -1359,6 +1359,7 @@ export const translations = {
         PRELIMINARY_SUPERVISION: 'Aloitusvalvonta',
         OPERATIONAL_CONDITION: 'Toiminnallisen kunnon valvonta',
         SUPERVISION: 'Valvonta',
+        WORK_TIME_SUPERVISION: 'Työnaikainen valvonta',
         FINAL_SUPERVISION: 'Loppuvalvonta',
         WARRANTY: 'Takuuvalvonta'
       },

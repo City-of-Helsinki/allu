@@ -14,6 +14,10 @@ public enum SupervisionTaskType {
    */
   SUPERVISION,
   /**
+   * Työnaikainen valvonta
+   */
+  WORK_TIME_SUPERVISION,
+  /**
    * Loppuvalvonta
    */
   FINAL_SUPERVISION,
