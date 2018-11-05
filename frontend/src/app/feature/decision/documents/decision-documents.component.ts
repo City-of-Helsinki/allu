@@ -41,7 +41,8 @@ export class DecisionDocumentsComponent implements OnInit {
         break;
       }
 
-      case ApplicationType.EXCAVATION_ANNOUNCEMENT: {
+      case ApplicationType.EXCAVATION_ANNOUNCEMENT:
+      case ApplicationType.AREA_RENTAL: {
         if (operationalCondition) {
           tabs = tabs.concat(DecisionTab.OPERATIONAL_CONDITION);
         }

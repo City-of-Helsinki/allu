@@ -103,7 +103,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   }
 
   private showWorkFinishedActions(app: Application): boolean {
-    const showByType = app.type === ApplicationType.EXCAVATION_ANNOUNCEMENT;
+    const showByType = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(app.type) >= 0;
     const showByStatus = contains([app.status, app.targetState], ApplicationStatus.FINISHED);
     return showByType && showByStatus;
   }
