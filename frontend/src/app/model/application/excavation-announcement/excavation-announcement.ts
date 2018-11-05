@@ -9,6 +9,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public maintenanceWork?: boolean,
     public emergencyWork?: boolean,
     public propertyConnectivity?: boolean,
+    public selfSupervision?: boolean,
     public winterTimeOperation?: Date,
     public workFinished?: Date,
     public unauthorizedWorkStartTime?: Date,

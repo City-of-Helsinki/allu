@@ -11,6 +11,7 @@ export interface ExcavationAnnouncementForm extends ApplicationForm {
   maintenanceWork?: boolean;
   emergencyWork?: boolean;
   propertyConnectivity?: boolean;
+  selfSupervision?: boolean;
   winterTimeOperation?: Date;
   workFinished?: string;
   unauthorizedWork?: TimePeriod;
@@ -35,6 +36,7 @@ export function to(form: ExcavationAnnouncementForm, original: ExcavationAnnounc
   ea.maintenanceWork = form.maintenanceWork;
   ea.emergencyWork = form.emergencyWork;
   ea.propertyConnectivity = form.propertyConnectivity;
+  ea.selfSupervision = form.selfSupervision;
   ea.winterTimeOperation = form.winterTimeOperation;
   ea.workFinished = TimeUtil.getDateFromUi(form.workFinished);
   ea.unauthorizedWorkStartTime = form.unauthorizedWork.startTime;
@@ -63,6 +65,7 @@ export function from(application: Application, excavation: ExcavationAnnouncemen
     maintenanceWork: excavation.maintenanceWork,
     emergencyWork: excavation.emergencyWork,
     propertyConnectivity: excavation.propertyConnectivity,
+    selfSupervision: excavation.selfSupervision,
     winterTimeOperation: excavation.winterTimeOperation,
     workFinished: TimeUtil.getUiDateString(excavation.workFinished),
     unauthorizedWork: new TimePeriod(excavation.unauthorizedWorkStartTime, excavation.unauthorizedWorkEndTime),

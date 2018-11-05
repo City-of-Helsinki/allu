@@ -23,6 +23,7 @@ public class ExcavationAnnouncementExt extends ApplicationExt {
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
+  private Boolean selfSupervision;
   private Integer cableReportId;
   @NotNull(message = "{application.workPurpose}")
   private String workPurpose;
@@ -90,6 +91,15 @@ public class ExcavationAnnouncementExt extends ApplicationExt {
 
   public void setPropertyConnectivity(Boolean propertyConnectivity) {
     this.propertyConnectivity = propertyConnectivity;
+  }
+
+  @ApiModelProperty(value = "Self supervision (omavalvonta)")
+  public Boolean getSelfSupervision() {
+    return selfSupervision;
+  }
+
+  public void setSelfSupervision(Boolean selfSupervision) {
+    this.selfSupervision = selfSupervision;
   }
 
   @ApiModelProperty(value = "ID of the cable report for excavation announcement (johtoselvityksen ID kaivuilmoitukselle)")

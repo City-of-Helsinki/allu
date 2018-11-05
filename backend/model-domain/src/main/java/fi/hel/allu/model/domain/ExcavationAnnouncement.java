@@ -14,6 +14,7 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
+  private Boolean selfSupervision;
   private Boolean compactionAndBearingCapacityMeasurement;
   private Boolean qualityAssuranceTest;
   private ZonedDateTime winterTimeOperation;
@@ -93,6 +94,17 @@ public class ExcavationAnnouncement extends ApplicationExtension {
 
   public void setPropertyConnectivity(Boolean propertyConnectivity) {
     this.propertyConnectivity = propertyConnectivity;
+  }
+
+  /**
+   * In Finnish: Omavalvonta.
+   */
+  public Boolean getSelfSupervision() {
+    return selfSupervision;
+  }
+
+  public void setSelfSupervision(Boolean selfSupervision) {
+    this.selfSupervision = selfSupervision;
   }
 
   public Boolean getCompactionAndBearingCapacityMeasurement() {

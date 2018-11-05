@@ -292,6 +292,7 @@ export const translations = {
       area: 'Pinta-ala',
       pksCard: 'Pks-kortti',
       propertyConnectivity: 'Tontti- / Kiinteistöliitos',
+      selfSupervision: 'Omavalvonta',
       constructionWork: 'Rakentaminen',
       maintenanceWork: 'Kunnossapito',
       emergencyWork: 'Hätätyö',

@@ -172,6 +172,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       maintenanceWork: [{value: false, disabled: this.readonly}],
       emergencyWork: [{value: false, disabled: this.readonly}],
       propertyConnectivity: [{value: false, disabled: this.readonly}],
+      selfSupervision: [{value: false, disabled: this.readonly}]
       winterTimeOperation: [undefined],
       workFinished: [undefined],
       unauthorizedWork: this.fb.group({
