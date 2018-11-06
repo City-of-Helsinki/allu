@@ -9,17 +9,17 @@ import {
   ExcavationAnnouncementActionType,
   ReportCustomerOperationalCondition,
   ReportCustomerValidity,
-  ReportCustomerWorkFinished,
   ReportOperationalCondition,
-  ReportWorkFinished,
   SetRequiredTasks
 } from '@feature/application/actions/excavation-announcement-actions';
 import * as SupervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap} from 'rxjs/internal/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {findTranslation} from '@util/translations';
 import * as TagAction from '@feature/application/actions/application-tag-actions';
+import {ApplicationType} from '@model/application/type/application-type';
+import {DateReportActionType, ReportCustomerWorkFinished, ReportWorkFinished} from '@feature/application/actions/date-report-actions';
 
 @Injectable()
 export class ExcavationAnnouncementEffects {
@@ -43,8 +43,9 @@ export class ExcavationAnnouncementEffects {
 
   @Effect()
   reportWorkFinished: Observable<Action> = this.actions.pipe(
-    ofType<ReportWorkFinished>(ExcavationAnnouncementActionType.ReportWorkFinished),
+    ofType<ReportWorkFinished>(DateReportActionType.ReportWorkFinished),
     withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
+    filter(([action, app]) => app.type === ApplicationType.EXCAVATION_ANNOUNCEMENT),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportWorkFinished(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
@@ -71,7 +72,7 @@ export class ExcavationAnnouncementEffects {
 
   @Effect()
   reportCustomerWorkFinished: Observable<Action> = this.actions.pipe(
-    ofType<ReportCustomerWorkFinished>(ExcavationAnnouncementActionType.ReportCustomerWorkFinished),
+    ofType<ReportCustomerWorkFinished>(DateReportActionType.ReportCustomerWorkFinished),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerWorkFinished(app.id, action.payload).pipe(
       switchMap(updated => [

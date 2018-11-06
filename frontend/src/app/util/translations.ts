@@ -437,6 +437,14 @@ export const translations = {
       propertyIdentificationNumber: 'Kiinteistötunnus',
       terminationDate: 'Irtisanomispäivä'
     },
+    areaRental: {
+      error: {
+        reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui'
+      },
+      action: {
+        reportWorkFinished: 'Työn valmistuminen ilmoitettu'
+      }
+    },
     button: {
       copy: 'Kopioi uudeksi',
       replace: 'Korvaava päätös',

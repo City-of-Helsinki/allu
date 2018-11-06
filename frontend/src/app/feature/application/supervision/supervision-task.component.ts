@@ -31,7 +31,6 @@ import {ExcavationAnnouncement} from '@model/application/excavation-announcement
 import {Some} from '@util/option';
 import {
   ReportOperationalCondition,
-  ReportWorkFinished,
   SetRequiredTasks
 } from '@feature/application/actions/excavation-announcement-actions';
 import {Observable, Subject} from 'rxjs/index';
@@ -51,6 +50,7 @@ import {
   AreaRentalSupervisionApprovalModalData
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
 import {AreaRental} from '@model/application/area-rental/area-rental';
+import {ReportWorkFinished} from '@feature/application/actions/date-report-actions';
 
 @Component({
   selector: 'supervision-task',
@@ -207,7 +207,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private openModal(type: SupervisionApprovalResolutionType): MatDialogRef<SupervisionApprovalModalComponent> {
     const task = SupervisionTaskForm.to(this.form.value);
-    switch(this.application.type) {
+    switch (this.application.type) {
       case ApplicationType.EXCAVATION_ANNOUNCEMENT: {
         return this.openExcavationApprovalModal(type, task);
       }
