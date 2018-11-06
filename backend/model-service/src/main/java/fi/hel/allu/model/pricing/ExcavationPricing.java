@@ -15,6 +15,8 @@ import fi.hel.allu.model.service.WinterTimeService;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ExcavationPricing extends Pricing {
@@ -27,6 +29,7 @@ public class ExcavationPricing extends Pricing {
 
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
   private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
+  private static final String SELF_SUPERVISION_TEXT = "Omavalvonta";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
@@ -41,7 +44,7 @@ public class ExcavationPricing extends Pricing {
     final int handlingFee = getHandlingFee(extension);
     setPriceInCents(handlingFee);
     addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, handlingFee,
-        HANDLING_FEE_TEXT, handlingFee);
+        HANDLING_FEE_TEXT, handlingFee, getHandlingFeeExplanation(extension));
   }
 
   @Override
@@ -140,6 +143,14 @@ public class ExcavationPricing extends Pricing {
       return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE_SELF_SUPERVISION);
     } else {
       return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.HANDLING_FEE);
+    }
+  }
+
+  private List<String> getHandlingFeeExplanation(ExcavationAnnouncement excavationAnnouncement) {
+    if (Boolean.TRUE.equals(excavationAnnouncement.getSelfSupervision())) {
+      return Arrays.asList(SELF_SUPERVISION_TEXT);
+    } else {
+      return Collections.emptyList();
     }
   }
 }
