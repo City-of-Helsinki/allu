@@ -31,6 +31,10 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     });
   }
 
+  get workFinished(): Date {
+    return this.applicationForm.getRawValue().workFinished;
+  }
+
   protected onApplicationChange(application: Application): void {
     super.onApplicationChange(application);
 

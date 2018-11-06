@@ -61,11 +61,8 @@
             </div>
             <div class="col s3">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="workFinished" placeholder="Työ valmis"
-                       [matDatepicker]="workFinishedPicker"/>
-                <mat-datepicker-toggle matSuffix [for]="workFinishedPicker"
-                                       [disabled]="readonly"></mat-datepicker-toggle>
-                <mat-datepicker #workFinishedPicker></mat-datepicker>
+                <input matInput disabled type="text" [value]="workFinished | date:'shortDate'"
+                       [placeholder]="'application.areaRental.workFinished' | translation"/>
               </mat-form-field>
             </div>
           </div>

@@ -438,6 +438,7 @@ export const translations = {
       terminationDate: 'Irtisanomispäivä'
     },
     areaRental: {
+      workFinished: 'Työ valmis',
       error: {
         reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui'
       },
