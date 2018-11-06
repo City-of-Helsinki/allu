@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service;
 
 import java.time.ZonedDateTime;
 
+import fi.hel.allu.common.domain.types.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,6 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.ExcavationAnnouncementDates;
 import fi.hel.allu.model.domain.Application;
@@ -85,7 +82,7 @@ public class ExcavationAnnouncementService {
   }
 
   public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate) {
-    applicationService.setWorkFinishedDate(id, workFinishedDate);
+    applicationService.setWorkFinishedDate(id, ApplicationType.EXCAVATION_ANNOUNCEMENT, workFinishedDate);
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.WARRANTY,
         ExcavationAnnouncementDates.warrantySupervisionDate(workFinishedDate));
     Application application = applicationService.setTargetState(id, StatusType.FINISHED);

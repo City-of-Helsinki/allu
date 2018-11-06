@@ -1,20 +1,9 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
@@ -22,6 +11,17 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.*;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -476,8 +476,8 @@ public class ApplicationService {
    * Sets excavation announcement work finished date and updates pricing of application
    */
   @Transactional
-  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    Application application = applicationDao.setWorkFinishedDate(id, workFinishedDate);
+  public void setWorkFinishedDate(Integer id, ApplicationType type, ZonedDateTime workFinishedDate) {
+    Application application = applicationDao.setWorkFinishedDate(id, type, workFinishedDate);
     updateChargeBasis(id, application);
     updateApplicationPricing(id);
   }

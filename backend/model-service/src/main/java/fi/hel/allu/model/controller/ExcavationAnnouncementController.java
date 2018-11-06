@@ -2,6 +2,7 @@ package fi.hel.allu.model.controller;
 
 import java.time.ZonedDateTime;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class ExcavationAnnouncementController {
 
   @RequestMapping(value = "/{id}/workfinished", method = RequestMethod.PUT)
   public ResponseEntity<Void> reportWorkFinished(@PathVariable Integer id, @RequestBody ZonedDateTime workFinishedDate) {
-   applicationService.setWorkFinishedDate(id, workFinishedDate);
+   applicationService.setWorkFinishedDate(id, ApplicationType.EXCAVATION_ANNOUNCEMENT, workFinishedDate);
    return new ResponseEntity<>(HttpStatus.OK);
   }
 

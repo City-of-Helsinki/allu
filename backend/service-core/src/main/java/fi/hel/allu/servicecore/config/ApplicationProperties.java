@@ -1340,6 +1340,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/excavationannouncements/{id}/workfinished");
   }
 
+  public String getAreaRentalWorkFinishedUrl() {
+    return getModelServiceUrl("/arearentals/{id}/workfinished");
+  }
+
   public String getSetRequiredTasksUrl() {
     return getModelServiceUrl("/excavationannouncements/{id}/requiredtasks");
   }

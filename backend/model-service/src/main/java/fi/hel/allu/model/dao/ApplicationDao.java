@@ -753,12 +753,29 @@ public class ApplicationDao {
     return findById(id);
   }
 
-  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+  public Application setWorkFinishedDate(Integer id, ApplicationType type, ZonedDateTime workFinishedDate) {
+    if (type == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      return setExcavationWorkFinishedDate(id, workFinishedDate);
+    } else if (type == ApplicationType.AREA_RENTAL) {
+      return setAreaRentalWorkFinishedDate(id, workFinishedDate);
+    } else {
+      throw new IllegalArgumentException("Setting work finished date not allowed for application " + type + " found for ID " + id);
+    }
+  }
+
+  public Application setExcavationWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
     excavationAnnouncement.setWorkFinished(workFinishedDate);
     // Set guarantee end time when work finished is updated
     excavationAnnouncement.setGuaranteeEndTime(ExcavationAnnouncementDates.guaranteeEndDate(workFinishedDate));
     updateExtension(id, excavationAnnouncement);
+    return findById(id);
+  }
+
+  public Application setAreaRentalWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+    AreaRental areaREntal = findExtension(id, ApplicationType.AREA_RENTAL);
+    areaREntal.setWorkFinished(workFinishedDate);
+    updateExtension(id, areaREntal);
     return findById(id);
   }
 

@@ -402,9 +402,9 @@ public class ApplicationService {
         HttpMethod.PUT, new HttpEntity<>(operationalConditionDate), Void.class, id);
   }
 
-  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+  public void setWorkFinishedDate(Integer id, ApplicationType type, ZonedDateTime workFinishedDate) {
     restTemplate.exchange(
-        applicationProperties.getExcavationAnnouncementWorkFinishedUrl(),
+        getWorkFinishedUrl(type),
         HttpMethod.PUT, new HttpEntity<>(workFinishedDate), Void.class, id);
   }
 
@@ -419,5 +419,15 @@ public class ApplicationService {
     return restTemplate.exchange(
         applicationProperties.getSetTargetStateUrl(),
         HttpMethod.PUT, new HttpEntity<>(targetState), Application.class, id).getBody();
+  }
+
+  private String getWorkFinishedUrl(ApplicationType type) {
+    if (type == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      return applicationProperties.getExcavationAnnouncementWorkFinishedUrl();
+    } else if (type == ApplicationType.AREA_RENTAL) {
+      return applicationProperties.getAreaRentalWorkFinishedUrl();
+    } else {
+      throw new IllegalArgumentException("application.update.workFinished.notallowed");
+    }
   }
 }
