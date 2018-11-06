@@ -18,13 +18,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class ApprovalDocumentService {
 
   private static final String TEMPLATE_NAME_POSTFIX = "-approval";
+  private static final Set<ApplicationType> hasFinalApprovalDocument = new HashSet<>(
+          Arrays.asList(ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT));
 
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
@@ -71,7 +72,7 @@ public class ApprovalDocumentService {
 
   public void createFinalApprovalDocument(ApplicationJson prevApplication,
       ApplicationJson application, List<ChargeBasisEntry> chargeBasisEntries) {
-    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+    if (hasFinalApprovalDocument.contains(application.getType())) {
       if (application.getStatus()== StatusType.OPERATIONAL_CONDITION) {
         generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.OPERATIONAL_CONDITION, chargeBasisEntries);
       } else if (application.getStatus() == StatusType.FINISHED) {
