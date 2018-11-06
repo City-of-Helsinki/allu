@@ -46,3 +46,4 @@ customer_notification_cronstring: "0 0 7 * * *"
 ui_baseurl: https://staging.allu.kaupunkiymparisto.fi
 
 ext_api_base_bath: /external
+supervision_api_basepath: /supervision-api

@@ -5,3 +5,4 @@ allu_service_list:
   - pdf-service
   - scheduler-service
   - external-service
+  - supervision-api

@@ -9,6 +9,7 @@ allu_service_memory_limit:
   allu-ui-service: 128m
   model-service: 128m
   external-service: 128m
+  supervision-api: 128m
 
 database_host: 172.17.0.1
 
@@ -48,3 +49,5 @@ customer_archivedir: /home/allu/scheduler-service/sap/customer-archive
 customer_failedupdatedir: /home/allu/scheduler-service/sap/customer-failed
 
 ext_api_base_bath: /external
+supervision_api_basepath: /supervision-api
+

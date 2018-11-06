@@ -69,6 +69,7 @@
     published_ports:
       - "9000:9000"
       - "9040:9040"
+      - "9050:9050"
   become: yes
 
 - name: remove Docker image tar file

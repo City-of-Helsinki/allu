@@ -37,6 +37,8 @@ RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
 RUN mkdir -p /home/allu/external-service
 RUN mkdir -p /home/allu/scheduler-service/sap
+RUN mkdir -p /home/allu/supervision-api
+
 
 ######################################################################################
 # Expose ports
@@ -52,6 +54,9 @@ EXPOSE 9020
 EXPOSE 9030
 # external-service
 EXPOSE 9040
+# supervision-api
+EXPOSE 9050
+
 
 ######################################################################################
 # Supervisord
