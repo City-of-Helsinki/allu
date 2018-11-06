@@ -14,6 +14,9 @@ import {RouterModule} from '@angular/router';
 import {
   ExcavationSupervisionApprovalModalComponent
 } from '@feature/application/supervision/excavation-supervision-approval-modal.component';
+import {
+  AreaRentalSupervisionApprovalModalComponent
+} from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
 
 @NgModule({
   imports: [
@@ -30,14 +33,16 @@ import {
     SupervisionComponent,
     SupervisionTaskComponent,
     SupervisionApprovalModalComponent,
-    ExcavationSupervisionApprovalModalComponent
+    ExcavationSupervisionApprovalModalComponent,
+    AreaRentalSupervisionApprovalModalComponent
   ],
   providers: [
     SupervisionTaskService
   ],
   entryComponents: [
     SupervisionApprovalModalComponent,
-    ExcavationSupervisionApprovalModalComponent
+    ExcavationSupervisionApprovalModalComponent,
+    AreaRentalSupervisionApprovalModalComponent
   ]
 })
 export class SupervisionModule {}

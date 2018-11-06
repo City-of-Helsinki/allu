@@ -46,6 +46,11 @@ import {
   ExcavationSupervisionApprovalModalComponent,
   ExcavationSupervisionApprovalModalData
 } from '@feature/application/supervision/excavation-supervision-approval-modal.component';
+import {
+  AreaRentalSupervisionApprovalModalComponent,
+  AreaRentalSupervisionApprovalModalData
+} from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
+import {AreaRental} from '@model/application/area-rental/area-rental';
 
 @Component({
   selector: 'supervision-task',
@@ -202,10 +207,18 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private openModal(type: SupervisionApprovalResolutionType): MatDialogRef<SupervisionApprovalModalComponent> {
     const task = SupervisionTaskForm.to(this.form.value);
-    if (this.application.type === ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      return this.openExcavationApprovalModal(type, task);
-    } else {
-      return this.openApprovalModal(type, task);
+    switch(this.application.type) {
+      case ApplicationType.EXCAVATION_ANNOUNCEMENT: {
+        return this.openExcavationApprovalModal(type, task);
+      }
+
+      case ApplicationType.AREA_RENTAL: {
+        return this.openAreaRentalApprovalModal(type, task);
+      }
+
+      default: {
+        return this.openApprovalModal(type, task);
+      }
     }
   }
 
@@ -229,6 +242,19 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     };
 
     return this.dialog.open(ExcavationSupervisionApprovalModalComponent, config);
+  }
+
+  private openAreaRentalApprovalModal(type: SupervisionApprovalResolutionType, task: SupervisionTask):
+    MatDialogRef<SupervisionApprovalModalComponent> {
+
+    const baseData = this.approvalModalData(type, task);
+
+    const config = {
+      ...SUPERVISION_APPROVAL_MODAL_CONFIG,
+      data: this.areRentalApprovalModalData(baseData)
+    };
+
+    return this.dialog.open(AreaRentalSupervisionApprovalModalComponent, config);
   }
 
   private currentUserCanEdit(creatorId: number, status: SupervisionTaskStatusType): void {
@@ -284,6 +310,22 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       comparedDate,
       compactionAndBearingCapacityMeasurement: extension.compactionAndBearingCapacityMeasurement,
       qualityAssuranceTest: extension.qualityAssuranceTest
+    };
+  }
+
+  private areRentalApprovalModalData(baseData: SupervisionApprovalModalData): AreaRentalSupervisionApprovalModalData {
+    let reportedDate: Date;
+    let comparedDate: Date;
+
+    if (SupervisionTaskType.FINAL_SUPERVISION === baseData.taskType) {
+      reportedDate = baseData.application.endTime;
+      comparedDate = baseData.application.endTime;
+    }
+
+    return {
+      ...baseData,
+      reportedDate,
+      comparedDate
     };
   }
 
