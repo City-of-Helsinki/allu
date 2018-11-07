@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
-import {ComplexValidator} from '@util/complex-validator';
 import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
 import {AreaRental} from '@model/application/area-rental/area-rental';
 import {AreaRentalForm, from, to} from './area-rental.form';
@@ -18,9 +17,9 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
   protected createExtensionForm(): FormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({
-        startTime: [undefined, Validators.required],
-        endTime: [undefined, Validators.required]
-      }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
+        startTime: [undefined],
+        endTime: [undefined]
+      }),
       pksCard: [false],
       workFinished: [undefined],
       calculatedPrice: [0],
@@ -35,6 +34,14 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     return this.applicationForm.getRawValue().workFinished;
   }
 
+  get startTime(): Date {
+    return this.applicationForm.get('validityTimes.startTime').value;
+  }
+
+  get endTime(): Date {
+    return this.applicationForm.get('validityTimes.endTime').value;
+  }
+
   protected onApplicationChange(application: Application): void {
     super.onApplicationChange(application);
 
@@ -47,10 +54,6 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
     application.extension = to(form);
-
-    application.firstLocation.startTime = application.startTime;
-    application.firstLocation.endTime = application.endTime;
-
     return application;
   }
 }

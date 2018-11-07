@@ -30,32 +30,14 @@
             <div formGroupName="validityTimes" class="col s6">
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                         [matDatepicker]="startTimePicker"/>
-                  <mat-datepicker-toggle matSuffix [for]="startTimePicker"
-                                         [disabled]="readonly"></mat-datepicker-toggle>
-                  <mat-datepicker #startTimePicker></mat-datepicker>
-                  <mat-hint>
-                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                      {{'application.common.field.validityStartTimeMissing' | translation}}
-                    </field-error>
-                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                      {{'application.common.field.validityStartBeforeEnd' | translation}}
-                    </field-error>
-                  </mat-hint>
+                  <input matInput disabled type="text" [value]="startTime | date:'shortDate'"
+                         [placeholder]="'application.common.startTime' | translation"/>
                 </mat-form-field>
               </div>
               <div class="col s6">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                         [matDatepicker]="endTimePicker"/>
-                  <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                  <mat-datepicker #endTimePicker></mat-datepicker>
-                  <mat-hint>
-                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                      {{'application.common.field.validityEndTimeMissing' | translation}}
-                    </field-error>
-                  </mat-hint>
+                  <input matInput disabled type="text" [value]="endTime | date:'shortDate'"
+                         [placeholder]="'application.common.endTime' | translation"/>
                 </mat-form-field>
               </div>
             </div>
