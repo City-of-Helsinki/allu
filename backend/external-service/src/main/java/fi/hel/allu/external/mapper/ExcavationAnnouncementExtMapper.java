@@ -23,6 +23,7 @@ public class ExcavationAnnouncementExtMapper extends ApplicationExtMapper<Excava
     extension.setSelfSupervision(excavationAnnouncement.getSelfSupervision());
     extension.setCableReportId(excavationAnnouncement.getCableReportId());
     extension.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
+    extension.setAdditionalInfo(excavationAnnouncement.getAdditionalInfo());
     extension.setTrafficArrangements(excavationAnnouncement.getTrafficArrangements());
     extension.setTrafficArrangementImpedimentType(excavationAnnouncement.getTrafficArrangementImpediment());
     return extension;

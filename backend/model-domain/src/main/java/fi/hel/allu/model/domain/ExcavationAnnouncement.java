@@ -31,6 +31,7 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   private ZonedDateTime validityReported;
   private Integer cableReportId;
   private String workPurpose;
+  private String additionalInfo;
   private String trafficArrangements;
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
@@ -242,6 +243,17 @@ public class ExcavationAnnouncement extends ApplicationExtension {
 
   public void setWorkPurpose(String workPurpose) {
     this.workPurpose = workPurpose;
+  }
+
+  /**
+   * In Finnish: lisätiedot.
+   */
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 
   /**

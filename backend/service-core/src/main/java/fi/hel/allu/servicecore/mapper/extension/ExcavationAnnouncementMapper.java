@@ -7,6 +7,7 @@ public class ExcavationAnnouncementMapper {
   public static ExcavationAnnouncementJson modelToJson(ExcavationAnnouncement excavationAnnouncement) {
     ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
     json.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
+    json.setAdditionalInfo(excavationAnnouncement.getAdditionalInfo());
     json.setCableReportId(excavationAnnouncement.getCableReportId());
     json.setGuaranteeEndTime(excavationAnnouncement.getGuaranteeEndTime());
     json.setWinterTimeOperation(excavationAnnouncement.getWinterTimeOperation());
@@ -36,6 +37,7 @@ public class ExcavationAnnouncementMapper {
   public static ExcavationAnnouncement jsonToModel(ExcavationAnnouncementJson json) {
     ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
     excavationAnnouncement.setWorkPurpose(json.getWorkPurpose());
+    excavationAnnouncement.setAdditionalInfo(json.getAdditionalInfo());
     excavationAnnouncement.setCableReportId(json.getCableReportId());
     excavationAnnouncement.setGuaranteeEndTime(json.getGuaranteeEndTime());
     excavationAnnouncement.setWinterTimeOperation(json.getWinterTimeOperation());

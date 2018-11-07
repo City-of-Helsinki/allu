@@ -34,6 +34,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private Integer cableReportId;
   @NotNull(message = "{application.excavationAnnouncement.workPurpose}")
   private String workPurpose;
+  private String additionalInfo;
   private String trafficArrangements;
   @NotNull(message = "{application.excavationAnnouncement.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
@@ -245,6 +246,17 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
 
   public void setWorkPurpose(String workPurpose) {
     this.workPurpose = workPurpose;
+  }
+
+  /**
+   * In Finnish: lisätiedot.
+   */
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 
   /**

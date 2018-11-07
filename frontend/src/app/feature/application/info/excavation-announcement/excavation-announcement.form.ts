@@ -21,6 +21,7 @@ export interface ExcavationAnnouncementForm extends ApplicationForm {
   customerWorkFinished?: Date;
   cableReportId?: number;
   workPurpose?: string;
+  additionalInfo?: string;
   trafficArrangements?: string;
   trafficArrangementImpedimentType?: string;
   compactionAndBearingCapacityMeasurement?: boolean;
@@ -48,6 +49,7 @@ export function to(form: ExcavationAnnouncementForm, original: ExcavationAnnounc
   ea.customerWorkFinished = form.customerWorkFinished;
   ea.cableReportId = form.cableReportId;
   ea.workPurpose = form.workPurpose;
+  ea.additionalInfo = form.additionalInfo;
   ea.trafficArrangements = form.trafficArrangements;
   ea.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
   ea.compactionAndBearingCapacityMeasurement = form.compactionAndBearingCapacityMeasurement;
@@ -75,6 +77,7 @@ export function from(application: Application, excavation: ExcavationAnnouncemen
     customerWorkFinished: excavation.customerWorkFinished,
     cableReportId: excavation.cableReportId,
     workPurpose: excavation.workPurpose,
+    additionalInfo: excavation.additionalInfo,
     trafficArrangements: excavation.trafficArrangements,
     trafficArrangementImpedimentType: excavation.trafficArrangementImpedimentType,
     compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,

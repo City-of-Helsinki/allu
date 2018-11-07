@@ -27,6 +27,7 @@ public class ExcavationAnnouncementExt extends ApplicationExt {
   private Integer cableReportId;
   @NotNull(message = "{application.workPurpose}")
   private String workPurpose;
+  private String additionalInfo;
   private String trafficArrangements;
   private TrafficArrangementImpedimentType trafficArrangementImpediment;
 
@@ -118,6 +119,15 @@ public class ExcavationAnnouncementExt extends ApplicationExt {
 
   public void setWorkPurpose(String workPurpose) {
     this.workPurpose = workPurpose;
+  }
+
+  @ApiModelProperty(value = "Additional information (lisätiedot)")
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 
   @ApiModelProperty(value = "Traffic arrangementes (suoritettavat liikennejärjestelyt)")

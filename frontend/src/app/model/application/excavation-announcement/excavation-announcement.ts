@@ -21,6 +21,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public customerWorkFinished?: Date,
     public cableReportId?: number,
     public workPurpose?: string,
+    public additionalInfo?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public terms?: string,
