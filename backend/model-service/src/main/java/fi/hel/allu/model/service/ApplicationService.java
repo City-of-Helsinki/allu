@@ -1,16 +1,11 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.ApplicationDateReport;
-import fi.hel.allu.common.domain.RequiredTasks;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.exception.IllegalOperationException;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.domain.*;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,10 +13,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.RequiredTasks;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.user.Constants;
+import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.UserDao;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 
 /**
  *
@@ -37,11 +42,12 @@ public class ApplicationService {
   private final CustomerDao customerDao;
   private final LocationService locationService;
   private final ApplicationDefaultValueService defaultValueService;
+  private final UserDao userDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
     ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
-    LocationService locationService, ApplicationDefaultValueService defaultValueService) {
+    LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -49,6 +55,7 @@ public class ApplicationService {
     this.customerDao = customerDao;
     this.locationService = locationService;
     this.defaultValueService = defaultValueService;
+    this.userDao = userDao;
   }
 
   /**
@@ -257,12 +264,15 @@ public class ApplicationService {
 
   private Integer getHandlerId(int applicationId, Integer userId) {
     Application application = applicationDao.findById(applicationId);
-    if (userId != null && userId.equals(application.getExternalOwnerId())) {
-      // If current user is external do not change handler
-      return application.getHandler();
-    } else {
-      return userId;
-    }
+    return Optional.ofNullable(userId)
+        .flatMap(i -> userDao.findById(i))
+        .map(u -> {
+          if (u.getUserName().equals(Constants.EXTERNAL_USER_USERNAME)) {
+            return application.getHandler();
+          } else {
+            return u.getId();
+          }
+        }).orElse(userId);
   }
 
   private void addCompensationClarificationForInvoiced(int id, Integer userId) {
