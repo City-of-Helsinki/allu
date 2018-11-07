@@ -86,7 +86,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.form.dirty) {
+    if (this.form.dirty && this.form.touched) {
       return this.confirmChanges();
     } else {
       return true;
