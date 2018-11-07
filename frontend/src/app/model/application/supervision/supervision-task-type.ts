@@ -26,6 +26,9 @@ export enum SupervisionTaskType {
 }
 
 export function isAutomaticSupervisionTaskType(type: SupervisionTaskType): boolean {
-  return type === SupervisionTaskType.OPERATIONAL_CONDITION ||
-         type === SupervisionTaskType.WARRANTY;
+  return [
+    SupervisionTaskType.OPERATIONAL_CONDITION,
+    SupervisionTaskType.WARRANTY,
+    SupervisionTaskType.WORK_TIME_SUPERVISION
+  ].indexOf(type) >= 0;
 }
