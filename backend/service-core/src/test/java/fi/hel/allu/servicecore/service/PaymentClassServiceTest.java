@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.SettableListenableFuture;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;;
 
 public class PaymentClassServiceTest {
@@ -106,6 +107,20 @@ public class PaymentClassServiceTest {
 
     final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY_COLLETION));
     assertEquals("1", paymentClass);
+  }
+
+  @Test
+  public void undefinedPaymentClassIsReturned() {
+    final List<String> paymentClasses = Collections.emptyList();
+
+    final ResponseEntity<String> response = ResponseEntity.ok(createResponse(paymentClasses));
+    final SettableListenableFuture<ResponseEntity<String>> future = new SettableListenableFuture<>();
+    future.set(response);
+    Mockito.when(restTemplate.exchange(
+        Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.anyObject(), Mockito.eq(String.class))).thenReturn(future);
+
+    final String paymentClass = paymentClassService.getPaymentClass(createLocation(GEOMETRY));
+    assertEquals("undefined", paymentClass);
   }
 
   private String createResponse(List<String> paymentClasses) {

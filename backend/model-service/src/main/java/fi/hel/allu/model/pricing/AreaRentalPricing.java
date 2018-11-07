@@ -69,13 +69,20 @@ public class AreaRentalPricing extends Pricing {
 
   @Override
   public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
-    long numUnits = Math.round(Math.ceil(locationArea / AREA_UNIT));
-    int dailyPrice = (int) numUnits * UNIT_PRICE.get(paymentClass);
-    int numDays = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
+    final long numUnits = Math.round(Math.ceil(locationArea / AREA_UNIT));
+    final int dailyPrice = getPrice((int)numUnits, paymentClass);
+    final int numDays = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
         ChronoUnit.DAYS);
-    int netPrice = dailyPrice * numDays;
+    final int netPrice = dailyPrice * numDays;
     addChargeBasisEntry(ChargeBasisTag.AreaRentalDailyFee(Integer.toString(locationKey)), ChargeBasisUnit.DAY, numDays, dailyPrice,
         DAILY_PRICE_EXPLANATION, netPrice);
     setPriceInCents(netPrice + getPriceInCents());
+  }
+
+  private int getPrice(int numUnits, String paymentClass) {
+    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
+      return 0;
+    }
+    return numUnits * UNIT_PRICE.get(paymentClass);
   }
 }

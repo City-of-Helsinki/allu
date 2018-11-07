@@ -55,6 +55,7 @@ public class PaymentClassServiceImpl implements PaymentClassService {
         "</ogc:Filter>" +
       "</wfs:Query>" +
     "</wfs:GetFeature>";
+  private static final String UNDEFINED = "undefined";
 
   private static final Logger logger = LoggerFactory.getLogger(PaymentClassServiceImpl.class);
   private final ApplicationProperties applicationProperties;
@@ -78,7 +79,7 @@ public class PaymentClassServiceImpl implements PaymentClassService {
       return parsePaymentClass(responses);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
-      throw new RuntimeException("paymentClass.error");
+      return UNDEFINED;
     }
   }
 
@@ -107,7 +108,7 @@ public class PaymentClassServiceImpl implements PaymentClassService {
   }
 
   private String parsePaymentClass(List<String> responses) {
-    String paymentClass = "4a"; // If payment tariff undefined -> default to lowest
+    String paymentClass = UNDEFINED;
     for (String response : responses) {
       final PaymentClassXml paymentClassXml = WfsUtil.unmarshalWfs(response, PaymentClassXml.class);
       final List<PaymentClassXml.FeatureMember> paymentClasses = paymentClassXml.featureMember.stream()

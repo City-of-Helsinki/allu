@@ -254,7 +254,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   paymentTariff() {
-    return findTranslationWithDefault('location.paymentTariffValue', 'tariff', this.locationForm.getRawValue().paymentTariff);
+    const paymentTariff = this.locationForm.getRawValue().paymentTariff;
+    if (paymentTariff === 'undefined') {
+      return findTranslation('location.paymentTariffUndefined');
+    } else {
+      return findTranslationWithDefault('location.paymentTariffValue', 'tariff', paymentTariff);
+    }
   }
 
   private editLocation(loc: Location): void {

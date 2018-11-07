@@ -30,6 +30,7 @@ public class ExcavationPricing extends Pricing {
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
   private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
   private static final String SELF_SUPERVISION_TEXT = "Omavalvonta";
+  private static final String UNDEFINED_PAYMENT_CLASS_TEXT = "tuntematon";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
@@ -51,11 +52,11 @@ public class ExcavationPricing extends Pricing {
   public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
     int dailyFee;
     if (locationArea < SMALL_AREA_LIMIT) {
-      dailyFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.SMALL_AREA_DAILY_FEE, paymentClass);
+      dailyFee = getPrice(PricingKey.SMALL_AREA_DAILY_FEE, paymentClass);
     } else if (locationArea > LARGE_AREA_LIMIT) {
-      dailyFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.LARGE_AREA_DAILY_FEE, paymentClass);
+      dailyFee = getPrice(PricingKey.LARGE_AREA_DAILY_FEE, paymentClass);
     } else {
-      dailyFee = pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass);
+      dailyFee = getPrice(PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass);
     }
     List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
@@ -68,7 +69,7 @@ public class ExcavationPricing extends Pricing {
 
   private void addChargeBasisEntryForPeriod(int locationKey, String paymentClass, int dailyFee,
       PricedPeriod invoicedPeriod, ChargeBasisTag tag) {
-    String rowText = String.format(AREA_FEE_TEXT, paymentClass);
+    String rowText = String.format(AREA_FEE_TEXT, getPaymentClassText(paymentClass));
     int totalPrice = invoicedPeriod.getNumberOfDays() * dailyFee;
     addChargeBasisEntry(tag, ChargeBasisUnit.DAY, invoicedPeriod.getNumberOfDays(),
         dailyFee, rowText, totalPrice,
@@ -136,6 +137,20 @@ public class ExcavationPricing extends Pricing {
     int getNumberOfDays() {
       return (int) CalendarUtil.startingUnitsBetween(start, end, ChronoUnit.DAYS);
     }
+  }
+
+  private int getPrice(PricingKey key, String paymentClass) {
+    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
+      return 0;
+    }
+    return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, key, paymentClass);
+  }
+
+  private String getPaymentClassText(String paymentClass) {
+    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS)) {
+      return UNDEFINED_PAYMENT_CLASS_TEXT;
+    }
+    return paymentClass;
   }
 
   private int getHandlingFee(ExcavationAnnouncement excavationAnnouncement) {

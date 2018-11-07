@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Pricing {
+  protected static final String UNDEFINED_PAYMENT_CLASS = "undefined";
 
   private int priceInCents = 0;
   private List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();

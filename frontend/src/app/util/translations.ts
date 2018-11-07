@@ -1053,6 +1053,7 @@ export const translations = {
     paymentTariff: 'Maksuluokka',
     paymentTariffOverride: 'Käsittelijän valitsema maksuluokka',
     paymentTariffValue: 'Maksuluokka {{tariff}}',
+    paymentTariffUndefined: 'Maksuluokka tuntematon',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
       fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',

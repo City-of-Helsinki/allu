@@ -13,7 +13,7 @@ import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
 import * as fromRoot from '../../../allu/reducers';
 import {Store} from '@ngrx/store';
 import {map} from 'rxjs/internal/operators';
-import {findTranslationWithDefault} from '@app/util/translations';
+import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
 
 @Component({
   selector: 'location-details',
@@ -80,7 +80,11 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
 
   paymentTariffText(paymentTariff: string): string {
     if (paymentTariff) {
-      return findTranslationWithDefault('location.paymentTariffValue', 'tariff', paymentTariff);
+      if (paymentTariff === 'undefined') {
+        return findTranslation('location.paymentTariffUndefined');
+      } else {
+        return findTranslationWithDefault('location.paymentTariffValue', 'tariff', paymentTariff);
+      }
     } else {
       return '';
     }
