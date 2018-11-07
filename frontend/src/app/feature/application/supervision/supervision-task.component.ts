@@ -29,10 +29,7 @@ import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {Some} from '@util/option';
-import {
-  ReportOperationalCondition,
-  SetRequiredTasks
-} from '@feature/application/actions/excavation-announcement-actions';
+import {ReportOperationalCondition, SetRequiredTasks} from '@feature/application/actions/excavation-announcement-actions';
 import {Observable, Subject} from 'rxjs/index';
 import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
@@ -49,8 +46,8 @@ import {
   AreaRentalSupervisionApprovalModalComponent,
   AreaRentalSupervisionApprovalModalData
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
-import {AreaRental} from '@model/application/area-rental/area-rental';
 import {ReportWorkFinished} from '@feature/application/actions/date-report-actions';
+import {Location} from '@model/common/location';
 
 @Component({
   selector: 'supervision-task',
@@ -66,12 +63,12 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   @Output() onRemove = new EventEmitter<void>();
 
   taskTypes: string[] = [];
-  statusTypes = EnumUtil.enumValues(SupervisionTaskStatusType);
   canEdit = false;
   canApprove = false;
   canRemove = false;
   editing = false;
   approveDisabled = false;
+  location: Location;
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
@@ -109,6 +106,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUserCanEdit(formValue.creatorId, formValue.status);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
+    this.location = this.getLocation(this.application.locations, formValue.locationId);
   }
 
   ngOnDestroy(): void {
@@ -364,5 +362,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.store.dispatch(new NotifySuccess(findTranslation(notificationKey)));
       }, err => this.store.dispatch(new NotifyFailure(err)));
+  }
+
+  private getLocation(locations: Location[], locationId: number): Location {
+    return ArrayUtil.first(locations, l => l.id === locationId);
   }
 }

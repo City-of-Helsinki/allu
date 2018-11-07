@@ -2,8 +2,10 @@
   <allu-card>
     <mat-card-title>
       <div *ngIf="form.value.id">
-        <span>{{['supervision.task.type', form.getRawValue().type] | translation}} - {{['supervision.task.status', form.value.status] | translation}}</span>
-        <span *ngIf="form.value.actualFinishingTime">- {{form.value.actualFinishingTime | date:'shortDate'}}</span>
+        <span>{{['supervision.task.type', form.getRawValue().type] | translation}}</span>
+        <span *ngIf="location"> - {{'location.locationKey' | translation:{key: location.locationKey} }}</span>
+        <span> - {{['supervision.task.status', form.value.status] | translation}}</span>
+        <span *ngIf="form.value.actualFinishingTime"> - {{form.value.actualFinishingTime | date:'shortDate'}}</span>
       </div>
       <div *ngIf="!form.value.id">{{'supervision.task.newTask' | translation}}</div>
     </mat-card-title>
