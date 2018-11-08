@@ -8,6 +8,7 @@ import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
@@ -30,7 +31,6 @@ public class ExcavationPricing extends Pricing {
   private static final String HANDLING_FEE_TEXT = "Ilmoituksen käsittely- ja työn valvontamaksu";
   private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %s";
   private static final String SELF_SUPERVISION_TEXT = "Omavalvonta";
-  private static final String UNDEFINED_PAYMENT_CLASS_TEXT = "tuntematon";
 
   private static final double SMALL_AREA_LIMIT = 60.0;
   private static final double LARGE_AREA_LIMIT = 120.0;
@@ -49,21 +49,27 @@ public class ExcavationPricing extends Pricing {
   }
 
   @Override
-  public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
-    int dailyFee;
-    if (locationArea < SMALL_AREA_LIMIT) {
-      dailyFee = getPrice(PricingKey.SMALL_AREA_DAILY_FEE, paymentClass);
-    } else if (locationArea > LARGE_AREA_LIMIT) {
-      dailyFee = getPrice(PricingKey.LARGE_AREA_DAILY_FEE, paymentClass);
-    } else {
-      dailyFee = getPrice(PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass);
-    }
-    List<PricedPeriod> pricedPeriods = getPricedPeriods();
+  public void addLocationPrice(Location location) {
+    final String paymentClass = location.getEffectivePaymentTariff();
+    final Integer locationKey = location.getLocationKey();
+    final int dailyFee = getDailyFee(location.getEffectiveArea(), paymentClass);
+
+    final List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
       addChargeBasisEntryForPeriod(locationKey, paymentClass, dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
     }
     if (pricedPeriods.size() > 1) {
       addChargeBasisEntryForPeriod(locationKey, paymentClass, dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
+    }
+  }
+
+  private int getDailyFee(double locationArea, String paymentClass) {
+    if (locationArea < SMALL_AREA_LIMIT) {
+      return getPrice(PricingKey.SMALL_AREA_DAILY_FEE, paymentClass);
+    } else if (locationArea > LARGE_AREA_LIMIT) {
+      return getPrice(PricingKey.LARGE_AREA_DAILY_FEE, paymentClass);
+    } else {
+      return getPrice(PricingKey.MEDIUM_AREA_DAILY_FEE, paymentClass);
     }
   }
 
@@ -144,13 +150,6 @@ public class ExcavationPricing extends Pricing {
       return 0;
     }
     return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, key, paymentClass);
-  }
-
-  private String getPaymentClassText(String paymentClass) {
-    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS)) {
-      return UNDEFINED_PAYMENT_CLASS_TEXT;
-    }
-    return paymentClass;
   }
 
   private int getHandlingFee(ExcavationAnnouncement excavationAnnouncement) {

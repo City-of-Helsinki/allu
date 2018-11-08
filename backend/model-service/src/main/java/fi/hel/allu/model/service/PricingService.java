@@ -142,7 +142,7 @@ public class PricingService {
    * Calculate price for area rental
    */
   private List<ChargeBasisEntry> updateAreaRentalPrice(Application application) {
-    return calculateChargeBasis(application, new AreaRentalPricing(application, pricingDao));
+    return calculateChargeBasis(application, new AreaRentalPricing(application, pricingDao, pricingExplanator));
   }
 
   /*
@@ -162,7 +162,7 @@ public class PricingService {
       locations = locationDao.findByApplication(application.getId());
     }
     for (Location l : locations) {
-      pricing.addLocationPrice(l.getLocationKey(), l.getEffectiveArea(), l.getEffectivePaymentTariff());
+      pricing.addLocationPrice(l);
     }
     return pricing.getChargeBasisEntries();
   }

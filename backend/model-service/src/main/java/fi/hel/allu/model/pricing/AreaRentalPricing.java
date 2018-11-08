@@ -6,6 +6,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
 
 import java.time.temporal.ChronoUnit;
@@ -16,8 +17,7 @@ import java.time.temporal.ChronoUnit;
  * "Alueenkäyttömaksu", for specification.
  */
 public class AreaRentalPricing extends Pricing {
-
-  private static final String DAILY_PRICE_EXPLANATION = "Alueenkäyttömaksu";
+  private static final String DAILY_PRICE_EXPLANATION = "Alueenkäyttömaksu, maksuluokka %s, %s/%d";
   private static final String SHORT_TERM_HANDLING_EXPLANATION = "Käsittely- ja valvontamaksu (tilapäinen työ)";
   private static final String LONG_TERM_HANDLING_EXPLANATION = "Käsittely- ja valvontamaksu (työmaavuokraus)";
 
@@ -25,10 +25,12 @@ public class AreaRentalPricing extends Pricing {
 
   private final Application application;
   private final PricingDao pricingDao;
+  private final PricingExplanator pricingExplanator;
 
-  public AreaRentalPricing(Application application, PricingDao pricingDao) {
+  public AreaRentalPricing(Application application, PricingDao pricingDao, PricingExplanator pricingExplanator) {
     this.application = application;
     this.pricingDao = pricingDao;
+    this.pricingExplanator = pricingExplanator;
     setHandlingFee();
   }
 
@@ -64,14 +66,17 @@ public class AreaRentalPricing extends Pricing {
   }
 
   @Override
-  public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
+  public void addLocationPrice(Location location) {
+    final String paymentClass = location.getEffectivePaymentTariff();
+    final Integer locationKey = location.getLocationKey();
+    final double locationArea = location.getEffectiveArea();
     final long numUnits = Math.round(Math.ceil(locationArea / AREA_UNIT));
     final int dailyPrice = getPrice((int)numUnits, paymentClass);
-    final int numDays = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
+    final int numDays = (int) CalendarUtil.startingUnitsBetween(location.getStartTime(), location.getEndTime(),
         ChronoUnit.DAYS);
     final int netPrice = dailyPrice * numDays;
     addChargeBasisEntry(ChargeBasisTag.AreaRentalDailyFee(Integer.toString(locationKey)), ChargeBasisUnit.DAY, numDays, dailyPrice,
-        DAILY_PRICE_EXPLANATION, netPrice);
+        getPriceText(paymentClass, locationKey), netPrice, pricingExplanator.getExplanation(location));
     setPriceInCents(netPrice + getPriceInCents());
   }
 
@@ -80,5 +85,9 @@ public class AreaRentalPricing extends Pricing {
       return 0;
     }
     return numUnits * pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, paymentClass);
+  }
+
+  private String getPriceText(String paymentClass, int locationKey) {
+    return String.format(DAILY_PRICE_EXPLANATION, getPaymentClassText(paymentClass), application.getApplicationId(), locationKey);
   }
 }

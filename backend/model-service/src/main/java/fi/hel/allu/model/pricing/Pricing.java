@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.exception.NotImplementedException;
 import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.Location;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 public abstract class Pricing {
   protected static final String UNDEFINED_PAYMENT_CLASS = "undefined";
+  private static final String UNDEFINED_PAYMENT_CLASS_TEXT = "tuntematon";
 
   private int priceInCents = 0;
   private List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
@@ -50,13 +52,9 @@ public abstract class Pricing {
   }
 
   /**
-   * Add a single location's price with given area and payment class
-   *
-   * @param locationKey the location's key (unique within application).
-   * @param locationArea Location's area in square meters
-   * @param paymentClass Payment class: 1,2, or 3.
+   * Add a single location's price with given location
    */
-  public void addLocationPrice(int locationKey, double locationArea, String paymentClass) {
+  public void addLocationPrice(Location location) {
     throw new NotImplementedException("Location price with payment class not implemented in " + this.getClass());
   }
 
@@ -84,4 +82,11 @@ public abstract class Pricing {
     }
   }
 
+
+  protected String getPaymentClassText(String paymentClass) {
+    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS)) {
+      return UNDEFINED_PAYMENT_CLASS_TEXT;
+    }
+    return paymentClass;
+  }
 }

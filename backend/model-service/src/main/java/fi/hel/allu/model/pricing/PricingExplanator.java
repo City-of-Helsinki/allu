@@ -32,6 +32,10 @@ public class PricingExplanator {
     return formatExplanation(application, customPeriod);
   }
 
+  public List<String> getExplanation(Location location) {
+    return formatExplanation(location, null);
+  }
+
   private List<String> formatExplanation(Application application, String customPeriod) {
     if (application.getId() == null) {
       return Collections.emptyList();
@@ -43,8 +47,10 @@ public class PricingExplanator {
     } else if (locations.isEmpty()) {
       return Collections.emptyList();
     }
-    final Location location = locations.get(0);
+    return formatExplanation(locations.get(0), customPeriod);
+  }
 
+  private List<String> formatExplanation(Location location, String customPeriod) {
     final List<FixedLocation> fixedLocations = new ArrayList<>();
     location.getFixedLocationIds().forEach((id) -> locationDao.findFixedLocation(id).map(fl -> fixedLocations.add(fl)));
     final String fixedLocation = Printable.forFixedLocations(fixedLocations);
@@ -52,7 +58,7 @@ public class PricingExplanator {
     final String address = fixedLocation.length() > 0 ? fixedLocation : locationAddress;
 
     final String period = customPeriod != null ? customPeriod :
-        Printable.forDayPeriod(application.getStartTime(), application.getEndTime());
+        Printable.forDayPeriod(location.getStartTime(), location.getEndTime());
 
     final String area = ((int)Math.ceil(location.getEffectiveArea())) + "m²";
 
