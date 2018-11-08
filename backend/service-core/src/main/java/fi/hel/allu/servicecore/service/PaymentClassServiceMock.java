@@ -14,7 +14,8 @@ public class PaymentClassServiceMock implements PaymentClassService {
 
   @Override
   public String getPaymentClass(LocationJson location) {
-    logger.info("PaymentClassServiceMock: returning payment class 3");
-    return "undefined";
+    final String paymentClass = "3";
+    logger.info("PaymentClassServiceMock: returning payment class {}", paymentClass);
+    return paymentClass;
   }
 }
