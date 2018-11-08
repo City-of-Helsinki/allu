@@ -105,8 +105,7 @@ describe('Area rental application', () => {
 
     const areaRental = {
       'type': 'AREA_RENTAL',
-      'notBillable': 'true',
-      'notBillableReason': 'Reima on hyvä jätkä',
+      'notBillable': 'false',
       'kindsWithSpecifiers': {'PROPERTY_RENOVATION' : []},
       'name': 'Aluevuokraus',
       'decisionPublicityType': 'PUBLIC',
