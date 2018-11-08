@@ -49,45 +49,59 @@ public class DateReportingService {
   }
 
   public ApplicationJson reportCustomerOperationalCondition(Integer id, ApplicationDateReport dateReport) {
-    Application application = applicationService.setCustomerOperationalConditionDates(id, dateReport);
+    final ApplicationJson oldApplicationJson = getApplicationJson(id);
+
+    final Application newApplication = applicationService.setCustomerOperationalConditionDates(id, dateReport);
     if (supervisionTaskService.hasSupervisionTask(id, SupervisionTaskType.OPERATIONAL_CONDITION)) {
       supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.OPERATIONAL_CONDITION,
           SupervisionDates.operationalConditionSupervisionDate(dateReport.getReportedDate()));
     } else {
-      createOperationalConditionSupervisionTask(application, dateReport.getReportedDate());
+      createOperationalConditionSupervisionTask(newApplication, dateReport.getReportedDate());
     }
     applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.OPERATIONAL_CONDITION_REPORTED, null));
-    return applicationJsonService.getFullyPopulatedApplication(application);
+    final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
+
+    applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+    return newApplicationJson;
   }
 
   public ApplicationJson reportCustomerWorkFinished(Integer id, ApplicationDateReport dateReport) {
-    Application application = applicationService.setCustomerWorkFinishedDates(id,
-        dateReport);
+    final ApplicationJson oldApplicationJson = getApplicationJson(id);
+
+    final Application newApplication = applicationService.setCustomerWorkFinishedDates(id, dateReport);
     supervisionTaskService.updateSupervisionTaskDate(id, SupervisionTaskType.FINAL_SUPERVISION,
         SupervisionDates.finalSupervisionDate(dateReport.getReportedDate()));
-    return applicationJsonService.getFullyPopulatedApplication(application);
+    final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
+
+    applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+    return newApplicationJson;
   }
 
   public ApplicationJson reportCustomerValidity(Integer id, ApplicationDateReport dateReport) {
-    final Application oldApplication = applicationService.findApplicationById(id);
-    final ApplicationJson oldApplicationJson = applicationJsonService.getFullyPopulatedApplication(oldApplication);
+    final ApplicationJson oldApplicationJson = getApplicationJson(id);
 
     final Application newApplication = applicationService.setCustomerValidityDates(id, dateReport);
     final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
 
     applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.DATE_CHANGE, null));
     applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
-
     return newApplicationJson;
   }
 
   public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate) {
+    final ApplicationJson oldApplicationJson = getApplicationJson(id);
+
     applicationService.setOperationalConditionDate(id, operationalConditionDate);
-    Application application = applicationService.setTargetState(id, StatusType.OPERATIONAL_CONDITION);
-    return applicationJsonService.getFullyPopulatedApplication(application);
+    final Application newApplication = applicationService.setTargetState(id, StatusType.OPERATIONAL_CONDITION);
+    final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
+
+    applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+    return newApplicationJson;
   }
 
   public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate) {
+    final ApplicationJson oldApplicationJson = getApplicationJson(id);
+
     applicationService.setWorkFinishedDate(id, workFinishedDate);
     Application application = applicationService.setTargetState(id, StatusType.FINISHED);
 
@@ -96,7 +110,10 @@ public class DateReportingService {
               SupervisionDates.warrantySupervisionDate(workFinishedDate));
     }
 
-    return applicationJsonService.getFullyPopulatedApplication(application);
+    final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(application);
+
+    applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+    return newApplicationJson;
   }
 
   private void createOperationalConditionSupervisionTask(Application application, ZonedDateTime reportedDate) {
@@ -119,4 +136,8 @@ public class DateReportingService {
     return supervisionTaskOwner;
   }
 
+  private ApplicationJson getApplicationJson(Integer id) {
+    final Application oldApplication = applicationService.findApplicationById(id);
+    return applicationJsonService.getFullyPopulatedApplication(oldApplication);
+  }
 }
