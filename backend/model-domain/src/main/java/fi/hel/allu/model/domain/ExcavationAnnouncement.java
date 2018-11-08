@@ -8,7 +8,8 @@ import java.time.ZonedDateTime;
 /**
  * Excavation announcement (Kaivuilmoitus) specific data.
  */
-public class ExcavationAnnouncement extends ApplicationExtension {
+public class ExcavationAnnouncement extends ApplicationExtension
+    implements WorkFinishedDates, GuaranteeEndTime, OperationalConditionDates, ValidityDates {
   private Boolean pksCard;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
@@ -127,10 +128,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * In Finnish: Talvityön toiminnallinen kunto (päivämäärä, jolloin valmis).
    */
+  @Override
   public ZonedDateTime getWinterTimeOperation() {
     return winterTimeOperation;
   }
 
+  @Override
   public void setWinterTimeOperation(ZonedDateTime winterTimeOperation) {
     this.winterTimeOperation = winterTimeOperation;
   }
@@ -138,10 +141,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * In Finnish: Työ valmis.
    */
+  @Override
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
 
+  @Override
   public void setWorkFinished(ZonedDateTime workFinished) {
     this.workFinished = workFinished;
   }
@@ -171,10 +176,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * In Finnish: Takuun päättymispäivämäärä.
    */
+  @Override
   public ZonedDateTime getGuaranteeEndTime() {
     return guaranteeEndTime;
   }
 
+  @Override
   public void setGuaranteeEndTime(ZonedDateTime guaranteeEndTime) {
     this.guaranteeEndTime = guaranteeEndTime;
   }
@@ -182,10 +189,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * In Finnish: Asiakkaan ilmoittama hakemuksen alkuaika.
    */
+  @Override
   public ZonedDateTime getCustomerStartTime() {
     return customerStartTime;
   }
 
+  @Override
   public void setCustomerStartTime(ZonedDateTime customerStartTime) {
     this.customerStartTime = customerStartTime;
   }
@@ -193,10 +202,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * In Finnish: Asiakkaan ilmoittama hakemuksen loppuaika.
    */
+  @Override
   public ZonedDateTime getCustomerEndTime() {
     return customerEndTime;
   }
 
+  @Override
   public void setCustomerEndTime(ZonedDateTime customerEndTime) {
     this.customerEndTime = customerEndTime;
   }
@@ -204,10 +215,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * In Finnish: Asiakkaan ilmoittama talvityön toiminnallinen kunto.
    */
+  @Override
   public ZonedDateTime getCustomerWinterTimeOperation() {
     return customerWinterTimeOperation;
   }
 
+  @Override
   public void setCustomerWinterTimeOperation(ZonedDateTime customerWinterTimeOperation) {
     this.customerWinterTimeOperation = customerWinterTimeOperation;
   }
@@ -215,10 +228,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * In Finnish: Asiakkaan ilmoittama aika, jolloin työ on valmis.
    */
+  @Override
   public ZonedDateTime getCustomerWorkFinished() {
     return customerWorkFinished;
   }
 
+  @Override
   public void setCustomerWorkFinished(ZonedDateTime customerWorkFinished) {
     this.customerWorkFinished = customerWorkFinished;
   }
@@ -281,10 +296,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * Date when customer reported operational condition date
    */
+  @Override
   public ZonedDateTime getOperationalConditionReported() {
     return operationalConditionReported;
   }
 
+  @Override
   public void setOperationalConditionReported(ZonedDateTime operationalConditionReported) {
     this.operationalConditionReported = operationalConditionReported;
   }
@@ -292,10 +309,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * Date when customer reported work finished date
    */
+  @Override
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
 
+  @Override
   public void setWorkFinishedReported(ZonedDateTime workFinishedReported) {
     this.workFinishedReported = workFinishedReported;
   }
@@ -303,10 +322,12 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   /**
    * Date when customer reported validity dates
    */
+  @Override
   public ZonedDateTime getValidityReported() {
     return validityReported;
   }
 
+  @Override
   public void setValidityReported(ZonedDateTime validityReported) {
     this.validityReported = validityReported;
   }

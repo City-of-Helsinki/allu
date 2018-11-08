@@ -5,21 +5,10 @@ import {Action, select, Store} from '@ngrx/store';
 import {ApplicationStore} from '@service/application/application-store';
 import {ExcavationAnnouncementService} from '@service/application/excavation-announcement.service';
 import {Observable, of} from 'rxjs/index';
-import {
-  ExcavationAnnouncementActionType,
-  ReportCustomerOperationalCondition,
-  ReportCustomerValidity,
-  ReportOperationalCondition,
-  SetRequiredTasks
-} from '@feature/application/actions/excavation-announcement-actions';
-import * as SupervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
-import {catchError, filter, map, switchMap} from 'rxjs/internal/operators';
+import {ExcavationAnnouncementActionType, SetRequiredTasks} from '@feature/application/actions/excavation-announcement-actions';
+import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
-import {findTranslation} from '@util/translations';
-import * as TagAction from '@feature/application/actions/application-tag-actions';
-import {ApplicationType} from '@model/application/type/application-type';
-import {DateReportActionType, ReportCustomerWorkFinished, ReportWorkFinished} from '@feature/application/actions/date-report-actions';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class ExcavationAnnouncementEffects {
@@ -29,79 +18,9 @@ export class ExcavationAnnouncementEffects {
               private excavationAnnouncementService: ExcavationAnnouncementService) {}
 
   @Effect()
-  reportOperationalCondition: Observable<Action> = this.actions.pipe(
-    ofType<ReportOperationalCondition>(ExcavationAnnouncementActionType.ReportOperationalCondition),
-    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
-    switchMap(([action, app]) => this.excavationAnnouncementService.reportOperationalCondition(app.id, action.payload).pipe(
-      switchMap(updated => [
-        this.applicationStore.setAndAction(updated),
-        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportOperationalCondition'))
-      ]),
-      catchError(error => of(new NotifyFailure(error)))
-    ))
-  );
-
-  @Effect()
-  reportWorkFinished: Observable<Action> = this.actions.pipe(
-    ofType<ReportWorkFinished>(DateReportActionType.ReportWorkFinished),
-    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
-    filter(([action, app]) => app.type === ApplicationType.EXCAVATION_ANNOUNCEMENT),
-    switchMap(([action, app]) => this.excavationAnnouncementService.reportWorkFinished(app.id, action.payload).pipe(
-      switchMap(updated => [
-        this.applicationStore.setAndAction(updated),
-        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportWorkFinished'))
-      ]),
-      catchError(error => of(new NotifyFailure(error)))
-    ))
-  );
-
-  @Effect()
-  reportCustomerOperationalCondition: Observable<Action> = this.actions.pipe(
-    ofType<ReportCustomerOperationalCondition>(ExcavationAnnouncementActionType.ReportCustomerOperationalCondition),
-    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerOperationalCondition(app.id, action.payload).pipe(
-      switchMap(updated => [
-        this.applicationStore.setAndAction(updated),
-        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerOperationalCondition')),
-        new SupervisionTaskActions.Load(),
-        new TagAction.Load()
-      ]),
-      catchError(error => of(new NotifyFailure(error)))
-    ))
-  );
-
-  @Effect()
-  reportCustomerWorkFinished: Observable<Action> = this.actions.pipe(
-    ofType<ReportCustomerWorkFinished>(DateReportActionType.ReportCustomerWorkFinished),
-    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerWorkFinished(app.id, action.payload).pipe(
-      switchMap(updated => [
-        this.applicationStore.setAndAction(updated),
-        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerWorkFinished')),
-        new SupervisionTaskActions.Load()
-      ]),
-      catchError(error => of(new NotifyFailure(error)))
-    ))
-  );
-
-  @Effect()
-  reportCustomerValidity: Observable<Action> = this.actions.pipe(
-    ofType<ReportCustomerValidity>(ExcavationAnnouncementActionType.ReportCustomerValidity),
-    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.excavationAnnouncementService.reportCustomerValidity(app.id, action.payload).pipe(
-      switchMap(updated => [
-        this.applicationStore.setAndAction(updated),
-        new NotifySuccess(findTranslation('application.excavationAnnouncement.action.reportCustomerValidity')),
-        new TagAction.Load()
-      ]),
-      catchError(error => of(new NotifyFailure(error)))
-    ))
-  );
-
-  @Effect()
   setRequiredTasks: Observable<Action> = this.actions.pipe(
     ofType<SetRequiredTasks>(ExcavationAnnouncementActionType.SetRequiredTasks),
-    withLatestExisting(this.store.select(fromApplication.getCurrentApplication)),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.excavationAnnouncementService.setRequiredTasks(app.id, action.payload).pipe(
       map(updated => this.applicationStore.setAndAction(updated)),
       catchError(error => of(new NotifyFailure(error)))

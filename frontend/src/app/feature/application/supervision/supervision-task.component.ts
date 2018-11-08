@@ -29,7 +29,7 @@ import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
 import {Some} from '@util/option';
-import {ReportOperationalCondition, SetRequiredTasks} from '@feature/application/actions/excavation-announcement-actions';
+import {SetRequiredTasks} from '@feature/application/actions/excavation-announcement-actions';
 import {Observable, Subject} from 'rxjs/index';
 import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
@@ -46,7 +46,7 @@ import {
   AreaRentalSupervisionApprovalModalComponent,
   AreaRentalSupervisionApprovalModalData
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
-import {ReportWorkFinished} from '@feature/application/actions/date-report-actions';
+import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/date-reporting-actions';
 import {Location} from '@model/common/location';
 
 @Component({

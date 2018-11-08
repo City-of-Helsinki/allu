@@ -28,7 +28,7 @@ import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.util.ExcavationAnnouncementDates;
+import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
@@ -722,61 +722,65 @@ public class ApplicationDao {
   }
 
   public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
-    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    excavationAnnouncement.setOperationalConditionReported(dateReport.getReportingDate());
-    excavationAnnouncement.setCustomerWinterTimeOperation(dateReport.getReportedDate());
-    updateExtension(id, excavationAnnouncement);
-    return findById(id);
-  }
-
-  public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
-    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    excavationAnnouncement.setWorkFinishedReported(dateReport.getReportingDate());
-    excavationAnnouncement.setCustomerWorkFinished(dateReport.getReportedDate());
-    updateExtension(id, excavationAnnouncement);
-    return findById(id);
-  }
-
-  public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
-    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    excavationAnnouncement.setValidityReported(dateReport.getReportingDate());
-    excavationAnnouncement.setCustomerStartTime(dateReport.getReportedDate());
-    excavationAnnouncement.setCustomerEndTime(dateReport.getReportedEndDate());
-    updateExtension(id, excavationAnnouncement);
-    return findById(id);
-  }
-
-  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
-    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    excavationAnnouncement.setWinterTimeOperation(operationalConditionDate);
-    updateExtension(id, excavationAnnouncement);
-    return findById(id);
-  }
-
-  public Application setWorkFinishedDate(Integer id, ApplicationType type, ZonedDateTime workFinishedDate) {
-    if (type == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      return setExcavationWorkFinishedDate(id, workFinishedDate);
-    } else if (type == ApplicationType.AREA_RENTAL) {
-      return setAreaRentalWorkFinishedDate(id, workFinishedDate);
+    final ApplicationExtension extension = findExtension(id);
+    if (extension instanceof OperationalConditionDates) {
+      ((OperationalConditionDates) extension).setOperationalConditionReported(dateReport.getReportingDate());
+      ((OperationalConditionDates) extension).setCustomerWinterTimeOperation(dateReport.getReportedDate());
+      updateExtension(id, extension);
+      return findById(id);
     } else {
-      throw new IllegalArgumentException("Setting work finished date not allowed for application " + type + " found for ID " + id);
+      throw new IllegalArgumentException("Setting customer operational condition date not allowed for application found for ID " + id);
     }
   }
 
-  public Application setExcavationWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    ExcavationAnnouncement excavationAnnouncement = findExtension(id, ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    excavationAnnouncement.setWorkFinished(workFinishedDate);
-    // Set guarantee end time when work finished is updated
-    excavationAnnouncement.setGuaranteeEndTime(ExcavationAnnouncementDates.guaranteeEndDate(workFinishedDate));
-    updateExtension(id, excavationAnnouncement);
-    return findById(id);
+  public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
+    final ApplicationExtension extension = findExtension(id);
+    if (extension instanceof WorkFinishedDates) {
+      ((WorkFinishedDates) extension).setWorkFinishedReported(dateReport.getReportingDate());
+      ((WorkFinishedDates) extension).setCustomerWorkFinished(dateReport.getReportedDate());
+      updateExtension(id, extension);
+      return findById(id);
+    } else {
+      throw new IllegalArgumentException("Setting customer work finished date not allowed for application found for ID " + id);
+    }
   }
 
-  public Application setAreaRentalWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
-    AreaRental areaREntal = findExtension(id, ApplicationType.AREA_RENTAL);
-    areaREntal.setWorkFinished(workFinishedDate);
-    updateExtension(id, areaREntal);
-    return findById(id);
+  public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
+    final ApplicationExtension extension = findExtension(id);
+    if (extension instanceof ValidityDates) {
+      ((ValidityDates) extension).setValidityReported(dateReport.getReportingDate());
+      ((ValidityDates) extension).setCustomerStartTime(dateReport.getReportedDate());
+      ((ValidityDates) extension).setCustomerEndTime(dateReport.getReportedEndDate());
+      updateExtension(id, extension);
+      return findById(id);
+    } else {
+      throw new IllegalArgumentException("Setting validity date not allowed for application found for ID " + id);
+    }
+  }
+
+  public Application setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
+    final ApplicationExtension extension = findExtension(id);
+    if (extension instanceof OperationalConditionDates) {
+      ((OperationalConditionDates) extension).setWinterTimeOperation(operationalConditionDate);
+      updateExtension(id, extension);
+      return findById(id);
+    } else {
+      throw new IllegalArgumentException("Setting operational condition date not allowed for application found for ID " + id);
+    }
+  }
+
+  public Application setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+    final ApplicationExtension extension = findExtension(id);
+    if (extension instanceof WorkFinishedDates) {
+      ((WorkFinishedDates) extension).setWorkFinished(workFinishedDate);
+      if (extension instanceof GuaranteeEndTime) {
+        ((GuaranteeEndTime) extension).setGuaranteeEndTime(SupervisionDates.guaranteeEndDate(workFinishedDate));
+      }
+      updateExtension(id, extension);
+      return findById(id);
+    } else {
+      throw new IllegalArgumentException("Setting work finished date not allowed for application found for ID " + id);
+    }
   }
 
   public void setRequiredTasks(Integer id, RequiredTasks tasks) {
@@ -804,7 +808,18 @@ public class ApplicationDao {
       throw new NoSuchEntityException("No application with type " + type + " found for ID " + id);
     }
     return (T)extension;
+  }
 
+  private ApplicationExtension findExtension(Integer id) {
+    ApplicationExtension extension =  queryFactory
+        .select(application.extension)
+        .from(application)
+        .where(application.id.eq(id))
+        .fetchOne();
+    if (extension == null) {
+      throw new NoSuchEntityException("No application found for ID " + id);
+    }
+    return extension;
   }
 
   /**

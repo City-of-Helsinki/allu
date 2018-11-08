@@ -55,8 +55,8 @@ import {NotificationModule} from '@feature/application/notification/notification
 import {ExcavationAnnouncementEffects} from '@feature/application/effects/excavation-announcement-effects';
 import {ExcavationAnnouncementService} from '@service/application/excavation-announcement.service';
 import {DateReportingModule} from '@feature/application/date-reporting/date-reporting.module';
-import {AreaRentalService} from '@service/application/area-rental.service';
-import {AreaRentalEffects} from '@feature/application/effects/area-rental-effects';
+import {DateReportingEffects} from '@feature/application/effects/date-reporting-effects';
+import {DateReportingService} from '@service/application/date-reporting.service';
 
 @NgModule({
   imports: [
@@ -67,7 +67,7 @@ import {AreaRentalEffects} from '@feature/application/effects/area-rental-effect
       ApplicationEffects,
       ApplicationTagEffects,
       ExcavationAnnouncementEffects,
-      AreaRentalEffects
+      DateReportingEffects
     ]),
     FormsModule,
     ReactiveFormsModule,
@@ -123,7 +123,7 @@ import {AreaRentalEffects} from '@feature/application/effects/area-rental-effect
     ApplicationResolve,
     ApplicationDraftService,
     ExcavationAnnouncementService,
-    AreaRentalService
+    DateReportingService
   ],
   entryComponents: [
     DefaultTextModalComponent

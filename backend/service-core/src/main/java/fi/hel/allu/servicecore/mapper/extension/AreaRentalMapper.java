@@ -11,6 +11,8 @@ public class AreaRentalMapper {
     areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
     areaRentalJson.setTrafficArrangementImpedimentType(areaRental.getTrafficArrangementImpedimentType());
     areaRentalJson.setWorkFinished(areaRental.getWorkFinished());
+    areaRentalJson.setCustomerWorkFinished(areaRental.getCustomerWorkFinished());
+    areaRentalJson.setWorkFinishedReported(areaRental.getWorkFinishedReported());
     return ApplicationExtensionMapper.modelToJson(areaRental, areaRentalJson);
   }
 
@@ -21,7 +23,8 @@ public class AreaRentalMapper {
     areaRental.setTrafficArrangements(json.getTrafficArrangements());
     areaRental.setTrafficArrangementImpedimentType(json.getTrafficArrangementImpedimentType());
     areaRental.setWorkFinished(json.getWorkFinished());
+    areaRental.setCustomerWorkFinished(json.getCustomerWorkFinished());
+    areaRental.setWorkFinishedReported(json.getWorkFinishedReported());
     return ApplicationExtensionMapper.jsonToModel(json, areaRental);
-
   }
 }

@@ -8,11 +8,13 @@ import java.time.ZonedDateTime;
 /**
  * Area rental (Aluevuokraus) specific data.
  */
-public class AreaRental extends ApplicationExtension {
+public class AreaRental extends ApplicationExtension implements WorkFinishedDates {
   private Boolean pksCard;
   private String additionalInfo;
   private String trafficArrangements;
   private ZonedDateTime workFinished;
+  private ZonedDateTime customerWorkFinished;
+  private ZonedDateTime workFinishedReported;
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
   @Override
@@ -57,12 +59,38 @@ public class AreaRental extends ApplicationExtension {
   /**
    * In Finnish: Työ valmis.
    */
+  @Override
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
 
+  @Override
   public void setWorkFinished(ZonedDateTime workFinished) {
     this.workFinished = workFinished;
+  }
+
+  /**
+   * In Finnish: Asiakkaan ilmoittama aika, jolloin työ on valmis.
+   */
+  @Override
+  public ZonedDateTime getCustomerWorkFinished() {
+    return customerWorkFinished;
+  }
+
+  @Override
+  public void setCustomerWorkFinished(ZonedDateTime customerWorkFinished) {
+    this.customerWorkFinished = customerWorkFinished;
+  }
+
+  /**
+   * Date when customer reported work finished date
+   */
+  public ZonedDateTime getWorkFinishedReported() {
+    return workFinishedReported;
+  }
+
+  public void setWorkFinishedReported(ZonedDateTime workFinishedReported) {
+    this.workFinishedReported = workFinishedReported;
   }
 
   /**

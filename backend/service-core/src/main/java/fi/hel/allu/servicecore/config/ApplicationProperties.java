@@ -1320,28 +1320,24 @@ public class ApplicationProperties {
     return getModelServiceUrl("/configurations/{id}");
   }
 
-  public String getExcavationAnnouncementCustomerOperationalConditionUrl() {
-    return getModelServiceUrl("/excavationannouncements/{id}/customeroperationalcondition");
+  public String getCustomerOperationalConditionUrl() {
+    return getModelServiceUrl("/applications/{id}/customeroperationalcondition");
   }
 
-  public String getExcavationAnnouncementCustomerValidityUrl() {
-    return getModelServiceUrl("/excavationannouncements/{id}/customervalidity");
+  public String getCustomerValidityUrl() {
+    return getModelServiceUrl("/applications/{id}/customervalidity");
   }
 
-  public String getExcavationAnnouncementCustomerWorkFinishedUrl() {
-    return getModelServiceUrl("/excavationannouncements/{id}/customerworkfinished");
+  public String getCustomerWorkFinishedUrl() {
+    return getModelServiceUrl("/applications/{id}/customerworkfinished");
   }
 
-  public String getExcavationAnnouncementOperationalConditionUrl() {
-    return getModelServiceUrl("/excavationannouncements/{id}/operationalcondition");
+  public String getOperationalConditionUrl() {
+    return getModelServiceUrl("/applications/{id}/operationalcondition");
   }
 
-  public String getExcavationAnnouncementWorkFinishedUrl() {
-    return getModelServiceUrl("/excavationannouncements/{id}/workfinished");
-  }
-
-  public String getAreaRentalWorkFinishedUrl() {
-    return getModelServiceUrl("/arearentals/{id}/workfinished");
+  public String getWorkFinishedUrl() {
+    return getModelServiceUrl("/applications/{id}/workfinished");
   }
 
   public String getSetRequiredTasksUrl() {

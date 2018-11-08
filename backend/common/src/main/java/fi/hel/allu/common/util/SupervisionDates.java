@@ -3,7 +3,7 @@ package fi.hel.allu.common.util;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
-public class ExcavationAnnouncementDates {
+public class SupervisionDates {
 
   private static final int EXCAVATION_ANNOUNCEMENT_WARRANTY_YEARS = 2;
 

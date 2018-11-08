@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import fi.hel.allu.common.util.ExcavationAnnouncementDates;
+import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.ApplicationDao;
@@ -38,16 +38,16 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     if (extension.getWinterTimeOperation() != null &&
         !hasSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION)) {
       createSupervisionTask(application, SupervisionTaskType.OPERATIONAL_CONDITION, userId,
-          ExcavationAnnouncementDates.operationalConditionSupervisionDate(extension.getWinterTimeOperation()));
+          SupervisionDates.operationalConditionSupervisionDate(extension.getWinterTimeOperation()));
     }
     if (application.getEndTime() != null) {
       if (!hasSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION)) {
         createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
-            ExcavationAnnouncementDates.finalSupervisionDate(application.getEndTime()));
+            SupervisionDates.finalSupervisionDate(application.getEndTime()));
       }
       if (!hasSupervisionTask(application, SupervisionTaskType.WARRANTY)) {
         createSupervisionTask(application, SupervisionTaskType.WARRANTY, userId,
-            ExcavationAnnouncementDates.warrantySupervisionDate(application.getEndTime()));
+            SupervisionDates.warrantySupervisionDate(application.getEndTime()));
       }
     }
   }

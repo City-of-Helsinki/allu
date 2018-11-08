@@ -14,6 +14,8 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   private String additionalInfo;
   private String trafficArrangements;
   private ZonedDateTime workFinished;
+  private ZonedDateTime customerWorkFinished;
+  private ZonedDateTime workFinishedReported;
   @NotNull(message = "{application.arearental.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
@@ -65,6 +67,28 @@ public class AreaRentalJson extends ApplicationExtensionJson {
 
   public void setWorkFinished(ZonedDateTime workFinished) {
     this.workFinished = workFinished;
+  }
+
+  /**
+   * In Finnish: Asiakkaan ilmoittama aika, jolloin työ on valmis.
+   */
+  public ZonedDateTime getCustomerWorkFinished() {
+    return customerWorkFinished;
+  }
+
+  public void setCustomerWorkFinished(ZonedDateTime customerWorkFinished) {
+    this.customerWorkFinished = customerWorkFinished;
+  }
+
+  /**
+   * Date when customer reported work finished date
+   */
+  public ZonedDateTime getWorkFinishedReported() {
+    return workFinishedReported;
+  }
+
+  public void setWorkFinishedReported(ZonedDateTime workFinishedReported) {
+    this.workFinishedReported = workFinishedReported;
   }
 
   /**

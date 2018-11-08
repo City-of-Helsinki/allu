@@ -32,10 +32,10 @@ import {ApplicationStatus, contains} from '@model/application/application-status
 import {ApplicationDateReport} from '@model/application/application-date-report';
 import {
   ReportCustomerOperationalCondition,
-  ReportCustomerValidity
-} from '@feature/application/actions/excavation-announcement-actions';
+  ReportCustomerValidity,
+  ReportCustomerWorkFinished
+} from '@feature/application/actions/date-reporting-actions';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
-import {ReportCustomerWorkFinished} from '@feature/application/actions/date-report-actions';
 
 @Component({
   selector: 'excavation-announcement',

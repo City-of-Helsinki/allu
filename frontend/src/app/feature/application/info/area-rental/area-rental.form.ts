@@ -7,6 +7,7 @@ export interface AreaRentalForm extends ApplicationForm {
   validityTimes?: TimePeriod;
   pksCard?: boolean;
   workFinished?: Date;
+  customerWorkFinished?: Date;
   trafficArrangements?: string;
   trafficArrangementImpedimentType?: string;
   additionalInfo?: string;
@@ -17,6 +18,7 @@ export function to(form: AreaRentalForm): AreaRental {
   const areaRental = new AreaRental();
   areaRental.pksCard = form.pksCard;
   areaRental.workFinished = form.workFinished;
+  areaRental.customerWorkFinished = form.customerWorkFinished;
   areaRental.trafficArrangements = form.trafficArrangements;
   areaRental.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
   areaRental.additionalInfo = form.additionalInfo;
@@ -30,6 +32,7 @@ export function from(application: Application, areaRental: AreaRental) {
     validityTimes: new TimePeriod(application.startTime, application.endTime),
     pksCard: areaRental.pksCard,
     workFinished: areaRental.workFinished,
+    customerWorkFinished: areaRental.customerWorkFinished,
     trafficArrangements: areaRental.trafficArrangements,
     trafficArrangementImpedimentType: areaRental.trafficArrangementImpedimentType,
     additionalInfo: areaRental.additionalInfo,

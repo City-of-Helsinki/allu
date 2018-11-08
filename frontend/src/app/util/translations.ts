@@ -52,12 +52,22 @@ export const translations = {
       tagFetchFailed: 'Hakemuksen tarkenteiden hakeminen epäonnistui',
       toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',
       toDecisionmaking: 'Hakemuksen siirtäminen odottamaan päätöstä epäonnistui',
-      cancel: 'Hakemuksen peruminen epäonnistui'
+      cancel: 'Hakemuksen peruminen epäonnistui',
+      reportOperationalCondition: 'Toiminnallisen kunnon ilmoittaminen epäonnistui',
+      reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui',
+      reportCustomerOperationalCondition: 'Asiakkaan ilmoittaman toiminnallisen kunnon päivittäminen epäonnistui',
+      reportCustomerWorkFinished: 'Asiakkaan ilmoittaman työn valmistumisen päivittäminen epäonnistui',
+      reportCustomerValidity: 'Asiakkaan ilmoittaman voimassaolon päivittäminen epäonnistui',
     },
     action: {
       saved: 'Hakemus tallennettu',
       replaced: 'Korvaava hakemus luotu',
-      deleted: 'Hakemus poistettu'
+      deleted: 'Hakemus poistettu',
+      reportOperationalCondition: 'Toiminnallinen kunto ilmoitettu',
+      reportWorkFinished: 'Työn valmistuminen ilmoitettu',
+      reportCustomerOperationalCondition: 'Asiakkaan ilmoittama toiminnallinen kunto päivitetty',
+      reportCustomerWorkFinished: 'Asiakkaan ilmoittama työn valmistuminen päivitetty',
+      reportCustomerValidity: 'Asiakkaan ilmoittama voimassaolo päivitetty',
     },
     progress: {
       location: 'Sijainti',
@@ -402,19 +412,7 @@ export const translations = {
         unauthorizedWorkStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
       },
       error: {
-        reportOperationalCondition: 'Toiminnallisen kunnon ilmoittaminen epäonnistui',
-        reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui',
-        reportCustomerOperationalCondition: 'Asiakkaan ilmoittaman toiminnallisen kunnon päivittäminen epäonnistui',
-        reportCustomerWorkFinished: 'Asiakkaan ilmoittaman työn valmistumisen päivittäminen epäonnistui',
-        reportCustomerValidity: 'Asiakkaan ilmoittaman voimassaolon päivittäminen epäonnistui',
         setRequiredTasks: 'Vaadittujen toimenpiteiden päivittäminen epäonnistui',
-      },
-      action: {
-        reportOperationalCondition: 'Toiminnallinen kunto ilmoitettu',
-        reportWorkFinished: 'Työn valmistuminen ilmoitettu',
-        reportCustomerOperationalCondition: 'Asiakkaan ilmoittama toiminnallinen kunto päivitetty',
-        reportCustomerWorkFinished: 'Asiakkaan ilmoittama työn valmistuminen päivitetty',
-        reportCustomerValidity: 'Asiakkaan ilmoittama voimassaolo päivitetty',
       }
     },
     note: {
@@ -439,6 +437,7 @@ export const translations = {
     },
     areaRental: {
       workFinished: 'Työ valmis',
+      customerWorkFinished: 'Työ valmis (Asiakkaan ilmoittama)',
       error: {
         reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui'
       },

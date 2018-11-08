@@ -109,6 +109,8 @@ export class ApplicationExtensionMapper {
         return new AreaRental(
           backendExtension.pksCard,
           TimeUtil.dateFromBackend(backendExtension.workFinished),
+          TimeUtil.dateFromBackend(backendExtension.customerWorkFinished),
+          TimeUtil.dateFromBackend(backendExtension.workFinishedReported),
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,
           backendExtension.additionalInfo,
@@ -267,6 +269,8 @@ export class ApplicationExtensionMapper {
       applicationType: areaRental.applicationType,
       pksCard: areaRental.pksCard,
       workFinished: TimeUtil.dateToBackend(areaRental.workFinished),
+      customerWorkFinished: TimeUtil.dateToBackend(areaRental.customerWorkFinished),
+      workFinishedReported: TimeUtil.dateToBackend(areaRental.workFinishedReported),
       trafficArrangements: areaRental.trafficArrangements,
       trafficArrangementImpedimentType: areaRental.trafficArrangementImpedimentType,
       additionalInfo: areaRental.additionalInfo,

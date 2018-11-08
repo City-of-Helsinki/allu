@@ -47,6 +47,22 @@
                        [placeholder]="'application.areaRental.workFinished' | translation"/>
               </mat-form-field>
             </div>
+            <div class="col s3">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="customerWorkFinished"
+                       [placeholder]="'application.areaRental.customerWorkFinished' | translation"
+                       [matDatepicker]="customerWorkFinishedPicker"/>
+                <button type="button" mat-icon-button matSuffix
+                        *ngIf="showReportCustomerDates; else customerWorkFinishedPickerToggle"
+                        (click)="reportCustomerWorkFinished(application.extension)">
+                  <mat-icon>event</mat-icon>
+                </button>
+                <ng-template #customerWorkFinishedPickerToggle>
+                  <mat-datepicker-toggle matSuffix [for]="customerWorkFinishedPicker"></mat-datepicker-toggle>
+                </ng-template>
+                <mat-datepicker #customerWorkFinishedPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
           </div>
         </mat-card-content>
       </allu-card>

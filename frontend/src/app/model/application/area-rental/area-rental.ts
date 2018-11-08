@@ -6,6 +6,8 @@ export class AreaRental extends ApplicationExtension {
   constructor(
     public pksCard?: boolean,
     public workFinished?: Date,
+    public customerWorkFinished?: Date,
+    public workFinishedReported?: Date,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string,

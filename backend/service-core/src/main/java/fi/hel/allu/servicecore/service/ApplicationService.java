@@ -377,34 +377,34 @@ public class ApplicationService {
 
   public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
     ResponseEntity<Application> responseEntity = restTemplate.exchange(
-        applicationProperties.getExcavationAnnouncementCustomerOperationalConditionUrl(), HttpMethod.PUT,
+        applicationProperties.getCustomerOperationalConditionUrl(), HttpMethod.PUT,
         new HttpEntity<>(dateReport), Application.class, id);
     return responseEntity.getBody();
   }
 
   public Application setCustomerWorkFinishedDates(Integer id, ApplicationDateReport dateReport) {
     ResponseEntity<Application> responseEntity = restTemplate.exchange(
-        applicationProperties.getExcavationAnnouncementCustomerWorkFinishedUrl(),
+        applicationProperties.getCustomerWorkFinishedUrl(),
         HttpMethod.PUT, new HttpEntity<>(dateReport), Application.class, id);
     return responseEntity.getBody();
   }
 
   public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
     ResponseEntity<Application> responseEntity = restTemplate.exchange(
-        applicationProperties.getExcavationAnnouncementCustomerValidityUrl(),
+        applicationProperties.getCustomerValidityUrl(),
         HttpMethod.PUT, new HttpEntity<>(dateReport), Application.class, id);
     return responseEntity.getBody();
   }
 
   public void setOperationalConditionDate(Integer id, ZonedDateTime operationalConditionDate) {
     restTemplate.exchange(
-        applicationProperties.getExcavationAnnouncementOperationalConditionUrl(),
+        applicationProperties.getOperationalConditionUrl(),
         HttpMethod.PUT, new HttpEntity<>(operationalConditionDate), Void.class, id);
   }
 
-  public void setWorkFinishedDate(Integer id, ApplicationType type, ZonedDateTime workFinishedDate) {
+  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
     restTemplate.exchange(
-        getWorkFinishedUrl(type),
+        applicationProperties.getWorkFinishedUrl(),
         HttpMethod.PUT, new HttpEntity<>(workFinishedDate), Void.class, id);
   }
 
@@ -419,15 +419,5 @@ public class ApplicationService {
     return restTemplate.exchange(
         applicationProperties.getSetTargetStateUrl(),
         HttpMethod.PUT, new HttpEntity<>(targetState), Application.class, id).getBody();
-  }
-
-  private String getWorkFinishedUrl(ApplicationType type) {
-    if (type == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      return applicationProperties.getExcavationAnnouncementWorkFinishedUrl();
-    } else if (type == ApplicationType.AREA_RENTAL) {
-      return applicationProperties.getAreaRentalWorkFinishedUrl();
-    } else {
-      throw new IllegalArgumentException("application.update.workFinished.notallowed");
-    }
   }
 }

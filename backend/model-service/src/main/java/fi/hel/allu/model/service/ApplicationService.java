@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.user.Constants;
@@ -486,8 +485,8 @@ public class ApplicationService {
    * Sets excavation announcement work finished date and updates pricing of application
    */
   @Transactional
-  public void setWorkFinishedDate(Integer id, ApplicationType type, ZonedDateTime workFinishedDate) {
-    Application application = applicationDao.setWorkFinishedDate(id, type, workFinishedDate);
+  public void setWorkFinishedDate(Integer id, ZonedDateTime workFinishedDate) {
+    Application application = applicationDao.setWorkFinishedDate(id, workFinishedDate);
     updateChargeBasis(id, application);
     updateApplicationPricing(id);
   }

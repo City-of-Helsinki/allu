@@ -19,8 +19,8 @@ import fi.hel.allu.external.domain.ValidityPeriodExt;
 import fi.hel.allu.external.mapper.ExcavationAnnouncementExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
+import fi.hel.allu.servicecore.service.DateReportingService;
 import fi.hel.allu.servicecore.service.DecisionService;
-import fi.hel.allu.servicecore.service.ExcavationAnnouncementService;
 import io.swagger.annotations.*;
 
 @RestController
@@ -33,9 +33,6 @@ public class ExcavationAnnouncementController
   private ExcavationAnnouncementExtMapper mapper;
 
   @Autowired
-  private ExcavationAnnouncementService excavationAnnouncementService;
-
-  @Autowired
   private ApplicationServiceExt applicationService;
 
   @Autowired
@@ -44,6 +41,8 @@ public class ExcavationAnnouncementController
   @Autowired
   private DecisionService decisionService;
 
+  @Autowired
+  private DateReportingService dateReportingService;
 
   @Override
   protected ExcavationAnnouncementExtMapper getMapper() {
@@ -62,7 +61,7 @@ public class ExcavationAnnouncementController
       @ApiParam(value = "Work finished date") @RequestBody @NotNull ZonedDateTime workFinishedDate) {
     applicationService.validateOwnedByExternalUser(id);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), workFinishedDate, null);
-    excavationAnnouncementService.reportCustomerWorkFinished(id, dateReport);
+    dateReportingService.reportCustomerWorkFinished(id, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -78,7 +77,7 @@ public class ExcavationAnnouncementController
       @ApiParam(value = "Operational condition date") @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
     applicationService.validateOwnedByExternalUser(id);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), operationalConditionDate, null);
-    excavationAnnouncementService.reportCustomerOperationalCondition(id, dateReport);
+    dateReportingService.reportCustomerOperationalCondition(id, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -95,7 +94,7 @@ public class ExcavationAnnouncementController
     applicationService.validateOwnedByExternalUser(id);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(),
         validityPeriod.getValidityPeriodStart(), validityPeriod.getValidityPeriodEnd());
-    excavationAnnouncementService.reportCustomerValidity(id, dateReport);
+    dateReportingService.reportCustomerValidity(id, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
