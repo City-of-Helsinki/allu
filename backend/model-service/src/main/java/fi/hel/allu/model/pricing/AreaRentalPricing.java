@@ -4,6 +4,7 @@ import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
@@ -72,7 +73,9 @@ public class AreaRentalPricing extends Pricing {
     final double locationArea = location.getEffectiveArea();
     final long numUnits = Math.round(Math.ceil(locationArea / AREA_UNIT));
     final int dailyPrice = getPrice((int)numUnits, paymentClass);
-    final int numDays = (int) CalendarUtil.startingUnitsBetween(location.getStartTime(), location.getEndTime(),
+    final int numDays = (int) CalendarUtil.startingUnitsBetween(
+        location.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId),
+        location.getEndTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId),
         ChronoUnit.DAYS);
     final int netPrice = dailyPrice * numDays;
     addChargeBasisEntry(ChargeBasisTag.AreaRentalDailyFee(Integer.toString(locationKey)), ChargeBasisUnit.DAY, numDays, dailyPrice,
