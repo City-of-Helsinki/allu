@@ -12,13 +12,18 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.domain.PricingKey;
 import static org.junit.Assert.assertEquals;
+import org.mockito.Mockito;
 
 @RunWith(Spectrum.class)
 public class AreaRentalPricingSpec {
 
   Application app;
   AreaRentalPricing arp;
+  PricingDao pricingDao;
 
   {
     describe("Area rental Pricing", () -> {
@@ -26,6 +31,12 @@ public class AreaRentalPricingSpec {
       beforeEach(() -> {
         app = new Application();
         app.setExtension(new AreaRental());
+        pricingDao = Mockito.mock(PricingDao.class);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.SHORT_TERM_HANDLING_FEE)).thenReturn(6000);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.LONG_TERM_HANDLING_FEE)).thenReturn(18000);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "3")).thenReturn(130);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "2")).thenReturn(300);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "1")).thenReturn(600);
       });
 
       context("with Five-day snow work", () -> {
@@ -33,7 +44,7 @@ public class AreaRentalPricingSpec {
           app.setStartTime(ZonedDateTime.parse("2017-04-20T08:00:00+03:00"));
           app.setEndTime(ZonedDateTime.parse("2017-04-24T17:00:00+03:00"));
           app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.SNOW_WORK, Collections.emptyList()));
-          arp = new AreaRentalPricing(app);
+          arp = new AreaRentalPricing(app, pricingDao);
         });
 
         context("On price class 2, with area of 85 sqm", () -> {
@@ -65,7 +76,7 @@ public class AreaRentalPricingSpec {
           app.setEndTime(ZonedDateTime.parse("2017-06-30T17:00:00+03:00"));
           app.setKindsWithSpecifiers(
               Collections.singletonMap(ApplicationKind.NEW_BUILDING_CONSTRUCTION, Collections.emptyList()));
-          arp = new AreaRentalPricing(app);
+          arp = new AreaRentalPricing(app, pricingDao);
         });
 
         context("On price class 2, with area of 1000 sqm", () -> {

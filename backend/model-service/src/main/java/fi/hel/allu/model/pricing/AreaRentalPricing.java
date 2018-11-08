@@ -2,12 +2,13 @@ package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.PricingKey;
 
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Implementation for area rental pricing. See
@@ -22,22 +23,13 @@ public class AreaRentalPricing extends Pricing {
 
   private static final double AREA_UNIT = 15.0;
 
-  // Basic unit price on different payment class:
-  private static final Map<String, Integer> UNIT_PRICE = new HashMap<>();
-  private static final int SHORT_TERM_HANDLING_FEE = 6000;
-  private static final int LONG_TERM_HANDLING_FEE = 18000;
-
   private final Application application;
+  private final PricingDao pricingDao;
 
-  public AreaRentalPricing(Application application) {
+  public AreaRentalPricing(Application application, PricingDao pricingDao) {
     this.application = application;
+    this.pricingDao = pricingDao;
     setHandlingFee();
-
-    UNIT_PRICE.put("1", 600);
-    UNIT_PRICE.put("2", 300);
-    UNIT_PRICE.put("3", 130);
-    UNIT_PRICE.put("4a", 80);
-    UNIT_PRICE.put("4b", 80);
   }
 
   private void setHandlingFee() {
@@ -48,20 +40,24 @@ public class AreaRentalPricing extends Pricing {
     case RELOCATION:
     case PHOTO_SHOOTING:
     case SNOW_WORK:
-    case PUBLIC_EVENT:
-      setPriceInCents(SHORT_TERM_HANDLING_FEE);
-        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, SHORT_TERM_HANDLING_FEE,
-            SHORT_TERM_HANDLING_EXPLANATION, SHORT_TERM_HANDLING_FEE);
+    case PUBLIC_EVENT: {
+      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.SHORT_TERM_HANDLING_FEE);
+      setPriceInCents(price);
+        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
+            SHORT_TERM_HANDLING_EXPLANATION, price);
       break;
+    }
     case PROPERTY_RENOVATION:
     case NEW_BUILDING_CONSTRUCTION:
     case CONTAINER_BARRACK:
     case STORAGE_AREA:
-    case OTHER:
-      setPriceInCents(LONG_TERM_HANDLING_FEE);
-        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, LONG_TERM_HANDLING_FEE,
-            LONG_TERM_HANDLING_EXPLANATION, LONG_TERM_HANDLING_FEE);
+    case OTHER: {
+      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.LONG_TERM_HANDLING_FEE);
+      setPriceInCents(price);
+        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
+            LONG_TERM_HANDLING_EXPLANATION, price);
       break;
+    }
     default:
       throw new IllegalArgumentException("Bad application kind for area rental: " + kind);
     }
@@ -83,6 +79,6 @@ public class AreaRentalPricing extends Pricing {
     if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
       return 0;
     }
-    return numUnits * UNIT_PRICE.get(paymentClass);
+    return numUnits * pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, paymentClass);
   }
 }

@@ -142,7 +142,7 @@ public class PricingService {
    * Calculate price for area rental
    */
   private List<ChargeBasisEntry> updateAreaRentalPrice(Application application) {
-    return calculateChargeBasis(application, new AreaRentalPricing(application));
+    return calculateChargeBasis(application, new AreaRentalPricing(application, pricingDao));
   }
 
   /*
