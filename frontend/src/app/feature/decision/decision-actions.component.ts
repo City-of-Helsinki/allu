@@ -71,7 +71,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       ...DECISION_PROPOSAL_MODAL_CONFIG,
       data: {
         proposalType,
-        cityDistrict: this.application.firstLocation.effectiveCityDistrictId
+        cityDistrict: this.application.firstLocation.effectiveCityDistrictId,
+        applicationType: this.application.type
       }
     };
 

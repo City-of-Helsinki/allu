@@ -1735,7 +1735,12 @@ export const translations = {
     key: {
       CUSTOMER_NOTIFICATION_RECEIVER_EMAIL: ' Sähköpostiosoite uusista asiakkaista ilmoittamiseen',
       INVOICE_NOTIFICATION_RECEIVER_EMAIL: 'Sähköpostiosoite laskuista ilmoittamiseen',
-      PLACEMENT_CONTRACT_DECISION_MAKER: 'Sijoittussopimuksen oletuspäättäjä',
+      EXCAVATION_ANNOUNCEMENT_DECISION_MAKER: 'Kaivuilmoituksen oletuspäättäjä',
+      AREA_RENTAL_DECISION_MAKER: 'Aluevuokrauksen oletuspäättäjä',
+      TEMPORARY_TRAFFIC_ARRANGEMENTS_DECISION_MAKER: 'Tilapäisen liikennejärjestelyn oletuspäättäjä',
+      PLACEMENT_CONTRACT_DECISION_MAKER: 'Sijoitussopimuksen oletuspäättäjä',
+      EVENT_DECISION_MAKER: 'Tapahtuman oletuspäättäjä',
+      SHORT_TERM_RENTAL_DECISION_MAKER: 'Lyhytaikaisen maanvuokrauksen oletuspäättäjä',
       WINTER_TIME_START: 'Talviajan alkupäivä',
       WINTER_TIME_END: 'Talviajan loppupäivä'
     },

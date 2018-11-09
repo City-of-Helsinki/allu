@@ -107,7 +107,6 @@ export function getAvailableSpecifiers(applicationType: string, kinds: Array<str
 
 const AUTOMATIC_DECISION_TYPES = [
   ApplicationType.CABLE_REPORT,
-  ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
   ApplicationType.EXCAVATION_ANNOUNCEMENT
 ];
 

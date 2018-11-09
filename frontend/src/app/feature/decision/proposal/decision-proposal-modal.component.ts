@@ -9,12 +9,16 @@ import {RoleType} from '@model/user/role-type';
 import {UserService} from '@service/user/user-service';
 import {tap} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
+import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
+import {ConfigurationKey} from '@model/config/configuration-key';
+import {ApplicationType} from '@model/application/type/application-type';
 
 export const DECISION_PROPOSAL_MODAL_CONFIG = {width: '800px'};
 
 export interface DecisionProposalData {
   proposalType: string;
   cityDistrict: number;
+  applicationType: ApplicationType;
   comment?: string;
 }
 
@@ -31,7 +35,8 @@ export class DecisionProposalModalComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: DecisionProposalData,
               private dialogRef: MatDialogRef<DecisionProposalModalComponent>,
               private userService: UserService,
-              private fb: FormBuilder) {}
+              private fb: FormBuilder,
+              private configHelper: ConfigurationHelperService) {}
 
   ngOnInit(): void {
     this.proposalForm = this.fb.group({
@@ -54,11 +59,12 @@ export class DecisionProposalModalComponent implements OnInit {
   }
 
   private selectDefaultDecisionMaker(decisionMakers: User[]): void {
-    const user = ArrayUtil.first(decisionMakers, (dm) => dm.cityDistrictIds.some(districtId => districtId === this.data.cityDistrict));
-    if (user) {
-      this.proposalForm.patchValue({
-        handler: user.id
-      });
-    }
+    this.configHelper.getSingleConfiguration(ConfigurationKey[this.data.applicationType + '_DECISION_MAKER']).subscribe(
+        config => {
+          const user = ArrayUtil.first(decisionMakers, u => u.userName === config.value);
+          if (user) {
+            this.proposalForm.patchValue({handler: user.id});
+          }
+        });
   }
 }
