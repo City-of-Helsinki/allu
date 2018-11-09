@@ -40,6 +40,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "2")).thenReturn(300);
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "1")).thenReturn(600);
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE)).thenReturn(50);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.AREA_UNIT_M2)).thenReturn(15);
       });
 
       context("with Five-day snow work", () -> {

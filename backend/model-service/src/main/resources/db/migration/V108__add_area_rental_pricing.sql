@@ -8,3 +8,4 @@ insert into allu.pricing (application_type, key, payment_class, value) values ('
 insert into allu.pricing (application_type, key, payment_class, value) values ('AREA_RENTAL', 'LONG_TERM_HANDLING_FEE', null, 21000);
 
 insert into allu.pricing (application_type, key, payment_class, value) values ('AREA_RENTAL', 'UNDERPASS_DICOUNT_PERCENTAGE', null, 50);
+insert into allu.pricing (application_type, key, payment_class, value) values ('AREA_RENTAL', 'AREA_UNIT_M2', null, 15);

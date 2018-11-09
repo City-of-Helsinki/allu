@@ -24,16 +24,16 @@ public class AreaRentalPricing extends Pricing {
   private static final String LONG_TERM_HANDLING_EXPLANATION = "Käsittely- ja valvontamaksu (työmaavuokraus)";
   private static final String UNDERPASS_TEXT = "Altakuljettava";
 
-  private static final double AREA_UNIT = 15.0;
-
   private final Application application;
   private final PricingDao pricingDao;
   private final PricingExplanator pricingExplanator;
+  private final double AREA_UNIT;
 
   public AreaRentalPricing(Application application, PricingDao pricingDao, PricingExplanator pricingExplanator) {
     this.application = application;
     this.pricingDao = pricingDao;
     this.pricingExplanator = pricingExplanator;
+    AREA_UNIT = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.AREA_UNIT_M2);
     setHandlingFee();
   }
 
