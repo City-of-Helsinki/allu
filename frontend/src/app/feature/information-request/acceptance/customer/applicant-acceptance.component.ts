@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
 import {FormBuilder, FormControl} from '@angular/forms';
 import * as fromRoot from '@feature/allu/reducers';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {Customer} from '@model/customer/customer';
 import {SetCustomer, UseCustomerForInvoicing} from '@feature/information-request/actions/information-request-result-actions';
 import {map, takeUntil} from 'rxjs/internal/operators';
@@ -10,11 +10,14 @@ import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import * as fromCustomerSearch from '@feature/customerregistry/reducers';
 import {Observable} from 'rxjs/index';
+import {NumberUtil} from '@util/number.util';
+import {LoadByCustomer, LoadByCustomerSuccess} from '@feature/customerregistry/actions/contact-search-actions';
 
 @Component({
   selector: 'applicant-acceptance',
   templateUrl: './applicant-acceptance.component.html',
-  styleUrls: []
+  styleUrls: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ApplicantAcceptanceComponent extends CustomerAcceptanceComponent {
   protected formName = 'applicant';
@@ -42,10 +45,21 @@ export class ApplicantAcceptanceComponent extends CustomerAcceptanceComponent {
   }
 
   getMatchingCustomers(): Observable<Customer[]> {
-    return this.store.select(fromCustomerSearch.getMatchingApplicants);
+    return this.store.pipe(select(fromCustomerSearch.getMatchingApplicants));
   }
 
   getLoading(): Observable<boolean> {
-    return this.store.select(fromCustomerSearch.getApplicantsLoading);
+    return this.store.pipe(select(fromCustomerSearch.getApplicantsLoading));
+  }
+
+
+  selectReferenceCustomer(customer?: Customer): void {
+    super.selectReferenceCustomer(customer);
+
+    if (NumberUtil.isExisting(customer)) {
+      this.store.dispatch(new LoadByCustomer(ActionTargetType.Applicant, customer.id));
+    } else {
+      this.store.dispatch(new LoadByCustomerSuccess(ActionTargetType.Applicant, []));
+    }
   }
 }

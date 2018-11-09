@@ -1,0 +1,37 @@
+<form [formGroup]="selectionForm">
+  <div class="section-container">
+    <div class="section-content info-acceptance-header">
+      <ng-content select=".left-header"></ng-content>
+    </div>
+    <div class="section-content info-acceptance-header">
+      <ng-content select=".right-header"></ng-content>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="section-content info-acceptance-control">
+      <ng-content select=".left-controls"></ng-content>
+    </div>
+    <div class="section-content info-acceptance-control">
+      <ng-content select=".right-controls"></ng-content>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="section-content info-acceptance-content">
+      <field-select
+        #oldValuesSelect
+        [fieldLabels]="fieldLabels"
+        [fieldValues]="oldDisplayValues"
+        formControlName="oldValues"></field-select>
+    </div>
+    <div class="section-content info-acceptance-content">
+      <field-select
+        #newValuesSelect
+        [fieldLabels]="fieldLabels"
+        [fieldValues]="newDisplayValues"
+        [comparedValues]="oldDisplayValues"
+        formControlName="newValues"></field-select>
+    </div>
+  </div>
+</form>

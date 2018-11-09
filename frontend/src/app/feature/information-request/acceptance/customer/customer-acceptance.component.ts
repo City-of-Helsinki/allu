@@ -59,6 +59,7 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   init(): void {}
 
   ngOnDestroy(): void {
+    this.parentForm.removeControl(this.formName);
     this.destroy.next(true);
     this.destroy.unsubscribe();
   }

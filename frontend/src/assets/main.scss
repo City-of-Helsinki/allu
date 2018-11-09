@@ -16,6 +16,7 @@
 @import 'allu-common';
 @import 'allu-common-theme';
 @import 'icons-theme';
+@import 'list-theme';
 @import 'forms';
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
@@ -36,6 +37,7 @@
 @include angular-material-theme($allu-theme);
 @include allu-common-theme($allu-theme);
 @include allu-icons-theme($allu-theme, $black-50-opacity);
+@include allu-list-theme($allu-theme);
 @include placeholder-theme($allu-theme);
 @include checkbox-theme($allu-theme);
 @include nav-theme($allu-theme);
@@ -52,10 +54,11 @@
 @include comments-theme($allu-theme);
 @include history-theme($allu-theme);
 @include progressbar-theme($allu-theme, $allu-success, $allu-basic);
-@include information-request-theme($allu-theme);
+@include information-request-theme($allu-theme, $black-8-opacity);
 @include application-notification-theme($allu-theme);
 @include charge-basis-theme($allu-theme);
 @include invoice-theme($allu-theme);
+@include field-select-theme($allu-theme, $allu-success);
 
 // Reset
 html,

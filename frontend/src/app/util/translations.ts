@@ -1081,6 +1081,7 @@ export const translations = {
   common: {
     freeTextSearch: 'Vapaa tekstihaku',
     select: 'Valitse',
+    selectAll: 'Valitse kaikki',
     field: {
       usernameMissing: 'Käyttäjänimi puuttuu',
       nameMissing: 'Nimi puuttuu',

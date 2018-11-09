@@ -1,21 +1,31 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Contact} from '@model/customer/contact';
-import {InfoAcceptance} from '@feature/information-request/acceptance/info-acceptance';
-import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
+import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import {findTranslation} from '@util/translations';
+import {FormBuilder} from '@angular/forms';
+import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+
+const requiredFields = {
+  name: true
+};
 
 @Component({
   selector: 'contact-info-acceptance',
-  templateUrl: './contact-info-acceptance.component.html',
-  styleUrls: []
+  templateUrl: '../info-acceptance/info-acceptance.component.html',
+  styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactInfoAcceptanceComponent extends InfoAcceptance<Contact> implements OnInit {
+export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Contact> implements OnInit {
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
   @Input() readonly: boolean;
 
   private _oldContact: Contact;
   private _newContact: Contact;
+
+  constructor(fb: FormBuilder) {
+    super(fb);
+  }
 
   @Input() set oldContact(contact: Contact) {
     this._oldContact = contact;
@@ -39,6 +49,10 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptance<Contact> impl
     contact.email = result.email;
     contact.phone = result.phone;
     this.contactChanges.emit(contact);
+  }
+
+  protected isRequired(field: string): boolean {
+    return requiredFields[field];
   }
 
   private toFieldValues(contact: Contact): FieldValues {

@@ -1,13 +1,15 @@
-<ng-container *ngIf="otherInfoKeys.length">
-  <h2 mat-dialog-title>
-    {{'informationRequest.field.others' | translation}}
-  </h2>
+<other-info-acceptance
+  *ngIf="otherInfoKeys.length"
+  [form]="form"
+  [oldInfo]="oldInfo"
+  [newInfo]="newInfo"
+  [fieldKeys]="otherInfoKeys"
+  [readonly]="readonly"
+  (otherInfoChanges)="otherInfoChanges($event)">
 
-  <other-info-acceptance
-    [form]="form"
-    [oldInfo]="oldInfo"
-    [newInfo]="newInfo"
-    [fieldKeys]="otherInfoKeys"
-    [readonly]="readonly"
-    (otherInfoChanges)="otherInfoChanges($event)"></other-info-acceptance>
-</ng-container>
+  <div class="left-header">
+    <h2 mat-dialog-title>
+      {{'informationRequest.field.others' | translation}}
+    </h2>
+  </div>
+</other-info-acceptance>

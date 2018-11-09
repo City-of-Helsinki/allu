@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .mat-dialog-title {
+  margin: 0 0 5px;
+}
+
+.section-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.section-content {
+  flex: 1;
+}
+
+.section-container:first-of-type .section-content {
+  padding-top: 18px;
+}
+
+.section-container:last-of-type .section-content {
+  padding-bottom: 18px;
+}
+
+.section-content {
+  padding: 0 18px;
+}
+
+.section-content:not(:first-child) {
+  border-left-width: 2px;
+  border-left-style: solid;
+}
+
+.info-acceptance-control {
+  padding-bottom: 18px;
+}

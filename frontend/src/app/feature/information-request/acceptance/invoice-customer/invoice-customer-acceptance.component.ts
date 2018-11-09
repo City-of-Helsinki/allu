@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {FormBuilder} from '@angular/forms';
@@ -12,7 +12,8 @@ import {Observable} from 'rxjs/index';
 @Component({
   selector: 'invoice-customer-acceptance',
   templateUrl: './invoice-customer-acceptance.component.html',
-  styleUrls: []
+  styleUrls: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceCustomerAcceptanceComponent extends CustomerAcceptanceComponent {
 

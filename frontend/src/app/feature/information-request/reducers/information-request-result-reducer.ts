@@ -1,11 +1,11 @@
-import {Application} from '../../../model/application/application';
+import {Application} from '@model/application/application';
 import {InformationRequestResultActions, InformationRequestResultActionType} from '../actions/information-request-result-actions';
-import {Customer} from '../../../model/customer/customer';
-import {Contact} from '../../../model/customer/contact';
-import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
+import {Customer} from '@model/customer/customer';
+import {Contact} from '@model/customer/contact';
+import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
-import {FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
+import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 
 export interface State {
   application: Application;

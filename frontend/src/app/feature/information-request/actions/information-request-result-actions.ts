@@ -1,13 +1,11 @@
 import {Action} from '@ngrx/store';
-import {Application} from '../../../model/application/application';
-import {Customer} from '../../../model/customer/customer';
-import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
+import {Application} from '@model/application/application';
+import {Customer} from '@model/customer/customer';
+import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {Contact} from '@model/customer/contact';
-import {ActionWithPayload} from '@feature/common/action-with-payload';
-import {ErrorInfo} from '@service/error/error-info';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
-import {FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
+import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 
 export enum InformationRequestResultActionType {
   SetApplication = '[InformationRequestResult] Set result application',

@@ -1,15 +1,13 @@
 import {NgModule} from '@angular/core';
 import {EffectsModule} from '@ngrx/effects';
 import {InformationRequestEffects} from './effects/information-request-effects';
-import {InformationRequestService} from '../../service/application/information-request.service';
+import {InformationRequestService} from '@service/application/information-request.service';
 import {MatDialogModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {InformationAcceptanceModalComponent} from './acceptance/information-acceptance-modal.component';
-import {FieldAcceptanceComponent} from './acceptance/field-acceptance.component';
-import {FieldGroupAcceptanceComponent} from './acceptance/field-group-acceptance.component';
 import {CustomerInfoAcceptanceComponent} from './acceptance/customer/customer-info-acceptance.component';
-import {FieldValueComponent} from './acceptance/field-value.component';
+import {FieldValueComponent} from './acceptance/field-select/field-value.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
 import {KindAcceptanceComponent} from './acceptance/kind-acceptance.component';
@@ -19,8 +17,6 @@ import {
 } from '@feature/information-request/acceptance/customer-with-contacts-acceptance.component';
 import {ContactsAcceptanceComponent} from '@feature/information-request/acceptance/contact/contacts-acceptance-component';
 import {ContactAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-acceptance.component';
-import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
-import {FieldDisplayComponent} from '@feature/information-request/acceptance/field-display.component';
 import {
   InvoiceCustomerAcceptanceComponent
 } from '@feature/information-request/acceptance/invoice-customer/invoice-customer-acceptance.component';
@@ -30,6 +26,8 @@ import {OtherInfoAcceptanceComponent} from '@feature/information-request/accepta
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import { InformationRequestModalComponent } from './request/information-request-modal.component';
 import { RequestFieldComponent } from './request/request-field/request-field.component';
+import {FieldSelectComponent} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
 
 @NgModule({
   imports: [
@@ -43,9 +41,6 @@ import { RequestFieldComponent } from './request/request-field/request-field.com
   declarations: [
     InformationAcceptanceModalComponent,
     FieldValueComponent,
-    FieldDisplayComponent,
-    FieldAcceptanceComponent,
-    FieldGroupAcceptanceComponent,
     CustomerWithContactsAcceptanceComponent,
     ApplicantAcceptanceComponent,
     CustomerInfoAcceptanceComponent,
@@ -57,7 +52,8 @@ import { RequestFieldComponent } from './request/request-field/request-field.com
     OtherAcceptanceComponent,
     OtherInfoAcceptanceComponent,
     InformationRequestModalComponent,
-    RequestFieldComponent
+    RequestFieldComponent,
+    FieldSelectComponent
   ],
   providers: [
     InformationRequestService,

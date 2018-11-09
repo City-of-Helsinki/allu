@@ -1,23 +1,34 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FieldLabels, FieldValues} from '../field-group-acceptance.component';
-import {Customer} from '../../../../model/customer/customer';
-import {PostalAddress} from '../../../../model/common/postal-address';
-import {findTranslation} from '../../../../util/translations';
-import {CodeSetCodeMap} from '../../../../model/codeset/codeset';
-import {Some} from '../../../../util/option';
-import {InfoAcceptance} from '@feature/information-request/acceptance/info-acceptance';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Customer} from '@model/customer/customer';
+import {PostalAddress} from '@model/common/postal-address';
+import {findTranslation} from '@util/translations';
+import {CodeSetCodeMap} from '@model/codeset/codeset';
+import {Some} from '@util/option';
+import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
+import {FormBuilder} from '@angular/forms';
+import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+
+const requiredFields = {
+  type: true,
+  name: true,
+  registryKey: true
+};
 
 @Component({
   selector: 'customer-info-acceptance',
-  templateUrl: './customer-info-acceptance.component.html',
-  styleUrls: []
+  templateUrl: '../info-acceptance/info-acceptance.component.html',
+  styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerInfoAcceptanceComponent extends InfoAcceptance<Customer> implements OnInit {
+export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Customer> implements OnInit {
   _oldCustomer: Customer;
   _newCustomer: Customer;
 
+  constructor(fb: FormBuilder) {
+    super(fb);
+  }
+
   @Input() countryCodes: CodeSetCodeMap;
-  @Input() readonly: boolean;
 
   @Output() customerChanges: EventEmitter<Customer> = new EventEmitter<Customer>();
 
@@ -36,7 +47,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptance<Customer> im
 
   resultChanges(result: FieldValues): void {
     const customer = {...this._oldCustomer};
-    customer.type = result.type;
+    customer.type = this._newCustomer.type;
     customer.name = result.name;
     customer.registryKey = result.registryKey;
     customer.ovt = result.ovt;
@@ -49,11 +60,14 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptance<Customer> im
     this.customerChanges.emit(customer);
   }
 
+  protected isRequired(field: string): boolean {
+    return requiredFields[field];
+  }
+
   private toFieldValues(customer: Customer): FieldValues {
     if (customer) {
       const postalAddress = customer.postalAddress;
       return {
-        type: customer.type,
         name: customer.name,
         registryKey: customer.registryKey,
         ovt: customer.ovt,
@@ -73,14 +87,12 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptance<Customer> im
   private toDisplayValues(fieldValues: FieldValues): FieldValues {
     return {
       ...fieldValues,
-      type: fieldValues.type ? findTranslation(['customer.type', fieldValues.type, 'name']) : undefined,
       country: this.getCountry(fieldValues.country)
     };
   }
 
   private createLabels(customerType: string): FieldLabels {
     return {
-      type: findTranslation('customer.type.title'),
       name: findTranslation(['customer.type', customerType, 'nameLabel']),
       registryKey: findTranslation(['customer.type', customerType, 'id']),
       ovt: findTranslation(['customer.type', customerType, 'ovt']),

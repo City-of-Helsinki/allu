@@ -1,14 +1,14 @@
 import {Component, DebugElement, Input} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Customer} from '../../../../src/app/model/customer/customer';
-import {CodeSet, CodeSetCodeMap, CodeSetTypeMap} from '../../../../src/app/model/codeset/codeset';
+import {Customer} from '@model/customer/customer';
+import {CodeSet, CodeSetCodeMap, CodeSetTypeMap} from '@model/codeset/codeset';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {combineReducers, Store, StoreModule} from '@ngrx/store';
-import * as fromCustomerSearch from '../../../../src/app/feature/customerregistry/reducers';
-import * as fromCodeSet from '../../../../src/app/feature/allu/reducers/code-set-reducer';
-import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {SearchSuccess} from '../../../../src/app/feature/customerregistry/actions/customer-search-actions';
-import * as CodeSetAction from '../../../../src/app/feature/allu/actions/code-set-actions';
+import * as fromCustomerSearch from '@feature/customerregistry/reducers';
+import * as fromCodeSet from '@feature/allu/reducers/code-set-reducer';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {SearchSuccess} from '@feature/customerregistry/actions/customer-search-actions';
+import * as CodeSetAction from '@feature/allu/actions/code-set-actions';
 import {By} from '@angular/platform-browser';
 import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
@@ -149,11 +149,11 @@ describe('ApplicantAcceptanceComponent', () => {
 
   it('should create new customer by user selection', () => {
     const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
-    const buttonElem: HTMLButtonElement = de.query(By.css('button.button-link')).nativeElement;
+    const testedComponent: ApplicantAcceptanceComponent = de.query(By.directive(ApplicantAcceptanceComponent)).componentInstance;
 
     expect(childComp._oldCustomer).toEqual(oldCustomer);
 
-    buttonElem.click();
+    testedComponent.createNewCustomer();
     fixture.detectChanges();
     expect(childComp._oldCustomer).toBeUndefined();
   });

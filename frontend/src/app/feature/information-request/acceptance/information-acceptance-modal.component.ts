@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
@@ -29,7 +29,8 @@ export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcc
 @Component({
   selector: 'information-acceptance-modal',
   templateUrl: './information-acceptance-modal.component.html',
-  styleUrls: ['./information-acceptance-modal.component.scss']
+  styleUrls: ['./information-acceptance-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InformationAcceptanceModalComponent implements OnInit, AfterViewInit {
 

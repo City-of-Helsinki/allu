@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Application} from '@model/application/application';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
 import {InformationRequestFieldKey, OtherInfoKeys} from '@model/information-request/information-request-field-key';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {SetOtherInfo} from '@feature/information-request/actions/information-request-result-actions';
+import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 
 @Component({
   selector: 'other-acceptance',

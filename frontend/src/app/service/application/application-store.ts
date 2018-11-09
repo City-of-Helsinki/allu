@@ -1,27 +1,28 @@
 import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject, throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Application} from '../../model/application/application';
-import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
-import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
-import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
-import {NumberUtil} from '../../util/number.util';
-import {ObjectUtil} from '../../util/object.util';
-import {ApplicationStatus} from '../../model/application/application-status';
-import {StatusChangeInfo} from '../../model/application/status-change-info';
-import {Deposit} from '../../model/application/invoice/deposit';
+import {Application} from '@model/application/application';
+import {AttachmentInfo} from '@model/application/attachment/attachment-info';
+import {AttachmentHub} from '@feature/application/attachment/attachment-hub';
+import {SidebarItemType} from '@feature/sidebar/sidebar-item';
+import {NumberUtil} from '@util/number.util';
+import {ObjectUtil} from '@util/object.util';
+import {ApplicationStatus} from '@model/application/application-status';
+import {StatusChangeInfo} from '@model/application/status-change-info';
+import {Deposit} from '@model/application/invoice/deposit';
 import {DepositService} from './deposit/deposit.service';
 import {ApplicationService} from './application.service';
-import {isCommon} from '../../model/application/attachment/attachment-type';
+import {isCommon} from '@model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
 import {catchError, distinctUntilChanged, filter, map, skip, switchMap, take, tap} from 'rxjs/internal/operators';
 import {Action, Store} from '@ngrx/store';
-import * as fromApplication from '../../feature/application/reducers';
-import * as TagAction from '../../feature/application/actions/application-tag-actions';
-import * as ApplicationAction from '../../feature/application/actions/application-actions';
-import * as HistoryAction from '../../feature/history/actions/history-actions';
-import {ActionTargetType} from '../../feature/allu/actions/action-target-type';
-import {ApplicationType} from '../../model/application/type/application-type';
+import * as fromApplication from '@feature/application/reducers';
+import * as TagAction from '@feature/application/actions/application-tag-actions';
+import * as ApplicationAction from '@feature/application/actions/application-actions';
+import * as HistoryAction from '@feature/history/actions/history-actions';
+import * as InvoicingCustomerAction from '@feature/application/invoicing/actions/invoicing-customer-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {Customer} from '@model/customer/customer';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
@@ -347,6 +348,7 @@ export class ApplicationStore {
     this.appStore.next({...this.current, application});
     this.store.dispatch(new ApplicationAction.LoadSuccess(application));
     this.store.dispatch(new HistoryAction.Load(ActionTargetType.Application));
+    this.store.dispatch(new InvoicingCustomerAction.Load());
   }
 
   private get current(): ApplicationState {

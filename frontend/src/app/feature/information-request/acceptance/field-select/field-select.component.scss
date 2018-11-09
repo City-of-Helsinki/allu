@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep .mat-selection-list .mat-list-option {
+  font-size: 14px;
+  height: 38px;
+}
+
+:host ::ng-deep .mat-selection-list .mat-list-option:not(:last-of-type) {
+  margin-bottom: 2px;
+}
+
+:host ::ng-deep .mat-selection-list .mat-list-option .mat-list-item-content {
+  padding-left: 0;
+}
+
+:host ::ng-deep .mat-pseudo-checkbox {
+  width: 8px;
+  visibility: hidden;
+  height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  position: relative;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 0;
+}
+
+:host ::ng-deep .mat-pseudo-checkbox.mat-pseudo-checkbox-checked {
+  visibility: visible;
+}
+
+:host ::ng-deep .mat-pseudo-checkbox-checked::after {
+  width: 0;
+  height: 0;
+  visibility: hidden;
+  border-left: none;
+}
+
+.value-change {
+  font-weight: 500;
+}

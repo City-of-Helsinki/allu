@@ -10,11 +10,11 @@ import {map, take} from 'rxjs/internal/operators';
 import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
 import {ObjectUtil} from '@util/object.util';
 import {Application} from '@model/application/application';
-import {FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
 import set from 'lodash/set';
 import {Customer} from '@model/customer/customer';
 import {Contact} from '@model/customer/contact';
 import {FieldNameMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
+import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 
 @Injectable()
 export class InformationRequestResultService {

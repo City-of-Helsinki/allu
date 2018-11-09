@@ -1,23 +1,34 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Application} from '@model/application/application';
-import {InfoAcceptance} from '@feature/information-request/acceptance/info-acceptance';
-import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-group-acceptance.component';
+import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import {findTranslation} from '@util/translations';
 import get from 'lodash/get';
 import {FieldKeyMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
+import {FormBuilder} from '@angular/forms';
+import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+
+const requiredFields = {
+  startTime: true,
+  endTime: true
+};
 
 @Component({
   selector: 'other-info-acceptance',
-  templateUrl: './other-info-acceptance.component.html',
+  templateUrl: '../info-acceptance/info-acceptance.component.html',
+  styleUrls: ['../info-acceptance/info-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OtherInfoAcceptanceComponent extends InfoAcceptance<any> implements OnInit {
+export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> implements OnInit {
   @Input() oldInfo: Application;
   @Input() newInfo: Application;
   @Input() readonly: boolean;
   @Input() fieldKeys: string[];
 
   @Output() otherInfoChanges = new EventEmitter<FieldValues>();
+
+  constructor(fb: FormBuilder) {
+    super(fb);
+  }
 
   ngOnInit(): void {
     this.oldValues = this.toFieldValues(this.oldInfo);
@@ -32,6 +43,10 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptance<any> implements
 
   protected resultChanges(result: FieldValues): void {
     this.otherInfoChanges.emit(result);
+  }
+
+  protected isRequired(field: string): boolean {
+    return requiredFields[field];
   }
 
   private toFieldValues(application: Application): FieldValues {

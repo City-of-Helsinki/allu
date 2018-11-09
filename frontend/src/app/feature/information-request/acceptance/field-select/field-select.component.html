@@ -1,0 +1,24 @@
+<button
+  *ngIf="displayedFields.length > 1"
+  type="button"
+  class="button-link"
+  (click)="selectAll()">
+  {{'common.selectAll' | translation}}
+</button>
+<mat-selection-list #selectionList>
+  <mat-list-option
+    *ngFor="let field of displayedFields"
+    checkboxPosition="before"
+    [value]="field"
+    [disabled]="isSelected(field)">
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div fxFlex class="text-highlighted">{{fieldLabels[field]}}</div>
+      <div fxFlex="0 0 24px">
+        <mat-icon color="accent" class="mat-icon-18" *ngIf="fieldHasChange(field)">warning</mat-icon>
+      </div>
+      <div fxFlex [class.value-change]="fieldHasChange(field)">
+        <field-value [value]="fieldValues[field]"></field-value>
+      </div>
+    </div>
+  </mat-list-option>
+</mat-selection-list>

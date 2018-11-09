@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Contact} from '@model/customer/contact';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Store} from '@ngrx/store';
@@ -13,7 +13,8 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'contact-acceptance',
-  templateUrl: './contact-acceptance.component.html'
+  templateUrl: './contact-acceptance.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   @Input() formArray: FormArray;

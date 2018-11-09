@@ -1,9 +1,10 @@
 @import '~@angular/material/theming';
 
-@mixin information-request-theme($theme) {
+@mixin information-request-theme($theme, $border-color) {
   $primary: map-get($theme, primary);
 
   @include field-acceptance-theme($theme);
+  @include info-acceptance-theme($border-color);
 }
 
 @mixin field-acceptance-theme($theme) {
@@ -17,5 +18,27 @@
   li:nth-child(odd) .field-display,
   .label-row {
     background: mat-color($primary, 50);
+  }
+}
+
+@mixin field-select-theme($theme, $success) {
+  $primary: map-get($theme, primary);
+
+  mat-selection-list .mat-list-option:nth-child(odd) {
+    background: mat-color($primary, 50);
+  }
+
+  field-select .mat-selection-list .mat-list-option .mat-pseudo-checkbox {
+    background: map-get($success, 200);
+  }
+}
+
+@mixin info-acceptance-theme($border-color) {
+  .info-acceptance {
+    border-color: $border-color;
+
+    .section-content {
+      border-color: $border-color;
+    }
   }
 }

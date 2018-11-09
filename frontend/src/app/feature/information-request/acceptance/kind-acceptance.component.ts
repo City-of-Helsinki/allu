@@ -4,9 +4,9 @@ import {
   KindsWithSpecifiers,
   SpecifierEntry,
   toKindsWithSpecifiers
-} from '../../../model/application/type/application-specifier';
+} from '@model/application/type/application-specifier';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '../../../model/application/type/application-type';
+import {getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@model/application/type/application-type';
 import {takeUntil} from 'rxjs/internal/operators';
 import {Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
@@ -16,7 +16,7 @@ import {SetKindsWithSpecifiers} from '../actions/information-request-result-acti
 @Component({
   selector: 'kind-acceptance',
   templateUrl: './kind-acceptance.component.html',
-  styleUrls: ['./field-acceptance.component.scss'],
+  styleUrls: ['./kind-acceptance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KindAcceptanceComponent implements OnInit {

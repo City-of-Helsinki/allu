@@ -1,50 +1,47 @@
-<h2 mat-dialog-title>
-  {{'informationRequest.field.CUSTOMER' | translation}}
-</h2>
-
-<form [formGroup]="searchForm">
-  <div class="label-row text-primary">
-    <ng-container *ngIf="referenceCustomerSelected; else newCustomerTitle">
-      {{'customer.suggestion.title' | translation}}
-    </ng-container>
-    <ng-template #newCustomerTitle>
-      <div>
-        {{'customer.newCustomer' | translation}}
-      </div>
-    </ng-template>
-  </div>
-
-  <mat-form-field floatLabel="never" class="form-field-33 form-field-dense" *ngIf="!readonly">
-    <input matInput type="text" formControlName="search"
-           [placeholder]="'customer.search.search' | translation"
-           [matAutocomplete]="customerSearch"/>
-    <mat-icon matSuffix>arrow_drop_down</mat-icon>
-    <mat-autocomplete #customerSearch="matAutocomplete">
-      <mat-option *ngFor="let customer of matchingCustomers$ | async"
-                  [value]="customer.name" (click)="selectReferenceCustomer(customer)">
-        {{ customer.name }} ({{customer.registryKey}})
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-
-  <p class="acceptance-info" *ngIf="!readonly">
-    {{'customer.suggestion.info' | translation}}
-    <button class="button-link" (click)="createNewCustomer()" *ngIf="referenceCustomerSelected">
-      {{'customer.createNew' | translation}}
-    </button>
-  </p>
-
-  <div *ngIf="!readonly">
-    <mat-checkbox formControlName="useForInvoicing">
-      {{'customer.useForInvoicing' | translation}}
-    </mat-checkbox>
-  </div>
-</form>
-
 <customer-info-acceptance
   [form]="form"
   [countryCodes]="countryCodes$ | async"
   [oldCustomer]="referenceCustomer$ | async"
   [newCustomer]="newCustomer"
   [readonly]="readonly"
-  (customerChanges)="customerChanges($event)"></customer-info-acceptance>
+  (customerChanges)="customerChanges($event)">
+
+  <div class="left-header">
+    <h2 mat-dialog-title>
+      {{'informationRequest.field.CUSTOMER' | translation}}
+    </h2>
+  </div>
+  <div class="left-controls">
+    <form [formGroup]="searchForm">
+      <mat-form-field floatLabel="never" class="input-full-width" *ngIf="!readonly">
+        <input matInput type="text" formControlName="search"
+               [placeholder]="'customer.search.search' | translation"
+               [matAutocomplete]="customerSearch"/>
+        <mat-icon matSuffix>arrow_drop_down</mat-icon>
+        <mat-autocomplete #customerSearch="matAutocomplete">
+          <mat-option *ngFor="let customer of matchingCustomers$ | async"
+                      [value]="customer.name" (click)="selectReferenceCustomer(customer)">
+            {{ customer.name }} ({{customer.registryKey}})
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <div *ngIf="!readonly">
+        <mat-checkbox formControlName="useForInvoicing">
+          {{'customer.useForInvoicing' | translation}}
+        </mat-checkbox>
+      </div>
+    </form>
+  </div>
+  <div class="right-controls">
+    <p class="acceptance-info" *ngIf="!readonly">
+      <button
+        *ngIf="referenceCustomerSelected"
+        type="button"
+        mat-raised-button
+        color="primary"
+        (click)="createNewCustomer()">
+        {{'customer.createNew' | translation}}
+      </button>
+    </p>
+  </div>
+</customer-info-acceptance>
