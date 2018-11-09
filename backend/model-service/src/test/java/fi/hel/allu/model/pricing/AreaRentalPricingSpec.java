@@ -14,6 +14,7 @@ import java.util.Collections;
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
 import static org.junit.Assert.assertEquals;
 import org.mockito.Mockito;
@@ -38,6 +39,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "3")).thenReturn(130);
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "2")).thenReturn(300);
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "1")).thenReturn(600);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE)).thenReturn(50);
       });
 
       context("with Five-day snow work", () -> {
@@ -69,6 +71,15 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
           it("Should cost 5 * 4 * 6.00 EUR +  60 EUR", () -> {
             arp.addLocationPrice(getLocation(1, 45.1, "1", start, end));
             assertEquals(5 * 4 * 600 + 6000, arp.getPriceInCents());
+          });
+        });
+
+        context("On price class 1, with area of 45.1 sqm, with underpass", () -> {
+          it("Should cost 0.5 * 5 * 4 * 6.00 EUR +  60 EUR", () -> {
+            Location location = getLocation(1, 45.1, "1", start, end);
+            location.setUnderpass(true);
+            arp.addLocationPrice(location);
+            assertEquals((int)Math.round(0.5 * 5 * 4 * 600) + 6000, arp.getPriceInCents());
           });
         });
 

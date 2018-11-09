@@ -16,7 +16,7 @@ public abstract class Pricing {
   private static final String UNDEFINED_PAYMENT_CLASS_TEXT = "tuntematon";
 
   private int priceInCents = 0;
-  private List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
+  private final List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
 
   public List<ChargeBasisEntry> getChargeBasisEntries() {
     return chargeBasisEntries;
@@ -24,6 +24,21 @@ public abstract class Pricing {
 
   protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
       String text, int netPrice, List<String> explanation) {
+    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, explanation, null);
+  }
+
+  protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
+      String text, int netPrice) {
+    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, null);
+  }
+
+  protected void addChargeBasisEntry(ChargeBasisUnit unit, double quantity, int unitPrice, String text,
+      int netPrice, ChargeBasisTag referredTag) {
+    addChargeBasisEntry(null, unit, quantity, unitPrice, text, netPrice, null, referredTag);
+  }
+
+  protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
+      String text, int netPrice, List<String> explanation, ChargeBasisTag referredTag) {
     ChargeBasisEntry entry = new ChargeBasisEntry();
     entry.setTag(tag == null ? null : tag.toString());
     entry.setType(ChargeBasisType.CALCULATED);
@@ -33,14 +48,10 @@ public abstract class Pricing {
     entry.setText(text);
     entry.setNetPrice(netPrice);
     entry.setReferrable(tag != null && tag.isReferrable());
+    entry.setReferredTag(referredTag == null ? null : referredTag.toString());
     Optional.ofNullable(explanation).ifPresent(e -> entry.setExplanation(e.toArray(new String[e.size()])));
     entry.setInvoicable(true);
     chargeBasisEntries.add(entry);
-  }
-
-  protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
-      String text, int netPrice) {
-    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, null);
   }
 
   public int getPriceInCents() {

@@ -9,6 +9,7 @@ import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
 import java.time.temporal.ChronoUnit;
 
@@ -21,6 +22,7 @@ public class AreaRentalPricing extends Pricing {
   private static final String DAILY_PRICE_EXPLANATION = "Alueenkäyttömaksu, maksuluokka %s, %s/%d";
   private static final String SHORT_TERM_HANDLING_EXPLANATION = "Käsittely- ja valvontamaksu (tilapäinen työ)";
   private static final String LONG_TERM_HANDLING_EXPLANATION = "Käsittely- ja valvontamaksu (työmaavuokraus)";
+  private static final String UNDERPASS_TEXT = "Altakuljettava";
 
   private static final double AREA_UNIT = 15.0;
 
@@ -77,9 +79,16 @@ public class AreaRentalPricing extends Pricing {
         location.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId),
         location.getEndTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId),
         ChronoUnit.DAYS);
-    final int netPrice = dailyPrice * numDays;
-    addChargeBasisEntry(ChargeBasisTag.AreaRentalDailyFee(Integer.toString(locationKey)), ChargeBasisUnit.DAY, numDays, dailyPrice,
+    int netPrice = dailyPrice * numDays;
+    final ChargeBasisTag tag = ChargeBasisTag.AreaRentalDailyFee(Integer.toString(locationKey));
+    addChargeBasisEntry(tag, ChargeBasisUnit.DAY, numDays, dailyPrice,
         getPriceText(paymentClass, locationKey), netPrice, pricingExplanator.getExplanation(location));
+
+    if (toBoolean(location.getUnderpass())) {
+      final double discount = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE);
+      addChargeBasisEntry(ChargeBasisUnit.PERCENT, -discount, 0, UNDERPASS_TEXT, 0, tag);
+      netPrice = (int)Math.round((discount / 100.0) * netPrice);
+    }
     setPriceInCents(netPrice + getPriceInCents());
   }
 
