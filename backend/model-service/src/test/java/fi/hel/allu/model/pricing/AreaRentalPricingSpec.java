@@ -34,8 +34,8 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         app.setExtension(new AreaRental());
         pricingDao = Mockito.mock(PricingDao.class);
         pricingExplanator = Mockito.mock(PricingExplanator.class);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.SHORT_TERM_HANDLING_FEE)).thenReturn(6000);
-        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.LONG_TERM_HANDLING_FEE)).thenReturn(18000);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MINOR_DISTURBANCE_HANDLING_FEE)).thenReturn(6000);
+        Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE)).thenReturn(18000);
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "3")).thenReturn(130);
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "2")).thenReturn(300);
         Mockito.when(pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, "1")).thenReturn(600);
@@ -99,13 +99,36 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
         });
 
         context("On price class 2, with area of 1000 sqm", () -> {
-          it("Should cost 30 * 67 * 3.00 EUR +  1800 EUR", () -> {
+          it("Should cost 30 * 67 * 3.00 EUR + 60 EUR", () -> {
+            arp.addLocationPrice(getLocation(1, 1000.0, "2", start, end));
+            assertEquals(30 * 67 * 300 + 6000, arp.getPriceInCents());
+          });
+        });
+      });
+
+      context("with major disturbance", () -> {
+        final ZonedDateTime start = ZonedDateTime.parse("2017-06-01T08:00:00+03:00");
+        final ZonedDateTime end = ZonedDateTime.parse("2017-06-30T17:00:00+03:00");
+
+        beforeEach(() -> {
+          AreaRental areaRental = new AreaRental();
+          areaRental.setMajorDisturbance(true);
+          app.setExtension(areaRental);
+          app.setStartTime(start);
+          app.setEndTime(end);
+          app.setKindsWithSpecifiers(
+              Collections.singletonMap(ApplicationKind.NEW_BUILDING_CONSTRUCTION, Collections.emptyList()));
+          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator);
+        });
+
+        context("On price class 2, with area of 1000 sqm", () -> {
+          it("Should cost 30 * 67 * 3.00 EUR + 180 EUR", () -> {
             arp.addLocationPrice(getLocation(1, 1000.0, "2", start, end));
             assertEquals(30 * 67 * 300 + 18000, arp.getPriceInCents());
           });
         });
-
       });
+
     });
   }
 }

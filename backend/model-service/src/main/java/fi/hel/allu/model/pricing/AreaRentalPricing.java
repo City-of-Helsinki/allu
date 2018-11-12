@@ -1,17 +1,18 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.common.util.CalendarUtil;
-import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 
 /**
  * Implementation for area rental pricing. See
@@ -20,8 +21,9 @@ import java.time.temporal.ChronoUnit;
  */
 public class AreaRentalPricing extends Pricing {
   private static final String DAILY_PRICE_EXPLANATION = "Alueenkäyttömaksu, maksuluokka %s, %s/%d";
-  private static final String SHORT_TERM_HANDLING_EXPLANATION = "Käsittely- ja valvontamaksu (tilapäinen työ)";
-  private static final String LONG_TERM_HANDLING_EXPLANATION = "Käsittely- ja valvontamaksu (työmaavuokraus)";
+  private static final String HANDLING_FEE_TEXT = "Käsittely- ja valvontamaksu";
+  private static final String MINOR_DISTURBANCE_EXPLANATION = "Vähäistä haittaa aiheuttava työ";
+  private static final String MAJOR_DISTURBANCE_EXPLANATION = "Vähäistä suurempaa haittaa aiheuttava työ";
   private static final String UNDERPASS_TEXT = "Altakuljettava";
 
   private final Application application;
@@ -38,33 +40,17 @@ public class AreaRentalPricing extends Pricing {
   }
 
   private void setHandlingFee() {
-    ApplicationKind kind = application.getKind();
-    switch (kind) {
-    case ROLL_OFF:
-    case LIFTING:
-    case RELOCATION:
-    case PHOTO_SHOOTING:
-    case SNOW_WORK:
-    case PUBLIC_EVENT: {
-      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.SHORT_TERM_HANDLING_FEE);
+    final AreaRental areaRental = (AreaRental)application.getExtension();
+    if (toBoolean(areaRental.getMajorDisturbance())) {
+      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE);
       setPriceInCents(price);
-        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
-            SHORT_TERM_HANDLING_EXPLANATION, price);
-      break;
-    }
-    case PROPERTY_RENOVATION:
-    case NEW_BUILDING_CONSTRUCTION:
-    case CONTAINER_BARRACK:
-    case STORAGE_AREA:
-    case OTHER: {
-      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.LONG_TERM_HANDLING_FEE);
+      addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
+          HANDLING_FEE_TEXT, price, Arrays.asList(MAJOR_DISTURBANCE_EXPLANATION));
+    } else {
+      final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MINOR_DISTURBANCE_HANDLING_FEE);
       setPriceInCents(price);
-        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
-            LONG_TERM_HANDLING_EXPLANATION, price);
-      break;
-    }
-    default:
-      throw new IllegalArgumentException("Bad application kind for area rental: " + kind);
+      addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
+          HANDLING_FEE_TEXT, price, Arrays.asList(MINOR_DISTURBANCE_EXPLANATION));
     }
   }
 
