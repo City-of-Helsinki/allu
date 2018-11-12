@@ -143,7 +143,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
         .pipe(filter(canBeEdited => canBeEdited))
         .subscribe(() => this.setCustomerEdit());
     }
-    if (type === ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+    if (type === ApplicationType.EXCAVATION_ANNOUNCEMENT || type === ApplicationType.AREA_RENTAL) {
       this.invoicingDateCtrl.disable();
     }
   }
