@@ -6,6 +6,7 @@ import {AreaRental} from '@model/application/area-rental/area-rental';
 export interface AreaRentalForm extends ApplicationForm {
   validityTimes?: TimePeriod;
   pksCard?: boolean;
+  majorDisturbance?: boolean;
   workFinished?: Date;
   customerWorkFinished?: Date;
   trafficArrangements?: string;
@@ -18,6 +19,7 @@ export interface AreaRentalForm extends ApplicationForm {
 export function to(form: AreaRentalForm): AreaRental {
   const areaRental = new AreaRental();
   areaRental.pksCard = form.pksCard;
+  areaRental.majorDisturbance = form.majorDisturbance;
   areaRental.workFinished = form.workFinished;
   areaRental.customerWorkFinished = form.customerWorkFinished;
   areaRental.trafficArrangements = form.trafficArrangements;
@@ -33,6 +35,7 @@ export function from(application: Application, areaRental: AreaRental) {
     name: application.name || 'Aluevuokraus', // Area rentals have no name so set default
     validityTimes: new TimePeriod(application.startTime, application.endTime),
     pksCard: areaRental.pksCard,
+    majorDisturbance: areaRental.majorDisturbance,
     workFinished: areaRental.workFinished,
     customerWorkFinished: areaRental.customerWorkFinished,
     trafficArrangements: areaRental.trafficArrangements,

@@ -108,6 +108,7 @@ export class ApplicationExtensionMapper {
       case ApplicationType.AREA_RENTAL:
         return new AreaRental(
           backendExtension.pksCard,
+          backendExtension.majorDisturbance,
           TimeUtil.dateFromBackend(backendExtension.workFinished),
           TimeUtil.dateFromBackend(backendExtension.customerWorkFinished),
           TimeUtil.dateFromBackend(backendExtension.workFinishedReported),
@@ -269,6 +270,7 @@ export class ApplicationExtensionMapper {
     return {
       applicationType: areaRental.applicationType,
       pksCard: areaRental.pksCard,
+      majorDisturbance: areaRental.majorDisturbance,
       workFinished: TimeUtil.dateToBackend(areaRental.workFinished),
       customerWorkFinished: TimeUtil.dateToBackend(areaRental.customerWorkFinished),
       workFinishedReported: TimeUtil.dateToBackend(areaRental.workFinishedReported),

@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
  */
 public class AreaRentalJson extends ApplicationExtensionJson {
   private Boolean pksCard;
+  private Boolean majorDisturbance;
   @NotNull(message = "{application.workPurpose}")
   private String workPurpose;
   private String additionalInfo;
@@ -36,6 +37,17 @@ public class AreaRentalJson extends ApplicationExtensionJson {
 
   public void setPksCard(Boolean pksCard) {
     this.pksCard = pksCard;
+  }
+
+  /**
+   * Vähäistä suurempaa haittaa aiheuttava työ.
+   */
+  public Boolean getMajorDisturbance() {
+    return majorDisturbance;
+  }
+
+  public void setMajorDisturbance(Boolean majorDisturbance) {
+    this.majorDisturbance = majorDisturbance;
   }
 
   /**

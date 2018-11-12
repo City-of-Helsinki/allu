@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
  */
 public class AreaRental extends ApplicationExtension implements WorkFinishedDates {
   private Boolean pksCard;
+  private Boolean majorDisturbance;
   private String workPurpose;
   private String additionalInfo;
   private String trafficArrangements;
@@ -29,6 +30,17 @@ public class AreaRental extends ApplicationExtension implements WorkFinishedDate
    */
   public Boolean getPksCard() {
     return pksCard;
+  }
+
+  /**
+   * Vähäistä suurempaa haittaa aiheuttava työ.
+   */
+  public Boolean getMajorDisturbance() {
+    return majorDisturbance;
+  }
+
+  public void setMajorDisturbance(Boolean majorDisturbance) {
+    this.majorDisturbance = majorDisturbance;
   }
 
   public void setPksCard(Boolean pksCard) {

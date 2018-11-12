@@ -5,6 +5,7 @@ import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impedimen
 export class AreaRental extends ApplicationExtension {
   constructor(
     public pksCard?: boolean,
+    public majorDisturbance?: boolean,
     public workFinished?: Date,
     public customerWorkFinished?: Date,
     public workFinishedReported?: Date,

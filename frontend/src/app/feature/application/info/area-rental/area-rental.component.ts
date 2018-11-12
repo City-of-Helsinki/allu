@@ -55,6 +55,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
         endTime: [undefined]
       }),
       pksCard: [false],
+      majorDisturbance: [false],
       workFinished: [undefined],
       customerWorkFinished: [undefined],
       calculatedPrice: [0],

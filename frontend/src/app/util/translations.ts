@@ -438,6 +438,7 @@ export const translations = {
     areaRental: {
       workFinished: 'Työ valmis',
       customerWorkFinished: 'Työ valmis (Asiakkaan ilmoittama)',
+      majorDisturbance: 'Vähäistä suurempaa haittaa aiheuttava työ',
       error: {
         reportWorkFinished: 'Työn valmistumisen ilmoittaminen epäonnistui'
       },
