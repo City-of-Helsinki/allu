@@ -1,5 +1,18 @@
 package fi.hel.allu.model.service.event.handler;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
@@ -7,35 +20,15 @@ import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AreaRentalStatusChangeHandlerTest {
@@ -61,6 +54,9 @@ public class AreaRentalStatusChangeHandlerTest {
   private ChargeBasisService chargeBasisService;
   @Mock
   private HistoryDao historyDao;
+  @Mock
+  private InvoiceService invoiceService;
+
   @Captor
   ArgumentCaptor<SupervisionTask> supervisionTaskCaptor;
 
@@ -69,8 +65,8 @@ public class AreaRentalStatusChangeHandlerTest {
     supervisor = new User();
     supervisor.setId(228);
     createApplicationWithLocations();
-    statusChangeHandler = new AreaRentalStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
+    statusChangeHandler = new AreaRentalStatusChangeHandler(applicationService, supervisionTaskService, locationService,
+        applicationDao, chargeBasisService, historyDao, invoiceService);
     when(locationService.findSupervisionTaskOwner(ApplicationType.AREA_RENTAL,
         location1.getCityDistrictId())).thenReturn(Optional.of(supervisor));
   }
@@ -105,6 +101,33 @@ public class AreaRentalStatusChangeHandlerTest {
       assertNotNull("Task must have locationId", task.getLocationId());
       assertEquals(locations.get(task.getLocationId()).getEndTime().plusDays(1), task.getPlannedFinishingTime());
     }
+  }
+
+  @Test
+  public void onDecisionShouldNotLockChargeBasisEntries() {
+    application.setType(ApplicationType.AREA_RENTAL);
+    application.setExtension(new AreaRental());
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    verify(chargeBasisService, never()).lockEntries(eq(application.getId()));
+  }
+
+  @Test
+  public void onFinishedShuoldLockChargeBasisEntries() {
+    application.setType(ApplicationType.AREA_RENTAL);
+    application.setExtension(new AreaRental());
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
+  }
+
+  @Test
+  public void onFinishedShouldSetInvoicable() {
+    application.setType(ApplicationType.AREA_RENTAL);
+    ZonedDateTime workFinishedDate = LocalDate.parse("2019-11-11").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    AreaRental extension = new AreaRental();
+    extension.setWorkFinished(workFinishedDate);
+    application.setExtension(extension);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(workFinishedDate));
   }
 
   private void createApplicationWithLocations() {

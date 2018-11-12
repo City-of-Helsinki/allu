@@ -1,26 +1,29 @@
 package fi.hel.allu.model.service.event.handler;
 
+import org.springframework.stereotype.Service;
+
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
-import org.springframework.stereotype.Service;
+import fi.hel.allu.model.domain.AreaRental;
+import fi.hel.allu.model.service.*;
 
 @Service
 public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandler {
+
+  private final InvoiceService invoiceService;
 
   public AreaRentalStatusChangeHandler(ApplicationService applicationService,
                                        SupervisionTaskService supervisionTaskService,
                                        LocationService locationService,
                                        ApplicationDao applicationDao,
                                        ChargeBasisService chargeBasisService,
-                                       HistoryDao historyDao) {
+                                       HistoryDao historyDao,
+                                       InvoiceService invoiceService) {
     super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
+    this.invoiceService = invoiceService;
   }
 
   @Override
@@ -34,4 +37,13 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
     createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
                           TimeUtil.nextDay(application.getEndTime()));
   }
+
+  @Override
+  protected void handleFinishedStatus(Application application) {
+    AreaRental extension = (AreaRental)application.getExtension();
+    invoiceService.lockInvoices(application.getId());
+    invoiceService.setInvoicableTime(application.getId(), extension.getWorkFinished());
+    lockChargeBasisEntries(application.getId());
+  }
+
 }

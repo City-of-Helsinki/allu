@@ -98,8 +98,9 @@ public class InvoiceService {
   }
 
   private ZonedDateTime getInvoicingDate(Application application) {
-    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT || application.getType() == ApplicationType.AREA_RENTAL) {
       // Excavation announcements invoiced when final operational condition / work finished dates are approved
+      // Area rentals invoiced when work finished date approved
       return null;
     }
     return application.getInvoicingDate();
