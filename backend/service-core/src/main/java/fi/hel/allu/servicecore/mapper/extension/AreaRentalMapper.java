@@ -7,6 +7,7 @@ public class AreaRentalMapper {
   public static AreaRentalJson modelToJson(AreaRental areaRental) {
     AreaRentalJson areaRentalJson = new AreaRentalJson();
     areaRentalJson.setPksCard(areaRental.getPksCard());
+    areaRentalJson.setWorkPurpose(areaRental.getWorkPurpose());
     areaRentalJson.setAdditionalInfo(areaRental.getAdditionalInfo());
     areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
     areaRentalJson.setTrafficArrangementImpedimentType(areaRental.getTrafficArrangementImpedimentType());
@@ -19,6 +20,7 @@ public class AreaRentalMapper {
   public static AreaRental jsonToModel(AreaRentalJson json) {
     AreaRental areaRental = new AreaRental();
     areaRental.setPksCard(json.getPksCard());
+    areaRental.setWorkPurpose(json.getWorkPurpose());
     areaRental.setAdditionalInfo(json.getAdditionalInfo());
     areaRental.setTrafficArrangements(json.getTrafficArrangements());
     areaRental.setTrafficArrangementImpedimentType(json.getTrafficArrangementImpedimentType());

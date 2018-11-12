@@ -10,6 +10,7 @@ export class AreaRental extends ApplicationExtension {
     public workFinishedReported?: Date,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
+    public workPurpose?: string,
     public additionalInfo?: string,
     public terms?: string
   ) {

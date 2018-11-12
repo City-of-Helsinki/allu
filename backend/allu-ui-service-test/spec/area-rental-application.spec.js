@@ -271,6 +271,7 @@ describe('Area rental application', () => {
       ],
       'extension': {
         'applicationType': 'AREA_RENTAL',
+        'workPurpose': 'Tehdään remonttia alueilla',
         'additionalInfo': 'Remontti valmis, kun se on valmis',
         'trafficArrangements': 'Eduskuntaan ei pääse, mene muualle',
         'trafficArrangementImpedimentType': 'INSIGNIFICANT_IMPEDIMENT'

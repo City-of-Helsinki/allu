@@ -60,6 +60,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
       calculatedPrice: [0],
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required],
+      workPurpose: ['', Validators.required],
       additionalInfo: [''],
       terms: [undefined]
     });

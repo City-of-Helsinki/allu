@@ -10,6 +10,7 @@ export interface AreaRentalForm extends ApplicationForm {
   customerWorkFinished?: Date;
   trafficArrangements?: string;
   trafficArrangementImpedimentType?: string;
+  workPurpose?: string;
   additionalInfo?: string;
   terms?: string;
 }
@@ -21,6 +22,7 @@ export function to(form: AreaRentalForm): AreaRental {
   areaRental.customerWorkFinished = form.customerWorkFinished;
   areaRental.trafficArrangements = form.trafficArrangements;
   areaRental.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
+  areaRental.workPurpose = form.workPurpose;
   areaRental.additionalInfo = form.additionalInfo;
   areaRental.terms = form.terms;
   return areaRental;
@@ -35,6 +37,7 @@ export function from(application: Application, areaRental: AreaRental) {
     customerWorkFinished: areaRental.customerWorkFinished,
     trafficArrangements: areaRental.trafficArrangements,
     trafficArrangementImpedimentType: areaRental.trafficArrangementImpedimentType,
+    workPurpose: areaRental.workPurpose,
     additionalInfo: areaRental.additionalInfo,
     terms: areaRental.terms
   };

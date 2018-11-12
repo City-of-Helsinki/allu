@@ -11,6 +11,8 @@ import java.time.ZonedDateTime;
  */
 public class AreaRentalJson extends ApplicationExtensionJson {
   private Boolean pksCard;
+  @NotNull(message = "{application.workPurpose}")
+  private String workPurpose;
   private String additionalInfo;
   private String trafficArrangements;
   private ZonedDateTime workFinished;
@@ -34,6 +36,17 @@ public class AreaRentalJson extends ApplicationExtensionJson {
 
   public void setPksCard(Boolean pksCard) {
     this.pksCard = pksCard;
+  }
+
+  /**
+   * In Finnish: Työn tarkoitus.
+   */
+  public String getWorkPurpose() {
+    return workPurpose;
+  }
+
+  public void setWorkPurpose(String workPurpose) {
+    this.workPurpose = workPurpose;
   }
 
   /**

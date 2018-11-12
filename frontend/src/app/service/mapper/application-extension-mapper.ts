@@ -113,6 +113,7 @@ export class ApplicationExtensionMapper {
           TimeUtil.dateFromBackend(backendExtension.workFinishedReported),
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,
+          backendExtension.workPurpose,
           backendExtension.additionalInfo,
           backendExtension.terms
         );
@@ -273,6 +274,7 @@ export class ApplicationExtensionMapper {
       workFinishedReported: TimeUtil.dateToBackend(areaRental.workFinishedReported),
       trafficArrangements: areaRental.trafficArrangements,
       trafficArrangementImpedimentType: areaRental.trafficArrangementImpedimentType,
+      workPurpose: areaRental.workPurpose,
       additionalInfo: areaRental.additionalInfo,
       terms: areaRental.terms
     };

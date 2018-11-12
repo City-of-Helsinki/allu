@@ -75,6 +75,16 @@
         <mat-card-title>Aluevuokrauksen tiedot</mat-card-title>
         <mat-card-content>
           <div class="row">
+            <div class="col m12">
+              <mat-form-field class="input-full-width">
+                <textarea matInput matTextareaAutosize required
+                          formControlName="workPurpose"
+                          [placeholder]="'application.common.workPurpose' | translation"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
             <div class="col m2">
               <mat-checkbox formControlName="pksCard">Pks-kortti</mat-checkbox>
             </div>

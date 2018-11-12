@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
  */
 public class AreaRental extends ApplicationExtension implements WorkFinishedDates {
   private Boolean pksCard;
+  private String workPurpose;
   private String additionalInfo;
   private String trafficArrangements;
   private ZonedDateTime workFinished;
@@ -32,6 +33,17 @@ public class AreaRental extends ApplicationExtension implements WorkFinishedDate
 
   public void setPksCard(Boolean pksCard) {
     this.pksCard = pksCard;
+  }
+
+  /**
+   * In Finnish: Työn tarkoitus.
+   */
+  public String getWorkPurpose() {
+    return workPurpose;
+  }
+
+  public void setWorkPurpose(String workPurpose) {
+    this.workPurpose = workPurpose;
   }
 
   /**
