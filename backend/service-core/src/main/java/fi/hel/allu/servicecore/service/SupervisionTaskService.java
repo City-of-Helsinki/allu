@@ -6,9 +6,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,9 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -136,23 +138,21 @@ public class SupervisionTaskService {
     applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
   }
 
-  public Page<SupervisionWorkItemJson> search(SupervisionTaskSearchCriteria searchCriteria,
+  public Page<SupervisionWorkItemJson> searchWorkItems(SupervisionTaskSearchCriteria searchCriteria,
       Pageable pageRequest) {
+    Page<SupervisionTask> result = search(searchCriteria, pageRequest);
+    Page<SupervisionWorkItemJson> response = result.map(s -> toWorkItem(s));
+    return response;
+  }
+
+  public Page<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     ParameterizedTypeReference<RestResponsePage<SupervisionTask>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionTask>>() {
     };
-
     URI targetUri = PageRequestBuilder.fromUriString(applicationProperties.getSupervisionTaskSearchUrl(), pageRequest);
     ResponseEntity<RestResponsePage<SupervisionTask>> response =
         restTemplate.exchange(targetUri, HttpMethod.POST, new HttpEntity<>(searchCriteria), typeref);
-
     final Page<SupervisionTask> responsePage = response.getBody();
-    final PageRequest responsePageRequest =
-        new PageRequest(responsePage.getNumber(), Math.max(1, responsePage.getNumberOfElements()),
-            responsePage.getSort());
-
-    final Page<SupervisionWorkItemJson> result = new PageImpl<>(
-        toWorkItems(responsePage.getContent()), responsePageRequest, responsePage.getTotalElements());
-    return result;
+    return responsePage;
   }
 
   /**
@@ -178,16 +178,11 @@ public class SupervisionTaskService {
     return SupervisionTaskMapper.maptoJson(supervisionTasks, idToUser(supervisionTasks));
   }
 
-  private List<SupervisionWorkItemJson> toWorkItems(List<SupervisionTask> tasks) {
-    Map<Integer, UserJson> userById = idToUser(tasks);
-    Map<Integer, ApplicationJson> applicationById = idToApplication(tasks);
-    return tasks.stream().map(task ->
-        SupervisionTaskMapper.mapToWorkItem(
-            task,
-            applicationById.get(task.getApplicationId()),
-            userById.get(task.getCreatorId()),
-            userById.get(task.getOwnerId()))
-    ).collect(Collectors.toList());
+  private SupervisionWorkItemJson toWorkItem(SupervisionTask task) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(task.getApplicationId());
+    UserJson owner = userService.findUserById(task.getOwnerId());
+    UserJson creator = userService.findUserById(task.getCreatorId());
+    return SupervisionTaskMapper.mapToWorkItem(task, application, creator, owner);
   }
 
   private Map<Integer, UserJson> idToUser(List<SupervisionTask> supervisionTasks) {
@@ -196,13 +191,6 @@ public class SupervisionTaskService {
         .filter(number -> number != null)
         .distinct()
         .collect(Collectors.toMap(id -> id, id -> userService.findUserById(id)));
-  }
-
-  private Map<Integer, ApplicationJson> idToApplication(List<SupervisionTask> tasks) {
-    return tasks.stream()
-        .map(SupervisionTask::getApplicationId)
-        .distinct()
-        .collect(Collectors.toMap(Function.identity(), appId -> applicationServiceComposer.findApplicationById(appId)));
   }
 
   public void updateSupervisionTaskDate(Integer applicationId, SupervisionTaskType taskType,

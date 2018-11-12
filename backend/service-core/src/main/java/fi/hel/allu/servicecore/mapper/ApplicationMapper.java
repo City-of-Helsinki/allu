@@ -21,7 +21,6 @@ import com.github.wnameless.json.flattener.JsonFlattener;
 
 import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.util.RecurringApplication;
@@ -29,8 +28,6 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.domain.search.ApplicationSearchResult;
-import fi.hel.allu.servicecore.domain.search.LocationSearchResult;
 import fi.hel.allu.servicecore.mapper.extension.*;
 import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.UserService;
@@ -458,29 +455,4 @@ public class ApplicationMapper {
     }
     return result;
   }
-
-  public ApplicationSearchResult mapToSearchResult(ApplicationES applicationES) {
-    ApplicationSearchResult application = new ApplicationSearchResult();
-    CustomerES applicant = applicationES.getCustomers().getApplicant().getCustomer();
-    application.setApplicantId(applicant.getId());
-    application.setApplicantName(applicant.getName());
-    application.setApplicationId(applicationES.getApplicationId());
-    application.setApplicationTags(applicationES.getApplicationTags().stream().map(ApplicationTagType::valueOf).collect(Collectors.toList()));
-    application.setId(applicationES.getId());
-    application.setLocations(applicationES.getLocations().stream().map(l -> new LocationSearchResult(l.getAddress(), l.getCityDistrictId(), l.getGeometry())).collect(Collectors.toList()));
-    Optional.ofNullable(applicationES.getOwner()).ifPresent(owner -> {
-      application.setOwnerRealName(owner.getRealName());
-      application.setOwnerUserName(owner.getRealName());
-    });
-    Optional.ofNullable(applicationES.getProject()).ifPresent(project -> {
-      application.setProjectId(project.getId());
-      application.setProjectIdentier(project.getIdentifier());
-    });
-    application.setStatus(applicationES.getStatus().getValue());
-    application.setType(applicationES.getType().getValue());
-    return application;
-  }
-
-
-
 }

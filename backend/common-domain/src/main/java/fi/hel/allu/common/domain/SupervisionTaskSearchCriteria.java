@@ -2,6 +2,7 @@ package fi.hel.allu.common.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 
 import java.time.ZonedDateTime;
@@ -16,6 +17,8 @@ public class SupervisionTaskSearchCriteria {
   private List<ApplicationType> applicationTypes;
   private List<StatusType> applicationStatus;
   private List<Integer> cityDistrictIds;
+  private List<SupervisionTaskStatusType> statuses;
+  private List<Integer> applicationIds;
 
   public List<Integer> getOwners() {
     return owners;
@@ -79,5 +82,21 @@ public class SupervisionTaskSearchCriteria {
 
   public void setCityDistrictIds(List<Integer> cityDistrictIds) {
     this.cityDistrictIds = cityDistrictIds;
+  }
+
+  public List<SupervisionTaskStatusType> getStatuses() {
+    return statuses;
+  }
+
+  public void setStatuses(List<SupervisionTaskStatusType> statuses) {
+    this.statuses = statuses;
+  }
+
+  public List<Integer> getApplicationIds() {
+    return applicationIds;
+  }
+
+  public void setApplicationIds(List<Integer> applicationIds) {
+    this.applicationIds = applicationIds;
   }
 }

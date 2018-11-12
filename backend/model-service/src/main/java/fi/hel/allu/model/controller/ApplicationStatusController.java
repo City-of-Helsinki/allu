@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.ApplicationStatusService;
@@ -96,7 +97,7 @@ public class ApplicationStatusController {
   }
 
   @RequestMapping(value = "/{id}/status", method = RequestMethod.GET)
-  public ResponseEntity<StatusType> getApplicationStatus(@PathVariable int id) {
+  public ResponseEntity<ApplicationStatusInfo> getApplicationStatus(@PathVariable int id) {
     return new ResponseEntity<>(applicationStatusService.getApplicationStatus(id), HttpStatus.OK);
   }
 

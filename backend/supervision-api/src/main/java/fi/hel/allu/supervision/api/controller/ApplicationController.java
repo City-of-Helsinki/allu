@@ -1,7 +1,7 @@
 package fi.hel.allu.supervision.api.controller;
 
 
-import java.time.format.DateTimeFormatter;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
-import fi.hel.allu.servicecore.domain.search.ApplicationSearchResult;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.supervision.api.domain.SearchParameters;
+import fi.hel.allu.supervision.api.domain.ApplicationSearchParameters;
+import fi.hel.allu.supervision.api.domain.ApplicationSearchResult;
+import fi.hel.allu.supervision.api.mapper.ApplicationSearchParameterMapper;
+import fi.hel.allu.supervision.api.mapper.ApplicationSearchResultMapper;
+import fi.hel.allu.supervision.api.mapper.MapperUtil;
 import io.swagger.annotations.*;
 
 @RestController
@@ -26,27 +29,26 @@ import io.swagger.annotations.*;
 @Api(value = "v1/applications")
 public class ApplicationController {
 
-  DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
   @Autowired
-  private ApplicationMapper applicationMapper;
+  private ApplicationSearchResultMapper applicationMapper;
 
   @ApiOperation(value = "Search applications",
       authorizations = @Authorization(value ="api_key"),
       produces = "application/json",
-      response = ApplicationES.class,
+      response = ApplicationSearchResult.class,
       responseContainer="List"
       )
   @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Applications retrieved successfully", response = ApplicationSearchResult.class, responseContainer="List")
+      @ApiResponse(code = 200, message = "Applications retrieved successfully", response = ApplicationSearchResult.class, responseContainer="List"),
+      @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
   })
   @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Page<ApplicationSearchResult>> search(@RequestBody SearchParameters searchParameters) {
-    ApplicationQueryParameters queryParameters = SearchParameterMapper.mapToQueryParameters(searchParameters);
-    Pageable pageable = SearchParameterMapper.mapToPageRequest(searchParameters);
+  public ResponseEntity<Page<ApplicationSearchResult>> search(@RequestBody @Valid ApplicationSearchParameters searchParameters) {
+    ApplicationQueryParameters queryParameters = ApplicationSearchParameterMapper.mapToQueryParameters(searchParameters);
+    Pageable pageable = MapperUtil.mapToPageRequest(searchParameters);
     Page<ApplicationES> result = applicationServiceComposer.search(queryParameters, pageable, Boolean.FALSE);
     Page<ApplicationSearchResult> response = result.map(a -> applicationMapper.mapToSearchResult(a));
     return ResponseEntity.ok(response);

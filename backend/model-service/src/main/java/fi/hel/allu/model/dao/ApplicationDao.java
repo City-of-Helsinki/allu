@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
@@ -25,6 +22,7 @@ import com.querydsl.sql.dml.SQLInsertClause;
 
 import fi.hel.allu.QApplication;
 import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -695,6 +693,20 @@ public class ApplicationDao {
     }
     return status;
   }
+
+  @Transactional(readOnly = true)
+  public ApplicationStatusInfo getStatusWithIdentifier(int applicationId) {
+    ApplicationStatusInfo statusWithIdentifier = queryFactory
+        .select(Projections.bean(ApplicationStatusInfo.class, application.status, application.applicationId))
+        .from(application)
+        .where(application.id.eq(applicationId))
+        .fetchOne();
+    if (statusWithIdentifier == null) {
+      throw new NoSuchEntityException("No application found for ID {}", applicationId);
+    }
+    return statusWithIdentifier;
+  }
+
 
   @Transactional(readOnly = true)
   public Integer getApplicationExternalOwner(Integer applicationId) {

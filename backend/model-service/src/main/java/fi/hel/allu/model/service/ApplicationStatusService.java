@@ -1,21 +1,14 @@
 package fi.hel.allu.model.service;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PlacementContract;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
 /**
@@ -51,8 +44,8 @@ public class ApplicationStatusService {
     return applicationService.findById(applicationId);
   }
 
-  public StatusType getApplicationStatus(int id) {
-    return applicationDao.getStatus(id);
+  public ApplicationStatusInfo getApplicationStatus(int id) {
+    return applicationDao.getStatusWithIdentifier(id);
   }
 
   public Application returnToStatus(int applicationId, StatusType status) {

@@ -70,7 +70,7 @@ public class SupervisionTaskController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<Page<SupervisionWorkItemJson>> search(
       @Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
+    return new ResponseEntity<>(supervisionTaskService.searchWorkItems(searchCriteria, pageRequest), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/owner/{id}", method = RequestMethod.PUT)

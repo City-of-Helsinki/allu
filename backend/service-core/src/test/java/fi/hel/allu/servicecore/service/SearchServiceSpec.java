@@ -58,10 +58,7 @@ public class SearchServiceSpec {
         Mockito.when(applicationProperties.getApplicationSearchUrl()).thenReturn(APPLICATION_SEARCH);
         ApplicationQueryParameters queryParameters = new ApplicationQueryParameters();
         queryParameters.setQueryParameters(Arrays.asList(new QueryParameter()));
-        RestResponsePage<Integer> response = new RestResponsePage<>();
-        response.setContent(Arrays.asList(1, 2, 3));
-        response.setNumberOfElements(3);
-        response.setTotalElements(50);
+        RestResponsePage<Integer> response = new RestResponsePage<>(Arrays.asList(1, 2, 3), 0, 3, 50);
         Mockito.when(restTemplate.exchange(
             Mockito.any(URI.class), Mockito.any(),
             Mockito.any(),

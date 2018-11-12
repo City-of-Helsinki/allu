@@ -1,4 +1,4 @@
-package fi.hel.allu.servicecore.domain.search;
+package fi.hel.allu.supervision.api.domain;
 
 import org.geolatte.geom.Geometry;
 
@@ -7,7 +7,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(value = "Application location")
 public class LocationSearchResult {
 
   private String address;
@@ -22,6 +25,7 @@ public class LocationSearchResult {
     this.geometry = geometry;
   }
 
+  @ApiModelProperty(value = "Address of the location")
   public String getAddress() {
     return address;
   }
@@ -30,6 +34,7 @@ public class LocationSearchResult {
     this.address = address;
   }
 
+  @ApiModelProperty(value = "City district ID of the location")
   public Integer getCityDistrictId() {
     return cityDistrictId;
   }
@@ -38,6 +43,8 @@ public class LocationSearchResult {
     this.cityDistrictId = cityDistrictId;
   }
 
+  @ApiModelProperty(value =
+      "Location geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a>")
   public Geometry getGeometry() {
     return geometry;
   }

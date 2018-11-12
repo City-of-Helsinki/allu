@@ -1,20 +1,21 @@
-package fi.hel.allu.servicecore.domain.search;
+package fi.hel.allu.supervision.api.domain;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Application search result")
 public class ApplicationSearchResult {
 
   private Integer id;
   private String applicationId;
-  private String projectIdentier;
   private Integer projectId;
-  private String projectIdentifer;
+  private String projectIdentifier;
   private String ownerUserName;
   private String ownerRealName;
   private StatusType status;
@@ -22,8 +23,11 @@ public class ApplicationSearchResult {
   private List<ApplicationTagType> applicationTags;
   private Integer applicantId;
   private String applicantName;
+  private ZonedDateTime startTime;
+  private ZonedDateTime endTime;
   private List<LocationSearchResult> locations;
 
+  @ApiModelProperty(value = "Id of the application")
   public Integer getId() {
     return id;
   }
@@ -32,6 +36,7 @@ public class ApplicationSearchResult {
     this.id = id;
   }
 
+  @ApiModelProperty(value = "Application identifier (hakemustunniste)")
   public String getApplicationId() {
     return applicationId;
   }
@@ -40,14 +45,16 @@ public class ApplicationSearchResult {
     this.applicationId = applicationId;
   }
 
-  public String getProjectIdentier() {
-    return projectIdentier;
+  @ApiModelProperty(value = "Project identifier (hanketunniste)")
+  public String getProjectIdentfier() {
+    return projectIdentifier;
   }
 
-  public void setProjectIdentier(String projectIdentier) {
-    this.projectIdentier = projectIdentier;
+  public void setProjectIdentifier(String projectIdentifier) {
+    this.projectIdentifier = projectIdentifier;
   }
 
+  @ApiModelProperty(value = "Id of the project")
   public Integer getProjectId() {
     return projectId;
   }
@@ -56,14 +63,7 @@ public class ApplicationSearchResult {
     this.projectId = projectId;
   }
 
-  public String getProjectIdentifer() {
-    return projectIdentifer;
-  }
-
-  public void setProjectIdentifer(String projectIdentifer) {
-    this.projectIdentifer = projectIdentifer;
-  }
-
+  @ApiModelProperty(value = "Application owner username")
   public String getOwnerUserName() {
     return ownerUserName;
   }
@@ -72,6 +72,7 @@ public class ApplicationSearchResult {
     this.ownerUserName = ownerUserName;
   }
 
+  @ApiModelProperty(value = "Application owner real name")
   public String getOwnerRealName() {
     return ownerRealName;
   }
@@ -80,6 +81,7 @@ public class ApplicationSearchResult {
     this.ownerRealName = ownerRealName;
   }
 
+  @ApiModelProperty(value = "Status of the application")
   public StatusType getStatus() {
     return status;
   }
@@ -88,6 +90,7 @@ public class ApplicationSearchResult {
     this.status = status;
   }
 
+  @ApiModelProperty(value = "Application type")
   public ApplicationType getType() {
     return type;
   }
@@ -96,6 +99,7 @@ public class ApplicationSearchResult {
     this.type = type;
   }
 
+  @ApiModelProperty(value = "Application tags")
   public List<ApplicationTagType> getApplicationTags() {
     return applicationTags;
   }
@@ -104,6 +108,7 @@ public class ApplicationSearchResult {
     this.applicationTags = applicationTags;
   }
 
+  @ApiModelProperty(value = "Id of the applicant")
   public Integer getApplicantId() {
     return applicantId;
   }
@@ -112,6 +117,7 @@ public class ApplicationSearchResult {
     this.applicantId = applicantId;
   }
 
+  @ApiModelProperty(value = "Name of the applicant")
   public String getApplicantName() {
     return applicantName;
   }
@@ -120,12 +126,31 @@ public class ApplicationSearchResult {
     this.applicantName = applicantName;
   }
 
+  @ApiModelProperty(value = "Application locations")
   public List<LocationSearchResult> getLocations() {
     return locations;
   }
 
   public void setLocations(List<LocationSearchResult> locations) {
     this.locations = locations;
+  }
+
+  @ApiModelProperty(value = "Starting time of the application")
+  public ZonedDateTime getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(ZonedDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  @ApiModelProperty(value = "Ending time of the application")
+  public ZonedDateTime getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(ZonedDateTime endTime) {
+    this.endTime = endTime;
   }
 
 }

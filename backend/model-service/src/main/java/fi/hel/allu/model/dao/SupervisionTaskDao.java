@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
@@ -32,9 +33,7 @@ import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.common.PathUtil;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
@@ -42,7 +41,6 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QChangeHistory.changeHistory;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.QProject.project;
@@ -215,8 +213,10 @@ public class SupervisionTaskDao {
   }
 
   private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria) {
+    List<SupervisionTaskStatusType> statuses = searchCriteria.getStatuses() != null && !searchCriteria.getStatuses().isEmpty() ?
+        searchCriteria.getStatuses() : Collections.singletonList(SupervisionTaskStatusType.OPEN);
     return Stream.of(
-        Optional.of(supervisionTask.status.eq(SupervisionTaskStatusType.OPEN)),
+        Optional.of(supervisionTask.status.in(statuses)),
         values(searchCriteria.getTaskTypes()).map(supervisionTask.type::in),
         Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTask.plannedFinishingTime::goe),
         Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTask.plannedFinishingTime::loe),
@@ -224,7 +224,8 @@ public class SupervisionTaskDao {
         values(searchCriteria.getOwners()).map(supervisionTask.ownerId::in),
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
         values(searchCriteria.getApplicationStatus()).map(application.status::in),
-        values(searchCriteria.getCityDistrictIds()).map(location.cityDistrictId::in)
+        values(searchCriteria.getCityDistrictIds()).map(location.cityDistrictId::in),
+        values(searchCriteria.getApplicationIds()).map(supervisionTask.applicationId::in)
     ).filter(opt -> opt.isPresent())
      .map(opt -> opt.get());
   }

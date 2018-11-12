@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hel.allu.common.domain.ApplicationDateReport;
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -322,8 +323,8 @@ public class ApplicationService {
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
   }
 
-  public StatusType getApplicationStatus(Integer applicationId) {
-    return restTemplate.getForObject(applicationProperties.getApplicationStatusUrl(), StatusType.class, applicationId);
+  public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationStatusUrl(), ApplicationStatusInfo.class, applicationId);
   }
 
   public Integer getReplacingApplicationId(Integer applicationId) {

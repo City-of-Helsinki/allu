@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
@@ -461,7 +462,7 @@ public class ApplicationServiceComposer {
     return applicationService.findFinishedApplications(statuses);
   }
 
-  public StatusType getApplicationStatus(Integer applicationId) {
+  public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {
     return applicationService.getApplicationStatus(applicationId);
   }
 

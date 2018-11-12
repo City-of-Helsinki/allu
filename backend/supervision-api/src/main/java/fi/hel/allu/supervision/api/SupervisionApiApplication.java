@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "fi.hel.allu.supervision.api", "fi.hel.allu.servicecore" })
+@ComponentScan(basePackages = { "fi.hel.allu.supervision.api", "fi.hel.allu.servicecore", "fi.hel.allu.common.controller" })
 public class SupervisionApiApplication {
 
   public static void main(String[] args) {
