@@ -1,5 +1,7 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.model.domain.Location;
+
 public class ChargeBasisTag {
   private final String asString;
   private boolean referrable = true;
@@ -58,6 +60,11 @@ public class ChargeBasisTag {
   public static ChargeBasisTag AreaRentalDailyFee(String areaId) {
     return new ChargeBasisTag(TagText.ARDF, areaId);
   }
+
+  public static ChargeBasisTag AreaRentalDailyFee(String areaId, String periodId) {
+    return new ChargeBasisTag(TagText.ARDF, areaId + "#" + periodId);
+  }
+
 
   public static ChargeBasisTag AreaRentalHandlingFee() {
     return new ChargeBasisTag(TagText.ARHF);

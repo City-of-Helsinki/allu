@@ -1,5 +1,6 @@
 package fi.hel.allu.common.util;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import org.junit.Test;
@@ -44,5 +45,20 @@ public class TimeUtilTest {
     assertTrue(TimeUtil.isSameDate(date1, date2));
     date2 = date2.minusDays(1);
     assertFalse(TimeUtil.isSameDate(date1, date2));
+  }
+
+  @Test
+  public void datePeriodsOverlap() {
+    ZonedDateTime p1Start = LocalDate.parse("2018-02-02").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ZonedDateTime p1End = LocalDate.parse("2018-03-02").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ZonedDateTime p2Start = LocalDate.parse("2018-02-12").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ZonedDateTime p2End = LocalDate.parse("2018-05-02").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    assertTrue(TimeUtil.datePeriodsOverlap(p1Start, p1End, p2Start, p2End));
+    assertTrue(TimeUtil.datePeriodsOverlap(p2Start, p2End, p1Start, p1End));
+    p2Start = p1End;
+    assertTrue(TimeUtil.datePeriodsOverlap(p1Start, p1End, p2Start, p2End));
+    p2Start = p2Start.plusDays(1);
+    assertFalse(TimeUtil.datePeriodsOverlap(p1Start, p1End, p2Start, p2End));
+    assertFalse(TimeUtil.datePeriodsOverlap(p2Start, p2End, p1Start, p1End));
   }
 }

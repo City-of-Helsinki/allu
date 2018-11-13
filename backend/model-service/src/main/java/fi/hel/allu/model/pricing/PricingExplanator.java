@@ -32,8 +32,8 @@ public class PricingExplanator {
     return formatExplanation(application, customPeriod);
   }
 
-  public List<String> getExplanation(Location location) {
-    return formatExplanation(location, null);
+  public List<String> getExplanation(Location location, String period) {
+    return formatExplanation(location, period);
   }
 
   private List<String> formatExplanation(Application application, String customPeriod) {

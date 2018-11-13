@@ -1,0 +1,57 @@
+package fi.hel.allu.model.dao;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQueryFactory;
+
+import fi.hel.allu.model.domain.InvoicingPeriod;
+
+import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QInvoicingPeriod.invoicingPeriod;
+
+@Repository
+public class InvoicingPeriodDao {
+
+  private final SQLQueryFactory queryFactory;
+
+  private final QBean<InvoicingPeriod> invoicingPeriodBean = bean(InvoicingPeriod.class, invoicingPeriod.all());
+
+  @Autowired
+  public InvoicingPeriodDao(SQLQueryFactory queryFactory) {
+    this.queryFactory = queryFactory;
+  }
+
+   @Transactional
+   public List<InvoicingPeriod> insertPeriods(List<InvoicingPeriod> periods) {
+     periods.forEach(p -> insertInvoicingPeriod(p));
+     return periods;
+  }
+
+  private InvoicingPeriod insertInvoicingPeriod(InvoicingPeriod p) {
+    Integer id = queryFactory.insert(invoicingPeriod).populate(p).executeWithKey(invoicingPeriod.id);
+    p.setId(id);
+    return p;
+  }
+
+  @Transactional(readOnly = true)
+  public List<InvoicingPeriod> findForApplicationId(Integer applicationId) {
+    return queryFactory.select(invoicingPeriodBean).from(invoicingPeriod)
+        .where(invoicingPeriod.applicationId.eq(applicationId)).fetch();
+  }
+
+  @Transactional
+  public void deletePeriods(Integer applicationId) {
+    queryFactory.delete(invoicingPeriod).where(invoicingPeriod.applicationId.eq(applicationId)).execute();
+ }
+
+  @Transactional
+  public void deleteUninvoicedPeriods(Integer applicationId) {
+    queryFactory.delete(invoicingPeriod).where(invoicingPeriod.applicationId.eq(applicationId), invoicingPeriod.invoiced.isFalse()).execute();
+  }
+
+}

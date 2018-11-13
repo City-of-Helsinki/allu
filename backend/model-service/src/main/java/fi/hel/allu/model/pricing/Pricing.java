@@ -24,21 +24,22 @@ public abstract class Pricing {
 
   protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
       String text, int netPrice, List<String> explanation) {
-    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, explanation, null);
+    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, explanation, null, null, null);
   }
 
   protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
       String text, int netPrice) {
-    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, null);
+    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, null, null, null, null);
   }
 
   protected void addChargeBasisEntry(ChargeBasisUnit unit, double quantity, int unitPrice, String text,
       int netPrice, ChargeBasisTag referredTag) {
-    addChargeBasisEntry(null, unit, quantity, unitPrice, text, netPrice, null, referredTag);
+    addChargeBasisEntry(null, unit, quantity, unitPrice, text, netPrice, null, referredTag, null, null);
   }
 
   protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
-      String text, int netPrice, List<String> explanation, ChargeBasisTag referredTag) {
+      String text, int netPrice, List<String> explanation, ChargeBasisTag referredTag, Integer invoicingPeriodId,
+      Integer locationId) {
     ChargeBasisEntry entry = new ChargeBasisEntry();
     entry.setTag(tag == null ? null : tag.toString());
     entry.setType(ChargeBasisType.CALCULATED);
@@ -51,6 +52,8 @@ public abstract class Pricing {
     entry.setReferredTag(referredTag == null ? null : referredTag.toString());
     Optional.ofNullable(explanation).ifPresent(e -> entry.setExplanation(e.toArray(new String[e.size()])));
     entry.setInvoicable(true);
+    entry.setInvoicingPeriodId(invoicingPeriodId);
+    entry.setLocationId(locationId);
     chargeBasisEntries.add(entry);
   }
 

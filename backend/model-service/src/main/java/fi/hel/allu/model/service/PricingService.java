@@ -40,6 +40,7 @@ public class PricingService {
   private final CustomerDao customerDao;
   private final PricingExplanator pricingExplanator;
   private final WinterTimeService winterTimeService;
+  private final InvoicingPeriodService invoicingPeriodService;
 
   private static final Location EMPTY_LOCATION;
 
@@ -49,12 +50,14 @@ public class PricingService {
   }
 
   @Autowired
-  public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao, WinterTimeService winterTimeService) {
+  public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao, WinterTimeService winterTimeService,
+      InvoicingPeriodService invoicingPeriodService) {
     this.pricingDao = pricingDao;
     this.locationDao = locationDao;
     this.customerDao = customerDao;
     this.pricingExplanator = new PricingExplanator(locationDao);
     this.winterTimeService = winterTimeService;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   /**
@@ -142,7 +145,8 @@ public class PricingService {
    * Calculate price for area rental
    */
   private List<ChargeBasisEntry> updateAreaRentalPrice(Application application) {
-    return calculateChargeBasis(application, new AreaRentalPricing(application, pricingDao, pricingExplanator));
+    return calculateChargeBasis(application,
+        new AreaRentalPricing(application, pricingDao, pricingExplanator, invoicingPeriodService.findForApplicationId(application.getId())));
   }
 
   /*

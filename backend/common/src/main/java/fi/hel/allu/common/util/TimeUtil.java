@@ -1,10 +1,13 @@
 package fi.hel.allu.common.util;
 
 import java.time.Instant;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 /**
  * Time related utlitity methods.
@@ -73,5 +76,19 @@ public class TimeUtil {
 
   public static ZonedDateTime nextDay(ZonedDateTime dateTime) {
     return dateTime != null ? dateTime.plusDays(1) : null;
+  }
+
+  public static ZonedDateTime last(ZonedDateTime...dateTimes ) {
+    return Stream.of(dateTimes).sorted(Comparator.reverseOrder()).findFirst().get();
+  }
+
+  public static ZonedDateTime first(ZonedDateTime...dateTimes ) {
+    return Stream.of(dateTimes).sorted().findFirst().get();
+  }
+
+  public static boolean datePeriodsOverlap(ZonedDateTime period1Start, ZonedDateTime period1End, ZonedDateTime period2Start,
+      ZonedDateTime period2End) {
+    return !startOfDay(period1End).isBefore(startOfDay(period2Start))
+        && !startOfDay(period1Start).isAfter(startOfDay(period2End));
   }
 }

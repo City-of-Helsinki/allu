@@ -28,6 +28,8 @@ public class ChargeBasisEntry {
   private Boolean locked;
   private boolean referrable;
   private boolean invoicable;
+  private Integer invoicingPeriodId;
+  private Integer locationId;
 
   public ChargeBasisEntry() {
     // for deserialization
@@ -269,5 +271,21 @@ public class ChargeBasisEntry {
     if (unitPrice != other.unitPrice)
       return false;
     return true;
+  }
+
+  public Integer getInvoicingPeriodId() {
+    return invoicingPeriodId;
+  }
+
+  public void setInvoicingPeriodId(Integer invoicingPeriodId) {
+    this.invoicingPeriodId = invoicingPeriodId;
+  }
+
+  public Integer getLocationId() {
+    return locationId;
+  }
+
+  public void setLocationId(Integer locationId) {
+    this.locationId = locationId;
   }
 }

@@ -1,18 +1,21 @@
 package fi.hel.allu.model.pricing;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AreaRental;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PricingKey;
-import static org.apache.commons.lang3.BooleanUtils.toBoolean;
+import fi.hel.allu.model.domain.*;
 
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
 /**
  * Implementation for area rental pricing. See
@@ -20,6 +23,7 @@ import java.util.Arrays;
  * "Alueenkäyttömaksu", for specification.
  */
 public class AreaRentalPricing extends Pricing {
+
   private static final String DAILY_PRICE_EXPLANATION = "Alueenkäyttömaksu, maksuluokka %s, %s/%d";
   private static final String HANDLING_FEE_TEXT = "Käsittely- ja valvontamaksu";
   private static final String MINOR_DISTURBANCE_EXPLANATION = "Vähäistä haittaa aiheuttava työ";
@@ -29,53 +33,85 @@ public class AreaRentalPricing extends Pricing {
   private final Application application;
   private final PricingDao pricingDao;
   private final PricingExplanator pricingExplanator;
+  private final List<InvoicingPeriod> invoicingPeriods;
   private final double AREA_UNIT;
 
-  public AreaRentalPricing(Application application, PricingDao pricingDao, PricingExplanator pricingExplanator) {
+  public AreaRentalPricing(Application application, PricingDao pricingDao, PricingExplanator pricingExplanator,
+      List<InvoicingPeriod> invoicingPeriods) {
     this.application = application;
     this.pricingDao = pricingDao;
     this.pricingExplanator = pricingExplanator;
+    this.invoicingPeriods = invoicingPeriods.stream().sorted(Comparator.comparing(InvoicingPeriod::getStartTime))
+        .collect(Collectors.toList());
     AREA_UNIT = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.AREA_UNIT_M2);
     setHandlingFee();
   }
 
   private void setHandlingFee() {
+    final Integer periodId = getFirstOpenPeriodId();
     final AreaRental areaRental = (AreaRental)application.getExtension();
     if (toBoolean(areaRental.getMajorDisturbance())) {
       final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MAJOR_DISTURBANCE_HANDLING_FEE);
       setPriceInCents(price);
       addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
-          HANDLING_FEE_TEXT, price, Arrays.asList(MAJOR_DISTURBANCE_EXPLANATION));
+          HANDLING_FEE_TEXT, price, Arrays.asList(MAJOR_DISTURBANCE_EXPLANATION), null, periodId, null);
     } else {
       final int price = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.MINOR_DISTURBANCE_HANDLING_FEE);
       setPriceInCents(price);
       addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, price,
-          HANDLING_FEE_TEXT, price, Arrays.asList(MINOR_DISTURBANCE_EXPLANATION));
+          HANDLING_FEE_TEXT, price, Arrays.asList(MINOR_DISTURBANCE_EXPLANATION), null, periodId, null);
     }
+  }
+
+  private Integer getFirstOpenPeriodId() {
+    return invoicingPeriods.stream().filter(p -> !p.isInvoiced()).findFirst().map(p -> p.getId()).orElse(null);
   }
 
   @Override
   public void addLocationPrice(Location location) {
-    final String paymentClass = location.getEffectivePaymentTariff();
-    final Integer locationKey = location.getLocationKey();
-    final double locationArea = location.getEffectiveArea();
-    final long numUnits = Math.round(Math.ceil(locationArea / AREA_UNIT));
-    final int dailyPrice = getPrice((int)numUnits, paymentClass);
-    final int numDays = (int) CalendarUtil.startingUnitsBetween(
-        location.getStartTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId),
-        location.getEndTime().withZoneSameInstant(TimeUtil.HelsinkiZoneId),
-        ChronoUnit.DAYS);
-    int netPrice = dailyPrice * numDays;
-    final ChargeBasisTag tag = ChargeBasisTag.AreaRentalDailyFee(Integer.toString(locationKey));
-    addChargeBasisEntry(tag, ChargeBasisUnit.DAY, numDays, dailyPrice,
-        getPriceText(paymentClass, locationKey), netPrice, pricingExplanator.getExplanation(location));
-
-    if (toBoolean(location.getUnderpass())) {
-      final double discount = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE);
-      addChargeBasisEntry(ChargeBasisUnit.PERCENT, -discount, 0, UNDERPASS_TEXT, 0, tag);
-      netPrice = (int)Math.round((discount / 100.0) * netPrice);
+    List<AreaRentalPeriodPrice> periodPrices = getLocationPeriodPrices(location);
+    for (AreaRentalPeriodPrice periodPrice : periodPrices) {
+      addChargeBasisEntry(location, periodPrice);
+      setPriceInCents(periodPrice.getNetPrice() + getPriceInCents());
+      if (toBoolean(location.getUnderpass())) {
+        addUnderpassDiscount(periodPrice);
+      }
     }
-    setPriceInCents(netPrice + getPriceInCents());
+  }
+
+  private void addUnderpassDiscount(AreaRentalPeriodPrice periodPrice) {
+    final double discount = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE);
+    addChargeBasisEntry(ChargeBasisUnit.PERCENT, -discount, 0, UNDERPASS_TEXT, 0, periodPrice.getTag());
+    int netDiscount = (int)Math.round((discount / 100.0) * periodPrice.getNetPrice());
+    setPriceInCents(getPriceInCents() - netDiscount);
+  }
+
+  private void addChargeBasisEntry(Location location, AreaRentalPeriodPrice periodPrice) {
+    addChargeBasisEntry(periodPrice.getTag(), ChargeBasisUnit.DAY, periodPrice.getNumberOfDays(), periodPrice.getUnitPrice(),
+        getPriceText(periodPrice), periodPrice.getNetPrice(), pricingExplanator.getExplanation(location, periodPrice.getPeriodText()),
+        null, periodPrice.getPeriodId(), periodPrice.getLocationId());
+  }
+
+  protected List<AreaRentalPeriodPrice> getLocationPeriodPrices(Location location) {
+    AreaRentalLocationPrice locationPrice = new AreaRentalLocationPrice(location, AREA_UNIT);
+    locationPrice.setDailyPrice(getPrice(locationPrice.getNumUnits(), locationPrice.getPaymentClass()));
+    List<AreaRentalPeriodPrice> periodPrices = new ArrayList<>();
+
+    if (invoicingPeriods.isEmpty()) {
+      periodPrices.add(new AreaRentalPeriodPrice(locationPrice));
+    } else {
+      getLocationPeriods(locationPrice).forEach(p -> periodPrices.add(new AreaRentalPeriodPrice(locationPrice, p)));
+    }
+    return periodPrices;
+  }
+
+  /**
+   * Gets invoicing periods overlapping with location's period
+   */
+  private List<InvoicingPeriod> getLocationPeriods(AreaRentalLocationPrice locationPrice) {
+    return invoicingPeriods.stream()
+        .filter(p -> TimeUtil.datePeriodsOverlap(p.getStartTime(), p.getEndTime(), locationPrice.getStartTime(), locationPrice.getEndTime()))
+        .collect(Collectors.toList());
   }
 
   private int getPrice(int numUnits, String paymentClass) {
@@ -85,7 +121,9 @@ public class AreaRentalPricing extends Pricing {
     return numUnits * pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, paymentClass);
   }
 
-  private String getPriceText(String paymentClass, int locationKey) {
-    return String.format(DAILY_PRICE_EXPLANATION, getPaymentClassText(paymentClass), application.getApplicationId(), locationKey);
+  private String getPriceText(AreaRentalPeriodPrice periodPrice) {
+    return String.format(DAILY_PRICE_EXPLANATION, getPaymentClassText(periodPrice.getPaymentClass()),
+        application.getApplicationId(), periodPrice.getLocationKey());
   }
+
 }

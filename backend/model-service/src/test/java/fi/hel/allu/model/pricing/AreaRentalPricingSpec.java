@@ -1,23 +1,24 @@
 package fi.hel.allu.model.pricing;
 
-import com.greghaskins.spectrum.Spectrum;
-
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AreaRental;
-
-import org.junit.runner.RunWith;
-
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
+import fi.hel.allu.model.service.InvoicingPeriodService;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
-import org.mockito.Mockito;
 
 @RunWith(Spectrum.class)
 public class AreaRentalPricingSpec extends LocationBasedPricing {
@@ -51,7 +52,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
           app.setStartTime(start);
           app.setEndTime(end);
           app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.SNOW_WORK, Collections.emptyList()));
-          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator);
+          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator, Collections.emptyList());
         });
 
         context("On price class 2, with area of 85 sqm", () -> {
@@ -95,7 +96,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
           app.setEndTime(end);
           app.setKindsWithSpecifiers(
               Collections.singletonMap(ApplicationKind.NEW_BUILDING_CONSTRUCTION, Collections.emptyList()));
-          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator);
+          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator, Collections.emptyList());
         });
 
         context("On price class 2, with area of 1000 sqm", () -> {
@@ -118,7 +119,7 @@ public class AreaRentalPricingSpec extends LocationBasedPricing {
           app.setEndTime(end);
           app.setKindsWithSpecifiers(
               Collections.singletonMap(ApplicationKind.NEW_BUILDING_CONSTRUCTION, Collections.emptyList()));
-          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator);
+          arp = new AreaRentalPricing(app, pricingDao, pricingExplanator, Collections.emptyList());
         });
 
         context("On price class 2, with area of 1000 sqm", () -> {
