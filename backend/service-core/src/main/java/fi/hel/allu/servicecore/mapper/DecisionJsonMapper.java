@@ -21,16 +21,21 @@ import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.util.EventDayUtil;
 import fi.hel.allu.model.domain.util.PriceUtil;
+import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.pdf.domain.CableInfoTexts;
 import fi.hel.allu.pdf.domain.ChargeInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.pdf.domain.KindWithSpecifiers;
+import fi.hel.allu.pdf.domain.RentalArea;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.*;
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -46,6 +51,8 @@ public class DecisionJsonMapper {
   private static final Map<DefaultTextType, String> defaultTextTypeTranslations;
   private static final String UNKNOWN_ADDRESS = "[Osoite ei tiedossa]";
   private static final FixedLocationJson BAD_LOCATION;
+  private static final String UNDERPASS_YES = "Kyllä";
+  private static final String UNDERPASS_NO = "Ei";
 
   static {
     BAD_LOCATION = new FixedLocationJson();
@@ -140,6 +147,9 @@ public class DecisionJsonMapper {
       break;
     case EXCAVATION_ANNOUNCEMENT:
       fillExcavationAnnouncementSpecifics(decisionJson, application);
+      break;
+    case AREA_RENTAL:
+      fillAreaRentalSpecifics(decisionJson, application);
       break;
     default:
       break;
@@ -460,6 +470,92 @@ public class DecisionJsonMapper {
 
   private void fillExcavationAnnouncementSpecifics(DecisionJson decision, ApplicationJson application) {
     ExcavationAnnouncementJson excavationAnnouncement = (ExcavationAnnouncementJson)application.getExtension();
+    setContacts(decision, application);
+    decision.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
+    decision.setWinterTimeOperation(formatDateWithDelta(excavationAnnouncement.getWinterTimeOperation(), 0));
+    decision.setCustomerWinterTimeOperation(formatDateWithDelta(excavationAnnouncement.getCustomerWinterTimeOperation(), 0));
+    decision.setWorkFinished(formatDateWithDelta(excavationAnnouncement.getWorkFinished(), 0));
+    decision.setCustomerWorkFinished(formatDateWithDelta(excavationAnnouncement.getCustomerWorkFinished(), 0));
+    decision.setTrafficArrangements(splitToList(Optional.ofNullable(excavationAnnouncement.getTrafficArrangements())));
+    decision.setCompactionAndBearingCapacityMeasurement(excavationAnnouncement.getCompactionAndBearingCapacityMeasurement());
+    decision.setQualityAssuranceTest(excavationAnnouncement.getQualityAssuranceTest());
+    decision.setGuaranteeEndTime(formatDateWithDelta(excavationAnnouncement.getGuaranteeEndTime(), 0));
+  }
+
+  private void fillAreaRentalSpecifics(DecisionJson decision, ApplicationJson application) {
+    AreaRentalJson areaRental = (AreaRentalJson)application.getExtension();
+    setContacts(decision, application);
+    decision.setWorkPurpose(areaRental.getWorkPurpose());
+    Set<String> addresses = new HashSet<>();
+    application.getLocations().stream().forEach(l -> addresses.add(l.getAddress()));
+    decision.setAreaAddresses(new ArrayList<>(addresses));
+
+    final Map<Integer, Location> locations = locationService.getLocationsByApplication(application.getId())
+        .stream().collect(Collectors.toMap(l -> l.getId(), l -> l));
+    final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(application.getId());
+    final List<ChargeBasisEntry> areaEntries = chargeBasisEntries.stream()
+        .filter(c -> isAreaEntry(c, chargeBasisEntries)).collect(Collectors.toList());
+    final List<ChargeBasisEntry> otherEntries = chargeBasisEntries.stream()
+        .filter(c -> !isAreaEntry(c, chargeBasisEntries)).collect(Collectors.toList());
+
+    final List<RentalArea> rentalAreas = areaEntries.stream()
+        .map(e -> chargeBasisToRentalArea(e, application, locations, areaEntries))
+        .collect(Collectors.toList());
+    rentalAreas.addAll(otherEntries.stream()
+        .map(e -> chargeBasisToRentalArea(e, application, locations, otherEntries))
+        .collect(Collectors.toList()));
+    decision.setRentalAreas(rentalAreas);
+  }
+
+  private boolean isAreaEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> allEntries) {
+    return entry.getLocationId() != null ||
+        (entry.getReferredTag() != null && getReferredEntry(entry.getReferredTag(), allEntries)
+            .map(e -> e.getLocationId()).orElse(null) != null);
+  }
+
+  private Optional<ChargeBasisEntry> getReferredEntry(String tag, List<ChargeBasisEntry> allEntries) {
+    return allEntries.stream().filter(e -> e.getTag() != null && e.getTag().equals(tag)).findFirst();
+  }
+
+  private RentalArea chargeBasisToRentalArea(ChargeBasisEntry entry, ApplicationJson application,
+      Map<Integer, Location> locations, List<ChargeBasisEntry> entries) {
+
+    final RentalArea rentalArea = new RentalArea();
+    rentalArea.setUnitPrice(chargeUnitPrice(entry));
+    rentalArea.setPrice(chargeNetPrice(entry));
+    rentalArea.setQuantity(chargeQuantity(entry));
+
+    if (entry.getLocationId() != null) {
+      final Location location = locations.get(entry.getLocationId());
+      rentalArea.setAreaId(application.getApplicationId() + "/" + location.getLocationKey());
+
+      final ZonedDateTime startTime = location.getStartTime();
+      final ZonedDateTime endTime = location.getEndTime();
+
+      rentalArea.setFinished(ZonedDateTime.now().isAfter(endTime));
+
+      final String period = Printable.forDayPeriod(startTime, endTime);
+      rentalArea.setTime(period);
+      if (location.getPostalAddress() != null) {
+        rentalArea.setAddress(location.getPostalAddress().getStreetAddress());
+      }
+      rentalArea.setUnderpass(toBoolean(location.getUnderpass()) ? UNDERPASS_YES : UNDERPASS_NO);
+      rentalArea.setArea(((int)Math.ceil(location.getEffectiveArea())) + " m²");
+      rentalArea.setPaymentClass(PriceUtil.getPaymentClassText(location.getEffectivePaymentTariff()));
+      rentalArea.setDays(Integer.toString((int)CalendarUtil.startingUnitsBetween(startTime, endTime, ChronoUnit.DAYS)));
+      rentalArea.setAdditionalInfo(location.getAdditionalInfo());
+
+    } else if (entry.getReferredTag() != null) {
+      rentalArea.setText(entry.getText());
+      getReferredEntry(entry.getReferredTag(), entries)
+          .ifPresent(e -> rentalArea.setFinished(ZonedDateTime.now().isAfter(locations.get(e.getLocationId()).getEndTime())));
+    } else {
+      rentalArea.setChargeBasisText(entry.getText());
+    }
+    return rentalArea;
+  }
+
+  private void setContacts(DecisionJson decision, ApplicationJson application) {
     decision.setContractorAddressLines(addressLines(application, CustomerRoleType.CONTRACTOR));
     decision.setContractorContactLines(contactLines(application, CustomerRoleType.CONTRACTOR));
     decision.setPropertyDeveloperAddressLines(addressLines(application, CustomerRoleType.PROPERTY_DEVELOPER));
@@ -472,15 +568,6 @@ public class DecisionJsonMapper {
       decision.setOvt(customer.getOvt());
       decision.setInvoicingOperator(customer.getInvoicingOperator());
     }
-    decision.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
-    decision.setWinterTimeOperation(formatDateWithDelta(excavationAnnouncement.getWinterTimeOperation(), 0));
-    decision.setCustomerWinterTimeOperation(formatDateWithDelta(excavationAnnouncement.getCustomerWinterTimeOperation(), 0));
-    decision.setWorkFinished(formatDateWithDelta(excavationAnnouncement.getWorkFinished(), 0));
-    decision.setCustomerWorkFinished(formatDateWithDelta(excavationAnnouncement.getCustomerWorkFinished(), 0));
-    decision.setTrafficArrangements(splitToList(Optional.ofNullable(excavationAnnouncement.getTrafficArrangements())));
-    decision.setCompactionAndBearingCapacityMeasurement(excavationAnnouncement.getCompactionAndBearingCapacityMeasurement());
-    decision.setQualityAssuranceTest(excavationAnnouncement.getQualityAssuranceTest());
-    decision.setGuaranteeEndTime(formatDateWithDelta(excavationAnnouncement.getGuaranteeEndTime(), 0));
   }
 
   /*

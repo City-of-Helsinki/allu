@@ -8,6 +8,9 @@ import java.math.RoundingMode;
 import java.util.List;
 
 public class PriceUtil {
+  public static final String UNDEFINED_PAYMENT_CLASS = "undefined";
+  public static final String UNDEFINED_PAYMENT_CLASS_TEXT = "tuntematon";
+
   /**
    * Calculate the total price of given charge basis entries
    *
@@ -20,4 +23,12 @@ public class PriceUtil {
         .reduce((b1, b2) -> b1.add(b2)).orElse(BigDecimal.ZERO)
         .setScale(0, RoundingMode.UP).intValue();
   }
+
+  public static String getPaymentClassText(String paymentClass) {
+    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS)) {
+      return UNDEFINED_PAYMENT_CLASS_TEXT;
+    }
+    return paymentClass;
+  }
+
 }

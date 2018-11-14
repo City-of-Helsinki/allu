@@ -22,6 +22,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.CityDistrictInfo;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.FixedLocationArea;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
@@ -30,7 +31,6 @@ import fi.hel.allu.servicecore.domain.FixedLocationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.LocationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
-
 
 @Service
 public class LocationService {
@@ -68,6 +68,11 @@ public class LocationService {
     return resultList;
   }
 
+  public List<Location> getLocationsByApplication(Integer applicationId) {
+    ResponseEntity<Location[]> queryResult = restTemplate
+        .getForEntity(applicationProperties.getLocationsByApplicationIdUrl(), Location[].class, applicationId);
+    return Arrays.asList(queryResult.getBody());
+  }
 
   /**
    * Retrieve the list of defined city districts

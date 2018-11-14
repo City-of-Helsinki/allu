@@ -32,6 +32,7 @@ public class DecisionJson {
   private String siteAdditionalInfo;
   private String siteArea;
   private String siteCityDistrict;
+  private List<String> areaAddresses;
 
   private String reservationStartDate;
   private String reservationEndDate;
@@ -93,6 +94,7 @@ public class DecisionJson {
   private String cableReportOrderer;
 
   private List<ChargeInfoTexts> chargeInfoEntries;
+  private List<RentalArea> rentalAreas;
   private Integer sectionNumber;
   private List<KindWithSpecifiers> kinds;
   private List<String> contractText;
@@ -246,6 +248,14 @@ public class DecisionJson {
 
   public void setSiteCityDistrict(String siteCityDistrict) {
     this.siteCityDistrict = siteCityDistrict;
+  }
+
+  public List<String> getAreaAddresses() {
+    return areaAddresses;
+  }
+
+  public void setAreaAddresses(List<String> areaAddresses) {
+    this.areaAddresses = areaAddresses;
   }
 
   public String getReservationStartDate() {
@@ -618,6 +628,14 @@ public class DecisionJson {
 
   public void setChargeInfoEntries(List<ChargeInfoTexts> chargeInfoEntries) {
     this.chargeInfoEntries = chargeInfoEntries;
+  }
+
+  public List<RentalArea> getRentalAreas() {
+    return rentalAreas;
+  }
+
+  public void setRentalAreas(List<RentalArea> rentalAreas) {
+    this.rentalAreas = rentalAreas;
   }
 
   public Integer getSectionNumber() {

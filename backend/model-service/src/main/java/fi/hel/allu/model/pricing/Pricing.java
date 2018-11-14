@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Pricing {
-  protected static final String UNDEFINED_PAYMENT_CLASS = "undefined";
-  private static final String UNDEFINED_PAYMENT_CLASS_TEXT = "tuntematon";
-
   private int priceInCents = 0;
   private final List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
 
@@ -94,13 +91,5 @@ public abstract class Pricing {
         // Unknown units are handled as pieces
         return ChargeBasisUnit.PIECE;
     }
-  }
-
-
-  protected String getPaymentClassText(String paymentClass) {
-    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS)) {
-      return UNDEFINED_PAYMENT_CLASS_TEXT;
-    }
-    return paymentClass;
   }
 }

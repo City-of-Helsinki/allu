@@ -10,6 +10,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PricingKey;
+import fi.hel.allu.model.domain.util.PriceUtil;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
 
@@ -56,10 +57,10 @@ public class ExcavationPricing extends Pricing {
 
     final List<PricedPeriod> pricedPeriods = getPricedPeriods();
     if (pricedPeriods.size() > 0) {
-      addChargeBasisEntryForPeriod(locationKey, paymentClass, dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
+      addChargeBasisEntryForPeriod(paymentClass, dailyFee, pricedPeriods.get(0), ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)));
     }
     if (pricedPeriods.size() > 1) {
-      addChargeBasisEntryForPeriod(locationKey, paymentClass, dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
+      addChargeBasisEntryForPeriod(paymentClass, dailyFee, pricedPeriods.get(1), ChargeBasisTag.ExcavationAnnouncementDailyFeeAdd(Integer.toString(locationKey)));
     }
   }
 
@@ -73,9 +74,9 @@ public class ExcavationPricing extends Pricing {
     }
   }
 
-  private void addChargeBasisEntryForPeriod(int locationKey, String paymentClass, int dailyFee,
+  private void addChargeBasisEntryForPeriod(String paymentClass, int dailyFee,
       PricedPeriod invoicedPeriod, ChargeBasisTag tag) {
-    String rowText = String.format(AREA_FEE_TEXT, getPaymentClassText(paymentClass));
+    String rowText = String.format(AREA_FEE_TEXT, PriceUtil.getPaymentClassText(paymentClass));
     int totalPrice = invoicedPeriod.getNumberOfDays() * dailyFee;
     addChargeBasisEntry(tag, ChargeBasisUnit.DAY, invoicedPeriod.getNumberOfDays(),
         dailyFee, rowText, totalPrice,
@@ -146,7 +147,7 @@ public class ExcavationPricing extends Pricing {
   }
 
   private int getPrice(PricingKey key, String paymentClass) {
-    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
+    if (paymentClass.equals(PriceUtil.UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
       return 0;
     }
     return pricingDao.findValue(ApplicationType.EXCAVATION_ANNOUNCEMENT, key, paymentClass);

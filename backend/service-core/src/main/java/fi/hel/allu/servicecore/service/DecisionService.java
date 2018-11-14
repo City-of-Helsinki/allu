@@ -102,7 +102,8 @@ public class DecisionService {
         CABLE_REPORT,
         PLACEMENT_CONTRACT,
         TEMPORARY_TRAFFIC_ARRANGEMENTS,
-        EXCAVATION_ANNOUNCEMENT);
+        EXCAVATION_ANNOUNCEMENT,
+        AREA_RENTAL);
     if (implementedTypes.contains(application.getType())) {
       return application.getType().name();
     }

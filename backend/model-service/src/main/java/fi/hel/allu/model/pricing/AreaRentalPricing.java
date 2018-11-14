@@ -1,7 +1,5 @@
 package fi.hel.allu.model.pricing;
 
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -10,10 +8,10 @@ import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.util.PriceUtil;
 
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
@@ -115,14 +113,14 @@ public class AreaRentalPricing extends Pricing {
   }
 
   private int getPrice(int numUnits, String paymentClass) {
-    if (paymentClass.equalsIgnoreCase(UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
+    if (paymentClass.equals(PriceUtil.UNDEFINED_PAYMENT_CLASS) || paymentClass.equalsIgnoreCase("h1")) {
       return 0;
     }
     return numUnits * pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNIT_PRICE, paymentClass);
   }
 
   private String getPriceText(AreaRentalPeriodPrice periodPrice) {
-    return String.format(DAILY_PRICE_EXPLANATION, getPaymentClassText(periodPrice.getPaymentClass()),
+    return String.format(DAILY_PRICE_EXPLANATION, PriceUtil.getPaymentClassText(periodPrice.getPaymentClass()),
         application.getApplicationId(), periodPrice.getLocationKey());
   }
 
