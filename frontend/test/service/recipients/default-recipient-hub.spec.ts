@@ -1,11 +1,13 @@
-import {DefaultRecipientHub} from '../../../src/app/service/recipients/default-recipient-hub';
+import {DefaultRecipientHub} from '@service/recipients/default-recipient-hub';
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {DefaultRecipientService} from '../../../src/app/service/recipients/default-recipient.service';
-import {DefaultRecipient} from '../../../src/app/model/common/default-recipient';
-import {ApplicationType} from '../../../src/app/model/application/type/application-type';
+import {DefaultRecipientService} from '@service/recipients/default-recipient.service';
+import {DefaultRecipient} from '@model/common/default-recipient';
+import {ApplicationType} from '@model/application/type/application-type';
 import {RECIPIENT_ONE, RECIPIENT_TWO, RECIPIENT_NEW, RECIPIENTS_ALL} from './default-recipient-mock-values';
 import {of} from 'rxjs/index';
 import {last} from 'rxjs/internal/operators';
+import {CurrentUserMock} from '../../mocks';
+import {CurrentUser} from '@service/user/current-user';
 
 class DefaultRecipientServiceMock {
   getDefaultRecipients() {
@@ -15,6 +17,8 @@ class DefaultRecipientServiceMock {
   removeDefaultRecipient(id: number) {}
 }
 
+const currentUserMock = CurrentUserMock.create(true, true);
+
 describe('DefaultRecipientHub', () => {
 
   let hub: DefaultRecipientHub;
@@ -23,8 +27,9 @@ describe('DefaultRecipientHub', () => {
   beforeEach(() => {
     const tb = TestBed.configureTestingModule({
       providers: [
+        DefaultRecipientHub,
+        { provide: CurrentUser, useValue: currentUserMock },
         { provide: DefaultRecipientService, useClass: DefaultRecipientServiceMock },
-        DefaultRecipientHub
       ]
     });
     hub = tb.get(DefaultRecipientHub);

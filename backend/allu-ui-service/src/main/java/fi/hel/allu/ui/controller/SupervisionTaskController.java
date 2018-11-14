@@ -35,13 +35,13 @@ public class SupervisionTaskController {
   }
 
   @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE','ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<SupervisionTaskJson>> findByApplicationId(@PathVariable int applicationId) {
     return new ResponseEntity<>(supervisionTaskService.findByApplicationId(applicationId), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/location/{locationId}", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE','ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<SupervisionTaskJson>> findByLocationId(@PathVariable int locationId) {
     return new ResponseEntity<>(supervisionTaskService.findByLocationId(locationId), HttpStatus.OK);
   }
