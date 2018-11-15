@@ -23,6 +23,7 @@ import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
+import static fi.hel.allu.common.util.TimeUtil.HelsinkiZoneId;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.util.EventDayUtil;
@@ -529,8 +530,8 @@ public class DecisionJsonMapper {
       final Location location = locations.get(entry.getLocationId());
       rentalArea.setAreaId(application.getApplicationId() + "/" + location.getLocationKey());
 
-      final ZonedDateTime startTime = location.getStartTime();
-      final ZonedDateTime endTime = location.getEndTime();
+      final ZonedDateTime startTime = location.getStartTime().withZoneSameInstant(HelsinkiZoneId);
+      final ZonedDateTime endTime = location.getEndTime().withZoneSameInstant(HelsinkiZoneId);
 
       rentalArea.setFinished(ZonedDateTime.now().isAfter(endTime));
 
