@@ -180,8 +180,8 @@ public class SupervisionTaskService {
 
   private SupervisionWorkItemJson toWorkItem(SupervisionTask task) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(task.getApplicationId());
-    UserJson owner = userService.findUserById(task.getOwnerId());
-    UserJson creator = userService.findUserById(task.getCreatorId());
+    UserJson owner = Optional.ofNullable(task.getOwnerId()).map(id -> userService.findUserById(id)).orElse(null);
+    UserJson creator = Optional.ofNullable(task.getCreatorId()).map(id -> userService.findUserById(id)).orElse(null);
     return SupervisionTaskMapper.mapToWorkItem(task, application, creator, owner);
   }
 
