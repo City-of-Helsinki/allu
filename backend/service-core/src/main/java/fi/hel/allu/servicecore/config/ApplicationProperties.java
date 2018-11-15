@@ -343,6 +343,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/handler");
   }
 
+  public String getApplicationDecisionMakerUrl() {
+    return getModelServiceUrl("/applications/{id}/decisionmaker");
+  }
+
   /**
    * @return url to replace distribution list of application.
    */

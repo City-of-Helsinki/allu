@@ -1,7 +1,5 @@
 package fi.hel.allu.external.api.controller;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -12,14 +10,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.ContractInfo;
+import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.external.domain.ContractExt;
 import fi.hel.allu.external.domain.ContractSigningInfoExt;
-import fi.hel.allu.external.domain.HandlerExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
+import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
-import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.ContractService;
 import io.swagger.annotations.*;
 
@@ -86,8 +84,9 @@ public class PlacementContractController extends BaseApplicationController<Place
     if (contractInfo == null) {
       throw new NoSuchEntityException("contract.notFound");
     }
-    HandlerExt handlerExt = applicationService.getHandler(id);
-    return ResponseEntity.ok(new ContractExt(handlerExt, contractInfo.getCreationTime()));
+    UserExt handler = applicationService.getHandler(id);
+    UserExt decisionMaker = contractInfo.getStatus() == ContractStatusType.FINAL ? applicationService.getDecisionMaker(id) : null;
+    return ResponseEntity.ok(new ContractExt(handler, decisionMaker, contractInfo.getStatus(), contractInfo.getCreationTime()));
   }
 
 

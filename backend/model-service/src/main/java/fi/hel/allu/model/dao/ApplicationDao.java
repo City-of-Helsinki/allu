@@ -888,4 +888,12 @@ public class ApplicationDao {
         .where(application.id.eq(applicationId))
         .fetchOne();
   }
+
+  public Integer getApplicationDecisionMakerId(Integer applicationId) {
+    return queryFactory
+        .select(application.decisionMaker)
+        .from(application)
+        .where(application.id.eq(applicationId))
+        .fetchOne();
+  }
 }

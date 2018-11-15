@@ -177,8 +177,13 @@ public class ApplicationServiceExt {
     return externalUserService.findUserByUserName(username).getId();
   }
 
-  public HandlerExt getHandler(Integer applicationId) {
+  public UserExt getHandler(Integer applicationId) {
     UserJson handler = applicationServiceComposer.getApplicationHandler(applicationId);
-    return Optional.ofNullable(handler).map(h -> new HandlerExt(h.getRealName(), h.getTitle())).orElse(null);
+    return Optional.ofNullable(handler).map(h -> new UserExt(h.getRealName(), h.getTitle())).orElse(null);
+  }
+
+  public UserExt getDecisionMaker(Integer applicationId) {
+    UserJson decisionMaker = applicationServiceComposer.getApplicationDecisionMaker(applicationId);
+    return Optional.ofNullable(decisionMaker).map(u -> new UserExt(u.getRealName(), u.getTitle())).orElse(null);
   }
 }

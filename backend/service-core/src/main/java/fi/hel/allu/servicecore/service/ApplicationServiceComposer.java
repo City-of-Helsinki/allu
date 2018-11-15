@@ -510,4 +510,8 @@ public class ApplicationServiceComposer {
   public UserJson getApplicationHandler(Integer applicationId) {
     return applicationService.getApplicationHandler(applicationId);
   }
+
+  public UserJson getApplicationDecisionMaker(Integer applicationId) {
+    return applicationService.getApplicationDecisionMaker(applicationId);
+  }
 }

@@ -428,7 +428,15 @@ public class ApplicationService {
   }
 
   public UserJson getApplicationHandler(Integer applicationId) {
-    User user = restTemplate.getForObject(applicationProperties.getApplicationHandlerUrl(), User.class, applicationId);
+    return getApplicationUser(applicationProperties.getApplicationHandlerUrl(), applicationId);
+  }
+
+  public UserJson getApplicationDecisionMaker(Integer applicationId) {
+    return getApplicationUser(applicationProperties.getApplicationDecisionMakerUrl(), applicationId);
+  }
+
+  private UserJson getApplicationUser(String url, Integer applicationId) {
+    User user = restTemplate.getForObject(url, User.class, applicationId);
     return Optional.ofNullable(user).map(u -> UserMapper.mapToUserJson(u)).orElse(null);
   }
 }

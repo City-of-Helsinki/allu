@@ -508,7 +508,15 @@ public class ApplicationService {
 
   @Transactional(readOnly = true)
   public User getApplicationHandler(Integer applicationId) {
-    Integer handlerId = applicationDao.getApplicationHandlerId(applicationId);
-    return Optional.ofNullable(handlerId).flatMap(id -> userDao.findById(id)).orElse(null);
+    return getUser(applicationDao.getApplicationHandlerId(applicationId));
+  }
+
+  @Transactional(readOnly = true)
+  public User getApplicationDecisionMaker(Integer applicationId) {
+    return getUser(applicationDao.getApplicationDecisionMakerId(applicationId));
+  }
+
+  private User getUser(Integer userId) {
+    return Optional.ofNullable(userId).flatMap(id -> userDao.findById(id)).orElse(null);
   }
 }

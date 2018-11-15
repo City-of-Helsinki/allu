@@ -370,6 +370,11 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.getApplicationHandler(id), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/decisionmaker", method = RequestMethod.GET)
+  public ResponseEntity<User> getApplicationDecisionMaker(@PathVariable Integer id) {
+    return new ResponseEntity<>(applicationService.getApplicationDecisionMaker(id), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
   public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam(value = "invoicerecipientid", required = false) final Integer invoiceRecipientId,
       @RequestParam("userid") final Integer userId) {
