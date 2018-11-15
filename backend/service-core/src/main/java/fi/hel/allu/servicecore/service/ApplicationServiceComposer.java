@@ -506,4 +506,8 @@ public class ApplicationServiceComposer {
   public Integer getReplacingApplicationId(Integer applicationId) {
     return applicationService.getReplacingApplicationId(applicationId);
   }
+
+  public UserJson getApplicationHandler(Integer applicationId) {
+    return applicationService.getApplicationHandler(applicationId);
+  }
 }

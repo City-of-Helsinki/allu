@@ -27,6 +27,7 @@ import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
 import fi.hel.allu.servicecore.service.*;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
@@ -176,4 +177,8 @@ public class ApplicationServiceExt {
     return externalUserService.findUserByUserName(username).getId();
   }
 
+  public HandlerExt getHandler(Integer applicationId) {
+    UserJson handler = applicationServiceComposer.getApplicationHandler(applicationId);
+    return Optional.ofNullable(handler).map(h -> new HandlerExt(h.getRealName(), h.getTitle())).orElse(null);
+  }
 }

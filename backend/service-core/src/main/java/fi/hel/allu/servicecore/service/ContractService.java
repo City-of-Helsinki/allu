@@ -115,7 +115,7 @@ public class ContractService {
   // Fetch placement contract decision maker from configuration
   private StatusChangeInfoJson getDecisionMakerInfo() {
     String decisionMakerUsername = configurationService.getSingleValue(ConfigurationKey.PLACEMENT_CONTRACT_DECISION_MAKER);
-    if (decisionMakerUsername != null) {
+    if (StringUtils.isNotBlank(decisionMakerUsername)) {
       UserJson user = userService.findUserByUserName(decisionMakerUsername);
       return new StatusChangeInfoJson(user.getId());
     }

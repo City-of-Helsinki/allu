@@ -879,4 +879,13 @@ public class ApplicationDao {
       .where(application.id.eq(id))
       .fetchOne();
   }
+
+  @Transactional(readOnly = true)
+  public Integer getApplicationHandlerId(Integer applicationId) {
+    return queryFactory
+        .select(application.handler)
+        .from(application)
+        .where(application.id.eq(applicationId))
+        .fetchOne();
+  }
 }

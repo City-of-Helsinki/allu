@@ -339,6 +339,9 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/externalowner");
   }
 
+  public String getApplicationHandlerUrl() {
+    return getModelServiceUrl("/applications/{id}/handler");
+  }
 
   /**
    * @return url to replace distribution list of application.

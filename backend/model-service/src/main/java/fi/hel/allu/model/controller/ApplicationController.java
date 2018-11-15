@@ -23,6 +23,7 @@ import fi.hel.allu.model.dao.AttachmentDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.dao.DistributionEntryDao;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.ApplicationReplacementService;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
@@ -364,6 +365,11 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.getApplicationExternalOwner(id), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/handler", method = RequestMethod.GET)
+  public ResponseEntity<User> getApplicationHandler(@PathVariable Integer id) {
+    return new ResponseEntity<>(applicationService.getApplicationHandler(id), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.PUT)
   public ResponseEntity<Void> setInvoiceRecipient(@PathVariable int id, @RequestParam(value = "invoicerecipientid", required = false) final Integer invoiceRecipientId,
       @RequestParam("userid") final Integer userId) {
@@ -375,6 +381,4 @@ public class ApplicationController {
   public ResponseEntity<Integer> getReplacingApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.getReplacingApplicationId(id), HttpStatus.OK);
   }
-
-
 }

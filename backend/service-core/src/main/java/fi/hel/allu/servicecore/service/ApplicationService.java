@@ -24,10 +24,15 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationIdentifier;
+import fi.hel.allu.model.domain.ApplicationTag;
+import fi.hel.allu.model.domain.DistributionEntry;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.UserMapper;
 
 @Service
 public class ApplicationService {
@@ -420,5 +425,10 @@ public class ApplicationService {
     return restTemplate.exchange(
         applicationProperties.getSetTargetStateUrl(),
         HttpMethod.PUT, new HttpEntity<>(targetState), Application.class, id).getBody();
+  }
+
+  public UserJson getApplicationHandler(Integer applicationId) {
+    User user = restTemplate.getForObject(applicationProperties.getApplicationHandlerUrl(), User.class, applicationId);
+    return Optional.ofNullable(user).map(u -> UserMapper.mapToUserJson(u)).orElse(null);
   }
 }

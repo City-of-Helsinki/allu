@@ -1,22 +1,25 @@
 package fi.hel.allu.external.api.controller;
 
-import java.io.IOException;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import fi.hel.allu.common.domain.ContractInfo;
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.external.domain.ContractExt;
 import fi.hel.allu.external.domain.ContractSigningInfoExt;
+import fi.hel.allu.external.domain.HandlerExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.ContractService;
 import io.swagger.annotations.*;
 
@@ -67,6 +70,26 @@ public class PlacementContractController extends BaseApplicationController<Place
     byte[] bytes = contractService.getFinalContract(id);
     return returnPdfResponse(bytes);
   }
+
+  @ApiOperation(value = "Gets contract metadata for application with given ID",
+      authorizations = @Authorization(value ="api_key"),
+      response = ContractExt.class)
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Contract metadata retrieved successfully", response = ContractExt.class),
+      @ApiResponse(code = 404, message = "No contract found for given application", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}/contract/metadata", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<ContractExt> getContractMetadata(@PathVariable Integer id) {
+    applicationService.validateOwnedByExternalUser(id);
+    ContractInfo contractInfo = contractService.getContractInfo(id);
+    if (contractInfo == null) {
+      throw new NoSuchEntityException("contract.notFound");
+    }
+    HandlerExt handlerExt = applicationService.getHandler(id);
+    return ResponseEntity.ok(new ContractExt(handlerExt, contractInfo.getCreationTime()));
+  }
+
 
   @ApiOperation(value = "Approve contract",
       produces = "application/json",

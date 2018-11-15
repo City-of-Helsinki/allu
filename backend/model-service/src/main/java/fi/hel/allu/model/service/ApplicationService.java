@@ -505,4 +505,10 @@ public class ApplicationService {
   public Integer getReplacingApplicationId(int id) {
     return applicationDao.getReplacingApplicationId(id);
   }
+
+  @Transactional(readOnly = true)
+  public User getApplicationHandler(Integer applicationId) {
+    Integer handlerId = applicationDao.getApplicationHandlerId(applicationId);
+    return Optional.ofNullable(handlerId).flatMap(id -> userDao.findById(id)).orElse(null);
+  }
 }
