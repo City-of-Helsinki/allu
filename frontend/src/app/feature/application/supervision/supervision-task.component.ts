@@ -48,6 +48,7 @@ import {
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
 import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/date-reporting-actions';
 import {Location} from '@model/common/location';
+import {AreaRental} from '@model/application/area-rental/area-rental';
 
 @Component({
   selector: 'supervision-task',
@@ -249,7 +250,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
     const config = {
       ...SUPERVISION_APPROVAL_MODAL_CONFIG,
-      data: this.areRentalApprovalModalData(baseData)
+      data: this.areaRentalApprovalModalData(baseData)
     };
 
     return this.dialog.open(AreaRentalSupervisionApprovalModalComponent, config);
@@ -311,12 +312,13 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     };
   }
 
-  private areRentalApprovalModalData(baseData: SupervisionApprovalModalData): AreaRentalSupervisionApprovalModalData {
+  private areaRentalApprovalModalData(baseData: SupervisionApprovalModalData): AreaRentalSupervisionApprovalModalData {
     let reportedDate: Date;
     let comparedDate: Date;
 
     if (SupervisionTaskType.FINAL_SUPERVISION === baseData.taskType) {
-      reportedDate = baseData.application.endTime;
+      const extension = <AreaRental> baseData.application.extension;
+      reportedDate = extension.customerWorkFinished || baseData.application.endTime;
       comparedDate = baseData.application.endTime;
     }
 
