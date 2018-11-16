@@ -24,6 +24,7 @@ import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.SupervisionTask;
 
 import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 
 /**
  * The service class for supervision task operations
@@ -84,7 +85,7 @@ public class SupervisionTaskService {
   }
 
   @Transactional(readOnly = true)
-  public Page<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
+  public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     return supervisionTaskDao.search(searchCriteria, pageRequest);
   }
 

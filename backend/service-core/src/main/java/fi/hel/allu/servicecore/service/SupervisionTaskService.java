@@ -3,17 +3,13 @@ package fi.hel.allu.servicecore.service;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -25,8 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
@@ -140,18 +136,18 @@ public class SupervisionTaskService {
 
   public Page<SupervisionWorkItemJson> searchWorkItems(SupervisionTaskSearchCriteria searchCriteria,
       Pageable pageRequest) {
-    Page<SupervisionTask> result = search(searchCriteria, pageRequest);
+    Page<SupervisionWorkItem> result = search(searchCriteria, pageRequest);
     Page<SupervisionWorkItemJson> response = result.map(s -> toWorkItem(s));
     return response;
   }
 
-  public Page<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
-    ParameterizedTypeReference<RestResponsePage<SupervisionTask>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionTask>>() {
+  public Page<SupervisionWorkItem> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
+    ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionWorkItem>>() {
     };
     URI targetUri = PageRequestBuilder.fromUriString(applicationProperties.getSupervisionTaskSearchUrl(), pageRequest);
-    ResponseEntity<RestResponsePage<SupervisionTask>> response =
+    ResponseEntity<RestResponsePage<SupervisionWorkItem>> response =
         restTemplate.exchange(targetUri, HttpMethod.POST, new HttpEntity<>(searchCriteria), typeref);
-    final Page<SupervisionTask> responsePage = response.getBody();
+    final Page<SupervisionWorkItem> responsePage = response.getBody();
     return responsePage;
   }
 
@@ -178,11 +174,10 @@ public class SupervisionTaskService {
     return SupervisionTaskMapper.maptoJson(supervisionTasks, idToUser(supervisionTasks));
   }
 
-  private SupervisionWorkItemJson toWorkItem(SupervisionTask task) {
-    ApplicationJson application = applicationServiceComposer.findApplicationById(task.getApplicationId());
+  private SupervisionWorkItemJson toWorkItem(SupervisionWorkItem task) {
     UserJson owner = Optional.ofNullable(task.getOwnerId()).map(id -> userService.findUserById(id)).orElse(null);
     UserJson creator = Optional.ofNullable(task.getCreatorId()).map(id -> userService.findUserById(id)).orElse(null);
-    return SupervisionTaskMapper.mapToWorkItem(task, application, creator, owner);
+    return SupervisionTaskMapper.mapToWorkItem(task, creator, owner);
   }
 
   private Map<Integer, UserJson> idToUser(List<SupervisionTask> supervisionTasks) {

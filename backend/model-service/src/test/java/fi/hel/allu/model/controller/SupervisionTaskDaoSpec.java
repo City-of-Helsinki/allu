@@ -33,6 +33,7 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.TestCommon;
@@ -148,28 +149,8 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
 
-          List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria());
+          List<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria());
           assertEquals(2, result.size());
-        });
-
-        it("Sort by creationTime when empty criteria", () -> {
-          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION,
-              shortTermApp.getOwner());
-          supervisionTaskDao.insert(taskForOther);
-
-          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "creationTime"));
-          Page<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
-
-          assertEquals(2, result.getNumberOfElements());
-          assertFalse(
-              result.getContent().get(0).getCreationTime().isAfter(result.getContent().get(1).getCreationTime()));
-
-          pageRequest = new PageRequest(0, 10, new Sort(Direction.DESC, "creationTime"));
-          result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
-
-          assertEquals(2, result.getNumberOfElements());
-          assertFalse(
-              result.getContent().get(1).getCreationTime().isAfter(result.getContent().get(0).getCreationTime()));
         });
 
         it("Sort by type when empty criteria", () -> {
@@ -177,7 +158,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
               shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
           Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "type"));
-          Page<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
 
           assertEquals(2, result.getNumberOfElements());
           // Warranty ("Takuuvalvonta") should precede Supervision ("Valvonta"):
@@ -190,7 +171,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
               shortTermApp.getOwner());
           supervisionTaskDao.insert(taskForOther);
           Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "application.type"));
-          Page<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
 
           assertEquals(2, result.getNumberOfElements());
           // Short term rental ("Lyhytaikainen maanvuokraus") should precede
@@ -206,7 +187,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           applicationDao.updateStatus(shortTermApp.getId(), StatusType.CANCELLED);
           applicationDao.updateStatus(outdoorApp.getId(), StatusType.HANDLING);
           Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "application.status"));
-          Page<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+          Page<SupervisionWorkItem> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
 
           assertEquals(2, result.getNumberOfElements());
           // HANDLING ("Käsittelyssä") should precede CANCELLED ("Peruttu"):
@@ -220,9 +201,8 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
           search.setApplicationId(shortTermApp.getApplicationId());
-          List<SupervisionTask> result = supervisionTaskDao.search(search);
+          List<SupervisionWorkItem> result = supervisionTaskDao.search(search);
           assertEquals(1, result.size());
-          assertTaskEquals(inserted, result.get(0));
         });
 
         it("Find by task type", () -> {
@@ -271,7 +251,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
         });
 
         context("Paging tests", () -> {
-          final Variable<Page<SupervisionTask>> results = new Variable<>();
+          final Variable<Page<SupervisionWorkItem>> results = new Variable<>();
 
           beforeEach(() -> {
             for (int i = 0; i < 100; ++i) {
@@ -281,15 +261,12 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
               supervisionTaskDao.insert(task_i);
             }
             SupervisionTaskSearchCriteria searchCriteria = new SupervisionTaskSearchCriteria();
-            PageRequest pageRequest = new PageRequest(2, 15, Direction.ASC, "description");
+            PageRequest pageRequest = new PageRequest(2, 15, Direction.ASC, "type");
             results.set(supervisionTaskDao.search(searchCriteria, pageRequest));
           });
 
           it("Returns only 15 results when asked", () -> {
             assertEquals(15, results.get().getNumberOfElements());
-            for (int i = 0; i < 15; ++i) {
-              assertEquals(String.format("00 - Task %03d", i + 30), results.get().getContent().get(i).getDescription());
-            }
           });
 
           it("Returns the correct total amount of elements", () -> {

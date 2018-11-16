@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.model.service.SupervisionTaskService;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
@@ -74,7 +74,7 @@ public class SupervisionTaskController {
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
-  public ResponseEntity<Page<SupervisionTask>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria,
+  public ResponseEntity<Page<SupervisionWorkItem>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria,
       Pageable pageRequest) {
     return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
   }

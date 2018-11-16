@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.supervision.api.domain.SupervisionTaskSearchResult;
 
@@ -21,23 +23,27 @@ public class SupervisionTaskSearchResultMapper {
   @Autowired
   private UserService userService;
 
-  public SupervisionTaskSearchResult mapToSearchResult(SupervisionTask s) {
-    UserJson owner = Optional.ofNullable(s.getOwnerId()).map(id -> userService.findUserById(id)).orElse(null);
-    ApplicationStatusInfo applicationStatusInfo = applicationServiceComposer.getApplicationStatus(s.getApplicationId());
+  @Autowired
+  private SupervisionTaskService supervisionTaskService;
+
+  public SupervisionTaskSearchResult mapToSearchResult(SupervisionWorkItem item) {
+    UserJson owner = Optional.ofNullable(item.getOwnerId()).map(id -> userService.findUserById(id)).orElse(null);
+    ApplicationStatusInfo applicationStatusInfo = applicationServiceComposer.getApplicationStatus(item.getApplicationId());
+    SupervisionTaskJson task = supervisionTaskService.findById(item.getId());
     SupervisionTaskSearchResult result = new SupervisionTaskSearchResult();
     Optional.ofNullable(owner).ifPresent(o -> result.setOwnerRealName(o.getRealName()));
     Optional.ofNullable(owner).ifPresent(o -> result.setOwnerUserName(o.getUserName()));
     result.setApplicationIdentifier(applicationStatusInfo.getApplicationId());
     result.setApplicationStatus(applicationStatusInfo.getStatus());
-    result.setActualFinishingTime(s.getActualFinishingTime());
-    result.setApplicationId(s.getApplicationId());
-    result.setCreationTime(s.getCreationTime());
-    result.setDescription(s.getDescription());
-    result.setId(s.getId());
-    result.setPlannedFinishingTime(s.getPlannedFinishingTime());
-    result.setResult(s.getResult());
-    result.setStatus(s.getStatus());
-    result.setType(s.getType());
+    result.setActualFinishingTime(task.getActualFinishingTime());
+    result.setApplicationId(task.getApplicationId());
+    result.setCreationTime(task.getCreationTime());
+    result.setDescription(task.getDescription());
+    result.setId(task.getId());
+    result.setPlannedFinishingTime(task.getPlannedFinishingTime());
+    result.setResult(task.getResult());
+    result.setStatus(task.getStatus());
+    result.setType(task.getType());
     return result;
   }
 

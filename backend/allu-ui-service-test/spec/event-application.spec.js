@@ -209,7 +209,7 @@ describe('Event application', () => {
             },
             'underpass': false,
             'postalAddress': {
-              'streetAddress': null,
+              'streetAddress': 'Hernesaarenkatu 9-11',
               'postalCode': null,
               'city': null
             }
@@ -411,7 +411,7 @@ describe('Event application', () => {
             },
             'underpass': false,
             'postalAddress': {
-              'streetAddress': null,
+              'streetAddress': 'Tervasaarenkannas 3',
               'postalCode': null,
               'city': null
             }

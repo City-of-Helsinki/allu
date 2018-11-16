@@ -1,7 +1,7 @@
 package fi.hel.allu.servicecore.mapper;
 
 import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
@@ -49,22 +49,18 @@ public class SupervisionTaskMapper {
     );
   }
 
-  public static SupervisionWorkItemJson mapToWorkItem(SupervisionTask task, ApplicationJson application,
+  public static SupervisionWorkItemJson mapToWorkItem(SupervisionWorkItem task,
                                                       UserJson creator, UserJson owner) {
     SupervisionWorkItemJson workItem = new SupervisionWorkItemJson();
     workItem.setId(task.getId());
     workItem.setType(task.getType());
     workItem.setApplicationId(task.getApplicationId());
-    workItem.setApplicationIdText(application.getApplicationId());
-    workItem.setApplicationStatus(application.getStatus());
+    workItem.setApplicationIdText(task.getApplicationIdText());
+    workItem.setApplicationStatus(task.getApplicationStatus());
     workItem.setCreator(creator);
     workItem.setPlannedFinishingTime(task.getPlannedFinishingTime());
-    application.getLocations().stream().findFirst().ifPresent(loc -> {
-      workItem.setPostalAddress(loc.getPostalAddress());
-      workItem.setAddress(loc.getAddress());
-    });
-    Optional.ofNullable(application.getProject())
-        .ifPresent(project -> workItem.setProjectName(project.getName()));
+    workItem.setAddress(task.getAddress());
+    workItem.setProjectName(task.getProjectName());
     workItem.setOwner(owner);
     return workItem;
   }

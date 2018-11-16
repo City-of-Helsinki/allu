@@ -168,6 +168,9 @@ describe('Area rental application', () => {
           'area': 1875.8281250381842,
           'areaOverride': null,
           'postalAddress': {
+            'streetAddress': 'Mannerheimintie 30',
+            'postalCode': '00100',
+            'city': 'Helsinki'
           },
           'fixedLocationIds': [
           ],
@@ -261,8 +264,8 @@ describe('Area rental application', () => {
           'area': 848.6249999612337,
           'areaOverride': null,
           'postalAddress': {
-            'streetAddress': null,
-            'postalCode': null,
+            'streetAddress': 'Arkadiankatu 1',
+            'postalCode': '00101',
             'city': null
           },
           'fixedLocationIds': [],

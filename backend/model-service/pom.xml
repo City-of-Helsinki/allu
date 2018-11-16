@@ -300,6 +300,21 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>supervision_task_with_address</table>
+                            <column>creation_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task_with_address</table>
+                            <column>planned_finishing_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task_with_address</table>
+                            <column>actual_finishing_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>invoice</table>
                             <column>invoicable_time</column>
                             <type>java.time.ZonedDateTime</type>
@@ -503,6 +518,16 @@
                         </typeMapping>
                         <typeMapping>
                             <table>supervision_task</table>
+                            <column>status</column>
+                            <type>fi.hel.allu.model.querydsl.StringToSupervisionTaskStatusType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task_with_address</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToSupervisionTaskType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task_with_address</table>
                             <column>status</column>
                             <type>fi.hel.allu.model.querydsl.StringToSupervisionTaskStatusType</type>
                         </typeMapping>
