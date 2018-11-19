@@ -1,13 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.core.types.Projections.bean;
-import static com.querydsl.sql.SQLExpressions.select;
-import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QChangeHistory.changeHistory;
-import static fi.hel.allu.QFieldChange.fieldChange;
-
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +24,18 @@ import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.FieldChange;
 
+import static com.querydsl.core.types.Projections.bean;
+import static com.querydsl.sql.SQLExpressions.select;
+import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QChangeHistory.changeHistory;
+import static fi.hel.allu.QFieldChange.fieldChange;
+
 /**
  * The DAO class for handling application history
  */
 @Repository
 public class HistoryDao {
+
   @Autowired
   private SQLQueryFactory queryFactory;
 
@@ -191,26 +190,62 @@ public class HistoryDao {
 
   @Transactional(readOnly = true)
   public Map<Integer, List<ChangeHistoryItem>> getApplicationStatusChangesForExternalOwner(Integer externalOwnerId, ZonedDateTime eventsAfter,
-      List<Integer> includedApplicationIds) {
+      List<Integer> includedExternalApplicationIds) {
     QApplication application = QApplication.application;
+
+    final QBean<ExternalApplicationId> applicationIdBean = bean(ExternalApplicationId.class, application.applicationId, application.externalApplicationId);
+
     BooleanBuilder builder = new BooleanBuilder();
     builder.and(application.externalOwnerId.eq(externalOwnerId));
     builder.and(changeHistory.changeSpecifier.isNotNull());
     builder.and(changeHistory.changeType.eq(ChangeType.STATUS_CHANGED));
+
     if (eventsAfter != null) {
       builder.and(changeHistory.changeTime.after(eventsAfter));
     }
-    if (!includedApplicationIds.isEmpty()) {
-      builder.and(application.id.in(includedApplicationIds));
+    if (!includedExternalApplicationIds.isEmpty()) {
+      builder.and(application.externalApplicationId.in(includedExternalApplicationIds));
     }
-    Map<Integer, List<ChangeHistoryItem>> result = queryFactory.select(changeHistory.all())
+    List<Tuple> result = queryFactory.select(changeHistoryBean, applicationIdBean)
         .from(changeHistory)
         .join(application).on(application.id.eq(changeHistory.applicationId))
         .where(builder)
-        .transform(groupBy(changeHistory.applicationId).as(list(changeHistoryBean)));
-    return result;
+        .fetch();
+    return result.stream()
+        .collect(Collectors.groupingBy(t -> t.get(1, ExternalApplicationId.class).getExternalApplicationId(),
+                 Collectors.mapping(t -> toChangeHistoryWithApplicationId(t), Collectors.toList())));
+   }
 
-
+  private ChangeHistoryItem toChangeHistoryWithApplicationId(Tuple tuple) {
+    String applicationId = tuple.get(1, ExternalApplicationId.class).getApplicationId();
+    ChangeHistoryItem item = tuple.get(0, ChangeHistoryItem.class);
+    item.setInfo(new ChangeHistoryItemInfo(applicationId));
+    return item;
   }
+
+  public static class ExternalApplicationId {
+    private Integer externalApplicationId;
+    private String applicationId;
+
+    public ExternalApplicationId() {
+    }
+
+    public Integer getExternalApplicationId() {
+      return externalApplicationId;
+    }
+
+    public void setExternalApplicationId(Integer externalApplicationId) {
+      this.externalApplicationId = externalApplicationId;
+    }
+
+    public String getApplicationId() {
+      return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+      this.applicationId = applicationId;
+    }
+  }
+
 
 }

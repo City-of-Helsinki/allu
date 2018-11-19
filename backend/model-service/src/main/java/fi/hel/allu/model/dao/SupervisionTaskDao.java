@@ -275,7 +275,7 @@ public class SupervisionTaskDao {
 
   @Transactional(readOnly = true)
   public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,
-      ZonedDateTime eventsAfter, List<Integer> includedApplicationIds) {
+      ZonedDateTime eventsAfter, List<Integer> includedExternalApplicationIds) {
     QApplication application = QApplication.application;
     BooleanBuilder builder = new BooleanBuilder();
     builder.and(application.externalOwnerId.eq(externalOwnerId));
@@ -283,14 +283,14 @@ public class SupervisionTaskDao {
     if (eventsAfter != null) {
       builder.and(supervisionTask.actualFinishingTime.after(eventsAfter));
     }
-    if (!includedApplicationIds.isEmpty()) {
-      builder.and(application.id.in(includedApplicationIds));
+    if (!includedExternalApplicationIds.isEmpty()) {
+      builder.and(application.externalApplicationId.in(includedExternalApplicationIds));
     }
     Map<Integer, List<SupervisionTask>> result = queryFactory.select(supervisionTask.all())
         .from(supervisionTask)
         .join(application).on(application.id.eq(supervisionTask.applicationId))
         .where(builder)
-        .transform(groupBy(supervisionTask.applicationId).as(list(supervisionTaskBean)));
+        .transform(groupBy(application.externalApplicationId).as(list(supervisionTaskBean)));
     return result;
 
   }

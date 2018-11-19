@@ -75,8 +75,8 @@ public class ApplicationHistoryController {
    */
   @RequestMapping(value = "/externalowner/{externalownerid}/applications/history", method = RequestMethod.POST)
   public ResponseEntity<Map<Integer, List<ChangeHistoryItem>>> getApplicationStatusChangesForExternalOwner(
-      @PathVariable(value = "externalownerid") Integer externalOwnerId, @RequestParam(value = "eventsafter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime eventsAfter, @RequestBody List<Integer> includedApplicationIds) {
-    Map<Integer, List<ChangeHistoryItem>> result = historyDao.getApplicationStatusChangesForExternalOwner(externalOwnerId, eventsAfter, includedApplicationIds);
+      @PathVariable(value = "externalownerid") Integer externalOwnerId, @RequestParam(value = "eventsafter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime eventsAfter, @RequestBody List<Integer> includedExternalApplicationIds) {
+    Map<Integer, List<ChangeHistoryItem>> result = historyDao.getApplicationStatusChangesForExternalOwner(externalOwnerId, eventsAfter, includedExternalApplicationIds);
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 

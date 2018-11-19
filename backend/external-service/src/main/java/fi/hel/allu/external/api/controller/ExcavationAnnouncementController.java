@@ -59,9 +59,10 @@ public class ExcavationAnnouncementController
   public ResponseEntity<Void> reportWorkFinished(
       @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
       @ApiParam(value = "Work finished date") @RequestBody @NotNull ZonedDateTime workFinishedDate) {
-    applicationService.validateOwnedByExternalUser(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), workFinishedDate, null);
-    dateReportingService.reportCustomerWorkFinished(id, dateReport);
+    dateReportingService.reportCustomerWorkFinished(applicationId, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -75,9 +76,10 @@ public class ExcavationAnnouncementController
   public ResponseEntity<Void> reportOperationalCondition(
       @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
       @ApiParam(value = "Operational condition date") @RequestBody @NotNull ZonedDateTime operationalConditionDate) {
-    applicationService.validateOwnedByExternalUser(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), operationalConditionDate, null);
-    dateReportingService.reportCustomerOperationalCondition(id, dateReport);
+    dateReportingService.reportCustomerOperationalCondition(applicationId, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -91,10 +93,11 @@ public class ExcavationAnnouncementController
   public ResponseEntity<Void> reportValidityPeriod(
       @ApiParam(value = "Id of the application") @PathVariable("id") Integer id,
       @ApiParam(value = "Work finished date") @RequestBody @Valid ValidityPeriodExt validityPeriod) {
-    applicationService.validateOwnedByExternalUser(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
     ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(),
         validityPeriod.getValidityPeriodStart(), validityPeriod.getValidityPeriodEnd());
-    dateReportingService.reportCustomerValidity(id, dateReport);
+    dateReportingService.reportCustomerValidity(applicationId, dateReport);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -109,8 +112,9 @@ public class ExcavationAnnouncementController
   @RequestMapping(value = "/{id}/approval/operationalcondition", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getOperationalConditionApprovalDocument(@PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(id, ApprovalDocumentType.OPERATIONAL_CONDITION);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.OPERATIONAL_CONDITION);
     return returnPdfResponse(bytes);
   }
 
@@ -125,8 +129,9 @@ public class ExcavationAnnouncementController
   @RequestMapping(value = "/{id}/approval/workfinished", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getWorkFinishedApprovalDocument(@PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(id, ApprovalDocumentType.WORK_FINISHED);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED);
     return returnPdfResponse(bytes);
   }
 
@@ -141,8 +146,9 @@ public class ExcavationAnnouncementController
   @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    byte[] bytes = decisionService.getFinalDecision(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    byte[] bytes = decisionService.getFinalDecision(applicationId);
     return returnPdfResponse(bytes);
   }
 }

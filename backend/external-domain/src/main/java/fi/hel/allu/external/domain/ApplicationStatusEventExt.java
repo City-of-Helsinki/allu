@@ -11,15 +11,15 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
 
   private ZonedDateTime eventTime;
   private StatusType newStatus;
-  private Integer replacingApplicationId;
+  private String applicationIdentifier;
 
   public ApplicationStatusEventExt() {
   }
 
-  public ApplicationStatusEventExt(ZonedDateTime eventTime, StatusType newStatus, Integer replacingApplicationId) {
+  public ApplicationStatusEventExt(ZonedDateTime eventTime, StatusType newStatus, String applicationIdentifier) {
     this.eventTime = eventTime;
     this.newStatus = newStatus;
-    this.replacingApplicationId = replacingApplicationId;
+    this.applicationIdentifier = applicationIdentifier;
   }
 
   @ApiModelProperty(value = "Time of the application event")
@@ -31,22 +31,22 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
     this.eventTime = eventTime;
   }
 
+  @ApiModelProperty(value = "Status of the application after the event")
   public StatusType getNewStatus() {
     return newStatus;
   }
 
-  @ApiModelProperty(value = "Status of the application after the event")
   public void setNewStatus(StatusType newStatus) {
     this.newStatus = newStatus;
   }
 
-  @ApiModelProperty(value = "ID of the replacing application ID if status is changed to REPLACED. Otherwise null.")
-  public Integer getReplacingApplicationId() {
-    return replacingApplicationId;
+  @ApiModelProperty(value = "Application identifier (hakemustunniste)")
+  public String getApplicationIdentifier() {
+    return applicationIdentifier;
   }
 
-  public void setReplacingApplicationId(Integer replacingApplicationId) {
-    this.replacingApplicationId = replacingApplicationId;
+  public void setApplicationIdentifier(String applicationIdentifier) {
+    this.applicationIdentifier = applicationIdentifier;
   }
 
   @Override
@@ -54,4 +54,5 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
     int result = this.getEventTime().compareTo(o.getEventTime());
     return result == 0 ? this.newStatus.name().compareTo(o.newStatus.name()) : result;
   }
+
 }

@@ -108,8 +108,8 @@ public class SupervisionTaskController {
 
   @RequestMapping(value = "/externalowner/{externalownerid}/history", method = RequestMethod.POST)
   public ResponseEntity<Map<Integer, List<SupervisionTask>>> getSupervisionTaskHistoryForExternalOwner(
-      @PathVariable(value = "externalownerid") Integer externalOwnerId, @RequestParam(value = "eventsafter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime eventsAfter, @RequestBody List<Integer> includedApplicationIds) {
-    Map<Integer, List<SupervisionTask>> result = supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedApplicationIds);
+      @PathVariable(value = "externalownerid") Integer externalOwnerId, @RequestParam(value = "eventsafter") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime eventsAfter, @RequestBody List<Integer> includedExternalApplicationIds) {
+    Map<Integer, List<SupervisionTask>> result = supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedExternalApplicationIds);
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 

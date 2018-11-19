@@ -107,6 +107,10 @@ public class ApplicationStatusChangeHandler {
 
   protected void handleCancelledStatus(Application application) {
     supervisionTaskService.cancelOpenTasksOfApplication(application.getId());
+    if (application.getReplacesApplicationId() != null) {
+      // If replacing application cancelled, clear replacing application ID from replaced application
+      applicationDao.setApplicationReplaced(application.getReplacesApplicationId(), null);
+    }
   }
 
   protected void handleReplacedApplicationOnDecision(Application application, Integer userId) {

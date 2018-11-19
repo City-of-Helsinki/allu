@@ -73,8 +73,9 @@ public abstract class BaseApplicationController<T extends ApplicationExt, M exte
                                         @PathVariable Integer id,
                                         @ApiParam(value = "Application data", required = true)
                                         @Valid @RequestBody T application) throws JsonProcessingException {
-    applicationService.validateFullUpdateAllowed(id);
-    applicationService.validateOwnedByExternalUser(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateFullUpdateAllowed(applicationId);
+    applicationService.validateOwnedByExternalUser(applicationId);
     return new ResponseEntity<>(applicationService.updateApplication(id, application, getMapper()), HttpStatus.OK);
   }
 
@@ -91,7 +92,7 @@ public abstract class BaseApplicationController<T extends ApplicationExt, M exte
   public ResponseEntity<Void> addResponse(@ApiParam(value = "Id of the application") @PathVariable("applicationid") Integer applicationId,
                                           @ApiParam(value = "Id of the information request") @PathVariable("requestid") Integer requestId,
                                           @ApiParam(value = "Content of the response") @RequestBody @Valid InformationRequestResponseExt<T> response) throws JsonProcessingException {
-    applicationService.addInformationRequestResponse(applicationId, requestId, response, getMapper());
+    applicationService.addInformationRequestResponse(applicationService.getApplicationIdForExternalId(applicationId), requestId, response, getMapper());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

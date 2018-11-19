@@ -177,7 +177,7 @@ public class SupervisionTaskService {
 
   @Transactional(readOnly = true)
   public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,
-      ZonedDateTime eventsAfter, List<Integer> includedApplicationIds) {
-    return supervisionTaskDao.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedApplicationIds);
+      ZonedDateTime eventsAfter, List<Integer> includedExternalApplicationIds) {
+    return supervisionTaskDao.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedExternalApplicationIds);
   }
 }

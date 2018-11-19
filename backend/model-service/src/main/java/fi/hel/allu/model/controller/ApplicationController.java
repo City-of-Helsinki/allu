@@ -365,6 +365,12 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.getApplicationExternalOwner(id), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/external/{externalid}/applicationid", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getApplicationIdForExternalId(@PathVariable(value = "externalid") Integer externalId) {
+    return new ResponseEntity<>(applicationService.getApplicationIdForExternalId(externalId), HttpStatus.OK);
+  }
+
+
   @RequestMapping(value = "/{id}/handler", method = RequestMethod.GET)
   public ResponseEntity<User> getApplicationHandler(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationHandler(id), HttpStatus.OK);

@@ -85,19 +85,8 @@ public class ApplicationServiceExt {
   private List<ApplicationStatusEventExt> toStatusEvents(Integer applicationId, List<ChangeHistoryItem> items) {
     return Optional.ofNullable(items).orElse(Collections.emptyList())
             .stream()
-            .map(i -> new ApplicationStatusEventExt(i.getChangeTime(), StatusType.valueOf(i.getChangeSpecifier()), getReplacingApplicationId(i, applicationId)))
+            .map(i -> new ApplicationStatusEventExt(i.getChangeTime(), StatusType.valueOf(i.getChangeSpecifier()), i.getInfo().getApplicationId()))
             .collect(Collectors.toList());
-  }
-
-  private Integer getReplacingApplicationId(ChangeHistoryItem item, Integer applicationId) {
-    if (StatusType.valueOf(item.getChangeSpecifier()) == StatusType.REPLACED) {
-      return getReplacingApplicationId(applicationId);
-    }
-    return null;
-  }
-
-  private Integer getReplacingApplicationId(Integer applicationId) {
-    return applicationServiceComposer.getReplacingApplicationId(applicationId);
   }
 
   public <T extends ApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
@@ -116,6 +105,10 @@ public class ApplicationServiceExt {
     if (status != StatusType.PENDING_CLIENT) {
       throw new IllegalOperationException("application.ext.notpending");
     }
+  }
+
+  public Integer getApplicationIdForExternalId(Integer externalId) {
+    return applicationServiceComposer.getApplicationIdForExternalId(externalId);
   }
 
   public void validateOwnedByExternalUser(Integer applicationId) {

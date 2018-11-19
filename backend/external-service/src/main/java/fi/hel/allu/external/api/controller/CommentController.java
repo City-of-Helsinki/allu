@@ -37,7 +37,8 @@ public class CommentController {
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Integer> addComment(@ApiParam(value = "Id of the application to add comment for.") @PathVariable Integer id,
                                             @ApiParam(value = "Comments to add") @RequestBody @Valid CommentExt comment) {
-    applicationService.validateOwnedByExternalUser(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
     return new ResponseEntity<>(commentService.addComment(id, comment), HttpStatus.OK);
   }
 

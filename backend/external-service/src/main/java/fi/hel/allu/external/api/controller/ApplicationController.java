@@ -29,8 +29,9 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}/cancelled", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> cancelApplication(@ApiParam(value = "Id of the application to cancel.") @PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    applicationService.cancelApplication(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    applicationService.cancelApplication(applicationId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

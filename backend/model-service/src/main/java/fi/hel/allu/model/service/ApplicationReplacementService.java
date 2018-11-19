@@ -159,6 +159,9 @@ public class ApplicationReplacementService {
     application.setDecisionDistributionList(applicationToReplace.getDecisionDistributionList());
     application.setKindsWithSpecifiers(applicationToReplace.getKindsWithSpecifiers());
     application.setReplacesApplicationId(applicationToReplace.getId());
+    application.setExternalOwnerId(applicationToReplace.getExternalOwnerId());
+    application.setExternalApplicationId(applicationToReplace.getExternalApplicationId());
+
     return application;
   }
 

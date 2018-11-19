@@ -239,14 +239,14 @@ public class ApplicationHistoryService {
   }
 
   public Map<Integer, List<ChangeHistoryItem>> getExternalOwnerApplicationHistory(Integer externalOwnerId, ZonedDateTime eventsAfter,
-      List<Integer> includedApplicationIds) {
+      List<Integer> includedExternalApplicationIds) {
     Map<String, Integer> uriParams = new HashMap<>();
     uriParams.put("externalownerid", externalOwnerId);
     URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getExternalOwnerApplicationHistoryUrl())
         .queryParam("eventsafter", eventsAfter)
         .buildAndExpand(uriParams).toUri();
     ParameterizedTypeReference<Map<Integer, List<ChangeHistoryItem>>> typeRef = new ParameterizedTypeReference<Map<Integer, List<ChangeHistoryItem>>>() {};
-    return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(includedApplicationIds), typeRef).getBody();
+    return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(includedExternalApplicationIds), typeRef).getBody();
   }
 
 }

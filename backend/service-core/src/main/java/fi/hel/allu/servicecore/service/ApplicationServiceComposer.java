@@ -503,15 +503,15 @@ public class ApplicationServiceComposer {
     return customerService.findCustomerById(id);
   }
 
-  public Integer getReplacingApplicationId(Integer applicationId) {
-    return applicationService.getReplacingApplicationId(applicationId);
-  }
-
   public UserJson getApplicationHandler(Integer applicationId) {
     return applicationService.getApplicationHandler(applicationId);
   }
 
   public UserJson getApplicationDecisionMaker(Integer applicationId) {
     return applicationService.getApplicationDecisionMaker(applicationId);
+  }
+
+  public Integer getApplicationIdForExternalId(Integer externalId) {
+    return applicationService.getApplicationIdForExternalId(externalId);
   }
 }

@@ -48,8 +48,9 @@ public class PlacementContractController extends BaseApplicationController<Place
   @RequestMapping(value = "/{id}/contract/proposal", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getContractProposal(@PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    byte[] bytes = contractService.getContractProposal(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    byte[] bytes = contractService.getContractProposal(applicationId);
     return returnPdfResponse(bytes);
   }
 
@@ -64,8 +65,9 @@ public class PlacementContractController extends BaseApplicationController<Place
   @RequestMapping(value = "/{id}/contract/final", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<byte[]> getFinalContract(@PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    byte[] bytes = contractService.getFinalContract(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    byte[] bytes = contractService.getFinalContract(applicationId);
     return returnPdfResponse(bytes);
   }
 
@@ -79,14 +81,16 @@ public class PlacementContractController extends BaseApplicationController<Place
   @RequestMapping(value = "/{id}/contract/metadata", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<ContractExt> getContractMetadata(@PathVariable Integer id) {
-    applicationService.validateOwnedByExternalUser(id);
-    ContractInfo contractInfo = contractService.getContractInfo(id);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    ContractInfo contractInfo = contractService.getContractInfo(applicationId);
     if (contractInfo == null) {
       throw new NoSuchEntityException("contract.notFound");
     }
-    UserExt handler = applicationService.getHandler(id);
+    UserExt handler = applicationService.getHandler(applicationId);
     UserExt decisionMaker = contractInfo.getStatus() == ContractStatusType.FINAL ? applicationService.getDecisionMaker(id) : null;
     return ResponseEntity.ok(new ContractExt(handler, decisionMaker, contractInfo.getStatus(), contractInfo.getCreationTime()));
+
   }
 
 
@@ -104,8 +108,9 @@ public class PlacementContractController extends BaseApplicationController<Place
   public ResponseEntity<Void> approve(@ApiParam(value = "Application ID of the contract") @PathVariable Integer id,
                                       @ApiParam(value = "Signing information")
                                       @Valid @RequestBody ContractSigningInfoExt signingInfo) {
-    applicationService.validateOwnedByExternalUser(id);
-    contractService.approveContract(id, signingInfo.getSigner(), signingInfo.getSigningTime());
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    contractService.approveContract(applicationId, signingInfo.getSigner(), signingInfo.getSigningTime());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -121,8 +126,9 @@ public class PlacementContractController extends BaseApplicationController<Place
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<Void> reject(@ApiParam(value = "Application ID of the contract") @PathVariable Integer id,
                                      @ApiParam(value = "Reject reason", required = true) @NotBlank(message = "{contract.rejectreason}") @RequestBody String rejectReason) {
-    applicationService.validateOwnedByExternalUser(id);
-    contractService.rejectContractProposal(id, rejectReason);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    contractService.rejectContractProposal(applicationId, rejectReason);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

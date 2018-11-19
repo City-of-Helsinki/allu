@@ -332,10 +332,6 @@ public class ApplicationService {
     return restTemplate.getForObject(applicationProperties.getApplicationStatusUrl(), ApplicationStatusInfo.class, applicationId);
   }
 
-  public Integer getReplacingApplicationId(Integer applicationId) {
-    return restTemplate.getForObject(applicationProperties.getReplacingApplicationIdUrl(), Integer.class, applicationId);
-  }
-
   public Integer getApplicationExternalOwner(Integer applicationId) {
     return restTemplate.getForObject(applicationProperties.getApplicationExternalOwnerUrl(), Integer.class, applicationId);
   }
@@ -438,5 +434,10 @@ public class ApplicationService {
   private UserJson getApplicationUser(String url, Integer applicationId) {
     User user = restTemplate.getForObject(url, User.class, applicationId);
     return Optional.ofNullable(user).map(u -> UserMapper.mapToUserJson(u)).orElse(null);
+  }
+
+
+  public Integer getApplicationIdForExternalId(Integer externalId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationIdForExternalIdUrl(), Integer.class, externalId);
   }
 }

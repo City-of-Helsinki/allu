@@ -78,6 +78,7 @@ public class Application {
   private StatusType targetState;
 
   private ZonedDateTime receivedTime;
+  private Integer externalApplicationId;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -552,5 +553,13 @@ public class Application {
 
   public void setReceivedTime(ZonedDateTime receivedTime) {
     this.receivedTime = receivedTime;
+  }
+
+  public Integer getExternalApplicationId() {
+    return externalApplicationId;
+  }
+
+  public void setExternalApplicationId(Integer externalApplicationId) {
+    this.externalApplicationId = externalApplicationId;
   }
 }

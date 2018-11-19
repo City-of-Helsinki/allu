@@ -325,19 +325,18 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/status");
   }
 
-  public String getReplacingApplicationIdUrl() {
-    return getModelServiceUrl("/applications/{id}/replacing");
-  }
-
-
   public String getApplicationStatusReturnUrl() {
     return getModelServiceUrl("/applications/{id}/status/return");
   }
 
-
   public String getApplicationExternalOwnerUrl() {
     return getModelServiceUrl("/applications/{id}/externalowner");
   }
+
+  public String getApplicationIdForExternalIdUrl() {
+    return getModelServiceUrl("/applications/external/{externalid}/applicationid");
+  }
+
 
   public String getApplicationHandlerUrl() {
     return getModelServiceUrl("/applications/{id}/handler");

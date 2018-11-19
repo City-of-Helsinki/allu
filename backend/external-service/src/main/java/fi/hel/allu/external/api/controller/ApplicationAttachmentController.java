@@ -37,8 +37,9 @@ public class ApplicationAttachmentController {
   public ResponseEntity<Void> create(@ApiParam(value = "Application ID to add attachment for") @PathVariable Integer id,
                                      @ApiParam(value = "Attachment info in JSON", required = true) @Valid @RequestPart(value="metadata",required=true) AttachmentInfoExt metadata,
                                      @ApiParam(value = "Attachment data", required = true) @RequestPart(value="file", required=true) MultipartFile file ) throws IOException {
-    applicationService.validateOwnedByExternalUser(id);
-    applicationService.addAttachment(id, metadata, file);
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    applicationService.addAttachment(applicationId, metadata, file);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

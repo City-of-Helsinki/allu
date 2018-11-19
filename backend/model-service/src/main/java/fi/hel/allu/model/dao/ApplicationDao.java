@@ -56,7 +56,8 @@ public class ApplicationDao {
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
           application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
           application.invoiced, application.clientApplicationData, application.applicationId,
-          application.externalOwnerId, application.invoicingChanged, application.targetState);
+          application.externalOwnerId, application.invoicingChanged, application.targetState,
+          application.externalApplicationId);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
@@ -267,6 +268,7 @@ public class ApplicationDao {
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
+    setExternalApplicationId(appl, id);
     insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
@@ -274,6 +276,12 @@ public class ApplicationDao {
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
     return populateTags(application);
+  }
+
+  protected void setExternalApplicationId(Application appl, Integer id) {
+    if (appl.getExternalOwnerId() != null && appl.getExternalApplicationId() == null) {
+      queryFactory.update(application).set(application.externalApplicationId, id).where(application.id.eq(id)).execute();
+    }
   }
 
   /**
@@ -649,7 +657,7 @@ public class ApplicationDao {
     attachmentDao.copyApplicationAttachments(copyFromApplicationId, copyToApplicationId);
   }
 
-  public void setApplicationReplaced(int replacedApplicationId, int replacingApplicationId) {
+  public void setApplicationReplaced(int replacedApplicationId, Integer replacingApplicationId) {
     queryFactory
         .update(application)
         .set(application.replacedByApplicationId, replacingApplicationId)
@@ -894,6 +902,16 @@ public class ApplicationDao {
         .select(application.decisionMaker)
         .from(application)
         .where(application.id.eq(applicationId))
+        .fetchOne();
+  }
+
+  @Transactional(readOnly = true)
+  public Integer getApplicationIdForExternalId(Integer externalId) {
+    // Return latest application ID for external ID i.e. the one that is not replaced
+    return queryFactory
+        .select(application.id)
+        .from(application)
+        .where(application.externalApplicationId.eq(externalId), application.replacedByApplicationId.isNull(), application.status.ne(StatusType.REPLACED))
         .fetchOne();
   }
 }

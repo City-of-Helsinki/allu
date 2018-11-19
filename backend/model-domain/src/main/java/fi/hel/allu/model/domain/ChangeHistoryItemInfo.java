@@ -9,6 +9,10 @@ public class ChangeHistoryItemInfo {
   public ChangeHistoryItemInfo() {
   }
 
+  public ChangeHistoryItemInfo(String applicationIdentifier) {
+    this.applicationId = applicationIdentifier;
+  }
+
   public ChangeHistoryItemInfo(Integer id) {
     this.id = id;
   }
