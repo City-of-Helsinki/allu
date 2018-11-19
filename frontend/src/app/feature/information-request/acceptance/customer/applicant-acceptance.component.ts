@@ -12,6 +12,7 @@ import * as fromCustomerSearch from '@feature/customerregistry/reducers';
 import {Observable} from 'rxjs/index';
 import {NumberUtil} from '@util/number.util';
 import {LoadByCustomer, LoadByCustomerSuccess} from '@feature/customerregistry/actions/contact-search-actions';
+import {MatDialog} from '@angular/material';
 
 @Component({
   selector: 'applicant-acceptance',
@@ -24,8 +25,8 @@ export class ApplicantAcceptanceComponent extends CustomerAcceptanceComponent {
   protected actionTargetType = ActionTargetType.Applicant;
   private useForInvoicingCtrl: FormControl;
 
-  constructor(fb: FormBuilder, store: Store<fromRoot.State>) {
-    super(fb, store);
+  constructor(fb: FormBuilder, store: Store<fromRoot.State>, dialog: MatDialog) {
+    super(fb, store, dialog);
   }
 
   init(): void {

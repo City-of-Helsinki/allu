@@ -35,7 +35,7 @@
   <div class="right-controls">
     <p class="acceptance-info" *ngIf="!readonly">
       <button
-        *ngIf="referenceCustomerSelected"
+        *ngIf="showCreateNew | async"
         type="button"
         mat-raised-button
         color="primary"

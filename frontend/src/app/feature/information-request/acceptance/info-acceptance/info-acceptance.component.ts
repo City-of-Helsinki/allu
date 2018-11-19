@@ -34,18 +34,28 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
+  selectAllOld(): void {
+    this.oldValuesSelect.selectAll();
+  }
+
+  selectAllNew(): void {
+    this.newValuesSelect.selectAll();
+  }
+
   onOldValuesSelected(fields: string[]): void {
     fields.forEach(f => {
-      this.form.get(f).patchValue(this.oldValues[f]);
+      this.form.get(f).patchValue(this.oldValues[f], {emitEvent: false});
       this.newValuesSelect.deselect(f);
     });
+    this.form.updateValueAndValidity();
   }
 
   onNewValuesSelected(fields: string[] = []): void {
     fields.forEach(f => {
-      this.form.get(f).patchValue(this.newValues[f]);
+      this.form.get(f).patchValue(this.newValues[f], {emitEvent: false});
       this.oldValuesSelect.deselect(f);
     });
+    this.form.updateValueAndValidity();
   }
 
   protected initSelectionForm(): void {

@@ -5,4 +5,8 @@
   .mat-list-option:focus {
     outline-color: mat-color($primary, 100);
   }
+
+  .mat-list.striped .mat-list-item:nth-child(odd) {
+    background: mat-color($primary, 50);
+  }
 }

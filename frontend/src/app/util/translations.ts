@@ -679,7 +679,7 @@ export const translations = {
     }
   },
   customer: {
-    newCustomer: 'Uusi asiakas',
+    newCustomer: 'Luo uusi asiakas',
     nameLabel: 'Nimi',
     registryKey: 'Tunniste',
     email: 'Sähköposti',

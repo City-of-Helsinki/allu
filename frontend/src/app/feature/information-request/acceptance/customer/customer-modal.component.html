@@ -1,0 +1,55 @@
+<h1 mat-dialog-title>
+  {{'customer.newCustomer' | translation}}
+</h1>
+<div mat-dialog-content>
+  <mat-list dense class="striped">
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'customer.nameLabel' | translation}}</div>
+      <div class="info-row-item">{{customer.name}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'customer.registryKey' | translation}}</div>
+      <div class="info-row-item">{{customer.registryKey}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{['customer.type', customer.type, 'ovt'] | translation}}</div>
+      <div class="info-row-item">{{customer.ovt}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{['customer.type', customer.type, 'invoicingOperator'] | translation}}</div>
+      <div class="info-row-item">{{customer.invoicingOperator}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'postalAddress.streetAddress' | translation}}</div>
+      <div class="info-row-item">{{customer.postalAddress.streetAddress}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'postalAddress.postalCode' | translation}}</div>
+      <div class="info-row-item">{{customer.postalAddress.postalCode}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'postalAddress.city' | translation}}</div>
+      <div class="info-row-item">{{customer.postalAddress.city}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'customer.email' | translation}}</div>
+      <div class="info-row-item">{{customer.email}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'customer.phone' | translation}}</div>
+      <div class="info-row-item">{{customer.phone}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'customer.country' | translation}}</div>
+      <div class="info-row-item">{{customer.country | countryName | async}}</div>
+    </mat-list-item>
+  </mat-list>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button type="button" color="primary" (click)="confirm()">
+    {{'common.button.save' | translation}}
+  </button>
+  <button mat-raised-button type="button" color="primary" (click)="cancel()">
+    {{'common.button.cancel' | translation}}
+  </button>
+</div>

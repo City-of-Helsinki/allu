@@ -38,6 +38,7 @@ import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 import {AlluCardComponent} from './card/allu-card.component';
 import {KeysPipe} from '@app/pipe/keys-pipe';
 import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
+import {CountryNamePipe} from '@app/pipe/country-name-pipe';
 
 @NgModule({
   imports: [
@@ -55,6 +56,7 @@ import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
     CommaSeparatedPipe,
     KeysPipe,
     CentsToEurosPipe,
+    CountryNamePipe,
     InputBoxComponent,
     InputBoxInputDirective,
     InputWarningDirective,
@@ -100,7 +102,8 @@ import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
     BottomBarComponent,
     AlluCardComponent,
     KeysPipe,
-    CentsToEurosPipe
+    CentsToEurosPipe,
+    CountryNamePipe
   ],
   entryComponents: [
     ConfirmDialogComponent

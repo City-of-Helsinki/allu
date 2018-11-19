@@ -1,4 +1,4 @@
-import {Input, OnDestroy, OnInit} from '@angular/core';
+import {Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Customer} from '@model/customer/customer';
@@ -11,6 +11,10 @@ import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
 import {CustomerNameSearchMinChars, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {MatDialog} from '@angular/material';
+import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
+import {isEqualWithSkip} from '@util/object.util';
+import {CustomerInfoAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-info-acceptance.component';
 
 export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
@@ -19,8 +23,9 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
 
+  @ViewChild(CustomerInfoAcceptanceComponent) infoAcceptance: CustomerInfoAcceptanceComponent;
+
   referenceCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(undefined);
-  referenceCustomerSelected: boolean;
 
   form: FormGroup;
   searchForm: FormGroup;
@@ -33,8 +38,10 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   protected destroy = new Subject<boolean>();
 
-  protected constructor(protected fb: FormBuilder,
-              protected store: Store<fromRoot.State>) {}
+  protected constructor(
+    protected fb: FormBuilder,
+    protected store: Store<fromRoot.State>,
+    protected dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({});
@@ -75,11 +82,26 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     const search = searchCustomer ? `${searchCustomer.name} (${searchCustomer.registryKey})` : undefined;
     this.searchForm.patchValue({search}, {emitEvent: false});
     this.referenceCustomer$.next(customer);
-    this.referenceCustomerSelected = !!customer;
   }
 
   createNewCustomer(): void {
-    this.selectReferenceCustomer();
+    const config = {
+      ...CUSTOMER_MODAL_CONFIG,
+      data: {customer: this.newCustomer}
+    };
+    this.dialog.open(CustomerModalComponent, config).afterClosed().pipe(
+      filter(customer => !!customer)
+    ).subscribe(customer => {
+      this.selectReferenceCustomer(customer);
+      this.newCustomer = customer;
+      this.oldCustomer = customer;
+    });
+  }
+
+  get showCreateNew(): Observable<boolean> {
+    return this.referenceCustomer$.pipe(
+      map(ref => !isEqualWithSkip(ref, this.newCustomer, ['id', 'sapCustomerNumber']))
+    );
   }
 
   private initialSearch() {

@@ -1,3 +1,6 @@
+import isEqualWith from 'lodash/isEqualWith';
+import {NumberUtil} from '@util/number.util';
+
 export class ObjectUtil {
   static filter(source: any, filterFn: (fieldName: string) => any) {
     if (typeof source !== 'object') {
@@ -83,4 +86,19 @@ export function typeOfValue(value: any): ValueType {
   } else {
     return undefined;
   }
+}
+
+export function isDefined(val: any): boolean {
+  return val !== undefined && val !== null;
+}
+
+export function isEqualWithSkip(left: any, right: any, skippedFields: string[] = []): boolean {
+  const skipped = toDictionary(skippedFields, item => item);
+  return isEqualWith(left, right, (l, r, key) => {
+    if (skipped[key]) {
+      return !isDefined(l) || !isDefined(r) || l === r;
+    } else {
+      return undefined;
+    }
+  });
 }

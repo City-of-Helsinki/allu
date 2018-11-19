@@ -1,4 +1,4 @@
-import {Directive} from '@angular/core';
+import {Directive, TemplateRef} from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
 import {Application} from '../src/app/model/application/application';
 import {Location} from '../src/app/model/common/location';
@@ -18,6 +18,8 @@ import {ErrorInfo} from '../src/app/service/error/error-info';
 import {BehaviorSubject, EMPTY, Observable, of, Subject, throwError} from 'rxjs/index';
 import {map} from 'rxjs/internal/operators';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
+import {ComponentType} from '@angular/cdk/portal';
+import {MatDialogConfig, MatDialogRef} from '@angular/material';
 
 /**
  * Mock for application state
@@ -247,3 +249,12 @@ export function availableToDirectiveMockMeta(mock: CurrentUserMock = new Current
   };
 }
 
+export class MatDialogMock {
+  open<T, D = any, R = any>(componentOrTemplateRef: ComponentType<T> | TemplateRef<T>, config?: MatDialogConfig<D>): MatDialogRef<T, R> {
+    return undefined;
+  }
+}
+
+export class MatDialogRefMock {
+  afterClosed() {}
+}

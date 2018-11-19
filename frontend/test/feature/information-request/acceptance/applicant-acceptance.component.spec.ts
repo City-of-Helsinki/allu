@@ -1,4 +1,4 @@
-import {Component, DebugElement, Input} from '@angular/core';
+import {Component, DebugElement, Input, NgModule} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Customer} from '@model/customer/customer';
 import {CodeSet, CodeSetCodeMap, CodeSetTypeMap} from '@model/codeset/codeset';
@@ -12,6 +12,12 @@ import * as CodeSetAction from '@feature/allu/actions/code-set-actions';
 import {By} from '@angular/platform-browser';
 import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
+import {CustomerService} from '@service/customer/customer.service';
+import {CustomerServiceMock, MatDialogMock, MatDialogRefMock, NotificationServiceMock} from '../../../mocks';
+import {NotificationService} from '@feature/notification/notification.service';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'host',
@@ -54,6 +60,17 @@ class MockCustomerInfoAcceptanceComponent {
   }
 }
 
+@NgModule({
+  imports: [AlluCommonModule],
+  declarations: [CustomerModalComponent],
+  providers: [
+    {provide: CustomerService, useClass: CustomerServiceMock},
+    {provide: NotificationService, useClass: NotificationServiceMock}
+  ],
+  entryComponents: [CustomerModalComponent]
+})
+class DialogTestModule { }
+
 const oldCustomer = new Customer(1, 'PERSON', 'old existing customer', 'oldKey');
 const newCustomer = new Customer(undefined, 'PERSON', 'new shining customer', 'newKey');
 const existingCustomer1 = new Customer(2, 'PERSON', 'first existing customer', '1key');
@@ -69,6 +86,8 @@ describe('ApplicantAcceptanceComponent', () => {
   let fixture: ComponentFixture<MockHostComponent>;
   let de: DebugElement;
   let store: Store<fromCustomerSearch.State>;
+  let dialogRef: MatDialogRefMock;
+  let dialog: MatDialogMock;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -76,6 +95,7 @@ describe('ApplicantAcceptanceComponent', () => {
         AlluCommonModule,
         FormsModule,
         ReactiveFormsModule,
+        DialogTestModule,
         StoreModule.forRoot({
           'customer': combineReducers(fromCustomerSearch.reducers),
           'codeSets': fromCodeSet.reducer
@@ -87,7 +107,9 @@ describe('ApplicantAcceptanceComponent', () => {
         MockCustomerInfoAcceptanceComponent
       ],
       providers: [
-        FormBuilder
+        FormBuilder,
+        {provide: MatDialogRef, useClass: MatDialogRefMock},
+        {provide: MatDialog, useClass: MatDialogMock}
       ]
     }).compileComponents();
   }));
@@ -97,6 +119,8 @@ describe('ApplicantAcceptanceComponent', () => {
     hostComp = fixture.componentInstance;
     de = fixture.debugElement;
     store = TestBed.get(Store);
+    dialog = TestBed.get(MatDialog) as MatDialogMock;
+    dialogRef = TestBed.get(MatDialogRef) as MatDialogRefMock;
 
     hostComp.oldCustomer = oldCustomer;
     hostComp.newCustomer = newCustomer;
@@ -153,8 +177,11 @@ describe('ApplicantAcceptanceComponent', () => {
 
     expect(childComp._oldCustomer).toEqual(oldCustomer);
 
+    spyOn(dialog, 'open').and.returnValue(dialogRef);
+    spyOn(dialogRef, 'afterClosed').and.returnValue(of(newCustomer));
+
     testedComponent.createNewCustomer();
     fixture.detectChanges();
-    expect(childComp._oldCustomer).toBeUndefined();
+    expect(childComp._oldCustomer).toEqual(newCustomer);
   });
 });

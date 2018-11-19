@@ -5,7 +5,7 @@ import {findTranslation} from '@util/translations';
 import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {Some} from '@util/option';
 import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
-import {FormBuilder} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
 import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 
 const requiredFields = {
@@ -36,6 +36,12 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
     this._oldCustomer = customer;
     this.oldValues = this.toFieldValues(customer);
     this.oldDisplayValues = this.toDisplayValues(this.oldValues);
+
+    // Customer id is set from old customer since we should only allow saving form when
+    // customer with id is selected as reference customer
+    if (customer) {
+      this.form.patchValue({id: customer.id});
+    }
   }
 
   @Input() set newCustomer(customer: Customer) {
@@ -58,6 +64,12 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
     customer.country = result.country;
     customer.active = this._newCustomer.active;
     this.customerChanges.emit(customer);
+  }
+
+  protected initResultForm(): void {
+    super.initResultForm();
+    const ctrl = this.fb.control(undefined, Validators.required);
+    this.form.addControl('id', ctrl);
   }
 
   protected isRequired(field: string): boolean {

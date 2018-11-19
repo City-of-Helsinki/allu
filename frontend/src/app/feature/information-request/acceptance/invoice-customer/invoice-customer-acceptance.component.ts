@@ -8,6 +8,7 @@ import {SetInvoicingCustomer} from '@feature/information-request/actions/informa
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import * as fromCustomerSearch from '@feature/customerregistry/reducers';
 import {Observable} from 'rxjs/index';
+import {MatDialog} from '@angular/material';
 
 @Component({
   selector: 'invoice-customer-acceptance',
@@ -20,8 +21,8 @@ export class InvoiceCustomerAcceptanceComponent extends CustomerAcceptanceCompon
   protected formName = 'invoiceCustomer';
   protected actionTargetType = ActionTargetType.InvoicingCustomer;
 
-  constructor(fb: FormBuilder, store: Store<fromRoot.State>) {
-    super(fb, store);
+  constructor(fb: FormBuilder, store: Store<fromRoot.State>, dialog: MatDialog) {
+    super(fb, store, dialog);
   }
 
   customerChanges(customer: Customer): void {
