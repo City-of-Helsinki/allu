@@ -6,13 +6,13 @@ import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.model.domain.ConfigurationKey;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Insert demo data on development and test environments.
@@ -33,6 +33,7 @@ public class DemoDataInserter {
   private final LocationDao locationDao;
   private final UserDao userDao;
   private final ConfigurationDao configurationDao;
+  private boolean inserted;
 
   public DemoDataInserter(LocationDao locationDao, UserDao userDao, ConfigurationDao configurationDao) {
     this.locationDao = locationDao;
@@ -40,10 +41,13 @@ public class DemoDataInserter {
     this.configurationDao = configurationDao;
   }
 
-  @PostConstruct
-  public void init() {
-    addSupervisorsForCityDistricts();
-    addDefaultDecisionMakers();
+  @EventListener
+  public void onApplicationEvent(ContextRefreshedEvent event) {
+    if (!inserted) {
+      addSupervisorsForCityDistricts();
+      addDefaultDecisionMakers();
+      inserted = true;
+    }
   }
 
   private void addSupervisorsForCityDistricts() {
