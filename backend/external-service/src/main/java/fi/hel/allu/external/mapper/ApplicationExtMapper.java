@@ -43,7 +43,7 @@ public abstract class ApplicationExtMapper<T extends ApplicationExt> {
   private ClientApplicationDataJson createClientApplicationData(T application) {
     ClientApplicationDataJson clientApplicationData = new ClientApplicationDataJson();
     clientApplicationData.setCustomer(CustomerExtMapper.mapCustomerWithContactsJson(application.getCustomerWithContacts(), CustomerRoleType.APPLICANT));
-    clientApplicationData.setInvoicingCustomer(CustomerExtMapper.mapCustomerJson(application.getInvoicingCustomer()));
+    clientApplicationData.setInvoicingCustomer(CustomerExtMapper.mapInvoicingCustomerJson(application.getInvoicingCustomer()));
     clientApplicationData.setRepresentative(CustomerExtMapper.mapCustomerWithContactsJson(application.getRepresentativeWithContacts(), CustomerRoleType.REPRESENTATIVE));
     clientApplicationData.setClientApplicationKind(getClientApplicationKind(application));
     addApplicationTypeSpecificData(application, clientApplicationData);

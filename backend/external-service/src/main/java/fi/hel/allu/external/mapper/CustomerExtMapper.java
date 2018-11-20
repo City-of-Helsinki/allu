@@ -42,6 +42,15 @@ public class CustomerExtMapper {
      return contact;
   }
 
+  public static CustomerJson mapInvoicingCustomerJson(CustomerExt invoicingCustomer) {
+    if (invoicingCustomer == null) {
+      return null;
+    }
+    CustomerJson customerJson = mapCustomerJson(invoicingCustomer);
+    customerJson.setInvoicingOnly(true);
+    return customerJson;
+  }
+
   public static CustomerJson mapCustomerJson(CustomerExt customerExt) {
     CustomerJson customerJson = new CustomerJson();
     customerJson.setId(customerExt.getId());
