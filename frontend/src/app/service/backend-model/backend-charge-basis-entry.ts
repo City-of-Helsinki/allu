@@ -16,4 +16,5 @@ export interface BackendChargeBasisEntry {
   locked?: boolean;
   referrable?: boolean;
   invoicable?: boolean;
+  invoicingPeriodId?: number;
 }

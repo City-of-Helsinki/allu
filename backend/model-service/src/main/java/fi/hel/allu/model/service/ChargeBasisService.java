@@ -1,9 +1,6 @@
 package fi.hel.allu.model.service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -18,8 +15,8 @@ import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.ChargeBasisModification;
-import fi.hel.allu.model.dao.InvoiceDao;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.pricing.ChargeBasisTag;
 import fi.hel.allu.model.service.event.InvoicingChangeEvent;
 
@@ -29,15 +26,16 @@ public class ChargeBasisService {
   private final ChargeBasisDao chargeBasisDao;
   private final ApplicationDao applicationDao;
   private final ApplicationEventPublisher invoicingChangeEventPublisher;
-
+  private final InvoicingPeriodService invoicingPeriodService;
 
 
   @Autowired
   public ChargeBasisService(ChargeBasisDao chargeBasisDao, ApplicationDao applicationDao,
-      ApplicationEventPublisher invoicingChangeEventPublisher) {
+      ApplicationEventPublisher invoicingChangeEventPublisher, InvoicingPeriodService invoicingPeriodService) {
     this.chargeBasisDao = chargeBasisDao;
     this.applicationDao = applicationDao;
     this.invoicingChangeEventPublisher = invoicingChangeEventPublisher;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   /**
@@ -71,6 +69,7 @@ public class ChargeBasisService {
    */
   @Transactional
   public boolean setManualChargeBasis(int applicationId, List<ChargeBasisEntry> entries) {
+    Optional<InvoicingPeriod> invoicingPeriod = invoicingPeriodService.findFirstOpenPeriod(applicationId);
     final Optional<ChargeBasisEntry> maxEntry =
         entries.stream()
             .filter(e -> e.getType() == ChargeBasisType.AREA_USAGE_FEE && e.getTag() != null)
@@ -81,6 +80,8 @@ public class ChargeBasisService {
         .filter(e -> e.getManuallySet())
         .map(e -> setAreaUsageTagIfMissing(e, i))
         .collect(Collectors.toList());
+    invoicingPeriod.ifPresent(p -> setPeriodIfMissing(p.getId(), manualEntries));
+
     ChargeBasisModification modification = chargeBasisDao.getModifications(
         applicationId,
         manualEntries,
@@ -88,6 +89,14 @@ public class ChargeBasisService {
     handleModifications(modification);
     return modification.hasChanges();
 
+  }
+
+  private void setPeriodIfMissing(Integer invoicingPeriodId, List<ChargeBasisEntry> manualEntries) {
+    manualEntries.forEach(e -> {
+      if (e.getInvoicingPeriodId() == null) {
+        e.setInvoicingPeriodId(invoicingPeriodId);
+      }
+    });
   }
 
   private int getNumberPartAreaUsageTag(ChargeBasisEntry entry) {

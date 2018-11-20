@@ -16,6 +16,7 @@ export class ChargeBasisEntry {
     public explanation: string[] = [],
     public locked?: boolean,
     public referrable?: boolean,
-    public invoicable?: boolean
+    public invoicable?: boolean,
+    public invoicingPeriodId?: number
   ) {}
 }

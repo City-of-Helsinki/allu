@@ -227,6 +227,7 @@ public class ChargeBasisEntry {
     result = prime * result + ((type == null) ? 0 : type.hashCode());
     result = prime * result + ((unit == null) ? 0 : unit.hashCode());
     result = prime * result + unitPrice;
+    result = prime * result + ((invoicingPeriodId == null) ? 0 : invoicingPeriodId.hashCode());
     return result;
   }
 
@@ -269,6 +270,11 @@ public class ChargeBasisEntry {
     if (unit != other.unit)
       return false;
     if (unitPrice != other.unitPrice)
+      return false;
+    if (invoicingPeriodId == null) {
+      if (other.invoicingPeriodId != null)
+        return false;
+    } else if (!invoicingPeriodId.equals(other.invoicingPeriodId))
       return false;
     return true;
   }

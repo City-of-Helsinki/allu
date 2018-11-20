@@ -26,7 +26,8 @@ export class ChargeBasisEntryMapper {
       backendChargeBasisEntry.explanation,
       backendChargeBasisEntry.locked,
       backendChargeBasisEntry.referrable,
-      backendChargeBasisEntry.invoicable
+      backendChargeBasisEntry.invoicable,
+      backendChargeBasisEntry.invoicingPeriodId
     );
   }
 
@@ -43,7 +44,8 @@ export class ChargeBasisEntryMapper {
       tag: chargeBasisEntry.tag,
       referredTag: chargeBasisEntry.referredTag,
       explanation: chargeBasisEntry.explanation || [],
-      invoicable: chargeBasisEntry.invoicable
+      invoicable: chargeBasisEntry.invoicable,
+      invoicingPeriodId: chargeBasisEntry.invoicingPeriodId
     };
   }
 }

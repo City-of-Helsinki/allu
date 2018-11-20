@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,8 +81,16 @@ public class InvoicingPeriodService {
   }
 
   @Transactional(readOnly = true)
-  List<InvoicingPeriod> findForApplicationId(Integer applicationId) {
+  public List<InvoicingPeriod> findForApplicationId(Integer applicationId) {
     return invoicingPeriodDao.findForApplicationId(applicationId);
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<InvoicingPeriod> findFirstOpenPeriod(Integer applicationId) {
+    return invoicingPeriodDao.findForApplicationId(applicationId).stream()
+    .filter(i -> !i.isInvoiced())
+    .sorted(Comparator.comparing(InvoicingPeriod::getStartTime))
+    .findFirst();
   }
 
   @Transactional
