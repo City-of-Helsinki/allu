@@ -13,6 +13,9 @@
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_etl.tar state=absent
 
+- name: remove existing zipped docker image
+  local_action: file path=/tmp/allu_etl.tar.gz state=absent
+
 # This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
@@ -22,9 +25,7 @@
                 state=present
 
 - name: gzip Docker image on local host
-  local_action: archive
-                path=/tmp/allu_etl.tar
-                remove=true
+  local_action: command pigz /tmp/allu_etl.tar
 
 - name: copy Docker image to target host
   copy: src=/tmp/allu_etl.tar.gz dest=/tmp

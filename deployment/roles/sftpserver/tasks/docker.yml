@@ -8,6 +8,9 @@
 - name: remove existing docker image to avoid Ansible task caching
   local_action: file path=/tmp/allu_sftpserver.tar state=absent
 
+- name: remove existing zipped docker image
+  local_action: file path=/tmp/allu_sftpserver.tar.gz state=absent
+
 # This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
 # able to use docker without super user rights
 - name: save local Docker image as file on local host
@@ -17,9 +20,7 @@
                 state=present
 
 - name: gzip Docker image on local host
-  local_action: archive
-                path=/tmp/allu_sftpserver.tar
-                remove=true
+  local_action: command pigz /tmp/allu_sftpserver.tar
 
 - name: copy Docker image to target host
   copy: src=/tmp/allu_sftpserver.tar.gz dest=/tmp
@@ -63,12 +64,9 @@
       - /home/allu/sftpserver/invoice:/home/allu/invoice
       - /home/allu/sftpserver/customer:/home/allu/customer
     ports:
-      - "2222:22"      
+      - "2222:22"
     command: "{{ sap_ftp_invoice_user }}:{{ sap_ftp_invoice_password }}:{{ system_user_id_allu}}:{{ system_group_id_allu }}:/customer/arch"
   become: yes
 
 - name: remove Docker image tar file
   file: path=/tmp/allu_sftpserver.tar state=absent
-
-
-
