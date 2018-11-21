@@ -242,4 +242,11 @@ public class InvoiceDao {
           .where(invoice.applicationId.eq(applicationId), invoice.locked.isTrue())
           .fetch();
   }
+
+  @Transactional(readOnly = true)
+  public boolean hasUninvoicedInvoices(Integer applicationId) {
+    return queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse())
+        .fetchCount() > 0;
+  }
 }

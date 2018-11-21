@@ -147,10 +147,15 @@ public class InvoiceService {
   @Transactional
   public void markSent(List<Integer> invoiceIds) {
     invoiceDao.markSent(invoiceIds);
-    // Mark application invoiced after invoice is sent.
-    // When application is invoiced with more than one invoice, this must be done
-    // when last invoice of application is sent.
-    applicationDao.markInvoiced(invoiceDao.getApplicationIdsForInvoices(invoiceIds));
+    // Mark application invoiced after all invoices are sent.
+
+
+    List<Integer> invoicedApplicationIds =  invoiceDao.getApplicationIdsForInvoices(invoiceIds)
+        .stream()
+        .filter(id -> !invoiceDao.hasUninvoicedInvoices(id))
+        .collect(Collectors.toList());
+
+    applicationDao.markInvoiced(invoicedApplicationIds);
 
   }
 
