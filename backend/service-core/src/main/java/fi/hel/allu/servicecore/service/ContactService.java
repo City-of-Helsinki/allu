@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,6 +97,10 @@ public class ContactService {
     return createdContactJsons;
   }
 
+  public ContactJson createContact(ContactJson contact) {
+    return createContacts(Collections.singletonList(contact)).get(0);
+  }
+
   public List<ContactJson> updateContacts(List<ContactJson> contactJsons) {
     ContactChange contactChange = new ContactChange(userService.getCurrentUser().getId(),
         contactJsons.stream().map(cJson -> customerMapper.createContactModel(cJson)).collect(Collectors.toList()));
@@ -113,6 +118,12 @@ public class ContactService {
     searchService.updateContactsOfApplications(applicationWithContactsESs);
     return updatedContactJsons;
   }
+
+  public ContactJson updateContact(int id, ContactJson contact) {
+    contact.setId(id);
+    return updateContacts(Collections.singletonList(contact)).get(0);
+  }
+
 
   public List<ContactJson> getContactsById(List<Integer> contactIds) {
     Contact[] contacts = restTemplate.postForObject(
@@ -151,4 +162,5 @@ public class ContactService {
   private ContactES mapContact(Contact contact) {
     return new ContactES(contact.getId(), contact.getName(), contact.isActive());
   }
+
 }

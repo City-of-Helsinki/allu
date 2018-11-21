@@ -131,16 +131,11 @@ export class CustomerService {
   }
 
   public saveContact(customerId: number, contact: Contact): Observable<Contact> {
-    /**
-     *  TODO: Uncomment when backend support is implemented
-     *
-     *   if (NumberUtil.isExisting(contact)) {
-     *     return this.updateContact(customerId, contact);
-     *   } else {
-     *     return this.createContact(customerId, contact);
-     *   }
-     */
-    return of(contact);
+    if (NumberUtil.isExisting(contact)) {
+      return this.updateContact(contact);
+    } else {
+      return this.createContact(customerId, contact);
+    }
   }
 
   private updateCustomer(id: number, customer: Customer): Observable<Customer> {
@@ -177,8 +172,8 @@ export class CustomerService {
     );
   }
 
-  private updateContact(customerId: number, contact: Contact): Observable<Contact> {
-    const url = `${CUSTOMERS_URL}/${customerId}/contacts/${contact.id}`;
+  private updateContact(contact: Contact): Observable<Contact> {
+    const url = `${CONTACTS_URL}/${contact.id}`;
     return this.http.put<BackendContact>(url, JSON.stringify(ContactMapper.mapFrontend(contact))).pipe(
       map(saved => ContactMapper.mapBackend(saved))
     );
