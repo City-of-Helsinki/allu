@@ -563,7 +563,9 @@ export const translations = {
       noChange: 'Älä vaihda',
       change: 'Vaihda',
       noChanges: 'Ei muutoksia',
-      close: 'Sulje'
+      close: 'Sulje',
+      existingInfo: 'Nykyiset tiedot',
+      providedInfo: 'Tarjotut tiedot'
     },
     request: {
       title: 'Hyväksy tiedot täydennyspyyntöön',

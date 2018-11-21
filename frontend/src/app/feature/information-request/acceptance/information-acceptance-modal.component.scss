@@ -1,3 +1,7 @@
 .acceptance-content > *:not(:first-child) {
   margin-top: 15px;
 }
+
+.acceptance-info-header > .mat-dialog-title {
+  margin: 0;
+}

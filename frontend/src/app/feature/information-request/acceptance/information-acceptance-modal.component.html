@@ -1,5 +1,11 @@
 <h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.acceptance.title' | translation}}</h1>
 <h1 mat-dialog-title *ngIf="readonly">{{'informationRequest.acceptance.readonlyTitle' | translation}}</h1>
+
+<div fxLayout="row" class="acceptance-info-header">
+  <h2 mat-dialog-title fxFlex>{{'informationRequest.acceptance.existingInfo' | translation}}</h2>
+  <h2 mat-dialog-title fxFlex>{{'informationRequest.acceptance.providedInfo' | translation}}</h2>
+</div>
+
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content class="acceptance-content">
     <div *ngFor="let field of updatedFields">
