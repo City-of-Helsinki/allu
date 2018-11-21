@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ErrorHandler} from '../error/error-handler.service';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {CustomerMapper} from '../mapper/customer-mapper';
 import {findTranslation} from '../../util/translations';
 import {ContactMapper} from '../mapper/contact-mapper';
@@ -22,6 +22,7 @@ import {BackendContact} from '../backend-model/backend-contact';
 import {BackendCustomerWithContacts} from '../backend-model/backend-customer-with-contacts';
 import {catchError, map} from 'rxjs/internal/operators';
 import {CustomerType} from '@model/customer/customer-type';
+import {NumberUtil} from '@util/number.util';
 
 const CUSTOMERS_URL = '/api/customers';
 const CUSTOMERS_SEARCH_URL = CUSTOMERS_URL + '/search';
@@ -129,6 +130,19 @@ export class CustomerService {
      );
   }
 
+  public saveContact(customerId: number, contact: Contact): Observable<Contact> {
+    /**
+     *  TODO: Uncomment when backend support is implemented
+     *
+     *   if (NumberUtil.isExisting(contact)) {
+     *     return this.updateContact(customerId, contact);
+     *   } else {
+     *     return this.createContact(customerId, contact);
+     *   }
+     */
+    return of(contact);
+  }
+
   private updateCustomer(id: number, customer: Customer): Observable<Customer> {
     const url = CUSTOMERS_URL + '/' + id;
     return this.http.put<BackendCustomer>(url, JSON.stringify(CustomerMapper.mapFrontend(customer))).pipe(
@@ -153,6 +167,20 @@ export class CustomerService {
     const url = CUSTOMERS_URL + WITH_CONTACTS;
     return this.http.post<BackendCustomerWithContacts>(url, JSON.stringify(CustomerMapper.mapFrontendWithContacts(customer))).pipe(
       map(customerWithContacts => CustomerMapper.mapBackendWithContacts(customerWithContacts))
+    );
+  }
+
+  private createContact(customerId: number, contact: Contact): Observable<Contact> {
+    const url = `${CUSTOMERS_URL}/${customerId}/contacts`;
+    return this.http.post<BackendContact>(url, JSON.stringify(ContactMapper.mapFrontend(contact))).pipe(
+      map(saved => ContactMapper.mapBackend(saved))
+    );
+  }
+
+  private updateContact(customerId: number, contact: Contact): Observable<Contact> {
+    const url = `${CUSTOMERS_URL}/${customerId}/contacts/${contact.id}`;
+    return this.http.put<BackendContact>(url, JSON.stringify(ContactMapper.mapFrontend(contact))).pipe(
+      map(saved => ContactMapper.mapBackend(saved))
     );
   }
 }

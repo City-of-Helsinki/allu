@@ -29,6 +29,7 @@ import { RequestFieldComponent } from './request/request-field/request-field.com
 import {FieldSelectComponent} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {ContactInfoAcceptanceComponent} from '@feature/information-request/acceptance/contact/contact-info-acceptance.component';
 import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
+import {ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import {CustomerModalComponent} from '@feature/information-request/acceptance/cu
     InformationRequestModalComponent,
     RequestFieldComponent,
     FieldSelectComponent,
-    CustomerModalComponent
+    CustomerModalComponent,
+    ContactModalComponent
   ],
   providers: [
     InformationRequestService,
@@ -68,7 +70,8 @@ import {CustomerModalComponent} from '@feature/information-request/acceptance/cu
   entryComponents: [
     InformationAcceptanceModalComponent,
     InformationRequestModalComponent,
-    CustomerModalComponent
+    CustomerModalComponent,
+    ContactModalComponent
   ]
 })
 export class InformationRequestModule {}

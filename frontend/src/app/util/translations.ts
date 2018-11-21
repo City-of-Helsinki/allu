@@ -822,7 +822,6 @@ export const translations = {
       remove: 'Yhteyshenkilö poistettu',
       save: 'Yhteyshenkilö tallennettu'
     },
-    newContact: 'Uusi yhteyshenkilö',
     suggestion: {
       title: 'Ehdotettu yhteyshenkilö',
       info: `Nimi yhdistetään samoilla tiedoilla löytyneeseen yhteyshenkilöön.

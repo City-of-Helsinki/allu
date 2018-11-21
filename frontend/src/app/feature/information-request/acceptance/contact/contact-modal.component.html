@@ -1,0 +1,39 @@
+<h1 mat-dialog-title>
+  {{'contact.createNew' | translation}}
+</h1>
+<div mat-dialog-content>
+  <mat-list dense class="striped">
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'name' | translation}}</div>
+      <div class="info-row-item">{{contact.name}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'postalAddress.streetAddress' | translation}}</div>
+      <div class="info-row-item">{{contact.streetAddress}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'postalAddress.postalCode' | translation}}</div>
+      <div class="info-row-item">{{contact.postalCode}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'postalAddress.postalOffice' | translation}}</div>
+      <div class="info-row-item">{{contact.city}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'email' | translation}}</div>
+      <div class="info-row-item">{{contact.email}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="text-highlighted info-row-item">{{'phone' | translation}}</div>
+      <div class="info-row-item">{{contact.phone}}</div>
+    </mat-list-item>
+  </mat-list>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button type="button" color="primary" (click)="confirm()">
+    {{'common.button.save' | translation}}
+  </button>
+  <button mat-raised-button type="button" color="primary" (click)="cancel()">
+    {{'common.button.cancel' | translation}}
+  </button>
+</div>
