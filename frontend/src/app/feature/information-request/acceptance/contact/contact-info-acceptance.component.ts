@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output}
 import {Contact} from '@model/customer/contact';
 import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import {findTranslation} from '@util/translations';
-import {FormBuilder} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
 import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 
 const requiredFields = {
@@ -31,6 +31,12 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Cont
     this._oldContact = contact;
     this.oldValues = this.toFieldValues(contact);
     this.oldDisplayValues = this.toDisplayValues(this.oldValues);
+
+    // Customer id is set from old customer since we should only allow saving form when
+    // customer with id is selected as reference customer
+    if (contact) {
+      this.form.patchValue({id: contact.id});
+    }
   }
 
   @Input() set newContact(contact: Contact) {
@@ -49,6 +55,12 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Cont
     contact.email = result.email;
     contact.phone = result.phone;
     this.contactChanges.emit(contact);
+  }
+
+  protected initResultForm(): void {
+    super.initResultForm();
+    const ctrl = this.fb.control(undefined, Validators.required);
+    this.form.addControl('id', ctrl);
   }
 
   protected isRequired(field: string): boolean {
