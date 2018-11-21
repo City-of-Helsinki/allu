@@ -1,31 +1,26 @@
-<h2 mat-dialog-title>
-  {{'informationRequest.field.APPLICATION_KIND' | translation}}
-</h2>
+<div class="section-container">
+  <div class="section-content">
+    <h2 mat-dialog-title>
+      {{'informationRequest.field.APPLICATION_KIND' | translation}}
+    </h2>
+  </div>
+  <div class="section-content">
+    <h2 mat-dialog-title>
+      <ng-container *ngIf="multipleKinds; else singleKind">
+        {{'application.kind.suggestion.multiple' | translation}}
+      </ng-container>
+      <ng-template #singleKind>
+        {{'application.kind.suggestion.single' | translation}}
+      </ng-template>
+    </h2>
+  </div>
+</div>
 
-<form [formGroup]="form">
-  <ul>
-    <li class="label-row text-primary">
-      <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim">
-        <div fxFlex="0 1 33%" class="text-primary">
-          <ng-container *ngIf="multipleKinds; else singleKind">
-            {{'application.kind.suggestion.multiple' | translation}}
-          </ng-container>
-          <ng-template #singleKind>
-            {{'application.kind.suggestion.single' | translation}}
-          </ng-template>
-        </div>
-        <div fxFlex="0 1 33%">
-          <div fxLayout="row" fxLayoutAlign="start center" class="slim value-change">
-            <div fxFlex="none">
-              {{newValues}}
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-    <li>
+<div class="section-container">
+  <div class="section-content">
+    <form [formGroup]="form">
       <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="start center" class="slim" *ngIf="!readonly">
-        <div fxFlex="0 1 33%" *ngIf="multipleKinds">
+        <div fxFlex="0 1 50%" *ngIf="multipleKinds">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="kinds" multiple required
                         [placeholder]="'application.kind.placeholder.multiple' | translation"
@@ -39,7 +34,7 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div fxFlex="0 1 33%" *ngIf="!multipleKinds">
+        <div fxFlex="0 1 50%" *ngIf="!multipleKinds">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="kinds" required
                         [placeholder]="'application.kind.placeholder.single' | translation"
@@ -53,7 +48,7 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div fxFlex="0 1 33%" *ngIf="showSpecifierSelection()">
+        <div fxFlex="0 1 50%" *ngIf="showSpecifierSelection()">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="specifiers" multiple
                         [placeholder]="'application.specifier.placeholder' | translation"
@@ -69,6 +64,9 @@
           </mat-form-field>
         </div>
       </div>
-    </li>
-  </ul>
-</form>
+    </form>
+  </div>
+  <div class="section-content section-container">
+    <div class="section-content-centered">{{newValues}}</div>
+  </div>
+</div>

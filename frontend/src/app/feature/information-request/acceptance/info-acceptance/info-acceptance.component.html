@@ -1,9 +1,9 @@
 <form [formGroup]="selectionForm">
   <div class="section-container">
-    <div class="section-content info-acceptance-header">
+    <div class="section-content">
       <ng-content select=".left-header"></ng-content>
     </div>
-    <div class="section-content info-acceptance-header">
+    <div class="section-content">
       <ng-content select=".right-header"></ng-content>
     </div>
   </div>
@@ -18,14 +18,14 @@
   </div>
 
   <div class="section-container">
-    <div class="section-content info-acceptance-content">
+    <div class="section-content">
       <field-select
         #oldValuesSelect
         [fieldLabels]="fieldLabels"
         [fieldValues]="oldDisplayValues"
         formControlName="oldValues"></field-select>
     </div>
-    <div class="section-content info-acceptance-content">
+    <div class="section-content">
       <field-select
         #newValuesSelect
         [fieldLabels]="fieldLabels"

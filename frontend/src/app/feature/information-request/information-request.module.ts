@@ -10,7 +10,7 @@ import {CustomerInfoAcceptanceComponent} from './acceptance/customer/customer-in
 import {FieldValueComponent} from './acceptance/field-select/field-value.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './reducers';
-import {KindAcceptanceComponent} from './acceptance/kind-acceptance.component';
+import {KindAcceptanceComponent} from './acceptance/kind/kind-acceptance.component';
 import {InformationRequestModalEvents} from './information-request-modal-events';
 import {
   CustomerWithContactsAcceptanceComponent

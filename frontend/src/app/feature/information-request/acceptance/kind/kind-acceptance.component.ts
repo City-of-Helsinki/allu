@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostBinding, Input, OnInit} from '@angular/core';
 import {
   hasSpecifiers,
   KindsWithSpecifiers,
@@ -10,13 +10,16 @@ import {getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@mode
 import {takeUntil} from 'rxjs/internal/operators';
 import {Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
-import * as fromApplication from '../../application/reducers';
-import {SetKindsWithSpecifiers} from '../actions/information-request-result-actions';
+import * as fromApplication from '@feature/application/reducers/index';
+import {SetKindsWithSpecifiers} from '@feature/information-request/actions/information-request-result-actions';
 
 @Component({
   selector: 'kind-acceptance',
   templateUrl: './kind-acceptance.component.html',
-  styleUrls: ['./kind-acceptance.component.scss'],
+  styleUrls: [
+    './kind-acceptance.component.scss',
+    '../info-acceptance/info-acceptance.component.scss'
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KindAcceptanceComponent implements OnInit {
@@ -25,6 +28,8 @@ export class KindAcceptanceComponent implements OnInit {
   @Input() oldValues: KindsWithSpecifiers;
   @Input() newValues: string;
   @Input() readonly: boolean;
+
+  @HostBinding('class') cssClasses = 'info-acceptance';
 
   multipleKinds = false;
   availableKinds: string[] = [];
