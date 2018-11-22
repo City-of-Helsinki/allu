@@ -53,14 +53,7 @@
         <p>luvat@hel.fi</p>
       </div>
       <div class="half-right" style="position:relative;left:-20pt;">
-        <xsl:choose>
-          <xsl:when test="data/replacingDecision = 'false'">
-            <h1>Päätös alueen vuokraamisesta</h1>
-          </xsl:when>
-          <xsl:otherwise>
-           <h1>Korvava päätös alueen vuokraamisesta</h1>
-          </xsl:otherwise>
-        </xsl:choose>
+        <h1>Valvontapöytäkirja</h1>
         <div class="page">
           <span id="pdfkit_page_current" />/<span id="pdfkit_page_count" />
         </div>

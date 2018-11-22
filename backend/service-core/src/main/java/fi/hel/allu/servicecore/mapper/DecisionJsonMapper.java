@@ -487,6 +487,8 @@ public class DecisionJsonMapper {
     AreaRentalJson areaRental = (AreaRentalJson)application.getExtension();
     setContacts(decision, application);
     decision.setWorkPurpose(areaRental.getWorkPurpose());
+    decision.setWorkFinished(formatDateWithDelta(areaRental.getWorkFinished(), 0));
+    decision.setCustomerWorkFinished(formatDateWithDelta(areaRental.getCustomerWorkFinished(), 0));
     Set<String> addresses = new HashSet<>();
     application.getLocations().stream().forEach(l -> addresses.add(l.getAddress()));
     decision.setAreaAddresses(new ArrayList<>(addresses));
