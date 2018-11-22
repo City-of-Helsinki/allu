@@ -31,6 +31,7 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   @ViewChild(MatSelectionList) selectionList: MatSelectionList;
 
   displayedFields: string[] = [];
+  isDisabled: boolean;
 
   private _fieldValues: FieldValues;
   private _comparedValues: FieldValues;
@@ -46,6 +47,7 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
   /** Implemented as a part of ControlValueAccessor. */
   setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
     this.selectionList.setDisabledState(isDisabled);
   }
 
@@ -69,6 +71,10 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   get comparedValues() { return this._comparedValues; }
   set comparedValues(comparedValues: FieldValues) {
     this._comparedValues = comparedValues;
+  }
+
+  get showSelectAll() {
+    return !this.isDisabled && (this.displayedFields.length > 1);
   }
 
   isSelected(field: string): boolean {
