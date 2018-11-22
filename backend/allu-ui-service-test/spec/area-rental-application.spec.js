@@ -281,9 +281,9 @@ describe('Area rental application', () => {
       },
       'applicationTags': [
       ],
-      'invoicingDate': '2018-12-22T22:00:00Z'
+      'invoicingDate': '2018-12-22T22:00:00Z',
+      'invoiceRecipientId': reimaCustomersWithContactsCreated.id
     };
-
 
     let options = TestUtil.getPostOptions('/api/applications', areaRental);
     TestUtil.login('kasittelija')
