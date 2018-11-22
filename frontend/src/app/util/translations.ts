@@ -562,7 +562,6 @@ export const translations = {
       readonlyTitle: 'Ehdotetut tietopäivitykset',
       noChange: 'Älä vaihda',
       change: 'Vaihda',
-      noChanges: 'Ei muutoksia',
       close: 'Sulje',
       existingInfo: 'Nykyiset tiedot',
       providedInfo: 'Tarjotut tiedot'
@@ -600,7 +599,8 @@ export const translations = {
       WORK_DESCRIPTION: 'Työn kuvaus',
       PROPERTY_IDENTIFICATION_NUMBER: 'Kiinteistötunnus',
       ATTACHMENT: 'Liite',
-      others: 'Muut tiedot'
+      others: 'Muut tiedot',
+      valueDiffers: 'Kentän sisältö poikkeaa nykyisestä',
     },
     error: {
       create: 'Täydennyspyynnön luominen epäonnistui',
