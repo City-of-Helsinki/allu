@@ -32,11 +32,13 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Cont
     this.oldValues = this.toFieldValues(contact);
     this.oldDisplayValues = this.toDisplayValues(this.oldValues);
 
-    // Customer id is set from old customer since we should only allow saving form when
-    // customer with id is selected as reference customer
+    // Contact id is set from old contact since we should only allow saving form when
+    // contact with id is selected as reference contact
     if (contact) {
       this.form.patchValue({id: contact.id});
       this.selectAllOld();
+    } else {
+      this.clearSelections();
     }
   }
 

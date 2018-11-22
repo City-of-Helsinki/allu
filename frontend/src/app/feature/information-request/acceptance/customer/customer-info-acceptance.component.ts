@@ -42,6 +42,8 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
     if (customer) {
       this.form.patchValue({id: customer.id});
       this.selectAllOld();
+    } else {
+      this.clearSelections();
     }
   }
 
