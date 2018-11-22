@@ -1,5 +1,7 @@
 package fi.hel.allu.external.domain;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,18 +18,18 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("Short term rental (lyhytaikainen maanvuokraus).")
 public class ShortTermRentalExt extends ApplicationExt {
 
-  private Integer fixedLocationId;
+  private List<Integer> fixedLocationIds;
   private String description;
   @NotNull(message = "{application.kind}")
   private ApplicationKind applicationKind;
 
-  @ApiModelProperty(value = "ID of the fixed location. Should be set if geometry of the application is selected from fixed locations.")
-  public Integer getFixedLocationId() {
-    return fixedLocationId;
+  @ApiModelProperty(value = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
+  public List<Integer> getFixedLocationIds() {
+    return fixedLocationIds;
   }
 
-  public void setFixedLocationId(Integer fixedLocationId) {
-    this.fixedLocationId = fixedLocationId;
+  public void setFixedLocationIds(List<Integer> fixedLocationIds) {
+    this.fixedLocationIds = fixedLocationIds;
   }
 
   @ApiModelProperty(value = "Description")

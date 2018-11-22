@@ -32,6 +32,6 @@ public class ShortTermRentalExtMapper extends ApplicationExtMapper<ShortTermRent
 
   @Override
   protected List<Integer> getFixedLocationIds(ShortTermRentalExt rental) {
-    return rental.getFixedLocationId() != null ? Collections.singletonList(rental.getFixedLocationId()) : null;
+    return rental.getFixedLocationIds();
   }
 }

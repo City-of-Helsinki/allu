@@ -1,5 +1,6 @@
 package fi.hel.allu.external.mapper;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -34,4 +35,10 @@ public class EventExtMapper extends ApplicationExtMapper<EventExt> {
   protected ApplicationKind getApplicationKind(EventExt event) {
     return ApplicationKind.PROMOTION;
   }
+
+  @Override
+  protected List<Integer> getFixedLocationIds(EventExt event) {
+    return event.getFixedLocationIds();
+  }
+
 }

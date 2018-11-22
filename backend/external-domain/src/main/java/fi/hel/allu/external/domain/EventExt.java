@@ -1,6 +1,7 @@
 package fi.hel.allu.external.domain;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("Event (tapahtuma). Currently only supported event type is promotion.")
 public class EventExt extends ApplicationExt {
 
+  private List<Integer> fixedLocationIds;
   private Integer structureArea;
   private String structureDescription;
   private String description;
@@ -17,6 +19,16 @@ public class EventExt extends ApplicationExt {
   private ZonedDateTime eventStartTime;
   @NotNull(message = "event.endtime")
   private ZonedDateTime eventEndTime;
+
+  @ApiModelProperty(value = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
+  public List<Integer> getFixedLocationIds() {
+    return fixedLocationIds;
+  }
+
+  public void setFixedLocationIds(List<Integer> fixedLocationIds) {
+    this.fixedLocationIds = fixedLocationIds;
+  }
+
 
   @ApiModelProperty(value = "Structure area in square meters")
   public Integer getStructureArea() {
