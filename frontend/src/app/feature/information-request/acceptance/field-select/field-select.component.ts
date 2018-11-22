@@ -76,11 +76,15 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   }
 
   selectAll(): void {
-    this.selectionList.selectAll();
+    if (this.selectionList.options) {
+      this.selectionList.selectAll();
+    }
   }
 
   deselectAll(): void {
-    this.selectionList.deselectAll();
+    if (this.selectionList.options) {
+      this.selectionList.deselectAll();
+    }
   }
 
   deselect(field: string): void {

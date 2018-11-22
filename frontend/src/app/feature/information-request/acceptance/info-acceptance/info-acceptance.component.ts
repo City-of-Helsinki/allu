@@ -35,16 +35,15 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   }
 
   selectAllOld(): void {
-    this.oldValuesSelect.selectAll();
-  }
-
-  selectAllNew(): void {
-    this.newValuesSelect.selectAll();
+    if (this.oldValues) {
+      this.oldValuesSelect.selectAll();
+      this.onOldValuesSelected(Object.keys(this.oldValues));
+    }
   }
 
   onOldValuesSelected(fields: string[]): void {
     fields.forEach(f => {
-      this.form.get(f).patchValue(this.oldValues[f], {emitEvent: false});
+      this.patchField(f, this.oldValues);
       this.newValuesSelect.deselect(f);
     });
     this.form.updateValueAndValidity();
@@ -90,4 +89,10 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   }
 
   protected abstract resultChanges(result: FieldValues): void;
+
+  private patchField(field: string, valuesFrom: FieldValues): void {
+    if (this.form.contains(field)) {
+      this.form.get(field).patchValue(valuesFrom[field], {emitEvent: false});
+    }
+  }
 }

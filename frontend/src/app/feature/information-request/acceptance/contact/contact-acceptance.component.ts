@@ -113,7 +113,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
       select(fromCustomerSearch.getApplicantContactsLoaded),
       filter(loaded => loaded),
       switchMap(() => this.store.pipe(select(fromCustomerSearch.getAvailableApplicantContacts))),
-      take(1),
+      takeUntil(this.destroy),
       map(contacts => contacts.filter(c => c.name.toLocaleLowerCase().startsWith(searchTerm))),
       map(contacts => ArrayUtil.first(contacts)),
     ).subscribe(matching => this.selectReferenceContact(matching));

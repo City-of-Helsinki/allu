@@ -41,6 +41,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
     // customer with id is selected as reference customer
     if (customer) {
       this.form.patchValue({id: customer.id});
+      this.selectAllOld();
     }
   }
 
