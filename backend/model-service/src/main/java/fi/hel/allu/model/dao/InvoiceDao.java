@@ -249,4 +249,10 @@ public class InvoiceDao {
         .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse())
         .fetchCount() > 0;
   }
+
+  @Transactional(readOnly = true)
+  public List<Integer> getInvoicePeriodIds(List<Integer> invoiceIds) {
+    return queryFactory.select(invoice.invoicingPeriodId).from(invoice)
+        .where(invoice.id.in(invoiceIds), invoice.invoicingPeriodId.isNotNull()).fetch();
+  }
 }

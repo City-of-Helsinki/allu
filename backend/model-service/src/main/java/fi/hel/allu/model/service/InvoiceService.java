@@ -164,9 +164,9 @@ public class InvoiceService {
   @Transactional
   public void markSent(List<Integer> invoiceIds) {
     invoiceDao.markSent(invoiceIds);
+    List<Integer> invoicePeriodIds = invoiceDao.getInvoicePeriodIds(invoiceIds);
+    invoicingPeriodService.closeInvoicingPeriods(invoicePeriodIds);
     // Mark application invoiced after all invoices are sent.
-
-
     List<Integer> invoicedApplicationIds =  invoiceDao.getApplicationIdsForInvoices(invoiceIds)
         .stream()
         .filter(id -> !invoiceDao.hasUninvoicedInvoices(id))

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.QInvoice;
 import fi.hel.allu.model.domain.InvoicingPeriod;
 
 import static com.querydsl.core.types.Projections.bean;
@@ -60,4 +61,9 @@ public class InvoicingPeriodDao {
         .where(invoicingPeriod.applicationId.eq(applicationId), invoicingPeriod.invoiced.isFalse()).fetch();
   }
 
+   @Transactional
+   public void closeInvoicingPeriods(List<Integer> invoicingPeriodIds) {
+    queryFactory.update(invoicingPeriod).set(invoicingPeriod.invoiced, true)
+        .where(invoicingPeriod.id.in(invoicingPeriodIds)).execute();
+   }
 }

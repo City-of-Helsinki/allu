@@ -101,4 +101,9 @@ public class InvoicingPeriodService {
   public void deletePeriods(Integer applicationId) {
     invoicingPeriodDao.deletePeriods(applicationId);
   }
+
+  @Transactional
+  public void closeInvoicingPeriods(List<Integer> invoicePeriodIds) {
+    invoicingPeriodDao.closeInvoicingPeriods(invoicePeriodIds);
+  }
 }
