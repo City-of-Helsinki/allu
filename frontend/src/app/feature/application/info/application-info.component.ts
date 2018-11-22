@@ -8,7 +8,9 @@ import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
 import {findTranslation} from '../../../util/translations';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {ApplicationNotificationType} from '@feature/application/notification/application-notification.component';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromAuth from '@feature/auth/reducers';
 import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
 import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
@@ -35,6 +37,7 @@ import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/acti
 import {ApplicationNotificationService} from '@feature/application/notification/application-notification.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {applicationForm} from '@feature/application/info/application-form';
+import {RoleType} from '@model/user/role-type';
 
 @Component({
   selector: 'application-info',
@@ -54,7 +57,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
 
   constructor(private applicationStore: ApplicationStore,
               private route: ActivatedRoute,
-              private store: Store<fromApplication.State>,
+              private store: Store<fromRoot.State>,
               private dialog: MatDialog,
               private modalState: InformationRequestModalEvents,
               private applicationNotificationService: ApplicationNotificationService,
@@ -163,12 +166,11 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private openAcceptanceModal(data: InformationAcceptanceData): Observable<InformationRequestResult>  {
-    data.readonly = this.applicationStore.snapshot.application.status === ApplicationStatus[ApplicationStatus.PENDING_CLIENT];
-    const config: MatDialogConfig<InformationAcceptanceData> = {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
-    return this.dialog
-      .open<InformationAcceptanceModalComponent>(InformationAcceptanceModalComponent, config)
-      .afterClosed()
-      .pipe(filter(result => !!result));
+    return this.createAcceptanceModalConfig(data).pipe(
+      switchMap(config => this.dialog.open<InformationAcceptanceModalComponent>(InformationAcceptanceModalComponent, config)
+        .afterClosed()),
+      filter(result => !!result)
+    );
   }
 
   private showInformationRequest(): void {
@@ -185,6 +187,21 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
         this.store.dispatch(new SaveAndSendRequest(request));
       }
     });
+  }
+
+  private createAcceptanceModalConfig(baseData: InformationAcceptanceData): Observable<MatDialogConfig<InformationAcceptanceData>> {
+    const readonlyStatus = this.applicationStore.snapshot.application.status === ApplicationStatus[ApplicationStatus.PENDING_CLIENT];
+
+    return this.store.pipe(
+      select(fromAuth.getUser),
+      filter(user => !!user),
+      map(user => user.hasRole(RoleType.ROLE_PROCESS_APPLICATION)),
+      map(canProcess => {
+        const readonly = readonlyStatus || !canProcess;
+        const data = { ...baseData, readonly };
+        return {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
+      })
+    );
   }
 
   private createRequestModalConfig(request: InformationRequest, applicationId: number): MatDialogConfig<InformationRequestData> {
