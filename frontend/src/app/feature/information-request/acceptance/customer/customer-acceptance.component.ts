@@ -78,8 +78,7 @@ export abstract class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   abstract getLoading(): Observable<boolean>;
 
   selectReferenceCustomer(customer?: Customer): void {
-    const searchCustomer = customer || this.newCustomer;
-    const search = searchCustomer ? `${searchCustomer.name} (${searchCustomer.registryKey})` : undefined;
+    const search = customer ? `${customer.name} (${customer.registryKey})` : undefined;
     this.searchForm.patchValue({search}, {emitEvent: false});
     this.referenceCustomer$.next(customer);
   }

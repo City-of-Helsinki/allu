@@ -87,8 +87,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   selectReferenceContact(contact?: Contact): void {
-    const searchContact = contact || this.newContact;
-    const search = searchContact ? searchContact.name : undefined;
+    const search = contact ? contact.name : undefined;
     this.searchForm.patchValue({search}, {emitEvent: false});
     this.referenceContact$.next(contact);
   }
