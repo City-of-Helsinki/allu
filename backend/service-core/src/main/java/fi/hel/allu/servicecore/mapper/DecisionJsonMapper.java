@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -496,8 +497,11 @@ public class DecisionJsonMapper {
     final Map<Integer, Location> locations = locationService.getLocationsByApplication(application.getId())
         .stream().collect(Collectors.toMap(l -> l.getId(), l -> l));
     final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(application.getId());
+    // There can be several entries for one location if entries are splitted to
+    // invoicing periods -> filter duplicate entries
     final List<ChargeBasisEntry> areaEntries = chargeBasisEntries.stream()
-        .filter(c -> isAreaEntry(c, chargeBasisEntries)).collect(Collectors.toList());
+        .filter(c -> isAreaEntry(c, chargeBasisEntries))
+        .collect(collectUniqueLocationIds());
     final List<ChargeBasisEntry> otherEntries = chargeBasisEntries.stream()
         .filter(c -> !isAreaEntry(c, chargeBasisEntries)).collect(Collectors.toList());
 
@@ -508,6 +512,13 @@ public class DecisionJsonMapper {
         .map(e -> chargeBasisToRentalArea(e, application, locations, otherEntries))
         .collect(Collectors.toList()));
     decision.setRentalAreas(rentalAreas);
+  }
+
+
+  private Collector<ChargeBasisEntry, ?, List<ChargeBasisEntry>> collectUniqueLocationIds() {
+    return Collectors.collectingAndThen(
+       Collectors.toCollection(() -> new TreeSet<>(Comparator.comparingInt(ChargeBasisEntry::getLocationId))),
+        ArrayList::new);
   }
 
   private boolean isAreaEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> allEntries) {
