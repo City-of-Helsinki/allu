@@ -1,0 +1,26 @@
+{
+  "name": "Allu",
+  "short_name": "Allu",
+  "description": "Allu-järjestelmällä hallitaan yleisellä alueella, kuten kadulla, jalkakäytävällä, pyörätiellä ja viheralueella tehtävän työn, järjestettävän tapahtuman, vuokrattavan maa-alan tai muulle vastaavalle alueen käytölle annettavan oikeuden tai käyttöilmoituksen käsittelyä, myöntämistä, käytön seurantaa ja käyttöön liittyvän laskutuksen hoitamista.",
+  "icons": [{
+    "src": "assets/bring_from_basket.svg",
+    "sizes": "44x38",
+    "type": "image/svg+xml"
+  }, {
+    "src": "assets/favicon-16x16.png",
+    "sizes": "16x16",
+    "type": "image/png"
+  }, {
+    "src": "assets/favicon-32x32.png",
+    "sizes": "32x32",
+    "type": "image/png"
+  }, {
+    "src": "assets/favicon-96x96.png",
+    "sizes": "96x96",
+    "type": "image/png"
+  }],
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#f1f7fc",
+  "theme_color": "#006cc6"
+}
