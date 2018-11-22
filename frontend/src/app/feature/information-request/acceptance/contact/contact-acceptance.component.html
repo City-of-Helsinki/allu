@@ -9,6 +9,11 @@
       {{'contact.title' | translation}}
     </h2>
   </div>
+  <div class="right-header">
+    <div class="info-acceptance-hint">
+      {{'contact.suggestion.info' | translation}}
+    </div>
+  </div>
   <div class="left-controls">
     <form [formGroup]="searchForm">
       <mat-form-field floatLabel="never" class="input-full-width" *ngIf="matchingContacts$ && !readonly">

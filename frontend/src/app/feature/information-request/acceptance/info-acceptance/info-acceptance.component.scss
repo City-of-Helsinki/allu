@@ -9,6 +9,11 @@
   margin: 0 0 5px;
 }
 
+:host ::ng-deep .info-acceptance-hint {
+  font-size: 12px;
+}
+
+
 .section-container {
   display: flex;
   flex-direction: row;

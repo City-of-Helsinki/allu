@@ -11,6 +11,11 @@
       {{'informationRequest.field.INVOICING_CUSTOMER' | translation}}
     </h2>
   </div>
+  <div class="right-header">
+    <div class="info-acceptance-hint">
+      {{'customer.suggestion.info' | translation}}
+    </div>
+  </div>
   <div class="left-controls">
     <form [formGroup]="searchForm">
       <mat-form-field floatLabel="never" class="input-full-width" *ngIf="!readonly">
