@@ -54,4 +54,10 @@ public class InvoicingPeriodDao {
     queryFactory.delete(invoicingPeriod).where(invoicingPeriod.applicationId.eq(applicationId), invoicingPeriod.invoiced.isFalse()).execute();
   }
 
+  @Transactional(readOnly = true)
+  public List<InvoicingPeriod> findOpenPeriodsForApplicationId(Integer applicationId) {
+    return queryFactory.select(invoicingPeriodBean).from(invoicingPeriod)
+        .where(invoicingPeriod.applicationId.eq(applicationId), invoicingPeriod.invoiced.isFalse()).fetch();
+  }
+
 }

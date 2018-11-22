@@ -37,6 +37,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
   private InvoiceRecipientDao invoiceRecipientDao;
   private CustomerDao customerDao;
   private HistoryDao historyDao;
+  private InvoicingPeriodService invoicingPeriodService;
 
   private InvoiceService invoiceService;
 
@@ -49,7 +50,9 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
       invoiceRecipientDao = Mockito.mock(InvoiceRecipientDao.class);
       customerDao = Mockito.mock(CustomerDao.class);
       historyDao = Mockito.mock(HistoryDao.class);
-      invoiceService = new InvoiceService(chargeBasisService, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao, historyDao);
+      invoicingPeriodService = Mockito.mock(InvoicingPeriodService.class);
+
+      invoiceService = new InvoiceService(chargeBasisService, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao, historyDao, invoicingPeriodService);
     });
 
     describe("InvoiceService", () -> {
@@ -85,7 +88,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         InvoiceRow row = new InvoiceRow();
         row.setNetPrice(10);
         final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
-        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID);
+        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID, null);
         List<Invoice> pendingInvoices = Collections.singletonList(invoice);
         Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
         Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));
@@ -105,7 +108,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         InvoiceRow row = new InvoiceRow();
         row.setNetPrice(0);
         final List<InvoiceRow> INVOICE_ROWS = Collections.singletonList(row);
-        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID);
+        Invoice invoice = new Invoice(1, 2, ZonedDateTime.now(), false, false, INVOICE_ROWS, INVOICE_RECIPIENT_ID, null);
         List<Invoice> pendingInvoices = Collections.singletonList(invoice);
         Mockito.when(invoiceDao.findPending()).thenReturn(pendingInvoices);
         Mockito.when(invoiceRecipientDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(invoiceRecipient));

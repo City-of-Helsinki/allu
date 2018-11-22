@@ -86,9 +86,13 @@ public class InvoicingPeriodService {
   }
 
   @Transactional(readOnly = true)
+  public List<InvoicingPeriod> findOpenPeriodsForApplicationId(Integer applicationId) {
+    return invoicingPeriodDao.findOpenPeriodsForApplicationId(applicationId);
+  }
+
+  @Transactional(readOnly = true)
   public Optional<InvoicingPeriod> findFirstOpenPeriod(Integer applicationId) {
-    return invoicingPeriodDao.findForApplicationId(applicationId).stream()
-    .filter(i -> !i.isInvoiced())
+    return invoicingPeriodDao.findOpenPeriodsForApplicationId(applicationId).stream()
     .sorted(Comparator.comparing(InvoicingPeriod::getStartTime))
     .findFirst();
   }
@@ -97,7 +101,4 @@ public class InvoicingPeriodService {
   public void deletePeriods(Integer applicationId) {
     invoicingPeriodDao.deletePeriods(applicationId);
   }
-
-
-
 }

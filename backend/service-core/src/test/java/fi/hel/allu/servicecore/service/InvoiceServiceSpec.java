@@ -58,10 +58,10 @@ public class InvoiceServiceSpec {
             Arrays.asList(
                 new InvoiceRow(null, ChargeBasisUnit.DAY, 1, "One day", new String[] {"24 hours"}, 1000, 1000),
                 new InvoiceRow(null, ChargeBasisUnit.DAY, 2, "Two days", new String[] {"48 hours"}, 1000, 2000)),
-            1),
+            1, null),
         new Invoice(2, APPLICATION_ID, ZonedDateTime.parse("2018-01-15T09:15:30+02:00"), false, false,
             Collections.singletonList(new InvoiceRow(null, ChargeBasisUnit.WEEK, 1, "One week",
                 new String[] { "168 hours" }, 1000, 1000)),
-            1) };
+            1, null) };
   }
 }

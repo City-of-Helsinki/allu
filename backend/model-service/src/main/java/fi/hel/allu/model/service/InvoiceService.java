@@ -10,22 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.*;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.InvoiceRecipientDao;
-import fi.hel.allu.model.dao.InvoiceDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.Invoice;
-import fi.hel.allu.model.domain.InvoiceRecipient;
-import fi.hel.allu.model.domain.InvoiceRow;
-
-import java.util.Optional;
+import fi.hel.allu.model.domain.*;
 
 /**
  * The service class responsible for managing invoices
@@ -41,11 +31,11 @@ public class InvoiceService {
   private final InvoiceRecipientDao invoiceRecipientDao;
   private final CustomerDao customerDao;
   private final HistoryDao historyDao;
-
+  private final InvoicingPeriodService invoicingPeriodService;
   @Autowired
   public InvoiceService(ChargeBasisService chargeBasisService, InvoiceDao invoiceDao, PricingService pricingService,
                         ApplicationDao applicationDao, InvoiceRecipientDao invoiceRecipientDao, CustomerDao customerDao,
-                        HistoryDao historyDao) {
+                        HistoryDao historyDao, InvoicingPeriodService invoicingPeriodService) {
     this.chargeBasisService = chargeBasisService;
     this.invoiceDao = invoiceDao;
     this.pricingService = pricingService;
@@ -53,6 +43,7 @@ public class InvoiceService {
     this.invoiceRecipientDao = invoiceRecipientDao;
     this.customerDao = customerDao;
     this.historyDao = historyDao;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   @Transactional(readOnly = true)
@@ -69,31 +60,57 @@ public class InvoiceService {
 
   @Transactional
   public void createInvoices(int applicationId, boolean sapIdPending) {
-    List<ChargeBasisEntry> chargeBasisEntries = getChargeBasisEntriesToInvoice(applicationId);
-    List<InvoiceRow> invoiceRows = pricingService.toSingleInvoice(chargeBasisEntries);
     Application application = applicationDao.findById(applicationId);
-    ZonedDateTime invoicingDate = getInvoicingDate(application);
     final Optional<Customer> customerOpt = customerDao.findById(application.getInvoiceRecipientId());
     if (!customerOpt.isPresent()) {
       throw new NoSuchEntityException("invoice.create.customer.notFound");
     }
     final Customer customer = customerOpt.get();
     final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
-    final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
-
     invoiceDao.deleteOpenInvoicesByApplication(applicationId);
+    List<InvoicingPeriod> openPeriods = invoicingPeriodService.findOpenPeriodsForApplicationId(applicationId);
+
+    if (!CollectionUtils.isEmpty(openPeriods)) {
+      final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
+      openPeriods.forEach(p -> addInvoiceForPeriod(p, applicationId, invoiceRecipientId, sapIdPending));
+    } else {
+      addInvoiceForApplication(applicationId, sapIdPending, application, invoiceRecipient);
+    }
+  }
+
+  private void addInvoiceForApplication(int applicationId, boolean sapIdPending, Application application,
+      final InvoiceRecipient invoiceRecipient) {
+    List<InvoiceRow> invoiceRows = getInvoiceRows(applicationId, null);
     if (!invoiceRows.isEmpty()) {
-      Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId);
+      final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
+      ZonedDateTime invoicingDate = getInvoicingDate(application);
+      Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId, null);
       invoiceDao.insert(applicationId, invoice);
     }
   }
 
+  private void addInvoiceForPeriod(InvoicingPeriod period, int applicationId, Integer invoiceRecipientId, boolean sapIdPending) {
+    List<InvoiceRow> invoiceRows = getInvoiceRows(applicationId, period.getId());
+    if (!invoiceRows.isEmpty()) {
+      ZonedDateTime invoicingDate = period.getEndTime();
+      Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId, period.getId());
+      invoiceDao.insert(applicationId, invoice);
+    }
+  }
+
+  private List<InvoiceRow> getInvoiceRows(int applicationId, Integer invoicingPeriodId) {
+    List<ChargeBasisEntry> chargeBasisEntries = getChargeBasisEntriesToInvoice(applicationId, invoicingPeriodId);
+    List<InvoiceRow> invoiceRows = pricingService.toSingleInvoice(chargeBasisEntries);
+    return invoiceRows;
+  }
+
   // Gets charge basis entries that are invoiceable and aren't in previously locked invoice
-  private List<ChargeBasisEntry> getChargeBasisEntriesToInvoice(int applicationId) {
+  private List<ChargeBasisEntry> getChargeBasisEntriesToInvoice(int applicationId, Integer periodId) {
     List<Integer> entryIdsInLockedInvoice = invoiceDao.getChargeBasisIdsInLockedInvoice(applicationId);
     return chargeBasisService.getChargeBasis(applicationId).stream()
         .filter(c -> !entryIdsInLockedInvoice.contains(c.getId()))
         .filter(c -> c.isInvoicable())
+        .filter(c -> Objects.equals(c.getInvoicingPeriodId(),  periodId))
         .collect(Collectors.toList());
   }
 
