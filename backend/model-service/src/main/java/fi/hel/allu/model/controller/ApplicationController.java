@@ -392,4 +392,10 @@ public class ApplicationController {
   public ResponseEntity<Integer> getReplacingApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.getReplacingApplicationId(id), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/clientapplicationdata", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> removeClientApplicationData(@PathVariable Integer id) {
+    applicationService.removeClientApplicationData(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

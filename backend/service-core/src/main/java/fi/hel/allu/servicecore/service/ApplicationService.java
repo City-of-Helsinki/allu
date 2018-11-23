@@ -440,4 +440,10 @@ public class ApplicationService {
   public Integer getApplicationIdForExternalId(Integer externalId) {
     return restTemplate.getForObject(applicationProperties.getApplicationIdForExternalIdUrl(), Integer.class, externalId);
   }
+
+
+  public Application removeClientApplicationData(Integer id) {
+    restTemplate.delete(applicationProperties.getClientApplicationDataDeleteUrl(), id);
+    return findApplicationById(id);
+  }
 }

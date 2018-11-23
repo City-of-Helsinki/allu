@@ -514,4 +514,9 @@ public class ApplicationServiceComposer {
   public Integer getApplicationIdForExternalId(Integer externalId) {
     return applicationService.getApplicationIdForExternalId(externalId);
   }
+
+  public ApplicationJson removeClientApplicationData(Integer id) {
+    Application application = applicationService.removeClientApplicationData(id);
+    return applicationJsonService.getFullyPopulatedApplication(application);
+  }
 }

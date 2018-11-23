@@ -914,4 +914,9 @@ public class ApplicationDao {
         .where(application.externalApplicationId.eq(externalId), application.replacedByApplicationId.isNull(), application.status.ne(StatusType.REPLACED))
         .fetchOne();
   }
+
+  @Transactional
+  public void removeClientApplicationData(Integer id) {
+    queryFactory.update(application).setNull(application.clientApplicationData).where(application.id.eq(id)).execute();
+  }
 }

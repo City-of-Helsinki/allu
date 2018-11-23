@@ -376,4 +376,10 @@ public class ApplicationController {
     applicationServiceComposer.setInvoiceRecipient(id, invoiceRecipientId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/clientapplicationdata", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> removeClientApplicationData(@PathVariable Integer id) {
+    return ResponseEntity.ok(applicationServiceComposer.removeClientApplicationData(id));
+  }
 }

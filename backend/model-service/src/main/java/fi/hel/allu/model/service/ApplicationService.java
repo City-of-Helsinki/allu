@@ -526,4 +526,9 @@ public class ApplicationService {
   public Integer getApplicationIdForExternalId(Integer externalId) {
     return applicationDao.getApplicationIdForExternalId(externalId);
   }
+
+  @Transactional
+  public void removeClientApplicationData(Integer id) {
+    applicationDao.removeClientApplicationData(id);
+  }
 }

@@ -1350,6 +1350,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/excavationannouncements/{id}/requiredtasks");
   }
 
+  public String getClientApplicationDataDeleteUrl() {
+    return getModelServiceUrl("/applications/{id}/clientapplicationdata");
+  }
+
+
   public String getPaymentClassUrl() {
     return paymentClassUrl;
   }
