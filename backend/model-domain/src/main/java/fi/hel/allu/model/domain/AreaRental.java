@@ -109,10 +109,12 @@ public class AreaRental extends ApplicationExtension implements WorkFinishedDate
   /**
    * Date when customer reported work finished date
    */
+  @Override
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
 
+  @Override
   public void setWorkFinishedReported(ZonedDateTime workFinishedReported) {
     this.workFinishedReported = workFinishedReported;
   }
