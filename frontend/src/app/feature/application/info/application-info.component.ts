@@ -23,7 +23,7 @@ import {
   InformationAcceptanceData,
   InformationAcceptanceModalComponent
 } from '@feature/information-request/acceptance/information-acceptance-modal.component';
-import {ApplicationStatus} from '@model/application/application-status';
+import {ApplicationStatus, isBefore} from '@model/application/application-status';
 import {Application} from '@model/application/application';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
@@ -190,7 +190,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private createAcceptanceModalConfig(baseData: InformationAcceptanceData): Observable<MatDialogConfig<InformationAcceptanceData>> {
-    const readonlyStatus = this.applicationStore.snapshot.application.status === ApplicationStatus[ApplicationStatus.PENDING_CLIENT];
+    const readonlyStatus = isBefore(this.applicationStore.snapshot.application.status, ApplicationStatus.INFORMATION_RECEIVED);
 
     return this.store.pipe(
       select(fromAuth.getUser),

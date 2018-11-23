@@ -65,14 +65,18 @@
     </div>
   </mat-dialog-content>
   <div mat-dialog-actions>
-    <button *ngIf="!readonly" type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">
-      {{'common.button.save' | translation}}
-    </button>
-    <button *ngIf="!readonly" type="button" mat-raised-button color="primary" (click)="cancel()">
-      {{'common.button.cancel' | translation}}
-    </button>
-    <button *ngIf="readonly" type="button" mat-raised-button color="primary" (click)="cancel()">
-      {{'informationRequest.acceptance.close' | translation}}
-    </button>
+    <ng-container *ngIf="readonly; else normalActions">
+      <button type="button" mat-raised-button color="primary" (click)="cancel()">
+        {{'informationRequest.acceptance.close' | translation}}
+      </button>
+    </ng-container>
+    <ng-template #normalActions>
+      <button  type="submit" mat-raised-button color="primary" [disabled]="submitDisabled | async">
+        {{'common.button.save' | translation}}
+      </button>
+      <button type="button" mat-raised-button color="primary" (click)="cancel()">
+        {{'common.button.cancel' | translation}}
+      </button>
+    </ng-template>
   </div>
 </form>
