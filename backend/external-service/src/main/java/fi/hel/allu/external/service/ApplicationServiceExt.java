@@ -1,6 +1,6 @@
 package fi.hel.allu.external.service;
 
-import java.io.IOException;
+import java.io.IOException;import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +58,7 @@ public class ApplicationServiceExt {
 
   public <T extends ApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson applicationJson = mapper.mapExtApplication(application, getExternalUserId());
+    applicationJson.setReceivedTime(ZonedDateTime.now());
     StatusType status = application.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     applicationJson.setExternalOwnerId(getExternalUserId());
     Integer applicationId = applicationServiceComposer.createApplication(applicationJson, status).getId();
@@ -90,8 +91,9 @@ public class ApplicationServiceExt {
   }
 
   public <T extends ApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
-    ApplicationJson application = applicationServiceComposer.updateApplication(id,
-        mapper.mapExtApplication(applicationExt, getExternalUserId()));
+    ApplicationJson application = mapper.mapExtApplication(applicationExt, getExternalUserId());
+    application.setReceivedTime(ZonedDateTime.now());
+    application = applicationServiceComposer.updateApplication(id, application);
     StatusType status = applicationExt.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
     if (application.getStatus() != status) {
       applicationServiceComposer.changeStatus(id, status);
