@@ -6,7 +6,6 @@ import {Subject} from 'rxjs';
 
 export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   @Input() form: FormGroup;
-  @Input() readonly: boolean;
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
@@ -20,9 +19,15 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   newValues: FieldValues;
   newDisplayValues: FieldValues;
 
+  private _readonly: boolean;
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  protected constructor(protected fb: FormBuilder) {}
+  protected constructor(protected fb: FormBuilder) {
+    this.selectionForm = this.fb.group({
+      oldValues: [{value: [], disabled: this.readonly}],
+      newValues: [{value: [], disabled: this.readonly}]
+    });
+  }
 
   ngOnInit(): void {
     this.initSelectionForm();
@@ -32,6 +37,19 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+  }
+
+  @Input() set readonly(isReadOnly: boolean) {
+    this._readonly = isReadOnly;
+    if (isReadOnly && this.selectionForm) {
+      this.selectionForm.disable();
+    } else {
+      this.selectionForm.enable();
+    }
+  }
+
+  get readonly() {
+    return this._readonly;
   }
 
   selectAllOld(): void {
@@ -64,11 +82,6 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   }
 
   protected initSelectionForm(): void {
-    this.selectionForm = this.fb.group({
-      oldValues: [{value: [], disabled: this.readonly}],
-      newValues: [{value: [], disabled: this.readonly}]
-    });
-
     this.selectionForm.get('oldValues').valueChanges.pipe(
       takeUntil(this.destroy)
     ).subscribe(oldValues => this.onOldValuesSelected(oldValues));

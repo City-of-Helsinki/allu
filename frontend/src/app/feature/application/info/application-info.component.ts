@@ -190,14 +190,12 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private createAcceptanceModalConfig(baseData: InformationAcceptanceData): Observable<MatDialogConfig<InformationAcceptanceData>> {
-    const readonlyStatus = isBefore(this.applicationStore.snapshot.application.status, ApplicationStatus.INFORMATION_RECEIVED);
-
     return this.store.pipe(
       select(fromAuth.getUser),
       filter(user => !!user),
       map(user => user.hasRole(RoleType.ROLE_PROCESS_APPLICATION)),
       map(canProcess => {
-        const readonly = readonlyStatus || !canProcess;
+        const readonly = !canProcess;
         const data = { ...baseData, readonly };
         return {...INFORMATION_ACCEPTANCE_MODAL_CONFIG, data};
       })

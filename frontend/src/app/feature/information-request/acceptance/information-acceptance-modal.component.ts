@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, Inject, Input, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
@@ -6,11 +6,13 @@ import {Store} from '@ngrx/store';
 import {Application} from '@model/application/application';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {Observable, Subject} from 'rxjs/index';
-import {distinctUntilChanged, map, skipUntil, startWith} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, skipUntil, startWith, tap} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {SetApplication, SetCustomer, SetKindsWithSpecifiers} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
+import {ApplicationStore} from '@service/application/application-store';
+import {ApplicationStatus, isBefore} from '@model/application/application-status';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -29,17 +31,15 @@ export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcc
 @Component({
   selector: 'information-acceptance-modal',
   templateUrl: './information-acceptance-modal.component.html',
-  styleUrls: ['./information-acceptance-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./information-acceptance-modal.component.scss']
 })
 export class InformationAcceptanceModalComponent implements OnInit, AfterViewInit {
-
+  readonly: boolean;
   oldInfo: Application;
   newInfo: Application;
   form: FormGroup;
   updatedFields: string[];
   submitDisabled: Observable<boolean>;
-  readonly: boolean;
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
 
   private childrenLoaded$ = new Subject<boolean>();
@@ -48,16 +48,15 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
               private store: Store<fromRoot.State>,
               @Inject(MAT_DIALOG_DATA) public data: InformationAcceptanceData,
               private fb: FormBuilder,
-              private resultService: InformationRequestResultService) {
+              private resultService: InformationRequestResultService,
+              private applicationStore: ApplicationStore) {
     this.form = this.fb.group({});
     this.readonly = data.readonly;
 
     // Need to wait until viewChildren are loaded so they wont emit
     // form changes before component tree has been stabilized
     this.submitDisabled = this.form.statusChanges.pipe(
-      skipUntil(this.childrenLoaded$),
       map(status => status !== 'VALID'),
-      startWith(true),
       distinctUntilChanged()
     );
   }
@@ -69,9 +68,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
 
     // set initial values to the store
     const baseInfo = this.data.oldInfo || new Application();
-    this.store.dispatch(new SetApplication(baseInfo));
-    this.store.dispatch(new SetCustomer(baseInfo.applicant.customer));
-    this.store.dispatch(new SetKindsWithSpecifiers(baseInfo.kindsWithSpecifiers));
+    this.onApplicationChange(baseInfo);
     this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
   }
 
@@ -86,5 +83,17 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  moveToHandling(): void {
+    this.applicationStore.changeStatus(this.oldInfo.id, ApplicationStatus.HANDLING)
+      .subscribe(application => this.onApplicationChange(application));
+  }
+
+  private onApplicationChange(application: Application): void {
+    this.store.dispatch(new SetApplication(application));
+    this.store.dispatch(new SetCustomer(application.applicant.customer));
+    this.store.dispatch(new SetKindsWithSpecifiers(application.kindsWithSpecifiers));
+    this.readonly = this.data.readonly || isBefore(application.status, ApplicationStatus.INFORMATION_RECEIVED);
   }
 }
