@@ -16,6 +16,7 @@ import {
 export interface AreaRentalSupervisionApprovalModalData extends SupervisionApprovalModalData {
   reportedDate?: Date;
   comparedDate?: Date;
+  minDate?: Date;
 }
 
 const taskTypeToReportedDateType = {
@@ -35,12 +36,14 @@ export class AreaRentalSupervisionApprovalModalComponent extends SupervisionAppr
   showToDecisionMaking = false;
   showDateReporting = false;
   reportedDateType: ReportedDateType;
+  minDate: Date;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: AreaRentalSupervisionApprovalModalData,
     fb: FormBuilder,
     dialogRef: MatDialogRef<SupervisionApprovalModalComponent>) {
     super(data, fb, dialogRef);
+    this.minDate = data.minDate;
   }
 
   ngOnInit(): void {

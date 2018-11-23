@@ -11,6 +11,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.GuaranteeEndTime;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
+import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DateReportingService {
@@ -102,6 +105,7 @@ public class DateReportingService {
   public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate) {
     final ApplicationJson oldApplicationJson = getApplicationJson(id);
 
+    adjustLocationEndDates(oldApplicationJson.getId(), workFinishedDate);
     applicationService.setWorkFinishedDate(id, workFinishedDate);
     Application application = applicationService.setTargetState(id, StatusType.FINISHED);
 
@@ -116,6 +120,21 @@ public class DateReportingService {
     return newApplicationJson;
   }
 
+  private void adjustLocationEndDates(int applicationId, ZonedDateTime date) {
+    final ApplicationJson application = getApplicationJson(applicationId);
+    final List<LocationJson> locationsEndingAfter = application.getLocations().stream()
+        .filter(l -> l.getEndTime().isAfter(date))
+        .collect(Collectors.toList());
+    if (!locationsEndingAfter.isEmpty()) {
+      if (locationsEndingAfter.stream()
+          .filter(l -> l.getStartTime().isAfter(date)).count() > 0) {
+        throw new IllegalArgumentException("workfinisheddate.before.area.start");
+      }
+      locationsEndingAfter.stream().forEach(l -> l.setEndTime(date));
+      applicationServiceComposer.updateApplication(application.getId(), application);
+    }
+
+  }
   private void createOperationalConditionSupervisionTask(Application application, ZonedDateTime reportedDate) {
     UserJson supervisionTaskOwner = getSupervisionTaskOwner(application);
     supervisionTaskService.insert(new SupervisionTaskJson(null, application.getId(), SupervisionTaskType.OPERATIONAL_CONDITION, null,

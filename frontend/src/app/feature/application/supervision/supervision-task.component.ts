@@ -315,6 +315,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private areaRentalApprovalModalData(baseData: SupervisionApprovalModalData): AreaRentalSupervisionApprovalModalData {
     let reportedDate: Date;
     let comparedDate: Date;
+    const minDate = this.findLatestStartingDate();
 
     if (SupervisionTaskType.FINAL_SUPERVISION === baseData.taskType) {
       const extension = <AreaRental> baseData.application.extension;
@@ -325,7 +326,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     return {
       ...baseData,
       reportedDate,
-      comparedDate
+      comparedDate,
+      minDate
     };
   }
 
@@ -368,5 +370,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private getLocation(locations: Location[], locationId: number): Location {
     return ArrayUtil.first(locations, l => l.id === locationId);
+  }
+
+  private findLatestStartingDate(): Date {
+    return this.application.locations.reduce((d, l) => d > l.startTime ? d : l.startTime, new Date(0));
   }
 }
