@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("Placement contract (sijoitussopimus)")
-public class PlacementContractExt extends ApplicationExt {
+public class PlacementContractExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")
   private String clientApplicationKind;

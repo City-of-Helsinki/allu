@@ -5,7 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import fi.hel.allu.external.domain.ApplicationExt;
+import fi.hel.allu.external.domain.BaseApplicationExt;
 
 import static fi.hel.allu.external.api.data.TestData.*;
 import static org.junit.Assert.assertEquals;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Base class for tests creating / updating applications.
  */
-public abstract class BaseApplicationTest <T extends ApplicationExt> extends BaseExternalApiTest {
+public abstract class BaseApplicationTest <T extends BaseApplicationExt> extends BaseExternalApiTest {
 
   protected abstract Geometry getGeometry();
   protected abstract T getApplication();

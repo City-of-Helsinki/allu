@@ -1,7 +1,11 @@
 package fi.hel.allu.external.service;
 
-import java.io.IOException;import java.time.ZonedDateTime;
-import java.util.*;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import fi.hel.allu.common.domain.ExternalApplication;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
@@ -56,7 +61,7 @@ public class ApplicationServiceExt {
   @Autowired
   private InformationRequestService informationRequestService;
 
-  public <T extends ApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+  public <T extends BaseApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson applicationJson = mapper.mapExtApplication(application, getExternalUserId());
     applicationJson.setReceivedTime(ZonedDateTime.now());
     StatusType status = application.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;
@@ -90,7 +95,7 @@ public class ApplicationServiceExt {
             .collect(Collectors.toList());
   }
 
-  public <T extends ApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
+  public <T extends BaseApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson application = mapper.mapExtApplication(applicationExt, getExternalUserId());
     application.setReceivedTime(ZonedDateTime.now());
     application = applicationServiceComposer.updateApplication(id, application);
@@ -110,7 +115,11 @@ public class ApplicationServiceExt {
   }
 
   public Integer getApplicationIdForExternalId(Integer externalId) {
-    return applicationServiceComposer.getApplicationIdForExternalId(externalId);
+    Integer applicationId = applicationServiceComposer.getApplicationIdForExternalId(externalId);
+    if (applicationId == null) {
+      throw new NoSuchEntityException("application.notfound");
+    }
+    return applicationId;
   }
 
   public void validateOwnedByExternalUser(Integer applicationId) {
@@ -144,7 +153,7 @@ public class ApplicationServiceExt {
     return externalApplication;
   }
 
-  public <T extends ApplicationExt> void addInformationRequestResponse(Integer applicationId, Integer requestId,
+  public <T extends BaseApplicationExt> void addInformationRequestResponse(Integer applicationId, Integer requestId,
       InformationRequestResponseExt<T> response, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     validateOwnedByExternalUser(applicationId);
     validateInformationRequestOpen(requestId);
@@ -180,5 +189,11 @@ public class ApplicationServiceExt {
   public UserExt getDecisionMaker(Integer applicationId) {
     UserJson decisionMaker = applicationServiceComposer.getApplicationDecisionMaker(applicationId);
     return Optional.ofNullable(decisionMaker).map(u -> new UserExt(u.getRealName(), u.getTitle())).orElse(null);
+  }
+
+  public ApplicationExt findById(Integer applicationId) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    return ApplicationExtMapper.mapToApplicationExt(application);
+
   }
 }

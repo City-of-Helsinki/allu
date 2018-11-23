@@ -2,6 +2,7 @@ package fi.hel.allu.external.mapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.geolatte.geom.Geometry;
 
@@ -10,10 +11,12 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.external.domain.ApplicationExt;
+import fi.hel.allu.external.domain.BaseApplicationExt;
 import fi.hel.allu.external.domain.PostalAddressExt;
+import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.servicecore.domain.*;
 
-public abstract class ApplicationExtMapper<T extends ApplicationExt> {
+public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
 
   protected abstract ApplicationExtensionJson createExtension(T application);
   protected abstract ApplicationType getApplicationType();
@@ -78,5 +81,17 @@ public abstract class ApplicationExtMapper<T extends ApplicationExt> {
 
   protected List<Integer> getFixedLocationIds(T application) {
     return null;
+  }
+
+  public static ApplicationExt mapToApplicationExt(ApplicationJson application) {
+    ApplicationExt applicationExt = new ApplicationExt();
+    applicationExt.setName(application.getName());
+    applicationExt.setApplicationId(application.getApplicationId());
+    applicationExt.setStartTime(application.getStartTime());
+    applicationExt.setEndTime(application.getEndTime());
+    applicationExt.setId(application.getExternalApplicationId());
+    Optional.ofNullable(application.getOwner()).ifPresent(o -> applicationExt.setOwner(new UserExt(o.getRealName(), o.getTitle())));
+    applicationExt.setStatus(application.getStatus());
+    return applicationExt;
   }
 }

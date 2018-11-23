@@ -195,6 +195,7 @@ public class ApplicationMapper {
     applicationJson.setLocations(LocationMapper.mapToLocationJsons(application.getLocations()));
     applicationJson.setInvoicingChanged(application.isInvoicingChanged());
     applicationJson.setTargetState(application.getTargetState());
+    applicationJson.setExternalApplicationId(application.getExternalApplicationId());
     return applicationJson;
   }
 

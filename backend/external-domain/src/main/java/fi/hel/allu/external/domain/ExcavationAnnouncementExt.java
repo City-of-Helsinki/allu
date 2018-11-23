@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("Excavation announcement (kaivuilmoitus)")
-public class ExcavationAnnouncementExt extends ApplicationExt {
+public class ExcavationAnnouncementExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")
   private String clientApplicationKind;

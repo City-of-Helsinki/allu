@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Response to information request")
-public class InformationRequestResponseExt<T extends ApplicationExt> {
+public class InformationRequestResponseExt<T extends BaseApplicationExt> {
 
   private T applicationData;
   @NotEmpty(message = "{informationRequest.fields}")

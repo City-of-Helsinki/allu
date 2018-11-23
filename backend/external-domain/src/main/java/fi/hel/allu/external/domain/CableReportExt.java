@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
     "customerWithContacts, hasOneOrderer, {cablereport.orderer}"
 })
 @ApiModel("Cable report (johtoselvitys).")
-public class CableReportExt extends ApplicationExt {
+public class CableReportExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")
   private String clientApplicationKind;

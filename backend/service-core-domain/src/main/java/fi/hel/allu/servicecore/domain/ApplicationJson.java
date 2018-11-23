@@ -102,6 +102,7 @@ public class ApplicationJson {
    * Id of the external owner (external_user.id)
    */
   private Integer externalOwnerId;
+  private Integer externalApplicationId;
 
   /**
   /**
@@ -609,4 +610,13 @@ public class ApplicationJson {
   public void setReceivedTime(ZonedDateTime receivedTime) {
     this.receivedTime= receivedTime;
   }
+
+  public Integer getExternalApplicationId() {
+    return externalApplicationId;
+  }
+
+  public void setExternalApplicationId(Integer externalApplicationId) {
+    this.externalApplicationId = externalApplicationId;
+  }
+
 }

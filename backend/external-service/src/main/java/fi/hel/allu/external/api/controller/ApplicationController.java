@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.external.domain.ApplicationExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/applications")
@@ -33,5 +32,20 @@ public class ApplicationController {
     applicationService.validateOwnedByExternalUser(applicationId);
     applicationService.cancelApplication(applicationId);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "Gets Allu application data for given application ID",
+      produces = "application/json",
+      authorizations=@Authorization(value ="api_key"))
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application retrieved successfully", response = ApplicationExt.class),
+      @ApiResponse(code = 404, message = "No application found for given ID")
+  })
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<ApplicationExt> getApplication(@ApiParam(value = "Id of the application to get") @PathVariable Integer id) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    return ResponseEntity.ok(applicationService.findById(applicationId));
   }
 }

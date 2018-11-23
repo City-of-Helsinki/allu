@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.common.exception.ErrorInfo;
-import fi.hel.allu.external.domain.ApplicationExt;
+import fi.hel.allu.external.domain.BaseApplicationExt;
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
@@ -24,7 +24,7 @@ import io.swagger.annotations.*;
 /**
  * Base class for external application controllers
  */
-public abstract class BaseApplicationController<T extends ApplicationExt, M extends ApplicationExtMapper<T>>  {
+public abstract class BaseApplicationController<T extends BaseApplicationExt, M extends ApplicationExtMapper<T>>  {
 
   @Autowired
   protected ApplicationServiceExt applicationService;
@@ -36,7 +36,7 @@ public abstract class BaseApplicationController<T extends ApplicationExt, M exte
 
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
-    if (binder.getTarget() != null && ApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
+    if (binder.getTarget() != null && BaseApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
       binder.addValidators(geometryValidator);
     }
   }

@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("Event (tapahtuma). Currently only supported event type is promotion.")
-public class EventExt extends ApplicationExt {
+public class EventExt extends BaseApplicationExt {
 
   private List<Integer> fixedLocationIds;
   private Integer structureArea;
