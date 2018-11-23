@@ -349,6 +349,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       data: {
         proposalType: CommentType[CommentType.PROPOSE_APPROVAL],
         cityDistrict: this.application.firstLocation.effectiveCityDistrictId,
+        applicationType: this.application.type,
         comment
       }
     };

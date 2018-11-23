@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
 import {UserService} from '@service/user/user-service';
-import {tap} from 'rxjs/internal/operators';
+import {take, tap} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 import {ConfigurationKey} from '@model/config/configuration-key';
@@ -59,7 +59,9 @@ export class DecisionProposalModalComponent implements OnInit {
   }
 
   private selectDefaultDecisionMaker(decisionMakers: User[]): void {
-    this.configHelper.getSingleConfiguration(ConfigurationKey[this.data.applicationType + '_DECISION_MAKER']).subscribe(
+    this.configHelper.getSingleConfiguration(ConfigurationKey[this.data.applicationType + '_DECISION_MAKER']).pipe(
+      take(1)
+    ).subscribe(
         config => {
           const user = ArrayUtil.first(decisionMakers, u => u.userName === config.value);
           if (user) {
