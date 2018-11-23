@@ -140,10 +140,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   moveToHandling(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.HANDLING)
-      .subscribe(app => {
-          this.notification.translateSuccess('application.statusChange.HANDLING');
-          this.router.navigate(['/applications', app.id, 'edit']);
-        },
+      .subscribe(app => this.router.navigate(['/applications', app.id, 'edit']),
         err => this.notification.translateErrorMessage('application.error.toHandling'));
   }
 
@@ -187,21 +184,14 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private cancelApplication(): void {
     this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.CANCELLED)
-      .subscribe(() => {
-          this.notification.translateSuccess('application.statusChange.CANCELLED');
-          this.router.navigate(['/workqueue']);
-        },
+      .subscribe(
+        () => this.router.navigate(['/workqueue']),
         err => this.notification.translateErrorMessage('application.error.cancel'));
   }
 
   private moveToDecisionMaking(): Observable<Application> {
     if (this.shouldMoveToDecisionMaking()) {
-      return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING).pipe(
-        map(app => {
-          this.notification.translateSuccess('application.statusChange.DECISIONMAKING');
-          return app;
-        })
-      );
+      return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING);
     } else {
       return of(this.applicationStore.snapshot.application);
     }

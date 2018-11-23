@@ -130,7 +130,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(() => {
           this.store.dispatch(new Load(ActionTargetType.Application));
-          this.notification.success(findTranslation('application.statusChange.DECISIONMAKING'));
           this.onDecisionConfirm.emit(changeInfo);
         }, err => this.notification.error(findTranslation('application.error.toDecisionmaking')));
     }
@@ -158,7 +157,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   private statusChanged(application: Application): void {
     this.application = application;
-    this.notification.success(findTranslation(['decision.type', this.application.status, 'confirmation']));
   }
 
   private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<{}> {

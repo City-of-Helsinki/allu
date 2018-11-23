@@ -27,6 +27,7 @@ import {InformationRequestResult} from '@feature/information-request/information
 import {Customer} from '@model/customer/customer';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {LoadSuccess} from '@feature/application/actions/application-actions';
+import {NotificationService} from '@feature/notification/notification.service';
 
 export interface ApplicationState {
   application?: Application;
@@ -59,7 +60,8 @@ export class ApplicationStore {
               private customerService: CustomerService,
               private attachmentHub: AttachmentHub,
               private depositService: DepositService,
-              private store: Store<fromApplication.State>) {
+              private store: Store<fromApplication.State>,
+              private notification: NotificationService) {
   }
 
   get snapshot(): ApplicationState {
@@ -212,23 +214,17 @@ export class ApplicationStore {
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     const appId = id || this.snapshot.application.id;
     this.appStore.next({...this.current, processing: true});
-    if (status === ApplicationStatus.RETURNED_TO_PREPARATION) {
-      return this.applicationService.returnToEditing(appId, changeInfo).pipe(
-        tap(application => this.setAndDispatch(application)),
-        catchError(err => {
-          this.appStore.next({...this.current, processing: false});
-          return observableThrowError(err);
-        })
-      );
-    } else {
-      return this.applicationService.changeStatus(appId, status, changeInfo).pipe(
-        tap(application => this.setAndDispatch(application)),
-        catchError(err => {
-          this.appStore.next({...this.current, processing: false});
-          return observableThrowError(err);
-        })
-      );
-    }
+    return this.doChangeStatus(appId, status, changeInfo).pipe(
+      tap(application => {
+        this.setAndDispatch(application);
+        this.notification.translateSuccess(`application.statusChange.${status}`);
+
+      }),
+      catchError(err => {
+        this.appStore.next({...this.current, processing: false});
+        return observableThrowError(err);
+      })
+    );
   }
 
   changeRelatedProject(projectId: number) {
@@ -353,5 +349,13 @@ export class ApplicationStore {
 
   private get current(): ApplicationState {
     return this.appStore.getValue();
+  }
+
+  private doChangeStatus(appId: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
+    if (status === ApplicationStatus.RETURNED_TO_PREPARATION) {
+      return this.applicationService.returnToEditing(appId, changeInfo);
+    } else {
+      return this.applicationService.changeStatus(appId, status, changeInfo);
+    }
   }
 }

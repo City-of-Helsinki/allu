@@ -21,15 +21,14 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {AttachmentInfo} from '@model/application/attachment/attachment-info';
 import {Location} from '@model/common/location';
 import {ApplicationType} from '@model/application/type/application-type';
-import {NotificationService} from '@feature/notification/notification.service';
 import {ApplicationStatus} from '@model/application/application-status';
 import {MatDialog} from '@angular/material';
 import {User} from '@model/user/user';
-import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {EMPTY, Observable, of} from 'rxjs/index';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '@service/user/user-service';
+import {NotificationService} from '@feature/notification/notification.service';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -68,7 +67,6 @@ describe('ApplicationActionsComponent', () => {
   let applicationStore: ApplicationStoreMock;
   let dialog: MatDialogMock;
   let userService: UserServiceMock;
-  let notification: NotificationServiceMock;
   const currentUserMock = CurrentUserMock.create(true, true);
   const applicationId = 15;
 
@@ -89,9 +87,9 @@ describe('ApplicationActionsComponent', () => {
         {provide: Router, useClass: RouterMock},
         {provide: ActivatedRoute},
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
-        {provide: NotificationService, useClass: NotificationServiceMock},
         {provide: MatDialog, useClass: MatDialogMock},
         {provide: UserService, useClass: UserServiceMock},
+        {provide: NotificationService, useClass: NotificationServiceMock},
         InformationRequestModalEvents
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
@@ -106,7 +104,6 @@ describe('ApplicationActionsComponent', () => {
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
     dialog = TestBed.get(MatDialog) as MatDialogMock;
     userService = TestBed.get(UserService) as UserServiceMock;
-    notification = TestBed.get(NotificationService) as NotificationServiceMock;
 
     const app = applicationStore.snapshot.application;
     app.id  = applicationId;
@@ -150,14 +147,12 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'replace').and.returnValue(applicationStore.application);
-    spyOn(notification, 'translateSuccess');
 
     const replaceBtn = getButtonWithText(de, findTranslation('application.button.replace').toUpperCase());
     replaceBtn.click();
     tickAndDetect();
 
     expect(applicationStore.replace).toHaveBeenCalled();
-    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationId, 'summary']);
   }));
 
@@ -192,14 +187,12 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'delete').and.returnValue(of({}));
-    spyOn(notification, 'translateSuccess');
 
     const removeBtn = getButtonWithText(de, findTranslation('common.button.remove').toUpperCase());
     removeBtn.click();
     tickAndDetect();
 
     expect(applicationStore.delete).toHaveBeenCalledWith(applicationId);
-    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   }));
 
@@ -231,7 +224,6 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.callThrough();
-    spyOn(notification, 'translateSuccess');
 
     const dialogRef = new MatDialogRefMock();
     spyOn(dialogRef, 'afterClosed').and.returnValue(of(true));
@@ -242,7 +234,6 @@ describe('ApplicationActionsComponent', () => {
     tickAndDetect();
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.CANCELLED);
-    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/workqueue']);
   }));
 
@@ -251,7 +242,6 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
-    spyOn(notification, 'translateSuccess');
 
     const dialogRef = new MatDialogRefMock();
     spyOn(dialogRef, 'afterClosed').and.returnValue(of(false));
@@ -262,7 +252,6 @@ describe('ApplicationActionsComponent', () => {
     tickAndDetect();
 
     expect(applicationStore.changeStatus).not.toHaveBeenCalled();
-    expect(notification.translateSuccess).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   }));
 
@@ -281,14 +270,12 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.callThrough();
-    spyOn(notification, 'translateSuccess');
 
     const toHandlingBtn = getButtonWithText(de, findTranslation('application.button.toHandling').toUpperCase());
     toHandlingBtn.click();
     tickAndDetect();
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.HANDLING);
-    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationId, 'edit']);
   }));
 
@@ -391,14 +378,12 @@ describe('ApplicationActionsComponent', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.callThrough();
-    spyOn(notification, 'translateSuccess');
 
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
     decisionBtn.click();
     tickAndDetect();
 
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.DECISIONMAKING);
-    expect(notification.translateSuccess).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'summary', 'decision']);
   }));
 
