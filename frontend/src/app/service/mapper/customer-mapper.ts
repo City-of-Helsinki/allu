@@ -73,11 +73,15 @@ export class CustomerMapper {
   }
 
   public static mapBackendWithContacts(customer: BackendCustomerWithContacts): CustomerWithContacts {
-    return new CustomerWithContacts(
-      CustomerRoleType[customer.roleType],
-      CustomerMapper.mapBackend(customer.customer),
-      customer.contacts.map(contact => ContactMapper.mapBackend(contact))
-    );
+    if (customer) {
+      return new CustomerWithContacts(
+        CustomerRoleType[customer.roleType],
+        CustomerMapper.mapBackend(customer.customer),
+        customer.contacts.map(contact => ContactMapper.mapBackend(contact))
+      );
+    } else {
+      return undefined;
+    }
   }
 
   public static mapFrontendWithContacts(customer: CustomerWithContacts): BackendCustomerWithContacts {

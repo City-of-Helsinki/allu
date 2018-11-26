@@ -30,18 +30,25 @@ export class InformationRequestResultService {
   private toResult(data: fromInformationRequestResult.State, requestId?: number): InformationRequestResult {
     const application = ObjectUtil.clone(data.application);
     application.kindsWithSpecifiers = data.kindsWithSpecifiers;
-    this.patchCustomerWithContacts(application, data.customer, data.contacts);
+    this.patchCustomerWithContacts(application, CustomerRoleType.APPLICANT, data.applicant, data.contacts);
+    this.patchCustomerWithContacts(application, CustomerRoleType.REPRESENTATIVE, data.representative, data.contacts);
+    this.patchCustomerWithContacts(application, CustomerRoleType.PROPERTY_DEVELOPER, data.propertyDeveloper, data.contacts);
+    this.patchCustomerWithContacts(application, CustomerRoleType.CONTRACTOR, data.contractor, data.contacts);
+
     this.patchOtherInfo(application, data.otherInfo);
     return new InformationRequestResult(requestId, application, data.invoicingCustomer, data.useCustomerForInvoicing);
   }
 
-  private patchCustomerWithContacts(application: Application, customer: Customer, contacts: Contact[]) {
-    const customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, contacts);
-    application.customersWithContacts = ArrayUtil.createOrReplace(
-      application.customersWithContacts,
-      customerWithContacts,
-      cwc => cwc.roleType === CustomerRoleType.APPLICANT
-    );
+  private patchCustomerWithContacts(application: Application, role: CustomerRoleType, customer: Customer, contacts: Contact[] = []) {
+    if (customer) {
+      const customerContacts = contacts.filter(c => c.customerId === customer.id);
+      const customerWithContacts = new CustomerWithContacts(role, customer, customerContacts);
+      application.customersWithContacts = ArrayUtil.createOrReplace(
+        application.customersWithContacts,
+        customerWithContacts,
+        cwc => cwc.roleType === role
+      );
+    }
   }
 
   private patchOtherInfo(application: Application, otherInfo: FieldValues): void {

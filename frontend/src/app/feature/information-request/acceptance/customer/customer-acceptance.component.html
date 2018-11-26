@@ -5,10 +5,9 @@
   [newCustomer]="newCustomer"
   [readonly]="readonly"
   (customerChanges)="customerChanges($event)">
-
   <div class="left-header">
     <h2 mat-dialog-title>
-      {{'informationRequest.field.CUSTOMER' | translation}}
+      {{['informationRequest.field', fieldKey] | translation}}
     </h2>
   </div>
   <div class="right-header">
@@ -30,7 +29,7 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <div *ngIf="!readonly">
+      <div *ngIf="!readonly && searchForm.contains('useForInvoicing')">
         <mat-checkbox formControlName="useForInvoicing">
           {{'customer.useForInvoicing' | translation}}
         </mat-checkbox>

@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, Inject, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
@@ -6,13 +6,14 @@ import {Store} from '@ngrx/store';
 import {Application} from '@model/application/application';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {Observable, Subject} from 'rxjs/index';
-import {distinctUntilChanged, map, skipUntil, startWith, tap} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {SetApplication, SetCustomer, SetKindsWithSpecifiers} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus, isBefore} from '@model/application/application-status';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -38,7 +39,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   oldInfo: Application;
   newInfo: Application;
   form: FormGroup;
-  updatedFields: string[];
+  updatedFields: InformationRequestFieldKey[];
   submitDisabled: Observable<boolean>;
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
 
@@ -64,7 +65,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   ngOnInit(): void {
     this.oldInfo = this.data.oldInfo;
     this.newInfo = this.data.newInfo;
-    this.updatedFields = this.data.updatedFields.map(field => InformationRequestFieldKey[field]);
+    this.updatedFields = this.data.updatedFields;
 
     // set initial values to the store
     const baseInfo = this.data.oldInfo || new Application();
@@ -92,7 +93,6 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
 
   private onApplicationChange(application: Application): void {
     this.store.dispatch(new SetApplication(application));
-    this.store.dispatch(new SetCustomer(application.applicant.customer));
     this.store.dispatch(new SetKindsWithSpecifiers(application.kindsWithSpecifiers));
     this.readonly = this.data.readonly || isBefore(application.status, ApplicationStatus.INFORMATION_RECEIVED);
   }

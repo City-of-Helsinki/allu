@@ -1,13 +1,13 @@
-import {InformationRequestResponse} from '../../model/information-request/information-request-response';
+import {InformationRequestResponse} from '@model/information-request/information-request-response';
 import {ApplicationMapper} from './application-mapper';
-import {InformationRequestFieldKey} from '../../model/information-request/information-request-field-key';
+import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {BackendApplication} from '../backend-model/backend-application';
 
 export interface BackendInformationRequestResponse {
   informationRequestId: number;
   applicationId: number;
   responseData: BackendApplication;
-  updatedFields: string[];
+  updatedFields: InformationRequestFieldKey[];
 }
 
 export class InformationRequestResponseMapper {
@@ -17,7 +17,7 @@ export class InformationRequestResponseMapper {
         backendResponse.informationRequestId,
         backendResponse.applicationId,
         ApplicationMapper.mapBackend(backendResponse.responseData),
-        backendResponse.updatedFields.map(field => InformationRequestFieldKey[field]))
+        backendResponse.updatedFields)
       : undefined;
   }
 }

@@ -4,7 +4,7 @@ import {InformationRequestStatus} from '@model/information-request/information-r
 import {InformationRequestField} from '@model/information-request/information-request-field';
 
 export interface BackendInformationRequestField {
-  fieldKey: string;
+  fieldKey: InformationRequestFieldKey;
   description: string;
 }
 
@@ -21,7 +21,7 @@ export class InformationRequestMapper {
       ? new InformationRequest(
         backendRequest.id,
         backendRequest.applicationId,
-        backendRequest.fields.map(field => new InformationRequestField(InformationRequestFieldKey[field.fieldKey], field.description)),
+        backendRequest.fields.map(field => new InformationRequestField(field.fieldKey, field.description)),
         backendRequest.status)
       : undefined;
   }
@@ -34,6 +34,6 @@ export class InformationRequestMapper {
   }
 
   private static mapFields(fields: InformationRequestField[]): BackendInformationRequestField[] {
-    return fields.map(field => ({fieldKey: InformationRequestFieldKey[field.fieldKey], description: field.description}));
+    return fields.map(field => ({fieldKey: field.fieldKey, description: field.description}));
   }
 }

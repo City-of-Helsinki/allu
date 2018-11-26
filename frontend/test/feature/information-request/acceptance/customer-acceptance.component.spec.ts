@@ -10,7 +10,6 @@ import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {SearchSuccess} from '@feature/customerregistry/actions/customer-search-actions';
 import * as CodeSetAction from '@feature/allu/actions/code-set-actions';
 import {By} from '@angular/platform-browser';
-import {ApplicantAcceptanceComponent} from '@feature/information-request/acceptance/customer/applicant-acceptance.component';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {CustomerService} from '@service/customer/customer.service';
@@ -18,15 +17,17 @@ import {CustomerServiceMock, MatDialogMock, MatDialogRefMock, NotificationServic
 import {NotificationService} from '@feature/notification/notification.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {of} from 'rxjs';
+import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
 
 @Component({
   selector: 'host',
   template: `
     <form [formGroup]="form">
-      <applicant-acceptance
+      <customer-acceptance
         [parentForm]="form"
         [oldCustomer]="oldCustomer"
-        [newCustomer]="newCustomer"></applicant-acceptance>
+        [newCustomer]="newCustomer"
+        fieldKey="CUSTOMER"></customer-acceptance>
     </form>`
 })
 class MockHostComponent {
@@ -81,7 +82,7 @@ const codeSet: CodeSetTypeMap = {
   }
 };
 
-describe('ApplicantAcceptanceComponent', () => {
+describe('CustomerAcceptanceComponent', () => {
   let hostComp: MockHostComponent;
   let fixture: ComponentFixture<MockHostComponent>;
   let de: DebugElement;
@@ -103,7 +104,7 @@ describe('ApplicantAcceptanceComponent', () => {
       ],
       declarations: [
         MockHostComponent,
-        ApplicantAcceptanceComponent,
+        CustomerAcceptanceComponent,
         MockCustomerInfoAcceptanceComponent
       ],
       providers: [
@@ -144,7 +145,7 @@ describe('ApplicantAcceptanceComponent', () => {
   });
 
   it('should pass old customer on change', () => {
-    const testedComponent: ApplicantAcceptanceComponent = de.query(By.directive(ApplicantAcceptanceComponent)).componentInstance;
+    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
     const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
     testedComponent.selectReferenceCustomer(existingCustomer1);
     fixture.detectChanges();
@@ -154,7 +155,7 @@ describe('ApplicantAcceptanceComponent', () => {
   it('should do initial customer search when old customer is undefined', () => {
     hostComp.oldCustomer = undefined;
     fixture.detectChanges();
-    const testedComponent: ApplicantAcceptanceComponent = de.query(By.directive(ApplicantAcceptanceComponent)).componentInstance;
+    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
     expect(testedComponent.oldCustomer).toBeUndefined();
 
     testedComponent.ngOnInit();
@@ -173,7 +174,7 @@ describe('ApplicantAcceptanceComponent', () => {
 
   it('should create new customer by user selection', () => {
     const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;
-    const testedComponent: ApplicantAcceptanceComponent = de.query(By.directive(ApplicantAcceptanceComponent)).componentInstance;
+    const testedComponent: CustomerAcceptanceComponent = de.query(By.directive(CustomerAcceptanceComponent)).componentInstance;
 
     expect(childComp._oldCustomer).toEqual(oldCustomer);
 

@@ -1,15 +1,23 @@
 import {Application} from '@model/application/application';
-import {InformationRequestResultActions, InformationRequestResultActionType} from '../actions/information-request-result-actions';
+import {
+  InformationRequestResultActions,
+  InformationRequestResultActionType,
+  SetCustomer
+} from '../actions/information-request-result-actions';
 import {Customer} from '@model/customer/customer';
 import {Contact} from '@model/customer/contact';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export interface State {
   application: Application;
-  customer: Customer;
+  applicant: Customer;
+  representative: Customer;
+  propertyDeveloper: Customer;
+  contractor: Customer;
   contacts: Contact[];
   kindsWithSpecifiers: KindsWithSpecifiers;
   invoicingCustomer: Customer;
@@ -19,13 +27,33 @@ export interface State {
 
 export const initialState: State = {
   application: undefined,
-  customer: undefined,
+  applicant: undefined,
+  representative: undefined,
+  propertyDeveloper: undefined,
+  contractor: undefined,
   contacts: [],
   kindsWithSpecifiers: {},
   invoicingCustomer: undefined,
   useCustomerForInvoicing: undefined,
   otherInfo: undefined
 };
+
+function updateCustomer(state: State, action: SetCustomer): State {
+  switch (action.targetType) {
+    case ActionTargetType.Applicant:
+      return {...state, applicant: action.payload};
+    case ActionTargetType.Representative:
+      return {...state, representative: action.payload};
+    case ActionTargetType.PropertyDeveloper:
+      return {...state, propertyDeveloper: action.payload};
+    case ActionTargetType.Contractor:
+      return {...state, contractor: action.payload};
+    case ActionTargetType.InvoicingCustomer:
+      return {...state, invoicingCustomer: action.payload};
+    default:
+      return state;
+  }
+}
 
 export function reducer(state: State = initialState, action: InformationRequestResultActions) {
   switch (action.type) {
@@ -37,23 +65,12 @@ export function reducer(state: State = initialState, action: InformationRequestR
     }
 
     case InformationRequestResultActionType.SetCustomer: {
-      return {
-        ...state,
-        customer: action.payload
-      };
-    }
-
-    case InformationRequestResultActionType.SetContacts: {
-      return {
-        ...state,
-        contacts: action.payload
-      };
+      return updateCustomer(state, action);
     }
 
     case InformationRequestResultActionType.SetContact: {
-      const index = action.payload.index;
-      const contact = action.payload.contact;
-      const result = ArrayUtil.createOrReplaceAt(state.contacts, contact, index);
+      const contact = action.payload;
+      const result = ArrayUtil.createOrReplace(state.contacts, contact, c => c.id === contact.id);
       return {
         ...state,
         contacts: result
@@ -64,13 +81,6 @@ export function reducer(state: State = initialState, action: InformationRequestR
       return {
         ...state,
         kindsWithSpecifiers: action.payload
-      };
-    }
-
-    case InformationRequestResultActionType.SetInvoicingCustomer: {
-      return {
-        ...state,
-        invoicingCustomer: action.payload
       };
     }
 
@@ -102,7 +112,13 @@ export function reducer(state: State = initialState, action: InformationRequestR
 
 export const getApplication = (state: State) => state.application;
 
-export const getCustomer = (state: State) => state.customer;
+export const getApplicant = (state: State) => state.applicant;
+
+export const getRepresentative = (state: State) => state.representative;
+
+export const getPropertyDeveloper = (state: State) => state.propertyDeveloper;
+
+export const getContractor = (state: State) => state.contractor;
 
 export const getContacts = (state: State) => state.contacts;
 

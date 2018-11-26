@@ -1,7 +1,8 @@
-<div *ngFor="let contact of newContacts; let index=index">
+<div *ngFor="let contact of newContacts">
   <contact-acceptance
     [formArray]="contactForms"
     [newContact]="contact"
     [readonly]="readonly"
-    (contactChanges)="onContactChange($event, index)"></contact-acceptance>
+    [fieldKey]="fieldKey"
+    (contactChanges)="onContactChange($event)"></contact-acceptance>
 </div>

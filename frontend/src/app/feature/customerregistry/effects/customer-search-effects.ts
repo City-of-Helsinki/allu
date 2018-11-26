@@ -2,10 +2,9 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
-import {catchError, filter, map, switchMap} from 'rxjs/operators';
-import {CustomerService} from '../../../service/customer/customer.service';
+import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
+import {CustomerService} from '@service/customer/customer.service';
 import {CustomerSearchActionType, Search, SearchByType, SearchFailed, SearchSuccess} from '../actions/customer-search-actions';
-import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Injectable()
 export class CustomerSearchEffects {
@@ -26,22 +25,7 @@ export class CustomerSearchEffects {
   @Effect()
   searchCustomerByType: Observable<Action> = this.actions.pipe(
     ofType<SearchByType>(CustomerSearchActionType.SearchByType),
-    filter(action => ActionTargetType.Customer === action.targetType),
-    switchMap(action => this.searchByType(action))
-  );
-
-  @Effect()
-  searchApplicantByType: Observable<Action> = this.actions.pipe(
-    ofType<SearchByType>(CustomerSearchActionType.SearchByType),
-    filter(action => ActionTargetType.Applicant === action.targetType),
-    switchMap(action => this.searchByType(action))
-  );
-
-  @Effect()
-  searchInvoicingCustomerByType: Observable<Action> = this.actions.pipe(
-    ofType<SearchByType>(CustomerSearchActionType.SearchByType),
-    filter(action => ActionTargetType.InvoicingCustomer === action.targetType),
-    switchMap(action => this.searchByType(action))
+    concatMap(action => this.searchByType(action))
   );
 
   private searchByType(action: SearchByType): Observable<Action> {

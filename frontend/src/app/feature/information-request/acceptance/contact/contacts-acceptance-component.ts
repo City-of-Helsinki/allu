@@ -4,8 +4,9 @@ import {Contact} from '@model/customer/contact';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {Subject} from 'rxjs/index';
-import {SetContact, SetContacts} from '@feature/information-request/actions/information-request-result-actions';
+import {SetContact} from '@feature/information-request/actions/information-request-result-actions';
 import {takeUntil} from 'rxjs/internal/operators';
+import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 
 @Component({
   selector: 'contacts-acceptance',
@@ -17,9 +18,10 @@ export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterView
   @Input() newContacts: Contact[] = [];
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
+  @Input() fieldKey: InformationRequestFieldKey;
 
   contactForms: FormArray;
-  contactChanges$ = new Subject<{contact: Contact, index: number}>();
+  contactChanges$ = new Subject<Contact>();
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
@@ -29,7 +31,6 @@ export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterView
   ngOnInit(): void {
     this.contactForms = this.fb.array([]);
     this.parentForm.addControl('contacts', this.contactForms);
-    this.store.dispatch(new SetContacts(this.newContacts));
   }
 
   ngOnDestroy(): void {
@@ -40,15 +41,10 @@ export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterView
   ngAfterViewInit(): void {
     this.contactChanges$.pipe(
       takeUntil(this.destroy)
-    ).subscribe(change => {
-      this.store.dispatch(new SetContact({
-        contact: change.contact,
-        index: change.index
-      }));
-    });
+    ).subscribe(contact => this.store.dispatch(new SetContact(contact)));
   }
 
-  onContactChange(contact: Contact, index) {
-    this.contactChanges$.next({contact, index});
+  onContactChange(contact: Contact) {
+    this.contactChanges$.next(contact);
   }
 }

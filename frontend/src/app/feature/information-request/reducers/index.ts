@@ -59,21 +59,29 @@ export const getResultApplication = createSelector(
   fromInformationRequestResult.getApplication
 );
 
-export const getResultCustomer = createSelector(
+export const getApplicant = createSelector(
   getInformationRequestResultState,
-  fromInformationRequestResult.getCustomer
+  fromInformationRequestResult.getApplicant
+);
+
+export const getRepresentative = createSelector(
+  getInformationRequestResultState,
+  fromInformationRequestResult.getRepresentative
+);
+
+export const getPropertyDeveloper = createSelector(
+  getInformationRequestResultState,
+  fromInformationRequestResult.getPropertyDeveloper
+);
+
+export const getContractor = createSelector(
+  getInformationRequestResultState,
+  fromInformationRequestResult.getContractor
 );
 
 export const getResultContacts = createSelector(
   getInformationRequestResultState,
   fromInformationRequestResult.getContacts
-);
-
-// Handle different role types when supported by external api
-export const getResultCustomerWithContacts = createSelector(
-  getResultCustomer,
-  getResultContacts,
-  (customer, contacts) => new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, contacts)
 );
 
 export const getResultKindsWithSpecifiers = createSelector(

@@ -1,12 +1,14 @@
 <div class="acceptance-content">
-  <applicant-acceptance
+  <customer-acceptance
     [parentForm]="parentForm"
     [oldCustomer]="oldCustomerWithContacts?.customer"
     [newCustomer]="newCustomerWithContacts?.customer"
-    [readonly]="readonly"></applicant-acceptance>
+    [readonly]="readonly"
+    [fieldKey]="fieldKey"></customer-acceptance>
 
   <contacts-acceptance
     [parentForm]="parentForm"
     [newContacts]="newCustomerWithContacts?.contacts"
-    [readonly]="readonly"></contacts-acceptance>
+    [readonly]="readonly"
+    [fieldKey]="fieldKey"></contacts-acceptance>
 </div>

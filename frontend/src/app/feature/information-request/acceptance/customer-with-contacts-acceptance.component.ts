@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
+import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 
 @Component({
   selector: 'customer-with-contacts-acceptance',
@@ -12,4 +13,5 @@ export class CustomerWithContactsAcceptanceComponent {
   @Input() newCustomerWithContacts: CustomerWithContacts;
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
+  @Input() fieldKey: InformationRequestFieldKey;
 }

@@ -6,14 +6,14 @@ import {Contact} from '@model/customer/contact';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {ActionWithTarget} from '@feature/allu/actions/action-with-target';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export enum InformationRequestResultActionType {
   SetApplication = '[InformationRequestResult] Set result application',
   SetCustomer = '[InformationRequestResult] Set result customer',
-  SetContacts = '[InformationRequestResult] Set result contacts',
-  SetContact = '[InformationRequestResult] Set result contact at index',
+  SetContact = '[InformationRequestResult] Set result contact',
   SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers',
-  SetInvoicingCustomer = '[InformationRequestResult] Set result invoicing customer',
   UseCustomerForInvoicing = '[InformationRequestResult] Use customer also for invoicing',
   SetOtherInfo = '[InformationRequestResult] Set other application info',
   Save = '[InformationRequestResult] Save result of information request',
@@ -25,29 +25,19 @@ export class SetApplication implements Action {
   constructor(public payload: Application) {}
 }
 
-export class SetCustomer implements Action {
+export class SetCustomer implements ActionWithTarget {
   readonly type = InformationRequestResultActionType.SetCustomer;
-  constructor(public payload: Customer) {}
-}
-
-export class SetContacts implements Action {
-  readonly type = InformationRequestResultActionType.SetContacts;
-  constructor(public payload: Contact[]) {}
+  constructor(readonly targetType: ActionTargetType, public payload: Customer) {}
 }
 
 export class SetContact implements Action {
   readonly type = InformationRequestResultActionType.SetContact;
-  constructor(public payload: {contact: Contact, index: number}) {}
+  constructor(public payload: Contact) {}
 }
 
 export class SetKindsWithSpecifiers implements Action {
   readonly type = InformationRequestResultActionType.SetKindsWithSpecifiers;
   constructor(public payload: KindsWithSpecifiers) {}
-}
-
-export class SetInvoicingCustomer implements Action {
-  readonly type = InformationRequestResultActionType.SetInvoicingCustomer;
-  constructor(public payload: Customer) {}
 }
 
 export class UseCustomerForInvoicing implements Action {
@@ -73,10 +63,8 @@ export class SaveSuccess implements Action {
 export type InformationRequestResultActions =
   | SetApplication
   | SetCustomer
-  | SetContacts
   | SetContact
   | SetKindsWithSpecifiers
-  | SetInvoicingCustomer
   | UseCustomerForInvoicing
   | SetOtherInfo
   | Save

@@ -589,6 +589,9 @@ export const translations = {
     },
     field: {
       CUSTOMER: 'Hakija',
+      PROPERTY_DEVELOPER: 'Rakennuttaja',
+      CONTRACTOR: 'Työn suorittaja',
+      REPRESENTATIVE: 'Asiamies',
       INVOICING_CUSTOMER: 'Laskutettava',
       GEOMETRY: 'Geometria',
       START_TIME: 'Aloituspäivämäärä',
@@ -755,7 +758,7 @@ export const translations = {
       },
       REPRESENTATIVE: {
         title: 'Asiamies'
-      }
+      },
     },
     field: {
       typeMissing: 'Tyyppi puuttuu',

@@ -17,7 +17,7 @@ export class OtherAcceptanceComponent implements OnInit {
   @Input() oldInfo: Application;
   @Input() newInfo: Application;
   @Input() readonly: boolean;
-  @Input() fieldKeys: string[];
+  @Input() fieldKeys: InformationRequestFieldKey[];
 
   form: FormGroup;
   otherInfoKeys: string[] = [];
@@ -29,7 +29,7 @@ export class OtherAcceptanceComponent implements OnInit {
   ngOnInit(): void {
     this.parentForm.addControl('other', this.form);
     this.otherInfoKeys = this.fieldKeys
-      .filter(key => OtherInfoKeys.some(otherInfoKey => otherInfoKey ===  InformationRequestFieldKey[key]));
+      .filter(key => OtherInfoKeys.some(otherInfoKey => otherInfoKey ===  key));
   }
 
   otherInfoChanges(fieldValues: FieldValues): void {

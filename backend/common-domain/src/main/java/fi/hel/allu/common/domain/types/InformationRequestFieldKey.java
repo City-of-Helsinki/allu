@@ -3,6 +3,9 @@ package fi.hel.allu.common.domain.types;
 public enum InformationRequestFieldKey {
   CUSTOMER,
   INVOICING_CUSTOMER,
+  PROPERTY_DEVELOPER,
+  CONTRACTOR,
+  REPRESENTATIVE,
   GEOMETRY,
   START_TIME,
   END_TIME,

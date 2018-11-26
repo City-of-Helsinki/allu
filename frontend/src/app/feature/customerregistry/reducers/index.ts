@@ -10,6 +10,12 @@ export interface CustomerState {
   contactSearch: fromContactSearch.State;
   applicantSearch: fromCustomerSearch.State;
   applicantContactSearch: fromContactSearch.State;
+  representativeSearch: fromCustomerSearch.State;
+  representativeContactSearch: fromContactSearch.State;
+  propertyDeveloperSearch: fromCustomerSearch.State;
+  propertyDeveloperContactSearch: fromContactSearch.State;
+  contractorSearch: fromCustomerSearch.State;
+  contractorContactSearch: fromContactSearch.State;
   invoicingCustomerSearch: fromCustomerSearch.State;
   invoicingCustomerContactSearch: fromContactSearch.State;
 }
@@ -23,6 +29,12 @@ export const reducers: ActionReducerMap<CustomerState> = {
   contactSearch: fromContactSearch.createReducerFor(ActionTargetType.Customer),
   applicantSearch: fromCustomerSearch.createReducerFor(ActionTargetType.Applicant),
   applicantContactSearch: fromContactSearch.createReducerFor(ActionTargetType.Applicant),
+  representativeSearch: fromCustomerSearch.createReducerFor(ActionTargetType.Representative),
+  representativeContactSearch: fromContactSearch.createReducerFor(ActionTargetType.Representative),
+  propertyDeveloperSearch: fromCustomerSearch.createReducerFor(ActionTargetType.PropertyDeveloper),
+  propertyDeveloperContactSearch: fromContactSearch.createReducerFor(ActionTargetType.PropertyDeveloper),
+  contractorSearch: fromCustomerSearch.createReducerFor(ActionTargetType.Contractor),
+  contractorContactSearch: fromContactSearch.createReducerFor(ActionTargetType.Contractor),
   invoicingCustomerSearch: fromCustomerSearch.createReducerFor(ActionTargetType.InvoicingCustomer),
   invoicingCustomerContactSearch: fromContactSearch.createReducerFor(ActionTargetType.InvoicingCustomer)
 };
@@ -35,39 +47,16 @@ export const reducersProvider = [
 
 export const getCustomerState = createFeatureSelector<CustomerState>('customer');
 
-export const getCustomerSearchState = createSelector(
-  getCustomerState,
-  (state: CustomerState) => state.customerSearch
-);
+export function createCustomerStateSelector(selector: (state: CustomerState) => fromCustomerSearch.State) {
+  return createSelector(getCustomerState, selector);
+}
 
-export const getContactSearchState = createSelector(
-  getCustomerState,
-  (state: CustomerState) => state.contactSearch
-);
-
-export const getApplicantSearchState = createSelector(
-  getCustomerState,
-  (state: CustomerState) => state.applicantSearch
-);
-
-export const getApplicantContactSearchState = createSelector(
-  getCustomerState,
-  (state: CustomerState) => state.applicantContactSearch
-);
-
-export const getInvoicingCustomerSearchState = createSelector(
-  getCustomerState,
-  (state: CustomerState) => state.invoicingCustomerSearch
-);
-
-export const getInvoicingCustomerContactSearchState = createSelector(
-  getCustomerState,
-  (state: CustomerState) => state.invoicingCustomerContactSearch
-);
+export function createContactsStateSelector(selector: (state: CustomerState) => fromContactSearch.State) {
+  return createSelector(getCustomerState, selector);
+}
 
 function createCustomerSelectors(getState: MemoizedSelector<object, fromCustomerSearch.State>) {
   return {
-    // Customer selectors
     getMatchingCustomers: createSelector(
       getState,
       fromCustomerSearch.getMatching
@@ -104,6 +93,19 @@ function createContactSelectors(getState: MemoizedSelector<object, fromContactSe
   };
 }
 
+export const getCustomerSearchState = createCustomerStateSelector((state: CustomerState) => state.customerSearch);
+export const getContactSearchState = createContactsStateSelector((state: CustomerState) => state.contactSearch);
+export const getApplicantSearchState = createCustomerStateSelector((state: CustomerState) => state.applicantSearch);
+export const getApplicantContactSearchState = createContactsStateSelector((state: CustomerState) => state.applicantContactSearch);
+export const getRepresentativeSearchState = createCustomerStateSelector((state: CustomerState) => state.representativeSearch);
+export const getRepresentativeContactSearchState = createContactsStateSelector((state: CustomerState) => state.representativeContactSearch);
+export const getPropertyDeveloperSearchState = createCustomerStateSelector((state: CustomerState) => state.propertyDeveloperSearch);
+export const getPropertyDeveloperContactSearchState = createContactsStateSelector(
+  (state: CustomerState) => state.propertyDeveloperContactSearch);
+export const getContractorSearchState = createCustomerStateSelector((state: CustomerState) => state.contractorSearch);
+export const getContractorContactSearchState = createContactsStateSelector((state: CustomerState) => state.contractorContactSearch);
+export const getInvoicingCustomerSearchState = createCustomerStateSelector((state: CustomerState) => state.invoicingCustomerSearch);
+
 export const {
   getMatchingCustomers,
   getLoading
@@ -116,27 +118,16 @@ export const {
   getContactsLoaded
 } = createContactSelectors(getContactSearchState);
 
-export const {
-  getMatchingCustomers: getMatchingApplicants,
-  getLoading: getApplicantsLoading
-} = createCustomerSelectors(getApplicantSearchState);
+export const getApplicantSelectors = createCustomerSelectors(getApplicantSearchState);
+export const getApplicantContactsSelectors = createContactSelectors(getApplicantContactSearchState);
 
-export const {
-  getAvailableContacts: getAvailableApplicantContacts,
-  getMatchingContacts: getMatchingApplicantContacts,
-  getContactsLoading: getApplicantContactsLoading,
-  getContactsLoaded: getApplicantContactsLoaded
-} = createContactSelectors(getApplicantContactSearchState);
+export const getRepresentativeSelectors = createCustomerSelectors(getRepresentativeSearchState);
+export const getRepresentativeContactsSelectors = createContactSelectors(getRepresentativeContactSearchState);
 
-export const {
-  getMatchingCustomers: getMatchingInvoicingCustomers,
-  getLoading: getInvoicingCustomersLoading
-} = createCustomerSelectors(getInvoicingCustomerSearchState);
+export const getPropertyDeveloperSelectors = createCustomerSelectors(getPropertyDeveloperSearchState);
+export const getPropertyDeveloperContactsSelectors = createContactSelectors(getPropertyDeveloperContactSearchState);
 
-export const {
-  getAvailableContacts: getAvailableInvoicingCustomerContacts,
-  getMatchingContacts: getMatchingInvoicingCustomerContacts,
-  getContactsLoading: getInvoicingCustomerContactsLoading,
-  getContactsLoaded: getInvoicingCustomerContactsLoaded
-} = createContactSelectors(getInvoicingCustomerContactSearchState);
+export const getContractorSelectors = createCustomerSelectors(getContractorSearchState);
+export const getContractorContactsSelectors = createContactSelectors(getContractorContactSearchState);
 
+export const getInvoicingCustomerSelectors = createCustomerSelectors(getInvoicingCustomerSearchState);
