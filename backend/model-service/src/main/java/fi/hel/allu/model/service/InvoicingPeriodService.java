@@ -30,7 +30,7 @@ public class InvoicingPeriodService {
   }
 
   @Transactional
-  public List<InvoicingPeriod> update(Integer applicationId,
+  public List<InvoicingPeriod> updateInvoicingPeriods(Integer applicationId,
       int periodLength) {
     List<InvoicingPeriod> existingPeriods = invoicingPeriodDao.findForApplicationId(applicationId);
     if (!hasInvoicedPeriods(existingPeriods)) {

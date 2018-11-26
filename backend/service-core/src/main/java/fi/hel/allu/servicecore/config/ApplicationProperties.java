@@ -1354,6 +1354,13 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/clientapplicationdata");
   }
 
+  public String getInvoicingPeriodUpdateUrl() {
+    return getModelServiceUrl("/applications/{id}/invoicingperiods?periodLength={periodLength}");
+  }
+
+  public String getFindInvoicingPeriodsUrl() {
+    return getModelServiceUrl("/applications/{id}/invoicingperiods");
+  }
 
   public String getPaymentClassUrl() {
     return paymentClassUrl;

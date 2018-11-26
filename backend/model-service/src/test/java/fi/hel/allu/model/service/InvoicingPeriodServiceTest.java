@@ -78,7 +78,7 @@ public class InvoicingPeriodServiceTest {
     existingPeriods.add(new InvoicingPeriod(APPLICATION_ID, START_TIME.plusMonths(6), END_TIME));
     existingPeriods.get(0).setInvoiced(true);
     when(invoicingPeriodDao.findForApplicationId(APPLICATION_ID)).thenReturn(existingPeriods);
-    invoicingPeriodService.update(APPLICATION_ID, 6);
+    invoicingPeriodService.updateInvoicingPeriods(APPLICATION_ID, 6);
     verify(invoicingPeriodDao).deleteUninvoicedPeriods(APPLICATION_ID);
     verify(invoicingPeriodDao).insertPeriods((List)argThat(IsCollectionWithSize.hasSize(1)));
   }
