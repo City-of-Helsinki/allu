@@ -497,11 +497,7 @@ public class DecisionJsonMapper {
     final Map<Integer, Location> locations = locationService.getLocationsByApplication(application.getId())
         .stream().collect(Collectors.toMap(l -> l.getId(), l -> l));
     final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(application.getId());
-    // There can be several entries for one location if entries are splitted to
-    // invoicing periods -> filter duplicate entries
-    final List<ChargeBasisEntry> areaEntries = chargeBasisEntries.stream()
-        .filter(c -> isAreaEntry(c, chargeBasisEntries))
-        .collect(collectUniqueLocationIds());
+    final List<ChargeBasisEntry> areaEntries = getAreaEntries(chargeBasisEntries);
     final List<ChargeBasisEntry> otherEntries = chargeBasisEntries.stream()
         .filter(c -> !isAreaEntry(c, chargeBasisEntries)).collect(Collectors.toList());
 
@@ -514,6 +510,22 @@ public class DecisionJsonMapper {
     decision.setRentalAreas(rentalAreas);
   }
 
+
+  // Gets area entries and entries referring to area entries. There can be several entries for one location if entries
+  // are splitted to invoicing periods -> filter duplicate entries
+  private List<ChargeBasisEntry> getAreaEntries(List<ChargeBasisEntry> allEntries) {
+    List<ChargeBasisEntry> result = new ArrayList<>();
+    List<ChargeBasisEntry> areaEntries = allEntries.stream().filter(e -> e.getLocationId() != null).collect(collectUniqueLocationIds());
+    areaEntries.forEach(ae -> addWithReferringEntries(ae, allEntries, result));
+    return result;
+  }
+
+  private void addWithReferringEntries(ChargeBasisEntry areaEntry, List<ChargeBasisEntry> allEntries,
+      List<ChargeBasisEntry> result) {
+    result.add(areaEntry);
+    result.addAll(allEntries.stream().filter(e -> Objects.equals(e.getReferredTag(), areaEntry.getTag()))
+        .collect(Collectors.toList()));
+  }
 
   private Collector<ChargeBasisEntry, ?, List<ChargeBasisEntry>> collectUniqueLocationIds() {
     return Collectors.collectingAndThen(
