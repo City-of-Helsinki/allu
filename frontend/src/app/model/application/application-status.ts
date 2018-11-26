@@ -22,30 +22,28 @@ export enum ApplicationStatus {
 
 export const statusNames = Object.keys(ApplicationStatus);
 
-export function applicationCanBeEdited(status: ApplicationStatus): boolean {
-  if (status !== undefined) {
-    return isAfter(status, ApplicationStatus.PENDING_CLIENT) && isBefore(status, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
+export function applicationCanBeEdited(application: Application): boolean {
+  const editableByStatus = isBetween(application.status, ApplicationStatus.PENDING_CLIENT, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
+  const noPendingClientData = application.clientApplicationData === undefined;
+  return editableByStatus && noPendingClientData;
+}
+
+export function invoicingChangesAllowedForType(application: Application): boolean {
+  if (ApplicationType.EXCAVATION_ANNOUNCEMENT === application.type) {
+    return excavationInvoicingChangeAllowed(application);
   } else {
-    return true;
+    return invoicingChangesAllowed(application);
   }
 }
 
-export function invoicingChangesAllowedForType(type: ApplicationType, status: ApplicationStatus): boolean {
-  if (ApplicationType.EXCAVATION_ANNOUNCEMENT === type) {
-    return excavationInvoicingChangeAllowed(status);
-  } else {
-    return invoicingChangesAllowed(status);
-  }
+export function invoicingChangesAllowed(application: Application): boolean {
+  return applicationCanBeEdited(application);
 }
 
-export function invoicingChangesAllowed(status): boolean {
-  return applicationCanBeEdited(status);
-}
-
-export function excavationInvoicingChangeAllowed(status: ApplicationStatus): boolean {
-  const invoicingChangesAllowedForAll = invoicingChangesAllowed(status);
-  const invoicingChangesAllowedForExcavation = [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(status) >= 0;
-  return invoicingChangesAllowedForAll || invoicingChangesAllowedForExcavation;
+export function excavationInvoicingChangeAllowed(application: Application): boolean {
+  const allowedForAll = invoicingChangesAllowed(application);
+  const allowedForExcavation = [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(application.status) >= 0;
+  return allowedForAll || allowedForExcavation;
 }
 
 export function inHandling(status: ApplicationStatus): boolean {
@@ -58,6 +56,10 @@ export function isBefore(first: ApplicationStatus, second: ApplicationStatus): b
 
 export function isAfter(first: ApplicationStatus, second: ApplicationStatus): boolean {
   return statusNames.indexOf(first) > statusNames.indexOf(second);
+}
+
+export function isBetween(tested: ApplicationStatus, after: ApplicationStatus, before: ApplicationStatus): boolean {
+  return isAfter(tested, after) && isBefore(tested, before);
 }
 
 export function isSameOrBefore(first: ApplicationStatus, second: ApplicationStatus): boolean {

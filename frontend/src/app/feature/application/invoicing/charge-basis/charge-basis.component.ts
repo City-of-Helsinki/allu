@@ -87,7 +87,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   private initChangesAllowed() {
     this.store.select(fromApplication.getCurrentApplication).pipe(
       take(1),
-      map(app => invoicingChangesAllowedForType(app.type, app.status)),
+      map(app => invoicingChangesAllowedForType(app)),
       withLatestFrom(this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))),
       map(([changesAllowed, modifyRole]) => changesAllowed && modifyRole)
     ).subscribe(e => this.changesAllowed = e);

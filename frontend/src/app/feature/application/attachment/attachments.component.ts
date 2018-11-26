@@ -42,7 +42,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
 
   ngOnInit() {
     this.application = this.applicationStore.snapshot.application;
-    this.applicationCanBeEdited = applicationCanBeEdited(this.application.status);
+    this.applicationCanBeEdited = applicationCanBeEdited(this.application);
     this.applicationStore.attachments.pipe(
       takeUntil(this.destroy),
       map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first

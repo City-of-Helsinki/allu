@@ -9,17 +9,18 @@ import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-mo
 import {NotificationService} from '@feature/notification/notification.service';
 import {Deposit} from '@model/application/invoice/deposit';
 import {DepositStatusType} from '@model/application/invoice/deposit-status-type';
-import {applicationCanBeEdited, ApplicationStatus} from '@model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus, isSameOrBefore} from '@model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, switchMap, takeUntil} from 'rxjs/internal/operators';
-import {Store} from '@ngrx/store';
+import {filter, map, switchMap, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromInvoicingr from '@feature/application/invoicing/reducers';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 import {TimeUtil} from '@util/time.util';
 import {Customer} from '@model/customer/customer';
 import {ApplicationType} from '@app/model/application/type/application-type';
+import {Application} from '@model/application/application';
 
 @Component({
   selector: 'invoicing-info',
@@ -113,20 +114,20 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   }
 
   private initForm(): void {
-    this.store.select(fromApplication.getCurrentApplication).pipe(takeUntil(this.destroy))
-      .subscribe(app => {
-        const invoicingDate = app.invoicingDate;
+    this.store.pipe(
+      select(fromApplication.getCurrentApplication),
+      takeUntil(this.destroy)
+    ).subscribe(app => {
+      this.form.patchValue({
+        notBillable: app.notBillable,
+        notBillableReason: app.notBillableReason,
+        customerReference: app.customerReference,
+        invoicingDate: app.invoicingDate,
+        skipPriceCalculation: app.skipPriceCalculation
+      });
+      this.originalForm = this.form.getRawValue();
 
-        this.form.patchValue({
-          notBillable: app.notBillable,
-          notBillableReason: app.notBillableReason,
-          customerReference: app.customerReference,
-          invoicingDate: invoicingDate,
-          skipPriceCalculation: app.skipPriceCalculation
-        });
-        this.originalForm = this.form.getRawValue();
-
-        this.setEditable(app.status, app.type, invoicingDate);
+      this.setEditable(app);
     });
 
     this.store.select(fromInvoicingr.getInvoicingCustomer).pipe(takeUntil(this.destroy))
@@ -135,15 +136,12 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     this.initDeposit();
   }
 
-  private setEditable(status: ApplicationStatus, type: ApplicationType, invoicingDate: Date) {
-    if (!applicationCanBeEdited(status)) {
+  private setEditable(application: Application) {
+    if (!applicationCanBeEdited(application)) {
       this.form.disable();
-
-      this.invoiceRecipientCanBeEdited(status, invoicingDate)
-        .pipe(filter(canBeEdited => canBeEdited))
-        .subscribe(() => this.setCustomerEdit());
+      this.setCustomerEdit();
     }
-    if (type === ApplicationType.EXCAVATION_ANNOUNCEMENT || type === ApplicationType.AREA_RENTAL) {
+    if ([ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(application.type) > -1) {
       this.invoicingDateCtrl.disable();
     }
   }
@@ -167,13 +165,17 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   }
 
   private setCustomerEdit(): void {
-    Object.keys(this.recipientForm.controls).forEach(key => {
-      const field = this.recipientForm.get(key);
-      if (ALWAYS_ENABLED_FIELDS.indexOf(key) >= 0) {
-        field.enable({emitEvent: false});
-      } else {
-        field.disable({emitEvent: false});
-      }
+    this.invoiceRecipientCanBeEdited().pipe(
+      filter(canBeEdited => canBeEdited)
+    ).subscribe(() => {
+      Object.keys(this.recipientForm.controls).forEach(key => {
+        const field = this.recipientForm.get(key);
+        if (ALWAYS_ENABLED_FIELDS.indexOf(key) >= 0) {
+          field.enable({emitEvent: false});
+        } else {
+          field.disable({emitEvent: false});
+        }
+      });
     });
   }
 
@@ -207,13 +209,18 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     this.applicationStore.loadDeposit().subscribe();
   }
 
-  private invoiceRecipientCanBeEdited(status: ApplicationStatus, invoicingDate: Date): Observable<boolean> {
-    const waitingForDecision = ApplicationStatus.DECISIONMAKING === status;
-    const tomorrow = TimeUtil.toStartDate(TimeUtil.addDays(new Date(), 1));
-    const dayBeforeInvoicing = !TimeUtil.isBefore(invoicingDate, tomorrow);
-
-    return this.store.select(fromApplication.hasTag(ApplicationTagType.SAP_ID_MISSING)).pipe(
-      map(sapIdMissing => sapIdMissing || waitingForDecision || dayBeforeInvoicing)
+  private invoiceRecipientCanBeEdited(): Observable<boolean> {
+    return this.store.pipe(
+      select(fromApplication.getCurrentApplication),
+      withLatestFrom(this.store.pipe(select(fromApplication.hasTag(ApplicationTagType.SAP_ID_MISSING)))),
+      takeUntil(this.destroy),
+      map(([app, sapIdMissing]) => {
+        const noPendingData = app.clientApplicationData === undefined;
+        const editableByStatus = isSameOrBefore(app.status, ApplicationStatus.DECISIONMAKING);
+        const tomorrow = TimeUtil.toStartDate(TimeUtil.addDays(new Date(), 1));
+        const dayBeforeInvoicing = !TimeUtil.isBefore(app.invoicingDate, tomorrow);
+        return (sapIdMissing || editableByStatus || dayBeforeInvoicing) && noPendingData;
+      })
     );
   }
 }

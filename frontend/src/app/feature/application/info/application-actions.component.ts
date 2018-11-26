@@ -73,7 +73,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showHandling = (status === ApplicationStatus.PENDING) && (app.type !== ApplicationType.NOTE);
       this.showDelete = (app.type === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
       this.showCancel = isSameOrBefore(status, ApplicationStatus.DECISION);
-      this.showEdit = this.readonly && applicationCanBeEdited(status);
+      this.showEdit = this.readonly && applicationCanBeEdited(app);
       this.showReplace = contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], status);
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
       this.showActions = (status !== ApplicationStatus.PENDING_CLIENT) && (status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL);

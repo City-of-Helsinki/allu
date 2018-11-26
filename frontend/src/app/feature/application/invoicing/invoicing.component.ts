@@ -49,18 +49,18 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit(): void {
-    this.applicationId = this.applicationStore.snapshot.application.id;
+    const application = this.applicationStore.snapshot.application;
+    this.applicationId = application.id;
     this.infoForm = InvoicingInfoForm.initialForm(this.fb);
     this.recipientForm = <FormGroup>this.infoForm.get('invoiceRecipient');
     this.notBillableCtrl = <FormControl>this.infoForm.get('notBillable');
-    this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role]))
-        .subscribe(hasRequiredRole => {
-          if (hasRequiredRole) {
-            this.infoForm.enable();
-          } else {
-            this.infoForm.disable();
-          }
-        });
+    this.currentUser.hasRole(MODIFY_ROLES.map(role => RoleType[role])).subscribe(hasRequiredRole => {
+      if (hasRequiredRole && applicationCanBeEdited(application)) {
+        this.infoForm.enable();
+      } else {
+        this.infoForm.disable();
+      }
+    });
     this.invoices$ = this.store.select(fromInvoicing.getAllInvoices);
   }
 
@@ -105,7 +105,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
     return this.store.select(fromApplication.getCurrentApplication).pipe(
       take(1),
       switchMap(app => {
-        if (applicationCanBeEdited(app.status)) {
+        if (applicationCanBeEdited(app)) {
           const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
           app.notBillable = invoicingInfo.notBillable;
           app.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;

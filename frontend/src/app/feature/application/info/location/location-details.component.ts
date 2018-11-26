@@ -41,7 +41,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit(): void {
     this.location = this.application.firstLocation;
-    this.canBeEdited = applicationCanBeEdited(this.application.status);
+    this.canBeEdited = applicationCanBeEdited(this.application);
     this.locationState.initLocations(this.application.locations);
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     // Sections can be selected only from single area so we can
