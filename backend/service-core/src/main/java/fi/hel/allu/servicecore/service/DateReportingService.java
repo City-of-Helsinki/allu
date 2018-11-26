@@ -7,8 +7,10 @@ import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.SupervisionDates;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.GuaranteeEndTime;
+import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.LocationJson;
@@ -20,7 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +39,7 @@ public class DateReportingService {
   private final ApplicationServiceComposer applicationServiceComposer;
   private final LocationService locationService;
   private final ApplicationHistoryService applicationHistoryService;
+  private final InvoicingPeriodService invoicingPeriodService;
 
   @Autowired
   public DateReportingService(
@@ -42,13 +48,15 @@ public class DateReportingService {
       SupervisionTaskService supervisionTaskService,
       ApplicationServiceComposer applicationServiceComposer,
       LocationService locationService,
-      ApplicationHistoryService applicationHistoryService) {
+      ApplicationHistoryService applicationHistoryService,
+      InvoicingPeriodService invoicingPeriodService) {
     this.applicationService = applicationService;
     this.applicationJsonService = applicationJsonService;
     this.supervisionTaskService = supervisionTaskService;
     this.applicationServiceComposer = applicationServiceComposer;
     this.locationService = locationService;
     this.applicationHistoryService = applicationHistoryService;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   public ApplicationJson reportCustomerOperationalCondition(Integer id, ApplicationDateReport dateReport) {
@@ -121,6 +129,11 @@ public class DateReportingService {
   }
 
   private void adjustLocationEndDates(int applicationId, ZonedDateTime date) {
+    final ZonedDateTime firstPossibleEndDate = firstAllowedInvoicingDate(applicationId);
+    if (firstPossibleEndDate == null || date.isBefore(firstPossibleEndDate)) {
+      throw new IllegalArgumentException("workfinisheddate.invoiced.invoicing.period");
+    }
+
     final ApplicationJson application = getApplicationJson(applicationId);
     final List<LocationJson> locationsEndingAfter = application.getLocations().stream()
         .filter(l -> l.getEndTime().isAfter(date))
@@ -133,8 +146,22 @@ public class DateReportingService {
       locationsEndingAfter.stream().forEach(l -> l.setEndTime(date));
       applicationServiceComposer.updateApplication(application.getId(), application);
     }
-
   }
+
+  private ZonedDateTime firstAllowedInvoicingDate(int applicationId) {
+    final List<InvoicingPeriod> periods = invoicingPeriodService.getInvoicingPeriods(applicationId);
+    if (periods.isEmpty()) {
+      // No periods -> applications is not periodized -> periodization doesn't limit start time
+      return ZonedDateTime.of(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), TimeUtil.HelsinkiZoneId);
+    }
+
+    return periods.stream()
+        .filter(p -> !p.isInvoiced())
+        .min(Comparator.comparing(InvoicingPeriod::getStartTime))
+        .map(p -> p.getStartTime())
+        .orElse(null);
+  }
+
   private void createOperationalConditionSupervisionTask(Application application, ZonedDateTime reportedDate) {
     UserJson supervisionTaskOwner = getSupervisionTaskOwner(application);
     supervisionTaskService.insert(new SupervisionTaskJson(null, application.getId(), SupervisionTaskType.OPERATIONAL_CONDITION, null,
