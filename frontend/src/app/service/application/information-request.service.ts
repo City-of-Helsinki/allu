@@ -27,7 +27,6 @@ export class InformationRequestService {
     );
   }
 
-  // TODO: Add information request as return type when implemented
   closeInformationRequest(id: number): Observable<InformationRequest> {
     const url = `${informationRequestUrl}/${id}/close`;
     return this.http.put<BackendInformationRequest>(url, {}).pipe(

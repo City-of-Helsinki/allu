@@ -23,14 +23,14 @@ import {
   InformationAcceptanceData,
   InformationAcceptanceModalComponent
 } from '@feature/information-request/acceptance/information-acceptance-modal.component';
-import {ApplicationStatus, isBefore} from '@model/application/application-status';
+import {ApplicationStatus} from '@model/application/application-status';
 import {Application} from '@model/application/application';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
 import {
+  INFORMATION_REQUEST_MODAL_CONFIG,
   InformationRequestData,
-  InformationRequestModalComponent,
-  INFORMATION_REQUEST_MODAL_CONFIG
+  InformationRequestModalComponent
 } from '@feature/information-request/request/information-request-modal.component';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {SaveAndSendRequest, SaveRequest} from '@feature/information-request/actions/information-request-actions';
@@ -38,6 +38,8 @@ import {ApplicationNotificationService} from '@feature/application/notification/
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {applicationForm} from '@feature/application/info/application-form';
 import {RoleType} from '@model/user/role-type';
+import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
+import {ClientApplicationData} from '@model/application/client-application-data';
 
 @Component({
   selector: 'application-info',
@@ -125,7 +127,8 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private getPendingData(): Observable<InformationAcceptanceData> {
-    return this.store.select(fromApplication.getCurrentApplication).pipe(
+    return this.store.pipe(
+      select(fromApplication.getCurrentApplication),
       switchMap(app => {
         if (ApplicationStatus.INFORMATION_RECEIVED === app.status) {
           return this.getPendingResponse(app);
@@ -138,7 +141,8 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private getPendingResponse(currentApp: Application): Observable<InformationAcceptanceData> {
-    return this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
+    return this.store.pipe(
+      select(fromInformationRequest.getInformationRequestResponse),
       filter(response => response !== undefined),
       map(response => ({
         informationRequestId: response.informationRequestId,
@@ -150,7 +154,10 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private getPendingInitialInfo(currentApp: Application): Observable<InformationAcceptanceData> {
-    return this.store.select(fromApplication.pendingClientDataFields).pipe(
+    return this.store.pipe(
+      select(fromApplication.getClientData),
+      filter(clientData => !!clientData),
+      map(clientData => this.getPendingDataFields(clientData)),
       switchMap((pending) => {
         if (pending.length) {
           return of({
@@ -174,9 +181,10 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private showInformationRequest(): void {
-    this.store.select(fromInformationRequest.getInformationRequest).pipe(
+    this.store.pipe(
+      select(fromInformationRequest.getInformationRequest),
       take(1),
-      withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+      withLatestFrom(this.store.pipe(select(fromApplication.getCurrentApplication))),
       map(([request, app]) => this.createRequestModalConfig(request, app.id)),
       switchMap(data => this.dialog.open(InformationRequestModalComponent, data).afterClosed()),
       filter(request => !!request), // Ignore no answers
@@ -213,5 +221,13 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
       ...INFORMATION_REQUEST_MODAL_CONFIG,
       data
     };
+  }
+
+  private getPendingDataFields(clientData: ClientApplicationData): InformationRequestFieldKey[] {
+    let fields: InformationRequestFieldKey[] = [];
+    fields = clientData.clientApplicationKind  ? fields.concat(InformationRequestFieldKey.CLIENT_APPLICATION_KIND) : fields;
+    fields = clientData.customer ? fields.concat(InformationRequestFieldKey.CUSTOMER) : fields;
+    fields = clientData.invoicingCustomer ? fields.concat(InformationRequestFieldKey.INVOICING_CUSTOMER) : fields;
+    return fields;
   }
 }

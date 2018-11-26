@@ -58,6 +58,7 @@ export const translations = {
       reportCustomerOperationalCondition: 'Asiakkaan ilmoittaman toiminnallisen kunnon päivittäminen epäonnistui',
       reportCustomerWorkFinished: 'Asiakkaan ilmoittaman työn valmistumisen päivittäminen epäonnistui',
       reportCustomerValidity: 'Asiakkaan ilmoittaman voimassaolon päivittäminen epäonnistui',
+      confirmClientApplicationData: 'Asiakkaalta saapuneiden tietojen hyväksyminen epäonnistui'
     },
     action: {
       saved: 'Hakemus tallennettu',

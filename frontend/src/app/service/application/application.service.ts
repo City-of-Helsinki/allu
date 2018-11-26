@@ -242,5 +242,13 @@ export class ApplicationService {
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.replacementHistory')))
     );
   }
+
+  removeClientApplicationData(id: number): Observable<Application> {
+    const url = `${APPLICATIONS_URL}/${id}/clientapplicationdata`;
+    return this.http.delete<BackendApplication>(url).pipe(
+      map(app => ApplicationMapper.mapBackend(app)),
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.confirmClientApplicationData')))
+    );
+  }
 }
 

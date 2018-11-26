@@ -72,38 +72,18 @@ export const getClientData = createSelector(
 );
 
 export const getPendingKind = createSelector(
-  getCurrentApplication,
   getClientData,
-  (application: Application, clientData: ClientApplicationData) => {
-    const noKind = application.kinds.length === 0;
-    const pendingKind = !!clientData ? clientData.clientApplicationKind : undefined;
-    return (noKind && pendingKind) ? pendingKind : undefined;
-  }
+  (clientData: ClientApplicationData) => !!clientData ? clientData.clientApplicationKind : undefined
 );
 
 export const getPendingCustomerWithContacts = createSelector(
-  getCurrentApplication,
   getClientData,
-  (application: Application, clientData: ClientApplicationData) => {
-    const noCustomers = application.customersWithContacts.length === 0;
-    const pendingCustomer = !!clientData ? clientData.customer : undefined;
-    return (noCustomers && pendingCustomer) ? pendingCustomer : undefined;
-  }
+  (clientData: ClientApplicationData) => !!clientData ? clientData.customer : undefined
 );
 
 export const getPendingInvoicingCustomer = createSelector(
-  getCurrentApplication,
   getClientData,
-  (application: Application, clientData: ClientApplicationData) => {
-    const noInvoicingCustomer = !NumberUtil.isDefined(application.invoiceRecipientId);
-    const pendingInvoicingCustomer = !!clientData ? clientData.invoicingCustomer : undefined;
-    return (noInvoicingCustomer && pendingInvoicingCustomer) ? pendingInvoicingCustomer : undefined;
-  }
-);
-
-export const hasPendingKind = createSelector(
-  getPendingKind,
-  kind => !!kind
+  (clientData: ClientApplicationData) => !!clientData ? clientData.invoicingCustomer : undefined
 );
 
 export const hasPendingCustomerInfo = createSelector(
@@ -111,27 +91,9 @@ export const hasPendingCustomerInfo = createSelector(
   pending => !!pending
 );
 
-export const hasPendingInvoicingCustomer = createSelector(
-  getPendingInvoicingCustomer,
-  pending => !!pending
-);
-
 export const hasPendingClientData = createSelector(
-  hasPendingKind,
-  hasPendingCustomerInfo,
-  hasPendingInvoicingCustomer,
-  (pendingKind, pendingCustomer, pendingInvoicingCustomer) => pendingKind || pendingCustomer || pendingInvoicingCustomer
-);
-
-export const pendingClientDataFields = createSelector(
-  hasPendingKind,
-  hasPendingCustomerInfo,
-  hasPendingInvoicingCustomer,
-  (pendingKind, pendingCustomer, pendingInvoicingCustomer) => ([
-    ...(pendingKind ? [InformationRequestFieldKey.CLIENT_APPLICATION_KIND] : []),
-    ...(pendingCustomer ? [InformationRequestFieldKey.CUSTOMER] : []),
-    ...(pendingInvoicingCustomer ? [InformationRequestFieldKey.INVOICING_CUSTOMER] : [])
-  ])
+  getClientData,
+  (clientData: ClientApplicationData) => !!clientData
 );
 
 export const getMeta = createSelector(

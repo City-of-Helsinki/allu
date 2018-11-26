@@ -93,4 +93,11 @@ export class InformationRequestEffects {
       catchError(error => of(new NotifyFailure(error)))
     ))
   );
+
+  @Effect()
+  clearApplicationClientData: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestResultAction.SaveSuccess>(InformationRequestResultActionType.SaveSuccess),
+    filter(action => !!action.payload.application.clientApplicationData),
+    map(() => new ApplicationAction.RemoveClientApplicationData())
+  );
 }
