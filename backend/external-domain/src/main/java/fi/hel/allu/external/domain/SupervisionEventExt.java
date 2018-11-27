@@ -23,7 +23,9 @@ public class SupervisionEventExt  implements Comparable<SupervisionEventExt> {
     this.eventTime = eventTime;
     this.type = type;
     this.status = status;
-    this.comment = comment;
+    if (status == SupervisionTaskStatusType.REJECTED) {
+      this.comment = comment;
+    }
   }
 
   public SupervisionTaskType getType() {
