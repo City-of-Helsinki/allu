@@ -106,8 +106,7 @@ export function getAvailableSpecifiers(applicationType: string, kinds: Array<str
 }
 
 const AUTOMATIC_DECISION_TYPES = [
-  ApplicationType.CABLE_REPORT,
-  ApplicationType.EXCAVATION_ANNOUNCEMENT
+  ApplicationType.CABLE_REPORT
 ];
 
 export function automaticDecisionMaking(type: ApplicationType): boolean {
