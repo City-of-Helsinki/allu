@@ -31,6 +31,7 @@ import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
@@ -195,5 +196,12 @@ public class ApplicationServiceExt {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     return ApplicationExtMapper.mapToApplicationExt(application);
 
+  }
+
+  public List<byte[]> getDecisionAttachments(Integer applicationId) {
+    return attachmentService.findAttachmentsForApplication(applicationId)
+        .stream().filter(a -> a.isDecisionAttachment() && "application/pdf".equals(a.getMimeType()))
+        .map(a -> attachmentService.getAttachmentData(a.getId()))
+        .collect(Collectors.toList());
   }
 }

@@ -1,7 +1,11 @@
 package fi.hel.allu.external.api.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +22,7 @@ import fi.hel.allu.external.domain.ContractSigningInfoExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
+import fi.hel.allu.external.service.PdfMerger;
 import fi.hel.allu.servicecore.service.ContractService;
 import io.swagger.annotations.*;
 
@@ -47,11 +52,12 @@ public class PlacementContractController extends BaseApplicationController<Place
   })
   @RequestMapping(value = "/{id}/contract/proposal", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<byte[]> getContractProposal(@PathVariable Integer id) {
+  public ResponseEntity<byte[]> getContractProposal(@PathVariable Integer id) throws IOException {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
-    byte[] bytes = contractService.getContractProposal(applicationId);
-    return returnPdfResponse(bytes);
+    byte[] contract= contractService.getContractProposal(applicationId);
+    List<byte[]> attachments = applicationService.getDecisionAttachments(applicationId);
+    return returnPdfResponse(PdfMerger.appendDocuments(contract, attachments));
   }
 
   @ApiOperation(value = "Gets final contract PDF for application with given ID",
@@ -64,11 +70,12 @@ public class PlacementContractController extends BaseApplicationController<Place
   })
   @RequestMapping(value = "/{id}/contract/final", method = RequestMethod.GET, produces = "application/pdf")
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<byte[]> getFinalContract(@PathVariable Integer id) {
+  public ResponseEntity<byte[]> getFinalContract(@PathVariable Integer id) throws IOException {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
-    byte[] bytes = contractService.getFinalContract(applicationId);
-    return returnPdfResponse(bytes);
+    byte[] contract = contractService.getFinalContract(applicationId);
+    List<byte[]> attachments = applicationService.getDecisionAttachments(applicationId);
+    return returnPdfResponse(PdfMerger.appendDocuments(contract, attachments));
   }
 
   @ApiOperation(value = "Gets contract metadata for application with given ID",
