@@ -110,7 +110,7 @@ public class ApplicationServiceExt {
 
   public void validateFullUpdateAllowed(Integer applicationId) {
     StatusType status = applicationServiceComposer.getApplicationStatus(applicationId).getStatus();
-    if (status != StatusType.PENDING_CLIENT) {
+    if (!(status == StatusType.PENDING_CLIENT || status == StatusType.PENDING)) {
       throw new IllegalOperationException("application.ext.notpending");
     }
   }

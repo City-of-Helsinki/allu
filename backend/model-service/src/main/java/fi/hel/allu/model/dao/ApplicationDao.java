@@ -731,9 +731,9 @@ public class ApplicationDao {
 
   @Transactional
   public void updateClientApplicationData(int id, ClientApplicationData clientApplicationData) {
-    // Client application data is updated only if application
-    // is still pending on client before update.
-    if (getStatus(id) == StatusType.PENDING_CLIENT) {
+    // Client application data is updated only if application is still pending
+    StatusType status = getStatus(id);
+    if (clientApplicationData != null && (status == StatusType.PENDING_CLIENT || status == StatusType.PENDING)) {
       queryFactory.update(application)
       .set(application.clientApplicationData, clientApplicationData)
       .where(application.id.eq(id))

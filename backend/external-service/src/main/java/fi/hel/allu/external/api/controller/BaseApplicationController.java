@@ -59,7 +59,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     return new ResponseEntity<>(applicationService.createApplication(applicationExt, getMapper()), HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Update application. Allowed only if application was created with pendingOnClient = true",
+  @ApiOperation(value = "Update application. Allowed only if handling of application has not been started",
       produces = "application/json",
       response = Integer.class,
       authorizations=@Authorization(value ="api_key"))
