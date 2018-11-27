@@ -50,6 +50,10 @@ export class ArrayUtil {
     return lengthEqual && allItems;
   }
 
+  static contains<T>(included: T[], tested: T): boolean {
+    return included.indexOf(tested) >= 0;
+  }
+
   static numberArrayEqual(left: Array<number>, right: Array<number>): boolean {
     return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;
   }

@@ -1,5 +1,6 @@
 import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
+import {ArrayUtil} from '@util/array-util';
 
 export enum ApplicationStatus {
   PENDING_CLIENT = 'PENDING_CLIENT',
@@ -30,8 +31,8 @@ export function applicationCanBeEdited(application: Application): boolean {
 }
 
 export function invoicingChangesAllowedForType(application: Application): boolean {
-  if (ApplicationType.EXCAVATION_ANNOUNCEMENT === application.type) {
-    return excavationInvoicingChangeAllowed(application);
+  if (ArrayUtil.contains([ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL], application.type)) {
+    return excavationOrAreaInvoicingChangeAllowed(application);
   } else {
     return invoicingChangesAllowed(application);
   }
@@ -41,10 +42,11 @@ export function invoicingChangesAllowed(application: Application): boolean {
   return applicationCanBeEdited(application);
 }
 
-export function excavationInvoicingChangeAllowed(application: Application): boolean {
+export function excavationOrAreaInvoicingChangeAllowed(application: Application): boolean {
   const allowedForAll = invoicingChangesAllowed(application);
-  const allowedForExcavation = [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION].indexOf(application.status) >= 0;
-  return allowedForAll || allowedForExcavation;
+  const allowedForExcavationOrArea = ArrayUtil.contains(
+      [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], application.status);
+  return allowedForAll || allowedForExcavationOrArea;
 }
 
 export function inHandling(status: ApplicationStatus): boolean {
@@ -69,10 +71,6 @@ export function isSameOrBefore(first: ApplicationStatus, second: ApplicationStat
 
 export function isSameOrAfter(first: ApplicationStatus, second: ApplicationStatus): boolean {
   return !isBefore(first, second);
-}
-
-export function contains(included: ApplicationStatus[], tested: ApplicationStatus): boolean {
-  return included.indexOf(tested) >= 0;
 }
 
 export const searchable = [

@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApplicationStore} from '@service/application/application-store';
-import {applicationCanBeEdited, ApplicationStatus, contains, isSameOrAfter, isSameOrBefore} from '@model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus, isSameOrAfter, isSameOrBefore} from '@model/application/application-status';
 import {ApplicationType, automaticDecisionMaking} from '@model/application/type/application-type';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Observable, of, Subscription} from 'rxjs';
@@ -74,7 +74,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showDelete = (app.type === ApplicationType.NOTE) || (status === ApplicationStatus.PRE_RESERVED);
       this.showCancel = isSameOrBefore(status, ApplicationStatus.DECISION);
       this.showEdit = this.readonly && applicationCanBeEdited(app);
-      this.showReplace = contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], status);
+      this.showReplace = ArrayUtil.contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], status);
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
       this.showActions = (status !== ApplicationStatus.PENDING_CLIENT) && (status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL);
       this.showInformationRequest = ApplicationUtil.validForInformationRequest(app);

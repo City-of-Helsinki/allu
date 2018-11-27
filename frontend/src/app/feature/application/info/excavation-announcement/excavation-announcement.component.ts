@@ -28,7 +28,7 @@ import {
   ReportedDateType,
   ReporterType
 } from '@feature/application/date-reporting/date-reporting-modal.component';
-import {ApplicationStatus, contains} from '@model/application/application-status';
+import {ApplicationStatus} from '@model/application/application-status';
 import {ApplicationDateReport} from '@model/application/application-date-report';
 import {
   ReportCustomerOperationalCondition,
@@ -36,6 +36,7 @@ import {
   ReportCustomerWorkFinished
 } from '@feature/application/actions/date-reporting-actions';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'excavation-announcement',
@@ -206,7 +207,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     const form = from(application, excavation);
     this.applicationForm.patchValue(form);
     this.patchRelatedCableReport(excavation);
-    this.showReportCustomerDates = contains([ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], application.status);
+    this.showReportCustomerDates = ArrayUtil.contains(
+        [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], application.status);
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {

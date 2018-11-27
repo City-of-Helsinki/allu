@@ -10,10 +10,11 @@ import * as fromSupervision from '@feature/application/supervision/reducers';
 import * as fromDecision from '@feature/decision/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationType} from '@model/application/type/application-type';
-import {ApplicationStatus, contains} from '@model/application/application-status';
+import {ApplicationStatus} from '@model/application/application-status';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'decision-document',
@@ -92,25 +93,25 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
 
   private showDecisionActions(app: Application): boolean {
     const inHandling = ApplicationStatus.HANDLING === app.status;
-    const showByStatus = contains([app.status, app.targetState], ApplicationStatus.DECISION);
+    const showByStatus = ArrayUtil.contains([app.status, app.targetState], ApplicationStatus.DECISION);
     return inHandling || showByStatus;
   }
 
   private showOperationalConditionActions(app: Application): boolean {
     const showByType = app.type === ApplicationType.EXCAVATION_ANNOUNCEMENT;
-    const showByStatus = contains([app.status, app.targetState], ApplicationStatus.OPERATIONAL_CONDITION);
+    const showByStatus = ArrayUtil.contains([app.status, app.targetState], ApplicationStatus.OPERATIONAL_CONDITION);
     return showByType && showByStatus;
   }
 
   private showWorkFinishedActions(app: Application): boolean {
     const showByType = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(app.type) >= 0;
-    const showByStatus = contains([app.status, app.targetState], ApplicationStatus.FINISHED);
+    const showByStatus = ArrayUtil.contains([app.status, app.targetState], ApplicationStatus.FINISHED);
     return showByType && showByStatus;
   }
 
   private showContractActions(app: Application): boolean {
     const showByType = app.type === ApplicationType.PLACEMENT_CONTRACT;
-    const showByStatus = contains([ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION], app.status);
+    const showByStatus = ArrayUtil.contains([ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION], app.status);
     return showByType && showByStatus;
   }
 }
