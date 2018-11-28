@@ -23,7 +23,8 @@ export enum ApplicationStatus {
 export const statusNames = Object.keys(ApplicationStatus);
 
 export function applicationCanBeEdited(application: Application): boolean {
-  const editableByStatus = isBetween(application.status, ApplicationStatus.PENDING_CLIENT, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
+  const editableByStatus = application.status === undefined ||
+    isBetween(application.status, ApplicationStatus.PENDING_CLIENT, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
   const noPendingClientData = application.clientApplicationData === undefined;
   return editableByStatus && noPendingClientData;
 }
