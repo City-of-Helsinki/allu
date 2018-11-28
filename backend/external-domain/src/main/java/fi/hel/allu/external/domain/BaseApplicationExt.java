@@ -1,6 +1,8 @@
 package fi.hel.allu.external.domain;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -45,8 +47,7 @@ public abstract class BaseApplicationExt {
   private String identificationNumber;
   private String customerReference;
   private Double area;
-
-
+  private List<Integer> trafficArrangementImages = new ArrayList<>();
 
   @ApiModelProperty(value = "Postal address")
   public PostalAddressExt getPostalAddress() {
@@ -161,6 +162,15 @@ public abstract class BaseApplicationExt {
 
   public void setArea(Double area) {
     this.area = area;
+  }
+
+  @ApiModelProperty(value = "Traffic arrangement image (tyyppikuva) IDs selected for application")
+  public List<Integer> getTrafficArrangementImages() {
+    return trafficArrangementImages;
+  }
+
+  public void setTrafficArrangementImages(List<Integer> trafficArrangementImages) {
+    this.trafficArrangementImages = trafficArrangementImages;
   }
 
 }

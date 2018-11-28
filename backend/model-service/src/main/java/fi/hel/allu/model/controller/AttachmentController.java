@@ -58,6 +58,18 @@ public class AttachmentController {
     }
   }
 
+  @RequestMapping(value = "/applications/{applicationId}/default", method = RequestMethod.PUT)
+  public ResponseEntity<Void> addDefaultAttachments(@PathVariable Integer applicationId, @RequestBody List<Integer> defaultAttachmentIds) {
+    defaultAttachmentIds.forEach(id -> attachmentDao.linkApplicationToAttachment(applicationId, id));
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/applications/{applicationId}/default", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> removeDefaultAttachments(@PathVariable Integer applicationId,  @RequestBody List<Integer> defaultAttachmentIds) {
+    defaultAttachmentIds.forEach(id -> attachmentDao.removeLinkApplicationToAttachment(applicationId, id));
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   /**
    * Get the size of attachment data (bytes) by attachment id
    *

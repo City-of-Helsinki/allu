@@ -10,16 +10,17 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
@@ -294,5 +295,40 @@ public class AttachmentService {
       }
     }
     return null;
+  }
+
+  public List<AttachmentInfoJson> getDefaultImagesForApplicationType(ApplicationType applicationType) {
+    return getDefaultAttachmentsByApplicationType(applicationType).stream()
+        .filter(a -> a.getType() == AttachmentType.DEFAULT_IMAGE)
+        .collect(Collectors.toList());
+  }
+
+  public byte[] getDefaultImage(Integer id) {
+    DefaultAttachmentInfoJson info = getDefaultAttachment(id);
+    if (info.getType() != AttachmentType.DEFAULT_IMAGE) {
+      throw new NoSuchEntityException("defaultimage.notfound");
+    }
+    return getAttachmentData(info.getId());
+  }
+
+  public void setDefaultImagesForApplication(Integer applicationId, List<Integer> trafficArrangementImages) {
+    List<Integer> oldDefaultImageIds = getDefaultImageIdsForApplication(applicationId);
+    List<Integer> defaultImageIdsToDelete = oldDefaultImageIds.stream().filter(d -> !trafficArrangementImages.contains(d)).collect(Collectors.toList());
+    List<Integer> defaultImageIdsToAdd = trafficArrangementImages.stream().filter(d -> !oldDefaultImageIds.contains(d)).collect(Collectors.toList());
+    deleteDefaultImages(applicationId, defaultImageIdsToDelete);
+    addDefaultImages(applicationId, defaultImageIdsToAdd);
+  }
+
+  private void deleteDefaultImages(Integer applicationId, List<Integer> defaultImageIdsToDelete) {
+    restTemplate.exchange(applicationProperties.getApplicationDefaultAttachmentUrl(), HttpMethod.DELETE, new HttpEntity<>(defaultImageIdsToDelete), Void.class, applicationId);
+  }
+
+  private void addDefaultImages(Integer applicationId, List<Integer> defaultImageIdsToAdd) {
+    restTemplate.put(applicationProperties.getApplicationDefaultAttachmentUrl(), new HttpEntity<>(defaultImageIdsToAdd), applicationId);
+  }
+
+  private List<Integer> getDefaultImageIdsForApplication(Integer applicationId) {
+    return findAttachmentsForApplication(applicationId).stream()
+        .filter(a -> a.getType() == AttachmentType.DEFAULT_IMAGE).map(AttachmentInfoJson::getId).collect(Collectors.toList());
   }
 }

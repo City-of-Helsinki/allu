@@ -636,6 +636,11 @@ public class ApplicationProperties {
     return getModelServiceUrl("/attachments/default");
   }
 
+  public String getApplicationDefaultAttachmentUrl() {
+    return getModelServiceUrl("/attachments/applications/{applicationId}/default");
+  }
+
+
   /**
    * @return url for updating a default attachment.
    */

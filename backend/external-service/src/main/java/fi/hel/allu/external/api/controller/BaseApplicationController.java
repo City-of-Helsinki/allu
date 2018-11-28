@@ -19,6 +19,7 @@ import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
+import fi.hel.allu.external.validation.DefaultImageValidator;
 import io.swagger.annotations.*;
 
 /**
@@ -32,12 +33,16 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
   @Autowired
   protected ApplicationExtGeometryValidator geometryValidator;
 
+  @Autowired
+  protected DefaultImageValidator defaultImageValidator;
+
+
   protected abstract M getMapper();
 
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
     if (binder.getTarget() != null && BaseApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
-      binder.addValidators(geometryValidator);
+      binder.addValidators(geometryValidator, defaultImageValidator);
     }
   }
 

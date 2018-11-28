@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -69,6 +70,7 @@ public class ApplicationServiceExt {
     applicationJson.setExternalOwnerId(getExternalUserId());
     Integer applicationId = applicationServiceComposer.createApplication(applicationJson, status).getId();
     saveOriginalApplication(applicationId, null, applicationJson);
+    setDefaultImages(applicationId, application.getTrafficArrangementImages());
     return applicationId;
   }
 
@@ -105,6 +107,8 @@ public class ApplicationServiceExt {
       applicationServiceComposer.changeStatus(id, status);
     }
     saveOriginalApplication(id, null, application);
+    setDefaultImages(id, applicationExt.getTrafficArrangementImages());
+
     return application.getId();
   }
 
@@ -204,4 +208,9 @@ public class ApplicationServiceExt {
         .map(a -> attachmentService.getAttachmentData(a.getId()))
         .collect(Collectors.toList());
   }
+
+  private void setDefaultImages(Integer applicationId, List<Integer> trafficArrangementImages) {
+    attachmentService.setDefaultImagesForApplication(applicationId, trafficArrangementImages);
+  }
+
 }
