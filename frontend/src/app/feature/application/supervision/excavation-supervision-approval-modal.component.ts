@@ -140,8 +140,8 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
   }
 
   private initRequiredTasks(): void {
-    const measurementCtrl = this.fb.control(this.data.compactionAndBearingCapacityMeasurement, Validators.required);
-    const qualityAssuranceTest = this.fb.control(this.data.qualityAssuranceTest, Validators.required);
+    const measurementCtrl = this.fb.control(this.data.compactionAndBearingCapacityMeasurement);
+    const qualityAssuranceTest = this.fb.control(this.data.qualityAssuranceTest);
     this.form.addControl('compactionAndBearingCapacityMeasurement', measurementCtrl);
     this.form.addControl('qualityAssuranceTest', qualityAssuranceTest);
   }
