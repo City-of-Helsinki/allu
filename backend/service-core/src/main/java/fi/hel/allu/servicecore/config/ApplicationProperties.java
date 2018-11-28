@@ -1363,7 +1363,7 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/invoicingperiods?periodLength={periodLength}");
   }
 
-  public String getFindInvoicingPeriodsUrl() {
+  public String getInvoicingPeriodsUrl() {
     return getModelServiceUrl("/applications/{id}/invoicingperiods");
   }
 

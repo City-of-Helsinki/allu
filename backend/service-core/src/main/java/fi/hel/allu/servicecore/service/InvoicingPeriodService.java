@@ -37,9 +37,13 @@ public class InvoicingPeriodService {
   }
 
   public List<InvoicingPeriod> getInvoicingPeriods(Integer applicationId) {
-    InvoicingPeriod[] periods = restTemplate.getForObject(applicationProperties.getFindInvoicingPeriodsUrl(),
+    InvoicingPeriod[] periods = restTemplate.getForObject(applicationProperties.getInvoicingPeriodsUrl(),
         InvoicingPeriod[].class, applicationId);
     return Arrays.asList(periods);
+  }
+
+  public void deleteInvoicingPeriods(Integer id) {
+    restTemplate.delete(applicationProperties.getInvoicingPeriodsUrl(), id);
   }
 
 }

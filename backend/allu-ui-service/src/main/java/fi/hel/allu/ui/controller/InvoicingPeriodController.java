@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,13 @@ public class InvoicingPeriodController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<InvoicingPeriod>> getInvoicingPeriods(@PathVariable Integer id) {
     return ResponseEntity.ok(invoicingPeriodService.getInvoicingPeriods(id));
+  }
+
+  @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<InvoicingPeriod>> deleteInvoicingPeriods(@PathVariable Integer id) {
+    invoicingPeriodService.deleteInvoicingPeriods(id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 }

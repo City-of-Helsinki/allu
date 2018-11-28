@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoicingPeriodDao;
 import fi.hel.allu.model.domain.Application;
@@ -34,7 +35,7 @@ public class InvoicingPeriodService {
       int periodLength) {
     List<InvoicingPeriod> existingPeriods = invoicingPeriodDao.findForApplicationId(applicationId);
     if (!hasInvoicedPeriods(existingPeriods)) {
-      deletePeriods(applicationId);
+      invoicingPeriodDao.deletePeriods(applicationId);
       return createInvoicingPeriods(applicationId, periodLength);
     } else {
       InvoicingPeriod latestInvoiced = findLatestInvoicedPeriod(existingPeriods);
@@ -99,6 +100,10 @@ public class InvoicingPeriodService {
 
   @Transactional
   public void deletePeriods(Integer applicationId) {
+    List<InvoicingPeriod> existingPeriods = invoicingPeriodDao.findForApplicationId(applicationId);
+    if (hasInvoicedPeriods(existingPeriods)) {
+      throw new IllegalOperationException("invoicingPeriod.invoiced");
+    }
     invoicingPeriodDao.deletePeriods(applicationId);
   }
 

@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,5 +31,11 @@ public class InvoicingPeriodController {
   public ResponseEntity<List<InvoicingPeriod>> getInvoicingPeriods(@PathVariable Integer id) {
     return ResponseEntity.ok(invoicingPeriodService.findForApplicationId(id));
   }
+  @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> deleteInvoicingPeriods(@PathVariable Integer id) {
+    invoicingPeriodService.deletePeriods(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 
 }
