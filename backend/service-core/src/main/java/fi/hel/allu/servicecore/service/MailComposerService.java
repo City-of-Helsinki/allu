@@ -91,46 +91,44 @@ public class MailComposerService {
     this.applicationService = applicationService;
   }
 
-  public void sendDecision(ApplicationJson applicationJson, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
-    final String subject = subject(applicationJson, type);
+  public void sendDecision(ApplicationJson application, DecisionDetailsJson decisionDetailsJson, DecisionDocumentType type) {
+    final String subject = subject(application, type);
     List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
         .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
 
     if (!emailRecipients.isEmpty()) {
-      List<Attachment> attachments = applicationJson.getAttachmentList().stream()
-          .filter(ai -> ai.isDecisionAttachment())
-          .map(ai -> new Attachment(ai.getName(), ai.getMimeType(), attachmentService.getAttachmentData(ai.getId())))
-          .collect(Collectors.toList());
-
-      List<InlineResource> inlineResources = inlineResources();
+      final List<InlineResource> inlineResources = inlineResources();
 
       MailSenderLog log;
       try {
-        final String attachmentName = attachmentName(type, applicationJson.getApplicationId());
+        final String attachmentName = attachmentName(type, application.getApplicationId());
         final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipients)
           .withSubject(subject)
-          .withBody(textBodyFor(applicationJson))
-          .withHtmlBody(htmlBodyFor(applicationJson))
-          .withAttachments(attachments)
+          .withBody(textBodyFor(application))
+          .withHtmlBody(htmlBodyFor(application))
           .withInlineResources(inlineResources)
-          .withModel(mailModel(applicationJson, decisionDetailsJson.getMessageBody(), decisionTypeFor(applicationJson.getType()), attachmentName));
+          .withModel(mailModel(application, decisionDetailsJson.getMessageBody(), decisionTypeFor(application.getType()), attachmentName));
 
-        if (applicationJson.getType() == ApplicationType.PLACEMENT_CONTRACT) {
-          mailBuilder.withContract(attachmentName, applicationJson.getId());
-        } else if (applicationJson.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+        if (application.getType() == ApplicationType.PLACEMENT_CONTRACT) {
+          mailBuilder.withContract(attachmentName, application.getId())
+              .withAttachments(attachments(application));
+        } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT ||
+                   application.getType() == ApplicationType.AREA_RENTAL) {
           switch (type) {
             case DECISION:
-              mailBuilder.withDecision(String.format(attachmentName, applicationJson.getApplicationId()), applicationJson.getId());
+              mailBuilder.withDecision(String.format(attachmentName, application.getApplicationId()), application.getId())
+                  .withAttachments(attachments(application));
               break;
             case OPERATIONAL_CONDITION:
-              mailBuilder.withOperationalCondition(attachmentName, applicationJson.getId());
+              mailBuilder.withOperationalCondition(attachmentName, application.getId());
               break;
             case WORK_FINISHED:
-              mailBuilder.withWorkFinished(attachmentName, applicationJson.getId());
+              mailBuilder.withWorkFinished(attachmentName, application.getId());
               break;
           }
         } else {
-          mailBuilder.withDecision(attachmentName, applicationJson.getId());
+          mailBuilder.withDecision(attachmentName, application.getId())
+              .withAttachments(attachments(application));
         }
 
         log = mailBuilder.send();
@@ -140,7 +138,7 @@ public class MailComposerService {
       }
       saveMailSenderLog(log);
       if (log.isSentFailed()) {
-        handleDecisionEmailSentFailed(log, applicationJson.getId());
+        handleDecisionEmailSentFailed(log, application.getId());
       }
     } else {
       logger.warn("No email recipients");
@@ -163,7 +161,13 @@ public class MailComposerService {
     } catch (IOException e) {
       return Collections.emptyList();
     }
+  }
 
+  private List<Attachment> attachments(ApplicationJson application) {
+    return application.getAttachmentList().stream()
+        .filter(ai -> ai.isDecisionAttachment())
+        .map(ai -> new Attachment(ai.getName(), ai.getMimeType(), attachmentService.getAttachmentData(ai.getId())))
+        .collect(Collectors.toList());
   }
 
   private String textBodyFor(ApplicationJson applicationJson) {
@@ -221,7 +225,8 @@ public class MailComposerService {
 
   private String subject(ApplicationJson application, DecisionDocumentType type) {
     StringBuilder subject = new StringBuilder();
-    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT ||
+        application.getType() == ApplicationType.AREA_RENTAL) {
       subject.append(String.format(subjectFor(application.getType()), attachmentName(type, application.getApplicationId())));
     } else {
       subject.append(String.format(subjectFor(application.getType()), application.getApplicationId()));
