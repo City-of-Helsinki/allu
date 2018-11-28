@@ -11,22 +11,52 @@
   </mat-card-title>
   <mat-card-content class="bordered">
     <div fxLayout="row wrap" fxLayout.sm="column" fxLayoutAlign="start center" class="header-row">
-      <div fxFlex="none" fxFlexAlign="center">
+      <div fxFlex="auto" fxFlexAlign="center">
         <mat-card-subtitle>
           {{'chargeBasis.invoicable' | translation}}
         </mat-card-subtitle>
       </div>
+      <div fxFlex="250px">
+        <invoicing-period-select
+          *ngIf="showPeriodSelect"
+          [disabled]="periodSelectionDisabled"
+          [selectedPeriod]="selectedPeriod$ | async">
+        </invoicing-period-select>
+      </div>
     </div>
-    <ul class="charge-basis-entries">
-      <li *ngFor="let entry of chargeBasisEntries$ | async; let i=index; trackBy: trackById" class="charge-basis-entry-container">
-        <charge-basis-entry
-          [entry]="entry"
-          [changesAllowed]="changesAllowed"
-          (onEdit)="editEntry($event)"
-          (onRemove)="removeEntry(entry.id)"
-          (invoicableChange)="setInvoicable(entry.id, $event)"></charge-basis-entry>
-      </li>
-    </ul>
+    <ng-container *ngIf="invoicingPeriods$ | async as periods">
+      <ng-container *ngIf="periods.length; else noPeriods">
+        <ng-container *ngFor="let period of periods">
+          <h2 class="invoicing-period">
+            {{'invoicing.period.title' | translation}} {{period.startTime | date:'shortDate'}} - {{period.endTime | date:'shortDate'}}
+          </h2>
+          <div>
+            <ul class="charge-basis-entries">
+              <li *ngFor="let entry of entriesForPeriod(period.id) | async; let i=index; trackBy: trackById" class="charge-basis-entry-container">
+                <charge-basis-entry
+                  [entry]="entry"
+                  [changesAllowed]="changesAllowed"
+                  (onEdit)="editEntry($event)"
+                  (onRemove)="removeEntry(entry.id)"
+                  (invoicableChange)="setInvoicable(entry.id, $event)"></charge-basis-entry>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #noPeriods>
+        <ul class="charge-basis-entries">
+          <li *ngFor="let entry of chargeBasisEntries$ | async; let i=index; trackBy: trackById" class="charge-basis-entry-container">
+            <charge-basis-entry
+              [entry]="entry"
+              [changesAllowed]="changesAllowed"
+              (onEdit)="editEntry($event)"
+              (onRemove)="removeEntry(entry.id)"
+              (invoicableChange)="setInvoicable(entry.id, $event)"></charge-basis-entry>
+          </li>
+        </ul>
+      </ng-template>
+    </ng-container>
   </mat-card-content>
   <mat-card-footer>
     <div fxLayout="row" fxLayoutAlign="start center">

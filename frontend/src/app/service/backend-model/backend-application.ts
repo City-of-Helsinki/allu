@@ -12,6 +12,7 @@ import {SearchResultEnumType} from './search-result-enum-type';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+import {InvoicingPeriodLength} from '@feature/application/invoicing/invoicing-period/invoicing-period-length';
 
 export interface BackendApplication {
   id: number;
@@ -54,6 +55,7 @@ export interface BackendApplication {
   invoiced?: boolean;
   invoicingChanged?: boolean;
   targetState?: ApplicationStatus;
+  invoicingPeriodLength?: InvoicingPeriodLength;
 }
 
 export interface SearchResultApplication {

@@ -23,6 +23,7 @@ import * as fromInvoicing from '@feature/application/invoicing/reducers';
 import * as fromApplication from '../reducers';
 import {SetRecipient} from '@feature/application/invoicing/actions/invoicing-customer-actions';
 import {Invoice} from '@model/application/invoice/invoice';
+import {Load as LoadInvoicingPeriods} from '@feature/application/invoicing/actions/invoicing-period-actions';
 
 @Component({
   selector: 'invoicing',
@@ -62,6 +63,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
       }
     });
     this.invoices$ = this.store.select(fromInvoicing.getAllInvoices);
+    this.store.dispatch(new LoadInvoicingPeriods());
   }
 
   onSubmit(): void {

@@ -25,6 +25,9 @@ import {InvoiceListComponent} from '@feature/application/invoicing/invoice/invoi
 import {InvoiceComponent} from '@feature/application/invoicing/invoice/invoice.component';
 import {InvoiceRowComponent} from '@feature/application/invoicing/invoice/invoice-row.component';
 import {InvoiceGroupComponent} from '@feature/application/invoicing/invoice/invoice-group.component';
+import {InvoicingPeriodSelectComponent} from '@feature/application/invoicing/invoicing-period/invoicing-period-select.component';
+import {InvoicingPeriodEffects} from '@feature/application/invoicing/effects/invoicing-period-effects';
+import {InvoicingPeriodService} from '@feature/application/invoicing/invoicing-period/invoicing-period.service';
 
 @NgModule({
   imports: [
@@ -36,7 +39,8 @@ import {InvoiceGroupComponent} from '@feature/application/invoicing/invoice/invo
     EffectsModule.forFeature([
       ChargeBasisEffects,
       InvoicingCustomerEffects,
-      InvoiceEffects
+      InvoiceEffects,
+      InvoicingPeriodEffects
     ])
   ],
   declarations: [
@@ -53,11 +57,13 @@ import {InvoiceGroupComponent} from '@feature/application/invoicing/invoice/invo
     ChargeBasisDiscountComponent,
     ChargeBasisNegligenceFeeComponent,
     ChargeBasisFeeComponent,
-    DepositModalComponent
+    DepositModalComponent,
+    InvoicingPeriodSelectComponent
   ],
   providers: [
     InvoiceService,
-    DepositService
+    DepositService,
+    InvoicingPeriodService
   ],
   entryComponents: [
     ChargeBasisEntryModalComponent,

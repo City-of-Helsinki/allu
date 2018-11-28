@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as ChargeBasisAction from '@feature/application/invoicing/actions/charge-basis-actions';
+import {ChargeBasisActionType} from '@feature/application/invoicing/actions/charge-basis-actions';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Observable, of} from 'rxjs/index';
@@ -10,7 +11,6 @@ import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {InvoiceService} from '@service/application/invoice/invoice.service';
 import {InvoiceActionType, Load, LoadSuccess} from '@feature/application/invoicing/actions/invoice-actions';
-import {ChargeBasisActionType} from '@feature/application/invoicing/actions/charge-basis-actions';
 
 @Injectable()
 export class InvoiceEffects {

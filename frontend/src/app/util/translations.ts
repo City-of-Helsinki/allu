@@ -1451,6 +1451,20 @@ export const translations = {
       title: 'Hylkää valvontatehtävä'
     }
   },
+  invoicing: {
+    period: {
+      title: 'Laskutusjakso',
+      periodSelection: 'Laskutuksen jaksotus',
+      noPeriod: 'Ei jaksotusta',
+      name: '{{period}}kk',
+      error: {
+        fetch: 'Laskutusjaksojen hakeminen epäonnistui',
+        create: 'Laskutuksen jaksotus epäonnistui',
+        update: 'Laskutuksen jaksotuksen muuttaminen epäonnistui',
+        remove: 'Laskutuksen jaksotuksen poistaminen epäonnistui'
+      }
+    }
+  },
   invoice: {
     invoiced: 'Laskutettu',
     notInvoiced: 'Ei laskutettu',

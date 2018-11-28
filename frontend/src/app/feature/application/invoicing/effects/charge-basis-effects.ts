@@ -18,6 +18,10 @@ import {InvoiceService} from '@service/application/invoice/invoice.service';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import * as ApplicationActions from '@feature/application/actions/application-actions';
+import {
+  InvoicingPeriodSuccessActions,
+  invoicingPeriodSuccessActionTypes
+} from '@feature/application/invoicing/actions/invoicing-period-actions';
 
 @Injectable()
 export class ChargeBasisEffects {
@@ -60,5 +64,11 @@ export class ChargeBasisEffects {
     ofType(ChargeBasisActionType.AddEntry, ChargeBasisActionType.UpdateEntry, ChargeBasisActionType.RemoveEntry),
     withLatestFrom(this.store.select(fromInvoicing.getAllChargeBasisEntries)),
     map(([action, entries]) => new Save(entries))
+  );
+
+  @Effect()
+  onInvoicingPeriodChange: Observable<Action> = this.actions.pipe(
+    ofType<InvoicingPeriodSuccessActions>(...invoicingPeriodSuccessActionTypes),
+    map(() => new Load())
   );
 }

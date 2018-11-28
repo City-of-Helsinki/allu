@@ -94,6 +94,7 @@ export class ApplicationMapper {
     application.externalOwnerId = backendApplication.externalOwnerId;
     application.invoicingChanged = backendApplication.invoicingChanged;
     application.targetState = backendApplication.targetState;
+    application.invoicingPeriodLength = backendApplication.invoicingPeriodLength;
     return application;
   }
 

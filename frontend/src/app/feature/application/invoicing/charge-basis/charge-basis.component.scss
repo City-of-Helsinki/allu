@@ -15,3 +15,13 @@
 .header-row {
   padding: 0 24px;
 }
+
+h2.invoicing-period {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 20px 0 5px 120px;
+}
+
+h2:first-of-type.invoicing-period {
+  margin: 0 0 5px 120px;
+}

@@ -16,6 +16,7 @@ import {ApplicationStatus} from './application-status';
 import {ApplicationKind} from './type/application-kind';
 import {KindsWithSpecifiers} from './type/application-specifier';
 import {ClientApplicationData} from './client-application-data';
+import {InvoicingPeriodLength} from '@feature/application/invoicing/invoicing-period/invoicing-period-length';
 
 export class Application {
   constructor(
@@ -59,7 +60,8 @@ export class Application {
     public nrOfComments?: number,
     public invoiced?: boolean,
     public invoicingChanged: boolean = false,
-    public targetState?: ApplicationStatus) {
+    public targetState?: ApplicationStatus,
+    public invoicingPeriodLength?: InvoicingPeriodLength) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

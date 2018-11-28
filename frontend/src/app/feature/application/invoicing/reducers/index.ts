@@ -1,6 +1,7 @@
 import * as fromChargeBasis from './charge-basis-reducer';
 import * as fromCustomer from './invoicing-customer-reducer';
 import * as fromInvoice from './invoice-reducer';
+import * as fromInvoicingPeriod from './invoicing-period-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
 
@@ -8,6 +9,7 @@ export interface InvoicingState {
   invoice: fromInvoice.State;
   chargeBasis: fromChargeBasis.State;
   customer: fromCustomer.State;
+  periods: fromInvoicingPeriod.State;
 }
 
 export interface State {
@@ -17,7 +19,8 @@ export interface State {
 export const reducers: ActionReducerMap<InvoicingState> = {
   invoice: fromInvoice.reducer,
   chargeBasis: fromChargeBasis.reducer,
-  customer: fromCustomer.reducer
+  customer: fromCustomer.reducer,
+  periods: fromInvoicingPeriod.reducer
 };
 
 export const getInvoicingState = createFeatureSelector<InvoicingState>('invoicing');
@@ -60,3 +63,24 @@ export const {
   selectAll: getAllInvoices,
   selectTotal: getInvoicesTotal
 } = fromInvoice.adapter.getSelectors(getInvoiceEntityState);
+
+
+/**
+ * Invoicing periods
+ */
+export const getInvoicingPeriodEntityState = createSelector(
+  getInvoicingState,
+  (state: InvoicingState) => state.periods
+);
+
+export const {
+  selectIds: getPeriodIds,
+  selectEntities: getPeriodEntities,
+  selectAll: getAllPeriods,
+  selectTotal: getPeriodTotal
+} = fromInvoicingPeriod.adapter.getSelectors(getInvoicingPeriodEntityState);
+
+export const getPeriodsProcessing = createSelector(
+  getInvoicingPeriodEntityState,
+  fromInvoicingPeriod.getProcessing
+);
