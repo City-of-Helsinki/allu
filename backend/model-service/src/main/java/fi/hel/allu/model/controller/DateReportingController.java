@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,12 @@ import java.time.ZonedDateTime;
 public class DateReportingController {
 
   private final ApplicationService applicationService;
+  private final LocationService locationService;
 
   @Autowired
-  public DateReportingController(ApplicationService applicationService) {
+  public DateReportingController(ApplicationService applicationService, LocationService locationService) {
     this.applicationService = applicationService;
+    this.locationService = locationService;
   }
 
   @RequestMapping(value = "/{id}/customeroperationalcondition", method = RequestMethod.PUT)
@@ -50,5 +53,12 @@ public class DateReportingController {
   public ResponseEntity<Void> reportWorkFinished(@PathVariable Integer id, @RequestBody ZonedDateTime workFinishedDate) {
    applicationService.setWorkFinishedDate(id, workFinishedDate);
    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/locations/{locationId}/customervalidity", method = RequestMethod.PUT)
+  public ResponseEntity<Void> reportCustomerLocationValidity(@PathVariable Integer id,
+      @PathVariable Integer locationId, @RequestBody ApplicationDateReport dateReport) {
+    locationService.setCustomerLocationValidity(locationId, dateReport);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

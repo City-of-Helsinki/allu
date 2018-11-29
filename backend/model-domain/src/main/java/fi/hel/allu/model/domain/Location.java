@@ -32,6 +32,9 @@ public class Location implements PostalAddressItem {
   private String paymentTariff;
   private String paymentTariffOverride;
   private Boolean underpass;
+  private ZonedDateTime customerStartTime;
+  private ZonedDateTime customerEndTime;
+  private ZonedDateTime customerReportingTime;
 
   /**
    * Get location's database ID
@@ -289,5 +292,29 @@ public class Location implements PostalAddressItem {
 
   public void setUnderpass(Boolean underpass) {
     this.underpass = underpass;
+  }
+
+  public ZonedDateTime getCustomerStartTime() {
+    return customerStartTime;
+  }
+
+  public void setCustomerStartTime(ZonedDateTime customerStartTime) {
+    this.customerStartTime = customerStartTime;
+  }
+
+  public ZonedDateTime getCustomerEndTime() {
+    return customerEndTime;
+  }
+
+  public void setCustomerEndTime(ZonedDateTime customerEndTime) {
+    this.customerEndTime = customerEndTime;
+  }
+
+  public ZonedDateTime getCustomerReportingTime() {
+    return customerReportingTime;
+  }
+
+  public void setCustomerReportingTime(ZonedDateTime customerReportingTime) {
+    this.customerReportingTime = customerReportingTime;
   }
 }

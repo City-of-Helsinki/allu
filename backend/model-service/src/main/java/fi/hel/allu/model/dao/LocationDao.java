@@ -41,39 +41,46 @@ import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationArea.locationArea;
+import static fi.hel.allu.QCustomerLocationValidity.customerLocationValidity;
 import static fi.hel.allu.QLocationFlids.locationFlids;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
 import static fi.hel.allu.QPostalAddress.postalAddress;
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class LocationDao {
 
   private static final Logger logger = LoggerFactory.getLogger(LocationDao.class);
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
-      Arrays.asList(location.paymentTariff);
-
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(location.paymentTariff);
+  private static final int TUPLE_LOCATION = 0;
+  private static final int TUPLE_POSTAL_ADDRESS = 1;
+  private static final int TUPLE_CUSTOMER_LOCATION_VALIDITY = 2;
 
   @Autowired
   private SQLQueryFactory queryFactory;
   @Autowired
-  PostalAddressDao postalAddressDao;
+  private PostalAddressDao postalAddressDao;
   @Autowired
   private CoordinateTransformation coordinateTransformation;
 
   final QBean<Location> locationBean = bean(Location.class, location.all());
   final QBean<PostalAddress> postalAddressBean = bean(PostalAddress.class, postalAddress.all());
+  final QBean<CustomerLocationValidity> customerLocationValidityBean = bean(CustomerLocationValidity.class, customerLocationValidity.all());
 
   @Transactional(readOnly = true)
   public Optional<Location> findById(int id) {
-    Tuple locationPostalAddress = queryFactory
-        .select(locationBean, postalAddressBean)
+    final Tuple locationPostalAddressCustomerLocationValidity = queryFactory
+        .select(locationBean, postalAddressBean, customerLocationValidityBean)
         .from(location)
         .leftJoin(postalAddress).on(location.postalAddressId.eq(postalAddress.id))
+        .leftJoin(customerLocationValidity).on(customerLocationValidity.locationId.eq(location.id))
         .where(location.id.eq(id)).fetchOne();
     Location cont = null;
-    if (locationPostalAddress != null) {
-      cont = PostalAddressUtil.mapPostalAddress(locationPostalAddress).get(0, Location.class);
+    if (locationPostalAddressCustomerLocationValidity != null) {
+      cont = mapCustomerLocationValidity(
+              PostalAddressUtil.mapPostalAddress(locationPostalAddressCustomerLocationValidity))
+            .get(TUPLE_LOCATION, Location.class);
       List<Geometry> geometries = queryFactory.select(locationGeometry.geometry).from(locationGeometry)
           .where(locationGeometry.locationId.eq(cont.getId())).fetch();
       GeometryCollection collection = toGeometryCollection(geometries);
@@ -129,6 +136,27 @@ public class LocationDao {
     return queryFactory
         .select(Expressions.simpleTemplate(Boolean.class, "st_isvalid({0})", geometry))
         .fetchFirst();
+  }
+
+  @Transactional
+  public void setCustomerLocationValidity(Integer locationId, ApplicationDateReport dateReport) {
+    if (queryFactory.select(customerLocationValidityBean).from(customerLocationValidity)
+        .where(customerLocationValidity.locationId.eq(locationId)).fetchCount() > 0) {
+      queryFactory
+          .update(customerLocationValidity)
+          .set(customerLocationValidity.startTime, dateReport.getReportedDate())
+          .set(customerLocationValidity.endTime, dateReport.getReportedEndDate())
+          .set(customerLocationValidity.reportingTime, dateReport.getReportingDate())
+          .where(customerLocationValidity.locationId.eq(locationId))
+          .execute();
+    } else {
+      queryFactory
+          .insert(customerLocationValidity)
+          .columns(customerLocationValidity.locationId, customerLocationValidity.startTime,
+              customerLocationValidity.endTime, customerLocationValidity.reportingTime)
+          .values(locationId, dateReport.getReportedDate(), dateReport.getReportedEndDate(), dateReport.getReportingDate())
+          .execute();
+    }
   }
 
   private Location update(Location locationData) {
@@ -324,8 +352,9 @@ public class LocationDao {
   }
 
   private GeometryCollection toGeometryCollectionIfNeeded(Geometry geometry) {
-    if (geometry instanceof GeometryCollection)
+    if (geometry instanceof GeometryCollection) {
       return (GeometryCollection) geometry;
+    }
     return toGeometryCollection(Arrays.asList(geometry));
   }
 
@@ -500,4 +529,13 @@ public class LocationDao {
      return coordinateTransformation.transformCoordinates(geometry, targetSrid);
   }
 
+  private Tuple mapCustomerLocationValidity(Tuple item) {
+    final CustomerLocationValidity validity = item.get(TUPLE_CUSTOMER_LOCATION_VALIDITY, CustomerLocationValidity.class);
+    if (validity != null && validity.getId() != null) {
+      item.get(TUPLE_LOCATION, Location.class).setCustomerStartTime(validity.getStartTime());
+      item.get(TUPLE_LOCATION, Location.class).setCustomerEndTime(validity.getEndTime());
+      item.get(TUPLE_LOCATION, Location.class).setCustomerReportingTime(validity.getReportingTime());
+    }
+    return item;
+  }
 }

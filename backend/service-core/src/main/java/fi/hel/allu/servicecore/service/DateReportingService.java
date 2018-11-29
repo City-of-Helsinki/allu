@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 public class DateReportingService {
   private static final Logger logger = LoggerFactory.getLogger(DateReportingService.class);
@@ -125,6 +126,14 @@ public class DateReportingService {
     final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(application);
 
     applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+    return newApplicationJson;
+  }
+
+  public ApplicationJson reportCustomerLocationValidity(Integer id, Integer locationId, ApplicationDateReport dateReport) {
+    applicationService.setCustomerLocationValidity(id, locationId, dateReport);
+    final ApplicationJson newApplicationJson = getApplicationJson(id);
+
+    // TODO: save to history
     return newApplicationJson;
   }
 

@@ -37,6 +37,9 @@ public class LocationMapper {
     location.setPaymentTariff(locationJson.getPaymentTariff());
     location.setPaymentTariffOverride(locationJson.getPaymentTariffOverride());
     location.setUnderpass(locationJson.getUnderpass());
+    location.setCustomerStartTime(locationJson.getCustomerStartTime());
+    location.setCustomerEndTime(locationJson.getCustomerEndTime());
+    location.setCustomerReportingTime(locationJson.getCustomerReportingTime());
     return location;
   }
 
@@ -68,6 +71,9 @@ public class LocationMapper {
     locationJson.setPaymentTariff(location.getPaymentTariff());
     locationJson.setPaymentTariffOverride(location.getPaymentTariffOverride());
     locationJson.setUnderpass(location.getUnderpass());
+    locationJson.setCustomerStartTime(location.getCustomerStartTime());
+    locationJson.setCustomerEndTime(location.getCustomerEndTime());
+    locationJson.setCustomerReportingTime(location.getCustomerReportingTime());
     return locationJson;
   }
 

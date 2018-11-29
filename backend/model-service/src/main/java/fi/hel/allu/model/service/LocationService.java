@@ -1,5 +1,7 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.common.domain.ApplicationDateReport;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,6 +104,10 @@ public class LocationService {
       throw new IllegalStateException("Application contains " + locations.size()
           + " locations where single location was expected");
     }
+  }
+
+  public void setCustomerLocationValidity(Integer locationId, ApplicationDateReport dateReport) {
+    locationDao.setCustomerLocationValidity(locationId, dateReport);
   }
 
   private int getApplicationId(List<Location> locations) {

@@ -391,6 +391,13 @@ public class ApplicationService {
     return responseEntity.getBody();
   }
 
+  public void setCustomerLocationValidity(Integer id, Integer locationId, ApplicationDateReport dateReport) {
+    restTemplate.put(
+        applicationProperties.getCustomerLocationValidityUrl(),
+        new HttpEntity<>(dateReport),
+        id, locationId);
+  }
+
   public Application setCustomerValidityDates(Integer id, ApplicationDateReport dateReport) {
     ResponseEntity<Application> responseEntity = restTemplate.exchange(
         applicationProperties.getCustomerValidityUrl(),

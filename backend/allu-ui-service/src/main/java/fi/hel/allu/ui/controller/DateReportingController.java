@@ -62,4 +62,11 @@ public class DateReportingController {
       @RequestBody @NotNull ZonedDateTime workFinishedDate) {
     return ResponseEntity.ok(dateReportingService.reportWorkFinished(id, workFinishedDate));
   }
+
+  @RequestMapping(value = "/{id}/locations/{locationId}/customervalidity", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> reportCustomerLocationValidity(@PathVariable Integer id,
+      @PathVariable Integer locationId, @RequestBody @Valid ApplicationDateReport dateReport) {
+    return ResponseEntity.ok(dateReportingService.reportCustomerLocationValidity(id, locationId, dateReport));
+  }
 }

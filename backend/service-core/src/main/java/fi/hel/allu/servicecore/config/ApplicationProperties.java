@@ -1343,6 +1343,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/customerworkfinished");
   }
 
+  public String getCustomerLocationValidityUrl() {
+    return getModelServiceUrl("/applications/{id}/locations/{id}/customervalidity");
+  }
+
   public String getOperationalConditionUrl() {
     return getModelServiceUrl("/applications/{id}/operationalcondition");
   }

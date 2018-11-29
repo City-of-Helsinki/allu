@@ -220,6 +220,21 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>customer_location_validity</table>
+                            <column>start_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>customer_location_validity</table>
+                            <column>end_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>customer_location_validity</table>
+                            <column>reporting_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>project</table>
                             <column>start_time</column>
                             <type>java.time.ZonedDateTime</type>
