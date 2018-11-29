@@ -14,6 +14,7 @@ import fi.hel.allu.model.domain.InvoicingPeriod;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QInvoicingPeriod.invoicingPeriod;
+import static fi.hel.allu.QChargeBasis.chargeBasis;
 
 @Repository
 public class InvoicingPeriodDao {
@@ -47,13 +48,9 @@ public class InvoicingPeriodDao {
 
   @Transactional
   public void deletePeriods(Integer applicationId) {
+    queryFactory.update(chargeBasis).setNull(chargeBasis.invoicingPeriodId).where(chargeBasis.applicationId.eq(applicationId)).execute();
     queryFactory.delete(invoicingPeriod).where(invoicingPeriod.applicationId.eq(applicationId)).execute();
  }
-
-  @Transactional
-  public void deleteUninvoicedPeriods(Integer applicationId) {
-    queryFactory.delete(invoicingPeriod).where(invoicingPeriod.applicationId.eq(applicationId), invoicingPeriod.invoiced.isFalse()).execute();
-  }
 
   @Transactional(readOnly = true)
   public List<InvoicingPeriod> findOpenPeriodsForApplicationId(Integer applicationId) {

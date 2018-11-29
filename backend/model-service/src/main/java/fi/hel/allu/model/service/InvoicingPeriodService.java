@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,46 +17,33 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoicingPeriodDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoicingPeriod;
+import fi.hel.allu.model.service.event.InvoicingPeriodChangeEvent;
 
 @Service
 public class InvoicingPeriodService {
 
-
   private final InvoicingPeriodDao invoicingPeriodDao;
   private final ApplicationDao applicationDao;
+  private final ApplicationEventPublisher invoicingPeriodEventPublisher;
 
   @Autowired
-  public InvoicingPeriodService(InvoicingPeriodDao invoicingPeriodDao, ApplicationDao applicationDao) {
+  public InvoicingPeriodService(InvoicingPeriodDao invoicingPeriodDao, ApplicationDao applicationDao, ApplicationEventPublisher invoicingPeriodEventPublisher) {
     this.invoicingPeriodDao = invoicingPeriodDao;
     this.applicationDao = applicationDao;
+    this.invoicingPeriodEventPublisher = invoicingPeriodEventPublisher;
   }
 
   @Transactional
   public List<InvoicingPeriod> updateInvoicingPeriods(Integer applicationId,
       int periodLength) {
-    List<InvoicingPeriod> existingPeriods = invoicingPeriodDao.findForApplicationId(applicationId);
-    if (!hasInvoicedPeriods(existingPeriods)) {
-      invoicingPeriodDao.deletePeriods(applicationId);
-      return createInvoicingPeriods(applicationId, periodLength);
-    } else {
-      InvoicingPeriod latestInvoiced = findLatestInvoicedPeriod(existingPeriods);
-      Application application = applicationDao.findById(applicationId);
-      invoicingPeriodDao.deleteUninvoicedPeriods(applicationId);
-      createPeriods(applicationId, periodLength, latestInvoiced.getEndTime().plusDays(1),
-          application.getEndTime().truncatedTo(ChronoUnit.DAYS));
-    }
+    deletePeriods(applicationId);
+    createInvoicingPeriods(applicationId, periodLength);
+    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     return findForApplicationId(applicationId);
   }
 
   private boolean hasInvoicedPeriods(List<InvoicingPeriod> periods) {
     return periods.stream().anyMatch(InvoicingPeriod::isInvoiced);
-  }
-
-  private InvoicingPeriod findLatestInvoicedPeriod(List<InvoicingPeriod> periods) {
-    return periods.stream()
-        .filter(p -> p.isInvoiced())
-        .sorted(Comparator.comparing(InvoicingPeriod::getEndTime, Comparator.reverseOrder()))
-        .findFirst().get();
   }
 
   @Transactional
@@ -64,7 +52,9 @@ public class InvoicingPeriodService {
     Application application = applicationDao.findById(applicationId);
     ZonedDateTime start = application.getStartTime().truncatedTo(ChronoUnit.DAYS);
     ZonedDateTime end = application.getEndTime().truncatedTo(ChronoUnit.DAYS);
-    return createPeriods(applicationId, periodLength, start, end);
+    List<InvoicingPeriod> periods = createPeriods(applicationId, periodLength, start, end);
+    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+    return periods;
   }
 
   private List<InvoicingPeriod> createPeriods(Integer applicationId, int periodLength, ZonedDateTime start,
@@ -105,6 +95,7 @@ public class InvoicingPeriodService {
       throw new IllegalOperationException("invoicingPeriod.invoiced");
     }
     invoicingPeriodDao.deletePeriods(applicationId);
+    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
   }
 
   @Transactional

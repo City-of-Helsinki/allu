@@ -156,6 +156,11 @@ public class ApplicationService {
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
   }
 
+  @Transactional
+  public void updateChargeBasis(int id) {
+    updateChargeBasis(id, findById(id));
+  }
+
   /**
    * Updates owner of given applications.
    *

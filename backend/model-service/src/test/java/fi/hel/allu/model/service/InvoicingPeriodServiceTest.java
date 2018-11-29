@@ -16,8 +16,11 @@ import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoicingPeriodDao;
@@ -39,6 +42,8 @@ public class InvoicingPeriodServiceTest {
   private InvoicingPeriodDao invoicingPeriodDao;
   @Mock
   private ApplicationDao applicationDao;
+  @Mock
+  private ApplicationEventPublisher eventPublisher;
 
 
   private static final ZonedDateTime START_TIME = LocalDate.parse("2018-01-01").atStartOfDay(TimeUtil.HelsinkiZoneId);
@@ -49,7 +54,7 @@ public class InvoicingPeriodServiceTest {
 
   @Before
   public void setup() {
-    invoicingPeriodService = new InvoicingPeriodService(invoicingPeriodDao, applicationDao);
+    invoicingPeriodService = new InvoicingPeriodService(invoicingPeriodDao, applicationDao, eventPublisher);
     when(invoicingPeriodDao.insertPeriods(anyListOf(InvoicingPeriod.class))).then(AdditionalAnswers.returnsFirstArg());
     Application application = new Application();
     application.setStartTime(START_TIME);
@@ -70,8 +75,7 @@ public class InvoicingPeriodServiceTest {
     validatePeriods(result, 1);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  @Test
+  @Test(expected = IllegalOperationException.class)
   public void shouldNotUpdateInvoicedPeriods() {
     List<InvoicingPeriod> existingPeriods = new ArrayList<>();
     existingPeriods.add(new InvoicingPeriod(APPLICATION_ID, START_TIME, START_TIME.plusMonths(6).minusDays(1)));
@@ -79,8 +83,6 @@ public class InvoicingPeriodServiceTest {
     existingPeriods.get(0).setInvoiced(true);
     when(invoicingPeriodDao.findForApplicationId(APPLICATION_ID)).thenReturn(existingPeriods);
     invoicingPeriodService.updateInvoicingPeriods(APPLICATION_ID, 6);
-    verify(invoicingPeriodDao).deleteUninvoicedPeriods(APPLICATION_ID);
-    verify(invoicingPeriodDao).insertPeriods((List)argThat(IsCollectionWithSize.hasSize(1)));
   }
 
   private void validatePeriods(List<InvoicingPeriod> result, int expectedAmount) {

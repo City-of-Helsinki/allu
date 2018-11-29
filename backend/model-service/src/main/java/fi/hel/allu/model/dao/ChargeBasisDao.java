@@ -179,4 +179,12 @@ public class ChargeBasisDao {
         .where(chargeBasis.id.eq(id))
         .fetchOne();
   }
+
+  @Transactional
+  public void setInvoicingPeriodForManualEntries(Integer periodId, Integer applicationId) {
+    queryFactory.update(chargeBasis).set(chargeBasis.invoicingPeriodId, periodId)
+        .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.manuallySet.isTrue(),
+            chargeBasis.locked.isTrue().not())
+        .execute();
+  }
 }

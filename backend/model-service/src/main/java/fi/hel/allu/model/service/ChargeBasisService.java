@@ -91,6 +91,12 @@ public class ChargeBasisService {
 
   }
 
+  @Transactional
+  public void setInvoicingPeriodForManualEntries(Integer applicationId) {
+    Optional<InvoicingPeriod> invoicingPeriod = invoicingPeriodService.findFirstOpenPeriod(applicationId);
+    chargeBasisDao.setInvoicingPeriodForManualEntries(invoicingPeriod.map(InvoicingPeriod::getId).orElse(null), applicationId);
+  }
+
   private void setPeriodIfMissing(Integer invoicingPeriodId, List<ChargeBasisEntry> manualEntries) {
     manualEntries.forEach(e -> {
       if (e.getInvoicingPeriodId() == null) {
@@ -158,6 +164,5 @@ public class ChargeBasisService {
     ChargeBasisEntry entry = chargeBasisDao.setInvoicable(entryId, invoiced);
     handleInvoicingChanged(applicationId);
     return entry;
-
   }
 }
