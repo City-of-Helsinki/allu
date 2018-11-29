@@ -57,7 +57,7 @@ public class ApplicationDao {
           application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
           application.invoiced, application.clientApplicationData, application.applicationId,
           application.externalOwnerId, application.invoicingChanged, application.targetState,
-          application.externalApplicationId);
+          application.externalApplicationId, application.invoicingPeriodLength);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
@@ -918,5 +918,10 @@ public class ApplicationDao {
   @Transactional
   public void removeClientApplicationData(Integer id) {
     queryFactory.update(application).setNull(application.clientApplicationData).where(application.id.eq(id)).execute();
+  }
+
+  @Transactional
+  public void setInvoicingPeriodLength(Integer applicationId, Integer periodLength) {
+    queryFactory.update(application).set(application.invoicingPeriodLength, periodLength).where(application.id.eq(applicationId)).execute();
   }
 }

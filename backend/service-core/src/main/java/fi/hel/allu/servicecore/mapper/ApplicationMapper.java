@@ -196,6 +196,7 @@ public class ApplicationMapper {
     applicationJson.setInvoicingChanged(application.isInvoicingChanged());
     applicationJson.setTargetState(application.getTargetState());
     applicationJson.setExternalApplicationId(application.getExternalApplicationId());
+    applicationJson.setInvoicingPeriodLength(application.getInvoicingPeriodLength());
     return applicationJson;
   }
 

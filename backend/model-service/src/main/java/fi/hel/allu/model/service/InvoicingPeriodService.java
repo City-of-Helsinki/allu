@@ -54,6 +54,7 @@ public class InvoicingPeriodService {
     ZonedDateTime end = application.getEndTime().truncatedTo(ChronoUnit.DAYS);
     List<InvoicingPeriod> periods = createPeriods(applicationId, periodLength, start, end);
     invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+    applicationDao.setInvoicingPeriodLength(applicationId, periodLength);
     return periods;
   }
 
@@ -95,6 +96,7 @@ public class InvoicingPeriodService {
       throw new IllegalOperationException("invoicingPeriod.invoiced");
     }
     invoicingPeriodDao.deletePeriods(applicationId);
+    applicationDao.setInvoicingPeriodLength(applicationId, null);
     invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
   }
 

@@ -79,6 +79,7 @@ public class Application {
 
   private ZonedDateTime receivedTime;
   private Integer externalApplicationId;
+  private Integer invoicingPeriodLength;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -561,5 +562,13 @@ public class Application {
 
   public void setExternalApplicationId(Integer externalApplicationId) {
     this.externalApplicationId = externalApplicationId;
+  }
+
+  public Integer getInvoicingPeriodLength() {
+    return invoicingPeriodLength;
+  }
+
+  public void setInvoicingPeriodLength(Integer invoicingPeriodLength) {
+    this.invoicingPeriodLength = invoicingPeriodLength;
   }
 }

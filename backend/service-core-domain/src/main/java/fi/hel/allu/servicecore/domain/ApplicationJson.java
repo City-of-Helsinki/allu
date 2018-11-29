@@ -103,6 +103,7 @@ public class ApplicationJson {
    */
   private Integer externalOwnerId;
   private Integer externalApplicationId;
+  private Integer invoicingPeriodLength;
 
   /**
   /**
@@ -617,6 +618,14 @@ public class ApplicationJson {
 
   public void setExternalApplicationId(Integer externalApplicationId) {
     this.externalApplicationId = externalApplicationId;
+  }
+
+  public Integer getInvoicingPeriodLength() {
+    return invoicingPeriodLength;
+  }
+
+  public void setInvoicingPeriodLength(Integer invoicingPeriodLength) {
+    this.invoicingPeriodLength = invoicingPeriodLength;
   }
 
 }
