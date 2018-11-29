@@ -89,8 +89,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   public operationalCondition(): void {
     const status = ApplicationStatus.DECISION;
     this.confirmDecisionSend(status, status).pipe(
-      switchMap(confirmation => this.toOperationalCondition(confirmation))
-    ).subscribe(confirmation => this.changeStatus(confirmation));
+      switchMap(confirmation => this.toOperationalCondition(confirmation)),
+      switchMap(confirmation => this.changeStatus(confirmation)),
+    ).subscribe(app => {}); // Nothing to do but must subscribe so observable is run
   }
 
   public decisionMaking(): void {
