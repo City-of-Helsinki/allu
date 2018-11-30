@@ -1,14 +1,14 @@
-<h2 class="mat-card-title">Tallennetut alueet</h2>
+<h2 class="mat-card-title">{{'location.stored' | translation}}</h2>
 <table class="bordered responsive-table">
   <thead>
   <tr>
     <th></th>
-    <th>Tunniste</th>
-    <th>Aloitus</th>
-    <th>Lopetus</th>
-    <th>Alue</th>
-    <th>Kaupunginosa</th>
-    <th>Lisätiedot</th>
+    <th>{{'location.identifier' | translation}}</th>
+    <th>{{'location.startTime' | translation}}</th>
+    <th>{{'location.endTime' | translation}}</th>
+    <th>{{'location.area' | translation}}</th>
+    <th>{{'location.cityDistrict' | translation}}</th>
+    <th>{{'location.additionalInfo' | translation}}</th>
   </tr>
   </thead>
   <tbody>
@@ -31,6 +31,15 @@
     <td>{{location.effectiveUiArea}}</td>
     <td>{{districtName(location.effectiveCityDistrictId) | async}}</td>
     <td>{{location.info}}</td>
+    <td>
+      <button
+        *ngIf="location.id !== undefined"
+        type="button"
+        mat-icon-button
+        (click)="reportCustomerValidity(location, i)">
+        <mat-icon>event</mat-icon>
+      </button>
+    </td>
   </tr>
   </tbody>
 </table>

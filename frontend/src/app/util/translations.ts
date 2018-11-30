@@ -457,7 +457,8 @@ export const translations = {
       toDecision: 'Päättämiseen',
       showPending: 'Näytä uudet tiedot',
       handleInformationRequestResponse: 'Käsittele täydennyspyyntö',
-      toDecisionMaking: 'Ehdota päätettäväksi'
+      toDecisionMaking: 'Ehdota päätettäväksi',
+      basicInfo: 'Jatka perustietoihin'
     },
     confirmCancel: {
       title: 'Haluatko varmasti perua hakemuksen?',
@@ -1055,6 +1056,10 @@ export const translations = {
   },
   location: {
     title: 'Sijainti',
+    stored: 'Tallennetut alueet',
+    identifier: 'Tunniste',
+    startTime: 'Aloitus',
+    endTime: 'Lopetus',
     postalAddress: 'Osoite',
     additionalInfo: 'Lisätietoja paikasta',
     fixedArea: 'Alue',
@@ -1069,6 +1074,10 @@ export const translations = {
     paymentTariffValue: 'Maksuluokka {{tariff}}',
     paymentTariffUndefined: 'Maksuluokka tuntematon',
     locationKey: 'Sijainti {{key}}',
+    customerStartTime: 'Asiakkaan ilmoittama aloitus',
+    customerEndTime: 'Asiakkaan ilmoittama lopetus',
+    fixedLocationNotAllowed: 'Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty',
+    noAreaSelected: 'Ei valittua sijaintia',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
       fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',
@@ -1087,6 +1096,7 @@ export const translations = {
     freeTextSearch: 'Vapaa tekstihaku',
     select: 'Valitse',
     selectAll: 'Valitse kaikki',
+    saving: 'Tallennus',
     field: {
       usernameMissing: 'Käyttäjänimi puuttuu',
       nameMissing: 'Nimi puuttuu',

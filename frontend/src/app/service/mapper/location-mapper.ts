@@ -42,7 +42,10 @@ export class LocationMapper {
         backendLocation.paymentTariff,
         backendLocation.paymentTariffOverride,
         backendLocation.underpass,
-        backendLocation.additionalInfo) : undefined;
+        backendLocation.additionalInfo,
+        TimeUtil.dateFromBackend(backendLocation.customerStartTime),
+        TimeUtil.dateFromBackend(backendLocation.customerEndTime),
+        TimeUtil.dateFromBackend(backendLocation.customerReportingTime)) : undefined;
   }
 
   public static mapSearchResult(backendLocation: SearchResultLocation): Location {

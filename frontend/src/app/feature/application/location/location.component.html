@@ -10,7 +10,7 @@
     <div fxLayout="row">
       <div fxFlex>
         <allu-card>
-          <mat-card-title>Sijainti</mat-card-title>
+          <mat-card-title>{{'location.title' | translation}}</mat-card-title>
           <mat-card-content>
             <div class="row">
               <div class="mapcontainer">
@@ -23,25 +23,29 @@
                      (editedItemCountChanged)="editedItemCountChanged($event)"></map>
               </div>
             </div>
-            <div class="row form-group">
+            <div fxLayout="row" fxLayoutGap="18px">
               <ng-container *ngIf="areas.length > 0">
-                <div *ngIf="editedItemCount > 0" class="col m6">
+                <div fxFlex="0 1 calc(50% - 18px)" *ngIf="editedItemCount > 0" class="col m6">
                   <div class="input-field-info-text">
-                    Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+                    {{'location.fixedLocationNotAllowed' | translation}}
                   </div>
                 </div>
-                <div class="col m6" *ngIf="editedItemCount === 0">
+                <div fxFlex="0 1 calc(30% - 18px)" *ngIf="editedItemCount === 0">
                   <mat-form-field class="input-full-width">
-                    <mat-select placeholder="Alue" class="input-full-width" formControlName="area">
-                      <mat-option value="" selected>Ei tapahtuma-aluetta</mat-option>
+                    <mat-select class="input-full-width"
+                                formControlName="area"
+                                [placeholder]="'location.fixedArea' | translation">
+                      <mat-option value="" selected>{{'location.noAreaSelected' | translation}}</mat-option>
                       <mat-option *ngFor="let area of areas" [value]="area.id">{{area.name}}</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
-                <div class="col m2">
+                <div fxFlex="0 1 calc(30% - 18px)">
                   <div *ngIf="areaSections.length">
                     <mat-form-field class="input-full-width">
-                      <mat-select formControlName="sections" class="input-full-width" multiple placeholder="Lohko">
+                      <mat-select class="input-full-width" multiple
+                                  formControlName="sections"
+                                  [placeholder]="'location.sections' | translation">
                         <mat-option *ngFor="let section of areaSections" [value]="section.id">{{section.name}}
                         </mat-option>
                       </mat-select>
@@ -50,74 +54,109 @@
                 </div>
               </ng-container>
             </div>
-            <div class="row form-group">
-              <div class="col m2">
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="number" formControlName="areaSize" placeholder="Alueen pinta-ala"/>
+                  <input matInput type="number"
+                         formControlName="areaSize"
+                         [placeholder]="'location.area' | translation"/>
                 </mat-form-field>
               </div>
-              <div class="col m2">
+              <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="number" formControlName="areaOverride"
-                         placeholder="Käsittelijän syöttämä pinta-ala"/>
+                         [placeholder]="'location.areaOverride' | translation"/>
                 </mat-form-field>
               </div>
-              <div class="col m2">
+              <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="cityDistrictName" placeholder="Kaupunginosa"/>
+                  <input matInput type="text" formControlName="cityDistrictName"
+                         [placeholder]="'location.cityDistrict' | translation"/>
                 </mat-form-field>
               </div>
-              <div class="col m2">
+              <div fxFlex="0 1 calc(20% - 18px)">
                 <mat-form-field class="input-full-width">
                   <mat-select formControlName="cityDistrictIdOverride" class="input-full-width"
-                              placeholder="Käsittelijän valitsema kaupunginosa">
+                              [placeholder]="'location.cityDistrictOverride' | translation">
                     <mat-option value="" selected>-</mat-option>
-                    <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
+                    <mat-option *ngFor="let district of districts | async" [value]="district.id">
+                      {{district.name}}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
-              <div class="col m2" *ngIf="showPaymentTariff">
+            </div>
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div fxFlex="0 1 calc(20% - 18px)" *ngIf="showPaymentTariff">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" [value]="paymentTariff()"
-                         [disabled]="true" [placeholder]="'location.paymentTariff' | translation"/>
+                  <input matInput type="text"
+                         [value]="paymentTariff()"
+                         [disabled]="true"
+                         [placeholder]="'location.paymentTariff' | translation"/>
                 </mat-form-field>
               </div>
-              <div class="col m2" *ngIf="showPaymentTariff">
+              <div fxFlex="0 1 calc(20% - 18px)" *ngIf="showPaymentTariff">
                 <mat-form-field class="input-full-width">
-                  <mat-select formControlName="paymentTariffOverride" [placeholder]="'location.paymentTariffOverride' | translation"
-                              class="input-full-width">
+                  <mat-select class="input-full-width"
+                              formControlName="paymentTariffOverride"
+                              [placeholder]="'location.paymentTariffOverride' | translation">
                     <mat-option>-</mat-option>
                     <mat-option *ngFor="let tariff of paymentTariffs" [value]="tariff">{{'location.paymentTariffValue' | translation:{tariff: tariff} }}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
-              <div class="col m2" *ngIf="application.type==='AREA_RENTAL'">
-                <mat-checkbox formControlName="underpass" class="checkbox-matching-height">
-                  Altakuljettava
-                </mat-checkbox>
-              </div>
-            </div>
-            <div class="row" form-group>
-              <div class="col m10">
+              <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="info" placeholder="Lisätietoja paikasta"/>
+                  <input matInput type="text"
+                         [disabled]="true"
+                         [value]="location.customerStartTime | date:'shortDate'"
+                         [placeholder]="'location.customerStartTime' | translation"/>
+                </mat-form-field>
+              </div>
+              <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text"
+                         [disabled]="true"
+                         [value]="location.customerEndTime | date:'shortDate'"
+                         [placeholder]="'location.customerEndTime' | translation"/>
                 </mat-form-field>
               </div>
             </div>
-            <div class="row" form-group>
-              <div class="col m12" *ngIf="multipleLocations">
-                <button mat-raised-button type="button" color="primary" [disabled]="!locationForm.valid"
-                        (click)="storeLocation(locationForm.value)">TALLENNA
-                </button>
-                <button mat-raised-button type="button" color="primary" (click)="cancelArea()">PERUUTA</button>
+            <div fxLayout="row" fxLayoutGap="18px">
+              <div fxFlex="0 1 calc(60% - 18px)">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text"
+                         formControlName="info"
+                         [placeholder]="'location.additionalInfo' | translation"/>
+                </mat-form-field>
+              </div>
+              <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">
+                <mat-checkbox formControlName="underpass" class="checkbox-matching-height">
+                  {{'location.underpass' | translation}}
+                </mat-checkbox>
               </div>
             </div>
-            <div class="row" *ngIf="multipleLocations">
-              <div class="col m12">
-                <stored-locations></stored-locations>
+            <ng-container *ngIf="multipleLocations">
+              <div fxLayout="row">
+                <div fxFlex>
+                  <button mat-raised-button type="button"
+                          color="primary" [disabled]="!locationForm.valid"
+                          (click)="storeLocation(locationForm.value)">
+                    {{'common.button.save' | translation | uppercase}}
+                  </button>
+                  <button mat-raised-button type="button"
+                          color="primary"
+                          (click)="cancelArea()">
+                    {{'common.button.cancel' | translation | uppercase}}
+                  </button>
+                </div>
               </div>
-            </div>
+              <div fxLayout="row" *ngIf="multipleLocations">
+                <div fxFlex>
+                  <stored-locations></stored-locations>
+                </div>
+              </div>
+            </ng-container>
           </mat-card-content>
         </allu-card>
       </div>
@@ -125,15 +164,22 @@
     <div fxLayout="row">
       <div fxFlex>
         <allu-card>
-          <mat-card-title>Tallennus</mat-card-title>
+          <mat-card-title>{{'common.saving' | translation}}</mat-card-title>
           <mat-card-content>
-            <div class="row">
-              <div class="col m2">
-                <a mat-raised-button type="button" color="primary" [routerLink]="cancelLink()">PERUUTA</a>
+            <div fxLayout="row">
+              <div fxFlex="0 1 70%">
+                <a mat-raised-button type="button" color="primary" [routerLink]="cancelLink()">
+                  {{'common.button.cancel' | translation | uppercase}}
+                </a>
               </div>
-              <div class="col m4 offset-m6">
+              <div fxFlex="0 1 30%">
                 <button mat-raised-button type="submit" color="primary" [disabled]="!submitAllowed">
-                  {{locationForm.value.id ? "YHTEENVETOON" : "PERUSTIEDOT"}}
+                  <ng-container *ngIf="locationForm.value.id; else basicInfo">
+                    {{'common.button.save' | translation | uppercase}}
+                  </ng-container>
+                  <ng-template #basicInfo>
+                    {{'application.button.basicInfo' | translation | uppercase}}
+                  </ng-template>
                 </button>
               </div>
             </div>

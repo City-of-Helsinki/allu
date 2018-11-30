@@ -1,6 +1,5 @@
 import {PostalAddress} from './postal-address';
-import {TimeUtil} from '../../util/time.util';
-import {Some} from '../../util/option';
+import {TimeUtil} from '@util/time.util';
 
 export class Location {
 
@@ -21,7 +20,10 @@ export class Location {
     public paymentTariff?: string,
     public paymentTariffOverride?: string,
     public underpass?: boolean,
-    public info?: string) {
+    public info?: string,
+    public customerStartTime?: Date,
+    public customerEndTime?: Date,
+    public customerReportingTime?: Date) {
     this.postalAddress = postalAddress || new PostalAddress();
     this.fixedLocationIds = fixedLocationIds || [];
     this.underpass = underpass || false;

@@ -1,4 +1,4 @@
-import {ApplicationDateReport} from '@model/application/application-date-report';
+import {DateReport} from '@model/application/date-report';
 import {TimeUtil} from '@util/time.util';
 
 export interface BackendApplicationDateReport {
@@ -8,7 +8,7 @@ export interface BackendApplicationDateReport {
 }
 
 export class ApplicationDateReportMapper {
-  public static mapFrontend(dateReport: ApplicationDateReport): BackendApplicationDateReport {
+  public static mapFrontend(dateReport: DateReport): BackendApplicationDateReport {
     return !!dateReport
       ? {
         reportingDate: TimeUtil.dateToBackend(dateReport.reportingDate),

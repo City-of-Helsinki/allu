@@ -1,4 +1,4 @@
-export class ApplicationDateReport {
+export class DateReport {
   constructor(
     public reportingDate?: Date,
     public reportedDate?: Date,

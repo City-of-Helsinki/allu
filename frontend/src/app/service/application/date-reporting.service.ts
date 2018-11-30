@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {Observable} from 'rxjs/index';
 import {Application} from '@model/application/application';
-import {ApplicationDateReport} from '@model/application/application-date-report';
+import {DateReport} from '@model/application/date-report';
 import {ApplicationDateReportMapper} from '@service/mapper/application-date-report-mapper';
 import {BackendApplication} from '@service/backend-model/backend-application';
 import {ApplicationMapper} from '@service/mapper/application-mapper';
@@ -34,7 +34,7 @@ export class DateReportingService {
     );
   }
 
-  reportCustomerOperationalCondition(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
+  reportCustomerOperationalCondition(applicationId: number, dateReport: DateReport): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/customeroperationalcondition`;
     return this.reportCustomer(url, dateReport).pipe(
       catchError(error =>
@@ -42,7 +42,7 @@ export class DateReportingService {
     );
   }
 
-  reportCustomerWorkFinished(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
+  reportCustomerWorkFinished(applicationId: number, dateReport: DateReport): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/customerworkfinished`;
     return this.reportCustomer(url, dateReport).pipe(
       catchError(error =>
@@ -50,7 +50,7 @@ export class DateReportingService {
     );
   }
 
-  reportCustomerValidity(applicationId: number, dateReport: ApplicationDateReport): Observable<Application> {
+  reportCustomerValidity(applicationId: number, dateReport: DateReport): Observable<Application> {
     const url = `${baseUrl}/${applicationId}/customervalidity`;
     return this.reportCustomer(url, dateReport).pipe(
       catchError(error =>
@@ -58,7 +58,15 @@ export class DateReportingService {
     );
   }
 
-  private reportCustomer(url: string, dateReport: ApplicationDateReport): Observable<Application> {
+  reportLocationCustomerValidity(applicationId: number, locationId: number, dateReport: DateReport): Observable<Application> {
+    const url = `${baseUrl}/${applicationId}/locations/${locationId}/customervalidity`;
+    return this.reportCustomer(url, dateReport).pipe(
+      catchError(error =>
+        this.errorHandler.handle(error, findTranslation('application.error.reportCustomerValidity')))
+    );
+  }
+
+  private reportCustomer(url: string, dateReport: DateReport): Observable<Application> {
     return this.http.put<BackendApplication>(url, ApplicationDateReportMapper.mapFrontend(dateReport)).pipe(
       map(response => ApplicationMapper.mapBackend(response))
     );

@@ -29,7 +29,7 @@ import {
   ReporterType
 } from '@feature/application/date-reporting/date-reporting-modal.component';
 import {ApplicationStatus} from '@model/application/application-status';
-import {ApplicationDateReport} from '@model/application/application-date-report';
+import {DateReport} from '@model/application/date-report';
 import {
   ReportCustomerOperationalCondition,
   ReportCustomerValidity,
@@ -122,7 +122,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerWorkFinished(dateReport)));
   }
 
-  private openDateReporting(data: DateReportingModalData): Observable<ApplicationDateReport> {
+  private openDateReporting(data: DateReportingModalData): Observable<DateReport> {
     return this.dialog.open(DateReportingModalComponent, {
       ...DATE_REPORTING_MODAL_CONFIG,
       data

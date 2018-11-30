@@ -1,91 +1,130 @@
 <allu-card>
   <mat-card-title>{{'location.title' | translation}}</mat-card-title>
   <mat-card-content>
-    <div class="row">
-      <div class="col m8">
-        <div class="col m12">
-          <div class="col m3">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="location.postalAddress.streetAddress" [disabled]="readonly"
-                     [placeholder]="'location.postalAddress' | translation"/>
-            </mat-form-field>
-          </div>
-          <div class="col m9">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="location.info" [disabled]="readonly"
-                     [placeholder]="'location.additionalInfo' | translation"/>
-            </mat-form-field>
-          </div>
-          <div class="col m10" *ngIf="area">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="area" [disabled]="readonly"
-                     [placeholder]="'location.fixedArea' | translation"/>
-            </mat-form-field>
-          </div>
-          <div class="col m2" *ngIf="area">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="sections" [disabled]="readonly"
-                     [placeholder]="'location.sections' | translation"/>
-            </mat-form-field>
-          </div>
-        </div>
-        <div class="col m12">
-          <div class="col m3">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="location.uiArea" [disabled]="readonly"
-                     [placeholder]="'location.area' | translation"/>
-            </mat-form-field>
-          </div>
-          <div class="col m3">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="location.areaOverride" [disabled]="readonly"
-                     [placeholder]="'location.areaOverride' | translation"/>
-            </mat-form-field>
-          </div>
-          <div class="col m3">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="districtName(location.cityDistrictId) | async"
-                     [disabled]="readonly" [placeholder]="'location.cityDistrict' | translation"/>
-            </mat-form-field>
-          </div>
-          <div class="col m3">
-            <mat-form-field class="input-full-width">
-              <input matInput type="text" [ngModel]="districtName(location.cityDistrictIdOverride) | async"
-                     [disabled]="readonly" [placeholder]="'location.cityDistrictOverride' | translation"/>
-            </mat-form-field>
-          </div>
-          <div class="col m2" *ngIf="showPaymentTariff()">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" [ngModel]="paymentTariff()"
-                     [disabled]="readonly" [placeholder]="'location.paymentTariff' | translation"/>
-              </mat-form-field>
-          </div>
-          <div class="col m2" *ngIf="showPaymentTariff()">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" [ngModel]="paymentTariffOverride()"
-                     [disabled]="readonly" [placeholder]="'location.paymentTariffOverride' | translation"/>
-              </mat-form-field>
-          </div>
-
-        </div>
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex="0 1 calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="location.postalAddress.streetAddress"
+                 [disabled]="readonly"
+                 [placeholder]="'location.postalAddress' | translation"/>
+        </mat-form-field>
       </div>
-      <div class="col m2 offset-m2" *ngIf="canBeEdited">
-        <button *availableTo="MODIFY_ROLES" mat-raised-button type="button" color="primary"
-                [routerLink]="['/applications', application.id, 'location']">
+      <div fxFlex="0 1 calc(40% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="location.info"
+                 [disabled]="readonly"
+                 [placeholder]="'location.additionalInfo' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(40%-18px)" *ngIf="canBeEdited" class="align-right">
+        <button
+          *availableTo="MODIFY_ROLES"
+          mat-raised-button
+          type="button"
+          color="primary"
+          [routerLink]="['/applications', application.id, 'location']">
           {{'common.button.edit' | translation}}
         </button>
       </div>
-      <div class="col m12">
-        <div class="mapcontainer">
-          <map [selection]="true"
-               [applicationId]="application.id"
-               [showOnlyApplicationArea]="true"
-               role="LOCATION"></map>
-        </div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="18px" *ngIf="area">
+      <div fxFlex="0 1 calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="area"
+                 [disabled]="readonly"
+                 [placeholder]="'location.fixedArea' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="sections"
+                 [disabled]="readonly"
+                 [placeholder]="'location.sections' | translation"/>
+        </mat-form-field>
       </div>
     </div>
-    <div class="row" *ngIf="multipleLocations">
-      <div class="col m12">
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex="0 1 calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="location.uiArea"
+                 [disabled]="readonly"
+                 [placeholder]="'location.area' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="location.areaOverride"
+                 [disabled]="readonly"
+                 [placeholder]="'location.areaOverride' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="districtName(location.cityDistrictId) | async"
+                 [disabled]="readonly"
+                 [placeholder]="'location.cityDistrict' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(20% - 18px)">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="districtName(location.cityDistrictIdOverride) | async"
+                 [disabled]="readonly"
+                 [placeholder]="'location.cityDistrictOverride' | translation"/>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="18px">
+      <div fxFlex="0 1 calc(20% - 18px)" *ngIf="showPaymentTariff()">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="paymentTariff()"
+                 [disabled]="readonly"
+                 [placeholder]="'location.paymentTariff' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(20% - 18px)" *ngIf="showPaymentTariff()">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [ngModel]="paymentTariffOverride()"
+                 [disabled]="readonly"
+                 [placeholder]="'location.paymentTariffOverride' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [value]="location.customerStartTime | date:'shortDate'"
+                 [disabled]="readonly"
+                 [placeholder]="'location.customerStartTime' | translation"/>
+        </mat-form-field>
+      </div>
+      <div fxFlex="0 1 calc(20% - 18px)" *ngIf="application.type==='AREA_RENTAL'">
+        <mat-form-field class="input-full-width">
+          <input matInput type="text"
+                 [value]="location.customerEndTime | date:'shortDate'"
+                 [disabled]="readonly"
+                 [placeholder]="'location.customerEndTime' | translation"/>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex class="mapcontainer">
+        <map [selection]="true"
+             [applicationId]="application.id"
+             [showOnlyApplicationArea]="true"
+             role="LOCATION"></map>
+      </div>
+    </div>
+    <div fxLayout="row" *ngIf="multipleLocations">
+      <div fxFlex>
         <stored-locations [readonly]="true"></stored-locations>
       </div>
     </div>

@@ -19,7 +19,9 @@ export class LocationForm {
     public underpass?: boolean,
     public info?: string,
     public paymentTariff?: string,
-    public paymentTariffOverride?: string) {}
+    public paymentTariffOverride?: string,
+    public customerStartTime?: Date,
+    public customerEndTime?: Date) {}
 
   static from(location: Location): LocationForm {
     const form = new LocationForm();

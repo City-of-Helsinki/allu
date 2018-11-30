@@ -6,11 +6,11 @@ import {ApplicationStore} from '@service/application/application-store';
 import {Observable, of} from 'rxjs/index';
 import {
   ReportCustomerOperationalCondition,
-  ReportCustomerValidity,
+  ReportCustomerValidity, ReportLocationCustomerValidity,
   ReportOperationalCondition,
 } from '@feature/application/actions/date-reporting-actions';
 import * as SupervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
-import {catchError, switchMap} from 'rxjs/internal/operators';
+import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {findTranslation} from '@util/translations';
@@ -23,13 +23,13 @@ export class DateReportingEffects {
   constructor(private actions: Actions,
               private store: Store<fromApplication.State>,
               private applicationStore: ApplicationStore,
-              private dateReportingService: DateReportingService) {}
+              private dateReporting: DateReportingService) {}
 
   @Effect()
   reportOperationalCondition: Observable<Action> = this.actions.pipe(
     ofType<ReportOperationalCondition>(DateReportingActionType.ReportOperationalCondition),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.dateReportingService.reportOperationalCondition(app.id, action.payload).pipe(
+    switchMap(([action, app]) => this.dateReporting.reportOperationalCondition(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.action.reportOperationalCondition'))
@@ -42,7 +42,7 @@ export class DateReportingEffects {
   reportWorkFinished: Observable<Action> = this.actions.pipe(
     ofType<ReportWorkFinished>(DateReportingActionType.ReportWorkFinished),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.dateReportingService.reportWorkFinished(app.id, action.payload).pipe(
+    switchMap(([action, app]) => this.dateReporting.reportWorkFinished(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.action.reportWorkFinished'))
@@ -55,7 +55,7 @@ export class DateReportingEffects {
   reportCustomerOperationalCondition: Observable<Action> = this.actions.pipe(
     ofType<ReportCustomerOperationalCondition>(DateReportingActionType.ReportCustomerOperationalCondition),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.dateReportingService.reportCustomerOperationalCondition(app.id, action.payload).pipe(
+    switchMap(([action, app]) => this.dateReporting.reportCustomerOperationalCondition(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.action.reportCustomerOperationalCondition')),
@@ -70,7 +70,7 @@ export class DateReportingEffects {
   reportCustomerWorkFinished: Observable<Action> = this.actions.pipe(
     ofType<ReportCustomerWorkFinished>(DateReportingActionType.ReportCustomerWorkFinished),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.dateReportingService.reportCustomerWorkFinished(app.id, action.payload).pipe(
+    switchMap(([action, app]) => this.dateReporting.reportCustomerWorkFinished(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.action.reportCustomerWorkFinished')),
@@ -84,7 +84,7 @@ export class DateReportingEffects {
   reportCustomerValidity: Observable<Action> = this.actions.pipe(
     ofType<ReportCustomerValidity>(DateReportingActionType.ReportCustomerValidity),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    switchMap(([action, app]) => this.dateReportingService.reportCustomerValidity(app.id, action.payload).pipe(
+    switchMap(([action, app]) => this.dateReporting.reportCustomerValidity(app.id, action.payload).pipe(
       switchMap(updated => [
         this.applicationStore.setAndAction(updated),
         new NotifySuccess(findTranslation('application.action.reportCustomerValidity')),
@@ -92,5 +92,20 @@ export class DateReportingEffects {
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))
+  );
+
+  @Effect()
+  reportLocationCustomerValidity: Observable<Action> = this.actions.pipe(
+    ofType<ReportLocationCustomerValidity>(DateReportingActionType.ReportLocationCustomerValidity),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([action, app]) =>
+      this.dateReporting.reportLocationCustomerValidity(app.id, action.payload.id, action.payload.report).pipe(
+        switchMap(updated => [
+          this.applicationStore.setAndAction(updated),
+          new NotifySuccess(findTranslation('application.action.reportCustomerValidity')),
+          new TagAction.Load()
+        ]),
+        catchError(error => of(new NotifyFailure(error)))
+      ))
   );
 }

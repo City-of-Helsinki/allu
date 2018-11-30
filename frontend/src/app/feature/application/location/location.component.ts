@@ -50,6 +50,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   areaCtrl: FormControl;
   sectionsCtrl: FormControl;
 
+  location: Location;
   areas = new Array<FixedLocationArea>();
   areaSections = new Array<FixedLocationSection>();
   editedItemCount = 0;
@@ -266,6 +267,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!!loc) {
       this.locationForm.patchValue(LocationForm.from(loc));
       this.mapStore.locationSearchFilterChange(this.createFilter(loc));
+      this.location = loc;
     }
   }
 

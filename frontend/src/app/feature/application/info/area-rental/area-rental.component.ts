@@ -16,7 +16,7 @@ import {
 } from '@feature/application/date-reporting/date-reporting-modal.component';
 import {ReportCustomerWorkFinished} from '@feature/application/actions/date-reporting-actions';
 import {Observable} from 'rxjs';
-import {ApplicationDateReport} from '@model/application/application-date-report';
+import {DateReport} from '@model/application/date-report';
 import {filter} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApplicationStore} from '@service/application/application-store';
@@ -89,7 +89,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerWorkFinished(dateReport)));
   }
 
-  private openDateReporting(data: DateReportingModalData): Observable<ApplicationDateReport> {
+  private openDateReporting(data: DateReportingModalData): Observable<DateReport> {
     return this.dialog.open(DateReportingModalComponent, {
       ...DATE_REPORTING_MODAL_CONFIG,
       data

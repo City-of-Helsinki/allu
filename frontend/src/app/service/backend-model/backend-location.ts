@@ -18,6 +18,9 @@ export interface BackendLocation {
   paymentTariffOverride: string;
   underpass: boolean;
   additionalInfo: string;
+  customerStartTime?: string;
+  customerEndTime?: string;
+  customerReportingTime?: string;
 }
 
 export interface SearchResultLocation {
