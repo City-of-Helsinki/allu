@@ -36,14 +36,10 @@ public class InvoicingPeriodService {
   @Transactional
   public List<InvoicingPeriod> updateInvoicingPeriods(Integer applicationId,
       int periodLength) {
-    deletePeriods(applicationId);
+    validatePeriodModificationAllowed(applicationId);
+    invoicingPeriodDao.deletePeriods(applicationId);
     createInvoicingPeriods(applicationId, periodLength);
-    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     return findForApplicationId(applicationId);
-  }
-
-  private boolean hasInvoicedPeriods(List<InvoicingPeriod> periods) {
-    return periods.stream().anyMatch(InvoicingPeriod::isInvoiced);
   }
 
   @Transactional
@@ -53,8 +49,8 @@ public class InvoicingPeriodService {
     ZonedDateTime start = application.getStartTime().truncatedTo(ChronoUnit.DAYS);
     ZonedDateTime end = application.getEndTime().truncatedTo(ChronoUnit.DAYS);
     List<InvoicingPeriod> periods = createPeriods(applicationId, periodLength, start, end);
-    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     applicationDao.setInvoicingPeriodLength(applicationId, periodLength);
+    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     return periods;
   }
 
@@ -91,13 +87,21 @@ public class InvoicingPeriodService {
 
   @Transactional
   public void deletePeriods(Integer applicationId) {
+    validatePeriodModificationAllowed(applicationId);
+    invoicingPeriodDao.deletePeriods(applicationId);
+    applicationDao.setInvoicingPeriodLength(applicationId, null);
+    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+  }
+
+  private void validatePeriodModificationAllowed(Integer applicationId) {
     List<InvoicingPeriod> existingPeriods = invoicingPeriodDao.findForApplicationId(applicationId);
     if (hasInvoicedPeriods(existingPeriods)) {
       throw new IllegalOperationException("invoicingPeriod.invoiced");
     }
-    invoicingPeriodDao.deletePeriods(applicationId);
-    applicationDao.setInvoicingPeriodLength(applicationId, null);
-    invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+  }
+
+  private boolean hasInvoicedPeriods(List<InvoicingPeriod> periods) {
+    return periods.stream().anyMatch(InvoicingPeriod::isInvoiced);
   }
 
   @Transactional
