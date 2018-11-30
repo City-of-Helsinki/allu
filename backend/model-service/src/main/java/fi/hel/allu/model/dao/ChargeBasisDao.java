@@ -184,7 +184,7 @@ public class ChargeBasisDao {
   public void setInvoicingPeriodForManualEntries(Integer periodId, Integer applicationId) {
     queryFactory.update(chargeBasis).set(chargeBasis.invoicingPeriodId, periodId)
         .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.manuallySet.isTrue(),
-            chargeBasis.locked.isTrue().not())
+            chargeBasis.locked.isNull().or(chargeBasis.locked.isFalse()))
         .execute();
   }
 }
