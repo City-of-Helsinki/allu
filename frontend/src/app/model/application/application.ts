@@ -82,6 +82,12 @@ export class Application {
     return ArrayUtil.first(this.locations);
   }
 
+  get address() {
+    const addresses = new Set();
+    this.locations.forEach(l => addresses.add(l.address));
+    return Array.from(addresses).join(', ');
+  }
+
   get kinds() {
     return this.uiKinds.map(kind => ApplicationKind[kind]);
   }

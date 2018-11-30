@@ -55,7 +55,7 @@
 
     <ng-container matColumnDef="locations.address">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.streetAddress' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.firstLocation?.address}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.content.address}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="locations.cityDistrictId">
