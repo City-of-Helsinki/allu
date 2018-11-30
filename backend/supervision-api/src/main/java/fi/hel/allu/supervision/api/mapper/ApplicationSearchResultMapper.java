@@ -17,9 +17,11 @@ public class ApplicationSearchResultMapper {
 
   public ApplicationSearchResult mapToSearchResult(ApplicationES applicationES) {
     ApplicationSearchResult application = new ApplicationSearchResult();
-    CustomerES applicant = applicationES.getCustomers().getApplicant().getCustomer();
-    application.setApplicantId(applicant.getId());
-    application.setApplicantName(applicant.getName());
+    CustomerES applicant = applicationES.getCustomers().getApplicant() != null ? applicationES.getCustomers().getApplicant().getCustomer() : null;
+    if (applicant != null) {
+      application.setApplicantId(applicant.getId());
+      application.setApplicantName(applicant.getName());
+    }
     application.setApplicationId(applicationES.getApplicationId());
     application.setApplicationTags(applicationES.getApplicationTags().stream().map(ApplicationTagType::valueOf).collect(Collectors.toList()));
     application.setId(applicationES.getId());
