@@ -1,0 +1,16 @@
+Hei
+Viestin liitteenä on aluevuokraukseen liittyvä päätös ${attachmentName} liitteineen.
+Tutustukaa päätöksen sisältöön huolellisesti ja ottakaa yhteyttä, mikäli teillä on kysyttävää tai huomautettavaa siihen liittyen.
+
+Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/isa/qbv.dll/ShowQuest?QuestID=5056528&sid=CXyRupE4hY
+
+Terveisin
+
+${handlerName}
+
+Helsingin kaupunki
+Kaupunkiympäristön asukas- ja yrityspalvelut
+Alueidenkäyttö
+Puh. 09 310 22111
+luvat@hel.fi
+www.hel.fi/luvat/yleisetalueet
