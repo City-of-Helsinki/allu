@@ -353,8 +353,8 @@ public class ApplicationController {
    * Finds finished applications having one of the given statuses.
    */
   @RequestMapping(value = "/finished", method = RequestMethod.POST)
-  public ResponseEntity<List<Integer>> findFinishedApplications(@RequestBody List<StatusType> statuses) {
-    return new ResponseEntity<>(applicationService.findFinishedApplications(statuses), HttpStatus.OK);
+  public ResponseEntity<List<Integer>> findFinishedApplications(@RequestBody DeadlineCheckParams params) {
+    return new ResponseEntity<>(applicationService.findFinishedApplications(params), HttpStatus.OK);
   }
 
   /**

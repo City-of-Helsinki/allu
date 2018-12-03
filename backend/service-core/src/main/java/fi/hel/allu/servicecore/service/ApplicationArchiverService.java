@@ -5,15 +5,13 @@ import java.util.*;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
@@ -26,6 +24,8 @@ import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 @Service
 public class ApplicationArchiverService {
 
+  private static final List<ApplicationType> TYPES_MOVED_TO_FINISHED = Arrays.asList(ApplicationType.CABLE_REPORT, ApplicationType.EVENT, ApplicationType.PLACEMENT_CONTRACT,
+          ApplicationType.SHORT_TERM_RENTAL, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS);
   private static final Set<StatusType> ARCHIVED_STATUSES = new HashSet<>(Arrays.asList(StatusType.FINISHED, StatusType.DECISION));
   private static final Set<ApplicationTagType> DEPOSIT_TAG_TYPES = new HashSet<>(
       Arrays.asList(ApplicationTagType.DEPOSIT_PAID, ApplicationTagType.DEPOSIT_REQUESTED));
@@ -63,7 +63,7 @@ public class ApplicationArchiverService {
   }
 
   private List<Integer> fetchFinishedApplications() {
-    return applicationServiceComposer.findFinishedApplications(Collections.singletonList(StatusType.DECISION));
+    return applicationServiceComposer.findFinishedApplications(Collections.singletonList(StatusType.DECISION), TYPES_MOVED_TO_FINISHED);
   }
 
   /**
@@ -99,11 +99,24 @@ public class ApplicationArchiverService {
   }
 
   private boolean readyForArchive(ApplicationJson application) {
-    return isFinished(application) && isInvoiced(application) && !hasOpenSupervisionTasks(application) && !hasOpenDeposits(application);
+    return isArchivedStatus(application)
+        && isFinished(application)
+        && isInvoiced(application)
+        && !hasOpenSupervisionTasks(application)
+        && !hasOpenDeposits(application);
+  }
+
+  private boolean isArchivedStatus(ApplicationJson application) {
+    boolean isArchivedStatus = application.getStatus() == StatusType.FINISHED;
+    // Area rentals and excavation announcements never archived from decision status
+    if (application.getType() != ApplicationType.EXCAVATION_ANNOUNCEMENT && application.getType() != ApplicationType.AREA_RENTAL) {
+      isArchivedStatus |= application.getStatus() == StatusType.DECISION;
+    }
+    return isArchivedStatus;
   }
 
   private boolean isFinished(ApplicationJson application) {
-    return ARCHIVED_STATUSES.contains(application.getStatus()) && ZonedDateTime.now().isAfter(application.getEndTime());
+    return ZonedDateTime.now().isAfter(application.getEndTime());
   }
 
   private boolean isInvoiced(ApplicationJson application) {

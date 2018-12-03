@@ -1,10 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -16,10 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.ApplicationES;
@@ -457,9 +451,10 @@ public class ApplicationServiceComposer {
 
   /**
    * Finds finished applications having one of the given statuses
+   * @param typesMovedToFinished
    */
-  public List<Integer> findFinishedApplications(List<StatusType> statuses) {
-    return applicationService.findFinishedApplications(statuses);
+  public List<Integer> findFinishedApplications(List<StatusType> statuses, List<ApplicationType> applicationTypes) {
+    return applicationService.findFinishedApplications(statuses, applicationTypes);
   }
 
   public ApplicationStatusInfo getApplicationStatus(Integer applicationId) {

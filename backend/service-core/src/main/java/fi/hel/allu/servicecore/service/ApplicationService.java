@@ -24,10 +24,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationIdentifier;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.DistributionEntry;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
@@ -316,11 +313,13 @@ public class ApplicationService {
 
   /**
    * Finds finished applications having one of the given statuses
+   * @param applicationTypes
    */
-  public List<Integer> findFinishedApplications(List<StatusType> statuses) {
+  public List<Integer> findFinishedApplications(List<StatusType> statuses, List<ApplicationType> applicationTypes) {
+    DeadlineCheckParams params = new DeadlineCheckParams(applicationTypes, statuses, null, ZonedDateTime.now());
     ParameterizedTypeReference<List<Integer>> typeRef = new ParameterizedTypeReference<List<Integer>>() {};
     return restTemplate.exchange(applicationProperties.getFinishedApplicationsUrl(),
-        HttpMethod.POST, new HttpEntity<>(statuses), typeRef).getBody();
+        HttpMethod.POST, new HttpEntity<>(params), typeRef).getBody();
   }
 
   private Application findApplicationByIdWithoutPersonAuditLogging(int applicationId) {

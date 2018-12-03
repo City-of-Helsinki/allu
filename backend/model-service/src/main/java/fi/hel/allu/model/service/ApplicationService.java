@@ -387,10 +387,9 @@ public class ApplicationService {
    * @return
    */
   @Transactional(readOnly = true)
-  public List<Integer> findFinishedApplications(List<StatusType> statuses) {
-    return applicationDao.findByEndTime(null, ZonedDateTime.now(), null, statuses);
+  public List<Integer> findFinishedApplications(DeadlineCheckParams params) {
+    return applicationDao.findByEndTime(null, params.getEndsBefore(), params.getTypeSelector(), params.getStatusSelector());
   }
-
 
   /*
    * Create invoice for the given application if it's needed

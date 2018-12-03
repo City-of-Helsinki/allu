@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
+import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
 import fi.hel.allu.servicecore.service.ChargeBasisService;
@@ -31,6 +33,7 @@ public class ApplicationStatusController {
   private final ContractService contractService;
   private final ApprovalDocumentService approvalDocumentService;
   private final ChargeBasisService chargeBasisService;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
   @Autowired
   public ApplicationStatusController(
@@ -40,7 +43,8 @@ public class ApplicationStatusController {
       DecisionService decisionService,
       ContractService contractService,
       ApprovalDocumentService approvalDocumentService,
-      ChargeBasisService chargeBasisService) {
+      ChargeBasisService chargeBasisService,
+      ApplicationEventPublisher applicationEventPublisher) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.commentService = commentService;
     this.decisionSecurityService = decisionSecurityService;
@@ -48,6 +52,7 @@ public class ApplicationStatusController {
     this.contractService = contractService;
     this.approvalDocumentService = approvalDocumentService;
     this.chargeBasisService = chargeBasisService;
+    this.applicationEventPublisher = applicationEventPublisher;
   }
 
   @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
@@ -135,6 +140,7 @@ public class ApplicationStatusController {
     List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedAndInvoicableChargeBasis(id);
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.FINISHED);
     approvalDocumentService.createFinalApprovalDocument(origApplicationJson, applicationJson, chargeBasisEntries);
+    applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(id));
     return ResponseEntity.ok(applicationJson);
   }
 
