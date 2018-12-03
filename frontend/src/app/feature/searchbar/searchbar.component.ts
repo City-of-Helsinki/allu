@@ -1,20 +1,19 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
-import {MapStore} from '../../service/map/map-store';
-import {PostalAddress} from '../../model/common/postal-address';
+import {MapStore} from '@service/map/map-store';
+import {PostalAddress} from '@model/common/postal-address';
 import {Observable, Subject} from 'rxjs';
-import {NotificationService} from '../notification/notification.service';
-import {ArrayUtil} from '../../util/array-util';
-import {StringUtil} from '../../util/string.util';
-import {ApplicationStatusGroup} from '../../model/application/application-status';
-import {MapSearchFilter} from '../../service/map-search-filter';
-import {EnumUtil} from '../../util/enum.util';
-import {StoredFilterType} from '../../model/user/stored-filter-type';
-import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
-import {StoredFilter} from '../../model/user/stored-filter';
-import {TimeUtil} from '../../util/time.util';
-import {debounceTime, filter, map, take, takeUntil} from 'rxjs/internal/operators';
+import {NotificationService} from '@feature/notification/notification.service';
+import {ArrayUtil} from '@util/array-util';
+import {StringUtil} from '@util/string.util';
+import {ApplicationStatusGroup} from '@model/application/application-status';
+import {MapSearchFilter} from '@service/map-search-filter';
+import {EnumUtil} from '@util/enum.util';
+import {StoredFilterType} from '@model/user/stored-filter-type';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
+import {StoredFilter} from '@model/user/stored-filter';
+import {debounceTime, filter, map, takeUntil} from 'rxjs/internal/operators';
 
 enum BarType {
   SIMPLE, // Front page
@@ -25,13 +24,15 @@ enum BarType {
 @Component({
   selector: 'searchbar',
   templateUrl: './searchbar.component.html',
-  styleUrls: ['./searchbar.component.scss']
+  styleUrls: ['./searchbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchbarComponent implements OnInit, OnDestroy {
   @Input() datesRequired = false;
   @Input() barType: string = BarType[BarType.BAR];
 
   @Output() onShowAdvanced = new EventEmitter<boolean>();
+  @Output() searchChange = new EventEmitter<MapSearchFilter>();
 
   searchForm: FormGroup;
   addressControl: FormControl;
@@ -82,8 +83,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
     this.mapFilter = this.mapStore.mapSearchFilter.pipe(takeUntil(this.destroy));
 
-    this.initSearch();
-
     this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.MAP);
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
@@ -94,14 +93,13 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
+  @Input()
+  set filter(searchFilter: MapSearchFilter) {
+    this.searchForm.patchValue(searchFilter, {emitEvent: false});
+  }
+
   public notifySearchUpdated(searchFilter: MapSearchFilter): void {
-    this.adjustStartAndStopDates(searchFilter);
-    if (this.useLocationSearch) {
-      this.mapStore.locationSearchFilterChange(searchFilter);
-    } else {
-      this.storedFilterStore.resetCurrent(StoredFilterType.MAP);
-      this.mapStore.mapSearchFilterChange(searchFilter);
-    }
+    this.searchChange.emit(searchFilter);
   }
 
   public addressSelected(streetAddress: string) {
@@ -115,24 +113,5 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   public selectFilter(searchFilter: StoredFilter) {
     this.storedFilterStore.currentChange(searchFilter);
-  }
-
-  private initSearch(): void {
-    const searchFilter = this.useLocationSearch ? this.mapStore.locationSearchFilter : this.mapStore.mapSearchFilter;
-    searchFilter.pipe(take(1))
-      .subscribe(sf => this.searchForm.patchValue(sf, {emitEvent: false}));
-  }
-
-  private get useLocationSearch(): boolean {
-    return BarType.BAR === BarType[this.barType];
-  }
-
-  private adjustStartAndStopDates(searchFilter: MapSearchFilter): void {
-    if (searchFilter.startDate) {
-      searchFilter.startDate = TimeUtil.toStartDate(searchFilter.startDate);
-    }
-    if (searchFilter.endDate) {
-      searchFilter.endDate = TimeUtil.toEndDate(searchFilter.endDate);
-    }
   }
 }

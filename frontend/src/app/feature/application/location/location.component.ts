@@ -61,6 +61,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   invalidGeometry = false;
   showPaymentTariff = false;
   paymentTariffs = ['1', '2', '3', '4a', '4b'];
+  searchFilter$: Observable<MapSearchFilter>;
 
   private destroy = new Subject<boolean>();
 
@@ -117,8 +118,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .indexOf(this.application.type) >= 0;
     this.loadFixedLocations();
 
-    this.mapStore.locationSearchFilter.pipe(takeUntil(this.destroy))
-      .subscribe(searchFilter => this.searchUpdated(searchFilter));
+    this.searchFilter$ = this.mapStore.locationSearchFilter;
 
     this.mapStore.shape.pipe(takeUntil(this.destroy))
       .subscribe(shape => this.shapeAdded(shape));
@@ -146,6 +146,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store.select(fromApplication.getKindsWithSpecifiers).pipe(takeUntil(this.destroy))
       .subscribe(kindsWithSpecifiers => this.onKindSpecifierChange(kindsWithSpecifiers));
+
+    this.searchFilter$.pipe(takeUntil(this.destroy)).subscribe(sf => this.searchUpdated(sf));
   }
 
   ngOnDestroy() {
@@ -186,6 +188,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       startTime: searchFilter.startDate,
       endTime: searchFilter.endDate
     }, {emitEvent: false});
+  }
+
+  onSearchChange(searchFilter: MapSearchFilter): void {
+    this.mapStore.locationSearchFilterChange(searchFilter);
   }
 
   storeLocation(form: LocationForm): void {

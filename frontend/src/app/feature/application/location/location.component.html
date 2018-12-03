@@ -15,7 +15,10 @@
             <div class="row">
               <div class="mapcontainer">
                 <div class="map-overlay">
-                  <searchbar [datesRequired]="true">Loading searchbar</searchbar>
+                  <searchbar
+                    [datesRequired]="true"
+                    [filter]="searchFilter$ | async"
+                    (searchChange)="onSearchChange($event)">Loading searchbar</searchbar>
                 </div>
                 <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
                      [applicationId]="application.id"

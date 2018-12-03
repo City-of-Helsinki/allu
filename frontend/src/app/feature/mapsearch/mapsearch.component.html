@@ -9,7 +9,11 @@
       </div>
       <div fxLayout="row" class="sidenav-centered-content">
         <div fxFlex="100%">
-          <searchbar *ngIf="sidenavOpen" barType="ADVANCED"></searchbar>
+          <searchbar
+            *ngIf="sidenavOpen"
+            barType="ADVANCED"
+            [filter]="searchFilter$ | async"
+            (searchChange)="onSearchChange($event)"></searchbar>
         </div>
       </div>
     </div>
@@ -28,7 +32,11 @@
   </mat-sidenav>
   <div class="mapcontainer">
     <div *ngIf="!sidenavOpen" class="map-overlay">
-      <searchbar barType="SIMPLE" (onShowAdvanced)="showAdvancedSearch()"></searchbar>
+      <searchbar
+        barType="SIMPLE"
+        [filter]="searchFilter$ | async"
+        (searchChange)="onSearchChange($event)"
+        (onShowAdvanced)="showAdvancedSearch()"></searchbar>
     </div>
     <map [zoom]="true" [draw]="true" [selection]="true"></map>
     <div class="map-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
