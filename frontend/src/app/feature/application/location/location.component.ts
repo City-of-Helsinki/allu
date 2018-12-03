@@ -346,12 +346,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initForm(): void {
     this.locationState.initLocations(this.application.locations);
+    this.location = this.application.firstLocation;
 
-    if (this.application.firstLocation) {
-      const formValues = LocationForm.from(this.application.firstLocation);
+    if (this.location) {
+      const formValues = LocationForm.from(this.location);
       this.locationForm.patchValue(formValues);
       this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
-      this.mapStore.locationSearchFilterChange(this.createFilter(this.application.firstLocation));
+      this.mapStore.locationSearchFilterChange(this.createFilter(this.location));
     }
   }
 
