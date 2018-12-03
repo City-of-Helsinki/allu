@@ -26,7 +26,7 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 @RequestMapping("/supervisiontask")
 public class SupervisionTaskController {
 
-  private SupervisionTaskService supervisionTaskService;
+  private final SupervisionTaskService supervisionTaskService;
 
   @Autowired
   public SupervisionTaskController(SupervisionTaskService supervisionTaskService) {
@@ -51,8 +51,13 @@ public class SupervisionTaskController {
   @RequestMapping(value = "/application/{applicationId}/type/{type}", method = RequestMethod.GET)
   public ResponseEntity<List<SupervisionTask>> findByApplicationIdAndType(
       @PathVariable(value = "applicationId") int applicationId,
-      @PathVariable(value = "type") SupervisionTaskType type) {
-    return new ResponseEntity<>(supervisionTaskService.findByApplicationIdAndType(applicationId, type), HttpStatus.OK);
+      @PathVariable(value = "type") SupervisionTaskType type,
+      @RequestParam(name = "locationId", required = false) Integer locationId) {
+    if (locationId != null) {
+      return ResponseEntity.ok(supervisionTaskService.findByApplicationIdAndTypeAndLocation(applicationId, type, locationId));
+    } else {
+      return ResponseEntity.ok(supervisionTaskService.findByApplicationIdAndType(applicationId, type));
+    }
   }
 
 

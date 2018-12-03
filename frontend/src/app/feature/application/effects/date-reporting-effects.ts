@@ -103,6 +103,7 @@ export class DateReportingEffects {
         switchMap(updated => [
           this.applicationStore.setAndAction(updated),
           new NotifySuccess(findTranslation('application.action.reportCustomerValidity')),
+          new SupervisionTaskActions.Load(),
           new TagAction.Load()
         ]),
         catchError(error => of(new NotifyFailure(error)))

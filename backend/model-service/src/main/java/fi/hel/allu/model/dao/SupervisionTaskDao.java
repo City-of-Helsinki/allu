@@ -95,6 +95,14 @@ public class SupervisionTaskDao {
         .fetch();
   }
 
+  @Transactional(readOnly = true)
+  public List<SupervisionTask> findByApplicationIdAndTypeAndLocation(int applicationId, SupervisionTaskType type, int locationId) {
+    return queryFactory.select(supervisionTaskBean).from(supervisionTask)
+        .where(supervisionTask.applicationId.eq(applicationId),
+               supervisionTask.type.eq(type),
+               supervisionTask.locationId.eq(locationId))
+        .fetch();
+  }
 
   @Transactional
   public SupervisionTask insert(SupervisionTask st) {

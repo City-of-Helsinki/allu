@@ -61,6 +61,10 @@ public class SupervisionTaskService {
     return supervisionTaskDao.findByApplicationIdAndType(applicationId, type);
   }
 
+  @Transactional(readOnly = true)
+  public List<SupervisionTask> findByApplicationIdAndTypeAndLocation(int applicationId, SupervisionTaskType type, int location) {
+    return supervisionTaskDao.findByApplicationIdAndTypeAndLocation(applicationId, type, location);
+  }
 
   @Transactional
   public SupervisionTask insert(SupervisionTask supervisionTask) {

@@ -1,11 +1,15 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.LocationJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,16 +20,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import static org.mockito.Matchers.eq;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class DateReportingServiceTest {
 
   private static final Integer APP_ID = 1234;
+  private static final int LOC_ID = 99;
+
   @Mock
   private ApplicationService applicationService;
   @Mock
@@ -55,6 +64,7 @@ public class DateReportingServiceTest {
 
     final List<LocationJson> locations = new ArrayList<>();
     LocationJson location = new LocationJson();
+    location.setId(LOC_ID);
     location.setStartTime(ZonedDateTime.now().minusDays(5));
     location.setEndTime(ZonedDateTime.now());
     locations.add(location);
@@ -91,5 +101,18 @@ public class DateReportingServiceTest {
 
     final ZonedDateTime workFinishedDate = ZonedDateTime.now().minusDays(10);
     dateReportingService.reportWorkFinished(APP_ID, workFinishedDate);
+  }
+
+  @Test
+  public void updateUustomerLocationValidityUpdatesSupervisionTask() {
+    final ApplicationDateReport dateReport = new ApplicationDateReport(ZonedDateTime.now(), ZonedDateTime.now().minusDays(5), ZonedDateTime.now().plusDays(5));
+    final SupervisionTaskJson task = new SupervisionTaskJson();
+    task.setType(SupervisionTaskType.WORK_TIME_SUPERVISION);
+    task.setStatus(SupervisionTaskStatusType.OPEN);
+    Mockito.when(supervisionTaskService.findByLocationId(Mockito.eq(LOC_ID))).thenReturn(Arrays.asList(task));
+
+    dateReportingService.reportCustomerLocationValidity(APP_ID, LOC_ID, dateReport);
+    Mockito.verify(supervisionTaskService).updateSupervisionTaskDate(
+        eq(APP_ID), eq(SupervisionTaskType.WORK_TIME_SUPERVISION), eq(LOC_ID), eq(dateReport.getReportedEndDate().plusDays(1)));
   }
 }

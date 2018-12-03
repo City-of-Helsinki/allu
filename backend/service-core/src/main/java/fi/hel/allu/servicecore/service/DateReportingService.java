@@ -133,8 +133,31 @@ public class DateReportingService {
     applicationService.setCustomerLocationValidity(id, locationId, dateReport);
     final ApplicationJson newApplicationJson = getApplicationJson(id);
 
+    // Update also due date for supervision task of this location
+    updateSupervisionTaskDate(id, locationId, dateReport.getReportedEndDate());
+
     // TODO: save to history
     return newApplicationJson;
+  }
+
+  private void updateSupervisionTaskDate(int applicationId, int locationId, ZonedDateTime endDate) {
+    if (endDate != null && locationHasOpenSupervisionTask(locationId)) {
+      if (endDate.isBefore(ZonedDateTime.now())) {
+        endDate = ZonedDateTime.now().plusDays(1);
+      } else {
+        endDate = endDate.plusDays(1);
+      }
+      supervisionTaskService.updateSupervisionTaskDate(
+          applicationId, SupervisionTaskType.WORK_TIME_SUPERVISION, locationId, endDate);
+    }
+  }
+
+  private boolean locationHasOpenSupervisionTask(int locationId) {
+    return supervisionTaskService.findByLocationId(locationId)
+        .stream()
+        .filter(t -> t.getType() == SupervisionTaskType.WORK_TIME_SUPERVISION &&
+                t.getStatus() == SupervisionTaskStatusType.OPEN)
+        .count() > 0;
   }
 
   private void adjustLocationEndDates(int applicationId, ZonedDateTime date) {

@@ -206,6 +206,22 @@ public class SupervisionTaskService {
     return null;
   }
 
+  public void updateSupervisionTaskDate(int applicationId, SupervisionTaskType type, int locationId, ZonedDateTime date) {
+    Arrays.asList(
+        restTemplate.getForEntity(
+            applicationProperties.getSupervisionTaskByApplicationIdAndTypeAndLocationUrl(),
+            SupervisionTask[].class,
+            applicationId,
+            type,
+            locationId)
+        .getBody())
+        .stream()
+        .forEach(t -> {
+            t.setPlannedFinishingTime(date);
+            update(t.getId(), t);
+        }
+    );
+  }
 
   public boolean hasSupervisionTask(Integer applicationId, SupervisionTaskType taskType) {
     return findByApplicationIdAndType(applicationId, taskType) != null;

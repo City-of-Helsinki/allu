@@ -990,6 +990,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/supervisiontask/application/{id}/type/{type}");
   }
 
+  public String getSupervisionTaskByApplicationIdAndTypeAndLocationUrl() {
+    return getModelServiceUrl("/supervisiontask/application/{id}/type/{type}?locationId={locationId}");
+  }
+
   /**
    * @return url for creating new supervision task-
    */
