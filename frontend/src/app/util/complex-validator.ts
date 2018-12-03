@@ -60,7 +60,7 @@ export class ComplexValidator {
       }
 
       fc.warnings = fc.warnings || {};
-      if (fc.dirty && TimeUtil.isInWinterTime(date, winterStart, winterEnd)) {
+      if (TimeUtil.isInWinterTime(date, winterStart, winterEnd)) {
         fc.warnings.inWinterTime = {date};
       } else {
         delete fc.warnings.inWinterTime;

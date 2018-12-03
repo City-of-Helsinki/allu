@@ -209,6 +209,9 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.patchRelatedCableReport(excavation);
     this.showReportCustomerDates = ArrayUtil.contains(
         [ApplicationStatus.DECISION, ApplicationStatus.OPERATIONAL_CONDITION], application.status);
+
+    // Run validation for validty end time so that if it is on winter time an icon will be shown
+    this.validityEndTimeCtrl.updateValueAndValidity();
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {
@@ -231,9 +234,11 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   }
 
   private onValidityEndTimeChange(status: any) {
-    this.validityEndTimeIcon = this.validityEndTimeCtrl.warnings.inWinterTime
-      ? new IconConfig('accent', false, 'warning')
-      : new IconConfig(undefined, true, 'today');
+    if (this.validityEndTimeCtrl.warnings) {
+      this.validityEndTimeIcon = this.validityEndTimeCtrl.warnings.inWinterTime
+        ? new IconConfig('accent', false, 'warning')
+        : new IconConfig(undefined, true, 'today');
+    }
   }
 
   private setEndTimeCtrlValidators(): void {
