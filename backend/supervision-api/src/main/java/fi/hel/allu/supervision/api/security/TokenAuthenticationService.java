@@ -1,13 +1,22 @@
 package fi.hel.allu.supervision.api.security;
 
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.security.AdfsTokenAuthenticationService;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.supervision.api.config.ApplicationProperties;
+import io.jsonwebtoken.JwtException;
 
 @Service
 public class TokenAuthenticationService extends AdfsTokenAuthenticationService {
@@ -22,5 +31,23 @@ public class TokenAuthenticationService extends AdfsTokenAuthenticationService {
   public boolean isAnonymousAccessAllowedForPath(String path) {
     final AntPathMatcher antPathMatcher = new AntPathMatcher();
     return getAnonymousAccessPaths().stream().anyMatch(p -> antPathMatcher.match(p, path));
+  }
+
+  public String loginWithAdfsToken(String adfsToken) {
+    try {
+      Optional<UserJson> user = authenticateWithAdfsToken(adfsToken);
+      return user.map(u -> loginUser(u)).orElseThrow(() -> new BadCredentialsException("No user found with ADFS token"));
+    } catch (JwtException ex) {
+      throw new BadCredentialsException("Invalid token", ex);
+    }
+  }
+
+  private String loginUser(UserJson user) {
+    if (user.isActive()) {
+      getUserService().setLastLogin(user.getId(), ZonedDateTime.now());
+      return createTokenForUser(user);
+    } else {
+      throw new LockedException("Account locked, user " + user.getUserName());
+    }
   }
 }

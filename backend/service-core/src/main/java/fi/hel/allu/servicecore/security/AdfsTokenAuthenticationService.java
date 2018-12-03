@@ -117,6 +117,10 @@ public abstract class AdfsTokenAuthenticationService extends AuthenticationServi
    */
   public Optional<UserJson> authenticateWithOAuth2Code(String code) {
     String adfsToken = exchangeCodeForToken(code);
+    return authenticateWithAdfsToken(adfsToken);
+  }
+
+  protected Optional<UserJson> authenticateWithAdfsToken(String adfsToken) {
     AdfsJwtTokenFields tokenFields = parseToken(adfsToken);
 
     UserJson userJson = null;
@@ -206,6 +210,8 @@ public abstract class AdfsTokenAuthenticationService extends AuthenticationServi
     public long expires_in;
   }
 
-
+  protected UserService getUserService() {
+    return userService;
+  }
 
 }
