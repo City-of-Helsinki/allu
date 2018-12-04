@@ -92,6 +92,9 @@ public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
     applicationExt.setId(application.getExternalApplicationId());
     Optional.ofNullable(application.getOwner()).ifPresent(o -> applicationExt.setOwner(new UserExt(o.getRealName(), o.getTitle())));
     applicationExt.setStatus(application.getStatus());
+    applicationExt.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
+    applicationExt.setTerms(application.getExtension().getTerms());
     return applicationExt;
   }
+
 }

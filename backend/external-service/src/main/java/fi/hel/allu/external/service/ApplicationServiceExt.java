@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +31,6 @@ import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
@@ -199,7 +197,6 @@ public class ApplicationServiceExt {
   public ApplicationExt findById(Integer applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     return ApplicationExtMapper.mapToApplicationExt(application);
-
   }
 
   public List<byte[]> getDecisionAttachments(Integer applicationId) {
@@ -212,5 +209,4 @@ public class ApplicationServiceExt {
   private void setDefaultImages(Integer applicationId, List<Integer> trafficArrangementImages) {
     attachmentService.setDefaultImagesForApplication(applicationId, trafficArrangementImages);
   }
-
 }

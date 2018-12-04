@@ -1,7 +1,11 @@
 package fi.hel.allu.external.domain;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.StatusType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,6 +24,8 @@ public class ApplicationExt {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private UserExt owner;
+  private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
+  private String terms;
 
   @ApiModelProperty(value = "Id of the application")
   public Integer getId() {
@@ -84,4 +90,21 @@ public class ApplicationExt {
     this.startTime = startTime;
   }
 
+  @ApiModelProperty(value = "Application kinds with specifiers.")
+  public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
+    return kindsWithSpecifiers;
+  }
+
+  public void setKindsWithSpecifiers(Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
+    this.kindsWithSpecifiers = kindsWithSpecifiers;
+  }
+
+  @ApiModelProperty(value = "Application terms")
+  public String getTerms() {
+    return terms;
+  }
+
+  public void setTerms(String terms) {
+    this.terms = terms;
+  }
 }
