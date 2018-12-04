@@ -1,5 +1,8 @@
 package fi.hel.allu.external.api.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +21,10 @@ import fi.hel.allu.external.domain.BaseApplicationExt;
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.external.service.PdfMerger;
 import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
 import fi.hel.allu.external.validation.DefaultImageValidator;
+import fi.hel.allu.servicecore.service.DecisionService;
 import io.swagger.annotations.*;
 
 /**
@@ -36,6 +41,8 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
   @Autowired
   protected DefaultImageValidator defaultImageValidator;
 
+  @Autowired
+  private DecisionService decisionService;
 
   protected abstract M getMapper();
 
@@ -107,5 +114,21 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
   }
 
-
+  @ApiOperation(value = "Gets decision document for application with given ID",
+      authorizations = @Authorization(value ="api_key"),
+      response = byte.class,
+      responseContainer = "Array")
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Decision document retrieved successfully", response = byte.class, responseContainer = "Array"),
+      @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = "application/pdf")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) throws IOException {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    byte[] decision = decisionService.getFinalDecision(applicationId);
+    List<byte[]> attachments = applicationService.getDecisionAttachments(applicationId);
+    return returnPdfResponse(PdfMerger.appendDocuments(decision, attachments));
+  }
 }

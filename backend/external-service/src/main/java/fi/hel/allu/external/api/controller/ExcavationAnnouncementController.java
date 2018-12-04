@@ -39,9 +39,6 @@ public class ExcavationAnnouncementController
   private ApprovalDocumentService approvalDocumentService;
 
   @Autowired
-  private DecisionService decisionService;
-
-  @Autowired
   private DateReportingService dateReportingService;
 
   @Override
@@ -132,23 +129,6 @@ public class ExcavationAnnouncementController
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED);
-    return returnPdfResponse(bytes);
-  }
-
-  @ApiOperation(value = "Gets decision document for application with given ID",
-      authorizations = @Authorization(value ="api_key"),
-      response = byte.class,
-      responseContainer = "Array")
-  @ApiResponses( value = {
-      @ApiResponse(code = 200, message = "Decision document retrieved successfully", response = byte.class, responseContainer = "Array"),
-      @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
-  })
-  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = "application/pdf")
-  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
-  public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) {
-    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
-    applicationService.validateOwnedByExternalUser(applicationId);
-    byte[] bytes = decisionService.getFinalDecision(applicationId);
     return returnPdfResponse(bytes);
   }
 }
