@@ -57,6 +57,7 @@ import {ExcavationAnnouncementService} from '@service/application/excavation-ann
 import {DateReportingModule} from '@feature/application/date-reporting/date-reporting.module';
 import {DateReportingEffects} from '@feature/application/effects/date-reporting-effects';
 import {DateReportingService} from '@service/application/date-reporting.service';
+import {ApplicationReplacementHistoryEffects} from '@feature/application/effects/application-replacement-history-effects';
 
 @NgModule({
   imports: [
@@ -67,7 +68,8 @@ import {DateReportingService} from '@service/application/date-reporting.service'
       ApplicationEffects,
       ApplicationTagEffects,
       ExcavationAnnouncementEffects,
-      DateReportingEffects
+      DateReportingEffects,
+      ApplicationReplacementHistoryEffects
     ]),
     FormsModule,
     ReactiveFormsModule,

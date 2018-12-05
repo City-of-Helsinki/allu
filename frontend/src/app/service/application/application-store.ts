@@ -116,7 +116,7 @@ export class ApplicationStore {
 
   replace(): Observable<Application> {
     return this.applicationService.replace(this.current.application.id).pipe(
-      tap(replacement => this.applicationChange(replacement))
+      tap(replacement => this.setAndDispatch(replacement))
     );
   }
 

@@ -1,13 +1,15 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {Application} from '../../../model/application/application';
-import {NumberUtil} from '../../../util/number.util';
-import {ApplicationIdentifier} from '../../../model/application/application-identifier';
-import {ApplicationService} from '../../../service/application/application.service';
-import {NotificationService} from '../../notification/notification.service';
+import {Application} from '@model/application/application';
+import {NumberUtil} from '@util/number.util';
+import {ApplicationIdentifier} from '@model/application/application-identifier';
+import {ApplicationService} from '@service/application/application.service';
+import {NotificationService} from '@feature/notification/notification.service';
 import {Router} from '@angular/router';
-import {ApplicationStatus} from '../../../model/application/application-status';
+import {ApplicationStatus} from '@model/application/application-status';
 import {Observable, of} from 'rxjs/index';
 import {catchError, map} from 'rxjs/internal/operators';
+import {select, Store} from '@ngrx/store';
+import * as fromApplication from '@feature/application/reducers';
 
 export type ProgressColor =
   | 'pending'
@@ -36,17 +38,14 @@ export class ProgressbarComponent implements OnInit {
 
   constructor(private router: Router,
               private service: ApplicationService,
-              private notification: NotificationService) {
+              private store: Store<fromApplication.State>) {
   }
 
   ngOnInit(): void {
     this.progress = this.calculateProgress(this.application.status);
     this.color = this.calculateColor(this.application.status);
     this.existingApplication = NumberUtil.isDefined(this.application.id);
-    this.replacements$ = this.existingApplication
-      ? this.service.getReplacementHistory(this.application.id)
-        .pipe(catchError(err => this.notification.errorCatch<ApplicationIdentifier[]>(err)))
-      : of([]);
+    this.replacements$ = this.store.pipe(select(fromApplication.getReplacementHistory));
     this.hasReplacements$ = this.replacements$.pipe(map(replacements => replacements.length > 1));
   }
 

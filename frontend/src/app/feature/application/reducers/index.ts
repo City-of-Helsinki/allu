@@ -5,13 +5,13 @@ import * as fromComments from '@feature/comment/reducers/comment-reducer';
 import * as fromApplicationComments from '@feature/application/reducers/application-comments-reducer';
 import * as fromTags from './application-tags-reducer';
 import * as fromRoot from '@feature/allu/reducers/index';
+import * as fromReplacementHistory from '@feature/application/reducers/application-replacement-history-reducer';
 import {Application} from '@model/application/application';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 import {ApplicationTag} from '@model/application/tag/application-tag';
 import * as fromHistory from '@feature/history/reducers/history-reducer';
 import * as fromApplicationHistory from '../reducers/application-history-reducer';
 import {ClientApplicationData} from '@model/application/client-application-data';
-import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {NumberUtil} from '@util/number.util';
 import {ArrayUtil} from '@util/array-util';
 
@@ -20,6 +20,7 @@ export interface ApplicationState {
   comments: fromComments.State;
   tags: fromTags.State;
   history: fromHistory.State;
+  replacementHistory: fromReplacementHistory.State;
 }
 
 export interface State extends fromRoot.State {
@@ -31,6 +32,7 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   comments: fromApplicationComments.reducer,
   tags: fromTags.reducer,
   history: fromApplicationHistory.reducer,
+  replacementHistory: fromReplacementHistory.reducer
 };
 
 export const getApplicationState = createFeatureSelector<ApplicationState>('application');
@@ -164,4 +166,15 @@ export const getHistory = createSelector(
 export const getFieldsVisible = createSelector(
   getHistoryState,
   fromHistory.getFieldsVisible
+);
+
+// Replacement history selectors
+export const getReplacementHistoryState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.replacementHistory
+);
+
+export const getReplacementHistory = createSelector(
+  getReplacementHistoryState,
+  fromReplacementHistory.getReplacementHistory
 );
