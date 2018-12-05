@@ -87,6 +87,11 @@ public class LocationController {
     return new ResponseEntity<>(locationDao.getFixedLocationList(applicationKind, srId), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/fixed-location/{id}", method = RequestMethod.GET)
+  public ResponseEntity<FixedLocation> getFixedLocationById(@PathVariable Integer id, @RequestParam(value="srid", required=false) Integer srId) {
+    return ResponseEntity.ok(locationDao.findFixedLocation(id, srId));
+  }
+
   /**
    * Get all fixed location areas
    *
@@ -109,6 +114,12 @@ public class LocationController {
     List<CityDistrictInfo> result = locationDao.getCityDistrictList().stream().map(LocationController::mapToInfo)
         .collect(Collectors.toList());
     return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/city-districts/{id}/name", method = RequestMethod.GET)
+  public ResponseEntity<String> getCityDistrictNameId(@PathVariable Integer id) {
+    String name = locationDao.getCityDistrictNameById(id);
+    return ResponseEntity.ok(name);
   }
 
   @RequestMapping(value = "/city-districts/{cityDistrictId}/supervisor/{type}", method = RequestMethod.GET)

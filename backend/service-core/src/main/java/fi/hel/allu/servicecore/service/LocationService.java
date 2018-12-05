@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,10 +26,7 @@ import fi.hel.allu.model.domain.FixedLocationArea;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
-import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
-import fi.hel.allu.servicecore.domain.FixedLocationJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.LocationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
 
@@ -68,10 +66,27 @@ public class LocationService {
     return resultList;
   }
 
+  public FixedLocationJson getFixedLocationById(Integer id, Integer srId) {
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getFixedLocationByIdUrl())
+        .queryParam("srid", srId)
+        .buildAndExpand(Collections.singletonMap("id", id)).toUri();
+    FixedLocation fixedLocation = restTemplate.getForObject(uri, FixedLocation.class);
+    return LocationMapper.mapToFixedLocationJson(fixedLocation);
+  }
+
   public List<Location> getLocationsByApplication(Integer applicationId) {
     ResponseEntity<Location[]> queryResult = restTemplate
         .getForEntity(applicationProperties.getLocationsByApplicationIdUrl(), Location[].class, applicationId);
     return Arrays.asList(queryResult.getBody());
+  }
+
+  public Location getSingleLocationByApplicationId(Integer applicationId, Integer srId) {
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getLocationsByApplicationIdUrl())
+        .queryParam("srid", srId)
+        .buildAndExpand(Collections.singletonMap("applicationId", applicationId)).toUri();
+    Location[] result = restTemplate
+        .getForEntity(uri.toString(), Location[].class, applicationId).getBody();
+    return result.length > 0 ? result[0] : null;
   }
 
   /**
@@ -85,6 +100,10 @@ public class LocationService {
     List<CityDistrictInfoJson> resultList = Arrays.stream(queryResult.getBody()).map(LocationMapper::mapToJson)
         .collect(Collectors.toList());
     return resultList;
+  }
+
+  public String getCityDistrictName(Integer id) {
+    return restTemplate.getForObject(applicationProperties.getCityDistrictNameUrl(), String.class, id);
   }
 
   /**

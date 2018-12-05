@@ -15,6 +15,12 @@ public class PostalAddressExt {
     // serialization
   }
 
+  public PostalAddressExt(StreetAddressExt streetAddress, String postalCode, String city) {
+    this.streetAddress = streetAddress;
+    this.postalCode = postalCode;
+    this.city = city;
+  }
+
   @ApiModelProperty("Street address")
   public StreetAddressExt getStreetAddress() {
     return streetAddress;

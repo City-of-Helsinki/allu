@@ -4,14 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.domain.ApplicationExt;
+import fi.hel.allu.external.domain.LocationExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.external.service.LocationServiceExt;
 import io.swagger.annotations.*;
 
 @RestController
@@ -21,6 +19,10 @@ public class ApplicationController {
 
   @Autowired
   private ApplicationServiceExt applicationService;
+
+  @Autowired
+  private LocationServiceExt locationService;
+
 
   @ApiOperation(value = "Sets Allu application cancelled",
       produces = "application/json",
@@ -47,5 +49,21 @@ public class ApplicationController {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(applicationService.findById(applicationId));
+  }
+
+  @ApiOperation(value = "Gets application location data for given application ID",
+      produces = "application/json",
+      authorizations=@Authorization(value ="api_key"))
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Location data retrieved successfully", response = LocationExt.class),
+      @ApiResponse(code = 404, message = "No location data found for given ID")
+  })
+  @RequestMapping(value = "/{id}/location", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<LocationExt> getLocation(@ApiParam(value = "Id of the application") @PathVariable Integer id,
+      @ApiParam(value = "Spatial reference system ID of the  geometry.", required = false, defaultValue = "3879") @RequestParam(required = false) Integer srId) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    return ResponseEntity.ok(locationService.findByApplicationId(applicationId, srId));
   }
 }

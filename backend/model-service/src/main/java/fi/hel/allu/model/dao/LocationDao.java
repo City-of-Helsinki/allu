@@ -25,6 +25,7 @@ import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
+import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -38,14 +39,13 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QCityDistrict.cityDistrict;
+import static fi.hel.allu.QCustomerLocationValidity.customerLocationValidity;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationArea.locationArea;
-import static fi.hel.allu.QCustomerLocationValidity.customerLocationValidity;
 import static fi.hel.allu.QLocationFlids.locationFlids;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
 import static fi.hel.allu.QPostalAddress.postalAddress;
-import fi.hel.allu.common.domain.ApplicationDateReport;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
@@ -250,7 +250,13 @@ public class LocationDao {
     List<FixedLocation> fixedLocations = findFixedLocations(Collections.emptyList(), kind);
     transformCoordinates(fixedLocations, srId);
     return fixedLocations;
+  }
 
+  @Transactional(readOnly = true)
+  public FixedLocation findFixedLocation(Integer id, Integer srId) {
+    FixedLocation fixedLocation = findFixedLocation(id).orElseThrow(() -> new NoSuchEntityException("fixedlocation.notfound"));
+    transformCoordinates(Collections.singletonList(fixedLocation), srId);
+    return fixedLocation;
   }
 
   /**
@@ -327,6 +333,7 @@ public class LocationDao {
     return queryFactory.select(bean(CityDistrict.class, QCityDistrict.cityDistrict.all()))
         .from(QCityDistrict.cityDistrict).fetch();
   }
+
 
   private void setGeometry(int locationId, Geometry geometry) {
     double area = 0.0;
@@ -537,5 +544,11 @@ public class LocationDao {
       item.get(TUPLE_LOCATION, Location.class).setCustomerReportingTime(validity.getReportingTime());
     }
     return item;
+  }
+
+  @Transactional(readOnly = true)
+  public String getCityDistrictNameById(Integer id) {
+    return queryFactory.select(cityDistrict.name)
+        .from(cityDistrict).where(cityDistrict.id.eq(id)).fetchFirst();
   }
 }

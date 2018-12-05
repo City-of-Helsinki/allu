@@ -494,6 +494,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/fixed-location");
   }
 
+  public String getFixedLocationByIdUrl() {
+    return getModelServiceUrl("/locations/fixed-location/{id}") ;
+  }
+
   /**
    * @return url for fetching fixed location areas for given application type.
    */
@@ -507,6 +511,11 @@ public class ApplicationProperties {
   public String getCityDistrictsUrl() {
     return getModelServiceUrl("/locations/city-districts");
   }
+
+  public String getCityDistrictNameUrl() {
+    return getModelServiceUrl("/locations/city-districts/{id}/name");
+  }
+
 
   public String getFindSupervisionTaskOwnerUrl() {
     return getModelServiceUrl("/locations/city-districts/{cityDistrictId}/supervisor/{type}");
