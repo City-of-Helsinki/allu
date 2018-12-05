@@ -127,8 +127,10 @@ public class ApplicationReplacementService {
   }
 
   private void validateReplacementAllowed(Application applicationToReplace) {
-    if (!REPLACEMENT_IS_ALLOWED.contains(applicationToReplace.getStatus())) {
-      throw new IllegalArgumentException("Application in invalid state, replacement not allowed");
+    final boolean replacementAllowedForStatus = REPLACEMENT_IS_ALLOWED.contains(applicationToReplace.getStatus());
+    final boolean isReplaced = applicationToReplace.getReplacedByApplicationId() != null;
+    if (!replacementAllowedForStatus || isReplaced) {
+      throw new IllegalArgumentException("Application already replaced or in invalid state, replacement not allowed");
     }
   }
 
