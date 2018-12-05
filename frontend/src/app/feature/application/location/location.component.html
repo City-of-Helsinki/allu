@@ -112,7 +112,7 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text"
                          [disabled]="true"
-                         [value]="location.customerStartTime | date:'shortDate'"
+                         [value]="location?.customerStartTime | date:'shortDate'"
                          [placeholder]="'location.customerStartTime' | translation"/>
                 </mat-form-field>
               </div>
@@ -120,7 +120,7 @@
                 <mat-form-field class="input-full-width">
                   <input matInput type="text"
                          [disabled]="true"
-                         [value]="location.customerEndTime | date:'shortDate'"
+                         [value]="location?.customerEndTime | date:'shortDate'"
                          [placeholder]="'location.customerEndTime' | translation"/>
                 </mat-form-field>
               </div>

@@ -33,7 +33,7 @@
     <td>{{location.info}}</td>
     <td>
       <button
-        *ngIf="location.id !== undefined"
+        *ngIf="customerValidityReportingAvailable(location)"
         type="button"
         mat-icon-button
         (click)="reportCustomerValidity(location, i)">

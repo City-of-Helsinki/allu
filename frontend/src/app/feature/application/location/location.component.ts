@@ -33,7 +33,7 @@ import {FixedLocationService} from '../../../service/map/fixed-location.service'
 import * as fromRoot from '../../allu/reducers';
 import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, take, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '../../../util/time.util';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 

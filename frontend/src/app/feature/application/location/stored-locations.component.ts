@@ -16,6 +16,7 @@ import {DateReport} from '@model/application/date-report';
 import {filter} from 'rxjs/operators';
 import {MatDialog} from '@angular/material';
 import {ObjectUtil} from '@util/object.util';
+import {NumberUtil} from '@util/number.util';
 
 @Component({
   selector: 'stored-locations',
@@ -54,6 +55,10 @@ export class StoredLocationsComponent implements OnInit, OnDestroy {
 
   remove(index: number): void {
     this.locationState.removeLocation(index);
+  }
+
+  customerValidityReportingAvailable(location: Location): boolean {
+    return NumberUtil.isExisting(location);
   }
 
   reportCustomerValidity(location: Location, index: number): void {
