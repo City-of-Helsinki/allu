@@ -27,6 +27,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -130,14 +131,23 @@ public class DateReportingService {
   }
 
   public ApplicationJson reportCustomerLocationValidity(Integer id, Integer locationId, ApplicationDateReport dateReport) {
+    final ApplicationJson oldApplicationJson = getApplicationJson(id);
+
     applicationService.setCustomerLocationValidity(id, locationId, dateReport);
     final ApplicationJson newApplicationJson = getApplicationJson(id);
 
     // Update also due date for supervision task of this location
     updateSupervisionTaskDate(id, locationId, dateReport.getReportedEndDate());
 
-    // TODO: save to history
+    applicationHistoryService.addLocationChanges(id,
+        findLocation(locationId, oldApplicationJson.getLocations()),
+        findLocation(locationId, newApplicationJson.getLocations()));
+
     return newApplicationJson;
+  }
+
+  private LocationJson findLocation(Integer locationId, List<LocationJson> locations) {
+    return locations.stream().filter(l -> Objects.equals(l.getId(), locationId)).findFirst().orElse(null);
   }
 
   private void updateSupervisionTaskDate(int applicationId, int locationId, ZonedDateTime endDate) {

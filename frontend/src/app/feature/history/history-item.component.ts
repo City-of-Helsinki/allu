@@ -6,6 +6,7 @@ import * as fromRoot from '../allu/reducers';
 import {FieldChange} from '../../model/history/field-change';
 import {ChangeDescription, HistoryFormatter} from '../../service/history/history-formatter';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'history-item',
@@ -45,6 +46,6 @@ export class HistoryItemComponent implements OnInit {
   }
 
   private showFields(change: ChangeHistoryItem): boolean {
-    return ChangeType.CONTENTS_CHANGED === ChangeType[change.changeType];
+    return ArrayUtil.contains([ChangeType.CONTENTS_CHANGED, ChangeType.LOCATION_CHANGED], ChangeType[change.changeType]);
   }
 }

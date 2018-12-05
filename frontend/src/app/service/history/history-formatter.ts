@@ -33,6 +33,8 @@ export class HistoryFormatter {
         return this.getContactChangeDescription(change, type);
       case ChangeType.STATUS_CHANGED:
         return this.getStatusChangeDescription(change, type);
+      case ChangeType.LOCATION_CHANGED:
+        return this.getLocationChangeDescription(change, type);
       default:
         return undefined;
     }
@@ -75,6 +77,16 @@ export class HistoryFormatter {
     const content = this.getApplicationContent(type, applicationId, applicationName);
 
     return { single: this.createChangeItemDescription(type, content, ['/applications', id, 'summary']) };
+  }
+
+  private getLocationChangeDescription(change: ChangeHistoryItem, type: ChangeDescriptionType): ChangeDescription {
+    const applicationId = change.info.applicationId;
+    const applicationName = change.info.name;
+    const content = this.getApplicationContent(type, applicationId, applicationName);
+    console.log(applicationId, applicationName);
+    return {
+      single: this.createChangeItemDescription(type, content, undefined)
+    };
   }
 
   private createChangeItemDescription(descriptionType: ChangeDescriptionType,

@@ -60,7 +60,8 @@ public class ApplicationHistoryController {
     final List<ChangeHistoryItem> history = historyDao.getApplicationHistory(id);
     history.stream().forEach(item -> {
       final ChangeHistoryItemInfo info = item.getInfo();
-      if (info.getId() != null && item.getChangeType() == ChangeType.STATUS_CHANGED) {
+      if (info.getId() != null && (item.getChangeType() == ChangeType.STATUS_CHANGED ||
+                                   item.getChangeType() == ChangeType.LOCATION_CHANGED)) {
           final Application app = applicationDao.findById(item.getInfo().getId());
           info.setApplicationId(app.getApplicationId());
           info.setName(app.getName());

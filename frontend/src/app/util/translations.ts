@@ -1667,7 +1667,7 @@ export const translations = {
         APPLICATION_ADDED: 'Hakemus lisätty',
         APPLICATION_REMOVED: 'Hakemus poistettu',
         CUSTOMER_CHANGED: 'Asiakas muutettu',
-        CONTACT_CHANGED: 'Yhteyshenkilö muutettu'
+        CONTACT_CHANGED: 'Yhteyshenkilö muutettu',
       },
       typeWithSpecifier: {
         STATUS_CHANGED: {
@@ -1697,7 +1697,8 @@ export const translations = {
           PROPERTY_DEVELOPER: 'Rakennuttajan yhteyshenkilö muutettu',
           CONTRACTOR: 'Työn suorittajan yhteyshenkilö muutettu',
           REPRESENTATIVE: 'Asiamiehen yhteyshenkilö muutettu'
-        }
+        },
+        LOCATION_CHANGED: 'Aluetta {{locationKey}} päivitetty'
       },
       field: {
         CUSTOMER: 'Asiakas',

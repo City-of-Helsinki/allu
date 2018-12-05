@@ -8,5 +8,6 @@ public enum ChangeType {
   APPLICATION_ADDED, // Application added to a project
   APPLICATION_REMOVED, // Application removed from a project
   CUSTOMER_CHANGED,
-  CONTACT_CHANGED
+  CONTACT_CHANGED,
+  LOCATION_CHANGED
 }

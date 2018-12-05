@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service.applicationhistory;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ChangeType;
@@ -12,6 +13,7 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.service.UserService;
+import org.apache.commons.lang3.tuple.Pair;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,6 +27,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -125,9 +128,57 @@ public class ApplicationHistoryService {
     oldHistoryApplication.setInvoiceRecipientId(null); // Invoice recipient change is saved separately
     newHistoryApplication.setInvoiceRecipientId(null);
 
+    // Area rental locations are saved separately as area rental can have several areas and thus area
+    // key must be saved also, so that it is possible to see which area was changed
+    if (getApplicationType(oldApplication, newApplication) == ApplicationType.AREA_RENTAL) {
+      addLocationChanges(applicationId, oldApplication.getLocations(), newApplication.getLocations());
+      oldHistoryApplication.setLocations(null);
+      newHistoryApplication.setLocations(null);
+    }
     addContentsChange(applicationId, oldHistoryApplication, newHistoryApplication);
     for (CustomerRoleType role : CustomerRoleType.values()) {
       addCustomerChange(applicationId, userId, oldCustomers.get(role), newCustomers.get(role), role);
+    }
+  }
+
+  public void addLocationChanges(Integer applicationId, LocationJson oldLocation, LocationJson newLocation) {
+    final String prefix = "/locations/" + getLocationValue(oldLocation, newLocation, LocationJson::getId);
+    final List<FieldChange> fieldChanges = findFieldChanges(oldLocation, newLocation, prefix);
+
+    if (!fieldChanges.isEmpty()) {
+      ChangeHistoryItem change = new ChangeHistoryItem();
+      change.setChangeType(ChangeType.LOCATION_CHANGED);
+      change.setFieldChanges(fieldChanges);
+      change.setChangeSpecifier(Integer.toString(getLocationValue(oldLocation, newLocation, LocationJson::getLocationKey)));
+      addChangeItem(applicationId, change);
+    }
+  }
+
+  private void addLocationChanges(Integer applicationId, List<LocationJson> oldLocations, List<LocationJson> newLocations) {
+    final Set<Integer> locationIds = oldLocations.stream().map(l -> l.getId()).collect(Collectors.toSet());
+    locationIds.addAll(newLocations.stream().map(l -> l.getId()).collect(Collectors.toSet()));
+    locationIds.stream()
+        .map(id -> Pair.of(
+            oldLocations.stream().filter(l -> l.getId().equals(id)).findFirst().orElse(null),
+            newLocations.stream().filter(l -> l.getId().equals(id)).findFirst().orElse(null)))
+        .collect(Collectors.toList())
+        .forEach(l -> addLocationChanges(applicationId, l.getLeft(), l.getRight()));
+  }
+
+  private <T> T getLocationValue(LocationJson l1, LocationJson l2, Function<LocationJson, T> valueGetter) {
+    if (l1 != null && valueGetter.apply(l1) != null) {
+      return valueGetter.apply(l1);
+    } else if (l2 != null) {
+      return valueGetter.apply(l2);
+    }
+    return null;
+  }
+
+  private ApplicationType getApplicationType(ApplicationJson app1, ApplicationJson app2) {
+    if (app1 != null) {
+      return app1.getType();
+    } else {
+      return app2.getType();
     }
   }
 
@@ -147,22 +198,25 @@ public class ApplicationHistoryService {
   }
 
   private void addContentsChange(Integer applicationId, ApplicationForHistory oldApplication, ApplicationForHistory newApplication) {
-    final Set<String> abbreviated = new HashSet<>();
-
-    List<FieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()
-        .filter(diff -> !skipFieldPattern.matcher(diff.keyName).matches())
-        .filter(diff -> !shouldAbbreviate(diff.keyName, abbreviated))
-        .map(diff -> new FieldChange(diff.keyName, diff.oldValue, diff.newValue))
-        .collect(Collectors.toList());
-
-    abbreviated.forEach(fieldName -> fieldChanges.add(new FieldChange(fieldName, "..", "..")));
-
+    final List<FieldChange> fieldChanges = findFieldChanges(oldApplication, newApplication, "");
     if (!fieldChanges.isEmpty()) {
       ChangeHistoryItem change = new ChangeHistoryItem();
       change.setChangeType(ChangeType.CONTENTS_CHANGED);
       change.setFieldChanges(fieldChanges);
       addChangeItem(applicationId, change);
     }
+  }
+
+  private List<FieldChange> findFieldChanges(Object obj1, Object obj2, String prefix) {
+    final Set<String> abbreviated = new HashSet<>();
+    final List<FieldChange> fieldChanges = comparer.compare(obj1, obj2).stream()
+        .filter(diff -> !skipFieldPattern.matcher(prefix + diff.keyName).matches())
+        .filter(diff -> !shouldAbbreviate(prefix + diff.keyName, abbreviated))
+        .map(diff -> new FieldChange(prefix + diff.keyName, diff.oldValue, diff.newValue))
+        .collect(Collectors.toList());
+
+    abbreviated.forEach(fieldName -> fieldChanges.add(new FieldChange(fieldName, "..", "..")));
+    return fieldChanges;
   }
 
   /*
