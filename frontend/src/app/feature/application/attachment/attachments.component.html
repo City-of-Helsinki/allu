@@ -44,7 +44,7 @@
               {{attachment.description}}
             </div>
           </div>
-          <div class="card-item-align-right">
+          <div class="card-item-align-right" *ngIf="isValidForDecision(attachment.mimeType)">
             <mat-slide-toggle
               [ngModel]="attachment.decisionAttachment"
               [disabled]="!applicationCanBeEdited"

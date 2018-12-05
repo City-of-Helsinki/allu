@@ -5,7 +5,7 @@
         <div fxFlex="200px">
           {{'attachment.title' | translation}}
         </div>
-        <div fxFlex="200px">
+        <div fxFlex="200px" *ngIf="validForDecision">
           <mat-slide-toggle formControlName="decisionAttachment">
             {{'attachment.decisionAttachment' | translation}}
           </mat-slide-toggle>
@@ -30,6 +30,9 @@
           <mat-form-field class="input-full-width">
             <input matInput type="text" (click)="realFileInput.click()" required
                    formControlName="name" [placeholder]="'attachment.select' | translation">
+            <mat-hint *ngIf="!validForDecision">
+              {{'attachment.onlyPdfForDecision' | translation}}
+            </mat-hint>
           </mat-form-field>
 
           <input #realFileInput class="real-file-input" type="file" fileSelect

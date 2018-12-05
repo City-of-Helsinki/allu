@@ -1,8 +1,9 @@
-import {Component, Input, Output, OnInit, EventEmitter} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
-import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
-import {AttachmentType} from '../../../model/application/attachment/attachment-type';
+import {AttachmentInfo} from '@model/application/attachment/attachment-info';
+import {AttachmentType} from '@model/application/attachment/attachment-type';
+import {validForDecision} from '@model/common/file-type';
 
 @Component({
   selector: 'attachment',
@@ -20,6 +21,8 @@ export class AttachmentComponent implements OnInit {
     AttachmentType[AttachmentType.ADDED_BY_CUSTOMER],
     AttachmentType[AttachmentType.ADDED_BY_HANDLER]
   ];
+
+  validForDecision = false;
 
   constructor(private fb: FormBuilder) {
   }
@@ -59,6 +62,14 @@ export class AttachmentComponent implements OnInit {
     if (files && files.length > 0) {
       const file = files[0];
       this.attachmentForm.patchValue({name: file.name, file: file});
+      this.setValidForDecision(file.type);
+    }
+  }
+
+  private setValidForDecision(fileType: string): void {
+    this.validForDecision = validForDecision(fileType);
+    if (!this.validForDecision) {
+      this.attachmentForm.get('decisionAttachment').patchValue(false);
     }
   }
 }

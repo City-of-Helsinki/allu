@@ -1305,6 +1305,7 @@ export const translations = {
     decisionAttachment: 'Päätöksen liite',
     unknownHandler: 'Tuntematon lisääjä',
     noArea: 'Ei aluetta',
+    onlyPdfForDecision: 'Vain pdf-tiedostoja voidaan lisätä päätöksen liitteeksi',
     type: {
       title: 'Liitteen tyyppi',
       ADDED_BY_CUSTOMER: 'Asiakkaan lisäämä liite',

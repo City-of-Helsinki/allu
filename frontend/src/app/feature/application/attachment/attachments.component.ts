@@ -2,20 +2,21 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import * as filesaver from 'file-saver';
 
-import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
-import {Application} from '../../../model/application/application';
-import {ApplicationStore} from '../../../service/application/application-store';
+import {AttachmentInfo} from '@model/application/attachment/attachment-info';
+import {Application} from '@model/application/application';
+import {ApplicationStore} from '@service/application/application-store';
 import {AttachmentHub} from './attachment-hub';
-import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {MatDialog, MatSlideToggleChange} from '@angular/material';
-import {TimeUtil} from '../../../util/time.util';
-import {Some} from '../../../util/option';
-import {AttachmentType, isCommon} from '../../../model/application/attachment/attachment-type';
-import {applicationCanBeEdited} from '../../../model/application/application-status';
-import {NotificationService} from '../../notification/notification.service';
-import {findTranslation} from '../../../util/translations';
-import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
+import {TimeUtil} from '@util/time.util';
+import {Some} from '@util/option';
+import {AttachmentType, isCommon} from '@model/application/attachment/attachment-type';
+import {applicationCanBeEdited} from '@model/application/application-status';
+import {NotificationService} from '@feature/notification/notification.service';
+import {findTranslation} from '@util/translations';
+import {CanComponentDeactivate} from '@service/common/can-deactivate-guard';
 import {filter, map, takeUntil} from 'rxjs/internal/operators';
+import {validForDecision} from '@model/common/file-type';
 
 @Component({
   selector: 'attachments',
@@ -32,6 +33,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
   editableAttachments: AttachmentInfo[] = [];
   hasFileOverDropzone = false;
   applicationCanBeEdited = true;
+  isValidForDecision = validForDecision;
 
   private destroy = new Subject<boolean>();
 
