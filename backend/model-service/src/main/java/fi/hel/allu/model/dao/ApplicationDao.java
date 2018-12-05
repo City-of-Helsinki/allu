@@ -650,6 +650,7 @@ public class ApplicationDao {
         .select(applicationIdentifierBean)
         .from(application)
         .where(application.applicationId.startsWith(idStart))
+        .orderBy(application.creationTime.desc())
         .fetch();
   }
 
