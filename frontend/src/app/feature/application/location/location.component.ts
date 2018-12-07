@@ -36,6 +36,7 @@ import {Store} from '@ngrx/store';
 import {distinctUntilChanged, filter, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '../../../util/time.util';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
+import {MapController} from '@service/map/map-controller';
 
 @Component({
   selector: 'type',
@@ -71,6 +72,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapService: MapUtil,
     private router: Router,
     private mapStore: MapStore,
+    private mapController: MapController,
     private store: Store<fromRoot.State>,
     private fixedLocationService: FixedLocationService,
     private fb: FormBuilder,
@@ -197,11 +199,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   storeLocation(form: LocationForm): void {
     this.locationState.storeLocation(LocationForm.to(form));
     this.resetForm();
+    this.mapController.clearEdited();
   }
 
   cancelArea(): void {
     this.locationState.cancelEditing();
     this.resetForm();
+    this.mapController.clearEdited();
   }
 
   cancelLink(): Array<string> {
