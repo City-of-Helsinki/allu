@@ -32,4 +32,9 @@ public class CableReportExtMapper extends ApplicationExtMapper<CableReportExt> {
     clientApplicationData.setPropertyDeveloper(CustomerExtMapper.mapCustomerWithContactsJson(
         cableReport.getPropertyDeveloperWithContacts(), CustomerRoleType.PROPERTY_DEVELOPER));
   }
+
+  @Override
+  protected String getClientApplicationKind(CableReportExt application) {
+    return application.getClientApplicationKind();
+  }
 }
