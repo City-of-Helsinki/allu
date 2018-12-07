@@ -66,4 +66,11 @@ export class InformationRequestService {
       catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.update')))
     );
   }
+
+  delete(id: number): Observable<{}> {
+    const url = `${informationRequestUrl}/${id}`;
+    return this.http.delete<{}>(url).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('informationRequest.error.delete')))
+    );
+  }
 }

@@ -5,17 +5,18 @@ import * as InformationRequestAction from '../actions/information-request-action
 import {InformationRequestActionType} from '../actions/information-request-actions';
 import * as InformationRequestResultAction from '../actions/information-request-result-actions';
 import * as ApplicationAction from '@feature/application/actions/application-actions';
-import {Action, Store} from '@ngrx/store';
-import {InformationRequestService} from '../../../service/application/information-request.service';
+import {Action, select, Store} from '@ngrx/store';
+import {InformationRequestService} from '@service/application/information-request.service';
 import {from, Observable, of} from 'rxjs/index';
-import * as fromApplication from '../../application/reducers';
+import * as fromApplication from '@feature/application/reducers';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
-import {NumberUtil} from '../../../util/number.util';
+import {NumberUtil} from '@util/number.util';
 import {InformationRequestResultActionType} from '@feature/information-request/actions/information-request-result-actions';
 import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus} from '@model/application/application-status';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {withLatestExisting} from '@feature/common/with-latest-existing';
 
 @Injectable()
 export class InformationRequestEffects {
@@ -90,6 +91,17 @@ export class InformationRequestEffects {
         new InformationRequestAction.LoadLatestResponseSuccess(undefined),
         new ApplicationAction.Load(action.payload.application.id)
       ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  cancelRequest: Observable<Action> = this.actions.pipe(
+    ofType<InformationRequestAction.CancelRequest>(InformationRequestActionType.CancelRequest),
+    switchMap(action => this.informationRequestService.delete(action.paylod)),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([_, app]) => this.applicationStore.changeStatus(app.id, ApplicationStatus.HANDLING).pipe(
+      map(() => new InformationRequestAction.CancelRequestSuccess()),
       catchError(error => of(new NotifyFailure(error)))
     ))
   );

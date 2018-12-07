@@ -452,6 +452,7 @@ export const translations = {
       replace: 'Korvaava päätös',
       toHandling: 'Käsittelyyn',
       informationRequest: 'Täydennyspyyntö',
+      cancelInformationRequest: 'Peru täydennyspyyntö',
       cancel: 'Peru hakemus',
       convertToApplication: 'Vahvista varaus',
       toDecision: 'Päättämiseen',
@@ -609,7 +610,8 @@ export const translations = {
     },
     error: {
       create: 'Täydennyspyynnön luominen epäonnistui',
-      update: 'Täydennyspyynnön päivittäminen epäonnistui'
+      update: 'Täydennyspyynnön päivittäminen epäonnistui',
+      delete: 'Täydennyspyynnön poistaminen epäonnistui',
     }
   },
   project: {

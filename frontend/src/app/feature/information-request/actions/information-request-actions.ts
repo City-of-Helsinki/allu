@@ -1,7 +1,7 @@
 import {Action} from '@ngrx/store';
-import {InformationRequestResponse} from '../../../model/information-request/information-request-response';
-import {ActionWithPayload} from '../../common/action-with-payload';
-import {ErrorInfo} from '../../../service/error/error-info';
+import {InformationRequestResponse} from '@model/information-request/information-request-response';
+import {ActionWithPayload} from '@feature/common/action-with-payload';
+import {ErrorInfo} from '@service/error/error-info';
 import {InformationRequest} from '@model/information-request/information-request';
 
 export enum InformationRequestActionType {
@@ -11,6 +11,8 @@ export enum InformationRequestActionType {
   SaveRequest = '[InformationRequest] Save information request',
   SaveAndSendRequest = '[InformationRequest] Save and send information request',
   SaveRequestSuccess = '[InformationRequest] Save information request success',
+  CancelRequest = '[InformationRequest] Cancel information request',
+  CancelRequestSuccess = '[InformationRequest] Cancel information request success',
   LoadLatestResponse = '[InformationRequest] Load latest information request response',
   LoadLatestResponseSuccess= '[InformationRequest] Load latest information request response success',
   LoadLatestResponseFailed = '[InformationRequest] Load latest information request response failed'
@@ -45,6 +47,15 @@ export class SaveRequestSuccess implements Action {
   constructor(public payload: InformationRequest) {}
 }
 
+export class CancelRequest implements Action {
+  readonly type = InformationRequestActionType.CancelRequest;
+  constructor(public paylod: number) {}
+}
+
+export class CancelRequestSuccess implements Action {
+  readonly type = InformationRequestActionType.CancelRequestSuccess;
+}
+
 export class LoadLatestResponse implements Action {
   readonly type = InformationRequestActionType.LoadLatestResponse;
 }
@@ -65,6 +76,8 @@ export type InformationRequestAction =
   | LoadLatestRequestFailed
   | SaveRequest
   | SaveRequestSuccess
+  | CancelRequest
+  | CancelRequestSuccess
   | LoadLatestResponse
   | LoadLatestResponseSuccess
   | LoadLatestResponseFailed;

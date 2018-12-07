@@ -41,11 +41,10 @@ public class InformationRequestController {
     return new ResponseEntity<>(informationRequestService.closeInformationRequest(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/informationrequests/{requestid}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/informationrequests/{id}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> delete(@PathVariable("id") int id,
-      @PathVariable("requestid") int informationRequestId) {
-    informationRequestService.delete(informationRequestId);
+  public ResponseEntity<Void> delete(@PathVariable("id") int id) {
+    informationRequestService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

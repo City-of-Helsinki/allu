@@ -1,4 +1,4 @@
-import {InformationRequestResponse} from '../../../model/information-request/information-request-response';
+import {InformationRequestResponse} from '@model/information-request/information-request-response';
 import {InformationRequestAction, InformationRequestActionType} from '../actions/information-request-actions';
 import {InformationRequest} from '@model/information-request/information-request';
 
@@ -56,6 +56,12 @@ export function reducer(state: State = initialState, action: InformationRequestA
         ...state,
         response: action.payload,
         responseLoading: false
+      };
+    }
+
+    case InformationRequestActionType.CancelRequestSuccess: {
+      return {
+        ...initialState
       };
     }
 

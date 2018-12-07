@@ -22,6 +22,9 @@ import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
 import {ApplicationExtension} from '@app/model/application/type/application-extension';
 import {ExcavationAnnouncement} from '@app/model/application/excavation-announcement/excavation-announcement';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
 
 @Component({
   selector: 'application-actions',
@@ -58,6 +61,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   private applicationSub: Subscription;
 
   constructor(private router: Router,
+              private store: Store<fromRoot.State>,
               private applicationStore: ApplicationStore,
               private dialog: MatDialog,
               private userService: UserService,
@@ -181,6 +185,12 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   showInformationRequestInfo(): void {
     this.modalState.openRequest();
+  }
+
+  cancelInformationRequest(): void {
+    Some(this.informationRequest)
+      .map(request => request.informationRequestId)
+      .do(id => this.store.dispatch(new CancelRequest(id)));
   }
 
   private cancelApplication(): void {
