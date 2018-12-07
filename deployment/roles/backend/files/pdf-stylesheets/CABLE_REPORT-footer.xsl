@@ -12,7 +12,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
     </xsl:element>  
-    <link rel="stylesheet" href="new-style.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body style="height:30mm;padding:10mm 0 0 0;margin:0">
     <div class="footer">

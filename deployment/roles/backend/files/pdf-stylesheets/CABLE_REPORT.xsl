@@ -12,7 +12,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <xsl:value-of select="basedir"/>
       </xsl:attribute>
     </xsl:element>  
-    <link rel="stylesheet" href="new-style.css" />
+    <link rel="stylesheet" href="style.css" />
     <xsl:if test="data/draft = 'true'">
       <link rel="stylesheet" href="watermark.css" />
     </xsl:if>
