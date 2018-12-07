@@ -216,7 +216,7 @@
       </section>
 
       <xsl:if test="data/notBillable = 'false'">
-        <div class="unboxed">
+        <div class="unboxed avoid-pb">
           <h2>Laskutusosoite</h2>
           <section class="half-left">
             <p>
@@ -270,7 +270,7 @@
         </p>
       </section>
 
-      <section class="unboxed">
+      <section class="unboxed avoid-pb">
         <h2>Päätös</h2>
         <p>
           Tämä päätös on sähköisesti allekirjoitettu.
@@ -286,7 +286,7 @@
         </p>
       </section>
 
-      <section class="unboxed">
+      <section class="unboxed avoid-pb">
         <h2>Liitteet</h2>
         <p>
           <!--  [Lista liitteiden nimistä] -->
@@ -296,7 +296,7 @@
         </p>
       </section>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <h2>Valvojan yhteystiedot</h2>
         <section class="half-left">
           <p class="small">Nimi</p>
@@ -310,7 +310,7 @@
         </section>
       </div>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <h2>Lupakäsittelijän yhteystiedot</h2>
         <section class="half-left">
           <p class="small">Nimi</p>

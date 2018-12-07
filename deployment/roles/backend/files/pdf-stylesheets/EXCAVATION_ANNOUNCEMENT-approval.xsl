@@ -100,22 +100,32 @@
         </div>
       </xsl:if>
 
-      <section class="unboxed">
-        <h2>Työn kohde</h2>
-        <p>
-          <!-- Käytetään vuokrattavaa paikkaa ja lohkoa, jos joku pudotusvalikossa määritetty paikka;
-               käytetään Osoitetta, jos ei pudotusvalikossa määritetty paikka -->
-          <!-- [Vuokrattava paikka, Lohko], [Osoite] -->
-          <xsl:value-of select="data/siteAddressLine"/>
-        </p>
-        <xsl:if test="data/siteAdditionalInfo != ''">
-          <p class="space-above">
-            <!-- Käytetään, jos Lisätietoja paikasta täytetty -->
-            <!-- [Lisätietoja paikasta] -->
-            <xsl:value-of select="data/siteAdditionalInfo"/>
+      <div class="unboxed">
+        <section class="half-left">
+          <h2>Työn kohde</h2>
+          <p>
+            <!-- Käytetään vuokrattavaa paikkaa ja lohkoa, jos joku pudotusvalikossa määritetty paikka;
+                 käytetään Osoitetta, jos ei pudotusvalikossa määritetty paikka -->
+            <!-- [Vuokrattava paikka, Lohko], [Osoite] -->
+            <xsl:value-of select="data/siteAddressLine"/>
           </p>
-        </xsl:if>
-      </section>
+          <xsl:if test="data/siteAdditionalInfo != ''">
+            <p class="space-above">
+              <!-- Käytetään, jos Lisätietoja paikasta täytetty -->
+              <!-- [Lisätietoja paikasta] -->
+              <xsl:value-of select="data/siteAdditionalInfo"/>
+            </p>
+          </xsl:if>
+        </section>
+
+        <section class="half-right">
+          <h2>Voimassaoloaika</h2>
+          <p>
+            <xsl:value-of select="data/reservationStartDate"/>-
+            <xsl:value-of select="data/reservationEndDate"/>
+          </p>
+        </section>
+      </div>
 
       <section class="unboxed">
         <h2>Työn tarkoitus</h2>
@@ -223,7 +233,7 @@
       </section>
 
       <xsl:if test="data/deciderName != ''">
-        <section class="unboxed">
+        <section class="unboxed avoid-pb">
           <h2>Päätös</h2>
           <p class="space-above">
             Tämä päätös on sähköisesti allekirjoitettu.
@@ -240,7 +250,7 @@
         </section>
       </xsl:if>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <h2>Valvojan yhteystiedot</h2>
         <section class="half-left">
           <p class="small">Nimi</p>
@@ -251,20 +261,6 @@
           <p><xsl:value-of select="data/supervisorEmail"/></p>
           <p class="small">Puhelin</p>
           <p><xsl:value-of select="data/supervisorPhone"/></p>
-        </section>
-      </div>
-
-      <div class="unboxed">
-        <h2>Lupakäsittelijän yhteystiedot</h2>
-        <section class="half-left">
-          <p class="small">Nimi</p>
-          <p><xsl:value-of select="data/handlerName"/></p>
-        </section>
-        <section class="half-right">
-          <p class="small">Sähköposti</p>
-          <p><xsl:value-of select="data/handlerEmail"/></p>
-          <p class="small">Puhelin</p>
-          <p><xsl:value-of select="data/handlerPhone"/></p>
         </section>
       </div>
 

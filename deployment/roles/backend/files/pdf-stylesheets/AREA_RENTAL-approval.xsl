@@ -100,14 +100,24 @@
         </div>
       </xsl:if>
 
-      <section class="unboxed">
-        <h2>Työn kohde</h2>
-        <xsl:for-each select="data/areaAddresses">
+      <div class="unboxed">
+        <section class="half-left">
+          <h2>Työn kohde</h2>
+          <xsl:for-each select="data/areaAddresses">
+            <p>
+              <xsl:value-of select="." />
+            </p>
+          </xsl:for-each>
+        </section>
+
+        <section class="half-right">
+          <h2>Voimassaoloaika</h2>
           <p>
-            <xsl:value-of select="." />
+            <xsl:value-of select="data/reservationStartDate"/>-
+            <xsl:value-of select="data/reservationEndDate"/>
           </p>
-        </xsl:for-each>
-      </section>
+        </section>
+      </div>
 
       <section class="unboxed">
         <h2>Työn tarkoitus</h2>
@@ -196,7 +206,7 @@
       </section>
 
       <xsl:if test="data/deciderName != ''">
-        <section class="unboxed">
+        <section class="unboxed avoid-pb">
           <h2>Päätös</h2>
           <p class="space-above">
             Tämä päätös on sähköisesti allekirjoitettu.
@@ -213,7 +223,7 @@
         </section>
       </xsl:if>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <h2>Valvojan yhteystiedot</h2>
         <section class="half-left">
           <p class="small">Nimi</p>
@@ -224,20 +234,6 @@
           <p><xsl:value-of select="data/supervisorEmail"/></p>
           <p class="small">Puhelin</p>
           <p><xsl:value-of select="data/supervisorPhone"/></p>
-        </section>
-      </div>
-
-      <div class="unboxed">
-        <h2>Lupakäsittelijän yhteystiedot</h2>
-        <section class="half-left">
-          <p class="small">Nimi</p>
-          <p><xsl:value-of select="data/handlerName"/></p>
-        </section>
-        <section class="half-right">
-          <p class="small">Sähköposti</p>
-          <p><xsl:value-of select="data/handlerEmail"/></p>
-          <p class="small">Puhelin</p>
-          <p><xsl:value-of select="data/handlerPhone"/></p>
         </section>
       </div>
 

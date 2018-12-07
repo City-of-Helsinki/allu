@@ -200,6 +200,10 @@ section.new-page {
     page-break-before: always;
   }
 
+.avoid-pb {
+  page-break-inside: avoid;
+}
+
 .footer {
   padding-bottom: 30px;
   width: 100%; }
