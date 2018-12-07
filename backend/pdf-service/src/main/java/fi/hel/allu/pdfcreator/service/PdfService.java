@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import javax.xml.transform.TransformerException;
 
@@ -23,6 +24,8 @@ import fi.hel.allu.pdfcreator.util.JsonConverter;
 public class PdfService {
 
   private static final Logger logger = LoggerFactory.getLogger(PdfService.class);
+
+  private static final String COMMON_STYLESHEET = "COMMON";
 
   // filename suffixes for header and footer
   private static final String HEADER_SUFFIX = "-header";
@@ -64,13 +67,18 @@ public class PdfService {
       if (contentPath == null) {
         throw new NoSuchEntityException("Can't find the stylesheet '" + stylesheet + "'");
       }
-      headerPath = writeHtml(xml, stylesheet + HEADER_SUFFIX);
-      footerPath = writeHtml(xml, stylesheet + FOOTER_SUFFIX);
+      headerPath = writeHtml(xml, stylesheet, HEADER_SUFFIX);
+      footerPath = writeHtml(xml, stylesheet, FOOTER_SUFFIX);
       pdfPath = writePdf(contentPath, headerPath, footerPath);
       return fileSysAccessor.readAllBytes(pdfPath);
     } finally {
       fileSysAccessor.deleteIfExist(contentPath, headerPath, footerPath, pdfPath);
     }
+  }
+
+  private Path writeHtml(String xml, String stylesheet, String suffix)  throws IOException, TransformerException {
+    Path path = writeHtml(xml, stylesheet + suffix);
+    return path != null ? path : writeHtml(xml, COMMON_STYLESHEET + suffix);
   }
 
   private Path writeHtml(String xml, String stylesheet) throws IOException, TransformerException {
