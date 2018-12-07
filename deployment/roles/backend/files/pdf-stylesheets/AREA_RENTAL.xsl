@@ -101,7 +101,7 @@
       </xsl:if>
 
       <section class="unboxed">
-        <h2>Työn kohde</h2>
+        <h2>Työkohde</h2>
         <xsl:for-each select="data/areaAddresses">
           <p>
             <xsl:value-of select="." />
@@ -149,13 +149,13 @@
         <h2>Vuokra-alueet</h2>
         <table class="area-table">
           <tr>
-            <th>Alue ID</th>
-            <th>Aika</th>
+            <th>Aluetunnus</th>
+            <th>Voimassaolo</th>
             <th>Osoite</th>
             <th>Altakuljettava</th>
             <th>Pinta-ala</th>
-            <th>Maksuluokka</th>
-            <th>á € / alkava 15m²</th>
+            <th>à</th>
+            <th>à € / alkava 15m²</th>
             <th>pv</th>
             <th>Maksu</th>
           </tr>
@@ -171,6 +171,17 @@
               </xsl:choose>
             </xsl:variable>
 
+            <xsl:variable name="borderStyle">
+              <xsl:choose>
+                <xsl:when test="./firstCommon = 'true'">
+                  fat-border
+                </xsl:when>
+                <xsl:otherwise>
+                  thin-border
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+
             <xsl:choose>
               <xsl:when  test="./text != ''">
                 <tr class="{$areaFinished}">
@@ -179,7 +190,7 @@
                 </tr>
               </xsl:when>
               <xsl:when test="./chargeBasisText != ''">
-                <tr>
+                <tr class="{$borderStyle}">
                   <td class="info" style="border-right: none;" colspan="3"><xsl:value-of select="chargeBasisText"/></td>
                   <td style="border-left: none; border-right: none;" colspan="2"><xsl:value-of select="quantity"/></td>
                   <td style="border-left: none; border-right: none;" colspan="2"><xsl:value-of select="unitPrice"/></td>
@@ -187,7 +198,7 @@
                 </tr>
               </xsl:when>
               <xsl:otherwise>
-                <tr class="{$areaFinished}">
+                <tr class="{$areaFinished} fat-border">
                   <td><xsl:value-of select="areaId"/></td>
                   <td><xsl:value-of select="time"/></td>
                   <td><xsl:value-of select="address"/></td>
@@ -248,25 +259,22 @@
       <section class="unboxed">
         <h2>Yleiset ehdot</h2>
         <p>
-          ??Tähän perustetta ja viittaus liitteeseen??. Päätöksenhakija on velvollinen noudattamaan sopimukseen
-          iitettyä liikennejärjestelypäätöstä. Mahdolliset lisäehdot ovat kohdassa päätösehdot.
+          Alueen vuokraukseen sovelletaan maanvuokralakia. Lisäksi sovelletaan liitteenä olevien yleisten vuokrausehtojen kohtia.
+          Päätöksenhakija on velvollinen noudattamaan liikennejärjestelypäätöstä sekä vuokrausehtoja.
         </p>
 
         <p class="space-above">
-          Työmaajärjestelyjä sekä kaivutöiden ja liikennejärjestelyjen suorittamista koskevat tekniset ohjeet ja
-          määräykset on annettu tässä päätöksessä sekä ohjeissa ”Yleisten alueiden käyttö, tilapäiset
-          liikennejärjestelyt ja katutyöt” ja ”Tilapäiset liikennejärjestelyt katu- ja yleisillä alueilla”. Ohjeista lisätietoa
-          Helsingin kaupungin nettisivuilla osoitteessa https://www.hel.fi/helsinki/fi/asuminen-ja-ymparisto/tontit/luvat/katutyoluvat/.
+          Työmaajärjestelyjä sekä kaivutöiden ja liikennejärjestelyjen suorittamista koskevat tekniset ohjeet ja määräykset on annettu
+          tässä päätöksessä sekä ohjeissa ”Yleisten alueiden käyttö, tilapäiset liikennejärjestelyt ja katutyöt” ja ”Tilapäiset
+          liikennejärjestelyt katu- ja yleisillä alueilla”. Ohjeista lisätietoa Helsingin kaupungin nettisivuilla osoitteessa
+          https://www.hel.fi/helsinki/fi/asuminen-ja-ymparisto/tontit/luvat/katutyoluvat/.
         </p>
 
         <p class="space-above">
-          Kunnan antamien määräysten lainmukaisuuden ratkaiseminen osoitetaan rakennusvalvontapalveluun.
-        </p>
-
-        <p class="space-above">
-          Muutoksenhaku kunnan antamiin päätöksiin osoitetaan kaupunkiympäristö lautakunnalle, sähköposti
-          helsinki.kirjaamo@hel.fi. Ennen varsinaisen valituksen tekemistä maksuvelvollisen tulee tehdä kirjallinen
-          muistutus maksun perimisestä päättävälle kunnan viranomaiselle 14 päivän kuluessa maksulipun (lasku) saamisesta.
+          Kunnan antamien määräysten lainmukaisuuden ratkaiseminen osoitetaan rakennusvalvontapalveluun. Muutoksenhaku
+          kunnan antamiin päätöksiin osoitetaan kaupunkiympäristölautakunnalle, sähköposti helsinki.kirjaamo@hel.fi. Ennen
+          varsinaisen valituksen tekemistä maksuvelvollisen tulee tehdä kirjallinen muistutus maksun perimisestä päättävälle kunnan
+          viranomaiselle 14 päivän kuluessa maksulipun (lasku) saamisesta.
         </p>
       </section>
 
@@ -324,6 +332,93 @@
         </section>
       </div>
 
+      <section class="unboxed">
+        <h2 class="new-page">Vuokrausehdot</h2>
+        <p class="space-above">
+          1. Vuokran irtisanomisaika on kaksi (2) viikkoa päätöksenantajan osalta. Irtisanominen on toimitettava
+          kirjallisena. Vuokrasopimus päättyy kuitenkin alkuperäisen hakemuksen mukaisesti, ellei kumpikaan
+          ilmoita kirjallisesti haluavansa siihen muutoksia sopimuksen voimassaoloaikana.
+        </p>
+
+        <p class="space-above">
+          2. Muutokset vuorauksenn tulee ilmoittaa etukäteen kirjallisena, jälkikäteen tehtyjä muutosilmoituksia
+          ei käsitellä.
+        </p>
+
+        <p class="space-above">
+          3. Päätöksensaaja on velvollinen noudattamaan päätöksen osana olevaa liikennejärjestelypäätöstä.
+          Päätöksenantajalla on oikeus teettää tarvittavat liikennejärjestelyt vuokralaisen kustannuksella, mikäli
+          vuokralainen ei niitä kehotuksesta huolimatta suorita.
+        </p>
+
+        <p class="space-above">
+          4. Vuokrasopimus ei oikeuta vuokralaista suorittamaan kaivu- tai louhintatöitä vuokra-alueella.
+          Kaupungin valvonta ei poista vuokralaisen vastuuta vuokralaisen aiheuttamista vahingoista kaupungille
+          tai kolmannelle osapuolelle. Vuokralainen on velvollinen hankkimaan työhön tarvittavat rakennus-,
+          toimenpide-, ympäristö-, ym. luvat sekä tekemään tarvittavat ilmoitukset muille viranomaisille.
+        </p>
+
+        <p class="space-above">
+          5. Alueen tai sen osan vuokraoikeus ei ole siirrettävissä, eikä aluetta saa edelleen vuokrata
+          kolmannelle osapuolelle.
+        </p>
+
+        <p class="space-above">
+          6. Altakuljettavattelineet on varusteltava riittävin suojakatoksin ja suojapeittein jalankulun
+          turvaamiseksi.
+        </p>
+
+        <p class="space-above">
+          7. Käytetyt aidat on pidettävä töhryistä vapaana. Työmaa-aidoissa mainostaminen yli kahden (2)
+          viikon ajan vaatii rakennusvalvonnan luvan.
+        </p>
+
+        <p class="space-above">
+          8. Jalankulku ja muu liikenne on ohjattava aina turvallista reittiä ohi työkohteen. Telineiden
+          pystytysvaiheen tai muun mahdollisesti putoavia esineitä käsittelevien työvaiheiden ajaksi
+          on vaadittaessa rakennettava katettu jalankulkusuoja.
+        </p>
+
+        <p class="space-above">
+          9. Autojen pysäköinti alueella on kielletty.
+        </p>
+
+        <p class="space-above">
+          10. Päätöksensaajan on huolehdittava alueen kunnossa ja puhtaanapidosta sekä aina tarvittaessa
+          kulkuväylän talvikunnossa pidosta koko vuokrauksen voimassaoloajan, myös normaalin työajan
+          ulkopuolella ja viikonloppuisin.
+        </p>
+
+        <p class="space-above">
+          11. Vuokra-alue on pidettävä yleisilmeeltään siistinä. Vuokra-alue on tyhjennettävä, aita ja muut
+          rakennelmat poistettava sekä alue siivottava vuokra-ajan päättymiseen mennessä. Mikäli aluetta ei ole
+          tyhjennetty (1) kuukauden kuluessa vuokra-ajan päättymisestä, kaupungilla on oikeus menetellä
+          alueella olevan omaisuuden suhteen parhaaksi katsomallaan tavalla. Alueen tyhjentämis- ja
+          siivoamiskulut sekä maanvuokraa vastaava korvaus kuntoonsaattamiseen asti kuluvalta ajalta peritään
+          vuokralaiselta.
+        </p>
+
+        <p class="space-above">
+          12. Päätöksensaajan on estettävä laastiaseman lietteen, rappaus- ym. rakennusjätteiden
+          kulkeutuminen kadulle ja viemäriverkostoon sekä estämään alueen pilaantuminen. Mikäli vuokra-alue
+          tai osa siitä on kuitenkin vuokra-aikana ympäristösuojelulain tarkoittamalla tavalla saastunut,
+          vuokralainen on velvollinen huolehtimaan alueen puhdistamisesta, kuten sanotussa laissa määrätään.
+          Mikäli vuokralainen laiminlyö tässä tarkoitetun velvollisuutensa, vuokranantajalla on oikeus tutkia ja
+          puhdistaa saastunut maa vuokralaisen lukuun ja periä toimenpiteistä aiheutuneet kustannukset
+          vuokralaiselta.
+        </p>
+
+        <p class="space-above">
+          13. Alkoholimainonta vuokra-alueella on kielletty.
+        </p>
+
+        <p class="space-above">
+          14. Päätöksenantaja ei vastaa päätöksensaajalle aiheutuneista kuluista mikäli päätös
+          oikaisuvaatimuksen, kunnallisvalituksen tai ylemmän toimielimen päätöksen johdosta muuttuu tai
+          kumoutuu. Päätöksenantaja ei myöskään vastaa muiden viranomaisten tekemien päätösten
+          aiheuttamista kuluista.
+        </p>
+      </section>
     </div>
   </body>
 </html>

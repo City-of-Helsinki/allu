@@ -490,6 +490,7 @@ public class DecisionJsonMapper {
     decision.setWorkPurpose(areaRental.getWorkPurpose());
     decision.setWorkFinished(formatDateWithDelta(areaRental.getWorkFinished(), 0));
     decision.setCustomerWorkFinished(formatDateWithDelta(areaRental.getCustomerWorkFinished(), 0));
+    decision.setTrafficArrangements(splitToList(Optional.ofNullable(areaRental.getTrafficArrangements())));
     Set<String> addresses = new HashSet<>();
     application.getLocations().stream().forEach(l -> addresses.add(l.getAddress()));
     decision.setAreaAddresses(new ArrayList<>(addresses));
@@ -504,9 +505,13 @@ public class DecisionJsonMapper {
     final List<RentalArea> rentalAreas = areaEntries.stream()
         .map(e -> chargeBasisToRentalArea(e, application, locations, areaEntries))
         .collect(Collectors.toList());
-    rentalAreas.addAll(otherEntries.stream()
+    final List<RentalArea> otherRentalAreas = otherEntries.stream()
         .map(e -> chargeBasisToRentalArea(e, application, locations, otherEntries))
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList());
+    if (!otherRentalAreas.isEmpty()) {
+      otherRentalAreas.get(0).setFirstCommon(true);
+      rentalAreas.addAll(otherRentalAreas);
+    }
     decision.setRentalAreas(rentalAreas);
   }
 

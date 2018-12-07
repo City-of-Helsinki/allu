@@ -203,9 +203,9 @@ img.checkbox {
   margin-right: 5px;
 }
 .area-table, .area-table tr, .area-table th, .area-table td {
-  border: 1px solid black;
+  border: 0.5px solid black;
   border-collapse: collapse;
-  padding: 2px;
+  padding: 3px;
   font-size: 8pt;
   text-align: center;
 }
@@ -216,6 +216,14 @@ tr.finished {
 
 tr.unfinished {
   background-color: white;
+}
+
+tr.fat-border {
+  border-top: 1px solid black;
+}
+
+tr.thin-border {
+  border-top: 0.5px solid black;
 }
 
 td.info {

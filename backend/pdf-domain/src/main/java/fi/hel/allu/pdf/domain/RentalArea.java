@@ -15,6 +15,7 @@ public class RentalArea {
   private String additionalInfo;
   private String text;
   private String chargeBasisText;
+  private Boolean firstCommon;
 
   public String getAreaId() {
     return areaId;
@@ -126,5 +127,13 @@ public class RentalArea {
 
   public void setChargeBasisText(String chargeBasisText) {
     this.chargeBasisText = chargeBasisText;
+  }
+
+  public Boolean isFirstCommon() {
+    return firstCommon;
+  }
+
+  public void setFirstCommon(Boolean firstCommon) {
+    this.firstCommon = firstCommon;
   }
 }
