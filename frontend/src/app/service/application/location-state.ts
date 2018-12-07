@@ -51,6 +51,7 @@ export class LocationState {
     const current = this.locations$.getValue();
     current.splice(index, 1);
     this.locations$.next(current);
+    this.clearEdited();
   }
 
   editLocation(index: number): void {

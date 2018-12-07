@@ -278,6 +278,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.locationForm.patchValue(LocationForm.from(loc));
       this.mapStore.locationSearchFilterChange(this.createFilter(loc));
       this.location = loc;
+    } else {
+      this.resetForm();
     }
   }
 
