@@ -1,7 +1,10 @@
 package fi.hel.allu.servicecore.service;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -16,6 +19,7 @@ import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.*;
@@ -513,5 +517,9 @@ public class ApplicationServiceComposer {
   public ApplicationJson removeClientApplicationData(Integer id) {
     Application application = applicationService.removeClientApplicationData(id);
     return applicationJsonService.getFullyPopulatedApplication(application);
+  }
+
+  public List<CustomerWithContacts> findApplicationCustomers(Integer applicationId) {
+    return applicationService.findApplicationCustomers(applicationId);
   }
 }

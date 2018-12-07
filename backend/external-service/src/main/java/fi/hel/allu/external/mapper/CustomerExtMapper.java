@@ -1,20 +1,30 @@
 package fi.hel.allu.external.mapper;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.external.domain.ContactExt;
-import fi.hel.allu.external.domain.CustomerExt;
-import fi.hel.allu.external.domain.CustomerWithContactsExt;
-import fi.hel.allu.external.domain.InvoicingCustomerExt;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.external.domain.*;
+import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
+import fi.hel.allu.servicecore.service.CodeSetService;
 
+@Component
 public class CustomerExtMapper {
 
-  public static CustomerWithContactsJson mapCustomerWithContactsJson(CustomerWithContactsExt customerWithContactsExt, CustomerRoleType roleType) {
+  @Autowired
+  private CodeSetService codesetService;
+
+  public  CustomerWithContactsJson mapCustomerWithContactsJson(CustomerWithContactsExt customerWithContactsExt, CustomerRoleType roleType) {
     if (customerWithContactsExt == null) {
       return null;
     }
@@ -27,7 +37,7 @@ public class CustomerExtMapper {
     return customerWithContacts;
   }
 
-  private static ContactJson mapContactJson(ContactExt contactExt) {
+  private ContactJson mapContactJson(ContactExt contactExt) {
      ContactJson contact = new ContactJson();
      contact.setActive(true);
      contact.setEmail(contactExt.getEmail());
@@ -42,7 +52,7 @@ public class CustomerExtMapper {
      return contact;
   }
 
-  public static CustomerJson mapInvoicingCustomerJson(CustomerExt invoicingCustomer) {
+  public CustomerJson mapInvoicingCustomerJson(CustomerExt invoicingCustomer) {
     if (invoicingCustomer == null) {
       return null;
     }
@@ -51,7 +61,7 @@ public class CustomerExtMapper {
     return customerJson;
   }
 
-  public static CustomerJson mapCustomerJson(CustomerExt customerExt) {
+  public CustomerJson mapCustomerJson(CustomerExt customerExt) {
     CustomerJson customerJson = new CustomerJson();
     customerJson.setId(customerExt.getId());
     customerJson.setName(customerExt.getName());
@@ -77,7 +87,7 @@ public class CustomerExtMapper {
    * Update current customerJson with the customerExt data. Updates only properties having non-null value
    * in customerExt
    */
-  public static CustomerJson mergeCustomerJson(CustomerJson currentCustomerJson, InvoicingCustomerExt customerExt) {
+  public CustomerJson mergeCustomerJson(CustomerJson currentCustomerJson, InvoicingCustomerExt customerExt) {
     Optional.ofNullable(customerExt.getName()).ifPresent(s -> currentCustomerJson.setName(s));
     Optional.ofNullable(customerExt.getType()).ifPresent(s -> currentCustomerJson.setType(s));
     Optional.ofNullable(customerExt.getRegistryKey()).ifPresent(s -> currentCustomerJson.setRegistryKey(s));
@@ -95,4 +105,49 @@ public class CustomerExtMapper {
        .ifPresent(a -> currentCustomerJson.setPostalAddress(a));
     return currentCustomerJson;
   }
+
+  public CustomerWithContactsExt mapCustomerWithContactsExt(CustomerWithContacts customerWithContacts) {
+    CustomerWithContactsExt customerWithContactsExt = new CustomerWithContactsExt();
+    customerWithContactsExt.setCustomer(mapCustomerExt(customerWithContacts.getCustomer()));
+    customerWithContactsExt.setContacts(customerWithContacts.getContacts().stream().map(c -> mapContactExt(c)).collect(Collectors.toList()));
+    return customerWithContactsExt;
+  }
+
+  private CustomerExt mapCustomerExt(Customer customer) {
+    CustomerExt customerExt = new CustomerExt();
+    customerExt.setCountry(getCountryCode(customer.getCountryId()));
+    customerExt.setEmail(customer.getEmail());
+    customerExt.setId(customer.getId());
+    customerExt.setInvoicingOperator(customer.getInvoicingOperator());
+    customerExt.setName(customer.getName());
+    customerExt.setOvt(customer.getOvt());
+    customerExt.setPhone(customer.getPhone());
+    if (customer.getType() != CustomerType.PERSON) {
+      customerExt.setRegistryKey(customer.getRegistryKey());
+    }
+    Optional.ofNullable(customer.getPostalAddress())
+        .map(p -> new PostalAddressExt(new StreetAddressExt(p.getStreetAddress()), p.getPostalCode(), p.getCity()))
+        .ifPresent(p -> customerExt.setPostalAddress(p));
+    customerExt.setSapCustomerNumber(customer.getSapCustomerNumber());
+    customerExt.setType(customer.getType());
+    return customerExt;
+  }
+
+  private String getCountryCode(Integer countryId) {
+    return Optional.ofNullable(countryId).map(id -> codesetService.findById(id).getCode()).orElse(null);
+  }
+
+  private static ContactExt mapContactExt(Contact contact) {
+    ContactExt contactExt = new ContactExt();
+    contactExt.setEmail(contact.getEmail());
+    contactExt.setId(contact.getId());
+    contactExt.setName(contact.getName());
+    contactExt.setOrderer(contact.getOrderer());
+    contactExt.setPhone(contact.getPhone());
+    Optional.ofNullable(contact.getPostalAddress())
+        .map(p -> new PostalAddressExt(new StreetAddressExt(p.getStreetAddress()), p.getPostalCode(), p.getCity()))
+        .ifPresent(p -> contactExt.setPostalAddress(p));
+    return contactExt;
+  }
+
 }

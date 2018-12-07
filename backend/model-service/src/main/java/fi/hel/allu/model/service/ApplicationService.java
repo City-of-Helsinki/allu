@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.QueryFactory;
-
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -534,5 +532,10 @@ public class ApplicationService {
   @Transactional
   public void removeClientApplicationData(Integer id) {
     applicationDao.removeClientApplicationData(id);
+  }
+
+  @Transactional(readOnly = true)
+  public List<CustomerWithContacts> getApplicationCustomers(Integer id) {
+    return customerDao.findByApplicationWithContacts(id);
   }
 }

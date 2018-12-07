@@ -37,7 +37,7 @@ public class ExcavationAnnouncementExtMapper extends ApplicationExtMapper<Excava
   @Override
   protected void addApplicationTypeSpecificData(ExcavationAnnouncementExt cableReport,
       ClientApplicationDataJson clientApplicationData) {
-    clientApplicationData.setContractor(CustomerExtMapper
+    clientApplicationData.setContractor(customerMapper
         .mapCustomerWithContactsJson(cableReport.getContractorWithContacts(), CustomerRoleType.CONTRACTOR));
   }
 

@@ -27,9 +27,9 @@ public class CableReportExtMapper extends ApplicationExtMapper<CableReportExt> {
   @Override
   protected void addApplicationTypeSpecificData(CableReportExt cableReport,
       ClientApplicationDataJson clientApplicationData) {
-    clientApplicationData.setContractor(CustomerExtMapper
+    clientApplicationData.setContractor(customerMapper
         .mapCustomerWithContactsJson(cableReport.getContractorWithContacts(), CustomerRoleType.CONTRACTOR));
-    clientApplicationData.setPropertyDeveloper(CustomerExtMapper.mapCustomerWithContactsJson(
+    clientApplicationData.setPropertyDeveloper(customerMapper.mapCustomerWithContactsJson(
         cableReport.getPropertyDeveloperWithContacts(), CustomerRoleType.PROPERTY_DEVELOPER));
   }
 

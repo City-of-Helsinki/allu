@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.geolatte.geom.Geometry;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -17,6 +18,9 @@ import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.servicecore.domain.*;
 
 public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
+
+  @Autowired
+  protected CustomerExtMapper customerMapper;
 
   protected abstract ApplicationExtensionJson createExtension(T application);
   protected abstract ApplicationType getApplicationType();
@@ -45,9 +49,9 @@ public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
 
   private ClientApplicationDataJson createClientApplicationData(T application) {
     ClientApplicationDataJson clientApplicationData = new ClientApplicationDataJson();
-    clientApplicationData.setCustomer(CustomerExtMapper.mapCustomerWithContactsJson(application.getCustomerWithContacts(), CustomerRoleType.APPLICANT));
-    clientApplicationData.setInvoicingCustomer(CustomerExtMapper.mapInvoicingCustomerJson(application.getInvoicingCustomer()));
-    clientApplicationData.setRepresentative(CustomerExtMapper.mapCustomerWithContactsJson(application.getRepresentativeWithContacts(), CustomerRoleType.REPRESENTATIVE));
+    clientApplicationData.setCustomer(customerMapper.mapCustomerWithContactsJson(application.getCustomerWithContacts(), CustomerRoleType.APPLICANT));
+    clientApplicationData.setInvoicingCustomer(customerMapper.mapInvoicingCustomerJson(application.getInvoicingCustomer()));
+    clientApplicationData.setRepresentative(customerMapper.mapCustomerWithContactsJson(application.getRepresentativeWithContacts(), CustomerRoleType.REPRESENTATIVE));
     clientApplicationData.setClientApplicationKind(getClientApplicationKind(application));
     addApplicationTypeSpecificData(application, clientApplicationData);
     return clientApplicationData;

@@ -447,9 +447,18 @@ public class ApplicationService {
     return restTemplate.getForObject(applicationProperties.getApplicationIdForExternalIdUrl(), Integer.class, externalId);
   }
 
-
   public Application removeClientApplicationData(Integer id) {
     restTemplate.delete(applicationProperties.getClientApplicationDataDeleteUrl(), id);
     return findApplicationById(id);
+  }
+
+  public List<CustomerWithContacts> findApplicationCustomers(Integer applicationId) {
+    ParameterizedTypeReference<List<CustomerWithContacts>> typeRef =
+        new ParameterizedTypeReference<List<CustomerWithContacts>>() {};
+    List<CustomerWithContacts> customers = restTemplate
+        .exchange(applicationProperties.getCustomerByApplicationIdUrl(), HttpMethod.GET, null, typeRef, applicationId)
+        .getBody();
+    customers.forEach(c -> personAuditLogService.log(c, "ApplicationService"));
+    return customers;
   }
 }

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Sets;
 
 import fi.hel.allu.common.domain.ExternalApplication;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
@@ -26,7 +27,9 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
+import fi.hel.allu.external.mapper.CustomerExtMapper;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.model.domain.InformationRequest;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -60,6 +63,8 @@ public class ApplicationServiceExt {
   private SupervisionTaskService supervisionTaskService;
   @Autowired
   private InformationRequestService informationRequestService;
+  @Autowired
+  private CustomerExtMapper customerMapper;
 
   public <T extends BaseApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson applicationJson = mapper.mapExtApplication(application, getExternalUserId());
@@ -208,5 +213,10 @@ public class ApplicationServiceExt {
 
   private void setDefaultImages(Integer applicationId, List<Integer> trafficArrangementImages) {
     attachmentService.setDefaultImagesForApplication(applicationId, trafficArrangementImages);
+  }
+
+  public Map<CustomerRoleType, CustomerWithContactsExt> findApplicationCustomers(Integer applicationId) {
+    return applicationServiceComposer.findApplicationCustomers(applicationId).stream().collect(
+        Collectors.toMap(CustomerWithContacts::getRoleType, c -> customerMapper.mapCustomerWithContactsExt(c)));
   }
 }

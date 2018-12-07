@@ -1,12 +1,16 @@
 package fi.hel.allu.external.api.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.external.domain.ApplicationExt;
+import fi.hel.allu.external.domain.CustomerWithContactsExt;
 import fi.hel.allu.external.domain.LocationExt;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.service.LocationServiceExt;
@@ -66,4 +70,27 @@ public class ApplicationController {
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(locationService.findByApplicationId(applicationId, srId));
   }
+
+  @ApiOperation(value = "Gets application customers for given application ID in a map, customer role as a key.",
+      notes = "Customer roles: "
+              + "<ul>"
+              + "<li>APPLICANT (hakija)</li>"
+              + "<li>PROPERTY_DEVELOPER (rakennuttaja)</li>"
+              + "<li>REPRESENTATIVE (asiamies)</li>"
+              + "<li>CONTRACTOR (urakoitsija)</li>"
+              + "</ul>",
+      produces = "application/json",
+      authorizations=@Authorization(value ="api_key"))
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Customers retrieved successfully", response = CustomerWithContactsExt.class, responseContainer = "Map"),
+      @ApiResponse(code = 404, message = "No location data found for given ID")
+  })
+  @RequestMapping(value = "/{id}/customers", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<Map<CustomerRoleType, CustomerWithContactsExt>> getCustomers(@ApiParam(value = "Id of the application") @PathVariable Integer id) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    return ResponseEntity.ok(applicationService.findApplicationCustomers(applicationId));
+  }
+
 }

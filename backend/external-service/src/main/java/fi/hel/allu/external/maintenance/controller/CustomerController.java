@@ -24,6 +24,9 @@ import fi.hel.allu.servicecore.service.CustomerService;
 public class CustomerController {
 
   @Autowired
+  private CustomerExtMapper customerMapper;
+
+  @Autowired
   CustomerService customerService;
 
   @Autowired
@@ -38,7 +41,7 @@ public class CustomerController {
   public ResponseEntity<Void> merge(@RequestBody InvoicingCustomerExt customer) {
     CustomerJson customerJson = customerService.findCustomerById(customer.getId());
     boolean addsSapNumber = addsSapNumber(customerJson, customer);
-    CustomerExtMapper.mergeCustomerJson(customerJson, customer);
+    customerMapper.mergeCustomerJson(customerJson, customer);
     customerService.updateCustomerWithInvoicingInfo(customerJson.getId(), customerJson);
     if (addsSapNumber) {
       applicationServiceComposer.releaseCustomersInvoices(customer.getId());

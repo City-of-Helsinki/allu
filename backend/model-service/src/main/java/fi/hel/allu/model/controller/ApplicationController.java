@@ -398,4 +398,9 @@ public class ApplicationController {
     applicationService.removeClientApplicationData(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/customers", method = RequestMethod.GET)
+  public ResponseEntity<List<CustomerWithContacts>> getApplicationCustomers(@PathVariable Integer id) {
+    return new ResponseEntity<>(applicationService.getApplicationCustomers(id), HttpStatus.OK);
+  }
 }

@@ -722,6 +722,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/customers/businessid/{businessid}");
   }
 
+  public String getCustomerByApplicationIdUrl() {
+    return getModelServiceUrl("/applications/{applicationId}/customers");
+  }
+
   /**
    * @return URL for getting customers by ids.
    */
