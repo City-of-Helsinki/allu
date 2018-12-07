@@ -100,6 +100,7 @@ export const translations = {
     statusChange: {
       PRE_RESERVED: 'Alustava varaus luotu',
       PENDING: 'Hakemus saapunut',
+      WAITING_INFORMATION: 'Hakemus siirretty odottamaan täydennystä',
       HANDLING: 'Hakemus siirretty käsittelyyn',
       RETURNED_TO_PREPARATION: 'Hakemus palautettu valmisteluun',
       DECISIONMAKING: 'Hakemus siirretty odottamaan päätöstä',
