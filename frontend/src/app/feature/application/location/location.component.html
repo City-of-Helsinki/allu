@@ -177,7 +177,7 @@
               </div>
               <div fxFlex="0 1 30%">
                 <button mat-raised-button type="submit" color="primary" [disabled]="!submitAllowed">
-                  <ng-container *ngIf="locationForm.value.id; else basicInfo">
+                  <ng-container *ngIf="application.id; else basicInfo">
                     {{'common.button.save' | translation | uppercase}}
                   </ng-container>
                   <ng-template #basicInfo>
