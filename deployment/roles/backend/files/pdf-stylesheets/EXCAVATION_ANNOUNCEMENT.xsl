@@ -110,7 +110,7 @@
             <xsl:value-of select="data/siteAddressLine"/>
           </p>
           <xsl:if test="data/siteAdditionalInfo != ''">
-            <p class="space-above">
+            <p>
               <!-- Käytetään, jos Lisätietoja paikasta täytetty -->
               <!-- [Lisätietoja paikasta] -->
               <xsl:value-of select="data/siteAdditionalInfo"/>
@@ -182,7 +182,7 @@
 
       <xsl:if test="data/qualityAssuranceTest = 'true' or data/compactionAndBearingCapacityMeasurement = 'true'">
         <div class="unboxed">
-          <h2>Päätöksen saada on velvollinen teettämään seuraavat kaivannon laadunvarmistustoimenpiteet</h2>
+          <h2>Päätöksen saaja on velvollinen teettämään seuraavat kaivannon laadunvarmistustoimenpiteet</h2>
 
           <section class="half-left">
             <div style="margin-top: 5px; height: 22px;">

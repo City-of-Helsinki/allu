@@ -58,7 +58,7 @@
             <h1>Päätös yleisellä alueella tehtävästä työstä</h1>
           </xsl:when>
           <xsl:otherwise>
-           <h1>Korvava päätös yleisellä alueella tehtävästä työstä</h1>
+           <h1>Korvaava päätös yleisellä alueella tehtävästä työstä</h1>
           </xsl:otherwise>
         </xsl:choose>
         <div class="page">
