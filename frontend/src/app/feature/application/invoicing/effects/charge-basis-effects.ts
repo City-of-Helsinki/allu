@@ -22,6 +22,7 @@ import {
   InvoicingPeriodSuccessActions,
   invoicingPeriodSuccessActionTypes
 } from '@feature/application/invoicing/actions/invoicing-period-actions';
+import {ApplicationActionType} from '@feature/application/actions/application-actions';
 
 @Injectable()
 export class ChargeBasisEffects {
@@ -69,6 +70,12 @@ export class ChargeBasisEffects {
   @Effect()
   onInvoicingPeriodChange: Observable<Action> = this.actions.pipe(
     ofType<InvoicingPeriodSuccessActions>(...invoicingPeriodSuccessActionTypes),
+    map(() => new Load())
+  );
+
+  @Effect()
+  onApplicationLoad: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationActions.LoadSuccess>(ApplicationActionType.LoadSuccess),
     map(() => new Load())
   );
 }
