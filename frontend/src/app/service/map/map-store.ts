@@ -33,7 +33,6 @@ export interface MapState {
   shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
   selectedSections: Array<number>;
   drawingAllowed: boolean;
-  hasFixedGeometry: boolean;
   invalidGeometry: boolean;
   loading: boolean;
 }
@@ -52,7 +51,6 @@ const initialState: MapState = {
   shape: undefined,
   selectedSections: [],
   drawingAllowed: true,
-  hasFixedGeometry: false,
   invalidGeometry: false,
   loading: false
 };
@@ -131,8 +129,7 @@ export class MapStore {
   get editedLocation(): Observable<Location> {
     return this.store.pipe(
       map(state => state.editedLocation),
-      distinctUntilChanged(),
-      filter(shape => !!shape)
+      distinctUntilChanged()
     );
   }
 
@@ -175,13 +172,6 @@ export class MapStore {
   get drawingAllowed(): Observable<boolean> {
     return this.store.pipe(
       map(state => state.drawingAllowed),
-      distinctUntilChanged()
-    );
-  }
-
-  get hasFixedGeometry(): Observable<boolean> {
-    return this.changes.pipe(
-      map(state => state.hasFixedGeometry),
       distinctUntilChanged()
     );
   }
@@ -280,10 +270,6 @@ export class MapStore {
       .subscribe(
         result => this.store.next({...this.store.getValue(), matchingAddresses: result}),
         err => this.store.next({...this.store.getValue(), matchingAddresses: []}));
-  }
-
-  hasFixedGeometryChange(hasFixedGeometry: boolean): void {
-    this.store.next({...this.store.getValue(), hasFixedGeometry});
   }
 
   storedFilterChange(storedFilter: StoredFilter): void {
