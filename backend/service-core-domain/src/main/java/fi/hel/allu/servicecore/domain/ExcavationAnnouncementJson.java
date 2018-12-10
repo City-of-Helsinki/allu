@@ -1,11 +1,12 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import java.time.ZonedDateTime;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 
 /**
  * Excavation announcement (Kaivuilmoitus) specific data.
@@ -38,6 +39,8 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private String trafficArrangements;
   @NotNull(message = "{application.excavationAnnouncement.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
+  private List<String> placementContracts;
+  private List<String> cableReports;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -312,5 +315,21 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
 
   public void setValidityReported(ZonedDateTime validityReported) {
     this.validityReported = validityReported;
+  }
+
+  public List<String> getPlacementContracts() {
+    return placementContracts;
+  }
+
+  public void setPlacementContracts(List<String> placementContracts) {
+    this.placementContracts = placementContracts;
+  }
+
+  public List<String> getCableReports() {
+    return cableReports;
+  }
+
+  public void setCableReports(List<String> cableReports) {
+    this.cableReports = cableReports;
   }
 }

@@ -31,6 +31,8 @@ public class ExcavationAnnouncementMapper {
     json.setQualityAssuranceTest(excavationAnnouncement.getQualityAssuranceTest());
     json.setUnauthorizedWorkStartTime(excavationAnnouncement.getUnauthorizedWorkStartTime());
     json.setUnauthorizedWorkEndTime(excavationAnnouncement.getUnauthorizedWorkEndTime());
+    json.setPlacementContracts(excavationAnnouncement.getPlacementContracts());
+    json.setCableReports(excavationAnnouncement.getCableReports());
     return ApplicationExtensionMapper.modelToJson(excavationAnnouncement, json);
   }
 
@@ -61,6 +63,8 @@ public class ExcavationAnnouncementMapper {
     excavationAnnouncement.setQualityAssuranceTest(json.getQualityAssuranceTest());
     excavationAnnouncement.setUnauthorizedWorkStartTime(json.getUnauthorizedWorkStartTime());
     excavationAnnouncement.setUnauthorizedWorkEndTime(json.getUnauthorizedWorkEndTime());
+    excavationAnnouncement.setPlacementContracts(json.getPlacementContracts());
+    excavationAnnouncement.setCableReports(json.getCableReports());
     return ApplicationExtensionMapper.jsonToModel(json, excavationAnnouncement);
   }
 }

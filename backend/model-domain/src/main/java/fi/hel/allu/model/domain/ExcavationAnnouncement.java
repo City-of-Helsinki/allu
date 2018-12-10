@@ -1,9 +1,10 @@
 package fi.hel.allu.model.domain;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
-
-import java.time.ZonedDateTime;
 
 /**
  * Excavation announcement (Kaivuilmoitus) specific data.
@@ -35,6 +36,8 @@ public class ExcavationAnnouncement extends ApplicationExtension
   private String additionalInfo;
   private String trafficArrangements;
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
+  private List<String> placementContracts;
+  private List<String> cableReports;
 
 
   @Override
@@ -330,5 +333,21 @@ public class ExcavationAnnouncement extends ApplicationExtension
   @Override
   public void setValidityReported(ZonedDateTime validityReported) {
     this.validityReported = validityReported;
+  }
+
+  public List<String> getPlacementContracts() {
+    return placementContracts;
+  }
+
+  public void setPlacementContracts(List<String> placementContracts) {
+    this.placementContracts = placementContracts;
+  }
+
+  public List<String> getCableReports() {
+    return cableReports;
+  }
+
+  public void setCableReports(List<String> cableReports) {
+    this.cableReports = cableReports;
   }
 }
