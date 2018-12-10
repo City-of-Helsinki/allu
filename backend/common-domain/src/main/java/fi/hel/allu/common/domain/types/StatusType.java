@@ -12,16 +12,17 @@ public enum StatusType {
   WAITING_INFORMATION(4), // Odottaa täydennystä
   INFORMATION_RECEIVED(5), // Täydennys vastaanotettu
   HANDLING(6), // Käsittelyssä
-  RETURNED_TO_PREPARATION(7), // Palautettu valmisteluun
-  WAITING_CONTRACT_APPROVAL(8), // Odottaa sopimuksen hyväksyntää
-  DECISIONMAKING(9), // Odottaa päätöstä
-  DECISION(10), // Päätetty
-  REJECTED(11), // Hylätty päätös
-  OPERATIONAL_CONDITION(12), // Toiminnallinen kunto
-  FINISHED(13), // Valmis
-  CANCELLED(14), // Peruttu
-  REPLACED(15), // Korvattu
-  ARCHIVED(16); // Arkistoitu
+  NOTE(7), // Muistiinpano
+  RETURNED_TO_PREPARATION(8), // Palautettu valmisteluun
+  WAITING_CONTRACT_APPROVAL(9), // Odottaa sopimuksen hyväksyntää
+  DECISIONMAKING(10), // Odottaa päätöstä
+  DECISION(11), // Päätetty
+  REJECTED(12), // Hylätty päätös
+  OPERATIONAL_CONDITION(13), // Toiminnallinen kunto
+  FINISHED(14), // Valmis
+  CANCELLED(15), // Peruttu
+  REPLACED(16), // Korvattu
+  ARCHIVED(17); // Arkistoitu
 
   // Status order in application process flow
   private int orderNumber;

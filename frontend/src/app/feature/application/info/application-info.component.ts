@@ -40,6 +40,8 @@ import {applicationForm} from '@feature/application/info/application-form';
 import {RoleType} from '@model/user/role-type';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {ClientApplicationData} from '@model/application/client-application-data';
+import {ApplicationType} from '@model/application/type/application-type';
+import {NumberUtil} from '@util/number.util';
 
 @Component({
   selector: 'application-info',
@@ -69,7 +71,7 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     const application = this.applicationStore.snapshot.application;
     this.form = this.fb.group(applicationForm(application));
     this.type = application.type;
-    this.showDraftSelection = this.shouldShowDraftSelection();
+    this.showDraftSelection = this.shouldShowDraftSelection(application);
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary');
     this.notificationType$ = this.applicationNotificationService.getNotificationType();
@@ -112,9 +114,10 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
   }
 
-  private shouldShowDraftSelection() {
-    return this.applicationStore.isNew &&
-        this.applicationStore.snapshot.application.type !== 'TEMPORARY_TRAFFIC_ARRANGEMENTS';
+  private shouldShowDraftSelection(application: Application) {
+    const isNew = !NumberUtil.isExisting(application);
+    const typeCanHaveDraft = [ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, ApplicationType.NOTE].indexOf(application.type) < 0;
+    return isNew && typeCanHaveDraft;
   }
 
   private showPendingInfo(): void {

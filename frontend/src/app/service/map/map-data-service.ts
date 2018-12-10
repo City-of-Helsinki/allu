@@ -33,7 +33,8 @@ export class MapDataService {
     this.groupedStatuses.set(ApplicationStatusGroup.PRELIMINARY, [
       ApplicationStatus.PRE_RESERVED,
       ApplicationStatus.PENDING_CLIENT,
-      ApplicationStatus.PENDING
+      ApplicationStatus.PENDING,
+      ApplicationStatus.NOTE
     ]);
 
     this.groupedStatuses.set(ApplicationStatusGroup.HANDLING, [
@@ -42,19 +43,22 @@ export class MapDataService {
       ApplicationStatus.DECISIONMAKING,
       ApplicationStatus.WAITING_CONTRACT_APPROVAL,
       ApplicationStatus.WAITING_INFORMATION,
-      ApplicationStatus.INFORMATION_RECEIVED
+      ApplicationStatus.INFORMATION_RECEIVED,
+      ApplicationStatus.NOTE
     ]);
 
     this.groupedStatuses.set(ApplicationStatusGroup.DECISION, [
       ApplicationStatus.DECISION,
-      ApplicationStatus.OPERATIONAL_CONDITION
+      ApplicationStatus.OPERATIONAL_CONDITION,
+      ApplicationStatus.NOTE
     ]);
 
     this.groupedStatuses.set(ApplicationStatusGroup.HISTORY, [
       ApplicationStatus.REJECTED,
       ApplicationStatus.FINISHED,
       ApplicationStatus.CANCELLED,
-      ApplicationStatus.ARCHIVED
+      ApplicationStatus.ARCHIVED,
+      ApplicationStatus.NOTE
     ]);
   }
 

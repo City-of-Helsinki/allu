@@ -107,7 +107,7 @@ public class ApplicationServiceComposer {
   }
 
   public  ApplicationJson createApplication(ApplicationJson applicationJson, StatusType status) {
-    applicationJson.setStatus(status);
+    applicationJson.setStatus(getApplicationCreationStatus(applicationJson.getType(), status));
     Application createdApplication = applicationService.createApplication(applicationJson);
     ApplicationJson createdApplicationJson = applicationJsonService.getFullyPopulatedApplication(createdApplication);
     applicationHistoryService.addApplicationCreated(createdApplication.getId());
@@ -521,5 +521,9 @@ public class ApplicationServiceComposer {
 
   public List<CustomerWithContacts> findApplicationCustomers(Integer applicationId) {
     return applicationService.findApplicationCustomers(applicationId);
+  }
+
+  private StatusType getApplicationCreationStatus(ApplicationType type, StatusType status) {
+    return type == ApplicationType.NOTE ? StatusType.NOTE : status;
   }
 }
