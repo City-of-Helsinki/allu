@@ -33,10 +33,11 @@ import {FixedLocationService} from '@service/map/fixed-location.service';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
+import {EMPTY} from 'rxjs/internal/observable/empty';
 
 @Component({
   selector: 'type',
@@ -118,7 +119,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.kindsSelected = this.application.kinds.length > 0;
     this.showPaymentTariff = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL]
       .indexOf(this.application.type) >= 0;
-    this.loadFixedLocations();
 
     this.searchFilter$ = this.mapStore.locationSearchFilter;
 
@@ -132,14 +132,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.editedLocation.pipe(takeUntil(this.destroy))
       .subscribe(loc => this.editLocation(loc));
 
-    this.areaCtrl.valueChanges.pipe(takeUntil(this.destroy))
-      .subscribe(id => this.onAreaChange(id));
-
-    this.sectionsCtrl.valueChanges.pipe(
-      takeUntil(this.destroy),
-      distinctUntilChanged(ArrayUtil.numberArrayEqual)
-    ).subscribe(ids => this.onSectionsChange(ids));
-
     this.mapStore.invalidGeometry.pipe(takeUntil(this.destroy))
       .subscribe(invalid => this.invalidGeometry = invalid);
 
@@ -149,7 +141,22 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.select(fromApplication.getKindsWithSpecifiers).pipe(takeUntil(this.destroy))
       .subscribe(kindsWithSpecifiers => this.onKindSpecifierChange(kindsWithSpecifiers));
 
+    this.areaCtrl.valueChanges.pipe(takeUntil(this.destroy))
+      .subscribe(id => this.onAreaChange(id));
+
+    this.sectionsCtrl.valueChanges.pipe(
+      takeUntil(this.destroy),
+      distinctUntilChanged(ArrayUtil.numberArrayEqual)
+    ).subscribe(ids => this.onSectionsChange(ids));
+
     this.searchFilter$.pipe(takeUntil(this.destroy)).subscribe(sf => this.searchUpdated(sf));
+
+    this.loadAreas().pipe(
+      takeUntil(this.destroy)
+    ).subscribe(areas => {
+      this.setSelectableAreas(areas);
+      this.setInitialSelections();
+    });
   }
 
   ngOnDestroy() {
@@ -175,7 +182,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   onKindSpecifierChange(kindsWithSpecifiers: KindsWithSpecifiers) {
     this.application.kindsWithSpecifiers = kindsWithSpecifiers;
     this.kindsSelected = this.application.kinds.length > 0;
-    this.loadFixedLocations();
+    this.loadAreas().pipe(
+      takeUntil(this.destroy)
+    ).subscribe(areas => this.setSelectableAreas(areas));
     this.notifyEditingAllowed();
     this.resetFixedLocations();
   }
@@ -291,17 +300,17 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private loadFixedLocations(): void {
+  private loadAreas(): Observable<FixedLocationArea[]> {
     if (hasSingleKind(this.application.type)) {
-      this.fixedLocationService.existing
-        .subscribe(fixedLocations => {
-          this.areas = fixedLocations
-            .filter(f => f.hasSectionsForKind(this.application.kind))
-            .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name));
-
-          this.areaSections = [];
-          this.setInitialSelections();
-        });
+      return this.fixedLocationService.existing.pipe(
+        takeUntil(this.destroy),
+        map(fixedLocations => fixedLocations
+          .filter(f => f.hasSectionsForKind(this.application.kind))
+          .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name))
+        )
+      );
+    } else {
+      return EMPTY;
     }
   }
 
@@ -427,5 +436,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.areaCtrl.reset(undefined);
       this.sectionsCtrl.reset([]);
     }
+  }
+
+  private setSelectableAreas(areas: FixedLocationArea[]): void {
+    this.areas = areas;
+    this.areaSections = [];
   }
 }

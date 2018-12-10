@@ -22,12 +22,6 @@ export class FixedLocationService {
     return this.fixedLocations$.pipe(distinctUntilChanged());
   }
 
-  public areasByIds(ids: Array<number>): Observable<FixedLocationArea[]> {
-    return this.fixedLocations$.pipe(
-      map(areas => areas.filter(a => ids.indexOf(a.id) >= 0))
-    );
-  }
-
   public areaById(id: number): Observable<FixedLocationArea> {
     return this.fixedLocations$.pipe(
       map(areas => areas.find(a => a.id === id)),
