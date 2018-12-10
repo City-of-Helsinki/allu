@@ -159,6 +159,10 @@ public class ApplicationStatusChangeHandler {
     return !supervisionTaskService.findByApplicationIdAndType(application.getId(), type).isEmpty();
   }
 
+  protected void cancelOpenSupervisionTasks(Integer applicationId) {
+    supervisionTaskService.cancelOpenTasksOfApplication(applicationId);
+  }
+
   private Integer getSupervisionTaskOwner(Application application) {
     Integer cityDistrict = application.getLocations().get(0).getCityDistrictId();
     Integer supervisionTaskOwner = null;

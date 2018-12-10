@@ -130,6 +130,17 @@ public class AreaRentalStatusChangeHandlerTest {
     verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(workFinishedDate));
   }
 
+  @Test
+  public void onFinishedShouldCancelOpenSupervisionTasks() {
+    application.setType(ApplicationType.AREA_RENTAL);
+    ZonedDateTime workFinishedDate = LocalDate.parse("2019-11-11").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    AreaRental extension = new AreaRental();
+    extension.setWorkFinished(workFinishedDate);
+    application.setExtension(extension);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(supervisionTaskService, times(1)).cancelOpenTasksOfApplication(eq(application.getId()));
+  }
+
   private void createApplicationWithLocations() {
     locations = new HashMap<>();
     location1 = new Location();

@@ -44,6 +44,7 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
     invoiceService.lockInvoices(application.getId());
     invoiceService.setInvoicableTime(application.getId(), extension.getWorkFinished());
     lockChargeBasisEntries(application.getId());
+    cancelOpenSupervisionTasks(application.getId());
   }
 
 }

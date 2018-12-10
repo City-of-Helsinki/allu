@@ -35,9 +35,8 @@ import {UserService} from '@service/user/user-service';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@feature/decision/proposal/decision-proposal-modal.component';
 import {CommentType} from '@model/application/comment/comment-type';
 import {ApplicationStatus} from '@model/application/application-status';
-import {findTranslation} from '@util/translations';
 import {StatusChangeInfo} from '@model/application/status-change-info';
-import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {
   ExcavationSupervisionApprovalModalComponent,
   ExcavationSupervisionApprovalModalData
@@ -49,6 +48,7 @@ import {
 import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/date-reporting-actions';
 import {Location} from '@model/common/location';
 import {AreaRental} from '@model/application/area-rental/area-rental';
+import {Load} from '@feature/application/supervision/actions/supervision-task-actions';
 
 @Component({
   selector: 'supervision-task',
@@ -364,7 +364,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private changeStatus(status: ApplicationStatus, changeInfo?: StatusChangeInfo): void {
     this.applicationStore.changeStatus(this.application.id, status, changeInfo)
       .subscribe(
-        () => {},
+        () => this.store.dispatch(new Load()),
         err => this.store.dispatch(new NotifyFailure(err)));
   }
 
