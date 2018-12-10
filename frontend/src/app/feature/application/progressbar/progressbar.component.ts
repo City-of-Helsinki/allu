@@ -3,11 +3,10 @@ import {Application} from '@model/application/application';
 import {NumberUtil} from '@util/number.util';
 import {ApplicationIdentifier} from '@model/application/application-identifier';
 import {ApplicationService} from '@service/application/application.service';
-import {NotificationService} from '@feature/notification/notification.service';
 import {Router} from '@angular/router';
 import {ApplicationStatus} from '@model/application/application-status';
-import {Observable, of} from 'rxjs/index';
-import {catchError, map} from 'rxjs/internal/operators';
+import {Observable} from 'rxjs/index';
+import {map} from 'rxjs/internal/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 
@@ -29,12 +28,13 @@ export type ProgressColor =
   encapsulation: ViewEncapsulation.None
 })
 export class ProgressbarComponent implements OnInit {
-  @Input() application: Application;
   progress: number;
   color: ProgressColor;
   replacements$: Observable<ApplicationIdentifier[]>;
   hasReplacements$: Observable<boolean>;
   existingApplication: boolean;
+
+  private _application: Application = new Application();
 
   constructor(private router: Router,
               private service: ApplicationService,
@@ -42,11 +42,17 @@ export class ProgressbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.progress = this.calculateProgress(this.application.status);
-    this.color = this.calculateColor(this.application.status);
-    this.existingApplication = NumberUtil.isDefined(this.application.id);
     this.replacements$ = this.store.pipe(select(fromApplication.getReplacementHistory));
     this.hasReplacements$ = this.replacements$.pipe(map(replacements => replacements.length > 1));
+  }
+
+  @Input()
+  get application() { return this._application; }
+  set application(application: Application) {
+    this._application = application;
+    this.progress = this.calculateProgress(application.status);
+    this.color = this.calculateColor(application.status);
+    this.existingApplication = NumberUtil.isDefined(application.id);
   }
 
   show(id: number) {
@@ -76,6 +82,7 @@ export class ProgressbarComponent implements OnInit {
         return 75;
       }
 
+      case ApplicationStatus.NOTE:
       case ApplicationStatus.DECISION:
       case ApplicationStatus.OPERATIONAL_CONDITION:
       case ApplicationStatus.REJECTED:
@@ -105,6 +112,7 @@ export class ProgressbarComponent implements OnInit {
         return 'cancelled';
       }
 
+      case ApplicationStatus.NOTE:
       case ApplicationStatus.FINISHED: {
         return 'finished';
       }
