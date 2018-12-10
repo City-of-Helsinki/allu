@@ -152,7 +152,7 @@
             <th>Aluetunnus</th>
             <th>Voimassaolo</th>
             <th>Osoite</th>
-            <th>Altakuljettava</th>
+            <th>Altakulj.</th>
             <th>Pinta-ala</th>
             <th>à</th>
             <th>à € / alkava 15m²</th>

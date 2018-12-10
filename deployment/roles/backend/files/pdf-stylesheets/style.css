@@ -202,12 +202,17 @@ img.checkbox {
   float: left;
   margin-right: 5px;
 }
+
 .area-table, .area-table tr, .area-table th, .area-table td {
   border: 0.5px solid black;
   border-collapse: collapse;
   padding: 3px;
-  font-size: 8pt;
+  font-size: 7pt;
   text-align: center;
+}
+
+.area-table {
+  width: 100%;
 }
 
 tr.finished {
