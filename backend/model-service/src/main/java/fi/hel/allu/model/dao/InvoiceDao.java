@@ -244,6 +244,16 @@ public class InvoiceDao {
   }
 
   @Transactional(readOnly = true)
+  public List<Integer> getInvoicedChargeBasisIds(int applicationId) {
+    return queryFactory
+        .select(invoiceRow.chargeBasisId)
+        .from(invoiceRow)
+        .join(invoice).on(invoice.id.eq(invoiceRow.invoiceId))
+        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isTrue())
+        .fetch();
+  }
+
+  @Transactional(readOnly = true)
   public boolean hasUninvoicedInvoices(Integer applicationId) {
     return queryFactory.select(invoice.id).from(invoice)
         .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse())

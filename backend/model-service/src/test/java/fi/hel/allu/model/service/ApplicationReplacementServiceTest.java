@@ -13,10 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.types.AttachmentType;
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.common.types.PublicityType;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.common.util.ApplicationIdUtil;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.*;
@@ -47,6 +44,8 @@ public class ApplicationReplacementServiceTest {
   private SupervisionTaskDao supervisionTaskDao;
   @Autowired
   private DepositDao depositDao;
+  @Autowired
+  private ChargeBasisDao chargeBasisDao;
   @Autowired
   private AttachmentDao attachmentDao;
   @Autowired
@@ -159,6 +158,15 @@ public class ApplicationReplacementServiceTest {
     assertEquals(original.getAttachmentDataId(), replacing.getAttachmentDataId());
   }
 
+  @Test
+  public void shouldCopyManualChargeBasisEntries() {
+    insertChargeBasisEntries();
+    Application application = replaceApplication();
+    List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(application.getId());
+    entries.forEach(e -> assertTrue(e.getManuallySet()));
+  }
+
+
   @Test(expected = IllegalArgumentException.class)
   public void shouldNotReplaceInInvalidState() {
     applicationReplacementService.replaceApplication(originalApplication.getId(), testUser.getId());
@@ -172,6 +180,28 @@ public class ApplicationReplacementServiceTest {
     byte data[] = {1, 2, 3};
     attachmentDao.insert(originalApplication.getId(), attachment, data);
   }
+
+  private void insertChargeBasisEntries() {
+    ChargeBasisEntry manual = new ChargeBasisEntry();
+    manual.setManuallySet(true);
+    manual.setType(ChargeBasisType.ADDITIONAL_FEE);
+    manual.setUnit(ChargeBasisUnit.PIECE);
+    manual.setUnitPrice(1);
+    manual.setNetPrice(1);
+    manual.setQuantity(1);
+    manual.setText("manual");
+    ChargeBasisEntry calculated = new ChargeBasisEntry();
+    calculated.setManuallySet(false);
+    calculated.setType(ChargeBasisType.AREA_USAGE_FEE);
+    calculated.setUnit(ChargeBasisUnit.DAY);
+    calculated.setUnitPrice(1);
+    calculated.setNetPrice(1);
+    calculated.setQuantity(1);
+    calculated.setText("calculated");
+    chargeBasisDao.setChargeBasis(new ChargeBasisModification(originalApplication.getId(), Collections.singletonList(manual), Collections.emptySet(), Collections.emptyMap(), true));
+    chargeBasisDao.setChargeBasis(new ChargeBasisModification(originalApplication.getId(), Collections.singletonList(calculated), Collections.emptySet(), Collections.emptyMap(), false));
+  }
+
 
   private void insertSupervisionTasks() {
     SupervisionTask supervisionTask = new SupervisionTask();

@@ -12,10 +12,7 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CommentDao;
-import fi.hel.allu.model.dao.DepositDao;
-import fi.hel.allu.model.dao.SupervisionTaskDao;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 
 import static fi.hel.allu.common.domain.types.ApplicationTagType.*;
@@ -60,16 +57,21 @@ public class ApplicationReplacementService {
   private final LocationService locationService;
   private final DepositDao depositDao;
   private final SupervisionTaskDao supervisionTaskDao;
+  private final ChargeBasisDao chargeBasisDao;
+  private final InvoiceDao invoiceDao;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
-      LocationService locationService, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao) {
+      LocationService locationService, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao, ChargeBasisDao chargeBasisDao,
+      InvoiceDao invoiceDao) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
     this.commentDao = commentDao;
     this.depositDao = depositDao;
     this.supervisionTaskDao = supervisionTaskDao;
+    this.chargeBasisDao = chargeBasisDao;
+    this.invoiceDao = invoiceDao;
   }
 
   /**
@@ -117,6 +119,7 @@ public class ApplicationReplacementService {
     applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());
     supervisionTaskDao.copyApprovedSupervisionTasks(applicationId, replacingApplication.getId());
+    chargeBasisDao.copyManualChargeBasisEntries(applicationId, replacingApplication.getId(), invoiceDao.getInvoicedChargeBasisIds(applicationId));
   }
 
   private Application addReplacingApplication(Application applicationToReplace, int userId) {
@@ -163,7 +166,7 @@ public class ApplicationReplacementService {
     application.setReplacesApplicationId(applicationToReplace.getId());
     application.setExternalOwnerId(applicationToReplace.getExternalOwnerId());
     application.setExternalApplicationId(applicationToReplace.getExternalApplicationId());
-
+    application.setSkipPriceCalculation(applicationToReplace.getSkipPriceCalculation());
     return application;
   }
 

@@ -3,10 +3,8 @@ package fi.hel.allu.model.dao;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -186,5 +184,18 @@ public class ChargeBasisDao {
         .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.manuallySet.isTrue(),
             chargeBasis.locked.isNull().or(chargeBasis.locked.isFalse()))
         .execute();
+  }
+
+  @Transactional
+  public void copyManualChargeBasisEntries(int fromApplicationId, Integer toApplicationId, List<Integer> filteredIds) {
+    List<ChargeBasisEntry> entries =
+    queryFactory.select(chargeBasisBean).from(chargeBasis)
+        .where(chargeBasis.applicationId.eq(fromApplicationId),
+               chargeBasis.manuallySet.isTrue(),
+               chargeBasis.referredTag.isNull(),
+               chargeBasis.id.notIn(filteredIds))
+        .fetch();
+    entries.forEach(e -> e.setId(null));
+    insertEntries(toApplicationId, entries, true, nextEntryNumber(toApplicationId, true));
   }
 }
