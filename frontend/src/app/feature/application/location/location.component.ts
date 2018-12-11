@@ -207,7 +207,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   storeLocation(form: LocationForm): void {
     this.locationState.storeLocation(LocationForm.to(form));
-    this.resetForm();
+    this.resetForm(form);
     this.mapController.clearEdited();
   }
 
@@ -418,9 +418,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  private resetForm(): void {
-    this.locationForm.reset(LocationForm.from(new Location()));
-    this.mapStore.locationSearchFilterChange({address: undefined, startDate: undefined, endDate: undefined});
+  private resetForm(form: LocationForm = new LocationForm()): void {
+    const location = LocationForm.to(form);
+    this.locationForm.reset({streetAddress: form.streetAddress, startTime: form.startTime, endTime: form.endTime});
+    this.mapStore.locationSearchFilterChange({address: form.streetAddress, startDate: location.startTime, endDate: location.endTime});
   }
 
   private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {
