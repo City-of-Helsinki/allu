@@ -11,13 +11,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.external.domain.ApplicationExt;
-import fi.hel.allu.external.domain.CustomerWithContactsExt;
-import fi.hel.allu.external.domain.LocationExt;
-import fi.hel.allu.external.domain.SupervisionTaskExt;
+import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.service.LocationServiceExt;
-import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import io.swagger.annotations.*;
 
@@ -98,6 +94,21 @@ public class ApplicationController {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     return ResponseEntity.ok(applicationService.findApplicationCustomers(applicationId));
+  }
+
+  @ApiOperation(value = "Gets invoice recipient for given application ID.",
+      produces = "application/json",
+      authorizations=@Authorization(value ="api_key"))
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Invoice recipient retrieved successfully", response = CustomerExt.class),
+      @ApiResponse(code = 404, message = "No invoice recipient found for application with given ID")
+  })
+  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<CustomerExt> getInvoiceRecipient(@ApiParam(value = "Id of the application") @PathVariable Integer id) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    return ResponseEntity.ok(applicationService.findInvoiceRecipient(applicationId));
   }
 
   @ApiOperation(value = "Gets supervision tasks for application with given application ID.",

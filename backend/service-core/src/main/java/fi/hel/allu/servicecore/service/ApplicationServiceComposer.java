@@ -19,6 +19,7 @@ import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
@@ -525,5 +526,9 @@ public class ApplicationServiceComposer {
 
   private StatusType getApplicationCreationStatus(ApplicationType type, StatusType status) {
     return type == ApplicationType.NOTE ? StatusType.NOTE : status;
+  }
+
+  public Customer findInvoiceRecipient(Integer applicationId) {
+    return applicationService.findInvoiceRecipient(applicationId);
   }
 }

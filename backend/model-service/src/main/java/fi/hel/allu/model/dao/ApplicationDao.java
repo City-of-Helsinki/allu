@@ -925,4 +925,13 @@ public class ApplicationDao {
   public void setInvoicingPeriodLength(Integer applicationId, Integer periodLength) {
     queryFactory.update(application).set(application.invoicingPeriodLength, periodLength).where(application.id.eq(applicationId)).execute();
   }
+
+  @Transactional(readOnly = true)
+  public Integer getInvoiceRecipientId(int id) {
+    return queryFactory
+        .select(application.invoiceRecipientId)
+        .from(application)
+        .where(application.id.eq(id))
+        .fetchOne();
+  }
 }

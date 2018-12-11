@@ -28,10 +28,7 @@ import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
 import fi.hel.allu.external.mapper.CustomerExtMapper;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.CustomerWithContacts;
-import fi.hel.allu.model.domain.InformationRequest;
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
@@ -218,5 +215,10 @@ public class ApplicationServiceExt {
   public Map<CustomerRoleType, CustomerWithContactsExt> findApplicationCustomers(Integer applicationId) {
     return applicationServiceComposer.findApplicationCustomers(applicationId).stream().collect(
         Collectors.toMap(CustomerWithContacts::getRoleType, c -> customerMapper.mapCustomerWithContactsExt(c)));
+  }
+
+  public CustomerExt findInvoiceRecipient(Integer applicationId) {
+    Customer invoiceRecipient = applicationServiceComposer.findInvoiceRecipient(applicationId);
+    return invoiceRecipient != null ? customerMapper.mapCustomerExt(invoiceRecipient) : null;
   }
 }

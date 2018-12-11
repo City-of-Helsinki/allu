@@ -113,7 +113,7 @@ public class CustomerExtMapper {
     return customerWithContactsExt;
   }
 
-  private CustomerExt mapCustomerExt(Customer customer) {
+  public CustomerExt mapCustomerExt(Customer customer) {
     CustomerExt customerExt = new CustomerExt();
     customerExt.setCountry(getCountryCode(customer.getCountryId()));
     customerExt.setEmail(customer.getEmail());

@@ -26,6 +26,7 @@ public class ApplicationExt {
   private UserExt owner;
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
   private String terms;
+  private String customerReference;
 
   @ApiModelProperty(value = "Id of the application")
   public Integer getId() {
@@ -106,5 +107,14 @@ public class ApplicationExt {
 
   public void setTerms(String terms) {
     this.terms = terms;
+  }
+
+  @ApiModelProperty(value = "Customer reference to the invoice")
+  public String getCustomerReference() {
+    return customerReference;
+  }
+
+  public void setCustomerReference(String customerReference) {
+    this.customerReference = customerReference;
   }
 }

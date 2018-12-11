@@ -98,6 +98,7 @@ public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
     applicationExt.setStatus(application.getStatus());
     applicationExt.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
     applicationExt.setTerms(application.getExtension().getTerms());
+    applicationExt.setCustomerReference(application.getCustomerReference());
     return applicationExt;
   }
 

@@ -441,6 +441,12 @@ public class ApplicationService {
     changeInvoiceRecipient(id, invoiceRecipientId, userId, application);
   }
 
+  @Transactional(readOnly = true)
+  public Customer getInvoiceRecipient(int id) {
+    Integer invoiceRecipientId = applicationDao.getInvoiceRecipientId(id);
+    return Optional.ofNullable(invoiceRecipientId).map(i -> customerDao.findById(i).orElse(null)).orElse(null);
+  }
+
   public void changeInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId, Application application) {
     application.setInvoiceRecipientId(invoiceRecipientId);
     applicationDao.update(id, application);

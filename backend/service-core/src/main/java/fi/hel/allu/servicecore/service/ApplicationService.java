@@ -461,4 +461,8 @@ public class ApplicationService {
     customers.forEach(c -> personAuditLogService.log(c, "ApplicationService"));
     return customers;
   }
+
+  public Customer findInvoiceRecipient(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getApplicationInvoiceRecipientUrl(), Customer.class, applicationId);
+  }
 }

@@ -388,6 +388,11 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/invoicerecipient", method = RequestMethod.GET)
+  public ResponseEntity<Customer> getInvoiceRecipient(@PathVariable int id) {
+    return ResponseEntity.ok(applicationService.getInvoiceRecipient(id));
+  }
+
   @RequestMapping(value = "/{id}/replacing", method = RequestMethod.GET)
   public ResponseEntity<Integer> getReplacingApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.getReplacingApplicationId(id), HttpStatus.OK);
