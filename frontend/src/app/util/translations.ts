@@ -35,6 +35,7 @@ export const translations = {
     replaced: 'Korvatut',
     invoiced: 'Laskutettu',
     receivedTime: 'Hakemus saapunut',
+    orderer: 'Hakemuksen tilaaja',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',

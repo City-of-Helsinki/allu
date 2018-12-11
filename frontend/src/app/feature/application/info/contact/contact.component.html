@@ -85,19 +85,26 @@
                 </mat-form-field>
               </div>
             </div>
-            <div fxLayout="row wrap" fxLayoutGap="18px" id="orderer">
+            <div fxLayout="row" fxLayoutGap="18px" id="orderer">
               <div fxFlex="calc(50% - 18px)">
-                
                 <button *ngIf="canBeAddedToDistribution(index)" mat-button type="button" color="primary" (click)="addToDistribution(index)">
                   <mat-icon>add</mat-icon>
                   {{'contact.addToDistribution' | translation }}
                 </button>
               </div>
-              <div fxFlex="calc(50% - 18px)" *ngIf="showOrderer" >
+              <div fxFlex="calc(25% - 18px)" *ngIf="showOrderer" >
                 <mat-radio-button name="orderer" [checked]="isOrderer(index)" [disabled]="readonly"
                                   (change)="selectOrderer(index)">
-                  Hakemuksen tilaaja
+                  {{'application.orderer' | translation}}
                 </mat-radio-button>
+              </div>
+              <div fxFlex="auto" class="align-right" *ngIf="showSaveContact$(contact.value) | async">
+                <button type="button"
+                        mat-raised-button color="primary"
+                        [disabled]="!contact.valid"
+                        (click)="save(contact.value, index)">
+                  {{'contact.createNew' | translation | uppercase}}
+                </button>
               </div>
             </div>
           </mat-card-content>

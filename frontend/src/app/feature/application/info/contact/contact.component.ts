@@ -1,21 +1,24 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
-import {Contact} from '../../../../model/customer/contact';
-import {Some} from '../../../../util/option';
-import {NumberUtil} from '../../../../util/number.util';
-import {Observable, Subject} from 'rxjs';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
-import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
-import {ApplicationStore} from '../../../../service/application/application-store';
-import {ApplicationType} from '../../../../model/application/type/application-type';
+import {Contact} from '@model/customer/contact';
+import {Some} from '@util/option';
+import {NumberUtil} from '@util/number.util';
+import {Observable} from 'rxjs';
+import {CustomerWithContactsForm} from '@feature/customerregistry/customer/customer-with-contacts.form';
+import {CustomerRoleType} from '@model/customer/customer-role-type';
+import {ApplicationStore} from '@service/application/application-store';
+import {ApplicationType} from '@model/application/type/application-type';
 import {createDefaultOrdererId, fromOrdererId, toOrdererId} from '../cable-report/cable-report.form';
-import {FormUtil} from '../../../../util/form.util';
-import {CustomerService} from '../../../../service/customer/customer.service';
-import {debounceTime, map, switchMap, tap} from 'rxjs/internal/operators';
-import {DistributionListEvents} from '../../distribution/distribution-list/distribution-list-events';
+import {FormUtil} from '@util/form.util';
+import {CustomerService} from '@service/customer/customer.service';
+import {debounceTime, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {DistributionType} from '@model/common/distribution-type';
 import {OrdererId} from '@model/application/cable-report/orderer-id';
+import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {findTranslation} from '@util/translations';
+import {NotificationService} from '@feature/notification/notification.service';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -39,15 +42,17 @@ export class ContactComponent implements OnInit {
   matchingContacts: Observable<Array<Contact>>;
   showOrderer = false;
 
-  private customerIdChanges = new Subject<number>();
+  private customerIdChanges = new BehaviorSubject<number>(undefined);
 
   constructor(private fb: FormBuilder,
               private customerService: CustomerService,
               private applicationStore: ApplicationStore,
-              private distributionListEvents: DistributionListEvents) {}
+              private distributionListEvents: DistributionListEvents,
+              private notification: NotificationService) {}
 
   ngOnInit(): void {
-    this.availableContacts = this.customerIdChanges.asObservable().pipe(
+    this.availableContacts = this.customerIdChanges.pipe(
+      filter(id => NumberUtil.isDefined(id)),
       switchMap(id => this.customerService.findCustomerActiveContacts(id))
     );
 
@@ -103,6 +108,7 @@ export class ContactComponent implements OnInit {
     if (NumberUtil.isDefined(customerId)) {
       this.availableContacts = this.customerService.findCustomerActiveContacts(customerId);
     }
+    this.customerIdChanges.next(customerId);
   }
 
   addContact(contact: Contact = new Contact()): void {
@@ -118,6 +124,25 @@ export class ContactComponent implements OnInit {
     if (NumberUtil.isDefined(contact.id)) {
       this.disableContactEdit(this.contacts.length - 1);
     }
+  }
+
+  showSaveContact$(contact: Contact): Observable<boolean> {
+    const newContact = !NumberUtil.isExisting(contact);
+    return this.customerIdChanges.pipe(
+      take(1),
+      map(id => NumberUtil.isDefined(id) && newContact)
+    );
+  }
+
+  save(contact: Contact, index: number): void {
+    this.customerIdChanges.pipe(
+      filter(id => NumberUtil.isDefined(id)),
+      take(1),
+      switchMap(customerId => this.customerService.saveContact(customerId, contact))
+    ).subscribe(saved => {
+      this.notification.success(findTranslation('contact.action.save'));
+      this.contactSelected(saved, index);
+    });
   }
 
   /**
