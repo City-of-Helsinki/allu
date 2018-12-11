@@ -5,7 +5,7 @@ import {MatCardModule} from '@angular/material';
 import {ContactComponent} from '../../../../../src/app/feature/application/info/contact/contact.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
 import {ApplicationStore} from '../../../../../src/app/service/application/application-store';
-import {ApplicationStoreMock, CustomerServiceMock} from '../../../../mocks';
+import {ApplicationStoreMock, CustomerServiceMock, NotificationServiceMock} from '../../../../mocks';
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {CustomerWithContactsForm} from '../../../../../src/app/feature/customerregistry/customer/customer-with-contacts.form';
 import {DebugElement} from '@angular/core';
@@ -17,6 +17,7 @@ import {createDefaultOrdererId, OrdererIdForm} from '../../../../../src/app/feat
 import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
+import {NotificationService} from '@feature/notification/notification.service';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');
@@ -60,7 +61,8 @@ describe('ContactComponent', () => {
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
-        {provide: DistributionListEvents, useClass: DistributionListEvents}
+        {provide: DistributionListEvents, useClass: DistributionListEvents},
+        {provide: NotificationService, useClass: NotificationServiceMock}
       ]
     }).compileComponents();
   }));
