@@ -4,7 +4,7 @@ import {FixedLocationArea} from '../../model/common/fixed-location-area';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {LocationService} from '../location.service';
 import {NotificationService} from '../../feature/notification/notification.service';
-import {distinctUntilChanged, filter, map} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, take} from 'rxjs/internal/operators';
 
 @Injectable()
 export class FixedLocationService {
@@ -47,7 +47,8 @@ export class FixedLocationService {
 
   public sectionsByIds(ids: number[]) {
     return this.sections().pipe(
-      map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0))
+      map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0)),
+      take(1)
     );
   }
 }

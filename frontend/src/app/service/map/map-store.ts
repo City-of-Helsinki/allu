@@ -15,7 +15,8 @@ import {ObjectUtil} from '../../util/object.util';
 import {StoredFilter} from '../../model/user/stored-filter';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
-import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, filter, map, publish, tap} from 'rxjs/internal/operators';
+import {ArrayUtil} from '@util/array-util';
 
 export type MapRole = 'SEARCH' | 'LOCATION';
 
@@ -165,7 +166,7 @@ export class MapStore {
   get selectedSections(): Observable<number[]> {
     return this.store.pipe(
       map(state => state.selectedSections),
-      distinctUntilChanged()
+      distinctUntilChanged(ArrayUtil.numberArrayEqual)
     );
   }
 

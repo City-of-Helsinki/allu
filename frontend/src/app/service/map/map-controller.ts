@@ -7,7 +7,7 @@ import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
 import '../../js/leaflet/draw-line';
 
-import {Subject, Observable, combineLatest} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {MapUtil} from './map.util';
 import {Some} from '../../util/option';
 import {translations} from '../../util/translations';
@@ -20,8 +20,8 @@ import {MapEventHandler} from './map-event-handler';
 import {MapFeatureInfo} from './map-feature-info';
 import {MapPopupService} from './map-popup.service';
 import {Injectable} from '@angular/core';
+import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 import GeoJSONOptions = L.GeoJSONOptions;
-import {map, takeUntil} from 'rxjs/internal/operators';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -358,7 +358,8 @@ export class MapController {
       this.mapStore.selectedSections
     ).pipe(
       map(([drawing, sections]) => drawingAllowed(drawing, sections)),
-      takeUntil(this.destroy)
+      takeUntil(this.destroy),
+      distinctUntilChanged(),
     ).subscribe(allowed => this.setDynamicControls(allowed));
   }
 

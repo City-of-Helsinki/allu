@@ -33,7 +33,7 @@ import {FixedLocationService} from '@service/map/fixed-location.service';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import {Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, take, takeUntil, tap} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
@@ -330,7 +330,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .filter(ids => ids.length > 0)
       .do(ids => {
         this.sectionsCtrl.patchValue(ids);
-        this.mapStore.selectedSectionsChange(ids);
       });
   }
 
@@ -420,7 +419,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private resetForm(form: LocationForm = new LocationForm()): void {
     const location = LocationForm.to(form);
-    this.locationForm.reset({streetAddress: form.streetAddress, startTime: form.startTime, endTime: form.endTime});
+    this.locationForm.reset({streetAddress: form.streetAddress, startTime: form.startTime, endTime: form.endTime, sections: []});
     this.mapStore.locationSearchFilterChange({address: form.streetAddress, startDate: location.startTime, endDate: location.endTime});
   }
 

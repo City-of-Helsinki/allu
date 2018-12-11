@@ -1,17 +1,23 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {NumberUtil} from '../../util/number.util';
 import {Location} from '../../model/common/location';
 import {MapStore} from '../map/map-store';
 import {Some} from '../../util/option';
+import {Subscription} from 'rxjs/internal/Subscription';
 
 @Injectable()
-export class LocationState {
+export class LocationState implements OnDestroy {
   private locations$ = new BehaviorSubject<Array<Location>>([]);
   private _editIndex: number;
+  private locationsSub: Subscription;
 
   constructor(private mapStore: MapStore) {
-    this.locations.subscribe(locations => this.notifyOnChange(locations));
+    this.locationsSub = this.locations.subscribe(locations => this.notifyOnChange(locations));
+  }
+
+  ngOnDestroy(): void {
+    this.locationsSub.unsubscribe();
   }
 
   initLocations(locations: Array<Location>): void {
