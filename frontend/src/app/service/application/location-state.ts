@@ -15,7 +15,7 @@ export class LocationState {
   }
 
   initLocations(locations: Array<Location>): void {
-    this._editIndex = 0;
+    this._editIndex = undefined;
     this.locations$.next(locations);
   }
 

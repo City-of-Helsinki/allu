@@ -198,7 +198,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       streetAddress: searchFilter.address,
       startTime: searchFilter.startDate,
       endTime: searchFilter.endDate
-    }, {emitEvent: false});
+    });
   }
 
   onSearchChange(searchFilter: MapSearchFilter): void {
@@ -288,6 +288,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.mapStore.locationSearchFilterChange(this.createFilter(loc));
       this.location = loc;
     } else {
+      this.location = undefined;
       this.resetForm();
     }
   }
@@ -367,9 +368,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initForm(): void {
     this.locationState.initLocations(this.application.locations);
-    this.location = this.application.firstLocation;
-
-    if (this.location) {
+    const location = this.application.firstLocation;
+    if (!this.multipleLocations && location) {
+      this.location = location;
       const formValues = LocationForm.from(this.location);
       this.locationForm.patchValue(formValues);
       this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
