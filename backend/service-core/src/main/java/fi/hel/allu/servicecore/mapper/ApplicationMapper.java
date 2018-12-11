@@ -28,9 +28,12 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.history.ApplicationForHistory;
+import fi.hel.allu.servicecore.domain.history.ApplicationTagForHistory;
 import fi.hel.allu.servicecore.mapper.extension.*;
 import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.UserService;
+
 
 @Component
 public class ApplicationMapper {
@@ -207,7 +210,12 @@ public class ApplicationMapper {
     history.setStatus(application.getStatus());
     history.setType(application.getType());
     history.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
-    history.setApplicationTags(application.getApplicationTags());
+    if (application.getApplicationTags() != null) {
+      history.setApplicationTags(application.getApplicationTags()
+          .stream()
+          .map(t -> new ApplicationTagForHistory(t.getType()))
+          .collect(Collectors.toList()));
+    }
     history.setMetadataVersion(application.getMetadataVersion());
     history.setCreationTime(application.getCreationTime());
     history.setReceivedTime(application.getReceivedTime());
@@ -216,11 +224,12 @@ public class ApplicationMapper {
     history.setRecurringEndTime(application.getRecurringEndTime());
     history.setName(application.getName());
     history.setDecisionTime(application.getDecisionTime());
-    history.setDecisionMaker(application.getDecisionMaker());
+    history.setDecisionMaker(getUserRealName(application.getDecisionMaker()));
     history.setExtension(application.getExtension());
     history.setDecisionPublicityType(application.getDecisionPublicityType());
     history.setDecisionDistributionList(application.getDecisionDistributionList());
-    history.setOwner(application.getOwner());
+    history.setOwner(getUserRealName(application.getOwner()));
+    history.setHandler(getUserRealName(application.getHandler()));
     history.setCalculatedPrice(application.getCalculatedPrice());
     history.setNotBillable(application.getNotBillable());
     history.setNotBillableReason(application.getNotBillableReason());
@@ -245,8 +254,15 @@ public class ApplicationMapper {
       customers.forEach(c -> customerMap.put(c.getRoleType(), c));
     }
     return customerMap;
-
   }
+
+  private String getUserRealName(UserJson user) {
+    if (user != null) {
+      return user.getRealName();
+    }
+    return null;
+  }
+
   /**
    * Transfer the information from the given model-domain object to given ui-domain object
    * @param application

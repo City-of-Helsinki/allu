@@ -151,7 +151,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
     oldApplication.setApplicationTags(Arrays.asList(new ApplicationTagJson(11, ApplicationTagType.DEPOSIT_PAID, ZonedDateTime.now())));
     ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
     newApplication.setApplicationTags(
-        Arrays.asList(new ApplicationTagJson(12, ApplicationTagType.DEPOSIT_PAID, ZonedDateTime.now().plusDays(1))));
+        Arrays.asList(new ApplicationTagJson(12, ApplicationTagType.DATE_CHANGE, ZonedDateTime.now().plusDays(1))));
     applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
 
     Assert.assertNotNull(capturedChange);

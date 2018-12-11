@@ -10,6 +10,7 @@ import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.changehistory.CustomerChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.history.ApplicationForHistory;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.service.UserService;

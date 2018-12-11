@@ -1,4 +1,4 @@
-package fi.hel.allu.servicecore.domain;
+package fi.hel.allu.servicecore.domain.history;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationSpecifier;
@@ -6,6 +6,13 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
+import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
+import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
+import fi.hel.allu.servicecore.domain.CommentJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.DistributionEntryJson;
+import fi.hel.allu.servicecore.domain.LocationJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -20,11 +27,11 @@ public class ApplicationForHistory {
   private Integer id;
   private String applicationId;
   private ProjectJson project;
-  private UserJson owner;
-  private UserJson handler;
+  private String owner;
+  private String handler;
   private StatusType status;
   private ApplicationType type;
-  private List<ApplicationTagJson> applicationTags;
+  private List<ApplicationTagForHistory> applicationTags;
   private Integer metadataVersion;
   private String name;
   private ZonedDateTime creationTime;
@@ -37,7 +44,7 @@ public class ApplicationForHistory {
   private ApplicationExtensionJson extension;
   private PublicityType decisionPublicityType;
   private ZonedDateTime decisionTime;
-  private UserJson decisionMaker;
+  private String decisionMaker;
   private List<DistributionEntryJson> decisionDistributionList;
   private List<AttachmentInfoJson> attachmentList;
   private List<CommentJson> comments;
@@ -83,19 +90,19 @@ public class ApplicationForHistory {
     this.project = project;
   }
 
-  public UserJson getOwner() {
+  public String getOwner() {
     return owner;
   }
 
-  public void setOwner(UserJson owner) {
+  public void setOwner(String owner) {
     this.owner = owner;
   }
 
-  public UserJson getHandler() {
+  public String getHandler() {
     return handler;
   }
 
-  public void setHandler(UserJson handler) {
+  public void setHandler(String handler) {
     this.handler = handler;
   }
 
@@ -115,11 +122,11 @@ public class ApplicationForHistory {
     this.type = type;
   }
 
-  public List<ApplicationTagJson> getApplicationTags() {
+  public List<ApplicationTagForHistory> getApplicationTags() {
     return applicationTags;
   }
 
-  public void setApplicationTags(List<ApplicationTagJson> applicationTags) {
+  public void setApplicationTags(List<ApplicationTagForHistory> applicationTags) {
     this.applicationTags = applicationTags;
   }
 
@@ -211,11 +218,11 @@ public class ApplicationForHistory {
     this.decisionTime = decisionTime;
   }
 
-  public UserJson getDecisionMaker() {
+  public String getDecisionMaker() {
     return decisionMaker;
   }
 
-  public void setDecisionMaker(UserJson decisionMaker) {
+  public void setDecisionMaker(String decisionMaker) {
     this.decisionMaker = decisionMaker;
   }
 
