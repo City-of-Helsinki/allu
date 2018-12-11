@@ -154,7 +154,7 @@
             <th>Osoite</th>
             <th>Altakulj.</th>
             <th>Pinta-ala</th>
-            <th>à</th>
+            <th>ML</th>
             <th>à € / alkava 15m²</th>
             <th>pv</th>
             <th>Maksu</th>
