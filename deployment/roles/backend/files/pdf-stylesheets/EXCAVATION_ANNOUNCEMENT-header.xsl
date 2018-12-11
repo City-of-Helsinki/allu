@@ -27,22 +27,16 @@
     </script>
   </head>
 
-  <!-- Set header height depending on header content -->
-  <xsl:variable name="bodyStyle">
-    <xsl:choose>
-      <xsl:when test="data/replacingDecision = 'true' and data/identificationNumber != ''">
-        <xsl:text>height:45mm;margin:0;padding:0;</xsl:text>
-      </xsl:when>
-      <xsl:when test="data/replacingDecision = 'true' or data/identificationNumber != ''">
-        <xsl:text>height:40mm;margin:0;padding:0;</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-         <xsl:text>height:34mm;margin:0;padding:0;</xsl:text>
-      </xsl:otherwise>
-    </xsl:choose>
+  <xsl:variable name="headerHeight">
+    <xsl:text><xsl:value-of select="32 + data/headerRows * 4"/></xsl:text>
   </xsl:variable>
 
-  <body style='{$bodyStyle}' onLoad='getPdfInfo()'>
+  <body onLoad='getPdfInfo()'>
+    <xsl:attribute name="style">
+      <xsl:text>height:</xsl:text>
+      <xsl:value-of select="$headerHeight"/>
+      <xsl:text>mm;margin:0;padding:0;</xsl:text>
+    </xsl:attribute>
     <div class="header">
       <div class="logo">
         <img src="helsinki-logo.png" />
@@ -77,10 +71,19 @@
               <td class="c2"><xsl:value-of select="data/decisionId" /></td>
             </tr>
             <xsl:if test="data/identificationNumber != ''">
+              <td class="c1">Asiointitunnus:</td>
+              <td class="c2"><xsl:value-of select="data/identificationNumber" /></td>
+            </xsl:if>
+            <xsl:if test="data/cableReports != ''">
               <tr>
-                <td class="c1">Asiointitunnus:</td>
-                <!-- [asiointitunnus] -->
-                <td class="c2"><xsl:value-of select="data/identificationNumber" /></td>
+                <td class="c1">Johtoselvitystunnus:</td>
+                <td class="c2"><xsl:value-of select="data/cableReports" /></td>
+              </tr>
+            </xsl:if>
+            <xsl:if test="data/placementContracts != ''">
+              <tr>
+                <td class="c1">Sijoitussopimustunnus:</td>
+                <td class="c2"><xsl:value-of select="data/placementContracts" /></td>
               </tr>
             </xsl:if>
           </table>

@@ -122,6 +122,11 @@ public class DecisionJson {
   private String invoicingOperator;
   private String customerReference;
 
+  private String placementContracts;
+  private String cableReports;
+
+  private int headerRows;
+
   public boolean isDraft() {
     return isDraft;
   }
@@ -822,4 +827,27 @@ public class DecisionJson {
     this.customerReference = customerReference;
   }
 
+  public String getPlacementContracts() {
+    return placementContracts;
+  }
+
+  public void setPlacementContracts(String placementContracts) {
+    this.placementContracts = placementContracts;
+  }
+
+  public String getCableReports() {
+    return cableReports;
+  }
+
+  public void setCableReports(String cableReports) {
+    this.cableReports = cableReports;
+  }
+
+  public int getHeaderRows() {
+    return headerRows;
+  }
+
+  public void setHeaderRows(int headerRows) {
+    this.headerRows = headerRows;
+  }
 }

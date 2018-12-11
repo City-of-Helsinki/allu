@@ -124,6 +124,12 @@ public class DecisionJsonMapper {
       kindsWithSpecifiers.add(k);
     });
     decisionJson.setKinds(kindsWithSpecifiers);
+    decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
+    decisionJson.setNotBillable(Boolean.TRUE.equals(application.getNotBillable()));
+    decisionJson.setNotBillableReason(application.getNotBillableReason());
+    fillCargeBasisInfo(decisionJson, application);
+    decisionJson.setIdentificationNumber(application.getIdentificationNumber());
+    decisionJson.setReplacingDecision(application.getReplacesApplicationId() != null);
 
     getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
     decisionJson.setCustomerReference(application.getCustomerReference());
@@ -194,12 +200,6 @@ public class DecisionJsonMapper {
       decisionJson.setDeciderTitle(decider.getTitle());
       decisionJson.setDeciderName(decider.getRealName());
     }
-    decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
-    decisionJson.setNotBillable(Boolean.TRUE.equals(application.getNotBillable()));
-    decisionJson.setNotBillableReason(application.getNotBillableReason());
-    fillCargeBasisInfo(decisionJson, application);
-    decisionJson.setIdentificationNumber(application.getIdentificationNumber());
-    decisionJson.setReplacingDecision(application.getReplacesApplicationId() != null);
     convertNonBreakingSpacesToSpaces(decisionJson);
     return decisionJson;
   }
@@ -482,6 +482,13 @@ public class DecisionJsonMapper {
     decision.setCompactionAndBearingCapacityMeasurement(excavationAnnouncement.getCompactionAndBearingCapacityMeasurement());
     decision.setQualityAssuranceTest(excavationAnnouncement.getQualityAssuranceTest());
     decision.setGuaranteeEndTime(formatDateWithDelta(excavationAnnouncement.getGuaranteeEndTime(), 0));
+    decision.setPlacementContracts(listToString(excavationAnnouncement.getPlacementContracts()));
+    decision.setCableReports(listToString(excavationAnnouncement.getCableReports()));
+    decision.setHeaderRows(countHeaderRows(decision, Arrays.asList(
+        DecisionJson::isReplacingDecision,
+        DecisionJson::getIdentificationNumber,
+        DecisionJson::getCableReports,
+        DecisionJson::getPlacementContracts)));
   }
 
   private void fillAreaRentalSpecifics(DecisionJson decision, ApplicationJson application) {
@@ -881,6 +888,17 @@ public class DecisionJsonMapper {
       }
     }
     return null;
+  }
+
+  private String listToString(List<String> list) {
+    if (list != null && !list.isEmpty()) {
+      return String.join(", ",list);
+    }
+    return null;
+  }
+
+  private int countHeaderRows(DecisionJson decision, List<Function<DecisionJson, Object>> getters) {
+    return (int)getters.stream().map(f -> f.apply(decision)).filter(r -> r != null).count();
   }
 
   private String translate(ApplicationKind kind) {
