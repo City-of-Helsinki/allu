@@ -18,18 +18,26 @@
         <mat-card-content>
           <customer-info [form]="customerForm" [allowSearch]="true"
                          (customerChange)="onCustomerChange($event)"></customer-info>
-          <div class="row form-group">
-            <div class="col m6 height-fix-bottom" *ngIf="showRepresentative">
+          <div fxLayout="row">
+            <div fxFlex="50%" *ngIf="showRepresentative">
               <mat-checkbox [checked]="parentForm.getRawValue().hasRepresentative" [disabled]="readonly"
                             (change)="onRepresentativeChange($event.checked)">
                 {{'customer.handledByRepresentative' | translation}}
               </mat-checkbox>
             </div>
-            <div class="col m6 height-fix-bottom" *ngIf="showPropertyDeveloper">
+            <div fxFlex="50%" *ngIf="showPropertyDeveloper">
               <mat-checkbox [checked]="parentForm.getRawValue().hasPropertyDeveloper" [disabled]="readonly"
                             (change)="onPropertyDeveloperChange($event.checked)">
                 {{'customer.hasPropertyDeveloper' | translation}}
               </mat-checkbox>
+            </div>
+            <div fxFlex="50%" *ngIf="isNewCustomer" class="align-right">
+              <button type="button" mat-raised-button
+                      color="primary"
+                      [disabled]="!customerForm.valid"
+                      (click)="save(customerForm.value)">
+                {{'customer.createNew' | translation | uppercase}}
+              </button>
             </div>
           </div>
         </mat-card-content>

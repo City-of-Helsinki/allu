@@ -1,15 +1,18 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {CustomerForm} from '../../../customerregistry/customer/customer.form';
-import {Some} from '../../../../util/option';
-import {NumberUtil} from '../../../../util/number.util';
-import {Customer} from '../../../../model/customer/customer';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
+import {Some} from '@util/option';
+import {NumberUtil} from '@util/number.util';
+import {Customer} from '@model/customer/customer';
+import {CustomerWithContactsForm} from '@feature/customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
-import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
-import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
-import {CustomerType} from '../../../../model/customer/customer-type';
-import {InformationRequestModalEvents} from '../../../information-request/information-request-modal-events';
+import {ALWAYS_ENABLED_FIELDS} from '@feature/customerregistry/customer/customer-info.component';
+import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
+import {CustomerType} from '@model/customer/customer-type';
+import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
+import {CustomerService} from '@service/customer/customer.service';
+import {findTranslation} from '@util/translations';
+import {NotificationService} from '@feature/notification/notification.service';
 
 @Component({
   selector: 'customer',
@@ -39,7 +42,9 @@ export class CustomerComponent implements OnInit, OnDestroy {
   private _customerWithContacts: CustomerWithContacts;
 
   constructor(private fb: FormBuilder,
-              private modalState: InformationRequestModalEvents) {
+              private modalState: InformationRequestModalEvents,
+              private customerService: CustomerService,
+              private notification: NotificationService) {
   }
 
   @Input() set customerWithContacts(customerWithContacts) {
@@ -87,6 +92,19 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   onPropertyDeveloperChange(checked: boolean): void {
     this.parentForm.patchValue({hasPropertyDeveloper: checked});
+  }
+
+  get isNewCustomer() {
+    return !NumberUtil.isDefined(this.customerForm.getRawValue().id);
+  }
+
+  save(form: CustomerForm): void {
+    this.customerService.saveCustomer(CustomerForm.toCustomer(form)).subscribe(
+      saved => {
+        this.notification.success(findTranslation('customer.action.save'));
+        this.customerForm.patchValue(CustomerForm.fromCustomer(saved), {emitEvent: false});
+        this.onCustomerChange(saved);
+      }, error => this.notification.errorInfo(error));
   }
 
   private initForm() {

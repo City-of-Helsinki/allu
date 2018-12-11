@@ -11,12 +11,13 @@ import {CustomerWithContacts} from '../../../../../src/app/model/customer/custom
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {Component, Injectable, Input} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
-import {CustomerServiceMock} from '../../../../mocks';
+import {CustomerServiceMock, NotificationServiceMock} from '../../../../mocks';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
 import {CodeSetService} from '../../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
 import {Observable, of} from 'rxjs/index';
 import {InformationRequestModalEvents} from '../../../../../src/app/feature/information-request/information-request-modal-events';
+import {NotificationService} from '@feature/notification/notification.service';
 
 const headerText = 'Hakija';
 
@@ -81,6 +82,7 @@ describe('CustomerComponent', () => {
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
         {provide: CodeSetService, useClass: CodeSetServiceMock},
+        {provide: NotificationService, useClass: NotificationServiceMock},
         InformationRequestModalEvents
       ]
     }).compileComponents();
