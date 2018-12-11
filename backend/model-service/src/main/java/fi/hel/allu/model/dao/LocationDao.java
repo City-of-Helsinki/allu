@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
+import org.geolatte.geom.GeometryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class LocationDao {
   private static final int TUPLE_LOCATION = 0;
   private static final int TUPLE_POSTAL_ADDRESS = 1;
   private static final int TUPLE_CUSTOMER_LOCATION_VALIDITY = 2;
+  private static final double LINE_BUFFER = 0.5;
 
   @Autowired
   private SQLQueryFactory queryFactory;
@@ -411,6 +413,9 @@ public class LocationDao {
         Geometry otherOne = iter.next();
         if (candidate.intersects(otherOne)) {
           logger.debug("Combining overlapping geometries {} and {}", candidate.asText(), otherOne.asText());
+          // Buffer line strings before union, otherwise union produces GeometryCollection
+          otherOne = bufferLineString(otherOne);
+          candidate = bufferLineString(candidate);
           candidate = candidate.union(otherOne);
           logger.debug("Result of combination is {}", candidate);
           iter.remove();
@@ -421,6 +426,10 @@ public class LocationDao {
     GeometryCollection collOut = new GeometryCollection(geomOut.toArray(new Geometry[geomOut.size()]));
     logger.debug("Resulting geometries: {}", collOut.asText());
     return collOut;
+  }
+
+  private Geometry bufferLineString(Geometry geometry) {
+    return geometry.getGeometryType() == GeometryType.LINE_STRING ? geometry.buffer(LINE_BUFFER) : geometry;
   }
 
   /*
