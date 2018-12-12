@@ -68,6 +68,15 @@ public class PricingService {
    */
   @Transactional
   public List<ChargeBasisEntry> calculateChargeBasis(Application application) {
+    return calculateChargeBasis(application, true);
+  }
+
+  @Transactional
+  public List<ChargeBasisEntry> calculateChargeBasisWithoutInvoicingPeriods(Application application) {
+    return calculateChargeBasis(application, false);
+  }
+
+  private List<ChargeBasisEntry> calculateChargeBasis(Application application, boolean periods) {
     if (application.getSkipPriceCalculation() == true) {
       return Collections.emptyList();
     } else if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
@@ -77,11 +86,12 @@ public class PricingService {
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       return updateExcavationAnnouncementPrice(application);
     } else if (application.getType() == ApplicationType.AREA_RENTAL) {
-      return updateAreaRentalPrice(application);
+      return updateAreaRentalPrice(application, periods);
     } else {
       return Collections.emptyList();
     }
   }
+
 
   /**
    * Calculate the total price of given charge basis entries
@@ -144,9 +154,10 @@ public class PricingService {
   /*
    * Calculate price for area rental
    */
-  private List<ChargeBasisEntry> updateAreaRentalPrice(Application application) {
+  private List<ChargeBasisEntry> updateAreaRentalPrice(Application application, boolean periods) {
     return calculateChargeBasis(application,
-        new AreaRentalPricing(application, pricingDao, pricingExplanator, invoicingPeriodService.findForApplicationId(application.getId())));
+        new AreaRentalPricing(application, pricingDao, pricingExplanator,
+            periods ? invoicingPeriodService.findForApplicationId(application.getId()) : Collections.EMPTY_LIST));
   }
 
   /*

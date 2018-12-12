@@ -613,6 +613,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/charge-basis");
   }
 
+  public String getSingleInvoiceChargeBasisUrl() {
+    return getModelServiceUrl("/applications/{id}/single-invoice-charge-basis");
+  }
+
   /**
    * @return url for setting the charge basis entries for an application
    */

@@ -45,6 +45,12 @@ public class ChargeBasisService {
         .collect(Collectors.toList()));
   }
 
+  public List<ChargeBasisEntry> getSingleInvoiceChargeBasis(int applicationId) {
+    return sortEntries(Arrays.asList(restTemplate.getForEntity(
+        applicationProperties.getSingleInvoiceChargeBasisUrl(),
+        ChargeBasisEntry[].class, applicationId).getBody()));
+  }
+
   public List<ChargeBasisEntry> getUnlockedAndInvoicableChargeBasis(int applicationId) {
     return sortEntries(loadChargeBasis(applicationId).stream()
         .filter(e -> !Boolean.TRUE.equals(e.getLocked()) && e.isInvoicable())

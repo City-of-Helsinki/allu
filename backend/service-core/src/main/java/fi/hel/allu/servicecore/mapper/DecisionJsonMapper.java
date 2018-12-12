@@ -6,7 +6,6 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -504,7 +503,7 @@ public class DecisionJsonMapper {
 
     final Map<Integer, Location> locations = locationService.getLocationsByApplication(application.getId())
         .stream().collect(Collectors.toMap(l -> l.getId(), l -> l));
-    final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getChargeBasis(application.getId());
+    final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getSingleInvoiceChargeBasis(application.getId());
     final List<ChargeBasisEntry> areaEntries = getAreaEntries(chargeBasisEntries);
     final List<ChargeBasisEntry> otherEntries = chargeBasisEntries.stream()
         .filter(c -> !isAreaEntry(c, chargeBasisEntries)).collect(Collectors.toList());
@@ -527,7 +526,7 @@ public class DecisionJsonMapper {
   // are splitted to invoicing periods -> filter duplicate entries
   private List<ChargeBasisEntry> getAreaEntries(List<ChargeBasisEntry> allEntries) {
     List<ChargeBasisEntry> result = new ArrayList<>();
-    List<ChargeBasisEntry> areaEntries = allEntries.stream().filter(e -> e.getLocationId() != null).collect(collectUniqueLocationIds());
+    List<ChargeBasisEntry> areaEntries = allEntries.stream().filter(e -> e.getLocationId() != null).collect(Collectors.toList());
     areaEntries.forEach(ae -> addWithReferringEntries(ae, allEntries, result));
     return result;
   }
@@ -537,12 +536,6 @@ public class DecisionJsonMapper {
     result.add(areaEntry);
     result.addAll(allEntries.stream().filter(e -> Objects.equals(e.getReferredTag(), areaEntry.getTag()))
         .collect(Collectors.toList()));
-  }
-
-  private Collector<ChargeBasisEntry, ?, List<ChargeBasisEntry>> collectUniqueLocationIds() {
-    return Collectors.collectingAndThen(
-       Collectors.toCollection(() -> new TreeSet<>(Comparator.comparingInt(ChargeBasisEntry::getLocationId))),
-        ArrayList::new);
   }
 
   private boolean isAreaEntry(ChargeBasisEntry entry, List<ChargeBasisEntry> allEntries) {

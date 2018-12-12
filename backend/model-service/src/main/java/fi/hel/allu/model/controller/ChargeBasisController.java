@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.ChargeBasisService;
+import fi.hel.allu.model.service.PricingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,19 @@ import java.util.List;
 @RequestMapping("/applications/{id}")
 public class ChargeBasisController {
 
-  @Autowired
-  ChargeBasisService chargeBasisService;
+  private final ChargeBasisService chargeBasisService;
+  private final ApplicationService applicationService;
+  private final PricingService pricingService;
 
   @Autowired
-  ApplicationService applicationService;
+  public ChargeBasisController(
+      ChargeBasisService chargeBasisService,
+      ApplicationService applicationService,
+      PricingService pricingService) {
+    this.chargeBasisService = chargeBasisService;
+    this.applicationService = applicationService;
+    this.pricingService = pricingService;
+  }
 
   /**
    * Get the charge basis entries for an application
@@ -30,6 +39,15 @@ public class ChargeBasisController {
   @RequestMapping(value = "/charge-basis", method = RequestMethod.GET)
   public ResponseEntity<List<ChargeBasisEntry>> findByApplicationId(@PathVariable int id) {
     return new ResponseEntity<>(chargeBasisService.getChargeBasis(id), HttpStatus.OK);
+  }
+
+  /**
+   * Get the charge basis entries for an application without using invoicing periods defined
+   * for the application, i.e. everything on a single invoice.
+   */
+  @RequestMapping(value = "/single-invoice-charge-basis", method = RequestMethod.GET)
+  public ResponseEntity<List<ChargeBasisEntry>> findSingleInvoiceByApplicationId(@PathVariable int id) {
+    return ResponseEntity.ok(pricingService.calculateChargeBasisWithoutInvoicingPeriods(applicationService.findById(id)));
   }
 
   /**
