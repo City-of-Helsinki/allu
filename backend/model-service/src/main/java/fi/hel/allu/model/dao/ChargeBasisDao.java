@@ -195,7 +195,10 @@ public class ChargeBasisDao {
                chargeBasis.referredTag.isNull(),
                chargeBasis.id.notIn(filteredIds))
         .fetch();
-    entries.forEach(e -> e.setId(null));
+    entries.forEach(e -> {
+      e.setId(null);
+      e.setLocked(false);
+    });
     insertEntries(toApplicationId, entries, true, nextEntryNumber(toApplicationId, true));
   }
 }
