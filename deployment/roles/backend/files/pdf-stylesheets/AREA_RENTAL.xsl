@@ -222,7 +222,16 @@
         <p class="space-above">
           Yllä olevassa taulukossa näkyy kaikki päätökseen liittyvät alueet ja maksut. Harmaalla merkittyjen
           alueiden voimassaolo on päättynyt. Toteutunut työaika vaikuttaa maksujen suuruuteen ja lopullinen
-          laskutettava maksu määräytyy hyväksytysti vastaanotetun työn keston perusteella. Lasku lähetetään erikseen.
+          laskutettava maksu määräytyy hyväksytysti vastaanotetun työn keston perusteella.
+          <xsl:choose>
+          <xsl:when test="data/invoicingPeriodLength != ''">
+            Aluevuokraus laskutetaan jaksotetusti <xsl:value-of select="data/invoicingPeriodLength"/> kk välein.
+            Laskut lähetetään erikseen.
+          </xsl:when>
+          <xsl:otherwise>
+            Lasku lähetetään erikseen.
+          </xsl:otherwise>
+          </xsl:choose>
         </p>
       </section>
 

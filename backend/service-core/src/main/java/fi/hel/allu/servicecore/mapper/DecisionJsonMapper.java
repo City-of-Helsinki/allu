@@ -132,6 +132,7 @@ public class DecisionJsonMapper {
 
     getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
     decisionJson.setCustomerReference(application.getCustomerReference());
+    decisionJson.setInvoicingPeriodLength(application.getInvoicingPeriodLength());
 
     if (application.getType() == null) {
       throw new IllegalArgumentException("Application type is required");

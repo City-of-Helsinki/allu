@@ -95,6 +95,7 @@ public class DecisionJson {
 
   private List<ChargeInfoTexts> chargeInfoEntries;
   private List<RentalArea> rentalAreas;
+  private Integer invoicingPeriodLength;
   private Integer sectionNumber;
   private List<KindWithSpecifiers> kinds;
   private List<String> contractText;
@@ -641,6 +642,14 @@ public class DecisionJson {
 
   public void setRentalAreas(List<RentalArea> rentalAreas) {
     this.rentalAreas = rentalAreas;
+  }
+
+  public Integer getInvoicingPeriodLength() {
+    return invoicingPeriodLength;
+  }
+
+  public void setInvoicingPeriodLength(Integer invoicingPeriodLength) {
+    this.invoicingPeriodLength = invoicingPeriodLength;
   }
 
   public Integer getSectionNumber() {
