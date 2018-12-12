@@ -1,0 +1,26 @@
+<div class="mat-elevation-z8 data-table">
+  <div class="loading-shade" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <mat-table [dataSource]="identifiers">
+    <ng-container matColumnDef="controls">
+      <mat-header-cell *matHeaderCellDef>{{'application.identifiers.removeFromApplication' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <button mat-icon-button (click)="remove.emit(row)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="applicationId">
+      <mat-header-cell *matHeaderCellDef>{{'application.applicationId' | translation}}</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row}}
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight"></mat-row>
+  </mat-table>
+</div>

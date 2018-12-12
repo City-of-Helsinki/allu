@@ -1,0 +1,28 @@
+<form>
+  <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="18px">
+    <div fxFlex="initial">
+      <mat-form-field class="search-field">
+        <span matPrefix>{{prefix}} &nbsp;</span>
+        <input matInput type="text"
+               [maxLength]="IDENTIFIER_LENGTH"
+               [formControl]="searchControl"
+               [placeholder]="'application.identifiers.searchAndAdd' | translation"
+               [matAutocomplete]="applicationSearch"/>
+        <mat-autocomplete #applicationSearch="matAutocomplete"
+                          [displayWith]="displayName"
+                          (optionSelected)="add($event.option)">
+          <mat-option *ngFor="let identifier of matchingIdentifiers"
+                      [value]="identifier.value">
+            {{ displayName(identifier) }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="searchControl.hasError('isNumber')">
+          {{'application.identifiers.field.isNumber' | translation}}
+        </mat-error>
+        <mat-error *ngIf="!searchControl.hasError('isNumber') && searchControl.hasError('requiredLength')">
+          {{'application.identifiers.field.requiredLength' | translation:{length: IDENTIFIER_LENGTH} }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+</form>

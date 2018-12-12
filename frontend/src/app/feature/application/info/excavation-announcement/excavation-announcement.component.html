@@ -241,21 +241,6 @@
             </div>
           </div>
           <div fxLayout="row" class="form-group">
-            <div fxFlex="50" class="gap-single-9">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="cableReportIdentifier"
-                       [placeholder]="'application.excavationAnnouncement.cableReport' | translation"
-                       [matAutocomplete]="cableReportSearch"/>
-                <mat-autocomplete #cableReportSearch="matAutocomplete">
-                  <mat-option *ngFor="let application of matchingApplications | async"
-                              [value]="application.applicationId" (click)="setCableReport(application)">
-                    {{ application.applicationId }}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
-            </div>
-          </div>
-          <div fxLayout="row" class="form-group">
             <div fxFlex="20">
               <mat-checkbox formControlName="pksCard">{{'application.common.pksCard' | translation}}</mat-checkbox>
             </div>
@@ -304,6 +289,37 @@
               </mat-button-toggle-group>
             </div>
           </div>
+        </mat-card-content>
+      </allu-card>
+    </div>
+  </div>
+
+  <div fxLayout="row">
+    <div fxFlex>
+      <allu-card>
+        <mat-card-title>{{'application.relatedApplications' | translation}}</mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row" fxLayoutGap="18px">
+            <div fxFlex="calc(50% - 18px)">
+              <h2 mat-card-subtitle>
+                {{'application.excavationAnnouncement.cableReports' | translation}}
+              </h2>
+              <application-identifiers
+                formControlName="cableReports"
+                type="CABLE_REPORT"
+              ></application-identifiers>
+            </div>
+            <div fxFlex="calc(50% - 18px)">
+              <h2 mat-card-subtitle>
+                {{'application.excavationAnnouncement.placementContracts' | translation}}
+              </h2>
+              <application-identifiers
+                formControlName="placementContracts"
+                type="PLACEMENT_CONTRACT"
+              ></application-identifiers>
+            </div>
+          </div>
+
         </mat-card-content>
       </allu-card>
     </div>

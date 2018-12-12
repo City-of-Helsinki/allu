@@ -1,0 +1,13 @@
+<application-identifier-select
+  *ngIf="!isDisabled"
+  [prefix]="prefix"
+  [matchingIdentifiers]="matchingIdentifiers$ | async"
+  (searchChange)="search($event)"
+  (selectedChange)="add($event)"
+></application-identifier-select>
+
+<application-identifier-list
+  [controls]="!isDisabled"
+  [identifiers]="identifiers$ | async"
+  (remove)="remove($event)"
+></application-identifier-list>

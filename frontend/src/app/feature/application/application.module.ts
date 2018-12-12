@@ -58,6 +58,7 @@ import {DateReportingModule} from '@feature/application/date-reporting/date-repo
 import {DateReportingEffects} from '@feature/application/effects/date-reporting-effects';
 import {DateReportingService} from '@service/application/date-reporting.service';
 import {ApplicationReplacementHistoryEffects} from '@feature/application/effects/application-replacement-history-effects';
+import {ApplicationIdentifierSelectModule} from '@feature/application/identifier-select/application-identifier-select.module';
 
 @NgModule({
   imports: [
@@ -95,7 +96,8 @@ import {ApplicationReplacementHistoryEffects} from '@feature/application/effects
     DecisionModule,
     PdfModule,
     NotificationModule,
-    DateReportingModule
+    DateReportingModule,
+    ApplicationIdentifierSelectModule
   ],
   declarations: [
     ApplicationComponent,

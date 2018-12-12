@@ -27,6 +27,8 @@ export interface ExcavationAnnouncementForm extends ApplicationForm {
   compactionAndBearingCapacityMeasurement?: boolean;
   qualityAssuranceTest?: boolean;
   terms?: string;
+  cableReports: string[];
+  placementContracts: string[];
 }
 
 export function to(form: ExcavationAnnouncementForm, original: ExcavationAnnouncement = new ExcavationAnnouncement()):
@@ -55,6 +57,8 @@ export function to(form: ExcavationAnnouncementForm, original: ExcavationAnnounc
   ea.compactionAndBearingCapacityMeasurement = form.compactionAndBearingCapacityMeasurement;
   ea.qualityAssuranceTest = form.qualityAssuranceTest;
   ea.terms = form.terms;
+  ea.cableReports = form.cableReports;
+  ea.placementContracts = form.placementContracts;
   return ea;
 }
 
@@ -75,13 +79,14 @@ export function from(application: Application, excavation: ExcavationAnnouncemen
     customerValidityTimes: new TimePeriod(excavation.customerStartTime, excavation.customerEndTime),
     customerWinterTimeOperation: excavation.customerWinterTimeOperation,
     customerWorkFinished: excavation.customerWorkFinished,
-    cableReportId: excavation.cableReportId,
     workPurpose: excavation.workPurpose,
     additionalInfo: excavation.additionalInfo,
     trafficArrangements: excavation.trafficArrangements,
     trafficArrangementImpedimentType: excavation.trafficArrangementImpedimentType,
     compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,
     qualityAssuranceTest: excavation.qualityAssuranceTest,
-    terms: excavation.terms
+    terms: excavation.terms,
+    cableReports: excavation.cableReports,
+    placementContracts: excavation.placementContracts
   };
 }

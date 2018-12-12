@@ -168,6 +168,27 @@ export class ComplexValidator {
       : {'idRequired': {value: control.value}};
   }
 
+  static requiredLength(length: number): ValidatorFn {
+    return (control: AbstractControl) => {
+      if (control.value) {
+        return control.value.length === length
+          ? undefined
+          : {'requiredLength': {value: control.value.length}};
+      } else {
+        return undefined;
+      }
+    };
+  }
+
+  static isNumber(control: AbstractControl): ValidationErrors | undefined {
+    if (control.value) {
+      const patternValidator = Validators.pattern('^[0-9]*$');
+      return patternValidator(control)
+        ? {'isNumber': {value: control.value}}
+        : undefined;
+    }
+  }
+
   private static fieldValue(group: FormGroup, fieldName: string) {
     return Some(group.get(fieldName))
       .filter(control => !!control)

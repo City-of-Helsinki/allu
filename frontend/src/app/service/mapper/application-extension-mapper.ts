@@ -85,7 +85,9 @@ export class ApplicationExtensionMapper {
           TimeUtil.dateFromBackend(backendExtension.workFinishedReported),
           TimeUtil.dateFromBackend(backendExtension.validityReported),
           backendExtension.compactionAndBearingCapacityMeasurement,
-          backendExtension.qualityAssuranceTest
+          backendExtension.qualityAssuranceTest,
+          backendExtension.cableReports,
+          backendExtension.placementContracts
         );
       case ApplicationType.NOTE:
         return new Note(backendExtension.description);
@@ -233,7 +235,9 @@ export class ApplicationExtensionMapper {
       operationalConditionReported: excavation.operationalConditionReported,
       workFinishedReported: excavation.workFinishedReported,
       compactionAndBearingCapacityMeasurement: excavation.compactionAndBearingCapacityMeasurement,
-      qualityAssuranceTest: excavation.qualityAssuranceTest
+      qualityAssuranceTest: excavation.qualityAssuranceTest,
+      cableReports: excavation.cableReports,
+      placementContracts: excavation.placementContracts
     };
   }
 

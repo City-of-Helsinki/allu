@@ -29,7 +29,9 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public workFinishedReported?: Date,
     public validityReported?: Date,
     public compactionAndBearingCapacityMeasurement?: boolean,
-    public qualityAssuranceTest?: boolean
+    public qualityAssuranceTest?: boolean,
+    public cableReports: string[] = [],
+    public placementContracts: string[] = [],
   ) {
     super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType

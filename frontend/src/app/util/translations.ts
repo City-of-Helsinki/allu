@@ -36,6 +36,7 @@ export const translations = {
     invoiced: 'Laskutettu',
     receivedTime: 'Hakemus saapunut',
     orderer: 'Hakemuksen tilaaja',
+    relatedApplications: 'Liittyvät hakemukset',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
@@ -409,7 +410,8 @@ export const translations = {
       guaranteeEndTime: 'Takuu päättyy (katutyö)',
       validityReportedByCustomer: 'Asiakkaan ilmoittama voimassaolo',
       excavationInfo: 'Kaivuilmoituksen tiedot',
-      cableReport: 'Johtoselvitys',
+      cableReports: 'Johtoselvitykset',
+      placementContracts: 'Sijoitussopimukset',
       compactionAndBearingCapacityMeasurement: 'Tiiveys- ja kantavuusmittaus',
       qualityAssuranceTest: 'Päällysteen laadunvarmistuskoe',
       field: {
@@ -483,6 +485,14 @@ export const translations = {
         PENDING_CLIENT_DATA: 'Hakemus sisältää tietopäivityksiä.'
       },
       show: 'Näytä'
+    },
+    identifiers: {
+      searchAndAdd: 'Etsi ja lisää hakemustunnuksia',
+      removeFromApplication: 'Poista hakemukselta',
+      field: {
+        isNumber: 'Tunnus saa sisältää vain numeroita',
+        requiredLength: 'Sallittu tunnuksen pituus on {{length}} numeroa'
+      }
     }
   },
   applicationSearch: {

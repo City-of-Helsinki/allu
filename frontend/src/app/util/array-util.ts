@@ -59,16 +59,20 @@ export class ArrayUtil {
   }
 
   static createOrReplace<T>(array: Array<T>, item: T, predicate: (item: T) => boolean): Array<T> {
-    if (array.some(predicate)) {
-      return array.map(original => {
-        if (predicate.call(this, original)) {
-          return item;
-        } else {
-          return original;
-        }
-      });
+    if (array) {
+      if (array.some(predicate)) {
+        return array.map(original => {
+          if (predicate.call(this, original)) {
+            return item;
+          } else {
+            return original;
+          }
+        });
+      } else {
+        return array.concat(item);
+      }
     } else {
-      return array.concat(item);
+      return [item];
     }
   }
 
