@@ -79,7 +79,9 @@ public class AreaRentalPricing extends Pricing {
 
   private void addUnderpassDiscount(AreaRentalPeriodPrice periodPrice) {
     final double discount = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE);
-    addChargeBasisEntry(ChargeBasisUnit.PERCENT, -discount, 0, UNDERPASS_TEXT, 0, periodPrice.getTag());
+    ChargeBasisTag tag = periodPrice.getPeriodId() != null ? ChargeBasisTag.AreaRentalUnderpass(Integer.toString(periodPrice.getLocationKey()), Integer.toString(periodPrice.getPeriodId())) :
+      ChargeBasisTag.AreaRentalUnderpass(Integer.toString(periodPrice.getLocationKey()));
+    addChargeBasisEntry(tag, ChargeBasisUnit.PERCENT, -discount, 0, UNDERPASS_TEXT, 0, null, periodPrice.getTag(), periodPrice.getPeriodId(), null);
     int netDiscount = (int)Math.round((discount / 100.0) * periodPrice.getNetPrice());
     setPriceInCents(getPriceInCents() - netDiscount);
   }

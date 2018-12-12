@@ -20,6 +20,11 @@ public class ChargeBasisTag {
     this.asString = txtStart.toString() + "#" + ending;
   }
 
+  private ChargeBasisTag(TagText txtStart, String ending, boolean referrable) {
+    this.asString = txtStart.toString() + "#" + ending;
+    this.referrable = referrable;
+  }
+
   public static ChargeBasisTag EventBaseFee() {
     return new ChargeBasisTag(TagText.EvtBf);
   }
@@ -65,6 +70,13 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.ARDF, areaId + "#" + periodId);
   }
 
+  public static ChargeBasisTag AreaRentalUnderpass(String areaId) {
+    return new ChargeBasisTag(TagText.ARUP, areaId, false);
+  }
+
+  public static ChargeBasisTag AreaRentalUnderpass(String areaId, String periodId) {
+    return new ChargeBasisTag(TagText.ARUP, areaId + "#" + periodId, false);
+  }
 
   public static ChargeBasisTag AreaRentalHandlingFee() {
     return new ChargeBasisTag(TagText.ARHF);
@@ -185,6 +197,8 @@ private enum TagText {
     ARDF,
     // Area rental, Handling fee
     ARHF,
+    // Area rental, underpass discount
+    ARUP,
     // Excavation announcement, Daily fee
     EADF,
     // Excavation announcement, Daily fee for additional period
