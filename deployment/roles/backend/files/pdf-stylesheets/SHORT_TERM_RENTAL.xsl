@@ -32,12 +32,14 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
 
         <section class="half-right">
-          <h2>Yhteyshenkilö</h2>
-          <!-- <p>[Yhteyshenkilön nimi]</p>
-               <p>[Sähköpostiosoite, puhelin]</p> -->
-           <xsl:for-each select="data/customerContactLines">
-             <p><xsl:value-of select="."/></p>
-           </xsl:for-each>
+          <xsl:if test="data/customerContactLines != ''">
+            <h2>Yhteyshenkilö</h2>
+            <!-- <p>[Yhteyshenkilön nimi]</p>
+                 <p>[Sähköpostiosoite, puhelin]</p> -->
+             <xsl:for-each select="data/customerContactLines">
+               <p><xsl:value-of select="."/></p>
+             </xsl:for-each>
+           </xsl:if>
         </section>
       </div>
 

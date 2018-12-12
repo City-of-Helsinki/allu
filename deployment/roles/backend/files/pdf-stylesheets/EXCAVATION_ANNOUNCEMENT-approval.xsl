@@ -50,12 +50,14 @@
             </p>
           </section>
           <section class="half-right">
-            <h2>Yhteyshenkilö</h2>
-            <p>
-              <xsl:for-each select="data/propertyDeveloperContactLines">
-                <xsl:value-of select="."/><br/>
-              </xsl:for-each>
-            </p>
+            <xsl:if test="data/propertyDeveloperContactLines != ''">
+              <h2>Yhteyshenkilö</h2>
+              <p>
+                <xsl:for-each select="data/propertyDeveloperContactLines">
+                  <xsl:value-of select="."/><br/>
+                </xsl:for-each>
+              </p>
+            </xsl:if>
           </section>
         </div>
       </xsl:if>
@@ -90,12 +92,14 @@
             </p>
           </section>
           <section class="half-right">
-            <h2>Yhteyshenkilö</h2>
-            <p>
-              <xsl:for-each select="data/representativeContactLines">
-                <xsl:value-of select="."/><br/>
-              </xsl:for-each>
-            </p>
+            <xsl:if test="data/representativeContactLines != ''">
+              <h2>Yhteyshenkilö</h2>
+              <p>
+                <xsl:for-each select="data/representativeContactLines">
+                  <xsl:value-of select="."/><br/>
+                </xsl:for-each>
+              </p>
+            </xsl:if>
           </section>
         </div>
       </xsl:if>
