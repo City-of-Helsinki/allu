@@ -17,7 +17,7 @@
     </xsl:if>
   </head>
   <body>
-    <div class="header" style="width: 100%">
+    <div class="header" style="width: 100%; margin-top: 3px;">
       <div class="logo">
         <img src="helsinki-logo.png" />
       </div>
@@ -88,7 +88,7 @@
         </section>
       </div>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section>
           <h2>Käsittelijä</h2>
           <!-- <p>[tehtävänimike, käsittelijän nimi]</p> -->
@@ -98,7 +98,7 @@
         </section>
       </div>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section>
           <h2>Muutoksenhaku</h2>
           <p class="indented space-above">
@@ -107,7 +107,7 @@
         </section>
       </div>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section>
           <h2>Lisätiedot</h2>
           <p class="indented space-above">

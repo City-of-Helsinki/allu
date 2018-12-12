@@ -193,7 +193,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </div>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section>
           <h2>Sopimuksen allekirjoitukset</h2>
 
@@ -227,7 +227,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </div>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section class="half-left">
           <h2>Lisätiedot</h2>
           <p>Kaupunkiympäristön alueidenkäyttö</p>
@@ -240,7 +240,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </div>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <h2>Sijoitussopimukset:</h2>
         <p>Kaupunkiympäristö/Alueidenkäyttö ja -valvonta</p>
         <p>Sörnäistenkatu 1</p>
@@ -248,7 +248,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <p>asiakaspalvelu puh. (09) 310 22111</p>
         <p>sähköposti alueidenkaytto@hel.fi</p>
       </div>
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <h2>Kaivuilmoitukset:</h2>
         <p>Kaupunkiympäristö/Alueidenkäyttö ja -valvonta</p>
         <p>Sörnäistenkatu 1</p>
@@ -256,7 +256,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <p>asiakaspalvelu puh. (09) 310 22111</p>
         <p>sähköposti luvat@hel.fi</p>
       </div>
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <h2>Kartoitus- ja sijaintitiedot:</h2>
         <p>Kaupunkiympäristö/Kaupunkimittauspalvelut</p>
         <p>Sörnäistenkatu 1</p>

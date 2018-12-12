@@ -253,7 +253,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </xsl:if>
 
-      <section class="unboxed">
+      <section class="unboxed avoid-pb">
         <h2>Ehdot</h2>
         <p>
           Liitteenä olevia ehtoja on noudatettava.
@@ -276,7 +276,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </xsl:if>
       </section>
 
-      <section class="unboxed">
+      <section class="unboxed avoid-pb">
         <h2>Päätös</h2>
         <p>
           Hakija on hakenut oikeutta alueen käyttöön, toimittanut hakemuksen liitteineen asukas- ja yrityspalveluihin ja ilmoittanut sitoutuvansa alueen käyttöä koskevaan ohjeistukseen sekä sopimusehtoihin.
@@ -295,7 +295,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </p>
       </section>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section class="half-left">
           <h2>Lisätiedot</h2>
           <p>
@@ -315,7 +315,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           </p>
         </section>
       </div>
-      <section>
+
+      <section class="unboxed avoid-pb">
         <h2>Liitteet</h2>
         <p>
           <!--  [Lista liitteiden nimistä] -->

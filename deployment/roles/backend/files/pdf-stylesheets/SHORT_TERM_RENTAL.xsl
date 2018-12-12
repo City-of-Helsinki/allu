@@ -195,7 +195,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </xsl:if>
       </section>
 
-      <section class="unboxed">
+      <section class="unboxed avoid-pb">
         <h2>Päätös</h2>
         <p>
           Hakija on hakenut oikeutta alueen käyttöön, toimittanut
@@ -219,7 +219,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </p>
       </section>
 
-      <div class="unboxed">
+      <div class="unboxed avoid-pb">
         <section class="half-left">
           <h2>Lisätiedot</h2>
           <p>Alueidenkäyttö ja -valvontayksikkö</p>
@@ -236,7 +236,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </div>
 
-      <section class="unboxed">
+      <section class="unboxed avoid-pb">
         <h2>Liitteet</h2>
         <!--  [Lista liitteiden nimistä] -->
         <xsl:for-each select="data/attachmentNames">
