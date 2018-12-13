@@ -9,7 +9,6 @@ import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -18,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import fi.hel.allu.external.mapper.*;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -35,6 +35,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
+
+  private static final Class<?>[] IGNORED_CLASSES = {
+      CableReportExtMapper.class,
+      EventExtMapper.class,
+      ExcavationAnnouncementExtMapper.class,
+      PlacementContractExtMapper.class,
+      ShortTermRentalExtMapper.class
+  };
 
   @Value("${ext.api.basepath}")
   private String apiBasePath;
@@ -58,7 +66,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
             }
         )
         .securitySchemes(schemeList)
-        .apiInfo(apiInfo());
+        .apiInfo(apiInfo())
+        .ignoredParameterTypes(IGNORED_CLASSES);
   }
 
   private ApiInfo apiInfo() {
