@@ -230,7 +230,6 @@ public class ApplicationMapper {
     history.setDecisionDistributionList(application.getDecisionDistributionList());
     history.setOwner(getUserRealName(application.getOwner()));
     history.setHandler(getUserRealName(application.getHandler()));
-    history.setCalculatedPrice(application.getCalculatedPrice());
     history.setNotBillable(application.getNotBillable());
     history.setNotBillableReason(application.getNotBillableReason());
     history.setCustomersWithContacts(customersToHistory(application.getCustomersWithContacts()));

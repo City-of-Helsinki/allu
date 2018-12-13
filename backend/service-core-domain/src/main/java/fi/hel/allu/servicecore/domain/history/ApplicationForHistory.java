@@ -48,7 +48,6 @@ public class ApplicationForHistory {
   private List<DistributionEntryJson> decisionDistributionList;
   private List<AttachmentInfoJson> attachmentList;
   private List<CommentJson> comments;
-  private Integer calculatedPrice;
   private Boolean notBillable;
   private String notBillableReason;
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers = new HashMap<>();
@@ -248,14 +247,6 @@ public class ApplicationForHistory {
 
   public void setComments(List<CommentJson> comments) {
     this.comments = comments;
-  }
-
-  public Integer getCalculatedPrice() {
-    return calculatedPrice;
-  }
-
-  public void setCalculatedPrice(Integer calculatedPrice) {
-    this.calculatedPrice = calculatedPrice;
   }
 
   public Boolean getNotBillable() {
