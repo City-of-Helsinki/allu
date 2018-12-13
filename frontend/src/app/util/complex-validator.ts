@@ -44,7 +44,7 @@ export class ComplexValidator {
   static invalidSsnWarning(fc: AbstractControlWarn) {
     const ssn = fc.value;
     fc.warnings = fc.warnings || {};
-    if (fc.dirty && !finnishSsn.validate(ssn)) {
+    if (ssn && fc.dirty && !finnishSsn.validate(ssn)) {
       fc.warnings.invalidSsn = {ssn};
     } else {
       fc.warnings.invalidSsn = undefined;

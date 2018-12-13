@@ -781,7 +781,6 @@ export const translations = {
       typeMissing: 'Tyyppi puuttuu',
       nameMissing: 'Nimi puuttuu',
       nameShort: 'Nimi on liian lyhyt',
-      registryKeyMissing: 'Tunniste puuttuu',
       registryKeyShort: 'Tunniste on liian lyhyt',
       ovtShort: 'OVT-tunnus liian lyhyt',
       ovtLong: 'OVT-tunnus liian pitkä',

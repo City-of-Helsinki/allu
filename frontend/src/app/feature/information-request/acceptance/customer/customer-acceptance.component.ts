@@ -171,7 +171,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   private searchCustomer(type: CustomerType, name: string, registryKey: string): void {
-    const searchQuery = registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS
+    const searchQuery = registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS
       ? {name, registryKey}
       : {name};
 

@@ -24,7 +24,6 @@ public class CustomerExt {
   private PostalAddressExt postalAddress;
   private String email;
   private String phone;
-  @NotBlank(message = "{customer.registrykey}")
   private String registryKey;
   private String ovt;
   private String invoicingOperator;
@@ -86,7 +85,7 @@ public class CustomerExt {
     this.phone = phone;
   }
 
-  @ApiModelProperty(value = "The registry key (social security number or business id i.e. Y-tunnus) of the customer person, company or organization.", required = true)
+  @ApiModelProperty(value = "The registry key (social security number or business id i.e. Y-tunnus) of the customer person, company or organization.")
   public String getRegistryKey() {
     return registryKey;
   }

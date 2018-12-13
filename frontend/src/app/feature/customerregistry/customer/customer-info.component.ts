@@ -19,8 +19,8 @@ import {postalCodeValidator} from '../../../util/complex-validator';
 import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
-const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
-const PERSON_REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2), ComplexValidator.invalidSsnWarning];
+const REGISTRY_KEY_VALIDATORS = [Validators.minLength(2)];
+const PERSON_REGISTRY_KEY_VALIDATORS = [Validators.minLength(2), ComplexValidator.invalidSsnWarning];
 const DEBOUNCE_TIME_MS = 300;
 
 @Component({

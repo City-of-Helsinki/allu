@@ -69,7 +69,7 @@
     </div>
     <div fxFlex="calc(50% - 18px)">
       <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
-        <input matInput type="text" formControlName="registryKey" required
+        <input matInput type="text" formControlName="registryKey"
                placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}"
                [matAutocomplete]="registryKeySearch"/>
 
@@ -81,9 +81,6 @@
         </mat-autocomplete>
 
         <mat-hint>
-          <field-error [form]="form" field="registryKey" hasError="required">
-            {{'customer.field.registryKeyMissing' | translation}}
-          </field-error>
           <field-error [form]="form" field="registryKey" hasError="minlength">
             {{'customer.field.registryKeyShort' | translation}}
           </field-error>
@@ -124,7 +121,7 @@
     <div fxLayout="row wrap" fxLayoutGap="18px">
       <div fxFlex="calc(50% - 18px)">
         <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
-          <input matInput type="text" formControlName="registryKey" required
+          <input matInput type="text" formControlName="registryKey"
                  [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'id'] | translation"
                  [matAutocomplete]="registryKeySearch"/>
 
@@ -136,9 +133,6 @@
           </mat-autocomplete>
 
           <mat-hint>
-            <field-error [form]="form" field="registryKey" hasError="required">
-              {{'customer.field.registryKeyMissing' | translation}}
-            </field-error>
             <field-error [form]="form" field="registryKey" hasError="minlength">
               {{'customer.field.registryKeyShort' | translation}}
             </field-error>
