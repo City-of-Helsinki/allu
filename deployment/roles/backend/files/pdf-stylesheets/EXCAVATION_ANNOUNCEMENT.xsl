@@ -104,6 +104,23 @@
         </div>
       </xsl:if>
 
+      <xsl:if test="data/cableReports != '' or data/placementContracts != ''">
+        <div class="unboxed">
+          <section class="half-left">
+            <xsl:if test="data/cableReports != ''">
+              <h2>Liittyvät johtoselvitykset</h2>
+              <p><xsl:value-of select="data/cableReports" /></p>
+            </xsl:if>
+          </section>
+          <section class="half-right">
+            <xsl:if test="data/placementContracts != ''">
+              <h2>Liittyvät sijoitussopimukset</h2>
+              <p><xsl:value-of select="data/placementContracts" /></p>
+            </xsl:if>
+          </section>
+        </div>
+      </xsl:if>
+
       <div class="unboxed">
         <section class="half-left">
           <h2>Työn kohde</h2>

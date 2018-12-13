@@ -28,7 +28,7 @@
   </head>
 
   <xsl:variable name="headerHeight">
-    <xsl:text><xsl:value-of select="32 + data/headerRows * 4"/></xsl:text>
+    <xsl:text><xsl:value-of select="26 + data/headerRows * 4"/></xsl:text>
   </xsl:variable>
 
   <body onLoad='getPdfInfo()'>
@@ -73,18 +73,6 @@
             <xsl:if test="data/identificationNumber != ''">
               <td class="c1">Asiointitunnus:</td>
               <td class="c2"><xsl:value-of select="data/identificationNumber" /></td>
-            </xsl:if>
-            <xsl:if test="data/cableReports != ''">
-              <tr>
-                <td class="c1">Johtoselvitystunnus:</td>
-                <td class="c2"><xsl:value-of select="data/cableReports" /></td>
-              </tr>
-            </xsl:if>
-            <xsl:if test="data/placementContracts != ''">
-              <tr>
-                <td class="c1">Sijoitussopimustunnus:</td>
-                <td class="c2"><xsl:value-of select="data/placementContracts" /></td>
-              </tr>
             </xsl:if>
           </table>
         </div>

@@ -486,9 +486,7 @@ public class DecisionJsonMapper {
     decision.setCableReports(listToString(excavationAnnouncement.getCableReports()));
     decision.setHeaderRows(countHeaderRows(decision, Arrays.asList(
         DecisionJson::isReplacingDecision,
-        DecisionJson::getIdentificationNumber,
-        DecisionJson::getCableReports,
-        DecisionJson::getPlacementContracts)));
+        DecisionJson::getIdentificationNumber)));
   }
 
   private void fillAreaRentalSpecifics(DecisionJson decision, ApplicationJson application) {
