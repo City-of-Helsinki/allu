@@ -6,6 +6,7 @@ import * as fromApplicationComments from '@feature/application/reducers/applicat
 import * as fromTags from './application-tags-reducer';
 import * as fromRoot from '@feature/allu/reducers/index';
 import * as fromReplacementHistory from '@feature/application/reducers/application-replacement-history-reducer';
+import * as fromApplicationSearch from '@feature/application/reducers/application-search-reducer';
 import {Application} from '@model/application/application';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 import {ApplicationTag} from '@model/application/tag/application-tag';
@@ -15,6 +16,7 @@ import {ClientApplicationData} from '@model/application/client-application-data'
 import {NumberUtil} from '@util/number.util';
 import {ArrayUtil} from '@util/array-util';
 import {InjectionToken} from '@angular/core';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -22,6 +24,8 @@ export interface ApplicationState {
   tags: fromTags.State;
   history: fromHistory.State;
   replacementHistory: fromReplacementHistory.State;
+  cableReportSearch: fromApplicationSearch.State;
+  placementContractSearch: fromApplicationSearch.State;
 }
 
 export interface State extends fromRoot.State {
@@ -33,7 +37,9 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   comments: fromApplicationComments.reducer,
   tags: fromTags.reducer,
   history: fromApplicationHistory.reducer,
-  replacementHistory: fromReplacementHistory.reducer
+  replacementHistory: fromReplacementHistory.reducer,
+  cableReportSearch: fromApplicationSearch.createReducerFor(ActionTargetType.CableReport),
+  placementContractSearch: fromApplicationSearch.createReducerFor(ActionTargetType.PlacementContract)
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Application reducers');
@@ -185,3 +191,36 @@ export const getReplacementHistory = createSelector(
   getReplacementHistoryState,
   fromReplacementHistory.getReplacementHistory
 );
+
+// Cable report search selectors
+export const getCableReportSearchState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.cableReportSearch
+);
+
+export const getMatchingCableReports = createSelector(
+  getCableReportSearchState,
+  fromApplicationSearch.getMatchingApplications
+);
+
+// Placement contract search selectors
+export const getPlacementContractSearchState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.placementContractSearch
+);
+
+export const getMatchingPlacementContracts = createSelector(
+  getPlacementContractSearchState,
+  fromApplicationSearch.getMatchingApplications
+);
+
+export const getMatchingByTargetType = (type: ActionTargetType) => {
+  switch (type) {
+    case ActionTargetType.CableReport:
+      return getMatchingCableReports;
+    case ActionTargetType.PlacementContract:
+      return getMatchingPlacementContracts;
+    default:
+      throw new Error(`Invalid target type for matching applications ${type}`);
+  }
+};

@@ -6,6 +6,7 @@ import {debounceTime, map, takeUntil} from 'rxjs/internal/operators';
 import {IdentifierEntry} from '@feature/application/identifier-select/identifier-entry';
 import {Some} from '@util/option';
 import {ComplexValidator} from '@util/complex-validator';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'application-identifier-select',
@@ -49,7 +50,8 @@ export class ApplicationIdentifierSelectComponent implements OnInit, OnDestroy {
     const value = this.valueWithPrefix(this.searchControl.value);
     const searchValue = this.searchControl.value && this.searchControl.valid ? [{value}] : [];
     const addedIdentifiers = identifiers ? identifiers : [];
-    this._matchingIdentifiers = searchValue.concat(addedIdentifiers);
+    this._matchingIdentifiers = searchValue.concat(addedIdentifiers)
+      .filter(ArrayUtil.uniqueItem(i => i.value));
   }
 
   add(option: MatOption): void {

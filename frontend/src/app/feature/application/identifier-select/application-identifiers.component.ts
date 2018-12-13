@@ -8,6 +8,10 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {Subject} from 'rxjs/internal/Subject';
 import {Application} from '@model/application/application';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {select, Store} from '@ngrx/store';
+import * as fromApplication from '@feature/application/reducers';
+import {SearchByNameOrId} from '@feature/application/actions/application-search-actions';
 
 const APPLICATION_IDENTIFIERS_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -18,6 +22,11 @@ const APPLICATION_IDENTIFIERS_VALUE_ACCESSOR = {
 const typeToPrefix = {
   CABLE_REPORT: 'JS',
   PLACEMENT_CONTRACT: 'SL'
+};
+
+const typeToTargetType = {
+  CABLE_REPORT: ActionTargetType.CableReport,
+  PLACEMENT_CONTRACT: ActionTargetType.PlacementContract
 };
 
 @Component({
@@ -35,17 +44,21 @@ export class ApplicationIdentifiersComponent implements OnInit, OnDestroy, Contr
   isDisabled = false;
   prefix: string;
 
-  private searchResult: Subject<Application[]> = new Subject<Application[]>();
+  private targetType: ActionTargetType;
   private destroy: Subject<boolean> = new Subject<boolean>();
+
+  constructor(private store: Store<fromApplication.State>) {}
 
   ngOnInit(): void {
     this.prefix = typeToPrefix[this.type];
+    this.targetType = typeToTargetType[this.type];
 
     this.identifiers$.pipe(
       takeUntil(this.destroy)
     ).subscribe(identifiers => this._onChange(identifiers));
 
-    this.matchingIdentifiers$ = this.searchResult.asObservable().pipe(
+    this.matchingIdentifiers$ = this.store.pipe(
+      select(fromApplication.getMatchingByTargetType(this.targetType)),
       map(applications => applications.map(app => this.toIdentifierEntry(app)))
     );
   }
@@ -75,7 +88,7 @@ export class ApplicationIdentifiersComponent implements OnInit, OnDestroy, Contr
   }
 
   search(term: string): void {
-    this.searchResult.next([]);
+    this.store.dispatch(new SearchByNameOrId(this.targetType, term));
   }
 
   add(identifier: string): void {

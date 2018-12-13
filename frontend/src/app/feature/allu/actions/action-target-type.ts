@@ -6,5 +6,7 @@ export enum ActionTargetType {
   Representative = 'Representative',
   PropertyDeveloper = 'PropertyDeveloper',
   Contractor = 'Contractor',
-  InvoicingCustomer = 'InvoicingCustomer'
+  InvoicingCustomer = 'InvoicingCustomer',
+  CableReport = 'CableReport',
+  PlacementContract = 'PlacementContract'
 }
