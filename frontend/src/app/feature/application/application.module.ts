@@ -41,7 +41,7 @@ import {SupervisionModule} from './supervision/supervision.module';
 import {ApplicationDraftService} from '../../service/application/application-draft.service';
 import {ApplicationCommentsComponent} from './comment/application-comments.component';
 import {StoreModule} from '@ngrx/store';
-import {reducers} from './reducers';
+import {reducersToken, reducersProvider} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {ApplicationTagEffects} from './effects/application-tag-effects';
 import {HistoryModule} from '../history/history.module';
@@ -59,18 +59,20 @@ import {DateReportingEffects} from '@feature/application/effects/date-reporting-
 import {DateReportingService} from '@service/application/date-reporting.service';
 import {ApplicationReplacementHistoryEffects} from '@feature/application/effects/application-replacement-history-effects';
 import {ApplicationIdentifierSelectModule} from '@feature/application/identifier-select/application-identifier-select.module';
+import {ApplicationSearchEffects} from '@feature/application/effects/application-search-effects';
 
 @NgModule({
   imports: [
     AlluCommonModule,
     RouterModule.forChild(applicationRoutes),
-    StoreModule.forFeature('application', reducers),
+    StoreModule.forFeature('application', reducersToken),
     EffectsModule.forFeature([
       ApplicationEffects,
       ApplicationTagEffects,
       ExcavationAnnouncementEffects,
       DateReportingEffects,
-      ApplicationReplacementHistoryEffects
+      ApplicationReplacementHistoryEffects,
+      ApplicationSearchEffects
     ]),
     FormsModule,
     ReactiveFormsModule,
@@ -127,7 +129,8 @@ import {ApplicationIdentifierSelectModule} from '@feature/application/identifier
     ApplicationResolve,
     ApplicationDraftService,
     ExcavationAnnouncementService,
-    DateReportingService
+    DateReportingService,
+    reducersProvider
   ],
   entryComponents: [
     DefaultTextModalComponent

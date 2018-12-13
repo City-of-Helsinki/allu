@@ -17,7 +17,7 @@ import {ProjectComponent} from './project.component';
 import {ProjectApplicationListComponent} from './applications/project-application-list.component';
 import {ProjectResolve} from './project-resolve';
 import {ProjectState} from '../../service/project/project-state';
-import {reducers} from './reducers';
+import {reducersProvider, reducersToken} from './reducers';
 import {ApplicationEffects} from './effects/application-effects';
 import {ApplicationSelectComponent} from './applications/application-select.component';
 import {SearchEffects} from './effects/search-effects';
@@ -50,7 +50,7 @@ import {ProjectSelectComponent} from './related-projects/project-select.componen
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    StoreModule.forFeature('project', reducers),
+    StoreModule.forFeature('project', reducersToken),
     EffectsModule.forFeature([
       ProjectEffects,
       ApplicationEffects,
@@ -81,7 +81,8 @@ import {ProjectSelectComponent} from './related-projects/project-select.componen
   providers: [
     ProjectService,
     ProjectResolve,
-    ProjectState
+    ProjectState,
+    reducersProvider
   ]
 })
 export class ProjectModule {}

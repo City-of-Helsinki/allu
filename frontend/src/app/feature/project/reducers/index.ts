@@ -1,23 +1,21 @@
-import {
-  createSelector,
-  createFeatureSelector,
-  ActionReducerMap,
-} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import * as fromApplications from './application-reducer';
 import * as fromProject from './project-reducer';
-import * as fromApplicationSearch from './application-search-reducer';
+import * as fromApplicationSearch from '@feature/application/reducers/application-search-reducer';
 import * as fromProjectSearch from './project-search-reducer';
 import * as fromParentProjects from './parent-project-reducer';
 import * as fromChildProjects from './child-project-reducer';
 import * as fromApplicationBasket from './application-basket-reducer';
-import * as fromRoot from '../../allu/reducers/index';
-import * as fromComments from '../../comment/reducers/comment-reducer';
+import * as fromRoot from '@feature/allu/reducers/index';
+import * as fromComments from '@feature/comment/reducers/comment-reducer';
 import * as fromProjectComments from './project-comments-reducer';
-import * as fromHistory from '../../history/reducers/history-reducer';
+import * as fromHistory from '@feature/history/reducers/history-reducer';
 import * as fromProjectHistory from './project-history-reducer';
-import {Project} from '../../../model/project/project';
-import {SortDirection} from '../../../model/common/sort';
-import {ArrayUtil} from '../../../util/array-util';
+import {Project} from '@model/project/project';
+import {SortDirection} from '@model/common/sort';
+import {ArrayUtil} from '@util/array-util';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {InjectionToken} from '@angular/core';
 
 export interface ProjectState {
   project: fromProject.State;
@@ -38,7 +36,7 @@ export interface State extends fromRoot.State {
 export const reducers: ActionReducerMap<ProjectState> = {
   project: fromProject.reducer,
   applications: fromApplications.reducer,
-  applicationSearch: fromApplicationSearch.reducer,
+  applicationSearch: fromApplicationSearch.createReducerFor(ActionTargetType.Project),
   projectSearch: fromProjectSearch.reducer,
   parents: fromParentProjects.reducer,
   children: fromChildProjects.reducer,
@@ -46,6 +44,12 @@ export const reducers: ActionReducerMap<ProjectState> = {
   comments: fromProjectComments.reducer,
   history: fromProjectHistory.reducer
 };
+
+export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Project reducers');
+
+export const reducersProvider = [
+  { provide: reducersToken, useValue: reducers }
+];
 
 export const getProjectState = createFeatureSelector<ProjectState>('project');
 

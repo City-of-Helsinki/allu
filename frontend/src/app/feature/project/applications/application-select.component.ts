@@ -1,10 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl} from '@angular/forms';
-import {Subject, Observable} from 'rxjs';
-import {Application} from '../../../model/application/application';
-import {Store} from '@ngrx/store';
-import * as fromProject from '../reducers/';
-import {Search} from '../actions/application-search-actions';
+import {FormControl} from '@angular/forms';
+import {Subject} from 'rxjs';
+import {Application} from '@model/application/application';
 import {MatOption} from '@angular/material';
 import {debounceTime, takeUntil} from 'rxjs/internal/operators';
 

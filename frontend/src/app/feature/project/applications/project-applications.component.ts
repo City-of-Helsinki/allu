@@ -3,12 +3,13 @@ import * as fromProject from '../reducers';
 import * as application from '../actions/application-actions';
 import * as basket from '../actions/application-basket-actions';
 import {Store} from '@ngrx/store';
-import {ProjectState} from '../../../service/project/project-state';
-import {Application} from '../../../model/application/application';
+import {ProjectState} from '@service/project/project-state';
+import {Application} from '@model/application/application';
 import {Observable} from 'rxjs';
-import {Search} from '../actions/application-search-actions';
-import {Some} from '../../../util/option';
+import {SearchByNameOrId} from '@feature/application/actions/application-search-actions';
+import {Some} from '@util/option';
 import {map, take} from 'rxjs/internal/operators';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'project-applications',
@@ -33,7 +34,7 @@ export class ProjectApplicationsComponent implements OnInit {
   }
 
   applicationSelectSearchChange(term: string): void {
-    this.store.dispatch(new Search(term));
+    this.store.dispatch(new SearchByNameOrId(ActionTargetType.Project, term));
     this.matchingApplications$ = this.store.select(fromProject.getMatchingApplications).pipe(
       map(applications => this.filterAlreadyIncludedApplications(applications))
     );

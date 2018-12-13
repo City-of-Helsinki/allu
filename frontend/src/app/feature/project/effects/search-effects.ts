@@ -1,15 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {ApplicationService} from '../../../service/application/application.service';
+import {ApplicationService} from '@service/application/application.service';
 import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
-import * as application from '../actions/application-search-actions';
-import {ApplicationSearchActionType} from '../actions/application-search-actions';
 import * as project from '../actions/project-search-actions';
 import {ProjectSearchActionType} from '../actions/project-search-actions';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
-import {CustomerService} from '../../../service/customer/customer.service';
-import {ProjectService} from '../../../service/project/project.service';
+import {CustomerService} from '@service/customer/customer.service';
+import {ProjectService} from '@service/project/project.service';
 
 @Injectable()
 export class SearchEffects {
@@ -27,18 +25,5 @@ export class SearchEffects {
       map(projects => new project.SearchSuccess(projects)),
       catchError(error => of(new project.SearchFailed(error)))
     ))
-  );
-
-  @Effect()
-  applicationSearch: Observable<Action> = this.actions.pipe(
-    ofType<application.Search>(ApplicationSearchActionType.Search),
-    map(action => action.payload),
-    filter(term => term && term.length > 2),
-    switchMap(searchTerm =>
-      this.applicationService.nameOrApplicationIdSearch(searchTerm).pipe(
-        map(applications => new application.SearchSuccess(applications)),
-        catchError(error => of(new application.SearchFailed(error)))
-      )
-    )
   );
 }

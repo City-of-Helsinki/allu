@@ -14,6 +14,7 @@ import * as fromApplicationHistory from '../reducers/application-history-reducer
 import {ClientApplicationData} from '@model/application/client-application-data';
 import {NumberUtil} from '@util/number.util';
 import {ArrayUtil} from '@util/array-util';
+import {InjectionToken} from '@angular/core';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -34,6 +35,12 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   history: fromApplicationHistory.reducer,
   replacementHistory: fromReplacementHistory.reducer
 };
+
+export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Application reducers');
+
+export const reducersProvider = [
+  { provide: reducersToken, useValue: reducers }
+];
 
 export const getApplicationState = createFeatureSelector<ApplicationState>('application');
 
