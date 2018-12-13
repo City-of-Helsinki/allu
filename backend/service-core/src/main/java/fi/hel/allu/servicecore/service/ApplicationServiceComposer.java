@@ -250,15 +250,16 @@ public class ApplicationServiceComposer {
 
   public ApplicationJson returnToEditing(int applicationId, StatusChangeInfoJson info) {
     Application application = applicationService.findApplicationById(applicationId);
-    StatusType statusToReturn = null;
+    StatusType statusToReturn;
     switch (application.getTargetState()) {
       case OPERATIONAL_CONDITION:
-        reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION);
+        reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION, info.getComment());
         applicationService.removeTag(applicationId, ApplicationTagType.OPERATIONAL_CONDITION_ACCEPTED);
         statusToReturn = StatusType.DECISION;
         break;
       case FINISHED:
-        reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION);
+        reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION, info.getComment());
+        applicationService.removeTag(applicationId, ApplicationTagType.FINAL_SUPERVISION_ACCEPTED);
         final List<ChangeHistoryItemJson> history = applicationHistoryService.getStatusChanges(applicationId);
         if (history.stream().filter(c -> StatusType.OPERATIONAL_CONDITION.name().equals(c.getChangeSpecifier())).count() > 0) {
           statusToReturn = StatusType.OPERATIONAL_CONDITION;
@@ -274,13 +275,29 @@ public class ApplicationServiceComposer {
     return updateSearchServiceOnStatusChange(application, statusToReturn);
   }
 
-  private void reopenSupervisionTask(int applicationId, SupervisionTaskType taskType) {
+  private void reopenSupervisionTask(int applicationId, SupervisionTaskType taskType, String comment) {
     final List<SupervisionTaskJson> tasks = supervisionTaskService.findByApplicationId(applicationId);
     tasks.stream().filter(s -> s.getType() == taskType).forEach(s -> {
       s.setStatus(SupervisionTaskStatusType.OPEN);
       s.setActualFinishingTime(null);
+      s.setDescription(appendCommentToDescription(s.getDescription(), comment));
       supervisionTaskService.update(s);
     });
+  }
+
+  private String appendCommentToDescription(String description, String comment) {
+    if (comment != null) {
+      final StringBuilder builder = new StringBuilder();
+      builder
+          .append(Optional.ofNullable(description).orElse(""))
+          .append(" ")
+          .append(userService.getCurrentUser().getRealName())
+          .append(": ")
+          .append(comment);
+      return builder.toString();
+    } else {
+      return description;
+    }
   }
 
   /**
