@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
   selector: 'application-identifier-list',
@@ -6,7 +6,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output}
   styleUrls: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ApplicationIdentifierListComponent implements OnInit {
+export class ApplicationIdentifierListComponent {
 
   @Input() controls = false;
   @Input() loading = false;
@@ -18,12 +18,6 @@ export class ApplicationIdentifierListComponent implements OnInit {
   private _identifiers: string[] = [];
 
   constructor() {}
-
-  ngOnInit(): void {
-    this.displayedColumns = this.controls
-      ? ['controls'].concat(this.displayedColumns)
-      : this.displayedColumns;
-  }
 
   @Input()
   get identifiers() { return this._identifiers; }

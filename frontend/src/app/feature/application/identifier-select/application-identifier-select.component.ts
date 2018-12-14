@@ -11,7 +11,7 @@ import {ArrayUtil} from '@util/array-util';
 @Component({
   selector: 'application-identifier-select',
   templateUrl: './application-identifier-select.component.html',
-  styleUrls: ['./application-identifier-select.component.scss'],
+  styleUrls: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ApplicationIdentifierSelectComponent implements OnInit, OnDestroy {

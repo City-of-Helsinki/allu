@@ -54,3 +54,15 @@ mat-cell, .mat-cell, .mat-header-cell {
 .row-details-link {
   font-weight: bold;
 }
+
+mat-cell.full-width > * {
+  width: 100%;
+}
+
+mat-cell:first-of-type.cell-wide {
+  padding-left: 8px;
+}
+
+mat-cell:last-of-type.cell-wide {
+  padding-right: 8px;
+}
