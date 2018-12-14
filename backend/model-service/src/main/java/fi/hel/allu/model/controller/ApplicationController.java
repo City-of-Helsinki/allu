@@ -358,6 +358,14 @@ public class ApplicationController {
   }
 
   /**
+   * Finds finished notes
+   */
+  @RequestMapping(value = "/notes/finished", method = RequestMethod.GET)
+  public ResponseEntity<List<Integer>> findFinishedNotes() {
+    return new ResponseEntity<>(applicationService.findFinishedNotes(), HttpStatus.OK);
+  }
+
+  /**
    * Finds id of the external owner (user) of the application.
    */
   @RequestMapping(value = "/{id}/externalowner", method = RequestMethod.GET)

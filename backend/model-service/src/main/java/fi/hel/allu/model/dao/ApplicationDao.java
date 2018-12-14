@@ -179,6 +179,15 @@ public class ApplicationDao {
     return applications;
   }
 
+  @Transactional(readOnly = true)
+  public List<Integer> findFinishedNotes() {
+    ZonedDateTime now = ZonedDateTime.now();
+    BooleanExpression recurringCondition = application.recurringEndTime.isNull()
+        .or(application.recurringEndTime.before(now));
+    return queryFactory.select(application.id).from(application).where(application.type.eq(ApplicationType.NOTE),
+        application.status.eq(StatusType.NOTE), application.endTime.before(now), recurringCondition).fetch();
+  }
+
   /**
    * Given a list of application ids, filter out those for which a reminder has
    * already been sent

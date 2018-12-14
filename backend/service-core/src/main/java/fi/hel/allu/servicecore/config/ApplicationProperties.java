@@ -1247,6 +1247,13 @@ public class ApplicationProperties {
      return getModelServiceUrl("/applications/finished");
   }
 
+  /**
+   * @return url to fetch finished notes
+   */
+  public String getFinishedNotesUrl() {
+     return getModelServiceUrl("/applications/notes/finished");
+  }
+
   public String getStoredFilterUrl() {
     return getModelServiceUrl("/stored-filter/{id}");
   }

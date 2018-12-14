@@ -389,6 +389,11 @@ public class ApplicationService {
     return applicationDao.findByEndTime(null, params.getEndsBefore(), params.getTypeSelector(), params.getStatusSelector());
   }
 
+  @Transactional(readOnly = true)
+  public List<Integer> findFinishedNotes() {
+    return applicationDao.findFinishedNotes();
+  }
+
   /*
    * Create invoice for the given application if it's needed
    */

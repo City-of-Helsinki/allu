@@ -322,6 +322,11 @@ public class ApplicationService {
         HttpMethod.POST, new HttpEntity<>(params), typeRef).getBody();
   }
 
+  public List<Integer> findFinishedNotes() {
+    ParameterizedTypeReference<List<Integer>> typeRef = new ParameterizedTypeReference<List<Integer>>() {};
+    return restTemplate.exchange(applicationProperties.getFinishedNotesUrl(), HttpMethod.GET, null, typeRef).getBody();
+  }
+
   private Application findApplicationByIdWithoutPersonAuditLogging(int applicationId) {
     return restTemplate.getForObject(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);

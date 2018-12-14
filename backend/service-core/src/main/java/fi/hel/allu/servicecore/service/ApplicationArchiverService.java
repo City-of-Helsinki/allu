@@ -26,7 +26,6 @@ public class ApplicationArchiverService {
 
   private static final List<ApplicationType> TYPES_MOVED_TO_FINISHED = Arrays.asList(ApplicationType.CABLE_REPORT, ApplicationType.EVENT, ApplicationType.PLACEMENT_CONTRACT,
           ApplicationType.SHORT_TERM_RENTAL, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS);
-  private static final Set<StatusType> ARCHIVED_STATUSES = new HashSet<>(Arrays.asList(StatusType.FINISHED, StatusType.DECISION));
   private static final Set<ApplicationTagType> DEPOSIT_TAG_TYPES = new HashSet<>(
       Arrays.asList(ApplicationTagType.DEPOSIT_PAID, ApplicationTagType.DEPOSIT_REQUESTED));
   private final ApplicationServiceComposer applicationServiceComposer;
@@ -52,6 +51,8 @@ public class ApplicationArchiverService {
   public void updateStatusForFinishedApplications() {
     List<Integer> readyApplications = fetchFinishedApplications();
     readyApplications.forEach(id -> moveToFinishedOrArchived(id));
+    List<Integer> finishedNotes = fetchFinishedNotes();
+    finishedNotes.forEach(id -> archiveApplication(id));
   }
 
   private void moveToFinishedOrArchived(Integer applicationId) {
@@ -64,6 +65,10 @@ public class ApplicationArchiverService {
 
   private List<Integer> fetchFinishedApplications() {
     return applicationServiceComposer.findFinishedApplications(Collections.singletonList(StatusType.DECISION), TYPES_MOVED_TO_FINISHED);
+  }
+
+  private List<Integer> fetchFinishedNotes() {
+    return applicationServiceComposer.findFinishedNotes();
   }
 
   /**

@@ -548,4 +548,8 @@ public class ApplicationServiceComposer {
   public Customer findInvoiceRecipient(Integer applicationId) {
     return applicationService.findInvoiceRecipient(applicationId);
   }
+
+  public List<Integer> findFinishedNotes() {
+    return applicationService.findFinishedNotes();
+  }
 }
