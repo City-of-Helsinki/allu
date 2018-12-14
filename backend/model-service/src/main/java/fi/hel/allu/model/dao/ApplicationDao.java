@@ -254,7 +254,7 @@ public class ApplicationDao {
   @Transactional
   public Application insert(Application appl) {
     // Use application id from application if present, otherwise generate id.
-    appl.setApplicationId(Optional.ofNullable(appl.getApplicationId()).orElse(createApplicationId(appl.getType())));
+    appl.setApplicationId(Optional.ofNullable(appl.getApplicationId()).orElseGet(() -> createApplicationId(appl.getType())));
     appl.setCreationTime(ZonedDateTime.now());
     if (appl.getReceivedTime() == null) {
       appl.setReceivedTime(appl.getCreationTime());

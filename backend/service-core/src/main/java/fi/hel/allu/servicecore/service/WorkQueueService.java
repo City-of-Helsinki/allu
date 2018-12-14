@@ -86,7 +86,7 @@ public class WorkQueueService {
 
   private QueryParameter getOrCreateParameter(List<QueryParameter> queryParameters, String fieldName) {
     return queryParameters.stream().filter(qp -> qp.getFieldName().equals(fieldName)).findFirst()
-        .orElse(new QueryParameter(fieldName, Collections.emptyList()));
+        .orElseGet(() -> new QueryParameter(fieldName, Collections.emptyList()));
   }
 
   private <T> List<T> mergeLists(List<T> a, List<T> b) {
