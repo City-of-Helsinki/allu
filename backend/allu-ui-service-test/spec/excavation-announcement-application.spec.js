@@ -15,6 +15,7 @@ describe('Excavation announcement application', () => {
 
   let applicantCustomersWithContactsCreated;
   let contractorCustomersWithContactsCreated;
+  let applicationCreated;
 
   function createCustomers() {
     const applicantContactNew = {
@@ -232,7 +233,49 @@ describe('Excavation announcement application', () => {
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))
+      .then(app => applicationCreated = app)
       .then(done, done.fail);
   });
 
+  it('Create supervisionTasks', done => {
+      const preliminarySupervision = {
+        'id': null,
+        'applicationId': applicationCreated.id,
+        'type': 'PRELIMINARY_SUPERVISION',
+        'status': 'OPEN',
+        'description': 'Aloitusvalvonnan kuvaus',
+        'plannedFinishingTime': '2019-01-01T00:00:00.000Z'
+      };
+      const operationalSupervision = {
+        'id': null,
+        'applicationId': applicationCreated.id,
+        'type': 'OPERATIONAL_CONDITION',
+        'status': 'OPEN',
+        'description': 'Toiminnallisen kunnon valvonnan kuvaus',
+        'plannedFinishingTime': '2019-03-03T00:00:00.000Z'
+      };
+      const finalSupervision = {
+        'id': null,
+        'applicationId': applicationCreated.id,
+        'type': 'FINAL_SUPERVISION',
+        'status': 'OPEN',
+        'description': 'Loppuvalvonnan kuvaus',
+        'plannedFinishingTime': '2019-05-14T00:00:00.000Z'
+      };
+
+      let preliminaryOptions = TestUtil.getPostOptions('/api/supervisiontask', preliminarySupervision);
+      let operationalOptions = TestUtil.getPostOptions('/api/supervisiontask', operationalSupervision);
+      let finalOptions = TestUtil.getPostOptions('/api/supervisiontask', finalSupervision);
+
+      TestUtil.login('kasittelija')
+        .then(token => {
+          TestUtil.addAuthorization(preliminaryOptions, token);
+          TestUtil.addAuthorization(operationalOptions, token);
+          TestUtil.addAuthorization(finalOptions, token);
+        })
+        .then(() => rp(preliminaryOptions))
+        .then(() => rp(operationalOptions))
+        .then(() => rp(finalOptions))
+        .then(done, done.fail);
+  });
 });
