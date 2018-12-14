@@ -21,6 +21,7 @@ import {TimeUtil} from '@util/time.util';
 import {Customer} from '@model/customer/customer';
 import {ApplicationType} from '@app/model/application/type/application-type';
 import {Application} from '@model/application/application';
+import {ArrayUtil} from '@util/array-util';
 
 @Component({
   selector: 'invoicing-info',
@@ -38,6 +39,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
   recipientForm: FormGroup;
   applicationLoaded: Observable<boolean>;
+  showDeposit: boolean;
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
@@ -128,6 +130,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       this.originalForm = this.form.getRawValue();
 
       this.setEditable(app);
+      this.showDeposit = !ArrayUtil.contains([ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT], app.type);
     });
 
     this.store.select(fromInvoicingr.getInvoicingCustomer).pipe(takeUntil(this.destroy))

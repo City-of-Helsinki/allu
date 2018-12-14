@@ -57,7 +57,8 @@
                        [placeholder]="'invoice.info.customerReference' | translation"/>
               </mat-form-field>
             </div>
-            <div fxFlex *ngIf="billable">
+
+            <div fxFlex *ngIf="billable && showDeposit">
               <mat-form-field class="input-full-width">
                 <input matInput formControlName="invoicingDate" required
                        [placeholder]="'invoice.info.invoicingDate' | translation"
@@ -72,7 +73,7 @@
                 </mat-hint>
                 </mat-form-field>
             </div>
-            <div fxFlex>
+            <div fxFlex *ngIf="showDeposit">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="depositAmount"
                        [placeholder]="'deposit.amount' | translation"/>
@@ -81,7 +82,7 @@
             </div>
 
           </div>
-          <div fxLayout="row wrap">
+          <div fxLayout="row wrap" *ngIf="showDeposit">
             <div fxFlex="100">
               <mat-form-field class="input-full-width">
                 <textarea matInput matTextareaAutosize formControlName="depositReason"
@@ -89,7 +90,7 @@
               </mat-form-field>
             </div>
           </div>
-          <div fxLayout="row wrap">
+          <div fxLayout="row wrap" *ngIf="showDeposit">
             <div>
               <button type="button" mat-raised-button color="primary"
                       *ngIf="canChangeDepositStatus" (click)="nextDepositStatus()">
