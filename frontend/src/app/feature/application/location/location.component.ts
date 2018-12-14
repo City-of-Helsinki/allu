@@ -367,8 +367,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initForm(): void {
     this.locationState.initLocations(this.application.locations);
-    const location = this.application.firstLocation;
-    if (!this.multipleLocations && location) {
+    const location = this.application.firstLocation || new Location();
+    if (!this.multipleLocations) {
       this.location = location;
       const formValues = LocationForm.from(this.location);
       this.locationForm.patchValue(formValues);
