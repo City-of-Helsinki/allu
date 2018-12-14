@@ -53,7 +53,14 @@
         <mat-autocomplete #nameSearch="matAutocomplete">
           <mat-option *ngFor="let customer of matchingNameCustomers | async"
                       [value]="customer.name" (click)="customerSelected(customer)">
-            {{ customer.name }}
+            <div fxLayout="row" fxLayoutAlign="start center" class="slim">
+              <div fxFlex="auto">{{ customer.name }}</div>
+              <div fxFlex="none">
+                <mat-icon *ngIf="customer.invoicingOnly"
+                          [matTooltip]="'customer.invoicingOnly' | translation"
+                          class="mat-icon-18">attach_money</mat-icon>
+              </div>
+            </div>
           </mat-option>
         </mat-autocomplete>
 
@@ -76,7 +83,14 @@
         <mat-autocomplete #registryKeySearch="matAutocomplete">
           <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
                       [value]="customer.registryKey" (click)="customerSelected(customer)">
-            {{ customer.name }} ({{ customer.registryKey}})
+            <div fxLayout="row" fxLayoutAlign="start center" class="slim">
+              <div fxFlex="auto">{{ customer.name }} ({{ customer.registryKey}})</div>
+              <div fxFlex="none">
+                <mat-icon *ngIf="customer.invoicingOnly"
+                          [matTooltip]="'customer.invoicingOnly' | translation"
+                          class="mat-icon-18">attach_money</mat-icon>
+              </div>
+            </div>
           </mat-option>
         </mat-autocomplete>
 
