@@ -89,6 +89,11 @@ public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
 
   public static ApplicationExt mapToApplicationExt(ApplicationJson application) {
     ApplicationExt applicationExt = new ApplicationExt();
+    setCommonFields(application, applicationExt);
+    return applicationExt;
+  }
+
+  protected static <A extends ApplicationExt> void setCommonFields(ApplicationJson application, A applicationExt) {
     applicationExt.setName(application.getName());
     applicationExt.setApplicationId(application.getApplicationId());
     applicationExt.setStartTime(application.getStartTime());
@@ -99,7 +104,6 @@ public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
     applicationExt.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
     applicationExt.setTerms(application.getExtension().getTerms());
     applicationExt.setCustomerReference(application.getCustomerReference());
-    return applicationExt;
   }
 
 }

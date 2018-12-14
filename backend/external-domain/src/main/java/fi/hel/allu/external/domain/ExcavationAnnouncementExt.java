@@ -9,7 +9,7 @@ import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel("Excavation announcement (kaivuilmoitus)")
+@ApiModel("Excavation announcement (kaivuilmoitus) input model")
 public class ExcavationAnnouncementExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")

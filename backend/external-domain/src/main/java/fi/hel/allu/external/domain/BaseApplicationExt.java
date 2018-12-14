@@ -18,7 +18,7 @@ import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Abstract base class for applications in external API
+ * Abstract base class for application input data in external API
  *
  */
 public abstract class BaseApplicationExt {

@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel("Placement contract (sijoitussopimus)")
+@ApiModel("Placement contract (sijoitussopimus) input model")
 public class PlacementContractExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")

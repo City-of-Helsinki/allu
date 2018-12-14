@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
 @NotFalse(rules = {
     "applicationKind, kindMatchType, {shorttermrental.kind}",
  })
-@ApiModel("Short term rental (lyhytaikainen maanvuokraus).")
+@ApiModel("Short term rental (lyhytaikainen maanvuokraus) input model.")
 public class ShortTermRentalExt extends BaseApplicationExt {
 
   private List<Integer> fixedLocationIds;

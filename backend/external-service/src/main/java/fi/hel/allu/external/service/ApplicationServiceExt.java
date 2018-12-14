@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,9 +197,9 @@ public class ApplicationServiceExt {
     return Optional.ofNullable(decisionMaker).map(u -> new UserExt(u.getRealName(), u.getTitle())).orElse(null);
   }
 
-  public ApplicationExt findById(Integer applicationId) {
+  public <T extends ApplicationExt> T findById(Integer applicationId, Function<ApplicationJson, T> mapper) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
-    return ApplicationExtMapper.mapToApplicationExt(application);
+    return mapper.apply(application);
   }
 
   public List<byte[]> getDecisionAttachments(Integer applicationId) {

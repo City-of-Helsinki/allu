@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * External API application output data
  *
  */
-@ApiModel(value = "Application data")
+@ApiModel(value = "Application output data")
 public class ApplicationExt {
 
   private Integer id;

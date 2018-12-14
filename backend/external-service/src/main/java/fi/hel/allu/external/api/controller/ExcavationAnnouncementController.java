@@ -15,12 +15,13 @@ import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.domain.ExcavationAnnouncementExt;
+import fi.hel.allu.external.domain.ExcavationAnnouncementOutExt;
 import fi.hel.allu.external.domain.ValidityPeriodExt;
 import fi.hel.allu.external.mapper.ExcavationAnnouncementExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
 import fi.hel.allu.servicecore.service.DateReportingService;
-import fi.hel.allu.servicecore.service.DecisionService;
 import io.swagger.annotations.*;
 
 @RestController
@@ -130,5 +131,20 @@ public class ExcavationAnnouncementController
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] bytes = approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED);
     return returnPdfResponse(bytes);
+  }
+
+  @ApiOperation(value = "Gets excavation announcement with given ID",
+      authorizations = @Authorization(value ="api_key"),
+      response = ExcavationAnnouncementOutExt.class)
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application retrieved successfully", response = ExcavationAnnouncementOutExt.class  ),
+      @ApiResponse(code = 404, message = "No excavation announcement found for given ID", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<ExcavationAnnouncementOutExt> getExcavationAnnouncement(@PathVariable Integer id) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    return ResponseEntity.ok(applicationService.findById(applicationId, (a -> mapper.mapApplicationJson(a))));
   }
 }

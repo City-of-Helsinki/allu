@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.external.domain.*;
+import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.service.LocationServiceExt;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
@@ -55,7 +56,7 @@ public class ApplicationController {
   public ResponseEntity<ApplicationExt> getApplication(@ApiParam(value = "Id of the application to get") @PathVariable Integer id) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
-    return ResponseEntity.ok(applicationService.findById(applicationId));
+    return ResponseEntity.ok(applicationService.findById(applicationId, ApplicationExtMapper::mapToApplicationExt));
   }
 
   @ApiOperation(value = "Gets application location data for given application ID",

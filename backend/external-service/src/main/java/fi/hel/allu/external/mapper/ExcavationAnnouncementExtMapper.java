@@ -1,11 +1,15 @@
 package fi.hel.allu.external.mapper;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.external.domain.ExcavationAnnouncementExt;
+import fi.hel.allu.external.domain.ExcavationAnnouncementOutExt;
 import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ClientApplicationDataJson;
 import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
 
@@ -44,6 +48,32 @@ public class ExcavationAnnouncementExtMapper extends ApplicationExtMapper<Excava
   @Override
   protected String getClientApplicationKind(ExcavationAnnouncementExt excavationAnnouncement) {
     return excavationAnnouncement.getClientApplicationKind();
+  }
+
+  public ExcavationAnnouncementOutExt mapApplicationJson(ApplicationJson application) {
+    if (application.getType() != ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      throw new IllegalOperationException("applicationtype.invalid");
+    }
+    ExcavationAnnouncementOutExt excavation = new ExcavationAnnouncementOutExt();
+    setCommonFields(application, excavation);
+    ExcavationAnnouncementJson extension = (ExcavationAnnouncementJson)application.getExtension();
+    excavation.setOperationalConditionDate(extension.getWinterTimeOperation());
+    excavation.setWorkFinishedDate(extension.getWorkFinished());
+    excavation.setReportedOperationalConditionDate(extension.getCustomerWinterTimeOperation());
+    excavation.setReportedWorkFinishedDate(extension.getCustomerWorkFinished());
+    excavation.setReportedStartTime(extension.getCustomerStartTime());
+    excavation.setReportedEndTime(extension.getCustomerEndTime());
+    excavation.setWarrantyEndTime(extension.getGuaranteeEndTime());
+    excavation.setCompactionAndBearingCapacityMeasurement(BooleanUtils.isTrue(extension.getCompactionAndBearingCapacityMeasurement()));
+    excavation.setQualityAssuranceTest(BooleanUtils.isTrue(extension.getQualityAssuranceTest()));
+    excavation.setWorkPurpose(extension.getWorkPurpose());
+    excavation.setAdditionalInfo(extension.getAdditionalInfo());
+    excavation.setCableReports(extension.getCableReports());
+    excavation.setPlacementContracts(extension.getPlacementContracts());
+    excavation.setSelfSupervision(BooleanUtils.isTrue(extension.getSelfSupervision()));
+    excavation.setEmergencyWork(BooleanUtils.isTrue(extension.getEmergencyWork()));
+    excavation.setTrafficArrangements(extension.getTrafficArrangements());
+    return excavation;
   }
 
 }

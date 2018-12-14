@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
 @NotFalse(rules = {
     "customerWithContacts, hasOneOrderer, {cablereport.orderer}"
 })
-@ApiModel("Cable report (johtoselvitys).")
+@ApiModel("Cable report (johtoselvitys) input model.")
 public class CableReportExt extends BaseApplicationExt {
 
   @NotEmpty(message = "{application.clientApplicationKind}")
