@@ -28,7 +28,7 @@
   </head>
 
   <xsl:variable name="headerHeight">
-    <xsl:text><xsl:value-of select="26 + data/headerRows * 4"/></xsl:text>
+    <xsl:text><xsl:value-of select="30 + data/headerRows * 4"/></xsl:text>
   </xsl:variable>
 
   <body onLoad='getPdfInfo()'>
