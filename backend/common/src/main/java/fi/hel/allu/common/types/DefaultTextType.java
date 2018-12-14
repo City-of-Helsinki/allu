@@ -14,5 +14,6 @@ public enum DefaultTextType {
   GEOTHERMAL_WELL, // Maalämpökaivo
   GEOTECHNICAL_OBSERVATION_POST, // Geotekninen tarkkailupiste
   TERMS, // Ehdot
+  TRAFFIC_ARRANGEMENT,
   OTHER // Yleisesti/muut
 }

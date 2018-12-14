@@ -567,6 +567,11 @@ export const translations = {
     selectTerm: 'Valitse perustelu',
     applicationTerms: 'Päätöksen perustelut'
   },
+  TRAFFIC_ARRANGEMENT: {
+    title: 'Suoritettavat liikennejärjestelyt',
+    selectTerm: 'Valitse liikennejärjestely',
+    applicationTerms: 'Suoritettavat liikennejärjestelyt'
+  },
   informationRequestResponse: {
     error: {
       fetch: 'Täydennyspyynnön hakeminen epäonnistui',
@@ -1066,6 +1071,7 @@ export const translations = {
       GEOTHERMAL_WELL: 'Maalämpökaivo',
       GEOTECHNICAL_OBSERVATION_POST: 'Geotekninen tarkkailupiste',
       TERMS: 'Ehdot',
+      TRAFFIC_ARRANGEMENT: 'Suoritettavat liikennejärjestelyt',
       OTHER: 'Yleisesti/muut'
     }
   },

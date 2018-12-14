@@ -264,11 +264,11 @@
           </div>
           <div fxLayout="row" class="form-group">
             <div fxFlex>
-              <mat-form-field class="input-full-width">
-                <textarea matInput matTextareaAutosize
-                          formControlName="trafficArrangements"
-                          [placeholder]="'application.common.trafficArrangements' | translation"></textarea>
-              </mat-form-field>
+              <default-text formControlName="trafficArrangements"
+                  [applicationType]="application.type"
+                  [readonly]="readonly"
+                  [textType]="'TRAFFIC_ARRANGEMENT'"
+                  [includeTypes]="['TRAFFIC_ARRANGEMENT']"></default-text>
             </div>
           </div>
           <div fxLayout="row" class="form-group">
