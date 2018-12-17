@@ -121,6 +121,12 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     }
   }
 
+  onKeyup(event: KeyboardEvent): void {
+    if (event.code !== 'Enter') {
+      this.resetFormIfExisting();
+    }
+  }
+
   get existingCustomer(): boolean {
     return NumberUtil.isDefined(this.form.value.id);
   }

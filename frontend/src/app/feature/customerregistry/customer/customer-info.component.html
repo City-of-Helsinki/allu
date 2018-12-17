@@ -49,10 +49,10 @@
       <mat-form-field class="input-full-width">
         <input matInput type="text" formControlName="name" required
                [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation"
-               [matAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
+               [matAutocomplete]="nameSearch" (keyup)="onKeyup($event)"/>
         <mat-autocomplete #nameSearch="matAutocomplete">
           <mat-option *ngFor="let customer of matchingNameCustomers | async"
-                      [value]="customer.name" (click)="customerSelected(customer)">
+                      [value]="customer.name" (onSelectionChange)="customerSelected(customer)">
             <div fxLayout="row" fxLayoutAlign="start center" class="slim">
               <div fxFlex="auto">{{ customer.name }}</div>
               <div fxFlex="none">
@@ -82,7 +82,7 @@
 
         <mat-autocomplete #registryKeySearch="matAutocomplete">
           <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
-                      [value]="customer.registryKey" (click)="customerSelected(customer)">
+                      [value]="customer.registryKey" (onSelectionChange)="customerSelected(customer)">
             <div fxLayout="row" fxLayoutAlign="start center" class="slim">
               <div fxFlex="auto">{{ customer.name }} ({{ customer.registryKey}})</div>
               <div fxFlex="none">
@@ -113,10 +113,10 @@
         <mat-form-field class="input-full-width">
           <input matInput type="text" formControlName="name" required
                  [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation"
-                 [matAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
+                 [matAutocomplete]="nameSearch" (keyup)="onKeyup($event)"/>
           <mat-autocomplete #nameSearch="matAutocomplete">
             <mat-option *ngFor="let customer of matchingNameCustomers | async"
-                        [value]="customer.name" (click)="customerSelected(customer)">
+                        [value]="customer.name" (onSelectionChange)="customerSelected(customer)">
               <div fxLayout="row" fxLayoutAlign="start center" class="slim">
                 <div fxFlex="auto">{{ customer.name }}</div>
                 <div fxFlex="none">
@@ -148,7 +148,7 @@
 
           <mat-autocomplete #registryKeySearch="matAutocomplete">
             <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
-                        [value]="customer.registryKey" (click)="customerSelected(customer)">
+                        [value]="customer.registryKey" (onSelectionChange)="customerSelected(customer)">
               <div fxLayout="row" fxLayoutAlign="start center" class="slim">
                 <div fxFlex="auto">{{ customer.name }} ({{ customer.registryKey}})</div>
                 <div fxFlex="none">

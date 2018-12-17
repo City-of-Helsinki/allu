@@ -103,6 +103,12 @@ export class ContactComponent implements OnInit {
     contactCtrl.enable();
   }
 
+  onKeyup(event: KeyboardEvent, index: number): void {
+    if (event.code !== 'Enter') {
+      this.resetContactIfExisting(index);
+    }
+  }
+
   onCustomerChange(customerId: number) {
     this.resetContacts();
     if (NumberUtil.isDefined(customerId)) {
