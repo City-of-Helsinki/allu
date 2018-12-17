@@ -190,6 +190,7 @@ public class AlluMapper {
   private static String SAP_MATERIAL_KESKUSKATU_SALES = "27100006";
   private static String SAP_MATERIAL_SUMMER_THEATER = "27100005";
   private static String SAP_MATERIAL_DOG_TRAINING_EVENT = "27100011";
+  private static String SAP_MATERIAL_DOG_TRAINING_FIELD = "27100040";
   private static String SAP_MATERIAL_SEASON_SALE = "27100021";
   private static String SAP_MATERIAL_CIRCUS = "27100022";
   private static String SAP_MATERIAL_DEPOSIT = "27100001";
@@ -232,6 +233,8 @@ public class AlluMapper {
         return SAP_MATERIAL_SUMMER_THEATER;
       case DOG_TRAINING_EVENT:
         return SAP_MATERIAL_DOG_TRAINING_EVENT;
+      case DOG_TRAINING_FIELD:
+        return SAP_MATERIAL_DOG_TRAINING_FIELD;
       case PROMOTION:
         return SAP_MATERIAL_PROMOTION;
       case SEASON_SALE:
