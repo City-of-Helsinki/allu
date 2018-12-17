@@ -2,6 +2,7 @@ package fi.hel.allu.model.service.event.handler;
 
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;

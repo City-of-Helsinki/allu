@@ -27,16 +27,6 @@ export enum ApplicationTagType {
   PAYMENT_BASIS_CORRECTION = 'PAYMENT_BASIS_CORRECTION',
   // toiminnallinen kunto ilmoitettu
   OPERATIONAL_CONDITION_REPORTED = 'OPERATIONAL_CONDITION_REPORTED',
-  // toiminnallinen kunto hylätty
-  OPERATIONAL_CONDITION_REJECTED = 'OPERATIONAL_CONDITION_REJECTED',
-  // toiminnallinen kunto hyväksytty
-  OPERATIONAL_CONDITION_ACCEPTED = 'OPERATIONAL_CONDITION_ACCEPTED',
-  // Loppuvalvontapyyntö lähetetty
-  FINAL_SUPERVISION_REQUESTED = 'FINAL_SUPERVISION_REQUESTED',
-  // Loppuvalvonta hylätty
-  FINAL_SUPERVISION_REJECTED = 'FINAL_SUPERVISION_REJECTED',
-  // Loppuvalvonta hyväksytty
-  FINAL_SUPERVISION_ACCEPTED = 'FINAL_SUPERVISION_ACCEPTED',
   // laskutettavan sap-tunnus ei tiedossa
   SAP_ID_MISSING = 'SAP_ID_MISSING',
   // Päätös lähettämättä

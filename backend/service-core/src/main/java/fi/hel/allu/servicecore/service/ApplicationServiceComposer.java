@@ -254,12 +254,10 @@ public class ApplicationServiceComposer {
     switch (application.getTargetState()) {
       case OPERATIONAL_CONDITION:
         reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION, info.getComment());
-        applicationService.removeTag(applicationId, ApplicationTagType.OPERATIONAL_CONDITION_ACCEPTED);
         statusToReturn = StatusType.DECISION;
         break;
       case FINISHED:
         reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION, info.getComment());
-        applicationService.removeTag(applicationId, ApplicationTagType.FINAL_SUPERVISION_ACCEPTED);
         final List<ChangeHistoryItemJson> history = applicationHistoryService.getStatusChanges(applicationId);
         if (history.stream().filter(c -> StatusType.OPERATIONAL_CONDITION.name().equals(c.getChangeSpecifier())).count() > 0) {
           statusToReturn = StatusType.OPERATIONAL_CONDITION;
