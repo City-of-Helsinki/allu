@@ -38,8 +38,10 @@ public class SupervisionTaskToTag {
         return Arrays.asList(SUPERVISION_REQUESTED, SUPERVISION_REJECTED, SUPERVISION_DONE);
       case FINAL_SUPERVISION:
         return Arrays.asList(FINAL_SUPERVISION_REQUESTED, FINAL_SUPERVISION_REJECTED, FINAL_SUPERVISION_ACCEPTED);
+      default:
+        return Collections.emptyList();
     }
-    throw new IllegalArgumentException("Uknown task type " + taskType);
+
   }
 
   private static Map<Pair<SupervisionTaskType, SupervisionTaskStatusType>, ApplicationTagType> createMapping() {
