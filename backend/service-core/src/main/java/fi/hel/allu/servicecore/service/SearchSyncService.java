@@ -100,11 +100,13 @@ public class SearchSyncService {
   }
 
   private void startSync() {
+    logger.info("Data sync started");
     talkToServer("Start sync",
         () -> restTemplate.postForEntity(applicationProperties.getStartSearchSyncUrl(), null, Void.class));
   }
 
   private void endSync() {
+    logger.info("Data sync finished");
     talkToServer("End sync",
         () -> restTemplate.postForEntity(applicationProperties.getCommitSearchSyncUrl(), null, Void.class));
   }
@@ -119,7 +121,7 @@ public class SearchSyncService {
    * elements from model-service, then maps them to ES with mapper and calls
    * sender to transmit the results to search-service.
    */
-  <T, U> void syncData(IntFunction<Page<T>> fetcher, Consumer<List<U>> sender, Function<T, U> mapper) {
+  private <T, U> void syncData(IntFunction<Page<T>> fetcher, Consumer<List<U>> sender, Function<T, U> mapper) {
     int page = 0;
     Page<T> fromModel;
     do {
@@ -132,66 +134,66 @@ public class SearchSyncService {
     } while (!fromModel.isLast());
   }
 
-  void syncApplications() {
+  private void syncApplications() {
     syncData(p -> fetchApplications(p), l -> sendApplications(l), a -> mapToES(a));
   }
 
-  void syncProjects() {
+  private void syncProjects() {
     syncData(p -> fetchProjects(p), l -> sendProjects(l), p -> mapToES(p));
   }
 
-  void syncCustomers() {
+  private void syncCustomers() {
     syncData(p -> fetchCustomers(p), l -> sendCustomers(l), c -> mapToES(c));
   }
 
-  void syncContacts() {
+  private void syncContacts() {
     syncData(p -> fetchContacts(p), l -> sendContacts(l), c -> mapToES(c));
   }
 
-  Page<Application> fetchApplications(int pageNum) {
+  private Page<Application> fetchApplications(int pageNum) {
     ParameterizedTypeReference<RestResponsePage<Application>> typeref = new ParameterizedTypeReference<RestResponsePage<Application>>() {
     };
     return talkToServer("Fetch applications", () -> restTemplate
         .exchange(applicationProperties.getAllApplicationsUrl(), HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
-  void sendApplications(List<ApplicationES> apps) {
+  private void sendApplications(List<ApplicationES> apps) {
     talkToServer("Send applications",
         () -> restTemplate.postForEntity(applicationProperties.getSyncApplicationsUrl(), apps, Void.class));
   }
 
-  Page<Project> fetchProjects(int pageNum) {
+  private Page<Project> fetchProjects(int pageNum) {
     ParameterizedTypeReference<RestResponsePage<Project>> typeref = new ParameterizedTypeReference<RestResponsePage<Project>>() {
     };
     return talkToServer("Fetch projects", () -> restTemplate.exchange(applicationProperties.getAllProjectsUrl(),
         HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
-  void sendProjects(List<ProjectES> projects) {
+  private void sendProjects(List<ProjectES> projects) {
     talkToServer("Send projects",
         () -> restTemplate.postForEntity(applicationProperties.getSyncProjectsUrl(), projects, Void.class));
   }
 
-  Page<Customer> fetchCustomers(int pageNum) {
+  private Page<Customer> fetchCustomers(int pageNum) {
     ParameterizedTypeReference<RestResponsePage<Customer>> typeref = new ParameterizedTypeReference<RestResponsePage<Customer>>() {
     };
     return talkToServer("Fetch customers", () -> restTemplate.exchange(applicationProperties.getAllCustomersUrl(),
         HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
-  void sendCustomers(List<CustomerES> customers) {
+  private void sendCustomers(List<CustomerES> customers) {
     talkToServer("Send customers",
         () -> restTemplate.postForEntity(applicationProperties.getSyncCustomersUrl(), customers, Void.class));
   }
 
-  Page<Contact> fetchContacts(int pageNum) {
+  private Page<Contact> fetchContacts(int pageNum) {
     ParameterizedTypeReference<RestResponsePage<Contact>> typeref = new ParameterizedTypeReference<RestResponsePage<Contact>>() {
     };
     return talkToServer("Fetch contacts", () -> restTemplate.exchange(applicationProperties.getAllContactsUrl(),
         HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
-  void sendContacts(List<ContactES> contacts) {
+  private void sendContacts(List<ContactES> contacts) {
     talkToServer("Send contacts",
         () -> restTemplate.postForEntity(applicationProperties.getSyncContactsUrl(), contacts, Void.class));
   }
@@ -209,22 +211,21 @@ public class SearchSyncService {
     }
   }
 
-  ApplicationES mapToES(Application application) {
+  private ApplicationES mapToES(Application application) {
     ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(application.getId());
     return applicationMapper.createApplicationESModel(applicationJson);
   }
 
-  ProjectES mapToES(Project project) {
+  private ProjectES mapToES(Project project) {
     return projectMapper.createProjectESModel(projectMapper.mapProjectToJson(project));
   }
 
-  CustomerES mapToES(Customer customer) {
+  private CustomerES mapToES(Customer customer) {
     return new CustomerES(customer.getId(), customer.getName(), customer.getRegistryKey(), customer.getOvt(),
         customer.getType(), customer.isActive(), customer.isInvoicingOnly());
   }
 
-  ContactES mapToES(Contact contact) {
+  private ContactES mapToES(Contact contact) {
     return new ContactES(contact.getId(), contact.getName(), contact.isActive());
   }
-
 }
