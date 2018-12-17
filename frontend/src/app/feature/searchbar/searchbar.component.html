@@ -35,6 +35,13 @@
     </div>
     <div fxFlex="0 0 220px"
          fxFlex.lt-md="100%">
+      <map-layer-select
+        classNames="input-raised"
+        [selected]="selectedLayers$ | async"
+        [layers]="availableLayers$ | async"></map-layer-select>
+    </div>
+    <div fxFlex="0 0 220px"
+         fxFlex.lt-md="100%">
       <stored-filter [type]="MAP_FILTER" classNames="input-raised"
                      [selectedFilter]="selectedFilter | async"
                      [availableFilters]="availableFilters | async"
@@ -88,6 +95,14 @@
           {{'application.common.field.validityEndTimeMissing' | translation}}
         </field-error>
       </input-box>
+    </div>
+
+    <div fxFlex="0 0 220px"
+         fxFlex.lt-md="100%">
+      <map-layer-select
+        classNames="input-raised"
+        [selected]="selectedLayers$ | async"
+        [layers]="availableLayers$ | async"></map-layer-select>
     </div>
   </div>
 

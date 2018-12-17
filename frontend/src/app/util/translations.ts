@@ -1287,6 +1287,9 @@ export const translations = {
     },
     popup: {
       titleMultipleFeatures: '{{count}} hakemusta'
+    },
+    layers: {
+      placeholder: 'Taustakartat'
     }
   },
   mapsearch: {

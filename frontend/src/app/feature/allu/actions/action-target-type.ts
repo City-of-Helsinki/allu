@@ -8,5 +8,7 @@ export enum ActionTargetType {
   Contractor = 'Contractor',
   InvoicingCustomer = 'InvoicingCustomer',
   CableReport = 'CableReport',
-  PlacementContract = 'PlacementContract'
+  PlacementContract = 'PlacementContract',
+  Home = 'Homepage',
+  Location = 'Location'
 }

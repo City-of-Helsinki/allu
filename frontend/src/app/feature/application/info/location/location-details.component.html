@@ -117,6 +117,14 @@
     </div>
     <div fxLayout="row">
       <div fxFlex class="mapcontainer">
+        <div class="map-overlay">
+          <map-layer-select
+            style="width: 220px"
+            classNames="input-raised"
+            [selected]="selectedLayers$ | async"
+            [layers]="availableLayers$ | async"></map-layer-select>
+        </div>
+
         <map [selection]="true"
              [applicationId]="application.id"
              [showOnlyApplicationArea]="true"

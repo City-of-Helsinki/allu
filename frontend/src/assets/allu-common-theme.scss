@@ -10,4 +10,8 @@
   .text-primary {
     color: mat-color($primary, 500);
   }
+
+  .text-primary-light {
+    color: mat-color($primary, 400);
+  }
 }

@@ -86,6 +86,10 @@ export class ArrayUtil {
     return result;
   }
 
+  static addUnique<T>(array: T[] = [], newValues: T[] = []): T[] {
+    return array.concat(newValues).filter(ArrayUtil.unique);
+  }
+
   static uniqueItem(valueFn?: (item) => any): (value: any, index: number, self: any[]) => boolean {
     return (value, index, self) => self
       .map(item => valueFn(item))

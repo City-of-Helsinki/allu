@@ -1,12 +1,11 @@
-import {ApplicationType} from '../../model/application/type/application-type';
-import {EnumUtil} from '../../util/enum.util';
-import {findTranslation} from '../../util/translations';
-import {AuthService} from '../authorization/auth.service';
+import {ApplicationType} from '@model/application/type/application-type';
+import {findTranslation} from '@util/translations';
+import {AuthService} from '@service/authorization/auth.service';
 import {Injectable} from '@angular/core';
-import {ConfigService} from '../config/config.service';
+import {ConfigService} from '@service/config/config.service';
 import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
-import {CITY_DISTRICTS, pathStyle, winkki} from './map-draw-styles';
-import {MapUtil} from './map.util';
+import {CITY_DISTRICTS, pathStyle, winkki} from '../../service/map/map-draw-styles';
+import {MapUtil} from '@service/map/map.util';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.layersupport';
@@ -16,7 +15,7 @@ import 'leaflet-wfst';
 import TimeoutOptions = L.TimeoutOptions;
 import {Observable} from 'rxjs';
 import {PathOptions} from 'leaflet';
-import {filter, map} from 'rxjs/internal/operators';
+import {filter, map, startWith} from 'rxjs/internal/operators';
 
 const timeout: TimeoutOptions = {
   response: 10000,
@@ -26,6 +25,47 @@ const timeout: TimeoutOptions = {
 const DEFAULT_OVERLAY = 'Karttasarja';
 const STATUS_PLAN = 'PLAN';
 const STATUS_ACTIVE = 'ACTIVE';
+
+export const commonLayers = {
+  'Karttasarja': null,
+  'Kantakartta': null,
+  'Ajantasa-asemakaava': null,
+  'Kiinteistökartta': null,
+  'Ortoilmakuva': null,
+  'Winkin kartat': {
+    'Tulevat katutyöt': null,
+    'Aktiiviset katutyöt': null,
+    'Tulevat vuokraukset': null,
+    'Aktiiviset vuokraukset': null,
+  },
+  'Muut': {
+    'Kaupunginosat': null
+  }
+};
+
+export const restrictedLayers = {
+  'Maalämpökaivot': null,
+  'Kiinteistökartat': {
+    'Maanomistus ja vuokraus yhdistelmä': null,
+    'Maanomistus vuokrausalueet': null,
+    'Maanomistus sisäinen vuokraus': null
+  },
+  'Maanalaiset tilat': {
+    'Maanalaiset tilat reunaviivat': null,
+    'Maanalaiset tilat alueet': null,
+  },
+  'Johtokartat': {
+    'Sähkö': null,
+    'Tietoliikenne': null,
+    'Kaukolampo': null,
+    'Kaasu': null,
+    'Vesijohto': null,
+    'Viemari': null
+  },
+};
+
+export const applicationLayers = Object.keys(ApplicationType)
+  .map(type => findTranslation(['application.type', type]));
 
 @Injectable()
 export class MapLayerService {
@@ -51,19 +91,17 @@ export class MapLayerService {
     this.defaultOverlay = this.overlays[DEFAULT_OVERLAY];
 
     const contentLayers = {};
-    Object.keys(ApplicationType)
-      .map(type => findTranslation(['application.type', type]))
-      .forEach(type => contentLayers[type] = L.featureGroup());
+    applicationLayers.forEach(type => contentLayers[type] = L.featureGroup());
     this.contentLayers = contentLayers;
 
     this.winkkiRoadWorks = {
-      'Tulevat': this.createWinkkiLayer('winkki_works', STATUS_PLAN, winkki.ROAD_WORKS),
-      'Aktiiviset': this.createWinkkiLayer('winkki_works', STATUS_ACTIVE, winkki.ROAD_WORKS)
+      'Tulevat katutyöt': this.createWinkkiLayer('winkki_works', STATUS_PLAN, winkki.ROAD_WORKS),
+      'Aktiiviset katutyöt': this.createWinkkiLayer('winkki_works', STATUS_ACTIVE, winkki.ROAD_WORKS)
     };
 
     this.winkkiEvents = {
-      'Tulevat': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN, winkki.EVENT),
-      'Aktiiviset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE, winkki.EVENT)
+      'Tulevat vuokraukset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN, winkki.EVENT),
+      'Aktiiviset vuokraukset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE, winkki.EVENT)
     };
 
     this.cityDistricts = this.createCityDistrictLayer();
@@ -90,7 +128,17 @@ export class MapLayerService {
   get restrictedOverlays(): Observable<L.Control.LayersObject> {
     return this.config.isStagingOrProduction().pipe(
       filter(isStagOrProd => isStagOrProd),
-      map(() => this.initRestrictedOverlays(this.token))
+      map(() => this.initRestrictedOverlays(this.token)),
+      startWith({})
+    );
+  }
+
+  createLayerTreeStructure(): Observable<any> {
+    return this.config.isStagingOrProduction().pipe(
+      map(stagingOrProduction => stagingOrProduction
+          ? this.createLayerTreeWithRestricted()
+          : this.createCommonLayerTree()
+      )
     );
   }
 
@@ -117,7 +165,7 @@ export class MapLayerService {
         {layers: 'helsinki_maanomistus_vuokrausalueet', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       'Maanomistus sisäinen vuokraus': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_maanomistus_sisainen', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Maanalaiset tilat': L.tileLayer.wmsAuth('/wms?',
+      'Maanalaiset tilat reunaviivat': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_maanalaiset_tilat', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       'Maanalaiset tilat alueet': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_maanalaiset_tilat_alueet', format: 'image/png', transparent: true, token: token, timeout: timeout}),
@@ -170,4 +218,29 @@ export class MapLayerService {
   private toArray(layers: L.Control.LayersObject): L.Layer[] {
     return Object.keys(layers).map(key => layers[key]);
   }
+
+  private createCommonLayerTree() {
+    return {
+      'Karttatasot': commonLayers,
+      'Hakemustyypit': this.createApplicationlayerTree()
+    };
+  }
+
+  private createLayerTreeWithRestricted() {
+    return {
+      'Karttatasot': {
+        ...commonLayers,
+        ...restrictedLayers
+      },
+      'Hakemustyypit': this.createApplicationlayerTree()
+    };
+  }
+
+  private createApplicationlayerTree() {
+    return applicationLayers.reduce((tree, layer) => {
+      tree[layer] = null;
+      return tree;
+    }, {});
+  }
+
 }

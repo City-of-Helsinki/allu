@@ -5,6 +5,7 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {SearchbarComponent} from './searchbar.component';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 import {StoredFilterModule} from '../stored-filter/stored-filter.module';
+import {MapModule} from '@feature/map/map.module';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import {StoredFilterModule} from '../stored-filter/stored-filter.module';
     MatToolbarModule,
     MatInputModule,
     SelectionGroupModule,
-    StoredFilterModule
+    StoredFilterModule,
+    MapModule
   ],
   declarations: [
     SearchbarComponent

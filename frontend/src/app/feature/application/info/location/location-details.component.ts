@@ -1,19 +1,20 @@
 import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 
-import {MapStore} from '../../../../service/map/map-store';
-import {Application} from '../../../../model/application/application';
-import {Location} from '../../../../model/common/location';
-import {ArrayUtil} from '../../../../util/array-util';
-import {ApplicationType} from '../../../../model/application/type/application-type';
-import {LocationState} from '../../../../service/application/location-state';
-import {FixedLocationService} from '../../../../service/map/fixed-location.service';
-import {applicationCanBeEdited} from '../../../../model/application/application-status';
-import {MODIFY_ROLES, RoleType} from '../../../../model/user/role-type';
-import * as fromRoot from '../../../allu/reducers';
-import {Store} from '@ngrx/store';
+import {MapStore} from '@service/map/map-store';
+import {Application} from '@model/application/application';
+import {Location} from '@model/common/location';
+import {ArrayUtil} from '@util/array-util';
+import {ApplicationType} from '@model/application/type/application-type';
+import {LocationState} from '@service/application/location-state';
+import {FixedLocationService} from '@service/map/fixed-location.service';
+import {applicationCanBeEdited} from '@model/application/application-status';
+import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
+import * as fromRoot from '@feature/allu/reducers';
+import {select, Store} from '@ngrx/store';
 import {map} from 'rxjs/internal/operators';
 import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
+import * as fromMapLayers from '@feature/map/reducers';
 
 @Component({
   selector: 'location-details',
@@ -32,6 +33,8 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   sections: string;
   multipleLocations = false;
   canBeEdited = true;
+  selectedLayers$: Observable<string[]>;
+  availableLayers$: Observable<string[] | number[]>;
 
   constructor(private mapStore: MapStore,
               private locationState: LocationState,
@@ -56,6 +59,8 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     ).subscribe(sectionNames => this.sections = sectionNames);
 
     this.mapStore.editedLocation.subscribe(loc => this.editLocation(loc));
+    this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
+    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayers));
   }
 
   ngAfterViewInit(): void {

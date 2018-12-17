@@ -14,6 +14,8 @@ import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {StoredFilter} from '@model/user/stored-filter';
 import {debounceTime, filter, map, takeUntil} from 'rxjs/internal/operators';
+import {select, Store} from '@ngrx/store';
+import * as fromMapLayers from '@feature/map/reducers';
 
 enum BarType {
   SIMPLE, // Front page
@@ -43,13 +45,16 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   selectedFilter: Observable<StoredFilter>;
   defaultFilter: Observable<StoredFilter>;
   availableFilters: Observable<StoredFilter[]>;
+  selectedLayers$: Observable<string[]>;
+  availableLayers$: Observable<string[] | number[]>;
 
   private destroy = new Subject<boolean>();
 
   constructor(private fb: FormBuilder,
               private mapStore: MapStore,
               private storedFilterStore: StoredFilterStore,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private store: Store<fromMapLayers.State>) {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
@@ -86,6 +91,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.MAP);
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
+    this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
+    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayers));
   }
 
   ngOnDestroy(): void {

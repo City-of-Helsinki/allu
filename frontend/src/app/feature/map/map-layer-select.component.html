@@ -1,0 +1,44 @@
+<input-box [ngClass]="classNames">
+  <button  type="button" inputBoxInput
+           [matMenuTriggerFor]="mapLayerMenu"
+           class="allu-icon-button">
+    <div class="button-content-clipped">
+      {{'map.layers.placeholder' | translation}}
+    </div>
+    <mat-icon class="icon-suffix">keyboard_arrow_down</mat-icon>
+  </button>
+</input-box>
+
+<mat-menu #mapLayerMenu="matMenu" overlapTrigger="false" class="allu-menu-panel">
+  <div class="menu-content">
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+      <mat-tree-node *matTreeNodeDef="let node"
+                     class="allu-tree-node tree-leaf-node"
+                     matTreeNodeToggle
+                     matTreeNodePadding
+                     [matTreeNodePaddingIndent]="20"
+                     (click)="$event.stopPropagation()">
+        <mat-checkbox [checked]="isSelected(node.id)"
+                      (change)="toggleLayer(node)">{{node.id}}</mat-checkbox>
+      </mat-tree-node>
+
+      <mat-tree-node *matTreeNodeDef="let node;when: hasChild"
+                     class="allu-tree-node"
+                     matTreeNodePadding
+                     [matTreeNodePaddingIndent]="20"
+                     (click)="$event.stopPropagation()">
+        <div matTreeNodeToggle class="clickable">
+          <button mat-icon-button
+                  [attr.aria-label]="'toggle ' + node.id">
+            <mat-icon>
+              {{treeControl.isExpanded(node) ? 'arrow_drop_down' : 'arrow_right'}}
+            </mat-icon>
+          </button>
+          <span class="text-primary-light">{{node.id}}</span>
+        </div>
+      </mat-tree-node>
+    </mat-tree>
+  </div>
+</mat-menu>
+
+

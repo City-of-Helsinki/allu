@@ -1,19 +1,20 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {combineLatest, Observable, Subject} from 'rxjs';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 
-import {Project} from '../../../model/project/project';
+import {Project} from '@model/project/project';
+import * as fromRoot from '@feature/allu/reducers';
 import * as fromProject from '../reducers';
-import {CityDistrict} from '../../../model/common/city-district';
-import {MapStore} from '../../../service/map/map-store';
-import {MapComponent} from '../../map/map.component';
-import {Comment} from '../../../model/application/comment/comment';
-import {filter, takeUntil, takeWhile} from 'rxjs/internal/operators';
-import {ChangeHistoryItem} from '../../../model/history/change-history-item';
+import * as fromMapLayers from '@feature/map/reducers';
+import {CityDistrict} from '@model/common/city-district';
+import {MapStore} from '@service/map/map-store';
+import {MapComponent} from '@feature/map/map.component';
+import {Comment} from '@model/application/comment/comment';
+import {takeUntil} from 'rxjs/internal/operators';
+import {ChangeHistoryItem} from '@model/history/change-history-item';
 import {MatSlideToggleChange} from '@angular/material';
 import {ShowBasicInfo} from '../actions/project-actions';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-import {shrinkFadeInOut} from '../../common/animation/common-animations';
+import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
 
 @Component({
   selector: 'project-summary',
@@ -27,18 +28,22 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   comments$: Observable<Comment[]>;
   changes$: Observable<ChangeHistoryItem[]>;
   showBasicInfo$: Observable<boolean>;
+  selectedLayers$: Observable<string[]>;
+  availableLayers$: Observable<string[] | number[]>;
 
   private destroy$ = new Subject<boolean>();
   @ViewChild(MapComponent) private map: MapComponent;
 
-  constructor(private store: Store<fromProject.State>, private mapStore: MapStore) {}
+  constructor(private store: Store<fromRoot.State>, private mapStore: MapStore) {}
 
   ngOnInit(): void {
-    this.districts$ = this.store.select(fromProject.getProjectDistricts);
-    this.project$ = this.store.select(fromProject.getCurrentProject);
-    this.comments$ = this.store.select(fromProject.getLatestComments('desc'));
-    this.changes$ = this.store.select(fromProject.getHistory);
-    this.showBasicInfo$ = this.store.select(fromProject.getShowBasicInfo);
+    this.districts$ = this.store.pipe(select(fromProject.getProjectDistricts));
+    this.project$ = this.store.pipe(select(fromProject.getCurrentProject));
+    this.comments$ = this.store.pipe(select(fromProject.getLatestComments('desc')));
+    this.changes$ = this.store.pipe(select(fromProject.getHistory));
+    this.showBasicInfo$ = this.store.pipe(select(fromProject.getShowBasicInfo));
+    this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
+    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayers));
   }
 
   ngAfterViewInit(): void {

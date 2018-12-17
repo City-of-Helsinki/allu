@@ -1,4 +1,5 @@
 @import '../../../../assets/colors';
+@import '../../../../assets/variables';
 
 // deep makes styles available for child components
 :host /deep/ {
@@ -48,6 +49,14 @@
   .mapcontainer {
     height: 49vh;
     position: relative;
+
+    .map-overlay {
+      position: absolute;
+      top: 10px;
+      left: 24px;
+      z-index: $over-map;
+      width: 220px;
+    }
   }
 
   .materialize-textarea {

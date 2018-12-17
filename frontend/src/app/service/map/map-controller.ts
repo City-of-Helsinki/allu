@@ -12,7 +12,7 @@ import {MapUtil} from './map.util';
 import {Some} from '../../util/option';
 import {translations} from '../../util/translations';
 import {Geocoordinates} from '../../model/common/geocoordinates';
-import {MapLayerService} from './map-layer.service';
+import {MapLayerService} from '../../feature/map/map-layer.service';
 import {NotificationService} from '../../feature/notification/notification.service';
 import {drawOptions, editOptions} from './map-config';
 import {MapStore} from './map-store';
@@ -20,8 +20,10 @@ import {MapEventHandler} from './map-event-handler';
 import {MapFeatureInfo} from './map-feature-info';
 import {MapPopupService} from './map-popup.service';
 import {Injectable} from '@angular/core';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, take, takeUntil} from 'rxjs/internal/operators';
 import GeoJSONOptions = L.GeoJSONOptions;
+import {select, Store} from '@ngrx/store';
+import * as fromMapLayers from '@feature/map/reducers';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -57,13 +59,17 @@ export class MapController {
               private mapStore: MapStore,
               private mapLayerService: MapLayerService,
               private popupService: MapPopupService,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private store: Store<fromMapLayers.State>) {
   }
 
   init(config: MapControllerConfig) {
     this.config = config;
     this.initMap();
     this.handleDrawingAllowedChanges();
+    this.store.pipe(
+      select(fromMapLayers.getSelectedLayers)
+    ).subscribe(selected => this.selectLayers(selected));
   }
 
   public clearDrawn() {
@@ -204,7 +210,6 @@ export class MapController {
       maxZoom: 13,
       maxBounds:
         L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
-      layers: this.mapLayerService.initialLayers,
       crs: this.mapUtil.EPSG3879,
       continuousWorld: true,
       worldCopyJump: false
@@ -274,34 +279,11 @@ export class MapController {
   }
 
   private setupLayerControls(): void {
-    const groupedOverlays = {
-      'Karttatasot': this.mapLayerService.overlays,
-      'Hakemustyypit': this.mapLayerService.contentLayers,
-      'Winkin katutyöt': this.mapLayerService.winkkiRoadWorks,
-      'Winkin vuokraukset ja tapahtumat': this.mapLayerService.winkkiEvents,
-      'Muut': this.mapLayerService.other
-    };
-    const groupedControl = L.control.groupedLayers(undefined, groupedOverlays);
-
     // Add marker group support for application layers
     this.mapLayerService.markerSupport.addTo(this.map);
     this.mapLayerService.markerSupport.checkIn(this.mapLayerService.contentLayerArray);
-
-    // Add layer group control to map
-    groupedControl.addTo(this.map);
-
-    // Need to add content layers (applications) to map again to pre-select
-    // them from layer selection control
-    this.mapLayerService.contentLayerArray.forEach(l => l.addTo(this.map));
-
     this.focusedItems = L.featureGroup();
     this.focusedItems.addTo(this.map);
-
-    this.mapLayerService.restrictedOverlays.subscribe(restricted => {
-      Object.keys(restricted).forEach(key => {
-        groupedControl.addOverlay(restricted[key], key, 'Karttatasot');
-      });
-    });
   }
 
   private setLocalizations(): void {
@@ -372,5 +354,20 @@ export class MapController {
       }
     });
     return removed;
+  }
+
+  private selectLayers(selected: string[] = []) {
+    combineLatest(
+      this.store.pipe(select(fromMapLayers.getAllLayers)),
+      this.store.pipe(select(fromMapLayers.getLayersByIds(selected)))
+    ).pipe(
+      take(1)
+    ).subscribe(([allLayers, selectedLayers]) => {
+      // Remove layers which are not selected
+      const deselectLayers = allLayers.filter(layer => selected.indexOf(layer.id) < 0);
+      deselectLayers.map(mapLayer => mapLayer.layer).forEach(layer => this.map.removeLayer(layer));
+      // Add selected layers
+      selectedLayers.map(mapLayer => mapLayer.layer).forEach(layer => this.map.addLayer(layer));
+    });
   }
 }

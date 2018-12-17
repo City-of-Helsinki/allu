@@ -1,5 +1,6 @@
 @import 'colors';
 @import 'marker-cluster';
+@import 'variables';
 
 input[type="radio"]:not(:checked).leaflet-control-layers-selector,
 input[type="radio"]:checked.leaflet-control-layers-selector,
@@ -77,5 +78,6 @@ img.leaflet-marker-icon {
   justify-content: center;
 }
 
-
-
+.map-top-control {
+  max-width: 220px;
+}

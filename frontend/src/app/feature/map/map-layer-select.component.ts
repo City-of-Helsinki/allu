@@ -1,0 +1,67 @@
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {select, Store} from '@ngrx/store';
+import * as fromMapLayers from '@feature/map/reducers';
+import {Subject} from 'rxjs/internal/Subject';
+import {map, takeUntil} from 'rxjs/operators';
+import {SelectLayers} from '@feature/map/actions/map-layer-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {getChildren, getLevel, hasChild as nodeHasChild, isExpandable, isRoot as nodeIsRoot} from '@feature/common/tree/tree-node';
+import {buildTree, MapLayerFlatNode, MapLayerNode, transformer} from './map-layer-node';
+import {FlatTreeControl} from '@angular/cdk/tree';
+import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material';
+import {SelectionModel} from '@angular/cdk/collections';
+
+
+@Component({
+  selector: 'map-layer-select',
+  templateUrl: './map-layer-select.component.html',
+  styleUrls: [
+    './map-layer-select.component.scss'
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class MapLayerSelectComponent implements OnInit, OnDestroy {
+  treeControl: FlatTreeControl<MapLayerFlatNode>;
+  treeFlattener: MatTreeFlattener<MapLayerNode, MapLayerFlatNode>;
+  dataSource: MatTreeFlatDataSource<MapLayerNode, MapLayerFlatNode>;
+  checklistSelection = new SelectionModel<string>(true /* multiple */);
+
+  hasChild = nodeHasChild;
+  isRoot = nodeIsRoot;
+
+  @Input() layers: string[] = [];
+  @Input() classNames: string[] = [];
+
+  private destroy: Subject<boolean> = new Subject<boolean>();
+
+  constructor(private store: Store<fromMapLayers.State>) {}
+
+  ngOnInit(): void {
+    this.treeFlattener = new MatTreeFlattener(transformer, getLevel, isExpandable, getChildren);
+    this.treeControl = new FlatTreeControl<MapLayerFlatNode>(getLevel, isExpandable);
+    this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    this.store.pipe(
+      select(fromMapLayers.getTreeStructure),
+      takeUntil(this.destroy),
+      map(treeStructure => buildTree(treeStructure)),
+    ).subscribe(treeStructure => this.dataSource.data = treeStructure);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
+
+  @Input() set selected(selected: string[]) {
+    this.checklistSelection.select(...selected);
+  }
+
+  isSelected(layerId: string): boolean {
+    return this.checklistSelection.isSelected(layerId);
+  }
+
+  toggleLayer(node: MapLayerFlatNode): void {
+    this.checklistSelection.toggle(node.id);
+    this.store.dispatch(new SelectLayers(ActionTargetType.Home, this.checklistSelection.selected));
+  }
+}

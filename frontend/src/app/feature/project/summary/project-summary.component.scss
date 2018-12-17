@@ -1,6 +1,16 @@
+@import '../../../../assets/variables';
+
 .mapcontainer {
   height: 430px;
   position: relative;
+
+  .map-overlay {
+    position: absolute;
+    top: 10px;
+    left: 24px;
+    z-index: $over-map;
+    width: 220px;
+  }
 }
 
 h2.preview-header {

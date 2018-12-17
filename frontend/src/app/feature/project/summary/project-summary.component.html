@@ -27,6 +27,14 @@
     </div>
     <div fxFlex="calc(50% - 18px)">
       <div class="mapcontainer">
+        <div class="map-overlay">
+          <map-layer-select
+            style="width: 220px"
+            classNames="input-raised"
+            [selected]="selectedLayers$ | async"
+            [layers]="availableLayers$ | async"></map-layer-select>
+        </div>
+
         <map [zoom]="true" [projectId]="project.id" role="LOCATION">Loading map</map>
       </div>
     </div>
