@@ -74,10 +74,11 @@
         <mat-card-content>
           <div class="row form-group">
             <div class="col m12">
-              <mat-form-field class="input-full-width">
-                                <textarea matInput matTextareaAutosize formControlName="trafficArrangements"
-                                          placeholder="Suoritettavat liikennejärjestelyt"></textarea>
-              </mat-form-field>
+              <default-text formControlName="trafficArrangements"
+                  [applicationType]="application.type"
+                  [readonly]="readonly"
+                  [textType]="'TRAFFIC_ARRANGEMENT'"
+                  [includeTypes]="['TRAFFIC_ARRANGEMENT']"></default-text>
             </div>
           </div>
           <div class="row" *ngIf="showImpedimentType">
