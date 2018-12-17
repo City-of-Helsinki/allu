@@ -2,6 +2,7 @@ package fi.hel.allu.model.service.event.handler;
 
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
@@ -37,6 +38,7 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
                             TimeUtil.nextDay(l.getEndTime()), l.getId()));
     createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
                           TimeUtil.nextDay(application.getEndTime()));
+    removeTag(application.getId(), ApplicationTagType.PRELIMINARY_SUPERVISION_DONE);
   }
 
   @Override

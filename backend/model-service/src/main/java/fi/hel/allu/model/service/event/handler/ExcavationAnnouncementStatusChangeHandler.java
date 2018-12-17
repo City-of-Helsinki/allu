@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
@@ -50,6 +51,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
             SupervisionDates.warrantySupervisionDate(application.getEndTime()));
       }
     }
+    removeTag(application.getId(), ApplicationTagType.PRELIMINARY_SUPERVISION_DONE);
   }
 
   protected void setExcavationAnnouncementInvoicable(Application application, ZonedDateTime invoicableTime) {

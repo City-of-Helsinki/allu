@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -174,6 +175,10 @@ public class ApplicationStatusChangeHandler {
       logger.warn("No final supervision task owner found for application {}", application.getId());
     }
     return supervisionTaskOwner;
+  }
+
+  protected void removeTag(Integer id, ApplicationTagType tagType) {
+    applicationService.removeTag(id, tagType);
   }
 
   protected ApplicationService getApplicationService() {
