@@ -233,7 +233,7 @@ public class SupervisionTaskDao {
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
         values(searchCriteria.getApplicationStatus()).map(application.status::in),
         values(searchCriteria.getCityDistrictIds()).map(location.cityDistrictId::in),
-        values(searchCriteria.getApplicationIds()).map(supervisionTask.applicationId::in)
+        values(searchCriteria.getApplicationIds()).map(supervisionTaskWithAddress.applicationId::in)
     ).filter(opt -> opt.isPresent())
      .map(opt -> opt.get());
   }
