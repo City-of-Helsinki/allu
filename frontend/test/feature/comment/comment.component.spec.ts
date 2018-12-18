@@ -1,16 +1,14 @@
 import {Component, DebugElement, ViewChild} from '@angular/core';
-import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
-import {CommentComponent} from '../../../src/app/feature/comment/comment.component';
-import {Comment} from '../../../src/app/model/application/comment/comment';
-import {User} from '../../../src/app/model/user/user';
-import {combineReducers, Store, StoreModule} from '@ngrx/store';
-import * as fromAuth from '../../../src/app/feature/auth/reducers';
-import {LoggedUserLoaded} from '../../../src/app/feature/auth/actions/auth-actions';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {CommentComponent} from '@feature/comment/comment.component';
+import {Comment} from '@model/application/comment/comment';
+import {User} from '@model/user/user';
 import {By} from '@angular/platform-browser';
-import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
-import {availableToDirectiveMockMeta} from '../../mocks';
+import {AvailableToDirective} from '@service/authorization/available-to.directive';
+import {availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
+import {CurrentUser} from '@service/user/current-user';
 
 @Component({
   selector: 'parent',
@@ -33,7 +31,7 @@ describe('CommentComponent', () => {
   let comp: CommentComponent;
   let de: DebugElement;
   let user: User;
-  let store: Store<fromAuth.State>;
+  const currentUser: CurrentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -41,16 +39,14 @@ describe('CommentComponent', () => {
         AlluCommonModule,
         FormsModule,
         ReactiveFormsModule,
-        StoreModule.forRoot({
-          'auth': combineReducers(fromAuth.reducers)
-        }),
       ],
       declarations: [
         MockParentComponent,
         CommentComponent
       ],
       providers: [
-        FormBuilder
+        FormBuilder,
+        {provide: CurrentUser, useValue: currentUser}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta())
@@ -62,10 +58,8 @@ describe('CommentComponent', () => {
     parentComp = fixture.componentInstance;
     comp = parentComp.commentComponent;
     de = fixture.debugElement;
-    store = TestBed.get(Store);
 
     user = new User(1, 'testUser');
-    store.dispatch(new LoggedUserLoaded(user));
     parentComp.comment = new Comment(1, 'INTERNAL', 'some text', new Date(), new Date(), user);
     fixture.detectChanges();
   });
