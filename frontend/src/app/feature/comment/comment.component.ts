@@ -3,11 +3,10 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {manualCommentNames} from '../../model/application/comment/comment-type';
 import {CommentForm} from './comment-form';
 import {Comment} from '../../model/application/comment/comment';
-import {Store} from '@ngrx/store';
-import * as fromAuth from '../auth/reducers';
-import {NumberUtil} from '../../util/number.util';
 import {StringUtil} from '../../util/string.util';
 import {map, take, takeWhile} from 'rxjs/internal/operators';
+import {combineLatest} from 'rxjs';
+import {CurrentUser} from '@service/user/current-user';
 
 @Component({
   selector: 'comment',
@@ -27,7 +26,8 @@ export class CommentComponent implements OnInit {
 
   private originalForm: CommentForm;
 
-  constructor(private store: Store<fromAuth.State>, private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+              private currentUser: CurrentUser) {
     this.form = this.fb.group({
       id: [undefined],
       type: [undefined],
@@ -47,11 +47,7 @@ export class CommentComponent implements OnInit {
       this.form.disable();
     }
 
-    this.store.select(fromAuth.getUser).pipe(
-      take(1),
-      takeWhile(() => !!this.comment.user),
-      map(user => user.id === this.comment.user.id)
-    ).subscribe(canEdit => this.canEdit = canEdit);
+    this.currentUserCanEdit(this.comment.user.id);
   }
 
   remove(): void {
@@ -76,6 +72,19 @@ export class CommentComponent implements OnInit {
     } else {
       this.onRemove.emit();
     }
+  }
+
+  private currentUserCanEdit(creatorId: number): void {
+    combineLatest(
+        this.currentUser.isCurrentUser(creatorId),
+        this.currentUser.hasRole(['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION', 'ROLE_DECLARANT']),
+        this.currentUser.hasRole(['ROLE_ADMIN'])
+      ).pipe(
+        take(1)
+      ).subscribe(([isCurrent, hasRole, isAdmin]) => {
+        this.canEdit = ((creatorId === undefined || isCurrent) && hasRole) || isAdmin;
+      }
+    );
   }
 
   edit(): void {
