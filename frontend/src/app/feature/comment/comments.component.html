@@ -1,6 +1,6 @@
 <h1 class="content-header">{{'comment.title' | translation}}</h1>
 
-<div class="add-new-control" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
+<div class="add-new-control" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION', 'ROLE_DECLARANT']">
   <allu-card>
     <mat-card-content>
       <comment (save)="save($event)"></comment>

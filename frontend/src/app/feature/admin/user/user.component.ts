@@ -33,6 +33,7 @@ export class UserComponent implements OnInit {
     'ROLE_SUPERVISE',
     'ROLE_INVOICING',
     'ROLE_VIEW',
+    'ROLE_DECLARANT',
   ].sort(ArrayUtil.naturalSortTranslated(['user.role'], (role: string) => role));
   districts: Observable<Array<CityDistrict>>;
 

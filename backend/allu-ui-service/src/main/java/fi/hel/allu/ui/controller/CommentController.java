@@ -39,28 +39,28 @@ public class CommentController {
   }
 
   @RequestMapping(value = "/applications/{applicationId}/comments", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION', 'ROLE_DECLARANT')")
   public ResponseEntity<CommentJson> insertApplicationComment(@PathVariable int applicationId,
       @Valid @RequestBody(required = true) CommentJson commentJson) {
     return new ResponseEntity<>(commentService.addApplicationComment(applicationId, commentJson), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/projects/{projectId}/comments", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION', 'ROLE_DECLARANT')")
   public ResponseEntity<CommentJson> insertProjectComment(@PathVariable int projectId,
       @Valid @RequestBody(required = true) CommentJson commentJson) {
     return new ResponseEntity<>(commentService.addProjectComment(projectId, commentJson), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/comments/{id}", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION', 'ROLE_DECLARANT')")
   public ResponseEntity<CommentJson> update(@PathVariable int id,
       @Valid @RequestBody(required = true) CommentJson commentJson) {
     return new ResponseEntity<>(commentService.updateComment(id, commentJson), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/comments/{id}", method = RequestMethod.DELETE)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION','ROLE_DECISION', 'ROLE_DECLARANT')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     commentService.deleteComment(id);
     return new ResponseEntity<>(HttpStatus.OK);

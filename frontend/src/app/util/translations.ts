@@ -980,6 +980,7 @@ export const translations = {
       ROLE_SUPERVISE: 'Valvonta',
       ROLE_INVOICING: 'Laskutus',
       ROLE_VIEW: 'Katselu',
+      ROLE_DECLARANT: 'Lausunnonantaja',
       ROLE_ADMIN: 'Ylläpito'
     },
     userInfo: 'Käyttäjän tiedot',

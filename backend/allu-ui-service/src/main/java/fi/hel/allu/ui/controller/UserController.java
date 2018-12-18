@@ -33,7 +33,7 @@ public class UserController {
    * @return  Nothing.
    */
   @RequestMapping(value = "/isauthenticated", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION','ROLE_PROCESS_APPLICATION','ROLE_DECISION','ROLE_SUPERVISE','ROLE_INVOICING','ROLE_VIEW','ROLE_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION','ROLE_PROCESS_APPLICATION','ROLE_DECISION','ROLE_SUPERVISE','ROLE_INVOICING','ROLE_DECLARANT', 'ROLE_VIEW','ROLE_ADMIN')")
   public ResponseEntity<Void> checkToken() {
     return new ResponseEntity<>(HttpStatus.OK);
   }

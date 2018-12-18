@@ -22,7 +22,11 @@ public enum RoleType {
    */
   ROLE_INVOICING,
   /**
-   * Allowed to login and view applications
+   * Allowed to comment applications and projects and to add attachments.
+   */
+  ROLE_DECLARANT,
+  /**
+   * Allowed to login and view applications.
    */
   ROLE_VIEW,
   /**

@@ -1,5 +1,5 @@
 <h1 class="content-header">{{'attachments' | translation | uppercase}}</h1>
-<div fxLayout="row" fxLayoutAlign="center" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+<div fxLayout="row" fxLayoutAlign="center" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT']">
   <div fxFlex>
     <div fileDrop (onFileDrop)="onFileDrop($event)" (onFileOver)="fileOverDropzone($event)"
          class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
@@ -20,7 +20,7 @@
 
     <li *ngFor="let attachment of commonAttachments; let i = index;">
       <allu-card class="slim-card">
-        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT']">
           <button mat-icon-button *ngIf="canEdit(attachment)" (click)="remove(attachment)">
             <mat-icon>clear</mat-icon>
            </button>

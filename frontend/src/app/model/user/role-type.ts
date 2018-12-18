@@ -20,6 +20,10 @@ export enum RoleType {
    */
   ROLE_INVOICING = 'ROLE_INVOICING',
   /**
+   * Allowed to comment applications and projects and to add attachments.
+   */
+  ROLE_DECLARANT = 'ROLE_DECLARANT',
+  /**
    * Allowed to login and view applications
    */
   ROLE_VIEW = 'ROLE_VIEW',
