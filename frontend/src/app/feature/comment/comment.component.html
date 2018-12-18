@@ -14,7 +14,7 @@
       </div>
 
       <div fxFlex="auto" class="align-right" *ngIf="form.disabled">
-        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
           <button mat-icon-button type="button" color="primary" (click)="edit()">
             <mat-icon class="mat-icon-18">edit</mat-icon>
           </button>
