@@ -257,14 +257,14 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private currentUserCanEdit(creatorId: number, status: SupervisionTaskStatusType): void {
-    this.currentUser.isCurrentUser(creatorId).subscribe(isCurrent => {
+    this.currentUser.isCurrentUser(creatorId).pipe(take(1)).subscribe(isCurrent => {
       const editableStatus = SupervisionTaskStatusType.APPROVED !== status;
       this.canEdit = (creatorId === undefined || isCurrent) && editableStatus;
     });
   }
 
   private currentUserCanApprove(ownerId: number, status: SupervisionTaskStatusType): void {
-    this.currentUser.isCurrentUser(ownerId).subscribe(isCurrent => {
+    this.currentUser.isCurrentUser(ownerId).pipe(take(1)).subscribe(isCurrent => {
       this.canApprove = isCurrent && SupervisionTaskStatusType.OPEN === status;
     });
   }
