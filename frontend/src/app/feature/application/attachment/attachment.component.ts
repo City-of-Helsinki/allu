@@ -68,7 +68,7 @@ export class AttachmentComponent implements OnInit {
   }
 
   getMaxAttachmentSize(): string {
-    return Math.round(this.maxAttachmentSize / (1000 * 1000)) + " MB";
+    return Math.round(this.maxAttachmentSize / (1000 * 1000)) + ' MB';
   }
 
   private setValidForDecision(fileType: string): void {
