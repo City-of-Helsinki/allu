@@ -1343,7 +1343,8 @@ export const translations = {
       defaultAttachmentByArea: 'Vakioliitteen automaattinen lisääminen alueen perusteella epäonnistui. ' +
       'Voit lisätä vakioliitteen Liitteet-välilehdeltä',
       addFailed: 'Liiteen {{name}} tallennus epäonnistui',
-      deleteFailed: 'Liiteen {{name}} poistaminen epäonnistui'
+      deleteFailed: 'Liiteen {{name}} poistaminen epäonnistui',
+      maxSizeExceeded: 'Liitteen maksimikoko on {{size}}'
     },
     confirmDiscard: {
       title: 'Hylätäänkö muutokset',

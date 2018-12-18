@@ -37,6 +37,9 @@
 
           <input #realFileInput class="real-file-input" type="file" fileSelect
                  (attachmentsSelected)="attachmentSelected($event)"/>
+          <mat-error *ngIf="attachmentForm.get('size').hasError('max')">
+            {{'attachment.error.maxSizeExceeded' | translation:{size: getMaxAttachmentSize()} }}
+          </mat-error>
         </div>
       </div>
       <div fxLayout="row">

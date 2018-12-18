@@ -23,6 +23,7 @@ export class AttachmentComponent implements OnInit {
   ];
 
   validForDecision = false;
+  readonly maxAttachmentSize = 10000000;
 
   constructor(private fb: FormBuilder) {
   }
@@ -33,7 +34,7 @@ export class AttachmentComponent implements OnInit {
       type: ['', Validators.required],
       name:  ['', Validators.required],
       description: [],
-      size: [],
+      size: [0, Validators.max(this.maxAttachmentSize)],
       creationTime: [],
       decisionAttachment: [{value: false, disabled: this.decisionAttachmentDisabled}],
       handlerName: [],
@@ -61,9 +62,13 @@ export class AttachmentComponent implements OnInit {
   attachmentSelected(files: any[]): void {
     if (files && files.length > 0) {
       const file = files[0];
-      this.attachmentForm.patchValue({name: file.name, file: file});
+      this.attachmentForm.patchValue({name: file.name, file: file, size: file.size});
       this.setValidForDecision(file.type);
     }
+  }
+
+  getMaxAttachmentSize(): string {
+    return Math.round(this.maxAttachmentSize / (1000 * 1000)) + " MB";
   }
 
   private setValidForDecision(fileType: string): void {
