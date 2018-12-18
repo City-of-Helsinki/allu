@@ -1,5 +1,7 @@
 package fi.hel.allu.supervision.api.service;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.servicecore.service.IdentityServiceInterface;
@@ -9,7 +11,8 @@ public class IdentityService implements IdentityServiceInterface {
 
   @Override
   public String getUsername() {
-    return null;
+    User alluUser = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    return alluUser.getUsername();
   }
 
 }

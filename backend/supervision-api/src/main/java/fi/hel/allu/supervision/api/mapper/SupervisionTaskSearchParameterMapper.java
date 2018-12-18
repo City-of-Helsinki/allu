@@ -1,7 +1,5 @@
 package fi.hel.allu.supervision.api.mapper;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;

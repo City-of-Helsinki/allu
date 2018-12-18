@@ -80,7 +80,9 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       "owner.userName",
       "owner.realName",
       "registryKey",
-      "project.identifier"
+      "project.identifier",
+      "identifier"
+
       };
 
   /* Fields that should be sorted ordinally */
@@ -566,10 +568,12 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     } else if (queryParameter.getFieldValue() != null) {
       return QueryBuilders.matchQuery(
           queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND);
-    } else if (queryParameter.getStartDateValue() != null && queryParameter.getEndDateValue() != null) {
+    } else if (queryParameter.getStartDateValue() != null || queryParameter.getEndDateValue() != null) {
+      ZonedDateTime startDate = queryParameter.getStartDateValue() != null ? queryParameter.getStartDateValue() : RecurringApplication.BEGINNING_1972_DATE;
+      ZonedDateTime endDate = queryParameter.getEndDateValue() != null ? queryParameter.getEndDateValue() : RecurringApplication.MAX_END_TIME;
       return QueryBuilders.rangeQuery(queryParameter.getFieldName())
-          .gte(queryParameter.getStartDateValue().toInstant().toEpochMilli())
-          .lte(queryParameter.getEndDateValue().toInstant().toEpochMilli());
+          .gte(startDate.toInstant().toEpochMilli())
+          .lte(endDate.toInstant().toEpochMilli());
     } else if (queryParameter.getFieldMultiValue() != null) {
       BoolQueryBuilder qb = QueryBuilders.boolQuery();
       for (String searchTerm : queryParameter.getFieldMultiValue()) {

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -78,6 +79,9 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     );
     if (queryParameters.getIntersectingGeometry() != null) {
       addGeometryParameter(queryParameters.getIntersectingGeometry(), qb);
+    }
+    if (BooleanUtils.isTrue(queryParameters.getHasProject())) {
+      qb.must(QueryBuilders.existsQuery("project"));
     }
   }
 
