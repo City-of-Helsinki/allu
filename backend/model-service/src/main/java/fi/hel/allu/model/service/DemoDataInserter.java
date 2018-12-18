@@ -1,16 +1,19 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.dao.ConfigurationDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Configuration;
 import fi.hel.allu.model.domain.ConfigurationKey;
+import fi.hel.allu.model.domain.user.User;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,7 @@ public class DemoDataInserter {
     if (!inserted) {
       addSupervisorsForCityDistricts();
       addDefaultDecisionMakers();
+      addUserWithRoleDeclarant();
       inserted = true;
     }
   }
@@ -66,5 +70,21 @@ public class DemoDataInserter {
         configurationDao.update(configuration.getId(), configuration);
       });
     });
+  }
+
+  private void addUserWithRoleDeclarant() {
+    final User user = new User(
+        null,
+        "lausunnonantaja",
+        "Laura Lausunnonantaja",
+        "laura@lausuntoautomaatti.fi",
+        "03-1234567",
+        "lausuja",
+        true,
+        null,
+        Collections.emptyList(),
+        Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_DECLARANT),
+        Collections.emptyList());
+    userDao.insert(user);
   }
 }
