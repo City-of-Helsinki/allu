@@ -1,19 +1,18 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {forkJoin, Observable} from 'rxjs';
+import {forkJoin} from 'rxjs';
 
-import {EnumUtil} from '../../../../util/enum.util';
-import {DefaultTextType} from '../../../../model/application/default-text-type';
-import {findTranslation, translations} from '../../../../util/translations';
-import {ComplexValidator} from '../../../../util/complex-validator';
-import {DefaultText, DefaultTextMap} from '../../../../model/application/cable-report/default-text';
+import {DefaultTextType} from '@model/application/default-text-type';
+import {findTranslation, translations} from '@util/translations';
+import {ComplexValidator} from '@util/complex-validator';
+import {DefaultText, DefaultTextMap} from '@model/application/cable-report/default-text';
 import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
-import {CableReport} from '../../../../model/application/cable-report/cable-report';
-import {Some} from '../../../../util/option';
-import {NotificationService} from '../../../notification/notification.service';
-import {ApplicationType} from '../../../../model/application/type/application-type';
-import {DefaultTextService} from '../../../../service/application/default-text.service';
+import {CableReport} from '@model/application/cable-report/cable-report';
+import {Some} from '@util/option';
+import {NotificationService} from '@feature/notification/notification.service';
+import {ApplicationType} from '@model/application/type/application-type';
+import {DefaultTextService} from '@service/application/default-text.service';
 import {switchMap} from 'rxjs/internal/operators';
 import {FormUtil} from '@util/form.util';
 
@@ -31,9 +30,11 @@ export class CableInfoComponent implements OnInit {
 
   cableInfoEntries: FormArray;
   translations = translations;
-  cableInfoTypes = ['TELECOMMUNICATION', 'ELECTRICITY', 'WATER_AND_SEWAGE', 'DISTRICT_HEATING_COOLING',
-                    'GAS', 'UNDERGROUND_STRUCTURE', 'TRAMWAY', 'STREET_HEATING', 'SEWAGE_PIPE',
-                    'GEOTHERMAL_WELL', 'GEOTECHNICAL_OBSERVATION_POST', 'OTHER'];
+  cableInfoTypes = [
+    DefaultTextType.TELECOMMUNICATION, DefaultTextType.ELECTRICITY, DefaultTextType.WATER_AND_SEWAGE,
+    DefaultTextType.DISTRICT_HEATING_COOLING, DefaultTextType.GAS, DefaultTextType.UNDERGROUND_STRUCTURE,
+    DefaultTextType.TRAMWAY, DefaultTextType.STREET_HEATING, DefaultTextType.SEWAGE_PIPE,
+    DefaultTextType.GEOTHERMAL_WELL, DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, DefaultTextType.OTHER];
   defaultTexts: DefaultTextMap = {};
   dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
@@ -49,8 +50,8 @@ export class CableInfoComponent implements OnInit {
     this.defaultTextService.load(ApplicationType.CABLE_REPORT).subscribe(texts => this.setDefaultTexts(texts));
   }
 
-  isSelected(type: string) {
-    return this.parentForm.getRawValue().selectedCableInfoTypes.indexOf(DefaultTextType[type]) >= 0;
+  isSelected(type: DefaultTextType) {
+    return this.parentForm.getRawValue().selectedCableInfoTypes.indexOf(type) >= 0;
   }
 
   addDefaultText(entryIndex: number, text: string) {
@@ -59,10 +60,10 @@ export class CableInfoComponent implements OnInit {
     this.cableInfoEntries.at(entryIndex).get('additionalInfo').patchValue(textValue);
   }
 
-  editDefaultTexts(type: string) {
+  editDefaultTexts(type: DefaultTextType) {
     this.dialogRef = this.dialog.open<DefaultTextModalComponent>(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
     const comp = this.dialogRef.componentInstance;
-    comp.type = DefaultTextType[type];
+    comp.type = type;
     comp.applicationType = ApplicationType.CABLE_REPORT;
 
     this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
@@ -96,7 +97,7 @@ export class CableInfoComponent implements OnInit {
     }
   }
 
-  private createCableInfoEntry(type: string) {
+  private createCableInfoEntry(type: DefaultTextType) {
     const additionalInfo = Some(this.cableReport.infoEntries.find(entry => entry.type === type))
       .map(entry => entry.additionalInfo)
       .orElse('') ;

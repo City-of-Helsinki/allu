@@ -390,6 +390,10 @@ export const translations = {
     },
     cableReport: {
       cableInfo: {
+        title: 'Johtotiedot',
+        selectInfoType: 'Valitse tyyppi',
+        mapExtractCount: 'Karttaotteiden määrä',
+        additionalInfo: 'Lisätietoja'
       },
       field: {
         startBeforeEnd: 'Lopetuspäivä ei voi olla ennen aloituspäivää'
@@ -1046,6 +1050,7 @@ export const translations = {
     saveAsDefault: 'Tallenna oletusnäkymäksi'
   },
   defaultText: {
+    placeholder: 'Vakiotekstit',
     actions: {
       saved: 'Vakiotekstit tallennettu'
     },
