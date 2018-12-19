@@ -20,7 +20,7 @@ import {Store} from '@ngrx/store';
 export class ProjectSearchComponent implements OnInit {
 
   displayedColumns = [
-      'id', 'ownerName', 'active',
+      'identifier', 'ownerName', 'active',
       'cityDistricts', 'startTime', 'endTime'
   ];
 
