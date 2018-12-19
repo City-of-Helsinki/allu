@@ -14,6 +14,8 @@ import fi.hel.allu.supervision.api.domain.SearchParameters;
 
 public class MapperUtil {
 
+  public static PageRequest DEFAULT_PAGE_REQUEST = new PageRequest(0, 100000);
+
   public static ZonedDateTime parseDate(String value) {
     return ZonedDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
   }
