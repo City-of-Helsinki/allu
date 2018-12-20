@@ -1,0 +1,1 @@
+alter table allureport.lasku alter column laskutettava_aika drop not null;
