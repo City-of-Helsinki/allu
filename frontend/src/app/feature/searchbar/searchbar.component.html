@@ -37,6 +37,7 @@
          fxFlex.lt-md="100%">
       <map-layer-select
         classNames="input-raised"
+        targetType="Home"
         [selected]="selectedLayers$ | async"
         [layers]="availableLayers$ | async"></map-layer-select>
     </div>
@@ -100,6 +101,7 @@
     <div fxFlex="0 0 220px"
          fxFlex.lt-md="100%">
       <map-layer-select
+        targetType="Location"
         classNames="input-raised"
         [selected]="selectedLayers$ | async"
         [layers]="availableLayers$ | async"></map-layer-select>

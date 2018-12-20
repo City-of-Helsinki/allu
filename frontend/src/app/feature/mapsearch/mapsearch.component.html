@@ -38,7 +38,12 @@
         (searchChange)="onSearchChange($event)"
         (onShowAdvanced)="showAdvancedSearch()"></searchbar>
     </div>
-    <map [zoom]="true" [draw]="true" [selection]="true"></map>
+    <map [zoom]="true"
+         [draw]="true"
+         [selection]="true"
+         [availableLayers]="availableLayers$ | async"
+         [selectedLayers]="selectedLayers$ | async"></map>
+
     <div class="map-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
       <button mat-fab color="accent" (click)="newApplication()"
               [matTooltip]="'mapsearch.newApplication' | translation" matTooltipPosition="above">

@@ -4,18 +4,21 @@ import {RouterModule} from '@angular/router';
 import {MatCardModule} from '@angular/material';
 
 import {LocationComponent} from './location.component';
-import {AlluCommonModule} from '../../common/allu-common.module';
-import {SearchBarModule} from '../../searchbar/searchbar.module';
-import {MapModule} from '../../map/map.module';
-import {ProgressBarModule} from '../progressbar/progressbar.module';
-import {TypeModule} from '../type/type.module';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {SearchBarModule} from '@feature/searchbar/searchbar.module';
+import {MapModule} from '@feature/map/map.module';
+import {ProgressBarModule} from '@feature/application/progressbar/progressbar.module';
+import {TypeModule} from '@feature/application/type/type.module';
 import {StoredLocationsComponent} from './stored-locations.component';
+import {StoreModule} from '@ngrx/store';
+import {reducersProvider, reducersToken} from '@feature/application/location/reducers';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
+    StoreModule.forFeature('location', reducersToken),
     AlluCommonModule,
     MatCardModule,
     SearchBarModule,
@@ -28,6 +31,7 @@ import {StoredLocationsComponent} from './stored-locations.component';
     StoredLocationsComponent
   ],
   providers: [
+    reducersProvider
   ],
   exports: [
     StoredLocationsComponent

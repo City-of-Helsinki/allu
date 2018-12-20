@@ -31,11 +31,16 @@
           <map-layer-select
             style="width: 220px"
             classNames="input-raised"
-            [selected]="selectedLayers$ | async"
-            [layers]="availableLayers$ | async"></map-layer-select>
+            targetType="Location"
+            [selected]="selectedLayersIds$ | async"
+            [layers]="availableLayerIds$ | async"></map-layer-select>
         </div>
 
-        <map [zoom]="true" [projectId]="project.id" role="LOCATION">Loading map</map>
+        <map [zoom]="true"
+             [projectId]="project.id"
+             role="LOCATION"
+             [availableLayers]="availableLayers$ | async"
+             [selectedLayers]="selectedLayers$ | async">Loading map</map>
       </div>
     </div>
   </div>

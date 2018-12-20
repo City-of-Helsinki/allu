@@ -20,11 +20,10 @@ import {MapEventHandler} from './map-event-handler';
 import {MapFeatureInfo} from './map-feature-info';
 import {MapPopupService} from './map-popup.service';
 import {Injectable} from '@angular/core';
-import {distinctUntilChanged, map, take, takeUntil} from 'rxjs/internal/operators';
-import GeoJSONOptions = L.GeoJSONOptions;
-import {select, Store} from '@ngrx/store';
-import * as fromMapLayers from '@feature/map/reducers';
+import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
+import GeoJSONOptions = L.GeoJSONOptions;
+import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -55,20 +54,48 @@ export class MapController {
   private deleting = false;
   private destroy = new Subject<boolean>();
   private config: MapControllerConfig;
+  private _allLayers$: BehaviorSubject<MapLayer[]> = new BehaviorSubject([]);
+  private _selectedLayers$: BehaviorSubject<MapLayer[]> = new BehaviorSubject([]);
 
   constructor(private mapUtil: MapUtil,
               private mapStore: MapStore,
               private mapLayerService: MapLayerService,
               private popupService: MapPopupService,
-              private notification: NotificationService,
-              private store: Store<fromMapLayers.State>) {
+              private notification: NotificationService) {
+    combineLatest(
+      this._allLayers$,
+      this._selectedLayers$
+    ).pipe(
+      takeUntil(this.destroy),
+      filter(() => !!this.map)
+    ).subscribe(([all, selected]) => this.selectLayers(all, selected));
   }
 
   init(config: MapControllerConfig) {
     this.config = config;
     this.initMap();
     this.handleDrawingAllowedChanges();
-    this.handleSelectedLayer();
+    this.reloadSelectedLayers();
+  }
+
+  public get availableLayers() {
+    return this._allLayers$.getValue();
+  }
+
+  public set availableLayers(layers: MapLayer[]) {
+    if (layers) {
+      this._allLayers$.next(layers);
+    }
+  }
+
+  public get selectedLayers() {
+    return this._selectedLayers$.getValue();
+  }
+
+  public set selectedLayers(layers: MapLayer[]) {
+    if (layers) {
+      this._selectedLayers$.next(layers);
+    }
   }
 
   public clearDrawn() {
@@ -148,15 +175,11 @@ export class MapController {
       .do(bounds => this.map.fitBounds(bounds));
   }
 
-  // For some reason leaflet does not show layer after angular route change
-  // unless it is removed and added back
   reloadSelectedLayers(): void {
-    combineLatest(
-      this.store.pipe(select(fromMapLayers.getAllLayers)),
-      this.store.pipe(select(fromMapLayers.getSelectedLayers))
-    ).pipe(
-      take(1)
-    ).subscribe(([allLayers, selectedLayers]) => this.setMapLayers(selectedLayers, allLayers));
+    // For leaflet to render selected layer after navigation
+    // we need to make sure the selected layer is added to map and re-added after that
+    this.setMapLayers(this.selectedLayers, []);
+    this.setMapLayers(this.selectedLayers, this.selectedLayers);
   }
 
   get shapes(): Observable<ShapeAdded> {
@@ -359,21 +382,14 @@ export class MapController {
     return removed;
   }
 
+  private selectLayers(allLayers: MapLayer[], selectedLayers: MapLayer[]) {
+    const selectedIds = selectedLayers.map(s => s.id);
+    const deselectLayers = allLayers.filter(layer => selectedIds.indexOf(layer.id) < 0);
+    this.setMapLayers(selectedLayers, deselectLayers);
+  }
+
   private setMapLayers(selected: MapLayer[], deselected: MapLayer[]): void {
     deselected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.removeLayer(layer));
     selected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.addLayer(layer));
-  }
-
-  private handleSelectedLayer() {
-    combineLatest(
-      this.store.pipe(select(fromMapLayers.getAllLayers)),
-      this.store.pipe(select(fromMapLayers.getSelectedLayers))
-    ).pipe(
-      takeUntil(this.destroy)
-    ).subscribe(([allLayers, selectedLayers]) => {
-      const selectedIds = selectedLayers.map(s => s.id);
-      const deselectLayers = allLayers.filter(layer => selectedIds.indexOf(layer.id) < 0);
-      this.setMapLayers(selectedLayers, deselectLayers);
-    });
   }
 }

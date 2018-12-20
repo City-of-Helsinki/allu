@@ -1,5 +1,5 @@
 import {InjectionToken} from '@angular/core';
-import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelector} from '@ngrx/store';
 import {State} from '../../application/reducers';
 import * as fromRoot from '../../allu/reducers';
 import * as fromLayers from './map-layer-reducer';
@@ -32,25 +32,36 @@ export const getMapLayersEntityState = createSelector(
   (state: MapState) => state.layers
 );
 
-export const getSelectedLayerIds = createSelector(
-  getMapLayersEntityState,
+export const createIdSelector = (getState: MemoizedSelector<object, fromLayers.State>) => createSelector(
+  getState,
   fromLayers.getSelected
 );
+
+export function createMapLayerSelectors(getState: MemoizedSelector<object, fromLayers.State>) {
+  const entitySelectors = fromLayers.adapter.getSelectors(getState);
+  const selectIds = createIdSelector(getState);
+
+  return {
+    ...entitySelectors,
+    getSelectedLayerIds: selectIds,
+    getSelectedLayers: createSelector(
+      selectIds,
+      entitySelectors.selectEntities,
+      (ids: string[] = [], layers: Dictionary<MapLayer>) => ids.map(id => layers[id])
+    ),
+    getTreeStructure: createSelector(
+      getState,
+      fromLayers.getTreeStructure
+    )
+  };
+}
 
 export const {
   selectIds: getLayerIds,
   selectEntities: getLayerEntities,
   selectAll: getAllLayers,
-  selectTotal: getLayersCount
-} = fromLayers.adapter.getSelectors(getMapLayersEntityState);
-
-export const getTreeStructure = createSelector(
-  getMapLayersEntityState,
-  fromLayers.getTreeStructure
-);
-
-export const getSelectedLayers = createSelector(
-  getSelectedLayerIds,
-  getLayerEntities,
-  (ids: string[] = [], layers: Dictionary<MapLayer>) => ids.map(id => layers[id])
-);
+  selectTotal: getLayersCount,
+  getSelectedLayerIds: getSelectedLayerIds,
+  getSelectedLayers,
+  getTreeStructure
+} = createMapLayerSelectors(getMapLayersEntityState);

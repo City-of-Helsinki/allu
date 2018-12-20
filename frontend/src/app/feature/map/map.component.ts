@@ -16,6 +16,7 @@ import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '../../util/time.util';
 import {MapUtil} from '../../service/map/map.util';
 import {GeometryCollection} from 'geojson';
+import {MapLayer} from '@service/map/map-layer';
 
 @Component({
   selector: 'map',
@@ -31,6 +32,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() projectId: number;
   @Input() showOnlyApplicationArea = false;
   @Input() role: MapRole = 'SEARCH';
+  @Input() availableLayers: MapLayer[] = [];
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
@@ -47,6 +49,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.mapStore.roleChange(this.role);
     this.loading$ = this.mapStore.loading;
+    this.mapController.availableLayers = this.availableLayers;
   }
 
   /**
@@ -63,12 +66,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.initSubscriptions();
     Some(this.projectId).do(id => this.drawProject(id));
-    this.mapController.reloadSelectedLayers();
   }
 
   ngOnDestroy() {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+  }
+
+  @Input() set selectedLayers(layers: MapLayer[]) {
+    this.mapController.selectedLayers = layers;
   }
 
   applicationSelected(application: Application) {

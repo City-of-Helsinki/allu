@@ -19,6 +19,7 @@ import * as supervisionTaskActions from '@feature/application/supervision/action
 import * as invoicingCustomerActions from '@feature/application/invoicing/actions/invoicing-customer-actions';
 import {NumberUtil} from '@util/number.util';
 import {ApplicationStatus} from '@model/application/application-status';
+import {ResetLayers} from '@feature/map/actions/map-layer-actions';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -52,6 +53,7 @@ export class ApplicationResolve implements Resolve<Application> {
       switchMap(() => this.store.pipe(select(fromApplication.getCurrentApplication))),
       tap(app => this.store.dispatch(new LoadSuccess(app))),
       tap(app => this.loadRelatedInfo(app)),
+      tap(app => this.store.dispatch(new ResetLayers(ActionTargetType.Location))),
       take(1),
       catchError(err => this.handleError(err))
     );

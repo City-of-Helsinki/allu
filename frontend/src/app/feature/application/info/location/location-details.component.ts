@@ -14,7 +14,8 @@ import * as fromRoot from '@feature/allu/reducers';
 import {select, Store} from '@ngrx/store';
 import {map} from 'rxjs/internal/operators';
 import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
-import * as fromMapLayers from '@feature/map/reducers';
+import * as fromLocationMapLayers from '@feature/application/location/reducers';
+import {MapLayer} from '@service/map/map-layer';
 
 @Component({
   selector: 'location-details',
@@ -33,8 +34,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   sections: string;
   multipleLocations = false;
   canBeEdited = true;
-  selectedLayers$: Observable<string[]>;
-  availableLayers$: Observable<string[] | number[]>;
+  selectedLayersIds$: Observable<string[]>;
+  availableLayerIds$: Observable<string[] | number[]>;
+  selectedLayers$: Observable<MapLayer[]>;
+  availableLayers$: Observable<MapLayer[]>;
 
   constructor(private mapStore: MapStore,
               private locationState: LocationState,
@@ -59,8 +62,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     ).subscribe(sectionNames => this.sections = sectionNames);
 
     this.mapStore.editedLocation.subscribe(loc => this.editLocation(loc));
-    this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
-    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayerIds));
+    this.availableLayerIds$ = this.store.pipe(select(fromLocationMapLayers.getLayerIds));
+    this.selectedLayersIds$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayerIds));
+    this.availableLayers$ = this.store.pipe(select(fromLocationMapLayers.getAllLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayers));
   }
 
   ngAfterViewInit(): void {

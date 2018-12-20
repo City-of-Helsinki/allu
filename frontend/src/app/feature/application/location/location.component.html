@@ -23,7 +23,9 @@
                 <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
                      [applicationId]="application.id"
                      role="LOCATION"
-                     (editedItemCountChanged)="editedItemCountChanged($event)"></map>
+                     (editedItemCountChanged)="editedItemCountChanged($event)"
+                     [availableLayers]="availableLayers$ | async"
+                     [selectedLayers]="selectedLayers$ | async"></map>
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">

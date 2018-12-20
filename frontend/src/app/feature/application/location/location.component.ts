@@ -32,12 +32,14 @@ import {defaultFilter, MapSearchFilter} from '@service/map-search-filter';
 import {FixedLocationService} from '@service/map/fixed-location.service';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
-import {Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, map, take, takeUntil, tap} from 'rxjs/internal/operators';
+import {select, Store} from '@ngrx/store';
+import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
 import {EMPTY} from 'rxjs/internal/observable/empty';
+import * as fromLocationMapLayers from '@feature/application/location/reducers';
+import {MapLayer} from '@service/map/map-layer';
 
 @Component({
   selector: 'type',
@@ -64,6 +66,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   showPaymentTariff = false;
   paymentTariffs = ['1', '2', '3', '4a', '4b'];
   searchFilter$: Observable<MapSearchFilter>;
+  selectedLayers$: Observable<MapLayer[]>;
+  availableLayers$: Observable<MapLayer[]>;
 
   private destroy = new Subject<boolean>();
 
@@ -157,6 +161,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.setSelectableAreas(areas);
       this.setInitialSelections();
     });
+
+    this.availableLayers$ = this.store.pipe(select(fromLocationMapLayers.getAllLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayers));
   }
 
   ngOnDestroy() {

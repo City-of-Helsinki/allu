@@ -17,6 +17,7 @@ import {NumberUtil} from '../../util/number.util';
 
 import {ActionTargetType} from '../allu/actions/action-target-type';
 import {filter, switchMap, take, tap} from 'rxjs/internal/operators';
+import {ResetLayers} from '@feature/map/actions/map-layer-actions';
 
 @Injectable()
 export class ProjectResolve implements Resolve<Project> {
@@ -45,6 +46,7 @@ export class ProjectResolve implements Resolve<Project> {
       tap(() => this.store.dispatch(new childActions.Load())),
       tap(() => this.store.dispatch(new parentActions.Load())),
       tap(() => this.store.dispatch(new applicationActions.Load())),
+      tap(app => this.store.dispatch(new ResetLayers(ActionTargetType.Location))),
       take(1)
     );
   }

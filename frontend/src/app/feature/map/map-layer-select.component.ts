@@ -21,6 +21,10 @@ import {SelectionModel} from '@angular/cdk/collections';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapLayerSelectComponent implements OnInit, OnDestroy {
+  @Input() targetType: ActionTargetType = ActionTargetType.Home;
+  @Input() layers: string[] = [];
+  @Input() classNames: string[] = [];
+
   treeControl: FlatTreeControl<MapLayerFlatNode>;
   treeFlattener: MatTreeFlattener<MapLayerNode, MapLayerFlatNode>;
   dataSource: MatTreeFlatDataSource<MapLayerNode, MapLayerFlatNode>;
@@ -28,9 +32,6 @@ export class MapLayerSelectComponent implements OnInit, OnDestroy {
 
   hasChild = nodeHasChild;
   isRoot = nodeIsRoot;
-
-  @Input() layers: string[] = [];
-  @Input() classNames: string[] = [];
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
@@ -62,6 +63,6 @@ export class MapLayerSelectComponent implements OnInit, OnDestroy {
 
   toggleLayer(node: MapLayerFlatNode): void {
     this.checklistSelection.toggle(node.id);
-    this.store.dispatch(new SelectLayers(ActionTargetType.Home, this.checklistSelection.selected));
+    this.store.dispatch(new SelectLayers(this.targetType, this.checklistSelection.selected));
   }
 }

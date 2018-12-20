@@ -121,14 +121,18 @@
           <map-layer-select
             style="width: 220px"
             classNames="input-raised"
-            [selected]="selectedLayers$ | async"
-            [layers]="availableLayers$ | async"></map-layer-select>
+            targetType="Location"
+            [selected]="selectedLayersIds$ | async"
+            [layers]="availableLayerIds$ | async"></map-layer-select>
         </div>
 
         <map [selection]="true"
              [applicationId]="application.id"
              [showOnlyApplicationArea]="true"
-             role="LOCATION"></map>
+             role="LOCATION"
+             [availableLayers]="availableLayers$ | async"
+             [selectedLayers]="selectedLayers$ | async"
+        ></map>
       </div>
     </div>
     <div fxLayout="row" *ngIf="multipleLocations">
