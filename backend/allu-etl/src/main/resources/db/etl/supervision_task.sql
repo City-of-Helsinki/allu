@@ -9,7 +9,8 @@ INSERT INTO allureport.valvontatehtava (
   toteutunut_loppuaika,
   status,
   kuvaus,
-  tulos
+  tulos,
+  sijainti_id
 )
 SELECT
     s.id AS id,
@@ -20,6 +21,7 @@ SELECT
         WHEN s.type = 'SUPERVISION' THEN 'Valvonta'
         WHEN s.type = 'FINAL_SUPERVISION' THEN 'Loppuvalvonta'
         WHEN s.type = 'WARRANTY' THEN 'Takuuvalvonta'
+        WHEN s.type = 'WORK_TIME_SUPERVISION' THEN 'Työnaikainen valvonta'
     END AS tyyppi,
     c.user_name AS lisaaja,
     o.user_name AS omistaja,
@@ -33,7 +35,8 @@ SELECT
         WHEN s.status = 'CANCELLED' THEN 'Peruttu'
     END AS status,
     s.description AS kuvaus,
-    s.result AS tulos
+    s.result AS tulos,
+    s.location_id AS sijainti_id
 FROM allu_operative.supervision_task s
 LEFT JOIN allu_operative.user c ON s.creator_id = c.id
 LEFT JOIN allu_operative.user o ON s.owner_id = o.id
@@ -47,6 +50,7 @@ ON CONFLICT (id) DO UPDATE SET
     toteutunut_loppuaika = EXCLUDED.toteutunut_loppuaika,
     status = EXCLUDED.status,
     kuvaus = EXCLUDED.kuvaus,
-    tulos = EXCLUDED.tulos;
+    tulos = EXCLUDED.tulos,
+    sijainti_id = EXCLUDED.sijainti_id
 ;
 

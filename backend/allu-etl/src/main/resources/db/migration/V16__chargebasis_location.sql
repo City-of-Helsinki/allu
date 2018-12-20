@@ -1,0 +1,1 @@
+alter table allureport.laskuperuste add column sijainti_id integer references allureport.sijainti(id);

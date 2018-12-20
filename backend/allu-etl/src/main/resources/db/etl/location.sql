@@ -15,7 +15,10 @@ INSERT INTO allureport.sijainti (
   syotetty_kaupunginosa_id,
   maksuluokka,
   syotetty_maksuluokka,
-  altakuljettava
+  altakuljettava,
+  asiakas_alkuaika,
+  asiakas_loppuaika,
+  asiakas_voimassaolo_ilmoitettu
 )
 SELECT
     l.id AS id,
@@ -34,9 +37,13 @@ SELECT
     l.city_district_id_override AS syotetty_kaupunginosa_id,
     l.payment_tariff AS maksuluokka,
     l.payment_tariff_override AS syotetty_maksuluokka,
-    l.underpass AS altakuljettava
+    l.underpass AS altakuljettava,
+    c.start_time AS asiakas_alkuaika,
+    c.end_time AS asiakas_loppuaika,
+    c.reporting_time AS asiakas_voimassaolo_ilmoitettu
 FROM allu_operative.location l
 LEFT JOIN allu_operative.postal_address p on l.postal_address_id = p.id
+LEFT JOIN allu_operative.customer_location_validity c on c.location_id = l.id
 ON CONFLICT (id) DO UPDATE SET
     hakemus_id = EXCLUDED.hakemus_id,
     sijainti_avain = EXCLUDED.sijainti_avain,
@@ -53,6 +60,8 @@ ON CONFLICT (id) DO UPDATE SET
     syotetty_kaupunginosa_id = EXCLUDED.syotetty_kaupunginosa_id,
     maksuluokka = EXCLUDED.maksuluokka,
     syotetty_maksuluokka = EXCLUDED.syotetty_maksuluokka,
-    altakuljettava = EXCLUDED.altakuljettava
+    altakuljettava = EXCLUDED.altakuljettava,
+    asiakas_alkuaika = EXCLUDED.asiakas_alkuaika,
+    asiakas_loppuaika = EXCLUDED.asiakas_loppuaika,
+    asiakas_voimassaolo_ilmoitettu = EXCLUDED.asiakas_voimassaolo_ilmoitettu
 ;
-

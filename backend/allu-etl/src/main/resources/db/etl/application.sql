@@ -24,7 +24,8 @@ INSERT INTO allureport.hakemus (
   laskutuspaiva,
   asiointitunnus,
   asiakasjarjestelma_kayttaja,
-  hakemus_saapunut
+  hakemus_saapunut,
+  laskutusjakson_pituus
 )
 SELECT
     a.id AS id,
@@ -50,6 +51,7 @@ SELECT
         WHEN a.status = 'CANCELLED' THEN 'Peruttu'
         WHEN a.status = 'REPLACED' THEN 'Korvattu'
         WHEN a.status = 'ARCHIVED' THEN 'Arkistoitu'
+        WHEN a.status = 'NOTE' THEN 'Muistiinpano'
         ELSE 'NA'
     END AS tila,
     CASE
@@ -84,7 +86,8 @@ SELECT
     a.invoicing_date AS laskutuspaiva,
     a.identification_number AS asiointitunnus,
     eu.user_name AS asiakasjarjestelma_kayttaja,
-    a.received_time AS hakemus_saapunut
+    a.received_time AS hakemus_saapunut,
+    a.invoicing_period_length AS laskutusjakson_pituus
 FROM allu_operative.application a
 LEFT JOIN allu_operative.user h ON a.handler = h.id
 LEFT JOIN allu_operative.user o ON a.owner = o.id
@@ -115,7 +118,8 @@ ON CONFLICT (id) DO UPDATE SET
     laskutuspaiva = EXCLUDED.laskutuspaiva,
     asiointitunnus = EXCLUDED.asiointitunnus,
     asiakasjarjestelma_kayttaja = EXCLUDED.asiakasjarjestelma_kayttaja,
-    hakemus_saapunut = EXCLUDED.hakemus_saapunut
+    hakemus_saapunut = EXCLUDED.hakemus_saapunut,
+    laskutusjakson_pituus = EXCLUDED.laskutusjakson_pituus
 ;
 
 INSERT INTO allureport.tapahtuma (
@@ -331,12 +335,14 @@ INSERT INTO allureport.kaivuilmoitus (
   asiakas_tyo_valmis,
   toiminnallinen_kunto_ilmoitettu,
   tyo_valmis_ilmoitettu,
-  johtoselvitys_id,
   tyon_tarkoitus,
   liikennejarjestelyt,
   liikennehaitta,
   tiiveys_ja_kantavuusmittaus,
-  paallysteen_laadunvarmistuskoe
+  paallysteen_laadunvarmistuskoe,
+  lisatiedot,
+  johtoselvitykset,
+  sijoitussopimukset
 )
 SELECT
   a.id AS hakemus_id,
@@ -358,7 +364,6 @@ SELECT
   TO_TIMESTAMP((a.extension::json ->> 'customerWorkFinished')::float) AS asiakas_tyo_valmis,
   TO_TIMESTAMP((a.extension::json ->> 'operationalConditionReported')::float) AS toiminnallinen_kunto_ilmoitettu,
   TO_TIMESTAMP((a.extension::json ->> 'workFinishedReported')::float) AS tyo_valmis_ilmoitettu,
-  (a.extension::json ->> 'cableReportId')::integer AS johtoselvitys_id,
   a.extension::json ->> 'workPurpose' AS tyon_tarkoitus,
   a.extension::json ->> 'trafficArrangements' AS liikennejarjestelyt,
     CASE
@@ -368,7 +373,10 @@ SELECT
       WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
   END AS liikennehaitta,
   (a.extension::json ->> 'compactionAndBearingCapacityMeasurement')::boolean AS tiiveys_ja_kantavuusmittaus,
-  (a.extension::json ->> 'qualityAssuranceTest')::boolean AS paallysteen_laadunvarmistuskoe
+  (a.extension::json ->> 'qualityAssuranceTest')::boolean AS paallysteen_laadunvarmistuskoe,
+  a.extension::json ->> 'additionalInfo' AS lisatiedot,
+  a.extension::json ->> 'cableReports' AS johtoselvitykset,
+  a.extension::json ->> 'placementContracts' AS sijoitussopimukset
 FROM allu_operative.application a
 WHERE a.type = 'EXCAVATION_ANNOUNCEMENT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -390,11 +398,57 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
 	  asiakas_tyo_valmis = EXCLUDED.asiakas_tyo_valmis,
 	  toiminnallinen_kunto_ilmoitettu = EXCLUDED.toiminnallinen_kunto_ilmoitettu,
 	  tyo_valmis_ilmoitettu = EXCLUDED.tyo_valmis_ilmoitettu,
-	  johtoselvitys_id = EXCLUDED.johtoselvitys_id,
 	  tyon_tarkoitus = EXCLUDED.tyon_tarkoitus,
 	  liikennejarjestelyt = EXCLUDED.liikennejarjestelyt,
 	  liikennehaitta = EXCLUDED.liikennehaitta,
     tiiveys_ja_kantavuusmittaus = EXCLUDED.tiiveys_ja_kantavuusmittaus,
-    paallysteen_laadunvarmistuskoe = EXCLUDED.paallysteen_laadunvarmistuskoe
+    paallysteen_laadunvarmistuskoe = EXCLUDED.paallysteen_laadunvarmistuskoe,
+    lisatiedot = EXCLUDED.lisatiedot,
+    johtoselvitykset = EXCLUDED.johtoselvitykset,
+    sijoitussopimukset = EXCLUDED.sijoitussopimukset
 ;
 
+INSERT INTO allureport.aluevuokraus (
+  hakemus_id,
+  ehdot,
+  pks_kortti,
+  haittaa_aiheuttava,
+  tyon_tarkoitus,
+  lisatiedot,
+  liikennejarjestelyt,
+  tyo_valmis,
+  asiakas_tyo_valmis,
+  tyo_valmis_ilmoitettu,
+  liikennehaitta
+)
+SELECT
+  a.id AS hakemus_id,
+  a.extension::json ->> 'terms' AS ehdot,
+  (a.extension::json ->> 'pksCard')::boolean AS pks_kortti,
+  (a.extension::json ->> 'majorDisturbance')::boolean AS haittaa_aiheuttava,
+  a.extension::json ->> 'workPurpose' AS tyon_tarkoitus,
+  a.extension::json ->> 'additionalInfo' AS lisatiedot,
+  a.extension::json ->> 'trafficArrangements' AS liikennejarjestelyt,
+  TO_TIMESTAMP((a.extension::json ->> 'workFinished')::float) AS tyo_valmis,
+  TO_TIMESTAMP((a.extension::json ->> 'customerWorkFinished')::float) AS asiakas_tyo_valmis,
+  TO_TIMESTAMP((a.extension::json ->> 'workFinishedReported')::float) AS tyo_valmis_ilmoitettu,
+  CASE
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'NO_IMPEDIMENT' THEN 'Ei haittaa'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'SIGNIFICANT_IMPEDIMENT' THEN 'Merkittävä haitta'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'IMPEDIMENT_FOR_HEAVY_TRAFFIC' THEN 'Haittaa raskasta liikennettä'
+      WHEN a.extension::json ->> 'trafficArrangementImpedimentType' = 'INSIGNIFICANT_IMPEDIMENT' THEN 'Vähäinen haitta'
+  END AS liikennehaitta
+FROM allu_operative.application a
+WHERE a.type = 'AREA_RENTAL'
+ON CONFLICT (hakemus_id) DO UPDATE SET
+    ehdot = EXCLUDED.ehdot,
+    pks_kortti = EXCLUDED.pks_kortti,
+    haittaa_aiheuttava = EXCLUDED.haittaa_aiheuttava,
+    tyon_tarkoitus = EXCLUDED.tyon_tarkoitus,
+    lisatiedot = EXCLUDED.lisatiedot,
+    liikennejarjestelyt = EXCLUDED.liikennejarjestelyt,
+    tyo_valmis = EXCLUDED.tyo_valmis,
+    asiakas_tyo_valmis = EXCLUDED.asiakas_tyo_valmis,
+    tyo_valmis_ilmoitettu = EXCLUDED.tyo_valmis_ilmoitettu,
+    liikennehaitta = EXCLUDED.liikennehaitta
+;

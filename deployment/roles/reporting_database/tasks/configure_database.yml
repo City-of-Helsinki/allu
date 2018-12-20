@@ -137,7 +137,9 @@
           project,
           recurring_period,
           supervision_task,
-          "user") FROM SERVER allu_operative INTO allu_operative;'
+          "user",
+          invoicing_period,
+          customer_location_validity) FROM SERVER allu_operative INTO allu_operative;'
   become: yes
   become_user: postgres
 

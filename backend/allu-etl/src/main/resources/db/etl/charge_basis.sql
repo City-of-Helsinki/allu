@@ -10,7 +10,9 @@ INSERT INTO allureport.laskuperuste (
   teksti,
   perusteet,
   yksikkohinta,
-  kokonaishinta
+  kokonaishinta,
+  laskutusjakso_id,
+  sijainti_id
 )
 SELECT
     c.id AS id,
@@ -39,7 +41,9 @@ SELECT
     c.text AS teksti,
     c.explanation AS perusteet,
     c.unit_price AS yksikkohinta,
-    c.net_price AS kokonaishinta
+    c.net_price AS kokonaishinta,
+    c.invoicing_period_id AS laskutusjakso_id,
+    c.location_id AS sijainti_id
 FROM allu_operative.charge_basis c
 ON CONFLICT (id) DO UPDATE SET
     hakemus_id = EXCLUDED.hakemus_id,
@@ -52,6 +56,8 @@ ON CONFLICT (id) DO UPDATE SET
     teksti = EXCLUDED.teksti,
     perusteet = EXCLUDED.perusteet,
     yksikkohinta = EXCLUDED.yksikkohinta,
-    kokonaishinta = EXCLUDED.kokonaishinta
+    kokonaishinta = EXCLUDED.kokonaishinta,
+    laskutusjakso_id = EXCLUDED.laskutusjakso_id,
+    sijainti_id = EXCLUDED.sijainti_id
 ;
 

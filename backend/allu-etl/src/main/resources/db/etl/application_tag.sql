@@ -21,7 +21,9 @@ WITH tunnisteet (en, fi) AS (
         ('FINAL_SUPERVISION_REJECTED', 'Loppuvalvonta hylätty'),
         ('SAP_ID_MISSING', 'Laskutettavan SAP-tunnus puuttuu'),
         ('DECISION_NOT_SENT', 'Päätös lähettämättä'),
-        ('CONTRACT_REJECTED', 'Sopimusta ei hyväksytty')
+        ('CONTRACT_REJECTED', 'Sopimusta ei hyväksytty'),
+        ('DATE_CHANGE', 'Aikamuutos'),
+        ('OTHER_CHANGES', 'Muut muutokset')
 )
 INSERT INTO allureport.hakemustunniste (
   id,

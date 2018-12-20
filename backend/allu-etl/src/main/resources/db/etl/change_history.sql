@@ -22,6 +22,7 @@ SELECT
         WHEN change_type = 'APPLICATION_REMOVED' THEN 'Hakemus poistettu'
         WHEN change_type = 'CUSTOMER_CHANGED' THEN 'Asiakas päivitetty'
         WHEN change_type = 'CONTACT_CHANGED' THEN 'Yhteystieto päivitetty'
+        WHEN change_type = 'LOCATION_CHANGED' THEN 'Sijainti päivitetty'
     END AS muutostyyppi,
     CASE
         WHEN c.change_specifier = 'PENDING_CLIENT' THEN 'Vireillä asiakasjärjestelmässä'
@@ -40,6 +41,7 @@ SELECT
         WHEN c.change_specifier = 'CANCELLED' THEN 'Peruttu'
         WHEN c.change_specifier = 'REPLACED' THEN 'Korvattu'
         WHEN c.change_specifier = 'ARCHIVED' THEN 'Arkistoitu'
+        WHEN c.change_specifier = 'NOTE' THEN 'Muistiinpano'
         WHEN c.change_specifier = 'APPLICANT' THEN 'Hakija'
         WHEN c.change_specifier = 'PROPERTY_DEVELOPER' THEN 'Rakennuttaja'
         WHEN c.change_specifier = 'CONTRACTOR' THEN 'Työn suorittaja'

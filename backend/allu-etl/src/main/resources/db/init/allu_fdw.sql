@@ -57,6 +57,8 @@ LIMIT TO (
   project,
   recurring_period,
   supervision_task,
-  "user"
+  "user",
+  invoicing_period,
+  customer_location_validity
 )
 FROM SERVER allu_operative INTO allu_operative;
