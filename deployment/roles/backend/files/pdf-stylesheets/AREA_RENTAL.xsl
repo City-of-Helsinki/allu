@@ -159,7 +159,7 @@
             <th>Altakulj.</th>
             <th>Pinta-ala</th>
             <th>ML</th>
-            <th>à € / alkava 15m²</th>
+            <th>à € / pv</th>
             <th>pv</th>
             <th>Maksu</th>
           </tr>
