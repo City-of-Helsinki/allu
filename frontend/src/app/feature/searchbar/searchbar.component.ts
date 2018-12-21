@@ -92,7 +92,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
     this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
-    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayerIds));
   }
 
   ngOnDestroy(): void {

@@ -43,7 +43,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
     this.changes$ = this.store.pipe(select(fromProject.getHistory));
     this.showBasicInfo$ = this.store.pipe(select(fromProject.getShowBasicInfo));
     this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
-    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayerIds));
   }
 
   ngAfterViewInit(): void {

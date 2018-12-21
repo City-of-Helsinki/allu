@@ -60,7 +60,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
 
     this.mapStore.editedLocation.subscribe(loc => this.editLocation(loc));
     this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
-    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayerIds));
   }
 
   ngAfterViewInit(): void {

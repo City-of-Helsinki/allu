@@ -63,7 +63,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.initSubscriptions();
     Some(this.projectId).do(id => this.drawProject(id));
-    this.mapController.selectDefaultLayer();
+    this.mapController.reloadSelectedLayers();
   }
 
   ngOnDestroy() {

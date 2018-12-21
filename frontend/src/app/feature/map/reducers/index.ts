@@ -32,7 +32,7 @@ export const getMapLayersEntityState = createSelector(
   (state: MapState) => state.layers
 );
 
-export const getSelectedLayers = createSelector(
+export const getSelectedLayerIds = createSelector(
   getMapLayersEntityState,
   fromLayers.getSelected
 );
@@ -44,12 +44,13 @@ export const {
   selectTotal: getLayersCount
 } = fromLayers.adapter.getSelectors(getMapLayersEntityState);
 
-export const getLayersByIds = (ids: string[] = []) => createSelector(
-  getLayerEntities,
-  (layers: Dictionary<MapLayer>) => ids.map(id => layers[id])
-);
-
 export const getTreeStructure = createSelector(
   getMapLayersEntityState,
   fromLayers.getTreeStructure
+);
+
+export const getSelectedLayers = createSelector(
+  getSelectedLayerIds,
+  getLayerEntities,
+  (ids: string[] = [], layers: Dictionary<MapLayer>) => ids.map(id => layers[id])
 );

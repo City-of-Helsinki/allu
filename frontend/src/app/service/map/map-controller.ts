@@ -9,11 +9,11 @@ import '../../js/leaflet/draw-line';
 
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {MapUtil} from './map.util';
-import {Some} from '../../util/option';
-import {translations} from '../../util/translations';
-import {Geocoordinates} from '../../model/common/geocoordinates';
-import {MapLayerService} from '../../feature/map/map-layer.service';
-import {NotificationService} from '../../feature/notification/notification.service';
+import {Some} from '@util/option';
+import {translations} from '@util/translations';
+import {Geocoordinates} from '@model/common/geocoordinates';
+import {MapLayerService} from '@feature/map/map-layer.service';
+import {NotificationService} from '@feature/notification/notification.service';
 import {drawOptions, editOptions} from './map-config';
 import {MapStore} from './map-store';
 import {MapEventHandler} from './map-event-handler';
@@ -24,6 +24,7 @@ import {distinctUntilChanged, map, take, takeUntil} from 'rxjs/internal/operator
 import GeoJSONOptions = L.GeoJSONOptions;
 import {select, Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
+import {MapLayer} from '@service/map/map-layer';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -67,9 +68,7 @@ export class MapController {
     this.config = config;
     this.initMap();
     this.handleDrawingAllowedChanges();
-    this.store.pipe(
-      select(fromMapLayers.getSelectedLayers)
-    ).subscribe(selected => this.selectLayers(selected));
+    this.handleSelectedLayer();
   }
 
   public clearDrawn() {
@@ -151,9 +150,13 @@ export class MapController {
 
   // For some reason leaflet does not show layer after angular route change
   // unless it is removed and added back
-  selectDefaultLayer(): void {
-    this.map.removeLayer(this.mapLayerService.defaultOverlay);
-    this.map.addLayer(this.mapLayerService.defaultOverlay);
+  reloadSelectedLayers(): void {
+    combineLatest(
+      this.store.pipe(select(fromMapLayers.getAllLayers)),
+      this.store.pipe(select(fromMapLayers.getSelectedLayers))
+    ).pipe(
+      take(1)
+    ).subscribe(([allLayers, selectedLayers]) => this.setMapLayers(selectedLayers, allLayers));
   }
 
   get shapes(): Observable<ShapeAdded> {
@@ -356,18 +359,21 @@ export class MapController {
     return removed;
   }
 
-  private selectLayers(selected: string[] = []) {
+  private setMapLayers(selected: MapLayer[], deselected: MapLayer[]): void {
+    deselected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.removeLayer(layer));
+    selected.map(mapLayer => mapLayer.layer).forEach(layer => this.map.addLayer(layer));
+  }
+
+  private handleSelectedLayer() {
     combineLatest(
       this.store.pipe(select(fromMapLayers.getAllLayers)),
-      this.store.pipe(select(fromMapLayers.getLayersByIds(selected)))
+      this.store.pipe(select(fromMapLayers.getSelectedLayers))
     ).pipe(
-      take(1)
+      takeUntil(this.destroy)
     ).subscribe(([allLayers, selectedLayers]) => {
-      // Remove layers which are not selected
-      const deselectLayers = allLayers.filter(layer => selected.indexOf(layer.id) < 0);
-      deselectLayers.map(mapLayer => mapLayer.layer).forEach(layer => this.map.removeLayer(layer));
-      // Add selected layers
-      selectedLayers.map(mapLayer => mapLayer.layer).forEach(layer => this.map.addLayer(layer));
+      const selectedIds = selectedLayers.map(s => s.id);
+      const deselectLayers = allLayers.filter(layer => selectedIds.indexOf(layer.id) < 0);
+      this.setMapLayers(selectedLayers, deselectLayers);
     });
   }
 }
