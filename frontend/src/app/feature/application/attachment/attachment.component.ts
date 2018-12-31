@@ -5,6 +5,8 @@ import {AttachmentInfo} from '@model/application/attachment/attachment-info';
 import {AttachmentType} from '@model/application/attachment/attachment-type';
 import {validForDecision} from '@model/common/file-type';
 
+const MB = 1000 * 1000;
+
 @Component({
   selector: 'attachment',
   templateUrl: './attachment.component.html',
@@ -23,7 +25,7 @@ export class AttachmentComponent implements OnInit {
   ];
 
   validForDecision = false;
-  readonly maxAttachmentSize = 10000000;
+  readonly maxAttachmentSize = 100 * MB;
 
   constructor(private fb: FormBuilder) {
   }
@@ -68,7 +70,7 @@ export class AttachmentComponent implements OnInit {
   }
 
   getMaxAttachmentSize(): string {
-    return Math.round(this.maxAttachmentSize / (1000 * 1000)) + ' MB';
+    return Math.round(this.maxAttachmentSize / (MB)) + ' MB';
   }
 
   private setValidForDecision(fileType: string): void {
