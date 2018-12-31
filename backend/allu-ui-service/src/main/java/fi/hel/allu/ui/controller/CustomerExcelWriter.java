@@ -15,26 +15,29 @@ import fi.hel.allu.servicecore.domain.CustomerJson;
 public class CustomerExcelWriter extends CustomerExport {
 
   private OutputStream outputStream;
-  private List<CustomerJson> customers;
 
   private XSSFWorkbook workbook;
   private XSSFSheet sheet;
 
-  public CustomerExcelWriter(OutputStream outputStream, List<CustomerJson> customers) {
+  public CustomerExcelWriter(OutputStream outputStream) {
     this.outputStream = outputStream;
-    this.customers = customers;
     workbook = new XSSFWorkbook();
     sheet = workbook.createSheet("Customers");
   }
 
-  public void write() throws IOException {
+  @Override
+  public void write(List<CustomerJson> customers) {
     int rowNumber = 0;
     createRow(rowNumber, getHeaders());
     for (CustomerJson customer : customers) {
       createRow(++rowNumber, getValues(customer));
     }
     autoSizeColumns();
-    workbook.write(outputStream);
+    try {
+      workbook.write(outputStream);
+    } catch (IOException ex) {
+      throw new RuntimeException("Failed to write customer export file", ex);
+    }
   }
 
   private void autoSizeColumns() {

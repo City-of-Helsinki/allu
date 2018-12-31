@@ -18,6 +18,7 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerChange;
+import fi.hel.allu.model.domain.CustomerUpdateLog;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
@@ -250,10 +251,20 @@ public class CustomerService {
     return Arrays.stream(customerResult.getBody())
         .map(customer -> customerMapper.createCustomerJson(customer))
         .collect(Collectors.toList());
-
   }
 
   public Integer getNumberInvoiceRecipientsWithoutSapNumber() {
     return restTemplate.getForEntity(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl(), Integer.class).getBody();
   }
+
+  public List<CustomerUpdateLog> getCustomerUpdateLog() {
+    ParameterizedTypeReference<List<CustomerUpdateLog>> typeRef =
+        new ParameterizedTypeReference<List<CustomerUpdateLog>>() {};
+    return restTemplate.exchange(applicationProperties.getCustomerUpdateLogUrl(), HttpMethod.GET, null, typeRef).getBody();
+  }
+
+  public void setUpdateLogsProcessed(List<Integer> logIds) {
+    restTemplate.put(applicationProperties.getCustomerUpdateLogProcessedUrl(), logIds);
+  }
+
 }

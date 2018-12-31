@@ -1,11 +1,9 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.CustomerChange;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.CustomerService;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,10 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-import java.util.List;
-import java.util.Map;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.model.dao.CustomerUpdateLogDao;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.CustomerChange;
+import fi.hel.allu.model.domain.CustomerUpdateLog;
+import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.CustomerService;
 
 @RestController
 @RequestMapping("/customers")
@@ -28,6 +30,8 @@ public class CustomerController {
   private CustomerService customerService;
   @Autowired
   private ApplicationService applicationService;
+  @Autowired
+  private CustomerUpdateLogDao customerUpdateLogDao;
 
   /**
    * Find a customer by database ID
@@ -151,5 +155,17 @@ public class CustomerController {
   public ResponseEntity<Integer> getNumberOfInvoiceRecipientsWithoutSapNumber() {
     return new ResponseEntity<>(customerService.getNumberInvoiceRecipientsWithoutSapNumber(), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/updatelog", method = RequestMethod.GET)
+  public ResponseEntity<List<CustomerUpdateLog>> getSapCustomerUpdateLog() {
+    return ResponseEntity.ok(customerUpdateLogDao.getUnprocessedUpdates());
+  }
+
+  @RequestMapping(value = "/updatelog/processed", method = RequestMethod.PUT)
+  public ResponseEntity<Void> setUpdateLogProcessed(@RequestBody List<Integer> logIds) {
+    customerUpdateLogDao.setUpdateLogsProcessed(logIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 
 }

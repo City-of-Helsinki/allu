@@ -783,6 +783,14 @@ public class ApplicationProperties {
     return getModelServiceUrl("/customers/sap_id_missing/count");
   }
 
+  public String getCustomerUpdateLogUrl() {
+    return getModelServiceUrl("/customers/updatelog");
+  }
+
+  public String getCustomerUpdateLogProcessedUrl() {
+    return getModelServiceUrl("/customers/updatelog/processed");
+  }
+
   /**
    * @return url to send customer search queries.
    */

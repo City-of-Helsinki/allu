@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.controller;
 
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,8 @@ public abstract class CustomerExport {
     CITY("city", (CustomerJson c) -> c.getPostalAddress() != null ? emptyIfNull(c.getPostalAddress().getCity()) : ""),
     KEY("key", CustomerJson::getRegistryKey),
     OVT("ovt", CustomerJson::getOvt),
-    INVOICING_OPERATOR("operator", CustomerJson::getInvoicingOperator);
+    INVOICING_OPERATOR("operator", CustomerJson::getInvoicingOperator),
+    SAP_NUMBER("sapcustomernumber", CustomerJson::getSapCustomerNumber);
 
     private String header;
     private Function<CustomerJson, String> valueGetter;
@@ -41,6 +43,8 @@ public abstract class CustomerExport {
       return Optional.ofNullable(value).orElse("");
     }
   }
+
+  public abstract void write(List<CustomerJson> customers);
 
   private static final List<CustomerExportField> FIELDS = Arrays.asList(CustomerExportField.values());
 

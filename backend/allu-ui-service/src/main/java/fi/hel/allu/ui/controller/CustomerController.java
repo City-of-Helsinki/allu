@@ -26,6 +26,7 @@ import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
+import fi.hel.allu.ui.service.CustomerExportService;
 
 /**
  * Controller for managing customer information.
@@ -40,6 +41,8 @@ public class CustomerController {
   CustomerService customerService;
   @Autowired
   ContactService contactService;
+  @Autowired
+  CustomerExportService customerExportService;
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
@@ -123,7 +126,8 @@ public class CustomerController {
   public ResponseEntity<Void> getSapCustomerOrderCSV(HttpServletResponse response) throws IOException {
     response.setContentType("text/csv; charset=utf-8");
     response.setHeader("Content-Disposition", "attachment; filename=" + getCustomerExportFileName() + ".csv");
-    new CustomerCsvWriter(response.getWriter(), customerService.findInvoiceRecipientsWithoutSapNumber()).write();
+    CustomerExport writer = new CustomerCsvWriter(response.getWriter());
+    writeCustomerExportFile(writer);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -135,8 +139,13 @@ public class CustomerController {
   public ResponseEntity<Void> getSapCustomerOrderExcel(HttpServletResponse response) throws IOException {
     response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     response.setHeader("Content-Disposition", "attachment; filename=" + getCustomerExportFileName() + ".xlsx");
-    new CustomerExcelWriter(response.getOutputStream(), customerService.findInvoiceRecipientsWithoutSapNumber()).write();
+    CustomerExport writer = new CustomerExcelWriter(response.getOutputStream());
+    writeCustomerExportFile(writer);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  private void writeCustomerExportFile(CustomerExport writer) {
+    customerExportService.writeExportFile(writer);
   }
 
   private String getCustomerExportFileName() {
