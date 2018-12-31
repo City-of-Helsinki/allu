@@ -106,7 +106,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     const data: DateReportingModalData = {
       reporterType: ReporterType.CUSTOMER,
       dateType: ReportedDateType.WORK_FINISHED,
-      reportedDate: excavation.workFinished,
+      reportedDate: excavation.customerWorkFinished,
       reportingDate: excavation.workFinishedReported
     };
     this.openDateReporting(data).subscribe(dateReport => this.store.dispatch(new ReportCustomerWorkFinished(dateReport)));
