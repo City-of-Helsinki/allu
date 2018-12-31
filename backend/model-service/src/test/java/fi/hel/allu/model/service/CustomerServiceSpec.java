@@ -1,5 +1,15 @@
 package fi.hel.allu.model.service;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.context.ApplicationEventPublisher;
+
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.CustomerType;
@@ -7,20 +17,12 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
-
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
@@ -33,13 +35,17 @@ public class CustomerServiceSpec extends SpeccyTestBase {
   private CustomerDao customerDao;
   private ContactDao contactDao;
   private HistoryDao historyDao;
+  private UserDao userDao;
+  private ApplicationEventPublisher eventPublisher;
 
   {
     beforeEach(() -> {
       customerDao = Mockito.mock(CustomerDao.class);
       contactDao = Mockito.mock(ContactDao.class);
       historyDao = Mockito.mock(HistoryDao.class);
-      customerService = new CustomerService(customerDao, contactDao, historyDao);
+      eventPublisher = Mockito.mock(ApplicationEventPublisher.class);
+      userDao = Mockito.mock(UserDao.class);
+      customerService = new CustomerService(customerDao, contactDao, historyDao, userDao, eventPublisher);
     });
 
     describe("Customer operations", () -> {
@@ -105,6 +111,7 @@ public class CustomerServiceSpec extends SpeccyTestBase {
           final Customer CUSTOMER = dummyCustomer(CUSTOMER_ID);
 
           beforeEach(() -> {
+            Mockito.when(userDao.findById(Mockito.anyInt())).thenReturn(Optional.empty());
             Mockito.when(customerDao.findById(CUSTOMER_ID)).thenReturn(Optional.of(CUSTOMER));
             Mockito.when(customerDao.update(Mockito.anyInt(), Mockito.any(Customer.class)))
                 .thenAnswer(new Answer<Customer>() {

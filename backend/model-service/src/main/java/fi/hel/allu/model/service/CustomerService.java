@@ -1,27 +1,32 @@
 package fi.hel.allu.model.service;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import fi.hel.allu.common.domain.user.Constants;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.FieldChange;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import fi.hel.allu.model.service.event.CustomerUpdateEvent;
 
 /**
  * Customer related operations
@@ -33,12 +38,16 @@ public class CustomerService {
   private CustomerDao customerDao;
   private ContactDao contactDao;
   private HistoryDao historyDao;
+  private final UserDao userDao;
+  private ApplicationEventPublisher customerUpdateEventPublisher;
 
   @Autowired
-  public CustomerService(CustomerDao customerDao, ContactDao contactDao, HistoryDao historyDao) {
+  public CustomerService(CustomerDao customerDao, ContactDao contactDao, HistoryDao historyDao, UserDao userDao, ApplicationEventPublisher customerUpdateEventPublisher) {
     this.customerDao = customerDao;
     this.contactDao = contactDao;
     this.historyDao = historyDao;
+    this.userDao = userDao;
+    this.customerUpdateEventPublisher = customerUpdateEventPublisher;
     objectComparer = new ObjectComparer();
   }
 
@@ -102,6 +111,9 @@ public class CustomerService {
     Customer oldCustomer = customerDao.findById(id).orElseThrow(() -> new NoSuchEntityException("Customer not found", Integer.toString(id)));
     Customer newCustomer = customerDao.update(id, customer);
     addChangeItem(id, userId, oldCustomer, newCustomer, "", false);
+    if (!isExternalUser(userId)) {
+      customerUpdateEventPublisher.publishEvent(new CustomerUpdateEvent(this, oldCustomer, newCustomer));
+    }
     return newCustomer;
   }
 
@@ -235,4 +247,9 @@ public class CustomerService {
     }
 
   }
+
+  private boolean isExternalUser(Integer userId) {
+    return userDao.findById(userId).map(u -> u.getUserName().equals(Constants.EXTERNAL_USER_USERNAME)).orElse(false);
+  }
+
 }

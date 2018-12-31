@@ -389,6 +389,16 @@
                             <column>end_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>customer_update_log</table>
+                            <column>update_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>customer_update_log</table>
+                            <column>processed_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
                         <!-- Map enumeration types -->
                         <!-- NOTE that if you add new kind of typeMapping type, you have to configure it in JdbcConfiguration class! -->
                         <typeMapping>
