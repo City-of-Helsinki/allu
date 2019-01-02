@@ -56,6 +56,7 @@ export class MapLayerSelectComponent implements OnInit, OnDestroy {
   }
 
   @Input() set selected(selected: string[]) {
+    this.checklistSelection.clear();
     this.checklistSelection.select(...selected);
   }
 
