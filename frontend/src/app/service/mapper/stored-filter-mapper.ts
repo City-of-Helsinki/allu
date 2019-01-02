@@ -54,7 +54,8 @@ export class StoredFilterMapper {
       address: filter.address,
       startDate: TimeUtil.dateFromBackend(filter.startDate),
       endDate: TimeUtil.dateFromBackend(filter.endDate),
-      statuses: filter.statuses
+      statuses: filter.statuses,
+      layers: filter.layers
     };
   }
 

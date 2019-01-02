@@ -52,6 +52,8 @@ class StoredFilterStoreMock {
 
   currentChange(filter: StoredFilter): void {
   }
+
+  currentMapFilterChange(storedFilter: StoredFilter): void {}
 }
 
 describe('StoredFilterComponent', () => {
@@ -108,16 +110,30 @@ describe('StoredFilterComponent', () => {
     expect(actual.length).toEqual(expected.length);
   }));
 
-  it('selects clicked filter and emits event', fakeAsync(() => {
-    spyOn(filterStore, 'currentChange');
+  it('selects clicked filter and sets selected filter', fakeAsync(() => {
+    spyOn(filterStore, 'currentMapFilterChange');
     openFilterMenu();
     const options = de.queryAll(By.css('.allu-menu-item button.mat-menu-item'));
 
     options[0].nativeElement.click();
     parentFixture.detectChanges();
     flush();
-
     const expected = filters[0];
+    expect(filterStore.currentMapFilterChange).toHaveBeenCalledWith(expected);
+  }));
+
+  it('emits correct event based on input type', fakeAsync(() => {
+    parentComp.type = StoredFilterType.APPLICATION_SEARCH;
+    parentFixture.detectChanges();
+
+    spyOn(filterStore, 'currentChange');
+    openFilterMenu();
+    const options = de.queryAll(By.css('.allu-menu-item button.mat-menu-item'));
+
+    options[3].nativeElement.click();
+    parentFixture.detectChanges();
+    flush();
+    const expected = filters[3];
     expect(filterStore.currentChange).toHaveBeenCalledWith(expected);
   }));
 

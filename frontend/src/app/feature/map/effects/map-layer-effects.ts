@@ -1,21 +1,26 @@
 import {Injectable} from '@angular/core';
-import {Actions, Effect} from '@ngrx/effects';
+import {Actions, Effect, ofType} from '@ngrx/effects';
 import {Action, select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
 import {Observable} from 'rxjs/internal/Observable';
 import {defer} from 'rxjs/internal/observable/defer';
-import {filter, map, switchMap} from 'rxjs/operators';
+import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
 import {Control} from 'leaflet';
 import {FeatureGroupsObject} from '@model/map/feature-groups-object';
-import {AddLayers, AddTreeStructure} from '@feature/map/actions/map-layer-actions';
+import {AddLayers, AddTreeStructure, MapLayerActionType, SelectLayers} from '@feature/map/actions/map-layer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import LayersObject = Control.LayersObject;
 import {MapLayerService} from '@feature/map/map-layer.service';
+import {MapStore} from '@service/map/map-store';
+import LayersObject = Control.LayersObject;
 
 @Injectable()
 export class MapLayerEffects {
-  constructor(private actions: Actions, private store: Store<fromAuth.State>, private layerService: MapLayerService) {
+  constructor(private actions: Actions,
+              private store: Store<fromRoot.State>,
+              private layerService: MapLayerService,
+              private mapStore: MapStore) {
   }
 
   @Effect()
@@ -40,6 +45,12 @@ export class MapLayerEffects {
     ])
   ));
 
+  @Effect({dispatch: false})
+  layersSelected: Observable<Action> = this.actions.pipe(
+    ofType<SelectLayers>(MapLayerActionType.SelectLayers),
+    filter(action => action.targetType === ActionTargetType.Home),
+    tap((action: SelectLayers) => this.mapStore.mapSearchFilterChange({layers: action.payload}))
+  );
 
   private getMapLayers(): Observable<MapLayer[]> {
     const layers = [

@@ -16,6 +16,8 @@ import {StoredFilter} from '@model/user/stored-filter';
 import {debounceTime, filter, map, takeUntil} from 'rxjs/internal/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
+import {SelectLayers} from '@feature/map/actions/map-layer-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 enum BarType {
   SIMPLE, // Front page
@@ -119,6 +121,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   public selectFilter(searchFilter: StoredFilter) {
-    this.storedFilterStore.currentChange(searchFilter);
+    this.storedFilterStore.currentMapFilterChange(searchFilter);
   }
 }

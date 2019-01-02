@@ -67,7 +67,11 @@ export class StoredFilterComponent implements OnInit, OnDestroy {
   }
 
   selectFilter(storedFilter: StoredFilter): void {
-    this.store.currentChange(storedFilter);
+    if (this.type === StoredFilterType.MAP) {
+      this.store.currentMapFilterChange(storedFilter);
+    } else {
+      this.store.currentChange(storedFilter);
+    }
   }
 
   removeFilter(id: number): void {

@@ -10,6 +10,8 @@ import {buildTree, MapLayerFlatNode, MapLayerNode, transformer} from './map-laye
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material';
 import {SelectionModel} from '@angular/cdk/collections';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
+import {StoredFilterType} from '@model/user/stored-filter-type';
 
 
 @Component({
@@ -35,7 +37,7 @@ export class MapLayerSelectComponent implements OnInit, OnDestroy {
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private store: Store<fromMapLayers.State>) {}
+  constructor(private store: Store<fromMapLayers.State>, private storedFilterStore: StoredFilterStore) {}
 
   ngOnInit(): void {
     this.treeFlattener = new MatTreeFlattener(transformer, getLevel, isExpandable, getChildren);
@@ -64,5 +66,7 @@ export class MapLayerSelectComponent implements OnInit, OnDestroy {
   toggleLayer(node: MapLayerFlatNode): void {
     this.checklistSelection.toggle(node.id);
     this.store.dispatch(new SelectLayers(this.targetType, this.checklistSelection.selected));
+    // TODO: stored filters should be moved to common store and reset handled there
+    this.storedFilterStore.resetCurrent(StoredFilterType.MAP);
   }
 }

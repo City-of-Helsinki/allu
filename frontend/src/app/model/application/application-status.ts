@@ -118,8 +118,8 @@ export const decided = [
 ];
 
 export enum ApplicationStatusGroup {
-  PRELIMINARY,
-  HANDLING,
-  DECISION,
-  HISTORY
+  PRELIMINARY = 'PRELIMINARY',
+  HANDLING = 'HANDLING',
+  DECISION = 'DECISION',
+  HISTORY = 'HISTORY'
 }

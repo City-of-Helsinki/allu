@@ -1,0 +1,1 @@
+update allu.stored_filter set filter = filter::jsonb || jsonb_build_object('layers', array_to_json('{Karttasarja,Aluevuokraus,Tilapäinen liikennejärjestely,Johtoselvitys,Sijoitussopimus,Tapahtuma,Lyhytaikainen maanvuokraus,Muistiinpano,Kaivuilmoitus}'::text[])) where type='MAP';

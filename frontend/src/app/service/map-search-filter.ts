@@ -1,12 +1,14 @@
 import {LatLngBounds} from 'leaflet';
-import {ApplicationStatus, ApplicationStatusGroup} from '../model/application/application-status';
+import {ApplicationStatusGroup} from '@model/application/application-status';
+import {applicationLayers} from '@feature/map/map-layer.service';
 
 export interface MapSearchFilter {
   address?: string;
   startDate?: Date;
   endDate?: Date;
-  statuses?: Array<string>;
+  statuses?: ApplicationStatusGroup[];
   geometry?: LatLngBounds;
+  layers?: string[];
 }
 
 export const defaultFilter = {
@@ -17,5 +19,6 @@ export const defaultFilter = {
     ApplicationStatusGroup.PRELIMINARY,
     ApplicationStatusGroup.HANDLING,
     ApplicationStatusGroup.DECISION
-  ].map(sg => ApplicationStatusGroup[sg])
+  ],
+  layers: ['Karttasarja'].concat(applicationLayers)
 };

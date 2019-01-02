@@ -6,6 +6,10 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {NotificationService} from '../../feature/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {catchError, distinctUntilChanged, filter, map, switchMap, tap} from 'rxjs/internal/operators';
+import {SelectLayers} from '@feature/map/actions/map-layer-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {Store} from '@ngrx/store';
+import * as fromMap from '@feature/map/reducers';
 
 export interface StoredFilterTypeState {
   current: number;
@@ -28,20 +32,22 @@ export const initialState: StoredFilterState = {
 @Injectable()
 export class StoredFilterStore {
 
-  private store = new BehaviorSubject<StoredFilterState>(initialState);
+  private state$ = new BehaviorSubject<StoredFilterState>(initialState);
 
-  constructor(private storedFilterService: StoredFilterService, private notification: NotificationService) {
+  constructor(private storedFilterService: StoredFilterService,
+              private notification: NotificationService,
+              private store: Store<fromMap.State>) {
     this.loadAvailable().pipe(
       map(filters => this.createState(filters))
-    ).subscribe(state => this.store.next(state));
+    ).subscribe(state => this.state$.next(state));
   }
 
   get changes(): Observable<StoredFilterState> {
-    return this.store.asObservable().pipe(distinctUntilChanged());
+    return this.state$.asObservable().pipe(distinctUntilChanged());
   }
 
   get snapshot(): StoredFilterState {
-    return this.store.getValue();
+    return this.state$.getValue();
   }
 
   getCurrent(type: StoredFilterType): Observable<StoredFilter> {
@@ -68,7 +74,7 @@ export class StoredFilterStore {
   }
 
   getAvailable(type: StoredFilterType): Observable<StoredFilter[]> {
-    return this.store.pipe(
+    return this.state$.pipe(
       map(state => state.available),
       map(available => available.filter(f => f.type === type)),
       distinctUntilChanged()
@@ -78,13 +84,18 @@ export class StoredFilterStore {
   currentChange(storedFilter: StoredFilter): void {
     const next = {...this.snapshot};
     next[storedFilter.typeName].current = storedFilter.id;
-    this.store.next(next);
+    this.state$.next(next);
+  }
+
+  currentMapFilterChange(storedFilter: StoredFilter): void {
+    this.currentChange(storedFilter);
+    this.store.dispatch(new SelectLayers(ActionTargetType.Home, storedFilter.filter.layers));
   }
 
   resetCurrent(type: StoredFilterType): void {
     const next = {...this.snapshot};
     next[StoredFilterType[type]].current = undefined;
-    this.store.next(next);
+    this.state$.next(next);
   }
 
   save(storedFilter: StoredFilter): Observable<StoredFilter> {
@@ -107,14 +118,8 @@ export class StoredFilterStore {
   }
 
   private createState(filters: StoredFilter[]): StoredFilterState {
-    const state = {...initialState};
-    filters.forEach(storedFilter => {
-      if (storedFilter.defaultFilter) {
-        state[storedFilter.typeName].current = storedFilter.id;
-      }
-
-      state.available.push(storedFilter);
-    });
+    const state = this.initDefaultFilter(initialState, filters);
+    state.available = filters;
     return state;
   }
 
@@ -123,7 +128,7 @@ export class StoredFilterStore {
     this.loadAvailable().subscribe(available => {
       state[storedFilter.typeName].current = storedFilter.id;
       state.available = available;
-      this.store.next(state);
+      this.state$.next(state);
     });
   }
 
@@ -139,7 +144,7 @@ export class StoredFilterStore {
     this.loadAvailable().subscribe(available => {
       state.available = available;
       state[removed.typeName] = typeState;
-      this.store.next(state);
+      this.state$.next(state);
     });
   }
 
@@ -147,5 +152,19 @@ export class StoredFilterStore {
     return this.storedFilterService.findForCurrentUser().pipe(
       catchError(err => this.notification.errorCatch(err, []))
     );
+  }
+
+  private initDefaultFilter(baseState: StoredFilterState, filters: StoredFilter[]): StoredFilterState {
+    const state = {...baseState};
+    const defaultFilter = ArrayUtil.first(filters, f => f.defaultFilter);
+    if (defaultFilter) {
+      state[defaultFilter.typeName].current = defaultFilter.id;
+
+      if (defaultFilter.type === StoredFilterType.MAP) {
+        this.store.dispatch(new SelectLayers(ActionTargetType.Home, defaultFilter.filter.layers));
+      }
+    }
+    return state;
+
   }
 }

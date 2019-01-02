@@ -90,7 +90,7 @@ export class MapDataService {
 
   private  mapSearchParameters(filter: MapSearchFilter): Array<BackendQueryParameter> {
     const queryParameters: Array<BackendQueryParameter> = [];
-    const statuses = this.statusesFromGroup(filter.statuses.map(sg => ApplicationStatusGroup[sg]));
+    const statuses = this.statusesFromGroup(filter.statuses);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'status', statuses);
     QueryParametersMapper.mapDateParameter(queryParameters, 'recurringApplication', filter.startDate, filter.endDate, true);
     return queryParameters;
