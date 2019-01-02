@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.external.domain.InvoicingCustomerExt;
 import fi.hel.allu.external.mapper.CustomerExtMapper;
+import fi.hel.allu.model.domain.CustomerUpdateLog;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.CustomerService;
@@ -60,4 +61,13 @@ public class CustomerController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  @RequestMapping(value="/sapupdates/count", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
+  public ResponseEntity<Integer> getNumberOfSapCustomerUpdates() {
+    int result = (int)customerService.getCustomerUpdateLog().stream()
+        .map(CustomerUpdateLog::getCustomerId)
+        .distinct()
+        .count();
+    return new ResponseEntity<>(Integer.valueOf(result), HttpStatus.OK);
+  }
 }

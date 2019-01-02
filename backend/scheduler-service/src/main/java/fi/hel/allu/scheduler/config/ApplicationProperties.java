@@ -331,6 +331,10 @@ public class ApplicationProperties {
     return getExtServiceUrl("/v1/customers/saporder/count");
   }
 
+  public String getNrOfSapCustomerUpdatesUrl() {
+    return getExtServiceUrl("/v1/customers/sapupdates/count");
+  }
+
   /**
    * @return url for starting search sync.
    */

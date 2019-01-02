@@ -1,4 +1,4 @@
-Allussa uusia SAP-asiakkuuksia lisättäväksi ${nrOfCustomers} kappaletta.
+Allussa uusia SAP-asiakkuuksia lisättäväksi ${nrOfCustomers} kappaletta ja SAP-asiakkaiden tietojen päivityksiä ${nrOfUpdates} kappaletta.
 
 Listaus lisättävistä asiakkaista löytyy osoitteesta ${customerOrderUrl}.
 

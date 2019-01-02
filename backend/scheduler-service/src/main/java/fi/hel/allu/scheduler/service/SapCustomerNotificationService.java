@@ -47,32 +47,43 @@ public class SapCustomerNotificationService {
   public void sendSapCustomerNotificationEmails() {
     final List<String> customerNotificationReceiverEmails = getCustomerNotificationReceiverEmails();
     if (!customerNotificationReceiverEmails.isEmpty()) {
-      Integer numberOfCustomersWaitingSapNumber = getNumberOfCustomersWaitingSapNumber();
-      if (numberOfCustomersWaitingSapNumber != null && numberOfCustomersWaitingSapNumber > 0) {
-        sendMail(numberOfCustomersWaitingSapNumber, customerNotificationReceiverEmails);
+      int numberOfCustomersWaitingSapNumber = getNumberOfCustomersWaitingSapNumber();
+      int numberOfSapCustomerUpdates = getNumberOfSapCustomerUpdates();
+      if (numberOfCustomersWaitingSapNumber > 0 || numberOfSapCustomerUpdates > 0) {
+        sendMail(numberOfCustomersWaitingSapNumber, numberOfSapCustomerUpdates, customerNotificationReceiverEmails);
       }
     }
   }
 
-  private Integer getNumberOfCustomersWaitingSapNumber() {
-    return restTemplate.exchange(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl(), HttpMethod.GET,
-        new HttpEntity<>(authenticationService.createAuthenticationHeader()), Integer.class).getBody();
+  private int getNumberOfSapCustomerUpdates() {
+    return getCountResult(applicationProperties.getNrOfSapCustomerUpdatesUrl());
   }
 
-  private void sendMail(Integer numberOfCustomersWaitingSapNumber, List<String> receiverEmails) {
+  private int getNumberOfCustomersWaitingSapNumber() {
+    return getCountResult(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl());
+  }
+
+  private int getCountResult(String url) {
+    Integer result = restTemplate.exchange(url, HttpMethod.GET,
+        new HttpEntity<>(authenticationService.createAuthenticationHeader()), Integer.class).getBody();
+    return result != null ? result.intValue() : 0;
+  }
+
+  private void sendMail(int numberOfCustomersWaitingSapNumber, int numberOfUpdates, List<String> receiverEmails) {
     String subject = String.format(applicationProperties.getCustomerNotificationMailSubject());
     try {
       String mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
-      String body = StrSubstitutor.replace(mailTemplate, mailVariables(numberOfCustomersWaitingSapNumber));
+      String body = StrSubstitutor.replace(mailTemplate, mailVariables(numberOfCustomersWaitingSapNumber, numberOfUpdates));
       alluMailService.sendEmail(receiverEmails, subject, body, null, null);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
   }
 
-  private Map<String, String> mailVariables(Integer nrOfCustomers) {
+  private Map<String, String> mailVariables(int nrOfCustomers, int nrOfUpdates) {
     Map<String, String> result = new HashMap<>();
-    result.put("nrOfCustomers", nrOfCustomers.toString());
+    result.put("nrOfCustomers", String.valueOf(nrOfCustomers));
+    result.put("nrOfUpdates", String.valueOf(nrOfUpdates));
     result.put("customerOrderUrl",  applicationProperties.getCustomerDownloadUrl());
     return result;
   }
