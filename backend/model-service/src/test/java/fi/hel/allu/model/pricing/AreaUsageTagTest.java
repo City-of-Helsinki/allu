@@ -23,6 +23,7 @@ import fi.hel.allu.model.dao.ChargeBasisModification;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.service.ChargeBasisService;
 import fi.hel.allu.model.service.InvoicingPeriodService;
+import fi.hel.allu.model.service.PricingService;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
@@ -40,12 +41,14 @@ public class AreaUsageTagTest {
   private InvoicingPeriodService invoicingPeriodService;
   @Mock
   private ApplicationEventPublisher eventPublisher;
+  @Mock
+  private PricingService pricingService;
   @Captor
   private ArgumentCaptor<List<ChargeBasisEntry>> captor;
 
   @Before
   public void setUp() {
-    chargeBasisService = new ChargeBasisService(chargeBasisDao, applicationDao, eventPublisher, invoicingPeriodService);
+    chargeBasisService = new ChargeBasisService(chargeBasisDao, applicationDao, eventPublisher, invoicingPeriodService, pricingService);
     Mockito.when(invoicingPeriodService.findFirstOpenPeriod(anyInt())).thenReturn(Optional.empty());
   }
 

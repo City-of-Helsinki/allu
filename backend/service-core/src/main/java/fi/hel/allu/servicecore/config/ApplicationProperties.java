@@ -628,6 +628,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/charge-basis/{entryId}/invoicable");
   }
 
+  public String getLocationInvoicableSumUrl() {
+    return getModelServiceUrl("/applications/{id}//location/{locationid}/invoicable/sum");
+  }
+
   /**
    * @return url for deleting attachment from application.
    */

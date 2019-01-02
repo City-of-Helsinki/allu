@@ -1,16 +1,19 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.PricingService;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.ChargeBasisService;
+import fi.hel.allu.model.service.PricingService;
 
 @RestController
 @RequestMapping("/applications/{id}")
@@ -18,16 +21,13 @@ public class ChargeBasisController {
 
   private final ChargeBasisService chargeBasisService;
   private final ApplicationService applicationService;
-  private final PricingService pricingService;
 
   @Autowired
   public ChargeBasisController(
       ChargeBasisService chargeBasisService,
-      ApplicationService applicationService,
-      PricingService pricingService) {
+      ApplicationService applicationService) {
     this.chargeBasisService = chargeBasisService;
     this.applicationService = applicationService;
-    this.pricingService = pricingService;
   }
 
   /**
@@ -47,7 +47,12 @@ public class ChargeBasisController {
    */
   @RequestMapping(value = "/single-invoice-charge-basis", method = RequestMethod.GET)
   public ResponseEntity<List<ChargeBasisEntry>> findSingleInvoiceByApplicationId(@PathVariable int id) {
-    return ResponseEntity.ok(pricingService.calculateChargeBasisWithoutInvoicingPeriods(applicationService.findById(id)));
+   return ResponseEntity.ok(chargeBasisService.findSingleInvoiceByApplicationId(id));
+  }
+
+  @RequestMapping(value = "/location/{locationid}/invoicable/sum", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getInvoicableSumForLocation(@PathVariable(value = "id") int id, @PathVariable(value = "locationid") Integer locationId) {
+    return ResponseEntity.ok(chargeBasisService.getInvoicableSumForLocation(id, locationId));
   }
 
   /**

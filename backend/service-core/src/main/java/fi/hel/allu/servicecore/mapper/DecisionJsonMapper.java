@@ -503,9 +503,9 @@ public class DecisionJsonMapper {
     final Map<Integer, Location> locations = locationService.getLocationsByApplication(application.getId())
         .stream().collect(Collectors.toMap(l -> l.getId(), l -> l));
     final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getSingleInvoiceChargeBasis(application.getId());
-    final List<ChargeBasisEntry> areaEntries = getAreaEntries(chargeBasisEntries);
+    final List<ChargeBasisEntry> areaEntries = getAreaEntries(chargeBasisEntries, application.getId());
     final List<ChargeBasisEntry> otherEntries = chargeBasisEntries.stream()
-        .filter(c -> !isAreaEntry(c, chargeBasisEntries)).collect(Collectors.toList());
+        .filter(c -> !isAreaEntry(c, chargeBasisEntries) && c.isInvoicable()).collect(Collectors.toList());
 
     final List<RentalArea> rentalAreas = areaEntries.stream()
         .map(e -> chargeBasisToRentalArea(e, application, locations, areaEntries))
@@ -523,9 +523,10 @@ public class DecisionJsonMapper {
 
   // Gets area entries and entries referring to area entries. There can be several entries for one location if entries
   // are splitted to invoicing periods -> filter duplicate entries
-  private List<ChargeBasisEntry> getAreaEntries(List<ChargeBasisEntry> allEntries) {
+  private List<ChargeBasisEntry> getAreaEntries(List<ChargeBasisEntry> allEntries, int applicationId) {
     List<ChargeBasisEntry> result = new ArrayList<>();
     List<ChargeBasisEntry> areaEntries = allEntries.stream().filter(e -> e.getLocationId() != null).collect(Collectors.toList());
+    areaEntries.forEach(ae -> ae.setNetPrice(chargeBasisService.getInvoicableSumForLocation(applicationId, ae.getLocationId())));
     areaEntries.forEach(ae -> addWithReferringEntries(ae, allEntries, result));
     return result;
   }
@@ -551,8 +552,10 @@ public class DecisionJsonMapper {
       Map<Integer, Location> locations, List<ChargeBasisEntry> entries) {
 
     final RentalArea rentalArea = new RentalArea();
-    rentalArea.setUnitPrice(chargeUnitPrice(entry));
-    rentalArea.setPrice(chargeNetPrice(entry));
+    if (entry.getNetPrice() != 0) {
+      rentalArea.setUnitPrice(chargeUnitPrice(entry));
+      rentalArea.setPrice(chargeNetPrice(entry));
+    }
     rentalArea.setQuantity(chargeQuantity(entry));
 
     if (entry.getLocationId() != null) {

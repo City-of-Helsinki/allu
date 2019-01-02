@@ -3,7 +3,9 @@ package fi.hel.allu.model.service;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -27,15 +29,17 @@ public class ChargeBasisService {
   private final ApplicationDao applicationDao;
   private final ApplicationEventPublisher invoicingChangeEventPublisher;
   private final InvoicingPeriodService invoicingPeriodService;
-
+  private final PricingService pricingService;
 
   @Autowired
   public ChargeBasisService(ChargeBasisDao chargeBasisDao, ApplicationDao applicationDao,
-      ApplicationEventPublisher invoicingChangeEventPublisher, InvoicingPeriodService invoicingPeriodService) {
+      ApplicationEventPublisher invoicingChangeEventPublisher, InvoicingPeriodService invoicingPeriodService,
+      PricingService pricingService) {
     this.chargeBasisDao = chargeBasisDao;
     this.applicationDao = applicationDao;
     this.invoicingChangeEventPublisher = invoicingChangeEventPublisher;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.pricingService = pricingService;
   }
 
   /**
@@ -165,4 +169,19 @@ public class ChargeBasisService {
     handleInvoicingChanged(applicationId);
     return entry;
   }
+
+  public int getInvoicableSumForLocation(int applicationId, Integer locationId) {
+    return chargeBasisDao.getChargeBasis(applicationId).stream()
+      .filter(c -> Objects.equals(locationId, c.getLocationId()) && c.isInvoicable())
+      .collect(Collectors.summingInt(ChargeBasisEntry::getNetPrice));
+  }
+
+  public List<ChargeBasisEntry> findSingleInvoiceByApplicationId(int id) {
+    // Get calculated entries without dividing to periods
+    List<ChargeBasisEntry> calculatedEntries = pricingService.calculateChargeBasisWithoutInvoicingPeriods(applicationDao.findById(id));
+    // Sets invoicable value for calculated entries not divided to periods (divided entries must be handled separately since period specific row has different tag)
+    calculatedEntries.forEach(e -> e.setInvoicable(BooleanUtils.isTrue(chargeBasisDao.isInvoicable(id, e.getTag(), false))));
+    // Fetch manual entries from db and add to result.
+    return Stream.concat(calculatedEntries.stream(), getChargeBasis(id).stream().filter(e -> e.getManuallySet()))
+        .collect(Collectors.toList());}
 }

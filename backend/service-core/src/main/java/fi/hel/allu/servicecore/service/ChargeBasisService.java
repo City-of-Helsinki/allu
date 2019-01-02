@@ -51,6 +51,10 @@ public class ChargeBasisService {
         ChargeBasisEntry[].class, applicationId).getBody()));
   }
 
+  public int getInvoicableSumForLocation(int applicationId, int locationId) {
+    return restTemplate.getForObject(applicationProperties.getLocationInvoicableSumUrl(), Integer.class, applicationId, locationId);
+  }
+
   public List<ChargeBasisEntry> getUnlockedAndInvoicableChargeBasis(int applicationId) {
     return sortEntries(loadChargeBasis(applicationId).stream()
         .filter(e -> !Boolean.TRUE.equals(e.getLocked()) && e.isInvoicable())

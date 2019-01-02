@@ -201,4 +201,12 @@ public class ChargeBasisDao {
     });
     insertEntries(toApplicationId, entries, true, nextEntryNumber(toApplicationId, true));
   }
+
+  @Transactional(readOnly = true)
+  public Boolean isInvoicable(int applicationId, String tag, boolean manuallySet) {
+    return queryFactory.select(chargeBasis.invoicable)
+        .from(chargeBasis)
+        .where(chargeBasis.applicationId.eq(applicationId), chargeBasis.tag.eq(tag), chargeBasis.manuallySet.eq(manuallySet))
+        .fetchFirst();
+  }
 }
