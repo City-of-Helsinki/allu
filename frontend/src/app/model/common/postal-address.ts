@@ -4,10 +4,10 @@ export class PostalAddress {
   constructor(public streetAddress?: string, public postalCode?: string, public city?: string) {}
 
   public static fromBackend(backendPostalAddress: BackendPostalAddress): PostalAddress {
-    return new PostalAddress(
+    return backendPostalAddress ? new PostalAddress(
       backendPostalAddress.streetAddress,
       backendPostalAddress.postalCode,
-      backendPostalAddress.city);
+      backendPostalAddress.city) : new PostalAddress();
   }
 
   public toBackend(): BackendPostalAddress {
