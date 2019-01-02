@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {CommentType, decisionProposalComments} from '../../../model/application/comment/comment-type';
-import {Comment} from '../../../model/application/comment/comment';
-import {TimeUtil} from '../../../util/time.util';
-import {Store} from '@ngrx/store';
-import * as fromApplication from '../../application/reducers';
+import {CommentType, decisionProposalComments} from '@model/application/comment/comment-type';
+import {Comment} from '@model/application/comment/comment';
+import {TimeUtil} from '@util/time.util';
+import {select, Store} from '@ngrx/store';
+import * as fromApplication from '@feature/application/reducers';
 import {map} from 'rxjs/internal/operators';
 
 @Component({
@@ -19,7 +19,8 @@ export class DecisionProposalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.proposals = this.store.select(fromApplication.getAllComments).pipe(
+    this.proposals = this.store.pipe(
+      select(fromApplication.getAllComments),
       map(comments => this.sortedProposals(comments))
     );
   }

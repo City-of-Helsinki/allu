@@ -26,6 +26,8 @@ import {catchError, map, switchMap} from 'rxjs/internal/operators';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {Load as LoadInvoices} from '@feature/application/invoicing/actions/invoice-actions';
 import {Load as LoadChargeBasis} from '@feature/application/invoicing/actions/charge-basis-actions';
+import {Load as LoadComments} from '@feature/comment/actions/comment-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 const requiresTagReload = [
   SupervisionTaskActionType.SaveSuccess,
@@ -111,6 +113,12 @@ export class SupervisionTaskEffects {
   reloadInvoicing: Observable<Action> = this.actions.pipe(
     ofType<Action>(SupervisionTaskActionType.ApproveSuccess),
     switchMap(() => [new LoadChargeBasis(), new LoadInvoices()])
+  );
+
+  @Effect()
+  reloadComments: Observable<Action> = this.actions.pipe(
+    ofType<Action>(SupervisionTaskActionType.ApproveSuccess),
+    map(() => new LoadComments(ActionTargetType.Application))
   );
 
   @Effect()
