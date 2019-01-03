@@ -504,8 +504,9 @@ public class DecisionJsonMapper {
         .stream().collect(Collectors.toMap(l -> l.getId(), l -> l));
     final List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getSingleInvoiceChargeBasis(application.getId());
     final List<ChargeBasisEntry> areaEntries = getAreaEntries(chargeBasisEntries, application.getId());
-    final List<ChargeBasisEntry> otherEntries = chargeBasisEntries.stream()
-        .filter(c -> !isAreaEntry(c, chargeBasisEntries) && c.isInvoicable()).collect(Collectors.toList());
+    final List<ChargeBasisEntry> otherEntries = BooleanUtils.isTrue(application.getNotBillable()) ? Collections.emptyList()
+        : chargeBasisEntries.stream().filter(c -> !isAreaEntry(c, chargeBasisEntries) && c.isInvoicable())
+            .collect(Collectors.toList());
 
     final List<RentalArea> rentalAreas = areaEntries.stream()
         .map(e -> chargeBasisToRentalArea(e, application, locations, areaEntries))
@@ -552,7 +553,7 @@ public class DecisionJsonMapper {
       Map<Integer, Location> locations, List<ChargeBasisEntry> entries) {
 
     final RentalArea rentalArea = new RentalArea();
-    if (entry.getNetPrice() != 0) {
+    if (BooleanUtils.isNotTrue(application.getNotBillable()) && entry.getNetPrice() != 0) {
       rentalArea.setUnitPrice(chargeUnitPrice(entry));
       rentalArea.setPrice(chargeNetPrice(entry));
     }
