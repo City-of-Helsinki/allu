@@ -4,8 +4,14 @@
 
 .mat-tree-node.allu-tree-node {
   min-height: 36px;
+  overflow: visible;
 }
 
 .tree-leaf-node {
   padding-left: 20px;
+  padding-right: 10px;
+}
+
+.layer-menu-content {
+  padding: 8px;
 }
