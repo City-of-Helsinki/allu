@@ -187,11 +187,11 @@ public class ApplicationServiceComposer {
    *
    * @param applicationIds  Applications whose owner should be removed.
    */
-  public void removeApplicationOwner(List<Integer> applicationIds) {
+  public void removeApplicationOwner(List<Integer> applicationIds, boolean waitRefresh) {
     applicationService.removeApplicationOwner(applicationIds);
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
-    searchService.updateApplications(applicationJsons);
+    searchService.updateApplications(applicationJsons, waitRefresh);
   }
 
   /**
@@ -430,7 +430,7 @@ public class ApplicationServiceComposer {
     } else if (StatusType.HANDLING.equals(application.getStatus())) {
       updateApplicationOwner(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()), false);
     } else if (StatusType.CANCELLED.equals(application.getStatus()) || StatusType.ARCHIVED.equals(application.getStatus())) {
-      removeApplicationOwner(Collections.singletonList(application.getId()));
+      removeApplicationOwner(Collections.singletonList(application.getId()), false);
     }
   }
 

@@ -97,7 +97,7 @@ public class ApplicationController {
   @RequestMapping(value = "/owner/remove", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> removeApplicationOwner(@RequestBody(required = true) List<Integer> applicationsIds) {
-    applicationServiceComposer.removeApplicationOwner(applicationsIds);
+    applicationServiceComposer.removeApplicationOwner(applicationsIds, true);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
