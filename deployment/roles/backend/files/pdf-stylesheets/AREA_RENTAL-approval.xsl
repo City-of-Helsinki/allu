@@ -145,58 +145,83 @@
         </div>
       </xsl:if>
 
-      <xsl:if test="data/notBillable = 'false' and data/chargeInfoEntries">
-        <section class="unboxed">
-          <h2>Perittävät maksut</h2>
+      <section class="unboxed">
+        <h2>Vuokra-alueet</h2>
+        <table class="area-table">
+          <tr>
+            <th>Aluetunnus</th>
+            <th>Voimassaolo</th>
+            <th>Osoite</th>
+            <th>Altakulj.</th>
+            <th>Pinta-ala</th>
+            <th>ML</th>
+            <th>à € / pv</th>
+            <th>pv</th>
+            <th>Maksu</th>
+          </tr>
+          <xsl:for-each select="data/rentalAreas">
+            <xsl:variable name="areaFinished">
+              <xsl:choose>
+                <xsl:when test="./finished = 'true'">
+                  finished
+                </xsl:when>
+                <xsl:otherwise>
+                  unfinished
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
 
-          <div class="indented-charge-info">
-            <div class="charge-info">
-              <xsl:for-each select="data/chargeInfoEntries">
-                <div class="row">
-                  <span class="c1">
-                    <xsl:if test="./level > 0">
-                      <span class="up-arrow" style="padding-left: {level}em"></span>
-                    </xsl:if>
-                    <xsl:value-of select="text"/>
-                    <xsl:for-each select="explanation">
-                      <div class="explanation"><xsl:value-of select="."/></div>
-                    </xsl:for-each>
-                  </span>
-                  <span class="c2">
-                    <xsl:value-of select="quantity"/>
-                  </span>
-                  <span class="c3">
-                    <xsl:value-of select="unitPrice"/>
-                  </span>
-                  <span class="c4">
-                    <xsl:value-of select="netPrice"/>
-                  </span>
-                </div>
-              </xsl:for-each>
+            <xsl:variable name="borderStyle">
+              <xsl:choose>
+                <xsl:when test="./firstCommon = 'true'">
+                  fat-border
+                </xsl:when>
+                <xsl:otherwise>
+                  thin-border
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
 
-              <div class="sum-row">
-                <span class="c1">YHTEENSÄ</span>
-                <span class="c2"></span>
-                <span class="c3"></span>
-                <span class="c4"><xsl:value-of select="data/totalRent"/></span>
-              </div>
-            </div>
-          </div>
-
-          <p class="space-above">
-            Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 28.9.2018 § 176.
-          </p>
-        </section>
-      </xsl:if>
-      <xsl:if test="data/notBillable = 'true'">
-        <section class="unboxed">
-          <h2>Perittävät maksut</h2>
-          <p>Korvauksetta.</p>
-          <p class="space-above">
-            Korvauksettomuuden peruste: <xsl:value-of select="data/notBillableReason"/>
-          </p>
-        </section>
-      </xsl:if>
+            <xsl:choose>
+              <xsl:when  test="./text != ''">
+                <tr class="{$areaFinished}">
+                  <td class="info" colspan="8"><xsl:value-of select="text"/></td>
+                  <td style='text-align: right;'><xsl:value-of select="price"/></td>
+                </tr>
+              </xsl:when>
+              <xsl:when test="./chargeBasisText != ''">
+                <tr class="{$borderStyle}">
+                  <td class="info" style="border-right: none;" colspan="3"><xsl:value-of select="chargeBasisText"/></td>
+                  <td style="border-left: none; border-right: none;" colspan="2"><xsl:value-of select="quantity"/></td>
+                  <td style="border-left: none; border-right: none;" colspan="2"><xsl:value-of select="unitPrice"/></td>
+                  <td style="border-left: none; text-align: right;" colspan="2"><xsl:value-of select="price"/></td>
+                </tr>
+              </xsl:when>
+              <xsl:otherwise>
+                <tr class="{$areaFinished} fat-border">
+                  <td><xsl:value-of select="areaId"/></td>
+                  <td><xsl:value-of select="time"/></td>
+                  <td><xsl:value-of select="address"/></td>
+                  <td><xsl:value-of select="underpass"/></td>
+                  <td><xsl:value-of select="area"/></td>
+                  <td><xsl:value-of select="paymentClass"/></td>
+                  <td><xsl:value-of select="unitPrice"/></td>
+                  <td><xsl:value-of select="days"/></td>
+                  <td style='text-align: right;'><xsl:value-of select="price"/></td>
+                </tr>
+                <xsl:if test="./additionalInfo != ''">
+                  <tr class="{$areaFinished}">
+                    <td class="info" colspan="9">Lisätietoja alueesta: <xsl:value-of select="additionalInfo"/></td>
+                  </tr>
+                </xsl:if>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </table>
+        <p class="space-above">
+          Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 28.9.2018 § 176.
+        </p>
+      </section>
 
       <section class="unboxed new-page">
         <h2>Muutoksenhaku</h2>
