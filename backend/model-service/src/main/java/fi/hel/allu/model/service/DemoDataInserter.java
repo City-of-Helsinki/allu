@@ -73,18 +73,20 @@ public class DemoDataInserter {
   }
 
   private void addUserWithRoleDeclarant() {
-    final User user = new User(
-        null,
-        "lausunnonantaja",
-        "Laura Lausunnonantaja",
-        "laura@lausuntoautomaatti.fi",
-        "03-1234567",
-        "lausuja",
-        true,
-        null,
-        Collections.emptyList(),
-        Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_DECLARANT),
-        Collections.emptyList());
-    userDao.insert(user);
+    if (!userDao.findByUserName("lausunnonantaja").isPresent()) {
+      final User user = new User(
+          null,
+          "lausunnonantaja",
+          "Laura Lausunnonantaja",
+          "laura@lausuntoautomaatti.fi",
+          "03-1234567",
+          "lausuja",
+          true,
+          null,
+          Collections.emptyList(),
+          Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_DECLARANT),
+          Collections.emptyList());
+      userDao.insert(user);
+    }
   }
 }
