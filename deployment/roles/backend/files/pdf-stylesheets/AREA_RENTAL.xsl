@@ -225,17 +225,28 @@
 
         <p class="space-above">
           Yllä olevassa taulukossa näkyy kaikki päätökseen liittyvät alueet ja maksut. Harmaalla merkittyjen
-          alueiden voimassaolo on päättynyt. Toteutunut työaika vaikuttaa maksujen suuruuteen ja lopullinen
-          laskutettava maksu määräytyy hyväksytysti vastaanotetun työn keston perusteella.
+          alueiden voimassaolo on päättynyt.
           <xsl:choose>
-          <xsl:when test="data/invoicingPeriodLength != ''">
-            Aluevuokraus laskutetaan jaksotetusti <xsl:value-of select="data/invoicingPeriodLength"/> kk välein.
-            Laskut lähetetään erikseen.
+          <xsl:when test="data/notBillable = 'false'">
+            Toteutunut työaika vaikuttaa maksujen suuruuteen ja lopullinen
+            laskutettava maksu määräytyy hyväksytysti vastaanotetun työn keston perusteella.
+            <xsl:choose>
+            <xsl:when test="data/invoicingPeriodLength != ''">
+              Aluevuokraus laskutetaan jaksotetusti <xsl:value-of select="data/invoicingPeriodLength"/> kk välein.
+              Laskut lähetetään erikseen.
+            </xsl:when>
+            <xsl:otherwise>
+              Lasku lähetetään erikseen.
+            </xsl:otherwise>
+            </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
-            Lasku lähetetään erikseen.
+            <p class="space-above">Korvauksetta</p>
+            <p>
+              Korvauksettomuuden peruste: <xsl:value-of select="data/notBillableReason"/>
+            </p>
           </xsl:otherwise>
-          </xsl:choose>
+        </xsl:choose>
         </p>
       </section>
 

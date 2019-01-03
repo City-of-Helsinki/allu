@@ -218,9 +218,19 @@
             </xsl:choose>
           </xsl:for-each>
         </table>
-        <p class="space-above">
-          Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 28.9.2018 § 176.
-        </p>
+        <xsl:choose>
+        <xsl:when test="data/notBillable = 'false'">
+          <p class="space-above">
+            Maksut perustuvat Kaupunkiympäristölautakunnan ympäristö- ja lupajaoston päätökseen 28.9.2018 § 176.
+          </p>
+        </xsl:when>
+        <xsl:otherwise>
+          <p class="space-above">Korvauksetta</p>
+          <p>
+            Korvauksettomuuden peruste: <xsl:value-of select="data/notBillableReason"/>
+          </p>
+        </xsl:otherwise>
+        </xsl:choose>
       </section>
 
       <section class="unboxed new-page">
