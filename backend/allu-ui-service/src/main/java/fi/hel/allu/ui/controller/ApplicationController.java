@@ -90,7 +90,7 @@ public class ApplicationController {
   @RequestMapping(value = "/owner/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> updateApplicationOwner(@PathVariable int id, @RequestBody(required = true) List<Integer> applicationsIds) {
-    applicationServiceComposer.updateApplicationOwner(id, applicationsIds);
+    applicationServiceComposer.updateApplicationOwner(id, applicationsIds, true);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

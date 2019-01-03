@@ -17,6 +17,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
@@ -209,7 +210,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         objectsToInsert.stream().map(entry -> createRequestInto(indexName, keyMapper.apply(entry), entry))
             .collect(Collectors.toList());
 
-    executeBulk(indexRequests);
+    executeBulk(indexRequests, null);
   }
 
   /**
@@ -220,10 +221,14 @@ public class GenericSearchService<T, Q extends QueryParameters> {
    * @param keyMapper lambda from object to its key
    */
   public void bulkUpdate(List<T> objectsToUpdate) {
+    bulkUpdate(objectsToUpdate, false);
+  }
 
-    bulkUpdateInto(indexConductor.getIndexAliasName(), objectsToUpdate);
+  public void bulkUpdate(List<T> objectsToUpdate, Boolean waitRefresh) {
+    RefreshPolicy refreshPolicy = Boolean.TRUE.equals(waitRefresh) ? RefreshPolicy.WAIT_UNTIL : null;
+    bulkUpdateInto(indexConductor.getIndexAliasName(), objectsToUpdate, refreshPolicy);
     if (indexConductor.isSyncActive()) {
-      bulkUpdateInto(indexConductor.getNewIndexName(), objectsToUpdate);
+      bulkUpdateInto(indexConductor.getNewIndexName(), objectsToUpdate, refreshPolicy);
     }
   }
 
@@ -235,12 +240,12 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     return propertyName + propertyToSort.getOrDefault(propertyName, "");
   }
 
-  private void bulkUpdateInto(String indexName, List<T> objectsToUpdate) {
+  private void bulkUpdateInto(String indexName, List<T> objectsToUpdate, RefreshPolicy refreshPolicy) {
     List<DocWriteRequest<?>> updateRequests =
         objectsToUpdate.stream().map(entry -> updateRequestInto(indexName, keyMapper.apply(entry), entry))
             .collect(Collectors.toList());
 
-    executeBulk(updateRequests);
+    executeBulk(updateRequests, refreshPolicy);
   }
 
   /**
@@ -263,7 +268,7 @@ public class GenericSearchService<T, Q extends QueryParameters> {
         .map(entry -> updateRequestInto(indexName, entry.getKey().toString(), entry.getValue()))
         .collect(Collectors.toList());
 
-    executeBulk(updateRequests);
+    executeBulk(updateRequests, null);
   }
 
   /**
@@ -648,14 +653,15 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     return (startOrEnd == 0) ? 1 : startOrEnd;
   }
 
-  private void executeBulk(List<DocWriteRequest<?>> requests) {
-    final BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessorListener())
+  private void executeBulk(List<DocWriteRequest<?>> requests, RefreshPolicy refreshPolicy) {
+    final BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessorListener(refreshPolicy))
         .setConcurrentRequests(1)           // at most 1 concurrent request
         .setBulkActions(1000)               // maximum of 1000 updates per request
         .setBulkSize(new ByteSizeValue(-1)) // no byte size limit for bulk
         .build();
 
     requests.forEach(req -> bp.add(req));
+
     try {
       bp.awaitClose(10, TimeUnit.MINUTES);
     } catch (InterruptedException e) {
@@ -664,8 +670,18 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   }
 
   private class BulkProcessorListener implements BulkProcessor.Listener {
+
+    private final RefreshPolicy refreshPolicy;
+
+    private BulkProcessorListener(RefreshPolicy refreshPolicy) {
+      this.refreshPolicy = refreshPolicy;
+    }
+
     @Override
     public void beforeBulk(long executionId, BulkRequest request) {
+      if (refreshPolicy != null) {
+        request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
+      }
     }
 
     @Override

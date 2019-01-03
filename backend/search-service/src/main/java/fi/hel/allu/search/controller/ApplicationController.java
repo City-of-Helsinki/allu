@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,8 +40,8 @@ public class ApplicationController {
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
-  public ResponseEntity<Void> update(@RequestBody List<ApplicationES> applicationESs) {
-    applicationSearchService.bulkUpdate(applicationESs);
+  public ResponseEntity<Void> update(@RequestBody List<ApplicationES> applicationESs, @RequestParam(required = false) Boolean waitRefresh) {
+    applicationSearchService.bulkUpdate(applicationESs, waitRefresh);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

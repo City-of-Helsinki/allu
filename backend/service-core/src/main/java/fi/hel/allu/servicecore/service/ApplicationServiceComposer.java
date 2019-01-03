@@ -171,11 +171,11 @@ public class ApplicationServiceComposer {
    * @param applicationIds
    *          Applications to be updated.
    */
-  public void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds) {
+  public void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds, boolean waitRefresh) {
     applicationService.updateApplicationOwner(updatedOwner, applicationIds);
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
-    searchService.updateApplications(applicationJsons);
+    searchService.updateApplications(applicationJsons, waitRefresh);
   }
 
   public void updateApplicationHandler(Integer applicationId, Integer updatedHandler) {
@@ -426,9 +426,9 @@ public class ApplicationServiceComposer {
   private void changeOwnerOnStatusChange(Application application, StatusChangeInfoJson info) {
     Integer newOwner = Optional.ofNullable(info).map(i -> i.getOwner()).orElse(null);
     if (newOwner != null) {
-      updateApplicationOwner(newOwner, Collections.singletonList(application.getId()));
+      updateApplicationOwner(newOwner, Collections.singletonList(application.getId()), false);
     } else if (StatusType.HANDLING.equals(application.getStatus())) {
-      updateApplicationOwner(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
+      updateApplicationOwner(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()), false);
     } else if (StatusType.CANCELLED.equals(application.getStatus()) || StatusType.ARCHIVED.equals(application.getStatus())) {
       removeApplicationOwner(Collections.singletonList(application.getId()));
     }

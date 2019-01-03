@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hel.allu.common.domain.geometry.Constants;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
@@ -71,11 +72,19 @@ public class SearchService {
    * @param applicationJsons Applications to be updated.
    */
   public void updateApplications(List<ApplicationJson> applicationJsons) {
+    updateApplications(applicationJsons, false);
+  }
+
+  public void updateApplications(List<ApplicationJson> applicationJsons, boolean waitRefresh) {
     List<ApplicationES> applications =
         applicationJsons.stream().map(a -> applicationMapper.createApplicationESModel(a)).collect(Collectors.toList());
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getApplicationsSearchUpdateUrl())
+        .queryParam("waitRefresh", waitRefresh)
+        .buildAndExpand().toUri();
     restTemplate.put(
-        applicationProperties.getApplicationsSearchUpdateUrl(),
-        applications);
+        uri.toString(),
+        applications,
+        waitRefresh);
   }
 
   /**
