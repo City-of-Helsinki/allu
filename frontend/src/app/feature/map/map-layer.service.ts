@@ -69,9 +69,7 @@ export const applicationLayers = Object.keys(ApplicationType)
 
 @Injectable()
 export class MapLayerService {
-  public readonly overlays: L.Control.LayersObject;
   public readonly contentLayers: FeatureGroupsObject;
-  public readonly defaultOverlay: L.Layer;
   public readonly winkkiRoadWorks: L.Control.LayersObject;
   public readonly winkkiEvents: L.Control.LayersObject;
   public readonly other: L.Control.LayersObject;
@@ -83,13 +81,7 @@ export class MapLayerService {
     zoomToBoundsOnClick: true
   });
 
-  private readonly token: string;
-
   constructor(private authService: AuthService, private config: ConfigService, private mapUtil: MapUtil) {
-    this.token = this.authService.token;
-    this.overlays = this.createOverlays();
-    this.defaultOverlay = this.overlays[DEFAULT_OVERLAY];
-
     const contentLayers = {};
     applicationLayers.forEach(type => contentLayers[type] = L.featureGroup());
     this.contentLayers = contentLayers;
@@ -119,20 +111,6 @@ export class MapLayerService {
     return Object.keys(this.contentLayers).map(k => this.contentLayers[k]);
   }
 
-  get initialLayers(): Array<L.Layer> {
-    const initialLayer = [this.overlays[DEFAULT_OVERLAY]];
-    return initialLayer
-      .concat(this.contentLayerArray);
-  }
-
-  get restrictedOverlays(): Observable<L.Control.LayersObject> {
-    return this.config.isStagingOrProduction().pipe(
-      filter(isStagOrProd => isStagOrProd),
-      map(() => this.initRestrictedOverlays(this.token)),
-      startWith({})
-    );
-  }
-
   createLayerTreeStructure(): Observable<any> {
     return this.config.isStagingOrProduction().pipe(
       map(stagingOrProduction => stagingOrProduction
@@ -142,19 +120,28 @@ export class MapLayerService {
     );
   }
 
-  private createOverlays(): L.Control.LayersObject {
+  createOverlays(): L.Control.LayersObject {
+    const token = this.authService.token;
     return {
       'Karttasarja': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token, timeout}),
       'Kantakartta': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kantakartta', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+        {layers: 'helsinki_kantakartta', format: 'image/png', transparent: true, token, timeout}),
       'Ajantasa-asemakaava': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ajantasa_asemakaava', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+        {layers: 'helsinki_ajantasa_asemakaava', format: 'image/png', transparent: true, token, timeout}),
       'Kiinteistökartta': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token: this.token, timeout: timeout}),
+        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token, timeout}),
       'Ortoilmakuva': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: this.token, timeout: timeout})
+        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token, timeout})
     };
+  }
+
+  createRestrictedOverlays(): Observable<L.Control.LayersObject> {
+    return this.config.isStagingOrProduction().pipe(
+      filter(isStagOrProd => isStagOrProd),
+      map(() => this.initRestrictedOverlays(this.authService.token)),
+      startWith({})
+    );
   }
 
   private initRestrictedOverlays(token: string): L.Control.LayersObject {

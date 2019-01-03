@@ -54,13 +54,13 @@ export class MapLayerEffects {
 
   private getMapLayers(): Observable<MapLayer[]> {
     const layers = [
-      ...this.toMapLayers(this.layerService.overlays),
+      ...this.toMapLayers(this.layerService.createOverlays()),
       ...this.toMapLayers(this.layerService.contentLayers),
       ...this.toMapLayers(this.layerService.winkkiRoadWorks),
       ...this.toMapLayers(this.layerService.winkkiEvents),
       ...this.toMapLayers(this.layerService.other)
       ];
-    return this.layerService.restrictedOverlays.pipe(
+    return this.layerService.createRestrictedOverlays().pipe(
       map(restricted => this.toMapLayers(restricted)),
       map(restricted => ([
         ...restricted,
