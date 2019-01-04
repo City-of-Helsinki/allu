@@ -133,7 +133,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </xsl:otherwise>
           </xsl:choose>
           <p class="space-above">
-            Maksut perustuvat yleisten töiden lautakunnan päätökseen 11.11.2014 §431.
+            Maksut perustuvat kaupunkiympäristölautakunnan päätökseen 11.12.2018 §639.
           </p>
           <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <p class="space-above">
