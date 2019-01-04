@@ -7,24 +7,24 @@ import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
 import {CITY_DISTRICTS, pathStyle, winkki} from '../../service/map/map-draw-styles';
 import {MapUtil} from '@service/map/map.util';
 import * as L from 'leaflet';
+import {PathOptions} from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.layersupport';
 import '../../js/leaflet/wms-authentication';
 import '../../js/leaflet/wfs-geojson';
 import 'leaflet-wfst';
-import TimeoutOptions = L.TimeoutOptions;
 import {Observable} from 'rxjs';
-import {PathOptions} from 'leaflet';
-import {filter, map, startWith} from 'rxjs/internal/operators';
+import {map} from 'rxjs/internal/operators';
+import TimeoutOptions = L.TimeoutOptions;
 
 const timeout: TimeoutOptions = {
   response: 10000,
   deadline: 60000
 };
 
-const DEFAULT_OVERLAY = 'Karttasarja';
 const STATUS_PLAN = 'PLAN';
 const STATUS_ACTIVE = 'ACTIVE';
+const DETAILED_LAYER_MIN_ZOOM = 10;
 
 export const commonLayers = {
   'Karttasarja': null,
@@ -146,23 +146,31 @@ export class MapLayerService {
       'Maanomistus sisäinen vuokraus': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_maanomistus_sisainen', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       'Maanalaiset tilat reunaviivat': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maanalaiset_tilat', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+        {layers: 'helsinki_maanalaiset_tilat', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM}),
       'Maanalaiset tilat alueet': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maanalaiset_tilat_alueet', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+        {layers: 'helsinki_maanalaiset_tilat_alueet', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM}),
       'Maalämpökaivot': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_maalampokaivot', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       'Sähkö': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_sahko', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+        {layers: 'helsinki_johtokartta_sahko', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM}),
       'Tietoliikenne': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_tietoliikenne', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+        {layers: 'helsinki_johtokartta_tietoliikenne', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM}),
       'Kaukolampo': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_kaukolampo', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+        {layers: 'helsinki_johtokartta_kaukolampo', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM}),
       'Kaasu': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_kaasu', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+        {layers: 'helsinki_johtokartta_kaasu', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM}),
       'Vesijohto': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_vesijohto', format: 'image/png', transparent: true, token: token, timeout: timeout}),
+        {layers: 'helsinki_johtokartta_vesijohto', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM}),
       'Viemari': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_viemari', format: 'image/png', transparent: true, token: token, timeout: timeout})
+        {layers: 'helsinki_johtokartta_viemari', format: 'image/png', transparent: true, token: token, timeout: timeout,
+          minZoom: DETAILED_LAYER_MIN_ZOOM})
     };
   }
 
