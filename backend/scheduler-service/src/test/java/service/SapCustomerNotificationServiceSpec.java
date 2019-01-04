@@ -36,6 +36,7 @@ import java.util.List;
 public class SapCustomerNotificationServiceSpec {
 
   private static final String COUNT_URL = "count_url";
+  private static final String UPDATES_URL = "updates_url";
   private static final String CUSTOMER_DOWNLOAD_URL = "download_url";
   private static final String CUSTOMER_NOTIFICATION_SUBJECT = "Mail subject";
   private static final String CUSTOMER_NOTIFICATION_RECEIVER = "foo@bar.com";
@@ -60,6 +61,7 @@ public class SapCustomerNotificationServiceSpec {
         notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
         when(authenticationService.getBearerToken()).thenReturn("");
         when(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl()).thenReturn(COUNT_URL);
+        when(applicationProperties.getNrOfSapCustomerUpdatesUrl()).thenReturn(UPDATES_URL);
         when(applicationProperties.getCustomerDownloadUrl()).thenReturn(CUSTOMER_DOWNLOAD_URL);
         when(applicationProperties.getCustomerNotificationMailSubject()).thenReturn(CUSTOMER_NOTIFICATION_SUBJECT);
         when(applicationProperties.getCustomerNotificationReceiverEmailsUrl()).thenReturn(CUSTOMER_NOTIFICATION_EMAIL_URL);
@@ -82,6 +84,7 @@ public class SapCustomerNotificationServiceSpec {
           when(restTemplate.exchange(eq(CUSTOMER_NOTIFICATION_EMAIL_URL), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class))).thenReturn(new ResponseEntity<>(configs, HttpStatus.OK));
           notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
           when(restTemplate.exchange(eq(COUNT_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(0));
+          when(restTemplate.exchange(eq(UPDATES_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(0));
           notificationService.sendSapCustomerNotificationEmails();
                  verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString(), anyString(), anyList());
         });
@@ -92,10 +95,24 @@ public class SapCustomerNotificationServiceSpec {
           configs.add(new Configuration(ConfigurationType.EMAIL, ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
           notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
           when(restTemplate.exchange(eq(COUNT_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(7));
+          when(restTemplate.exchange(eq(UPDATES_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(0));
           notificationService.sendSapCustomerNotificationEmails();
           verify(alluMailService, times(1)).sendEmail(eq(Collections.singletonList(CUSTOMER_NOTIFICATION_RECEIVER)), eq(CUSTOMER_NOTIFICATION_SUBJECT), captor.capture(), eq(null), eq(null));
           assertTrue(captor.getValue().contains(CUSTOMER_DOWNLOAD_URL));
         });
+        it("should send email if updated sap customers", () -> {
+          ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+          List<Configuration> configs = new ArrayList<>();
+          when(restTemplate.exchange(eq(CUSTOMER_NOTIFICATION_EMAIL_URL), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class))).thenReturn(new ResponseEntity<>(configs, HttpStatus.OK));
+          configs.add(new Configuration(ConfigurationType.EMAIL, ConfigurationKey.CUSTOMER_NOTIFICATION_RECEIVER_EMAIL, CUSTOMER_NOTIFICATION_RECEIVER));
+          notificationService = new SapCustomerNotificationService(restTemplate, applicationProperties, alluMailService, authenticationService);
+          when(restTemplate.exchange(eq(COUNT_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(0));
+          when(restTemplate.exchange(eq(UPDATES_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(Integer.class))).thenReturn(responseWithValue(7));
+          notificationService.sendSapCustomerNotificationEmails();
+          verify(alluMailService, times(1)).sendEmail(eq(Collections.singletonList(CUSTOMER_NOTIFICATION_RECEIVER)), eq(CUSTOMER_NOTIFICATION_SUBJECT), captor.capture(), eq(null), eq(null));
+          assertTrue(captor.getValue().contains(CUSTOMER_DOWNLOAD_URL));
+        });
+
     });
     });
   }
