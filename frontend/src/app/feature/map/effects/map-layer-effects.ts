@@ -27,7 +27,7 @@ export class MapLayerEffects {
   initAvailableLayers: Observable<Action> = defer(() => this.store.pipe(
     select(fromAuth.getLoggedIn),
     filter(loggedIn => loggedIn),
-    switchMap(() => this.getMapLayers()),
+    map(() => this.getMapLayers()),
     switchMap(layers => [
       new AddLayers(ActionTargetType.Home, layers),
       new AddLayers(ActionTargetType.Location, layers)
@@ -52,21 +52,15 @@ export class MapLayerEffects {
     tap((action: SelectLayers) => this.mapStore.mapSearchFilterChange({layers: action.payload}))
   );
 
-  private getMapLayers(): Observable<MapLayer[]> {
-    const layers = [
+  private getMapLayers(): MapLayer[] {
+    return [
       ...this.toMapLayers(this.layerService.createOverlays()),
       ...this.toMapLayers(this.layerService.contentLayers),
       ...this.toMapLayers(this.layerService.winkkiRoadWorks),
       ...this.toMapLayers(this.layerService.winkkiEvents),
-      ...this.toMapLayers(this.layerService.other)
+      ...this.toMapLayers(this.layerService.other),
+      ...this.toMapLayers(this.layerService.createRestrictedOverlays())
       ];
-    return this.layerService.createRestrictedOverlays().pipe(
-      map(restricted => this.toMapLayers(restricted)),
-      map(restricted => ([
-        ...restricted,
-        ... layers
-      ]))
-    );
   }
 
   private toMapLayers(layersObject: LayersObject | FeatureGroupsObject): MapLayer[] {

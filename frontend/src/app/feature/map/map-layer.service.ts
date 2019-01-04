@@ -136,15 +136,8 @@ export class MapLayerService {
     };
   }
 
-  createRestrictedOverlays(): Observable<L.Control.LayersObject> {
-    return this.config.isStagingOrProduction().pipe(
-      filter(isStagOrProd => isStagOrProd),
-      map(() => this.initRestrictedOverlays(this.authService.token)),
-      startWith({})
-    );
-  }
-
-  private initRestrictedOverlays(token: string): L.Control.LayersObject {
+  createRestrictedOverlays(): L.Control.LayersObject {
+    const token = this.authService.token;
     return {
       'Maanomistus ja vuokraus yhdistelmä': L.tileLayer.wmsAuth('/wms?',
         {layers: 'helsinki_maanomistus_vuokrausalueet_yhdistelma', format: 'image/png', transparent: true, token: token, timeout: timeout}),
