@@ -42,11 +42,13 @@ public class ApplicationService {
   private final LocationService locationService;
   private final ApplicationDefaultValueService defaultValueService;
   private final UserDao userDao;
+  private final InvoicingPeriodService invoicingPeriodService;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
     ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao,
-    LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao) {
+    LocationService locationService, ApplicationDefaultValueService defaultValueService, UserDao userDao,
+    InvoicingPeriodService invoicingPeriodService) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisService = chargeBasisService;
@@ -55,6 +57,7 @@ public class ApplicationService {
     this.locationService = locationService;
     this.defaultValueService = defaultValueService;
     this.userDao = userDao;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   /**
@@ -141,10 +144,16 @@ public class ApplicationService {
     verifyApplicationIsUpdatable(id);
     defaultValueService.setByType(application);
     List<Location> locations = locationService.updateApplicationLocations(id, application.getLocations(), userId);
-    updateChargeBasis(id, application);
     applicationDao.updateClientApplicationData(id, application.getClientApplicationData());
     Application result = applicationDao.update(id, application);
     result.setLocations(locations);
+    if (result.getInvoicingPeriodLength() != null) {
+      // Updates also charge basis entries
+      invoicingPeriodService.updateInvoicingPeriods(id, result.getInvoicingPeriodLength());
+    } else {
+      updateChargeBasis(id, application);
+    }
+
     return result;
   }
 
