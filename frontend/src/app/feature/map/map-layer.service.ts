@@ -25,6 +25,7 @@ const timeout: TimeoutOptions = {
 const STATUS_PLAN = 'PLAN';
 const STATUS_ACTIVE = 'ACTIVE';
 const DETAILED_LAYER_MIN_ZOOM = 10;
+const OVERLAY_TILE_SIZE = 512; // px
 
 export const commonLayers = {
   'Karttasarja': null,
@@ -123,54 +124,29 @@ export class MapLayerService {
   createOverlays(): L.Control.LayersObject {
     const token = this.authService.token;
     return {
-      'Karttasarja': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token, timeout}),
-      'Kantakartta': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kantakartta', format: 'image/png', transparent: true, token, timeout}),
-      'Ajantasa-asemakaava': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ajantasa_asemakaava', format: 'image/png', transparent: true, token, timeout}),
-      'Kiinteistökartta': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token, timeout}),
-      'Ortoilmakuva': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token, timeout})
+      'Karttasarja': this.createOverlayLayer('helsinki_karttasarja', token),
+      'Kantakartta': this.createOverlayLayer('helsinki_kantakartta', token),
+      'Ajantasa-asemakaava': this.createOverlayLayer('helsinki_ajantasa_asemakaava', token),
+      'Kiinteistökartta': this.createOverlayLayer('helsinki_kiinteistokartta', token),
+      'Ortoilmakuva': this.createOverlayLayer('helsinki_ortoilmakuva', token)
     };
   }
 
   createRestrictedOverlays(): L.Control.LayersObject {
     const token = this.authService.token;
     return {
-      'Maanomistus ja vuokraus yhdistelmä': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maanomistus_vuokrausalueet_yhdistelma', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Maanomistus vuokrausalueet': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maanomistus_vuokrausalueet', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Maanomistus sisäinen vuokraus': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maanomistus_sisainen', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Maanalaiset tilat reunaviivat': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maanalaiset_tilat', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM}),
-      'Maanalaiset tilat alueet': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maanalaiset_tilat_alueet', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM}),
-      'Maalämpökaivot': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_maalampokaivot', format: 'image/png', transparent: true, token: token, timeout: timeout}),
-      'Sähkö': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_sahko', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM}),
-      'Tietoliikenne': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_tietoliikenne', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM}),
-      'Kaukolampo': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_kaukolampo', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM}),
-      'Kaasu': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_kaasu', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM}),
-      'Vesijohto': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_vesijohto', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM}),
-      'Viemari': L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_johtokartta_viemari', format: 'image/png', transparent: true, token: token, timeout: timeout,
-          minZoom: DETAILED_LAYER_MIN_ZOOM})
+      'Maanomistus ja vuokraus yhdistelmä': this.createOverlayLayer('helsinki_maanomistus_vuokrausalueet_yhdistelma', token),
+      'Maanomistus vuokrausalueet': this.createOverlayLayer('helsinki_maanomistus_vuokrausalueet', token),
+      'Maanomistus sisäinen vuokraus': this.createOverlayLayer('helsinki_maanomistus_sisainen', token),
+      'Maanalaiset tilat reunaviivat': this.createOverlayLayer('helsinki_maanalaiset_tilat', token, DETAILED_LAYER_MIN_ZOOM),
+      'Maanalaiset tilat alueet': this.createOverlayLayer('helsinki_maanalaiset_tilat_alueet', token, DETAILED_LAYER_MIN_ZOOM),
+      'Maalämpökaivot': this.createOverlayLayer('helsinki_maalampokaivot', token),
+      'Sähkö': this.createOverlayLayer('helsinki_johtokartta_sahko', token, DETAILED_LAYER_MIN_ZOOM),
+      'Tietoliikenne': this.createOverlayLayer('helsinki_johtokartta_tietoliikenne', token, DETAILED_LAYER_MIN_ZOOM),
+      'Kaukolampo': this.createOverlayLayer('helsinki_johtokartta_kaukolampo', token, DETAILED_LAYER_MIN_ZOOM),
+      'Kaasu': this.createOverlayLayer('helsinki_johtokartta_kaasu', token, DETAILED_LAYER_MIN_ZOOM),
+      'Vesijohto': this.createOverlayLayer('helsinki_johtokartta_vesijohto', token, DETAILED_LAYER_MIN_ZOOM),
+      'Viemari': this.createOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM)
     };
   }
 
@@ -231,4 +207,15 @@ export class MapLayerService {
     }, {});
   }
 
+  private createOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer.WMSAuth {
+    return L.tileLayer.wmsAuth('/wms?', {
+      layers: layerName,
+      format: 'image/png',
+      transparent: true,
+      token: token,
+      timeout: timeout,
+      tileSize: OVERLAY_TILE_SIZE,
+      minZoom: minZoom
+    });
+  }
 }
