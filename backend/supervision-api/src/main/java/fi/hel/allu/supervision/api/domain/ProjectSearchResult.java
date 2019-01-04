@@ -1,6 +1,7 @@
 package fi.hel.allu.supervision.api.domain;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,6 +16,7 @@ public class ProjectSearchResult {
   private String ownerName;
   private String contactName;
   private String customerReference;
+  private List<LocationSearchResult> locations;
 
   @ApiModelProperty(value = "Id of the project")
   public Integer getId() {
@@ -86,6 +88,15 @@ public class ProjectSearchResult {
 
   public void setCustomerReference(String customerReference) {
     this.customerReference = customerReference;
+  }
+
+  @ApiModelProperty(value = "Project locations (locations of applications belonging to project)")
+  public List<LocationSearchResult> getLocations() {
+    return locations;
+  }
+
+  public void setLocations(List<LocationSearchResult> locations) {
+    this.locations = locations;
   }
 
 }
