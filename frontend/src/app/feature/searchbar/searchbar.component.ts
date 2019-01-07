@@ -99,7 +99,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  onDateChange(): void {
+  onDateChange(event: any): void {
     this.notifySearchUpdated(this.searchForm.getRawValue());
   }
 

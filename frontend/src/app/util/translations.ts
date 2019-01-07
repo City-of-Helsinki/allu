@@ -1820,7 +1820,7 @@ const toKey = (path: string | Array<string>): Option<Array<string>> => {
 };
 
 type Path = string | Array<string>;
-export interface Params { [key: string]: string; }
+export interface Params { [key: string]: string | number; }
 
 /**
  * Replaces parameters in string with matching key's value
@@ -1832,7 +1832,8 @@ function replaceParams(text: string, params: Params): string {
   let replaced = text;
   Object.keys(params).forEach(key => {
     const replacement = `{{${key}}}`;
-    replaced = replaced.replace(replacement, params[key]);
+    const value = '' + params[key];
+    replaced = replaced.replace(replacement, value);
   });
   return replaced;
 }

@@ -94,7 +94,7 @@ export function isDefined(val: any): boolean {
 
 export function isEqualWithSkip(left: any, right: any, skippedFields: string[] = []): boolean {
   const skipped = toDictionary(skippedFields, item => item);
-  return isEqualWith(left, right, (l, r, key) => {
+  return isEqualWith(left, right, (l, r, key: string) => {
     if (skipped[key]) {
       return !isDefined(l) || !isDefined(r) || l === r;
     } else {
