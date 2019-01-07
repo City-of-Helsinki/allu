@@ -48,7 +48,10 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
       dts => this.defaultTexts = this.filterDefaultTexts(dts),
       err => this.notification.errorInfo(err)
     );
-    this.changeSub = this.textsControl.valueChanges.subscribe(val => this._onChange(val));
+    this.changeSub = this.textsControl.valueChanges.subscribe(val => {
+      this._onChange(val);
+      this._onTouched(val);
+    });
   }
 
   ngOnDestroy(): void {
@@ -85,13 +88,17 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
     this._onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {}
+  registerOnTouched(fn: any): void {
+    this._onTouched = fn;
+  }
 
   writeValue(text: string): void {
     this.textsControl.setValue(text);
   }
 
   private _onChange = (_: any) => {};
+
+  private _onTouched = (_: any) => {};
 
   private filterDefaultTexts(texts: Array<DefaultText>): Array<DefaultText> {
     if (this.includeTypes) {
