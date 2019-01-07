@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {manualCommentNames} from '../../model/application/comment/comment-type';
+import {manualCommentNames} from '@model/application/comment/comment-type';
 import {CommentForm} from './comment-form';
-import {Comment} from '../../model/application/comment/comment';
-import {StringUtil} from '../../util/string.util';
-import {map, take, takeWhile} from 'rxjs/internal/operators';
+import {Comment} from '@model/application/comment/comment';
+import {StringUtil} from '@util/string.util';
+import {take} from 'rxjs/internal/operators';
 import {combineLatest} from 'rxjs';
 import {CurrentUser} from '@service/user/current-user';
 
@@ -47,7 +47,7 @@ export class CommentComponent implements OnInit {
       this.form.disable();
     }
 
-    this.currentUserCanEdit(this.comment.user.id);
+    this.currentUserCanEdit(this.comment.user ? this.comment.user.id : undefined);
   }
 
   remove(): void {
@@ -60,6 +60,7 @@ export class CommentComponent implements OnInit {
     if (this.isNew) {
       this.form.reset({type: 'INTERNAL'});
     } else {
+      this.form.markAsPristine();
       this.form.disable();
     }
   }
@@ -69,6 +70,7 @@ export class CommentComponent implements OnInit {
       this.form.patchValue(this.originalForm);
       this.originalForm = undefined;
       this.form.disable();
+      this.form.markAsPristine();
     } else {
       this.onRemove.emit();
     }
