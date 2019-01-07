@@ -74,9 +74,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
       filter(coords => !coords.isDefined())
     ).subscribe(() => this.notification.success('Osoitetta ei löytynyt'));
 
-    this.searchForm.valueChanges.pipe(takeUntil(this.destroy))
-      .subscribe(form => this.notifySearchUpdated(form));
-
     this.addressControl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
@@ -100,6 +97,10 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+  }
+
+  onDateChange(): void {
+    this.notifySearchUpdated(this.searchForm.getRawValue());
   }
 
   @Input()
