@@ -8,6 +8,7 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
     response: 2000,  // Wait max 2 seconds for the server to start sending,
     deadline: 30000, // but allow 30 seconds for the file to finish loading.
   },
+  _tileRequests: {},
 
   initialize: function (url, options) {
     this.token = options.token;
@@ -23,6 +24,7 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
   createTile: function (coords, done) {
     var tile = document.createElement('img');
     var url = this.getTileUrl(coords);
+    var key = this._tileCoordsToKey(coords);
 
     /*
      Alt tag is set to empty string to keep screen readers from reading URL and for compliance reasons
@@ -41,25 +43,38 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
     }
 
     const self = this;
-    request
+    const req = request
       .get(url)
       .timeout(this.timeoutOptions)
       .set('Authorization', 'Bearer ' + this.token)
-      .responseType('blob')
-      .then(
-        function(res) {
-          tile.src = URL.createObjectURL(res.body);
-          L.TileLayer.WMS.prototype._tileOnLoad.call(self, done, tile);
-        },
-        function(err) {
-          if (err.timeout) {
-            console.error('Fetching map tile took too long');
-          }
-          L.TileLayer.WMS.prototype._tileOnError.call(self, done, tile, err);
+      .responseType('blob');
+
+    req.then(
+      function(res) {
+        tile.src = URL.createObjectURL(res.body);
+        L.TileLayer.WMS.prototype._tileOnLoad.call(self, done, tile);
+      },
+      function(err) {
+        if (err.timeout) {
+          console.error('Fetching map tile took too long');
         }
-      );
+        L.TileLayer.WMS.prototype._tileOnError.call(self, done, tile, err);
+      }
+    );
+    this._tileRequests[key] = req;
     return tile;
   },
+
+  // Abort pending tile loads from old zoom level when zoom changes
+  _abortLoading: function () {
+    L.TileLayer.WMS.prototype._abortLoading.call(self);
+    for (const i in this._tiles) {
+      if (this._tileRequests[i] && (this._tiles[i].coords.z !== this._tileZoom)) {
+        this._tileRequests[i].abort();
+        this._tileRequests[i] = undefined;
+      }
+    }
+  }
 });
 
 // @factory L.tileLayer.wmsAuth(baseUrl: String, options: TileLayer.WMS options)
