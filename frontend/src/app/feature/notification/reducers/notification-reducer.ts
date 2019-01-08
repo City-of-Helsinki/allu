@@ -1,8 +1,12 @@
 import {ErrorInfo} from '@service/error/error-info';
 import {NotificationActions, NotificationActionType} from '@feature/notification/actions/notification-actions';
 
+export interface SuccessInfo {
+  message: string;
+}
+
 export interface State {
-  success: string;
+  success: SuccessInfo;
   error: ErrorInfo;
 }
 
@@ -14,7 +18,7 @@ const initialState: State = {
 export function reducer(state: State = initialState, action: NotificationActions) {
   switch (action.type) {
     case NotificationActionType.NotifySuccess: {
-      return {...state, success: action.payload};
+      return {...state, success: {message: action.payload}};
     }
 
     case NotificationActionType.NotifyFailure: {

@@ -1,22 +1,24 @@
 import {EMPTY, Observable, of} from 'rxjs';
-import {ErrorInfo} from '../../service/error/error-info';
-import {Some} from '../../util/option';
-import {findTranslation} from '../../util/translations';
+import {ErrorInfo} from '@service/error/error-info';
+import {Some} from '@util/option';
+import {findTranslation} from '@util/translations';
 import {Injectable} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
 import * as fromNotification from './reducers';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {filter} from 'rxjs/internal/operators';
 
 @Injectable()
 export class NotificationService {
 
   constructor(private toastService: ToastrService, private store: Store<fromNotification.State>) {
-    this.store.select(fromNotification.getSuccess).pipe(
-      filter(success => !!success)
-    ).subscribe(success => this.translateSuccess(success));
+    this.store.pipe(
+      select(fromNotification.getSuccess),
+      filter(success => !!success),
+    ).subscribe(success => this.translateSuccess(success.message));
 
-    this.store.select(fromNotification.getError).pipe(
+    this.store.pipe(
+      select(fromNotification.getError),
       filter(error => !!error)
     ).subscribe(error => this.errorInfo(error));
   }
