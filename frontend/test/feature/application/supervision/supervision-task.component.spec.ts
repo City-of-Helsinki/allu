@@ -1,4 +1,4 @@
-import {DebugElement} from '@angular/core';
+import {Component, DebugElement, Input} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
@@ -27,6 +27,8 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {getButtonWithText} from '../../../selector-helpers';
 import {UserService} from '@service/user/user-service';
 import {Location} from '@model/common/location';
+import {MapModule} from '@feature/map/map.module';
+import {MapFeature} from '@feature/map/map-feature';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -57,6 +59,16 @@ const validTask: SupervisionTaskForm = {
 
 const currentApplication = new Application(1);
 
+@Component({
+  selector: 'supervision-map',
+  template: ''
+})
+class SupervisionMapMockComponent {
+  @Input() mapId = 'map';
+  @Input() content: MapFeature[] = [];
+  @Input() selectedFeature: number;
+}
+
 describe('SupervisionTaskComponent', () => {
   let comp: SupervisionTaskComponent;
   let fixture: ComponentFixture<SupervisionTaskComponent>;
@@ -77,7 +89,8 @@ describe('SupervisionTaskComponent', () => {
         })
       ],
       declarations: [
-        SupervisionTaskComponent
+        SupervisionTaskComponent,
+        SupervisionMapMockComponent
       ],
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},

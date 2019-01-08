@@ -10,74 +10,87 @@
       <div *ngIf="!form.value.id">{{'supervision.task.newTask' | translation}}</div>
     </mat-card-title>
     <mat-card-content>
-      <div fxLayout="row wrap" fxLayout.lt-md="column">
-        <div fxFlex="100%" *ngIf="form.value.id">
-          <div class="save-info">
-            <div>{{'supervision.task.createdBy' | translation}}: {{form.value.creatorName}} {{form.value.creationTime | date:'short'}}
+      <div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="18px">
+        <div fxFlex>
+          <div fxLayout="row wrap" fxLayout.lt-md="column">
+            <div fxFlex="100%" *ngIf="form.value.id">
+              <div class="save-info">
+                <div>{{'supervision.task.createdBy' | translation}}: {{form.value.creatorName}} {{form.value.creationTime | date:'short'}}
+                </div>
+              </div>
+            </div>
+            <div fxFlex="100%">
+              <div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="18px">
+                <div fxFlex>
+                  <mat-form-field class="input-full-width">
+                    <mat-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width"
+                                formControlName="type" required>
+                      <mat-option *ngFor="let type of taskTypes" [value]="type">
+                        {{['supervision.task.type', type] | translation}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div fxFlex>
+                  <mat-form-field class="input-full-width">
+                    <mat-select [placeholder]="'supervision.task.owner' | translation" class="input-full-width"
+                                formControlName="ownerId" required>
+                      <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
+                        {{supervisor.realName}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div fxFlex>
+                  <mat-form-field class="input-full-width">
+                    <input matInput formControlName="plannedFinishingTime" required
+                           [placeholder]="'supervision.task.plannedFinishingTime' | translation"
+                           [matDatepicker]="plannedFinishingTimePicker">
+                    <mat-datepicker-toggle matSuffix [for]="plannedFinishingTimePicker"
+                                           [disabled]="form.disabled"></mat-datepicker-toggle>
+                    <mat-datepicker #plannedFinishingTimePicker></mat-datepicker>
+                    <mat-error *ngIf="form.get('plannedFinishingTime').hasError('inThePast')">
+                      {{'supervision.task.field.plannedFinishingTimeInThePast' | translation}}
+                    </mat-error>
+                    <mat-error *ngIf="form.get('plannedFinishingTime').hasError('required')">
+                      {{'supervision.task.field.plannedFinishingTimeMissing' | translation}}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div fxFlex="100%">
-          <div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="18px">
-            <div fxFlex>
-              <mat-form-field class="input-full-width">
-                <mat-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width"
-                            formControlName="type" required>
-                  <mat-option *ngFor="let type of taskTypes" [value]="type">
-                    {{['supervision.task.type', type] | translation}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div fxFlex>
-              <mat-form-field class="input-full-width">
-                <mat-select [placeholder]="'supervision.task.owner' | translation" class="input-full-width"
-                            formControlName="ownerId" required>
-                  <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
-                    {{supervisor.realName}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div fxFlex>
-              <mat-form-field class="input-full-width">
-                <input matInput formControlName="plannedFinishingTime" required
-                       [placeholder]="'supervision.task.plannedFinishingTime' | translation"
-                       [matDatepicker]="plannedFinishingTimePicker">
-                <mat-datepicker-toggle matSuffix [for]="plannedFinishingTimePicker"
-                                       [disabled]="form.disabled"></mat-datepicker-toggle>
-                <mat-datepicker #plannedFinishingTimePicker></mat-datepicker>
-                <mat-error *ngIf="form.get('plannedFinishingTime').hasError('inThePast')">
-                  {{'supervision.task.field.plannedFinishingTimeInThePast' | translation}}
-                </mat-error>
-                <mat-error *ngIf="form.get('plannedFinishingTime').hasError('required')">
-                  {{'supervision.task.field.plannedFinishingTimeMissing' | translation}}
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div fxLayout="row">
-        <div fxFlex="100%">
           <div fxLayout="row">
             <div fxFlex="100%">
-              <mat-form-field class="input-full-width">
+              <div fxLayout="row">
+                <div fxFlex="100%">
+                  <mat-form-field class="input-full-width">
                 <textarea matInput matTextareaAutosize formControlName="description"
                           [placeholder]="'supervision.task.description' | translation"></textarea>
-              </mat-form-field>
-            </div>
-          </div>
-          <div fxLayout="row" *ngIf="form.getRawValue().result">
-            <div fxFlex="100%">
-              <mat-form-field class="input-full-width">
+                  </mat-form-field>
+                </div>
+              </div>
+              <div fxLayout="row" *ngIf="form.getRawValue().result">
+                <div fxFlex="100%">
+                  <mat-form-field class="input-full-width">
                 <textarea matInput matTextareaAutosize formControlName="result"
                           [placeholder]="'supervision.task.result' | translation"></textarea>
-              </mat-form-field>
+                  </mat-form-field>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        <div fxFlex="0 1 auto">
+          <div class="map-container">
+            <supervision-map
+              [mapId]="'map-' + form.value.id"
+              [content]="mapFeatures"
+              [selectedFeature]="form.value.locationId"></supervision-map>
+          </div>
+        </div>
       </div>
+
 
       <div fxLayout="row" fxLayout.sm="column">
         <div fxFlex="100%">

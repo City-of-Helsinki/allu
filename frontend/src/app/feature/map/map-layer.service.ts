@@ -22,6 +22,7 @@ const timeout: TimeoutOptions = {
   deadline: 60000
 };
 
+export const DEFAULT_OVERLAY = 'helsinki_karttasarja';
 const STATUS_PLAN = 'PLAN';
 const STATUS_ACTIVE = 'ACTIVE';
 const DETAILED_LAYER_MIN_ZOOM = 10;
@@ -148,6 +149,10 @@ export class MapLayerService {
       'Vesijohto': this.createOverlayLayer('helsinki_johtokartta_vesijohto', token, DETAILED_LAYER_MIN_ZOOM),
       'Viemari': this.createOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM)
     };
+  }
+
+  createOverlay(layerName: string): L.TileLayer.WMSAuth {
+    return this.createOverlayLayer(layerName, this.authService.token);
   }
 
   private createWinkkiLayer(layerName: string, status: string, style: PathOptions = pathStyle.DEFAULT): L.FeatureGroup {

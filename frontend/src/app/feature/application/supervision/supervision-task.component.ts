@@ -49,6 +49,7 @@ import {ReportOperationalCondition, ReportWorkFinished} from '@feature/applicati
 import {Location} from '@model/common/location';
 import {AreaRental} from '@model/application/area-rental/area-rental';
 import {Load} from '@feature/application/supervision/actions/supervision-task-actions';
+import {MapFeature} from '@feature/map/map-feature';
 
 @Component({
   selector: 'supervision-task',
@@ -70,6 +71,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   editing = false;
   approveDisabled = false;
   location: Location;
+  mapFeatures: MapFeature[] = [];
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
@@ -108,6 +110,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
     this.location = this.getLocation(this.application.locations, formValue.locationId);
+    this.mapFeatures = this.application.locations.map(loc => ({id: loc.id, geometry: loc.geometry}));
   }
 
   ngOnDestroy(): void {

@@ -17,6 +17,7 @@ import {
 import {
   AreaRentalSupervisionApprovalModalComponent
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
+import {MapModule} from '@feature/map/map.module';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import {
     StoreModule.forFeature('supervisionTasks', reducers),
     EffectsModule.forFeature([
       SupervisionTaskEffects
-    ])
+    ]),
+    MapModule
   ],
   declarations: [
     SupervisionComponent,
