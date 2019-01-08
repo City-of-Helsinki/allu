@@ -149,39 +149,36 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <section>
           <h2>Yleiset sopimusehdot</h2>
           <ol>
-            <li>Sopimuksessa sovitun rakenteen sijoittamiseen liittyvä rakennustyö on aloitettava vuoden
-            kuluessa tämän sopimuksen syntymisestä. Sopimus katsotaan purkautuneeksi, mikäli rakenteen
-            sijoittamistyötä ei ole aloitettu edellä mainitussa ajassa.
-            Sijoittamisesta on sovittava uudelleen, mikäli toteutussuunnitelma muuttuu tai kohteeseen
-            sisältyy muita kuin hakemuksessa tai suunnitelmassa esitettyjä rakenteita tai laitteita.</li>
+            <li>Sijoittamissuostumuksesta tehdään sopimus ja se on voimassa toistaiseksi, ellei määräaikaisuudesta ole
+            erikseen sovittu. Sopimus raukeaa ilman erillistä ilmoitusta myöntämispäivästä lukien yhden (1) vuoden
+            kuluttua, ellei toteutusta ole tuona aikana aloitettu. Sopimus on uusittava, mikäli toteutussuunnitelma
+            muuttuu merkittävästi, tai kohteeseen sisältyy muita kuin hakemuksessa esitettyjä rakenteita tai laitteita.</li>
 
-            <li>Ennen kaivutyön aloittamista on hankittava johtoselvitys ja tehtävä kaivuilmoitus.
-            Kaivuilmoituksessa on mainittava sijoitussopimustunnus. Kaivuilmoituksen yhteydessä kaupunki
-            antaa ohjeita ja määräyksiä mm. työn suorittamisesta, liikennejärjestelyiden toteuttamisesta
-            sekä aloitus- ja loppuvalvonnasta. Liikennealueella työskenneltäessä tai työ, joka vaikuttaa
-            olemassa olevaan liikenteeseen, on aina esitettävä suunnitelma. Vallitsevia liikennejärjestelyjä
-            voi muuttaa ainoastaan kaupungin päätöksellä tilapäisistä liikennejärjestelyistä. Työn aikana on
-            valvojalle järjestettävä esteetön pääsy alueelle ja mahdollisuus tarkastaa kohde.</li>
+            <li>Ennen kaivutyöhön ryhtymistä on haettava johtoselvitys sekä tehtävä kaivuilmoitus. Kaivuilmoituksessa
+            on mainittava sopimuksen tunnus ja myöntämisajankohta. Kaivuilmoituksen yhteydessä kaupunki antaa
+            ohjeita ja ehtoja mm. työn suorittamisesta, liikennejärjestelyiden toteuttamisesta sekä aloitus- ja
+            loppukatselmuksista. Liikennealueella tai liikenteeseen vaikuttavalla alueella työskenneltäessä on aina
+            esitettävä työsuunnitelma sekä hyväksytettävä päätös tilapäisistä liikennejärjestelyistä. Työn aikana on
+            tarkastajalle sallittava pääsy alueelle valvomaan työn toteutusta.</li>
 
-            <li>Rakenteen, laiteen tai johdon omistajaa on velvollinen kartoittamaan rakentamisen aikana
-            sopimuksessa tarkoitetut johdot, rakenteet ja laitteet. Sijaintitietojen rekisteröimisen osalta on
-            noudatettava kaupunkiympäristön kaupunkimittauspalveluiden ohjeita ja sovittava kohteen
-            kartoittamisesta sekä sijaintitietojen toimittamisesta rekisteröintiä varten. Edellä mainittu
-            koskee myös valmistumisen jälkeen tehtäviä pysyviä siirtoja ja poistamista.</li>
+            <li>Sijoittava sopimusosapuoli on velvollinen kartoittamaan sopimuksen mukaiset johdot, rakenteet ja
+            laitteet. Sijaintitietojen rekisteröimisen osalta on noudatettava kaupunkiympäristön
+            kaupunkimittauspalveluiden ohjeita, sovittava kohteen kartoittamisesta ja sijaintitietojen toimittamisesta
+            rekisteröintiä varten. Edellä mainittu koskee myös valmistumisen jälkeen tehtäviä pysyviä siirtoja ja
+            rakenteiden poistamista.</li>
 
-            <li>Rakenteen, laiteen tai johdon omistaja vastaa rakenteiden, laitteiden ja johtojen
-            kunnostamisesta ja kunnossapidosta.</li>
+            <li>Sijoittava sopimusosapuoli vastaa rakenteiden, laitteiden ja johtojen kunnostamisesta ja
+            kunnossapidosta.</li>
 
-            <li>Rakenteen, laiteen tai johdon omistaja vastaa kaikista sopimuksessa tarkoitettujen rakenteiden,
-            laitteiden ja johtojen rakentamisen ja käytön kustannuksista sekä kaupungille tai kolmannelle
-            osapuolelle mahdollisesti edellä mainituista toimenpiteistä aiheutuvasta vahingosta tai haitasta.
-            Kaupungin valvonta ei poista vastuuta.</li>
+            <li>Sijoittava sopimusosapuoli vastaa kaikista luvan tarkoittamien rakenteiden, laitteiden ja johtojen
+            rakentamisen ja käytön kustannuksista, sekä kaupungille tai kolmannelle osapuolelle mahdollisesti edellä
+            mainituista toimenpiteistä aiheutuvasta vahingosta tai haitasta. Kaupungin suorittama työn valvonta ei
+            poista sijoittavan vastuuta.</li>
 
-            <li>Sopimuksen irtisanomisaika on kuusi kuukautta. Kaupunki ilmoittaa sopimusosapuolelle, mikäli
-            välttämättömän tai perustellun syyn johdosta rakenteet, laitteet tai johdot on tarpeellista
-            poistaa tai siirtää väliaikaisesti tai pysyvästi. Työn suorittaa rakenteen, laiteen tai johdon
-            omistaja kustannuksellaan ja saattaa paikan alueidenkäytön tarkastajan hyväksymään kuntoon.
-            Käytöstä poistetuista rakenteista, laitteista ja johdoista on ilmoitettava kaupunkiympäristön
+            <li>Mikäli rakenteet, laitteet tai johdot on tarpeellista poistaa tai siirtää välttämättömän syyn johdosta
+            väliaikaisesti tai pysyvästi, sijoittavan sopimusosapuolen on tehtävä työ kustannuksellaan. Työalue tulee
+            palauttaa kaupungin hyväksymään tilaan. Sopimuksen irtisanomisaika on kuusi (6) kuukautta. Käytöstä
+            poistetuista rakenteista, laitteista ja johdoista on ilmoitettava kaupunkiympäristön
             kaupunkimittauspalveluille.</li>
 
             <li>Mikäli alueiden käytön ja valvonnan yksikön päällikön päätös kumoutuu tai muuttuu
