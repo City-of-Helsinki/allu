@@ -1434,7 +1434,8 @@ export const translations = {
         approve: 'Valvontatehtävä hyväksytty',
         reject: 'Valvontatehtävä hylätty',
         handlerChanged: 'Valvoja vaihdettu valituille tehtäville',
-        hanlerRemoved: 'Valvoja poistettu valituilta tehtäviltä'
+        hanlerRemoved: 'Valvoja poistettu valituilta tehtäviltä',
+        movedToSelf: 'Valvontatehtävä siirretty omaksi'
       },
       error: {
         save: 'Valvontatehtävän tallentaminen epäonnistui',

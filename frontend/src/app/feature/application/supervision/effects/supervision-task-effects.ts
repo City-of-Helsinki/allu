@@ -8,7 +8,7 @@ import {SupervisionTaskService} from '@service/supervision/supervision-task.serv
 import {from, Observable, of} from 'rxjs/index';
 import {
   Approve,
-  ApproveSuccess,
+  ApproveSuccess, ChangeOwner, ChangeOwnerSuccess,
   Load,
   LoadFailed,
   LoadSuccess,
@@ -33,7 +33,7 @@ const requiresTagReload = [
   SupervisionTaskActionType.SaveSuccess,
   SupervisionTaskActionType.RemoveSuccess,
   SupervisionTaskActionType.ApproveSuccess,
-  SupervisionTaskActionType.RejectSuccess,
+  SupervisionTaskActionType.RejectSuccess
 ];
 
 @Injectable()
@@ -98,6 +98,18 @@ export class SupervisionTaskEffects {
       switchMap((task) => [
         new RejectSuccess(task),
         new NotifySuccess('supervision.task.action.reject')
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  changeOwner: Observable<Action> = this.actions.pipe(
+    ofType<ChangeOwner>(SupervisionTaskActionType.ChangeOwner),
+    switchMap(action => this.taskService.changeOwner(action.payload.ownerId, action.payload.taskIds).pipe(
+      switchMap(() => [
+        new Load(),
+        new NotifySuccess('supervision.task.action.movedToSelf')
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))

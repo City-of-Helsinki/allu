@@ -24,7 +24,7 @@ import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromSupervision from '@feature/application/supervision/reducers';
-import {Approve, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
+import {Approve, ChangeOwner, Load, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
 import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
@@ -48,7 +48,6 @@ import {
 import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/date-reporting-actions';
 import {Location} from '@model/common/location';
 import {AreaRental} from '@model/application/area-rental/area-rental';
-import {Load} from '@feature/application/supervision/actions/supervision-task-actions';
 import {MapFeature} from '@feature/map/map-feature';
 
 @Component({
@@ -68,6 +67,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   canEdit = false;
   canApprove = false;
   canRemove = false;
+  canTakeOwnership = false;
   editing = false;
   approveDisabled = false;
   location: Location;
@@ -108,6 +108,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     }
     this.currentUserCanEdit(formValue.creatorId, formValue.status);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
+    this.currentUserCanTakeOwnership(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
     this.location = this.getLocation(this.application.locations, formValue.locationId);
     this.mapFeatures = this.application.locations.map(loc => ({id: loc.id, geometry: loc.geometry}));
@@ -172,6 +173,11 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     ).subscribe(result => this.store.dispatch(
       new Reject(this.taskWithResult(SupervisionTaskStatusType.REJECTED, result), result.newSupervisionDate)
     ));
+  }
+
+  moveToSelf(taskId: number): void {
+    this.currentUser.user.pipe(take(1))
+      .subscribe(user => this.store.dispatch(new ChangeOwner({ownerId: user.id, taskIds: [taskId]})));
   }
 
   private approveWithState(result: SupervisionApprovalResult): void {
@@ -269,6 +275,14 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   private currentUserCanApprove(ownerId: number, status: SupervisionTaskStatusType): void {
     this.currentUser.isCurrentUser(ownerId).pipe(take(1)).subscribe(isCurrent => {
       this.canApprove = isCurrent && SupervisionTaskStatusType.OPEN === status;
+    });
+  }
+
+  private currentUserCanTakeOwnership(ownerId: number, status: SupervisionTaskStatusType): void {
+    this.currentUser.user.pipe(take(1)).subscribe(currentUser => {
+      const ownedByOther = ownerId !== currentUser.id;
+      const isSupervisor = currentUser.assignedRoles.indexOf(RoleType.ROLE_SUPERVISE) > -1;
+      this.canTakeOwnership = ownedByOther && isSupervisor && status === SupervisionTaskStatusType.OPEN;
     });
   }
 

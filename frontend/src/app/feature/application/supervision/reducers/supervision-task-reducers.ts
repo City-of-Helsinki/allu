@@ -48,7 +48,8 @@ export function reducer(state: State = initialState, action: SupervisionTaskActi
 
     case SupervisionTaskActionType.Save:
     case SupervisionTaskActionType.Approve:
-    case SupervisionTaskActionType.Reject: {
+    case SupervisionTaskActionType.Reject:
+    case SupervisionTaskActionType.ChangeOwner: {
       return {
         ...state,
         saving: true
@@ -57,7 +58,8 @@ export function reducer(state: State = initialState, action: SupervisionTaskActi
 
     case SupervisionTaskActionType.SaveSuccess:
     case SupervisionTaskActionType.ApproveSuccess:
-    case SupervisionTaskActionType.RejectSuccess: {
+    case SupervisionTaskActionType.RejectSuccess:
+    case SupervisionTaskActionType.ChangeOwnerSuccess: {
       return adapter.upsertOne(action.payload, {
         ...state,
         saving: false

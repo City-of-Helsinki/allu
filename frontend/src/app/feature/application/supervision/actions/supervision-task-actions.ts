@@ -14,6 +14,8 @@ export enum SupervisionTaskActionType {
   ApproveSuccess = '[SupervisionTask] Approve task success',
   Reject = '[SupervisionTask] Reject task',
   RejectSuccess = '[SupervisionTask] Reject task success',
+  ChangeOwner = '[SupervisionTask] Change owner',
+  ChangeOwnerSuccess = '[SupervisionTask] Change owner success',
 }
 
 export class Load implements Action {
@@ -76,6 +78,19 @@ export class RejectSuccess implements Action {
   constructor(public payload: SupervisionTask) {}
 }
 
+export class ChangeOwner implements Action {
+  readonly type = SupervisionTaskActionType.ChangeOwner;
+  constructor(public payload: {
+    ownerId: number;
+    taskIds: number[]
+  }) {}
+}
+
+export class ChangeOwnerSuccess implements Action {
+  readonly type = SupervisionTaskActionType.ChangeOwnerSuccess;
+  constructor(public payload: SupervisionTask) {}
+}
+
 
 export type SupervisionTaskActions =
   | Load
@@ -88,4 +103,6 @@ export type SupervisionTaskActions =
   | Approve
   | ApproveSuccess
   | Reject
-  | RejectSuccess;
+  | RejectSuccess
+  | ChangeOwner
+  | ChangeOwnerSuccess;
