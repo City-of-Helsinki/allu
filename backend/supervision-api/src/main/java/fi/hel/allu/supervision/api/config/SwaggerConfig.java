@@ -9,6 +9,8 @@ import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -16,7 +18,11 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
+import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
+import fi.hel.allu.servicecore.domain.ClientApplicationDataJson;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -34,6 +40,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
+
+  private static final Class<?>[] IGNORED_CLASSES = {
+      ApplicationExtensionJson.class,
+      Page.class,
+      ClientApplicationDataJson.class,
+      Sort.class
+  };
+
+  private static final String[] FILTERED_APPLICATION_FIELDS = { "extension", "metadataVersion", "creationTime",
+      "clientApplicationData", "externalOwnerId", "externalApplicationId" };
 
   @Value("${supervision.api.basepath}")
   private String apiBasePath;
@@ -57,7 +73,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
             }
         )
         .securitySchemes(schemeList)
-        .apiInfo(apiInfo());
+        .apiInfo(apiInfo())
+        .ignoredParameterTypes(IGNORED_CLASSES);
   }
 
   private ApiInfo apiInfo() {
@@ -73,8 +90,11 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    SimpleBeanPropertyFilter applicationFilter = SimpleBeanPropertyFilter
+        .serializeAllExcept(FILTERED_APPLICATION_FIELDS);
     Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-    builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS );
+    builder.filters(new SimpleFilterProvider().addFilter("applicationFilter", applicationFilter));
     converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
     addDefaultHttpMessageConverters(converters);
   }

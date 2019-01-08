@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.supervision.api.domain.ApplicationSearchParameters;
 import fi.hel.allu.supervision.api.domain.ApplicationSearchResult;
+import fi.hel.allu.supervision.api.domain.ExcavationAnnouncementApplication;
 import fi.hel.allu.supervision.api.mapper.ApplicationSearchParameterMapper;
 import fi.hel.allu.supervision.api.mapper.ApplicationSearchResultMapper;
 import fi.hel.allu.supervision.api.mapper.MapperUtil;
@@ -71,4 +73,19 @@ public class ApplicationController {
     return ResponseEntity.ok(response.getContent());
   }
 
+
+  @ApiOperation(value = "Get excavation announcement application details",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = ExcavationAnnouncementApplication.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application retrieved successfully", response = ExcavationAnnouncementApplication.class),
+  })
+  @RequestMapping(value = "/excavationannouncements/{id}", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<ExcavationAnnouncementApplication> getApplication(@PathVariable Integer id) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(id);
+    return ResponseEntity.ok(new ExcavationAnnouncementApplication(application));
+  }
 }
