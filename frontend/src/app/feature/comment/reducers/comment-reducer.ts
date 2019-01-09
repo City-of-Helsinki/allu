@@ -35,7 +35,7 @@ export function reducer(state: State = initialState, action: CommentActions) {
     }
 
     case CommentActionType.SaveSuccess: {
-      return adapter.addOne(action.payload, {...state});
+      return adapter.upsertOne(action.payload, {...state});
     }
 
     case CommentActionType.RemoveSuccess: {
