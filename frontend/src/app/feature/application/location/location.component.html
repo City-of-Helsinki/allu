@@ -18,6 +18,7 @@
                   <searchbar
                     [datesRequired]="true"
                     [filter]="searchFilter$ | async"
+                    targetType="Location"
                     (searchChange)="onSearchChange($event)">Loading searchbar</searchbar>
                 </div>
                 <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"

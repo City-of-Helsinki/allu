@@ -16,8 +16,9 @@ import {StoredFilter} from '@model/user/stored-filter';
 import {debounceTime, filter, map, takeUntil} from 'rxjs/internal/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
-import {SelectLayers} from '@feature/map/actions/map-layer-actions';
+import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+
 
 enum BarType {
   SIMPLE, // Front page
@@ -34,6 +35,7 @@ enum BarType {
 export class SearchbarComponent implements OnInit, OnDestroy {
   @Input() datesRequired = false;
   @Input() barType: string = BarType[BarType.BAR];
+  @Input() targetType: ActionTargetType = ActionTargetType.Home;
 
   @Output() onShowAdvanced = new EventEmitter<boolean>();
   @Output() searchChange = new EventEmitter<MapSearchFilter>();
@@ -90,8 +92,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.MAP);
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
-    this.availableLayers$ = this.store.pipe(select(fromMapLayers.getLayerIds));
-    this.selectedLayers$ = this.store.pipe(select(fromMapLayers.getSelectedLayerIds));
+    this.availableLayers$ = this.store.pipe(select(this.getLayerIds()));
+    this.selectedLayers$ = this.store.pipe(select(this.getSelectedLayerIds()));
   }
 
   ngOnDestroy(): void {
@@ -123,5 +125,17 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   public selectFilter(searchFilter: StoredFilter) {
     this.storedFilterStore.currentMapFilterChange(searchFilter);
+  }
+
+  private getLayerIds() {
+    return this.targetType === ActionTargetType.Location
+      ? fromLocationMapLayers.getLayerIds
+      : fromMapLayers.getLayerIds;
+  }
+
+  private getSelectedLayerIds() {
+    return this.targetType === ActionTargetType.Location
+      ? fromLocationMapLayers.getSelectedLayerIds
+      : fromMapLayers.getSelectedLayerIds;
   }
 }
