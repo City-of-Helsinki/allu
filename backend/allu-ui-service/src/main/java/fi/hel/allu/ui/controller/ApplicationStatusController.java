@@ -148,6 +148,7 @@ public class ApplicationStatusController {
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> returnToEditing(@PathVariable int id, @RequestBody StatusChangeInfoJson info) {
     commentService.addReturnComment(id, info.getComment());
+    contractService.rejectContractIfExists(id, info.getComment());
     return ResponseEntity.ok(applicationServiceComposer.returnToEditing(id, info));
   }
 
