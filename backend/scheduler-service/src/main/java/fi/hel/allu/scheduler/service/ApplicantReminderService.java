@@ -31,7 +31,7 @@ public class ApplicantReminderService {
   private static final List<ApplicationType> APPLICATION_TYPES = Arrays.asList(ApplicationType.EXCAVATION_ANNOUNCEMENT,
       ApplicationType.AREA_RENTAL);
   /* Application statuses that we care of: */
-  private static final List<StatusType> STATUS_TYPES = Arrays.asList(StatusType.DECISION);
+  private static final List<StatusType> STATUS_TYPES = Arrays.asList(StatusType.DECISION, StatusType.OPERATIONAL_CONDITION);
   /* How many times before application's end should the notification be sent? */
   private static final int DAYS_BEFORE = 2;
 
