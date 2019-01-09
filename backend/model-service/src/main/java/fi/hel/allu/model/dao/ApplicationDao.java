@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.QueryResults;
@@ -26,8 +27,8 @@ import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.RecurringApplication;
+import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
@@ -196,7 +197,7 @@ public class ApplicationDao {
    * @return those application IDs that don't have a reminder sent
    */
   @Transactional(readOnly = true)
-  public List<Integer> excludeSentReminders(List<Integer> applications) {
+  public List<Integer> excludeSentReminders(Collection<Integer> applications) {
     final Set<Integer> sentReminders = new HashSet<>(
         queryFactory.select(applicationReminder.applicationId).from(applicationReminder).join(application)
             .on(applicationReminder.applicationId.eq(application.id)).where(applicationReminder.applicationId
@@ -943,4 +944,18 @@ public class ApplicationDao {
         .where(application.id.eq(id))
         .fetchOne();
   }
+
+  @Transactional(readOnly = true)
+  public List<Integer> findExcavationAnnouncementByOperationalDate(ZonedDateTime conditionAfter, ZonedDateTime conditionBefore,
+      List<StatusType> statusTypes) {
+    BooleanExpression whereCondition = Expressions.booleanTemplate("(extension::json->>'winterTimeOperation') is not null");
+    whereCondition = whereCondition.and(Expressions.booleanTemplate("to_timestamp((extension::json->>'winterTimeOperation')::float)  BETWEEN {0} AND {1}", conditionAfter, conditionBefore));
+    whereCondition = whereCondition.and(application.type.eq(ApplicationType.EXCAVATION_ANNOUNCEMENT));
+    if (!CollectionUtils.isEmpty(statusTypes)) {
+      whereCondition = whereCondition.and(application.status.in(statusTypes));
+    }
+    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
+    return applications;
+  }
+
 }

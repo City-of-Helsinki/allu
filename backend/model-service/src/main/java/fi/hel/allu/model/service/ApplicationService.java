@@ -1,10 +1,7 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -343,10 +340,13 @@ public class ApplicationService {
    */
   @Transactional(readOnly = true)
   public List<Application> deadLineCheck(DeadlineCheckParams checkParams) {
-    List<Integer> candidates = applicationDao.findByEndTime(checkParams.getEndsAfter(), checkParams.getEndsBefore(),
-        checkParams.getTypeSelector(), checkParams.getStatusSelector());
-    candidates = applicationDao.excludeSentReminders(candidates);
-    return findByIds(candidates);
+    Set<Integer> candidates = new HashSet<>();
+    candidates.addAll(applicationDao.findByEndTime(checkParams.getEndsAfter(), checkParams.getEndsBefore(),
+        checkParams.getTypeSelector(), checkParams.getStatusSelector()));
+    // Add excavation announcements having operational condition date in given period
+    candidates.addAll(applicationDao.findExcavationAnnouncementByOperationalDate(checkParams.getEndsAfter(),
+        checkParams.getEndsBefore(), checkParams.getStatusSelector()));
+    return findByIds(applicationDao.excludeSentReminders(candidates));
   }
 
   /**
