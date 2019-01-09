@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,15 +73,17 @@ public class ApplicantReminderService {
   }
 
   private void sendReminder(Application application) {
-    application.getCustomersWithContacts().stream()
-      .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT)
-      .map(cwc -> cwc.getCustomer().getEmail())
-      .filter(e -> e != null)
-      .findFirst()
-      .ifPresent(e -> sendEmail(e, application));
+    List<String> recipients = application.getCustomersWithContacts().stream()
+      .flatMap(cwc -> cwc.getContacts().stream())
+      .map(c -> c.getEmail())
+      .filter(e -> StringUtils.isNotBlank(e))
+      .collect(Collectors.toList());
+     if (!recipients.isEmpty()) {
+       sendEmails(recipients, application);
+     }
   }
 
-  private void sendEmail(String email, Application application) {
+  private void sendEmails(List<String> recipients, Application application) {
     final String subject = String.format(MAIL_SUBJECT, idAndAddress(application));
     try {
       final Map<String, String> mailVariables = mailVariables(application);
@@ -89,7 +92,7 @@ public class ApplicantReminderService {
       final String htmlMailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE + ".html");
       final String htmlBody = StrSubstitutor.replace(htmlMailTemplate, mailVariables);
       final List<InlineResource> inlineResources = inlineResources();
-      alluMailService.sendEmail(Collections.singletonList(email), subject, body, htmlBody, inlineResources);
+      alluMailService.sendEmail(recipients, subject, body, htmlBody, inlineResources);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
