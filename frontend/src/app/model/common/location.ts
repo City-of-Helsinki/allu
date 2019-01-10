@@ -90,3 +90,11 @@ export class Location {
     return loc;
   }
 }
+
+export function getEffectivePaymentTariff(location: Location): string {
+  if (location) {
+    return location.paymentTariffOverride ? location.paymentTariffOverride : location.paymentTariff;
+  }  else {
+    return undefined;
+  }
+}

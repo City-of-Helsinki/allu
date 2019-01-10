@@ -18,6 +18,7 @@ import {
   AreaRentalSupervisionApprovalModalComponent
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
 import {MapModule} from '@feature/map/map.module';
+import {SupervisionTaskLocationComponent} from '@feature/application/supervision/location/supervision-task-location.component';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import {MapModule} from '@feature/map/map.module';
     SupervisionTaskComponent,
     SupervisionApprovalModalComponent,
     ExcavationSupervisionApprovalModalComponent,
-    AreaRentalSupervisionApprovalModalComponent
+    AreaRentalSupervisionApprovalModalComponent,
+    SupervisionTaskLocationComponent
   ],
   providers: [
     SupervisionTaskService

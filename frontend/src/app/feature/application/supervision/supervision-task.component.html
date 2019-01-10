@@ -82,12 +82,10 @@
           </div>
         </div>
         <div fxFlex="0 1 auto">
-          <div class="map-container">
-            <supervision-map
-              [mapId]="'map-' + form.value.id"
-              [content]="mapFeatures"
-              [selectedFeature]="form.value.locationId"></supervision-map>
-          </div>
+          <supervision-task-location
+            [taskId]="form.value.id"
+            [application]="application"
+            [relatedLocation]="location"></supervision-task-location>
         </div>
       </div>
 
