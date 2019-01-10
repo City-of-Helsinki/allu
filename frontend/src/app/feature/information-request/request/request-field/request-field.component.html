@@ -1,13 +1,13 @@
-<form [formGroup]="form">
-  <div fxLayout="row">
-    <mat-checkbox class="request-field" [formControlName]="'selected' + fieldKey" labelPosition='after'>
-      {{label}}
-    </mat-checkbox>
-  </div>
-  <div fxLayout="row" *ngIf="checked()">
-    <mat-form-field class="input-full-width">
-      <input matInput type="text" [formControlName]="fieldKey" required
-             placeholder="{{'informationRequest.request.guide' | translation}}"/>
-    </mat-form-field>
-  </div>
-</form>
+<div fxLayout="row">
+  <mat-checkbox class="request-field" [formControl]="selectedCtrl" labelPosition='after'>
+    {{label}}
+  </mat-checkbox>
+</div>
+<div fxLayout="row" *ngIf="selectedCtrl.value">
+  <mat-form-field class="input-full-width">
+    <input matInput type="text"  required
+           [formControl]="descriptionCtrl"
+           placeholder="{{'informationRequest.request.guide' | translation}}"/>
+    <mat-error *ngIf="descriptionCtrl.hasError('required')">{{'informationRequest.field.descriptionMissing' | translation}}</mat-error>
+  </mat-form-field>
+</div>

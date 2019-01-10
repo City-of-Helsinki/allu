@@ -12,9 +12,9 @@
       {{'informationRequest.request.description' | translation}}
     </p>
     <request-field *ngFor="let key of fieldKeys"
-                  [form]="form"
+                  [formControlName]="key"
                   [label]="['informationRequest.field', key] | translation"
-                  [fieldKey]="key">
+                  (selectedChange)="onSelectedChange(key, $event)">
     </request-field>
   </mat-dialog-content>
 
@@ -23,10 +23,10 @@
       <button type="button" mat-raised-button color="primary" (click)="cancel()">
         {{'common.button.cancel' | translation}}
       </button>
-      <button type="button" mat-raised-button color="primary" (click)="saveDraft()">
+      <button type="button" mat-raised-button color="primary" [disabled]="!form.valid" (click)="saveDraft()">
         {{'informationRequest.request.draft' | translation | uppercase}}
       </button>
-      <button type="submit" mat-raised-button color="primary">
+      <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid">
         {{'informationRequest.request.send' | translation | uppercase}}
       </button>
     </ng-container>

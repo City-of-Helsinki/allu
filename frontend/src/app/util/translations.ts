@@ -625,6 +625,7 @@ export const translations = {
       ATTACHMENT: 'Liite',
       others: 'Muut tiedot',
       valueDiffers: 'Kentän sisältö poikkeaa nykyisestä',
+      descriptionMissing: 'Selite puuttuu'
     },
     error: {
       create: 'Täydennyspyynnön luominen epäonnistui',

@@ -1,11 +1,11 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {InformationRequest} from '@model/information-request/information-request';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {EnumUtil} from '@util/enum.util';
-import {InformationRequestForm} from './information-request.form';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {toFormGroup, toInformationRequestFields} from '@feature/information-request/request/information-request.form';
 
 export const INFORMATION_REQUEST_MODAL_CONFIG: MatDialogConfig<InformationRequestData> = {
   width: '60vw'
@@ -29,12 +29,12 @@ export class InformationRequestModalComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<InformationRequestModalComponent>,
               private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public data: InformationRequestData) {
-    this.form = InformationRequestForm.formGroup(fb, data.request);
-    this.request = data.request;
+    this.request = data.request || new InformationRequest();
+    this.form = toFormGroup(fb, this.fieldKeys, this.request);
   }
 
   ngOnInit() {
-    if (InformationRequestStatus.DRAFT !== this.data.request.status) {
+    if (InformationRequestStatus.DRAFT !== this.request.status) {
       this.form.disable();
     }
   }
@@ -48,13 +48,24 @@ export class InformationRequestModalComponent implements OnInit {
   }
 
   private close(status?: InformationRequestStatus): void {
-    const originalRequest = this.request || new InformationRequest();
-    const request = InformationRequestForm.toInformationRequest(this.form.value, originalRequest);
-    request.status = status || request.status;
-    this.dialogRef.close(request);
+    this.dialogRef.close({
+      ...this.request,
+      fields: toInformationRequestFields(this.form.value),
+      status: status ? status : this.request.status
+    });
   }
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  onSelectedChange(field: string, selected: boolean) {
+    const control = this.form.get(field);
+    if (selected) {
+      control.setValidators(Validators.required);
+    } else {
+      control.clearValidators();
+    }
+    this.form.get(field).updateValueAndValidity();
   }
 }
