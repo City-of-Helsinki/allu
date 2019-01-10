@@ -12,7 +12,6 @@ import {ComplexValidator} from '@util/complex-validator';
 import {User} from '@model/user/user';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {findTranslation} from '@util/translations';
-import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
 import {of} from 'rxjs/index';
 import * as fromRoot from '@feature/allu/reducers';
@@ -27,8 +26,6 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {getButtonWithText} from '../../../selector-helpers';
 import {UserService} from '@service/user/user-service';
 import {Location} from '@model/common/location';
-import {MapModule} from '@feature/map/map.module';
-import {MapFeature} from '@feature/map/map-feature';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -60,13 +57,13 @@ const validTask: SupervisionTaskForm = {
 const currentApplication = new Application(1);
 
 @Component({
-  selector: 'supervision-map',
+  selector: 'supervision-task-location',
   template: ''
 })
-class SupervisionMapMockComponent {
-  @Input() mapId = 'map';
-  @Input() content: MapFeature[] = [];
-  @Input() selectedFeature: number;
+class SupervisionTaskLocationMockComponent {
+  @Input() taskId = 1;
+  @Input() application: Application;
+  @Input() relatedLocation: Location;
 }
 
 describe('SupervisionTaskComponent', () => {
@@ -90,7 +87,7 @@ describe('SupervisionTaskComponent', () => {
       ],
       declarations: [
         SupervisionTaskComponent,
-        SupervisionMapMockComponent
+        SupervisionTaskLocationMockComponent
       ],
       providers: [
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
