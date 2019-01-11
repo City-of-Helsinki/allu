@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -86,6 +88,13 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<ExcavationAnnouncementApplication> getApplication(@PathVariable Integer id) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(id);
+    validateType(application, ApplicationType.EXCAVATION_ANNOUNCEMENT);
     return ResponseEntity.ok(new ExcavationAnnouncementApplication(application));
+  }
+
+  private void validateType(ApplicationJson application, ApplicationType expectedType) {
+    if (application.getType() != expectedType) {
+      throw new IllegalOperationException("applicationtype.invalid");
+    }
   }
 }
