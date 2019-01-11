@@ -18,8 +18,8 @@ import {map} from 'rxjs/internal/operators';
 import TimeoutOptions = L.TimeoutOptions;
 
 const timeout: TimeoutOptions = {
-  response: 10000,
-  deadline: 60000
+  response: 20000, // Wait max 20 seconds for the server to start sending,
+  deadline: 60000 // but allow 60 seconds for the file to finish loading.
 };
 
 export const DEFAULT_OVERLAY = 'helsinki_karttasarja';
