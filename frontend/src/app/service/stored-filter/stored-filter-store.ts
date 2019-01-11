@@ -154,16 +154,17 @@ export class StoredFilterStore {
     );
   }
 
-  private initDefaultFilter(baseState: StoredFilterState, filters: StoredFilter[]): StoredFilterState {
+  private initDefaultFilter(baseState: StoredFilterState, filters: StoredFilter[] = []): StoredFilterState {
     const state = {...baseState};
-    const defaultFilter = ArrayUtil.first(filters, f => f.defaultFilter);
-    if (defaultFilter) {
-      state[defaultFilter.typeName].current = defaultFilter.id;
+    filters
+      .filter(f => f.defaultFilter)
+      .forEach(defaultFilter => {
+        state[defaultFilter.typeName].current = defaultFilter.id;
 
-      if (defaultFilter.type === StoredFilterType.MAP) {
-        this.store.dispatch(new SelectLayers(ActionTargetType.Home, defaultFilter.filter.layers));
-      }
-    }
+        if (defaultFilter.type === StoredFilterType.MAP) {
+          this.store.dispatch(new SelectLayers(ActionTargetType.Home, defaultFilter.filter.layers));
+        }
+      });
     return state;
 
   }
