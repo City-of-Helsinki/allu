@@ -1,14 +1,18 @@
 package fi.hel.allu.servicecore.domain;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.validator.NotFalse;
-
-import javax.validation.constraints.NotNull;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Items stored in distribution list. Each item describes a single distribution target, which will receive application decision.
  */
+@ApiModel(value = "Distribution entry describing a single distribution target, which will receive application decision")
 @NotFalse(rules = {"email, hasRecipientValidation, Either email or postal address must have values"})
 public class DistributionEntryJson {
   @NotNull(message = "{distributionentry.type}")
@@ -17,11 +21,7 @@ public class DistributionEntryJson {
   private String email;
   private PostalAddressJson postalAddress;
 
-  /**
-   * The media type used to distribute the decision.
-   *
-   * @return  The media type used to distribute the decision.
-   */
+  @ApiModelProperty(value = "The media type used to distribute the decision.")
   public DistributionType getDistributionType() {
     return distributionType;
   }
@@ -30,11 +30,7 @@ public class DistributionEntryJson {
     this.distributionType = distributionType;
   }
 
-  /**
-   * Name of the distribution recipient.
-   *
-   * @return  Name of the distribution recipient.
-   */
+  @ApiModelProperty(value = "Name of the distribution recipient")
   public String getName() {
     return name;
   }
@@ -43,11 +39,7 @@ public class DistributionEntryJson {
     this.name = name;
   }
 
-  /**
-   * The email address of the distribution recipient.
-   *
-   * @return  The email address of the distribution recipient.
-   */
+  @ApiModelProperty(value = "Email address of the distribution recipient")
   public String getEmail() {
     return email;
   }
@@ -56,11 +48,7 @@ public class DistributionEntryJson {
     this.email = email;
   }
 
-  /**
-   * The postal address of the distribution recipient.
-   *
-   * @return
-   */
+  @ApiModelProperty(value = "Postal address of the distribution recipient")
   public PostalAddressJson getPostalAddress() {
     return postalAddress;
   }

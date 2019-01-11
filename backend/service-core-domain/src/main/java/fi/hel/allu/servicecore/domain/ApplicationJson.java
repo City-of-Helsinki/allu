@@ -1,5 +1,18 @@
 package fi.hel.allu.servicecore.domain;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -9,23 +22,13 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.validator.NotFalse;
 import fi.hel.allu.servicecore.domain.validator.ValidApplication;
-
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.groups.Default;
-
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * in Finnish: Hakemus
  */
+@ApiModel(value = "Application")
 @NotFalse(rules = {
     "recurringEndTime, lessThanYearActivity, Recurring applications start and end time duration has to be less than a year",
     "kind, kindsMatchType, Application kinds must be valid for the type",
@@ -105,10 +108,8 @@ public class ApplicationJson {
   private Integer externalApplicationId;
   private Integer invoicingPeriodLength;
 
-  /**
-  /**
-   * in Finnish: Hakemuksen tunniste tietokannassa
-   */
+
+  @ApiModelProperty(value = "ID of the application")
   public Integer getId() {
     return id;
   }
@@ -117,11 +118,8 @@ public class ApplicationJson {
     this.id = id;
   }
 
-  /**
-   * In Finnish: Hakemuksen tunniste ihmisille
-   * <p>The human readable application id. The format is XXYYZZZZZ where XX is application type abbreviation, YY is year and ZZZZZ is
-   * serial number for the given year. For example TP1600001.
-   */
+  @ApiModelProperty(value = "Human readable application identifier (hakemustunniste). The format is XXYYZZZZZ where XX is application type abbreviation, " +
+      "YY is year and ZZZZZ is serial number for the given year. For example TP1600001")
   public String getApplicationId() {
     return applicationId;
   }
@@ -130,9 +128,7 @@ public class ApplicationJson {
     this.applicationId = applicationId;
   }
 
-  /**
-   * in Finnish: Hanke, johon hakemus liittyy
-   */
+  @ApiModelProperty(value = "Project this application belongs to")
   public ProjectJson getProject() {
     return project;
   }
@@ -141,9 +137,7 @@ public class ApplicationJson {
     this.project = project;
   }
 
-  /**
-   * in Finnish: Hakemuksen omistaja
-   */
+  @ApiModelProperty(value = "Owner of the application")
   public UserJson getOwner() {
     return owner;
   }
@@ -152,9 +146,7 @@ public class ApplicationJson {
     this.owner = owner;
   }
 
-  /**
-   * in Finnish: Hakemuksen käsittelijä
-   */
+  @ApiModelProperty(value = "Handler of the application")
   public UserJson getHandler() {
     return handler;
   }
@@ -163,9 +155,7 @@ public class ApplicationJson {
     this.handler = handler;
   }
 
-  /**
-   * in Finnish: Hakemuksen tila
-   */
+  @ApiModelProperty(value = "Status of the application")
   public StatusType getStatus() {
     return status;
   }
@@ -174,9 +164,7 @@ public class ApplicationJson {
     this.status = status;
   }
 
-  /**
-   * in Finnish: Hakemuksen tyyppi
-   */
+  @ApiModelProperty(value = "Application type")
   public ApplicationType getType() {
     return type;
   }
@@ -185,9 +173,7 @@ public class ApplicationJson {
     this.type = type;
   }
 
-  /**
-   * in Finnish: Hakemuksen tagit
-   */
+  @ApiModelProperty(value = "Application tags")
   public List<ApplicationTagJson> getApplicationTags() {
     return applicationTags;
   }
@@ -199,6 +185,7 @@ public class ApplicationJson {
   /**
    * @return Metadata version related to the application.
    */
+  @ApiModelProperty(hidden = true)
   public Integer getMetadataVersion() {
     return metadataVersion;
   }
@@ -207,9 +194,7 @@ public class ApplicationJson {
     this.metadataVersion = metadataVersion;
   }
 
-  /**
-   * in Finnish: Hakemuksen nimi
-   */
+  @ApiModelProperty(value = "Name of the application")
   public String getName() {
     return name;
   }
@@ -218,9 +203,7 @@ public class ApplicationJson {
     this.name = name;
   }
 
-  /**
-   * in Finnish: Hakemuksen luontiaika
-   */
+  @ApiModelProperty(value = "Application creation time")
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -229,11 +212,7 @@ public class ApplicationJson {
     this.creationTime = creationTime;
   }
 
-  /**
-   * The starting time the application is active i.e. the starting time certain land area is reserved by the application.
-   *
-   * @return  starting time the application is active i.e. the starting time certain land area is reserved by the application.
-   */
+  @ApiModelProperty(value = "The starting time the application is active i.e. the starting time certain land area is reserved by the application")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -242,11 +221,7 @@ public class ApplicationJson {
     this.startTime = startTime;
   }
 
-  /**
-   * The ending time the application is active i.e. the time certain land area stops being reserved by the application.
-   *
-   * @return  ending time the application is active i.e. the time certain land area stops being reserved by the application.
-   */
+  @ApiModelProperty(value = "The ending time the application is active i.e. the time certain land area stops being reserved by the application.")
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -255,15 +230,9 @@ public class ApplicationJson {
     this.endTime = endTime;
   }
 
-  /**
-   * The last moment the recurring application is active. Application may recur for certain time every year. For example, an area might
-   * be used for storing snow every year and such application should be created as a recurring application instead of creating and
-   * application for each year separately.
-   * <p>
-   * Application with start time as 1.12.2016 and end time 31.1.2017 having recurring end time 31.1.2020 is active until 31.1.2020.
-   *
-   * @return  The last year recurring application is active.
-   */
+  @ApiModelProperty(value = "The last moment the recurring application is active. Application may recur for certain time every year. For example, an area might " +
+      "be used for storing snow every year and such application should be created as a recurring application instead of creating " +
+      "application for each year separately.")
   public ZonedDateTime getRecurringEndTime() {
     return recurringEndTime;
   }
@@ -272,9 +241,7 @@ public class ApplicationJson {
     this.recurringEndTime = recurringEndTime;
   }
 
-  /**
-   * in Finnish: Hakemuksen asiakkuus ja kontaktitiedot
-   */
+  @ApiModelProperty(value = "Application customers with contacts")
   public List<CustomerWithContactsJson> getCustomersWithContacts() {
     return customersWithContacts;
   }
@@ -283,9 +250,7 @@ public class ApplicationJson {
     this.customersWithContacts = customersWithContacts;
   }
 
-  /**
-   * in Finnish: Hakemuksen sijainti
-   */
+  @ApiModelProperty(value = "Application locations")
   public List<LocationJson> getLocations() {
     return locations;
   }
@@ -294,9 +259,6 @@ public class ApplicationJson {
     this.locations = locations;
   }
 
-  /**
-   * in Finnish: Tapahtuma
-   */
   public ApplicationExtensionJson getExtension() {
     return extension;
   }
@@ -305,11 +267,7 @@ public class ApplicationJson {
     this.extension = event;
   }
 
-  /**
-   * Publicity of the decision.
-   *
-   * @return  Publicity of the decision.
-   */
+  @ApiModelProperty(value = "Publicity of the decision")
   public PublicityType getDecisionPublicityType() {
     return decisionPublicityType;
   }
@@ -318,11 +276,7 @@ public class ApplicationJson {
     this.decisionPublicityType = decisionPublicityType;
   }
 
-  /**
-   * The time decision was made.
-   *
-   * @return  The time decision was made.
-   */
+  @ApiModelProperty(value = "The time the decision was made")
   public ZonedDateTime getDecisionTime() {
     return decisionTime;
   }
@@ -331,11 +285,7 @@ public class ApplicationJson {
     this.decisionTime = decisionTime;
   }
 
-  /**
-   * The user who made the decision.
-   *
-   * @return  The user who made the decision.
-   */
+  @ApiModelProperty(value = "The user who made the decision")
   public UserJson getDecisionMaker() {
     return decisionMaker;
   }
@@ -344,11 +294,7 @@ public class ApplicationJson {
     this.decisionMaker = decisionMaker;
   }
 
-  /**
-   * The distribution list of the decision.
-   *
-   * @return  The distribution list of the decision.
-   */
+  @ApiModelProperty(value = "Decision distribution list")
   public List<DistributionEntryJson> getDecisionDistributionList() {
     return decisionDistributionList;
   }
@@ -357,9 +303,7 @@ public class ApplicationJson {
     this.decisionDistributionList = decisionDistributionList;
   }
 
-  /**
-   * in Finnish: Hakemuksen liitteet
-   */
+  @ApiModelProperty(value = "Attachments of the application")
   public List<AttachmentInfoJson> getAttachmentList() {
     return attachmentList;
   }
@@ -368,9 +312,7 @@ public class ApplicationJson {
     this.attachmentList = attachmentList;
   }
 
-  /**
-   * in Finnish: Hakemuksen kommentit
-   */
+  @ApiModelProperty(value = "Comments of the application")
   public List<CommentJson> getComments() {
     return comments;
   }
@@ -379,11 +321,7 @@ public class ApplicationJson {
     this.comments = comments;
   }
 
-  /**
-   * Get the calculated price
-   *
-   * @return calculated price in cents
-   */
+  @ApiModelProperty(value = "Calculated price of the application (in cents)")
   public Integer getCalculatedPrice() {
     return calculatedPrice;
   }
@@ -392,11 +330,7 @@ public class ApplicationJson {
     this.calculatedPrice = calculatedPrice;
   }
 
-  /**
-   * Is this application not meant to be billed?
-   *
-   * @return true if the application is not billable
-   */
+  @ApiModelProperty(value = "True if application is not billed")
   public Boolean getNotBillable() {
     return notBillable;
   }
@@ -405,11 +339,7 @@ public class ApplicationJson {
     this.notBillable = notBillable;
   }
 
-  /**
-   * Why is this application not billable?
-   *
-   * @return Explanation for not billing.
-   */
+  @ApiModelProperty(value = "Explanation for not billing")
   public String getNotBillableReason() {
     return notBillableReason;
   }
@@ -418,12 +348,7 @@ public class ApplicationJson {
     this.notBillableReason = notBillableReason;
   }
 
-  /**
-   * Get the application kinds and their specifiers.
-   *
-   * @return Map where keys are the application kinds and values are a list of
-   *         specifiers for that kind.
-   */
+  @ApiModelProperty(value = "Application kinds with their specifiers")
   public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
     return kindsWithSpecifiers;
   }
@@ -432,10 +357,7 @@ public class ApplicationJson {
     this.kindsWithSpecifiers = kindsWithSpecifiers;
   }
 
-  /**
-   * Customer who is invoiced for this application
-   * @return Id of the invoiced customer
-   */
+  @ApiModelProperty(value = "Id of the customer who is invoiced for this application")
   public Integer getInvoiceRecipientId() {
     return invoiceRecipientId;
   }
@@ -495,10 +417,7 @@ public class ApplicationJson {
     return true;
   }
 
-  /**
-   * Get ID of the application which is replaced by this application.
-   * @return applicationId of the replaced application
-   */
+  @ApiModelProperty(value = "ID of the application which is replaced by this application")
   public Integer getReplacesApplicationId() {
     return replacesApplicationId;
   }
@@ -507,10 +426,7 @@ public class ApplicationJson {
     this.replacesApplicationId = replacesApplicationId;
   }
 
-  /**
-   * Get ID of the application which has replaced this application.
-   * @return applicationId which has replaced this application
-   */
+  @ApiModelProperty(value = "ID of the application which has replaced this application")
   public Integer getReplacedByApplicationId() {
     return replacedByApplicationId;
   }
@@ -519,9 +435,7 @@ public class ApplicationJson {
     this.replacedByApplicationId = replacedByApplicationId;
   }
 
-  /**
-   * Get customer reference
-   */
+  @ApiModelProperty(value = "Customer reference (to invoice)")
   public String getCustomerReference() {
     return customerReference;
   }
@@ -530,10 +444,7 @@ public class ApplicationJson {
     this.customerReference = customerReference;
   }
 
-  /**
-   * Get invoicing date for application.
-   * @return
-   */
+  @ApiModelProperty(value = "Invoicing date of the application")
   public ZonedDateTime getInvoicingDate() {
     return invoicingDate;
   }
@@ -542,9 +453,7 @@ public class ApplicationJson {
     this.invoicingDate = invoicingDate;
   }
 
-  /**
-   * Gets value indicating whether application is completely invoiced.
-   */
+  @ApiModelProperty(value = "True if application is (completely) invoiced")
   public Boolean getInvoiced() {
     return invoiced;
   }
@@ -553,9 +462,7 @@ public class ApplicationJson {
     this.invoiced = invoiced;
   }
 
-  /**
-   * Should the automatic price calculation be skipped for this application?
-   */
+  @ApiModelProperty(value = "True if the automatic price calculation should not be done for this application")
   public boolean getSkipPriceCalculation() {
     return skipPriceCalculation;
   }
@@ -564,6 +471,7 @@ public class ApplicationJson {
     this.skipPriceCalculation = skipPriceCalculation;
   }
 
+  @ApiModelProperty(hidden = true)
   public Integer getExternalOwnerId() {
     return externalOwnerId;
   }
@@ -580,6 +488,7 @@ public class ApplicationJson {
     this.clientApplicationData = clientApplicationData;
   }
 
+  @ApiModelProperty(value = "Application identification number (asiointitunnus)")
   public String getIdentificationNumber() {
     return identificationNumber;
   }
@@ -588,6 +497,7 @@ public class ApplicationJson {
     this.identificationNumber = identificationNumber;
   }
 
+  @ApiModelProperty(hidden = true)
   public Boolean getInvoicingChanged() {
     return invoicingChanged;
   }
@@ -596,6 +506,7 @@ public class ApplicationJson {
     this.invoicingChanged = invoicingChanged;
   }
 
+  @ApiModelProperty(hidden = true)
   public StatusType getTargetState() {
     return targetState;
   }
@@ -604,6 +515,7 @@ public class ApplicationJson {
     this.targetState = targetState;
   }
 
+  @ApiModelProperty(value = "Time when application was received")
   public ZonedDateTime getReceivedTime() {
     return receivedTime;
   }
@@ -612,6 +524,7 @@ public class ApplicationJson {
     this.receivedTime= receivedTime;
   }
 
+  @ApiModelProperty(hidden = true)
   public Integer getExternalApplicationId() {
     return externalApplicationId;
   }
@@ -620,6 +533,7 @@ public class ApplicationJson {
     this.externalApplicationId = externalApplicationId;
   }
 
+  @ApiModelProperty(value = "Invoicing period length for this application")
   public Integer getInvoicingPeriodLength() {
     return invoicingPeriodLength;
   }

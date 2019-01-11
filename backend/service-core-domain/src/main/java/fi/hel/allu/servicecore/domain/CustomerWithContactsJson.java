@@ -1,29 +1,25 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Wrapper class for communicating changes to customer and its related contacts to and back from frontend.
- */
+@ApiModel(value = "Application customer and related contacts")
 public class CustomerWithContactsJson {
 
   private CustomerRoleType roleType;
   private CustomerJson customer;
   private List<ContactJson> contacts = new ArrayList<>();
 
-  /**
-   * Return an ID for the item -- needed for application history
-   */
+  @ApiModelProperty(value = "Id of the customer (if present)")
   public Integer getId() {
     return (customer == null) ? null : customer.getId();
   }
 
-  /**
-   * @return  The role type of the customer.
-   */
+  @ApiModelProperty(value = "Customer role type")
   public CustomerRoleType getRoleType() {
     return roleType;
   }
@@ -32,12 +28,7 @@ public class CustomerWithContactsJson {
     this.roleType = roleType;
   }
 
-  /**
-   * Created or updated customer.
-   *
-   * @return  Created or updated customer. May be <code>null</code> in case customer is not changed, but related contacts are (the
-   *          id of the customer must be communicated by other means than as instance variable).
-   */
+  @ApiModelProperty(value = "Application customer")
   public CustomerJson getCustomer() {
     return customer;
   }
@@ -46,11 +37,7 @@ public class CustomerWithContactsJson {
     this.customer = customer;
   }
 
-  /**
-   * Created or updated contacts. If a contact is neither created nor updated, it should not appear on the list!
-   *
-   * @return  List of created or updated contacts. If contact has an id, it's considered as an update.
-   */
+  @ApiModelProperty(value = "Contacts of the application customer")
   public List<ContactJson> getContacts() {
     return contacts;
   }

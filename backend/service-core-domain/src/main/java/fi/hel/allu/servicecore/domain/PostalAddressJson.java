@@ -1,9 +1,12 @@
 package fi.hel.allu.servicecore.domain;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * in Finnish: Osoitteen tiedot
  */
+@ApiModel(value = "Postal address")
 public class PostalAddressJson {
   private String streetAddress;
   private String postalCode;
@@ -19,9 +22,7 @@ public class PostalAddressJson {
     this.city = city;
   }
 
-  /**
-   * in Finnish: postiosoite
-   */
+  @ApiModelProperty(value = "Street address")
   public String getStreetAddress() {
     return streetAddress;
   }
@@ -30,9 +31,7 @@ public class PostalAddressJson {
     this.streetAddress = streetAddress;
   }
 
-  /**
-   * in Finnish: postinumero
-   */
+  @ApiModelProperty(value = "Postal code")
   public String getPostalCode() {
     return postalCode;
   }
@@ -41,9 +40,7 @@ public class PostalAddressJson {
     this.postalCode = postalCode;
   }
 
-  /**
-   * in Finnish: kaupunki
-   */
+  @ApiModelProperty(value = "City")
   public String getCity() {
     return city;
   }

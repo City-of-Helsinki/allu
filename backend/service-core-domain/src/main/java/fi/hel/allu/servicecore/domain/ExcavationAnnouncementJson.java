@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Excavation announcement (Kaivuilmoitus) specific data.
@@ -42,15 +43,13 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private List<String> placementContracts;
   private List<String> cableReports;
 
+  @ApiModelProperty(hidden = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.EXCAVATION_ANNOUNCEMENT;
   }
 
-  /**
-   * In Finnish: PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
-   * True, if the contractor doing the actual work has PKS-card.
-   */
+  @ApiModelProperty(value = "True, if the contractor doing the actual work has PKS-card")
   public Boolean getPksCard() {
     return pksCard;
   }
@@ -59,9 +58,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.pksCard = pksCard;
   }
 
-  /**
-   * In Finnish: Rakentaminen.
-   */
+  @ApiModelProperty(value = "Construction work")
   public Boolean getConstructionWork() {
     return constructionWork;
   }
@@ -70,9 +67,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.constructionWork = constructionWork;
   }
 
-  /**
-   * In Finnish: Kunnossapito.
-   */
+  @ApiModelProperty(value = "Maintenance work")
   public Boolean getMaintenanceWork() {
     return maintenanceWork;
   }
@@ -81,9 +76,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.maintenanceWork = maintenanceWork;
   }
 
-  /**
-   * In Finnish: Hätätyö.
-   */
+  @ApiModelProperty(value = "Emergency work")
   public Boolean getEmergencyWork() {
     return emergencyWork;
   }
@@ -92,9 +85,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.emergencyWork = emergencyWork;
   }
 
-  /**
-   * In Finnish: Tontti-/Kiinteistöliitos.
-   */
+  @ApiModelProperty(value = "Property connectivity (tontti-/kiinteistöliitos)")
   public Boolean getPropertyConnectivity() {
     return propertyConnectivity;
   }
@@ -103,9 +94,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.propertyConnectivity = propertyConnectivity;
   }
 
-  /**
-   * In Finnish: Omavalvonta.
-   */
+  @ApiModelProperty(value = "Self supervision (omavalvonta)")
   public Boolean getSelfSupervision() {
     return selfSupervision;
   }
@@ -114,6 +103,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.selfSupervision = selfSupervision;
   }
 
+  @ApiModelProperty(value = "Compaction and bearing capacity measurement (tiiveys- ja kantavuusmittaus)")
   public Boolean getCompactionAndBearingCapacityMeasurement() {
     return compactionAndBearingCapacityMeasurement;
   }
@@ -122,6 +112,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
   }
 
+  @ApiModelProperty(value = "Quality assurance test (päällysteen laadunvarmistus)")
   public Boolean getQualityAssuranceTest() {
     return qualityAssuranceTest;
   }
@@ -130,9 +121,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.qualityAssuranceTest = qualityAssuranceTest;
   }
 
-  /**
-   * In Finnish: Talvityön toiminnallinen kunto (päivämäärä, jolloin valmis).
-   */
+  @ApiModelProperty(value = "Operational condition date for winter time work (toiminnallinen kunto)")
   public ZonedDateTime getWinterTimeOperation() {
     return winterTimeOperation;
   }
@@ -141,9 +130,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.winterTimeOperation = winterTimeOperation;
   }
 
-  /**
-   * In Finnish: Työ valmis.
-   */
+  @ApiModelProperty(value = "Work finished date")
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
@@ -152,9 +139,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.workFinished = workFinished;
   }
 
-  /**
-   * In Finnish: Luvattoman kaivutyön aloitusaika.
-   */
+  @ApiModelProperty(value = "Unauthorized work start time")
   public ZonedDateTime getUnauthorizedWorkStartTime() {
     return unauthorizedWorkStartTime;
   }
@@ -163,9 +148,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.unauthorizedWorkStartTime = unauthorizedWorkStartTime;
   }
 
-  /**
-   * In Finnish: Luvattoman kaivutyön lopetusaika.
-   */
+  @ApiModelProperty(value = "Unauthorized work end time")
   public ZonedDateTime getUnauthorizedWorkEndTime() {
     return unauthorizedWorkEndTime;
   }
@@ -174,9 +157,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.unauthorizedWorkEndTime = unauthorizedWorkEndTime;
   }
 
-  /**
-   * In Finnish: Takuun päättymispäivämäärä.
-   */
+  @ApiModelProperty(value = "Guarantee end time")
   public ZonedDateTime getGuaranteeEndTime() {
     return guaranteeEndTime;
   }
@@ -185,9 +166,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.guaranteeEndTime = guaranteeEndTime;
   }
 
-  /**
-   * In Finnish: Asiakkaan ilmoittama hakemuksen alkuaika.
-   */
+  @ApiModelProperty(value = "Start time reported by customer")
   public ZonedDateTime getCustomerStartTime() {
     return customerStartTime;
   }
@@ -196,9 +175,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerStartTime = customerStartTime;
   }
 
-  /**
-   * In Finnish: Asiakkaan ilmoittama hakemuksen loppuaika.
-   */
+  @ApiModelProperty(value = "End time reported by customer")
   public ZonedDateTime getCustomerEndTime() {
     return customerEndTime;
   }
@@ -207,9 +184,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerEndTime = customerEndTime;
   }
 
-  /**
-   * In Finnish: Asiakkaan ilmoittama talvityön toiminnallinen kunto.
-   */
+  @ApiModelProperty(value = "Operational condition date reported by customer")
   public ZonedDateTime getCustomerWinterTimeOperation() {
     return customerWinterTimeOperation;
   }
@@ -218,9 +193,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerWinterTimeOperation = customerWinterTimeOperation;
   }
 
-  /**
-   * In Finnish: Asiakkaan ilmoittama aika, jolloin työ on valmis.
-   */
+  @ApiModelProperty(value = "Work finished date reported by customer")
   public ZonedDateTime getCustomerWorkFinished() {
     return customerWorkFinished;
   }
@@ -229,9 +202,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerWorkFinished = customerWorkFinished;
   }
 
-  /**
-   * In Finnish: johtoselvitys kaivuilmoitukselle.
-   */
+  @ApiModelProperty(hidden = true)
   public Integer getCableReportId() {
     return cableReportId;
   }
@@ -240,9 +211,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.cableReportId = cableReportId;
   }
 
-  /**
-   * In Finnish: Työn tarkoitus.
-   */
+  @ApiModelProperty(value = "Purpose of the work")
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -251,9 +220,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.workPurpose = workPurpose;
   }
 
-  /**
-   * In Finnish: lisätiedot.
-   */
+  @ApiModelProperty(value = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -262,9 +229,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.additionalInfo = additionalInfo;
   }
 
-  /**
-   * In Finnish: suoritettavat liikennejärjestelytyöt.
-   */
+  @ApiModelProperty(value = "Traffic arrangements")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -273,9 +238,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.trafficArrangements = trafficArrangements;
   }
 
-  /**
-   * In Finnish: Liikennejärjestelyn haitta.
-   */
+  @ApiModelProperty(value = "Traffic arrangement impediment")
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }
@@ -284,9 +247,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
   }
 
-  /**
-   * Date when customer reported operational condition date
-   */
+  @ApiModelProperty(value = "Date when customer reported operational condition date")
   public ZonedDateTime getOperationalConditionReported() {
     return operationalConditionReported;
   }
@@ -295,9 +256,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.operationalConditionReported = operationalConditionReported;
   }
 
-  /**
-   * Date when customer reported work finished date
-   */
+  @ApiModelProperty(value = "Date when customer reported work finished date")
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
@@ -306,9 +265,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.workFinishedReported = workFinishedReported;
   }
 
-  /**
-   * Date when customer reported validity dates
-   */
+  @ApiModelProperty(value = "Date when customer reported application validity dates")
   public ZonedDateTime getValidityReported() {
     return validityReported;
   }
@@ -317,6 +274,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.validityReported = validityReported;
   }
 
+  @ApiModelProperty(value = "Identifiers of related placement contracts")
   public List<String> getPlacementContracts() {
     return placementContracts;
   }
@@ -325,6 +283,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.placementContracts = placementContracts;
   }
 
+  @ApiModelProperty(value = "Identifiers of related cable reports")
   public List<String> getCableReports() {
     return cableReports;
   }

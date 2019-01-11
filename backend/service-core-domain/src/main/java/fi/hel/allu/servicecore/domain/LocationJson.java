@@ -1,5 +1,13 @@
 package fi.hel.allu.servicecore.domain;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.geolatte.geom.Geometry;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -7,18 +15,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import fi.hel.allu.common.validator.NotFalse;
-
-import org.geolatte.geom.Geometry;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import java.time.ZonedDateTime;
-import java.util.List;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * in Finnish: Hakemuksen sijainti
  */
+@ApiModel(value = "Application location")
 @NotFalse(rules = {"startTime, startTimeBeforeEndTimeValidation, start time must be before end time"})
 public class LocationJson {
   private Integer id;
@@ -55,13 +58,7 @@ public class LocationJson {
     this.id = id;
   }
 
-  /**
-   * Returns the human readable name of location (actually a number, which can be converted into a name). Each new location for one
-   * application gets a key greater than the previous key. In case there are locations 1,2 and 3 and 2 is deleted and a new location is
-   * added, the new location gets key 4.
-   *
-   * @return  Returns the human readable name of location (actually a number, which can be converted into a name).
-   */
+  @ApiModelProperty(value = "Location key. Each new location for one application gets a key greater than the previous key.")
   public Integer getLocationKey() {
     return locationKey;
   }
@@ -70,12 +67,7 @@ public class LocationJson {
     this.locationKey = locationKey;
   }
 
-  /**
-   * Returns the version of the location. If location is updated, the new version will get higher version number than the previous.
-   * Location's application + location key + location version is unique.
-   *
-   * @return  Returns the version of the location.
-   */
+  @ApiModelProperty(value = "Version of the location. If the location is updated, then new version will get higher version number than the previous.")
   public Integer getLocationVersion() {
     return locationVersion;
   }
@@ -84,11 +76,8 @@ public class LocationJson {
     this.locationVersion = locationVersion;
   }
 
-  /**
-   * Returns the time location use starts.
-   *
-   * @return  the time location use starts.
-   */
+
+  @ApiModelProperty(value = "The time location use starts")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -97,11 +86,7 @@ public class LocationJson {
     this.startTime = startTime;
   }
 
-  /**
-   * Returns the time location use ends.
-   *
-   * @return  the time location use ends.
-   */
+  @ApiModelProperty(value = "The time location use ends")
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -110,9 +95,7 @@ public class LocationJson {
     this.endTime = endTime;
   }
 
-  /**
-   * Get the additional info for the location
-   */
+  @ApiModelProperty(value = "Additional information for the location")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -121,6 +104,12 @@ public class LocationJson {
     this.additionalInfo = additionalInfo;
   }
 
+  @ApiModelProperty(value =
+      "Location geometry in <a href=\"https://tools.ietf.org/html/rfc7946\">GeoJSON</a> with following limitations:"
+      +"<ul>"
+      +"<li>Feature / FeatureCollection is currently not supported, geometry should be given as <a href=\"https://tools.ietf.org/html/rfc7946#section-3.1.8\">GeometryCollection</a>.</li>"
+     + "<li>Only named CRS is supported, the given name must either be of the form: urn:ogc:def:crs:EPSG:x.y:4326 (x.y: the version of the EPSG) or of the form EPSG:4326</li>"
+      +"</ul>")
   public Geometry getGeometry() {
     return geometry;
   }
@@ -129,9 +118,7 @@ public class LocationJson {
     this.geometry = geometry;
   }
 
-  /**
-   * @return the area in sq. meters
-   */
+  @ApiModelProperty(value = "Calculated location area in sq meters")
   public Double getArea() {
     return area;
   }
@@ -140,9 +127,7 @@ public class LocationJson {
     this.area = area;
   }
 
-  /**
-   * @return the area override in sq. meters or null, if override is not set
-   */
+  @ApiModelProperty(value = "The user overridden area in sq. meters or null, if override is not set")
   public Double getAreaOverride() {
     return areaOverride;
   }
@@ -151,6 +136,7 @@ public class LocationJson {
     this.areaOverride = areaOverride;
   }
 
+  @ApiModelProperty(value = "Address of the location")
   public PostalAddressJson getPostalAddress() {
     return postalAddress;
   }
@@ -159,11 +145,7 @@ public class LocationJson {
     this.postalAddress = postalAddress;
   }
 
-  /**
-   * Get the location's area-section address ID.
-   *
-   * @return the fixedLocationId
-   */
+  @ApiModelProperty(value = "Fixed location IDs for this area")
   public List<Integer> getFixedLocationIds() {
     return fixedLocationIds;
   }
@@ -172,11 +154,7 @@ public class LocationJson {
     this.fixedLocationIds = fixedLocationIds;
   }
 
-  /**
-   * Get the location's calculated district ID.
-   *
-   * @return district ID or null
-   */
+  @ApiModelProperty(value = "Calculated city district ID for the location")
   public Integer getCityDistrictId() {
     return cityDistrictId;
   }
@@ -185,11 +163,7 @@ public class LocationJson {
     this.cityDistrictId = cityDistrictId;
   }
 
-  /**
-   * Get the locations user-overridden district ID
-   *
-   * @return district ID or null
-   */
+  @ApiModelProperty(value = "The user overridden city district id")
   public Integer getCityDistrictIdOverride() {
     return cityDistrictIdOverride;
   }
@@ -198,11 +172,7 @@ public class LocationJson {
     this.cityDistrictIdOverride = cityDistrictIdOverride;
   }
 
-  /**
-   * Returns the calculated payment tariff (maksuluokka) of the location.
-   *
-   * @return  the calculated payment tariff (maksuluokka) of the location or <code>null</code>.
-   */
+  @ApiModelProperty(value = "Calculated payment tariff (maksuluokka) of the location")
   public String getPaymentTariff() {
     return paymentTariff;
   }
@@ -211,11 +181,7 @@ public class LocationJson {
     this.paymentTariff = paymentTariff;
   }
 
-  /**
-   * Returns the user overridden payment tariff (maksuluokka) of the location.
-   *
-   * @return  the user overridden payment tariff (maksuluokka) of the location or <code>null</code>.
-   */
+  @ApiModelProperty(value = "User overridden payment tariff (maksuluokka) of the location")
   public String getPaymentTariffOverride() {
     return paymentTariffOverride;
   }
@@ -224,11 +190,8 @@ public class LocationJson {
     this.paymentTariffOverride = paymentTariffOverride;
   }
 
-  /**
-   * Returns true if it's possible to pass through the reserved area without obstacles (altakuljettava).
-   *
-   * @return  true if it's possible to pass through the reserved area without obstacles (altakuljettava).
-   */
+
+  @ApiModelProperty(value = "Underpass (altakuljettava)")
   public Boolean getUnderpass() {
     return underpass;
   }
@@ -246,10 +209,12 @@ public class LocationJson {
     return address;
   }
 
+  @ApiModelProperty(value = "Location address in string or name of the fixed location")
   public void setAddress(String address) {
     this.address = address;
   }
 
+  @ApiModelProperty(value = "Location start time reported by the customer")
   public ZonedDateTime getCustomerStartTime() {
     return customerStartTime;
   }
@@ -258,6 +223,7 @@ public class LocationJson {
     this.customerStartTime = customerStartTime;
   }
 
+  @ApiModelProperty(value = "Location end time reported by the customer")
   public ZonedDateTime getCustomerEndTime() {
     return customerEndTime;
   }
@@ -266,6 +232,7 @@ public class LocationJson {
     this.customerEndTime = customerEndTime;
   }
 
+  @ApiModelProperty(value = "Time when customer reported start and/or end time for the location")
   public ZonedDateTime getCustomerReportingTime() {
     return customerReportingTime;
   }

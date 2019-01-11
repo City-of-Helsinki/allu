@@ -5,9 +5,10 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * in Finnish: Hanke
- */
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Project (hanke)")
 public class ProjectJson {
   private Integer id;
   private String name;
@@ -32,9 +33,7 @@ public class ProjectJson {
     this.id = id;
   }
 
-  /**
-   * in Finnish: Hankkeen tunniste
-   */
+  @ApiModelProperty(value = "Id of the project")
   public Integer getId() {
     return id;
   }
@@ -43,9 +42,7 @@ public class ProjectJson {
     this.id = id;
   }
 
-  /**
-   * in Finnish: Hankkeen nimi
-   */
+  @ApiModelProperty(value = "Name of the project")
   public String getName() {
     return name;
   }
@@ -54,9 +51,7 @@ public class ProjectJson {
     this.name = name;
   }
 
-  /**
-   * in Finnish: hankkeen alkuaika. Lasketaan hankkeeseen sisältyvien hakemusten alkuajoista.
-   */
+  @ApiModelProperty(value = "Start time of the project. Calculated from the applications of the project.")
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -65,9 +60,7 @@ public class ProjectJson {
     this.startTime = startTime;
   }
 
-  /**
-   * in Finnish: hankkeen loppumisaika. Lasketaan hankkeeseen sisältyvien hakemusten loppumisajoista.
-   */
+  @ApiModelProperty(value = "End time of the project. Calculated from the applications of the project.")
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -76,9 +69,7 @@ public class ProjectJson {
     this.endTime = endTime;
   }
 
-  /**
-   * in Finnish: hankkeen kaupunginosat. Lasketaan hankkeeseen sisältyvien hakemusten kaupunginosista.
-   */
+  @ApiModelProperty(value = "City districts of the project. Calculated from the applications of the project.")
   public List<Integer> getCityDistricts() {
     return cityDistricts;
   }
@@ -87,9 +78,7 @@ public class ProjectJson {
     this.cityDistricts = cityDistricts;
   }
 
-  /**
-   * in Finnish: asiakkaan viite tai työnumero.
-   */
+  @ApiModelProperty(value = "Customer reference (asiakkaan viite tai työnumero) ")
   public String getCustomerReference() {
     return customerReference;
   }
@@ -98,9 +87,7 @@ public class ProjectJson {
     this.customerReference = customerReference;
   }
 
-  /**
-   * in Finnish: Hankkeen lisätietoa
-   */
+  @ApiModelProperty(value = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -109,11 +96,7 @@ public class ProjectJson {
     this.additionalInfo = additionalInfo;
   }
 
-  /**
-   * in Finnish: hankkeen äitihanke eli hanke, joka tämän hankkeen sisältää, mikäli äitihanke on olemassa.
-   *
-   * @return Id of the parent of <code>null</code> if parent does not exist.
-   */
+  @ApiModelProperty(value = "Id of the parent project")
   public Integer getParentId() {
     return parentId;
   }
@@ -122,6 +105,7 @@ public class ProjectJson {
     this.parentId = parentId;
   }
 
+  @ApiModelProperty(value = "Customer of the project")
   public CustomerJson getCustomer() {
     return customer;
   }
@@ -130,6 +114,7 @@ public class ProjectJson {
     this.customer = customer;
   }
 
+  @ApiModelProperty(value = "Contact of the project")
   public ContactJson getContact() {
     return contact;
   }
@@ -138,6 +123,7 @@ public class ProjectJson {
     this.contact = contact;
   }
 
+  @ApiModelProperty(value = "Project identifier (hanketunniste)")
   public String getIdentifier() {
     return identifier;
   }
@@ -146,6 +132,7 @@ public class ProjectJson {
     this.identifier = identifier;
   }
 
+  @ApiModelProperty(value = "Creator of the project")
   public UserJson getCreator() {
     return creator;
   }

@@ -1,17 +1,17 @@
 package fi.hel.allu.servicecore.domain;
 
+import java.time.ZonedDateTime;
+
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotNull;
-
-import java.time.ZonedDateTime;
-
-/**
- * in Finnish: hakemuksen tagi.
- */
+@ApiModel(value = "Application tag")
 public class ApplicationTagJson {
   private Integer addedBy;
   @NotNull
@@ -23,6 +23,7 @@ public class ApplicationTagJson {
    * Add a fake "id" field during serialization so that comparison of tag lists
    * in allu-ui-service's ObjectComparer compares by ID.
    */
+  @ApiModelProperty(hidden = true)
   @JsonProperty(access = Access.READ_ONLY)
   public int getId() {
     return type.ordinal();
@@ -38,11 +39,7 @@ public class ApplicationTagJson {
     this.creationTime = creationTime;
   }
 
-  /**
-   * User (handler) who added the tag.
-   *
-   * @return  User (handler) who added the tag.
-   */
+  @ApiModelProperty(value = "Id of the user who added the tag")
   public Integer getAddedBy() {
     return addedBy;
   }
@@ -51,11 +48,7 @@ public class ApplicationTagJson {
     this.addedBy = addedBy;
   }
 
-  /**
-   * Type of the tag.
-   *
-   * @return  Type of the tag.
-   */
+  @ApiModelProperty(value = "Type of the tag")
   public ApplicationTagType getType() {
     return type;
   }
@@ -64,11 +57,7 @@ public class ApplicationTagJson {
     this.type = type;
   }
 
-  /**
-   * Time the tag was added.
-   *
-   * @return  Time the tag was added.
-   */
+  @ApiModelProperty(value = "Time the tag was added.")
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }

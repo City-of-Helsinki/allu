@@ -1,13 +1,14 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.types.AttachmentType;
-
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
-/**
- * Attachment information
- */
+import javax.validation.constraints.NotNull;
+
+import fi.hel.allu.common.types.AttachmentType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Attachment information")
 public class AttachmentInfoJson {
 
   private Integer id;
@@ -23,9 +24,7 @@ public class AttachmentInfoJson {
   private ZonedDateTime creationTime;
   private boolean decisionAttachment;
 
-  /**
-   * The attachment ID -- created by database
-   */
+  @ApiModelProperty(value = "The attachment ID")
   public Integer getId() {
     return id;
   }
@@ -34,11 +33,7 @@ public class AttachmentInfoJson {
     this.id = id;
   }
 
-  /**
-   * Id of the user who has made the latest change to the attachment.
-   *
-   * @return  Name of the handler who has made the latest change to the attachment.
-   */
+  @ApiModelProperty(value = "Id of the user who has made the latest change to the attachment.")
   public String getHandlerName() {
     return handlerName;
   }
@@ -47,11 +42,7 @@ public class AttachmentInfoJson {
     this.handlerName = handlerName;
   }
 
-  /**
-   * Type of the attachment.
-   *
-   * @return  Type of the attachment.
-   */
+  @ApiModelProperty(value = "Type of the attachment.")
   public AttachmentType getType() {
     return type;
   }
@@ -60,9 +51,7 @@ public class AttachmentInfoJson {
     this.type = type;
   }
 
-  /**
-   * Attachments mime type
-   */
+  @ApiModelProperty(value = "Attachments mime type")
   public String getMimeType() {
     return mimeType;
   }
@@ -71,9 +60,7 @@ public class AttachmentInfoJson {
     this.mimeType = mimeType;
   }
 
-  /**
-   * Attachment name (file name) -- supplied by UI
-   */
+  @ApiModelProperty(value = "Attachment name (file name)")
   public String getName() {
     return name;
   }
@@ -82,9 +69,7 @@ public class AttachmentInfoJson {
     this.name = name;
   }
 
-  /**
-   * Attachment description -- Supplied by UI
-   */
+  @ApiModelProperty(value = "Attachment description")
   public String getDescription() {
     return description;
   }
@@ -93,9 +78,7 @@ public class AttachmentInfoJson {
     this.description = description;
   }
 
-  /**
-   * Attachment size -- supplied by model
-   */
+  @ApiModelProperty(value = "Attachment size")
   public Long getSize() {
     return size;
   }
@@ -104,9 +87,7 @@ public class AttachmentInfoJson {
     this.size = size;
   }
 
-  /**
-   * Attachment creation time -- supplied by model
-   */
+  @ApiModelProperty(value = "Attachment creation time")
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -115,9 +96,7 @@ public class AttachmentInfoJson {
     this.creationTime = creationTime;
   }
 
-  /**
-   * Database ID of the attachment data.
-   */
+  @ApiModelProperty(value = "ID of the attachment data.")
   public Integer getAttachmentDataId() {
     return attachmentDataId;
   }
@@ -126,9 +105,7 @@ public class AttachmentInfoJson {
     this.attachmentDataId = attachmentDataId;
   }
 
-  /**
-   * Indication if attachment should be included in decision distribution
-   */
+  @ApiModelProperty(value = "Indication if attachment should be included in decision distribution")
   public boolean isDecisionAttachment() {
     return decisionAttachment;
   }

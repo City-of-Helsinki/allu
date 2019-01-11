@@ -1,14 +1,16 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.types.CommentType;
-import org.hibernate.validator.constraints.NotBlank;
-
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
-/**
- * Comment for an application
- */
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import fi.hel.allu.common.types.CommentType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Comment for an application")
 public class CommentJson {
   private Integer id;
   @NotNull
@@ -20,11 +22,7 @@ public class CommentJson {
   private UserJson user;
   private String commentator;
 
-  /**
-   * Get the database ID of the comment. Can be null for new comments.
-   *
-   * @return database ID or null
-   */
+  @ApiModelProperty(value = "Id of the comment. Should be null when creating new comment")
   public Integer getId() {
     return id;
   }
@@ -33,11 +31,8 @@ public class CommentJson {
     this.id = id;
   }
 
-  /**
-   * Get the type of the comment
-   *
-   * @return comment type
-   */
+
+  @ApiModelProperty(value = "Type of the comment")
   public CommentType getType() {
     return type;
   }
@@ -46,11 +41,7 @@ public class CommentJson {
     this.type = type;
   }
 
-  /**
-   * Get the comment text.
-   *
-   * @return comment text
-   */
+  @ApiModelProperty(value = "Comment text")
   public String getText() {
     return text;
   }
@@ -59,11 +50,7 @@ public class CommentJson {
     this.text = text;
   }
 
-  /**
-   * Get comment's creation time. Can be null for new comments.
-   *
-   * @return creation time or null
-   */
+  @ApiModelProperty(value = "Comment creation time")
   public ZonedDateTime getCreateTime() {
     return createTime;
   }
@@ -72,11 +59,7 @@ public class CommentJson {
     this.createTime = createTime;
   }
 
-  /**
-   * Get comment's last update time. Can be null for new comments.
-   *
-   * @return update time or null
-   */
+  @ApiModelProperty(value = "Comment last update time")
   public ZonedDateTime getUpdateTime() {
     return updateTime;
   }
@@ -85,11 +68,8 @@ public class CommentJson {
     this.updateTime = updateTime;
   }
 
-  /**
-   * Get the user who last updated the comment. Can be null for new comments.
-   *
-   * @return user info or null
-   */
+
+  @ApiModelProperty(value = "User who last updated comment")
   public UserJson getUser() {
     return user;
   }
@@ -98,6 +78,7 @@ public class CommentJson {
     this.user = user;
   }
 
+  @ApiModelProperty(value = "Name of the commentator")
   public String getCommentator() {
     return commentator;
   }

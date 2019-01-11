@@ -1,11 +1,15 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.domain.types.CustomerType;
-import org.hibernate.validator.constraints.NotBlank;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotBlank;
+
+import fi.hel.allu.common.domain.types.CustomerType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Customer")
 public class CustomerJson {
 
   private Integer id;
@@ -28,9 +32,7 @@ public class CustomerJson {
   private String country;
   private String projectIdentifierPrefix;
 
-  /**
-   * in Finnish: Tietokantatunniste
-   */
+  @ApiModelProperty(value = "Id of the customer")
   public Integer getId() {
     return id;
   }
@@ -39,9 +41,7 @@ public class CustomerJson {
     this.id = id;
   }
 
-  /**
-   * in Finnish: Hakijan tyyppi: yksityinen ihminen, yritys tai yhteisö.
-   */
+  @ApiModelProperty(value = "Customer type")
   public CustomerType getType() {
     return type;
   }
@@ -50,9 +50,7 @@ public class CustomerJson {
     this.type = type;
   }
 
-  /**
-   * in Finnish: Henkilön/yrityksen/yhteisön nimi
-   */
+  @ApiModelProperty(value = "Name of the customer")
   public String getName() {
     return name;
   }
@@ -61,9 +59,7 @@ public class CustomerJson {
     this.name = name;
   }
 
-  /**
-   * in Finnish: Henkilön/yrityksen/yhteisön osoitetiedot
-   */
+  @ApiModelProperty(value = "Postal address of the customer")
   public PostalAddressJson getPostalAddress() {
     return postalAddress;
   }
@@ -72,9 +68,7 @@ public class CustomerJson {
     this.postalAddress = postalAddress;
   }
 
-  /**
-   * in Finnish: Henkilön/yrityksen/yhteisön sähköpostiosoite
-   */
+  @ApiModelProperty(value = "Email of the customer")
   public String getEmail() {
     return email;
   }
@@ -83,9 +77,7 @@ public class CustomerJson {
     this.email = email;
   }
 
-  /**
-   * in Finnish: Henkilön/yrityksen/yhteisön puhelinnumero
-   */
+  @ApiModelProperty(value = "Phone number of the customer")
   public String getPhone() {
     return phone;
   }
@@ -94,9 +86,7 @@ public class CustomerJson {
     this.phone = phone;
   }
 
-  /**
-   * in Finnish: Henkilön henkilötunnus tai yrityksen/yhteisön Y-tunnus.
-   */
+  @ApiModelProperty(value = "Key of the customer (SSN or business identifier depending on customer type)")
   public String getRegistryKey() {
     return registryKey;
   }
@@ -105,9 +95,7 @@ public class CustomerJson {
     this.registryKey = registryKey;
   }
 
-  /**
-   * E-invoice identifier of the customer (OVT-tunnus).
-   */
+  @ApiModelProperty(value = "E-invoice identifier (OVT-tunnus)")
   public String getOvt() {
     return ovt;
   }
@@ -116,9 +104,7 @@ public class CustomerJson {
     this.ovt = ovt;
   }
 
-  /*
-   * @return  True, if the user is active i.e. has not been marked as deleted.
-   */
+  @ApiModelProperty(value = "True, if the customer is active i.e. has not been marked as deleted")
   public boolean isActive() {
     return active;
   }
@@ -127,10 +113,7 @@ public class CustomerJson {
     this.active = active;
   }
 
-  /**
-   * SAP Customer Number (KUNNR)
-   *
-   */
+  @ApiModelProperty(value = "SAP customer number")
   public String getSapCustomerNumber() {
     return sapCustomerNumber;
   }
@@ -139,10 +122,7 @@ public class CustomerJson {
     this.sapCustomerNumber = sapCustomerNumber;
   }
 
-  /**
-   * SAP invoicing prohibited (SAP laskutuskielto)
-   * @return
-   */
+  @ApiModelProperty(value = "SAP invoicing prohibited (laskutuskielto SAP:ssa)")
   public boolean isInvoicingProhibited() {
     return invoicingProhibited;
   }
@@ -151,9 +131,7 @@ public class CustomerJson {
     this.invoicingProhibited = invoicingProhibited;
   }
 
-  /**
-   * E-invoicing operator code
-   */
+  @ApiModelProperty(value = "E-invoicing operator code")
   public String getInvoicingOperator() {
     return invoicingOperator;
   }
@@ -162,6 +140,7 @@ public class CustomerJson {
     this.invoicingOperator = invoicingOperator;
   }
 
+  @ApiModelProperty(value = "Customer used only as invoice recipient")
   public boolean isInvoicingOnly() {
     return invoicingOnly;
   }
@@ -170,6 +149,7 @@ public class CustomerJson {
     this.invoicingOnly = invoicingOnly;
   }
 
+  @ApiModelProperty(value = "Customer's country (ISO 3166-1 alpha-2 country code).")
   public String getCountry() {
     return country;
   }
@@ -178,6 +158,7 @@ public class CustomerJson {
     this.country = country;
   }
 
+  @ApiModelProperty(value = "Identifier prefix for customer's projects")
   public String getProjectIdentifierPrefix() {
     return projectIdentifierPrefix;
   }

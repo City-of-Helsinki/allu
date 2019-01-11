@@ -2,9 +2,10 @@ package fi.hel.allu.servicecore.domain;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-/**
- * in Finnish: Yhteyshenkilö
- */
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Contact person")
 public class ContactJson {
   private Integer id;
   private Integer customerId;
@@ -19,9 +20,7 @@ public class ContactJson {
   private boolean active;
   private Boolean orderer;
 
-  /**
-   * in Finnish: Yhteyshenkilön tunniste
-   */
+  @ApiModelProperty(value = "Id of the contact")
   public Integer getId() {
     return id;
   }
@@ -30,9 +29,7 @@ public class ContactJson {
     this.id = id;
   }
 
-  /**
-   * in Finnish: Yhteyshenkilön hakijan tunniste
-   */
+  @ApiModelProperty(value = "Id of the customer whose contact this is")
   public Integer getCustomerId() {
     return customerId;
   }
@@ -41,9 +38,7 @@ public class ContactJson {
     this.customerId = customerId;
   }
 
-  /**
-   * in Finnish: Yhteyshenkilön nimi
-   */
+  @ApiModelProperty(value = "Name of the contact")
   public String getName() {
     return name;
   }
@@ -52,9 +47,7 @@ public class ContactJson {
     this.name = name;
   }
 
-  /**
-   * in Finnish: Katuosoite
-   */
+  @ApiModelProperty(value = "Street address of the contact")
   public String getStreetAddress() {
     return streetAddress;
   }
@@ -63,9 +56,7 @@ public class ContactJson {
     this.streetAddress = streetAddress;
   }
 
-  /**
-   * in Finnish: Postinumer
-   */
+  @ApiModelProperty(value = "Postal code of the contact")
   public String getPostalCode() {
     return postalCode;
   }
@@ -74,9 +65,7 @@ public class ContactJson {
     this.postalCode = postalCode;
   }
 
-  /**
-   * in Finnish: Kaupunki
-   */
+  @ApiModelProperty(value = "City of the contact")
   public String getCity() {
     return city;
   }
@@ -85,9 +74,7 @@ public class ContactJson {
     this.city = city;
   }
 
-  /**
-   * in Finnish: Sähköpostiosoite
-   */
+  @ApiModelProperty(value = "Email of the contact")
   public String getEmail() {
     return email;
   }
@@ -96,9 +83,7 @@ public class ContactJson {
     this.email = email;
   }
 
-  /**
-   * in Finnish: Puhelinnumero
-   */
+  @ApiModelProperty(value = "Phone number of the contact")
   public String getPhone() {
     return phone;
   }
@@ -107,9 +92,7 @@ public class ContactJson {
     this.phone = phone;
   }
 
-  /*
-   * @return  True, if the user is active i.e. has not been marked as deleted.
-   */
+  @ApiModelProperty(value = "True, if the user is active i.e. has not been marked as deleted.")
   public boolean isActive() {
     return active;
   }
@@ -118,6 +101,7 @@ public class ContactJson {
     this.active = active;
   }
 
+  @ApiModelProperty(hidden = true)
   public Boolean getOrderer() {
     return orderer;
   }
