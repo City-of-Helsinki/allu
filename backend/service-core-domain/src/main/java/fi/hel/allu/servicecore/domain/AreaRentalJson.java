@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -22,15 +23,13 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   @NotNull(message = "{application.arearental.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
+  @ApiModelProperty(hidden = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.AREA_RENTAL;
   }
 
-  /**
-   * In Finnish: PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
-   * True, if the contractor doing the actual work has PKS-card.
-   */
+  @ApiModelProperty(value = "True, if the contractor doing the actual work has PKS-card")
   public Boolean getPksCard() {
     return pksCard;
   }
@@ -42,6 +41,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   /**
    * Vähäistä suurempaa haittaa aiheuttava työ.
    */
+  @ApiModelProperty(value = "Work causing major disturbance (vähäistä suurempaa haittaa aiheuttava työ)")
   public Boolean getMajorDisturbance() {
     return majorDisturbance;
   }
@@ -50,9 +50,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.majorDisturbance = majorDisturbance;
   }
 
-  /**
-   * In Finnish: Työn tarkoitus.
-   */
+  @ApiModelProperty(value = "Work purpose")
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -61,9 +59,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workPurpose = workPurpose;
   }
 
-  /**
-   * In Finnish: lisätiedot.
-   */
+  @ApiModelProperty(value = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -72,9 +68,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.additionalInfo = additionalInfo;
   }
 
-  /**
-   * In Finnish: suoritettavat liikennejärjestelytyöt.
-   */
+  @ApiModelProperty(value = "Traffic arrangements")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -83,9 +77,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.trafficArrangements = trafficArrangements;
   }
 
-  /**
-   * In Finnish: Työ valmis.
-   */
+  @ApiModelProperty(value = "Work finished date")
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
@@ -94,9 +86,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workFinished = workFinished;
   }
 
-  /**
-   * In Finnish: Asiakkaan ilmoittama aika, jolloin työ on valmis.
-   */
+  @ApiModelProperty(value = "Work finished date reported by customer")
   public ZonedDateTime getCustomerWorkFinished() {
     return customerWorkFinished;
   }
@@ -105,9 +95,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.customerWorkFinished = customerWorkFinished;
   }
 
-  /**
-   * Date when customer reported work finished date
-   */
+  @ApiModelProperty(value = "Date when customer reported work finished date")
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
@@ -116,9 +104,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workFinishedReported = workFinishedReported;
   }
 
-  /**
-   * In Finnish: Liikennejärjestelyn haitta.
-   */
+  @ApiModelProperty(value = "Traffic arrangement impediment")
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }
