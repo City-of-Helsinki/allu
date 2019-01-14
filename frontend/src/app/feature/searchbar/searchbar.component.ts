@@ -18,6 +18,7 @@ import {select, Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {merge} from 'rxjs/internal/observable/merge';
 
 
 enum BarType {
@@ -82,6 +83,13 @@ export class SearchbarComponent implements OnInit, OnDestroy {
       filter(searchTerm => !!searchTerm && searchTerm.length >= 3)
     ).subscribe(searchTerm => this.mapStore.addressSearchChange(searchTerm));
 
+    merge(
+      this.searchForm.get('address').valueChanges,
+      this.searchForm.get('statuses').valueChanges
+    ).pipe(
+      takeUntil(this.destroy)
+    ).subscribe(() => this.onFormChange(this.searchForm.getRawValue()));
+
     this.matchingAddresses = this.mapStore.matchingAddresses.pipe(
       takeUntil(this.destroy),
       map(matching => matching.sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress)))
@@ -101,8 +109,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  onDateChange(event: any): void {
-    this.notifySearchUpdated(this.searchForm.getRawValue());
+  onFormChange(value: MapSearchFilter): void {
+    this.notifySearchUpdated(value);
   }
 
   @Input()

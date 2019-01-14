@@ -76,7 +76,7 @@
                [placeholder]="'applicationSearch.startTime' | translation"
                [matDatepicker]="startDatePicker"
                [max]="searchForm.get('endDate').value"
-               (dateChange)="onDateChange($event)"/>
+               (dateChange)="onFormChange(searchForm.value)"/>
         <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #startDatePicker></mat-datepicker>
         <field-error [form]="searchForm" field="startDate" hasError="required">
@@ -91,7 +91,7 @@
                [placeholder]="'applicationSearch.endTime' | translation"
                [matDatepicker]="endDatePicker"
                [min]="searchForm.get('startDate').value"
-               (dateChange)="onDateChange($event)"/>
+               (dateChange)="onFormChange(searchForm.value)"/>
         <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #endDatePicker></mat-datepicker>
         <field-error [form]="searchForm" field="endDate" hasError="required">
@@ -136,7 +136,7 @@
                  [placeholder]="'applicationSearch.startTime' | translation"
                  [matDatepicker]="startDatePicker"
                  [max]="searchForm.get('endDate').value"
-                 (dateChange)="onDateChange($event)"/>
+                 (dateChange)="onFormChange(searchForm.value)"/>
           <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
         </mat-form-field>
@@ -147,7 +147,7 @@
                  [placeholder]="'applicationSearch.endTime' | translation"
                  [matDatepicker]="endDatePicker"
                  [min]="searchForm.get('startDate').value"
-                 (dateChange)="onDateChange($event)"/>
+                 (dateChange)="onFormChange(searchForm.value)"/>
           <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
           <mat-datepicker #endDatePicker></mat-datepicker>
         </mat-form-field>
