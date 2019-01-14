@@ -20,7 +20,6 @@ public class AttachmentInfoJson {
   private String name;
   private String description;
   private Long size;
-  private Integer attachmentDataId;
   private ZonedDateTime creationTime;
   private boolean decisionAttachment;
 
@@ -94,15 +93,6 @@ public class AttachmentInfoJson {
 
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
-  }
-
-  @ApiModelProperty(value = "ID of the attachment data.")
-  public Integer getAttachmentDataId() {
-    return attachmentDataId;
-  }
-
-  public void setAttachmentDataId(Integer attachmentDataId) {
-    this.attachmentDataId = attachmentDataId;
   }
 
   @ApiModelProperty(value = "Indication if attachment should be included in decision distribution")
