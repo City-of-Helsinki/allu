@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import fi.hel.allu.supervision.api.domain.SupervisionTaskCreateJson;
 import fi.hel.allu.supervision.api.domain.SupervisionTaskSearchParameters;
@@ -59,6 +60,22 @@ public class SupervisionTaskController {
     SupervisionTaskSearchCriteria criteria = searchParameterMapper.createSearchCriteria(searchParameters);
     Pageable pageRequest = MapperUtil.mapToPageRequest(searchParameters);
     return ResponseEntity.ok(supervisionTaskService.search(criteria, pageRequest).map(s -> supervisionTaskMapper.mapToSearchResult(s)));
+  }
+
+  @ApiOperation(value = "Get supervision task by ID",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = SupervisionTaskSearchResult.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Supervision task retrieved successfully", response = SupervisionTaskSearchResult.class),
+      @ApiResponse(code = 404, message = "Task with ID not found", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<SupervisionTaskSearchResult> findById(@PathVariable Integer id) {
+    SupervisionTaskJson task = supervisionTaskService.findById(id);
+    return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(task));
   }
 
   @ApiOperation(value = "Create new supervision task. Returns ID of the created task. "
