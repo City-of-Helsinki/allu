@@ -89,6 +89,10 @@ public class SupervisionTaskService {
 
   public SupervisionTaskJson insert(SupervisionTaskJson supervisionTaskJson) {
     SupervisionTask task = SupervisionTaskMapper.mapToModel(supervisionTaskJson);
+    return insert(task);
+  }
+
+  public  SupervisionTaskJson insert(SupervisionTask task) {
     task.setCreatorId(userService.getCurrentUser().getId());
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.postForEntity(
         applicationProperties.getSupervisionTaskCreateUrl(), task, SupervisionTask.class);

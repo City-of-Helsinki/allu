@@ -6,16 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
+import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import fi.hel.allu.servicecore.service.UserService;
+import fi.hel.allu.supervision.api.domain.SupervisionTaskCreateJson;
 import fi.hel.allu.supervision.api.domain.SupervisionTaskSearchResult;
 
 @Component
-public class SupervisionTaskSearchResultMapper {
+public class SupervisionTaskMapper {
 
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
@@ -47,5 +49,9 @@ public class SupervisionTaskSearchResultMapper {
     return result;
   }
 
+  public SupervisionTask mapToModel(SupervisionTaskCreateJson supervisionTask) {
+    return new SupervisionTask(supervisionTask.getApplicationId(), supervisionTask.getType(),
+        supervisionTask.getOwnerId(), supervisionTask.getPlannedFinishingTime(), supervisionTask.getDescription());
+  }
 
 }

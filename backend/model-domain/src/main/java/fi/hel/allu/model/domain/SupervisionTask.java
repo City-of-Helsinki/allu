@@ -53,6 +53,19 @@ public class SupervisionTask {
     this.locationId = locationId;
   }
 
+  public SupervisionTask(
+      Integer applicationId,
+      SupervisionTaskType type,
+      Integer ownerId,
+      ZonedDateTime plannedFinishingTime,
+      String description) {
+    this.applicationId = applicationId;
+    this.type = type;
+    this.ownerId = ownerId;
+    this.plannedFinishingTime = plannedFinishingTime;
+    this.description = description;
+  }
+
   /**
    * Database id of the task.
    *
