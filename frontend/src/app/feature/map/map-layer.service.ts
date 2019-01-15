@@ -154,7 +154,7 @@ export class MapLayerService {
   }
 
   createOverlay(layerName: string): L.TileLayer {
-    return this.createAuthenticatedOverlayLayer(layerName, this.authService.token);
+    return this.createOverlayLayer(layerName);
   }
 
   private createWinkkiLayer(layerName: string, status: string, style: PathOptions = pathStyle.DEFAULT): L.FeatureGroup {

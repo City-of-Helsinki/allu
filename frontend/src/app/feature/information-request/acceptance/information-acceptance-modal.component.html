@@ -64,9 +64,11 @@
             [fieldKey]="field"></customer-acceptance>
         </ng-container>
 
-        <div *ngSwitchCase="'GEOMETRY'">
-          <!-- Placeholder -->
-        </div>
+        <locations-acceptance
+          *ngSwitchCase="'GEOMETRY'"
+          [parentForm]="form"
+          [oldLocations]="oldInfo?.locations"
+          [newLocations]="newInfo?.locations"></locations-acceptance>
 
         <div *ngSwitchCase="'POSTAL_ADDRESS'">
           <!-- Placeholder -->

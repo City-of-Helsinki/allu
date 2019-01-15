@@ -1,11 +1,13 @@
 import {HostBinding, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {takeUntil} from 'rxjs/internal/operators';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {FieldLabels, FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
+import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
 import {Subject} from 'rxjs';
+import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
 export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   @Input() form: FormGroup;
+  @Input() id: string;
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
@@ -13,7 +15,7 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   @ViewChild('newValuesSelect') newValuesSelect: FieldSelectComponent;
 
   selectionForm: FormGroup;
-  fieldLabels: FieldLabels;
+  fieldDescriptions: FieldDescription[];
   oldValues: FieldValues;
   oldDisplayValues: FieldValues;
   newValues: FieldValues;
@@ -92,10 +94,10 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   }
 
   protected initResultForm(): void {
-    Object.keys(this.fieldLabels).forEach(field => {
-      const validators = this.isRequired(field) ? [Validators.required] : [];
+    this.fieldDescriptions.forEach(desc => {
+      const validators = this.isRequired(desc.field) ? [Validators.required] : [];
       const ctrl = this.fb.control(undefined, validators);
-      this.form.addControl(field, ctrl);
+      this.form.addControl(desc.field, ctrl);
     });
 
     this.form.valueChanges.pipe(

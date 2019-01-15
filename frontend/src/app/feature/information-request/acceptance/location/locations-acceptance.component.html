@@ -1,0 +1,9 @@
+<div *ngFor="let key of locationKeys; index as i">
+  <location-acceptance
+    [id]="i"
+    [formArray]="locationForms"
+    [oldLocation]="oldLocationsByKey[key]"
+    [newLocation]="newLocationsByKey[key]"
+    [readonly]="readonly"
+    (locationChanges)="onLocationChange($event)"></location-acceptance>
+</div>

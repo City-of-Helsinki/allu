@@ -25,6 +25,10 @@ import {ContactInfoAcceptanceComponent} from '@feature/information-request/accep
 import {CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
+import {LocationsAcceptanceComponent} from '@feature/information-request/acceptance/location/locations-acceptance.component';
+import {LocationAcceptanceComponent} from '@feature/information-request/acceptance/location/location-acceptance.component';
+import {LocationInfoAcceptanceComponent} from '@feature/information-request/acceptance/location/location-info-acceptance.component';
+import {MapModule} from '@feature/map/map.module';
 
 @NgModule({
   imports: [
@@ -33,7 +37,8 @@ import {CustomerAcceptanceComponent} from '@feature/information-request/acceptan
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    AlluCommonModule
+    AlluCommonModule,
+    MapModule
   ],
   declarations: [
     InformationAcceptanceModalComponent,
@@ -51,7 +56,10 @@ import {CustomerAcceptanceComponent} from '@feature/information-request/acceptan
     RequestFieldComponent,
     FieldSelectComponent,
     CustomerModalComponent,
-    ContactModalComponent
+    ContactModalComponent,
+    LocationsAcceptanceComponent,
+    LocationAcceptanceComponent,
+    LocationInfoAcceptanceComponent
   ],
   providers: [
     InformationRequestService,

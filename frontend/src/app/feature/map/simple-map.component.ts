@@ -7,11 +7,11 @@ import {MapFeature} from '@feature/map/map-feature';
 import {pathStyle} from '@service/map/map-draw-styles';
 
 @Component({
-  selector: 'supervision-map',
-  templateUrl: './supervision-map.component.html',
+  selector: 'simple-map',
+  templateUrl: './simple-map.component.html',
   styleUrls: []
 })
-export class SupervisionMapComponent implements AfterViewInit {
+export class SimpleMapComponent implements AfterViewInit {
   @Input() mapId = 'map';
   @Input() content: MapFeature[] = [];
   @Input() selectedFeature: number;
@@ -60,7 +60,7 @@ export class SupervisionMapComponent implements AfterViewInit {
     if (feature.id === this.selectedFeature) {
       return L.geoJSON(fc, {style: () => pathStyle.HIGHLIGHT});
     } else {
-      return L.geoJSON(fc);
+      return L.geoJSON(fc, {style: () => feature.style});
     }
   }
 

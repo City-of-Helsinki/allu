@@ -13,6 +13,8 @@ import {FieldValues} from '@feature/information-request/acceptance/field-select/
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ObjectUtil} from '@util/object.util';
 import {OrdererId} from '@model/application/cable-report/orderer-id';
+import {Location} from '@model/common/location';
+import {NumberUtil} from '@util/number.util';
 
 export interface State {
   application: Application;
@@ -25,6 +27,7 @@ export interface State {
   invoicingCustomer: Customer;
   useCustomerForInvoicing: CustomerRoleType;
   otherInfo: FieldValues;
+  locations: Location[];
 }
 
 export const initialState: State = {
@@ -37,7 +40,8 @@ export const initialState: State = {
   kindsWithSpecifiers: {},
   invoicingCustomer: undefined,
   useCustomerForInvoicing: undefined,
-  otherInfo: undefined
+  otherInfo: undefined,
+  locations: []
 };
 
 function updateCustomer(state: State, action: SetCustomer): State {
@@ -106,6 +110,24 @@ export function reducer(state: State = initialState, action: InformationRequestR
       return {
         ...state,
         otherInfo: action.payload
+      };
+    }
+
+    case InformationRequestResultActionType.SetLocations: {
+      return {
+        ...state,
+        locations: action.payload
+      };
+    }
+
+    case InformationRequestResultActionType.SetLocation: {
+      const location = action.payload;
+      return {
+        ...state,
+        locations: ArrayUtil.createOrReplace(
+          state.locations,
+          action.payload,
+          loc => NumberUtil.isExisting(location) && loc.id === location.id)
       };
     }
 

@@ -6,7 +6,8 @@ import {CodeSetCodeMap} from '@model/codeset/codeset';
 import {Some} from '@util/option';
 import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import {FormBuilder, Validators} from '@angular/forms';
-import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
 const requiredFields = {
   type: true,
@@ -51,7 +52,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
     this._newCustomer = customer;
     this.newValues = this.toFieldValues(customer);
     this.newDisplayValues = this.toDisplayValues(this.newValues);
-    this.fieldLabels = this.createLabels(customer.type);
+    this.fieldDescriptions = this.createDescriptions(customer.type);
   }
 
   resultChanges(result: FieldValues): void {
@@ -106,19 +107,19 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
     };
   }
 
-  private createLabels(customerType: string): FieldLabels {
-    return {
-      name: findTranslation(['customer.type', customerType, 'nameLabel']),
-      registryKey: findTranslation(['customer.type', customerType, 'id']),
-      ovt: findTranslation(['customer.type', customerType, 'ovt']),
-      invoicingOperator: findTranslation(['customer.type', customerType, 'invoicingOperator']),
-      streetAddress: findTranslation('postalAddress.streetAddress'),
-      postalCode: findTranslation('postalAddress.postalCode'),
-      city: findTranslation('postalAddress.postalOffice'),
-      email: findTranslation('customer.email'),
-      phone: findTranslation('customer.phone'),
-      country: findTranslation('customer.country')
-    };
+  private createDescriptions(customerType: string): FieldDescription[] {
+    return [
+      new FieldDescription('name', findTranslation(['customer.type', customerType, 'nameLabel'])),
+      new FieldDescription('registryKey', findTranslation(['customer.type', customerType, 'id'])),
+      new FieldDescription('ovt', findTranslation(['customer.type', customerType, 'ovt'])),
+      new FieldDescription('invoicingOperator', findTranslation(['customer.type', customerType, 'invoicingOperator'])),
+      new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
+      new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
+      new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
+      new FieldDescription('email', findTranslation('customer.email')),
+      new FieldDescription('phone', findTranslation('customer.phone')),
+      new FieldDescription('country', findTranslation('customer.country'))
+    ];
   }
 
   private getCountry(code: string): string {

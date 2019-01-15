@@ -5,7 +5,8 @@ import {findTranslation} from '@util/translations';
 import get from 'lodash/get';
 import {FieldKeyMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
 import {FormBuilder} from '@angular/forms';
-import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
 const requiredFields = {
   startTime: true,
@@ -36,7 +37,7 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> i
 
     this.newValues = this.toFieldValues(this.newInfo);
     this.newDisplayValues = this.toDisplayValues(this.newValues);
-    this.fieldLabels = this.createLabels();
+    this.fieldDescriptions = this.createDescriptions();
 
     super.ngOnInit();
   }
@@ -72,22 +73,18 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> i
     return fieldValues;
   }
 
-  private createLabels(): FieldLabels {
-    return this.fieldKeys.reduce((labels: FieldLabels, key: string) => {
-      const newLabel = this.createLabel(key);
-      return {
-        ...labels,
-        ...newLabel
-      };
-    }, {});
+  private createDescriptions(): FieldDescription[] {
+    return this.fieldKeys
+      .map(key => this.createDescription(key))
+      .filter(desc => !!desc);
   }
 
-  private createLabel(fieldKey: string): FieldLabels {
+  private createDescription(fieldKey: string): FieldDescription {
     const fieldInfo = FieldKeyMapping[fieldKey];
-    const labels = {};
     if (fieldInfo) {
-      labels[fieldInfo.fieldName] = findTranslation(['informationRequest.field', fieldKey]);
+      return new FieldDescription(fieldInfo.fieldName, findTranslation(['informationRequest.field', fieldKey]));
+    } else {
+      return undefined;
     }
-    return labels;
   }
 }

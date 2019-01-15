@@ -21,14 +21,16 @@
     <div class="section-content">
       <field-select
         #oldValuesSelect
-        [fieldLabels]="fieldLabels"
+        [id]="id + '-old'"
+        [descriptions]="fieldDescriptions"
         [fieldValues]="oldDisplayValues"
         formControlName="oldValues"></field-select>
     </div>
     <div class="section-content">
       <field-select
         #newValuesSelect
-        [fieldLabels]="fieldLabels"
+        [id]="id + '-new'"
+        [descriptions]="fieldDescriptions"
         [fieldValues]="newDisplayValues"
         [comparedValues]="oldDisplayValues"
         formControlName="newValues"></field-select>

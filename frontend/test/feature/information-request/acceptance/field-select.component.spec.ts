@@ -1,20 +1,22 @@
-import {Component, DebugElement} from '@angular/core';
+import {Component, DebugElement, Input} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '@feature/common/allu-common.module';
 import {MatDialogModule, MatListOption} from '@angular/material';
 import {By} from '@angular/platform-browser';
-import {FieldLabels, FieldSelectComponent, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldSelectComponent, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldValueComponent} from '@feature/information-request/acceptance/field-select/field-value.component';
 import {getButtonWithText, getMatIcon} from '../../../selector-helpers';
 import {findTranslation} from '@util/translations';
+import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
+import {MapFeature} from '@feature/map/map-feature';
 
 @Component({
   selector: 'test-host',
   template: `
     <form [formGroup]="form">
       <field-select
-        [fieldLabels]="fieldLabels"
+        [descriptions]="fieldDescriptions"
         [fieldValues]="values"
         [comparedValues]="comparedValues"
         formControlName="selectedValues"></field-select>
@@ -22,10 +24,10 @@ import {findTranslation} from '@util/translations';
   `
 })
 class MockHostComponent {
-  fieldLabels: FieldLabels = {
-    value1: 'value1Label',
-    value2: 'value2Label'
-  };
+  fieldDescriptions: FieldDescription[] = [
+    new FieldDescription('value1', 'value1Label'),
+    new FieldDescription('value2', 'value2Label')
+  ];
 
   values: FieldValues = {
     value1: 'new value here',
@@ -40,6 +42,16 @@ class MockHostComponent {
   form = new FormBuilder().group({
     selectedValues: [[]]
   });
+}
+
+@Component({
+  selector: 'simple-map',
+  template: '',
+})
+class SimpleMapMockComponent {
+  @Input() mapId = 'map';
+  @Input() content: MapFeature[] = [];
+  @Input() selectedFeature: number;
 }
 
 
@@ -60,7 +72,8 @@ describe('FieldSelectComponent', () => {
       declarations: [
         MockHostComponent,
         FieldSelectComponent,
-        FieldValueComponent
+        FieldValueComponent,
+        SimpleMapMockComponent
       ],
       providers: [
         FormBuilder
@@ -83,7 +96,7 @@ describe('FieldSelectComponent', () => {
 
   it('should create option for each value', () => {
     const options: DebugElement[] = de.queryAll(By.directive(MatListOption));
-    expect(options.length).toEqual(Object.keys(testHost.fieldLabels).length);
+    expect(options.length).toEqual(testHost.fieldDescriptions.length);
   });
 
 
@@ -92,12 +105,12 @@ describe('FieldSelectComponent', () => {
 
     const firstOpt: DebugElement = options[0];
     expect(firstOpt.nativeElement.getAttribute('ng-reflect-value')).toEqual('value1');
-    expect(firstOpt.query(By.css('.text-highlighted')).nativeElement.textContent).toEqual(testHost.fieldLabels.value1);
+    expect(firstOpt.query(By.css('.text-highlighted')).nativeElement.textContent).toEqual(testHost.fieldDescriptions[0].label);
     expect(firstOpt.query(By.directive(FieldValueComponent)).componentInstance.displayValue).toEqual(testHost.values.value1);
 
     const secondOpt: DebugElement = options[1];
     expect(secondOpt.nativeElement.getAttribute('ng-reflect-value')).toEqual('value2');
-    expect(secondOpt.query(By.css('.text-highlighted')).nativeElement.textContent).toEqual(testHost.fieldLabels.value2);
+    expect(secondOpt.query(By.css('.text-highlighted')).nativeElement.textContent).toEqual(testHost.fieldDescriptions[1].label);
     expect(secondOpt.query(By.directive(FieldValueComponent)).componentInstance.displayValue).toEqual(testHost.values.value2);
   });
 

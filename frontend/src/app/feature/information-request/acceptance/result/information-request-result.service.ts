@@ -30,6 +30,7 @@ export class InformationRequestResultService {
   private toResult(data: fromInformationRequestResult.State, requestId?: number): InformationRequestResult {
     const application = ObjectUtil.clone(data.application);
     application.kindsWithSpecifiers = data.kindsWithSpecifiers;
+    application.locations = data.locations;
     this.patchCustomerWithContacts(application, CustomerRoleType.APPLICANT, data.applicant, data.contacts);
     this.patchCustomerWithContacts(application, CustomerRoleType.REPRESENTATIVE, data.representative, data.contacts);
     this.patchCustomerWithContacts(application, CustomerRoleType.PROPERTY_DEVELOPER, data.propertyDeveloper, data.contacts);

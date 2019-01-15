@@ -1,9 +1,9 @@
 <div fxLayout="column">
   <div fxFlex class="map-container">
-    <supervision-map
+    <simple-map
       [mapId]="'map-' + taskId"
       [content]="mapFeatures"
-      [selectedFeature]="relatedLocation?.id"></supervision-map>
+      [selectedFeature]="relatedLocation?.id"></simple-map>
   </div>
   <div fxFlex *ngIf="relatedLocation">
     <div fxLayout="row" class="location-info">

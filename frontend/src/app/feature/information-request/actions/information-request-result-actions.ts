@@ -8,6 +8,7 @@ import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {ActionWithTarget} from '@feature/allu/actions/action-with-target';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {Location} from '@model/common/location';
 
 export enum InformationRequestResultActionType {
   SetApplication = '[InformationRequestResult] Set result application',
@@ -16,6 +17,8 @@ export enum InformationRequestResultActionType {
   SetKindsWithSpecifiers = '[InformationRequestResult] Set result kinds with specifiers',
   UseCustomerForInvoicing = '[InformationRequestResult] Use customer also for invoicing',
   SetOtherInfo = '[InformationRequestResult] Set other application info',
+  SetLocations = '[InformationRequestResult] Set locations',
+  SetLocation = '[InformationRequestResult] Set single location',
   Save = '[InformationRequestResult] Save result of information request',
   SaveSuccess = '[InformationRequestResult] Save result of information request success'
 }
@@ -50,6 +53,16 @@ export class SetOtherInfo implements Action {
   constructor(public payload: FieldValues) {}
 }
 
+export class SetLocations implements Action {
+  readonly type = InformationRequestResultActionType.SetLocations;
+  constructor(public payload: Location[]) {}
+}
+
+export class SetLocation implements Action {
+  readonly type = InformationRequestResultActionType.SetLocation;
+  constructor(public payload: Location) {}
+}
+
 export class Save implements Action {
   readonly type = InformationRequestResultActionType.Save;
   constructor(public payload: InformationRequestResult) {}
@@ -67,5 +80,7 @@ export type InformationRequestResultActions =
   | SetKindsWithSpecifiers
   | UseCustomerForInvoicing
   | SetOtherInfo
+  | SetLocations
+  | SetLocation
   | Save
   | SaveSuccess;

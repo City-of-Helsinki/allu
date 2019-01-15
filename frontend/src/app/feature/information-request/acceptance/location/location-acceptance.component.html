@@ -1,0 +1,13 @@
+<location-info-acceptance
+  [id]="id"
+  [form]="form"
+  [oldLocation]="oldLocation"
+  [newLocation]="newLocation"
+  [readonly]="readonly"
+  (locationChanges)="locationChanges.emit($event)">
+  <div class="left-header">
+    <h2 mat-dialog-title>
+      {{'location.title' | translation}}
+    </h2>
+  </div>
+</location-info-acceptance>

@@ -7,6 +7,19 @@
   height: 38px;
 }
 
+:host ::ng-deep .mat-selection-list .mat-list-option.map-container {
+  height: 200px;
+
+  .mat-list-item-content {
+    padding-right: 0;
+
+    .mat-list-text {
+      padding-left: 0;
+    }
+  }
+}
+
+
 :host ::ng-deep .mat-selection-list .mat-list-option:not(:last-of-type) {
   margin-bottom: 2px;
 }

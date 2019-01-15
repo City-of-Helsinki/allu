@@ -3,7 +3,8 @@ import {Contact} from '@model/customer/contact';
 import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
 import {findTranslation} from '@util/translations';
 import {FormBuilder, Validators} from '@angular/forms';
-import {FieldLabels, FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 
 const requiredFields = {
   name: true
@@ -47,7 +48,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Cont
     this._newContact = contact;
     this.newValues = this.toFieldValues(contact);
     this.newDisplayValues = this.toDisplayValues(this.newValues);
-    this.fieldLabels = this.createLabels();
+    this.fieldDescriptions = this.createDescriptions();
   }
 
   protected resultChanges(result: FieldValues): void {
@@ -90,14 +91,14 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Cont
     return {...fieldValues};
   }
 
-  private createLabels(): FieldLabels {
-    return {
-      name: findTranslation('name'),
-      streetAddress: findTranslation('postalAddress.streetAddress'),
-      postalCode: findTranslation('postalAddress.postalCode'),
-      city: findTranslation('postalAddress.postalOffice'),
-      email: findTranslation('email'),
-      phone: findTranslation('phone'),
-    };
+  private createDescriptions(): FieldDescription[] {
+    return [
+      new FieldDescription('name', findTranslation('name')),
+      new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
+      new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
+      new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
+      new FieldDescription('email', findTranslation('email')),
+      new FieldDescription('phone', findTranslation('phone'))
+    ];
   }
 }

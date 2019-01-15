@@ -2,10 +2,9 @@ import {ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, ViewChild
 import isEqual from 'lodash/isEqual';
 import {MatSelectionList} from '@angular/material';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-
-export interface FieldLabels {
-  [field: string]: string;
-}
+import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
+import {MapFeature} from '@feature/map/map-feature';
+import {pathStyle} from '@service/map/map-draw-styles';
 
 export interface FieldValues {
   [field: string]: any;
@@ -26,18 +25,17 @@ const FIELD_SELECT_VALUE_ACCESSOR = {
 })
 export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
-  @Input() fieldLabels: FieldLabels;
+  @Input() id = '';
+  @Input() descriptions: FieldDescription[] = [];
 
   @ViewChild(MatSelectionList) selectionList: MatSelectionList;
 
-  displayedFields: string[] = [];
   isDisabled: boolean;
 
   private _fieldValues: FieldValues;
   private _comparedValues: FieldValues;
 
   ngOnInit(): void {
-    this.displayedFields = Object.keys(this.fieldLabels);
   }
 
   /** Implemented as part of ControlValueAccessor. */
@@ -74,7 +72,7 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   }
 
   get showSelectAll() {
-    return !this.isDisabled && (this.displayedFields.length > 1);
+    return !this.isDisabled && (this.descriptions.length > 1);
   }
 
   isSelected(field: string): boolean {
@@ -117,6 +115,14 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
       } else {
         return !isEqual(value, comparedValue);
       }
+    }
+  }
+
+  getMapContent(field: string): MapFeature[] {
+    if (this.fieldHasChange(field)) {
+      return [{id: this.fieldValues['id'], geometry: this.fieldValues[field], style: pathStyle.WARNING}];
+    } else {
+      return [{id: this.fieldValues['id'], geometry: this.fieldValues[field]}];
     }
   }
 }

@@ -17,7 +17,7 @@ import {MapLayerEffects} from '@feature/map/effects/map-layer-effects';
 import {MapLayerSelectComponent} from '@feature/map/map-layer-select.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatTreeModule} from '@angular/material';
-import {SupervisionMapComponent} from '@feature/map/supervision-map.component';
+import {SimpleMapComponent} from '@feature/map/simple-map.component';
 
 @NgModule({
   imports: [
@@ -35,12 +35,12 @@ import {SupervisionMapComponent} from '@feature/map/supervision-map.component';
     MapComponent,
     MapPopupComponent,
     MapLayerSelectComponent,
-    SupervisionMapComponent
+    SimpleMapComponent
   ],
   exports: [
     MapComponent,
     MapLayerSelectComponent,
-    SupervisionMapComponent
+    SimpleMapComponent
   ],
   providers: [
     MapUtil,
