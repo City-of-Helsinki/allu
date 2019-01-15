@@ -1,11 +1,11 @@
 import {DataSource} from '@angular/cdk/collections';
-import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
+import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {Observable, Subject} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
 import {SupervisionWorkItemStore} from '../supervision-work-item-store';
-import {Sort} from '../../../model/common/sort';
-import {Page} from '../../../model/common/page';
-import {PageRequest} from '../../../model/common/page-request';
+import {Sort} from '@model/common/sort';
+import {Page} from '@model/common/page';
+import {PageRequest} from '@model/common/page-request';
 import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 export class SupervisionWorkItemDatasource extends DataSource<any> {
@@ -13,12 +13,12 @@ export class SupervisionWorkItemDatasource extends DataSource<any> {
 
   constructor(private store: SupervisionWorkItemStore, private paginator: MatPaginator, private sort: MatSort) {
     super();
-
-    // Initial paging
-    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
   }
 
   connect(): Observable<SupervisionWorkItem[]> {
+    // Initial paging
+    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
+
     this.sort.sortChange.pipe(takeUntil(this.destroy))
       .subscribe(sortChange => this.store.sortChange(Sort.fromMatSort(sortChange)));
 

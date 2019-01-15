@@ -1,16 +1,15 @@
-
-import {mergeMap} from 'rxjs/operators';
+import {mergeMap, tap} from 'rxjs/operators';
 import {DataSource} from '@angular/cdk/collections';
 import {Observable, of, Subject} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
-import {Sort} from '../../../model/common/sort';
-import {Page} from '../../../model/common/page';
-import {PageRequest} from '../../../model/common/page-request';
+import {Sort} from '@model/common/sort';
+import {Page} from '@model/common/page';
+import {PageRequest} from '@model/common/page-request';
 import {ApplicationWorkItemStore} from '../application-work-item-store';
-import {Application} from '../../../model/application/application';
-import {Some} from '../../../util/option';
-import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import {NotificationService} from '../../notification/notification.service';
+import {Application} from '@model/application/application';
+import {Some} from '@util/option';
+import {ApplicationTag} from '@model/application/tag/application-tag';
+import {NotificationService} from '@feature/notification/notification.service';
 import {catchError, distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
 
 export interface ApplicationWorkItemRow {
@@ -26,12 +25,12 @@ export class ApplicationWorkItemDatasource extends DataSource<any> {
               private paginator: MatPaginator,
               private sort: MatSort) {
     super();
-
-    // Initial paging
-    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
   }
 
   connect(): Observable<ApplicationWorkItemRow[]> {
+    // Initial paging
+    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
+
     this.sort.sortChange.pipe(
       takeUntil(this.destroy),
       distinctUntilChanged()
