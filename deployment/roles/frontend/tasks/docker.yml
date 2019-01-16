@@ -68,7 +68,7 @@
     volumes:
       - /home/allu/apache/sites-available:/etc/apache2/sites-available:rw
       - /home/allu/apache/www:/var/www/html:rw
-      - /home/allu/mapproxy:/mapproxy:rw
+      - /srv/data/allu/mapproxy:/mapproxy:rw
       - /home/allu/ssl:/etc/ssl/allu:rw
     published_ports:
       - "80:80"
