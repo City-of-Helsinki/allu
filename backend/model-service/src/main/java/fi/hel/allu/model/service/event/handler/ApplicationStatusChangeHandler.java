@@ -165,7 +165,7 @@ public class ApplicationStatusChangeHandler {
   }
 
   private Integer getSupervisionTaskOwner(Application application) {
-    Integer cityDistrict = application.getLocations().get(0).getCityDistrictId();
+    Integer cityDistrict = application.getLocations().get(0).getEffectiveCityDistrictId();
     Integer supervisionTaskOwner = null;
     if (cityDistrict != null) {
       supervisionTaskOwner = locationService.findSupervisionTaskOwner(application.getType(), cityDistrict).map(u -> u.getId())
