@@ -42,8 +42,20 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <span id="pdfkit_page_current" />/<span id="pdfkit_page_count" />
         </p>
         <div class="id">
+          <table>
+            <tr>
+              <td class="c1">Päätöspäivämäärä:</td>
               <!-- [päätöspvm] -->
-              <xsl:value-of select="data/decisionDate" />
+              <td class="c2"><xsl:value-of select="data/decisionDate" /></td>
+            </tr>
+            <xsl:if test="data/identificationNumber != ''">
+              <tr>
+                <td class="c1">Asiointitunnus:</td>
+                <!-- [asiointitunnus] -->
+                <td class="c2"><xsl:value-of select="data/identificationNumber" /></td>
+              </tr>
+            </xsl:if>
+          </table>
         </div>
       </div>
     </div>
