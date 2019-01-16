@@ -12,13 +12,13 @@
             [customerWithContacts]="application.representative"
             [readonly]="readonly"></customer>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <allu-card>
         <mat-card-title>{{'application.shortTermRental.info' | translation}}</mat-card-title>
         <mat-card-content>
-          <div class="row form-group">
-            <div class="col m6">
+          <div fxLayout="row" fxLayoutGap="18px">
+            <div fxFlex="calc(50% - 18px)">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="name" required
                        [placeholder]="'application.shortTermRental.name' | translation"/>
@@ -32,20 +32,8 @@
                 </mat-hint>
               </mat-form-field>
             </div>
-            <div class="col m6">
-              <mat-form-field class="input-full-width">
-                            <textarea matInput matTextareaAutosize formControlName="description"
-                                      [required]="required(applicationForm.get('description'))"
-                                      [placeholder]="'application.shortTermRental.description' | translation"></textarea>
-                <mat-hint>
-                  <field-error [form]="applicationForm" field="description" hasError="required">
-                    {{'application.shortTermRental.field.descriptionMissing' | translation}}
-                  </field-error>
-                </mat-hint>
-              </mat-form-field>
-            </div>
-            <div formGroupName="rentalTimes">
-              <div class="col m3">
+            <ng-container formGroupName="rentalTimes">
+              <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="startTime" required
                          [placeholder]="'application.common.startTime' | translation"
@@ -64,7 +52,7 @@
                   </mat-hint>
                 </mat-form-field>
               </div>
-              <div class="col m3">
+              <div fxFlex="calc(25% - 18px)">
                 <mat-form-field class="input-full-width">
                   <input matInput type="text" formControlName="endTime" required
                          [placeholder]="'application.common.endTime' | translation"
@@ -79,26 +67,42 @@
                   </mat-hint>
                 </mat-form-field>
               </div>
+            </ng-container>
+          </div>
+          <div fxLayout="row">
+            <div fxFlex>
+              <mat-form-field class="input-full-width">
+                  <textarea matInput matTextareaAutosize formControlName="description"
+                            [required]="required(applicationForm.get('description'))"
+                            [placeholder]="'application.shortTermRental.description' | translation"></textarea>
+                <mat-hint>
+                  <field-error [form]="applicationForm" field="description" hasError="required">
+                    {{'application.shortTermRental.field.descriptionMissing' | translation}}
+                  </field-error>
+                </mat-hint>
+              </mat-form-field>
             </div>
-            <div class="col m6" *ngIf="showCommercial">
+          </div>
+          <div fxLayout="row" *ngIf="showCommercial">
+            <div fxFlex>
               <mat-slide-toggle formControlName="commercial">
                 {{commercialLabel | translation}}
               </mat-slide-toggle>
             </div>
           </div>
-        </mat-card-content>
+      </mat-card-content>
       </allu-card>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <pricing-info [form]="applicationForm" [kind]="application.uiKind" (billableChange)="billableChange($event)"></pricing-info>
     </div>
   </div>
 
-  <div class="row" *ngIf="readonly">
-    <div class="col m12">
+  <div fxLayout="row" *ngIf="readonly">
+    <div fxFlex>
       <location-details [application]="application" [readonly]="readonly"></location-details>
     </div>
   </div>
@@ -118,14 +122,14 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col m12">
+  <div fxLayout="row">
+    <div fxFlex>
       <application-actions
         [readonly]="readonly"
         [valid]="applicationForm.valid"
