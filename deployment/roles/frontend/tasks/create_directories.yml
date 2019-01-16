@@ -47,16 +47,23 @@
         group=allu
         mode="u=rwx,g=rx,o=rx"
 
-- name: create mapproxy cache directory
-  file: path=/home/allu/mapproxy/cache_data
-        state=directory
-        owner=allu
-        group=allu
-        mode="u=rwx,g=rx,o=rx"
-
 - name: create ssl root dir for allu
   file: path=/home/allu/ssl
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=rx,o=rx"
+
+- name: create mapproxy directory under srv
+  file: path=/srv/data/allu/mapproxy
+    state=directory
+    owner=allu
+    group=allu
+    mode="u=rwx,g=rx,o=rx"
+
+- name: create mapproxy cache directory
+  file: path=/srv/data/allu/mapproxy/cache_data
+    state=directory
+    owner=allu
+    group=allu
+    mode="u=rwx,g=rx,o=rx"
