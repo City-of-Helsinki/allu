@@ -1,5 +1,7 @@
 package fi.hel.allu.external.domain;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -24,12 +26,13 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
   private Boolean selfSupervision;
-  private Integer cableReportId;
   @NotNull(message = "{application.workPurpose}")
   private String workPurpose;
   private String additionalInfo;
   private String trafficArrangements;
   private TrafficArrangementImpedimentType trafficArrangementImpediment;
+  private List<String> placementContracts;
+  private List<String> cableReports;
 
   @ApiModelProperty(value = "Application kind of the client system. Allu application kind will be selected by handler according to this value", required = true)
   public String getClientApplicationKind() {
@@ -103,15 +106,6 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
     this.selfSupervision = selfSupervision;
   }
 
-  @ApiModelProperty(value = "ID of the cable report for excavation announcement (johtoselvityksen ID kaivuilmoitukselle)")
-  public Integer getCableReportId() {
-    return cableReportId;
-  }
-
-  public void setCableReportId(Integer cableReportId) {
-    this.cableReportId = cableReportId;
-  }
-
   @ApiModelProperty(value = "Work purpose (työn tarkoitus)", required = true)
   public String getWorkPurpose() {
     return workPurpose;
@@ -146,6 +140,24 @@ public class ExcavationAnnouncementExt extends BaseApplicationExt {
 
   public void setTrafficArrangementImpediment(TrafficArrangementImpedimentType trafficArrangementImpediment) {
     this.trafficArrangementImpediment = trafficArrangementImpediment;
+  }
+
+  @ApiModelProperty(value = "Application identifiers of related placement contracts")
+  public List<String> getPlacementContracts() {
+    return placementContracts;
+  }
+
+  public void setPlacementContracts(List<String> placementContracts) {
+    this.placementContracts = placementContracts;
+  }
+
+  @ApiModelProperty(value = "Application identifiers of related cable reports")
+  public List<String> getCableReports() {
+    return cableReports;
+  }
+
+  public void setCableReports(List<String> cableReports) {
+    this.cableReports = cableReports;
   }
 
 }

@@ -1,5 +1,7 @@
 package fi.hel.allu.external.api;
 
+import java.util.Arrays;
+
 import org.geolatte.geom.Geometry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +33,8 @@ public class ExcavationAnnouncementTest extends BaseApplicationTest<ExcavationAn
     excavation.setClientApplicationKind("Pohjatutkimus");
     excavation.setWorkPurpose("Tarkoituksena tutkia pohjia");
     excavation.setContractorWithContacts(CONTRACTOR_WITH_CONTACTS);
+    excavation.setCableReports(Arrays.asList("JS1234567", "JS1234568"));
+    excavation.setPlacementContracts(Arrays.asList("SL1234567", "SL1234568"));
     setCommonFields(excavation);
     return excavation;
   }
