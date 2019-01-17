@@ -128,7 +128,7 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] decision = decisionService.getFinalDecision(applicationId);
-    List<byte[]> attachments = applicationService.getDecisionAttachments(applicationId);
+    List<byte[]> attachments = applicationService.getDecisionAttachmentDocuments(applicationId);
     return returnPdfResponse(PdfMerger.appendDocuments(decision, attachments));
   }
 }

@@ -32,6 +32,7 @@ import fi.hel.allu.external.mapper.CustomerExtMapper;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationJsonMapper;
@@ -202,10 +203,30 @@ public class ApplicationServiceExt {
     return mapper.apply(application);
   }
 
-  public List<byte[]> getDecisionAttachments(Integer applicationId) {
-    return attachmentService.findAttachmentsForApplication(applicationId)
-        .stream().filter(a -> a.isDecisionAttachment() && "application/pdf".equals(a.getMimeType()))
+  public List<byte[]> getDecisionAttachmentDocuments(Integer applicationId) {
+    return getDecisionAttachments(applicationId)
+        .stream()
         .map(a -> attachmentService.getAttachmentData(a.getId()))
+        .collect(Collectors.toList());
+  }
+
+  public AttachmentInfoExt getDecisionAttachmentInfo(Integer applicationId, int attachmentId) {
+    return getDecisionAttachments(applicationId)
+        .stream()
+        .filter(a -> a.getId().equals(attachmentId))
+        .findFirst()
+        .orElseThrow(() -> new NoSuchEntityException("attachment.decision.notFound"));
+  }
+
+  public byte[] getDecisionAttachmentData(int attachmentId) {
+    return attachmentService.getAttachmentData(attachmentId);
+  }
+
+  public List<AttachmentInfoExt> getDecisionAttachments(Integer applicationId) {
+    return attachmentService.findAttachmentsForApplication(applicationId)
+        .stream()
+        .filter(a -> a.isDecisionAttachment() && "application/pdf".equals(a.getMimeType()))
+        .map(a -> new AttachmentInfoExt(a.getId(), a.getMimeType(), a.getName(), a.getDescription()))
         .collect(Collectors.toList());
   }
 

@@ -55,7 +55,7 @@ public class PlacementContractController extends BaseApplicationController<Place
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] contract= contractService.getContractProposal(applicationId);
-    List<byte[]> attachments = applicationService.getDecisionAttachments(applicationId);
+    List<byte[]> attachments = applicationService.getDecisionAttachmentDocuments(applicationId);
     return returnPdfResponse(PdfMerger.appendDocuments(contract, attachments));
   }
 
@@ -73,7 +73,7 @@ public class PlacementContractController extends BaseApplicationController<Place
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] contract = contractService.getFinalContract(applicationId);
-    List<byte[]> attachments = applicationService.getDecisionAttachments(applicationId);
+    List<byte[]> attachments = applicationService.getDecisionAttachmentDocuments(applicationId);
     return returnPdfResponse(PdfMerger.appendDocuments(contract, attachments));
   }
 

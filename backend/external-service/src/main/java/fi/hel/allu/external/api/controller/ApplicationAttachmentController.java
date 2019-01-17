@@ -1,11 +1,14 @@
 package fi.hel.allu.external.api.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +44,43 @@ public class ApplicationAttachmentController {
     applicationService.validateOwnedByExternalUser(applicationId);
     applicationService.addAttachment(applicationId, metadata, file);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
+  @ApiOperation(value = "List decision attachments of an application with given ID",
+      produces = "application/json",
+      response = AttachmentInfoExt.class,
+      responseContainer = "List",
+      authorizations=@Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Attachments listed successfully", response = Void.class),
+  })
+  @RequestMapping(value = "/applications/{id}/attachments", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<List<AttachmentInfoExt>> getAttachments(@ApiParam(value = "Application ID to get attachments for") @PathVariable Integer id) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    return ResponseEntity.ok(applicationService.getDecisionAttachments(applicationId));
+  }
+
+  @ApiOperation(value = "Get attachment data of an attachment with given attachment ID.",
+      response = byte.class,
+      responseContainer = "Array",
+      authorizations=@Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Attachment data fetched successfully", response = byte.class, responseContainer="Array"),
+  })
+  @RequestMapping(value = "/applications/{id}/attachments/{attachmentId}/data", method = RequestMethod.GET, produces = "application/pdf")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<byte[]> getAttachmentData(@PathVariable(value = "id") Integer id, @PathVariable(value = "attachmentId") Integer attachmentId) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    AttachmentInfoExt info = applicationService.getDecisionAttachmentInfo(applicationId, attachmentId);
+    byte[] attachmentData = applicationService.getDecisionAttachmentData(attachmentId);
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.add("Content-Disposition", "attachment; filename=" + info.getName());
+    httpHeaders.setContentType(MediaType.parseMediaType(info.getMimeType()));
+    return new ResponseEntity<>(attachmentData, httpHeaders, HttpStatus.OK);
   }
 
 }
