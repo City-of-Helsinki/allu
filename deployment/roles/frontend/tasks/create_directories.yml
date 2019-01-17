@@ -26,6 +26,14 @@
         group=allu
         mode="u=rwx,g=rx,o=rx"
 
+- name: create data directory
+  file: path=/srv/data/allu
+    state=directory
+    owner=allu
+    group=allu
+    mode="u=rwx,g=rx,o=rx"
+  become: yes
+
 - name: create mapproxy directory under srv
   file: path=/srv/data/allu/mapproxy
     state=directory
