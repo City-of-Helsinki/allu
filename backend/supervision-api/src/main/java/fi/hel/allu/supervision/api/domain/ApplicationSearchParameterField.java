@@ -11,7 +11,7 @@ public enum ApplicationSearchParameterField implements SearchField {
   STATUS("status.value", "status", SearchParameterType.STRING, true),
   DISTRICTS("locations.cityDistrictId", null, SearchParameterType.STRING, true),
   OWNER("owner.userName", "owner.userName", SearchParameterType.STRING, true),
-  ADDRESS("address", null, SearchParameterType.STRING, false),
+  ADDRESS("locations.address", null, SearchParameterType.STRING, false),
   APPLICANT_NAME("customers.applicant.customer.name", "customers.applicant.customer.name", SearchParameterType.STRING, false),
   CONTACT_NAME("customers.applicant.contacts.name", null, SearchParameterType.STRING, false),
   VALID_AFTER("recurringApplication", "startTime", SearchParameterType.DATE, false),
