@@ -32,7 +32,7 @@ public class InvoicingPeriodController {
   }
 
   @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_VIEW, ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<InvoicingPeriod>> getInvoicingPeriods(@PathVariable Integer id) {
     return ResponseEntity.ok(invoicingPeriodService.getInvoicingPeriods(id));
   }
