@@ -52,6 +52,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <section>
           <p class="space-above">Tällä sopimuksella <xsl:value-of select="data/decisionId"/> sovitaan rakenteiden
             sijoittamisesta Helsingin kaupungin omistamalle ja hallitsemalle yleiselle alueelle.
+            <xsl:if test="data/siteAddressLine != ''">
+              Osoite: <xsl:value-of select="data/siteAddressLine"/>.
+            </xsl:if>
+            Kaupunginosa: <xsl:value-of select="data/siteCityDistrict"/>
           </p>
 
           <xsl:if test="data/contractText">
