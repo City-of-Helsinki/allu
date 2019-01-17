@@ -17,7 +17,8 @@ cleanups:
       hki_johtokartta_kaukolampo_cache,
       hki_johtokartta_kaasu_cache,
       hki_johtokartta_vesijohto_cache,
-      hki_johtokartta_viemari_cache
+      hki_johtokartta_viemari_cache,
+      hki_johtokartta_yhdistelma_cache
     ]
     remove_before:
     #  weeks: 1

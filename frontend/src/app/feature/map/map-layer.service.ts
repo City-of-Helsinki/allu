@@ -62,7 +62,8 @@ export const restrictedLayers = {
     'Kaukolampo': null,
     'Kaasu': null,
     'Vesijohto': null,
-    'Viemari': null
+    'Viemari': null,
+    'Yhdistelmäjohtokartta': null
   },
 };
 
@@ -147,7 +148,8 @@ export class MapLayerService {
       'Kaukolampo': this.createOverlayLayer('helsinki_johtokartta_kaukolampo', token, DETAILED_LAYER_MIN_ZOOM),
       'Kaasu': this.createOverlayLayer('helsinki_johtokartta_kaasu', token, DETAILED_LAYER_MIN_ZOOM),
       'Vesijohto': this.createOverlayLayer('helsinki_johtokartta_vesijohto', token, DETAILED_LAYER_MIN_ZOOM),
-      'Viemari': this.createOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM)
+      'Viemari': this.createOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM),
+      'Yhdistelmäjohtokartta': this.createOverlayLayer('helsinki_johtokartta_yhdistelma', token, DETAILED_LAYER_MIN_ZOOM),
     };
   }
 
