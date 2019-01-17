@@ -116,7 +116,7 @@ public class ApplicationStatusController {
   }
 
   @RequestMapping(value = "/{id}/status/operational_condition", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToOperationalCondition(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
     List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedAndInvoicableChargeBasis(id);
@@ -134,7 +134,7 @@ public class ApplicationStatusController {
   }
 
   @RequestMapping(value = "/{id}/status/finished", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
   public ResponseEntity<ApplicationJson> changeStatusToFinished(@PathVariable int id) {
     ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(id);
     List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedAndInvoicableChargeBasis(id);
