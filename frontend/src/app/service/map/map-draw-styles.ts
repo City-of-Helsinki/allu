@@ -4,7 +4,7 @@ export const styleByApplicationType = {
   TEMPORARY_TRAFFIC_ARRANGEMENTS: {color: '#F46D43', opacity: 1, fillOpacity: 0.4},
   CABLE_REPORT: {color: '#B87333', opacity: 1, fillOpacity: 0.4},
   PLACEMENT_CONTRACT: {color: '#5AB4AC', opacity: 1, fillOpacity: 0.4},
-  EVENT: {color: '#920000', opacity: 1, fillOpacity: 0.4},
+  EVENT: {color: '#DD1C77', opacity: 1, fillOpacity: 0.4},
   SHORT_TERM_RENTAL: {color: '#006DE0', opacity: 1, fillOpacity: 0.4},
   NOTE: {color: '#00EF00', opacity: 1, fillOpacity: 0.4}
 };
