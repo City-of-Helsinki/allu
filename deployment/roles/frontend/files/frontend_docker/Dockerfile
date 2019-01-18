@@ -73,7 +73,7 @@ RUN systemctl disable apache2
 # Python pip (mapproxy installation)
 ######################################################################################
 RUN pip install Pillow
-RUN pip install MapProxy==1.10.0
+RUN pip install MapProxy==1.11.0
 RUN pip install requests==2.18.4
 
 ######################################################################################
