@@ -39,25 +39,25 @@ caches:
     grids: [EPSG_3879]
     sources: [hki_wms_kantakartta]
     cache:
-      type: file
+      type: sqlite
 
   hki_ajantasa_asemakaava_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_ajantasa_asemakaava]
     cache:
-      type: file
+      type: sqlite
 
   hki_kiinteistokartta_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_kiinteistokartta]
     cache:
-      type: file
+      type: sqlite
 
   hki_ortoilmakuva_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_ortoilmakuva]
     cache:
-      type: file
+      type: sqlite
 
 #Data which requires authentication
 
@@ -65,85 +65,85 @@ caches:
     grids: [EPSG_3879]
     sources: [hki_wms_maanomistus_vuokrausalueet_yhdistelma]
     cache:
-      type: file
+      type: sqlite
 
   hki_maanomistus_vuokrausalueet_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_maanomistus_vuokrausalueet]
     cache:
-      type: file
+      type: sqlite
 
   hki_maanomistus_sisainen_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_maanomistus_sisainen]
     cache:
-      type: file
+      type: sqlite
 
   hki_maanalaiset_tilat_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_maanalaiset_tilat]
     cache:
-      type: file
+      type: sqlite
 
   hki_maanalaiset_tilat_alueet_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_maanalaiset_tilat_alueet]
     cache:
-      type: file
+      type: sqlite
 
   hki_maalampokaivot_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_maalampokaivot]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_sahko_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_sahko]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_tietoliikenne_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_tietoliikenne]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_kaukolampo_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_kaukolampo]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_kaukojaahdytys_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_kaukojaahdytys]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_kaasu_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_kaasu]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_vesijohto_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_vesijohto]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_viemari_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_viemari]
     cache:
-      type: file
+      type: sqlite
 
   hki_johtokartta_yhdistelma_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_yhdistelma]
     cache:
-      type: file
+      type: sqlite
 
 sources:
 
@@ -313,3 +313,13 @@ globals:
     base_dir: /home/allu/mapproxy/cache_data
   http:
     ssl_no_cert_checks: true
+    access_control_allow_origin: ''
+  image:
+    resampling_method: bilinear
+    paletted: true
+    formats:
+      image/png:
+        mode: 'P'
+        transparent: false
+        encoding_options:
+          quantizer: fastoctree
