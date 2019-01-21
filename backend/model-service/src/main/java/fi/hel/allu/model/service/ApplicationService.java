@@ -148,7 +148,7 @@ public class ApplicationService {
       // Updates also charge basis entries
       invoicingPeriodService.updateInvoicingPeriods(id, result.getInvoicingPeriodLength());
     } else {
-      updateChargeBasis(id, application);
+      updateChargeBasis(id, result);
     }
 
     return result;
@@ -158,6 +158,7 @@ public class ApplicationService {
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
     chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
     application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
+    applicationDao.updateCalculatedPrice(application.getId(), application.getCalculatedPrice());
   }
 
   @Transactional
