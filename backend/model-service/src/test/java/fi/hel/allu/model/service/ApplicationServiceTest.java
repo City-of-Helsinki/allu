@@ -79,9 +79,9 @@ public class ApplicationServiceTest {
     Application application = new Application();
     application.setName("Foo");
     applicationService.update(123, application, 1);
-    Mockito.verify(pricingService).calculateChargeBasis(Mockito.eq(application));
     Mockito.verify(applicationDao).update(Mockito.eq(123), Mockito.eq(application));
     Mockito.verify(chargeBasisService).setCalculatedChargeBasis(Mockito.eq(123), Mockito.anyListOf(ChargeBasisEntry.class));
+    Mockito.verify(pricingService).calculateChargeBasis(Mockito.any(Application.class));
   }
 
   @Test
