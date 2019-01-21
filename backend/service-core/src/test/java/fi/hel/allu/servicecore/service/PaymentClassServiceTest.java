@@ -35,12 +35,12 @@ public class PaymentClassServiceTest {
           "xsi:schemaLocation=\"http://www.opengis.net/wfs " +
           "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd " +
           "https://www.hel.fi/hel " +
-          "https://kartta.hel.fi/ws/geoserver/wfs?service=WFS&amp;version=1.0.0&amp;request=DescribeFeatureType&amp;typeName=helsinki%3AAllu_maksuvyohykkeet_testi\">" +
+          "https://kartta.hel.fi/ws/geoserver/wfs?service=WFS&amp;version=1.0.0&amp;request=DescribeFeatureType&amp;typeName=helsinki%3AKatutoiden_maksuluokat\">" +
         "<gml:boundedBy><gml:null>unknown</gml:null></gml:boundedBy>" +
         PAYMENT_CLASSES +
       "</wfs:FeatureCollection>";
-  private static final String MEMBER = "<gml:featureMember><helsinki:Allu_maksuvyohykkeet_testi fid=\"Allu_maksuvyohykkeet_testi.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" + 
-      PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Allu_maksuvyohykkeet_testi></gml:featureMember>";
+  private static final String MEMBER = "<gml:featureMember><helsinki:Katutoiden_maksuluokat fid=\"Katutoiden_maksuluokat.14292\"><helsinki:tietopalvelu_id>14292</helsinki:tietopalvelu_id><helsinki:maksuluokka>" + 
+      PAYMENT_CLASS + "</helsinki:maksuluokka></helsinki:Katutoiden_maksuluokat></gml:featureMember>";
 
   private static final Geometry GEOMETRY = geometrycollection(3879, polygon(ring(
       c(2.5494887994040444E7,6673140.94535369),

@@ -16,7 +16,7 @@ public class PaymentClassXml {
   public List<FeatureMember> featureMember;
 
   public static class FeatureMember {
-    @XmlElement(name = "Allu_maksuvyohykkeet_testi", namespace = HELSINKI_NAMESPACE)
+    @XmlElement(name = "Katutoiden_maksuluokat", namespace = HELSINKI_NAMESPACE)
     public HelsinkiAlluMaksuvyohyke paymentClass;
 
     @Override

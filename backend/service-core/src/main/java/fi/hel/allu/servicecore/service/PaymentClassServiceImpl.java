@@ -37,7 +37,7 @@ public class PaymentClassServiceImpl implements PaymentClassService {
       "xsi:schemaLocation=\"http://www.opengis.net/wfs\" " +
       "xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\" " +
       "xmlns:ogc=\"http://www.opengis.net/ogc\" service=\"WFS\" version=\"1.0.0\">" +
-      "<wfs:Query typeName=\"helsinki:Allu_maksuvyohykkeet_testi\">" +
+      "<wfs:Query typeName=\"helsinki:Katutoiden_maksuluokat\">" +
         "<ogc:PropertyName>maksuluokka</ogc:PropertyName>" +
         "<ogc:Filter>" +
           "<ogc:Intersects>" +
