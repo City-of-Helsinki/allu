@@ -233,11 +233,11 @@ public class SupervisionTaskDao {
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
         values(searchCriteria.getApplicationStatus()).map(application.status::in),
         values(searchCriteria.getCityDistrictIds()).map(location.cityDistrictId::in),
-        values(searchCriteria.getApplicationIds()).map(supervisionTaskWithAddress.applicationId::in)
+        // Include also empty application ID list in search conditions
+        Optional.ofNullable(searchCriteria.getApplicationIds()).map(supervisionTaskWithAddress.applicationId::in)
     ).filter(opt -> opt.isPresent())
      .map(opt -> opt.get());
   }
-
 
   private <T> Optional<List<T>> values(List<T> valueList) {
     return Optional.ofNullable(valueList)
