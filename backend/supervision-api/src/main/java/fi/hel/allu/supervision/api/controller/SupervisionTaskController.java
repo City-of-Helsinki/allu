@@ -1,6 +1,9 @@
 package fi.hel.allu.supervision.api.controller;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +18,17 @@ import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
-import fi.hel.allu.supervision.api.domain.SupervisionTaskCreateJson;
-import fi.hel.allu.supervision.api.domain.SupervisionTaskSearchParameters;
-import fi.hel.allu.supervision.api.domain.SupervisionTaskSearchResult;
+import fi.hel.allu.supervision.api.domain.*;
 import fi.hel.allu.supervision.api.mapper.MapperUtil;
 import fi.hel.allu.supervision.api.mapper.SupervisionTaskMapper;
 import fi.hel.allu.supervision.api.mapper.SupervisionTaskSearchParameterMapper;
+import fi.hel.allu.supervision.api.service.SupervisionTaskApprovalService;
+import fi.hel.allu.supervision.api.validation.SupervisionTaskApprovalValidator;
 import fi.hel.allu.supervision.api.validation.SupervisionTaskValidator;
 import io.swagger.annotations.*;
 
 @RestController
-@RequestMapping("/v1/supervisiontasks")
+@RequestMapping("/v1")
 @Api(value = "v1/supervisiontasks")
 public class SupervisionTaskController {
 
@@ -37,11 +40,19 @@ public class SupervisionTaskController {
   private SupervisionTaskMapper supervisionTaskMapper;
   @Autowired
   private SupervisionTaskValidator supervisionTaskValidator;
-
+  @Autowired
+  private SupervisionTaskApprovalValidator supervisionTaskApprovalValidator;
+  @Autowired
+  private SupervisionTaskApprovalService supervisionTaskApprovalService;
 
   @InitBinder("supervisionTaskCreateJson")
-  protected void initBinder(WebDataBinder binder) {
+  protected void initCreateBinder(WebDataBinder binder) {
     binder.addValidators(supervisionTaskValidator);
+  }
+
+  @InitBinder("supervisionTaskApprovalJson")
+  protected void initApprovalBinder(WebDataBinder binder) {
+    binder.addValidators(supervisionTaskApprovalValidator);
   }
 
   @ApiOperation(value = "Search supervision tasks",
@@ -54,7 +65,7 @@ public class SupervisionTaskController {
       @ApiResponse(code = 200, message = "Supervision tasks retrieved successfully", response = SupervisionTaskSearchResult.class, responseContainer="List"),
       @ApiResponse(code = 400, message = "Invalid search parameters", response = ErrorInfo.class)
   })
-  @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+  @RequestMapping(value = "/supervisiontasks/search", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Page<SupervisionTaskSearchResult>> search(@RequestBody @Valid SupervisionTaskSearchParameters searchParameters) {
     SupervisionTaskSearchCriteria criteria = searchParameterMapper.createSearchCriteria(searchParameters);
@@ -71,11 +82,30 @@ public class SupervisionTaskController {
       @ApiResponse(code = 200, message = "Supervision task retrieved successfully", response = SupervisionTaskSearchResult.class),
       @ApiResponse(code = 404, message = "Task with ID not found", response = ErrorInfo.class)
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+  @RequestMapping(value = "/supervisiontasks/{id}", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<SupervisionTaskSearchResult> findById(@PathVariable Integer id) {
     SupervisionTaskJson task = supervisionTaskService.findById(id);
     return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(task));
+  }
+
+  @ApiOperation(value = "Get supervision tasks for application with given ID",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = SupervisionTaskSearchResult.class,
+      responseContainer = "List"
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Supervision tasks retrieved successfully", response = SupervisionTaskSearchResult.class, responseContainer = "List"),
+  })
+  @RequestMapping(value = "/applications/{id}/supervisiontasks", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<List<SupervisionTaskSearchResult>> findByApplicationId(@PathVariable Integer id) {
+    List<SupervisionTaskSearchResult> tasks = supervisionTaskService.findByApplicationId(id)
+        .stream()
+        .map(t -> supervisionTaskMapper.mapToSearchResult(t))
+        .collect(Collectors.toList());
+    return ResponseEntity.ok(tasks);
   }
 
   @ApiOperation(value = "Create new supervision task. Returns ID of the created task. "
@@ -88,10 +118,57 @@ public class SupervisionTaskController {
       @ApiResponse(code = 200, message = "Supervision tasks created successfully", response = Integer.class),
       @ApiResponse(code = 400, message = "Invalid create parameters", response = ErrorInfo.class)
   })
-  @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+  @RequestMapping(value = "/supervisiontasks", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Integer> create(@RequestBody @Valid SupervisionTaskCreateJson supervisionTask) {
     return ResponseEntity.ok(supervisionTaskService.insert(supervisionTaskMapper.mapToModel(supervisionTask)).getId());
   }
 
+  @ApiOperation(value = "Approves supervision task and returns updated task.",
+      notes =
+            "<h3>Approval of operational condition supervision task</h3>"
+          + " <ul>"
+          + "   <li>Approval not allowed if there's no decision made for application (application status other than DECISION)</li>"
+          + "   <li>Approval not allowed if application has DATE_CHANGE or OTHER_CHANGES tag</li>"
+          + "   <li>Sets operational condition date for the excavation announcement according to given date</li>"
+          + "   <li>Moves application to operational condition state if there's no changes in invoicing or in operational condition date after decision. If invoicing or operational condition date is changed, "
+          + "   moves application to decision making state</li>"
+          + " </ul>"
+          + "<h3>Approval of final supervision task</h3>"
+          + " <ul>"
+          + "   <li>Approval not allowed if there's no decision made for application (application status other than DECISION or OPERATIONAL_CONDITION)</li>"
+          + "   <li>Approval not allowed if application has DATE_CHANGE or OTHER_CHANGES tag</li>"
+          + "   <li>Sets work finished date for the excavation announcement or area rental according to given date</li>"
+          + "   <li>Moves application to finished state if there's no change in invoicing and work finished date is equal to original application end time. If invoicing or date is changed, "
+          + "   moves application to decision making state</li>"
+          + " </ul>",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = Integer.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Supervision task approved successfully", response = Integer.class),
+      @ApiResponse(code = 400, message = "Invalid parameters", response = ErrorInfo.class),
+      @ApiResponse(code = 403, message = "Approval of task not allowed", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/supervisiontasks/{id}/approved", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<SupervisionTaskSearchResult> approve(@PathVariable Integer id, @RequestBody @Valid SupervisionTaskApprovalJson approvalData) {
+    return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(supervisionTaskApprovalService.approveSupervisionTask(approvalData)));
+  }
+
+  @ApiOperation(value = "Rejects supervision task and creates a new task with given date.",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = Integer.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Supervision task rejected successfully", response = Integer.class),
+      @ApiResponse(code = 400, message = "Invalid parameters", response = ErrorInfo.class),
+  })
+  @RequestMapping(value = "/supervisiontasks/{id}/rejected", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<SupervisionTaskSearchResult> reject(@PathVariable Integer id, @RequestBody @Valid SupervisionTaskRejectionJson rejectionData) {
+    return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(supervisionTaskApprovalService.rejectSupervisionTask(id, rejectionData)));
+  }
 }

@@ -1,9 +1,5 @@
 package fi.hel.allu.supervision.api.validation;
 
-import java.util.Locale;
-
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -13,7 +9,6 @@ import org.springframework.validation.Validator;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.servicecore.service.ApplicationService;
-import fi.hel.allu.servicecore.service.LocationService;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.supervision.api.domain.SupervisionTaskCreateJson;
 
