@@ -57,7 +57,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   protected void setExcavationAnnouncementInvoicable(Application application, ZonedDateTime invoicableTime) {
     invoiceService.lockInvoices(application.getId());
     invoiceService.setInvoicableTime(application.getId(), invoicableTime);
-    lockChargeBasisEntries(application.getId());
+    finishInvoicing(application);
   }
 
   @Override
