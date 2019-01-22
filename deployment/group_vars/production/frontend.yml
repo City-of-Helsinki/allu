@@ -15,3 +15,4 @@ server_admin: alluprojekti@gmail.com
 ssl_certificate_file: star_kaupunkiymparisto_fi.crt
 ssl_certificate_key_file: star_kaupunkiymparisto_fi.key
 ssl_certificate_chain_file: DigiCertCA.crt
+mapproxy_block_by_referer: true

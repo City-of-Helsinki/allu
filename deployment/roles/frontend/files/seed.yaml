@@ -1,15 +1,36 @@
+coverages:
+  helsinki_coverage:
+    bbox: [24.4555930248625906, 59.9084989595170114, 25.2903558783246289, 60.4122137731072542]
+    srs: 'EPSG:4326'
+
+seeds:
+  refresh_karttasarja:
+    caches: [hki_karttasarja_cache]
+    grids: [EPSG_3879]
+    coverages: ['helsinki_coverage']
+    levels:
+      to: 8
+    refresh_before:
+      days: 1
+
 cleanups:
+  remove_karttasarja_detailed_levels:
+    caches: [hki_karttasarja_cache]
+    remove_before:
+      days: 1
+    levels:
+      from: 9
+
   remove_all_to_refresh_cache:
     caches: [
-      hki_karttasarja_cache,
       hki_kantakartta_cache,
       hki_ajantasa_asemakaava_cache,
       hki_kiinteistokartta_cache,
       hki_ortoilmakuva_cache,
       hki_maanomistus_vuokrausalueet_yhdistelma_cache,
-      hki_wms_maanomistus_vuokrausalueet_cache,
-      hki_wms_maanomistus_sisainen_cache,
-      hki_wms_maanalaiset_tilat_cache,
+      hki_maanomistus_vuokrausalueet_cache,
+      hki_maanomistus_sisainen_cache,
+      hki_maanalaiset_tilat_cache,
       hki_maanalaiset_tilat_alueet_cache,
       hki_maalampokaivot_cache,
       hki_johtokartta_sahko_cache,
@@ -21,7 +42,4 @@ cleanups:
       hki_johtokartta_yhdistelma_cache
     ]
     remove_before:
-    #  weeks: 1
       days: 1
-    #  hours: 4
-    #  minutes: 15

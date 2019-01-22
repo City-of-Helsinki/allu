@@ -153,7 +153,7 @@ export class MapLayerService {
     };
   }
 
-  createOverlay(layerName: string): L.TileLayer.WMSAuth {
+  createOverlay(layerName: string): L.TileLayer {
     return this.createOverlayLayer(layerName, this.authService.token);
   }
 
@@ -214,15 +214,11 @@ export class MapLayerService {
     }, {});
   }
 
-  private createOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer.WMSAuth {
-    return L.tileLayer.wmsAuth('/wms?', {
-      layers: layerName,
+  private createOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer {
+    const url = `/tms/1.0.0/${layerName}/EPSG_3879/{z}/{x}/{-y}.png`;
+    return L.tileLayer(url, {
       format: 'image/png',
-      transparent: true,
-      token: token,
-      timeout: timeout,
-      tileSize: OVERLAY_TILE_SIZE,
-      minZoom: minZoom
+      minZoom: minZoom,
     });
   }
 }

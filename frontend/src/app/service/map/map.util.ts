@@ -95,8 +95,9 @@ export class MapUtil {
     const bounds = L.bounds([25440000, 6630000], [25571072, 6761072]);
     const projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
     return new L.Proj.CRS(crsName, projDef, {
-      resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125],
-      bounds: bounds
+      resolutions: [128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125],
+      bounds: bounds,
+      origin: [25440000, 6630000]
     });
   }
 
