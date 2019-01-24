@@ -33,7 +33,7 @@ caches:
     grids: [EPSG_3879]
     sources: [hki_wms_karttasarja]
     cache:
-      type: file
+      type: sqlite
 
   hki_kantakartta_cache:
     grids: [EPSG_3879]
@@ -320,6 +320,6 @@ globals:
     formats:
       image/png:
         mode: 'P'
-        transparent: false
+        transparent: true
         encoding_options:
           quantizer: fastoctree
