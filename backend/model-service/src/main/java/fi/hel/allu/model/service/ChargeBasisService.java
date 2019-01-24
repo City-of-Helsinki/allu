@@ -1,5 +1,7 @@
 package fi.hel.allu.model.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.types.ChargeBasisType;
@@ -171,9 +174,44 @@ public class ChargeBasisService {
   }
 
   public int getInvoicableSumForLocation(int applicationId, Integer locationId) {
-    return chargeBasisDao.getChargeBasis(applicationId).stream()
+    List<ChargeBasisEntry> applicationEntries = chargeBasisDao.getChargeBasis(applicationId);
+    List<ChargeBasisEntry> locationEntries = applicationEntries.stream()
       .filter(c -> Objects.equals(locationId, c.getLocationId()) && c.isInvoicable())
-      .collect(Collectors.summingInt(ChargeBasisEntry::getNetPrice));
+      .collect(Collectors.toList());
+    int sum = locationEntries.stream().collect(Collectors.summingInt(le -> getEntryPriceWithDiscounts(le, applicationEntries)));
+    return sum;
+  }
+
+  // Calculates price for one charge basis entry with discounts applied
+  private int getEntryPriceWithDiscounts(ChargeBasisEntry entry, List<ChargeBasisEntry> applicationEntries) {
+    List<ChargeBasisEntry> discountEntries = applicationEntries
+        .stream()
+        .filter(re -> Objects.equals(re.getReferredTag(), entry.getTag()) && re.isInvoicable())
+        .sorted((re1, re2) -> {
+          if (re1.getUnit() == re2.getUnit()) {
+            return 0;
+          } else if (re1.getUnit() == ChargeBasisUnit.PERCENT) {
+            return -1;
+          } else {
+            return 1;
+          }
+        })
+        .collect(Collectors.toList());
+    BigDecimal price = BigDecimal.valueOf(entry.getNetPrice());
+    for (ChargeBasisEntry e : discountEntries) {
+      price = applyDiscount(price, e);
+    }
+    return price.setScale(0, RoundingMode.UP).intValue();
+  }
+
+  private BigDecimal applyDiscount(BigDecimal price, ChargeBasisEntry e) {
+    if (e.getUnit() == ChargeBasisUnit.PERCENT) {
+      // Discount quantity is negative
+      return price.add(BigDecimal.valueOf(e.getQuantity() / 100.0).multiply(price));
+    } else {
+      // Discount net price is negative
+      return price.add(BigDecimal.valueOf(e.getNetPrice()));
+    }
   }
 
   public List<ChargeBasisEntry> findSingleInvoiceByApplicationId(int id) {
