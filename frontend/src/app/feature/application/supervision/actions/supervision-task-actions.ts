@@ -1,6 +1,8 @@
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {Action} from '@ngrx/store';
 import {ActionWithPayload} from '@feature/common/action-with-payload';
+import {ApplicationStatus} from '@model/application/application-status';
+import {StatusChangeInfo} from '@model/application/status-change-info';
 
 export enum SupervisionTaskActionType {
   Load = '[SupervisionTask] Load tasks',
@@ -53,7 +55,12 @@ export class RemoveSuccess implements Action {
 
 export class Approve implements Action {
   readonly type = SupervisionTaskActionType.Approve;
-  constructor(public payload: SupervisionTask) {}
+  constructor(public payload: {
+    task: SupervisionTask,
+    reportedDate: Date,
+    status: ApplicationStatus,
+    changeInfo?: StatusChangeInfo
+  }) {}
 }
 
 export class ApproveSuccess implements Action {

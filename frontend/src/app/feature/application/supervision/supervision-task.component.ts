@@ -23,8 +23,7 @@ import {filter, map, take} from 'rxjs/internal/operators';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
-import * as fromSupervision from '@feature/application/supervision/reducers';
-import {Approve, ChangeOwner, Load, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
+import {Approve, ChangeOwner, Reject, Remove, Save} from '@feature/application/supervision/actions/supervision-task-actions';
 import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExcavationAnnouncement} from '@model/application/excavation-announcement/excavation-announcement';
@@ -36,7 +35,6 @@ import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from '@f
 import {CommentType} from '@model/application/comment/comment-type';
 import {ApplicationStatus} from '@model/application/application-status';
 import {StatusChangeInfo} from '@model/application/status-change-info';
-import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {
   ExcavationSupervisionApprovalModalComponent,
   ExcavationSupervisionApprovalModalData
@@ -45,7 +43,6 @@ import {
   AreaRentalSupervisionApprovalModalComponent,
   AreaRentalSupervisionApprovalModalData
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
-import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/date-reporting-actions';
 import {Location} from '@model/common/location';
 import {AreaRental} from '@model/application/area-rental/area-rental';
 
@@ -187,18 +184,13 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private handleApproval(result: SupervisionApprovalResult, changeInfo?: StatusChangeInfo) {
     const task = this.taskWithResult(SupervisionTaskStatusType.APPROVED, result);
-    this.store.dispatch(new Approve(task));
-    Some(result.reportedDate).do(date => this.reportDatesOnApproval(date, task.type));
+    this.store.dispatch(new Approve({
+      task,
+      reportedDate: result.reportedDate,
+      status: result.statusChange,
+      changeInfo
+    }));
     Some(result.requiredTasks).do(tasks => this.store.dispatch(new SetRequiredTasks(tasks)));
-    this.handleStatusChange(result, changeInfo);
-  }
-
-  private reportDatesOnApproval(date: Date, type: SupervisionTaskType): void {
-    if (type === SupervisionTaskType.OPERATIONAL_CONDITION) {
-      this.store.dispatch(new ReportOperationalCondition(date));
-    } else if (type === SupervisionTaskType.FINAL_SUPERVISION) {
-      this.store.dispatch(new ReportWorkFinished(date));
-    }
   }
 
   private taskWithResult(status: SupervisionTaskStatusType, result: SupervisionApprovalResult): SupervisionTask {
@@ -350,15 +342,6 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.editing = false;
   }
 
-  private handleStatusChange(result: SupervisionApprovalResult, changeInfo?: StatusChangeInfo): void {
-    if (result.statusChange) {
-      this.store.select(fromSupervision.getSaving).pipe(
-        filter(saving => !saving),
-        take(1),
-      ).subscribe(() => this.changeStatus(result.statusChange, changeInfo));
-    }
-  }
-
   private toDecisionMaking(comment?: string): Observable<StatusChangeInfo> {
     const config = {
       ...DECISION_PROPOSAL_MODAL_CONFIG,
@@ -373,13 +356,6 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     return this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed().pipe(
       filter(result => !!result)
     );
-  }
-
-  private changeStatus(status: ApplicationStatus, changeInfo?: StatusChangeInfo): void {
-    this.applicationStore.changeStatus(this.application.id, status, changeInfo)
-      .subscribe(
-        () => this.store.dispatch(new Load()),
-        err => this.store.dispatch(new NotifyFailure(err)));
   }
 
   private getLocation(locations: Location[], locationId: number): Location {

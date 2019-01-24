@@ -5,7 +5,7 @@ import * as fromApplication from '@feature/application/reducers';
 import * as fromSupervision from '@feature/application/supervision/reducers';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {SupervisionTaskService} from '@service/supervision/supervision-task.service';
-import {from, Observable, of} from 'rxjs/index';
+import {EMPTY, from, Observable, of} from 'rxjs/index';
 import {
   Approve,
   ApproveSuccess, ChangeOwner, ChangeOwnerSuccess,
@@ -22,12 +22,19 @@ import {
 } from '@feature/application/supervision/actions/supervision-task-actions';
 import * as TagActions from '@feature/application/actions/application-tag-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {catchError, map, switchMap} from 'rxjs/internal/operators';
+import {catchError, map, switchMap, take, tap} from 'rxjs/internal/operators';
 import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {Load as LoadInvoices} from '@feature/application/invoicing/actions/invoice-actions';
 import {Load as LoadChargeBasis} from '@feature/application/invoicing/actions/charge-basis-actions';
 import {Load as LoadComments} from '@feature/comment/actions/comment-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {DateReportingService} from '@service/application/date-reporting.service';
+import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
+import {ReportOperationalCondition, ReportWorkFinished} from '@feature/application/actions/date-reporting-actions';
+import {Application} from '@model/application/application';
+import {ApplicationStore} from '@service/application/application-store';
+import {ApplicationStatus} from '@model/application/application-status';
+import {StatusChangeInfo} from '@model/application/status-change-info';
 
 const requiresTagReload = [
   SupervisionTaskActionType.SaveSuccess,
@@ -40,7 +47,9 @@ const requiresTagReload = [
 export class SupervisionTaskEffects {
   constructor(private actions: Actions,
               private store: Store<fromRoot.State>,
-              private taskService: SupervisionTaskService) {}
+              private taskService: SupervisionTaskService,
+              private dateReporting: DateReportingService,
+              private applicationStore: ApplicationStore) {}
 
   @Effect()
   load: Observable<Action> = this.actions.pipe(
@@ -82,12 +91,16 @@ export class SupervisionTaskEffects {
   @Effect()
   approve: Observable<Action> = this.actions.pipe(
     ofType<Approve>(SupervisionTaskActionType.Approve),
-    switchMap(action => this.taskService.approve(action.payload).pipe(
-      switchMap((task) => [
-        new ApproveSuccess(task),
-        new NotifySuccess('supervision.task.action.approve')
-      ]),
-      catchError(error => of(new NotifyFailure(error)))
+    switchMap(action => this.taskService.approve(action.payload.task).pipe(
+      switchMap((task) => this.reportDatesOnApproval(task.applicationId, action.payload.reportedDate, task.type).pipe(
+        switchMap(app => this.handleStatusChange(app, action.payload.status, action.payload.changeInfo)),
+        switchMap(app => [
+          new ApproveSuccess(task),
+          this.applicationStore.setAndAction(app),
+          new NotifySuccess('supervision.task.action.approve')
+        ]),
+        catchError(error => of(new NotifyFailure(error)))
+      ))
     ))
   );
 
@@ -139,4 +152,23 @@ export class SupervisionTaskEffects {
     withLatestExisting(this.store.select(fromSupervision.getOpenOperationalConditionTask)),
     map(([action, task]) => new RemoveSuccess(task.id))
   );
+
+  private reportDatesOnApproval(appId: number, date: Date, type: SupervisionTaskType): Observable<Application> {
+    if (date !== undefined) {
+      if (type === SupervisionTaskType.OPERATIONAL_CONDITION) {
+        return this.dateReporting.reportOperationalCondition(appId, date);
+      } else if (type === SupervisionTaskType.FINAL_SUPERVISION) {
+        return this.dateReporting.reportWorkFinished(appId, date);
+      }
+    }
+    return this.store.select(fromApplication.getCurrentApplication).pipe(take(1));
+  }
+
+  private handleStatusChange(app: Application, target: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
+    if (target) {
+      return this.applicationStore.changeStatus(app.id, target, changeInfo);
+    } else {
+      return of(app);
+    }
+  }
 }
