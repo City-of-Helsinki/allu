@@ -243,10 +243,11 @@ public class ApplicationHistoryService {
    * @param newStatus
    *          new status
    */
-  public void addStatusChange(Integer applicationId, StatusType newStatus) {
+  public void addStatusChange(Integer applicationId, StatusType newStatus, StatusType targetStatus) {
     ChangeHistoryItem change = new ChangeHistoryItem();
     change.setChangeType(ChangeType.STATUS_CHANGED);
     change.setChangeSpecifier(newStatus.name());
+    Optional.ofNullable(targetStatus).ifPresent(t -> change.setChangeSpecifier2(t.name()));
     addChangeItem(applicationId, change);
   }
 

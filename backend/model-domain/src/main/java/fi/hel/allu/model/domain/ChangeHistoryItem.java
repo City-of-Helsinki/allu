@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * A single change to an application. Can be creation, status change or contents
- * change. In case of a status change, the new status is provided. In case of
+ * change. In case of a status change, the new status and possible target status is provided. In case of
  * contents change, the changed field descriptions are provided.
  */
 public class ChangeHistoryItem {
@@ -15,6 +15,7 @@ public class ChangeHistoryItem {
   private ChangeHistoryItemInfo info;
   private ChangeType changeType;
   private String changeSpecifier;
+  private String changeSpecifier2;
   private ZonedDateTime changeTime;
   private List<FieldChange> fieldChanges;
 
@@ -29,6 +30,12 @@ public class ChangeHistoryItem {
     this.changeSpecifier = newStatus;
     this.changeTime = changeTime;
     this.fieldChanges = fieldChanges;
+  }
+
+  public ChangeHistoryItem(Integer userId, ChangeHistoryItemInfo info, ChangeType changeType,
+      String newStatus, ZonedDateTime changeTime, List<FieldChange> fieldChanges, String changeSpecifier2) {
+    this(userId, info, changeType, newStatus, changeTime, fieldChanges);
+    this.changeSpecifier2 = changeSpecifier2;
   }
 
   /**
@@ -101,5 +108,13 @@ public class ChangeHistoryItem {
 
   public void setFieldChanges(List<FieldChange> fieldChanges) {
     this.fieldChanges = fieldChanges;
+  }
+
+  public String getChangeSpecifier2() {
+    return changeSpecifier2;
+  }
+
+  public void setChangeSpecifier2(String changeSpecifier2) {
+    this.changeSpecifier2 = changeSpecifier2;
   }
 }

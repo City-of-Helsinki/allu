@@ -124,7 +124,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
     final int APPLICATION_ID = 432;
     setupChangeCapture(APPLICATION_ID);
 
-    applicationHistoryService.addStatusChange(APPLICATION_ID, StatusType.PRE_RESERVED);
+    applicationHistoryService.addStatusChange(APPLICATION_ID, StatusType.PRE_RESERVED, null);
 
     Assert.assertNotNull(capturedChange);
     Assert.assertEquals(ChangeType.STATUS_CHANGED, capturedChange.getChangeType());

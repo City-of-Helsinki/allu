@@ -235,8 +235,7 @@ public class ApplicationServiceComposer {
     // Get application again so that updated owner is included
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(
         applicationService.findApplicationById(application.getId()));
-
-    applicationHistoryService.addStatusChange(application.getId(), newStatus);
+    applicationHistoryService.addStatusChange(application.getId(), newStatus, applicationJson.getTargetState());
     List<ApplicationJson> applicationsUpdated = new ArrayList<>();
     applicationsUpdated.add(applicationJson);
     // Update possible replaced applications to search service, also status of those might have changed

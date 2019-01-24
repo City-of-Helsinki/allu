@@ -12,14 +12,16 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
   private ZonedDateTime eventTime;
   private StatusType newStatus;
   private String applicationIdentifier;
+  private StatusType targetStatus;
 
   public ApplicationStatusEventExt() {
   }
 
-  public ApplicationStatusEventExt(ZonedDateTime eventTime, StatusType newStatus, String applicationIdentifier) {
+  public ApplicationStatusEventExt(ZonedDateTime eventTime, StatusType newStatus, String applicationIdentifier, StatusType targetStatus) {
     this.eventTime = eventTime;
     this.newStatus = newStatus;
     this.applicationIdentifier = applicationIdentifier;
+    this.targetStatus = targetStatus;
   }
 
   @ApiModelProperty(value = "Time of the application event")
@@ -53,6 +55,15 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
   public int compareTo(ApplicationStatusEventExt o) {
     int result = this.getEventTime().compareTo(o.getEventTime());
     return result == 0 ? this.newStatus.name().compareTo(o.newStatus.name()) : result;
+  }
+
+  @ApiModelProperty(value = "Target status. Tells next status (DECISION, OPERATIONAL_CONDITION or FINISHED) if current status is DECISIONMAKING.")
+  public StatusType getTargetStatus() {
+    return targetStatus;
+  }
+
+  public void setTargetStatus(StatusType targetStatus) {
+    this.targetStatus = targetStatus;
   }
 
 }

@@ -94,6 +94,7 @@ public class ApplicationStatusChangeHandler {
   }
 
   protected void handleFinishedStatus(Application application) {
+    clearTargetState(application);
   }
 
   protected void handleOperationalConditionStatus(Application application) {

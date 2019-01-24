@@ -66,6 +66,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     ZonedDateTime invoicableTime = getInvoicableTimeForOperationalCondition(extension);
     setExcavationAnnouncementInvoicable(application, invoicableTime);
     removeTag(application.getId(), ApplicationTagType.OPERATIONAL_CONDITION_REPORTED);
+    clearTargetState(application);
   }
 
   private ZonedDateTime getInvoicableTimeForOperationalCondition(ExcavationAnnouncement extension) {
@@ -81,5 +82,6 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   protected void handleFinishedStatus(Application application) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
     setExcavationAnnouncementInvoicable(application, extension.getWorkFinished());
+    clearTargetState(application);
   }
 }

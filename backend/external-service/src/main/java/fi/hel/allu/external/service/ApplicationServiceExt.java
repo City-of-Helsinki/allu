@@ -96,8 +96,19 @@ public class ApplicationServiceExt {
   private List<ApplicationStatusEventExt> toStatusEvents(Integer applicationId, List<ChangeHistoryItem> items) {
     return Optional.ofNullable(items).orElse(Collections.emptyList())
             .stream()
-            .map(i -> new ApplicationStatusEventExt(i.getChangeTime(), StatusType.valueOf(i.getChangeSpecifier()), i.getInfo().getApplicationId()))
+            .map(i ->
+              new ApplicationStatusEventExt(i.getChangeTime(),
+                  toStatusType(i.getChangeSpecifier()),
+                  i.getInfo().getApplicationId(),
+                  toStatusType(i.getChangeSpecifier2()))
+             )
             .collect(Collectors.toList());
+  }
+
+  private StatusType toStatusType(String statusTypeString) {
+    return Optional.ofNullable(statusTypeString)
+        .map(s -> StatusType.valueOf(s))
+        .orElse(null);
   }
 
   public <T extends BaseApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
