@@ -167,7 +167,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.locationForm.get('areaOverride').valueChanges.pipe(
       takeUntil(this.destroy),
-      map(val => Math.floor(val))
+      map(val => NumberUtil.isDefined(val) ? Math.floor(val) : null)
     ).subscribe(val => this.locationForm.patchValue({areaOverride: val}, {emitEvent: false}));
   }
 
