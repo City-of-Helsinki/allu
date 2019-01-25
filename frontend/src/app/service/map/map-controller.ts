@@ -233,7 +233,7 @@ export class MapController {
       scrollWheelZoom: this.config.zoom,
       zoom: 6,
       minZoom: 3,
-      maxZoom: 13,
+      maxZoom: 12,
       maxBounds:
         L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
       crs: this.mapUtil.EPSG3879,
