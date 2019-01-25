@@ -30,6 +30,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
 
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
+  orderer: boolean;
   referenceContact$: BehaviorSubject<Contact> = new BehaviorSubject<Contact>(undefined);
   showCreateNew$: Observable<boolean>;
 
@@ -54,6 +55,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
     this._newContact = contact;
     const searchTerm = contact.name ? contact.name.toLocaleLowerCase() : '';
     this.search$.next(searchTerm);
+    this.orderer = this.orderer === undefined ? contact.orderer : this.orderer;
   }
 
   get newContact() {

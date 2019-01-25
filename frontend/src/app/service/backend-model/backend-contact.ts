@@ -9,4 +9,5 @@ export interface BackendContact {
   email: string;
   phone: string;
   active: boolean;
+  orderer?: boolean;
 }

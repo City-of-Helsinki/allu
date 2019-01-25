@@ -19,6 +19,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Cont
   @Output() contactChanges: EventEmitter<Contact> = new EventEmitter<Contact>();
 
   @Input() readonly: boolean;
+  @Input() orderer: boolean;
 
   private _oldContact: Contact;
   private _newContact: Contact;
@@ -50,7 +51,7 @@ export class ContactInfoAcceptanceComponent extends InfoAcceptanceComponent<Cont
   }
 
   protected resultChanges(result: FieldValues): void {
-    const contact: Contact = {...this._oldContact};
+    const contact: Contact = {...this._oldContact, orderer: this.orderer};
     contact.name = result.name;
     contact.streetAddress = result.streetAddress;
     contact.postalCode = result.postalCode;

@@ -1,5 +1,5 @@
 import isEqualWith from 'lodash/isEqualWith';
-import {NumberUtil} from '@util/number.util';
+import set from 'lodash/set';
 
 export class ObjectUtil {
   static filter(source: any, filterFn: (fieldName: string) => any) {
@@ -42,6 +42,11 @@ export class ObjectUtil {
       }
       return cloned;
     }
+  }
+
+  static set(source: any, path: string | string[], value: any): any {
+    const cloned = ObjectUtil.clone(source);
+    return set(cloned, path, value);
   }
 }
 

@@ -3,10 +3,12 @@
   [oldContact]="referenceContact$ | async"
   [newContact]="newContact"
   [readonly]="readonly"
+  [orderer]="orderer"
   (contactChanges)="contactChanges.emit($event)">
   <div class="left-header">
     <h2 mat-dialog-title>
       {{'contact.title' | translation}}
+      <ng-container *ngIf="orderer"> - {{'contact.orderer' | translation | lowercase}}</ng-container>
     </h2>
   </div>
   <div class="right-header">

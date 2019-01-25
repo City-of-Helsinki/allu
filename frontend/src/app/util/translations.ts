@@ -821,6 +821,7 @@ export const translations = {
   contact: {
     title: 'Yhteyshenkilö',
     name: 'Yhteyshenkilön nimi',
+    orderer: 'Tilaaja',
     role: {
       APPLICANT: {
         title: 'Yhteyshenkilö'

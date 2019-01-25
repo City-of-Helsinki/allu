@@ -11,6 +11,8 @@ import {ArrayUtil} from '@util/array-util';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ObjectUtil} from '@util/object.util';
+import {OrdererId} from '@model/application/cable-report/orderer-id';
 
 export interface State {
   application: Application;
@@ -71,10 +73,19 @@ export function reducer(state: State = initialState, action: InformationRequestR
     case InformationRequestResultActionType.SetContact: {
       const contact = action.payload;
       const result = ArrayUtil.createOrReplace(state.contacts, contact, c => c.id === contact.id);
-      return {
-        ...state,
-        contacts: result
-      };
+
+      if (contact.orderer) {
+        return {
+          ...state,
+          application: ObjectUtil.set(state.application, 'extension.ordererId', OrdererId.ofId(contact.id)),
+          contacts: result
+        };
+      } else {
+        return {
+          ...state,
+          contacts: result
+        };
+      }
     }
 
     case InformationRequestResultActionType.SetKindsWithSpecifiers: {

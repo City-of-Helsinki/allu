@@ -1,5 +1,5 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {postalCodeValidator} from '../../util/complex-validator';
+import {postalCodeValidator} from '@util/complex-validator';
 
 export class Contact {
   constructor(
@@ -11,7 +11,8 @@ export class Contact {
     public city?: string,
     public email?: string,
     public phone?: string,
-    public active = true) {}
+    public active = true,
+    public orderer?: boolean) {}
 
   static formGroup(fb: FormBuilder, contact: Contact = new Contact()): FormGroup {
     return fb.group({
