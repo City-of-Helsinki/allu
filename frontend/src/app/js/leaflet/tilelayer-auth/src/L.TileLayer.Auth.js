@@ -2,7 +2,7 @@
 
 const request = require('superagent');
 
-L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
+L.TileLayer.Auth = L.TileLayer.extend({
   token: undefined,
   timeoutOptions: {
     response: 2000,  // Wait max 2 seconds for the server to start sending,
@@ -15,7 +15,7 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
     this.timeoutOptions = Object.assign(this.timeoutOptions, options.timeout);
     delete options.timeout;
     delete options.token; // need to delete property so it is not added as url parameters by parent class
-    L.TileLayer.WMS.prototype.initialize.call(this, url, options);
+    L.TileLayer.prototype.initialize.call(this, url, options);
   },
   // @method createTile(coords: Object, done?: Function): HTMLElement
   // Called only internally, overrides GridLayer's [`createTile()`](#gridlayer-createtile)
@@ -52,13 +52,13 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
     req.then(
       function(res) {
         tile.src = URL.createObjectURL(res.body);
-        L.TileLayer.WMS.prototype._tileOnLoad.call(self, done, tile);
+        L.TileLayer.prototype._tileOnLoad.call(self, done, tile);
       },
       function(err) {
         if (err.timeout) {
           console.error('Fetching map tile took too long');
         }
-        L.TileLayer.WMS.prototype._tileOnError.call(self, done, tile, err);
+        L.TileLayer.prototype._tileOnError.call(self, done, tile, err);
       }
     );
     this._tileRequests[key] = req;
@@ -67,7 +67,7 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
 
   // Abort pending tile loads from old zoom level when zoom changes
   _abortLoading: function () {
-    L.TileLayer.WMS.prototype._abortLoading.call(self);
+    L.TileLayer.prototype._abortLoading.call(self);
     for (const i in this._tiles) {
       if (this._tileRequests[i] && (this._tiles[i].coords.z !== this._tileZoom)) {
         this._tileRequests[i].abort();
@@ -80,6 +80,6 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
 // @factory L.tileLayer.wmsAuth(baseUrl: String, options: TileLayer.WMS options)
 // Instantiates a WMS tile layer with authentication object given a base URL of the WMS service and a WMS parameters/options object.
 // options object should contain jwt token which is used for authenticating
-L.tileLayer.wmsAuth = function (url, options) {
-  return new L.TileLayer.WMSAuth(url, options);
+L.tileLayer.auth = function (url, options) {
+  return new L.TileLayer.Auth(url, options);
 };

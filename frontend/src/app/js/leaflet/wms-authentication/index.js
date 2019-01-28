@@ -1,3 +1,0 @@
-require('leaflet');
-require('./src/L.TileLayer.WMSAuth');
-

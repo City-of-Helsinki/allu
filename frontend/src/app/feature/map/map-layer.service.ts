@@ -10,7 +10,7 @@ import * as L from 'leaflet';
 import {PathOptions} from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.layersupport';
-import '../../js/leaflet/wms-authentication';
+import '../../js/leaflet/tilelayer-auth';
 import '../../js/leaflet/wfs-geojson';
 import 'leaflet-wfst';
 import {Observable} from 'rxjs';
@@ -18,8 +18,8 @@ import {map} from 'rxjs/internal/operators';
 import TimeoutOptions = L.TimeoutOptions;
 
 const timeout: TimeoutOptions = {
-  response: 20000, // Wait max 20 seconds for the server to start sending,
-  deadline: 60000 // but allow 60 seconds for the file to finish loading.
+  response: 60000, // Wait max x seconds for the server to start sending,
+  deadline: 60000 // but allow y seconds for the file to finish loading.
 };
 
 export const DEFAULT_OVERLAY = 'helsinki_karttasarja';
@@ -126,35 +126,35 @@ export class MapLayerService {
   createOverlays(): L.Control.LayersObject {
     const token = this.authService.token;
     return {
-      'Karttasarja': this.createOverlayLayer('helsinki_karttasarja', token),
-      'Kantakartta': this.createOverlayLayer('helsinki_kantakartta', token),
-      'Ajantasa-asemakaava': this.createOverlayLayer('helsinki_ajantasa_asemakaava', token),
-      'Kiinteistökartta': this.createOverlayLayer('helsinki_kiinteistokartta', token),
-      'Ortoilmakuva': this.createOverlayLayer('helsinki_ortoilmakuva', token)
+      'Karttasarja': this.createOverlayLayer('helsinki_karttasarja'),
+      'Kantakartta': this.createOverlayLayer('helsinki_kantakartta'),
+      'Ajantasa-asemakaava': this.createOverlayLayer('helsinki_ajantasa_asemakaava'),
+      'Kiinteistökartta': this.createOverlayLayer('helsinki_kiinteistokartta'),
+      'Ortoilmakuva': this.createOverlayLayer('helsinki_ortoilmakuva')
     };
   }
 
   createRestrictedOverlays(): L.Control.LayersObject {
     const token = this.authService.token;
     return {
-      'Maanomistus ja vuokraus yhdistelmä': this.createOverlayLayer('helsinki_maanomistus_vuokrausalueet_yhdistelma', token),
-      'Maanomistus vuokrausalueet': this.createOverlayLayer('helsinki_maanomistus_vuokrausalueet', token),
-      'Maanomistus sisäinen vuokraus': this.createOverlayLayer('helsinki_maanomistus_sisainen', token),
-      'Maanalaiset tilat reunaviivat': this.createOverlayLayer('helsinki_maanalaiset_tilat', token, DETAILED_LAYER_MIN_ZOOM),
-      'Maanalaiset tilat alueet': this.createOverlayLayer('helsinki_maanalaiset_tilat_alueet', token, DETAILED_LAYER_MIN_ZOOM),
-      'Maalämpökaivot': this.createOverlayLayer('helsinki_maalampokaivot', token),
-      'Sähkö': this.createOverlayLayer('helsinki_johtokartta_sahko', token, DETAILED_LAYER_MIN_ZOOM),
-      'Tietoliikenne': this.createOverlayLayer('helsinki_johtokartta_tietoliikenne', token, DETAILED_LAYER_MIN_ZOOM),
-      'Kaukolampo': this.createOverlayLayer('helsinki_johtokartta_kaukolampo', token, DETAILED_LAYER_MIN_ZOOM),
-      'Kaasu': this.createOverlayLayer('helsinki_johtokartta_kaasu', token, DETAILED_LAYER_MIN_ZOOM),
-      'Vesijohto': this.createOverlayLayer('helsinki_johtokartta_vesijohto', token, DETAILED_LAYER_MIN_ZOOM),
-      'Viemari': this.createOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM),
-      'Yhdistelmäjohtokartta': this.createOverlayLayer('helsinki_johtokartta_yhdistelma', token, DETAILED_LAYER_MIN_ZOOM),
+      'Maanomistus ja vuokraus yhdistelmä': this.createAuthenticatedOverlayLayer('helsinki_maanomistus_vuokrausalueet_yhdistelma', token),
+      'Maanomistus vuokrausalueet': this.createAuthenticatedOverlayLayer('helsinki_maanomistus_vuokrausalueet', token),
+      'Maanomistus sisäinen vuokraus': this.createAuthenticatedOverlayLayer('helsinki_maanomistus_sisainen', token),
+      'Maanalaiset tilat reunaviivat': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat', token, DETAILED_LAYER_MIN_ZOOM),
+      'Maanalaiset tilat alueet': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat_alueet', token, DETAILED_LAYER_MIN_ZOOM),
+      'Maalämpökaivot': this.createAuthenticatedOverlayLayer('helsinki_maalampokaivot', token),
+      'Sähkö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_sahko', token, DETAILED_LAYER_MIN_ZOOM),
+      'Tietoliikenne': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_tietoliikenne', token, DETAILED_LAYER_MIN_ZOOM),
+      'Kaukolampo': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukolampo', token, DETAILED_LAYER_MIN_ZOOM),
+      'Kaasu': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaasu', token, DETAILED_LAYER_MIN_ZOOM),
+      'Vesijohto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_vesijohto', token, DETAILED_LAYER_MIN_ZOOM),
+      'Viemari': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM),
+      'Yhdistelmäjohtokartta': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_yhdistelma', token, DETAILED_LAYER_MIN_ZOOM),
     };
   }
 
   createOverlay(layerName: string): L.TileLayer {
-    return this.createOverlayLayer(layerName, this.authService.token);
+    return this.createAuthenticatedOverlayLayer(layerName, this.authService.token);
   }
 
   private createWinkkiLayer(layerName: string, status: string, style: PathOptions = pathStyle.DEFAULT): L.FeatureGroup {
@@ -214,11 +214,21 @@ export class MapLayerService {
     }, {});
   }
 
-  private createOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer {
+  private createAuthenticatedOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer {
+    const url = `/tms/1.0.0/${layerName}/EPSG_3879/{z}/{x}/{-y}.png`;
+    return L.tileLayer.auth(url, {
+      format: 'image/png',
+      minZoom,
+      token,
+      timeout: timeout
+    });
+  }
+
+  private createOverlayLayer(layerName: string, minZoom?: number): L.TileLayer {
     const url = `/tms/1.0.0/${layerName}/EPSG_3879/{z}/{x}/{-y}.png`;
     return L.tileLayer(url, {
       format: 'image/png',
-      minZoom: minZoom,
+      minZoom
     });
   }
 }
