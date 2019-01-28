@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {AttachmentInfo} from '@model/application/attachment/attachment-info';
-import {AttachmentType} from '@model/application/attachment/attachment-type';
+import {AttachmentType, commonAttachmentTypes} from '@model/application/attachment/attachment-type';
 import {validForDecision} from '@model/common/file-type';
 
 const MB = 1000 * 1000;
@@ -19,10 +19,7 @@ export class AttachmentComponent implements OnInit {
   @Output() onSave = new EventEmitter<AttachmentInfo>();
 
   attachmentForm: FormGroup;
-  attachmentTypes = [
-    AttachmentType[AttachmentType.ADDED_BY_CUSTOMER],
-    AttachmentType[AttachmentType.ADDED_BY_HANDLER]
-  ];
+  attachmentTypes = commonAttachmentTypes.map(type => AttachmentType[type]);
 
   validForDecision = false;
   readonly maxAttachmentSize = 100 * MB;

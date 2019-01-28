@@ -3,12 +3,18 @@ export enum AttachmentType {
   ADDED_BY_HANDLER, // Käsittelijän lisäämä liite
   DEFAULT,          // Hakemustyyppikohtainen vakioliite
   DEFAULT_IMAGE,    // Hakemustyyppikohtainen tyyppikuvaliite
-  DEFAULT_TERMS     // Hakemustyyppikohtainen ehtoliite
+  DEFAULT_TERMS,    // Hakemustyyppikohtainen ehtoliite
+  SUPERVISION,      // Valvonnan liite
+  STATEMENT,        // Lausunto
+  OTHER             // Muu liite
 }
 
 export const commonAttachmentTypes = [
   AttachmentType.ADDED_BY_CUSTOMER,
-  AttachmentType.ADDED_BY_HANDLER
+  AttachmentType.ADDED_BY_HANDLER,
+  AttachmentType.SUPERVISION,
+  AttachmentType.STATEMENT,
+  AttachmentType.OTHER
 ];
 
 export const isCommon = (type: string) => commonAttachmentTypes.indexOf(AttachmentType[type]) >= 0;

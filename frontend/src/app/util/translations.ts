@@ -1339,7 +1339,10 @@ export const translations = {
       ADDED_BY_HANDLER: 'Käsittelijän lisäämä liite',
       DEFAULT: 'Hakemustyyppikohtainen vakioliite',
       DEFAULT_IMAGE: 'Hakemustyyppikohtainen tyyppikuvaliite',
-      DEFAULT_TERMS: 'Hakemustyyppikohtainen ehtoliite'
+      DEFAULT_TERMS: 'Hakemustyyppikohtainen ehtoliite',
+      SUPERVISION: 'Valvontaliite',
+      STATEMENT: 'Lausunto',
+      OTHER: 'Muu'
     },
     selectionTitle: {
       DEFAULT: 'Vakioliitteet',
