@@ -38,7 +38,7 @@ class TokenAuthFilter(object):
             if environ.has_key('HTTP_AUTHORIZATION'):
               headers = {'Authorization': environ['HTTP_AUTHORIZATION']}
               # call backend to validate the given token
-              r = requests.get('http://10.1.2.157:9000/users/isauthenticated', headers=headers)
+              r = requests.get('{{ proxypass_api_target }}users/isauthenticated', headers=headers)
               if r.status_code == 200:
                 return {'authorized': 'full'}
               else:
