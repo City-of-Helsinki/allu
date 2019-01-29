@@ -195,6 +195,7 @@ public class AlluMapper {
   private static String SAP_MATERIAL_CIRCUS = "27100022";
   private static String SAP_MATERIAL_DEPOSIT = "27100001";
   private static String SAP_MATERIAL_OTHER_RENTAL = "27100017";
+  private static String SAP_MATERIAL_PLACEMENT_CONTRACT = "27100032";
 
   private static String mapToSapMaterial(Application application) {
     if (application.getType() == null) {
@@ -205,6 +206,8 @@ public class AlluMapper {
         return SAP_MATERIAL_AREA_RENTAL;
       case EXCAVATION_ANNOUNCEMENT:
         return SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT;
+      case PLACEMENT_CONTRACT:
+        return SAP_MATERIAL_PLACEMENT_CONTRACT;
       default:
         // Don't do anything, will be decided in next switch
     }
