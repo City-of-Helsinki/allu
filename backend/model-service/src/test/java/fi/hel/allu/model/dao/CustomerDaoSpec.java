@@ -1,13 +1,7 @@
 package fi.hel.allu.model.dao;
 
-import com.greghaskins.spectrum.Spectrum;
-
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +10,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import fi.hel.allu.model.testUtils.TestCommon;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import fi.hel.allu.model.testUtils.TestCommon;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
@@ -164,9 +161,9 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           application.setInvoiceRecipientId(insertedCustomer.getId());
           insertedApplication = applicationDao.insert(application);
           applicationDao.addTag(insertedApplication.getId(), testCommon.dummyTag(ApplicationTagType.SAP_ID_MISSING));
-          List<Customer> customers = customerDao.findInvoiceRecipientsWithoutSapNumber();
+          List<InvoiceRecipientCustomer> customers = customerDao.findInvoiceRecipientsWithoutSapNumber();
           assertEquals(1, customers.size());
-          assertEquals(insertedCustomer.getId(), customers.get(0).getId());
+          assertEquals(insertedCustomer.getId(), customers.get(0).getCustomer().getId());
       });
       it("should not return invoice recipients of replaced applications", () -> {
         Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
@@ -176,7 +173,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         application.setReplacedByApplicationId(replacingApplication.getId());
         insertedApplication = applicationDao.insert(application);
         applicationDao.addTag(insertedApplication.getId(), testCommon.dummyTag(ApplicationTagType.SAP_ID_MISSING));
-        List<Customer> customers = customerDao.findInvoiceRecipientsWithoutSapNumber();
+        List<InvoiceRecipientCustomer> customers = customerDao.findInvoiceRecipientsWithoutSapNumber();
         assertEquals(0, customers.size());
     });
 

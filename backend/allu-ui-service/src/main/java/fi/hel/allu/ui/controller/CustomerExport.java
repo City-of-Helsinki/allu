@@ -1,32 +1,31 @@
 package fi.hel.allu.ui.controller;
 
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.ui.domain.CustomerExportJson;
 
 public abstract class CustomerExport {
 
   private static enum CustomerExportField {
-    TYPE("type", (CustomerJson c) -> c.getType().name()),
-    ALLUID("alluid", (CustomerJson c) -> c.getId().toString()),
-    NAME("name", CustomerJson::getName),
-    STREETADDRESS("streetaddress", (CustomerJson c) -> c.getPostalAddress() != null ? emptyIfNull(c.getPostalAddress().getStreetAddress()) : ""),
-    POSTALCODE("postalcode", (CustomerJson c) -> c.getPostalAddress() != null ? emptyIfNull(c.getPostalAddress().getPostalCode()) : ""),
-    CITY("city", (CustomerJson c) -> c.getPostalAddress() != null ? emptyIfNull(c.getPostalAddress().getCity()) : ""),
-    KEY("key", CustomerJson::getRegistryKey),
-    OVT("ovt", CustomerJson::getOvt),
-    INVOICING_OPERATOR("operator", CustomerJson::getInvoicingOperator),
-    SAP_NUMBER("sapcustomernumber", CustomerJson::getSapCustomerNumber);
+    TYPE("type", CustomerExportJson::getType),
+    ALLUID("alluid", CustomerExportJson::getAlluId),
+    NAME("name", CustomerExportJson::getName),
+    STREETADDRESS("streetaddress", CustomerExportJson::getStreetAddress),
+    POSTALCODE("postalcode", CustomerExportJson::getPostalCode),
+    CITY("city", CustomerExportJson::getCity),
+    KEY("key", CustomerExportJson::getKey),
+    OVT("ovt", CustomerExportJson::getOvt),
+    INVOICING_OPERATOR("operator", CustomerExportJson::getInvoicingOperator),
+    SAP_NUMBER("sapcustomernumber", CustomerExportJson::getSapCustomerNumber),
+    APPLICATIONS("applications", CustomerExportJson::getSemicolonSeparatedApplicationIds);
 
     private String header;
-    private Function<CustomerJson, String> valueGetter;
+    private Function<CustomerExportJson, String> valueGetter;
 
-    private CustomerExportField(String header, Function<CustomerJson, String> valueGetter) {
+    private CustomerExportField(String header, Function<CustomerExportJson, String> valueGetter) {
       this.header = header;
       this.valueGetter = valueGetter;
     }
@@ -35,16 +34,12 @@ public abstract class CustomerExport {
       return header;
     }
 
-    public String getValue(CustomerJson customer) {
+    public String getValue(CustomerExportJson customer) {
       return valueGetter.apply(customer);
-    }
-
-    private static String emptyIfNull(String value) {
-      return Optional.ofNullable(value).orElse("");
     }
   }
 
-  public abstract void write(List<CustomerJson> customers);
+  public abstract void write(List<CustomerExportJson> customers);
 
   private static final List<CustomerExportField> FIELDS = Arrays.asList(CustomerExportField.values());
 
@@ -52,7 +47,7 @@ public abstract class CustomerExport {
     return FIELDS.stream().map(f -> f.getHeader()).collect(Collectors.toList());
   }
 
-  protected List<String> getValues(CustomerJson customer) {
+  protected List<String> getValues(CustomerExportJson customer) {
     return FIELDS.stream().map(f -> f.getValue(customer)).collect(Collectors.toList());
   }
 

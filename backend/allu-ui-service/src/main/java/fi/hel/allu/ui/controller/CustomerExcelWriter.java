@@ -10,7 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.ui.domain.CustomerExportJson;
 
 public class CustomerExcelWriter extends CustomerExport {
 
@@ -26,10 +26,10 @@ public class CustomerExcelWriter extends CustomerExport {
   }
 
   @Override
-  public void write(List<CustomerJson> customers) {
+  public void write(List<CustomerExportJson> customers) {
     int rowNumber = 0;
     createRow(rowNumber, getHeaders());
-    for (CustomerJson customer : customers) {
+    for (CustomerExportJson customer : customers) {
       createRow(++rowNumber, getValues(customer));
     }
     autoSizeColumns();

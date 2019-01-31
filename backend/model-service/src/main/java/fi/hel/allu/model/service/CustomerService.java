@@ -3,7 +3,6 @@ package fi.hel.allu.model.service;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,10 +21,7 @@ import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.UserDao;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.FieldChange;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.event.CustomerUpdateEvent;
 
 /**
@@ -222,7 +218,7 @@ public class CustomerService {
     return newContacts;
   }
 
-  public List<Customer> findInvoiceRecipientsWithoutSapNumber() {
+  public List<InvoiceRecipientCustomer> findInvoiceRecipientsWithoutSapNumber() {
     return customerDao.findInvoiceRecipientsWithoutSapNumber();
   }
 

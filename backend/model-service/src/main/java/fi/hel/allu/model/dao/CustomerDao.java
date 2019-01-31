@@ -1,5 +1,15 @@
 package fi.hel.allu.model.dao;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.QueryException;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
@@ -19,21 +29,10 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.CustomerWithContacts;
-import fi.hel.allu.model.domain.PostalAddress;
+import fi.hel.allu.model.domain.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
@@ -81,7 +80,7 @@ public class CustomerDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Customer> findByIds(List<Integer> ids) {
+  public List<Customer> findByIds(Collection<Integer> ids) {
     List<Tuple> customerPostalAddress = queryFactory
         .select(customerBean, postalAddressBean)
         .from(customer)
@@ -203,18 +202,20 @@ public class CustomerDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Customer> findInvoiceRecipientsWithoutSapNumber() {
-    List<Integer> customerIds = findInvoiceRecipientIdsWithoutSapNumber();
-    return findByIds(customerIds);
+  public List<InvoiceRecipientCustomer> findInvoiceRecipientsWithoutSapNumber() {
+    Map<Integer, List<String>> recipientIdToApplicationIds = findInvoiceRecipientIdsWithoutSapNumber();
+    List<Customer> customers = findByIds(recipientIdToApplicationIds.keySet());
+    return customers.stream()
+        .map(c -> new InvoiceRecipientCustomer(c, recipientIdToApplicationIds.get(c.getId())))
+        .collect(Collectors.toList());
   }
 
-  private List<Integer> findInvoiceRecipientIdsWithoutSapNumber() {
+  private Map<Integer, List<String>> findInvoiceRecipientIdsWithoutSapNumber() {
     QApplicationTag tag = QApplicationTag.applicationTag;
     QApplication application = QApplication.application;
     QApplication replacingApplication = new QApplication("replacingApplication");
     return queryFactory
         .select(application.invoiceRecipientId)
-        .distinct()
         .from(application)
         .join(tag).on(tag.applicationId.eq(application.id))
         .where(application.status.notIn(StatusType.REPLACED, StatusType.CANCELLED)
@@ -224,7 +225,8 @@ public class CustomerDao {
               .from(replacingApplication)
               .where(replacingApplication.id.eq(application.replacedByApplicationId)
                   .and(replacingApplication.status.ne(StatusType.CANCELLED))).notExists())
-        ).fetch();
+        )
+        .transform(groupBy(application.invoiceRecipientId).as(list(application.applicationId)));
   }
 
   @Transactional(readOnly = true)

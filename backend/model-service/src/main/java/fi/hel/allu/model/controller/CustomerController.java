@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.model.dao.CustomerUpdateLogDao;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.CustomerChange;
-import fi.hel.allu.model.domain.CustomerUpdateLog;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.CustomerService;
 
@@ -143,7 +140,7 @@ public class CustomerController {
    * @return
    */
   @RequestMapping(value = "/sap_id_missing", method = RequestMethod.GET)
-  public ResponseEntity<List<Customer>> findInvoiceRecipientsWithoutSapNumber() {
+  public ResponseEntity<List<InvoiceRecipientCustomer>> findInvoiceRecipientsWithoutSapNumber() {
     return new ResponseEntity<>(customerService.findInvoiceRecipientsWithoutSapNumber(), HttpStatus.OK);
   }
 

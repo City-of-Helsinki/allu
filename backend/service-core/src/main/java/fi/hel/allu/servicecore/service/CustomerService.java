@@ -15,10 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.model.domain.ChangeHistoryItem;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.CustomerChange;
-import fi.hel.allu.model.domain.CustomerUpdateLog;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
@@ -245,12 +242,9 @@ public class CustomerService {
         .collect(Collectors.toList());
   }
 
-  public List<CustomerJson> findInvoiceRecipientsWithoutSapNumber() {
-    ResponseEntity<Customer[]> customerResult =
-        restTemplate.getForEntity(applicationProperties.getInvoiceRecipientsWithoutSapNumberUrl(), Customer[].class);
-    return Arrays.stream(customerResult.getBody())
-        .map(customer -> customerMapper.createCustomerJson(customer))
-        .collect(Collectors.toList());
+  public List<InvoiceRecipientCustomer> findInvoiceRecipientsWithoutSapNumber() {
+    ParameterizedTypeReference<List<InvoiceRecipientCustomer>> typeRef = new ParameterizedTypeReference<List<InvoiceRecipientCustomer>>() {};
+    return restTemplate.exchange(applicationProperties.getInvoiceRecipientsWithoutSapNumberUrl(), HttpMethod.GET, null, typeRef).getBody();
   }
 
   public Integer getNumberInvoiceRecipientsWithoutSapNumber() {
