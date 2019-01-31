@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 
 import {MapStore} from '@service/map/map-store';
@@ -12,7 +12,7 @@ import {applicationCanBeEdited} from '@model/application/application-status';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import * as fromRoot from '@feature/allu/reducers';
 import {select, Store} from '@ngrx/store';
-import {map} from 'rxjs/internal/operators';
+import {map, take} from 'rxjs/internal/operators';
 import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
@@ -21,10 +21,10 @@ import {MapLayer} from '@service/map/map-layer';
   selector: 'location-details',
   viewProviders: [],
   templateUrl: './location-details.component.html',
-  styleUrls: []
+  styleUrls: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() application: Application;
   @Input() readonly: boolean;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
@@ -39,29 +39,42 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
 
+  private _application: Application;
+
   constructor(private mapStore: MapStore,
               private locationState: LocationState,
               private fixedLocationService: FixedLocationService,
               private store: Store<fromRoot.State>) {
   }
 
-  ngOnInit(): void {
-    this.location = this.application.firstLocation;
-    this.canBeEdited = applicationCanBeEdited(this.application);
-    this.locationState.initLocations(this.application.locations);
-    this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
+  @Input() set application(application: Application) {
+    this._application = application;
+
+    this.location = this._application.firstLocation;
+    this.canBeEdited = applicationCanBeEdited(this._application);
+    this.locationState.initLocations(this._application.locations);
+    this.multipleLocations = this._application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     // Sections can be selected only from single area so we can
     // get area based on its sections
-    this.fixedLocationService.areaBySectionIds(this.location.fixedLocationIds)
-      .subscribe(area => this.area = area.name);
+    this.fixedLocationService.areaBySectionIds(this.location.fixedLocationIds).pipe(
+      take(1)
+    ).subscribe(area => this.area = area.name);
 
     this.fixedLocationService.sectionsByIds(this.location.fixedLocationIds).pipe(
+      take(1),
       map(sections => sections.map(s => s.name)),
       map(names => names.sort(ArrayUtil.naturalSort((name: string) => name))),
       map(names => names.join(', '))
     ).subscribe(sectionNames => this.sections = sectionNames);
 
     this.mapStore.editedLocation.subscribe(loc => this.editLocation(loc));
+  }
+
+  get application() {
+    return this._application;
+  }
+
+  ngOnInit(): void {
     this.availableLayerIds$ = this.store.pipe(select(fromLocationMapLayers.getLayerIds));
     this.selectedLayersIds$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayerIds));
     this.availableLayers$ = this.store.pipe(select(fromLocationMapLayers.getAllLayers));
