@@ -204,7 +204,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </xsl:otherwise>
           </xsl:choose>
           <p class="space-above">
-            Vuokrauspäätöksen hinta perustuu yleisten töiden lautakunnan päätökseen 11.11.2014 § 431.
+            Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 15.1.2019 § 15.
           </p>
           <xsl:if test="data/notBillable = 'false' and data/separateBill = 'true'">
             <p class="space-above">

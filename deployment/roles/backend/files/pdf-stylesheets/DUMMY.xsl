@@ -120,7 +120,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
            <xsl:if test="data/priceReason = ''">
             <p>
               <!-- Ei käytetä, jos hinta syötetty erikseen ja erilliset perustelut kirjoitettu. -->
-              Vuokrauspäätöksen hinta perustuu yleisten töiden lautakunnan päätökseen 11.11.2014 § 431.
+              Vuokrauspäätöksen hinta perustuu kaupunkiympäristölautakunnan päätökseen 15.1.2019 § 15.
             </p>
           </xsl:if>
           <xsl:if test="data/separateBill = 'true'">
