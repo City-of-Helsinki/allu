@@ -79,8 +79,6 @@ export class MapController {
   }
 
   remove(): void {
-    this.destroy.next(true);
-    this.destroy.unsubscribe();
     this.map.remove();
     this.map = undefined;
   }
