@@ -69,6 +69,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.mapController.remove();
     this.destroy.next(true);
     this.destroy.unsubscribe();
   }

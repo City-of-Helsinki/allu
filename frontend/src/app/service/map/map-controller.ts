@@ -78,6 +78,13 @@ export class MapController {
     this.reloadSelectedLayers();
   }
 
+  remove(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+    this.map.remove();
+    this.map = undefined;
+  }
+
   public get availableLayers() {
     return this._allLayers$.getValue();
   }

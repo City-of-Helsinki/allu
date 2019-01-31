@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
 import * as L from 'leaflet';
 import 'proj4leaflet';
 import {MapUtil} from '@service/map/map.util';
@@ -11,7 +11,7 @@ import {pathStyle} from '@service/map/map-draw-styles';
   templateUrl: './simple-map.component.html',
   styleUrls: []
 })
-export class SimpleMapComponent implements AfterViewInit {
+export class SimpleMapComponent implements AfterViewInit, OnDestroy {
   @Input() mapId = 'map';
   @Input() content: MapFeature[] = [];
   @Input() selectedFeature: number;
@@ -27,6 +27,11 @@ export class SimpleMapComponent implements AfterViewInit {
     this.createMap();
     this.addContent();
     this.centerAndZoomOnDrawn();
+  }
+
+  ngOnDestroy(): void {
+    this._map.remove();
+    this._map = undefined;
   }
 
   private createMap(): void {
