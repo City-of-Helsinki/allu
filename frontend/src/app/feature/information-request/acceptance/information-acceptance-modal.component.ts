@@ -8,7 +8,7 @@ import {InformationRequestFieldKey} from '@model/information-request/information
 import {Observable, Subject} from 'rxjs/index';
 import {distinctUntilChanged, map} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
-import {SetApplication, SetCustomer, SetKindsWithSpecifiers} from '../actions/information-request-result-actions';
+import {SetApplication, SetCustomer, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import {ApplicationStore} from '@service/application/application-store';
@@ -94,6 +94,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   private onApplicationChange(application: Application): void {
     this.store.dispatch(new SetApplication(application));
     this.store.dispatch(new SetKindsWithSpecifiers(application.kindsWithSpecifiers));
+    this.store.dispatch(new SetLocations(application.locations));
     this.readonly = this.data.readonly || isBefore(application.status, ApplicationStatus.INFORMATION_RECEIVED);
   }
 }

@@ -6,7 +6,7 @@ import {Subject} from 'rxjs/internal/Subject';
 import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
-import {SetLocation, SetLocations} from '@feature/information-request/actions/information-request-result-actions';
+import {SetLocation} from '@feature/information-request/actions/information-request-result-actions';
 
 const DEFAULT_LOCATION_KEY = 1;
 
@@ -39,8 +39,6 @@ export class LocationsAcceptanceComponent implements OnInit, AfterViewInit {
     this.oldLocationsByKey = this.byKey(this.oldLocations);
     this.newLocationsByKey = this.byKey(this.newLocations);
     this.locationKeys = this.getLocationKeys();
-
-    this.store.dispatch(new SetLocations(this.oldLocations));
   }
 
   ngAfterViewInit(): void {
