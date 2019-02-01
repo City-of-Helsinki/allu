@@ -43,6 +43,12 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
     location.startTime = result.startTime;
     location.endTime = result.endTime;
     location.postalAddress = new PostalAddress(result.streetAddress, result.postalCode, result.postalOffice);
+
+    // Only set area override when selected area differs from existing locations effective area (calculated / manually set)
+    // to prevent setting area override when existing calculated area was selected
+    if (location.effectiveArea !== result.area) {
+      location.areaOverride = result.area;
+    }
     this.locationChanges.emit(location);
   }
 
@@ -56,7 +62,7 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
         streetAddress: Some(location.postalAddress).map(pa => pa.streetAddress).orElse(undefined),
         postalCode: Some(location.postalAddress).map(pa => pa.postalCode).orElse(undefined),
         postalOffice: Some(location.postalAddress).map(pa => pa.city).orElse(undefined),
-        area: location.areaOverride
+        area: location.effectiveArea
       };
     } else {
       return {};
@@ -64,7 +70,10 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
   }
 
   private toDisplayValues(fieldValues: FieldValues): FieldValues {
-    return {...fieldValues};
+    return {
+      ...fieldValues,
+      area: Some(fieldValues.area).map(area => Math.ceil(area)).orElse(undefined)
+    };
   }
 
 
@@ -76,6 +85,7 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
       new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
       new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
       new FieldDescription('postalOffice', findTranslation('postalAddress.postalOffice')),
+      new FieldDescription('area', findTranslation('location.area')),
     ];
   }
 }

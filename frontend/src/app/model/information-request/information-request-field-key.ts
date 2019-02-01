@@ -13,12 +13,14 @@ export enum InformationRequestFieldKey {
   POSTAL_ADDRESS = 'POSTAL_ADDRESS',
   WORK_DESCRIPTION = 'WORK_DESCRIPTION',
   PROPERTY_IDENTIFICATION_NUMBER = 'PROPERTY_IDENTIFICATION_NUMBER',
-  ATTACHMENT = 'ATTACHMENT'
+  ATTACHMENT = 'ATTACHMENT',
+  AREA = 'AREA'
 }
 
 export const LocationKeys: InformationRequestFieldKey[] = [
   InformationRequestFieldKey.GEOMETRY,
-  InformationRequestFieldKey.POSTAL_ADDRESS
+  InformationRequestFieldKey.POSTAL_ADDRESS,
+  InformationRequestFieldKey.AREA
 ];
 
 export const OtherInfoKeys: InformationRequestFieldKey[] = [
