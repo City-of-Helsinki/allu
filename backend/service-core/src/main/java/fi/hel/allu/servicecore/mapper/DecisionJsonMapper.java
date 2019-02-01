@@ -350,52 +350,10 @@ public class DecisionJsonMapper {
       decisionJson
           .setEventNature("Lyhytaikainen maanvuokraus, " + translate(application.getKind()));
       decisionJson.setEventDescription(strj.getDescription());
-      decisionJson.setPriceBasisText(shortTermPriceBasis(application.getKind(), strj));
     }
     if (ApplicationKind.BRIDGE_BANNER.equals(application.getKind())) {
       // For bridge banners, site area should be skipped in printout
       decisionJson.setSiteArea(null);
-    }
-  }
-
-  /*
-   * Return the application-kind specific price basis text for Short term
-   * rentals
-   */
-  private String shortTermPriceBasis(ApplicationKind kind, ShortTermRentalJson shortTermRental) {
-    switch (kind) {
-      case BENJI:
-        return "320 &euro;/p&auml;iv&auml; + alv";
-      case BRIDGE_BANNER:
-        if (BooleanUtils.isTrue(shortTermRental.getCommercial())) {
-          return "Kaupalliset toimijat: 750 &euro;/kalenteriviikko + alv";
-        } else {
-          return "Ei-kaupalliset toimijat: 150 &euro;/kalenteriviikko + alv";
-        }
-      case CIRCUS:
-        return "200 €/p&auml;iv&auml; + alv";
-      case DOG_TRAINING_EVENT:
-        return "<ul><li>Kertamaksu yhdistyksille: 50 &euro;/kerta + alv</li>"
-            + "<li>Kertamaksu yrityksille: 100 &euro;/kerta + alv</li></ul>";
-      case DOG_TRAINING_FIELD:
-        return "<ul><li>Vuosivuokra yhdistyksille: 100 &euro;/vuosi</li>"
-            + "<li>Vuosivuokra yrityksille: 200 &euro;/vuosi</li></ul>";
-      case KESKUSKATU_SALES:
-      case SEASON_SALE:
-        return "50 &euro;/p&auml;iv&auml;/alkava 10m&sup2; + alv";
-      case PROMOTION_OR_SALES:
-        return "150 &euro;/kalenterivuosi + alv";
-      case SUMMER_THEATER:
-        return "120 &euro;/kuukausi n&auml;yt&auml;nt&ouml;ajalta";
-      case URBAN_FARMING:
-        return "2 &euro;/m&sup2;/viljelykausi";
-      case OTHER:
-      case ART:
-      case SMALL_ART_AND_CULTURE:
-      case STORAGE_AREA:
-        return null;
-      default:
-        return "[FIXME: Perustetta ei m&auml;&auml;ritetty]";
     }
   }
 

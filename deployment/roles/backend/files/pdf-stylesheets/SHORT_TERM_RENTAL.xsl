@@ -112,12 +112,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                 <!-- alv 24 % tai alv 0 %, riippuen asiakkaasta -->
                  + ALV <xsl:value-of select="data/vatPercentage"/> %
               </p>
-              <!-- Hinnan peruste tyyppikohtaisesti. Erillinen lista -->
-              <!-- Confluencessa: -->
-              <p class="space-above">
-                <!-- [Hinnan peruste, raakaa HTML:ää] -->
-                <xsl:value-of select="data/priceBasisText" disable-output-escaping="yes"/>
-              </p>
             </xsl:when>
             <xsl:otherwise>
               <p>Korvauksetta.</p>
