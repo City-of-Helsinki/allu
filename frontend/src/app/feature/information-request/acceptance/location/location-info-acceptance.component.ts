@@ -42,9 +42,7 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
     location.geometry = result.geometry;
     location.startTime = result.startTime;
     location.endTime = result.endTime;
-    location.postalAddress = Some(location.postalAddress)
-      .map(pa => new PostalAddress(result.streetAddress, pa.postalCode, pa.postalOffice))
-      .orElseGet(() => new PostalAddress(result.streetAddress));
+    location.postalAddress = new PostalAddress(result.streetAddress, result.postalCode, result.postalOffice);
     this.locationChanges.emit(location);
   }
 
@@ -55,7 +53,9 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
         geometry: location.geometry,
         startTime: location.startTime,
         endTime: location.endTime,
-        streetAddress: location.postalAddress ? location.postalAddress.streetAddress : undefined,
+        streetAddress: Some(location.postalAddress).map(pa => pa.streetAddress).orElse(undefined),
+        postalCode: Some(location.postalAddress).map(pa => pa.postalCode).orElse(undefined),
+        postalOffice: Some(location.postalAddress).map(pa => pa.city).orElse(undefined),
         area: location.areaOverride
       };
     } else {
@@ -73,7 +73,9 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
       new FieldDescription('geometry', findTranslation('location.geometry'), SelectFieldType.GEOMETRY),
       new FieldDescription('startTime', findTranslation('location.startTime')),
       new FieldDescription('endTime', findTranslation('location.endTime')),
-      new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress'))
+      new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
+      new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
+      new FieldDescription('postalOffice', findTranslation('postalAddress.postalOffice')),
     ];
   }
 }

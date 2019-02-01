@@ -12,7 +12,7 @@
     [value]="description.field"
     [disabled]="isSelected(description.field)"
     [class.map-container]="description.type==='GEOMETRY'">
-    <div fxLayout="row" fxLayoutAlign="start center" *ngIf="fieldValues[description.field] as value">
+    <div fxLayout="row" fxLayoutAlign="start center">
       <div fxFlex *ngIf="description.type==='GEOMETRY'; else textField">
         <simple-map
           [mapId]="'map-' + id"
@@ -28,7 +28,7 @@
             [matTooltip]="'informationRequest.field.valueDiffers' | translation">warning</mat-icon>
         </div>
         <div fxFlex [class.value-change]="fieldHasChange(description.field)">
-          <field-value [value]="value"></field-value>
+          <field-value [value]="fieldValues[description.field]"></field-value>
         </div>
       </ng-template>
     </div>
