@@ -52,6 +52,14 @@ public class AppConfig extends WebMvcConfigurerAdapter {
   }
 
   @Bean
+  public MessageSource typeMessageSource() {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    messageSource.setBasename("TypeMessages");
+    messageSource.setDefaultEncoding("UTF-8");
+    return messageSource;
+  }
+
+  @Bean
   public ControllerExceptionHandlerConfig controllerExceptionHandlerConfig() {
     ControllerExceptionHandlerConfig config = new ControllerExceptionHandlerConfig();
     config.setTranslateErrorMessages(true);
