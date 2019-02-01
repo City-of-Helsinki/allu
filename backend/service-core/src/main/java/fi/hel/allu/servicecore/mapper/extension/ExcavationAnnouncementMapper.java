@@ -8,7 +8,6 @@ public class ExcavationAnnouncementMapper {
     ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
     json.setWorkPurpose(excavationAnnouncement.getWorkPurpose());
     json.setAdditionalInfo(excavationAnnouncement.getAdditionalInfo());
-    json.setCableReportId(excavationAnnouncement.getCableReportId());
     json.setGuaranteeEndTime(excavationAnnouncement.getGuaranteeEndTime());
     json.setWinterTimeOperation(excavationAnnouncement.getWinterTimeOperation());
     json.setWorkFinished(excavationAnnouncement.getWorkFinished());
@@ -40,7 +39,6 @@ public class ExcavationAnnouncementMapper {
     ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
     excavationAnnouncement.setWorkPurpose(json.getWorkPurpose());
     excavationAnnouncement.setAdditionalInfo(json.getAdditionalInfo());
-    excavationAnnouncement.setCableReportId(json.getCableReportId());
     excavationAnnouncement.setGuaranteeEndTime(json.getGuaranteeEndTime());
     excavationAnnouncement.setWinterTimeOperation(json.getWinterTimeOperation());
     excavationAnnouncement.setWorkFinished(json.getWorkFinished());

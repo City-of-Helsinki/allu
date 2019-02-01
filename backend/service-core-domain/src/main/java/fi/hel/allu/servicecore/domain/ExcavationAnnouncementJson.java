@@ -33,7 +33,6 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private ZonedDateTime operationalConditionReported;
   private ZonedDateTime workFinishedReported;
   private ZonedDateTime validityReported;
-  private Integer cableReportId;
   @NotNull(message = "{application.excavationAnnouncement.workPurpose}")
   private String workPurpose;
   private String additionalInfo;
@@ -200,15 +199,6 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
 
   public void setCustomerWorkFinished(ZonedDateTime customerWorkFinished) {
     this.customerWorkFinished = customerWorkFinished;
-  }
-
-  @ApiModelProperty(hidden = true)
-  public Integer getCableReportId() {
-    return cableReportId;
-  }
-
-  public void setCableReportId(Integer cableReportId) {
-    this.cableReportId = cableReportId;
   }
 
   @ApiModelProperty(value = "Purpose of the work")
