@@ -64,16 +64,6 @@
             [fieldKey]="field"></customer-acceptance>
         </ng-container>
 
-        <locations-acceptance
-          *ngSwitchCase="'GEOMETRY'"
-          [parentForm]="form"
-          [oldLocations]="oldInfo?.locations"
-          [newLocations]="newInfo?.locations"></locations-acceptance>
-
-        <div *ngSwitchCase="'POSTAL_ADDRESS'">
-          <!-- Placeholder -->
-        </div>
-
         <div *ngSwitchCase="'ATTACHMENT'">
           <!-- Placeholder -->
         </div>
@@ -82,6 +72,12 @@
           <!-- Placeholder -->
         </div>
       </div>
+    </div>
+    <div *ngIf="hasLocationChanges">
+      <locations-acceptance
+        [parentForm]="form"
+        [oldLocations]="oldInfo?.locations"
+        [newLocations]="newInfo?.locations"></locations-acceptance>
     </div>
     <div>
       <other-acceptance

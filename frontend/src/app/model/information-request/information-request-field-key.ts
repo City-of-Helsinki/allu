@@ -16,6 +16,11 @@ export enum InformationRequestFieldKey {
   ATTACHMENT = 'ATTACHMENT'
 }
 
+export const LocationKeys: InformationRequestFieldKey[] = [
+  InformationRequestFieldKey.GEOMETRY,
+  InformationRequestFieldKey.POSTAL_ADDRESS
+];
+
 export const OtherInfoKeys: InformationRequestFieldKey[] = [
   InformationRequestFieldKey.START_TIME,
   InformationRequestFieldKey.END_TIME,

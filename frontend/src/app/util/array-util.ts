@@ -39,6 +39,8 @@ export class ArrayUtil {
   static anyMatch<T>(left: T[], right: T[]): boolean {
     if (left === right) {
       return true;
+    } else if (left === undefined || right === undefined) {
+      return false;
     } else {
       return left.some(l => right.some(r => r === l));
     }

@@ -4,16 +4,16 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
 import {Store} from '@ngrx/store';
 import {Application} from '@model/application/application';
-import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
+import {InformationRequestFieldKey, LocationKeys} from '@model/information-request/information-request-field-key';
 import {Observable, Subject} from 'rxjs/index';
 import {distinctUntilChanged, map} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
-import {SetApplication, SetCustomer, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
+import {SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus, isBefore} from '@model/application/application-status';
-import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ArrayUtil} from '@util/array-util';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -42,6 +42,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   updatedFields: InformationRequestFieldKey[];
   submitDisabled: Observable<boolean>;
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
+  hasLocationChanges: boolean;
 
   private childrenLoaded$ = new Subject<boolean>();
 
@@ -66,6 +67,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     this.oldInfo = this.data.oldInfo;
     this.newInfo = this.data.newInfo;
     this.updatedFields = this.data.updatedFields;
+    this.hasLocationChanges = ArrayUtil.anyMatch(this.updatedFields, LocationKeys);
 
     // set initial values to the store
     const baseInfo = this.data.oldInfo || new Application();
