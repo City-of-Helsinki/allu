@@ -7,11 +7,13 @@ import javax.validation.constraints.NotNull;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Excavation announcement (Kaivuilmoitus) specific data.
  */
+@ApiModel("Excavation announcement specific fields")
 public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private Boolean pksCard;
   private Boolean constructionWork;

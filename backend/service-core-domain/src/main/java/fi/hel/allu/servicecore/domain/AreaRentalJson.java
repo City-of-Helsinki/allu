@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import java.time.ZonedDateTime;
 /**
  * Area rental (aluevuokraus) specific data.
  */
+@ApiModel("Area rental specific fields")
 public class AreaRentalJson extends ApplicationExtensionJson {
   private Boolean pksCard;
   private Boolean majorDisturbance;

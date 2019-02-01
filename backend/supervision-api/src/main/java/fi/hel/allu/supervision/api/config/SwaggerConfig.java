@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.geolatte.geom.Geometry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +18,16 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
+import fi.hel.allu.servicecore.domain.AreaRentalJson;
 import fi.hel.allu.servicecore.domain.ClientApplicationDataJson;
+import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
+import fi.hel.allu.supervision.api.domain.BaseApplication;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -54,6 +59,9 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
   @Value("${supervision.api.basepath}")
   private String apiBasePath;
 
+  @Autowired
+  private TypeResolver typeResolver;
+
   @Bean
   public Docket api(ServletContext servletContext) {
       List<SecurityScheme> schemeList = Collections.singletonList(new ApiKey("api_key", "Authorization", "Bearer"));
@@ -74,6 +82,10 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         )
         .securitySchemes(schemeList)
         .apiInfo(apiInfo())
+        .additionalModels(
+            typeResolver.resolve(BaseApplication.class),
+            typeResolver.resolve(ExcavationAnnouncementJson.class),
+            typeResolver.resolve(AreaRentalJson.class))
         .ignoredParameterTypes(IGNORED_CLASSES);
   }
 
@@ -107,4 +119,5 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
       registry.addResourceHandler("/webjars/**")
               .addResourceLocations("classpath:/META-INF/resources/webjars/");
   }
+
 }

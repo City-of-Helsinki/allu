@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import io.swagger.annotations.ApiModel;
 
 /**
  * Base class for all application types.
  *
  */
+@ApiModel(value = "Fields common to all application types")
 public abstract class BaseApplication <T extends ApplicationExtensionJson> {
 
   @JsonFilter("applicationFilter")
