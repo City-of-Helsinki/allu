@@ -104,6 +104,16 @@ public class TestCommon {
     return app;
   }
 
+  public Application dummyOutdoorApplicationWithLocation(String name, String owner) {
+    Application app = dummyOutdoorApplication(name, owner);
+    Geometry geometry = polygon(3879,
+            ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
+    Location location = createLocation("address1", geometry, ZonedDateTime.now(), ZonedDateTime.now().plusDays(1));
+    location.setCityDistrictId(1);
+    app.setLocations(Collections.singletonList(location));
+    return app;
+  }
+
   public Application dummyBridgeBannerApplication(String name, String owner) {
     Application app = dummyBasicApplication(name, owner);
     app.setType(ApplicationType.SHORT_TERM_RENTAL);

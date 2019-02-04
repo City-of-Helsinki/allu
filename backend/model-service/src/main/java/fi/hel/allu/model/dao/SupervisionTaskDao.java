@@ -1,15 +1,18 @@
 package fi.hel.allu.model.dao;
 
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.querydsl.sql.SQLExpressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -223,6 +226,8 @@ public class SupervisionTaskDao {
   private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria) {
     List<SupervisionTaskStatusType> statuses = searchCriteria.getStatuses() != null && !searchCriteria.getStatuses().isEmpty() ?
         searchCriteria.getStatuses() : Collections.singletonList(SupervisionTaskStatusType.OPEN);
+
+
     return Stream.of(
         Optional.of(supervisionTaskWithAddress.status.in(statuses)),
         values(searchCriteria.getTaskTypes()).map(supervisionTaskWithAddress.type::in),
@@ -232,7 +237,7 @@ public class SupervisionTaskDao {
         values(searchCriteria.getOwners()).map(supervisionTaskWithAddress.ownerId::in),
         values(searchCriteria.getApplicationTypes()).map(application.type::in),
         values(searchCriteria.getApplicationStatus()).map(application.status::in),
-        values(searchCriteria.getCityDistrictIds()).map(location.cityDistrictId::in),
+        values(searchCriteria.getCityDistrictIds()).map(this::cityDistrictsIn),
         // Include also empty application ID list in search conditions
         Optional.ofNullable(searchCriteria.getApplicationIds()).map(supervisionTaskWithAddress.applicationId::in)
     ).filter(opt -> opt.isPresent())
@@ -242,6 +247,25 @@ public class SupervisionTaskDao {
   private <T> Optional<List<T>> values(List<T> valueList) {
     return Optional.ofNullable(valueList)
         .filter(values -> !values.isEmpty());
+  }
+
+  private BooleanExpression cityDistrictsIn(List<Integer> ids) {
+    // Use city district override when it is defined
+    BooleanExpression override = location.cityDistrictIdOverride.isNotNull().and(location.cityDistrictIdOverride.in(ids));
+    BooleanExpression calculated = location.cityDistrictIdOverride.isNull().and(location.cityDistrictId.in(ids));
+    BooleanExpression effective = override.or(calculated);
+
+    // Use tasks location when available otherwise use supervision tasks application's locations
+    return SQLExpressions.selectOne()
+            .from(location)
+            .where(
+              supervisionTaskWithAddress.locationId.isNotNull()
+                .and(supervisionTaskWithAddress.locationId.eq(location.id)
+                .and(effective))
+              .or(supervisionTaskWithAddress.locationId.isNull()
+                .and(supervisionTaskWithAddress.applicationId.eq(location.applicationId)
+                .and(effective))))
+            .exists();
   }
 
   private static Map<String, Path<?>> orderByColumns() {

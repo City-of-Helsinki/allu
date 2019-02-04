@@ -3,9 +3,11 @@ package fi.hel.allu.model.controller;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.model.domain.Location;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -248,6 +250,63 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
           search.setApplicationStatus(Arrays.asList(shortTermApp.getStatus()));
           assertEquals(2, supervisionTaskDao.search(search).size());
+        });
+
+        it("Find by city district", () -> {
+          Application app = insertApplication(testCommon.dummyOutdoorApplicationWithLocation("event", "owner"));
+          Location location = app.getLocations().get(0);
+
+          SupervisionTask task = createTask(app.getId(), SupervisionTaskType.SUPERVISION, app.getOwner());
+          task.setLocationId(location.getId());
+          supervisionTaskDao.insert(task);
+
+          SupervisionTaskSearchCriteria location1Search = new SupervisionTaskSearchCriteria();
+          location1Search.setCityDistrictIds(Arrays.asList(location.getCityDistrictId()));
+          assertEquals(1, supervisionTaskDao.search(location1Search).size());
+        });
+
+        it("Find by city district override", () -> {
+          Application app = testCommon.dummyOutdoorApplicationWithLocation("event", "owner");
+          app.getLocations().get(0).setCityDistrictIdOverride(2);
+          app = insertApplication(app);
+          Location location = app.getLocations().get(0);
+
+          SupervisionTask task = createTask(app.getId(), SupervisionTaskType.SUPERVISION, app.getOwner());
+          task.setLocationId(location.getId());
+          supervisionTaskDao.insert(task);
+
+          SupervisionTaskSearchCriteria location1Search = new SupervisionTaskSearchCriteria();
+          location1Search.setCityDistrictIds(Arrays.asList(location.getCityDistrictIdOverride()));
+          assertEquals(1, supervisionTaskDao.search(location1Search).size());
+        });
+
+        it("Find only by specified city districts", () -> {
+          Application app1 = insertApplication(testCommon.dummyOutdoorApplicationWithLocation("event1", "owner1"));
+          Location location1 = app1.getLocations().get(0);
+
+          SupervisionTask app1Task1 = createTask(app1.getId(), SupervisionTaskType.SUPERVISION, app1.getOwner());
+          app1Task1.setLocationId(location1.getId());
+          SupervisionTask app1Task2 = createTask(app1.getId(), SupervisionTaskType.SUPERVISION, app1.getOwner());
+
+          supervisionTaskDao.insert(app1Task1);
+          supervisionTaskDao.insert(app1Task2);
+
+          Application app2 = testCommon.dummyOutdoorApplicationWithLocation("event2", "owner2");
+          app2.getLocations().get(0).setCityDistrictIdOverride(2);
+          app2 = insertApplication(app2);
+          Location location2 = app2.getLocations().get(0);
+
+          SupervisionTask app2Task = createTask(app2.getId(), SupervisionTaskType.SUPERVISION, app2.getOwner());
+
+          supervisionTaskDao.insert(app2Task);
+
+          SupervisionTaskSearchCriteria location1Search = new SupervisionTaskSearchCriteria();
+          location1Search.setCityDistrictIds(Arrays.asList(location1.getCityDistrictId()));
+          assertEquals("Expected to find both tasks", 2, supervisionTaskDao.search(location1Search).size());
+
+          SupervisionTaskSearchCriteria location2Search = new SupervisionTaskSearchCriteria();
+          location2Search.setCityDistrictIds(Arrays.asList(location2.getCityDistrictIdOverride()));
+          assertEquals("Expected to find single task", 1, supervisionTaskDao.search(location2Search).size());
         });
 
         context("Paging tests", () -> {
