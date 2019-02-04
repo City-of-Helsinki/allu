@@ -501,8 +501,8 @@ export const translations = {
     status: 'Hakemuksen tila',
     owner: 'Hakemuksen omistaja',
     address: 'Osoite',
-    startTime: 'Alkupäivämäärä',
-    endTime: 'Loppupäivämäärä',
+    startTime: 'Alkupäivä',
+    endTime: 'Loppupäivä',
   },
   applicationInfo: {
     title: 'Hakemuksen perustiedot',
