@@ -336,6 +336,13 @@ public class LocationDao {
         .from(QCityDistrict.cityDistrict).fetch();
   }
 
+  @Transactional(readOnly = true)
+  public Optional<CityDistrict> getCityDistrictById(Integer id) {
+    return Optional.ofNullable(
+        queryFactory.select(bean(CityDistrict.class, QCityDistrict.cityDistrict.all()))
+        .from(QCityDistrict.cityDistrict).where(cityDistrict.id.eq(id)).fetchOne()
+    );
+  }
 
   private void setGeometry(int locationId, Geometry geometry) {
     double area = 0.0;

@@ -122,6 +122,14 @@ public class LocationController {
     return ResponseEntity.ok(name);
   }
 
+  @RequestMapping(value = "/city-districts/{id}", method = RequestMethod.GET)
+  public ResponseEntity<CityDistrictInfo> getCityDistrictById(@PathVariable Integer id) {
+    CityDistrictInfo cityDistrict = locationDao.getCityDistrictById(id)
+        .map(c -> mapToInfo(c))
+        .orElseThrow(() -> new NoSuchEntityException("No city district found for ID " + id));
+    return ResponseEntity.ok(cityDistrict);
+  }
+
   @RequestMapping(value = "/city-districts/{cityDistrictId}/supervisor/{type}", method = RequestMethod.GET)
   public ResponseEntity<User> findSupervisionTaskOwner(@PathVariable int cityDistrictId, @PathVariable ApplicationType type) {
     final Optional<User> optUser = locationService.findSupervisionTaskOwner(type, cityDistrictId);

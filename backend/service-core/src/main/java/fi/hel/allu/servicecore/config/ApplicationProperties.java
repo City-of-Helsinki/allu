@@ -516,6 +516,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/city-districts/{id}/name");
   }
 
+  public String getCityDistrictByIdUrl() {
+    return getModelServiceUrl("/locations/city-districts/{id}");
+  }
+
 
   public String getFindSupervisionTaskOwnerUrl() {
     return getModelServiceUrl("/locations/city-districts/{cityDistrictId}/supervisor/{type}");

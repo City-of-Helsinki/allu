@@ -20,13 +20,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.model.domain.CityDistrictInfo;
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.FixedLocationArea;
-import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
+import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
+import fi.hel.allu.servicecore.domain.FixedLocationJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.LocationMapper;
 import fi.hel.allu.servicecore.mapper.UserMapper;
 
@@ -106,6 +106,11 @@ public class LocationService {
     return restTemplate.getForObject(applicationProperties.getCityDistrictNameUrl(), String.class, id);
   }
 
+  public CityDistrictInfoJson getCityDistrictById(Integer id) {
+    CityDistrictInfo cityDistrict = restTemplate.getForObject(applicationProperties.getCityDistrictByIdUrl(),
+        CityDistrictInfo.class, id);
+    return LocationMapper.mapToJson(cityDistrict);
+  }
   /**
    * Retrieve the list of defined fixed locations areas
    *

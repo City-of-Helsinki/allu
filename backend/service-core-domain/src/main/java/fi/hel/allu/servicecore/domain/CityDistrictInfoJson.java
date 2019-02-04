@@ -1,18 +1,15 @@
 package fi.hel.allu.servicecore.domain;
 
-/**
- * Helsinki city district info.
- */
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "City district information")
 public class CityDistrictInfoJson {
   private Integer id;
   private Integer districtId;
   private String name;
 
-  /**
-   * Internal (database) id of the city district.
-   *
-   * @return  Internal (database) id of the city district.
-   */
+  @ApiModelProperty(value = "Internal ID of the city district")
   public Integer getId() {
     return id;
   }
@@ -21,11 +18,7 @@ public class CityDistrictInfoJson {
     this.id = id;
   }
 
-  /**
-   * The official district id.
-   *
-   * @return  The official district id.
-   */
+  @ApiModelProperty(value = "Official city district ID")
   public Integer getDistrictId() {
     return districtId;
   }
@@ -34,11 +27,7 @@ public class CityDistrictInfoJson {
     this.districtId = districtId;
   }
 
-  /**
-   * Name of the city district.
-   *
-   * @return  Name of the city district.
-   */
+  @ApiModelProperty(value = "Name of the city district")
   public String getName() {
     return name;
   }
