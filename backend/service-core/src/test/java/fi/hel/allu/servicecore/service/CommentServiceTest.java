@@ -112,6 +112,9 @@ public class CommentServiceTest {
   @Test
   public void testDeleteComment() {
     final int COMMENT_ID = 123;
+    final int USER_ID = 7;
+    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_FIND_BY_ID_URL), Mockito.eq(Comment.class), Mockito.eq(COMMENT_ID)))
+            .thenReturn(ResponseEntity.ok(newComment(CommentType.INTERNAL, "text", USER_ID)));
 
     commentService.deleteComment(COMMENT_ID);
     Mockito.verify(restTemplate).delete(Mockito.eq(COMMENTS_DELETE_URL), Mockito.eq(COMMENT_ID));
