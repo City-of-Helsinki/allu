@@ -24,7 +24,8 @@
 @mixin field-select-theme($theme, $success) {
   $primary: map-get($theme, primary);
 
-  mat-selection-list .mat-list-option:nth-child(odd) {
+  mat-selection-list .mat-list-option:nth-child(odd),
+  mat-list .mat-list-item:nth-child(odd) {
     background: mat-color($primary, 50);
   }
 

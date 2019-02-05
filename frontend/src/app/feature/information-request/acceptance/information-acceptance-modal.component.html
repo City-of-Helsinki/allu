@@ -64,9 +64,9 @@
             [fieldKey]="field"></customer-acceptance>
         </ng-container>
 
-        <div *ngSwitchCase="'ATTACHMENT'">
-          <!-- Placeholder -->
-        </div>
+        <attachments-acceptance
+          *ngSwitchCase="'ATTACHMENT'"
+          [attachments]="oldInfo?.attachmentList"></attachments-acceptance>
 
         <div *ngSwitchDefault>
           <!-- Placeholder -->

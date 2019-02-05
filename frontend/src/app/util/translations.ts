@@ -624,7 +624,7 @@ export const translations = {
       POSTAL_ADDRESS: 'Postiosoite',
       WORK_DESCRIPTION: 'Työn kuvaus',
       PROPERTY_IDENTIFICATION_NUMBER: 'Kiinteistötunnus',
-      ATTACHMENT: 'Liite',
+      ATTACHMENT: 'Liitteet',
       others: 'Muut tiedot',
       valueDiffers: 'Kentän sisältö poikkeaa nykyisestä',
       descriptionMissing: 'Selite puuttuu'

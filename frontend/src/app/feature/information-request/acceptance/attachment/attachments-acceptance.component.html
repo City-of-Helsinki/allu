@@ -1,0 +1,21 @@
+<div class="section-container">
+  <div class="section-content">
+    <h2 mat-dialog-title>
+      {{'informationRequest.field.ATTACHMENT' | translation}}
+    </h2>
+  </div>
+</div>
+
+<div class="section-container">
+  <div class="section-content">
+    <mat-list>
+      <mat-list-item *ngFor="let attachment of attachments">
+        <div mat-line fxLayout="row" fxLayoutGap="24px" fxLayoutAlign="start center" style="width: 50%;">
+          <div fxFlex class="text-highlighted">{{['attachment.type', attachment.type] | translation}}</div>
+          <div fxFlex>{{attachment.name}}</div>
+          <div fxFlex>{{attachment.creationTime | date:'shortDate'}}</div>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

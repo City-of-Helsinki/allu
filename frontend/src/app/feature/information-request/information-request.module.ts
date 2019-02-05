@@ -29,6 +29,7 @@ import {LocationsAcceptanceComponent} from '@feature/information-request/accepta
 import {LocationAcceptanceComponent} from '@feature/information-request/acceptance/location/location-acceptance.component';
 import {LocationInfoAcceptanceComponent} from '@feature/information-request/acceptance/location/location-info-acceptance.component';
 import {MapModule} from '@feature/map/map.module';
+import {AttachmentsAcceptanceComponent} from '@feature/information-request/acceptance/attachment/attachments-acceptance.component';
 
 @NgModule({
   imports: [
@@ -59,7 +60,8 @@ import {MapModule} from '@feature/map/map.module';
     ContactModalComponent,
     LocationsAcceptanceComponent,
     LocationAcceptanceComponent,
-    LocationInfoAcceptanceComponent
+    LocationInfoAcceptanceComponent,
+    AttachmentsAcceptanceComponent
   ],
   providers: [
     InformationRequestService,

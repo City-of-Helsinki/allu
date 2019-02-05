@@ -2,30 +2,33 @@
   display: block;
 }
 
-:host ::ng-deep .mat-selection-list .mat-list-option {
-  font-size: 14px;
-  height: 38px;
-}
+:host ::ng-deep {
+  .mat-selection-list .mat-list-option,
+  .mat-list-base .mat-list-item {
+    font-size: 14px;
+    height: 38px;
+  }
 
-:host ::ng-deep .mat-selection-list .mat-list-option.map-container {
-  height: 200px;
+  .mat-selection-list .mat-list-option.map-container {
+    height: 200px;
 
-  .mat-list-item-content {
-    padding-right: 0;
+    .mat-list-item-content {
+      padding-right: 0;
 
-    .mat-list-text {
-      padding-left: 0;
+      .mat-list-text {
+        padding-left: 0;
+      }
     }
   }
-}
 
+  .mat-selection-list .mat-list-option:not(:last-of-type),
+  .mat-list .mat-list-item:not(:last-of-type) {
+    margin-bottom: 2px;
+  }
 
-:host ::ng-deep .mat-selection-list .mat-list-option:not(:last-of-type) {
-  margin-bottom: 2px;
-}
-
-:host ::ng-deep .mat-selection-list .mat-list-option .mat-list-item-content {
-  padding-left: 0;
+  .mat-selection-list .mat-list-option .mat-list-item-content {
+    padding-left: 0;
+  }
 }
 
 :host ::ng-deep .mat-pseudo-checkbox {
