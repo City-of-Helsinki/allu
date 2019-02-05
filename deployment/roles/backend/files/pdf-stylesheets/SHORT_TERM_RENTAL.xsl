@@ -43,8 +43,30 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </section>
       </div>
 
-      <div class="unboxed">
+      <xsl:if test="data/representativeAddressLines != ''">
+        <div class="unboxed">
+          <section class="half-left">
+            <h2>Asiamies</h2>
+            <p>
+              <xsl:for-each select="data/representativeAddressLines">
+                <xsl:value-of select="." /><br/>
+              </xsl:for-each>
+            </p>
+          </section>
+          <section class="half-right">
+            <xsl:if test="data/representativeContactLines != ''">
+              <h2>Yhteyshenkilö</h2>
+              <p>
+                <xsl:for-each select="data/representativeContactLines">
+                  <xsl:value-of select="."/><br/>
+                </xsl:for-each>
+              </p>
+            </xsl:if>
+          </section>
+        </div>
+      </xsl:if>
 
+      <div class="unboxed">
         <section class="half-left">
           <h2>Kohde</h2>
           <p>

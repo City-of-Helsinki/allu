@@ -355,6 +355,8 @@ public class DecisionJsonMapper {
       // For bridge banners, site area should be skipped in printout
       decisionJson.setSiteArea(null);
     }
+    decisionJson.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
+    decisionJson.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
   }
 
   private void fillEventSpecifics(DecisionJson decisionJson, ApplicationJson application) {
@@ -377,6 +379,8 @@ public class DecisionJsonMapper {
       decisionJson.setEventUrl(ej.getUrl());
       decisionJson.setHasEkokompassi(ej.isEcoCompass());
       decisionJson.setEventNature(eventNature(ej.getNature()));
+      decisionJson.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
+      decisionJson.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
     }
   }
 
