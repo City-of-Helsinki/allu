@@ -1,9 +1,16 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormGroup, FormControl} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {EventNature} from '../../../../model/application/event/event-nature';
-import {EnumUtil} from '../../../../util/enum.util';
-import {FormUtil} from '../../../../util/form.util';
+import {EventNature} from '@model/application/event/event-nature';
+import {EnumUtil} from '@util/enum.util';
+import {FormUtil} from '@util/form.util';
+import {ApplicationKind} from '@model/application/type/application-kind';
+
+const kindsWithPricingInfo: ApplicationKind[] = [
+  ApplicationKind.OUTDOOREVENT,
+  ApplicationKind.PROMOTION,
+  ApplicationKind.PROMOTION_OR_SALES
+];
 
 @Component({
   selector: 'pricing-info',
@@ -18,6 +25,7 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
 
   @Output() billableChange = new EventEmitter<boolean>();
 
+  showPricingInfo = false;
   eventNatures = EnumUtil.enumValues(EventNature).filter(nature => nature !== 'PROMOTION');
   required = FormUtil.required;
   billableSalesAreaSubscription: Subscription;
@@ -30,6 +38,8 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
       this.billableSalesAreaSubscription = this.billableSalesAreaControl.valueChanges
         .subscribe(billable => this.billableChange.emit(billable));
     }
+
+    this.showPricingInfo = kindsWithPricingInfo.indexOf(ApplicationKind[this.kind]) >= 0;
   }
 
   ngOnDestroy(): void {

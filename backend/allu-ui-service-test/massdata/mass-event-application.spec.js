@@ -151,7 +151,8 @@ describe('Event application mass insert', () => {
           'structureDescription': 'Paikalle rakennetaan linna',
           'structureStartTime': '2016-12-22T22:00:00Z',
           'structureEndTime': '2016-12-26T22:00:00Z',
-          'timeExceptions': 'Pyhäpäivinä tauko'
+          'timeExceptions': 'Pyhäpäivinä tauko',
+          'surfaceHardness': 'HARD'
         },
         'decisionTime': null
       };

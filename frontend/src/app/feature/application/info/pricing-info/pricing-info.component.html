@@ -1,44 +1,50 @@
-<form *ngIf="kind==='OUTDOOREVENT' || kind==='PROMOTION_OR_SALES'" [formGroup]="form">
+<form *ngIf="showPricingInfo" [formGroup]="form">
   <allu-card>
     <mat-card-title>
       {{'application.pricingBasis' | translation}}
     </mat-card-title>
     <mat-card-content>
-      <div fxLayout="row wrap">
-        <div fxFlex="100%" *ngIf="kind==='OUTDOOREVENT'">
-          <div fxLayout="row">
-            <div fxFlex="0 0 25%">
-              <mat-form-field class="input-full-width">
-                <mat-select formControlName="nature"
-                            placeholder="{{'application.event.nature.placeholder' | translation}}"
-                            [required]="required(form.get('nature'))"
-                            class="input-full-width">
-                  <mat-option *ngFor="let nature of eventNatures" [value]="nature">
-                    {{['application.event.nature', nature] | translation}}
-                  </mat-option>
-                </mat-select>
-                <field-error [form]="form" field="nature" hasError="required">
-                  {{'application.event.field.natureMissing' | translation}}
-                </field-error>
-              </mat-form-field>
-            </div>
-          </div>
-          <div fxLayout="row">
-            <div fxFlex="0 0 50%">
-              <mat-checkbox class="input-field-checkbox" formControlName="ecoCompass">
-                {{'application.pricing.ecoCompass' | translation}}
-              </mat-checkbox>
-            </div>
-          </div>
+      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT'">
+        <div fxFlex="0 0 25%">
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="nature"
+                        placeholder="{{'application.event.nature.placeholder' | translation}}"
+                        [required]="required(form.get('nature'))"
+                        class="input-full-width">
+              <mat-option *ngFor="let nature of eventNatures" [value]="nature">
+                {{['application.event.nature', nature] | translation}}
+              </mat-option>
+            </mat-select>
+            <field-error [form]="form" field="nature" hasError="required">
+              {{'application.event.field.natureMissing' | translation}}
+            </field-error>
+          </mat-form-field>
         </div>
-        <div fxFlex="100%" *ngIf="kind==='PROMOTION_OR_SALES'">
-          <div fxLayout="row">
-            <div fxFlex="0 0 auto">
-              <mat-slide-toggle formControlName="billableSalesArea">
-                {{'application.pricing.distanceFromWallOver80' | translation}}
-              </mat-slide-toggle>
-            </div>
-          </div>
+      </div>
+      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT' || kind==='PROMOTION'">
+        <div fxFlex>
+          <mat-button-toggle-group formControlName="surfaceHardness" required>
+            <mat-button-toggle value="SOFT">
+              {{'application.event.surface.SOFT' | translation}}
+            </mat-button-toggle>
+            <mat-button-toggle value="HARD">
+              {{'application.event.surface.HARD' | translation}}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </div>
+      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT'">
+        <div fxFlex>
+          <mat-checkbox class="input-field-checkbox" formControlName="ecoCompass">
+            {{'application.pricing.ecoCompass' | translation}}
+          </mat-checkbox>
+        </div>
+      </div>
+      <div fxLayout="row" *ngIf="kind==='PROMOTION_OR_SALES'">
+        <div fxFlex="0 0 auto">
+          <mat-slide-toggle formControlName="billableSalesArea">
+            {{'application.pricing.distanceFromWallOver80' | translation}}
+          </mat-slide-toggle>
         </div>
       </div>
     </mat-card-content>

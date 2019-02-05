@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import javax.validation.constraints.NotNull;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.types.EventNature;
 
 public class EventJson extends ApplicationExtensionJson {
@@ -24,6 +25,8 @@ public class EventJson extends ApplicationExtensionJson {
   private float structureArea;
   private String structureDescription;
   private String timeExceptions;
+  @NotNull(message = "{event.surfaceHardness}")
+  private SurfaceHardness surfaceHardness;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -184,5 +187,16 @@ public class EventJson extends ApplicationExtensionJson {
 
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
+  }
+
+  /**
+   * in Finnish: Pinnan tyyppi
+   */
+  public SurfaceHardness getSurfaceHardness() {
+    return surfaceHardness;
+  }
+
+  public void setSurfaceHardness(SurfaceHardness surfaceHardness) {
+    this.surfaceHardness = surfaceHardness;
   }
 }

@@ -231,7 +231,8 @@ describe('Event application', () => {
           'marketingProviders': 'Tapahtumassa ei luultavimmin ole markkinointitoimintaa',
           'structureArea': 54.0,
           'structureDescription': 'Paikalle rakennetaan linna',
-          'timeExceptions': 'Pyhäpäivinä tauko'
+          'timeExceptions': 'Pyhäpäivinä tauko',
+          'surfaceHardness': 'HARD'
         },
         'decisionTime': null,
         'invoicingDate': '2018-12-22T22:00:00Z'
@@ -433,7 +434,8 @@ describe('Event application', () => {
           'marketingProviders': 'Markkinoidaan tervaa ja myydään tynnyreitä',
           'structureArea': 205.0,
           'structureDescription': 'Paikalla tervan polttohauta',
-          'timeExceptions': 'Tapahtuma-ajalla ei ole poikkeuksia'
+          'timeExceptions': 'Tapahtuma-ajalla ei ole poikkeuksia',
+          'surfaceHardness': 'SOFT'
         },
         'decisionTime': null,
         'invoicingDate': '2018-12-22T22:00:00Z'

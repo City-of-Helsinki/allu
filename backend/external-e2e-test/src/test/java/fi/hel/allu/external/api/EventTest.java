@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.hel.allu.external.domain.EventExt;
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 
 import static fi.hel.allu.external.api.data.TestData.EVENT_GEOMETRY;
 
@@ -41,6 +42,7 @@ public class EventTest extends BaseApplicationTest<EventExt> {
     event.setStructureArea(STRUCTURE_AREA);
     event.setStructureDescription(STRUCTURE_DESCRIPTION);
     event.setDescription(DESCRIPTION);
+    event.setSurfaceHardness(SurfaceHardness.HARD);
     setCommonFields(event);
     return event;
   }

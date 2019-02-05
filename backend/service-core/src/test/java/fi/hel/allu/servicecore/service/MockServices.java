@@ -165,6 +165,7 @@ public abstract class MockServices {
     ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
     eventJson.setEventStartTime(zonedDateTime);
     eventJson.setEventEndTime(zonedDateTime2);
+    eventJson.setSurfaceHardness(SurfaceHardness.HARD);
     return eventJson;
   }
 

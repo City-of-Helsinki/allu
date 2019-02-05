@@ -6,6 +6,7 @@ import {ApplicationForm} from '../application-form';
 import {ComplexValidator} from '@util/complex-validator';
 import {FormBuilder, Validators} from '@angular/forms';
 import {TimeUtil} from '@util/time.util';
+import {SurfaceHardness} from '@model/application/event/surface-hardness';
 
 export interface EventForm extends ApplicationForm {
   nature?: string;
@@ -23,6 +24,7 @@ export interface EventForm extends ApplicationForm {
   structureDescription?: string;
   structureTimes?: TimePeriod;
   calculatedPrice?: number;
+  surfaceHardness?: SurfaceHardness;
   terms?: string;
 }
 
@@ -43,6 +45,7 @@ export function fromEvent(application: Application, event: Event): EventForm {
     structureArea: event.structureArea,
     structureDescription: event.structureDescription,
     structureTimes: structureTimes(application, event),
+    surfaceHardness: event.surfaceHardness,
     terms: event.terms
   };
 }
@@ -63,6 +66,7 @@ export function toEvent(form: EventForm, type: ApplicationType): Event {
   event.marketingProviders = form.marketingProviders;
   event.structureArea = form.structureArea;
   event.structureDescription = form.structureDescription;
+  event.surfaceHardness = form.surfaceHardness;
   event.terms = form.terms;
   return event;
 }
@@ -93,6 +97,7 @@ export function eventForm(fb: FormBuilder): { [key: string]: any; } {
       startTime: [undefined],
       endTime: [undefined]
     }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
+    surfaceHardness: [undefined, Validators.required],
     terms: [undefined]
   };
 }
@@ -100,6 +105,7 @@ export function eventForm(fb: FormBuilder): { [key: string]: any; } {
 export function eventDraft(fb: FormBuilder): { [key: string]: any; } {
   const form = eventForm(fb);
   form.description = [''];
+  form.surfaceHardness = [undefined];
   return form;
 }
 

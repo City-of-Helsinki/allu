@@ -36,6 +36,7 @@ export class ApplicationExtensionMapper {
           backendExtension.marketingProviders,
           backendExtension.structureArea,
           backendExtension.structureDescription,
+          backendExtension.surfaceHardness,
           backendExtension.terms);
       case ApplicationType.SHORT_TERM_RENTAL:
         return new ShortTermRental(
@@ -166,6 +167,7 @@ export class ApplicationExtensionMapper {
         marketingProviders: event.marketingProviders,
         structureArea: event.structureArea,
         structureDescription: event.structureDescription,
+        surfaceHardness: event.surfaceHardness,
         terms: event.terms
     };
   }

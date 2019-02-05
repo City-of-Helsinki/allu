@@ -3,6 +3,7 @@ package fi.hel.allu.model.domain;
 import java.time.ZonedDateTime;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +23,7 @@ public class Event extends ApplicationExtension {
   private String timeExceptions;
   private ZonedDateTime eventStartTime;
   private ZonedDateTime eventEndTime;
+  private SurfaceHardness surfaceHardness;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -180,5 +182,16 @@ public class Event extends ApplicationExtension {
 
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
+  }
+
+  /**
+   * in Finnish: Pinnan tyyppi
+   */
+  public SurfaceHardness getSurfaceHardness() {
+    return surfaceHardness;
+  }
+
+  public void setSurfaceHardness(SurfaceHardness surfaceHardness) {
+    this.surfaceHardness = surfaceHardness;
   }
 }

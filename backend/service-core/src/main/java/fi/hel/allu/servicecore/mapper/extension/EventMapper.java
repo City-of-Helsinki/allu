@@ -21,6 +21,7 @@ public class EventMapper {
     eventJson.setFoodProviders(event.getFoodProviders());
     eventJson.setMarketingProviders(event.getMarketingProviders());
     eventJson.setFoodSales(event.isFoodSales());
+    eventJson.setSurfaceHardness(event.getSurfaceHardness());
     return ApplicationExtensionMapper.modelToJson(event, eventJson);
   }
 
@@ -40,6 +41,7 @@ public class EventMapper {
     event.setStructureArea(eventJson.getStructureArea());
     event.setStructureDescription(eventJson.getStructureDescription());
     event.setTimeExceptions(eventJson.getTimeExceptions());
+    event.setSurfaceHardness(eventJson.getSurfaceHardness());
     return ApplicationExtensionMapper.jsonToModel(eventJson, event);
   }
 }

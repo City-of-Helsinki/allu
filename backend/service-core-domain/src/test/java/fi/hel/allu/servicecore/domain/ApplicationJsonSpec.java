@@ -7,6 +7,7 @@ import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.PublicityType;
 
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 import org.junit.runner.RunWith;
 
 import javax.validation.ConstraintViolation;
@@ -102,6 +103,7 @@ public class ApplicationJsonSpec {
           ZonedDateTime start = ZonedDateTime.now();
           extension.setEventStartTime(start);
           extension.setEventEndTime(start.plusDays(2));
+          extension.setSurfaceHardness(SurfaceHardness.HARD);
           applicationJson.setExtension(extension);
           applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
           applicationJson.setDecisionPublicityType(PublicityType.CONFIDENTIAL);

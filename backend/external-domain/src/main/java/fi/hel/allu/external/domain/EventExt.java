@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -15,10 +16,12 @@ public class EventExt extends BaseApplicationExt {
   private Integer structureArea;
   private String structureDescription;
   private String description;
-  @NotNull(message = "event.starttime")
+  @NotNull(message = "{event.starttime}")
   private ZonedDateTime eventStartTime;
-  @NotNull(message = "event.endtime")
+  @NotNull(message = "{event.endtime}")
   private ZonedDateTime eventEndTime;
+  @NotNull(message = "{event.surfaceHardness}")
+  private SurfaceHardness surfaceHardness;
 
   @ApiModelProperty(value = "IDs of the fixed locations. Should be set if geometry of the application is selected from fixed locations.")
   public List<Integer> getFixedLocationIds() {
@@ -75,4 +78,12 @@ public class EventExt extends BaseApplicationExt {
     this.eventEndTime = eventEndTime;
   }
 
+  @ApiModelProperty(value = "Hardness of the surface the event is held on")
+  public SurfaceHardness getSurfaceHardness() {
+    return surfaceHardness;
+  }
+
+  public void setSurfaceHardness(SurfaceHardness surfaceHardness) {
+    this.surfaceHardness = surfaceHardness;
+  }
 }

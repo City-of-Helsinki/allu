@@ -1,5 +1,6 @@
-import {ApplicationExtension} from '../type/application-extension';
-import {TimeUtil} from '../../../util/time.util';
+import {ApplicationExtension} from '@model/application/type/application-extension';
+import {TimeUtil} from '@util/time.util';
+import {SurfaceHardness} from '@model/application/event/surface-hardness';
 
 export class Event extends ApplicationExtension {
   constructor(public nature?: string,
@@ -17,6 +18,7 @@ export class Event extends ApplicationExtension {
               public marketingProviders?: string,
               public structureArea?: number,
               public structureDescription?: string,
+              public surfaceHardness: SurfaceHardness = SurfaceHardness.HARD,
               public terms?: string) {
     super(applicationType, terms);
   }

@@ -23,6 +23,7 @@ public class EventExtMapper extends ApplicationExtMapper<EventExt> {
     extension.setEventEndTime(event.getEventEndTime());
     extension.setNature(EventNature.PROMOTION);
     extension.setDescription(event.getDescription());
+    extension.setSurfaceHardness(event.getSurfaceHardness());
     return extension;
   }
 
