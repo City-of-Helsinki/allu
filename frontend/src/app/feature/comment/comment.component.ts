@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {manualCommentNames} from '@model/application/comment/comment-type';
+import {manualComments} from '@model/application/comment/comment-type';
 import {CommentForm} from './comment-form';
 import {Comment} from '@model/application/comment/comment';
 import {StringUtil} from '@util/string.util';
@@ -21,7 +21,7 @@ export class CommentComponent implements OnInit {
   @Output('remove') onRemove = new EventEmitter<Comment>();
 
   canEdit = false;
-  commentTypes = manualCommentNames;
+  commentTypes = manualComments;
   form: FormGroup;
 
   private originalForm: CommentForm;

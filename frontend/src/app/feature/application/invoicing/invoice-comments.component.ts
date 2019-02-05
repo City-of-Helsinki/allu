@@ -22,7 +22,7 @@ export class InvoiceCommentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.comments$ = this.store.select(fromApplication.getAllComments).pipe(
-      map(comments => comments.filter(c => CommentType[c.type] === CommentType.INVOICING))
+      map(comments => comments.filter(c => c.type === CommentType.INVOICING))
     );
   }
 }

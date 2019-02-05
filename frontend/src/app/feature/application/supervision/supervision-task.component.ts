@@ -346,7 +346,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     const config = {
       ...DECISION_PROPOSAL_MODAL_CONFIG,
       data: {
-        proposalType: CommentType[CommentType.PROPOSE_APPROVAL],
+        proposalType: CommentType.PROPOSE_APPROVAL,
         cityDistrict: this.application.firstLocation.effectiveCityDistrictId,
         applicationType: this.application.type,
         comment

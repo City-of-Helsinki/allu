@@ -10,14 +10,14 @@ import {BehaviorSubject} from 'rxjs/index';
 
 const COMMENT_ONE = new Comment(
   1,
-  CommentType[CommentType.INTERNAL],
+  CommentType.INTERNAL,
   'Test comment one',
   new Date()
 );
 
 const COMMENT_TWO = new Comment(
   2,
-  CommentType[CommentType.INVOICING],
+  CommentType.INVOICING,
   'Test comment two',
   new Date()
 );

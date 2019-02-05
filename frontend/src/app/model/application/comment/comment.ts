@@ -1,11 +1,11 @@
-import {User} from '../../user/user';
-import {TimeUtil} from '../../../util/time.util';
+import {User} from '@model/user/user';
+import {TimeUtil} from '@util/time.util';
 import {CommentType} from './comment-type';
 
 export class Comment {
   constructor(
     public id?: number,
-    public type?: string,
+    public type?: CommentType,
     public text?: string,
     public createTime?: Date,
     public updateTime?: Date,
@@ -30,13 +30,5 @@ export class Comment {
 
   get uiUpdateTime(): string {
     return TimeUtil.getUiDateTimeString(this.updateTime);
-  }
-
-  get typeEnum() {
-    return this.type ? CommentType[this.type] : undefined;
-  }
-
-  set typeEnum(type: CommentType) {
-    this.type = CommentType[type];
   }
 }

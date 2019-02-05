@@ -9,6 +9,7 @@ import {By} from '@angular/platform-browser';
 import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
 import {CurrentUser} from '@service/user/current-user';
+import {CommentType} from '@model/application/comment/comment-type';
 
 @Component({
   selector: 'parent',
@@ -60,7 +61,7 @@ describe('CommentComponent', () => {
     de = fixture.debugElement;
 
     user = new User(1, 'testUser');
-    parentComp.comment = new Comment(1, 'INTERNAL', 'some text', new Date(), new Date(), user);
+    parentComp.comment = new Comment(1, CommentType.INTERNAL, 'some text', new Date(), new Date(), user);
     fixture.detectChanges();
   });
 
@@ -70,7 +71,7 @@ describe('CommentComponent', () => {
   });
 
   it('should show relevant content for new comment', () => {
-    parentComp.comment = new Comment(undefined, 'INTERNAL', 'some text');
+    parentComp.comment = new Comment(undefined, CommentType.INTERNAL, 'some text');
     fixture.detectChanges();
     fixture.whenStable().then(() => {
       expect(de.query(By.css('[formControlName="type"]'))).toBeDefined();

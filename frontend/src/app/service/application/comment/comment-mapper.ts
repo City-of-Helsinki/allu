@@ -1,8 +1,9 @@
-import {Comment} from '../../../model/application/comment/comment';
-import {BackendUser} from '../../backend-model/backend-user';
-import {TimeUtil} from '../../../util/time.util';
-import {UserMapper} from '../../mapper/user-mapper';
-import {Some} from '../../../util/option';
+import {Comment} from '@model/application/comment/comment';
+import {BackendUser} from '@service/backend-model/backend-user';
+import {TimeUtil} from '@util/time.util';
+import {UserMapper} from '@service/mapper/user-mapper';
+import {Some} from '@util/option';
+import {CommentType} from '@model/application/comment/comment-type';
 
 export class CommentMapper {
   public static mapBackendList(comments: Array<BackendComment>): Array<Comment> {
@@ -40,7 +41,7 @@ export class CommentMapper {
 
 export interface BackendComment {
   id: number;
-  type: string;
+  type: CommentType;
   text: string;
   createTime: string;
   updateTime: string;

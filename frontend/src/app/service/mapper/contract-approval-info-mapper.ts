@@ -1,8 +1,8 @@
-import {CommentType} from '../../model/application/comment/comment-type';
+import {CommentType} from '@model/application/comment/comment-type';
 import {ContractApprovalInfo} from '@model/decision/contract-approval-info';
 
 export interface BackendContractApprovalInfo {
-  type?: string;
+  type?: CommentType;
   comment?: string;
   owner?: number;
   frameAgreementExists?: boolean;
@@ -12,7 +12,7 @@ export interface BackendContractApprovalInfo {
 export class ContractApprovalInfoMapper {
   public static mapFrontEnd(approvalInfo: ContractApprovalInfo): BackendContractApprovalInfo {
     return approvalInfo ? {
-      type: CommentType[approvalInfo.type],
+      type: approvalInfo.type,
       comment: approvalInfo.comment,
       owner: approvalInfo.owner,
       frameAgreementExists: approvalInfo.frameAgreementExists,

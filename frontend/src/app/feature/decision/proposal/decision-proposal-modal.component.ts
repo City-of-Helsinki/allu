@@ -16,7 +16,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 export const DECISION_PROPOSAL_MODAL_CONFIG = {width: '800px'};
 
 export interface DecisionProposalData {
-  proposalType: string;
+  proposalType: CommentType;
   cityDistrict: number;
   applicationType: ApplicationType;
   comment?: string;
@@ -51,7 +51,7 @@ export class DecisionProposalModalComponent implements OnInit {
 
   confirm() {
     const formValue = this.proposalForm.value;
-    this.dialogRef.close(new StatusChangeInfo(CommentType[this.data.proposalType], formValue.comment, formValue.handler));
+    this.dialogRef.close(new StatusChangeInfo(this.data.proposalType, formValue.comment, formValue.handler));
   }
 
   cancel() {
