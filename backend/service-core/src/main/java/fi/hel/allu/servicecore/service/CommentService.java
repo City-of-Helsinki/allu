@@ -82,7 +82,6 @@ public class CommentService {
   }
 
   public CommentJson updateComment(int id, CommentJson commentJson) {
-    validateCommentType(commentJson.getType());
     Comment comment = mapToModel(commentJson, userService.getCurrentUser());
     HttpEntity<Comment> request = new HttpEntity<>(comment);
     ResponseEntity<Comment> result = restTemplate.exchange(applicationProperties.getCommentsUpdateUrl(), HttpMethod.PUT,
@@ -92,6 +91,7 @@ public class CommentService {
 
   public void deleteComment(int id) {
     Comment comment = findById(id);
+    validateCommentType(comment.getType());
     restTemplate.delete(applicationProperties.getCommentsDeleteUrl(), id);
     if (comment.getApplicationId() != null) {
       updateSearchServiceNrOfComments(comment.getApplicationId());
@@ -144,7 +144,7 @@ public class CommentService {
   }
 
   /*
-   * Make sure that the given comment type is valid for insert or update
+   * Make sure that the given comment type is valid for insert or delete
    */
   private void validateCommentType(CommentType type) {
     if (!allowedUserCommentTypes.contains(type)) {

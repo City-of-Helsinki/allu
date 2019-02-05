@@ -1,24 +1,28 @@
 <form [formGroup]="form" (ngSubmit)="save()">
   <h1 class="comment-header">
     <div fxLayout="row" fxLayoutGap="6px" class="slim">
-      <div fxFlex="none" *ngIf="isNew">
+      <div fxFlex="none" *ngIf="isNew; else existingComment">
         {{'comment.newComment' | translation}}
       </div>
 
-      <div fxFlex="none" *ngIf="!isNew">
-        {{form.value.commentator || form.value.user.realName }} {{form.value.updateTime | date:'short'}}
-      </div>
+      <ng-template #existingComment>
+        <div fxFlex="none">
+          {{form.value.commentator || form.value.user.realName }} {{form.value.updateTime | date:'short'}}
+        </div>
 
-      <div fxFlex="none" *ngIf="!form.enabled">
-        {{['comment.type', comment.type] | translation}}
-      </div>
+        <div fxFlex="none" *ngIf="form.value.type">
+          {{['comment.type', form.value.type] | translation}}
+        </div>
+      </ng-template>
 
       <div fxFlex="auto" class="align-right" *ngIf="form.disabled">
         <ng-container *ngIf="canEdit">
           <button mat-icon-button type="button" color="primary" (click)="edit()">
             <mat-icon class="mat-icon-18">edit</mat-icon>
           </button>
-          <button mat-icon-button type="button" color="primary" (click)="remove()">
+          <button *ngIf="isManualType"
+                  mat-icon-button type="button" color="primary"
+                  (click)="remove()">
             <mat-icon class="mat-icon-18">clear</mat-icon>
           </button>
         </ng-container>
@@ -26,7 +30,7 @@
     </div>
   </h1>
 
-  <div fxLayout="row" *ngIf="form.enabled">
+  <div fxLayout="row" *ngIf="form.enabled && isManualType">
     <div fxFlex="200px">
       <mat-form-field>
         <mat-select formControlName="type" [value]="'INTERNAL'">

@@ -21,6 +21,7 @@ export class CommentComponent implements OnInit {
   @Output('remove') onRemove = new EventEmitter<Comment>();
 
   canEdit = false;
+  isManualType = false;
   commentTypes = manualComments;
   form: FormGroup;
 
@@ -48,6 +49,7 @@ export class CommentComponent implements OnInit {
     }
 
     this.currentUserCanEdit(this.comment.user ? this.comment.user.id : undefined);
+    this.isManualType = this.isNew || (manualComments.indexOf(this.comment.type) > -1);
   }
 
   remove(): void {
