@@ -8,6 +8,7 @@ import {ObjectUtil} from '@util/object.util';
 import {PostalAddress} from '@model/common/postal-address';
 import {Some} from '@util/option';
 import {FieldDescription, SelectFieldType} from '@feature/information-request/acceptance/field-select/field-description';
+import {NumberUtil} from '@util/number.util';
 
 @Component({
   selector: 'location-info-acceptance',
@@ -32,7 +33,8 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
 
     this.newValues = this.toFieldValues(this.newLocation);
     this.newDisplayValues = this.toDisplayValues(this.newValues);
-    this.fieldDescriptions = this.createDescriptions();
+    const hasArea = NumberUtil.isDefined(this.newLocation.areaOverride);
+    this.fieldDescriptions = this.createDescriptions(hasArea);
 
     super.ngOnInit();
   }
@@ -77,15 +79,20 @@ export class LocationInfoAcceptanceComponent extends InfoAcceptanceComponent<any
   }
 
 
-  private createDescriptions(): FieldDescription[] {
-    return [
+  private createDescriptions(hasArea: boolean): FieldDescription[] {
+    const commonFields = [
       new FieldDescription('geometry', findTranslation('location.geometry'), SelectFieldType.GEOMETRY),
       new FieldDescription('startTime', findTranslation('location.startTime')),
       new FieldDescription('endTime', findTranslation('location.endTime')),
       new FieldDescription('streetAddress', findTranslation('postalAddress.streetAddress')),
       new FieldDescription('postalCode', findTranslation('postalAddress.postalCode')),
-      new FieldDescription('postalOffice', findTranslation('postalAddress.postalOffice')),
-      new FieldDescription('area', findTranslation('location.area')),
+      new FieldDescription('postalOffice', findTranslation('postalAddress.postalOffice'))
     ];
+
+    const areaFields = hasArea
+      ? [new FieldDescription('area', findTranslation('location.area'))]
+      : [];
+
+    return [...commonFields, ...areaFields];
   }
 }
