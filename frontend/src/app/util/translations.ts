@@ -592,18 +592,6 @@ export const translations = {
       readonlyTitle: 'Pyydetyt täydennykset',
       description: `Merkitse tiedot jotka puuttuvat, ovat virheellisiä tai jotka haluat muusta syystä päivittää.
        Huomaa, että et voi päivittää hakemusta niin kauan kuin sillä on vastaamattomia täydennyspyyntöjä.`,
-      customer: 'Asiakas',
-      invoiceRecipient: 'Laskutusasiakas',
-      geometry: 'Alueen rajaus',
-      area: 'Pinta-ala',
-      startTime: 'Aloituspäivämäärä',
-      endTime: 'Lopetuspäivämäärä',
-      clientApplicationKind: 'Asiakasjärjestelmän hakemuslaji',
-      applicationKind: 'Hakemuksen laji',
-      postalAddress: 'Postiosoite',
-      workDescription: 'Työn kuvaus',
-      propertyIdentificationNumber: 'Kiinteistön tunnus',
-      attachment: 'Liite',
       guide: 'Selite',
       send: 'Lähetä pyyntö',
       draft: 'Tallenna luonnos'
@@ -625,6 +613,7 @@ export const translations = {
       WORK_DESCRIPTION: 'Työn kuvaus',
       PROPERTY_IDENTIFICATION_NUMBER: 'Kiinteistötunnus',
       ATTACHMENT: 'Liitteet',
+      OTHER: 'Muu',
       others: 'Muut tiedot',
       valueDiffers: 'Kentän sisältö poikkeaa nykyisestä',
       descriptionMissing: 'Selite puuttuu'

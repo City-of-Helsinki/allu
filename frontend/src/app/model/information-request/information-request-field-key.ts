@@ -14,7 +14,8 @@ export enum InformationRequestFieldKey {
   WORK_DESCRIPTION = 'WORK_DESCRIPTION',
   PROPERTY_IDENTIFICATION_NUMBER = 'PROPERTY_IDENTIFICATION_NUMBER',
   ATTACHMENT = 'ATTACHMENT',
-  AREA = 'AREA'
+  AREA = 'AREA',
+  OTHER = 'OTHER'
 }
 
 export const LocationKeys: InformationRequestFieldKey[] = [

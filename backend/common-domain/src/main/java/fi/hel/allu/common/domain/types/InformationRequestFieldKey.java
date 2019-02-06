@@ -16,5 +16,6 @@ public enum InformationRequestFieldKey {
   WORK_DESCRIPTION,
   PROPERTY_IDENTIFICATION_NUMBER,
   ATTACHMENT,
-  AREA
+  AREA,
+  OTHER
 }
