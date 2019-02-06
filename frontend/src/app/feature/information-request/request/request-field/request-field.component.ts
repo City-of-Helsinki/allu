@@ -1,5 +1,5 @@
 import {Component, EventEmitter, forwardRef, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {ControlValueAccessor, FormBuilder, FormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {StringUtil} from '@util/string.util';
 import {Subject} from 'rxjs/internal/Subject';
 import {takeUntil} from 'rxjs/operators';
@@ -22,6 +22,7 @@ export class RequestFieldComponent implements OnInit, OnDestroy, ControlValueAcc
 
   selectedCtrl: FormControl;
   descriptionCtrl: FormControl;
+  private form: FormGroup;
 
 
   private destroy: Subject<boolean> = new Subject<boolean>();
@@ -31,6 +32,10 @@ export class RequestFieldComponent implements OnInit, OnDestroy, ControlValueAcc
   ngOnInit() {
     this.selectedCtrl = this.fb.control(false);
     this.descriptionCtrl = this.fb.control('');
+    this.form = this.fb.group({
+      selected: this.selectedCtrl,
+      description: this.descriptionCtrl
+    });
 
     this.selectedCtrl.valueChanges.pipe(
       takeUntil(this.destroy)
@@ -52,6 +57,14 @@ export class RequestFieldComponent implements OnInit, OnDestroy, ControlValueAcc
 
   registerOnChange(fn: any): void {
     this._onChange = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    if (isDisabled) {
+      this.form.disable();
+    } else {
+      this.form.enable();
+    }
   }
 
   registerOnTouched(fn: any): void {
