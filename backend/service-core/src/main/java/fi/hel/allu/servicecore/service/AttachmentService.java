@@ -155,7 +155,8 @@ public class AttachmentService {
         AttachmentInfo[].class,
         applicationId);
     for (AttachmentInfo attachmentInfo : attachmentResult.getBody()) {
-      AttachmentInfoJson attachmentInfoJson = toAttachmentInfoJson(attachmentInfo);
+      AttachmentInfoJson attachmentInfoJson = new AttachmentInfoJson();
+      setCommonAttachmentJsonFields(attachmentInfo, attachmentInfoJson);
       resultList.add(attachmentInfoJson);
     }
     return resultList;
@@ -269,6 +270,17 @@ public class AttachmentService {
   // convert (Default)AttachmentInfo --> (Default)AttachmentInfoJson
   private DefaultAttachmentInfoJson toAttachmentInfoJson(AttachmentInfo attachmentInfo) {
     DefaultAttachmentInfoJson result = new DefaultAttachmentInfoJson();
+    setCommonAttachmentJsonFields(attachmentInfo, result);
+    if (attachmentInfo instanceof DefaultAttachmentInfo) {
+      DefaultAttachmentInfo defaultAttachmentInfo = (DefaultAttachmentInfo) attachmentInfo;
+      result.setDefaultAttachmentId(defaultAttachmentInfo.getDefaultAttachmentId());
+      result.setApplicationTypes(defaultAttachmentInfo.getApplicationTypes());
+      result.setFixedLocationId(defaultAttachmentInfo.getFixedLocationAreaId());
+    }
+    return result;
+  }
+
+  private void setCommonAttachmentJsonFields(AttachmentInfo attachmentInfo, AttachmentInfoJson result) {
     result.setId(attachmentInfo.getId());
     result.setHandlerName(getUserName(attachmentInfo.getUserId()));
     result.setType(attachmentInfo.getType());
@@ -278,13 +290,6 @@ public class AttachmentService {
     result.setCreationTime(attachmentInfo.getCreationTime());
     result.setSize(getAttachmentSize(attachmentInfo.getId()));
     result.setDecisionAttachment(attachmentInfo.isDecisionAttachment());
-    if (attachmentInfo instanceof DefaultAttachmentInfo) {
-      DefaultAttachmentInfo defaultAttachmentInfo = (DefaultAttachmentInfo) attachmentInfo;
-      result.setDefaultAttachmentId(defaultAttachmentInfo.getDefaultAttachmentId());
-      result.setApplicationTypes(defaultAttachmentInfo.getApplicationTypes());
-      result.setFixedLocationId(defaultAttachmentInfo.getFixedLocationAreaId());
-    }
-    return result;
   }
 
   private String getUserName(Integer id) {
