@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 /**
- * Support for ADFS OAuth2 authentication.
+ * Support for AD  OAuth2 authentication.
  */
 @RestController
 @RequestMapping("/oauth2")

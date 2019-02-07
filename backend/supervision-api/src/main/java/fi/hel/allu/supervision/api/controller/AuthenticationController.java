@@ -20,10 +20,10 @@ public class AuthenticationController {
   @Autowired
   private TokenAuthenticationService tokenAuthenticationService;
 
-  @ApiOperation(value = "Authenticate with ADFS token")
+  @ApiOperation(value = "Authenticate with AD token")
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<String> login(@RequestParam @ApiParam(value = "ADFS JWT", required = true) String adfsToken) {
-    return ResponseEntity.ok(tokenAuthenticationService.loginWithAdfsToken(adfsToken));
+  public ResponseEntity<String> login(@RequestParam @ApiParam(value = "AD JWT", required = true) String adToken) {
+    return ResponseEntity.ok(tokenAuthenticationService.loginWithAdToken(adToken));
   }
 
 }

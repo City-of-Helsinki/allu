@@ -2,7 +2,7 @@ package fi.hel.allu.servicecore.security;
 
 import java.util.List;
 
-public interface AdfsAuthenticationProperties {
+public interface AdAuthenticationProperties {
 
   String getOauth2Certificate();
 

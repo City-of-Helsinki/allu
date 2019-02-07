@@ -29,33 +29,33 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 /**
- * Base class for ADFS authentication services
+ * Base class for AD authentication services
  * @author User
  *
  */
-public abstract class AdfsTokenAuthenticationService extends AuthenticationServiceInterface {
+public abstract class AdTokenAuthenticationService extends AuthenticationServiceInterface {
 
   private static final String OAUTH2_CLIENT_ID_PARAM = "client_id";
   private static final String OAUTH2_REDIRECT_URI_PARAM = "redirect_uri";
   private static final String OAUTH2_CODE_PARAM = "code";
   private static final String OAUTH2_GRANT_TYPE= "grant_type=authorization_code";
-  // ADFS Token fields
-  private static final String ADFS_USER_NAME = "winaccountname";
-  private static final String ADFS_REAL_NAME = "unique_name";
-  private static final String ADFS_EMAIL = "email";
-  private static final String ADFS_GROUP = "group";
-  private static final String ADFS_ALLU_GROUP_NAME = "sg_HKR_Allu";
+  // AD Token fields
+  private static final String AD_USER_NAME = "winaccountname";
+  private static final String AD_REAL_NAME = "unique_name";
+  private static final String AD_EMAIL = "email";
+  private static final String AD_GROUP = "group";
+  private static final String AD_ALLU_GROUP_NAME = "sg_HKR_Allu";
 
-  private static final Logger logger = LoggerFactory.getLogger(AdfsTokenAuthenticationService.class);
+  private static final Logger logger = LoggerFactory.getLogger(AdTokenAuthenticationService.class);
 
-  private AdfsAuthenticationProperties properties;
+  private AdAuthenticationProperties properties;
   private RestTemplate restTemplate;
   private UserService userService;
 
   private PublicKey publicKey;
   private TokenUtil tokenUtil;
 
-  protected AdfsTokenAuthenticationService(AdfsAuthenticationProperties properties, RestTemplate restTemplate, UserService userService) {
+  protected AdTokenAuthenticationService(AdAuthenticationProperties properties, RestTemplate restTemplate, UserService userService) {
     this.properties = properties;
     this.restTemplate = restTemplate;
     this.userService = userService;
@@ -109,19 +109,19 @@ public abstract class AdfsTokenAuthenticationService extends AuthenticationServi
   }
 
   /**
-   * Authenticates user with OAuth2 code against ADFS. If user does not exist in Allu user database and user belongs to allu group in ADFS,
+   * Authenticates user with OAuth2 code against AD. If user does not exist in Allu user database and user belongs to allu group in AD,
    * user is automatically added to Allu user database with viewing rights.
    *
    * @param   code  OAuth2 authorization code grant code.
    * @return  User data if login using code was successful. Otherwise nothing.
    */
   public Optional<UserJson> authenticateWithOAuth2Code(String code) {
-    String adfsToken = exchangeCodeForToken(code);
-    return authenticateWithAdfsToken(adfsToken);
+    String adToken = exchangeCodeForToken(code);
+    return authenticateWithAdToken(adToken);
   }
 
-  protected Optional<UserJson> authenticateWithAdfsToken(String adfsToken) {
-    AdfsJwtTokenFields tokenFields = parseToken(adfsToken);
+  protected Optional<UserJson> authenticateWithAdToken(String adToken) {
+    AdJwtTokenFields tokenFields = parseToken(adToken);
 
     UserJson userJson = null;
     String username = StringUtils.lowerCase(tokenFields.winAccountName);
@@ -154,10 +154,10 @@ public abstract class AdfsTokenAuthenticationService extends AuthenticationServi
   }
 
   /**
-   * Exchange OAuth2 code for a (ADFS) JWT token.
+   * Exchange OAuth2 code for a (AD) JWT token.
    *
-   * @param   code  Code for getting token from ADFS.
-   * @return  Token from ADFS.
+   * @param   code  Code for getting token from AD.
+   * @return  Token from AD.
    */
   private String exchangeCodeForToken(String code) {
     String clientIdParam = createOAuth2Param(OAUTH2_CLIENT_ID_PARAM, properties.getOauth2ClientId());
@@ -167,7 +167,7 @@ public abstract class AdfsTokenAuthenticationService extends AuthenticationServi
         new StringJoiner("&").add(clientIdParam).add(redirectUriParam).add(codeParam).add(OAUTH2_GRANT_TYPE).toString();
 
     TokenWrapper tokenWrapper = restTemplate.postForObject(properties.getOauth2TokenUrl(), tokenExchangeBody, TokenWrapper.class);
-    logger.debug("ADFS token: {}", tokenWrapper.access_token);
+    logger.debug("AD token: {}", tokenWrapper.access_token);
     return tokenWrapper.access_token;
   }
 
@@ -175,25 +175,25 @@ public abstract class AdfsTokenAuthenticationService extends AuthenticationServi
     return paramName + "=" + paramValue;
   }
 
-  private AdfsJwtTokenFields parseToken(String token) {
+  private AdJwtTokenFields parseToken(String token) {
     final Claims claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token).getBody();
 
-    List<String> groups = claims.get(ADFS_GROUP, List.class);
-    boolean hasAlluGroup = groups == null ? false : groups.stream().filter(g -> g.equals(ADFS_ALLU_GROUP_NAME)).findFirst().isPresent();
-    return new AdfsJwtTokenFields(
-        claims.get(ADFS_USER_NAME, String.class),
-        claims.get(ADFS_REAL_NAME, String.class),
-        claims.get(ADFS_EMAIL, String.class),
+    List<String> groups = claims.get(AD_GROUP, List.class);
+    boolean hasAlluGroup = groups == null ? false : groups.stream().filter(g -> g.equals(AD_ALLU_GROUP_NAME)).findFirst().isPresent();
+    return new AdJwtTokenFields(
+        claims.get(AD_USER_NAME, String.class),
+        claims.get(AD_REAL_NAME, String.class),
+        claims.get(AD_EMAIL, String.class),
         hasAlluGroup);
   }
 
-  private static class AdfsJwtTokenFields {
+  private static class AdJwtTokenFields {
     public final String winAccountName;
     public final String uniqueName;
     public final String email;
     public final boolean hasAlluGroup;
 
-    public AdfsJwtTokenFields(String winAccountName, String uniqueName, String email, boolean hasAlluGroup) {
+    public AdJwtTokenFields(String winAccountName, String uniqueName, String email, boolean hasAlluGroup) {
       this.winAccountName = winAccountName;
       this.uniqueName = uniqueName;
       this.email = email;
@@ -202,7 +202,7 @@ public abstract class AdfsTokenAuthenticationService extends AuthenticationServi
   }
 
   /**
-   * JSON mapping for ADFS JWT: {"access_token":"...","token_type":"bearer","expires_in":3600}
+   * JSON mapping for AD JWT: {"access_token":"...","token_type":"bearer","expires_in":3600}
    */
   public static class TokenWrapper {
     public String access_token;

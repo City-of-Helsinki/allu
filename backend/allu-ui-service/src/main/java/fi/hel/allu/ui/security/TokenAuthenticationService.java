@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.servicecore.security.AdfsTokenAuthenticationService;
+import fi.hel.allu.servicecore.security.AdTokenAuthenticationService;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.ui.config.ApplicationProperties;
 
 @Service
-public class TokenAuthenticationService extends AdfsTokenAuthenticationService {
+public class TokenAuthenticationService extends AdTokenAuthenticationService {
 
   @Autowired
   public TokenAuthenticationService(

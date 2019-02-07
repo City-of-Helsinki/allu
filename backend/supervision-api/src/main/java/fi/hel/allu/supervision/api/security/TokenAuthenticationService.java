@@ -13,13 +13,13 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.servicecore.security.AdfsTokenAuthenticationService;
+import fi.hel.allu.servicecore.security.AdTokenAuthenticationService;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.supervision.api.config.ApplicationProperties;
 import io.jsonwebtoken.JwtException;
 
 @Service
-public class TokenAuthenticationService extends AdfsTokenAuthenticationService {
+public class TokenAuthenticationService extends AdTokenAuthenticationService {
 
   @Autowired
   public TokenAuthenticationService(ApplicationProperties properties, RestTemplate restTemplate,
@@ -33,10 +33,10 @@ public class TokenAuthenticationService extends AdfsTokenAuthenticationService {
     return getAnonymousAccessPaths().stream().anyMatch(p -> antPathMatcher.match(p, path));
   }
 
-  public String loginWithAdfsToken(String adfsToken) {
+  public String loginWithAdToken(String adToken) {
     try {
-      Optional<UserJson> user = authenticateWithAdfsToken(adfsToken);
-      return user.map(u -> loginUser(u)).orElseThrow(() -> new BadCredentialsException("No user found with ADFS token"));
+      Optional<UserJson> user = authenticateWithAdToken(adToken);
+      return user.map(u -> loginUser(u)).orElseThrow(() -> new BadCredentialsException("No user found with AD token"));
     } catch (JwtException ex) {
       throw new BadCredentialsException("Invalid token", ex);
     }
