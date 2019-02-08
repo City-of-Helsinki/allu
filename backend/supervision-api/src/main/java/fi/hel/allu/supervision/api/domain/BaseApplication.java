@@ -21,6 +21,9 @@ public abstract class BaseApplication <T extends ApplicationExtensionJson> {
   @JsonUnwrapped
   private T extension;
 
+  public BaseApplication() {
+  }
+
   public BaseApplication(ApplicationJson application, T extension) {
     this.extension = extension;
     this.application = application;

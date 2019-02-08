@@ -13,17 +13,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.IllegalOperationException;
-import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationQueryParameters;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.supervision.api.domain.ApplicationSearchParameters;
-import fi.hel.allu.supervision.api.domain.ApplicationSearchResult;
-import fi.hel.allu.supervision.api.domain.AreaRentalApplication;
-import fi.hel.allu.supervision.api.domain.ExcavationAnnouncementApplication;
+import fi.hel.allu.supervision.api.domain.*;
 import fi.hel.allu.supervision.api.mapper.ApplicationSearchParameterMapper;
 import fi.hel.allu.supervision.api.mapper.ApplicationSearchResultMapper;
 import fi.hel.allu.supervision.api.mapper.MapperUtil;
@@ -108,6 +105,68 @@ public class ApplicationController {
     ApplicationJson application = applicationServiceComposer.findApplicationById(id);
     validateType(application, ApplicationType.AREA_RENTAL);
     return ResponseEntity.ok(new AreaRentalApplication(application));
+  }
+
+  @ApiOperation(value = "Update area rental application. "
+      + "Update is allowed only if the status of the application is PENDING and application is not an external application "
+      + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = AreaRentalApplication.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application updated successfully", response = AreaRentalApplication.class),
+      @ApiResponse(code = 409, message = "Update failed, given version of application updated by another user", response = ErrorInfo.class),
+      @ApiResponse(code = 403, message = "Application update forbidden", response = ErrorInfo.class),
+
+  })
+  @RequestMapping(value = "/arearentals/{id}", method = RequestMethod.PUT, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<AreaRentalApplication> updateAreaRentalApplication(@PathVariable Integer id, @RequestBody @Valid AreaRentalApplication areaRentalApplication) {
+    ApplicationJson updatedApplication = updateApplication(id, areaRentalApplication);
+    return ResponseEntity.ok(new AreaRentalApplication(updatedApplication));
+  }
+
+  @ApiOperation(value = "Update excavation announcement application. "
+      + "Update is allowed only if the status of the application is PENDING and application is not an external application "
+      + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = ExcavationAnnouncementApplication.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application updated successfully", response = ExcavationAnnouncementApplication.class),
+      @ApiResponse(code = 409, message = "Update failed, given version of application updated by another user", response = ErrorInfo.class),
+      @ApiResponse(code = 403, message = "Application update forbidden", response = ErrorInfo.class),
+  })
+  @RequestMapping(value = "/excavationannouncements/{id}", method = RequestMethod.PUT, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<ExcavationAnnouncementApplication> updateExcavationAnnouncementApplication(
+      @PathVariable Integer id,
+      @RequestBody @Valid ExcavationAnnouncementApplication excavationAnnouncementApplication) {
+    ApplicationJson updatedApplication = updateApplication(id, excavationAnnouncementApplication);
+    return ResponseEntity.ok(new ExcavationAnnouncementApplication(updatedApplication));
+  }
+
+  private <T extends BaseApplication<?>> ApplicationJson updateApplication(Integer id, T application) {
+    ApplicationJson applicationJson = application.getApplication();
+    applicationJson.setExtension(application.getExtension());
+    validateUpdateAllowed(id);
+    return applicationServiceComposer.updateApplication(id, applicationJson);
+  }
+
+  private void validateUpdateAllowed(Integer id) {
+    StatusType status = applicationServiceComposer.getApplicationStatus(id).getStatus();
+    if (status != StatusType.HANDLING
+        && status != StatusType.PRE_RESERVED
+        && status != StatusType.RETURNED_TO_PREPARATION
+        && (status != StatusType.PENDING || isExternalApplication(id))) {
+      throw new IllegalArgumentException("application.applicationStatus.forbidden");
+    }
+  }
+
+  private boolean isExternalApplication(Integer id) {
+    return applicationServiceComposer.getApplicationExternalOwner(id) != null;
   }
 
   private void validateType(ApplicationJson application, ApplicationType expectedType) {

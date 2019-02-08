@@ -158,7 +158,7 @@ public class ApplicationJson {
     this.handler = handler;
   }
 
-  @ApiModelProperty(value = "Status of the application")
+  @ApiModelProperty(value = "Status of the application", readOnly = true)
   public StatusType getStatus() {
     return status;
   }
@@ -167,7 +167,7 @@ public class ApplicationJson {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "Application type", required = true)
+  @ApiModelProperty(value = "Application type. Cannot be changed after creation", readOnly = true)
   public ApplicationType getType() {
     return type;
   }
@@ -176,7 +176,7 @@ public class ApplicationJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Application tags")
+  @ApiModelProperty(value = "Application tags", readOnly = true)
   public List<ApplicationTagJson> getApplicationTags() {
     return applicationTags;
   }
@@ -552,6 +552,11 @@ public class ApplicationJson {
 
   public void setVersion(Integer version) {
     this.version = version;
+  }
+
+  @ApiModelProperty(value = "Value indicating whether application is received from external system")
+  public boolean isExternalApplication() {
+    return externalOwnerId != null;
   }
 
 }

@@ -6,6 +6,10 @@ import io.swagger.annotations.ApiModel;
 
 @ApiModel(value = "Excavation announcement application")
 public class ExcavationAnnouncementApplication extends BaseApplication<ExcavationAnnouncementJson> {
+
+  public ExcavationAnnouncementApplication() {
+  }
+
   public ExcavationAnnouncementApplication(ApplicationJson application) {
     super(application, (ExcavationAnnouncementJson) application.getExtension());
   }
