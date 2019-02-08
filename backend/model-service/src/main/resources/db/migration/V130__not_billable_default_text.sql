@@ -1,0 +1,2 @@
+insert into  allu.attribute_meta (name, ui_name, data_type, structure_meta_id)
+  values ('NOT_BILLABLE', 'Ei laskutettava', 'ENUM_VALUE', (select id from allu.structure_meta where type_name = 'CableInfoType'));

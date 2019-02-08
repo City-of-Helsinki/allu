@@ -565,6 +565,11 @@ export const translations = {
     selectTerm: 'Valitse ehto',
     applicationTerms: 'Hakemuksen ehdot'
   },
+  NOT_BILLABLE: {
+    title: 'Ei laskuteta peruste',
+    selectTerm: 'Valitse valmis peruste',
+    applicationTerms: 'Peruste'
+  },
   OTHER: {
     title: 'Päätöksen perustelut',
     selectTerm: 'Valitse perustelu',
@@ -1070,6 +1075,7 @@ export const translations = {
       GEOTECHNICAL_OBSERVATION_POST: 'Geotekninen tarkkailupiste',
       TERMS: 'Ehdot',
       TRAFFIC_ARRANGEMENT: 'Suoritettavat liikennejärjestelyt',
+      NOT_BILLABLE: 'Ei laskuteta peruste',
       OTHER: 'Yleisesti/muut'
     }
   },

@@ -28,6 +28,7 @@ import {InvoiceGroupComponent} from '@feature/application/invoicing/invoice/invo
 import {InvoicingPeriodSelectComponent} from '@feature/application/invoicing/invoicing-period/invoicing-period-select.component';
 import {InvoicingPeriodEffects} from '@feature/application/invoicing/effects/invoicing-period-effects';
 import {InvoicingPeriodService} from '@feature/application/invoicing/invoicing-period/invoicing-period.service';
+import {DefaultTextModule} from '@feature/application/default-text/default-text.module';
 
 @NgModule({
   imports: [
@@ -41,7 +42,8 @@ import {InvoicingPeriodService} from '@feature/application/invoicing/invoicing-p
       InvoicingCustomerEffects,
       InvoiceEffects,
       InvoicingPeriodEffects
-    ])
+    ]),
+    DefaultTextModule
   ],
   declarations: [
     InvoicingComponent,

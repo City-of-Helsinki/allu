@@ -12,5 +12,6 @@ export enum DefaultTextType {
   GEOTECHNICAL_OBSERVATION_POST = 'GEOTECHNICAL_OBSERVATION_POST', // Geotekninen tarkkailupiste
   TERMS = 'TERMS', // Ehdot
   TRAFFIC_ARRANGEMENT = 'TRAFFIC_ARRANGEMENT', // Liikennejärjestely
+  NOT_BILLABLE = 'NOT_BILLABLE', // Ei laskuteta peruste
   OTHER = 'OTHER' // Yleisesti/muut
 }

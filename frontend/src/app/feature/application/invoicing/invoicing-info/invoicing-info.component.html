@@ -33,16 +33,11 @@
             </div>
           </div>
           <div fxLayout="row">
-            <div fxFlex *ngIf="!billable">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="notBillableReason" required
-                       [placeholder]="'invoice.info.notBillableReason' | translation"/>
-                <mat-hint>
-                  <field-error [form]="form" field="notBillableReason" hasError="required">
-                    {{'invoice.field.notBillableReasonMissing' | translation}}
-                  </field-error>
-                </mat-hint>
-              </mat-form-field>
+            <div fxFlex="50%" *ngIf="!billable">
+              <default-text formControlName="notBillableReason"
+                            applicationType="EVENT"
+                            [textType]="'NOT_BILLABLE'"
+                            [includeTypes]="['NOT_BILLABLE']"></default-text>
             </div>
           </div>
           <div fxLayout="row wrap">

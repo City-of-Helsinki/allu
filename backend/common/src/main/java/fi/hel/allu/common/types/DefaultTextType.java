@@ -15,5 +15,6 @@ public enum DefaultTextType {
   GEOTECHNICAL_OBSERVATION_POST, // Geotekninen tarkkailupiste
   TERMS, // Ehdot
   TRAFFIC_ARRANGEMENT,
+  NOT_BILLABLE, // Ei laskuteta peruste
   OTHER // Yleisesti/muut
 }
