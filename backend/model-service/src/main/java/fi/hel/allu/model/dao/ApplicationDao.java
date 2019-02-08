@@ -470,7 +470,6 @@ public class ApplicationDao {
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
     Application application = findByIds(Collections.singletonList(id)).get(0);
-    replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
     return populateTags(application);
   }

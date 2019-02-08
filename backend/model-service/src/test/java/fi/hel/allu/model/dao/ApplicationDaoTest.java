@@ -199,24 +199,6 @@ public class ApplicationDaoTest {
   }
 
   @Test
-  public void testUpdateApplicationTags() {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Owner");
-    newApplication.setApplicationTags(Collections.singletonList(
-        createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
-    Application application = applicationDao.insert(newApplication);
-    application.setApplicationTags(Arrays.asList(
-        createApplicationTag(ApplicationTagType.COMPENSATION_CLARIFICATION),
-        createApplicationTag(ApplicationTagType.DEPOSIT_PAID)));
-    application = applicationDao.update(application.getId(), application);
-    assertNotNull(application.getApplicationTags());
-    assertEquals(2, application.getApplicationTags().size());
-    assertTrue(application.getApplicationTags().stream()
-        .filter(tag -> tag.getType().equals(ApplicationTagType.COMPENSATION_CLARIFICATION)).findFirst().isPresent());
-    assertTrue(application.getApplicationTags().stream()
-        .filter(tag -> tag.getType().equals(ApplicationTagType.DEPOSIT_PAID)).findFirst().isPresent());
-  }
-
-  @Test
   public void testfindByEndTimeNoSpecifiers() {
     // Insert three applications that end in different times in future, remember
     // their ids:
