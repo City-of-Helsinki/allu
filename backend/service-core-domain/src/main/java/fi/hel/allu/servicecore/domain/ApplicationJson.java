@@ -120,8 +120,9 @@ public class ApplicationJson {
     this.id = id;
   }
 
+
   @ApiModelProperty(value = "Human readable application identifier (hakemustunniste). The format is XXYYZZZZZ where XX is application type abbreviation, " +
-      "YY is year and ZZZZZ is serial number for the given year. For example TP1600001")
+      "YY is year and ZZZZZ is serial number for the given year. For example TP1600001", readOnly = true)
   public String getApplicationId() {
     return applicationId;
   }
@@ -166,7 +167,7 @@ public class ApplicationJson {
     this.status = status;
   }
 
-  @ApiModelProperty(value = "Application type")
+  @ApiModelProperty(value = "Application type", required = true)
   public ApplicationType getType() {
     return type;
   }
@@ -196,7 +197,7 @@ public class ApplicationJson {
     this.metadataVersion = metadataVersion;
   }
 
-  @ApiModelProperty(value = "Name of the application")
+  @ApiModelProperty(value = "Name of the application", required = true)
   public String getName() {
     return name;
   }
@@ -205,7 +206,7 @@ public class ApplicationJson {
     this.name = name;
   }
 
-  @ApiModelProperty(value = "Application creation time")
+  @ApiModelProperty(value = "Application creation time", readOnly = true)
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -243,7 +244,7 @@ public class ApplicationJson {
     this.recurringEndTime = recurringEndTime;
   }
 
-  @ApiModelProperty(value = "Application customers with contacts")
+  @ApiModelProperty(value = "Application customers with contacts", required = true)
   public List<CustomerWithContactsJson> getCustomersWithContacts() {
     return customersWithContacts;
   }
@@ -252,7 +253,7 @@ public class ApplicationJson {
     this.customersWithContacts = customersWithContacts;
   }
 
-  @ApiModelProperty(value = "Application locations")
+  @ApiModelProperty(value = "Application locations", required = true)
   public List<LocationJson> getLocations() {
     return locations;
   }
@@ -278,7 +279,7 @@ public class ApplicationJson {
     this.decisionPublicityType = decisionPublicityType;
   }
 
-  @ApiModelProperty(value = "The time the decision was made")
+  @ApiModelProperty(value = "The time the decision was made", readOnly = true)
   public ZonedDateTime getDecisionTime() {
     return decisionTime;
   }
@@ -287,7 +288,7 @@ public class ApplicationJson {
     this.decisionTime = decisionTime;
   }
 
-  @ApiModelProperty(value = "The user who made the decision")
+  @ApiModelProperty(value = "The user who made the decision", readOnly = true)
   public UserJson getDecisionMaker() {
     return decisionMaker;
   }
@@ -305,7 +306,7 @@ public class ApplicationJson {
     this.decisionDistributionList = decisionDistributionList;
   }
 
-  @ApiModelProperty(value = "Attachments of the application")
+  @ApiModelProperty(value = "Attachments of the application", readOnly = true)
   public List<AttachmentInfoJson> getAttachmentList() {
     return attachmentList;
   }
@@ -314,7 +315,7 @@ public class ApplicationJson {
     this.attachmentList = attachmentList;
   }
 
-  @ApiModelProperty(value = "Comments of the application")
+  @ApiModelProperty(value = "Comments of the application", readOnly = true)
   public List<CommentJson> getComments() {
     return comments;
   }
@@ -323,7 +324,7 @@ public class ApplicationJson {
     this.comments = comments;
   }
 
-  @ApiModelProperty(value = "Calculated price of the application (in cents)")
+  @ApiModelProperty(value = "Calculated price of the application (in cents)", readOnly = true)
   public Integer getCalculatedPrice() {
     return calculatedPrice;
   }
@@ -419,7 +420,7 @@ public class ApplicationJson {
     return true;
   }
 
-  @ApiModelProperty(value = "ID of the application which is replaced by this application")
+  @ApiModelProperty(value = "ID of the application which is replaced by this application", readOnly = true)
   public Integer getReplacesApplicationId() {
     return replacesApplicationId;
   }
@@ -428,7 +429,7 @@ public class ApplicationJson {
     this.replacesApplicationId = replacesApplicationId;
   }
 
-  @ApiModelProperty(value = "ID of the application which has replaced this application")
+  @ApiModelProperty(value = "ID of the application which has replaced this application", readOnly = true)
   public Integer getReplacedByApplicationId() {
     return replacedByApplicationId;
   }
@@ -455,7 +456,7 @@ public class ApplicationJson {
     this.invoicingDate = invoicingDate;
   }
 
-  @ApiModelProperty(value = "True if application is (completely) invoiced")
+  @ApiModelProperty(value = "True if application is (completely) invoiced", readOnly = true)
   public Boolean getInvoiced() {
     return invoiced;
   }
@@ -544,7 +545,7 @@ public class ApplicationJson {
     this.invoicingPeriodLength = invoicingPeriodLength;
   }
 
-  @ApiModelProperty(value = "Application version number")
+  @ApiModelProperty(value = "Application version number. Used for optimistic locking, required when updating application")
   public Integer getVersion() {
     return version;
   }

@@ -22,7 +22,7 @@ public class CommentJson {
   private UserJson user;
   private String commentator;
 
-  @ApiModelProperty(value = "Id of the comment. Should be null when creating new comment")
+  @ApiModelProperty(value = "Id of the comment. Should be null when creating new comment", readOnly = true)
   public Integer getId() {
     return id;
   }
@@ -32,7 +32,7 @@ public class CommentJson {
   }
 
 
-  @ApiModelProperty(value = "Type of the comment")
+  @ApiModelProperty(value = "Type of the comment", required = true)
   public CommentType getType() {
     return type;
   }
@@ -41,7 +41,7 @@ public class CommentJson {
     this.type = type;
   }
 
-  @ApiModelProperty(value = "Comment text")
+  @ApiModelProperty(value = "Comment text", required = true)
   public String getText() {
     return text;
   }
@@ -50,7 +50,7 @@ public class CommentJson {
     this.text = text;
   }
 
-  @ApiModelProperty(value = "Comment creation time")
+  @ApiModelProperty(value = "Comment creation time", readOnly = true)
   public ZonedDateTime getCreateTime() {
     return createTime;
   }
@@ -59,7 +59,7 @@ public class CommentJson {
     this.createTime = createTime;
   }
 
-  @ApiModelProperty(value = "Comment last update time")
+  @ApiModelProperty(value = "Comment last update time", readOnly = true)
   public ZonedDateTime getUpdateTime() {
     return updateTime;
   }
@@ -69,7 +69,7 @@ public class CommentJson {
   }
 
 
-  @ApiModelProperty(value = "User who last updated comment")
+  @ApiModelProperty(value = "User who last updated comment", readOnly = true)
   public UserJson getUser() {
     return user;
   }

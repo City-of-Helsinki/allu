@@ -58,7 +58,7 @@ public class LocationJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Location key. Each new location for one application gets a key greater than the previous key.")
+  @ApiModelProperty(value = "Location key. Each new location for one application gets a key greater than the previous key.", readOnly = true)
   public Integer getLocationKey() {
     return locationKey;
   }
@@ -67,7 +67,7 @@ public class LocationJson {
     this.locationKey = locationKey;
   }
 
-  @ApiModelProperty(value = "Version of the location. If the location is updated, then new version will get higher version number than the previous.")
+  @ApiModelProperty(value = "Version of the location. If the location is updated, then new version will get higher version number than the previous.", readOnly = true)
   public Integer getLocationVersion() {
     return locationVersion;
   }
@@ -77,7 +77,7 @@ public class LocationJson {
   }
 
 
-  @ApiModelProperty(value = "The time location use starts")
+  @ApiModelProperty(value = "The time location use starts", required = true)
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -86,7 +86,7 @@ public class LocationJson {
     this.startTime = startTime;
   }
 
-  @ApiModelProperty(value = "The time location use ends")
+  @ApiModelProperty(value = "The time location use ends", required = true)
   public ZonedDateTime getEndTime() {
     return endTime;
   }
@@ -118,7 +118,7 @@ public class LocationJson {
     this.geometry = geometry;
   }
 
-  @ApiModelProperty(value = "Calculated location area in sq meters")
+  @ApiModelProperty(value = "Calculated location area in sq meters", readOnly = true)
   public Double getArea() {
     return area;
   }
@@ -154,7 +154,7 @@ public class LocationJson {
     this.fixedLocationIds = fixedLocationIds;
   }
 
-  @ApiModelProperty(value = "Calculated city district ID for the location")
+  @ApiModelProperty(value = "Calculated city district ID for the location", readOnly = true)
   public Integer getCityDistrictId() {
     return cityDistrictId;
   }
@@ -172,7 +172,7 @@ public class LocationJson {
     this.cityDistrictIdOverride = cityDistrictIdOverride;
   }
 
-  @ApiModelProperty(value = "Calculated payment tariff (maksuluokka) of the location")
+  @ApiModelProperty(value = "Calculated payment tariff (maksuluokka) of the location", readOnly = true)
   public String getPaymentTariff() {
     return paymentTariff;
   }
@@ -209,7 +209,7 @@ public class LocationJson {
     return address;
   }
 
-  @ApiModelProperty(value = "Location address in string or name of the fixed location")
+  @ApiModelProperty(value = "Location address in string or name of the fixed location", readOnly = true)
   public void setAddress(String address) {
     this.address = address;
   }

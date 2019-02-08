@@ -203,7 +203,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerWorkFinished = customerWorkFinished;
   }
 
-  @ApiModelProperty(value = "Purpose of the work")
+  @ApiModelProperty(value = "Purpose of the work", required = true)
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -230,7 +230,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement impediment")
+  @ApiModelProperty(value = "Traffic arrangement impediment", required = true)
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }

@@ -23,7 +23,7 @@ public class AttachmentInfoJson {
   private ZonedDateTime creationTime;
   private boolean decisionAttachment;
 
-  @ApiModelProperty(value = "The attachment ID")
+  @ApiModelProperty(value = "The attachment ID", readOnly = true)
   public Integer getId() {
     return id;
   }
@@ -32,7 +32,7 @@ public class AttachmentInfoJson {
     this.id = id;
   }
 
-  @ApiModelProperty(value = "Id of the user who has made the latest change to the attachment.")
+  @ApiModelProperty(value = "Id of the user who has made the latest change to the attachment.", readOnly = true)
   public String getHandlerName() {
     return handlerName;
   }
@@ -41,7 +41,7 @@ public class AttachmentInfoJson {
     this.handlerName = handlerName;
   }
 
-  @ApiModelProperty(value = "Type of the attachment.")
+  @ApiModelProperty(value = "Type of the attachment.", required = true)
   public AttachmentType getType() {
     return type;
   }
@@ -59,7 +59,7 @@ public class AttachmentInfoJson {
     this.mimeType = mimeType;
   }
 
-  @ApiModelProperty(value = "Attachment name (file name)")
+  @ApiModelProperty(value = "Attachment name (file name)", required = true)
   public String getName() {
     return name;
   }
@@ -77,7 +77,7 @@ public class AttachmentInfoJson {
     this.description = description;
   }
 
-  @ApiModelProperty(value = "Attachment size")
+  @ApiModelProperty(value = "Attachment size", readOnly = true)
   public Long getSize() {
     return size;
   }
@@ -86,7 +86,7 @@ public class AttachmentInfoJson {
     this.size = size;
   }
 
-  @ApiModelProperty(value = "Attachment creation time")
+  @ApiModelProperty(value = "Attachment creation time", readOnly = true)
   public ZonedDateTime getCreationTime() {
     return creationTime;
   }
@@ -95,7 +95,7 @@ public class AttachmentInfoJson {
     this.creationTime = creationTime;
   }
 
-  @ApiModelProperty(value = "Indication if attachment should be included in decision distribution")
+  @ApiModelProperty(value = "Indication if attachment should be included in decision distribution. Only PDF attachments are allowed as decision attachments.")
   public boolean isDecisionAttachment() {
     return decisionAttachment;
   }

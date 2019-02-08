@@ -52,7 +52,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.majorDisturbance = majorDisturbance;
   }
 
-  @ApiModelProperty(value = "Work purpose")
+  @ApiModelProperty(value = "Work purpose", required = true)
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -106,7 +106,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workFinishedReported = workFinishedReported;
   }
 
-  @ApiModelProperty(value = "Traffic arrangement impediment")
+  @ApiModelProperty(value = "Traffic arrangement impediment", required = true)
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }
