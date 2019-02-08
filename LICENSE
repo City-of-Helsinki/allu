@@ -7,6 +7,10 @@ Method for interpolating L.Circle into a set of points, for example for use in G
 Copyright (c) 2014 Alexander Milevski
 
 The MIT License (MIT)
+Buffering feature for polygons based on @turf/buffer.
+Copyright (c) 2017 TurfJS
+
+The MIT License (MIT)
 Copyright (c) 2016 Helsinki city
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files

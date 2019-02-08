@@ -1,6 +1,7 @@
+import {MIN_WIDTH} from './L.Draw.BufferPolyLine';
+
 const ARROW_UP = '&#9650;';
 const ARROW_DOWN = '&#9660;';
-const MIN_VALUE = 0.1;
 
 function changeValue(inputEl, byValue, options) {
   const value = (parseFloat(inputEl.value) + byValue).toFixed(1);
@@ -8,7 +9,7 @@ function changeValue(inputEl, byValue, options) {
 };
 
 function setValue(inputEl, value, options) {
-  inputEl.value = value >= MIN_VALUE ? value : MIN_VALUE;
+  inputEl.value = value >= MIN_WIDTH ? value : MIN_WIDTH;
   options.callback.call(options.context, inputEl.value);
 }
 

@@ -1,4 +1,6 @@
-const buffer = require('@turf/buffer').default;
+import buffer from './buffer';
+
+export const MIN_WIDTH = 0.2;
 
 L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
   statics: {
@@ -40,6 +42,7 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
     this.type = L.Draw.BufferPolyLine.TYPE;
     L.Draw.Polyline.prototype.initialize.call(this, map, options);
     this._polyShapeOptions = options.polyOptions.shapeOptions;
+    this._bufferOptions = {steps: 4, units: 'meters'};
   },
 
   // @method removeHooks(): void
@@ -64,7 +67,7 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
   },
 
   setWidth: function(width) {
-    this._width = width > 0 ? width : 0.1;
+    this._width = width >= MIN_WIDTH ? width : MIN_WIDTH;
     this._updateBufferedLine();
   },
 
@@ -74,7 +77,7 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
     }
 
     if (this._poly.getLatLngs().length > 1) {
-      const bufferedGeoJSON = buffer(this._poly.toGeoJSON(), this._toRadius(this._width));
+      const bufferedGeoJSON = buffer(this._poly.toGeoJSON(), this._toRadius(this._width), this._bufferOptions);
       // It is safe to assume only single polygon since it is created from single continuous line
       const layer = L.geoJSON(bufferedGeoJSON).getLayers()[0];
       this._bufferedLine = L.polygon(layer.getLatLngs(), this._polyShapeOptions);
@@ -82,8 +85,8 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
     }
   },
 
-  _toRadius: function(inMeters) {
-    return inMeters / 1000 / 2; // width to kilometers to radius
+  _toRadius: function(diameterInMeters) {
+    return diameterInMeters / 2; // diameter to radius
   },
 
   _fireCreatedEvent: function () {
