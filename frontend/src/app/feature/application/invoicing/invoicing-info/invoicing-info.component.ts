@@ -12,10 +12,10 @@ import {DepositStatusType} from '@model/application/invoice/deposit-status-type'
 import {applicationCanBeEdited, ApplicationStatus, isSameOrBefore} from '@model/application/application-status';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
-import {filter, map, switchMap, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
-import * as fromInvoicingr from '@feature/application/invoicing/reducers';
+import * as fromInvoicing from '@feature/application/invoicing/reducers';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 import {TimeUtil} from '@util/time.util';
 import {Customer} from '@model/customer/customer';
@@ -33,12 +33,10 @@ import {ArrayUtil} from '@util/array-util';
 export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
-  @Input() reset: Observable<boolean>;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
   recipientForm: FormGroup;
-  applicationLoaded: Observable<boolean>;
   showDeposit: boolean;
 
   private notBillableCtrl: FormControl;
@@ -61,13 +59,24 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
     this.initForm();
-    this.reset.pipe(filter(r => !!r)).subscribe(r => this.resetMe(r));
-    this.applicationLoaded = this.store.select(fromApplication.getApplicationLoaded);
   }
 
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+  }
+
+  reset() {
+    if (this.originalForm) {
+      this.form.reset(this.originalForm);
+    } else {
+      this.form.reset();
+    }
+    if (this.originalRecipientForm) {
+      this.recipientForm.reset(this.originalRecipientForm);
+    } else {
+      this.recipientForm.reset();
+    }
   }
 
   invoiceRecipientChange(recipient: CustomerForm) {
@@ -118,7 +127,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   private initForm(): void {
     this.store.pipe(
       select(fromApplication.getCurrentApplication),
-      takeUntil(this.destroy)
+      take(1),
     ).subscribe(app => {
       this.form.patchValue({
         notBillable: app.notBillable,
@@ -133,7 +142,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       this.showDeposit = !ArrayUtil.contains([ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT], app.type);
     });
 
-    this.store.select(fromInvoicingr.getInvoicingCustomer).pipe(takeUntil(this.destroy))
+    this.store.select(fromInvoicing.getInvoicingCustomer).pipe(takeUntil(this.destroy))
       .subscribe(customer => this.patchCustomer(customer));
 
     this.initDeposit();
@@ -185,19 +194,6 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   private currentDeposit(): Deposit {
     const applicationId = this.applicationStore.snapshot.application.id;
     return this.applicationStore.snapshot.deposit || Deposit.forApplication(applicationId);
-  }
-
-  private resetMe(reset: boolean) {
-    if (this.originalForm) {
-      this.form.reset(this.originalForm);
-    } else {
-      this.form.reset();
-    }
-    if (this.originalRecipientForm) {
-      this.recipientForm.reset(this.originalRecipientForm);
-    } else {
-      this.recipientForm.reset();
-    }
   }
 
   private initDeposit(): void {
