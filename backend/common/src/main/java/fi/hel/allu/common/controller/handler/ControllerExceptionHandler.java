@@ -83,6 +83,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
   }
 
+  @ExceptionHandler({OptimisticLockException.class})
+  protected ResponseEntity<Object> handleOptimisticLockException(RuntimeException e, WebRequest request) {
+    logger.error(e.getMessage(), e);
+    return handleExceptionInternal(e, getErrorBody(e), new HttpHeaders(), HttpStatus.CONFLICT, request);
+  }
+
   @Override
   protected ResponseEntity<Object>
   handleMethodArgumentNotValid(MethodArgumentNotValidException e,

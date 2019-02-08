@@ -95,6 +95,7 @@ export class ApplicationMapper {
     application.invoicingChanged = backendApplication.invoicingChanged;
     application.targetState = backendApplication.targetState;
     application.invoicingPeriodLength = backendApplication.invoicingPeriodLength;
+    application.version = backendApplication.version;
     return application;
   }
 
@@ -133,7 +134,8 @@ export class ApplicationMapper {
       customerReference: application.customerReference,
       invoicingDate: application.invoicingDate,
       identificationNumber: application.identificationNumber,
-      skipPriceCalculation: application.skipPriceCalculation
+      skipPriceCalculation: application.skipPriceCalculation,
+      version: application.version
     };
   }
 }

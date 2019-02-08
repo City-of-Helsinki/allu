@@ -108,6 +108,8 @@ public class ApplicationJson {
   private Integer externalApplicationId;
   private Integer invoicingPeriodLength;
 
+  private Integer version;
+
 
   @ApiModelProperty(value = "ID of the application")
   public Integer getId() {
@@ -540,6 +542,15 @@ public class ApplicationJson {
 
   public void setInvoicingPeriodLength(Integer invoicingPeriodLength) {
     this.invoicingPeriodLength = invoicingPeriodLength;
+  }
+
+  @ApiModelProperty(value = "Application version number")
+  public Integer getVersion() {
+    return version;
+  }
+
+  public void setVersion(Integer version) {
+    this.version = version;
   }
 
 }

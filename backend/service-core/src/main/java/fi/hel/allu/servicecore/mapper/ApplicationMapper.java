@@ -98,6 +98,7 @@ public class ApplicationMapper {
     applicationDomain.setClientApplicationData(createClientApplicationDataModel(applicationJson.getClientApplicationData()));
     applicationDomain.setIdentificationNumber(applicationJson.getIdentificationNumber());
     applicationDomain.setLocations(LocationMapper.createLocationModel(applicationJson.getId(), applicationJson.getLocations()));
+    applicationDomain.setVersion(applicationJson.getVersion());
     return applicationDomain;
   }
 
@@ -200,6 +201,7 @@ public class ApplicationMapper {
     applicationJson.setTargetState(application.getTargetState());
     applicationJson.setExternalApplicationId(application.getExternalApplicationId());
     applicationJson.setInvoicingPeriodLength(application.getInvoicingPeriodLength());
+    applicationJson.setVersion(application.getVersion());
     return applicationJson;
   }
 

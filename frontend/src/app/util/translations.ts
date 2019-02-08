@@ -1773,6 +1773,7 @@ export const translations = {
     NOT_FOUND: 'Haku epäonnistui',
     INTERNAL_SERVER_ERROR: 'Palvelinvirhe',
     GATEWAY_TIMEOUT: 'Palvelimeen ei saatu yhteyttä',
+    CONFLICT: 'Tallennus epäonnistui',
     UNKNOWN: 'Tuntematon virhe'
   },
   sort: {

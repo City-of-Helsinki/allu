@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import com.querydsl.core.QueryException;
 
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.exception.OptimisticLockException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,13 @@ public class ControllerDbExceptionHandler {
   void handleBadRequests(RuntimeException e, HttpServletResponse response) throws IOException {
     logger.error("Data integrity violation", e);
     response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+  }
+
+
+  @ExceptionHandler({OptimisticLockException.class})
+  void handleLockingException(RuntimeException e, HttpServletResponse response) throws IOException {
+    logger.error("Locking exception", e);
+    response.sendError(HttpStatus.CONFLICT.value(), e.getMessage());
   }
 
 }

@@ -56,6 +56,7 @@ export interface BackendApplication {
   invoicingChanged?: boolean;
   targetState?: ApplicationStatus;
   invoicingPeriodLength?: InvoicingPeriodLength;
+  version: number;
 }
 
 export interface SearchResultApplication {

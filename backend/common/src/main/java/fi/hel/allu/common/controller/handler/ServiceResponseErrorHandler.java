@@ -10,6 +10,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.exception.OptimisticLockException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -38,6 +39,9 @@ public class ServiceResponseErrorHandler implements ResponseErrorHandler {
     } else if (clientHttpResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
       logger.error("{} response. Throwing IllegalArgumentException", HttpStatus.BAD_REQUEST);
       throw new IllegalArgumentException(getMessage(clientHttpResponse));
+    } else if (clientHttpResponse.getStatusCode() == HttpStatus.CONFLICT) {
+      logger.error("{} response. Throwing OptimisticLockException", HttpStatus.CONFLICT);
+      throw new OptimisticLockException(getMessage(clientHttpResponse));
     } else {
       logger.error("Not mapped error response. Throwing runtime exception. {} {}", clientHttpResponse.getStatusCode(),
           clientHttpResponse.getStatusText());

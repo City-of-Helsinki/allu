@@ -549,4 +549,8 @@ public class ApplicationServiceComposer {
   public List<Integer> findFinishedNotes() {
     return applicationService.findFinishedNotes();
   }
+
+  public Integer getApplicationVersion(Integer id) {
+    return applicationService.getApplicationVersion(id);
+  }
 }

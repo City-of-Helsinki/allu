@@ -184,6 +184,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to get current application version
+   */
+  public String getApplicationVersionUrl() {
+    return getModelServiceUrl("/applications/{id}/version");
+  }
+
+  /**
    * @return url to delete a note in model service.
    */
   public String getNoteDeleteUrl() {

@@ -27,6 +27,7 @@ import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.exception.OptimisticLockException;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
@@ -454,13 +455,15 @@ public class ApplicationDao {
   @Transactional
   public Application update(int id, Application appl) {
     appl.setId(id);
+    Integer rowVersion = appl.getVersion();
+    appl.setVersion(rowVersion + 1);
     long changed = queryFactory.update(application)
         .populate(appl,
             new ExcludingMapper(WITH_NULL_BINDINGS,
                 UPDATE_READ_ONLY_FIELDS))
-        .where(application.id.eq(id)).execute();
+        .where(application.id.eq(id), application.version.eq(rowVersion)).execute();
     if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+      throw new OptimisticLockException("application.stale");
     }
     distributionEntryDao.deleteByApplication(id);
     insertDistributionEntries(id, appl.getDecisionDistributionList());
@@ -956,6 +959,18 @@ public class ApplicationDao {
     }
     List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
     return applications;
+  }
+
+  @Transactional
+  public void setInvoiceRecipient(int id, Integer invoiceRecipientId) {
+    queryFactory.update(application)
+        .set(application.invoiceRecipientId, invoiceRecipientId)
+        .where(application.id.eq(id)).execute();
+  }
+
+  @Transactional(readOnly = true)
+  public Integer getVersion(int id) {
+    return queryFactory.select(application.version).from(application).where(application.id.eq(id)).fetchFirst();
   }
 
 }

@@ -61,7 +61,8 @@ export class Application {
     public invoiced?: boolean,
     public invoicingChanged: boolean = false,
     public targetState?: ApplicationStatus,
-    public invoicingPeriodLength?: InvoicingPeriodLength) {
+    public invoicingPeriodLength?: InvoicingPeriodLength,
+    public version?: number) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

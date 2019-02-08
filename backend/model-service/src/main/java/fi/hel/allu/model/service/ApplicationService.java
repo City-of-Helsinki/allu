@@ -385,9 +385,7 @@ public class ApplicationService {
    */
   @Transactional
   public void updateApplicationPricing(int applicationId) {
-    Application application = findById(applicationId);
-    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(applicationId)));
-    applicationDao.update(applicationId, application);
+    applicationDao.updateCalculatedPrice(applicationId, pricingService.totalPrice(chargeBasisService.getChargeBasis(applicationId)));
   }
 
   /**
@@ -452,8 +450,7 @@ public class ApplicationService {
 
   @Transactional
   public void setInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId) {
-    Application application = findById(id);
-    changeInvoiceRecipient(id, invoiceRecipientId, userId, application);
+    changeInvoiceRecipient(id, invoiceRecipientId, userId);
   }
 
   @Transactional(readOnly = true)
@@ -462,10 +459,10 @@ public class ApplicationService {
     return Optional.ofNullable(invoiceRecipientId).map(i -> customerDao.findById(i).orElse(null)).orElse(null);
   }
 
-  public void changeInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId, Application application) {
-    application.setInvoiceRecipientId(invoiceRecipientId);
-    applicationDao.update(id, application);
+  public void changeInvoiceRecipient(int id, Integer invoiceRecipientId, Integer userId) {
+    applicationDao.setInvoiceRecipient(id, invoiceRecipientId);
     if (invoiceService.hasInvoices(id)) {
+      Application application = findById(id);
       applicationDao.removeTagByType(id, ApplicationTagType.SAP_ID_MISSING);
       // Recreates invoice with new invoice recipient
       createInvoice(id, userId, application);
@@ -558,5 +555,10 @@ public class ApplicationService {
   @Transactional(readOnly = true)
   public List<CustomerWithContacts> getApplicationCustomers(Integer id) {
     return customerDao.findByApplicationWithContacts(id);
+  }
+
+  @Transactional(readOnly = true)
+  public Integer getVersion(int id) {
+    return applicationDao.getVersion(id);
   }
 }

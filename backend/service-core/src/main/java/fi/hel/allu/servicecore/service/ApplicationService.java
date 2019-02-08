@@ -470,4 +470,8 @@ public class ApplicationService {
   public Customer findInvoiceRecipient(Integer applicationId) {
     return restTemplate.getForObject(applicationProperties.getApplicationInvoiceRecipientUrl(), Customer.class, applicationId);
   }
+
+  public Integer getApplicationVersion(Integer id) {
+    return restTemplate.getForObject(applicationProperties.getApplicationVersionUrl(), Integer.class, id);
+  }
 }

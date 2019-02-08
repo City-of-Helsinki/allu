@@ -416,4 +416,9 @@ public class ApplicationController {
   public ResponseEntity<List<CustomerWithContacts>> getApplicationCustomers(@PathVariable Integer id) {
     return new ResponseEntity<>(applicationService.getApplicationCustomers(id), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/version", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getVersion(@PathVariable int id) {
+    return new ResponseEntity<>(applicationService.getVersion(id), HttpStatus.OK);
+  }
 }

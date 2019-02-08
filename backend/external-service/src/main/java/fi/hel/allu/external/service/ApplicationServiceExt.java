@@ -113,6 +113,8 @@ public class ApplicationServiceExt {
 
   public <T extends BaseApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson application = mapper.mapExtApplication(applicationExt, getExternalUserId());
+    // Set optimistic lock version since it's currently not available from ext api
+    application.setVersion(applicationServiceComposer.getApplicationVersion(id));
     application.setReceivedTime(ZonedDateTime.now());
     application = applicationServiceComposer.updateApplication(id, application);
     StatusType status = applicationExt.isPendingOnClient() ? StatusType.PENDING_CLIENT : StatusType.PENDING;

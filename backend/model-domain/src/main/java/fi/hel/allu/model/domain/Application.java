@@ -81,6 +81,8 @@ public class Application {
   private Integer externalApplicationId;
   private Integer invoicingPeriodLength;
 
+  private Integer version;
+
   /**
    * in Finnish: Hakemuksen tunniste
    * <p>This is the database id.
@@ -570,5 +572,13 @@ public class Application {
 
   public void setInvoicingPeriodLength(Integer invoicingPeriodLength) {
     this.invoicingPeriodLength = invoicingPeriodLength;
+  }
+
+  public Integer getVersion() {
+    return version;
+  }
+
+  public void setVersion(Integer version) {
+    this.version = version;
   }
 }
