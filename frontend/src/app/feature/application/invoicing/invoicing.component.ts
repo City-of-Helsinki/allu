@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApplicationStore} from '@service/application/application-store';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {NotificationService} from '@feature/notification/notification.service';
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {Customer} from '@model/customer/customer';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
@@ -24,6 +24,7 @@ import * as fromApplication from '../reducers';
 import {SetRecipient} from '@feature/application/invoicing/actions/invoicing-customer-actions';
 import {Invoice} from '@model/application/invoice/invoice';
 import {Load as LoadInvoicingPeriods} from '@feature/application/invoicing/actions/invoicing-period-actions';
+import {InvoicingInfoComponent} from '@feature/application/invoicing/invoicing-info/invoicing-info.component';
 
 @Component({
   selector: 'invoicing',
@@ -32,9 +33,10 @@ import {Load as LoadInvoicingPeriods} from '@feature/application/invoicing/actio
 })
 export class InvoicingComponent implements OnInit, CanComponentDeactivate {
 
+  @ViewChild('invoicing-info') invoicingInfo: InvoicingInfoComponent;
+
   applicationId: number;
   infoForm: FormGroup;
-  reset = new Subject<boolean>();
   invoices$: Observable<Invoice[]>;
 
   private recipientForm: FormGroup;
@@ -73,7 +75,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
   }
 
   cancel(): void {
-    this.reset.next(true);
+    this.invoicingInfo.reset();
   }
 
   private saveApplicationInfo(): Observable<Application> {
