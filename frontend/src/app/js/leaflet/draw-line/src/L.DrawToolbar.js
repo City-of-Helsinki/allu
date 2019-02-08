@@ -1,3 +1,5 @@
+import {MIN_WIDTH} from './L.Draw.BufferPolyLine';
+
 L.drawLocal.draw.toolbar.lineWidth = {
   title: 'Line width',
   text: 'Width'
@@ -17,7 +19,7 @@ L.DrawToolbar.prototype.getActions = function getActionsExt(handler) {
       type: 'number',
       value: 2.0,
       step: 0.1,
-      min: 0.1,
+      min: MIN_WIDTH,
       max: 100.0
     },
   }];
