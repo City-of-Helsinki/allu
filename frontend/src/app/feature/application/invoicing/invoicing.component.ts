@@ -33,7 +33,7 @@ import {InvoicingInfoComponent} from '@feature/application/invoicing/invoicing-i
 })
 export class InvoicingComponent implements OnInit, CanComponentDeactivate {
 
-  @ViewChild('invoicing-info') invoicingInfo: InvoicingInfoComponent;
+  @ViewChild(InvoicingInfoComponent) invoicingInfo: InvoicingInfoComponent;
 
   applicationId: number;
   infoForm: FormGroup;
