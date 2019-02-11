@@ -319,12 +319,21 @@ public class LocationDaoTest {
 
     // Test: read them back
     List<FixedLocationArea> areas = locationDao.getFixedLocationAreas(null);
-    // Only two areas should be there (third only contains passive sections)
-    assertEquals(2, areas.size());
-    // Kauppatori should have two sections
-    assertEquals(2, areas.stream().filter(a -> a.getId() == kauppatoriId).findFirst().get().getSections().size());
+    // Should contain all areas
+    assertEquals(3, areas.size());
+
+    // Kauppatori should have two active sections
+    assertEquals(2, areas.stream()
+            .filter(a -> a.getId() == kauppatoriId)
+            .flatMap(area -> area.getSections().stream())
+            .filter(section -> section.isActive())
+            .count());
+
     // Senaatintori should have one section
-    assertEquals(1, areas.stream().filter(a -> a.getId() == senaatintoriToriId).findFirst().get().getSections().size());
+    assertEquals(1, areas.stream()
+            .filter(a -> a.getId() == senaatintoriToriId)
+            .flatMap(area -> area.getSections().stream())
+            .count());
   }
 
   // Polygon that's mostly in Herttoniemi:

@@ -9,12 +9,15 @@ export class FixedLocationArea {
     this.sections = sections || [];
   }
 
-  hasSectionsForKind(kind: ApplicationKind): boolean {
-    return this.sections.some(s => s.applicationKind === kind);
+  hasActiveSectionsForKind(kind: ApplicationKind): boolean {
+    return this.sections
+      .filter(s => s.active)
+      .some(s => s.applicationKind === kind);
   }
 
-  namedSectionsForKind(kind: ApplicationKind): Array<FixedLocationSection> {
+  namedActiveSectionsForKind(kind: ApplicationKind): Array<FixedLocationSection> {
     return this.sectionsForKind(kind)
+      .filter(s => s.active)
       .filter(s => !!s.name);
   }
 

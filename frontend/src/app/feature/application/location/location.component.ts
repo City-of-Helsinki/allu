@@ -318,7 +318,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.fixedLocationService.existing.pipe(
         takeUntil(this.destroy),
         map(fixedLocations => fixedLocations
-          .filter(f => f.hasSectionsForKind(this.application.kind))
+          .filter(f => f.hasActiveSectionsForKind(this.application.kind))
           .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name))
         )
       );
@@ -334,7 +334,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .map(areas => areas[0])
       .do(area => {
         this.locationForm.patchValue({area: area.id});
-        this.areaSections = this.sortedAreaSectionsFrom(area);
+        this.areaSections = this.sortedActiveSectionsFrom(area);
       });
 
     Some(this.application.firstLocation)
@@ -363,7 +363,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       const area = this.areas.find(a => a.id === id);
       const kind = this.application.kind;
 
-      this.areaSections = this.sortedAreaSectionsFrom(area);
+      this.areaSections = this.sortedActiveSectionsFrom(area);
 
       area.singleDefaultSectionForKind(kind)
         .do(defaultSection => this.sectionsCtrl.patchValue([defaultSection.id]));
@@ -436,10 +436,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.locationSearchFilterChange({address: form.streetAddress, startDate: location.startTime, endDate: location.endTime});
   }
 
-  private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {
+  private sortedActiveSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {
     if (hasSingleKind(this.application.type)) {
       const kind = this.application.kind;
-      return area.namedSectionsForKind(kind).sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
+      return area.namedActiveSectionsForKind(kind)
+        .sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
     } else {
       return [];
     }

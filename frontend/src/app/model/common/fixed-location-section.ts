@@ -5,5 +5,6 @@ export class FixedLocationSection {
     public id?: number,
     public name?: string,
     public applicationKind?: ApplicationKind,
-    public geometry?: GeoJSON.GeometryCollection) { }
+    public geometry?: GeoJSON.GeometryCollection,
+    public active?: boolean) { }
 }

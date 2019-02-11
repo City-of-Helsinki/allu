@@ -103,6 +103,7 @@ public class LocationMapper {
     fixedLocationSectionJson.setName(fixedLocationSection.getSection());
     fixedLocationSectionJson.setApplicationKind(fixedLocationSection.getApplicationKind());
     fixedLocationSectionJson.setGeometry(fixedLocationSection.getGeometry());
+    fixedLocationSectionJson.setActive(fixedLocationSection.isActive());
     return fixedLocationSectionJson;
   }
 

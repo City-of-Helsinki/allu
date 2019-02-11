@@ -307,15 +307,14 @@ public class LocationDao {
   }
 
   /**
-   * Get all defined fixed location areas as a list
+   * Get all defined fixed location areas (even inactive) as a list
    *
    * @return list of FixedLocationAreas
    */
   @Transactional(readOnly = true)
   public List<FixedLocationArea> getFixedLocationAreas(Integer srId) {
-
     List<FixedLocationArea> areas = queryFactory.from(locationArea, fixedLocation)
-        .where(fixedLocation.areaId.eq(locationArea.id).and(activeFixedLocation()))
+        .where(fixedLocation.areaId.eq(locationArea.id))
         .transform(groupBy(locationArea.id).as(
             Projections.constructor(FixedLocationArea.class, locationArea.id, locationArea.name,
                 list(bean(FixedLocationSection.class, fixedLocation.all())))))

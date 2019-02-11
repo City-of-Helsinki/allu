@@ -16,6 +16,7 @@ public class FixedLocationSection {
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
+  private boolean active;
 
   /**
    * Get the database id for the section
@@ -67,5 +68,13 @@ public class FixedLocationSection {
 
   public void setGeometry(Geometry geometry) {
     this.geometry = geometry;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setIsActive(boolean active) {
+    this.active = active;
   }
 }

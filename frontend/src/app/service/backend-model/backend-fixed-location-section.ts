@@ -3,4 +3,5 @@ export interface BackendFixedLocationSection {
   name: string;
   applicationKind: string;
   geometry: GeoJSON.GeometryCollection;
+  active: boolean;
 }

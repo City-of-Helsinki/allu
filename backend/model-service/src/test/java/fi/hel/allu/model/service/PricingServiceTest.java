@@ -66,9 +66,9 @@ public class PricingServiceTest {
   public void testMultiSectionApplication() {
     // Create a one-day event with two build days and one teardown day,
     // EcoCompass discount and
-    // fixed locations "Kansalaistori, lohko A" and "Kansalaistori, lohko C".
-    // The expected price is (1 * (500 + 400) + 3 * (250 + 200)) * 0.7 EUR =
-    // 1575.00 EUR
+    // fixed locations "Rautatientori, lohko A" and "Rautatientori, lohko C".
+    // The expected price is (1 * (500 + 500) + 3 * (250 + 250)) * 0.7 EUR =
+    // 1750.00 EUR
     Application application = new Application();
     application.setType(ApplicationType.EVENT);
     application.setStartTime(ZonedDateTime.parse("2018-03-28T00:00:00+03:00"));
@@ -89,8 +89,8 @@ public class PricingServiceTest {
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
     List<Integer> fixedLocationIds = Arrays
-        .asList(Triple.of(ApplicationKind.OUTDOOREVENT, "Kansalaistori", "A"),
-            Triple.of(ApplicationKind.OUTDOOREVENT, "Kansalaistori", "C"))
+        .asList(Triple.of(ApplicationKind.OUTDOOREVENT, "Rautatientori", "A"),
+            Triple.of(ApplicationKind.OUTDOOREVENT, "Rautatientori", "C"))
         .stream()
         .map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
     location.setFixedLocationIds(fixedLocationIds);
@@ -103,8 +103,8 @@ public class PricingServiceTest {
     // ...and three build/teardown days
     assertEquals(3.0, chargeBasisEntries.stream().filter(cbe -> cbe.getUnitPrice() == 25000)
         .map(cbe -> cbe.getQuantity()).findFirst().orElse(0.0).doubleValue(), 0.0001);
-    assertEquals(157500, pricingService.totalPrice(chargeBasisEntries));
-    checkPrice(application, 157500);
+    assertEquals(175000, pricingService.totalPrice(chargeBasisEntries));
+    checkPrice(application, 175000);
   }
 
   @Test
