@@ -34,7 +34,7 @@
           </div>
           <div fxLayout="row">
             <div fxFlex="50%" *ngIf="!billable">
-              <default-text formControlName="notBillableReason"
+              <default-text formControlName="notBillableReason" required
                             applicationType="EVENT"
                             [textType]="'NOT_BILLABLE'"
                             [includeTypes]="['NOT_BILLABLE']"></default-text>

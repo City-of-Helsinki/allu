@@ -1,5 +1,5 @@
-<div fxLayout="row">
-  <div *ngIf="!readonly" fxFlex="60">
+<div fxLayout="row" fxLayoutGap="18px" *ngIf="!readonly">
+  <div fxFlex="60">
     <mat-form-field class="input-full-width">
       <mat-select class="input-full-width" [placeholder]="[textType, 'selectTerm'] | translation">
         <mat-option *ngFor="let defaultText of defaultTexts"
@@ -10,7 +10,7 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div *ngIf="!readonly" fxFlex="60">
+  <div fxFlex="60">
     <button mat-raised-button type="button" color="primary" (click)="editDefaultTexts()">
       {{'common.button.edit' | translation | uppercase}}
     </button>
@@ -19,9 +19,10 @@
 <div fxLayout="row">
   <div fxFlex>
     <mat-form-field class="input-full-width">
-      <textarea matInput matTextareaAutosize
+      <textarea matInput matTextareaAutosize [required]="required"
                 [formControl]="textsControl"
                 [placeholder]="[textType, 'applicationTerms'] | translation"></textarea>
+      <mat-error *ngIf="textsControl.hasError('required')">{{[textType, 'missing'] | translation}}</mat-error>
     </mat-form-field>
   </div>
 </div>

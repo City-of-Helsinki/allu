@@ -563,22 +563,26 @@ export const translations = {
   TERMS: {
     title: 'Ehdot',
     selectTerm: 'Valitse ehto',
-    applicationTerms: 'Hakemuksen ehdot'
+    applicationTerms: 'Hakemuksen ehdot',
+    missing: 'Ehdot puuttuvat'
   },
   NOT_BILLABLE: {
     title: 'Ei laskuteta peruste',
     selectTerm: 'Valitse valmis peruste',
-    applicationTerms: 'Peruste'
+    applicationTerms: 'Peruste',
+    missing: 'Peruste puuttuu'
   },
   OTHER: {
     title: 'Päätöksen perustelut',
     selectTerm: 'Valitse perustelu',
-    applicationTerms: 'Päätöksen perustelut'
+    applicationTerms: 'Päätöksen perustelut',
+    missing: 'Päätöksen perustelut puuttuvat'
   },
   TRAFFIC_ARRANGEMENT: {
     title: 'Suoritettavat liikennejärjestelyt',
     selectTerm: 'Valitse liikennejärjestely',
-    applicationTerms: 'Suoritettavat liikennejärjestelyt'
+    applicationTerms: 'Suoritettavat liikennejärjestelyt',
+    missing: 'Suoritettavat liikennejärjestelyt puuttuvat'
   },
   informationRequestResponse: {
     error: {

@@ -1,5 +1,5 @@
-import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlValueAccessor, FormBuilder, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {Attribute, Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
+import {ControlValueAccessor, FormBuilder, FormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {ApplicationType} from '@model/application/type/application-type';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {forkJoin, Subscription} from 'rxjs';
@@ -11,7 +11,6 @@ import {Some} from '@util/option';
 import {findTranslation} from '@util/translations';
 import {DefaultTextService} from '@service/application/default-text.service';
 import {switchMap} from 'rxjs/internal/operators';
-import {MAX_YEAR} from '@util/time.util';
 
 const DEFAULT_TEXT_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -37,13 +36,18 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
   private changeSub: Subscription;
   private dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
-  constructor(private fb: FormBuilder,
+  constructor(@Attribute('required') public required: boolean = false,
+              private fb: FormBuilder,
               private dialog: MatDialog,
               private defaultTextService: DefaultTextService,
               private notification: NotificationService) {}
 
   ngOnInit(): void {
-    this.textsControl = this.fb.control({value: undefined, disabled: this.readonly});
+    this.textsControl = this.fb.control(
+      {value: undefined, disabled: this.readonly},
+      this.required ? Validators.required : null
+    );
+
     this.defaultTextService.load(this.applicationType).subscribe(
       dts => this.defaultTexts = this.filterDefaultTexts(dts),
       err => this.notification.errorInfo(err)
