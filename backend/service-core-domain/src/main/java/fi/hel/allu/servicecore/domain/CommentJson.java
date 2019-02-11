@@ -22,6 +22,14 @@ public class CommentJson {
   private UserJson user;
   private String commentator;
 
+  public CommentJson() {
+  }
+
+  public CommentJson(CommentType type, String text) {
+    this.type = type;
+    this.text = text;
+  }
+
   @ApiModelProperty(value = "Id of the comment. Should be null when creating new comment", readOnly = true)
   public Integer getId() {
     return id;

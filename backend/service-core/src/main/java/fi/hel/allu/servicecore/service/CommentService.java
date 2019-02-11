@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -148,7 +149,7 @@ public class CommentService {
    */
   private void validateCommentType(CommentType type) {
     if (!allowedUserCommentTypes.contains(type)) {
-      throw new IllegalArgumentException("CommentType " + type.name() + " not allowed!");
+      throw new IllegalArgumentException("comment.type.invalid");
     }
   }
 
@@ -166,6 +167,14 @@ public class CommentService {
 
   private Integer getNumberOfApplicationComments(int applicationId) {
     return restTemplate.getForEntity(applicationProperties.getCommentsFindCountByApplicationUrl(), Integer.class, applicationId).getBody();
+  }
+
+  public void validateIsOwnedByCurrentUser(Integer id) {
+    Comment comment = findById(id);
+    if (!Objects.equals(comment.getUserId(), userService.getCurrentUser().getId())) {
+      throw new IllegalOperationException("comment.owner");
+    }
+
   }
 
 }
