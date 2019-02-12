@@ -1,12 +1,4 @@
 export const FieldKeyMapping = {
-  START_TIME: {
-    fieldName: 'startTime',
-    valueField: 'startTime'
-  },
-  END_TIME: {
-    fieldName: 'endTime',
-    valueField: 'endTime'
-  },
   IDENTIFICATION_NUMBER: {
     fieldName: 'identificationNumber',
     valueField: 'identificationNumber'
@@ -22,8 +14,6 @@ export const FieldKeyMapping = {
 };
 
 export const FieldNameMapping = {
-  startTime: 'startTime',
-  endTime: 'endTime',
   identificationNumber: 'identificationNumber',
   workDescription: 'extension.additionalInfo',
   propertyIdentificationNumber: 'extension.propertyIdentificationNumber'

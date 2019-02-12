@@ -15,6 +15,7 @@ import {Customer} from '@model/customer/customer';
 import {Contact} from '@model/customer/contact';
 import {FieldNameMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {TimeUtil} from '@util/time.util';
 
 @Injectable()
 export class InformationRequestResultService {
@@ -31,6 +32,8 @@ export class InformationRequestResultService {
     const application = ObjectUtil.clone(data.application);
     application.kindsWithSpecifiers = data.kindsWithSpecifiers;
     application.locations = data.locations;
+    application.startTime = TimeUtil.minimum(... data.locations.map(l => l.startTime));
+    application.endTime = TimeUtil.maximum(... data.locations.map(l => l.endTime));
     this.patchCustomerWithContacts(application, CustomerRoleType.APPLICANT, data.applicant, data.contacts);
     this.patchCustomerWithContacts(application, CustomerRoleType.REPRESENTATIVE, data.representative, data.contacts);
     this.patchCustomerWithContacts(application, CustomerRoleType.PROPERTY_DEVELOPER, data.propertyDeveloper, data.contacts);
@@ -58,13 +61,6 @@ export class InformationRequestResultService {
         const valueField = FieldNameMapping[fieldName];
         set(application, valueField, otherInfo[fieldName]);
       });
-
-      if (otherInfo.startTime) {
-        application.singleLocation.startTime = otherInfo.startTime;
-      }
-      if (otherInfo.endTime) {
-        application.singleLocation.endTime = otherInfo.endTime;
-      }
     }
   }
 }

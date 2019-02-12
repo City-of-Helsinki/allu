@@ -21,12 +21,12 @@ export enum InformationRequestFieldKey {
 export const LocationKeys: InformationRequestFieldKey[] = [
   InformationRequestFieldKey.GEOMETRY,
   InformationRequestFieldKey.POSTAL_ADDRESS,
-  InformationRequestFieldKey.AREA
+  InformationRequestFieldKey.AREA,
+  InformationRequestFieldKey.START_TIME,
+  InformationRequestFieldKey.END_TIME
 ];
 
 export const OtherInfoKeys: InformationRequestFieldKey[] = [
-  InformationRequestFieldKey.START_TIME,
-  InformationRequestFieldKey.END_TIME,
   InformationRequestFieldKey.IDENTIFICATION_NUMBER,
   InformationRequestFieldKey.WORK_DESCRIPTION,
   InformationRequestFieldKey.PROPERTY_IDENTIFICATION_NUMBER
