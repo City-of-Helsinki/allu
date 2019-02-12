@@ -53,12 +53,12 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   }
 
   private initFormStructures(application: Application) {
-    if (application.kind === ApplicationKind.PROMOTION) {
-      this.completeFormStructure = eventForm(this.fb);
-      this.draftFormStructure = eventDraft(this.fb);
-    } else {
+    if (application.kind === ApplicationKind.OUTDOOREVENT) {
       this.completeFormStructure = outdoorEventForm(this.fb);
       this.draftFormStructure = outdoorEventDraft(this.fb);
+    } else {
+      this.completeFormStructure = eventForm(this.fb);
+      this.draftFormStructure = eventDraft(this.fb);
     }
   }
 
@@ -90,14 +90,14 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     event.eventStartTime = TimeUtil.toStartDate(event.eventStartTime || application.startTime);
     event.eventEndTime = TimeUtil.toEndDate(event.eventEndTime || application.endTime);
     event.applicationType = ApplicationType[ApplicationType.EVENT];
-
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;
 
     if (application.kind === ApplicationKind.PROMOTION) {
       event.nature = EventNature[EventNature.PROMOTION];
+    } else if (application.kind === ApplicationKind.BIG_EVENT) {
+      event.nature = EventNature[EventNature.BIG_EVENT];
     }
-
     return event;
   }
 

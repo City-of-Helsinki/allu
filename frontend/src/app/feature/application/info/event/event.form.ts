@@ -98,7 +98,8 @@ export function eventForm(fb: FormBuilder): { [key: string]: any; } {
       endTime: [undefined]
     }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
     surfaceHardness: [undefined, Validators.required],
-    terms: [undefined]
+    terms: [undefined],
+    nature: [undefined]
   };
 }
 

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {EventNature} from '@model/application/event/event-nature';
+import {EventNature, selectableNatures} from '@model/application/event/event-nature';
 import {EnumUtil} from '@util/enum.util';
 import {FormUtil} from '@util/form.util';
 import {ApplicationKind} from '@model/application/type/application-kind';
@@ -27,7 +27,7 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
   @Output() billableChange = new EventEmitter<boolean>();
 
   showPricingInfo = false;
-  eventNatures = EnumUtil.enumValues(EventNature).filter(nature => nature !== 'PROMOTION');
+  eventNatures = selectableNatures.map(nature => EventNature[nature]);
   required = FormUtil.required;
   billableSalesAreaSubscription: Subscription;
 
