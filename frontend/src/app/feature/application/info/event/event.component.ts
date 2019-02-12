@@ -53,12 +53,12 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   }
 
   private initFormStructures(application: Application) {
-    if (application.kind === ApplicationKind.OUTDOOREVENT) {
-      this.completeFormStructure = outdoorEventForm(this.fb);
-      this.draftFormStructure = outdoorEventDraft(this.fb);
-    } else {
+    if (application.kind === ApplicationKind.PROMOTION) {
       this.completeFormStructure = eventForm(this.fb);
       this.draftFormStructure = eventDraft(this.fb);
+    } else {
+      this.completeFormStructure = outdoorEventForm(this.fb);
+      this.draftFormStructure = outdoorEventDraft(this.fb);
     }
   }
 

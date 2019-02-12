@@ -144,6 +144,7 @@ export const translations = {
         multiple: 'Ehdotetut lajit'
       },
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
+      BIG_EVENT: 'Suuret tapahtumat',
       PROMOTION: 'Promootio',
       AREA_RENTAL: 'Aluevuokraus',
       TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Tilapäiset liikennejärjestelyt',

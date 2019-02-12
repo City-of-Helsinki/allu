@@ -213,6 +213,7 @@ public class AlluMapper {
     }
     switch (Optional.ofNullable(application.getKind()).orElse(ApplicationKind.OTHER)) {
       case OUTDOOREVENT:
+      case BIG_EVENT:
         Event evt = (Event) application.getExtension();
         switch (evt.getNature()) {
           case PUBLIC_FREE:

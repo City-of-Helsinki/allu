@@ -9,7 +9,8 @@ import {ApplicationKind} from '@model/application/type/application-kind';
 const kindsWithPricingInfo: ApplicationKind[] = [
   ApplicationKind.OUTDOOREVENT,
   ApplicationKind.PROMOTION,
-  ApplicationKind.PROMOTION_OR_SALES
+  ApplicationKind.PROMOTION_OR_SALES,
+  ApplicationKind.BIG_EVENT
 ];
 
 @Component({

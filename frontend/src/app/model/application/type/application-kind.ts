@@ -3,6 +3,7 @@ import {KindsWithSpecifiers} from './application-specifier';
 export enum ApplicationKind {
   PROMOTION,
   OUTDOOREVENT,
+  BIG_EVENT, // Suuret tapahtumat
   BRIDGE_BANNER, // Banderollit silloissa
   BENJI, // Benji-hyppylaite
   PROMOTION_OR_SALES, // Esittely- tai myyntitila liikkeen edustalla

@@ -46,7 +46,8 @@ export const applicationTypeTree: ApplicationTypeTree = {
   },
   EVENT: {
     PROMOTION: [],
-    OUTDOOREVENT: []
+    OUTDOOREVENT: [],
+    BIG_EVENT: []
   },
   SHORT_TERM_RENTAL: {
     BRIDGE_BANNER: [],

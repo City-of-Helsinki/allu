@@ -4,7 +4,7 @@
       {{'application.pricingBasis' | translation}}
     </mat-card-title>
     <mat-card-content>
-      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT'">
+      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT' || kind==='BIG_EVENT'">
         <div fxFlex="0 0 25%">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="nature"
@@ -21,7 +21,7 @@
           </mat-form-field>
         </div>
       </div>
-      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT' || kind==='PROMOTION'">
+      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT' || kind==='PROMOTION' || kind==='BIG_EVENT'">
         <div fxFlex>
           <mat-button-toggle-group formControlName="surfaceHardness" required>
             <mat-button-toggle value="SOFT">
@@ -33,7 +33,7 @@
           </mat-button-toggle-group>
         </div>
       </div>
-      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT'">
+      <div fxLayout="row" *ngIf="kind==='OUTDOOREVENT' || kind==='BIG_EVENT'">
         <div fxFlex>
           <mat-checkbox class="input-field-checkbox" formControlName="ecoCompass">
             {{'application.pricing.ecoCompass' | translation}}

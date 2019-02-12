@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public enum ApplicationKind {
   PROMOTION(ApplicationType.EVENT),
   OUTDOOREVENT(ApplicationType.EVENT),
+  BIG_EVENT(ApplicationType.EVENT),
   BRIDGE_BANNER(ApplicationType.SHORT_TERM_RENTAL), // Banderollit silloissa
   BENJI(ApplicationType.SHORT_TERM_RENTAL), // Benji-hyppylaite
   PROMOTION_OR_SALES(ApplicationType.SHORT_TERM_RENTAL), // Esittely- tai myyntitila liikkeen edustalla
