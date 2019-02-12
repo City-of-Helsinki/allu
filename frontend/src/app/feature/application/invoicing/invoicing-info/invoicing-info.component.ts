@@ -38,6 +38,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
   recipientForm: FormGroup;
   showDeposit: boolean;
+  applicationType: ApplicationType;
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
@@ -140,6 +141,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
       this.setEditable(app);
       this.showDeposit = !ArrayUtil.contains([ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT], app.type);
+      this.applicationType = app.type;
     });
 
     this.store.select(fromInvoicing.getInvoicingCustomer).pipe(takeUntil(this.destroy))
