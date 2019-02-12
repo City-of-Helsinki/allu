@@ -50,7 +50,7 @@ public class ContractService {
   }
 
   public byte[] getContractPreview(Integer applicationId) {
-    return generateContractPdf(applicationId, null);
+    return generateContractPdf(applicationId, null, true);
   }
 
   public byte[] getContract(Integer applicationId) {
@@ -69,7 +69,7 @@ public class ContractService {
   public byte[] createContractProposal(Integer applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     validateProposalCreationAllowed(application);
-    byte[] pdfData = generateContractPdf(application, null);
+    byte[] pdfData = generateContractPdf(application, null, false);
     restTemplate.exchange(applicationProperties.getContractProposalUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("data", pdfData), String.class, applicationId);
     applicationServiceComposer.changeStatus(applicationId, StatusType.WAITING_CONTRACT_APPROVAL);
@@ -87,7 +87,7 @@ public class ContractService {
 
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
     validateProposalCreationAllowed(application);
-    byte[] pdfData = generateContractPdf(application, contractInfo);
+    byte[] pdfData = generateContractPdf(application, contractInfo, false);
     if (StringUtils.isNotBlank(contractApprovalInfo.getComment())) {
       commentService.addDecisionProposalComment(applicationId, contractApprovalInfo);
     }
@@ -103,7 +103,7 @@ public class ContractService {
     contractInfo.setStatus(ContractStatusType.APPROVED);
     contractInfo.setSigner(signer);
     contractInfo.setResponseTime(signingTime);
-    byte[] data = generateContractPdf(applicationId, contractInfo);
+    byte[] data = generateContractPdf(applicationId, contractInfo, false);
     HttpEntity<?> requestEntity = MultipartRequestBuilder.buildByteArrayRequest("file", data, Collections.singletonMap("info", contractInfo));
     restTemplate.exchange(applicationProperties.getContractUrl(), HttpMethod.PUT, requestEntity, Void.class, applicationId);
 
@@ -164,20 +164,20 @@ public class ContractService {
     if (applicationJson.getType() == ApplicationType.PLACEMENT_CONTRACT) {
       ContractInfo contractInfo = getContractInfo(applicationId);
       if (contractInfo != null && contractInfo.getStatus() == ContractStatusType.APPROVED) {
-        byte[] contractData = generateContractPdf(applicationJson, contractInfo);
+        byte[] contractData = generateContractPdf(applicationJson, contractInfo, false);
         restTemplate.exchange(applicationProperties.getFinalContractUrl(), HttpMethod.POST,
             MultipartRequestBuilder.buildByteArrayRequest("data", contractData), String.class, applicationId);
       }
     }
   }
 
-  private byte[] generateContractPdf(Integer applicationId, ContractInfo contractInfo) {
+  private byte[] generateContractPdf(Integer applicationId, ContractInfo contractInfo, boolean draft) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
-    return generateContractPdf(application, contractInfo);
+    return generateContractPdf(application, contractInfo, draft);
   }
 
-  private byte[] generateContractPdf(ApplicationJson application, ContractInfo contractInfo) {
-    DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, false);
+  private byte[] generateContractPdf(ApplicationJson application, ContractInfo contractInfo, boolean draft) {
+    DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, draft);
     setContractData(contractInfo, decisionJson);
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,

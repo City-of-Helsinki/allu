@@ -183,6 +183,13 @@ p.small {
   font-size: 8pt;
 }
 
+p.signature {
+  border-bottom-style: solid;
+  border-bottom-width: thin;
+  margin-top: 3em;
+  margin-bottom: 4em;
+}
+
 div.indented {
   display: inline-block;
   vertical-align: top;

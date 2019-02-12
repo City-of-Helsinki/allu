@@ -13,9 +13,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </xsl:attribute>
     </xsl:element>
     <link rel="stylesheet" href="style.css" />
-    <xsl:if test="data/draft = 'true'">
-      <link rel="stylesheet" href="watermark.css" />
-    </xsl:if>
   </head>
   <body>
     <div class="body">
@@ -219,10 +216,20 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               </p>
             </xsl:when>
             <xsl:otherwise>
-              <p class="indented space-above">
-                <xsl:value-of select="data/applicantName"/> puolesta <xsl:value-of select="data/contractSigner"/> <!-- [asioinnissa sopimuksen hyväksyjä] -->
-                    on allekirjoittanut tämän asiakirjan sähköisesti <xsl:value-of select="data/contractSigningDate"/> <!-- [aikaleima sopimuksen hyväksynnästä asioinnissa]-->
-              </p>
+              <xsl:if test="data/draft = 'true'">
+                <p class="indented space-above">
+                  <xsl:value-of select="data/applicantName"/>
+                </p>
+                <p class="indented signature"></p>
+              </xsl:if>
+
+              <xsl:if test="data/draft = 'false'">
+                <p class="indented space-above">
+                  <xsl:value-of select="data/applicantName"/> puolesta <xsl:value-of select="data/contractSigner"/> <!-- [asioinnissa sopimuksen hyväksyjä] -->
+                  on allekirjoittanut tämän asiakirjan sähköisesti <xsl:value-of select="data/contractSigningDate"/> <!-- [aikaleima sopimuksen hyväksynnästä asioinnissa]-->
+                </p>
+              </xsl:if>
+
             </xsl:otherwise>
           </xsl:choose>
         </section>
