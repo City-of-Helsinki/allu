@@ -64,7 +64,7 @@ export class TypeComponent implements OnInit, OnDestroy {
       select(fromApplication.getCurrentApplication),
       take(1)
     ).subscribe(app => {
-      this.availableKinds = getAvailableKinds(app.type);
+      this.availableKinds = getAvailableKinds(app.type, !this.readonly);
       this.multipleKinds = hasMultipleKinds(app.type);
       this.initForm(app);
       this.applicationTypes = this.getAvailableTypes().pipe(
@@ -83,7 +83,7 @@ export class TypeComponent implements OnInit, OnDestroy {
   typeChange(type: string) {
     this.typeCtrl.patchValue(type, {emitEvent: false});
     this.kindsCtrl.reset([]);
-    this.availableKinds = getAvailableKinds(type);
+    this.availableKinds = getAvailableKinds(type, !this.readonly);
     this.multipleKinds = hasMultipleKinds(type);
   }
 

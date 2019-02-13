@@ -1,52 +1,56 @@
 import {KindsWithSpecifiers} from './application-specifier';
 
 export enum ApplicationKind {
-  PROMOTION,
-  OUTDOOREVENT,
-  BIG_EVENT, // Suuret tapahtumat
-  BRIDGE_BANNER, // Banderollit silloissa
-  BENJI, // Benji-hyppylaite
-  PROMOTION_OR_SALES, // Esittely- tai myyntitila liikkeen edustalla
-  URBAN_FARMING, // Kaupunkiviljelypaikka
-  KESKUSKATU_SALES, // Keskuskadun myyntipaikka
-  SUMMER_THEATER, // Kesäteatterit
-  DOG_TRAINING_FIELD, // Koirakoulutuskentät
-  DOG_TRAINING_EVENT, // Koirakoulutustapahtuma
-  SMALL_ART_AND_CULTURE, // Pienimuotoinen taide- ja kulttuuritoiminta
-  SEASON_SALE, // Sesonkimyynti
-  CIRCUS, // Sirkus/tivolivierailu
-  ART, // Taideteos
-  STORAGE_AREA, // Varastoalue
-  STREET_AND_GREEN, // Katu- ja vihertyöt
-  WATER_AND_SEWAGE, // Vesi / viemäri
-  ELECTRICITY, // Sähkö
-  DATA_TRANSFER, // Tiedonsiirto
-  HEATING_COOLING, // Lämmitys/viilennys
-  CONSTRUCTION, // Rakennus
-  YARD, // Piha
-  GEOLOGICAL_SURVEY, // Pohjatutkimus
-  PROPERTY_RENOVATION, // kiinteistöremontti
-  CONTAINER_BARRACK, // kontti/parakki
-  PHOTO_SHOOTING, // kuvaus
-  SNOW_WORK, // lumenpudotus
-  RELOCATION, // muutto
-  LIFTING, // nostotyö
-  NEW_BUILDING_CONSTRUCTION, // uudisrakennuksen työmaa-alue
-  ROLL_OFF, // vaihtolava
-  CHRISTMAS_TREE_SALES_AREA, // Joulukuusenmyyntipaikka
-  CITY_CYCLING_AREA, // Kaupunkipyöräpaikka
-  AGILE_KIOSK_AREA, // Ketterien kioskien myyntipaikka
-  STATEMENT, // Lausunto
-  SNOW_HEAP_AREA, // Lumenkasauspaikka
-  SNOW_GATHER_AREA, // Lumenvastaanottopaikka
-  OTHER_SUBVISION_OF_STATE_AREA, // Muun hallintokunnan alue
-  MILITARY_EXCERCISE, // Sotaharjoitus
-  WINTER_PARKING, // Talvipysäköinti
-  REPAVING, // Uudelleenpäällystykset
-  ELECTION_ADD_STAND, // Vaalimainosteline
-  PUBLIC_EVENT, // Yleisötilaisuus
-  OTHER
+  PROMOTION = 'PROMOTION',
+  OUTDOOREVENT = 'OUTDOOREVENT',
+  BIG_EVENT = 'BIG_EVENT', // Suuret tapahtumat
+  BRIDGE_BANNER = 'BRIDGE_BANNER', // Banderollit silloissa
+  BENJI = 'BENJI', // Benji-hyppylaite
+  PROMOTION_OR_SALES = 'PROMOTION_OR_SALES', // Esittely- tai myyntitila liikkeen edustalla
+  URBAN_FARMING = 'URBAN_FARMING', // Kaupunkiviljelypaikka
+  KESKUSKATU_SALES = 'KESKUSKATU_SALES', // Keskuskadun myyntipaikka
+  SUMMER_THEATER = 'SUMMER_THEATER', // Kesäteatterit
+  DOG_TRAINING_FIELD = 'DOG_TRAINING_FIELD', // Koirakoulutuskentät
+  DOG_TRAINING_EVENT = 'DOG_TRAINING_EVENT', // Koirakoulutustapahtuma
+  SMALL_ART_AND_CULTURE = 'SMALL_ART_AND_CULTURE', // Pienimuotoinen taide- ja kulttuuritoiminta
+  SEASON_SALE = 'SEASON_SALE', // Sesonkimyynti
+  CIRCUS = 'CIRCUS', // Sirkus/tivolivierailu
+  ART = 'ART', // Taideteos
+  STORAGE_AREA = 'STORAGE_AREA', // Varastoalue
+  STREET_AND_GREEN = 'STREET_AND_GREEN', // Katu- ja vihertyöt
+  WATER_AND_SEWAGE = 'WATER_AND_SEWAGE', // Vesi / viemäri
+  ELECTRICITY = 'ELECTRICITY', // Sähkö
+  DATA_TRANSFER = 'DATA_TRANSFER', // Tiedonsiirto
+  HEATING_COOLING = 'HEATING_COOLING', // Lämmitys/viilennys
+  CONSTRUCTION = 'CONSTRUCTION', // Rakennus
+  YARD = 'YARD', // Piha
+  GEOLOGICAL_SURVEY = 'GEOLOGICAL_SURVEY', // Pohjatutkimus
+  PROPERTY_RENOVATION = 'PROPERTY_RENOVATION', // kiinteistöremontti
+  CONTAINER_BARRACK = 'CONTAINER_BARRACK', // kontti/parakki
+  PHOTO_SHOOTING = 'PHOTO_SHOOTING', // kuvaus
+  SNOW_WORK = 'SNOW_WORK', // lumenpudotus
+  RELOCATION = 'RELOCATION', // muutto
+  LIFTING = 'LIFTING', // nostotyö
+  NEW_BUILDING_CONSTRUCTION = 'NEW_BUILDING_CONSTRUCTION', // uudisrakennuksen työmaa-alue
+  ROLL_OFF = 'ROLL_OFF', // vaihtolava
+  CHRISTMAS_TREE_SALES_AREA = 'CHRISTMAS_TREE_SALES_AREA', // Joulukuusenmyyntipaikka
+  CITY_CYCLING_AREA = 'CITY_CYCLING_AREA', // Kaupunkipyöräpaikka
+  AGILE_KIOSK_AREA = 'AGILE_KIOSK_AREA', // Ketterien kioskien myyntipaikka
+  STATEMENT = 'STATEMENT', // Lausunto
+  SNOW_HEAP_AREA = 'SNOW_HEAP_AREA', // Lumenkasauspaikka
+  SNOW_GATHER_AREA = 'SNOW_GATHER_AREA', // Lumenvastaanottopaikka
+  OTHER_SUBVISION_OF_STATE_AREA = 'OTHER_SUBVISION_OF_STATE_AREA', // Muun hallintokunnan alue
+  MILITARY_EXCERCISE = 'MILITARY_EXCERCISE', // Sotaharjoitus
+  WINTER_PARKING = 'WINTER_PARKING', // Talvipysäköinti
+  REPAVING = 'REPAVING', // Uudelleenpäällystykset
+  ELECTION_ADD_STAND = 'ELECTION_ADD_STAND', // Vaalimainosteline
+  PUBLIC_EVENT = 'PUBLIC_EVENT', // Yleisötilaisuus
+  OTHER = 'OTHER'
 }
+
+export const disabledKinds: ApplicationKind[] = [
+  ApplicationKind.DOG_TRAINING_EVENT
+];
 
 export const commonKinds: KindsWithSpecifiers = {
   STREET_AND_GREEN: [

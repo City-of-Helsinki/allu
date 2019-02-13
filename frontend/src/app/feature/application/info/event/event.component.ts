@@ -94,7 +94,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;
 
-    if (application.kind === ApplicationKind[ApplicationKind.PROMOTION]) {
+    if (application.kind === ApplicationKind.PROMOTION) {
       event.nature = EventNature[EventNature.PROMOTION];
     }
 

@@ -1,4 +1,4 @@
-import {commonKinds} from './application-kind';
+import {ApplicationKind, commonKinds, disabledKinds} from './application-kind';
 import {Some} from '../../../util/option';
 import {KindsWithSpecifiers} from './application-specifier';
 import {ObjectUtil} from '../../../util/object.util';
@@ -93,11 +93,17 @@ export function hasMultipleKinds(typeName: string): boolean {
     ].indexOf(ApplicationType[typeName]) >= 0;
 }
 
-export function getAvailableKinds(type: string): string[] {
+/**
+ * Fetch available application kinds for given application type.
+ * If active flag is provided as true then only active kinds are returned
+ */
+export function getAvailableKinds(type: string, active: boolean = false): ApplicationKind[] {
   return Some(applicationTypeTree[type])
     .map(typeTree => Object.keys(typeTree))
-    .map(kinds => kinds.sort(ArrayUtil.naturalSortTranslated(['application.kind'], (kind: string) => kind)))
-    .orElse([]);
+    .map(kinds => kinds.map(kind => ApplicationKind[kind]))
+    .map(kinds => kinds.sort(ArrayUtil.naturalSortTranslated(['application.kind'], (kind: ApplicationKind) => kind)))
+    .orElse([])
+    .filter(kind => active ? disabledKinds.indexOf(kind) < 0 : true);
 }
 
 export function getAvailableSpecifiers(applicationType: string, kinds: Array<string>): KindsWithSpecifiers {

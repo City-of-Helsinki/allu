@@ -22,7 +22,7 @@ const kindsWithPricingInfo: ApplicationKind[] = [
 export class PricingInfoComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
-  @Input() kind: string;
+  @Input() kind: ApplicationKind;
 
   @Output() billableChange = new EventEmitter<boolean>();
 
@@ -40,7 +40,7 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
         .subscribe(billable => this.billableChange.emit(billable));
     }
 
-    this.showPricingInfo = kindsWithPricingInfo.indexOf(ApplicationKind[this.kind]) >= 0;
+    this.showPricingInfo = kindsWithPricingInfo.indexOf(this.kind) >= 0;
   }
 
   ngOnDestroy(): void {

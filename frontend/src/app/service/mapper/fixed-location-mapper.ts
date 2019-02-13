@@ -1,5 +1,4 @@
 import {BackendFixedLocationArea} from '../backend-model/backend-fixed-location-area';
-import {ApplicationKind} from '@model/application/type/application-kind';
 import {FixedLocationArea} from '@model/common/fixed-location-area';
 import {BackendFixedLocationSection} from '../backend-model/backend-fixed-location-section';
 import {FixedLocationSection} from '@model/common/fixed-location-section';
@@ -28,7 +27,7 @@ export class FixedLocationMapper {
     return new FixedLocationSection(
       section.id,
       section.name,
-      ApplicationKind[section.applicationKind],
+      section.applicationKind,
       section.geometry,
       section.active
     );
@@ -38,7 +37,7 @@ export class FixedLocationMapper {
     return {
       id: section.id,
       name: section.name,
-      applicationKind: ApplicationKind[section.applicationKind],
+      applicationKind: section.applicationKind,
       geometry: section.geometry,
       active: section.active
     };

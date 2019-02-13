@@ -12,6 +12,7 @@ import {Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers/index';
 import {SetKindsWithSpecifiers} from '@feature/information-request/actions/information-request-result-actions';
+import {ApplicationKind} from '@model/application/type/application-kind';
 
 @Component({
   selector: 'kind-acceptance',
@@ -32,7 +33,7 @@ export class KindAcceptanceComponent implements OnInit {
   @HostBinding('class') cssClasses = 'info-acceptance';
 
   multipleKinds = false;
-  availableKinds: string[] = [];
+  availableKinds: ApplicationKind[] = [];
   availableKindsWithSpecifiers: KindsWithSpecifiers = {};
   form: FormGroup;
 

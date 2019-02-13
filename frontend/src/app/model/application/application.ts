@@ -92,7 +92,7 @@ export class Application {
   }
 
   get kinds() {
-    return this.uiKinds.map(kind => ApplicationKind[kind]);
+    return this.uiKinds.map(k => ApplicationKind[k]);
   }
 
   get kind() {
@@ -104,7 +104,7 @@ export class Application {
   }
 
   get uiKind() {
-    return ApplicationKind[this.kind];
+    return this.kind;
   }
 
   get uiKinds() {
