@@ -68,7 +68,6 @@ public class AttachmentController {
     AttachmentInfoJson info = attachmentService.getAttachment(attachmentId);
     byte[] bytes = attachmentService.getAttachmentData(attachmentId);
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("Content-Disposition", "attachment; filename=" + info.getName());
     try {
       httpHeaders.setContentType(MediaType.parseMediaType(info.getMimeType()));
     } catch (InvalidMediaTypeException e) {

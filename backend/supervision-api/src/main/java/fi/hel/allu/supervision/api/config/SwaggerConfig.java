@@ -19,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.fasterxml.classmate.TypeResolver;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -101,14 +102,17 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
   }
 
   @Override
-  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+  public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    // Find jackson message converter and add custom object mapper
     SimpleBeanPropertyFilter applicationFilter = SimpleBeanPropertyFilter
         .serializeAllExcept(FILTERED_APPLICATION_FIELDS);
-    Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-    builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS );
-    builder.filters(new SimpleFilterProvider().addFilter("applicationFilter", applicationFilter));
-    converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
-    addDefaultHttpMessageConverters(converters);
+    ObjectMapper mapper = Jackson2ObjectMapperBuilder.json()
+      .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
+      .filters(new SimpleFilterProvider().addFilter("applicationFilter", applicationFilter)).build();
+    getMessageConverters().stream()
+        .filter(m -> m.getClass().isAssignableFrom(MappingJackson2HttpMessageConverter.class))
+        .findFirst()
+        .ifPresent(j -> ((MappingJackson2HttpMessageConverter)j).setObjectMapper(mapper));
   }
 
   @Override
