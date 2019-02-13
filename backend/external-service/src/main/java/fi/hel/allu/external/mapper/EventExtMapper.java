@@ -3,6 +3,7 @@ package fi.hel.allu.external.mapper;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 import org.springframework.stereotype.Component;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
@@ -23,7 +24,7 @@ public class EventExtMapper extends ApplicationExtMapper<EventExt> {
     extension.setEventEndTime(event.getEventEndTime());
     extension.setNature(EventNature.PROMOTION);
     extension.setDescription(event.getDescription());
-    extension.setSurfaceHardness(event.getSurfaceHardness());
+    extension.setSurfaceHardness(SurfaceHardness.HARD);
     return extension;
   }
 
@@ -41,5 +42,4 @@ public class EventExtMapper extends ApplicationExtMapper<EventExt> {
   protected List<Integer> getFixedLocationIds(EventExt event) {
     return event.getFixedLocationIds();
   }
-
 }
