@@ -34,8 +34,12 @@ Intersect.prototype.polyIntersect = function(layer, againstLayer) {
   // Skip checking self
   if (layer._leaflet_id === againstLayer._leaflet_id) return [];
 
-  const intersecting = intersect(this.toGeoJSON(layer), this.toGeoJSON(againstLayer));
-  return intersecting ? [againstLayer] : [];
+  try {
+    const intersecting = intersect(this.toGeoJSON(layer), this.toGeoJSON(againstLayer));
+    return intersecting ? [againstLayer] : [];
+  } catch (e) {
+    return [];
+  }
 }
 
 Intersect.prototype.toGeoJSON = function(layer) {

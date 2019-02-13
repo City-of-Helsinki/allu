@@ -267,12 +267,12 @@ export class MapController {
 
     this.map.on('draw:deleted', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
 
-    this.map.on('draw:editstart', () => {
-      this.editing = true;
+    this.map.on('draw:drawstart draw:editstart', () => {
+      self.editing = true;
       self.editedItems.bringToFront();
     });
 
-    this.map.on('draw:editstop', () => self.editing = false);
+    this.map.on('draw:drawstop draw:editstop', () => self.editing = false);
 
     this.map.on('draw:deletestart', () => {
       self.deleting = true;
