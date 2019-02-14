@@ -2,13 +2,13 @@ import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
-import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
-import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
-import {NumberUtil} from '../../../../util/number.util';
-import {ArrayUtil} from '../../../../util/array-util';
-import {ChargeBasisType, manualChargeBasisTypes} from '../../../../model/application/invoice/charge-basis-type';
+import {ChargeBasisUnit} from '@model/application/invoice/charge-basis-unit';
+import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+import {NumberUtil} from '@util/number.util';
+import {ArrayUtil} from '@util/array-util';
+import {ChargeBasisType, manualChargeBasisTypes} from '@model/application/invoice/charge-basis-type';
 import {Subject} from 'rxjs';
-import {distinctUntilChanged, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, take, takeUntil} from 'rxjs/internal/operators';
 import {FormUtil} from '@util/form.util';
 
 export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};
@@ -46,6 +46,12 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
 
     this.chargeBasisEntryForm.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(entryForm => this.updateNetPrice(entryForm));
+
+    // Mark manual explanation as touched first time user inputs something
+    // this marks the control for angulars validation even before user focus leaves the field
+    this.chargeBasisEntryForm.get('manualExplanation').valueChanges.pipe(
+      take(1)
+    ).subscribe(() => this.chargeBasisEntryForm.get('manualExplanation').markAsTouched());
   }
 
   ngOnDestroy(): void {
