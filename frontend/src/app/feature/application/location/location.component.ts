@@ -281,8 +281,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const nothingEdited = this.locationState.editIndex === undefined;
     const formValid = (this.locationForm.valid && !!this.locationForm.value['geometry']);
     const validGeometry = !this.invalidGeometry;
+    const receivedTimeSet = !!this.application.receivedTime;
 
-    return nothingEdited || (formValid && validGeometry);
+    return nothingEdited || (formValid && validGeometry && receivedTimeSet);
   }
 
   paymentTariff() {

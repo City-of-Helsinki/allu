@@ -71,17 +71,25 @@
               </mat-slide-toggle>
             </div>
             <div fxFlex="1 1 calc(20% - 18px)" class="received-date-container">
-              <div class="text-primary info-text-med">{{'application.receivedTime' | translation}}</div>
-              <div class="text-primary info-text-large">{{form.getRawValue().receivedTime | date:'shortDate'}}</div>
-              <ng-container *ngIf="!readonly">
-                <button mat-icon-button class="mat-icon-button-18">
-                  <mat-icon (click)="receivedTimePicker.open()">event</mat-icon>
-                </button>
-                <mat-form-field class="hidden">
-                  <input matInput type="text" formControlName="receivedTime" [matDatepicker]="receivedTimePicker"/>
-                  <mat-datepicker #receivedTimePicker></mat-datepicker>
-                </mat-form-field>
+              <ng-container *ngIf="readonly; else showPicker">
+                <div class="text-primary info-text-med">{{'application.receivedTime' | translation}}</div>
+                <div class="text-primary info-text-large" >{{form.getRawValue().receivedTime | date:'shortDate'}}</div>
               </ng-container>
+              <ng-template #showPicker>
+                <mat-form-field>
+                  <input matInput type="text" required
+                         formControlName="receivedTime"
+                         [placeholder]="'application.receivedTime' | translation"
+                         [matDatepicker]="receivedTimePicker"/>
+                  <mat-datepicker-toggle matSuffix
+                    [for]="receivedTimePicker"
+                    [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #receivedTimePicker></mat-datepicker>
+                  <mat-error *ngIf="form.get('receivedTime').hasError('required')">
+                    {{'application.field.receivedTimeMissing' | translation}}
+                  </mat-error>
+                </mat-form-field>
+              </ng-template>
             </div>
           </div>
         </form>
