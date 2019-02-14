@@ -434,6 +434,12 @@ public class ApplicationService {
         HttpMethod.PUT, new HttpEntity<>(targetState), Application.class, id).getBody();
   }
 
+  public Application clearTargetState(Integer id) {
+    return restTemplate.exchange(
+            applicationProperties.getClearTargetStateUrl(),
+            HttpMethod.PUT, null, Application.class, id).getBody();
+  }
+
   public UserJson getApplicationHandler(Integer applicationId) {
     return getApplicationUser(applicationProperties.getApplicationHandlerUrl(), applicationId);
   }

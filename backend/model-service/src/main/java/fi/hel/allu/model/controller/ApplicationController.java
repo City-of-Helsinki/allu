@@ -322,6 +322,11 @@ public class ApplicationController {
     return ResponseEntity.ok(applicationService.setTargetState(id, targetState));
   }
 
+  @RequestMapping(value = "/{id}/targetstate/clear", method = RequestMethod.PUT)
+  public ResponseEntity<Application> clearTargetState(@PathVariable Integer id) {
+    return ResponseEntity.ok(applicationService.setTargetState(id, null));
+  }
+
   /**
    * Get list of invoices that are ready to be sent to SAP
    *

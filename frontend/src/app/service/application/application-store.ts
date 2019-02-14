@@ -19,6 +19,7 @@ import {Action, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import * as TagAction from '@feature/application/actions/application-tag-actions';
 import * as ApplicationAction from '@feature/application/actions/application-actions';
+import {LoadSuccess} from '@feature/application/actions/application-actions';
 import * as HistoryAction from '@feature/history/actions/history-actions';
 import * as InvoicingCustomerAction from '@feature/application/invoicing/actions/invoicing-customer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
@@ -26,7 +27,6 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {Customer} from '@model/customer/customer';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
-import {LoadSuccess} from '@feature/application/actions/application-actions';
 import {NotificationService} from '@feature/notification/notification.service';
 
 export interface ApplicationState {
@@ -182,14 +182,15 @@ export class ApplicationStore {
       application,
       processing: false,
       attachments: application.attachmentList,
-      draft: application.status === ApplicationStatus.PRE_RESERVED
+      draft: application.targetState !== ApplicationStatus.PENDING && application.status === ApplicationStatus.PRE_RESERVED
     });
   }
 
   save(application: Application): Observable<Application> {
     return this.saveCustomersAndContacts(application).pipe(
       switchMap(app => this.saveApplication(app)),
-      tap(app => this.saved(app))
+      tap(app => this.saved(app)),
+      take(1)
     );
   }
 
@@ -304,38 +305,55 @@ export class ApplicationStore {
   }
 
   private saveCustomersAndContacts(application: Application): Observable<Application> {
-    const app = ObjectUtil.clone(application);
-    return forkJoin(application.customersWithContacts.map(cwc =>
-      this.customerService.saveCustomerWithContacts(cwc))
-    ).pipe(
-      map(savedCustomersWithContacts => {
-        app.customersWithContacts = savedCustomersWithContacts;
-        return app;
+    if (application.customersWithContacts.length) {
+      const app = ObjectUtil.clone(application);
+      return forkJoin(application.customersWithContacts.map(cwc =>
+        this.customerService.saveCustomerWithContacts(cwc))
+      ).pipe(
+        map(savedCustomersWithContacts => {
+          app.customersWithContacts = savedCustomersWithContacts;
+          return app;
+        })
+      );
+    } else {
+      return of(application);
+    }
+  }
+
+  private saveApplication(application: Application): Observable<Application> {
+    return this.getApplicationForSave(application).pipe(
+      switchMap(app => {
+        if (!NumberUtil.isExisting(app) || app.status === ApplicationStatus.PRE_RESERVED) {
+          return this.saveDraft(app);
+        } else {
+          return this.applicationService.save(application);
+        }
       })
     );
   }
 
-  private saveApplication(application: Application): Observable<Application> {
+  private saveDraft(application: Application): Observable<Application> {
+    if (!NumberUtil.isExisting(application) || this.snapshot.draft) {
+      return this.applicationDraftService.save(application);
+    } else {
+      // Convert to full application
+      return this.applicationDraftService.convertToApplication(application);
+    }
+  }
+
+  private getApplicationForSave(application: Application): Observable<Application> {
     return combineLatest(
       this.store.select(fromApplication.getTags),
       this.store.select(fromApplication.getType),
       this.store.select(fromApplication.getKindsWithSpecifiers)
     ).pipe(
       take(1),
-      switchMap(([tags, type, kindsWithSpecifiers]) => {
-        application.applicationTags = tags;
-        application.type = ApplicationType[type];
-        application.kindsWithSpecifiers = kindsWithSpecifiers;
-        if (this.snapshot.draft) {
-          return this.applicationDraftService.save(application);
-        } else {
-          // Convert to full application
-          if (application.status === ApplicationStatus.PRE_RESERVED) {
-            return this.applicationDraftService.convertToApplication(application);
-          } else {
-            return this.applicationService.save(application);
-          }
-        }
+      map(([tags, type, kindsWithSpecifiers]) => {
+        const app = ObjectUtil.clone(application);
+        app.applicationTags = tags;
+        app.type = ApplicationType[type];
+        app.kindsWithSpecifiers = kindsWithSpecifiers;
+        return app;
       })
     );
   }

@@ -194,6 +194,10 @@ public class ApplicationServiceComposer {
     searchService.updateApplications(applicationJsons, waitRefresh);
   }
 
+  public void clearTargetState(int applicationId) {
+    applicationService.clearTargetState(applicationId);
+  }
+
   /**
    * Find applications by given fields.
    *

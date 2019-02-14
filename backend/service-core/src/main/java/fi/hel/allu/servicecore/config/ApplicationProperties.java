@@ -1151,6 +1151,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/targetstate");
   }
 
+  public String getClearTargetStateUrl() {
+    return getModelServiceUrl("/applications/{id}/targetstate/clear");
+  }
+
   /**
   * @return url for getting deposit by application id.
    */

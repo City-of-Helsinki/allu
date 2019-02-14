@@ -53,14 +53,14 @@ public class ApplicationJson {
   private ApplicationType type;
   private List<ApplicationTagJson> applicationTags;
   private Integer metadataVersion;
-  @NotBlank(message = "{application.name}", groups = {Draft.class, Default.class})
+  @NotBlank(message = "{application.name}")
   private String name;
   private ZonedDateTime creationTime;
   private ZonedDateTime receivedTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ZonedDateTime recurringEndTime;
-  @NotEmpty(message = "{application.customersWithContacts}", groups = {Draft.class, Default.class})
+  @NotEmpty(message = "{application.customersWithContacts}")
   private List<CustomerWithContactsJson> customersWithContacts;
   @NotEmpty(message = "{application.locations}", groups = {Draft.class, Default.class})
   @Valid

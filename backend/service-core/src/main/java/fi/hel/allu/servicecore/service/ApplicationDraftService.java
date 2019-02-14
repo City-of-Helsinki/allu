@@ -24,6 +24,7 @@ public class ApplicationDraftService {
   public ApplicationJson createDraft(ApplicationJson applicationJson) {
     applicationJson.setNotBillable(Optional.ofNullable(applicationJson.getNotBillable()).orElse(Boolean.FALSE));
     applicationJson.setDecisionPublicityType(Optional.ofNullable(applicationJson.getDecisionPublicityType()).orElse(DEFAULT_PUBLICITY_TYPE));
+    applicationJson.setTargetState(StatusType.PENDING);
     return applicationServiceComposer.createDraft(applicationJson);
   }
 
@@ -32,6 +33,7 @@ public class ApplicationDraftService {
   }
 
   public ApplicationJson updateDraft(int id, ApplicationJson applicationJson) {
+    applicationServiceComposer.clearTargetState(id);
     return applicationServiceComposer.updateApplication(id, applicationJson);
   }
 
@@ -40,6 +42,7 @@ public class ApplicationDraftService {
   }
 
   public ApplicationJson convertToApplication(int id, ApplicationJson applicationJson) {
+    applicationServiceComposer.clearTargetState(id);
     applicationServiceComposer.updateApplication(id, applicationJson);
     return applicationServiceComposer.changeStatus(id, StatusType.PENDING);
 

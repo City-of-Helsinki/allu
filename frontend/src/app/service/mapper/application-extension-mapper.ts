@@ -184,7 +184,8 @@ export class ApplicationExtensionMapper {
 
   private static mapFrontendCableReport(application: Application): any {
     const cableReport = <CableReport> application.extension;
-    const ordererId = Some(cableReport.ordererId.id)
+    const ordererId = Some(cableReport.ordererId)
+      .map(orderer => orderer.id)
       .orElse(this.getOrdererId(cableReport.ordererId, application.customersWithContacts));
     return {
       applicationType: cableReport.applicationType,
@@ -203,7 +204,7 @@ export class ApplicationExtensionMapper {
     };
   }
 
-  private static getOrdererId(ordererId: OrdererId, customersWithContacts: Array<CustomerWithContacts>): number {
+  private static getOrdererId(ordererId: OrdererId = new OrdererId(), customersWithContacts: Array<CustomerWithContacts>): number {
     return Some(ArrayUtil.first(customersWithContacts.filter(cwc => cwc.uiRoleType === ordererId.customerRoleType)))
       .map(cwc => cwc.contacts[ordererId.index])
       .map(orderer => orderer.id)

@@ -44,7 +44,7 @@ public class Application {
   private ApplicationType type;
   private List<ApplicationTag> applicationTags;
   private Integer metadataVersion;
-  @NotBlank
+  @NotBlank(groups = Application.Complete.class)
   private String name;
   private ZonedDateTime creationTime;
   private ZonedDateTime startTime;

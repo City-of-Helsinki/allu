@@ -41,7 +41,6 @@ import {RoleType} from '@model/user/role-type';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
 import {ClientApplicationData} from '@model/application/client-application-data';
 import {ApplicationType} from '@model/application/type/application-type';
-import {NumberUtil} from '@util/number.util';
 
 @Component({
   selector: 'application-info',
@@ -115,9 +114,10 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private shouldShowDraftSelection(application: Application) {
-    const isNew = !NumberUtil.isExisting(application);
+    const preReserved = application.status === ApplicationStatus.PRE_RESERVED;
+    const targetedForPending = application.targetState === ApplicationStatus.PENDING;
     const typeCanHaveDraft = [ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, ApplicationType.NOTE].indexOf(application.type) < 0;
-    return isNew && typeCanHaveDraft;
+    return preReserved && targetedForPending && typeCanHaveDraft;
   }
 
   private showPendingInfo(): void {

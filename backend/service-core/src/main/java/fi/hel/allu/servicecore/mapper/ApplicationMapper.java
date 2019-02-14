@@ -78,6 +78,7 @@ public class ApplicationMapper {
     applicationDomain.setApplicationTags(createTagModel(applicationJson.getApplicationTags()));
     applicationDomain.setMetadataVersion(applicationJson.getMetadataVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
+    applicationDomain.setTargetState(applicationJson.getTargetState());
     applicationDomain.setDecisionTime(applicationJson.getDecisionTime());
     if (applicationJson.getExtension() != null) {
       applicationDomain.setExtension(createExtensionModel(applicationJson));

@@ -40,6 +40,7 @@ import {MapController} from '@service/map/map-controller';
 import {EMPTY} from 'rxjs/internal/observable/empty';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
+import {ApplicationStatus} from '@model/application/application-status';
 
 @Component({
   selector: 'type',
@@ -242,18 +243,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
     this.application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
 
-    if (this.application.id) {
-      this.applicationStore.save(this.application)
-        .subscribe(
-          app => {
-            this.notification.success(findTranslation('application.action.saved'));
-            this.router.navigate(['/applications', String(app.id), 'summary']);
-          },
-          err => this.notification.errorInfo(err));
-    } else {
-      this.applicationStore.applicationChange(this.application);
-      this.router.navigate(['/applications/edit']);
-    }
+    const urlSuffix = this.applicationStore.isNew ? 'edit' : 'summary';
+
+    this.applicationStore.save(this.application)
+      .subscribe(
+        app => {
+          this.notification.success(findTranslation('application.action.saved'));
+          this.router.navigate(['/applications', app.id, urlSuffix]);
+        },
+        err => {
+          this.locationState.editLocation(0);
+          this.notification.errorInfo(err);
+        });
   }
 
   editedItemCountChanged(editedItemCount: number) {
