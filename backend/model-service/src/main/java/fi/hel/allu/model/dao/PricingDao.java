@@ -1,22 +1,25 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.model.pricing.OutdoorPricingConfiguration;
-import fi.hel.allu.model.domain.PricingKey;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQueryFactory;
+
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.SurfaceHardness;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.model.domain.PricingKey;
+import fi.hel.allu.model.pricing.OutdoorPricingConfiguration;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
 import static fi.hel.allu.QPricing.pricing;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
 
 @Repository
 public class PricingDao {
@@ -34,10 +37,12 @@ public class PricingDao {
   }
 
   @Transactional(readOnly = true)
-  public Optional<OutdoorPricingConfiguration> findByDisctrictAndNature(int cityDistrictId, EventNature nature) {
+  public Optional<OutdoorPricingConfiguration> findByDisctrictAndNature(int cityDistrictId, EventNature nature, SurfaceHardness surfaceHardness) {
     OutdoorPricingConfiguration pc = queryFactory.select(outdoorPricingBean).from(outdoorPricing).innerJoin(cityDistrict)
         .on(outdoorPricing.zoneId.eq(cityDistrict.zoneId))
-        .where(cityDistrict.id.eq(cityDistrictId).and(outdoorPricing.nature.eq(nature.toString()))).fetchFirst();
+        .where(cityDistrict.id.eq(cityDistrictId)
+            .and(outdoorPricing.nature.eq(nature.toString()))
+            .and(outdoorPricing.surfaceHardness.eq(surfaceHardness))).fetchFirst();
     return Optional.ofNullable(pc);
   }
 

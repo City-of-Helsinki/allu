@@ -15,10 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
@@ -218,6 +215,7 @@ public class ApplicationControllerTest {
     event.setDescription("Eventti");
     event.setEcoCompass(true);
     event.setNature(EventNature.CLOSED);
+    event.setSurfaceHardness(SurfaceHardness.HARD);
     event.setEventStartTime(newApplication.getStartTime());
     event.setEventEndTime(newApplication.getEndTime());
     newApplication.setExtension(event);
@@ -234,7 +232,7 @@ public class ApplicationControllerTest {
     // read application back from database and check the calculated price
     ResultActions ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(ra, Application.class);
-    int expectedPrice = 28140000;
+    int expectedPrice = 280000; // 8 days, 500€ per day with eco compass discount
     assertEquals(expectedPrice, (int) application.getCalculatedPrice());
   }
 

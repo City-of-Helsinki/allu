@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.domain.ChargeBasisCalc;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.domain.InvoiceRow;
@@ -26,12 +27,11 @@ public class EventPricingTest {
   @Test
   public void testOpenEvent() {
     // EventPricing configuration for open event at Narinkka
-    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(6000000L, 50, 50, 14, null, null, null, null);
+    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(6000000L, 50);
     EventPricing bill = new EventPricing();
-    // Calculate a bill for 5-day event with two build days and some structures + area:
-    bill.accumulatePrice(bc, 5, 2, 30.5, 300, infoTexts);
-    assertEquals(360000, bill.getPriceInCents()); // The price should be 3600
-                                                  // EUR
+    // Calculate a bill for 5-day event with two build days
+    bill.accumulatePrice(bc, 5, 2, 300.0, infoTexts, EventNature.PUBLIC_FREE);
+    assertEquals(360000, bill.getPriceInCents());
     // Verify that EcoCompass gives 30% discount
     bill.applyDiscounts(true);
     assertEquals(252000, bill.getPriceInCents());
@@ -39,47 +39,14 @@ public class EventPricingTest {
   }
 
   @Test
-  public void testAreaExtraFee() {
-    // EventPricing configuration for non-free open event at Zone 2
-    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(2500000, 50, 50, 14, null, null, new long[] { 5000, 2500, 1250 },
-        new double[] { 0.0, 2000.0, 4000.0 });
+  public void testBigEvent() {
+    // EventPricing configuration for open event at Narinkka
+    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(5000000L, 0);
     EventPricing bill = new EventPricing();
-    // Calculate price for 20-day event with four build days and a 5000 sq.m.
-    // area (i.e., 14 days with base price, 6 days with discount price and 4
-    // days with build price)
-    bill.accumulatePrice(bc, 20, 4, 20, 5000.0, infoTexts);
-    assertEquals(3562500L, bill.getPriceInCents()); // The price should be 35625
-                                                  // EUR
-    verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
-  }
-
-  @Test
-  public void testStructureExtraFee() {
-    // EventPricing configuration for open event at Zone 3
-    OutdoorPricingConfiguration bc = new OutdoorPricingConfiguration(1250000, 50, 50, 14, new long[] { 125000, 62500 },
-        new double[] { 100.0, 300.0 },
-        null, null);
-    EventPricing bill = new EventPricing();
-    // Price for 25-day event with three build days, 455 sqm structures and 1000
-    // sqm area:
-    bill.accumulatePrice(bc, 25, 3, 455.0, 1000.0, infoTexts);
-    assertEquals(997500, bill.getPriceInCents()); // The price should be 9975
-                                                  // EUR
-    verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void testAreaExtraChargeValidation() {
-    OutdoorPricingConfiguration pricingConfiguration = new OutdoorPricingConfiguration();
-    pricingConfiguration.setAreaExtraChargeLimits(new Double[] { Double.valueOf(1020.0), Double.valueOf(2204.2) });
-    pricingConfiguration.setAreaExtraCharges(new Long[] { Long.valueOf(1234L) });
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void testStructureExtraChargeValidation() {
-    OutdoorPricingConfiguration pricingConfiguration = new OutdoorPricingConfiguration();
-    pricingConfiguration.setStructureExtraChargeLimits(new Double[] { Double.valueOf(1020.0), Double.valueOf(2204.2) });
-    pricingConfiguration.setStructureExtraCharges(new Long[] { Long.valueOf(1234L) });
+    // Calculate a bill for 10-day big event,
+    bill.accumulatePrice(bc, 10, 0, 11000.0, infoTexts, EventNature.BIG_EVENT);
+    // 10 days, 500€ every starting 10000m² -> 1000€ per day
+    assertEquals(1000000, bill.getPriceInCents());
   }
 
   private void verifyInvoicePrice(List<ChargeBasisEntry> chargeBasisEntries, int expectedPrice) {

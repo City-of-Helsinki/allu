@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.pricing.OutdoorPricingConfiguration;
@@ -51,8 +52,7 @@ public class PricingDaoTest {
         .set(fixedLocation.isActive, true).execute();
     queryFactory.insert(outdoorPricing).set(outdoorPricing.fixedLocationId, TEST_ID)
         .set(outdoorPricing.nature, "PUBLIC_FREE").set(outdoorPricing.baseCharge, TEST_BASE_CHARGE)
-        .set(outdoorPricing.buildDiscountPercent, 0).set(outdoorPricing.durationDiscountPercent, 0)
-        .set(outdoorPricing.durationDiscountLimit, 0).execute();
+        .set(outdoorPricing.buildDiscountPercent, 0).execute();
   }
 
   // Check that the pricing configuration can be read:
@@ -81,9 +81,10 @@ public class PricingDaoTest {
     int cityDistrictId = queryFactory.insert(cityDistrict).set(cityDistrict.districtId, DISTRICT_ID).set(cityDistrict.zoneId, ZONE_ID)
         .executeWithKey(cityDistrict.id);
     queryFactory.insert(outdoorPricing).set(outdoorPricing.zoneId, ZONE_ID).set(outdoorPricing.nature, "PUBLIC_FREE")
+        .set(outdoorPricing.surfaceHardness, SurfaceHardness.HARD)
         .set(outdoorPricing.baseCharge, TEST_BASE_CHARGE).set(outdoorPricing.buildDiscountPercent, 0)
-        .set(outdoorPricing.durationDiscountPercent, 0).set(outdoorPricing.durationDiscountLimit, 0).execute();
-    Optional<OutdoorPricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(cityDistrictId, EventNature.PUBLIC_FREE);
+        .execute();
+    Optional<OutdoorPricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(cityDistrictId, EventNature.PUBLIC_FREE, SurfaceHardness.HARD);
     assertTrue(opt_pc.isPresent());
     assertEquals(TEST_BASE_CHARGE, opt_pc.get().getBaseCharge());
   }

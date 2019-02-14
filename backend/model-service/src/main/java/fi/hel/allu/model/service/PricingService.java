@@ -1,7 +1,5 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.model.domain.ChargeBasisCalc;
-
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -13,10 +11,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
@@ -193,7 +193,6 @@ public class PricingService {
       return 0; // No location -> no price.
     }
     Location location = locations.get(0);
-
     EventNature nature = event.getNature();
     if (nature == null) {
       if (application.hasTypeAndKind(ApplicationType.EVENT, ApplicationKind.PROMOTION)) {
@@ -204,7 +203,7 @@ public class PricingService {
       }
     }
 
-    List<OutdoorPricingConfiguration> pricingConfigs = getEventPricing(location, nature);
+    List<OutdoorPricingConfiguration> pricingConfigs = getEventPricing(location, nature, event.getSurfaceHardness());
 
     final int eventDays = EventDayUtil.eventDays(event.getEventStartTime(), event.getEventEndTime());
     final int buildDays = EventDayUtil.buildDays(event.getEventStartTime(), event.getEventEndTime(),
@@ -216,17 +215,12 @@ public class PricingService {
     infoTexts.buildPeriods = buildDayPeriod(application.getStartTime(), event.getEventStartTime(),
         event.getEventEndTime(), application.getEndTime());
 
-    double structureArea = event.getStructureArea();
-    double area = location.getEffectiveArea();
-
-    for(OutdoorPricingConfiguration pricingConfig : pricingConfigs) {
+    for (OutdoorPricingConfiguration pricingConfig : pricingConfigs) {
       infoTexts.fixedLocation = Optional.ofNullable(pricingConfig.getFixedLocationId())
           .flatMap(id -> locationDao.findFixedLocation(id)).map(Printable::forFixedLocation).orElse(null);
       // Calculate price per location...
-      pricing.accumulatePrice(pricingConfig, eventDays, buildDays, structureArea,
-          area, infoTexts);
+      pricing.accumulatePrice(pricingConfig, eventDays, buildDays, location.getEffectiveArea(), infoTexts, event.getNature());
     }
-
     // ... apply discounts...
     pricing.applyDiscounts(event.isEcoCompass());
     // ... and get the final price
@@ -248,22 +242,25 @@ public class PricingService {
    * Get event pricings for given location and nature.
    * May return multiple pricings if location consists of fixed locations.
    */
-  private List<OutdoorPricingConfiguration> getEventPricing(Location location, EventNature nature) {
+  private List<OutdoorPricingConfiguration> getEventPricing(Location location, EventNature nature, SurfaceHardness surfaceHardness) {
     List<Integer> fixedLocationIds = location.getFixedLocationIds();
+    List<OutdoorPricingConfiguration> pricingConfigurations = Collections.emptyList();
     if (fixedLocationIds != null && !fixedLocationIds.isEmpty()) {
       // fixed locations exist, so they define the pricing
-      return fixedLocationIds.stream().map(flId -> pricingDao.findByFixedLocationAndNature(flId, nature))
+      pricingConfigurations = fixedLocationIds.stream().map(flId -> pricingDao.findByFixedLocationAndNature(flId, nature))
           .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-    } else {
+    }
+    if (CollectionUtils.isEmpty(pricingConfigurations) && surfaceHardness != null) {
       // Check if district is defined:
       Integer cityDistrictId = location.getEffectiveCityDistrictId();
       if (cityDistrictId != null) {
-        return pricingDao.findByDisctrictAndNature(cityDistrictId, nature).map(Collections::singletonList)
+        pricingConfigurations = pricingDao.findByDisctrictAndNature(cityDistrictId, nature, surfaceHardness)
+            .map(Collections::singletonList)
             .orElse(Collections.emptyList());
       }
     }
     // No pricing could be found:
-    return Collections.emptyList();
+    return pricingConfigurations;
   }
 
 

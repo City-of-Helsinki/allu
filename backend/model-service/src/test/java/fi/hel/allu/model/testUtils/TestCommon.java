@@ -147,6 +147,7 @@ public class TestCommon {
     event.setDescription("desc");
     event.setAttendees(10);
     event.setNature(EventNature.PUBLIC_FREE);
+    event.setSurfaceHardness(SurfaceHardness.HARD);
     return event;
   }
 

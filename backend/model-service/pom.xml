@@ -626,6 +626,11 @@
                             <column>application_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>outdoor_pricing</table>
+                            <column>surface_hardness</column>
+                            <type>fi.hel.allu.model.querydsl.StringToSurfaceHardness</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

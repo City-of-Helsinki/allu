@@ -72,6 +72,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToInformationRequestStatus());
     configuration.register(new StringToContractStatus());
     configuration.register(new StringToApprovalDocumentType());
+    configuration.register(new StringToSurfaceHardness());
     return configuration;
   }
 
