@@ -6,7 +6,7 @@
     (receivedTimeChange)="updateReceivedTime($event)"
   ></application-type>
 
-  <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="kindsSelected">
+  <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="showMap">
     <div fxLayout="row">
       <div fxFlex>
         <allu-card>

@@ -60,7 +60,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   areaSections = new Array<FixedLocationSection>();
   editedItemCount = 0;
   application: Application;
-  kindsSelected = false;
   districts: Observable<Array<CityDistrict>>;
   multipleLocations = false;
   invalidGeometry = false;
@@ -121,7 +120,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.application = this.applicationStore.snapshot.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
-    this.kindsSelected = this.application.kinds.length > 0;
     this.showPaymentTariff = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL]
       .indexOf(this.application.type) >= 0;
 
@@ -180,6 +178,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.mapStore.selectedApplicationChange(this.application);
+  }
+
+  get showMap() {
+    return Some(this.application)
+      .map(app => !!app.receivedTime && app.kinds.length > 0)
+      .orElse(false);
   }
 
   onApplicationTypeChange(type: ApplicationType) {

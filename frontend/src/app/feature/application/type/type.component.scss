@@ -1,9 +1,0 @@
-.received-date-container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: baseline;
-}
-
-.received-date-container > *:not(:first-child) {
-  margin-left: 8px;
-}
