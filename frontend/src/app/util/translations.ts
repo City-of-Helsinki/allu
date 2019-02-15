@@ -1114,6 +1114,12 @@ export const translations = {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
       fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',
       addressSearch: 'Osoitehaku epäonnistui'
+    },
+    button: {
+      save: 'Tallenna sijaintitiedot'
+    },
+    action: {
+      saved: 'Sijaintitiedot tallennettu'
     }
   },
   postalAddress: {
