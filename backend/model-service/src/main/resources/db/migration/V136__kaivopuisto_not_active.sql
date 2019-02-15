@@ -1,0 +1,1 @@
+update allu.fixed_location set is_active = false where  area_id = (select id from allu.location_area where name = 'Kaivopuisto') and application_kind in ('OUTDOOREVENT', 'PROMOTION');
