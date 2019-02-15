@@ -1,9 +1,11 @@
 package fi.hel.allu.model.service.event;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
 
@@ -21,8 +23,9 @@ public class InvoicingChangeListener {
 
   @EventListener
   public void onApplicationInvoicingChange(InvoicingChangeEvent event) {
-    invoiceService.createInvoices(event.getApplicationId(), applicationService.isSapIdPending(event.getApplicationId()));
+    Application application = applicationService.findById(event.getApplicationId());
+    if (BooleanUtils.isFalse(application.getNotBillable())) {
+      invoiceService.createInvoices(event.getApplicationId(), applicationService.isSapIdPending(application));
+    }
   }
-
 }
-
