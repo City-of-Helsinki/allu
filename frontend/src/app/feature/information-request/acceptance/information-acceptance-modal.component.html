@@ -58,7 +58,7 @@
 
         <ng-container *ngSwitchCase="'INVOICING_CUSTOMER'">
           <customer-acceptance
-            *ngIf="(useCustomerForInvoicing$ | async) === undefined"
+            *ngIf="applicationTypeBillable && (useCustomerForInvoicing$ | async) === undefined"
             [parentForm]="form"
             [newCustomer]="newInfo?.clientApplicationData?.invoicingCustomer"
             [readonly]="readonly"
