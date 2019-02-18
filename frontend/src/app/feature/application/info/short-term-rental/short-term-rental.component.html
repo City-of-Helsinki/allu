@@ -97,7 +97,7 @@
 
   <div fxLayout="row">
     <div fxFlex>
-      <pricing-info [form]="applicationForm" [kind]="application.uiKind" (billableChange)="billableChange($event)"></pricing-info>
+      <pricing-info [form]="applicationForm" [application]="application" (billableChange)="billableChange($event)"></pricing-info>
     </div>
   </div>
 

@@ -103,10 +103,6 @@ export class Application {
     }
   }
 
-  get uiKind() {
-    return this.kind;
-  }
-
   get uiKinds() {
     return this.kindsWithSpecifiers ? Object.keys(this.kindsWithSpecifiers) : [];
   }
@@ -131,4 +127,11 @@ export class Application {
     return Some(this.customersWithContacts.find(cwc => cwc.roleType === roleType))
       .orElse(new CustomerWithContacts(roleType));
   }
+}
+
+export function hasFixedLocations(application: Application) {
+  return Some(application)
+    .map(app => app.locations)
+    .map(locations => locations.some(location => location.hasFixedGeometry()))
+    .orElse(false);
 }

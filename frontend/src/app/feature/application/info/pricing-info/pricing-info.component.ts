@@ -2,16 +2,10 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {EventNature, selectableNatures} from '@model/application/event/event-nature';
-import {EnumUtil} from '@util/enum.util';
 import {FormUtil} from '@util/form.util';
 import {ApplicationKind} from '@model/application/type/application-kind';
-
-const kindsWithPricingInfo: ApplicationKind[] = [
-  ApplicationKind.OUTDOOREVENT,
-  ApplicationKind.PROMOTION,
-  ApplicationKind.PROMOTION_OR_SALES,
-  ApplicationKind.BIG_EVENT
-];
+import {Application, hasFixedLocations} from '@model/application/application';
+import {ApplicationType} from '@model/application/type/application-type';
 
 @Component({
   selector: 'pricing-info',
@@ -22,7 +16,7 @@ const kindsWithPricingInfo: ApplicationKind[] = [
 export class PricingInfoComponent implements OnInit, OnDestroy {
 
   @Input() form: FormGroup;
-  @Input() kind: ApplicationKind;
+  @Input() application: Application;
 
   @Output() billableChange = new EventEmitter<boolean>();
 
@@ -30,6 +24,10 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
   eventNatures = selectableNatures.map(nature => EventNature[nature]);
   required = FormUtil.required;
   billableSalesAreaSubscription: Subscription;
+  natureSelectable: boolean;
+  surfaceHardnessSelectable: boolean;
+  ecoCompassSelectable: boolean;
+  distanceFromWallSelectable: boolean;
 
   private billableSalesAreaControl: FormControl;
 
@@ -40,7 +38,16 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
         .subscribe(billable => this.billableChange.emit(billable));
     }
 
-    this.showPricingInfo = kindsWithPricingInfo.indexOf(this.kind) >= 0;
+    this.natureSelectable = this.application.kind === ApplicationKind.OUTDOOREVENT;
+    this.surfaceHardnessSelectable = this.application.type === ApplicationType.EVENT && !hasFixedLocations(this.application);
+    this.ecoCompassSelectable = this.application.kind === ApplicationKind.OUTDOOREVENT
+      || this.application.kind === ApplicationKind.BIG_EVENT;
+    this.distanceFromWallSelectable = this.application.kind === ApplicationKind.PROMOTION_OR_SALES;
+
+    this.showPricingInfo = this.natureSelectable
+      || this.surfaceHardnessSelectable
+      || this.ecoCompassSelectable
+      || this.distanceFromWallSelectable;
   }
 
   ngOnDestroy(): void {
