@@ -29,7 +29,8 @@
           [oldCustomerWithContacts]="oldInfo?.applicant"
           [newCustomerWithContacts]="newInfo?.clientApplicationData?.customer"
           [readonly]="readonly"
-          [fieldKey]="field"></customer-with-contacts-acceptance>
+          [fieldKey]="field"
+          [canBeInvoiceRecipient]="applicationTypeBillable"></customer-with-contacts-acceptance>
 
         <customer-with-contacts-acceptance
           *ngSwitchCase="'REPRESENTATIVE'"

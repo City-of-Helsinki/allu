@@ -38,6 +38,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
+  @Input() canBeInvoiceRecipient = false;
 
   @ViewChild(CustomerInfoAcceptanceComponent) infoAcceptance: CustomerInfoAcceptanceComponent;
 
@@ -91,7 +92,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   init(): void {
-    if (this.roleType === CustomerRoleType.APPLICANT) {
+    if (this.canBeInvoiceRecipient) {
       this.useForInvoicingCtrl = this.fb.control(false);
       this.searchForm.addControl('useForInvoicing', this.useForInvoicingCtrl);
 

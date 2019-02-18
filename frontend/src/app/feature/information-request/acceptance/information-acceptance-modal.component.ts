@@ -14,6 +14,7 @@ import {InformationRequestResultService} from '@feature/information-request/acce
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus, isBefore} from '@model/application/application-status';
 import {ArrayUtil} from '@util/array-util';
+import {ApplicationType} from '@model/application/type/application-type';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
@@ -43,6 +44,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   submitDisabled: Observable<boolean>;
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
   hasLocationChanges: boolean;
+  applicationTypeBillable: boolean;
 
   private childrenLoaded$ = new Subject<boolean>();
 
@@ -73,6 +75,8 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     const baseInfo = this.data.oldInfo || new Application();
     this.onApplicationChange(baseInfo);
     this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
+    this.applicationTypeBillable = [ApplicationType.CABLE_REPORT, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS]
+      .indexOf(this.oldInfo.type) < 0;
   }
 
   ngAfterViewInit(): void {

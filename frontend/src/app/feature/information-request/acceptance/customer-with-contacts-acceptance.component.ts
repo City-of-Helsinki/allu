@@ -14,4 +14,5 @@ export class CustomerWithContactsAcceptanceComponent {
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
   @Input() fieldKey: InformationRequestFieldKey;
+  @Input() canBeInvoiceRecipient = false;
 }
