@@ -198,7 +198,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onKindSpecifierChange(kindsWithSpecifiers: KindsWithSpecifiers) {
     this.application.kindsWithSpecifiers = kindsWithSpecifiers;
-    this.kindsSelected = this.application.kinds.length > 0;
     this.loadAreas().pipe(
       takeUntil(this.destroy)
     ).subscribe(areas => this.setSelectableAreas(areas));
