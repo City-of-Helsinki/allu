@@ -7,13 +7,13 @@ export const translations = {
     'Mikäli haluat varmistaa uloskirjautumisen myös Helsingin kaupungin AD-tunnistuksesta, tyhjennä selaimen välimuisti.'
   },
   nav: {
-    home: 'ETUSIVU',
-    workqueue: 'TYÖJONO',
-    supervisionTasks: 'VALVONTATEHTÄVÄT',
-    applications: 'HAKEMUKSET',
-    projects: 'HANKKEET',
-    customers: 'ASIAKKAAT',
-    admin: 'YLLÄPITO'
+    map: 'Kartta',
+    workqueue: 'Työjono',
+    supervisionTasks: 'Valvontatehtävät',
+    applications: 'Hakemukset',
+    projects: 'Hankkeet',
+    customers: 'Asiakkaat',
+    admin: 'Ylläpito'
   },
   application: {
     newApplication: 'Uusi hakemus',
@@ -1157,7 +1157,7 @@ export const translations = {
       cancel: 'PERUUTA',
       remove: 'POISTA',
       edit: 'MUOKKAA',
-      home: 'Etusivulle',
+      home: 'Kartalle',
       add: 'Lisää',
       show: 'Näytä',
       search: 'Hae',

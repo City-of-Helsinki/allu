@@ -1,13 +1,13 @@
 <nav fxLayout="row wrap" fxLayoutAlign="start stretch">
-  <a [routerLink]="['/home']" routerLinkActive="active">{{'nav.home' | translation}}</a>
-  <a [routerLink]="['/workqueue']" routerLinkActive="active">{{'nav.workqueue' | translation}}</a>
-  <a [routerLink]="['/supervision-tasks']" routerLinkActive="active">{{'nav.supervisionTasks' | translation}}</a>
-  <a [routerLink]="['/applications']" routerLinkActive="active">{{'nav.applications' | translation}}</a>
-  <a [routerLink]="['/projects']" routerLinkActive="active">{{'nav.projects' | translation}}</a>
+  <a [routerLink]="['/home']" routerLinkActive="active">{{'nav.map' | translation | uppercase}}</a>
+  <a [routerLink]="['/workqueue']" routerLinkActive="active">{{'nav.workqueue' | translation | uppercase}}</a>
+  <a [routerLink]="['/supervision-tasks']" routerLinkActive="active">{{'nav.supervisionTasks' | translation | uppercase}}</a>
+  <a [routerLink]="['/applications']" routerLinkActive="active">{{'nav.applications' | translation | uppercase}}</a>
+  <a [routerLink]="['/projects']" routerLinkActive="active">{{'nav.projects' | translation | uppercase}}</a>
   <a [routerLink]="['/customers']" routerLinkActive="active"
      *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_INVOICING']">
-    {{'nav.customers' | translation}}
+    {{'nav.customers' | translation | uppercase}}
   </a>
   <a [routerLink]="['/admin']" routerLinkActive="active" *availableTo="['ROLE_ADMIN']">
-    {{'nav.admin' | translation}}</a>
+    {{'nav.admin' | translation | uppercase}}</a>
 </nav>
