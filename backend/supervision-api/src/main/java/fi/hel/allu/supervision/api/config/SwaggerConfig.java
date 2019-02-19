@@ -57,6 +57,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
   private static final String[] FILTERED_APPLICATION_FIELDS = { "extension", "metadataVersion", "creationTime",
       "clientApplicationData", "externalOwnerId", "externalApplicationId", "invoicingChanged", "targetState" };
 
+  private static final String[] FILTERED_EXTENSION_FIELDS = { "applicationType" };
+
   @Value("${supervision.api.basepath}")
   private String apiBasePath;
 
@@ -106,9 +108,15 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     // Find jackson message converter and add custom object mapper
     SimpleBeanPropertyFilter applicationFilter = SimpleBeanPropertyFilter
         .serializeAllExcept(FILTERED_APPLICATION_FIELDS);
+    SimpleBeanPropertyFilter extensionFilter = SimpleBeanPropertyFilter
+        .serializeAllExcept(FILTERED_EXTENSION_FIELDS);
     ObjectMapper mapper = Jackson2ObjectMapperBuilder.json()
       .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
-      .filters(new SimpleFilterProvider().addFilter("applicationFilter", applicationFilter)).build();
+      .filters(new SimpleFilterProvider()
+          .addFilter("applicationFilter", applicationFilter)
+          .addFilter("extensionFilter", extensionFilter)
+       )
+      .build();
     getMessageConverters().stream()
         .filter(m -> m.getClass().isAssignableFrom(MappingJackson2HttpMessageConverter.class))
         .findFirst()
