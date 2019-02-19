@@ -55,6 +55,7 @@ export class MapPopupService {
     if (feature.id.indexOf(ALLU_PREFIX) >= 0) {
       contentRows = [
         this.createContentRowLink(properties.name, properties.id, 'content-row-bold'),
+        this.createContentRow(properties.applicant),
         this.createContentRow(`${properties.startTime} - ${properties.endTime}`)
       ];
     } else if (isWinkkiId(feature.id)) {
@@ -76,6 +77,7 @@ export class MapPopupService {
       if (f.id.indexOf(ALLU_PREFIX) >= 0) {
         contentRows.push(
           this.createContentRowLink(properties.applicationId, properties.id, 'content-row-bold'),
+          this.createContentRow(properties.applicant),
           this.createContentRow(`${properties.startTime} - ${properties.endTime}`));
       } else if (isWinkkiId(f.id)) {
         contentRows.push(

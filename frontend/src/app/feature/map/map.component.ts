@@ -114,7 +114,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       name: application.name,
       applicationId: application.applicationId,
       startTime: TimeUtil.getUiDateString(application.startTime),
-      endTime: TimeUtil.getUiDateString(application.endTime)
+      endTime: TimeUtil.getUiDateString(application.endTime),
+      applicant: Some(application.applicant.customer).map(c => c.name).orElse(undefined)
     };
 
     this.mapController.drawGeometry(

@@ -4,4 +4,5 @@ export interface MapFeatureInfo {
   type?: string;
   startTime: string;
   endTime: string;
+  applicant?: string;
 }
