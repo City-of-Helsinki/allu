@@ -89,7 +89,7 @@ public class ObjectComparer {
     } else if (isArray(source) && isArray(target)) {
       compareArray(prefix, source, target, diff);
     } else {
-      throw new IllegalArgumentException("Source and target don't match");
+      markChanged(prefix, "", "", diff);
     }
   }
 
