@@ -47,6 +47,7 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
   showDateReporting = false;
   showRequiredTasks = false;
   reportedDateType: ReportedDateType;
+  maxReportedDate: Date;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ExcavationSupervisionApprovalModalData,
@@ -61,7 +62,7 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
     super.ngOnInit();
     this.showDateReporting = this.needDateReporting(this.data.taskType, this.resolutionType);
     this.showRequiredTasks = SupervisionTaskType.PRELIMINARY_SUPERVISION === this.data.taskType;
-
+    this.maxReportedDate = new Date();
     if (this.showDateReporting) {
       this.initDateReporting();
     }
@@ -89,13 +90,14 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
   }
 
   private initDateReporting(): void {
-    const reportedDateCtrl = this.fb.control(this.data.reportedDate, Validators.required);
+    const reportedDate = TimeUtil.minimum(this.data.reportedDate, this.maxReportedDate);
+    const reportedDateCtrl = this.fb.control(reportedDate, Validators.required);
     this.form.addControl('reportedDate', reportedDateCtrl);
     this.reportedDateType = taskTypeToReportedDateType[this.data.taskType];
 
     reportedDateCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
-      startWith(this.data.reportedDate),
+      startWith(reportedDate),
     ).subscribe(date => this.onReportedDateChange(date));
   }
 

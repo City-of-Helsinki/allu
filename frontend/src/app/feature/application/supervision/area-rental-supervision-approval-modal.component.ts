@@ -37,6 +37,7 @@ export class AreaRentalSupervisionApprovalModalComponent extends SupervisionAppr
   showDateReporting = false;
   reportedDateType: ReportedDateType;
   minDate: Date;
+  maxReportedDate: Date;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: AreaRentalSupervisionApprovalModalData,
@@ -44,6 +45,7 @@ export class AreaRentalSupervisionApprovalModalComponent extends SupervisionAppr
     dialogRef: MatDialogRef<SupervisionApprovalModalComponent>) {
     super(data, fb, dialogRef);
     this.minDate = data.minDate;
+    this.maxReportedDate = new Date();
   }
 
   ngOnInit(): void {
@@ -72,13 +74,14 @@ export class AreaRentalSupervisionApprovalModalComponent extends SupervisionAppr
   }
 
   private initDateReporting(): void {
-    const reportedDateCtrl = this.fb.control(this.data.reportedDate, Validators.required);
+    const reportedDate = TimeUtil.minimum(this.data.reportedDate, this.maxReportedDate);
+    const reportedDateCtrl = this.fb.control(reportedDate, Validators.required);
     this.form.addControl('reportedDate', reportedDateCtrl);
     this.reportedDateType = taskTypeToReportedDateType[this.data.taskType];
 
     reportedDateCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
-      startWith(this.data.reportedDate),
+      startWith(reportedDate),
     ).subscribe(date => this.onReportedDateChange(date));
   }
 

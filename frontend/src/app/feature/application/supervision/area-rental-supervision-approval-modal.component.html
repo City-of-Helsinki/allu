@@ -31,7 +31,8 @@
       <input matInput formControlName="reportedDate" required
              [placeholder]="['dateReporting.reportedInfo', reportedDateType] | translation"
              [matDatepicker]="reportedDatePicker"
-             [min]="minDate">
+             [min]="minDate"
+             [max]="maxReportedDate">
       <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"
                              [disabled]="form.disabled"></mat-datepicker-toggle>
       <mat-datepicker #reportedDatePicker></mat-datepicker>

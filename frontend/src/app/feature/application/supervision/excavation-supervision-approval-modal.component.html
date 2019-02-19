@@ -30,7 +30,8 @@
     <mat-form-field *ngIf="showDateReporting" class="form-field-50">
       <input matInput formControlName="reportedDate" required
              [placeholder]="['dateReporting.reportedInfo', reportedDateType] | translation"
-             [matDatepicker]="reportedDatePicker">
+             [matDatepicker]="reportedDatePicker"
+             [max]="maxReportedDate">
       <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"
                              [disabled]="form.disabled"></mat-datepicker-toggle>
       <mat-datepicker #reportedDatePicker></mat-datepicker>
