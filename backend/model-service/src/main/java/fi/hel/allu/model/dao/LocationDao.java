@@ -347,13 +347,15 @@ public class LocationDao {
     double area = 0.0;
     if (geometry != null) {
       if (geometry instanceof GeometryCollection) {
-        GeometryCollection gc = removeOverlaps((GeometryCollection) geometry);
+        GeometryCollection gc = bufferLineStrings((GeometryCollection) geometry);
+        gc = removeOverlaps(gc);
         List<Geometry> flat = new ArrayList<>();
         flatten(gc, flat);
         flat.forEach(
             geo -> queryFactory.insert(locationGeometry).columns(locationGeometry.locationId, locationGeometry.geometry)
             .values(locationId, geo).execute());
       } else {
+        bufferLineString(geometry);
         queryFactory.insert(locationGeometry).columns(locationGeometry.locationId, locationGeometry.geometry)
             .values(locationId, geometry)
             .execute();
@@ -419,9 +421,6 @@ public class LocationDao {
         Geometry otherOne = iter.next();
         if (candidate.intersects(otherOne)) {
           logger.debug("Combining overlapping geometries {} and {}", candidate.asText(), otherOne.asText());
-          // Buffer line strings before union, otherwise union produces GeometryCollection
-          otherOne = bufferLineString(otherOne);
-          candidate = bufferLineString(candidate);
           candidate = candidate.union(otherOne);
           logger.debug("Result of combination is {}", candidate);
           iter.remove();
@@ -434,8 +433,22 @@ public class LocationDao {
     return collOut;
   }
 
+  private GeometryCollection bufferLineStrings(GeometryCollection geometryCollection) {
+    List<Geometry> result = new ArrayList<>();
+    geometryCollection.forEach(g -> {
+        result.add(bufferLineString(g));
+    });
+    return new GeometryCollection(result.toArray(new Geometry[result.size()]));
+  }
+
   private Geometry bufferLineString(Geometry geometry) {
-    return geometry.getGeometryType() == GeometryType.LINE_STRING ? geometry.buffer(LINE_BUFFER) : geometry;
+    Geometry resultGeometry = geometry;
+    if (geometry.getGeometryType() == GeometryType.LINE_STRING) {
+      resultGeometry = queryFactory
+          .select(Expressions.simpleTemplate(Geometry.class, "ST_Buffer({0}, {1}, 'endcap=flat')", geometry, LINE_BUFFER))
+          .fetchFirst();
+    }
+    return resultGeometry;
   }
 
   /*
