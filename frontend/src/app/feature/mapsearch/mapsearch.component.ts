@@ -1,6 +1,4 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {Router} from '@angular/router';
-import {ApplicationStore} from '@service/application/application-store';
 import {MapSearchFilter} from '@service/map-search-filter';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
@@ -9,8 +7,6 @@ import {Observable} from 'rxjs/internal/Observable';
 import {MapLayer} from '@service/map/map-layer';
 import {select, Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
-import {ResetLayers} from '@feature/map/actions/map-layer-actions';
-import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'mapsearch',
@@ -28,9 +24,7 @@ export class MapSearchComponent implements OnInit {
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
 
-  constructor(private router: Router,
-              private applicationStore: ApplicationStore,
-              private storedFilterStore: StoredFilterStore,
+  constructor(private storedFilterStore: StoredFilterStore,
               private mapStore: MapStore,
               private store: Store<fromMapLayers.State>) {
   }
@@ -47,12 +41,6 @@ export class MapSearchComponent implements OnInit {
 
   hideAdvancedSearch() {
     this.sidenavOpen = false;
-  }
-
-  newApplication() {
-    this.applicationStore.reset();
-    this.store.dispatch(new ResetLayers(ActionTargetType.Location));
-    this.router.navigate(['/applications/location']);
   }
 
   onSearchChange(searchFilter: MapSearchFilter): void {

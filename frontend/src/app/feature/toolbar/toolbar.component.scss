@@ -1,11 +1,5 @@
 @import '../../../assets/colors';
 
-$toolbar-height: 50px;
-
-.toolbar {
-  line-height: $toolbar-height;
-}
-
 :host {
   background: mat-color($allu-primary, 500);
   color: mat-contrast($allu-primary, 500);
@@ -29,8 +23,9 @@ $toolbar-height: 50px;
   )
 }
 
-[fxLayout="row"] {
+[fxLayout].toolbar {
   margin-bottom: 0px;
+  width: 100%;
 }
 
 .logo {
@@ -55,6 +50,10 @@ h1 {
 .toolbar-section {
   padding: 0 5px;
   border-left: 2px solid mat-color($allu-primary, 300);
+}
+
+.toolbar-section > * {
+  height: 100%;
 }
 
 .pill {

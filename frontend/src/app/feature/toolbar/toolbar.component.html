@@ -1,4 +1,4 @@
-<div fxLayout="row" fxFill class="toolbar">
+<div fxLayout="row wrap" fxLayoutAlign="start stretch" class="toolbar">
   <div fxFlex="250px" fxFlexAlign="center" class="logo">
     <div>
       <a [routerLink]="['/home']" routerLinkActive="active">
@@ -10,14 +10,31 @@
   <div fxFlex="auto">
     <navbar *ngIf="authenticated"></navbar>
   </div>
+
+  <div fxFlex="none" class="toolbar-section" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
+      <button mat-button (click)="newApplication()">
+      <mat-icon>add_circle</mat-icon>
+        {{'common.button.newApplication' | translation | uppercase}}
+      </button>
+      <button mat-button [routerLink]="['/projects/edit']">
+      <mat-icon>add_circle</mat-icon>
+        {{'common.button.newProject' | translation | uppercase}}
+      </button>
+    </div>
+  </div>
+
   <div fxFlex="none" class="toolbar-section" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
     <button mat-icon-button [matMenuTriggerFor]="applicationBasket">
       <mat-icon>shopping_basket</mat-icon>
     </button>
     <span class="pill">{{applicationBasketSize$ | async}}</span>
   </div>
-  <div fxFlex="none" fxFlexAlign="center" class="nav-controls toolbar-section" *ngIf="authenticated">
-    <a [routerLink]="['/logout']">KIRJAUDU ULOS</a>
+
+  <div fxFlex="none" class="nav-controls toolbar-section" *ngIf="authenticated">
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <a fxFlex [routerLink]="['/logout']">{{'common.action.logout' | translation | uppercase}}</a>
+    </div>
   </div>
 </div>
 

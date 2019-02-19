@@ -76,19 +76,6 @@ mat-sidenav.no-scroll {
     z-index: $over-map;
     width: 40vw;
   }
-
-  .map-action-buttons {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-    z-index: $over-map;
-
-    button {
-      .material-icons {
-        color: mat-contrast($allu-accent, 800);
-      }
-    }
-  }
 }
 
 .btn-right {

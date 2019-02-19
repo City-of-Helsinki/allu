@@ -1149,7 +1149,8 @@ export const translations = {
     },
     action: {
       remove: 'poistettu',
-      canDownload: 'Voit ladata sen'
+      canDownload: 'Voit ladata sen',
+      logout: 'Kirjaudu ulos',
     },
     button: {
       ok: 'HYVÄKSY',
@@ -1163,7 +1164,9 @@ export const translations = {
       search: 'Hae',
       toSelf: 'Omaksi',
       moveTo: 'Siirrä',
-      close: 'Sulje'
+      close: 'Sulje',
+      newApplication: 'Uusi hakemus',
+      newProject: 'Uusi hanke'
     },
     time: {
       today: 'Tänään',
@@ -1311,8 +1314,7 @@ export const translations = {
   mapsearch: {
     advanced: 'Tarkennettu haku',
     results: 'Hakutulokset',
-    loading: 'Ladataan hakemuksia',
-    newApplication: 'Uusi hakemus'
+    loading: 'Ladataan hakemuksia'
   },
   searchbar: {
     address: 'Kirjoita osoite',
