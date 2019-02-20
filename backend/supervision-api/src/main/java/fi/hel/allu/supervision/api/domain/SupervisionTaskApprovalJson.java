@@ -26,6 +26,8 @@ public class SupervisionTaskApprovalJson {
   private String result;
   private ZonedDateTime operationalConditionDate;
   private ZonedDateTime workFinishedDate;
+  private Integer decisionMakerId;
+  private String decisionNote;
 
   @ApiModelProperty(value = "Id of the supervision task", required = true)
   public Integer getTaskId() {
@@ -45,7 +47,8 @@ public class SupervisionTaskApprovalJson {
     this.result = result;
   }
 
-  @ApiModelProperty(value = "Date when work was in operational condition. Required when approving operational condition supervision (otherwise ignored). Cannot be in future.")
+  @ApiModelProperty(value = "Date when work was in operational condition. Required when approving operational condition supervision (otherwise ignored). "
+      + "Cannot be in future.")
   public ZonedDateTime getOperationalConditionDate() {
     return operationalConditionDate;
   }
@@ -54,13 +57,34 @@ public class SupervisionTaskApprovalJson {
     this.operationalConditionDate = operationalConditionDate;
   }
 
-  @ApiModelProperty(value = "Date when work was finished. Required when approving final supervision of area rental or excavation announcement (otherwise ignored). Cannot be in future.")
+  @ApiModelProperty(value = "Date when work was finished. Required when approving final supervision of area rental or excavation announcement (otherwise ignored). "
+      + "Cannot be in future.")
   public ZonedDateTime getWorkFinishedDate() {
     return workFinishedDate;
   }
 
   public void setWorkFinishedDate(ZonedDateTime workFinishedDate) {
     this.workFinishedDate = workFinishedDate;
+  }
+
+  @ApiModelProperty(value = "Decision maker user ID. User must have ROLE_DECISION -role. Required when approving operational condition or final supervision of "
+      + "area rental or excavation announcement (otherwise ignored)")
+  public Integer getDecisionMakerId() {
+    return decisionMakerId;
+  }
+
+  public void setDecisionMakerId(Integer decisionMakerId) {
+    this.decisionMakerId = decisionMakerId;
+  }
+
+  @ApiModelProperty(value = "Note for decision maker. Required when approving operational condition or final supervision of area rental or "
+      + "excavation announcement (otherwise ignored)")
+  public String getDecisionNote() {
+    return decisionNote;
+  }
+
+  public void setDecisionNote(String decisionNote) {
+    this.decisionNote = decisionNote;
   }
 
   @JsonIgnore

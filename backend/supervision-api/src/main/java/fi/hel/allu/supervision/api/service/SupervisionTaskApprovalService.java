@@ -12,9 +12,11 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 import fi.hel.allu.servicecore.service.*;
@@ -38,6 +40,8 @@ public class SupervisionTaskApprovalService {
   private ChargeBasisService chargeBasisService;
   @Autowired
   private ApplicationEventPublisher applicationEventPublisher;
+  @Autowired
+  private CommentService commentService;
 
   public SupervisionTaskJson approveSupervisionTask(SupervisionTaskApprovalJson approvalData) {
     SupervisionTaskJson task = supervisionTaskService.findById(approvalData.getTaskId());
@@ -67,7 +71,7 @@ public class SupervisionTaskApprovalService {
             : StatusType.OPERATIONAL_CONDITION;
     SupervisionTaskJson approved = supervisionTaskService.approve(task);
     dateReportingService.reportOperationalCondition(application.getId(), approvalData.getOperationalConditionDate());
-    updateStatus(application.getId(), newStatus);
+    updateStatus(application.getId(), newStatus, approvalData);
     return approved;
   }
 
@@ -77,7 +81,7 @@ public class SupervisionTaskApprovalService {
         : StatusType.FINISHED;
     SupervisionTaskJson approved = supervisionTaskService.approve(task);
     dateReportingService.reportWorkFinished(application.getId(), approvalData.getWorkFinishedDate());
-    updateStatus(application.getId(), newStatus);
+    updateStatus(application.getId(), newStatus, approvalData);
     return approved;
   }
 
@@ -108,9 +112,13 @@ public class SupervisionTaskApprovalService {
     return supervisionTaskService.reject(task, rejectionData.getNewSupervisionDate());
   }
 
-  private void updateStatus(Integer applicationId, StatusType newStatus) {
+  private void updateStatus(Integer applicationId, StatusType newStatus, SupervisionTaskApprovalJson approvalData) {
     if (newStatus == StatusType.DECISIONMAKING) {
-      applicationServiceComposer.changeStatus(applicationId, newStatus);
+      StatusChangeInfoJson statusChangeInfo = new StatusChangeInfoJson(approvalData.getDecisionMakerId());
+      statusChangeInfo.setComment(approvalData.getDecisionNote());
+      statusChangeInfo.setType(CommentType.PROPOSE_APPROVAL);
+      commentService.addDecisionProposalComment(applicationId, statusChangeInfo);
+      applicationServiceComposer.changeStatus(applicationId, newStatus, statusChangeInfo);
     } else {
       ApplicationJson origApplicationJson = applicationServiceComposer.findApplicationById(applicationId);
       List<ChargeBasisEntry> chargeBasisEntries = chargeBasisService.getUnlockedAndInvoicableChargeBasis(applicationId);
