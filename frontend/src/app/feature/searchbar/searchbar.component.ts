@@ -22,20 +22,19 @@ import {merge} from 'rxjs/internal/observable/merge';
 
 
 enum BarType {
-  SIMPLE, // Front page
-  BAR, // Location
-  ADVANCED // Front page
+  SIMPLE = 'SIMPLE', // Front page
+  BAR = 'BAR', // Location
+  ADVANCED = 'ADVANCED' // Front page
 }
 
 @Component({
   selector: 'searchbar',
   templateUrl: './searchbar.component.html',
-  styleUrls: ['./searchbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./searchbar.component.scss']
 })
 export class SearchbarComponent implements OnInit, OnDestroy {
   @Input() datesRequired = false;
-  @Input() barType: string = BarType[BarType.BAR];
+  @Input() barType: BarType = BarType.BAR;
   @Input() targetType: ActionTargetType = ActionTargetType.Home;
 
   @Output() onShowAdvanced = new EventEmitter<boolean>();
@@ -70,8 +69,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.searchForm.patchValue(this.mapStore.snapshot.mapSearchFilter);
-
     this.mapStore.coordinates.pipe(
       takeUntil(this.destroy),
       filter(coords => !coords.isDefined())
