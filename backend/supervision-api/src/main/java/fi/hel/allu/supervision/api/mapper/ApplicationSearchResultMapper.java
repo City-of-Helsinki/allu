@@ -25,7 +25,10 @@ public class ApplicationSearchResultMapper {
     application.setApplicationId(applicationES.getApplicationId());
     application.setApplicationTags(applicationES.getApplicationTags().stream().map(ApplicationTagType::valueOf).collect(Collectors.toList()));
     application.setId(applicationES.getId());
-    application.setLocations(applicationES.getLocations().stream().map(l -> new LocationSearchResult(l.getAddress(), l.getCityDistrictId(), l.getGeometry())).collect(Collectors.toList()));
+    application.setLocations(applicationES.getLocations()
+        .stream()
+        .map(l -> new LocationSearchResult(l.getAddress(), l.getAdditionalInfo(), l.getCityDistrictId(), l.getGeometry()))
+        .collect(Collectors.toList()));
     Optional.ofNullable(applicationES.getOwner()).ifPresent(owner -> {
       application.setOwnerRealName(owner.getRealName());
       application.setOwnerUserName(owner.getRealName());

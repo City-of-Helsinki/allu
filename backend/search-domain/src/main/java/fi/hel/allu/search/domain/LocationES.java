@@ -1,7 +1,13 @@
 package fi.hel.allu.search.domain;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
 import org.geolatte.geom.Geometry;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -106,5 +112,12 @@ public class LocationES {
 
   public void setSearchGeometry(Geometry searchGeometry) {
     this.searchGeometry = searchGeometry;
+  }
+
+  @JsonProperty(access = Access.READ_ONLY)
+  public String getExtendedAddress() {
+    return Stream.of(address, additionalInfo)
+        .filter(s -> StringUtils.isNotBlank(s))
+        .collect(Collectors.joining(" "));
   }
 }

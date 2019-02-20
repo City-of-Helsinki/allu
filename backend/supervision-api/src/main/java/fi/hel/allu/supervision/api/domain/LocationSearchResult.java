@@ -10,17 +10,19 @@ import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Application location")
+@ApiModel(value = "Location search result")
 public class LocationSearchResult {
 
   private String address;
+  private String additionalInfo;
   private Integer cityDistrictId;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
 
-  public LocationSearchResult(String address, Integer cityDistrictId, Geometry geometry) {
+  public LocationSearchResult(String address, String additionalInfo, Integer cityDistrictId, Geometry geometry) {
     this.address = address;
+    this.additionalInfo = additionalInfo;
     this.cityDistrictId = cityDistrictId;
     this.geometry = geometry;
   }
@@ -51,5 +53,14 @@ public class LocationSearchResult {
 
   public void setGeometry(Geometry geometry) {
     this.geometry = geometry;
+  }
+
+  @ApiModelProperty(value = "Location additional information (tarkennettu sijainti)")
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 }
