@@ -1,7 +1,16 @@
 <h1 class="popup-header">{{header}}</h1>
 <ul class="popup-content">
   <li *ngFor="let row of contentRows" [ngClass]="row.class">
-    <a [routerLink]="row.link" *ngIf="row.link; else normalContent">{{row.content}}</a>
+    <div *ngIf="row.link; else normalContent" fxLayout="row" fxLayoutAlign="start center">
+      <div fxFlex>
+        <a [routerLink]="row.link">{{row.content}}</a>
+      </div>
+      <div fxFlex="none" *ngIf="row.idForBasket">
+        <button mat-icon-button class="mat-icon-button-18" (click)="addToBasket(row.idForBasket)">
+          <mat-icon color="primary">shopping_basket</mat-icon>
+        </button>
+      </div>
+    </div>
     <ng-template #normalContent>
       <div>{{row.content}}</div>
     </ng-template>

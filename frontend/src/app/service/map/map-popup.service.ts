@@ -99,7 +99,8 @@ export class MapPopupService {
     return {
       content: content,
       link: `/applications/${id}/summary`,
-      class: className
+      class: className,
+      idForBasket: id
     };
   }
 
