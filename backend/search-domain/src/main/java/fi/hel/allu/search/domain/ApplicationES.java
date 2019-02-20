@@ -31,6 +31,7 @@ public class ApplicationES {
   private RoleTypedCustomerES customers;
   private RecurringApplication recurringApplication;
   private Integer nrOfComments;
+  private String identificationNumber;
 
   public Integer getId() {
     return id;
@@ -174,6 +175,14 @@ public class ApplicationES {
 
   public void setReceivedTime(Long receivedTime) {
     this.receivedTime = receivedTime;
+  }
+
+  public String getIdentificationNumber() {
+    return identificationNumber;
+  }
+
+  public void setIdentificationNumber(String identificationNumber) {
+    this.identificationNumber = identificationNumber;
   }
 
 }

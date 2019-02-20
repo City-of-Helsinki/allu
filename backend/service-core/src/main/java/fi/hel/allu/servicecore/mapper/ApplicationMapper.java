@@ -143,6 +143,7 @@ public class ApplicationMapper {
       applicationES.setProject(project);
     }
     applicationES.setNrOfComments(applicationJson.getComments() != null ? applicationJson.getComments().size() : 0);
+    applicationES.setIdentificationNumber(applicationJson.getIdentificationNumber());
     return applicationES;
   }
 
