@@ -3,6 +3,9 @@
 # process specific Java -Xmx settings for limiting memory usage. If nothing is specified here for a service, service will use the default
 # value specified elsewhere
 allu_service_memory_limit:
+  search-service: 512m
+  allu-ui-service: 512m
+  model-service: 512m
 
 database_host: "{{ hostvars['databaseEndpoint'].ansible_host }}"
 
