@@ -57,8 +57,7 @@ export class MapDataService {
       ApplicationStatus.REJECTED,
       ApplicationStatus.FINISHED,
       ApplicationStatus.CANCELLED,
-      ApplicationStatus.ARCHIVED,
-      ApplicationStatus.NOTE
+      ApplicationStatus.ARCHIVED
     ]);
   }
 
