@@ -18,7 +18,6 @@ public abstract class BaseApplication <T extends ApplicationExtensionJson> {
   @JsonUnwrapped
   private ApplicationJson application;
 
-  @JsonFilter("extensionFilter")
   @JsonUnwrapped
   private T extension;
 
