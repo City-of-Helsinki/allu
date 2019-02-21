@@ -16,5 +16,23 @@ public enum DefaultTextType {
   TERMS, // Ehdot
   TRAFFIC_ARRANGEMENT,
   NOT_BILLABLE, // Ei laskuteta peruste
-  OTHER // Yleisesti/muut
+  OTHER; // Yleisesti/muut
+
+  public static DefaultTextType[] getCableInfoTypes() {
+    return new DefaultTextType[] {
+        TELECOMMUNICATION,
+        ELECTRICITY,
+        WATER_AND_SEWAGE,
+        DISTRICT_HEATING_COOLING,
+        GAS,
+        UNDERGROUND_STRUCTURE,
+        TRAMWAY,
+        STREET_HEATING,
+        SEWAGE_PIPE,
+        GEOTHERMAL_WELL,
+        GEOTECHNICAL_OBSERVATION_POST,
+        OTHER
+    };
+  }
+
 }

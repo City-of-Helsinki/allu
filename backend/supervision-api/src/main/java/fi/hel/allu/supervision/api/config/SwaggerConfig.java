@@ -24,10 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
-import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
-import fi.hel.allu.servicecore.domain.AreaRentalJson;
-import fi.hel.allu.servicecore.domain.ClientApplicationDataJson;
-import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.supervision.api.domain.BaseApplication;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -86,7 +83,13 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         .additionalModels(
             typeResolver.resolve(BaseApplication.class),
             typeResolver.resolve(ExcavationAnnouncementJson.class),
-            typeResolver.resolve(AreaRentalJson.class))
+            typeResolver.resolve(AreaRentalJson.class),
+            typeResolver.resolve(CableReportJson.class),
+            typeResolver.resolve(PlacementContractJson.class),
+            typeResolver.resolve(ShortTermRentalJson.class),
+            typeResolver.resolve(TrafficArrangementJson.class),
+            typeResolver.resolve(EventJson.class),
+            typeResolver.resolve(NoteJson.class))
         .ignoredParameterTypes(IGNORED_CLASSES);
   }
 

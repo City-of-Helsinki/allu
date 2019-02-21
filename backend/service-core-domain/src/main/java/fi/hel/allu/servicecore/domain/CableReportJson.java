@@ -1,10 +1,13 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel("Cable report specific fields")
 public class CableReportJson extends ApplicationExtensionJson {
 
   private Boolean cableSurveyRequired;
@@ -20,14 +23,13 @@ public class CableReportJson extends ApplicationExtensionJson {
   private ZonedDateTime validityTime;
   private Integer orderer;
 
+  @ApiModelProperty(hidden = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.CABLE_REPORT;
   }
 
-  /**
-   * Whether cable survey is needed for cable report (in Finnish: "Johtokartoitettava")
-   */
+  @ApiModelProperty(value = "True, if cable survey is required (johtokartoitettava)")
   public Boolean getCableSurveyRequired() {
     return cableSurveyRequired;
   }
@@ -36,11 +38,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.cableSurveyRequired = cableSurveyRequired;
   }
 
-  /**
-   * Get the cable report ID (in Finnish: "Johtoselvitystunnus")
-   *
-   * @return cable report ID
-   */
+  @ApiModelProperty(value = "Cable report identifier (johtoselvitystunnus)")
   public String getCableReportId() {
     return cableReportId;
   }
@@ -49,11 +47,8 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.cableReportId = cableReportId;
   }
 
-  /**
-   * Get work description (in Finnish: "Työn kuvaus")
-   *
-   * @return work description
-   */
+
+  @ApiModelProperty(value = "Work description")
   public String getWorkDescription() {
     return workDescription;
   }
@@ -62,11 +57,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.workDescription = workDescription;
   }
 
-  /**
-   * Get the map extract count (In Finnish: "Karttaotteiden määrä")
-   *
-   * @return the count
-   */
+  @ApiModelProperty(value = "Map extract count")
   public Integer getMapExtractCount() {
     return mapExtractCount;
   }
@@ -75,11 +66,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.mapExtractCount = mapExtractCount;
   }
 
-  /**
-   * Get the cable info entries
-   *
-   * @return the entries
-   */
+  @ApiModelProperty(value = "Cable info entries (johtotiedot)")
   public List<CableInfoEntryJson> getInfoEntries() {
     return infoEntries;
   }
@@ -88,9 +75,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.infoEntries = infoEntries;
   }
 
-  /**
-   * In Finnish: Kartta päivitetty.
-   */
+  @ApiModelProperty(value = "True if map is updated")
   public Boolean getMapUpdated() {
     return mapUpdated;
   }
@@ -99,9 +84,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.mapUpdated = mapUpdated;
   }
 
-  /**
-   * In Finnish: Rakentaminen.
-   */
+  @ApiModelProperty(value = "Construction work")
   public Boolean getConstructionWork() {
     return constructionWork;
   }
@@ -110,9 +93,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.constructionWork = constructionWork;
   }
 
-  /**
-   * In Finnish: Kunnossapito.
-   */
+  @ApiModelProperty(value = "Maintenance work")
   public Boolean getMaintenanceWork() {
     return maintenanceWork;
   }
@@ -121,9 +102,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.maintenanceWork = maintenanceWork;
   }
 
-  /**
-   * In Finnish: Hätätyö.
-   */
+  @ApiModelProperty(value = "Emergency work")
   public Boolean getEmergencyWork() {
     return emergencyWork;
   }
@@ -132,9 +111,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.emergencyWork = emergencyWork;
   }
 
-  /**
-   * In Finnish: Kiinteistöliitos.
-   */
+  @ApiModelProperty(value = "Property connectivity (tontti-/kiinteistöliitos)")
   public Boolean getPropertyConnectivity() {
     return propertyConnectivity;
   }
@@ -143,11 +120,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.propertyConnectivity = propertyConnectivity;
   }
 
-  /**
-   * In Finnish: Johtoselvityksen voimassaoloaika
-   *
-   * @return  The validity time of the cable report.
-   */
+  @ApiModelProperty(value = "Validity time of the cable report")
   public ZonedDateTime getValidityTime() {
     return validityTime;
   }
@@ -156,12 +129,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     this.validityTime = validityTime;
   }
 
-  /**
-   * In Finnish: Tilaaja
-   * Identifier of a person (contact) who ordered the application
-   * Currently in use only for cable report (Johtoselvityksen tilaaja)
-   * Only one contact per application can be marked as orderer.
-   */
+  @ApiModelProperty(value = "Id of the contact person who ordered the cable report.  ")
   public Integer getOrderer() {
     return orderer;
   }

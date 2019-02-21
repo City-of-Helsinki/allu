@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.types.AttachmentType;
-import fi.hel.allu.common.types.CommentType;
-import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.common.types.PublicityType;
+import fi.hel.allu.common.types.*;
+import fi.hel.allu.model.domain.DefaultText;
 import fi.hel.allu.supervision.api.translation.EnumTranslator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -167,6 +165,16 @@ public class CodeController {
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<Map<ApplicationTagType, String>> getApplicationTagTypes() {
     return ResponseEntity.ok(getTranslations(ApplicationTagType.values()));
+  }
+
+  @ApiOperation(value = "Gets cable info types",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json"
+  )
+  @RequestMapping(value = "/cableinfotypes", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Map<DefaultTextType, String>> getCableInfoTypes() {
+    return ResponseEntity.ok(getTranslations(DefaultTextType.getCableInfoTypes()));
   }
 
   private <T extends Enum<T>> Map<T, String> getTranslations(T[] values) {

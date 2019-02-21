@@ -107,6 +107,23 @@ public class ApplicationController {
     return ResponseEntity.ok(new AreaRentalApplication(application));
   }
 
+  @ApiOperation(value = "Get cable report application details",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = CableReportApplication.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application retrieved successfully", response = CableReportApplication.class),
+  })
+  @RequestMapping(value = "/cablereports/{id}", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CableReportApplication> getCableReport(@PathVariable Integer id) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(id);
+    validateType(application, ApplicationType.CABLE_REPORT);
+    return ResponseEntity.ok(new CableReportApplication(application));
+  }
+
+
   @ApiOperation(value = "Update area rental application. "
       + "Update is allowed only if the status of the application is PENDING and application is not an external application "
       + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.",
@@ -146,6 +163,25 @@ public class ApplicationController {
       @RequestBody @Valid ExcavationAnnouncementApplication excavationAnnouncementApplication) {
     ApplicationJson updatedApplication = updateApplication(id, excavationAnnouncementApplication);
     return ResponseEntity.ok(new ExcavationAnnouncementApplication(updatedApplication));
+  }
+
+  @ApiOperation(value = "Update cable report application. "
+      + "Update is allowed only if the status of the application is PENDING and application is not an external application "
+      + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json",
+      response = CableReportApplication.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Application updated successfully", response = CableReportApplication.class),
+      @ApiResponse(code = 409, message = "Update failed, given version of application updated by another user", response = ErrorInfo.class),
+      @ApiResponse(code = 403, message = "Application update forbidden", response = ErrorInfo.class),
+  })
+  @RequestMapping(value = "/cablereports/{id}", method = RequestMethod.PUT, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CableReportApplication> updateCableReportApplication(@PathVariable Integer id, @RequestBody @Valid CableReportApplication cableReportApplication) {
+    ApplicationJson updatedApplication = updateApplication(id, cableReportApplication);
+    return ResponseEntity.ok(new CableReportApplication(updatedApplication));
   }
 
   private <T extends BaseApplication<?>> ApplicationJson updateApplication(Integer id, T application) {
