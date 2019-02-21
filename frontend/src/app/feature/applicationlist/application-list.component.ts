@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Observable} from 'rxjs';
 
-import {Application} from '../../model/application/application';
-import {MapStore} from '../../service/map/map-store';
+import {Application} from '@model/application/application';
+import {MapStore} from '@service/map/map-store';
 
 
 @Component({
@@ -24,7 +24,7 @@ export class ApplicationListComponent implements OnInit {
     this.applications = this.mapStore.applications;
   }
 
-  jobClick(application: Application) {
+  focusOnApplication(application: Application) {
     this.mapStore.selectedApplicationChange(application);
   }
 }

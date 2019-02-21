@@ -1190,6 +1190,7 @@ export const translations = {
     zoomOut: 'Loitonna',
     areasIntersect: 'Alue leikkaa toisen alueen',
     areaIntersects: 'Alue leikkaa itsensä',
+    focusOnApplication: 'Tarkenna hakemukseen',
     draw: {
       toolbar: {
         actions: {
