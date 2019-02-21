@@ -29,7 +29,8 @@ mat-sidenav {
   box-shadow: 0 2px 20px 0 #757575;
 }
 
-mat-sidenav.no-scroll {
+mat-sidenav.no-scroll,
+mat-sidenav.no-scroll .mat-drawer-inner-container {
   overflow-y: hidden;
 }
 

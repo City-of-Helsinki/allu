@@ -2,9 +2,11 @@
   <ng-container *ngFor="let application of applications | async">
     <mat-divider></mat-divider>
     <mat-list-item (click)="jobClick(application)">
-      <h1 matLine class="clickable">{{application.name}}</h1>
-      <div matLine>{{['application.type', application.type] | translation}}</div>
+      <h1 matLine class="clickable">{{application.applicationId}}</h1>
+      <div matLine>{{application.name}}</div>
       <div matLine>{{['application.status', application.status] | translation}}</div>
+      <div matLine>{{application.address}}</div>
+      <div matLine *ngIf="application.applicant.customer as applicant">{{applicant.name}}</div>
       <div matLine>{{application.startTime | date:'shortDate'}} - {{application.endTime | date:'shortDate'}}</div>
     </mat-list-item>
   </ng-container>
