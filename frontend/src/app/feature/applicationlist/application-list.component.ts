@@ -3,6 +3,9 @@ import {Observable} from 'rxjs';
 
 import {Application} from '@model/application/application';
 import {MapStore} from '@service/map/map-store';
+import {Add} from '@feature/project/actions/application-basket-actions';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 
 
 @Component({
@@ -17,8 +20,8 @@ export class ApplicationListComponent implements OnInit {
 
   applications: Observable<Array<Application>>;
 
-  constructor(private mapStore: MapStore) {
-  }
+  constructor(private mapStore: MapStore,
+              private store: Store<fromRoot.State>) {}
 
   ngOnInit() {
     this.applications = this.mapStore.applications;
@@ -26,5 +29,9 @@ export class ApplicationListComponent implements OnInit {
 
   focusOnApplication(application: Application) {
     this.mapStore.selectedApplicationChange(application);
+  }
+
+  addToBasket(applicationId: number): void {
+    this.store.dispatch(new Add(applicationId));
   }
 }

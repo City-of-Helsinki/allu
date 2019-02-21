@@ -6,6 +6,13 @@
         <a fxFlex [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
         <div fxFlex="none">
           <button mat-icon-button color="primary"
+                  [matTooltip]="'applicationBasket.addTo' | translation"
+                  (click)="addToBasket(application.id)">
+            <mat-icon>shopping_basket</mat-icon>
+          </button>
+        </div>
+        <div fxFlex="none">
+          <button mat-icon-button color="primary"
                   [matTooltip]="'map.focusOnApplication' | translation"
                   (click)="focusOnApplication(application)">
             <mat-icon>filter_center_focus</mat-icon>
