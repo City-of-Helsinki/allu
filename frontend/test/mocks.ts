@@ -92,9 +92,7 @@ export class ApplicationStoreMock {
   }
 }
 
-/**
- * Mock for customer hub
- */
+
 export class CustomerServiceMock {
   public orderer$ = new Subject<Contact>();
 
@@ -102,6 +100,16 @@ export class CustomerServiceMock {
   findCustomerActiveContacts(customerId: number) {}
   get orderer() { return this.orderer$.asObservable(); }
   ordererWasSelected(orderer) {}
+}
+
+export class ContactServiceMock {
+  public findById(id: number): Observable<Contact> {
+    return of(new Contact(id));
+  }
+
+  public save(customerId: number, contact: Contact): Observable<Contact> {
+    return of({...contact, customerId});
+  }
 }
 
 /**

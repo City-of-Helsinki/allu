@@ -2,22 +2,23 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
-import {ContactComponent} from '../../../../../src/app/feature/application/info/contact/contact.component';
-import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
-import {ApplicationStore} from '../../../../../src/app/service/application/application-store';
-import {ApplicationStoreMock, CustomerServiceMock, NotificationServiceMock} from '../../../../mocks';
-import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
-import {CustomerWithContactsForm} from '../../../../../src/app/feature/customerregistry/customer/customer-with-contacts.form';
+import {ContactComponent} from '@feature/application/info/contact/contact.component';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {ApplicationStore} from '@service/application/application-store';
+import {ApplicationStoreMock, ContactServiceMock, CustomerServiceMock, NotificationServiceMock} from '@test/mocks';
+import {CustomerRoleType} from '@model/customer/customer-role-type';
+import {CustomerWithContactsForm} from '@feature/customerregistry/customer/customer-with-contacts.form';
 import {DebugElement} from '@angular/core';
-import {Contact} from '../../../../../src/app/model/customer/contact';
-import {getMatIconButton} from '../../../../selector-helpers';
-import {ApplicationType} from '../../../../../src/app/model/application/type/application-type';
-import {Application} from '../../../../../src/app/model/application/application';
-import {createDefaultOrdererId, OrdererIdForm} from '../../../../../src/app/feature/application/info/cable-report/cable-report.form';
-import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
-import {CustomerService} from '../../../../../src/app/service/customer/customer.service';
+import {Contact} from '@model/customer/contact';
+import {getMatIconButton} from '@test/selector-helpers';
+import {ApplicationType} from '@model/application/type/application-type';
+import {Application} from '@model/application/application';
+import {createDefaultOrdererId, OrdererIdForm} from '@feature/application/info/cable-report/cable-report.form';
+import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
+import {CustomerService} from '@service/customer/customer.service';
 import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
 import {NotificationService} from '@feature/notification/notification.service';
+import {ContactService} from '@service/customer/contact.service';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');
@@ -61,6 +62,7 @@ describe('ContactComponent', () => {
         {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},
+        {provide: ContactService, useClass: ContactServiceMock},
         {provide: DistributionListEvents, useClass: DistributionListEvents},
         {provide: NotificationService, useClass: NotificationServiceMock}
       ]

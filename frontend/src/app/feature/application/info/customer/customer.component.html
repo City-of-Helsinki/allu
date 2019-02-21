@@ -44,6 +44,8 @@
       </allu-card>
     </div>
   </form>
-  <contact #contacts [parentForm]="parentForm" [customerRoleType]="customerWithContacts.uiRoleType"
-           [readonly]="readonly" [contactRequired]="contactRequired"></contact>
+  <contact #contacts [parentForm]="parentForm" [readonly]="readonly"
+           [customerRoleType]="customerWithContacts.uiRoleType"
+           [contactRequired]="contactRequired"
+           (contactSelectChange)="contactSelected($event)"></contact>
 </div>

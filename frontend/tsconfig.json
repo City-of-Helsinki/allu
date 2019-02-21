@@ -23,7 +23,8 @@
       "@feature/*": ["app/feature/*"],
       "@model/*": ["app/model/*"],
       "@service/*": ["app/service/*"],
-      "@util/*": ["app/util/*"]
+      "@util/*": ["app/util/*"],
+      "@test/*": ["../test/*"]
     }
   },
   "angularCompilerOptions": {

@@ -1,11 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {findTranslation} from '../../../util/translations';
-import {NotificationService} from '../../notification/notification.service';
-import {Contact} from '../../../model/customer/contact';
-import {ArrayUtil} from '../../../util/array-util';
-import {CustomerService} from '../../../service/customer/customer.service';
+import {findTranslation} from '@util/translations';
+import {NotificationService} from '@feature/notification/notification.service';
+import {Contact} from '@model/customer/contact';
+import {ContactService} from '@service/customer/contact.service';
 
 @Component({
   selector: 'contact-modal',
@@ -20,23 +19,23 @@ export class ContactModalComponent implements OnInit {
   contactForm: FormGroup;
 
   constructor(public dialogRef: MatDialogRef<ContactModalComponent>,
-              private customerService: CustomerService,
+              private contactService: ContactService,
               private notification: NotificationService,
               fb: FormBuilder) {
     this.contactForm = Contact.formGroup(fb);
   }
 
   ngOnInit(): void {
-    this.customerService.findContactById(this.contactId)
+    this.contactService.findById(this.contactId)
       .subscribe(contact => this.contactForm.patchValue(contact));
   }
 
   onSubmit(contact: Contact) {
-    this.customerService.saveContactsForCustomer(contact.customerId, [contact])
+    this.contactService.save(contact.customerId, contact)
       .subscribe(
         saved => {
           this.notification.success(findTranslation('contact.action.save'));
-          this.dialogRef.close(ArrayUtil.first(saved.contacts));
+          this.dialogRef.close(saved);
         }, error => this.notification.errorInfo(error));
   }
 

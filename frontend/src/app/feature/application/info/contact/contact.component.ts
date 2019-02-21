@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Contact} from '@model/customer/contact';
 import {Some} from '@util/option';
@@ -19,6 +19,7 @@ import {OrdererId} from '@model/application/cable-report/orderer-id';
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
+import {ContactService} from '@service/customer/contact.service';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -36,6 +37,8 @@ export class ContactComponent implements OnInit {
   @Input() readonly: boolean;
   @Input() contactRequired = false;
 
+  @Output() contactSelectChange: EventEmitter<Contact> = new EventEmitter<Contact>();
+
   form: FormGroup;
   contacts: FormArray;
   availableContacts: Observable<Array<Contact>>;
@@ -46,6 +49,7 @@ export class ContactComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private customerService: CustomerService,
+              private contactService: ContactService,
               private applicationStore: ApplicationStore,
               private distributionListEvents: DistributionListEvents,
               private notification: NotificationService) {}
@@ -67,6 +71,7 @@ export class ContactComponent implements OnInit {
   contactSelected(contact: Contact, index: number): void {
     this.contacts.at(index).patchValue(contact);
     this.disableContactEdit(index);
+    this.contactSelectChange.emit(contact);
   }
 
   canBeRemoved(): boolean {
@@ -111,9 +116,6 @@ export class ContactComponent implements OnInit {
 
   onCustomerChange(customerId: number) {
     this.resetContacts();
-    if (NumberUtil.isDefined(customerId)) {
-      this.availableContacts = this.customerService.findCustomerActiveContacts(customerId);
-    }
     this.customerIdChanges.next(customerId);
   }
 
@@ -144,7 +146,7 @@ export class ContactComponent implements OnInit {
     this.customerIdChanges.pipe(
       filter(id => NumberUtil.isDefined(id)),
       take(1),
-      switchMap(customerId => this.customerService.saveContact(customerId, contact))
+      switchMap(customerId => this.contactService.save(customerId, contact))
     ).subscribe(saved => {
       this.notification.success(findTranslation('contact.action.save'));
       this.contactSelected(saved, index);
@@ -185,12 +187,24 @@ export class ContactComponent implements OnInit {
 
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
     if (!!term) {
-      return this.availableContacts.pipe(
-        map(contacts => contacts.filter(c => c.name.toLowerCase().indexOf(term.toLowerCase()) >= 0))
-      );
+      if (NumberUtil.isDefined(this.customerIdChanges.value)) {
+        return this.searchForCurrentCustomer(term);
+      } else {
+        return this.searchForAnyCustomer(term);
+      }
     } else {
       return this.availableContacts;
     }
+  }
+
+  private searchForCurrentCustomer(term: string): Observable<Contact[]> {
+    return this.availableContacts.pipe(
+      map(contacts => contacts.filter(c => c.name.toLowerCase().indexOf(term.toLowerCase()) >= 0))
+    );
+  }
+
+  private searchForAnyCustomer(term: string): Observable<Contact[]> {
+    return this.contactService.search({name: term});
   }
 
   private initContacts(): void {

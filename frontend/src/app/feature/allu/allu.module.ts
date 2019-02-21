@@ -58,6 +58,7 @@ import {ConfigurationService} from '@service/config/configuration.service';
 import {ConfigurationEffects} from './effects/configuration-effects';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 import {UserEffects} from '@feature/allu/effects/user-effects';
+import {ContactService} from '@service/customer/contact.service';
 
 @NgModule({
   imports: [
@@ -107,6 +108,7 @@ import {UserEffects} from '@feature/allu/effects/user-effects';
     UserService,
     LocationService,
     CustomerService,
+    ContactService,
     MapStore,
     AuthGuard,
     CanDeactivateGuard,

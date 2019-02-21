@@ -13,6 +13,7 @@ import {InformationRequestModalEvents} from '@feature/information-request/inform
 import {CustomerService} from '@service/customer/customer.service';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
+import {Contact} from '@model/customer/contact';
 
 @Component({
   selector: 'customer',
@@ -84,6 +85,16 @@ export class CustomerComponent implements OnInit, OnDestroy {
   onCustomerChange(customer: Customer): void {
     this.disableEdit(customer);
     this.contacts.onCustomerChange(customer.id);
+  }
+
+  contactSelected(contact: Contact): void {
+    // When contact is selected and no existing customer is selected
+    // Customer should be filled based on contacts customer
+    if (this.isNewCustomer) {
+      this.customerService.findCustomerById(contact.customerId).subscribe(customer => {
+        this.customerForm.patchValue(CustomerForm.fromCustomer(customer));
+      });
+    }
   }
 
   onRepresentativeChange(checked: boolean): void {

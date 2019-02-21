@@ -4,6 +4,7 @@ import {NotificationService} from '@feature/notification/notification.service';
 import {Contact} from '@model/customer/contact';
 import {CustomerService} from '@service/customer/customer.service';
 import {findTranslation} from '@util/translations';
+import {ContactService} from '@service/customer/contact.service';
 
 export const CONTACT_MODAL_CONFIG = {width: '600px', data: {}};
 
@@ -24,6 +25,7 @@ export class ContactModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ContactModalData,
     private dialogRef: MatDialogRef<ContactModalComponent>,
     private customerService: CustomerService,
+    private contactService: ContactService,
     private notification: NotificationService) {}
 
   ngOnInit(): void {
@@ -31,7 +33,7 @@ export class ContactModalComponent implements OnInit {
   }
 
   confirm() {
-    this.customerService.saveContact(this.data.customerId, this.contact)
+    this.contactService.save(this.data.customerId, this.contact)
       .subscribe(
         saved => {
           this.notification.success(findTranslation('contact.action.save'));
