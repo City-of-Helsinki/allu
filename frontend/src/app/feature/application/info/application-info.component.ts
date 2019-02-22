@@ -23,7 +23,7 @@ import {
   InformationAcceptanceData,
   InformationAcceptanceModalComponent
 } from '@feature/information-request/acceptance/information-acceptance-modal.component';
-import {ApplicationStatus} from '@model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus} from '@model/application/application-status';
 import {Application} from '@model/application/application';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';

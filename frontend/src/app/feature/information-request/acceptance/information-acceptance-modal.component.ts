@@ -12,7 +12,7 @@ import {SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/i
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import {ApplicationStore} from '@service/application/application-store';
-import {ApplicationStatus, isBefore} from '@model/application/application-status';
+import {applicationCanBeEdited, ApplicationStatus, isBefore, isBetween} from '@model/application/application-status';
 import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 
@@ -101,6 +101,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     this.store.dispatch(new SetApplication(application));
     this.store.dispatch(new SetKindsWithSpecifiers(application.kindsWithSpecifiers));
     this.store.dispatch(new SetLocations(application.locations));
-    this.readonly = this.data.readonly || isBefore(application.status, ApplicationStatus.INFORMATION_RECEIVED);
+    this.readonly = this.data.readonly
+      || !isBetween(application.status, ApplicationStatus.PENDING_CLIENT, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
   }
 }
