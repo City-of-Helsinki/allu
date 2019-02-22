@@ -23,7 +23,7 @@ public class CableReportJson extends ApplicationExtensionJson {
   private ZonedDateTime validityTime;
   private Integer orderer;
 
-  @ApiModelProperty(hidden = true)
+  @ApiModelProperty(value = "Application type (always CABLE_REPORT).", allowableValues="CABLE_REPORT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.CABLE_REPORT;

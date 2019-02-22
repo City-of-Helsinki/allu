@@ -7,7 +7,10 @@ import javax.validation.constraints.NotNull;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.types.EventNature;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(value = "Event specific fields")
 public class EventJson extends ApplicationExtensionJson {
   private EventNature nature;
   private String description;
@@ -28,14 +31,14 @@ public class EventJson extends ApplicationExtensionJson {
   @NotNull(message = "{event.surfaceHardness}")
   private SurfaceHardness surfaceHardness;
 
+  @ApiModelProperty(value = "Application type (always EVENT).", allowableValues="EVENT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.EVENT;
   }
 
-  /**
-   * in Finnish: Tapahtuman luonne
-   */
+
+  @ApiModelProperty(value = "Event nature")
   public EventNature getNature() {
     return nature;
   }
@@ -44,9 +47,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.nature = nature;
   }
 
-  /**
-   * in Finnish: Tapahtuman kuvaus
-   */
+  @ApiModelProperty(value = "Event description")
   public String getDescription() {
     return description;
   }
@@ -58,6 +59,7 @@ public class EventJson extends ApplicationExtensionJson {
   /**
    * in Finnish: Tapahtuman WWW-sivu
    */
+  @ApiModelProperty(value = "Event's WWW page")
   public String getUrl() {
     return url;
   }
@@ -66,9 +68,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.url = url;
   }
 
-  /**
-   * in Finnish: Tapahtuman alkuaika
-   */
+  @ApiModelProperty(value = "Event start time", required = true)
   public ZonedDateTime getEventStartTime() {
     return eventStartTime;
   }
@@ -77,9 +77,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.eventStartTime = eventStartTime;
   }
 
-  /**
-   * in Finnish: Tapahtuman päättymisaika
-   */
+  @ApiModelProperty(value = "Event end time", required = true)
   public ZonedDateTime getEventEndTime() {
     return eventEndTime;
   }
@@ -88,9 +86,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.eventEndTime = eventEndTime;
   }
 
-  /**
-   * in Finnish: Tapahtuman arvioitu yleisömäärä
-   */
+  @ApiModelProperty(value = "Estimated number of attendees")
   public int getAttendees() {
     return attendees;
   }
@@ -99,9 +95,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.attendees = attendees;
   }
 
-  /**
-   * in Finnish: Osallistumismaksu
-   */
+  @ApiModelProperty(value = "Entry fee")
   public int getEntryFee() {
     return entryFee;
   }
@@ -110,9 +104,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.entryFee = entryFee;
   }
 
-  /**
-   * in Finnish: Hakijalla ekokompassi
-   */
+  @ApiModelProperty(value = "True if applicant has EcoCompass")
   public boolean isEcoCompass() {
     return ecoCompass;
   }
@@ -121,11 +113,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.ecoCompass = ecoCompass;
   }
 
-  /**
-   * in Finnish: Tapahtuma sisältää elintarvikemyyntiä- tai tarjoilua
-   *
-   * @return
-   */
+  @ApiModelProperty(value = "True if there's food sales in event")
   public boolean isFoodSales() {
     return foodSales;
   }
@@ -134,9 +122,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.foodSales = foodSales;
   }
 
-  /**
-   * in Finnish: Tapahtuman elintarviketoimijat
-   */
+  @ApiModelProperty(value = "Food providers")
   public String getFoodProviders() {
     return foodProviders;
   }
@@ -145,9 +131,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.foodProviders = foodProviders;
   }
 
-  /**
-   * in Finnish: Tapahtuman markkinointitoimijat
-   */
+  @ApiModelProperty(value = "Marketing providers")
   public String getMarketingProviders() {
     return marketingProviders;
   }
@@ -156,9 +140,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.marketingProviders = marketingProviders;
   }
 
-  /**
-   * in Finnish: Rakenteiden kokonaisneliömäärä
-   */
+  @ApiModelProperty(value = "Total area of structures in sq. meters")
   public float getStructureArea() {
     return structureArea;
   }
@@ -167,9 +149,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.structureArea = structureArea;
   }
 
-  /**
-   * in Finnish: Rakenteiden kuvaus
-   */
+  @ApiModelProperty(value = "Description of the structures")
   public String getStructureDescription() {
     return structureDescription;
   }
@@ -178,9 +158,8 @@ public class EventJson extends ApplicationExtensionJson {
     this.structureDescription = structureDescription;
   }
 
-  /**
-   * in Finnish: Tapahtuma-ajan poikkeukset
-   */
+
+  @ApiModelProperty(value = "Event time exceptions")
   public String getTimeExceptions() {
     return timeExceptions;
   }
@@ -189,9 +168,7 @@ public class EventJson extends ApplicationExtensionJson {
     this.timeExceptions = timeExceptions;
   }
 
-  /**
-   * in Finnish: Pinnan tyyppi
-   */
+  @ApiModelProperty(value = "Surface type")
   public SurfaceHardness getSurfaceHardness() {
     return surfaceHardness;
   }

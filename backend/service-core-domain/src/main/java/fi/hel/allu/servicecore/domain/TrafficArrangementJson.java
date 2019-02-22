@@ -1,27 +1,26 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
-
 import javax.validation.constraints.NotNull;
 
-/**
- * Traffic arrangement (väliaikainen liikennejärjestely) specific data.
- */
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Traffic arrangement specific fields")
 public class TrafficArrangementJson extends ApplicationExtensionJson {
   private String workPurpose;
   private String trafficArrangements;
   @NotNull(message = "{application.trafficarrangements.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
+  @ApiModelProperty(value = "Application type (always TEMPORARY_TRAFFIC_ARRANGEMENTS).", allowableValues="TEMPORARY_TRAFFIC_ARRANGEMENTS", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS;
   }
 
-  /**
-   * In Finnish: työn tarkoitus.
-   */
+  @ApiModelProperty(value = "Purpose of the work")
   public String getWorkPurpose() {
     return workPurpose;
   }
@@ -30,9 +29,7 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
     this.workPurpose = workPurpose;
   }
 
-  /**
-   * In Finnish: suoritettavat liikennejärjestelytyöt.
-   */
+  @ApiModelProperty(value = "Traffic arrangements")
   public String getTrafficArrangements() {
     return trafficArrangements;
   }
@@ -41,9 +38,7 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
     this.trafficArrangements = trafficArrangements;
   }
 
-  /**
-   * In Finnish: Liikennejärjestelyn haitta.
-   */
+  @ApiModelProperty(value = "Traffic arrangement impediment type", required = true)
   public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
     return trafficArrangementImpedimentType;
   }

@@ -25,7 +25,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   @NotNull(message = "{application.arearental.trafficArrangementImpedimentType}")
   private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
-  @ApiModelProperty(hidden = true)
+  @ApiModelProperty(value = "Application type (always AREA_RENTAL).", allowableValues="AREA_RENTAL", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.AREA_RENTAL;

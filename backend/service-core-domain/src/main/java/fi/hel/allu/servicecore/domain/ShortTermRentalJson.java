@@ -1,26 +1,23 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-/**
- * JSON DAO covering all short term rental data requirements.
- */
+@ApiModel(value = "Short term rental specific fields")
 public class ShortTermRentalJson extends ApplicationExtensionJson {
 
   private String description;
   private Boolean commercial;
   private Boolean billableSalesArea;
 
+  @ApiModelProperty(value = "Application type (always SHORT_TERM_RENTAL).", allowableValues="SHORT_TERM_REANTAL", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.SHORT_TERM_RENTAL;
   }
 
-  /**
-   * Returns the description of the short term rental.
-   *
-   * @return  the description of the short term rental.
-   */
+  @ApiModelProperty(value = "Description of the rental")
   public String getDescription() {
     return description;
   }
@@ -29,11 +26,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
     this.description = description;
   }
 
-  /**
-   * True, if this short term rental has commercial nature.
-   *
-   * @return  True, if this short term rental has commercial nature.
-   */
+  @ApiModelProperty(value = "True, if rental has commercial nature.")
   public Boolean getCommercial() {
     return commercial;
   }
@@ -42,11 +35,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
     this.commercial = commercial;
   }
 
-  /**
-   * Is this application for a large sales area (over 0.8 * 3 sqm)?
-   *
-   * @return true if the application is for a large sales area
-   */
+  @ApiModelProperty(value = "True if the sales area is billable (over 80cm from the wall)")
   public Boolean getBillableSalesArea() {
     return billableSalesArea;
   }

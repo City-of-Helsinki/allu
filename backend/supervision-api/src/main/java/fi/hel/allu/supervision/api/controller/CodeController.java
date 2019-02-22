@@ -177,6 +177,26 @@ public class CodeController {
     return ResponseEntity.ok(getTranslations(DefaultTextType.getCableInfoTypes()));
   }
 
+  @ApiOperation(value = "Gets event natures",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json"
+  )
+  @RequestMapping(value = "/eventnatures", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Map<EventNature, String>> getEventNatures() {
+    return ResponseEntity.ok(getTranslations(EventNature.values()));
+  }
+
+  @ApiOperation(value = "Gets surface hardness types",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json"
+  )
+  @RequestMapping(value = "/surfacehardnesstypes", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Map<SurfaceHardness, String>> getSurfaceHardnessTypes() {
+    return ResponseEntity.ok(getTranslations(SurfaceHardness.values()));
+  }
+
   private <T extends Enum<T>> Map<T, String> getTranslations(T[] values) {
     return Stream.of(values)
         .collect(Collectors.toMap(a -> a, a -> enumTranslator.getTranslation(a)));

@@ -44,7 +44,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private List<String> placementContracts;
   private List<String> cableReports;
 
-  @ApiModelProperty(hidden = true)
+  @ApiModelProperty(value = "Application type (always EXCAVATION_ANNOUNCEMENT).", allowableValues="EXCAVATION_ANNOUNCEMENT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.EXCAVATION_ANNOUNCEMENT;

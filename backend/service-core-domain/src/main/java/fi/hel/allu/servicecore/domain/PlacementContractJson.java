@@ -1,12 +1,13 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-
 import java.time.ZonedDateTime;
 
-/**
- * Placement contract (sijoitussopimus) specific data.
- */
+import fi.hel.allu.common.domain.types.ApplicationType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+
+@ApiModel(value = "Placement contract specific data")
 public class PlacementContractJson extends ApplicationExtensionJson {
   private String propertyIdentificationNumber;
   private String additionalInfo;
@@ -15,14 +16,13 @@ public class PlacementContractJson extends ApplicationExtensionJson {
   private Integer sectionNumber;
   private String rationale;
 
+  @ApiModelProperty(value = "Application type (always PLACEMENT_CONTRACT).", allowableValues="PLACEMENT_CONTRACT", required = true)
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.PLACEMENT_CONTRACT;
   }
 
-  /**
-   * In Finnish: kiinteistötunnus
-   */
+  @ApiModelProperty(value = "Property identification number (kiinteistötunnus)")
   public String getPropertyIdentificationNumber() {
     return propertyIdentificationNumber;
   }
@@ -31,9 +31,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.propertyIdentificationNumber = propertyIdentificationNumber;
   }
 
-  /**
-   * In Finnish: lisätiedot.
-   */
+  @ApiModelProperty(value = "Additional information")
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -42,10 +40,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.additionalInfo = additionalInfo;
   }
 
-  /**
-   * In Finnish: sopimusteksti
-   * @return General terms related to the application.
-   */
+  @ApiModelProperty(value = "Contract text")
   public String getContractText() {
     return contractText;
   }
@@ -54,6 +49,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.contractText = contractText;
   }
 
+  @ApiModelProperty(value = "Contract termination date")
   public ZonedDateTime getTerminationDate() {
     return terminationDate;
   }
@@ -62,6 +58,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.terminationDate = terminationDate;
   }
 
+  @ApiModelProperty(value = "Section number (pykälänumero)", readOnly = true)
   public Integer getSectionNumber() {
     return sectionNumber;
   }
@@ -70,6 +67,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     this.sectionNumber = sectionNumber;
   }
 
+  @ApiModelProperty(value = "Rationale")
   public String getRationale() {
     return rationale;
   }
