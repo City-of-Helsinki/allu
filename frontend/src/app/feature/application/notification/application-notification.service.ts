@@ -16,8 +16,7 @@ export class ApplicationNotificationService {
   public getNotificationType(): Observable<ApplicationNotificationType> {
     return combineLatest(
       this.pendingClientData(),
-      this.informationRequest(),
-      this.informationRequestResponse()
+      this.informationRequest()
     ).pipe(
       map((types: ApplicationNotificationType[]) => this.pickType(types))
     );
@@ -35,23 +34,20 @@ export class ApplicationNotificationService {
     );
   }
 
-  private informationRequestResponse(): Observable<ApplicationNotificationType> {
-    return this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
-      map(response => response !== undefined ? ApplicationNotificationType.INFORMATION_REQUEST_RESPONSE : undefined)
-    );
-  }
-
   private pickType(types: ApplicationNotificationType[] = []): ApplicationNotificationType {
     return types.reduce((acc, cur) => cur !== undefined ? cur : acc, undefined);
   }
 
   private activeInformationRequestNotificationType(request: InformationRequest): ApplicationNotificationType {
-    if (request.status === InformationRequestStatus.OPEN) {
-      return ApplicationNotificationType.INFORMATION_REQUEST_PENDING;
-    } else if (request.status === InformationRequestStatus.DRAFT) {
-      return ApplicationNotificationType.INFORMATION_REQUEST_DRAFT;
-    } else {
-      return undefined;
+    switch (request.status) {
+      case InformationRequestStatus.OPEN:
+        return ApplicationNotificationType.INFORMATION_REQUEST_PENDING;
+      case InformationRequestStatus.DRAFT:
+        return ApplicationNotificationType.INFORMATION_REQUEST_DRAFT;
+      case InformationRequestStatus.RESPONSE_RECEIVED:
+        return ApplicationNotificationType.INFORMATION_REQUEST_RESPONSE;
+      default:
+        return undefined;
     }
   }
 }

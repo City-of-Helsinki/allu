@@ -102,6 +102,6 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     this.store.dispatch(new SetKindsWithSpecifiers(application.kindsWithSpecifiers));
     this.store.dispatch(new SetLocations(application.locations));
     this.readonly = this.data.readonly
-      || !isBetween(application.status, ApplicationStatus.PENDING_CLIENT, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
+      || !isBetween(application.status, ApplicationStatus.WAITING_INFORMATION, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
   }
 }
