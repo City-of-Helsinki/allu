@@ -2,6 +2,7 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.ZonedDateTime;
 
+import fi.hel.allu.model.dao.InformationRequestDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,20 +38,21 @@ public class ApplicationStatusChangeHandler {
   private final ApplicationDao applicationDao;
   private final ChargeBasisService chargeBasisService;
   private final HistoryDao historyDao;
+  private final InformationRequestDao informationRequestDao;
 
 
   @Autowired
   public ApplicationStatusChangeHandler(ApplicationService applicationService,
       SupervisionTaskService supervisionTaskService, LocationService locationService,
       ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
-      HistoryDao historyDao) {
+      HistoryDao historyDao, InformationRequestDao informationRequestDao) {
     this.applicationService = applicationService;
     this.supervisionTaskService = supervisionTaskService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
     this.chargeBasisService = chargeBasisService;
     this.historyDao = historyDao;
-
+    this.informationRequestDao = informationRequestDao;
   }
 
   public void handleStatusChange(ApplicationStatusChangeEvent statusChangeEvent) {
@@ -109,6 +111,7 @@ public class ApplicationStatusChangeHandler {
 
   protected void handleCancelledStatus(Application application) {
     supervisionTaskService.cancelOpenTasksOfApplication(application.getId());
+    informationRequestDao.closeInformationRequestOf(application.getId());
     if (application.getReplacesApplicationId() != null) {
       // If replacing application cancelled, clear replacing application ID from replaced application
       applicationDao.setApplicationReplaced(application.getReplacesApplicationId(), null);

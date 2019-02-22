@@ -3,6 +3,7 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
+import fi.hel.allu.model.dao.InformationRequestDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,12 @@ public class PlacementContractStatusChangeHandler extends ApplicationStatusChang
 
   @Autowired
   public PlacementContractStatusChangeHandler(ApplicationService applicationService,
-      SupervisionTaskService supervisionTaskService, LocationService locationService, ApplicationDao applicationDao,
-      ChargeBasisService chargeBasisService, HistoryDao historyDao, DecisionDao decisionDao) {
-    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
+      SupervisionTaskService supervisionTaskService, LocationService locationService,
+      ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
+      HistoryDao historyDao, InformationRequestDao informationRequestDao,
+      DecisionDao decisionDao) {
+    super(applicationService, supervisionTaskService, locationService,
+            applicationDao, chargeBasisService, historyDao, informationRequestDao);
     this.decisionDao = decisionDao;
   }
 

@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
+import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,8 +44,6 @@ public class TrafficArrangementStatusChangeHandlerTest {
   @Mock
   private LocationService locationService;
   @Mock
-  private DecisionDao decisionDao;
-  @Mock
   private SupervisionTaskService supervisionTaskService;
   @Mock
   private ApplicationService applicationService;
@@ -53,11 +52,9 @@ public class TrafficArrangementStatusChangeHandlerTest {
   @Mock
   private ChargeBasisService chargeBasisService;
   @Mock
-  private InvoiceService invoiceService;
-  @Mock
-  private WinterTimeService winterTimeService;
-  @Mock
   private HistoryDao historyDao;
+  @Mock
+  private InformationRequestDao informationRequestDao;
 
 
   @Captor
@@ -69,7 +66,7 @@ public class TrafficArrangementStatusChangeHandlerTest {
     supervisor.setId(228);
     createApplicationWithLocation();
     statusChangeHandler = new TrafficArrangementStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
+        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao);
     when(locationService.findSupervisionTaskOwner(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
         location.getCityDistrictId())).thenReturn(Optional.of(supervisor));
   }

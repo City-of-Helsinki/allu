@@ -139,6 +139,12 @@ public class InformationRequestDao {
   }
 
   @Transactional
+  public void closeInformationRequestOf(Integer applicationId) {
+    queryFactory.update(informationRequest).set(informationRequest.status, InformationRequestStatus.CLOSED)
+      .where(informationRequest.applicationId.eq(applicationId)).execute();
+  }
+
+  @Transactional
   public void delete(Integer id) {
     deleteInformationRequestFields(id);
     queryFactory

@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service.event.handler;
 
+import fi.hel.allu.model.dao.InformationRequestDao;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -16,9 +17,10 @@ import fi.hel.allu.model.service.SupervisionTaskService;
 public class TrafficArrangementStatusChangeHandler extends ApplicationStatusChangeHandler {
 
   public TrafficArrangementStatusChangeHandler(ApplicationService applicationService,
-      SupervisionTaskService supervisionTaskService, LocationService locationService,
-      ApplicationDao applicationDao, ChargeBasisService chargeBasisService, HistoryDao historyDao) {
-    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
+     SupervisionTaskService supervisionTaskService, LocationService locationService,
+     ApplicationDao applicationDao, ChargeBasisService chargeBasisService, HistoryDao historyDao,
+     InformationRequestDao informationRequestDao) {
+    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao);
   }
 
   @Override

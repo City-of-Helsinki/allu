@@ -1,7 +1,6 @@
 package fi.hel.allu.model.service.event.handler;
 
-import java.util.Arrays;
-
+import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,8 +35,6 @@ public class ApplicationStatusChangeHandlerTest {
   @Mock
   private LocationService locationService;
   @Mock
-  private DecisionDao decisionDao;
-  @Mock
   private SupervisionTaskService supervisionTaskService;
   @Mock
   private ApplicationService applicationService;
@@ -47,11 +44,14 @@ public class ApplicationStatusChangeHandlerTest {
   private ChargeBasisService chargeBasisService;
   @Mock
   private HistoryDao historyDao;
+  @Mock
+  private InformationRequestDao informationRequestDao;
 
   @Before
   public void setup() {
     statusChangeHandler = new ApplicationStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao);
+        supervisionTaskService, locationService, applicationDao, chargeBasisService,
+        historyDao, informationRequestDao);
     application = createApplication();
   }
 
@@ -79,6 +79,18 @@ public class ApplicationStatusChangeHandlerTest {
     application.setType(ApplicationType.EVENT);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     Mockito.verify(applicationDao).updateStatus(replacedApplicationId, StatusType.REPLACED);
+  }
+
+  @Test
+  public void onCancelShouldCancelOpenSupervisionTasks() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.CANCELLED, USER_ID));
+    verify(supervisionTaskService, times(1)).cancelOpenTasksOfApplication(application.getId());
+  }
+
+  @Test
+  public void onCancelShouldCloseInformationRequests() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.CANCELLED, USER_ID));
+    verify(informationRequestDao, times(1)).closeInformationRequestOf(application.getId());
   }
 
 

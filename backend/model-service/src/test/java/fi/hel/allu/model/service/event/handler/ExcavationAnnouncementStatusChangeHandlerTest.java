@@ -3,6 +3,7 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,8 +36,6 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   @Mock
   private LocationService locationService;
   @Mock
-  private DecisionDao decisionDao;
-  @Mock
   private SupervisionTaskService supervisionTaskService;
   @Mock
   private ApplicationService applicationService;
@@ -52,13 +51,15 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   private WinterTime winterTime;
   @Mock
   private HistoryDao historyDao;
+  @Mock
+  private InformationRequestDao informationRequestDao;
 
 
   @Before
   public void setup() {
     statusChangeHandler = new ExcavationAnnouncementStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao, invoiceService,
-        winterTimeService);
+        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
+        informationRequestDao, invoiceService, winterTimeService);
     createApplication();
     when(winterTimeService.getWinterTime()).thenReturn(winterTime);
     when(winterTime.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);

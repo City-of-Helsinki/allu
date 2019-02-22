@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,8 @@ public class PlacementContractStatusChangeHandlerTest {
   private ChargeBasisService chargeBasisService;
   @Mock
   private HistoryDao historyDao;
+  @Mock
+  private InformationRequestDao informationRequestDao;
 
 
   @Captor
@@ -66,7 +69,7 @@ public class PlacementContractStatusChangeHandlerTest {
   @Before
   public void setup() {
     statusChangeHandler = new PlacementContractStatusChangeHandler(applicationService, supervisionTaskService,
-        locationService, applicationDao, chargeBasisService, historyDao, decisionDao);
+        locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao, decisionDao);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);
