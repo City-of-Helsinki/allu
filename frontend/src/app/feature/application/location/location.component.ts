@@ -33,14 +33,18 @@ import {FixedLocationService} from '@service/map/fixed-location.service';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import {select, Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, takeUntil, takeWhile} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
 import {EMPTY} from 'rxjs/internal/observable/empty';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
-import {ApplicationStatus} from '@model/application/application-status';
+import {DistributionEntry} from '@model/common/distribution-entry';
+import {DistributionType} from '@model/common/distribution-type';
+import {DefaultRecipient} from '@model/common/default-recipient';
+import {DefaultRecipientHub} from '@service/recipients/default-recipient-hub';
+import {CurrentUser} from '@service/user/current-user';
 
 @Component({
   selector: 'type',
@@ -81,7 +85,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private store: Store<fromRoot.State>,
     private fixedLocationService: FixedLocationService,
     private fb: FormBuilder,
-    private notification: NotificationService) {
+    private defaultRecipientHub: DefaultRecipientHub,
+    private notification: NotificationService,
+    private currentUser: CurrentUser) {
 
     this.areaCtrl = this.fb.control(undefined);
     this.sectionsCtrl = this.fb.control([]);
@@ -245,10 +251,16 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.application.locations = locations;
     this.application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
     this.application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
+    this.applicationStore.applicationChange(this.application);
+
+    const updated = this.applicationStore.snapshot.application;
+
+    this.initDistribution(updated);
+    this.addCurrentUserToDistribution(updated);
 
     const urlSuffix = this.applicationStore.isNew ? 'edit' : 'summary';
 
-    this.applicationStore.save(this.application)
+    this.applicationStore.save(updated)
       .subscribe(
         app => {
           this.notification.success(findTranslation('location.action.saved'));
@@ -461,5 +473,36 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private setSelectableAreas(areas: FixedLocationArea[]): void {
     this.areas = areas;
     this.areaSections = [];
+  }
+
+  private initDistribution(application: Application): void {
+    this.defaultRecipientHub.defaultRecipientsByApplicationType(application.type).pipe(
+      takeWhile(() => this.applicationStore.isNew), // Only add default attachments if it is a new application
+      takeUntil(this.destroy),
+      map(recipients => recipients.map(r => this.toDistributionEntry(r)))
+    ).subscribe(distributionEntries => {
+      application.decisionDistributionList.push(...distributionEntries);
+      this.applicationStore.applicationChange(application);
+    }, err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
+  }
+
+  private addCurrentUserToDistribution(application: Application): void {
+    const existingApplication = NumberUtil.isDefined(application.id);
+    if (!existingApplication && (application.type === ApplicationType.EVENT
+      || application.type === ApplicationType.SHORT_TERM_RENTAL)) {
+      this.currentUser.user.subscribe(user => {
+        const entry = new DistributionEntry(null, user.realName, DistributionType.EMAIL, user.emailAddress);
+        application.decisionDistributionList.push(entry);
+        this.applicationStore.applicationChange(application);
+      });
+    }
+  }
+
+  private toDistributionEntry(recipient: DefaultRecipient): DistributionEntry {
+    const de = new DistributionEntry();
+    de.name = recipient.email;
+    de.email = recipient.email;
+    de.distributionType = DistributionType.EMAIL;
+    return de;
   }
 }
