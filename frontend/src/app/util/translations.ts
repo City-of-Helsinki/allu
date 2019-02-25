@@ -1117,7 +1117,8 @@ export const translations = {
     },
     button: {
       save: 'Tallenna sijaintitiedot',
-      edit: 'Muokkaa sijaintia'
+      edit: 'Muokkaa sijaintia',
+      viewOnMap: 'Kartalle'
     },
     action: {
       saved: 'Sijaintitiedot tallennettu'

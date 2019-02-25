@@ -18,15 +18,25 @@
                  [placeholder]="'location.additionalInfo' | translation"/>
         </mat-form-field>
       </div>
-      <div fxFlex="0 1 calc(40%-18px)" *ngIf="canBeEdited" class="align-right">
+      <div fxFlex="0 1 calc(40%-18px)" class="align-right">
         <button
-          *availableTo="MODIFY_ROLES"
           mat-raised-button
           type="button"
           color="primary"
-          [routerLink]="['/applications', application.id, 'location']">
-          {{'location.button.edit' | translation | uppercase}}
+          [routerLink]="['/home']"
+          [queryParams]="{applicationId: application.id}">
+          {{'location.button.viewOnMap' | translation | uppercase}}
         </button>
+        <ng-container *ngIf="canBeEdited">
+          <button
+            *availableTo="MODIFY_ROLES"
+            mat-raised-button
+            type="button"
+            color="primary"
+            [routerLink]="['/applications', application.id, 'location']">
+            {{'location.button.edit' | translation | uppercase}}
+          </button>
+        </ng-container>
       </div>
     </div>
     <div fxLayout="row" fxLayoutGap="18px" *ngIf="area">
