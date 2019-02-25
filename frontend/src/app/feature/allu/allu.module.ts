@@ -59,6 +59,7 @@ import {ConfigurationEffects} from './effects/configuration-effects';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 import {UserEffects} from '@feature/allu/effects/user-effects';
 import {ContactService} from '@service/customer/contact.service';
+import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects';
 
 @NgModule({
   imports: [
@@ -72,7 +73,8 @@ import {ContactService} from '@service/customer/contact.service';
       CityDistrictEffects,
       CodeSetEffects,
       ConfigurationEffects,
-      UserEffects
+      UserEffects,
+      FixedLocationEffects
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

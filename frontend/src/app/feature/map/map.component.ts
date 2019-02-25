@@ -10,14 +10,14 @@ import {Location} from '@model/common/location';
 import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '@service/map/map-controller';
 import {Observable, Subject} from 'rxjs';
-import {FixedLocationService} from '@service/map/fixed-location.service';
 import {ProjectService} from '@service/project/project.service';
 import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {MapUtil} from '@service/map/map.util';
 import {GeometryCollection} from 'geojson';
 import {MapLayer} from '@service/map/map-layer';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 import * as fromMap from '@feature/map/reducers';
 
 @Component({
@@ -44,10 +44,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private mapStore: MapStore,
-    private fixedLocationService: FixedLocationService,
     private projectService: ProjectService,
     private mapController: MapController,
-    private store: Store<fromMap.State>) {}
+    private store: Store<fromRoot.State>) {}
 
   ngOnInit() {
     this.mapStore.roleChange(this.role);
@@ -208,7 +207,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.mapStore.selectedSections.pipe(
         takeUntil(this.destroy),
-        switchMap(ids => this.fixedLocationService.sectionsByIds(ids))
+        switchMap(ids => this.store.pipe(select(fromRoot.getFixedLocationSectionsByIds(ids)))),
       ).subscribe(fxs => this.drawFixedLocations(fxs));
 
     this.mapStore.editedLocation.pipe(takeUntil(this.destroy))

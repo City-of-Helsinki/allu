@@ -4,15 +4,13 @@ import {Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as filesaver from 'file-saver';
 
-import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {CityDistrict} from '../../../model/common/city-district';
 import {AttachmentHub} from '../../application/attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {ArrayUtil} from '../../../util/array-util';
 import {FixedLocationArea} from '../../../model/common/fixed-location-area';
-import {FixedLocationService} from '../../../service/map/fixed-location.service';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from '../../allu/reducers';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
 import {NotificationService} from '../../notification/notification.service';
@@ -30,15 +28,13 @@ export class DefaultAttachmentComponent implements OnInit {
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   hasFileOverDropzone = false;
   attachmentType: string;
-  areas = this.fixedLocationService.existing
-    .pipe(map(areas => areas.sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name))));
+  areas: Observable<FixedLocationArea[]>;
 
   file: Blob;
 
   constructor(private fb: FormBuilder,
               private route: ActivatedRoute,
               private router: Router,
-              private fixedLocationService: FixedLocationService,
               private store: Store<fromRoot.State>,
               private attachmentHub: AttachmentHub,
               private notification: NotificationService) {
@@ -58,6 +54,11 @@ export class DefaultAttachmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
+
+    this.areas = this.store.pipe(
+      select(fromRoot.getAllFixedLocations),
+      map(areas => areas.sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name)))
+    );
 
     this.route.params.pipe(
       map(params => params['id']),

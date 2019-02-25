@@ -2,24 +2,29 @@ import * as fromCityDistricts from './city-district-reducer';
 import * as fromCodeSets from './code-set-reducer';
 import * as fromConfigurations from './configuration-reducer';
 import * as fromUsers from './user-reducer';
+import * as fromFixedLocations from './fixed-location-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {Some} from '@util/option';
 import {CodeSetTypeMap} from '@model/codeset/codeset';
 import {User} from '@model/user/user';
 import {Configuration} from '@model/config/configuration';
+import {ArrayUtil} from '@util/array-util';
+
 
 export interface State {
   cityDistricts: fromCityDistricts.State;
   codeSets: fromCodeSets.State;
   configurations: fromConfigurations.State;
   users: fromUsers.State;
+  fixedLocations: fromFixedLocations.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
   cityDistricts: fromCityDistricts.reducer,
   codeSets: fromCodeSets.reducer,
   configurations: fromConfigurations.reducer,
-  users: fromUsers.reducer
+  users: fromUsers.reducer,
+  fixedLocations: fromFixedLocations.reducer
 };
 
 export const getCityDistrictsState = createFeatureSelector<fromCityDistricts.State>('cityDistricts');
@@ -84,4 +89,34 @@ export const {
 export const getActiveUsers = createSelector(
   getAllUsers,
   (users: User[]) => users.filter(user => user.isActive)
+);
+
+export const getFixedLocationsState = createFeatureSelector<fromFixedLocations.State>('fixedLocations');
+
+export const {
+  selectIds: getFixedLocationIds,
+  selectEntities: getFixedLocationEntities,
+  selectAll: getAllFixedLocations,
+  selectTotal: getFixedLocationTotal
+} = fromFixedLocations.adapter.getSelectors(getFixedLocationsState);
+
+export const getFixedLocationAreaById = (id: number) => createSelector(
+  getFixedLocationEntities,
+  (fixedLocations) => fixedLocations[id]
+);
+
+export const getFixedLocationAreaBySectionIds = (sectionIds: number[] = []) => createSelector(
+  getAllFixedLocations,
+  (fixedLocations) => {
+    const matching = fixedLocations.filter(a => a.hasSectionIds(sectionIds));
+    return ArrayUtil.first(matching);
+  }
+);
+
+export const getFixedLocationSectionsByIds = (sectionIds: number[] = []) => createSelector(
+  getAllFixedLocations,
+  (fixedLocations) => {
+    const sections = fixedLocations.reduce((acc, cur) => acc.concat(cur.sections), []);
+    return sections.filter(section => sectionIds.indexOf(section.id) >= 0);
+  }
 );

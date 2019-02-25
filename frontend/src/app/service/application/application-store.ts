@@ -15,7 +15,8 @@ import {isCommon} from '@model/application/attachment/attachment-type';
 import {ApplicationDraftService} from './application-draft.service';
 import {CustomerService} from '../customer/customer.service';
 import {catchError, distinctUntilChanged, filter, map, skip, switchMap, take, tap} from 'rxjs/internal/operators';
-import {Action, Store} from '@ngrx/store';
+import {Action, select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as TagAction from '@feature/application/actions/application-tag-actions';
 import * as ApplicationAction from '@feature/application/actions/application-actions';
@@ -28,6 +29,9 @@ import {InformationRequestResult} from '@feature/information-request/information
 import {Customer} from '@model/customer/customer';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {NotificationService} from '@feature/notification/notification.service';
+import {findTranslation} from '@util/translations';
+import {DefaultAttachmentInfo} from '@model/application/attachment/default-attachment-info';
+import {Some} from '@util/option';
 
 export interface ApplicationState {
   application?: Application;
@@ -60,7 +64,7 @@ export class ApplicationStore {
               private customerService: CustomerService,
               private attachmentHub: AttachmentHub,
               private depositService: DepositService,
-              private store: Store<fromApplication.State>,
+              private store: Store<fromRoot.State>,
               private notification: NotificationService) {
   }
 
@@ -282,7 +286,6 @@ export class ApplicationStore {
     }
   }
 
-
   private saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
     if (attachments.length === 0) {
       return this.loadAttachments(applicationId);
@@ -333,7 +336,12 @@ export class ApplicationStore {
   }
 
   private saveDraft(application: Application): Observable<Application> {
-    if (!NumberUtil.isExisting(application) || this.snapshot.draft) {
+    const newApplication = !NumberUtil.isExisting(application);
+    if (newApplication) {
+      return this.applicationDraftService.save(application).pipe(
+        tap(result => this.initDefaultAttachments(result))
+      );
+    } else if (this.snapshot.draft) {
       return this.applicationDraftService.save(application);
     } else {
       // Convert to full application
@@ -375,5 +383,24 @@ export class ApplicationStore {
     } else {
       return this.applicationService.changeStatus(appId, status, changeInfo);
     }
+  }
+
+  private initDefaultAttachments(application: Application): void {
+    this.defaultAttachmentsForArea(application).pipe(
+      take(1),
+      switchMap(attachments => this.saveAttachments(application.id, attachments))
+    ).subscribe(
+      () => {},
+      err => this.notification.error(findTranslation('attachment.error.defaultAttachmentByArea')));
+  }
+
+  private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {
+    return Some(application.firstLocation)
+      .map(loc => loc.fixedLocationIds)
+      .map(ids => this.store.pipe(
+        select(fromRoot.getFixedLocationAreaBySectionIds(ids)),
+        filter(area => !!area),
+        switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.type, area.id))
+      )).orElse(of([]));
   }
 }

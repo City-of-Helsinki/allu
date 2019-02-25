@@ -6,10 +6,11 @@ import {AttachmentHub} from '../../application/attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {translateArray} from '../../../util/translations';
 import {ContentRow} from '../../../model/common/content-row';
-import {FixedLocationService} from '../../../service/map/fixed-location.service';
 import {Some} from '../../../util/option';
 import {map} from 'rxjs/internal/operators';
 import {NotificationService} from '../../notification/notification.service';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 
 @Component({
   selector: 'default-attachments',
@@ -24,8 +25,8 @@ export class DefaultAttachmentsComponent implements OnInit {
   constructor(private router: Router,
               private route: ActivatedRoute,
               private attachmentHub: AttachmentHub,
-              private fixedLocationService: FixedLocationService,
-              private notification: NotificationService) {
+              private notification: NotificationService,
+              private store: Store<fromRoot.State>) {
   }
 
   ngOnInit(): void {
@@ -52,8 +53,10 @@ export class DefaultAttachmentsComponent implements OnInit {
 
   areaName(areaId: number): Observable<string> {
     return Some(areaId)
-      .map(id => this.fixedLocationService.areaById(id).pipe(map(area => area.name)))
-      .orElse(EMPTY);
+      .map(id => this.store.pipe(
+        select(fromRoot.getFixedLocationAreaById(id)),
+        map(area => area.name)
+      )).orElse(EMPTY);
   }
 
   private loadAttachmentInfos(): void {

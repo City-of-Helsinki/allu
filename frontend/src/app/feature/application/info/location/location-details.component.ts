@@ -7,12 +7,11 @@ import {Location} from '@model/common/location';
 import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
 import {LocationState} from '@service/application/location-state';
-import {FixedLocationService} from '@service/map/fixed-location.service';
 import {applicationCanBeEdited} from '@model/application/application-status';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import * as fromRoot from '@feature/allu/reducers';
 import {select, Store} from '@ngrx/store';
-import {map, take} from 'rxjs/internal/operators';
+import {filter, map, take} from 'rxjs/internal/operators';
 import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
@@ -43,7 +42,6 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
 
   constructor(private mapStore: MapStore,
               private locationState: LocationState,
-              private fixedLocationService: FixedLocationService,
               private store: Store<fromRoot.State>) {
   }
 
@@ -56,11 +54,14 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     this.multipleLocations = this._application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     // Sections can be selected only from single area so we can
     // get area based on its sections
-    this.fixedLocationService.areaBySectionIds(this.location.fixedLocationIds).pipe(
-      take(1)
+    this.store.pipe(
+      select(fromRoot.getFixedLocationAreaBySectionIds(this.location.fixedLocationIds)),
+      take(1),
+      filter(area => !!area)
     ).subscribe(area => this.area = area.name);
 
-    this.fixedLocationService.sectionsByIds(this.location.fixedLocationIds).pipe(
+    this.store.pipe(
+      select(fromRoot.getFixedLocationSectionsByIds(this.location.fixedLocationIds)),
       take(1),
       map(sections => sections.map(s => s.name)),
       map(names => names.sort(ArrayUtil.naturalSort((name: string) => name))),
