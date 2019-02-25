@@ -1116,7 +1116,8 @@ export const translations = {
       addressSearch: 'Osoitehaku epäonnistui'
     },
     button: {
-      save: 'Tallenna sijaintitiedot'
+      save: 'Tallenna sijaintitiedot',
+      edit: 'Muokkaa sijaintia'
     },
     action: {
       saved: 'Sijaintitiedot tallennettu'
