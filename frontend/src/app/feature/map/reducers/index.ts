@@ -3,12 +3,14 @@ import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelecto
 import {State} from '../../application/reducers';
 import * as fromRoot from '../../allu/reducers';
 import * as fromLayers from './map-layer-reducer';
+import * as fromAddressSearch from './address-search-reducer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {Dictionary} from '@ngrx/entity';
 import {MapLayer} from '@service/map/map-layer';
 
 export interface MapState {
   layers: fromLayers.State;
+  address: fromAddressSearch.State;
 }
 
 export interface State extends fromRoot.State {
@@ -16,7 +18,8 @@ export interface State extends fromRoot.State {
 }
 
 export const reducers: ActionReducerMap<MapState> = {
-  layers: fromLayers.createReducerFor(ActionTargetType.Home)
+  layers: fromLayers.createReducerFor(ActionTargetType.Home),
+  address: fromAddressSearch.reducer
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Map reducers');
@@ -27,6 +30,10 @@ export const reducersProvider = [
 
 export const getMapState = createFeatureSelector<MapState>('map');
 
+
+/**
+ * Map layer selectors
+ */
 export const getMapLayersEntityState = createSelector(
   getMapState,
   (state: MapState) => state.layers
@@ -65,3 +72,22 @@ export const {
   getSelectedLayers,
   getTreeStructure
 } = createMapLayerSelectors(getMapLayersEntityState);
+
+
+/**
+ * Address search reducers
+ */
+export const getAddressSearchEntityState = createSelector(
+  getMapState,
+  (state: MapState) => state.address
+);
+
+export const getMatchingAddressed = createSelector(
+  getAddressSearchEntityState,
+  fromAddressSearch.getMatching
+);
+
+export const getCoordinates = createSelector(
+  getAddressSearchEntityState,
+  fromAddressSearch.getCoordinates
+);

@@ -15,10 +15,11 @@ import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {StoredFilter} from '@model/user/stored-filter';
 import {debounceTime, filter, map, takeUntil} from 'rxjs/internal/operators';
 import {select, Store} from '@ngrx/store';
-import * as fromMapLayers from '@feature/map/reducers';
+import * as fromMap from '@feature/map/reducers';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {merge} from 'rxjs/internal/observable/merge';
+import {FetchCoordinates, Search} from '@feature/map/actions/address-search-actions';
 
 
 enum BarType {
@@ -42,7 +43,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   searchForm: FormGroup;
   addressControl: FormControl;
-  matchingAddresses: Observable<Array<PostalAddress>>;
+  matchingAddresses$: Observable<PostalAddress[]>;
   statuses = EnumUtil.enumValues(ApplicationStatusGroup);
   MAP_FILTER = StoredFilterType.MAP;
   mapFilter: Observable<MapSearchFilter>;
@@ -58,7 +59,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
               private mapStore: MapStore,
               private storedFilterStore: StoredFilterStore,
               private notification: NotificationService,
-              private store: Store<fromMapLayers.State>) {
+              private store: Store<fromMap.State>) {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
@@ -69,16 +70,11 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.mapStore.coordinates.pipe(
-      takeUntil(this.destroy),
-      filter(coords => !coords.isDefined())
-    ).subscribe(() => this.notification.success('Osoitetta ei löytynyt'));
-
     this.addressControl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),
-      filter(searchTerm => !!searchTerm && searchTerm.length >= 3)
-    ).subscribe(searchTerm => this.mapStore.addressSearchChange(searchTerm));
+      filter(term => !!term && term.length >= 3)
+    ).subscribe(term => this.store.dispatch(new Search(term)));
 
     merge(
       this.searchForm.get('address').valueChanges,
@@ -87,10 +83,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy)
     ).subscribe(() => this.onFormChange(this.searchForm.getRawValue()));
 
-    this.matchingAddresses = this.mapStore.matchingAddresses.pipe(
-      takeUntil(this.destroy),
-      map(matching => matching.sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress)))
-    );
+    this.matchingAddresses$ = this.store.select(fromMap.getMatchingAddressed);
 
     this.mapFilter = this.mapStore.mapSearchFilter.pipe(takeUntil(this.destroy));
 
@@ -120,7 +113,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   public addressSelected(streetAddress: string) {
-    this.mapStore.coordinateSearchChange(StringUtil.capitalize(streetAddress));
+    this.store.dispatch(new FetchCoordinates(StringUtil.capitalize(streetAddress)));
+    // this.mapStore.coordinateSearchChange();
     this.searchForm.patchValue({address: streetAddress});
   }
 
@@ -135,12 +129,12 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   private getLayerIds() {
     return this.targetType === ActionTargetType.Location
       ? fromLocationMapLayers.getLayerIds
-      : fromMapLayers.getLayerIds;
+      : fromMap.getLayerIds;
   }
 
   private getSelectedLayerIds() {
     return this.targetType === ActionTargetType.Location
       ? fromLocationMapLayers.getSelectedLayerIds
-      : fromMapLayers.getSelectedLayerIds;
+      : fromMap.getSelectedLayerIds;
   }
 }

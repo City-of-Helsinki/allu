@@ -1,19 +1,16 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, merge, Observable} from 'rxjs';
-import {Geocoordinates} from '../../model/common/geocoordinates';
-
-import {Application} from '../../model/application/application';
-import {Option, Some} from '../../util/option';
-import {LocationService} from '../location.service';
-import {Location} from '../../model/common/location';
-import {NotificationService} from '../../feature/notification/notification.service';
-import {defaultFilter, MapSearchFilter} from '../map-search-filter';
-import {PostalAddress} from '../../model/common/postal-address';
+import {Application} from '@model/application/application';
+import {Some} from '@util/option';
+import {LocationService} from '@service/location.service';
+import {Location} from '@model/common/location';
+import {defaultFilter, MapSearchFilter} from '@service/map-search-filter';
+import {PostalAddress} from '@model/common/postal-address';
 import {MapDataService} from './map-data-service';
 import {LatLngBounds} from 'leaflet';
-import {ObjectUtil} from '../../util/object.util';
-import {StoredFilter} from '../../model/user/stored-filter';
-import {StoredFilterType} from '../../model/user/stored-filter-type';
+import {ObjectUtil} from '@util/object.util';
+import {StoredFilter} from '@model/user/stored-filter';
+import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
 import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
@@ -22,7 +19,6 @@ export type MapRole = 'SEARCH' | 'LOCATION';
 
 export interface MapState {
   role: MapRole;
-  coordinates: Option<Geocoordinates>;
   coordinateSearch: string;
   mapSearchFilter: MapSearchFilter;
   locationSearchFilter: MapSearchFilter;
@@ -40,7 +36,6 @@ export interface MapState {
 
 const initialState: MapState = {
   role: undefined,
-  coordinates: undefined,
   coordinateSearch: undefined,
   mapSearchFilter: defaultFilter,
   locationSearchFilter: defaultFilter,
@@ -62,21 +57,13 @@ export class MapStore {
 
   constructor(private mapDataService: MapDataService,
               private locationService: LocationService,
-              private storedFilterStore: StoredFilterStore,
-              private notification: NotificationService) {
+              private storedFilterStore: StoredFilterStore) {
 
     // Search when either of filters change
     merge(this.mapSearchFilter, this.locationSearchFilter).pipe(
       debounceTime(300),
       filter(storedFilter => !!storedFilter.geometry)
     ).subscribe(storedFilter => this.fetchMapDataByFilter(storedFilter));
-
-    // When search changes fetches new coordinates and adds them to coordinates observable
-    this.coordinateSearch.pipe(
-      filter(search => !!search),
-      debounceTime(300),
-      distinctUntilChanged(),
-    ).subscribe(term => this.fetchCoordinates(term));
 
     this.storedFilterStore.getCurrent(StoredFilterType.MAP)
       .subscribe(sf => this.storedFilterChange(sf));
@@ -101,21 +88,6 @@ export class MapStore {
   get applications(): Observable<Array<Application>> {
     return this.state$.pipe(
       map(state => state.visibleApplications),
-      distinctUntilChanged()
-    );
-  }
-
-  get coordinates(): Observable<Option<Geocoordinates>> {
-    return this.state$.pipe(
-      map(state => state.coordinates),
-      distinctUntilChanged(),
-      filter(c => !!c)
-    );
-  }
-
-  get coordinateSearch(): Observable<string> {
-    return this.state$.pipe(
-      map(state => state.coordinateSearch),
       distinctUntilChanged()
     );
   }
@@ -177,13 +149,6 @@ export class MapStore {
     );
   }
 
-  get matchingAddresses(): Observable<PostalAddress[]> {
-    return this.state$.pipe(
-      map(state => state.matchingAddresses),
-      distinctUntilChanged()
-    );
-  }
-
   get role(): Observable<MapRole> {
     return this.state$.pipe(
       map(state => state.role),
@@ -203,14 +168,6 @@ export class MapStore {
       map(state => state.loading),
       distinctUntilChanged()
     );
-  }
-
-  coordinateSearchChange(term: string): void {
-    this.state$.next({...this.state$.getValue(), coordinateSearch: term});
-  }
-
-  coordinateChange(coordinates: Option<Geocoordinates>): void {
-    this.state$.next({...this.state$.getValue(), coordinates});
   }
 
   selectedApplicationChange(application: Application): void {
@@ -266,13 +223,6 @@ export class MapStore {
     this.state$.next({...this.state$.getValue(), drawingAllowed: allowed});
   }
 
-  addressSearchChange(searchTerm: string): void {
-    this.locationService.search(searchTerm)
-      .subscribe(
-        result => this.state$.next({...this.state$.getValue(), matchingAddresses: result}),
-        err => this.state$.next({...this.state$.getValue(), matchingAddresses: []}));
-  }
-
   storedFilterChange(storedFilter: StoredFilter): void {
     const mapSearchFilter = Some(storedFilter)
       .map(sf => sf.filter)
@@ -296,13 +246,5 @@ export class MapStore {
     this.state$.next({...this.snapshot, loading: true});
     this.mapDataService.applicationsByLocation(searchFilter)
       .subscribe(applications => this.applicationsChange(applications));
-  }
-
-  private fetchCoordinates(term: string) {
-    this.locationService.geocode(term)
-      .subscribe(
-        coordinates => this.coordinateChange(coordinates),
-        err => this.notification.errorInfo(err)
-      );
   }
 }

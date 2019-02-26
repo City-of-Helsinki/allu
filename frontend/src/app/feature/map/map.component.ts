@@ -1,22 +1,24 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
-import {MapRole, MapStore} from '../../service/map/map-store';
-import {Application} from '../../model/application/application';
-import {Some} from '../../util/option';
-import {findTranslation} from '../../util/translations';
-import {pathStyle, styleByApplicationType} from '../../service/map/map-draw-styles';
-import {FixedLocationSection} from '../../model/common/fixed-location-section';
-import {Location} from '../../model/common/location';
+import {MapRole, MapStore} from '@service/map/map-store';
+import {Application} from '@model/application/application';
+import {Some} from '@util/option';
+import {findTranslation} from '@util/translations';
+import {pathStyle, styleByApplicationType} from '@service/map/map-draw-styles';
+import {FixedLocationSection} from '@model/common/fixed-location-section';
+import {Location} from '@model/common/location';
 import * as L from 'leaflet';
-import {MapController, ShapeAdded} from '../../service/map/map-controller';
+import {MapController, ShapeAdded} from '@service/map/map-controller';
 import {Observable, Subject} from 'rxjs';
-import {FixedLocationService} from '../../service/map/fixed-location.service';
-import {ProjectService} from '../../service/project/project.service';
+import {FixedLocationService} from '@service/map/fixed-location.service';
+import {ProjectService} from '@service/project/project.service';
 import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
-import {TimeUtil} from '../../util/time.util';
-import {MapUtil} from '../../service/map/map.util';
+import {TimeUtil} from '@util/time.util';
+import {MapUtil} from '@service/map/map.util';
 import {GeometryCollection} from 'geojson';
 import {MapLayer} from '@service/map/map-layer';
+import {Store} from '@ngrx/store';
+import * as fromMap from '@feature/map/reducers';
 
 @Component({
   selector: 'map',
@@ -44,7 +46,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapStore: MapStore,
     private fixedLocationService: FixedLocationService,
     private projectService: ProjectService,
-    private mapController: MapController) {}
+    private mapController: MapController,
+    private store: Store<fromMap.State>) {}
 
   ngOnInit() {
     this.mapStore.roleChange(this.role);
@@ -187,8 +190,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initSubscriptions(): void {
-    this.mapStore.coordinates.pipe(takeUntil(this.destroy))
-      .subscribe(opt => opt.map(coordinates => this.mapController.panToCoordinates(coordinates)));
+    this.store.select(fromMap.getCoordinates).pipe(
+      takeUntil(this.destroy),
+      filter(coordinates => !!coordinates)
+    ).subscribe(coordinates => this.mapController.panToCoordinates(coordinates));
 
     this.mapController.shapes.pipe(takeUntil(this.destroy))
       .subscribe(shapes => this.addShape(shapes));

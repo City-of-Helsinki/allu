@@ -18,6 +18,7 @@ import {MapLayerSelectComponent} from '@feature/map/map-layer-select.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatTreeModule} from '@angular/material';
 import {SimpleMapComponent} from '@feature/map/simple-map.component';
+import {AddressSearchEffects} from '@feature/map/effects/address-search-effects';
 
 @NgModule({
   imports: [
@@ -26,7 +27,8 @@ import {SimpleMapComponent} from '@feature/map/simple-map.component';
     AlluCommonModule,
     StoreModule.forFeature('map', reducersToken),
     EffectsModule.forFeature([
-      MapLayerEffects
+      MapLayerEffects,
+      AddressSearchEffects
     ]),
     ReactiveFormsModule,
     MatTreeModule

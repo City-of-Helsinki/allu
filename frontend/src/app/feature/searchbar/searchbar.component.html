@@ -24,9 +24,10 @@
                class="input-addon-field last-item"
                [placeholder]="'searchbar.address' | translation"
                (keyup.enter)="addressSelected(searchForm.value.address)"
+               (blur)="addressSelected(searchForm.value.address)"
                [matAutocomplete]="addressSearch"/>
         <mat-autocomplete #addressSearch="matAutocomplete">
-          <mat-option *ngFor="let address of matchingAddresses | async"
+          <mat-option *ngFor="let address of matchingAddresses$ | async"
                       [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
             {{ address.uiStreetAddress }}
           </mat-option>
@@ -60,10 +61,11 @@
                inputBoxInput
                [placeholder]="'searchbar.address' | translation"
                (keyup.enter)="addressSelected(searchForm.value.address)"
+               (blur)="addressSelected(searchForm.value.address)"
                [matAutocomplete]="addressSearch"/>
       </input-box>
       <mat-autocomplete #addressSearch="matAutocomplete">
-        <mat-option *ngFor="let address of matchingAddresses | async"
+        <mat-option *ngFor="let address of matchingAddresses$ | async"
                     [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
           {{ address.uiStreetAddress }}
         </mat-option>
@@ -117,9 +119,10 @@
           <input matInput type="text" formControlName="address"
                  [placeholder]="'searchbar.address' | translation"
                  (keyup.enter)="addressSelected(searchForm.value.address)"
+                 (blur)="addressSelected(searchForm.value.address)"
                  [matAutocomplete]="addressSearch"/>
           <mat-autocomplete #addressSearch="matAutocomplete">
-            <mat-option *ngFor="let address of matchingAddresses | async"
+            <mat-option *ngFor="let address of matchingAddresses$ | async"
                         [value]="address.uiStreetAddress"
                         (click)="addressSelected(address.uiStreetAddress)">
               {{ address.uiStreetAddress }}
