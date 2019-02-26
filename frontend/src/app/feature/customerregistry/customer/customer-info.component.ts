@@ -1,21 +1,21 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {CustomerType} from '../../../model/customer/customer-type';
-import {EnumUtil} from '../../../util/enum.util';
+import {CustomerType} from '@model/customer/customer-type';
+import {EnumUtil} from '@util/enum.util';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {EMPTY, Observable, Subscription} from 'rxjs';
-import {NumberUtil} from '../../../util/number.util';
+import {NumberUtil} from '@util/number.util';
 import {CustomerForm} from './customer.form';
-import {ComplexValidator} from '../../../util/complex-validator';
-import {Customer} from '../../../model/customer/customer';
-import {CustomerService} from '../../../service/customer/customer.service';
+import {ComplexValidator} from '@util/complex-validator';
+import {Customer} from '@model/customer/customer';
+import {CustomerService} from '@service/customer/customer.service';
 import {
   CustomerNameSearchMinChars,
   CustomerRegistryKeySearchMinChars,
   CustomerSearchQuery
-} from '../../../service/customer/customer-search-query';
-import {CodeSetService} from '../../../service/codeset/codeset.service';
-import {CodeSet} from '../../../model/codeset/codeset';
-import {postalCodeValidator} from '../../../util/complex-validator';
+} from '@service/customer/customer-search-query';
+import {CodeSetService} from '@service/codeset/codeset.service';
+import {CodeSet} from '@model/codeset/codeset';
+import {postalCodeValidator} from '@util/complex-validator';
 import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
 
 export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];

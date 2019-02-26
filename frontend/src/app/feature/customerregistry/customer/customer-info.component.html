@@ -50,11 +50,19 @@
         <input matInput type="text" formControlName="name" required
                [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation"
                [matAutocomplete]="nameSearch" (keyup)="onKeyup($event)"/>
-        <mat-autocomplete #nameSearch="matAutocomplete">
+        <mat-autocomplete #nameSearch="matAutocomplete" class="multi-line-option">
           <mat-option *ngFor="let customer of matchingNameCustomers | async"
                       [value]="customer.name" (onSelectionChange)="customerSelected(customer)">
             <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-              <div fxFlex="auto">{{ customer.name }}</div>
+              <div fxFlex="auto">
+                <h4 class="mat-option-header">{{customer.name}}</h4>
+                <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
+                  {{postalAddress.uiAddress}}
+                </div>
+                <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
+                  {{customer.sapCustomerNumber}}
+                </div>
+              </div>
               <div fxFlex="none">
                 <mat-icon *ngIf="customer.invoicingOnly"
                           [matTooltip]="'customer.invoicingOnly' | translation"
@@ -80,11 +88,20 @@
                placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}"
                [matAutocomplete]="registryKeySearch"/>
 
-        <mat-autocomplete #registryKeySearch="matAutocomplete">
+        <mat-autocomplete #registryKeySearch="matAutocomplete" class="multi-line-option">
           <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
                       [value]="customer.registryKey" (onSelectionChange)="customerSelected(customer)">
             <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-              <div fxFlex="auto">{{ customer.name }} ({{ customer.registryKey}})</div>
+              <div fxFlex="auto">
+                <h4 class="mat-option-header">{{customer.name}}</h4>
+                <div class="mat-option-line">{{customer.registryKey}}</div>
+                <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
+                  {{postalAddress.uiAddress}}
+                </div>
+                <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
+                  {{customer.sapCustomerNumber}}
+                </div>
+              </div>
               <div fxFlex="none">
                 <mat-icon *ngIf="customer.invoicingOnly"
                           [matTooltip]="'customer.invoicingOnly' | translation"
@@ -114,11 +131,20 @@
           <input matInput type="text" formControlName="name" required
                  [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation"
                  [matAutocomplete]="nameSearch" (keyup)="onKeyup($event)"/>
-          <mat-autocomplete #nameSearch="matAutocomplete">
+          <mat-autocomplete #nameSearch="matAutocomplete" class="multi-line-option">
             <mat-option *ngFor="let customer of matchingNameCustomers | async"
                         [value]="customer.name" (onSelectionChange)="customerSelected(customer)">
               <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-                <div fxFlex="auto">{{ customer.name }}</div>
+                <div fxFlex="auto">
+                  <h4 class="mat-option-header">{{customer.name}}</h4>
+                  <div class="mat-option-line">{{customer.registryKey}}</div>
+                  <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
+                    {{postalAddress.uiAddress}}
+                  </div>
+                  <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
+                    {{customer.sapCustomerNumber}}
+                  </div>
+                </div>
                 <div fxFlex="none">
                   <mat-icon *ngIf="customer.invoicingOnly"
                             [matTooltip]="'customer.invoicingOnly' | translation"
@@ -146,11 +172,20 @@
                  [placeholder]="['customer.type', form.value.type || 'DEFAULT', 'id'] | translation"
                  [matAutocomplete]="registryKeySearch"/>
 
-          <mat-autocomplete #registryKeySearch="matAutocomplete">
+          <mat-autocomplete #registryKeySearch="matAutocomplete" class="multi-line-option">
             <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
                         [value]="customer.registryKey" (onSelectionChange)="customerSelected(customer)">
               <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-                <div fxFlex="auto">{{ customer.name }} ({{ customer.registryKey}})</div>
+                <div fxFlex="auto">
+                  <h4 class="mat-option-header">{{customer.name}}</h4>
+                  <div class="mat-option-line">{{customer.registryKey}}</div>
+                  <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
+                    {{postalAddress.uiAddress}}
+                  </div>
+                  <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
+                    {{customer.sapCustomerNumber}}
+                  </div>
+                </div>
                 <div fxFlex="none">
                   <mat-icon *ngIf="customer.invoicingOnly"
                             [matTooltip]="'customer.invoicingOnly' | translation"
