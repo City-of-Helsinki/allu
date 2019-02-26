@@ -36,6 +36,11 @@
           <mat-icon color="primary" class="icon-middle">check_circle</mat-icon>
           {{'application.invoiced' | translation}}
         </div>
+        <div fxFlex="none">
+          <button mat-icon-button (click)="addToBasket(application.id)">
+            <mat-icon color="primary">shopping_basket</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
   </div>

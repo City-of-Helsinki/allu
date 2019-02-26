@@ -9,6 +9,7 @@ import {Observable} from 'rxjs/index';
 import {map} from 'rxjs/internal/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
+import {Add} from '@feature/project/actions/application-basket-actions';
 
 export type ProgressColor =
   | 'pending'
@@ -57,6 +58,10 @@ export class ProgressbarComponent implements OnInit {
 
   show(id: number) {
     this.router.navigate(['/applications', id, 'summary']);
+  }
+
+  addToBasket(applicationId: number): void {
+    this.store.dispatch(new Add(applicationId));
   }
 
   private calculateProgress(status: ApplicationStatus): number {
