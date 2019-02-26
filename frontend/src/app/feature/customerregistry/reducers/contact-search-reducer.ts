@@ -34,7 +34,7 @@ function reducer(state: State = initialState, action: ContactSearchActions) {
         loading: false,
         loaded: true,
         available: action.payload,
-        matching: []
+        matching: matchingContacts(action.payload, state.search)
       };
     }
 
@@ -55,7 +55,7 @@ function reducer(state: State = initialState, action: ContactSearchActions) {
 
       return {
         ...state,
-        matching: matching
+        matching: matchingContacts(state.available, action.payload)
       };
     }
 
@@ -82,3 +82,8 @@ export const getAvailable = (state: State) => state.available;
 export const getLoading = (state: State) => state.loading;
 
 export const getLoaded = (state: State) => state.loaded;
+
+function matchingContacts(available: Contact[] = [], searchTerm: string = ''): Contact[] {
+  const lowerCaseTerm = searchTerm.toLocaleLowerCase();
+  return available.filter(c => c.name.toLocaleLowerCase().startsWith(lowerCaseTerm));
+}

@@ -8,16 +8,16 @@ import * as CustomerSearchAction from '@feature/customerregistry/actions/custome
 import * as ContactSearchAction from '@feature/customerregistry/actions/contact-search-actions';
 import {Store} from '@ngrx/store';
 import {Save} from '../actions/project-actions';
-import {EnumUtil} from '../../../util/enum.util';
-import {CustomerType} from '../../../model/customer/customer-type';
-import {Customer} from '../../../model/customer/customer';
+import {EnumUtil} from '@util/enum.util';
+import {CustomerType} from '@model/customer/customer-type';
+import {Customer} from '@model/customer/customer';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {MatOption} from '@angular/material';
-import {ComplexValidator} from '../../../util/complex-validator';
-import {Contact} from '../../../model/customer/contact';
-import {Application} from '../../../model/application/application';
-import {ProjectService} from '../../../service/project/project.service';
-import {NumberUtil} from '../../../util/number.util';
+import {ComplexValidator} from '@util/complex-validator';
+import {Contact} from '@model/customer/contact';
+import {Application} from '@model/application/application';
+import {ProjectService} from '@service/project/project.service';
+import {NumberUtil} from '@util/number.util';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
