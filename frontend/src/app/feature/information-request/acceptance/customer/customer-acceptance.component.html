@@ -22,10 +22,19 @@
                [placeholder]="'customer.search.search' | translation"
                [matAutocomplete]="customerSearch"/>
         <mat-icon matSuffix>arrow_drop_down</mat-icon>
-        <mat-autocomplete #customerSearch="matAutocomplete">
+        <mat-autocomplete #customerSearch="matAutocomplete" class="multi-line-option">
           <mat-option *ngFor="let customer of matchingCustomers$ | async"
                       [value]="customer.name" (click)="selectReferenceCustomer(customer)">
-            {{ customer.name }} ({{customer.registryKey}})
+            <div fxFlex="auto">
+              <h4 class="mat-option-header">{{customer.name}}</h4>
+              <div class="mat-option-line">{{customer.registryKey}}</div>
+              <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
+                {{postalAddress.uiAddress}}
+              </div>
+              <div class="mat-option-line" *ngIf="customer.sapCustomerNumber">
+                {{customer.sapCustomerNumber}}
+              </div>
+            </div>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
