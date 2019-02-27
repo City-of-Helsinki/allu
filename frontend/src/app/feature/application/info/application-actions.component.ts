@@ -21,7 +21,7 @@ import {InformationRequest} from '@model/information-request/information-request
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
 import {
-  ApplicationExtension, isOperationalConditionDates,
+  ApplicationExtension, isGuaranteeEndTime, isOperationalConditionDates,
   isWorkFinishedDates,
   OperationalConditionDates,
   WorkFinishedDates
@@ -129,9 +129,15 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     if (isWorkFinishedDates(extension)) {
       this.clearWorkFinishedDates(extension);
     }
+
     if (isOperationalConditionDates(extension)) {
       this.clearOperationalConditionDates(extension);
     }
+
+    if (isGuaranteeEndTime(extension)) {
+      extension.guaranteeEndTime = undefined;
+    }
+
     return extension;
   }
 

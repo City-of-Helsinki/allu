@@ -28,3 +28,11 @@ export function isOperationalConditionDates(obj: any): obj is OperationalConditi
   && 'customerWinterTimeOperation' in obj
   && 'operationalConditionReported' in obj;
 }
+
+export interface GuaranteeEndTime {
+  guaranteeEndTime?: Date;
+}
+
+export function isGuaranteeEndTime(obj: any): obj is GuaranteeEndTime {
+  return 'guaranteeEndTime' in obj;
+}
