@@ -1,8 +1,8 @@
-import {ApplicationExtension} from '../type/application-extension';
+import {ApplicationExtension, WorkFinishedDates} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
 
-export class ExcavationAnnouncement extends ApplicationExtension {
+export class ExcavationAnnouncement extends ApplicationExtension implements WorkFinishedDates {
   constructor(
     public pksCard?: boolean,
     public constructionWork?: boolean,

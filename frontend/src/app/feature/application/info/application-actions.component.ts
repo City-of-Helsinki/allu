@@ -20,8 +20,7 @@ import {InformationRequestModalEvents} from '@feature/information-request/inform
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
-import {ApplicationExtension} from '@app/model/application/type/application-extension';
-import {ExcavationAnnouncement} from '@app/model/application/excavation-announcement/excavation-announcement';
+import {ApplicationExtension, isWorkFinishedDates, WorkFinishedDates} from '@app/model/application/type/application-extension';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
@@ -122,10 +121,16 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   private copyExtension(extension: ApplicationExtension): ApplicationExtension {
-    if (extension instanceof ExcavationAnnouncement) {
-      extension.workFinished = undefined;
+    if (isWorkFinishedDates(extension)) {
+      this.clearWorkFinishedDates(extension);
     }
     return extension;
+  }
+
+  private clearWorkFinishedDates(extension: WorkFinishedDates): void {
+    extension.workFinished = undefined;
+    extension.customerWorkFinished = undefined;
+    extension.workFinishedReported = undefined;
   }
 
   replace(): void {
