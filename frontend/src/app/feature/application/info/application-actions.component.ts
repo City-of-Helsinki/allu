@@ -20,7 +20,12 @@ import {InformationRequestModalEvents} from '@feature/information-request/inform
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
-import {ApplicationExtension, isWorkFinishedDates, WorkFinishedDates} from '@app/model/application/type/application-extension';
+import {
+  ApplicationExtension, isOperationalConditionDates,
+  isWorkFinishedDates,
+  OperationalConditionDates,
+  WorkFinishedDates
+} from '@app/model/application/type/application-extension';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
@@ -124,6 +129,9 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     if (isWorkFinishedDates(extension)) {
       this.clearWorkFinishedDates(extension);
     }
+    if (isOperationalConditionDates(extension)) {
+      this.clearOperationalConditionDates(extension);
+    }
     return extension;
   }
 
@@ -131,6 +139,12 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     extension.workFinished = undefined;
     extension.customerWorkFinished = undefined;
     extension.workFinishedReported = undefined;
+  }
+
+  private clearOperationalConditionDates(extension: OperationalConditionDates): void {
+    extension.winterTimeOperation = undefined;
+    extension.customerWinterTimeOperation = undefined;
+    extension.operationalConditionReported = undefined;
   }
 
   replace(): void {

@@ -16,3 +16,15 @@ export function isWorkFinishedDates(obj: any): obj is WorkFinishedDates {
     && 'customerWorkFinished' in obj
     && 'workFinishedReported' in obj;
 }
+
+export interface OperationalConditionDates {
+  winterTimeOperation?: Date;
+  customerWinterTimeOperation?: Date;
+  operationalConditionReported?: Date;
+}
+
+export function isOperationalConditionDates(obj: any): obj is OperationalConditionDates {
+  return 'winterTimeOperation' in obj
+  && 'customerWinterTimeOperation' in obj
+  && 'operationalConditionReported' in obj;
+}

@@ -1,8 +1,8 @@
-import {ApplicationExtension, WorkFinishedDates} from '../type/application-extension';
+import {ApplicationExtension, OperationalConditionDates, WorkFinishedDates} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
 
-export class ExcavationAnnouncement extends ApplicationExtension implements WorkFinishedDates {
+export class ExcavationAnnouncement extends ApplicationExtension implements WorkFinishedDates, OperationalConditionDates {
   constructor(
     public pksCard?: boolean,
     public constructionWork?: boolean,
