@@ -4,6 +4,8 @@ import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -86,11 +88,17 @@ public class AttachmentDao {
   }
 
 
-  /**
-   * Find default attachment info by Id
-   */
   @Transactional(readOnly = true)
   public Optional<DefaultAttachmentInfo> findDefaultById(int attachmentId) {
+    return findDefaultById(attachmentId, true);
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<DefaultAttachmentInfo> findDefaultById(int attachmentId, boolean onlyExisting) {
+    BooleanExpression deletedPart = onlyExisting
+            ? defaultAttachment.deleted.eq(false)
+            : Expressions.TRUE;
+
     Tuple result = queryFactory
         .select(
             attachment.id,
@@ -106,8 +114,8 @@ public class AttachmentDao {
             defaultAttachment.deleted,
             defaultAttachment.locationAreaId)
         .from(attachment)
-        .leftJoin(defaultAttachment).on(attachment.id.eq(defaultAttachment.attachmentId))
-        .where(attachment.id.eq(attachmentId).and(defaultAttachment.deleted.eq(false)))
+        .innerJoin(defaultAttachment).on(attachment.id.eq(defaultAttachment.attachmentId))
+        .where(attachment.id.eq(attachmentId).and(deletedPart))
         .fetchOne();
 
     DefaultAttachmentInfo dai = null;

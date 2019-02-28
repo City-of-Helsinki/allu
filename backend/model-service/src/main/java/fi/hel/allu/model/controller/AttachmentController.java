@@ -128,7 +128,7 @@ public class AttachmentController {
   public ResponseEntity<?> deleteAttachmentInfo(
       @PathVariable int applicationId,
       @PathVariable int attachmentId) {
-    Optional<DefaultAttachmentInfo> dai = attachmentDao.findDefaultById(attachmentId);
+    Optional<DefaultAttachmentInfo> dai = attachmentDao.findDefaultById(attachmentId, false);
     if (dai.isPresent()) {
       AttachmentInfo ai = attachmentDao.findById(attachmentId).get();
       attachmentDao.removeLinkApplicationToAttachment(applicationId, ai.getId());
