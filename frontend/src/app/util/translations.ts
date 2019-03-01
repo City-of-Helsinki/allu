@@ -1133,6 +1133,7 @@ export const translations = {
   phone: 'Puhelin',
   name: 'Nimi',
   common: {
+    filter: 'Suodata',
     freeTextSearch: 'Vapaa tekstihaku',
     select: 'Valitse',
     selectAll: 'Valitse kaikki',

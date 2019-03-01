@@ -1,9 +1,16 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, LOCALE_ID, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
-
 import {User} from '@model/user/user';
 import {UserService} from '@service/user/user-service';
+import * as fromRoot from '@feature/allu/reducers';
+import {Store} from '@ngrx/store';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {formatDate} from '@angular/common';
+import {findTranslation, translateArray} from '@util/translations';
+import {map, withLatestFrom} from 'rxjs/operators';
+import {flattenToString, StringUtil} from '@util/string.util';
+import {Dictionary} from '@ngrx/entity';
+import {CityDistrict} from '@model/common/city-district';
 
 @Component({
   selector: 'user-list',
@@ -12,19 +19,71 @@ import {UserService} from '@service/user/user-service';
 })
 export class UserListComponent implements OnInit {
 
-  users: Observable<Array<User>>;
+  dataSource: MatTableDataSource<UserElement>;
+  displayedColumns: string[] = ['userName', 'realName', 'lastLogin', 'isActive', 'roles', 'applicationTypes', 'cityDistricts'];
 
-  constructor(private userService: UserService, private router: Router) {}
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
-  ngOnInit(): void {
-    this.users = this.userService.getAllUsers();
+  constructor(private userService: UserService,
+              private router: Router,
+              private store: Store<fromRoot.State>,
+              @Inject(LOCALE_ID) private localeId: string) {
+    this.dataSource = new MatTableDataSource([]);
   }
 
-  onSelect(user: User): void {
+  ngOnInit(): void {
+    this.userService.getAllUsers().pipe(
+      withLatestFrom(this.store.select(fromRoot.getCityDistrictEntities)),
+      map(([users, cityDistricts]) => users.map(user => this.toUserElement(user, cityDistricts)))
+    ).subscribe(users =>  {
+      this.dataSource.data = users;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
+
+    this.dataSource.filterPredicate = (user: UserElement, filter: string) => {
+      const filterValues = filter.trim().toLowerCase().split(' ');
+      const flatUser = flattenToString(user);
+      return filterValues.reduce((matches, cur) => matches && (StringUtil.isEmpty(cur) || flatUser.includes(cur)), true);
+    };
+  }
+
+  showUser(user: UserElement): void {
     this.router.navigate(['/admin/users', user.id]);
   }
 
-  newUser(): void {
-    this.router.navigate(['/admin/users/new']);
+  trackById(index: number, item: User) {
+    return item.id;
   }
+
+  applyFilter(filterValue: string): void {
+    this.dataSource.filter = filterValue;
+  }
+
+  toUserElement(user: User, cityDistricts: Dictionary<CityDistrict>): UserElement {
+    return {
+      id: user.id,
+      userName: user.userName,
+      realName: user.realName,
+      lastLogin: user.lastLogin ? formatDate(user.lastLogin, 'short', this.localeId) : undefined,
+      isActive: findTranslation(['common.boolean', user.isActive.toString()]),
+      roles: translateArray('user.role', user.assignedRoles),
+      applicationTypes: translateArray('application.type', user.allowedApplicationTypes),
+      cityDistricts: user.cityDistrictIds.map(id => cityDistricts[id])
+        .filter(cd => !!cd)
+        .map(cd => cd.name)
+    };
+  }
+}
+
+export interface UserElement {
+  id: number;
+  userName: string;
+  realName: string;
+  lastLogin: string;
+  isActive: string;
+  roles: string[];
+  applicationTypes: string[];
+  cityDistricts: string[];
 }

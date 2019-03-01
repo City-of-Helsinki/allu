@@ -156,6 +156,10 @@ export class UserServiceMock {
   public getByRole = (role: RoleType) => of([supervisor]);
 
   public search(criteria: UserSearchCriteria) { return of([]); }
+
+  public getAllUsers(): Observable<User[]> {
+    return of([]);
+  }
 }
 
 /**

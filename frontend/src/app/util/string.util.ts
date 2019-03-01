@@ -40,3 +40,17 @@ export class StringUtil {
     }
   }
 }
+
+export function flattenToString(obj: any): string {
+  let returnVal = '';
+
+  Object.values(obj).forEach((val) => {
+    if (typeof val !== 'object') {
+      returnVal = returnVal + ' ' + val;
+    } else if (val !== null) {
+      returnVal = returnVal + ' ' + flattenToString(val);
+    }
+  });
+
+  return returnVal.trim().toLowerCase();
+}

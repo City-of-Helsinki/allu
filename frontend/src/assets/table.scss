@@ -25,11 +25,6 @@
   font-weight: 700;
 }
 
-// Bug fix for mat-checkbox inside a mat-cell
-mat-cell, .mat-cell, .mat-header-cell {
-  overflow: visible !important;
-}
-
 .data-table {
   position: relative;
 }
@@ -66,3 +61,31 @@ mat-cell:first-of-type.cell-wide {
 mat-cell:last-of-type.cell-wide {
   padding-right: 8px;
 }
+
+mat-header-cell.mat-cell-1,
+mat-cell.mat-cell-1 {
+  flex: 1;
+}
+
+mat-header-cell.mat-cell-2,
+mat-cell.mat-cell-2 {
+  flex: 2;
+}
+
+mat-header-cell.mat-cell-3,
+mat-cell.mat-cell-3 {
+  flex: 3;
+}
+
+mat-header-cell.mat-cell-4,
+mat-cell.mat-cell-4 {
+  flex: 4;
+}
+
+.mat-cell-text-limit {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 500px;
+}
+

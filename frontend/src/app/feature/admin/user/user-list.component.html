@@ -1,42 +1,72 @@
 <div class="main-content">
   <div fxLayout="row">
     <div fxFlex>
-      <button mat-raised-button type="button" color="primary" (click)="newUser()">
+      <a [routerLink]="['/admin/users/new']" mat-raised-button type="button" color="primary">
         {{'user.addNew' | translation}}
-      </button>
+      </a>
+    </div>
+    <div fxFlex="38%">
+      <mat-form-field class="input-full-width">
+        <input matInput (keyup)="applyFilter($event.target.value)" [placeholder]="'common.filter' | translation">
+      </mat-form-field>
     </div>
   </div>
   <div fxLayout="row">
     <div fxFlex>
-      <table class="bordered responsive-table">
-        <thead>
-        <tr>
-          <th>{{'user.username' | translation}}</th>
-          <th>{{'user.name' | translation}}</th>
-          <th>{{'user.lastLogin' | translation}}</th>
-          <th>{{'user.roles' | translation}}</th>
-          <th>{{'user.applicationTypes' | translation}}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let user of users | async" class="clickable row-highlight"
-            (click)="onSelect(user)">
-          <td>{{user.userName}}</td>
-          <td>{{user.realName}}</td>
-          <td>{{user.uiLastLogin}}</td>
-          <td>
-            <span *ngFor="let role of user.assignedRoles; let last=last">
-                {{['user.role', role] | translation | commaSeparated: last}}
-            </span>
-          </td>
-          <td>
-            <span *ngFor="let applicationType of user.allowedApplicationTypes; let last=last">
-                {{['application.type', applicationType] | translation | commaSeparated: last}}
-            </span>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="mat-elevation-z8 data-table data-table-with-paging">
+        <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+          <ng-container matColumnDef="userName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'user.username' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.userName}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="realName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'user.name' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.realName}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="lastLogin">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'user.lastLogin' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.lastLogin}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isActive">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-1">{{'user.active' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-1">{{row.isActive}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="roles">
+            <mat-header-cell *matHeaderCellDef class="mat-cell-3">{{'user.roles' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-3">
+              {{row.roles | commaSeparated}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="applicationTypes">
+            <mat-header-cell *matHeaderCellDef class="mat-cell-3">{{'user.applicationTypes' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-3">
+              {{row.applicationTypes | commaSeparated}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="cityDistricts">
+            <mat-header-cell *matHeaderCellDef class="mat-cell-3">{{'user.cityDistricts' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-3">
+              <div class=" mat-cell-text-limit" [matTooltip]="row.cityDistricts | commaSeparated">
+                {{row.cityDistricts | commaSeparated}}
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="row-highlight clickable" (click)="showUser(row)"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator
+                       [pageSize]="25"
+                       [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
     </div>
   </div>
 </div>

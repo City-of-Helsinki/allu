@@ -1,4 +1,3 @@
-import {TimeUtil} from '../../util/time.util';
 import {ApplicationType} from '@app/model/application/type/application-type';
 import {RoleType} from '@app/model/user/role-type';
 
@@ -26,9 +25,5 @@ export class User {
 
   get roles(): Array<RoleType> {
     return this.assignedRoles;
-  }
-
-  get uiLastLogin(): string {
-    return TimeUtil.getUiDateTimeString(this.lastLogin);
   }
 }

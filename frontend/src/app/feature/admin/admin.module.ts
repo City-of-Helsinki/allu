@@ -1,7 +1,14 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatCardModule, MatExpansionModule, MatSlideToggleModule} from '@angular/material';
+import {
+  MatCardModule,
+  MatExpansionModule,
+  MatPaginatorModule,
+  MatSlideToggleModule,
+  MatSortModule,
+  MatTableModule
+} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {adminRoutes} from './admin.routing';
@@ -32,7 +39,10 @@ import {ConfigurationModule} from '@feature/admin/configuration/configuration.mo
     MatExpansionModule,
     MatSlideToggleModule,
     SelectionGroupModule,
-    ConfigurationModule
+    ConfigurationModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   declarations: [
     AdminComponent,
