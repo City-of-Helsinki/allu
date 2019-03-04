@@ -18,7 +18,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.external.domain.BaseApplicationExt;
+import fi.hel.allu.external.domain.DecisionExt;
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
+import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.external.service.PdfMerger;
@@ -131,4 +133,21 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     List<byte[]> attachments = applicationService.getDecisionAttachmentDocuments(applicationId);
     return returnPdfResponse(PdfMerger.appendDocuments(decision, attachments));
   }
+
+  @ApiOperation(value = "Gets decision metadata for application with given ID. If there's not yet decision for application, decision maker is null",
+      authorizations = @Authorization(value ="api_key"),
+      response = DecisionExt.class)
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Decision metadata retrieved successfully", response = DecisionExt.class),
+  })
+  @RequestMapping(value = "/{id}/decision/metadata", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<DecisionExt> getDecisionMetadata(@PathVariable Integer id)  {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    UserExt handler = applicationService.getHandler(applicationId);
+    UserExt decisionMaker = applicationService.getDecisionMaker(applicationId);
+    return ResponseEntity.ok(new DecisionExt(handler, decisionMaker));
+  }
+
 }
