@@ -29,6 +29,7 @@ import {InformationRequestModalEvents} from '@feature/information-request/inform
 import {StoreModule} from '@ngrx/store';
 import {UserService} from '@service/user/user-service';
 import {NotificationService} from '@feature/notification/notification.service';
+import {ShortTermRental} from '@app/model/application/short-term-rental/short-term-rental';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -168,6 +169,7 @@ describe('ApplicationActionsComponent', () => {
     application.id = 1;
     application.attachmentList = [new AttachmentInfo(15, 'type', 'name'), new AttachmentInfo(10, 'type', 'name')];
     application.locations = [location];
+    application.extension = new ShortTermRental();
 
     const copyAsNewBtn = getButtonWithText(de, findTranslation('application.button.copy').toUpperCase());
     copyAsNewBtn.click();
