@@ -9,7 +9,8 @@ INSERT INTO allureport.hanke (
   lisatiedot,
   asiakas_id,
   tunniste,
-  lisaaja
+  lisaaja,
+  poistettu
 )
 SELECT
 		p.id AS id,
@@ -22,7 +23,8 @@ SELECT
 		p.additional_info AS lisatiedot,
 		p.customer_id AS asiakas_id,
 		p.identifier AS tunniste,
-		u.user_name AS lisaaja
+		u.user_name AS lisaaja,
+		p.deleted AS poistettu
 FROM allu_operative.project p
 LEFT JOIN allu_operative.user u ON p.creator_id = u.id
 ON CONFLICT (id) DO UPDATE SET
@@ -35,5 +37,6 @@ ON CONFLICT (id) DO UPDATE SET
     lisatiedot = EXCLUDED.lisatiedot,
     asiakas_id = EXCLUDED.asiakas_id,
     tunniste = EXCLUDED.tunniste,
-    lisaaja = EXCLUDED.lisaaja
+    lisaaja = EXCLUDED.lisaaja,
+    poistettu = EXCLUDED.poistettu
 ;

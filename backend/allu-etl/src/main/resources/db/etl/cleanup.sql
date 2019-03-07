@@ -30,7 +30,6 @@ DELETE FROM allureport.sijoitussopimus h WHERE NOT EXISTS (SELECT id FROM allu_o
 DELETE FROM allureport.kaivuilmoitus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
 DELETE FROM allureport.johtoselvitys h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.hakemus_id);
 DELETE FROM allureport.hakemus h WHERE NOT EXISTS (SELECT id FROM allu_operative.application oa WHERE oa.id = h.id);
-DELETE FROM allureport.hanke h WHERE EXISTS (SELECT id FROM allu_operative.project op WHERE op.id = h.id AND op.deleted = true);
 DELETE FROM allureport.hanke h WHERE NOT EXISTS (SELECT id FROM allu_operative.project op WHERE op.id = h.id);
 DELETE FROM allureport.asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.customer oc WHERE oc.id = a.id);
 DELETE FROM allureport.kaupunginosa k WHERE NOT EXISTS (SELECT id FROM allu_operative.city_district oc WHERE oc.id = k.id);
