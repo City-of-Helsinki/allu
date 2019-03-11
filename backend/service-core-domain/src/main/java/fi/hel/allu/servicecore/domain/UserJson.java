@@ -36,6 +36,10 @@ public class UserJson {
     // for JSON deserialization
   }
 
+  public UserJson(Integer id) {
+    this.id = id;
+  }
+
   public UserJson(
       Integer id,
       String userName,

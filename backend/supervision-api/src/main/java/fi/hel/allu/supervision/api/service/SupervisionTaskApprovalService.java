@@ -3,10 +3,12 @@ package fi.hel.allu.supervision.api.service;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -42,12 +44,26 @@ public class SupervisionTaskApprovalService {
   private ApplicationEventPublisher applicationEventPublisher;
   @Autowired
   private CommentService commentService;
+  @Autowired
+  private ExcavationAnnouncementService excavationAnnouncementService;
 
   public SupervisionTaskJson approveSupervisionTask(SupervisionTaskApprovalJson approvalData) {
     SupervisionTaskJson task = supervisionTaskService.findById(approvalData.getTaskId());
     Application application = applicationService.findApplicationById(task.getApplicationId());
     validateApproval(task, application);
+    setRequiredTasks(application, task, approvalData);
     return approve(approvalData, task, application);
+  }
+
+  private void setRequiredTasks(Application application, SupervisionTaskJson task,
+      SupervisionTaskApprovalJson approvalData) {
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT &&
+        task.getType() == SupervisionTaskType.PRELIMINARY_SUPERVISION) {
+      excavationAnnouncementService.setRequiredTasks(application.getId(),
+          new RequiredTasks(
+              BooleanUtils.isTrue(approvalData.getCompactionAndBearingCapacityMeasurement()),
+              BooleanUtils.isTrue(approvalData.getQualityAssuranceTest())));
+    }
   }
 
   private SupervisionTaskJson approve(SupervisionTaskApprovalJson approvalData, SupervisionTaskJson task, Application application) {

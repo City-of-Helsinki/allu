@@ -212,16 +212,7 @@ public class DateReportingService {
   }
 
   private UserJson getSupervisionTaskOwner(Application application) {
-    Integer cityDistrict = application.getLocations().get(0).getCityDistrictId();
-    UserJson supervisionTaskOwner = null;
-    if (cityDistrict != null) {
-      try {
-        supervisionTaskOwner = locationService.findSupervisionTaskOwner(application.getType(), cityDistrict);
-      } catch (NoSuchEntityException e) {
-        logger.warn("Didn't find supervisor for city district " + cityDistrict);
-      }
-    }
-    return supervisionTaskOwner;
+    return locationService.findSupervisionTaskOwner(application);
   }
 
   private ApplicationJson getApplicationJson(Integer id) {

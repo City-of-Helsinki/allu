@@ -4,6 +4,14 @@ public class RequiredTasks {
   private boolean compactionAndBearingCapacityMeasurement;
   private boolean qualityAssuranceTest;
 
+  public RequiredTasks() {
+  }
+
+  public RequiredTasks(boolean compactionAndBearingCapacityMeasurement, boolean qualityAssuranceTest) {
+    this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
+    this.qualityAssuranceTest = qualityAssuranceTest;
+  }
+
   public boolean getCompactionAndBearingCapacityMeasurement() {
     return compactionAndBearingCapacityMeasurement;
   }

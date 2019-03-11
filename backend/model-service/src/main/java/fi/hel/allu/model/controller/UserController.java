@@ -35,7 +35,7 @@ public class UserController {
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<User> findById(@PathVariable int id) {
-    User user = userDao.findById(id).orElseThrow(() -> new NoSuchEntityException("No such user", Integer.toString(id)));
+    User user = userDao.findById(id).orElseThrow(() -> new NoSuchEntityException("user.notFound", Integer.toString(id)));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
@@ -53,7 +53,7 @@ public class UserController {
 
   @RequestMapping(value = "/userName/{userName}", method = RequestMethod.GET)
   public ResponseEntity<User> getUser(@PathVariable String userName) {
-    User user = userDao.findByUserName(userName).orElseThrow(() -> new NoSuchEntityException("No such user", userName));
+    User user = userDao.findByUserName(userName).orElseThrow(() -> new NoSuchEntityException("user.notFound", userName));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 

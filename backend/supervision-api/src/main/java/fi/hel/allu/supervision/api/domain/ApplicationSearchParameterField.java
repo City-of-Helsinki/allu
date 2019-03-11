@@ -17,7 +17,8 @@ public enum ApplicationSearchParameterField implements SearchField {
   VALID_AFTER("recurringApplication", "startTime", SearchParameterType.DATE, false),
   VALID_BEFORE("recurringApplication", "startTime", SearchParameterType.DATE, false),
   TAGS("applicationTags", null, SearchParameterType.STRING, true),
-  PROJECT_ID("project.id", null, SearchParameterType.STRING, false);
+  PROJECT_ID("project.id", null, SearchParameterType.STRING, false),
+  PROJECT_IDENTIFIER("project.identifier", null, SearchParameterType.STRING, false);
 
   private final String searchFieldName;
   private final String sortFieldName;

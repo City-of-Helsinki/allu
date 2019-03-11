@@ -1,14 +1,15 @@
 package fi.hel.allu.supervision.api.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -43,6 +44,22 @@ public abstract class BaseApplicationDetailsController <A extends BaseApplicatio
     ApplicationJson application = applicationServiceComposer.findApplicationById(id);
     validateType(application, getApplicationType());
     return ResponseEntity.ok(mapApplication(application));
+  }
+
+  @ApiOperation(value = "Get applications with given list of IDs",
+      authorizations = @Authorization(value ="api_key"),
+      consumes = "application/json",
+      produces = "application/json"
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Applications retrieved successfully"),
+  })
+  @RequestMapping(method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<List<A>> getApplicationsWithIds(@RequestParam("ids") final List<Integer> ids) {
+    List<ApplicationJson> applications = applicationServiceComposer.findApplicationsByIds(ids);
+    applications.forEach(a -> validateType(a, getApplicationType()));
+    return ResponseEntity.ok(applications.stream().map(a -> mapApplication(a)).collect(Collectors.toList()));
   }
 
   @ApiOperation(value = "Update application. "

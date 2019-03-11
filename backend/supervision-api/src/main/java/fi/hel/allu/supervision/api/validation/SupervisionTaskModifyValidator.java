@@ -8,42 +8,41 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.servicecore.service.ApplicationService;
 import fi.hel.allu.servicecore.service.UserService;
-import fi.hel.allu.supervision.api.domain.SupervisionTaskCreateJson;
+import fi.hel.allu.supervision.api.domain.SupervisionTaskModifyJson;
 
 @Component
-public class SupervisionTaskValidator implements Validator {
+public class SupervisionTaskModifyValidator implements Validator {
 
-  private final ApplicationService applicationService;
+  private final UserService userService;
   private final MessageSourceAccessor accessor;
 
-  private static final String ERROR_APPLICATION = "supervisiontask.application.invalid";
+  private static final String ERROR_OWNER = "supervisiontask.owner.invalid";
 
   @Autowired
-  SupervisionTaskValidator(
-      ApplicationService applicationService,
+  SupervisionTaskModifyValidator(
+      UserService userService,
       MessageSource validationMessageSource) {
-    this.applicationService = applicationService;
+    this.userService = userService;
     accessor = new MessageSourceAccessor(validationMessageSource);
   }
 
   @Override
   public boolean supports(Class<?> clazz) {
-    return SupervisionTaskCreateJson.class.isAssignableFrom(clazz);
+    return SupervisionTaskModifyJson.class.isAssignableFrom(clazz);
   }
 
   @Override
   public void validate(Object target, Errors errors) {
-    SupervisionTaskCreateJson task = (SupervisionTaskCreateJson) target;
-    if (!hasValidApplication(task)) {
-      errors.rejectValue("applicationId", ERROR_APPLICATION, accessor.getMessage(ERROR_APPLICATION));
+    SupervisionTaskModifyJson task = (SupervisionTaskModifyJson) target;
+    if (!hasValidOwner(task)) {
+      errors.rejectValue("ownerId", ERROR_OWNER, accessor.getMessage(ERROR_OWNER));
     }
   }
 
-  private boolean hasValidApplication(SupervisionTaskCreateJson task) {
+  private boolean hasValidOwner(SupervisionTaskModifyJson task) {
     try {
-      applicationService.findApplicationById(task.getApplicationId());
+      userService.findUserById(task.getOwnerId());
     } catch (NoSuchEntityException ex) {
       return false;
     }

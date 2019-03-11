@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.GeometryWrapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -126,6 +127,20 @@ public class LocationService {
 
   public boolean isValidGeometry(Geometry geometry) {
     return restTemplate.postForObject(applicationProperties.getIsValidGeometryUrl(), new GeometryWrapper(geometry), Boolean.class);
+  }
+
+  public UserJson findSupervisionTaskOwner(Application application) {
+    Integer cityDistrict = application.getLocations().get(0).getEffectiveCityDistrictId();
+    UserJson supervisionTaskOwner = null;
+    if (cityDistrict != null) {
+      try {
+        supervisionTaskOwner = findSupervisionTaskOwner(application.getType(), cityDistrict);
+      } catch (NoSuchEntityException e) {
+        logger.warn("Didn't find supervisor for city district " + cityDistrict);
+      }
+    }
+    return supervisionTaskOwner;
+
   }
 
   public UserJson findSupervisionTaskOwner(ApplicationType type, Integer cityDistrictId) {

@@ -28,6 +28,8 @@ public class SupervisionTaskApprovalJson {
   private ZonedDateTime workFinishedDate;
   private Integer decisionMakerId;
   private String decisionNote;
+  private Boolean compactionAndBearingCapacityMeasurement;
+  private Boolean qualityAssuranceTest;
 
   @ApiModelProperty(value = "Id of the supervision task", required = true)
   public Integer getTaskId() {
@@ -87,6 +89,26 @@ public class SupervisionTaskApprovalJson {
     this.decisionNote = decisionNote;
   }
 
+  @ApiModelProperty(value = "Quality assurance test (päällysteen laadunvarmistuskoe) required. "
+      + "Applies only to preliminary supervision of excavation announcement, otherwise ignored.")
+  public Boolean getQualityAssuranceTest() {
+    return qualityAssuranceTest;
+  }
+
+  public void setQualityAssuranceTest(Boolean qualityAssuranceTest) {
+    this.qualityAssuranceTest = qualityAssuranceTest;
+  }
+
+  @ApiModelProperty(value = "Compaction and bearing measurement (tiiveys- ja kantavuusmittaus) required. "
+      + "Applies only to preliminary supervision of excavation announcement, otherwise ignored.")
+  public Boolean getCompactionAndBearingCapacityMeasurement() {
+    return compactionAndBearingCapacityMeasurement;
+  }
+
+  public void setCompactionAndBearingCapacityMeasurement(Boolean compactionAndBearingCapacityMeasurement) {
+    this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
+  }
+
   @JsonIgnore
   public boolean getOperationalConditionNotInFuture() {
     return getNotInFuture(operationalConditionDate);
@@ -101,4 +123,5 @@ public class SupervisionTaskApprovalJson {
   private boolean getNotInFuture(ZonedDateTime date) {
     return date == null || date.isBefore(TimeUtil.startOfDay(TimeUtil.nextDay(ZonedDateTime.now())));
   }
+
 }

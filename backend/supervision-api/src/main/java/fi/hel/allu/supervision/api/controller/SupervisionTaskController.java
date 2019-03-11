@@ -9,13 +9,17 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.common.exception.IllegalOperationException;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import fi.hel.allu.supervision.api.domain.*;
@@ -24,6 +28,7 @@ import fi.hel.allu.supervision.api.mapper.SupervisionTaskMapper;
 import fi.hel.allu.supervision.api.mapper.SupervisionTaskSearchParameterMapper;
 import fi.hel.allu.supervision.api.service.SupervisionTaskApprovalService;
 import fi.hel.allu.supervision.api.validation.SupervisionTaskApprovalValidator;
+import fi.hel.allu.supervision.api.validation.SupervisionTaskModifyValidator;
 import fi.hel.allu.supervision.api.validation.SupervisionTaskValidator;
 import io.swagger.annotations.*;
 
@@ -43,11 +48,18 @@ public class SupervisionTaskController {
   @Autowired
   private SupervisionTaskApprovalValidator supervisionTaskApprovalValidator;
   @Autowired
+  private SupervisionTaskModifyValidator supervisionTaskModifyValidator;
+  @Autowired
   private SupervisionTaskApprovalService supervisionTaskApprovalService;
 
   @InitBinder("supervisionTaskCreateJson")
   protected void initCreateBinder(WebDataBinder binder) {
-    binder.addValidators(supervisionTaskValidator);
+    binder.addValidators(supervisionTaskValidator, supervisionTaskModifyValidator);
+  }
+
+  @InitBinder("supervisionTaskModifyJson")
+  protected void initUpdateBinder(WebDataBinder binder) {
+    binder.addValidators(supervisionTaskModifyValidator);
   }
 
   @InitBinder("supervisionTaskApprovalJson")
@@ -108,7 +120,7 @@ public class SupervisionTaskController {
     return ResponseEntity.ok(tasks);
   }
 
-  @ApiOperation(value = "Create new supervision task. Returns ID of the created task. "
+  @ApiOperation(value = "Create new supervision task. Returns created task. "
       + "Creation is allowed for task types PRELIMINARY_SUPERVISION and SUPERVISION",
       authorizations = @Authorization(value ="api_key"),
       produces = "application/json",
@@ -120,8 +132,44 @@ public class SupervisionTaskController {
   })
   @RequestMapping(value = "/supervisiontasks", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Integer> create(@RequestBody @Valid SupervisionTaskCreateJson supervisionTask) {
-    return ResponseEntity.ok(supervisionTaskService.insert(supervisionTaskMapper.mapToModel(supervisionTask)).getId());
+  public ResponseEntity<SupervisionTaskSearchResult> create(@RequestBody @Valid SupervisionTaskCreateJson supervisionTask) {
+    SupervisionTaskJson inserted = supervisionTaskService.insert(supervisionTaskMapper.mapToModel(supervisionTask));
+    return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(inserted));
+  }
+
+  @ApiOperation(value = "Update supervision task. Returns updated task. "
+      + "Update is allowed for task with types PRELIMINARY_SUPERVISION and SUPERVISION.",
+      authorizations = @Authorization(value = "api_key"),
+      produces = "application/json",
+      response = Integer.class
+      )
+  @ApiResponses( value = {
+      @ApiResponse(code = 200, message = "Supervision tasks updated successfully", response = Integer.class),
+      @ApiResponse(code = 400, message = "Invalid update parameters", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/supervisiontasks/{id}", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<SupervisionTaskSearchResult> update(@PathVariable Integer id, @RequestBody @Valid SupervisionTaskModifyJson supervisionTask) {
+    SupervisionTaskJson task = supervisionTaskService.findById(id);
+    validateModificationAllowed(task);
+    task.setPlannedFinishingTime(supervisionTask.getPlannedFinishingTime());
+    task.setOwner(new UserJson(supervisionTask.getOwnerId()));
+    task.setDescription(supervisionTask.getDescription());
+    task = supervisionTaskService.update(task);
+    return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(task));
+  }
+
+  @ApiOperation(value = "Delete supervision task.  "
+      + "Delete is allowed for task with types PRELIMINARY_SUPERVISION and SUPERVISION.",
+      authorizations = @Authorization(value = "api_key")
+  )
+  @RequestMapping(value = "/supervisiontasks/{id}", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    SupervisionTaskJson task = supervisionTaskService.findById(id);
+    validateModificationAllowed(task);
+    supervisionTaskService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @ApiOperation(value = "Approves supervision task and returns updated task.",
@@ -170,5 +218,12 @@ public class SupervisionTaskController {
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<SupervisionTaskSearchResult> reject(@PathVariable Integer id, @RequestBody @Valid SupervisionTaskRejectionJson rejectionData) {
     return ResponseEntity.ok(supervisionTaskMapper.mapToSearchResult(supervisionTaskApprovalService.rejectSupervisionTask(id, rejectionData)));
+  }
+
+  private void validateModificationAllowed(SupervisionTaskJson task) {
+    if (task.getType() != SupervisionTaskType.PRELIMINARY_SUPERVISION &&
+        task.getType() != SupervisionTaskType.SUPERVISION) {
+      throw new IllegalOperationException("supervisiontask.modify.forbidden");
+    }
   }
 }
