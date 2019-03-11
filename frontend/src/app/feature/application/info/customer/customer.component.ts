@@ -85,6 +85,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   onCustomerChange(customer: Customer): void {
     this.disableEdit(customer);
     this.contacts.onCustomerChange(customer.id);
+    this.contacts.resetContacts();
   }
 
   contactSelected(contact: Contact): void {
@@ -93,6 +94,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
     if (this.isNewCustomer) {
       this.customerService.findCustomerById(contact.customerId).subscribe(customer => {
         this.customerForm.patchValue(CustomerForm.fromCustomer(customer));
+        this.disableEdit(customer);
+        this.contacts.onCustomerChange(customer.id);
       });
     }
   }

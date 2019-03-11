@@ -115,7 +115,6 @@ export class ContactComponent implements OnInit {
   }
 
   onCustomerChange(customerId: number) {
-    this.resetContacts();
     this.customerIdChanges.next(customerId);
   }
 
@@ -185,6 +184,14 @@ export class ContactComponent implements OnInit {
     this.distributionListEvents.add(new DistributionEntry(null, contact.name, DistributionType.EMAIL, contact.email));
   }
 
+  resetContacts(): void {
+    this.contacts.reset();
+    while (this.contacts.length > 1) {
+      this.remove(1);
+    }
+    this.contacts.enable();
+  }
+
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
     if (!!term) {
       if (NumberUtil.isDefined(this.customerIdChanges.value)) {
@@ -221,14 +228,6 @@ export class ContactComponent implements OnInit {
       FormUtil.clearArray(this.contacts);
       contacts.forEach(contact => this.addContact(contact));
     });
-  }
-
-  private resetContacts(): void {
-    this.contacts.reset();
-    while (this.contacts.length > 1) {
-      this.remove(1);
-    }
-    this.contacts.enable();
   }
 
   private disableContactEdit(index: number): void {
