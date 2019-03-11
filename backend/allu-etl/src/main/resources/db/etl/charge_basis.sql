@@ -36,6 +36,7 @@ SELECT
         WHEN c.unit = 'MONTH' THEN 'kk'
         WHEN c.unit = 'YEAR' THEN 'v'
         WHEN c.unit = 'PERCENT' THEN '%'
+        WHEN c.unit = 'METER' THEN 'm'
     END AS yksikko,
     c.quantity AS maara,
     c.text AS teksti,
