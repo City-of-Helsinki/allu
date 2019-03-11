@@ -11,7 +11,7 @@ import {
   Search,
   SearchSuccess
 } from '@feature/map/actions/address-search-actions';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, filter, map, switchMap} from 'rxjs/operators';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
@@ -32,6 +32,7 @@ export class AddressSearchEffects {
   @Effect()
   fetchCoordinates: Observable<Action> = this.actions.pipe(
     ofType<FetchCoordinates>(AddressSearchActionType.FetchCoordinates),
+    filter(action => !!action.payload),
     switchMap(action => this.locationService.geocode(action.payload).pipe(
       map(coordinatesOpt => coordinatesOpt
         .map(coordinates => new FetchCoordinatesSuccess(coordinates))

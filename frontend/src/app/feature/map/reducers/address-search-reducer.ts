@@ -22,6 +22,12 @@ export function reducer(state: State = initialState, action: AddressSearchAction
         matching: sorted
       };
 
+    case AddressSearchActionType.FetchCoordinates:
+      return {
+        ...state,
+        coordinates: undefined
+      };
+
     case AddressSearchActionType.FetchCoordinatesSuccess:
       return {
         ...state,
