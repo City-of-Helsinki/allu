@@ -80,7 +80,8 @@ describe('Event application', () => {
         'phone': '09-1234567',
         'active': true,
         'country': 'FI',
-        'projectIdentifierPrefix': 'TERVA'
+        'projectIdentifierPrefix': 'TERVA',
+        'sapCustomerNumber': '0000123123'
       },
       'contacts': [tervaContactNew]
     };
