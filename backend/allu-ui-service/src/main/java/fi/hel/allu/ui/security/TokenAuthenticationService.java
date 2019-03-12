@@ -2,8 +2,8 @@ package fi.hel.allu.ui.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.servicecore.security.AadService;
 import fi.hel.allu.servicecore.security.AdTokenAuthenticationService;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.ui.config.ApplicationProperties;
@@ -12,11 +12,9 @@ import fi.hel.allu.ui.config.ApplicationProperties;
 public class TokenAuthenticationService extends AdTokenAuthenticationService {
 
   @Autowired
-  public TokenAuthenticationService(
-      ApplicationProperties applicationProperties,
-      RestTemplate restTemplate,
-      UserService userService) {
-    super(applicationProperties, restTemplate, userService);
+  public TokenAuthenticationService(ApplicationProperties applicationProperties, UserService userService,
+      AadService aadService) {
+    super(applicationProperties, userService, aadService);
   }
 
 

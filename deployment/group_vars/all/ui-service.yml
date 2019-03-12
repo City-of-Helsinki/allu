@@ -1,1 +1,3 @@
-oauth2_authorization_url: https://fs.hel.fi/adfs/oauth2/authorize?response_type=code
+oauth2_authorization_url: https://login.microsoftonline.com/3feb6bc1-d722-4726-966c-5b58b64df752/oauth2/authorize?response_type=code
+oauth2_token_url: https://login.microsoftonline.com/3feb6bc1-d722-4726-966c-5b58b64df752/oauth2/token
+oauth2_jwks_uri: https://login.microsoftonline.com/3feb6bc1-d722-4726-966c-5b58b64df752/discovery/keys

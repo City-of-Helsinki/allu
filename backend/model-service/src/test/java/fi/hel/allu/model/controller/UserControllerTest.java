@@ -56,7 +56,7 @@ public class UserControllerTest {
   @Test
   public void testLoadUserByUserName() throws Exception {
     User user = testCommon.insertUser("testuser");
-    ResultActions resultActions = wtc.perform(get("/users/userName/" + user.getUserName())).andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(get("/users/userName/?userName=" + user.getUserName())).andExpect(status().isOk());
     User parsedUser = wtc.parseObjectFromResult(resultActions, User.class);
     Assert.assertEquals(user.getUserName(), parsedUser.getUserName());
   }

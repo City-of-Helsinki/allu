@@ -27,7 +27,9 @@ public class ApplicationProperties implements AdAuthenticationProperties {
   private final String oauth2TokenUrl;
   private final String oauth2ClientId;
   private final String oauth2RedirectUri;
-  private final String oauth2Certificate;
+  private final String oauth2JwksUri;
+  private final String oauth2ClientSecret;
+  private final String alluAdGroupId;
   private final List<String> anonymousAccessPaths;
 
   @Autowired
@@ -44,7 +46,9 @@ public class ApplicationProperties implements AdAuthenticationProperties {
                                @Value("${oauth2.url.token}") @NotEmpty String oauth2TokenUrl,
                                @Value("${oauth2.clientid}") @NotEmpty String oauth2ClientId,
                                @Value("${oauth2.redirect.uri}") @NotEmpty String oauth2RedirectUri,
-                               @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate,
+                               @Value("${oauth2.jwks_uri}") @NotEmpty String oauth2JwksUri,
+                               @Value("${oauth2.clientsecret}") @NotEmpty String oauth2ClientSecret,
+                               @Value("${ad.allu.group.id}") @NotEmpty String alluAdGroupId,
                                @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
     this.environment = Environment.valueOf(environment);
     this.versionNumber = versionNumber;
@@ -59,7 +63,9 @@ public class ApplicationProperties implements AdAuthenticationProperties {
     this.oauth2TokenUrl = oauth2TokenUrl;
     this.oauth2ClientId = oauth2ClientId;
     this.oauth2RedirectUri = oauth2RedirectUri;
-    this.oauth2Certificate = oauth2Certificate;
+    this.oauth2JwksUri = oauth2JwksUri;
+    this.oauth2ClientSecret = oauth2ClientSecret;
+    this.alluAdGroupId = alluAdGroupId;
     this.anonymousAccessPaths = anonymousAccessPaths;
   }
 
@@ -108,6 +114,7 @@ public class ApplicationProperties implements AdAuthenticationProperties {
    *
    * @return  JWT secret key used to sign tokens.
    */
+  @Override
   public String getJwtSecret() {
     return jwtSecret;
   }
@@ -117,6 +124,7 @@ public class ApplicationProperties implements AdAuthenticationProperties {
    *
    * @return  the expiration time of JWT.
    */
+  @Override
   public Integer getJwtExpirationHours() {
     return jwtExpirationHours;
   }
@@ -143,6 +151,7 @@ public class ApplicationProperties implements AdAuthenticationProperties {
    *
    * @return  the code for token exchange URI.
    */
+  @Override
   public String getOauth2TokenUrl() {
     return oauth2TokenUrl;
   }
@@ -152,6 +161,7 @@ public class ApplicationProperties implements AdAuthenticationProperties {
    *
    * @return  the OAuth2 client id.
    */
+  @Override
   public String getOauth2ClientId() {
     return oauth2ClientId;
   }
@@ -161,17 +171,19 @@ public class ApplicationProperties implements AdAuthenticationProperties {
    *
    * @return  the OAuth2 redirect uri.
    */
+  @Override
   public String getOauth2RedirectUri() {
     return oauth2RedirectUri;
   }
 
-  /**
-   * Returns the OAuth2 public certificate for verifying token signing.
-   *
-   * @return  the OAuth2 public certificate for verifying token signing.
-   */
-  public String getOauth2Certificate() {
-    return oauth2Certificate;
+  @Override
+  public String getOauth2JwksUri() {
+    return oauth2JwksUri;
+  }
+
+  @Override
+  public String getOauth2ClientSecret() {
+    return oauth2ClientSecret;
   }
 
   /**
@@ -189,5 +201,10 @@ public class ApplicationProperties implements AdAuthenticationProperties {
    */
   public String getVersionNumber() {
     return versionNumber;
+  }
+
+  @Override
+  public String getAlluAdGroupId() {
+    return alluAdGroupId;
   }
 }

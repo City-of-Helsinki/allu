@@ -4,15 +4,13 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.security.AadService;
 import fi.hel.allu.servicecore.security.AdTokenAuthenticationService;
 import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.supervision.api.config.ApplicationProperties;
@@ -22,9 +20,8 @@ import io.jsonwebtoken.JwtException;
 public class TokenAuthenticationService extends AdTokenAuthenticationService {
 
   @Autowired
-  public TokenAuthenticationService(ApplicationProperties properties, RestTemplate restTemplate,
-      UserService userService) {
-    super(properties, restTemplate, userService);
+  public TokenAuthenticationService(ApplicationProperties properties, UserService userService, AadService aadService) {
+    super(properties, userService, aadService);
   }
 
   @Override

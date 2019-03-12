@@ -1,18 +1,20 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.UserDao;
-import fi.hel.allu.model.domain.user.User;
-import fi.hel.allu.common.domain.UserSearchCriteria;
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.domain.UserSearchCriteria;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.UserDao;
+import fi.hel.allu.model.domain.user.User;
 
 /**
  * Controller for managing Allu users.
@@ -51,8 +53,8 @@ public class UserController {
     return new ResponseEntity<>(userDao.findByRole(roleType), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/userName/{userName}", method = RequestMethod.GET)
-  public ResponseEntity<User> getUser(@PathVariable String userName) {
+  @RequestMapping(value = "/userName", method = RequestMethod.GET)
+  public ResponseEntity<User> getUser(@RequestParam String userName) {
     User user = userDao.findByUserName(userName).orElseThrow(() -> new NoSuchEntityException("user.notFound", userName));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }

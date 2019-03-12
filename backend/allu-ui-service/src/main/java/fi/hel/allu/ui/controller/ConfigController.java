@@ -45,7 +45,7 @@ public class ConfigController {
       return applicationProperties.getOauth2AuthorizationEndpointUrl() +
           "&client_id=" + applicationProperties.getOauth2ClientId() +
           "&redirect_uri=" + URLEncoder.encode(applicationProperties.getOauth2RedirectUri(), "UTF-8") +
-          "&resource=" + URLEncoder.encode(applicationProperties.getOauth2RedirectUri(), "UTF-8");
+          "&resource=" + applicationProperties.getOauth2ClientId();
     } catch (UnsupportedEncodingException e) {
       // should never happen...
       throw new RuntimeException(e);

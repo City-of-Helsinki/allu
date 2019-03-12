@@ -4,8 +4,6 @@ import java.util.List;
 
 public interface AdAuthenticationProperties {
 
-  String getOauth2Certificate();
-
   String getJwtSecret();
 
   List<String> getAnonymousAccessPaths();
@@ -18,4 +16,9 @@ public interface AdAuthenticationProperties {
 
   String getOauth2TokenUrl();
 
+  String getOauth2JwksUri();
+
+  String getOauth2ClientSecret();
+
+  String getAlluAdGroupId();
 }

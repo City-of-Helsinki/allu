@@ -393,7 +393,7 @@ public class ApplicationProperties {
    * @return url to fetch given user from model service.
    */
   public String getUserByUserNameUrl() {
-    return getModelServiceUrl("/users/userName/{userName}");
+    return getModelServiceUrl("/users/userName/?userName={userName}");
   }
 
   /**

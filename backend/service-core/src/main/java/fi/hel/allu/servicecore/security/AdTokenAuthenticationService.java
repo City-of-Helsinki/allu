@@ -1,32 +1,24 @@
 package fi.hel.allu.servicecore.security;
 
-import java.io.ByteArrayInputStream;
-import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.codec.Base64;
-import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.security.domain.AdClaims;
 import fi.hel.allu.servicecore.service.UserService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 
 /**
  * Base class for AD authentication services
@@ -35,43 +27,20 @@ import io.jsonwebtoken.Jwts;
  */
 public abstract class AdTokenAuthenticationService extends AuthenticationServiceInterface {
 
-  private static final String OAUTH2_CLIENT_ID_PARAM = "client_id";
-  private static final String OAUTH2_REDIRECT_URI_PARAM = "redirect_uri";
-  private static final String OAUTH2_CODE_PARAM = "code";
-  private static final String OAUTH2_GRANT_TYPE= "grant_type=authorization_code";
-  // AD Token fields
-  private static final String AD_USER_NAME = "winaccountname";
-  private static final String AD_REAL_NAME = "unique_name";
-  private static final String AD_EMAIL = "email";
-  private static final String AD_GROUP = "group";
-  private static final String AD_ALLU_GROUP_NAME = "sg_HKR_Allu";
+  @Autowired
+  private AadService aadService;
 
   private static final Logger logger = LoggerFactory.getLogger(AdTokenAuthenticationService.class);
 
   private AdAuthenticationProperties properties;
-  private RestTemplate restTemplate;
   private UserService userService;
-
-  private PublicKey publicKey;
   private TokenUtil tokenUtil;
 
-  protected AdTokenAuthenticationService(AdAuthenticationProperties properties, RestTemplate restTemplate, UserService userService) {
+  protected AdTokenAuthenticationService(AdAuthenticationProperties properties, UserService userService, AadService aadService) {
     this.properties = properties;
-    this.restTemplate = restTemplate;
     this.userService = userService;
+    this.aadService = aadService;
     this.tokenUtil = new TokenUtil(properties.getJwtSecret());
-  }
-
-  @PostConstruct
-  public void initializePublicKey() {
-    try {
-      CertificateFactory f = CertificateFactory.getInstance("X.509");
-      X509Certificate certificate = (X509Certificate) f.generateCertificate(
-          new ByteArrayInputStream(Base64.decode(properties.getOauth2Certificate().getBytes())));
-      publicKey = certificate.getPublicKey();
-    } catch (CertificateException e) {
-      logger.error("Unable to initialize public key", e);
-    }
   }
 
   @Override
@@ -116,24 +85,37 @@ public abstract class AdTokenAuthenticationService extends AuthenticationService
    * @return  User data if login using code was successful. Otherwise nothing.
    */
   public Optional<UserJson> authenticateWithOAuth2Code(String code) {
-    String adToken = exchangeCodeForToken(code);
-    return authenticateWithAdToken(adToken);
+    try {
+      AdClaims adClaims = aadService.exchangeCodeForToken(code);
+      return authenticateWithAdToken(adClaims);
+    } catch (Exception e) {
+      logger.error("AD authentication failed", e);
+      return Optional.empty();
+    }
   }
 
-  protected Optional<UserJson> authenticateWithAdToken(String adToken) {
-    AdJwtTokenFields tokenFields = parseToken(adToken);
+  public Optional<UserJson> authenticateWithAdToken(String accessToken) {
+    try {
+      AdClaims adClaims = aadService.parseToken(accessToken);
+      return authenticateWithAdToken(adClaims);
+    } catch (Exception ex) {
+      logger.error("Invalid access token ", ex);
+      return Optional.empty();
+    }
+  }
 
+  protected Optional<UserJson> authenticateWithAdToken(AdClaims adClaims) {
     UserJson userJson = null;
-    String username = StringUtils.lowerCase(tokenFields.winAccountName);
+    String username = StringUtils.lowerCase(adClaims.getUserName());
     try {
       userJson = userService.findUserByUserName(username);
     } catch (NoSuchEntityException e) {
-      if (tokenFields.hasAlluGroup) {
+      if (adClaims.isInGroup(properties.getAlluAdGroupId())) {
         userJson = new UserJson(
             null,
             username,
-            tokenFields.uniqueName,
-            tokenFields.email,
+            adClaims.getRealName(),
+            adClaims.getEmail(),
             "", // phone
             "", // using empty value as title, because title is required. However, the correct title is unknown at this point
             true,
@@ -148,66 +130,8 @@ public abstract class AdTokenAuthenticationService extends AuthenticationService
     return Optional.ofNullable(userJson);
   }
 
-
   protected List<String> getAnonymousAccessPaths() {
     return properties.getAnonymousAccessPaths();
-  }
-
-  /**
-   * Exchange OAuth2 code for a (AD) JWT token.
-   *
-   * @param   code  Code for getting token from AD.
-   * @return  Token from AD.
-   */
-  private String exchangeCodeForToken(String code) {
-    String clientIdParam = createOAuth2Param(OAUTH2_CLIENT_ID_PARAM, properties.getOauth2ClientId());
-    String redirectUriParam = createOAuth2Param(OAUTH2_REDIRECT_URI_PARAM, properties.getOauth2RedirectUri());
-    String codeParam = createOAuth2Param(OAUTH2_CODE_PARAM, code);
-    String tokenExchangeBody =
-        new StringJoiner("&").add(clientIdParam).add(redirectUriParam).add(codeParam).add(OAUTH2_GRANT_TYPE).toString();
-
-    TokenWrapper tokenWrapper = restTemplate.postForObject(properties.getOauth2TokenUrl(), tokenExchangeBody, TokenWrapper.class);
-    logger.debug("AD token: {}", tokenWrapper.access_token);
-    return tokenWrapper.access_token;
-  }
-
-  private String createOAuth2Param(String paramName, String paramValue) {
-    return paramName + "=" + paramValue;
-  }
-
-  private AdJwtTokenFields parseToken(String token) {
-    final Claims claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token).getBody();
-
-    List<String> groups = claims.get(AD_GROUP, List.class);
-    boolean hasAlluGroup = groups == null ? false : groups.stream().filter(g -> g.equals(AD_ALLU_GROUP_NAME)).findFirst().isPresent();
-    return new AdJwtTokenFields(
-        claims.get(AD_USER_NAME, String.class),
-        claims.get(AD_REAL_NAME, String.class),
-        claims.get(AD_EMAIL, String.class),
-        hasAlluGroup);
-  }
-
-  private static class AdJwtTokenFields {
-    public final String winAccountName;
-    public final String uniqueName;
-    public final String email;
-    public final boolean hasAlluGroup;
-
-    public AdJwtTokenFields(String winAccountName, String uniqueName, String email, boolean hasAlluGroup) {
-      this.winAccountName = winAccountName;
-      this.uniqueName = uniqueName;
-      this.email = email;
-      this.hasAlluGroup = hasAlluGroup;
-    }
-  }
-
-  /**
-   * JSON mapping for AD JWT: {"access_token":"...","token_type":"bearer","expires_in":3600}
-   */
-  public static class TokenWrapper {
-    public String access_token;
-    public String token_type;
-    public long expires_in;
   }
 
   protected UserService getUserService() {

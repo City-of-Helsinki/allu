@@ -22,6 +22,8 @@ public class ApplicationPropertiesTest {
         null,
         null,
         null,
+        null,
+        null,
         null);
     String result = props.getStreetGeocodeUrl();
     Assert.assertEquals("localhost/geocode", result);
