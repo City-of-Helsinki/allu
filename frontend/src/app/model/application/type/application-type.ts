@@ -120,3 +120,7 @@ export function automaticDecisionMaking(type: ApplicationType): boolean {
   return AUTOMATIC_DECISION_TYPES.indexOf(type) >= 0;
 }
 
+export function requiresContract(type: ApplicationType): boolean {
+  return ApplicationType.PLACEMENT_CONTRACT === type;
+}
+

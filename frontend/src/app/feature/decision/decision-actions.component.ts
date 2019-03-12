@@ -19,7 +19,7 @@ import {Load} from '@feature/comment/actions/comment-actions';
 import * as tagActions from '@feature/application/actions/application-tag-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
-import {automaticDecisionMaking} from '@model/application/type/application-type';
+import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
 import {NumberUtil} from '@util/number.util';
 
 const RESEND_ALLOWED = [
@@ -58,7 +58,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     const status = this.application.status;
-    this.showProposal = inHandling(status) && !automaticDecisionMaking(this.application.type);
+    this.showProposal = inHandling(status)
+      && !automaticDecisionMaking(this.application.type)
+      && !requiresContract(this.application.type);
     this.skipProposal = inHandling(status) && automaticDecisionMaking(this.application.type);
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
