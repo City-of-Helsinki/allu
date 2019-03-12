@@ -1,0 +1,1 @@
+update allu.pricing set value = 25000 where application_type = 'SHORT_TERM_RENTAL' and key in ('BENJI_DAILY_PRICE', 'CIRCUS_DAILY_PRICE')

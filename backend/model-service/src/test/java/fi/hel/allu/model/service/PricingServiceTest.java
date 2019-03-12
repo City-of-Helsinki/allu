@@ -175,8 +175,8 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
     addDummyCustomer(application, CustomerType.PERSON);
-    // Thirty-four days -> 6800 EUR
-    checkPrice(application, 680000);
+    // Thirty-four days
+    checkPrice(application, 850000);
   }
 
   @Test
