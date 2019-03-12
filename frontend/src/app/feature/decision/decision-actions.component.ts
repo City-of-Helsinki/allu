@@ -78,8 +78,9 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       }
     };
 
-    this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed()
-      .subscribe(proposal => this.proposalConfirmed(proposal));
+    this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed().pipe(
+      filter(result => !!result)
+    ).subscribe(proposal => this.proposalConfirmed(proposal));
   }
 
   public decision(): void {

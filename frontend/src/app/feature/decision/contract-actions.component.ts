@@ -6,6 +6,7 @@ import {Approve, CreateProposal} from '@feature/decision/actions/contract-action
 import {MatDialog} from '@angular/material';
 import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
 import {Observable} from 'rxjs/index';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'contract-actions',
@@ -29,7 +30,8 @@ export class ContractActionsComponent implements OnInit {
 
   approve(): void {
     const dialogRef = this.dialog.open<ContractApprovalModalComponent>(ContractApprovalModalComponent, CONTRACT_APPROVAL_MODAL_CONFIG);
-    dialogRef.afterClosed()
-      .subscribe(approval => this.store.dispatch(new Approve(approval)));
+    dialogRef.afterClosed().pipe(
+      filter(result => !!result)
+    ).subscribe(approval => this.store.dispatch(new Approve(approval)));
   }
 }
