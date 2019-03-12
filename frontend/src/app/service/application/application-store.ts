@@ -32,6 +32,7 @@ import {NotificationService} from '@feature/notification/notification.service';
 import {findTranslation} from '@util/translations';
 import {DefaultAttachmentInfo} from '@model/application/attachment/default-attachment-info';
 import {Some} from '@util/option';
+import {ClearCoordinates} from '@feature/map/actions/address-search-actions';
 
 export interface ApplicationState {
   application?: Application;
@@ -78,6 +79,7 @@ export class ApplicationStore {
 
   reset(): void {
     this.appStore.next(initialState);
+    this.store.dispatch(new ClearCoordinates());
   }
 
   get application(): Observable<Application> {

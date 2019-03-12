@@ -18,6 +18,7 @@ import {
   InvoicingPeriodSuccessActions,
   invoicingPeriodSuccessActionTypes
 } from '@feature/application/invoicing/actions/invoicing-period-actions';
+import {ClearCoordinates} from '@feature/map/actions/address-search-actions';
 
 @Injectable()
 export class ApplicationEffects {
@@ -70,5 +71,11 @@ export class ApplicationEffects {
     ofType<InvoicingPeriodSuccessActions>(...invoicingPeriodSuccessActionTypes),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     map(([_, app]) => new ApplicationAction.Load(app.id))
+  );
+
+  @Effect()
+  onApplicationLoad: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationAction.Load>(ApplicationActionType.Load),
+    map(() => new ClearCoordinates())
   );
 }

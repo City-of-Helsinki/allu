@@ -23,6 +23,7 @@ export function reducer(state: State = initialState, action: AddressSearchAction
       };
 
     case AddressSearchActionType.FetchCoordinates:
+    case AddressSearchActionType.ClearCoordinates:
       return {
         ...state,
         coordinates: undefined

@@ -6,7 +6,8 @@ export enum AddressSearchActionType {
   Search = '[AddressSearch] Search',
   SearchSuccess = '[AddressSearch] Search success',
   FetchCoordinates = '[AddressSearch] Fetch coordinates',
-  FetchCoordinatesSuccess = '[AddressSearch] Fetch coordinates success'
+  FetchCoordinatesSuccess = '[AddressSearch] Fetch coordinates success',
+  ClearCoordinates = '[AddressSearch] Clear coordinates'
 }
 
 export class Search implements Action {
@@ -29,8 +30,13 @@ export class FetchCoordinatesSuccess implements Action {
   constructor(public payload: Geocoordinates) {}
 }
 
+export class ClearCoordinates implements Action {
+  readonly type = AddressSearchActionType.ClearCoordinates;
+}
+
 export type AddressSearchActions =
   | Search
   | SearchSuccess
   | FetchCoordinates
-  | FetchCoordinatesSuccess;
+  | FetchCoordinatesSuccess
+  | ClearCoordinates;
