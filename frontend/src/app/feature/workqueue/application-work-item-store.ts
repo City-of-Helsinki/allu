@@ -113,7 +113,10 @@ export class ApplicationWorkItemStore {
     const selected = this.store.getValue().selectedItems;
     return this.service.changeOwner(ownerId, selected).pipe(
       switchMap(() => this.pagedSearch()),
-      tap(result => this.pageChange(result))
+      tap(result => {
+        this.toggleAll(false);
+        this.pageChange(result);
+      })
     );
   }
 
@@ -121,7 +124,10 @@ export class ApplicationWorkItemStore {
     const selected = this.store.getValue().selectedItems;
     return this.service.removeOwner(selected).pipe(
       switchMap(() => this.pagedSearch()),
-      tap(result => this.pageChange(result))
+      tap(result => {
+        this.toggleAll(false);
+        this.pageChange(result);
+      })
     );
   }
 
