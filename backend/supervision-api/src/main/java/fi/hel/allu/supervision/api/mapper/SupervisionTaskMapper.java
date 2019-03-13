@@ -51,6 +51,7 @@ public class SupervisionTaskMapper {
     result.setResult(task.getResult());
     result.setStatus(task.getStatus());
     result.setType(task.getType());
+    result.setApplicationType(applicationStatusInfo.getType());
     result.setAddresses(Optional.ofNullable(addresses).map(a -> Arrays.asList(a)).orElse(Collections.emptyList()));
     return result;
   }

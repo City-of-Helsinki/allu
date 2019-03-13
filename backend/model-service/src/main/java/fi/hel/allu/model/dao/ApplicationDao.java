@@ -718,7 +718,7 @@ public class ApplicationDao {
   @Transactional(readOnly = true)
   public ApplicationStatusInfo getStatusWithIdentifier(int applicationId) {
     ApplicationStatusInfo statusWithIdentifier = queryFactory
-        .select(Projections.bean(ApplicationStatusInfo.class, application.status, application.applicationId))
+        .select(Projections.bean(ApplicationStatusInfo.class, application.status, application.applicationId, application.type))
         .from(application)
         .where(application.id.eq(applicationId))
         .fetchOne();

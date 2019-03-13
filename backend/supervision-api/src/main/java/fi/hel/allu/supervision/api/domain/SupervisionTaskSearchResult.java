@@ -3,6 +3,7 @@ package fi.hel.allu.supervision.api.domain;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -15,6 +16,7 @@ public class SupervisionTaskSearchResult {
   private Integer id;
   private Integer applicationId;
   private StatusType applicationStatus;
+  private ApplicationType applicationType;
   private String applicationIdentifier;
   private SupervisionTaskType type;
   private String ownerRealName;
@@ -145,6 +147,15 @@ public class SupervisionTaskSearchResult {
 
   public void setApplicationStatus(StatusType applicationStatus) {
     this.applicationStatus = applicationStatus;
+  }
+
+  @ApiModelProperty(value = "Application type")
+  public ApplicationType getApplicationType() {
+    return applicationType;
+  }
+
+  public void setApplicationType(ApplicationType applicationType) {
+    this.applicationType = applicationType;
   }
 
   @ApiModelProperty(value = "Address(es) of the supervision task.")
