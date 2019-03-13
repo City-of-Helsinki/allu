@@ -241,4 +241,8 @@ public class SupervisionTaskService {
     ParameterizedTypeReference<Map<Integer, List<SupervisionTask>>> typeRef = new ParameterizedTypeReference<Map<Integer, List<SupervisionTask>>>() {};
     return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(includedExternalApplicationIds), typeRef).getBody();
   }
+
+  public String[] getTaskAddresses(Integer id) {
+    return restTemplate.getForObject(applicationProperties.getSupervisionTaskAddressByIdUrl(), String[].class, id);
+  }
 }

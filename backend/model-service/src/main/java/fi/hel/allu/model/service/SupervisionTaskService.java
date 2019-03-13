@@ -185,4 +185,8 @@ public class SupervisionTaskService {
       ZonedDateTime eventsAfter, List<Integer> includedExternalApplicationIds) {
     return supervisionTaskDao.getSupervisionTaskHistoryForExternalOwner(externalOwnerId, eventsAfter, includedExternalApplicationIds);
   }
+
+  public String[] findAddressById(int id) {
+    return supervisionTaskDao.findAddressById(id);
+  }
 }

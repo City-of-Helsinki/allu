@@ -118,4 +118,9 @@ public class SupervisionTaskController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/address", method = RequestMethod.GET)
+  public ResponseEntity<String[]> findAddressById(@PathVariable int id) {
+    return ResponseEntity.ok(supervisionTaskService.findAddressById(id));
+  }
+
 }

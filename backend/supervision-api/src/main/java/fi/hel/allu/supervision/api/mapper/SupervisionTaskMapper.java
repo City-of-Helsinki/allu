@@ -1,5 +1,7 @@
 package fi.hel.allu.supervision.api.mapper;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +27,17 @@ public class SupervisionTaskMapper {
 
   public SupervisionTaskSearchResult mapToSearchResult(SupervisionWorkItem item) {
     SupervisionTaskJson task = supervisionTaskService.findById(item.getId());
-    return mapToSearchResult(task);
+    return mapToSearchResult(task, item.getAddress());
   }
 
   public SupervisionTaskSearchResult mapToSearchResult(SupervisionTaskJson task) {
+    return mapToSearchResult(task, supervisionTaskService.getTaskAddresses(task.getId()));
+  }
+
+  private SupervisionTaskSearchResult mapToSearchResult(SupervisionTaskJson task, String[] addresses) {
     ApplicationStatusInfo applicationStatusInfo = applicationServiceComposer.getApplicationStatus(task.getApplicationId());
     SupervisionTaskSearchResult result = new SupervisionTaskSearchResult();
+
     Optional.ofNullable(task.getOwner()).ifPresent(o -> result.setOwnerRealName(o.getRealName()));
     Optional.ofNullable(task.getOwner()).ifPresent(o -> result.setOwnerUserName(o.getUserName()));
     result.setApplicationIdentifier(applicationStatusInfo.getApplicationId());
@@ -44,6 +51,7 @@ public class SupervisionTaskMapper {
     result.setResult(task.getResult());
     result.setStatus(task.getStatus());
     result.setType(task.getType());
+    result.setAddresses(Optional.ofNullable(addresses).map(a -> Arrays.asList(a)).orElse(Collections.emptyList()));
     return result;
   }
 

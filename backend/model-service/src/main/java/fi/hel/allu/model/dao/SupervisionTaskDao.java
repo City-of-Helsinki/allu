@@ -340,4 +340,12 @@ public class SupervisionTaskDao {
     return result;
 
   }
+
+  @Transactional(readOnly = true)
+  public String[] findAddressById(int id) {
+    return queryFactory.select(supervisionTaskWithAddress.address)
+        .from(supervisionTaskWithAddress)
+        .where(supervisionTaskWithAddress.id.eq(id))
+        .fetchFirst();
+  }
 }

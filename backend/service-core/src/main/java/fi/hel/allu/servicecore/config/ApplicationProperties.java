@@ -1012,6 +1012,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/supervisiontask/{id}");
   }
 
+  public String getSupervisionTaskAddressByIdUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}/address");
+  }
+
   /**
    * @return url for retrieving supervision tasks by application id.
    */
