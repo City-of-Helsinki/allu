@@ -13,7 +13,7 @@ public class SupervisionWorkItem {
   private StatusType applicationStatus;
   private Integer creatorId;
   private ZonedDateTime plannedFinishingTime;
-  private String address;
+  private String[] address;
   private String projectName;
   private Integer ownerId;
 
@@ -73,11 +73,11 @@ public class SupervisionWorkItem {
     this.plannedFinishingTime = plannedFinishingTime;
   }
 
-  public String getAddress() {
+  public String[] getAddress() {
     return address;
   }
 
-  public void setAddress(String address) {
+  public void setAddress(String[] address) {
     this.address = address;
   }
 

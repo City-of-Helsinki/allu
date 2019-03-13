@@ -59,7 +59,7 @@ public class SupervisionTaskMapper {
     workItem.setApplicationStatus(task.getApplicationStatus());
     workItem.setCreator(creator);
     workItem.setPlannedFinishingTime(task.getPlannedFinishingTime());
-    workItem.setAddress(task.getAddress());
+    workItem.setAddress(Optional.ofNullable(task.getAddress()).map(a -> String.join(", ", a)).orElse(null));
     workItem.setProjectName(task.getProjectName());
     workItem.setOwner(owner);
     return workItem;
