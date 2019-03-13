@@ -37,11 +37,11 @@ SELECT
     CASE
         WHEN a.status = 'PENDING_CLIENT' THEN 'Vireillä asiakasjärjestelmässä'
         WHEN a.status = 'PRE_RESERVED' THEN 'Alustava varaus'
-        WHEN a.status = 'PENDING' THEN 'Vireillä'
+        WHEN a.status = 'PENDING' THEN 'Hakemus saapunut'
         WHEN a.status = 'WAITING_INFORMATION' THEN 'Odottaa täydennystä'
         WHEN a.status = 'INFORMATION_RECEIVED' THEN 'Täydennys vastaanotettu'
         WHEN a.status = 'HANDLING' THEN 'Käsittelyssä'
-        WHEN a.status = 'RETURNED_TO_PREPARATION' THEN 'Palautettu valmisteluun'
+        WHEN a.status = 'RETURNED_TO_PREPARATION' THEN 'Palautettu käsittelyyn'
         WHEN a.status = 'WAITING_CONTRACT_APPROVAL' THEN 'Odottaa sopimusta'
         WHEN a.status = 'DECISIONMAKING' THEN 'Odottaa päätöstä'
         WHEN a.status = 'DECISION' THEN 'Päätetty'
