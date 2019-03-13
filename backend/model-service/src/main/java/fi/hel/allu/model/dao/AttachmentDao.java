@@ -359,10 +359,10 @@ public class AttachmentDao {
   private int insertCommon(AttachmentInfo info, byte[] data) {
     Integer attachmentDataId = insertAttachmentData(data);
     info.setAttachmentDataId(attachmentDataId);
-    return insertAttachmentInfo(info, attachmentDataId);
+    return insertAttachmentInfo(info);
   }
 
-  private int insertAttachmentInfo(AttachmentInfo info, Integer attachmentDataId) {
+  private int insertAttachmentInfo(AttachmentInfo info) {
     info.setId(null); // Don't respect any ID given, let database assign the ID.
     info.setCreationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(attachment).populate(info)
@@ -424,7 +424,9 @@ public class AttachmentDao {
     if (isDefaultAttachment(info)) {
       attachmentId = info.getId();
     } else {
-      attachmentId = insertAttachmentInfo(info, info.getAttachmentDataId());
+      info.setId(null);
+      attachmentId = queryFactory.insert(attachment).populate(info)
+          .executeWithKey(attachment.id);
     }
     linkApplicationToAttachment(copyToApplicationId, attachmentId);
   }
