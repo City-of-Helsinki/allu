@@ -1,9 +1,6 @@
 package fi.hel.allu.model.pricing;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
@@ -22,7 +19,8 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
  */
 public class AreaRentalPricing extends Pricing {
 
-  private static final String DAILY_PRICE_EXPLANATION = "Alueenkäyttömaksu, maksuluokka %s, %s/%d";
+  private static final String LOCATION_IDENTIFIER = "%s/%d";
+  private static final String DAILY_PRICE_EXPLANATION = "Alueenkäyttömaksu, maksuluokka %s, " + LOCATION_IDENTIFIER;
   private static final String HANDLING_FEE_TEXT = "Käsittely- ja valvontamaksu";
   private static final String MINOR_DISTURBANCE_EXPLANATION = "Vähäistä haittaa aiheuttava työ";
   private static final String MAJOR_DISTURBANCE_EXPLANATION = "Vähäistä suurempaa haittaa aiheuttava työ";
@@ -81,7 +79,8 @@ public class AreaRentalPricing extends Pricing {
     final double discount = pricingDao.findValue(ApplicationType.AREA_RENTAL, PricingKey.UNDERPASS_DICOUNT_PERCENTAGE);
     ChargeBasisTag tag = periodPrice.getPeriodId() != null ? ChargeBasisTag.AreaRentalUnderpass(Integer.toString(periodPrice.getLocationKey()), Integer.toString(periodPrice.getPeriodId())) :
       ChargeBasisTag.AreaRentalUnderpass(Integer.toString(periodPrice.getLocationKey()));
-    addChargeBasisEntry(tag, ChargeBasisUnit.PERCENT, -discount, 0, UNDERPASS_TEXT, 0, null, periodPrice.getTag(), periodPrice.getPeriodId(), null);
+    String explanation = String.format(LOCATION_IDENTIFIER, application.getApplicationId(), periodPrice.getLocationKey());
+    addChargeBasisEntry(tag, ChargeBasisUnit.PERCENT, -discount, 0, UNDERPASS_TEXT, 0, Collections.singletonList(explanation) , periodPrice.getTag(), periodPrice.getPeriodId(), null);
     int netDiscount = (int)Math.round((discount / 100.0) * periodPrice.getNetPrice());
     setPriceInCents(getPriceInCents() - netDiscount);
   }
