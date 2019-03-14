@@ -12,7 +12,8 @@ import java.util.List;
  */
 @XmlRootElement(name = "SBO_SalesOrder")
 @XmlType(propOrder = { "senderId", "orderType", "salesOrg", "distributionChannel", "division", "salesOffice",
-    "poNumber", "billTextL1", "referenceText", "paymentTerm", "orderParty", "lineItems" })
+    "poNumber", "billTextL1", "billTextL2", "billTextL3", "billTextL4", "billTextL5", "billTextL6", "referenceText",
+    "paymentTerm", "orderParty", "lineItems" })
 public class SalesOrder {
 
   private String senderId;
@@ -30,6 +31,16 @@ public class SalesOrder {
   private String poNumber;
 
   private String billTextL1;
+
+  private String billTextL2;
+
+  private String billTextL3;
+
+  private String billTextL4;
+
+  private String billTextL5;
+
+  private String billTextL6;
 
   private String referenceText;
 
@@ -136,6 +147,66 @@ public class SalesOrder {
 
   public void setBillTextL1(String billTextL1) {
     this.billTextL1 = billTextL1;
+  }
+
+  /**
+   * Ulkoisen tekstilajin teksti rivi 2/6 (70 merkkiä), valinnainen
+   */
+  @XmlElement(name = "BillTextL2")
+  public String getBillTextL2() {
+    return billTextL2;
+  }
+
+  public void setBillTextL2(String billTextL2) {
+    this.billTextL2 = billTextL2;
+  }
+
+  /**
+   * Ulkoisen tekstilajin teksti rivi 3/6 (70 merkkiä), valinnainen
+   */
+  @XmlElement(name = "BillTextL3")
+  public String getBillTextL3() {
+    return billTextL3;
+  }
+
+  public void setBillTextL3(String billTextL3) {
+    this.billTextL3 = billTextL3;
+  }
+
+  /**
+   * Ulkoisen tekstilajin teksti rivi 4/6 (70 merkkiä), valinnainen
+   */
+  @XmlElement(name = "BillTextL4")
+  public String getBillTextL4() {
+    return billTextL4;
+  }
+
+  public void setBillTextL4(String billTextL4) {
+    this.billTextL4 = billTextL4;
+  }
+
+  /**
+   * Ulkoisen tekstilajin teksti rivi 5/6 (70 merkkiä), valinnainen
+   */
+  @XmlElement(name = "BillTextL5")
+  public String getBillTextL5() {
+    return billTextL5;
+  }
+
+  public void setBillTextL5(String billTextL5) {
+    this.billTextL5 = billTextL5;
+  }
+
+  /**
+   * Ulkoisen tekstilajin teksti rivi 6/6 (70 merkkiä), valinnainen
+   */
+  @XmlElement(name = "BillTextL6")
+  public String getBillTextL6() {
+    return billTextL6;
+  }
+
+  public void setBillTextL6(String billTextL6) {
+    this.billTextL6 = billTextL6;
   }
 
   /**

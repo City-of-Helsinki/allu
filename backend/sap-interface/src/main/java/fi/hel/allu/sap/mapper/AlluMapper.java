@@ -21,6 +21,18 @@ import java.util.stream.Collectors;
  */
 public class AlluMapper {
 
+  /**
+   * Bill text lines for area rentals and excavation announcements
+   */
+  private static final String[] BILL_TEXT_LINES = {
+      "LASKUTUSPERUSTE: Laki kadun ja eräiden yleisten alueiden kunnossa- ja",
+      "puhtaanapidosta. MUUTOKSENHAKU: Maksuvelvollisella on oikeus 14 vrk",
+      "kuluessa tämän maksulipun saamisesta tehdä kirjallinen muistutus",
+      "maksun perimisestä alueidenkäytön yksikön päällikölle.",
+      "OSOITE: Helsingin kaupungin kirjaamo, Kaupunkiympäristön toimiala,",
+      "PL 10, 00099 HELSINGIN KAUPUNKI; helsinki.kirjaamo@hel.fi."
+   };
+
   /*
    * Allu-specific constant values for various SAP fields:
    */
@@ -49,7 +61,7 @@ public class AlluMapper {
   public static SalesOrder mapToSalesOrder(Application application, InvoiceRecipient invoiceRecipient,
       String sapCustomerNumber, List<InvoiceRow> invoiceRows) {
     SalesOrder salesOrder = new SalesOrder();
-    salesOrder.setBillTextL1(application.getName());
+    setBillTextLines(salesOrder, application);
     salesOrder.setDistributionChannel(ALLU_DISTRIBUTION_CHANNEL);
     salesOrder.setDivision(ALLU_DIVISION);
     final String sapMaterial = mapToSapMaterial(application);
@@ -64,6 +76,19 @@ public class AlluMapper {
     salesOrder.setSalesOrg(ALLU_SALES_ORG);
     salesOrder.setSenderId(ALLU_SENDER_ID);
     return salesOrder;
+  }
+
+  private static void setBillTextLines(SalesOrder salesOrder, Application application) {
+    if (application.getType() == ApplicationType.AREA_RENTAL || application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      salesOrder.setBillTextL1(BILL_TEXT_LINES[0]);
+      salesOrder.setBillTextL2(BILL_TEXT_LINES[1]);
+      salesOrder.setBillTextL3(BILL_TEXT_LINES[2]);
+      salesOrder.setBillTextL4(BILL_TEXT_LINES[3]);
+      salesOrder.setBillTextL5(BILL_TEXT_LINES[4]);
+      salesOrder.setBillTextL6(BILL_TEXT_LINES[5]);
+    } else {
+      salesOrder.setBillTextL1(application.getName());
+    }
   }
 
   /**
