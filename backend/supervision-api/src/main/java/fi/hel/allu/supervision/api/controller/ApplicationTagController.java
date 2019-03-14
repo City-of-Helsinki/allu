@@ -17,7 +17,7 @@ import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1/applications")
-@Api
+@Api(tags = "Application tags")
 public class ApplicationTagController {
 
   @Autowired

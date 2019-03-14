@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.*;
-import fi.hel.allu.model.domain.DefaultText;
 import fi.hel.allu.supervision.api.translation.EnumTranslator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +20,7 @@ import io.swagger.annotations.Authorization;
 
 @RestController
 @RequestMapping("/v1/codes")
-@Api(value = "API providing descriptions for constant codes of Allu")
+@Api(tags = "Codes")
 public class CodeController {
 
   @Autowired

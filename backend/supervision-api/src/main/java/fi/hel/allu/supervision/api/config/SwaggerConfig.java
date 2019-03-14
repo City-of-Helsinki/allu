@@ -77,7 +77,19 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         )
         .securitySchemes(schemeList)
         .apiInfo(apiInfo())
-        .tags(new Tag("Applications", "API to manage applications"))
+        .tags(
+              new Tag("Applications", "API to search and manage applications"),
+              new Tag("Supervision tasks", "API to search and manage supervision tasks"),
+              new Tag("Projects", "Project API"),
+              new Tag("Authentication", "Authentication API"),
+              new Tag("Users", "User API"),
+              new Tag("Codes", "API providing translations for Allu codes"),
+              new Tag("Application tags", "API to add and remove application tags"),
+              new Tag("Comments", "API to list and add/remove application comments"),
+              new Tag("Application attachments", "API to list and add application attachments"),
+              new Tag("City districts", "API to list city districts")
+              )
+
         .additionalModels(
             typeResolver.resolve(BaseApplication.class),
             typeResolver.resolve(ExcavationAnnouncementJson.class),

@@ -18,7 +18,7 @@ import io.swagger.annotations.Authorization;
 
 @RestController
 @RequestMapping("/v1/citydistricts")
-@Api
+@Api(tags = "City districts")
 public class CityDistrictController {
 
   @Autowired

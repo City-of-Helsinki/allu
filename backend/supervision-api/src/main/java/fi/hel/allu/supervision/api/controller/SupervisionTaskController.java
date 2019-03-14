@@ -34,7 +34,7 @@ import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/v1")
-@Api(value = "v1/supervisiontasks")
+@Api(tags = "Supervision tasks")
 public class SupervisionTaskController {
 
   @Autowired

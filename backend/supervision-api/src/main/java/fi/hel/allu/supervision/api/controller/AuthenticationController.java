@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/v1/login")
-@Api(value = "v1/login")
+@Api(tags = "Authentication")
 public class AuthenticationController {
 
   @Autowired
