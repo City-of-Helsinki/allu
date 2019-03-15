@@ -39,7 +39,7 @@ L.DrawToolbar.prototype.getActions = function getActionsExt(handler) {
       context: handler,
       attributes: {
         type: 'number',
-        value: 2.0,
+        value: handler.getMinDiameter ? handler.getMinDiameter() : 2.0,
         step: 0.1,
         min: MIN_RADIUS * 2,
         max: 100.0

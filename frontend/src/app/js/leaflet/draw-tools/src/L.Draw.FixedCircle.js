@@ -27,14 +27,17 @@ L.Draw.FixedCircle = L.Draw.Circle.extend({
 
   _minRadius: DEFAULT_MIN_RADIUS,
 
-  addHooks: function () {
-    L.Draw.Circle.prototype.addHooks.call(this);
-    this._minRadius = DEFAULT_MIN_RADIUS;
+  initialize: function (map, options) {
+    L.Draw.Circle.prototype.initialize.call(this, map, options);
   },
 
   setMinDiameter: function(diameter) {
     var radius = diameter / 2;
     this._minRadius = radius >= MIN_RADIUS ? radius : MIN_RADIUS;
+  },
+
+  getMinDiameter: function() {
+    return this._minRadius * 2;
   },
 
   _drawShape: function (latlng) {

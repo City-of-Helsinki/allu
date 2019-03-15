@@ -14,7 +14,8 @@ export function drawOptions(enabled: boolean): any {
     },
     circle: false,
     fixedCircle: {
-      shapeOptions: pathStyle.DEFAULT_DRAW
+      shapeOptions: pathStyle.DEFAULT_DRAW,
+      repeatMode: true
     },
     rectangle: {
       shapeOptions: pathStyle.DEFAULT_DRAW
