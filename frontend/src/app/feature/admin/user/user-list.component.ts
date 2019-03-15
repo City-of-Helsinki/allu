@@ -11,6 +11,7 @@ import {map, withLatestFrom} from 'rxjs/operators';
 import {flattenToString, StringUtil} from '@util/string.util';
 import {Dictionary} from '@ngrx/entity';
 import {CityDistrict} from '@model/common/city-district';
+import {AlluTableDataSource} from '@feature/common/table/allu-table-data-source';
 
 @Component({
   selector: 'user-list',
@@ -19,7 +20,7 @@ import {CityDistrict} from '@model/common/city-district';
 })
 export class UserListComponent implements OnInit {
 
-  dataSource: MatTableDataSource<UserElement>;
+  dataSource: AlluTableDataSource<UserElement>;
   displayedColumns: string[] = ['userName', 'realName', 'lastLogin', 'isActive', 'roles', 'applicationTypes', 'cityDistricts'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -29,7 +30,12 @@ export class UserListComponent implements OnInit {
               private router: Router,
               private store: Store<fromRoot.State>,
               @Inject(LOCALE_ID) private localeId: string) {
-    this.dataSource = new MatTableDataSource([]);
+    this.dataSource = new AlluTableDataSource([], {
+      caseInsensitiveFields: [
+        'userName',
+        'realName'
+      ]
+    });
   }
 
   ngOnInit(): void {
