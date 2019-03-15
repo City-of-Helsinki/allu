@@ -82,6 +82,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
               new Tag("Supervision tasks", "API to search and manage supervision tasks"),
               new Tag("Projects", "Project API"),
               new Tag("Authentication", "Authentication API"),
+              new Tag("Charge basis entries", "API to list and manage charge basis entries"),
               new Tag("Users", "User API"),
               new Tag("Codes", "API providing translations for Allu codes"),
               new Tag("Application tags", "API to add and remove application tags"),

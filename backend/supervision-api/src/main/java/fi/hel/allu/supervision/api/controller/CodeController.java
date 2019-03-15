@@ -186,6 +186,26 @@ public class CodeController {
     return ResponseEntity.ok(getTranslations(EventNature.values()));
   }
 
+  @ApiOperation(value = "Gets charge basis types",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json"
+  )
+  @RequestMapping(value = "/chargebasistypes", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Map<ChargeBasisType, String>> getChargeBasisTypes() {
+    return ResponseEntity.ok(getTranslations(ChargeBasisType.values()));
+  }
+
+  @ApiOperation(value = "Gets charge basis units",
+      authorizations = @Authorization(value ="api_key"),
+      produces = "application/json"
+  )
+  @RequestMapping(value = "/chargebasisunits", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<Map<ChargeBasisUnit, String>> getChargeBasisUnits() {
+    return ResponseEntity.ok(getTranslations(ChargeBasisUnit.values()));
+  }
+
   @ApiOperation(value = "Gets surface hardness types",
       authorizations = @Authorization(value ="api_key"),
       produces = "application/json"
