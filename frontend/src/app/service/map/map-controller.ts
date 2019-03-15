@@ -5,7 +5,7 @@ import 'leaflet-groupedlayercontrol';
 import 'leaflet-measure-path';
 import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
-import '../../js/leaflet/draw-line';
+import '../../js/leaflet/draw-tools';
 
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {MapUtil} from './map.util';

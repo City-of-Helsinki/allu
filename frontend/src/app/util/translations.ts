@@ -1218,14 +1218,19 @@ export const translations = {
         lineWidth: {
           title: 'Viivan leveys',
           text: 'Leveys'
-        }
+        },
+        diameter: {
+          title: 'Ympyrän halkaisija',
+          text: 'Halkaisija'
+        },
       },
       handlers: {
         circle: {
           tooltip: {
             start: 'Klikkaa ja raahaa piirtääksesi ympyrän.'
           },
-          radius: 'Säde'
+          radius: 'Säde',
+          diameter: 'Halkaisija'
         },
         marker: {
           tooltip: {

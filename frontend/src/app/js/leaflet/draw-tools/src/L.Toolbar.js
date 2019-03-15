@@ -1,5 +1,3 @@
-import {MIN_WIDTH} from './L.Draw.BufferPolyLine';
-
 const ARROW_UP = '&#9650;';
 const ARROW_DOWN = '&#9660;';
 
@@ -9,9 +7,9 @@ function changeValue(inputEl, byValue, options) {
 };
 
 function setValue(inputEl, value, options) {
-  inputEl.value = value >= MIN_WIDTH ? value : MIN_WIDTH;
+  inputEl.value = value >= options.attributes.min ? value : options.attributes.min;
   options.callback.call(options.context, inputEl.value);
-}
+};
 
 function addAttributes(attributes, element) {
   Object.keys(attributes).forEach(function(key) {

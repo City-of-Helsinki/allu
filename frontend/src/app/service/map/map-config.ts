@@ -12,7 +12,8 @@ export function drawOptions(enabled: boolean): any {
       allowIntersection: false,
       showArea: true
     },
-    circle: {
+    circle: false,
+    fixedCircle: {
       shapeOptions: pathStyle.DEFAULT_DRAW
     },
     rectangle: {
