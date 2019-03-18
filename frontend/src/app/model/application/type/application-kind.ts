@@ -17,6 +17,9 @@ export enum ApplicationKind {
   CIRCUS = 'CIRCUS', // Sirkus/tivolivierailu
   ART = 'ART', // Taideteos
   STORAGE_AREA = 'STORAGE_AREA', // Varastoalue
+  SUMMER_TERRACE = 'SUMMER_TERRACE', // Kesäterassi
+  WINTER_TERRACE = 'WINTER_TERRACE', // Talviterassi
+  PARKLET = 'PARKLET', // Parklet
   STREET_AND_GREEN = 'STREET_AND_GREEN', // Katu- ja vihertyöt
   WATER_AND_SEWAGE = 'WATER_AND_SEWAGE', // Vesi / viemäri
   ELECTRICITY = 'ELECTRICITY', // Sähkö

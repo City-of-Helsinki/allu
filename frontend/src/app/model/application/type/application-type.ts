@@ -63,6 +63,9 @@ export const applicationTypeTree: ApplicationTypeTree = {
     CIRCUS: [],
     ART: [],
     STORAGE_AREA: [],
+    SUMMER_TERRACE: [],
+    WINTER_TERRACE: [],
+    PARKLET: [],
     OTHER: []
   },
   NOTE: {

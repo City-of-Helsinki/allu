@@ -24,6 +24,9 @@ public enum ApplicationKind {
   CIRCUS(ApplicationType.SHORT_TERM_RENTAL), // Sirkus/tivolivierailu
   ART(ApplicationType.SHORT_TERM_RENTAL), // Taideteos
   STORAGE_AREA(ApplicationType.SHORT_TERM_RENTAL, ApplicationType.AREA_RENTAL), // Varastoalue
+  SUMMER_TERRACE(ApplicationType.SHORT_TERM_RENTAL), // Kesäterassi
+  WINTER_TERRACE(ApplicationType.SHORT_TERM_RENTAL), // Talviterassi
+  PARKLET(ApplicationType.SHORT_TERM_RENTAL), // Parklet
   STREET_AND_GREEN(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
       ApplicationType.PLACEMENT_CONTRACT), // Katu- ja vihertyöt
   WATER_AND_SEWAGE(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,

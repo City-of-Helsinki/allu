@@ -190,6 +190,9 @@ export const translations = {
       REPAVING: 'Uudelleenpäällystykset',
       ELECTION_ADD_STAND: 'Vaalimainosteline',
       PUBLIC_EVENT: 'Yleisötilaisuus',
+      SUMMER_TERRACE: 'Kesäterassi',
+      WINTER_TERRACE: 'Talviterassi',
+      PARKLET: 'Parklet',
       OTHER: 'Muu'
     },
     specifier: {
