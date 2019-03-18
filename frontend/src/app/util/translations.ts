@@ -297,7 +297,8 @@ export const translations = {
       recurringEndYearNotBetween: 'Virheellinen toistuvuuden päättymisvuosi',
       invoiceRecipientMissing: 'Laskutettavaa asiakasta ei ole valittu',
       kindMissing: 'Hakemuksen laji puuttuu',
-      receivedTimeMissing: 'Hakemuksen saapumispäivä puuttuu'
+      receivedTimeMissing: 'Hakemuksen saapumispäivä puuttuu',
+      receivedTimeInFuture: 'Hakemuksen saapumispäivä ei voi olla tulevaisuudessa'
     },
     common: {
       startTime: 'Voimassaolon aloitus',

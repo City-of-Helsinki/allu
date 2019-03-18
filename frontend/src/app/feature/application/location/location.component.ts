@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -44,6 +44,7 @@ import {DistributionType} from '@model/common/distribution-type';
 import {DefaultRecipient} from '@model/common/default-recipient';
 import {DefaultRecipientHub} from '@service/recipients/default-recipient-hub';
 import {CurrentUser} from '@service/user/current-user';
+import {TypeComponent} from '@feature/application/type/type.component';
 
 @Component({
   selector: 'type',
@@ -73,6 +74,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   availableLayers$: Observable<MapLayer[]>;
 
   private destroy = new Subject<boolean>();
+
+  @ViewChild(TypeComponent)
+  private typeComponent: TypeComponent;
 
   constructor(
     private applicationStore: ApplicationStore,
@@ -295,9 +299,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const nothingEdited = this.locationState.editIndex === undefined;
     const formValid = (this.locationForm.valid && !!this.locationForm.value['geometry']);
     const validGeometry = !this.invalidGeometry;
-    const receivedTimeSet = !!this.application.receivedTime;
+    const typeFormValid = this.typeComponent.valid;
 
-    return nothingEdited || (formValid && validGeometry && receivedTimeSet);
+    return nothingEdited || (formValid && validGeometry && typeFormValid);
   }
 
   paymentTariff() {

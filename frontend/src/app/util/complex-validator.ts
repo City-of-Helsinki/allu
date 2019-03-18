@@ -161,6 +161,13 @@ export class ComplexValidator {
     return inThePast ? {inThePast: fc.value} : undefined;
   }
 
+  static inTheFuture(fc: AbstractControl): ValidationErrors {
+    const now = new Date();
+    now.setHours(23, 59, 59, 99); // end of the day
+    const inTheFuture = fc.value && TimeUtil.isAfter(fc.value, now);
+    return inTheFuture ? {inTheFuture: fc.value} : undefined;
+  }
+
   static idRequired(control: AbstractControl): ValidationErrors | undefined {
     const id = control.value ? control.value.id : undefined;
     return NumberUtil.isDefined(id)

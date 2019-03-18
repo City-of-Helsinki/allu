@@ -70,13 +70,17 @@
                 <input matInput type="text" required
                        formControlName="receivedTime"
                        [placeholder]="'application.receivedTime' | translation"
-                       [matDatepicker]="receivedTimePicker"/>
+                       [matDatepicker]="receivedTimePicker"
+                       [max]="today"/>
                 <mat-datepicker-toggle matSuffix
                        [for]="receivedTimePicker"
                        [disabled]="readonly"></mat-datepicker-toggle>
                 <mat-datepicker #receivedTimePicker></mat-datepicker>
                 <mat-error *ngIf="form.get('receivedTime').hasError('required')">
                   {{'application.field.receivedTimeMissing' | translation}}
+                </mat-error>
+                <mat-error *ngIf="form.get('receivedTime').hasError('inTheFuture')">
+                  {{'application.field.receivedTimeInFuture' | translation}}
                 </mat-error>
               </mat-form-field>
             </div>

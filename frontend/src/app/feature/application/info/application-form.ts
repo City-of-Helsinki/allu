@@ -2,6 +2,7 @@ import {DistributionEntryForm} from '../distribution/distribution-list/distribut
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
 import {Validators} from '@angular/forms';
 import {Application} from '@model/application/application';
+import {ComplexValidator} from '@util/complex-validator';
 
 export interface ApplicationForm {
   name?: string;
@@ -23,6 +24,6 @@ export interface CommunicationForm {
 export function applicationForm(app: Application = new Application()): { [key: string]: any; } {
   return {
     name: [app.name, [Validators.required, Validators.minLength(2)]],
-    receivedTime: [app.receivedTime, Validators.required]
+    receivedTime: [app.receivedTime, [Validators.required, ComplexValidator.inTheFuture]]
   };
 }

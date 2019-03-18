@@ -24,6 +24,7 @@ import {
 import {SetKindsWithSpecifiers, SetType} from '@feature/application/actions/application-actions';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {Application} from '@model/application/application';
+import {ComplexValidator} from '@util/complex-validator';
 
 @Component({
   selector: 'application-type',
@@ -39,6 +40,7 @@ export class TypeComponent implements OnInit, OnDestroy {
   @Input() receivedTime: Date = new Date();
 
   @Output() receivedTimeChange: EventEmitter<Date> = new EventEmitter<Date>();
+  valid: boolean;
 
   multipleKinds = false;
   applicationTypes: Observable<string[]>;
@@ -46,6 +48,7 @@ export class TypeComponent implements OnInit, OnDestroy {
   availableKindsWithSpecifiers: KindsWithSpecifiers = {};
   pendingKind$: Observable<string>;
   form: FormGroup;
+  today: Date = new Date();
 
   private typeCtrl: FormControl;
   private kindsCtrl: FormControl;
@@ -136,7 +139,7 @@ export class TypeComponent implements OnInit, OnDestroy {
       kinds: this.kindsCtrl,
       specifiers: this.specifiersCtrl,
       draft: this.draftCtrl,
-      receivedTime: [this.receivedTime, Validators.required]
+      receivedTime: [this.receivedTime, [Validators.required, ComplexValidator.inTheFuture]]
     });
 
     this.kindsCtrl.updateValueAndValidity();
@@ -173,6 +176,9 @@ export class TypeComponent implements OnInit, OnDestroy {
 
     this.form.get('receivedTime').valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(date => this.receivedTimeChange.emit(date));
+
+    this.form.statusChanges.pipe(takeUntil(this.destroy))
+      .subscribe(status => this.valid = status === 'VALID');
   }
 
   private getAvailableTypes() {
