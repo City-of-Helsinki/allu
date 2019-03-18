@@ -7,9 +7,9 @@
         <div>{{['application.type', application.type] | translation}}</div>
       </div>
       <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
-        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.creationTime' | translation}}
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.receivedTime' | translation}}
         </mat-card-subtitle>
-        <div>{{application.creationTime | date:'shortDate'}}</div>
+        <div>{{application.receivedTime | date:'shortDate'}}</div>
       </div>
       <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.kinds' | translation}}</mat-card-subtitle>

@@ -514,7 +514,7 @@ export const translations = {
   applicationInfo: {
     title: 'Hakemuksen perustiedot',
     type: 'Hakemuksen tyyppi',
-    creationTime: 'Hakemus saapunut',
+    receivedTime: 'Hakemus saapunut',
     kinds: 'Hakemuksen laji(t)',
     startTime: 'Arvioitu aloitus',
     endTime: 'Arvioitu päättyminen',
