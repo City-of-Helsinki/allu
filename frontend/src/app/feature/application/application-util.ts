@@ -10,3 +10,7 @@ export class ApplicationUtil {
     return validStatus && external;
   }
 }
+
+export function validForDecision(app: Application): boolean {
+  return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
+}

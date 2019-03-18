@@ -1,12 +1,16 @@
 <div class="action-row">
   <ng-container *availableTo="['ROLE_PROCESS_APPLICATION']">
     <div class="action-item" *ngIf="isFromExternalSystem$ | async">
-      <button mat-raised-button type="button" color="primary" (click)="createProposal()">
+      <button mat-raised-button type="button" color="primary"
+              [disabled]="!isValidForDecision"
+              (click)="createProposal()">
         {{'contract.createProposal' | translation | uppercase}}
       </button>
     </div>
     <div class="action-item">
-      <button mat-raised-button type="button" color="primary" (click)="approve()">
+      <button mat-raised-button type="button" color="primary"
+              [disabled]="!isValidForDecision"
+              (click)="approve()">
         {{'contract.proposeApproval' | translation | uppercase}}
       </button>
     </div>

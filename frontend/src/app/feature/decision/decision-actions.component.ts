@@ -21,6 +21,7 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
 import {NumberUtil} from '@util/number.util';
+import {validForDecision} from '@feature/application/application-util';
 
 const RESEND_ALLOWED = [
   ApplicationStatus.DECISION,
@@ -65,7 +66,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
     this.showToOperationalCondition = this.approvedOperationalCondition && this.application.targetState === ApplicationStatus.DECISION;
-    this.isValidForDecision = this.validForDecision(this.application);
+    this.isValidForDecision = validForDecision(this.application);
   }
 
   public decisionProposal(proposalType: string): void {
@@ -182,10 +183,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     } else {
       return this.decisionService.sendDecision(appId, details);
     }
-  }
-
-  private validForDecision(app: Application): boolean {
-    return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
   }
 
   /**
