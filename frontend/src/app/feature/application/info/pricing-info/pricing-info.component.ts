@@ -40,9 +40,15 @@ export class PricingInfoComponent implements OnInit, OnDestroy {
 
     this.natureSelectable = this.application.kind === ApplicationKind.OUTDOOREVENT;
     this.surfaceHardnessSelectable = this.application.type === ApplicationType.EVENT && !hasFixedLocations(this.application);
+
     this.ecoCompassSelectable = this.application.kind === ApplicationKind.OUTDOOREVENT
       || this.application.kind === ApplicationKind.BIG_EVENT;
-    this.distanceFromWallSelectable = this.application.kind === ApplicationKind.PROMOTION_OR_SALES;
+
+    this.distanceFromWallSelectable = [
+      ApplicationKind.PROMOTION_OR_SALES,
+      ApplicationKind.SUMMER_TERRACE,
+      ApplicationKind.WINTER_TERRACE
+    ].indexOf(this.application.kind) >= 0;
 
     this.showPricingInfo = this.natureSelectable
       || this.surfaceHardnessSelectable

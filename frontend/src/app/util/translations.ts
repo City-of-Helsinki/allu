@@ -396,7 +396,9 @@ export const translations = {
         rentalEndTimeMissing: 'Vuokrauksen loppuaika puuttuu',
         startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää'
       },
-      notBillableReason: 'Myyntitila alle 0.8m seinästä veloituksetta'
+      promotionOrSalesNotBillableReason: 'Myyntitila alle 0.8m seinästä veloituksetta',
+      terraceNotBillableReason: 'Välittömästi liiketilan edessä, julkisivussa kiinni olevaa 80 cm levyistä aluetta' +
+        ' saa käyttää ulkotarjoiluun korvauksetta',
     },
     cableReport: {
       cableInfo: {

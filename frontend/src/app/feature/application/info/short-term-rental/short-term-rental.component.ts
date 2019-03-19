@@ -12,6 +12,11 @@ import {findTranslation} from '@util/translations';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
+const kindsWithNotBillableReason = [
+  ApplicationKind.PROMOTION_OR_SALES,
+  ApplicationKind.SUMMER_TERRACE,
+  ApplicationKind.WINTER_TERRACE
+];
 
 @Component({
   selector: 'short-term-rental',
@@ -57,13 +62,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     this.applicationForm.patchValue(formValue);
     this.showCommercial = application.kinds.some(kind => ApplicationKind.BRIDGE_BANNER === kind);
     this.updateCommercialLabel(rental.commercial);
-
-    if (application.kinds.some(kind => ApplicationKind.PROMOTION_OR_SALES === kind)) {
-      application.notBillable = !this.billable;
-      if (!this.billable && !application.notBillableReason) {
-        application.notBillableReason = findTranslation('application.shortTermRental.notBillableReason');
-      }
-    }
+    this.updateNotBillable(application);
   }
 
   protected update(form: ShortTermRentalForm): Application {
@@ -80,5 +79,27 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   private updateCommercialLabel(commercial: boolean) {
     this.commercialLabel = commercial ? COMMERCIAL : NON_COMMERCIAL;
+  }
+
+  private updateNotBillable(application: Application): void {
+    const kind = application.kind;
+
+    if (kindsWithNotBillableReason.indexOf(kind) >= 0) {
+      application.notBillable = !this.billable;
+      this.updateNotBillableFor(application, kind);
+    }
+  }
+
+  private updateNotBillableFor(application: Application, kind: ApplicationKind): void {
+    if (application.notBillable && !application.notBillableReason) {
+      switch (kind) {
+        case ApplicationKind.PROMOTION_OR_SALES:
+          application.notBillableReason = findTranslation('application.shortTermRental.promotionOrSalesNotBillableReason');
+          break;
+        case ApplicationKind.SUMMER_TERRACE:
+        case ApplicationKind.WINTER_TERRACE:
+          application.notBillableReason = findTranslation('application.shortTermRental.terraceNotBillableReason');
+      }
+    }
   }
 }

@@ -40,7 +40,7 @@
           </mat-checkbox>
         </div>
       </div>
-      <div fxLayout="row" *ngIf="application.kind==='PROMOTION_OR_SALES'">
+      <div fxLayout="row" *ngIf="distanceFromWallSelectable">
         <div fxFlex="0 0 auto">
           <mat-slide-toggle formControlName="billableSalesArea">
             {{'application.pricing.distanceFromWallOver80' | translation}}
