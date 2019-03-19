@@ -1,17 +1,22 @@
 <form [formGroup]="recurringForm">
-  <mat-radio-group formControlName="type" class="vertical-radio-group">
-    <mat-radio-button value="none" class="recurring-radio-button">Ei toistu</mat-radio-button>
-    <mat-radio-button value="forNow" class="recurring-radio-button">Toistaiseksi vuosittain toistuva</mat-radio-button>
+  <mat-radio-group formControlName="type">
+    <mat-radio-button value="none" class="recurring-radio-button">
+      {{'application.recurring.notRecurring' | translation}}
+    </mat-radio-button>
+    <mat-radio-button value="forNow" class="recurring-radio-button">
+      {{'application.recurring.recurringYearlyForNow' | translation}}
+    </mat-radio-button>
     <mat-radio-button value="until" class="recurring-radio-button">
-      <span>Toistuu vuosittain</span>
-      <span>
-                <mat-form-field floatLabel="never" class="error-overflow">
-                    <input type="number" matInput formControlName="endYear" placeholder="Loppuvuosi"
-                           class="year-input" min="{{minYear}}" max="{{maxYear}}" step="1"/>
-                    <mat-error>{{'application.field.recurringEndYearNotBetween' | translation}}</mat-error>
-                </mat-form-field>
-            </span>
-      <span>asti</span>
+      <span>{{'application.recurring.recurringYearly' | translation}}</span>
+      <mat-form-field floatLabel="never" class="year-input error-overflow">
+        <input type="number" matInput formControlName="endYear"
+               [placeholder]="'application.recurring.untilYear' | translation"
+               [min]="minYear"
+               [max]="maxYear"
+               step="1"/>
+        <mat-error>{{'application.field.recurringEndYearNotBetween' | translation}}</mat-error>
+      </mat-form-field>
+      <span>{{'application.recurring.until' | translation}}</span>
     </mat-radio-button>
   </mat-radio-group>
 </form>

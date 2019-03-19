@@ -464,6 +464,13 @@ export const translations = {
         reportWorkFinished: 'Työn valmistuminen ilmoitettu'
       }
     },
+    recurring: {
+      notRecurring: 'Ei toistu',
+      recurringYearlyForNow: 'Toistuu vuosittain toistaiseksi',
+      recurringYearly: 'Toistuu vuosittain',
+      until: 'asti',
+      untilYear: 'vuoteen'
+    },
     button: {
       copy: 'Kopioi uudeksi',
       replace: 'Korvaava päätös',

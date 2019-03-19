@@ -1,8 +1,9 @@
 import {Component, forwardRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Subscription} from 'rxjs';
-import {ComplexValidator} from '../../../../util/complex-validator';
-import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
+import {ComplexValidator} from '@util/complex-validator';
+import {MAX_YEAR, MIN_YEAR} from '@util/time.util';
+import {Subject} from 'rxjs/internal/Subject';
+import {takeUntil} from 'rxjs/operators';
 
 type RecurringType = 'none' | 'forNow' | 'until';
 
@@ -29,8 +30,8 @@ export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccess
 
   private recurringTypeCtrl: FormControl;
   private endYearCtrl: FormControl;
-  private endYearSubscription: Subscription;
-  private recurringTypeSubscription: Subscription;
+
+  private destroy: Subject<boolean> = new Subject<boolean>();
 
   constructor(private fb: FormBuilder) {
   }
@@ -43,8 +44,11 @@ export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccess
       endYear: this.endYearCtrl
     });
 
-    this.recurringTypeSubscription = this.recurringTypeCtrl.valueChanges.subscribe(type => this.typeChange(type));
-    this.endYearSubscription = this.endYearCtrl.valueChanges.subscribe(endYear => this._onChange(endYear));
+    this.recurringTypeCtrl.valueChanges.pipe(takeUntil(this.destroy))
+      .subscribe(type => this.typeChange(type));
+
+    this.endYearCtrl.valueChanges.pipe(takeUntil(this.destroy))
+      .subscribe(endYear => this._onChange(endYear));
 
     if (this.readonly) {
       this.recurringForm.disable();
@@ -52,8 +56,8 @@ export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccess
   }
 
   ngOnDestroy(): void {
-    this.recurringTypeSubscription.unsubscribe();
-    this.endYearSubscription.unsubscribe();
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   writeValue(endYear: number): void {
