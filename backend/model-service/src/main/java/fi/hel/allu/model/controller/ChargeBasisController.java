@@ -1,8 +1,6 @@
 package fi.hel.allu.model.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.PricingService;
 
 @RestController
 @RequestMapping("/applications/{id}")
@@ -79,6 +76,33 @@ public class ChargeBasisController {
     ResponseEntity<ChargeBasisEntry> response = new ResponseEntity<>(chargeBasisService.setInvoicable(id, entryId, invoicable), HttpStatus.OK);
     applicationService.updateApplicationPricing(id);
     return response;
+  }
 
+  @RequestMapping(value = "/charge-basis", method = RequestMethod.POST)
+  public ResponseEntity<ChargeBasisEntry> insertEntry(@PathVariable int id,
+                                                      @RequestBody ChargeBasisEntry entry) {
+    ChargeBasisEntry inserted = chargeBasisService.insert(id, entry);
+    applicationService.updateApplicationPricing(id);
+    return ResponseEntity.ok(inserted);
+  }
+
+  @RequestMapping(value = "/charge-basis/{entryId}", method = RequestMethod.GET)
+  public ResponseEntity<ChargeBasisEntry> getEntry(@PathVariable int id, @PathVariable int entryId) {
+    return ResponseEntity.ok(chargeBasisService.getEntry(id, entryId));
+  }
+
+  @RequestMapping(value = "/charge-basis/{entryId}", method = RequestMethod.PUT)
+  public ResponseEntity<ChargeBasisEntry> updateEntry(@PathVariable int id, @PathVariable int entryId,
+                                                        @RequestBody ChargeBasisEntry entry) {
+    ChargeBasisEntry updated = chargeBasisService.updateEntry(id, entryId, entry);
+    applicationService.updateApplicationPricing(id);
+    return ResponseEntity.ok(updated);
+  }
+
+  @RequestMapping(value = "/charge-basis/{entryId}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> deleteEntry(@PathVariable int id, @PathVariable int entryId) {
+    chargeBasisService.deleteEntry(id, entryId);
+    applicationService.updateApplicationPricing(id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

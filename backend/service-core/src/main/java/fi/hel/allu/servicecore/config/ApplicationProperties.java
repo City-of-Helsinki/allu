@@ -618,21 +618,18 @@ public class ApplicationProperties {
 
 
   /**
-   * @return url for getting the charge basis entries for an application
+   * @return url for getting / updating the charge basis entries for an application
    */
   public String getChargeBasisUrl() {
     return getModelServiceUrl("/applications/{id}/charge-basis");
   }
 
-  public String getSingleInvoiceChargeBasisUrl() {
-    return getModelServiceUrl("/applications/{id}/single-invoice-charge-basis");
+  public String getChargeBasisEntryUrl() {
+    return getModelServiceUrl("/applications/{id}/charge-basis/{entryId}");
   }
 
-  /**
-   * @return url for setting the charge basis entries for an application
-   */
-  public String setChargeBasisUrl() {
-    return getModelServiceUrl("/applications/{id}/charge-basis");
+  public String getSingleInvoiceChargeBasisUrl() {
+    return getModelServiceUrl("/applications/{id}/single-invoice-charge-basis");
   }
 
   public String getSetChargeBasisInvoicableUrl() {

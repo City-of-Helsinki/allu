@@ -103,13 +103,18 @@ public class ChargeBasisDao {
   }
 
   private void updateEntries(Map<Integer, ChargeBasisEntry> entriesToUpdate) {
-    ZonedDateTime modificationTime = ZonedDateTime.now();
     for (Entry<Integer, ChargeBasisEntry> entry : entriesToUpdate.entrySet()) {
-      entry.getValue().setModificationTime(modificationTime);
-      queryFactory.update(chargeBasis)
-      .populate(entry.getValue(), new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
-      .where(chargeBasis.id.eq(entry.getKey())).execute();
+      updateEntry(entry.getKey(), entry.getValue());
     }
+  }
+
+  @Transactional
+  public ChargeBasisEntry updateEntry(Integer id, ChargeBasisEntry entry) {
+    entry.setModificationTime(ZonedDateTime.now());
+    queryFactory.update(chargeBasis)
+    .populate(entry, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
+    .where(chargeBasis.id.eq(id)).execute();
+    return findChargeBasisEntry(id);
   }
 
   private boolean hasChanges(ChargeBasisEntry entry, ChargeBasisEntry old) {
@@ -120,6 +125,19 @@ public class ChargeBasisDao {
     Integer maxEntryNumber = queryFactory.select(chargeBasis.entryNumber.max()).from(chargeBasis)
         .where(chargeBasis.applicationId.eq(applicationId)).fetchFirst();
     return maxEntryNumber != null ? maxEntryNumber + 1 : 0;
+  }
+
+  @Transactional
+  public ChargeBasisEntry insertManualEntry(int applicationId, ChargeBasisEntry entry) {
+    int entryNumber = nextEntryNumber(applicationId, true);
+    entry.setModificationTime(ZonedDateTime.now());
+    Integer id = queryFactory.insert(chargeBasis)
+        .populate(entry, new ExcludingMapper(NullHandling.WITH_NULL_BINDINGS, Arrays.asList(chargeBasis.manuallySet)))
+        .set(chargeBasis.applicationId, applicationId)
+        .set(chargeBasis.entryNumber, entryNumber)
+        .set(chargeBasis.manuallySet, true)
+        .executeWithKey(chargeBasis.id);
+    return findChargeBasisEntry(id);
   }
 
   private void insertEntries(int applicationId, Collection<ChargeBasisEntry> entries, boolean manuallySet, int nextEntryNumber) {
@@ -142,7 +160,8 @@ public class ChargeBasisDao {
     }
   }
 
-  private void deleteEntries(Set<Integer> entryIdsToDelete, int applicationId) {
+  @Transactional
+  public void deleteEntries(Collection<Integer> entryIdsToDelete, int applicationId) {
     // Delete invoice rows created from charge basis entry
     queryFactory.delete(invoiceRow).where(invoiceRow.chargeBasisId.in(entryIdsToDelete)).execute();
     queryFactory.delete(chargeBasis).where(chargeBasis.id.in(entryIdsToDelete)).execute();
@@ -169,6 +188,15 @@ public class ChargeBasisDao {
   public ChargeBasisEntry setInvoicable(int id, boolean invoicable) {
     queryFactory.update(chargeBasis).set(chargeBasis.invoicable, invoicable).where(chargeBasis.id.eq(id)).execute();
     return findChargeBasisEntry(id);
+  }
+
+  @Transactional(readOnly = true)
+  public ChargeBasisEntry findChargeBasisEntry(int applicationId, int entryId) {
+    return queryFactory.select(chargeBasisBean)
+        .from(chargeBasis)
+        .where(chargeBasis.id.eq(entryId), chargeBasis.applicationId.eq(applicationId))
+        .fetchOne();
+
   }
 
   private ChargeBasisEntry findChargeBasisEntry(int id) {

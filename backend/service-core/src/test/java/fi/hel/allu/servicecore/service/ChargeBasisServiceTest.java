@@ -25,6 +25,8 @@ public class ChargeBasisServiceTest {
   private ApplicationProperties applicationProperties;
   @Mock
   private RestTemplate restTemplate;
+  @Mock
+  private ApplicationService applicationService;
 
   private ChargeBasisService chargeBasisService;
 
@@ -32,7 +34,7 @@ public class ChargeBasisServiceTest {
     describe("ChargeBasis service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
-        chargeBasisService = new ChargeBasisService(applicationProperties, restTemplate);
+        chargeBasisService = new ChargeBasisService(applicationProperties, restTemplate, applicationService);
       });
 
       it("Retrieves charge basis entries", () -> {

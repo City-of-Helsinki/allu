@@ -35,5 +35,7 @@ public enum StatusType {
     return orderNumber < DECISION.orderNumber;
   }
 
-
+  public boolean isBeforeDecisionMaking() {
+    return orderNumber < DECISIONMAKING.orderNumber;
+  }
 }
