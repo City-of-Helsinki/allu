@@ -76,6 +76,7 @@ export class TypeComponent implements OnInit, OnDestroy {
 
       this.initEvents();
     });
+    this.valid = this.form.valid;
   }
 
   ngOnDestroy(): void {
