@@ -11,7 +11,8 @@ import {
   LoadSuccess,
   Save,
   SetInvoicable,
-  SetInvoicableFailed, UpdateEntry
+  SetInvoicableFailed,
+  UpdateEntrySuccess
 } from '@feature/application/invoicing/actions/charge-basis-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {InvoiceService} from '@service/application/invoice/invoice.service';
@@ -55,7 +56,7 @@ export class ChargeBasisEffects {
     ofType<SetInvoicable>(ChargeBasisActionType.SetInvoicable),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.invoiceService.setInvoicable(app.id, action.payload.id, action.payload.invoicable).pipe(
-      map(entry => new UpdateEntry(entry)),
+      map(entry => new UpdateEntrySuccess(entry)),
       catchError(error => from([new NotifyFailure(error), new SetInvoicableFailed(action.payload.id, action.payload.invoicable)]))
     ))
   );

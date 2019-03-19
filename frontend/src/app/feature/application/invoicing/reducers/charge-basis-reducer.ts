@@ -25,7 +25,8 @@ export function reducer(state: State = initialState, action: ChargeBasisActions)
       return adapter.addOne(action.payload, state);
     }
 
-    case ChargeBasisActionType.UpdateEntry: {
+    case ChargeBasisActionType.UpdateEntry:
+    case ChargeBasisActionType.UpdateEntrySuccess: {
       return adapter.upsertOne(action.payload, state);
     }
 
