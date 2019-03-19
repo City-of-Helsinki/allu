@@ -4,6 +4,7 @@ import {Application} from '@model/application/application';
 import {ApplicationForm} from '@feature/application/info/application-form';
 import {FormBuilder, Validators} from '@angular/forms';
 import {ComplexValidator} from '@util/complex-validator';
+import {MAX_YEAR, MIN_YEAR, TimeUtil} from '@util/time.util';
 
 export interface ShortTermRentalForm extends ApplicationForm {
   description?: string;
@@ -11,6 +12,7 @@ export interface ShortTermRentalForm extends ApplicationForm {
   commercial?: boolean;
   billableSalesArea?: boolean;
   terms?: string;
+  recurringEndYear?: number;
 }
 
 export function from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
@@ -20,7 +22,8 @@ export function from(application: Application, rental: ShortTermRental): ShortTe
     rentalTimes: new TimePeriod(application.startTime, application.endTime),
     commercial: rental.commercial,
     billableSalesArea: rental.billableSalesArea,
-    terms: rental.terms
+    terms: rental.terms,
+    recurringEndYear: TimeUtil.yearFromDate(application.recurringEndTime)
   };
 }
 
@@ -43,7 +46,8 @@ export function createStructure(fb: FormBuilder): { [key: string]: any; } {
       startTime: [undefined, Validators.required],
       endTime: [undefined, Validators.required]
     }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
-    terms: [undefined]
+    terms: [undefined],
+    recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
   };
 }
 

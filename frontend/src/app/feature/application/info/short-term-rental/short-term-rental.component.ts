@@ -17,6 +17,11 @@ const kindsWithNotBillableReason = [
   ApplicationKind.SUMMER_TERRACE,
   ApplicationKind.WINTER_TERRACE
 ];
+const kindsWithRecurring = [
+  ApplicationKind.SUMMER_TERRACE,
+  ApplicationKind.WINTER_TERRACE,
+  ApplicationKind.PARKLET
+];
 
 @Component({
   selector: 'short-term-rental',
@@ -29,6 +34,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   showCommercial = false;
   commercialLabel: string;
   billable = false;
+  recurringAllowed = false;
 
   private commercialCtrl: FormControl;
 
@@ -63,12 +69,14 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     this.showCommercial = application.kinds.some(kind => ApplicationKind.BRIDGE_BANNER === kind);
     this.updateCommercialLabel(rental.commercial);
     this.updateNotBillable(application);
+    this.recurringAllowed = kindsWithRecurring.indexOf(application.kind) >= 0;
   }
 
   protected update(form: ShortTermRentalForm): Application {
     const application = super.update(form);
     application.startTime = TimeUtil.toStartDate(form.rentalTimes.startTime);
     application.endTime = TimeUtil.toEndDate(form.rentalTimes.endTime);
+    application.recurringEndTime = TimeUtil.dateWithYear(application.endTime, form.recurringEndYear);
     application.extension = to(form);
 
     application.singleLocation.startTime = application.startTime;

@@ -83,6 +83,11 @@
               </mat-form-field>
             </div>
           </div>
+          <div fxLayout="row" *ngIf="recurringAllowed">
+            <div fxFlex>
+              <recurring formControlName="recurringEndYear" [readonly]="readonly"></recurring>
+            </div>
+          </div>
           <div fxLayout="row" *ngIf="showCommercial">
             <div fxFlex>
               <mat-slide-toggle formControlName="commercial">
