@@ -1849,7 +1849,13 @@ export const translations = {
       EVENT_DECISION_MAKER: 'Tapahtuman oletuspäättäjä',
       SHORT_TERM_RENTAL_DECISION_MAKER: 'Lyhytaikaisen maanvuokrauksen oletuspäättäjä',
       WINTER_TIME_START: 'Talviajan alkupäivä',
-      WINTER_TIME_END: 'Talviajan loppupäivä'
+      WINTER_TIME_END: 'Talviajan loppupäivä',
+      SUMMER_TERRACE_TIME_START: 'Kesäterassiajan alkupäivä',
+      SUMMER_TERRACE_TIME_END: 'Kesäterassiajan loppupäivä',
+      WINTER_TERRACE_TIME_START: 'Talviterassiajan alkupäivä',
+      WINTER_TERRACE_TIME_END: 'Talviterassiajan loppupäivä',
+      PARKLET_TIME_START: 'Parklet-ajan alkupäivä',
+      PARKLET_TIME_END: 'Parklet-ajan loppupäivä'
     },
     field: {
       valueMissing: 'Arvo puuttuu'
