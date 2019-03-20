@@ -66,15 +66,14 @@ public class ApplicationTagController {
       + "</ul>",
       produces = "application/json",
       consumes = "application/json",
-      response = ApplicationTagJson.class,
       authorizations = @Authorization(value ="api_key"))
   @ApiResponses(value =  {
       @ApiResponse(code = 200, message = "Tag removed successfully"),
       @ApiResponse(code = 400, message = "Invalid tag type", response = ErrorInfo.class)
   })
-  @RequestMapping(value = "/applications/{id}/tags", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/applications/{id}/tags/{tagType}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Void> deleteTag(@PathVariable Integer id, @RequestBody ApplicationTagType tagType) {
+  public ResponseEntity<Void> deleteTag(@PathVariable Integer id, @PathVariable ApplicationTagType tagType) {
     validateTagType(tagType);
     applicationServiceComposer.removeTag(id, tagType);
     return new ResponseEntity<>(HttpStatus.OK);
