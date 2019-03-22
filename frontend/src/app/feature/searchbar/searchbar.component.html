@@ -81,9 +81,9 @@
                (dateChange)="onFormChange(searchForm.value)"/>
         <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #startDatePicker></mat-datepicker>
-        <field-error [form]="searchForm" field="startDate" hasError="required">
+        <mat-error inputBoxError *ngIf="searchForm.get('startDate').hasError('required')">
           {{'application.common.field.validityStartTimeMissing' | translation}}
-        </field-error>
+        </mat-error>
       </input-box>
     </div>
     <div fxFlex="1 1 200px"
@@ -96,9 +96,9 @@
                (dateChange)="onFormChange(searchForm.value)"/>
         <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #endDatePicker></mat-datepicker>
-        <field-error [form]="searchForm" field="endDate" hasError="required">
+        <mat-error inputBoxError *ngIf="searchForm.get('endDate').hasError('required')">
           {{'application.common.field.validityEndTimeMissing' | translation}}
-        </field-error>
+        </mat-error>
       </input-box>
     </div>
 

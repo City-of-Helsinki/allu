@@ -13,6 +13,8 @@ input[type="text"], textarea {
   appearance: none;
   box-shadow: none;
   border: none;
+  font-size: 14px;
+  font-family: Roboto, "Helvetica Neue", sans-serif
 }
 
 input[type="text"]:focus, textarea:focus {
@@ -29,14 +31,18 @@ select {
   border: 1px solid #dcdcdc;
   border-radius: 6px 6px;
   align-items: center;
-
-  .has-error {
-    position: absolute;
-    font-size: 75%;
-  }
 }
 
-.input-raised > .input-box-content {
+.input-box-error {
+  padding: 4px 8px;
+  margin-top: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.input-raised > .input-box-content,
+.input-raised > .input-box-error {
   box-shadow: 0 2px 4px 0 #757575;
 }
 

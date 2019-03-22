@@ -1,6 +1,6 @@
 @import '~@angular/material/theming';
 
-@mixin input-box-theme($theme) {
+@mixin input-box-theme($theme, $errorBackground) {
   $primary: map-get($theme, primary);
   $warn: map-get($theme, warn);
 
@@ -28,5 +28,9 @@
 
   .input-box-content > .select-wrapper span.caret {
     color: mat-color($primary, 300);
+  }
+
+  .input-box-error {
+    background: $errorBackground;
   }
 }

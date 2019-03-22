@@ -1,7 +1,8 @@
 import {
-  AfterContentInit, Component, ContentChild, Directive, ElementRef, HostBinding, HostListener, Input,
+  AfterContentInit, Component, ContentChild, ContentChildren, Directive, ElementRef, HostBinding, HostListener, Input, QueryList,
   ViewEncapsulation
 } from '@angular/core';
+import {MatError} from '@angular/material';
 
 @Directive({
   selector: 'input[inputBoxInput], select[inputBoxInput], mat-select[inputBoxInput], button[inputBoxInput], textarea[inputBoxInput]'
@@ -30,6 +31,8 @@ export class InputBoxComponent implements AfterContentInit {
   @Input() placeholder: string;
 
   @ContentChild(InputBoxInputDirective) _inputChild: InputBoxInputDirective;
+
+  @ContentChildren(MatError) errors: QueryList<MatError>;
 
   @HostBinding('class.input-box-focused') focused = false;
 

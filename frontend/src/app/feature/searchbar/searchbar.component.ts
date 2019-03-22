@@ -63,13 +63,18 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
-      startDate: this.datesRequired ? [undefined, Validators.required] : undefined,
-      endDate: this.datesRequired ? [undefined, Validators.required] : undefined,
+      startDate: undefined,
+      endDate: undefined,
       statuses: [[]]
     });
   }
 
   ngOnInit(): void {
+    if (this.datesRequired) {
+      this.searchForm.get('startDate').setValidators(Validators.required);
+      this.searchForm.get('endDate').setValidators(Validators.required);
+    }
+
     this.addressControl.valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300),

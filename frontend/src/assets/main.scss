@@ -42,7 +42,7 @@
 @include placeholder-theme($allu-theme);
 @include checkbox-theme($allu-theme);
 @include nav-theme($allu-theme);
-@include input-box-theme($allu-theme);
+@include input-box-theme($allu-theme, $white-87-opacity);
 @include stored-filter-theme($allu-theme);
 @include buttons-theme($allu-theme);
 @include toggle-buttons-theme($allu-theme);
