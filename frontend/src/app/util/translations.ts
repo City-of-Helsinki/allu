@@ -1860,7 +1860,10 @@ export const translations = {
       WINTER_TERRACE_TIME_START: 'Talviterassiajan alkupäivä',
       WINTER_TERRACE_TIME_END: 'Talviterassiajan loppupäivä',
       PARKLET_TIME_START: 'Parklet-ajan alkupäivä',
-      PARKLET_TIME_END: 'Parklet-ajan loppupäivä'
+      PARKLET_TIME_END: 'Parklet-ajan loppupäivä',
+      SUMMER_TERRACE_INVOICING_DATE: 'Kesäterassien laskutuspäivä',
+      WINTER_TERRACE_INVOICING_DATE: 'Talviterassien laskutuspäivä',
+      PARKLET_INVOICING_DATE: 'Parklettien laskutuspäivä'
     },
     field: {
       valueMissing: 'Arvo puuttuu'
