@@ -1,6 +1,10 @@
 package fi.hel.allu.pdf.domain;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import fi.hel.allu.common.util.TimeUtil;
 
 /**
  * DecisionJson is used to transfer all needed data to PDF service for decision
@@ -8,6 +12,8 @@ import java.util.List;
  * into the decision template.
  */
 public class DecisionJson {
+
+  private static final int MAX_RECURRING_YEAR = 9999;
 
   private boolean isDraft;
 
@@ -34,9 +40,10 @@ public class DecisionJson {
   private String siteCityDistrict;
   private List<String> areaAddresses;
 
-  private String reservationStartDate;
-  private String reservationEndDate;
+  private ZonedDateTime reservationStartDate;
+  private ZonedDateTime reservationEndDate;
   private int numReservationDays;
+  private ZonedDateTime recurringEndTime;
 
   private String buildStartDate;
   private String buildEndDate;
@@ -264,18 +271,22 @@ public class DecisionJson {
   }
 
   public String getReservationStartDate() {
-    return reservationStartDate;
+    return Optional.ofNullable(reservationStartDate)
+            .map(date -> TimeUtil.dateAsString(date))
+            .orElse(null);
   }
 
-  public void setReservationStartDate(String reservationStartDate) {
+  public void setReservationStartDate(ZonedDateTime reservationStartDate) {
     this.reservationStartDate = reservationStartDate;
   }
 
   public String getReservationEndDate() {
-    return reservationEndDate;
+    return Optional.ofNullable(reservationEndDate)
+            .map(date -> TimeUtil.dateAsString(date))
+            .orElse(null);
   }
 
-  public void setReservationEndDate(String reservationEndDate) {
+  public void setReservationEndDate(ZonedDateTime reservationEndDate) {
     this.reservationEndDate = reservationEndDate;
   }
 
@@ -285,6 +296,48 @@ public class DecisionJson {
 
   public void setNumReservationDays(int numReservationDays) {
     this.numReservationDays = numReservationDays;
+  }
+
+  public String getRecurringEndTime() {
+    return Optional.ofNullable(recurringEndTime)
+            .map(date -> TimeUtil.dateAsString(date))
+            .orElse(null);
+  }
+
+  public void setRecurringEndTime(ZonedDateTime recurringEndTime) {
+    this.recurringEndTime = recurringEndTime;
+  }
+
+  public String getReservationStartDayMonth() {
+    return Optional.ofNullable(reservationStartDate)
+            .map(date -> TimeUtil.dateAsDayMonthString(date))
+            .orElse(null);
+  }
+
+  public String getReservationEndDayMonth() {
+    return Optional.ofNullable(reservationEndDate)
+            .map(date -> TimeUtil.dateAsDayMonthString(date))
+            .orElse(null);
+  }
+
+  public String getReservationStartYear() {
+    return Optional.ofNullable(reservationStartDate)
+            .map(date -> date.getYear())
+            .map(year -> year.toString())
+            .orElse(null);
+  }
+
+  public String getRecurringEndYear() {
+    return Optional.ofNullable(recurringEndTime)
+            .map(date -> date.getYear())
+            .map(year -> year.toString())
+            .orElse(null);
+  }
+
+  public boolean getRecurringIndefinitely() {
+    return Optional.ofNullable(recurringEndTime)
+            .map(date -> date.getYear() == MAX_RECURRING_YEAR)
+            .orElse(null);
   }
 
   public String getBuildStartDate() {

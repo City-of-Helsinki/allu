@@ -54,6 +54,7 @@ public class DecisionJsonMapper {
   private static final FixedLocationJson BAD_LOCATION;
   private static final String UNDERPASS_YES = "Kyllä";
   private static final String UNDERPASS_NO = "Ei";
+  private static final Set<ApplicationKind> vat0Kinds;
 
   static {
     BAD_LOCATION = new FixedLocationJson();
@@ -72,6 +73,10 @@ public class DecisionJsonMapper {
     tempMap.put(DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, "Geotekninen tarkkailupiste");
     tempMap.put(DefaultTextType.OTHER, "Yleisesti/muut");
     defaultTextTypeTranslations = Collections.unmodifiableMap(tempMap);
+    vat0Kinds = new HashSet<>(Arrays.asList(
+            ApplicationKind.SUMMER_TERRACE,
+            ApplicationKind.WINTER_TERRACE,
+            ApplicationKind.PARKLET));
   }
 
   private final NumberFormat currencyFormat;
@@ -112,6 +117,7 @@ public class DecisionJsonMapper {
     decisionJson.setApplicantName(applicantName(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
     decisionJson.setSiteCityDistrict(siteCityDistrict(application));
+
     final Map<ApplicationKind, List<ApplicationSpecifier>> applicationsKindsWithSpecifiers = application.getKindsWithSpecifiers();
     final List<KindWithSpecifiers> kindsWithSpecifiers = new ArrayList<>();
     applicationsKindsWithSpecifiers.keySet().forEach((kind) -> {
@@ -133,6 +139,7 @@ public class DecisionJsonMapper {
     getSiteArea(application.getLocations()).ifPresent(siteArea -> decisionJson.setSiteArea(siteArea));
     decisionJson.setCustomerReference(application.getCustomerReference());
     decisionJson.setInvoicingPeriodLength(application.getInvoicingPeriodLength());
+    decisionJson.setVatPercentage(24); // FIXME: find actual value somehow
 
     if (application.getType() == null) {
       throw new IllegalArgumentException("Application type is required");
@@ -182,16 +189,17 @@ public class DecisionJsonMapper {
           .map(a -> StringUtils.defaultIfEmpty(a.getDescription(), a.getName()))
           .collect(Collectors.toList()));
     }
-    decisionJson.setReservationStartDate(formatDateWithDelta(application.getStartTime(), 0));
-    decisionJson.setReservationEndDate(formatDateWithDelta(application.getEndTime(), 0));
+    decisionJson.setReservationStartDate(application.getStartTime());
+    decisionJson.setReservationEndDate(application.getEndTime());
     decisionJson.setNumReservationDays(daysBetween(application.getStartTime(), application.getEndTime()) + 1);
+    decisionJson.setRecurringEndTime(application.getRecurringEndTime());
+
     String additionalInfos = String.join("; ",
         streamFor(application.getLocations()).map(LocationJson::getAdditionalInfo).filter(p -> p != null)
             .map(p -> p.trim()).filter(p -> !p.isEmpty()).collect(Collectors.toList()));
     decisionJson.setSiteAdditionalInfo(additionalInfos);
     decisionJson.setDecisionDate(
         Optional.ofNullable(application.getDecisionTime()).map(dt -> formatDateWithDelta(dt, 0)).orElse("[Päätöspvm]"));
-    decisionJson.setVatPercentage(24); // FIXME: find actual value somehow
     decisionJson.setAdditionalConditions(
         splitToList(Optional.ofNullable(application.getExtension()).map(e -> e.getTerms())));
     decisionJson.setDecisionTimestamp(TimeUtil.dateAsDateTimeString(ZonedDateTime.now()));
@@ -355,6 +363,10 @@ public class DecisionJsonMapper {
       // For bridge banners, site area should be skipped in printout
       decisionJson.setSiteArea(null);
     }
+    if (vat0Kinds.contains(application.getKind())) {
+      decisionJson.setVatPercentage(0);
+    }
+
     decisionJson.setRepresentativeAddressLines(addressLines(application, CustomerRoleType.REPRESENTATIVE));
     decisionJson.setRepresentativeContactLines(contactLines(application, CustomerRoleType.REPRESENTATIVE));
   }
@@ -617,6 +629,13 @@ public class DecisionJsonMapper {
       return null;
     }
     return TimeUtil.dateAsString(zonedDateTime.plusDays(deltaDays));
+  }
+
+  private String formatDayMonth(ZonedDateTime zonedDateTime) {
+    if (zonedDateTime == null) {
+      return null;
+    }
+    return TimeUtil.dateAsDayMonthString(zonedDateTime);
   }
 
   private List<String> customerAddressLines(ApplicationJson applicationJson) {

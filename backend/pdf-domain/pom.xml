@@ -6,4 +6,12 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>pdf-domain</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>fi.hel.allu</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
 </project>

@@ -16,6 +16,7 @@ public class TimeUtil {
 
   private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
   private static final DateTimeFormatter timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
+  private static final DateTimeFormatter dayMonthFormatter = DateTimeFormatter.ofPattern("d.M");
 
   public static final ZoneId HelsinkiZoneId = ZoneId.of("Europe/Helsinki");
 
@@ -64,6 +65,10 @@ public class TimeUtil {
 
   public static String dateAsDateTimeString(ZonedDateTime dateTime) {
     return dateTime.withZoneSameInstant(HelsinkiZoneId).format(timeStampFormatter);
+  }
+
+  public static String dateAsDayMonthString(ZonedDateTime dateTime) {
+    return dateTime.withZoneSameInstant(HelsinkiZoneId).format(dayMonthFormatter);
   }
 
   public static boolean isSameDateOrLater(ZonedDateTime dateToCheck, ZonedDateTime limitDate) {

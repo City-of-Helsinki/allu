@@ -96,14 +96,30 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
           <p class="text-flow">
             <!-- [Varauksen alkupäivämäärä] -->
-            <xsl:value-of select="data/reservationStartDate"/>
-            <xsl:if test="data/numReservationDays > 1">
-              <!-- Käytetään, jos varauspäiviä enemmän kuin 1. -->
-              <!-- -[Varauksen loppupäivämäärä] -->
-              &#8211; <xsl:value-of select="data/reservationEndDate"/>
-            </xsl:if>
+            <xsl:choose>
+              <xsl:when test="data/recurringEndTime = ''">
+                <xsl:value-of select="data/reservationStartDate"/>
+                <xsl:if test="data/numReservationDays > 1">
+                  <!-- Käytetään, jos varauspäiviä enemmän kuin 1. -->
+                  <!-- -[Varauksen loppupäivämäärä] -->
+                  &#8211; <xsl:value-of select="data/reservationEndDate"/>
+                </xsl:if>
+              </xsl:when>
+              <!-- Toistuva varaus -->
+              <xsl:otherwise>
+                Käyttöoikeus vuosittain <xsl:value-of select="data/reservationStartDayMonth"/>
+                &#8211; <xsl:value-of select="data/reservationEndDayMonth"/>
+                <xsl:choose>
+                  <xsl:when test="data/recurringIndefinitely = 'true'">
+                    vuodesta <xsl:value-of select="data/reservationStartYear"/> lähtien
+                  </xsl:when>
+                <xsl:otherwise>
+                  vuosina <xsl:value-of select="data/reservationStartYear"/> &#8211; <xsl:value-of select="data/recurringEndYear"/>
+                </xsl:otherwise>
+                </xsl:choose>
+              </xsl:otherwise>
+            </xsl:choose>
           </p>
-
         </section>
       </div>
 
