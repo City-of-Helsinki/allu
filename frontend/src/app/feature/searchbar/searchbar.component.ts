@@ -74,12 +74,12 @@ export class SearchbarComponent implements OnInit, OnDestroy {
               private storedFilterStore: StoredFilterStore,
               private notification: NotificationService,
               private store: Store<fromRoot.State>) {
-    this.baseDateValidators = this.datesRequired ? [Validators.required] : [];
+    this.baseDateValidators = [];
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
-      startDate: [undefined, this.baseDateValidators],
-      endDate: [undefined, this.baseDateValidators],
+      startDate: undefined,
+      endDate: undefined,
       statuses: [[]]
     });
   }
@@ -88,6 +88,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     if (this.datesRequired) {
       this.searchForm.get('startDate').setValidators(Validators.required);
       this.searchForm.get('endDate').setValidators(Validators.required);
+      this.baseDateValidators = this.baseDateValidators.concat(Validators.required);
     }
 
     this.addressControl.valueChanges.pipe(
