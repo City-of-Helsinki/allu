@@ -32,7 +32,7 @@ import {defaultFilter, MapSearchFilter} from '@service/map-search-filter';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import {select, Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, map, takeUntil, takeWhile} from 'rxjs/internal/operators';
+import {distinctUntilChanged, filter, map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
@@ -45,6 +45,9 @@ import {DefaultRecipient} from '@model/common/default-recipient';
 import {DefaultRecipientHub} from '@service/recipients/default-recipient-hub';
 import {CurrentUser} from '@service/user/current-user';
 import {TypeComponent} from '@feature/application/type/type.component';
+import {SearchbarComponent} from '@feature/searchbar/searchbar.component';
+import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
+import {TimePeriod} from '@feature/application/info/time-period';
 
 @Component({
   selector: 'type',
@@ -72,11 +75,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   searchFilter$: Observable<MapSearchFilter>;
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
+  timePeriod$: Observable<TimePeriod>;
 
   private destroy = new Subject<boolean>();
 
   @ViewChild(TypeComponent)
   private typeComponent: TypeComponent;
+  @ViewChild(SearchbarComponent)
+  private searchbarComponent: SearchbarComponent;
 
   constructor(
     private applicationStore: ApplicationStore,
@@ -89,7 +95,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private defaultRecipientHub: DefaultRecipientHub,
     private notification: NotificationService,
-    private currentUser: CurrentUser) {
+    private currentUser: CurrentUser,
+    private configurationHelper: ConfigurationHelperService) {
 
     this.areaCtrl = this.fb.control(undefined);
     this.sectionsCtrl = this.fb.control([]);
@@ -176,6 +183,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       takeUntil(this.destroy),
       map(val => NumberUtil.isDefined(val) ? Math.floor(val) : null)
     ).subscribe(val => this.locationForm.patchValue({areaOverride: val}, {emitEvent: false}));
+
+    this.timePeriod$ = this.store.pipe(
+      select(fromApplication.getKind),
+      switchMap(kind => this.configurationHelper.getTimePeriodForKind(kind))
+    );
   }
 
   ngOnDestroy() {
@@ -300,8 +312,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const formValid = (this.locationForm.valid && !!this.locationForm.value['geometry']);
     const validGeometry = !this.invalidGeometry;
     const typeFormValid = this.typeComponent.valid;
+    // Component might be hidden if required values have not been selected
+    const searchFormValid = this.searchbarComponent ? this.searchbarComponent.valid : true;
 
-    return nothingEdited || (formValid && validGeometry && typeFormValid);
+    return nothingEdited || (formValid && validGeometry && typeFormValid && searchFormValid);
   }
 
   paymentTariff() {

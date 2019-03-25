@@ -3,6 +3,6 @@
   <ng-content select="[inputBoxInput]"></ng-content>
   <ng-content select="[inputBoxSuffix]"></ng-content>
 </div>
-<div class="input-box-error" *ngIf="errors?.length">
+<div class="input-box-error" *ngIf="touched && dirty && errors?.length">
   <ng-content select="[inputBoxError]"></ng-content>
 </div>

@@ -71,7 +71,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
         // winter end date the control would immediately become invalid again.
         this.validityEndTimeCtrl.clearValidators();
         this.validityEndTimeCtrl.warnings = [];
-        this.validityEndTimeCtrl.patchValue(TimeUtil.toWinterTimeEnd(date, this.winterTimeEnd));
+        this.validityEndTimeCtrl.patchValue(TimeUtil.toTimePeriodEnd(date, TimeUtil.dateFromBackend(this.winterTimeEnd)));
         this.setEndTimeCtrlValidators();
 
         this.winterTimeOperationCtrl.patchValue(date);
@@ -215,7 +215,9 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   }
 
   private setEndTimeCtrlValidators(): void {
+    const start = TimeUtil.dateFromBackend(this.winterTimeStart);
+    const end = TimeUtil.dateFromBackend(this.winterTimeEnd);
     this.validityEndTimeCtrl.setValidators(
-        [Validators.required, ComplexValidator.inWinterTime(this.winterTimeStart, this.winterTimeEnd)]);
+        [Validators.required, ComplexValidator.inWinterTimeWarn(start, end)]);
   }
 }

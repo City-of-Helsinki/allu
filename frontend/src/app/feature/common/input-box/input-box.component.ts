@@ -17,6 +17,14 @@ export class InputBoxInputDirective {
   @HostListener('focus') _onFocus() { this.focused = true; }
 
   @HostListener('blur') _onBlur() { this.focused = false; }
+
+  get touched() {
+    return this._elementRef.nativeElement.classList.contains('ng-touched');
+  }
+
+  get dirty() {
+    return this._elementRef.nativeElement.classList.contains('ng-dirty');
+  }
 }
 
 @Component({
@@ -43,5 +51,13 @@ export class InputBoxComponent implements AfterContentInit {
       throw new Error('Input box requires input with attribute inputBoxInput inside it');
     }
     this.focused = this._inputChild.focused;
+  }
+
+  get touched() {
+    return this._inputChild.touched;
+  }
+
+  get dirty() {
+    return this._inputChild.dirty;
   }
 }

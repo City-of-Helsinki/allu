@@ -166,9 +166,9 @@ export class TimeUtil {
     return lMoment.isSame(rMoment, granularity);
   }
 
-  public static isInWinterTime(date: Date, winterStart: string, winterEnd: string): boolean {
-    const start = moment(winterStart);
-    const winterEndDate = this.toWinterTimeEnd(date, winterEnd);
+  public static isInTimePeriod(date: Date, periodStart: Date, periodEnd: Date): boolean {
+    const start = moment(periodStart);
+    const winterEndDate = this.toTimePeriodEnd(date, periodEnd);
     let winterStartYear = winterEndDate.getFullYear();
     if (start.month() > winterEndDate.getMonth()) {
       winterStartYear = winterEndDate.getFullYear() - 1;
@@ -176,13 +176,28 @@ export class TimeUtil {
     return this.isBetweenInclusive(date, start.year(winterStartYear).toDate(), winterEndDate);
   }
 
-  public static toWinterTimeEnd(date: Date, winterEnd: string): Date {
-    const end = moment(winterEnd).toDate();
-    let year = date.getFullYear();
-    if (date.getMonth() > end.getMonth()) {
-      year = year + 1;
+  public static toTimePeriodEnd(date: Date, periodEnd: Date): Date {
+    if (date && periodEnd) {
+      let year = date.getFullYear();
+      if (date.getMonth() > periodEnd.getMonth()) {
+        year = year + 1;
+      }
+      return moment(periodEnd).year(year).toDate();
+    } else {
+      return undefined;
     }
-    return moment(end).year(year).toDate();
+  }
+
+  public static toTimePeriodStart(date: Date, periodStart: Date): Date {
+    if (date && periodStart) {
+      let year = date.getFullYear();
+      if (date.getMonth() < periodStart.getMonth()) {
+        year = year - 1;
+      }
+      return moment(periodStart).year(year).toDate();
+    } else {
+      return undefined;
+    }
   }
 
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {

@@ -77,12 +77,19 @@
         <input inputBoxInput type="text" formControlName="startDate"
                [placeholder]="'applicationSearch.startTime' | translation"
                [matDatepicker]="startDatePicker"
+               [min]="minStartDate$ | async"
                [max]="searchForm.get('endDate').value"
+               [matDatepickerFilter]="dateFilter"
                (dateChange)="onFormChange(searchForm.value)"/>
         <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #startDatePicker></mat-datepicker>
         <mat-error inputBoxError *ngIf="searchForm.get('startDate').hasError('required')">
           {{'application.common.field.validityStartTimeMissing' | translation}}
+        </mat-error>
+        <mat-error inputBoxError *ngIf="searchForm.get('startDate').hasError('inTimePeriod') || searchForm.get('startDate').hasError('matDatepickerMin')">
+          <span *ngIf="kind$ | async as kind">
+            {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
+          </span>
         </mat-error>
       </input-box>
     </div>
@@ -93,11 +100,18 @@
                [placeholder]="'applicationSearch.endTime' | translation"
                [matDatepicker]="endDatePicker"
                [min]="searchForm.get('startDate').value"
+               [max]="maxEndDate$ | async"
+               [matDatepickerFilter]="dateFilter"
                (dateChange)="onFormChange(searchForm.value)"/>
         <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
         <mat-datepicker #endDatePicker></mat-datepicker>
         <mat-error inputBoxError *ngIf="searchForm.get('endDate').hasError('required')">
           {{'application.common.field.validityEndTimeMissing' | translation}}
+        </mat-error>
+        <mat-error inputBoxError *ngIf="searchForm.get('endDate').hasError('inTimePeriod') || searchForm.get('endDate').hasError('matDatepickerMax')">
+          <span *ngIf="kind$ | async as kind">
+            {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
+          </span>
         </mat-error>
       </input-box>
     </div>

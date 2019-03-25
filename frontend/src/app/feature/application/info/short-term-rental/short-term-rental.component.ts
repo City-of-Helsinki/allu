@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 import {Application} from '@model/application/application';
 import {createDraftStructure, createStructure, from, ShortTermRentalForm, to} from './short-term-rental.form';
@@ -7,8 +7,23 @@ import {ShortTermRental} from '@model/application/short-term-rental/short-term-r
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ApplicationKind} from '@model/application/type/application-kind';
 import {TimeUtil} from '@util/time.util';
-import {takeUntil} from 'rxjs/internal/operators';
+import {map, switchMap, takeUntil} from 'rxjs/operators';
+import {combineLatest} from 'rxjs';
 import {findTranslation} from '@util/translations';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ApplicationStore} from '@service/application/application-store';
+import {ApplicationService} from '@service/application/application.service';
+import {NotificationService} from '@feature/notification/notification.service';
+import {ProjectService} from '@service/project/project.service';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromApplication from '@feature/application/reducers';
+import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
+import {Observable} from 'rxjs/internal/Observable';
+import {setValidatorsAndValidate} from '@feature/common/validation/validation-util';
+import {TimePeriod} from '@feature/application/info/time-period';
+import {ComplexValidator} from '@util/complex-validator';
+import {DateFilter, defaultDateFilter} from '@util/date-filter';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -35,8 +50,29 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   commercialLabel: string;
   billable = false;
   recurringAllowed = false;
+  dateFilter: DateFilter;
+  kind$: Observable<ApplicationKind>;
+  maxEndDate$: Observable<Date>;
+  minStartDate$: Observable<Date>;
+  timePeriod$: Observable<TimePeriod>;
 
   private commercialCtrl: FormControl;
+
+  constructor(fb: FormBuilder,
+              route: ActivatedRoute,
+              applicationStore: ApplicationStore,
+              applicationService: ApplicationService,
+              notification: NotificationService,
+              router: Router,
+              projectService: ProjectService,
+              store: Store<fromRoot.State>,
+              private configurationHelper: ConfigurationHelperService) {
+    super(fb, route, applicationStore, applicationService, notification, router, projectService, store);
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
 
   billableChange(billable: boolean): void {
     this.billable = billable;
@@ -48,6 +84,30 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     this.commercialCtrl = <FormControl>this.applicationForm.get('commercial');
     this.commercialCtrl.valueChanges.pipe(takeUntil(this.destroy))
       .subscribe(value => this.updateCommercialLabel(value));
+
+    this.kind$ = this.store.pipe(select(fromApplication.getKind));
+
+    this.timePeriod$ = this.store.pipe(
+      select(fromApplication.getKind),
+      switchMap((kind: ApplicationKind) => this.configurationHelper.getTimePeriodForKind(kind)),
+      takeUntil(this.destroy)
+    );
+
+    this.maxEndDate$ = combineLatest(
+      this.applicationForm.get('rentalTimes.startTime').valueChanges,
+      this.timePeriod$
+    ).pipe(
+      map(([startTime, timePeriod]) => TimeUtil.toTimePeriodEnd(startTime, timePeriod.endTime))
+    );
+
+    this.minStartDate$ = combineLatest(
+      this.applicationForm.get('rentalTimes.endTime').valueChanges,
+      this.timePeriod$
+    ).pipe(
+      map(([endTime, timePeriod]) => TimeUtil.toTimePeriodStart(endTime, timePeriod.startTime))
+    );
+
+    this.timePeriod$.subscribe(timePeriod => this.onTimePeriodChange(timePeriod));
   }
 
   protected createExtensionForm(): FormGroup {
@@ -108,6 +168,19 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
         case ApplicationKind.WINTER_TERRACE:
           application.notBillableReason = findTranslation('application.shortTermRental.terraceNotBillableReason');
       }
+    }
+  }
+
+  private onTimePeriodChange(timePeriod: TimePeriod) {
+    if (timePeriod) {
+      const validators = [Validators.required, ComplexValidator.inTimePeriod(timePeriod.startTime, timePeriod.endTime)];
+      setValidatorsAndValidate(this.applicationForm.get('rentalTimes.startTime'), validators);
+      setValidatorsAndValidate(this.applicationForm.get('rentalTimes.endTime'), validators);
+      this.dateFilter = (date: Date) => TimeUtil.isInTimePeriod(date, timePeriod.startTime, timePeriod.endTime);
+    } else {
+      setValidatorsAndValidate(this.applicationForm.get('rentalTimes.startTime'), [Validators.required]);
+      setValidatorsAndValidate(this.applicationForm.get('rentalTimes.endTime'), [Validators.required]);
+      this.dateFilter = defaultDateFilter;
     }
   }
 }

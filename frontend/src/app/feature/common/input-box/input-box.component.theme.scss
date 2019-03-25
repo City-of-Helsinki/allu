@@ -20,7 +20,8 @@
     background: mat-contrast($primary, 500);
     color: mat-color($primary, 300);
 
-    &.ng-touched.ng-dirty.ng-invalid {
+    &.ng-touched.ng-dirty.ng-invalid,
+    &.ng-touched.ng-dirty.ng-invalid::placeholder {
       border-color: mat-color($warn, 300);
       color: mat-color($warn, 300);
     }

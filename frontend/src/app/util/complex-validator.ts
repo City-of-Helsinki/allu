@@ -52,7 +52,7 @@ export class ComplexValidator {
     return undefined;
   }
 
-  static inWinterTime(winterStart: string, winterEnd: string): ValidatorFn {
+  static inWinterTimeWarn(winterStart: Date, winterEnd: Date): ValidatorFn {
     const validationFn = (fc: AbstractControlWarn) => {
       const date = fc.value;
       if (!date) {
@@ -60,7 +60,7 @@ export class ComplexValidator {
       }
 
       fc.warnings = fc.warnings || {};
-      if (TimeUtil.isInWinterTime(date, winterStart, winterEnd)) {
+      if (TimeUtil.isInTimePeriod(date, winterStart, winterEnd)) {
         fc.warnings.inWinterTime = {date};
       } else {
         delete fc.warnings.inWinterTime;
@@ -68,6 +68,13 @@ export class ComplexValidator {
       return undefined;
     };
     return validationFn;
+  }
+
+  static inTimePeriod(periodStart: Date, periodEnd: Date): ValidatorFn {
+    return (fc: AbstractControl) => {
+      const inTimePeriod = fc.value && !TimeUtil.isInTimePeriod(fc.value, periodStart, periodEnd);
+      return inTimePeriod ? {inTimePeriod: fc.value} : undefined;
+    };
   }
 
   static startBeforeEnd(startField: string, endField: string): ValidatorFn {

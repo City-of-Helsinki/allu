@@ -394,7 +394,12 @@ export const translations = {
         descriptionMissing: 'Vuokrauksen kuvaus puuttuu',
         rentalStartTimeMissing: 'Vuokrauksen alkuaika puuttuu',
         rentalEndTimeMissing: 'Vuokrauksen loppuaika puuttuu',
-        startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää'
+        startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää',
+        notInValidTimePeriod: {
+          SUMMER_TERRACE: 'Vuokraus kesäterassikauden ulkopuolella',
+          WINTER_TERRACE: 'Vuokraus talviterassikauden ulkopuolella',
+          PARKLET: 'Vuokraus parklet-kauden ulkopuolella'
+        }
       },
       promotionOrSalesNotBillableReason: 'Myyntitila alle 0.8m seinästä veloituksetta',
       terraceNotBillableReason: 'Välittömästi liiketilan edessä, julkisivussa kiinni olevaa 80 cm levyistä aluetta' +

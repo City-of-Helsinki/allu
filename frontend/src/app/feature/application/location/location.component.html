@@ -17,6 +17,7 @@
                 <div class="map-overlay">
                   <searchbar
                     [datesRequired]="true"
+                    [timePeriod]="timePeriod$ | async"
                     [filter]="searchFilter$ | async"
                     targetType="Location"
                     (searchChange)="onSearchChange($event)">Loading searchbar</searchbar>

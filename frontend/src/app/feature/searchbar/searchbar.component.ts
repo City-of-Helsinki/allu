@@ -1,11 +1,10 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 
 import {MapStore} from '@service/map/map-store';
 import {PostalAddress} from '@model/common/postal-address';
 import {Observable, Subject} from 'rxjs';
 import {NotificationService} from '@feature/notification/notification.service';
-import {ArrayUtil} from '@util/array-util';
 import {StringUtil} from '@util/string.util';
 import {ApplicationStatusGroup} from '@model/application/application-status';
 import {MapSearchFilter} from '@service/map-search-filter';
@@ -13,13 +12,22 @@ import {EnumUtil} from '@util/enum.util';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {StoredFilter} from '@model/user/stored-filter';
-import {debounceTime, filter, map, takeUntil} from 'rxjs/internal/operators';
+import {map, debounceTime, filter, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 import * as fromMap from '@feature/map/reducers';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
+import * as fromApplication from '@feature/application/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {merge} from 'rxjs/internal/observable/merge';
 import {FetchCoordinates, Search} from '@feature/map/actions/address-search-actions';
+import {setValidatorsAndValidate} from '@feature/common/validation/validation-util';
+import {DateFilter, defaultDateFilter} from '@util/date-filter';
+import {TimePeriod} from '@feature/application/info/time-period';
+import {ComplexValidator} from '@util/complex-validator';
+import {TimeUtil} from '@util/time.util';
+import {ApplicationKind} from '@model/application/type/application-kind';
+import {Some} from '@util/option';
 
 
 enum BarType {
@@ -46,25 +54,32 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   matchingAddresses$: Observable<PostalAddress[]>;
   statuses = EnumUtil.enumValues(ApplicationStatusGroup);
   MAP_FILTER = StoredFilterType.MAP;
+  maxEndDate$: Observable<Date>;
+  minStartDate$: Observable<Date>;
+  dateFilter: DateFilter = defaultDateFilter;
   mapFilter: Observable<MapSearchFilter>;
   selectedFilter: Observable<StoredFilter>;
   defaultFilter: Observable<StoredFilter>;
   availableFilters: Observable<StoredFilter[]>;
   selectedLayers$: Observable<string[]>;
   availableLayers$: Observable<string[] | number[]>;
+  kind$: Observable<ApplicationKind>;
 
+  private _timePeriod: TimePeriod = new TimePeriod();
+  private baseDateValidators: ValidatorFn[] = [];
   private destroy = new Subject<boolean>();
 
   constructor(private fb: FormBuilder,
               private mapStore: MapStore,
               private storedFilterStore: StoredFilterStore,
               private notification: NotificationService,
-              private store: Store<fromMap.State>) {
+              private store: Store<fromRoot.State>) {
+    this.baseDateValidators = this.datesRequired ? [Validators.required] : [];
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
-      startDate: undefined,
-      endDate: undefined,
+      startDate: [undefined, this.baseDateValidators],
+      endDate: [undefined, this.baseDateValidators],
       statuses: [[]]
     });
   }
@@ -97,6 +112,16 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
     this.availableLayers$ = this.store.pipe(select(this.getLayerIds()));
     this.selectedLayers$ = this.store.pipe(select(this.getSelectedLayerIds()));
+
+    this.maxEndDate$ = this.searchForm.get('startDate').valueChanges.pipe(
+      map(start => TimeUtil.toTimePeriodEnd(start, this.timePeriod.endTime))
+    );
+
+    this.minStartDate$ = this.searchForm.get('endDate').valueChanges.pipe(
+      map(end => TimeUtil.toTimePeriodStart(end, this.timePeriod.startTime))
+    );
+
+    this.kind$ = this.store.pipe(select(fromApplication.getKind));
   }
 
   ngOnDestroy(): void {
@@ -111,6 +136,30 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   @Input()
   set filter(searchFilter: MapSearchFilter) {
     this.searchForm.patchValue(searchFilter, {emitEvent: false});
+  }
+
+  @Input()
+  set timePeriod(timePeriod: TimePeriod) {
+    if (timePeriod) {
+      const validators = this.baseDateValidators.concat(ComplexValidator.inTimePeriod(timePeriod.startTime, timePeriod.endTime));
+      setValidatorsAndValidate(this.searchForm.get('startDate'), validators);
+      setValidatorsAndValidate(this.searchForm.get('endDate'), validators);
+      this.dateFilter = (date: Date) => TimeUtil.isInTimePeriod(date, timePeriod.startTime, timePeriod.endTime);
+      this._timePeriod = timePeriod;
+    } else {
+      setValidatorsAndValidate(this.searchForm.get('startDate'), this.baseDateValidators);
+      setValidatorsAndValidate(this.searchForm.get('endDate'), this.baseDateValidators);
+      this.dateFilter = defaultDateFilter;
+      this._timePeriod = new TimePeriod();
+    }
+  }
+
+  get timePeriod() {
+    return this._timePeriod;
+  }
+
+  get valid(): boolean {
+    return this.searchForm.valid;
   }
 
   public notifySearchUpdated(searchFilter: MapSearchFilter): void {

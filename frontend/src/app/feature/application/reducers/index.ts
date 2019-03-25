@@ -17,6 +17,7 @@ import {NumberUtil} from '@util/number.util';
 import {ArrayUtil} from '@util/array-util';
 import {InjectionToken} from '@angular/core';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ApplicationKind} from '@model/application/type/application-kind';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -74,6 +75,11 @@ export const getType = createSelector(
 export const getKindsWithSpecifiers = createSelector(
   getApplicationEntitiesState,
   fromApplication.getKindsWithSpecifiers
+);
+
+export const getKind = createSelector(
+  getKindsWithSpecifiers,
+  (kws) => (<ApplicationKind>ArrayUtil.first(Object.keys(kws)))
 );
 
 export const isFromExternalSystem = createSelector(

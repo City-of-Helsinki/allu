@@ -38,10 +38,17 @@
                   <input matInput type="text" formControlName="startTime" required
                          [placeholder]="'application.common.startTime' | translation"
                          [matDatepicker]="startTimePicker"
-                         [max]="applicationForm.get('rentalTimes.endTime').value"/>
+                         [min]="minStartDate$ | async"
+                         [max]="applicationForm.get('rentalTimes.endTime').value"
+                         [matDatepickerFilter]="dateFilter"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #startTimePicker></mat-datepicker>
+                  <mat-error *ngIf="applicationForm.get('rentalTimes.startTime').hasError('inTimePeriod') || applicationForm.get('rentalTimes.startTime').hasError('matDatepickerMin')">
+                    <span *ngIf="kind$ | async as kind">
+                      {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
+                    </span>
+                  </mat-error>
                   <mat-hint>
                     <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
                       {{'application.common.field.validityStartTimeMissing' | translation}}
@@ -57,9 +64,16 @@
                   <input matInput type="text" formControlName="endTime" required
                          [placeholder]="'application.common.endTime' | translation"
                          [matDatepicker]="endTimePicker"
-                         [min]="applicationForm.get('rentalTimes.startTime').value"/>
+                         [min]="applicationForm.get('rentalTimes.startTime').value"
+                         [max]="maxEndDate$ | async"
+                         [matDatepickerFilter]="dateFilter"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
+                  <mat-error *ngIf="applicationForm.get('rentalTimes.endTime').hasError('inTimePeriod') || applicationForm.get('rentalTimes.endTime').hasError('matDatepickerMax')">
+                    <span *ngIf="kind$ | async as kind">
+                      {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
+                    </span>
+                  </mat-error>
                   <mat-hint>
                     <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
                       {{'application.common.field.validityEndTimeMissing' | translation}}
