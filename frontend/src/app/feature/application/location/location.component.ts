@@ -277,6 +277,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.applicationStore.save(updated)
       .subscribe(
         app => {
+          this.destroy.next(true);
           this.notification.success(findTranslation('location.action.saved'));
           this.router.navigate(['/applications', app.id, urlSuffix]);
         },
