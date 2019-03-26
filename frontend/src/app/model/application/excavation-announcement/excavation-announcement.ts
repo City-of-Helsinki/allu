@@ -1,9 +1,15 @@
-import {ApplicationExtension, GuaranteeEndTime, OperationalConditionDates, WorkFinishedDates} from '../type/application-extension';
+import {
+  ApplicationExtension,
+  CustomerStartEndTimes,
+  GuaranteeEndTime,
+  OperationalConditionDates,
+  WorkFinishedDates
+} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
 
 export class ExcavationAnnouncement extends ApplicationExtension
-  implements WorkFinishedDates, OperationalConditionDates, GuaranteeEndTime {
+  implements WorkFinishedDates, OperationalConditionDates, GuaranteeEndTime, CustomerStartEndTimes {
   constructor(
     public pksCard?: boolean,
     public constructionWork?: boolean,
