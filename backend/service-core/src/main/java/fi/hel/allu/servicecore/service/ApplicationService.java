@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.ApplicationStatusInfo;
 import fi.hel.allu.common.domain.RequiredTasks;
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -40,6 +41,7 @@ public class ApplicationService {
   private final UserService userService;
   private final PersonAuditLogService personAuditLogService;
   private final PaymentClassService paymentClassService;
+  private final PaymentZoneService paymentZoneService;
 
   @Autowired
   public ApplicationService(
@@ -48,13 +50,15 @@ public class ApplicationService {
       ApplicationMapper applicationMapper,
       UserService userService,
       PersonAuditLogService personAuditLogService,
-      PaymentClassService paymentClassService) {
+      PaymentClassService paymentClassService,
+      PaymentZoneService paymentZoneService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
     this.userService = userService;
     this.personAuditLogService = personAuditLogService;
     this.paymentClassService = paymentClassService;
+    this.paymentZoneService = paymentZoneService;
   }
 
 
@@ -245,9 +249,17 @@ public class ApplicationService {
   private void setPaymentClasses(ApplicationJson application) {
     if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT ||
         application.getType() == ApplicationType.AREA_RENTAL) {
-      final List<LocationJson> locations = application.getLocations();
-      locations.forEach(l -> l.setPaymentTariff(paymentClassService.getPaymentClass(l)));
+      application.getLocations().forEach(l -> l.setPaymentTariff(paymentClassService.getPaymentClass(l)));
+    } else if (needsPaymentZone(application)) {
+      application.getLocations().forEach(l -> l.setPaymentTariff(paymentZoneService.getPaymentZone(l)));
     }
+  }
+
+  private boolean needsPaymentZone(ApplicationJson application) {
+    return application.getType() == ApplicationType.SHORT_TERM_RENTAL
+        && (application.getKind() == ApplicationKind.SUMMER_TERRACE
+            || application.getKind() == ApplicationKind.WINTER_TERRACE
+            || application.getKind() == ApplicationKind.PARKLET);
   }
 
   private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
