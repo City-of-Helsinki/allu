@@ -221,6 +221,8 @@ public class AlluMapper {
   private static String SAP_MATERIAL_DEPOSIT = "27100001";
   private static String SAP_MATERIAL_OTHER_RENTAL = "27100017";
   private static String SAP_MATERIAL_PLACEMENT_CONTRACT = "27100032";
+  private static String SAP_MATERIAL_TERRACE = "27100052";
+  private static String SAP_MATERIAL_PARKLET = "27100129";
 
   private static String mapToSapMaterial(Application application) {
     if (application.getType() == null) {
@@ -270,6 +272,11 @@ public class AlluMapper {
         return SAP_MATERIAL_SEASON_SALE;
       case CIRCUS:
         return SAP_MATERIAL_CIRCUS;
+      case SUMMER_TERRACE:
+      case WINTER_TERRACE:
+        return SAP_MATERIAL_TERRACE;
+      case PARKLET:
+        return SAP_MATERIAL_PARKLET;
       default:
         return SAP_MATERIAL_OTHER_RENTAL;
     }
