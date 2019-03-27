@@ -15,6 +15,7 @@ import {filter, map, take} from 'rxjs/internal/operators';
 import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
+import {needsPaymentTariff} from '@feature/common/payment-tariff';
 
 @Component({
   selector: 'location-details',
@@ -90,8 +91,12 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     this.mapStore.reset();
   }
 
-  showPaymentTariff() {
-    return [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(this.application.type) >= 0;
+  get showPaymentTariff(): boolean {
+    if (this.application) {
+      return needsPaymentTariff(this.application.type, this.application.kinds);
+    } else {
+      return false;
+    }
   }
 
   paymentTariff(): string {
