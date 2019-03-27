@@ -36,7 +36,7 @@ public class SupervisionTaskValidator implements Validator {
   @Override
   public void validate(Object target, Errors errors) {
     SupervisionTaskCreateJson task = (SupervisionTaskCreateJson) target;
-    if (!hasValidApplication(task)) {
+    if (task.getApplicationId() != null && !hasValidApplication(task)) {
       errors.rejectValue("applicationId", ERROR_APPLICATION, accessor.getMessage(ERROR_APPLICATION));
     }
   }

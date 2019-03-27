@@ -56,12 +56,14 @@ public class SupervisionTaskApprovalValidator implements Validator {
   @Override
   public void validate(Object target, Errors errors) {
     SupervisionTaskApprovalJson approval = (SupervisionTaskApprovalJson)target;
-    SupervisionTaskJson task = supervisionTaskService.findById(approval.getTaskId());
-    Application application = applicationService.findApplicationById(task.getApplicationId());
-    validateTaskStatus(task, errors);
-    validateOperationalConditionDate(approval, task, errors);
-    validateWorkFinishedDate(approval, task, application, errors);
-    validateDecisionData(approval, task, application, errors);
+    if (approval.getTaskId() != null) {
+      SupervisionTaskJson task = supervisionTaskService.findById(approval.getTaskId());
+      Application application = applicationService.findApplicationById(task.getApplicationId());
+      validateTaskStatus(task, errors);
+      validateOperationalConditionDate(approval, task, errors);
+      validateWorkFinishedDate(approval, task, application, errors);
+      validateDecisionData(approval, task, application, errors);
+    }
   }
 
   private void validateTaskStatus(SupervisionTaskJson task, Errors errors) {

@@ -35,7 +35,7 @@ public class SupervisionTaskModifyValidator implements Validator {
   @Override
   public void validate(Object target, Errors errors) {
     SupervisionTaskModifyJson task = (SupervisionTaskModifyJson) target;
-    if (!hasValidOwner(task)) {
+    if (task.getOwnerId() != null && !hasValidOwner(task)) {
       errors.rejectValue("ownerId", ERROR_OWNER, accessor.getMessage(ERROR_OWNER));
     }
   }
