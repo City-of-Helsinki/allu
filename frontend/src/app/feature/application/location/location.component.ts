@@ -7,7 +7,7 @@ import {MapUtil} from '@service/map/map.util';
 import {MapStore} from '@service/map/map-store';
 import {Some} from '@util/option';
 import {ApplicationType, hasSingleKind} from '@model/application/type/application-type';
-import {drawingAllowedForKind} from '@model/application/type/application-kind';
+import {ApplicationKind, drawingAllowedForKind} from '@model/application/type/application-kind';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationExtension} from '@model/application/type/application-extension';
 import {CableReport} from '@model/application/cable-report/cable-report';
@@ -48,6 +48,10 @@ import {TypeComponent} from '@feature/application/type/type.component';
 import {SearchbarComponent} from '@feature/searchbar/searchbar.component';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 import {TimePeriod} from '@feature/application/info/time-period';
+import {
+  getPaymentTariffs,
+  needsPaymentTariff,
+} from '@feature/common/payment-tariff';
 
 @Component({
   selector: 'type',
@@ -70,8 +74,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   districts: Observable<Array<CityDistrict>>;
   multipleLocations = false;
   invalidGeometry = false;
-  showPaymentTariff = false;
-  paymentTariffs = ['1', '2', '3', '4a', '4b'];
   searchFilter$: Observable<MapSearchFilter>;
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
@@ -135,8 +137,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.application = this.applicationStore.snapshot.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
-    this.showPaymentTariff = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL]
-      .indexOf(this.application.type) >= 0;
 
     this.searchFilter$ = this.mapStore.locationSearchFilter;
 
@@ -206,13 +206,26 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .orElse(false);
   }
 
+  get paymentTariffs(): string[] {
+    return Some(this.application)
+      .map(app => getPaymentTariffs(app.kinds))
+      .orElse([]);
+  }
+
+  get showPaymentTariff(): boolean {
+    if (this.application) {
+      return needsPaymentTariff(this.application.type, this.application.kinds);
+    } else {
+      return false;
+    }
+  }
+
   onApplicationTypeChange(type: ApplicationType) {
     if (type !== this.application.type) {
       this.application.type = ApplicationType[type];
       this.application.extension = this.createExtension(type);
       this.multipleLocations = type === ApplicationType.AREA_RENTAL;
       this.setInitialDates();
-      this.showPaymentTariff = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL].indexOf(type) >= 0;
     }
   }
 
