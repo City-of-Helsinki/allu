@@ -24,6 +24,7 @@ const RECURRING_VALUE_ACCESSOR = {
 })
 export class RecurringComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() readonly = false;
+  @Input() forNowSelectable = true;
   recurringForm: FormGroup;
   minYear = MIN_YEAR;
   maxYear = MAX_YEAR;

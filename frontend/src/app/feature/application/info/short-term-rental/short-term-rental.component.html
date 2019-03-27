@@ -99,7 +99,9 @@
           </div>
           <div fxLayout="row" *ngIf="recurringAllowed">
             <div fxFlex>
-              <recurring formControlName="recurringEndYear" [readonly]="readonly"></recurring>
+              <recurring formControlName="recurringEndYear"
+                         [forNowSelectable]="false"
+                         [readonly]="readonly"></recurring>
             </div>
           </div>
           <div fxLayout="row" *ngIf="showCommercial">

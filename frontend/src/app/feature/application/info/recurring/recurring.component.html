@@ -3,7 +3,7 @@
     <mat-radio-button value="none" class="recurring-radio-button">
       {{'application.recurring.notRecurring' | translation}}
     </mat-radio-button>
-    <mat-radio-button value="forNow" class="recurring-radio-button">
+    <mat-radio-button value="forNow" class="recurring-radio-button" *ngIf="forNowSelectable">
       {{'application.recurring.recurringYearlyForNow' | translation}}
     </mat-radio-button>
     <mat-radio-button value="until" class="recurring-radio-button">
