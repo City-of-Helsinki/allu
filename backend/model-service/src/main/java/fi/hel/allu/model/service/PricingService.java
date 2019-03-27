@@ -141,12 +141,9 @@ public class PricingService {
     if (application.getId() != null) {
       locations = locationDao.findByApplication(application.getId());
     }
-    // TODO: should we handle different locations as their own charge basis
-    // items? This works anyway as long as only area rentals have multiple
-    // locations
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, pricingExplanator,
-        pricingDao, applicationArea, isCompany(application));
+        pricingDao, applicationArea, isCompany(application), invoicingPeriodService.findForApplicationId(application.getId()));
     pricing.calculatePrice();
     return pricing.getChargeBasisEntries();
   }

@@ -1,5 +1,7 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
+
 public enum PricingKey {
   // Excavation announcement
   HANDLING_FEE,
@@ -23,11 +25,27 @@ public enum PricingKey {
   STORAGE_AREA_MONTHLY_PRICE,
   SUMMER_THEATER_YEARLY_PRICE,
   URBAN_FARMING_TERM_PRICE,
+  SUMMER_TERRACE,
+  WINTER_TERRACE,
+  PARKLET,
 
   // Area rental
   MINOR_DISTURBANCE_HANDLING_FEE,
   MAJOR_DISTURBANCE_HANDLING_FEE,
   UNIT_PRICE,
   UNDERPASS_DICOUNT_PERCENTAGE,
-  AREA_UNIT_M2
-};
+  AREA_UNIT_M2;
+
+  public static PricingKey forTerraceKind(ApplicationKind kind) {
+    switch (kind) {
+    case SUMMER_TERRACE:
+      return PricingKey.SUMMER_TERRACE;
+    case WINTER_TERRACE:
+      return PricingKey.WINTER_TERRACE;
+    case PARKLET:
+      return PricingKey.PARKLET;
+    default:
+      return null;
+    }
+  }
+}

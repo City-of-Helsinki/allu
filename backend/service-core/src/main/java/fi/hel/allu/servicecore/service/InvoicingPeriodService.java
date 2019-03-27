@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,6 +43,13 @@ public class InvoicingPeriodService {
 
   public void deleteInvoicingPeriods(Integer id) {
     restTemplate.delete(applicationProperties.getInvoicingPeriodsUrl(), id);
+  }
+
+  public List<InvoicingPeriod> createPeriodsForRecurringApplication(Integer applicationId) {
+    InvoicingPeriod[] periods = restTemplate.postForObject(applicationProperties.getRecurringApplicationPeriodsUrl(),
+        null, InvoicingPeriod[].class, applicationId);
+    return Arrays.asList(periods);
+
   }
 
 }

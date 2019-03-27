@@ -58,6 +58,8 @@ public class ApplicationServiceTest extends MockServices {
   private PaymentClassServiceImpl paymentClassService;
   @Mock
   private PaymentZoneServiceImpl paymentZoneService;
+  @Mock
+  private InvoicingPeriodService invoicingPeriodService;
 
   private ApplicationService applicationService;
 
@@ -87,7 +89,8 @@ public class ApplicationServiceTest extends MockServices {
     userJson = new UserJson(USER_ID, null, null, null, null, null, true, null, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
-    applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService, personAuditLogService, paymentClassService, paymentZoneService);
+    applicationService = new ApplicationService(props, restTemplate, applicationMapper, userService,
+        personAuditLogService, paymentClassService, paymentZoneService, invoicingPeriodService);
   }
 
   @Test

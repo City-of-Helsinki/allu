@@ -1,6 +1,9 @@
 package fi.hel.allu.model.domain;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
+
+import fi.hel.allu.common.util.TimeUtil;
 
 
 public class InvoicingPeriod {
@@ -59,5 +62,24 @@ public class InvoicingPeriod {
   public void setInvoiced(boolean invoiced) {
     this.invoiced = invoiced;
   }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(applicationId, endTime, invoiced, startTime);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    InvoicingPeriod other = (InvoicingPeriod) obj;
+    return Objects.equals(applicationId, other.applicationId) && TimeUtil.isSameDate(endTime, other.endTime)
+        && invoiced == other.invoiced && TimeUtil.isSameDate(startTime, other.startTime);
+  }
+
 
 }

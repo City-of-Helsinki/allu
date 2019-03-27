@@ -1427,6 +1427,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/invoicingperiods");
   }
 
+  public String getRecurringApplicationPeriodsUrl() {
+    return getModelServiceUrl("/applications/{id}/recurring/invoicingperiods");
+  }
+
   public String getPaymentClassUrl() {
     return paymentClassUrl;
   }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.model.dao.ApplicationDao;
@@ -52,6 +53,34 @@ public class InvoicingPeriodService {
     applicationDao.setInvoicingPeriodLength(applicationId, periodLength);
     invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     return periods;
+  }
+
+  @Transactional
+  public List<InvoicingPeriod> createRecurringApplicationPeriods(Integer applicationId) {
+    validatePeriodModificationAllowed(applicationId);
+    Application application = applicationDao.findById(applicationId);
+    List<InvoicingPeriod> recurringPeriods = new ArrayList<>();
+    ZonedDateTime periodStart = application.getStartTime();
+    ZonedDateTime periodEnd = application.getEndTime();
+    while (periodEnd.getYear() <= application.getRecurringEndTime().getYear()) {
+      recurringPeriods.add(new InvoicingPeriod(applicationId, periodStart, periodEnd));
+      periodStart = periodStart.plusYears(1);
+      periodEnd= periodEnd.plusYears(1);
+    }
+    List<InvoicingPeriod> result;
+    List<InvoicingPeriod> currentPeriods = findForApplicationId(applicationId);
+    if (periodsChanged(currentPeriods, recurringPeriods)) {
+      invoicingPeriodDao.deletePeriods(applicationId);
+      result = invoicingPeriodDao.insertPeriods(recurringPeriods);
+      invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+    } else {
+      result = currentPeriods;
+    }
+    return result;
+  }
+
+  private boolean periodsChanged(List<InvoicingPeriod> currentPeriods, List<InvoicingPeriod> newPeriods) {
+    return currentPeriods.size() != newPeriods.size() || !currentPeriods.containsAll(newPeriods);
   }
 
   private List<InvoicingPeriod> createPeriods(Integer applicationId, int periodLength, ZonedDateTime start,

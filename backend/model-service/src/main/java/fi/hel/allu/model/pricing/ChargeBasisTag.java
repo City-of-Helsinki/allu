@@ -163,6 +163,18 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.ArUs);
   }
 
+  public static ChargeBasisTag SummerTerrace(Integer periodId) {
+    return periodId != null ? new ChargeBasisTag(TagText.STST, periodId.toString()) : new ChargeBasisTag(TagText.STST);
+  }
+
+  public static ChargeBasisTag WinterTerrace(Integer periodId) {
+    return periodId != null ? new ChargeBasisTag(TagText.STWT, periodId.toString()) : new ChargeBasisTag(TagText.STWT);
+  }
+
+  public static ChargeBasisTag Parklet(Integer periodId) {
+    return periodId != null ? new ChargeBasisTag(TagText.STPa, periodId.toString()) : new ChargeBasisTag(TagText.STPa);
+  }
+
   public static ChargeBasisTag EcoCompassTag() {
     return new ChargeBasisTag(TagText.ECO, false);
   }
@@ -237,6 +249,12 @@ private enum TagText {
     STRST,
     // Short term rental, Urban farming
     STRUF,
+    // Short term rental, Summer terrace
+    STST,
+    // Short term rental, Winter terrace
+    STWT,
+    // Short term rental, Parklet
+    STPa,
     // Area Usage
     ArUs,
     // Eco compass

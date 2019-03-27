@@ -42,6 +42,7 @@ public class ApplicationService {
   private final PersonAuditLogService personAuditLogService;
   private final PaymentClassService paymentClassService;
   private final PaymentZoneService paymentZoneService;
+  private final InvoicingPeriodService invoicingPeriodService;
 
   @Autowired
   public ApplicationService(
@@ -51,7 +52,8 @@ public class ApplicationService {
       UserService userService,
       PersonAuditLogService personAuditLogService,
       PaymentClassService paymentClassService,
-      PaymentZoneService paymentZoneService) {
+      PaymentZoneService paymentZoneService,
+      InvoicingPeriodService invoicingPeriodService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
@@ -59,6 +61,7 @@ public class ApplicationService {
     this.personAuditLogService = personAuditLogService;
     this.paymentClassService = paymentClassService;
     this.paymentZoneService = paymentZoneService;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
 
@@ -173,7 +176,7 @@ public class ApplicationService {
         applicationMapper.createApplicationModel(newApplication),
         Application.class,
         userService.getCurrentUser().getId());
-    return applicationModel;
+    return setInvoicingPeriods(applicationModel);
 
   }
 
@@ -187,11 +190,14 @@ public class ApplicationService {
     applicationJson.setId(applicationId);
     applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
     setPaymentClasses(applicationJson);
+
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
-    ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
-        HttpMethod.PUT, requestEntity, Application.class, applicationId, userService.getCurrentUser().getId());
-    return responseEntity.getBody();
+    Application application = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
+        HttpMethod.PUT, requestEntity, Application.class, applicationId, userService.getCurrentUser().getId()).getBody();
+
+    return setInvoicingPeriods(application);
   }
+
 
   /**
    * Delete a note from model-service's database.
@@ -256,10 +262,7 @@ public class ApplicationService {
   }
 
   private boolean needsPaymentZone(ApplicationJson application) {
-    return application.getType() == ApplicationType.SHORT_TERM_RENTAL
-        && (application.getKind() == ApplicationKind.SUMMER_TERRACE
-            || application.getKind() == ApplicationKind.WINTER_TERRACE
-            || application.getKind() == ApplicationKind.PARKLET);
+    return isShortTermRental(application.getType()) && isTerrace(application.getKind());
   }
 
   private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
@@ -492,4 +495,38 @@ public class ApplicationService {
   public Integer getApplicationVersion(Integer id) {
     return restTemplate.getForObject(applicationProperties.getApplicationVersionUrl(), Integer.class, id);
   }
+
+  private Application setInvoicingPeriods(Application application) {
+    if (isRecurringTerraceApplication(application)) {
+      invoicingPeriodService.createPeriodsForRecurringApplication(application.getId());
+      return findApplicationById(application.getId());
+    } else if (isShortTermRental(application.getType()) && isTerrace(application.getKind())) {
+      // Recurring application possibly changed to not recurring
+      invoicingPeriodService.deleteInvoicingPeriods(application.getId());
+      return findApplicationById(application.getId());
+    } else {
+      return application;
+    }
+  }
+
+  private boolean isShortTermRental(ApplicationType type) {
+    return type == ApplicationType.SHORT_TERM_RENTAL;
+  }
+  private boolean isTerrace(ApplicationKind kind) {
+    return kind == ApplicationKind.SUMMER_TERRACE
+          || kind == ApplicationKind.WINTER_TERRACE
+          || kind == ApplicationKind.PARKLET;
+  }
+
+  private boolean isRecurringTerraceApplication(Application application) {
+    return isShortTermRental(application.getType()) && isTerrace(application.getKind()) && isRecurringApplication(application);
+  }
+
+  private boolean isRecurringApplication(Application application) {
+    return application.getRecurringEndTime() != null &&
+           application.getEndTime() != null &&
+           application.getRecurringEndTime().getYear() > application.getEndTime().getYear();
+  }
+
+
 }

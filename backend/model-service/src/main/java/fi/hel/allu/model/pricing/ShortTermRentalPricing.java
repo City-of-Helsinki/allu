@@ -1,18 +1,25 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.common.util.CalendarUtil;
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.PricingKey;
-import fi.hel.allu.model.domain.ShortTermRental;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.springframework.util.CollectionUtils;
+
+import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.util.CalendarUtil;
+import fi.hel.allu.model.dao.PricingDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.InvoicingPeriod;
+import fi.hel.allu.model.domain.PricingKey;
+import fi.hel.allu.model.domain.ShortTermRental;
 
 public class ShortTermRentalPricing extends Pricing {
   private final Application application;
@@ -21,6 +28,7 @@ public class ShortTermRentalPricing extends Pricing {
   private final double applicationArea;
   private final boolean customerIsCompany;
   private final DecimalFormat decimalFormat;
+  private final List<InvoicingPeriod> recurringPeriods;
 
   // Various price constants for short term rental
   private static final int LONG_TERM_DISCOUNT_LIMIT = 14; // how many days
@@ -50,17 +58,20 @@ public class ShortTermRentalPricing extends Pricing {
     static final String CIRCUS = "%s €/päivä + alv";
   }
 
-  public ShortTermRentalPricing(Application application, PricingExplanator explanationService, PricingDao pricingDao, double applicationArea, boolean customerIsCompany) {
+  public ShortTermRentalPricing(Application application, PricingExplanator explanationService, PricingDao pricingDao,
+      double applicationArea, boolean customerIsCompany, List<InvoicingPeriod> recurringPeriods) {
     super();
     this.application = application;
     this.applicationArea = applicationArea;
     this.customerIsCompany = customerIsCompany;
     this.explanationService = explanationService;
     this.pricingDao = pricingDao;
+    this.recurringPeriods = recurringPeriods;
     this.decimalFormat = new DecimalFormat("#.00");
     final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
     symbols.setDecimalSeparator(',');
     decimalFormat.setDecimalFormatSymbols(symbols);
+
   }
 
 
@@ -72,6 +83,8 @@ public class ShortTermRentalPricing extends Pricing {
   }
 
   private void calculatePrice(ApplicationKind kind) {
+    ShortTermRental str = (ShortTermRental) application.getExtension();
+    boolean billableSalesArea = Optional.ofNullable(str).map(s -> s.getBillableSalesArea()).orElse(false);
     switch (kind) {
     case ART:
       // Free event
@@ -149,8 +162,7 @@ public class ShortTermRentalPricing extends Pricing {
     case PROMOTION_OR_SALES:
       // at max 0.8 m from a wall: free of charge
       // over 0.8m from a wall: 2 EUR/sqm/kk
-      ShortTermRental str = (ShortTermRental) application.getExtension();
-      if (str != null && Optional.ofNullable(str.getBillableSalesArea()).orElse(false) == true) {
+      if (billableSalesArea) {
         final int price = getPrice(PricingKey.PROMOTION_OR_SALES_MONTHLY);
         updatePriceByTimeAndArea(price, ChronoUnit.MONTHS, 1, false,
             priceText(price, InvoiceLines.PROMOTION_OR_SALES_LARGE), null,
@@ -183,6 +195,13 @@ public class ShortTermRentalPricing extends Pricing {
     }
     case URBAN_FARMING:
       updateUrbanFarmingPrice();
+      break;
+    case SUMMER_TERRACE:
+    case WINTER_TERRACE:
+    case PARKLET:
+      if (billableSalesArea) {
+        updateTerracePrice();
+      }
       break;
     default:
       break;
@@ -261,13 +280,18 @@ public class ShortTermRentalPricing extends Pricing {
     }
 
     final int urbanFarmingTermPrice = getPrice(PricingKey.URBAN_FARMING_TERM_PRICE);
-    double billableArea = applicationArea == 0.0 ? 0.0 : Math.ceil(applicationArea);
+    double billableArea = getBillableArea();
     int netPrice = urbanFarmingTermPrice * (int) billableArea * numTerms;
 
     addChargeBasisEntry(ChargeBasisTag.ShortTermRentalUrbanFarming(), ChargeBasisUnit.SQUARE_METER, billableArea,
         urbanFarmingTermPrice * numTerms,
         InvoiceLines.URBAN_FARMING, netPrice, explanationService.getExplanation(application));
     setPriceInCents(netPrice);
+  }
+
+
+  private double getBillableArea() {
+    return applicationArea == 0.0 ? 0.0 : Math.ceil(applicationArea);
   }
 
   private int getPrice(PricingKey key) {
@@ -282,4 +306,34 @@ public class ShortTermRentalPricing extends Pricing {
     }
     return String.format(text, priceText);
   }
+
+  private void updateTerracePrice() {
+    String paymentClass = getPaymentClass(application);
+    // Price per square meter per month
+    int unitPrice = pricingDao.findValue(ApplicationType.SHORT_TERM_RENTAL,
+        PricingKey.forTerraceKind(application.getKind()), paymentClass);
+    getTerracePrices(paymentClass, unitPrice).forEach(p -> addTerracePeriodPrice(p));
+  }
+
+  private void addTerracePeriodPrice(TerracePrice price) {
+    addChargeBasisEntry(price.getTag(), ChargeBasisUnit.MONTH, price.getNumberOfBillableMonths(),
+        price.getMonthlyPrice(), price.getInvoiceLineText(), price.getNetPrice(),
+        explanationService.getExplanationWithCustomPeriod(application, price.getPricePeriod()),
+        null, price.getInvoicingPeriodId(), null);
+    setPriceInCents(getPriceInCents() + price.getNetPrice());
+  }
+
+  private Stream<TerracePrice> getTerracePrices(String paymentClass, int unitPrice) {
+    if (CollectionUtils.isEmpty(recurringPeriods)) {
+      return Stream.of(new TerracePrice(unitPrice, (int)getBillableArea(), application.getStartTime(), application.getEndTime(), application));
+    } else {
+      return recurringPeriods.stream()
+          .map(p -> new TerracePrice(unitPrice, (int)getBillableArea(), p.getStartTime(), p.getEndTime(), application, p.getId()));
+    }
+  }
+
+  private String getPaymentClass(Application application) {
+    return application.getLocations().get(0).getEffectivePaymentTariff();
+  }
+
 }
