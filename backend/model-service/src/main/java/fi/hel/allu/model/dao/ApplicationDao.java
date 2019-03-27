@@ -28,9 +28,7 @@ import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.OptimisticLockException;
-import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.SupervisionDates;
-import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
@@ -47,7 +45,6 @@ import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QKindSpecifier.kindSpecifier;
 import static fi.hel.allu.QPostalAddress.postalAddress;
-import static fi.hel.allu.QRecurringPeriod.recurringPeriod;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
@@ -285,7 +282,6 @@ public class ApplicationDao {
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
     Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
-    replaceRecurringPeriods(application);
     return populateTags(application);
   }
 
@@ -470,7 +466,6 @@ public class ApplicationDao {
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
     Application application = findByIds(Collections.singletonList(id)).get(0);
-    replaceRecurringPeriods(application);
     return populateTags(application);
   }
 
@@ -579,26 +574,6 @@ public class ApplicationDao {
     tag.setApplicationId(applicationId);
     Integer id = queryFactory.insert(applicationTag).populate(tag).executeWithKey(applicationTag.id);
     return queryFactory.select(applicationTagBean).from(applicationTag).where(applicationTag.id.eq(id)).fetchOne();
-  }
-
-  private void replaceRecurringPeriods(Application application) {
-    queryFactory.delete(recurringPeriod).where(recurringPeriod.applicationId.eq(application.getId())).execute();
-    if (hasValidRecurringEndTime(application)) {
-      RecurringApplication recurringApplication =
-          new RecurringApplication(application.getStartTime(), application.getEndTime(), application.getRecurringEndTime());
-      RecurringPeriod period1 = new RecurringPeriod(
-          application.getId(),
-          TimeUtil.millisToZonedDateTime(recurringApplication.getPeriod1Start()),
-          TimeUtil.millisToZonedDateTime(recurringApplication.getPeriod1End()));
-      queryFactory.insert(recurringPeriod).populate(period1).execute();
-      if (recurringApplication.getPeriod2End() != 0) {
-        RecurringPeriod period2 = new RecurringPeriod(
-            application.getId(),
-            TimeUtil.millisToZonedDateTime(recurringApplication.getPeriod2Start()),
-            TimeUtil.millisToZonedDateTime(recurringApplication.getPeriod2End()));
-        queryFactory.insert(recurringPeriod).populate(period2).execute();
-      }
-    }
   }
 
   /* Set new kinds and specifiers for the given application id */
