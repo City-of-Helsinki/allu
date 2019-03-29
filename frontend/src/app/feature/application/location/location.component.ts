@@ -79,6 +79,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   availableLayers$: Observable<MapLayer[]>;
   timePeriod$: Observable<TimePeriod>;
 
+  private submitPending = false;
   private destroy = new Subject<boolean>();
 
   @ViewChild(TypeComponent)
@@ -273,6 +274,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSubmit(form: LocationForm) {
+    this.submitPending = true;
     this.locationState.storeLocation(LocationForm.to(form));
     const locations = this.locationState.locationsSnapshot;
     this.application.locations = locations;
@@ -293,10 +295,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           this.destroy.next(true);
           this.notification.success(findTranslation('location.action.saved'));
           this.router.navigate(['/applications', app.id, urlSuffix]);
+          this.submitPending = false;
         },
         err => {
           this.locationState.editLocation(0);
           this.notification.errorInfo(err);
+          this.submitPending = false;
         });
   }
 
@@ -328,8 +332,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const typeFormValid = this.typeComponent.valid;
     // Component might be hidden if required values have not been selected
     const searchFormValid = this.searchbarComponent ? this.searchbarComponent.valid : true;
+    const validData = formValid && validGeometry && typeFormValid && searchFormValid;
 
-    return nothingEdited || (formValid && validGeometry && typeFormValid && searchFormValid);
+    return !this.submitPending && (nothingEdited || validData);
   }
 
   paymentTariff() {
