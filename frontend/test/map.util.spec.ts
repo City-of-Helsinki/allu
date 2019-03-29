@@ -39,7 +39,7 @@ describe('MapService', () => {
     const originalGeometryCollection = JSON.parse(geoJSON);
     const coordinates = originalGeometryCollection.geometries[0].coordinates[0];
 
-    const featureCollection = mapService.geometryCollectionToFeatureCollection(originalGeometryCollection);
+    const featureCollection = mapService.createFeatureCollection(originalGeometryCollection);
     const geometryCollection = mapService.featureCollectionToGeometryCollection(featureCollection);
     const processedGeometries = <DirectGeometryObject>geometryCollection.geometries[0];
     const processedCoordinates = <number[][]>processedGeometries.coordinates[0];

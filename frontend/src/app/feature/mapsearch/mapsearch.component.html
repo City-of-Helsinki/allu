@@ -1,34 +1,35 @@
 <mat-sidenav-container>
-  <mat-sidenav mode="over" [opened]="sidenavOpen" class="no-scroll" fixedBottomGap="50">
-    <div class="sidenav-search">
-      <div class="sidenav-header flex-container">
-        <h1 class="flex-item">{{'mapsearch.advanced' | translation}}</h1>
-        <button type="button" class="btn-right" (click)="hideAdvancedSearch()">
-          <mat-icon>clear</mat-icon>
-        </button>
-      </div>
-      <div fxLayout="row" class="sidenav-centered-content">
-        <div fxFlex="100%">
-          <searchbar
-            *ngIf="sidenavOpen"
-            barType="ADVANCED"
-            [filter]="searchFilter$ | async"
-            (searchChange)="onSearchChange($event)"></searchbar>
+  <mat-sidenav mode="over" [opened]="sidenavOpen" class="no-scroll" fixedBottomGap="100">
+    <ng-container *ngIf="sidenavOpen">
+      <div class="sidenav-search">
+        <div class="sidenav-header flex-container">
+          <h1 class="flex-item">{{'mapsearch.advanced' | translation}}</h1>
+          <button type="button" class="btn-right" (click)="hideAdvancedSearch()">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </div>
+        <div fxLayout="row" class="sidenav-centered-content">
+          <div fxFlex="100%">
+            <searchbar
+              barType="ADVANCED"
+              [filter]="searchFilter$ | async"
+              (searchChange)="onSearchChange($event)"></searchbar>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="sidenav-search-results">
-      <div fxLayout="row" class="sidenav-centered-content">
-        <div fxFlex>
-          <h1>{{'mapsearch.results' | translation}}</h1>
+      <div class="sidenav-search-results">
+        <div fxLayout="row" class="sidenav-centered-content">
+          <div fxFlex>
+            <h1>{{'mapsearch.results' | translation}}</h1>
+          </div>
+        </div>
+        <div fxLayout="row">
+          <div fxFlex>
+            <application-list>{{'mapsearch.loading' | translation}}</application-list>
+          </div>
         </div>
       </div>
-      <div fxLayout="row">
-        <div fxFlex>
-          <application-list>{{'mapsearch.loading' | translation}}</application-list>
-        </div>
-      </div>
-    </div>
+    </ng-container>
   </mat-sidenav>
   <div class="mapcontainer">
     <div *ngIf="!sidenavOpen" class="map-overlay">

@@ -24,6 +24,7 @@ import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
 import GeoJSONOptions = L.GeoJSONOptions;
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {FeatureCollection, GeometryObject} from 'geojson';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -147,6 +148,18 @@ export class MapController {
     }
   }
 
+  public drawToLayer(layerName: string, featureCollection: FeatureCollection<GeometryObject>, style?: GeoJSONOptions) {
+    const layer = this.mapLayerService.contentLayers[layerName];
+    layer.clearLayers();
+
+    if (featureCollection) {
+      style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
+        .bindPopup((l: any) => this.popupService.create([l.feature]), {className: 'allu-map-popup'});
+      const geoJSON = L.geoJSON(featureCollection, style);
+      this.drawGeoJSON(geoJSON, layer);
+    }
+  }
+
   public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
                       style?: Object, featureInfo?: MapFeatureInfo) {
     const layer = this.mapLayerService.contentLayers[layerName];
@@ -196,7 +209,7 @@ export class MapController {
                               style?: GeoJSONOptions, featureInfo?: MapFeatureInfo) {
     if (geometryCollection.geometries.length) {
       style = style || {};
-      const featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection, featureInfo);
+      const featureCollection = this.mapUtil.createFeatureCollection(geometryCollection, featureInfo);
       style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
         .bindPopup((layer: any) => this.popupService.create([layer.feature]), {className: 'allu-map-popup'});
       const geoJSON = L.geoJSON(featureCollection, style);
@@ -243,7 +256,8 @@ export class MapController {
         L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
       crs: this.mapUtil.EPSG3879,
       continuousWorld: true,
-      worldCopyJump: false
+      worldCopyJump: false,
+      preferCanvas: true
     };
     return L.map('map', mapOption);
   }

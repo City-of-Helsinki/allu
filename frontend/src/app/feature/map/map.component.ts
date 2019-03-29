@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 import {MapRole, MapStore} from '@service/map/map-store';
 import {Application} from '@model/application/application';
@@ -14,16 +14,21 @@ import {ProjectService} from '@service/project/project.service';
 import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {MapUtil} from '@service/map/map.util';
-import {GeometryCollection} from 'geojson';
+import {FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
 import {MapLayer} from '@service/map/map-layer';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromMap from '@feature/map/reducers';
+import {MapFeatureInfo} from '@service/map/map-feature-info';
+import {NumberUtil} from '@util/number.util';
+import {EnumUtil} from '@util/enum.util';
+import {ApplicationType} from '@model/application/type/application-type';
 
 @Component({
   selector: 'map',
   templateUrl: './map.component.html',
-  styleUrls: []
+  styleUrls: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() draw = false;
@@ -46,11 +51,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapStore: MapStore,
     private projectService: ProjectService,
     private mapController: MapController,
-    private store: Store<fromRoot.State>) {}
+    private store: Store<fromRoot.State>,
+    private mapUtil: MapUtil) {}
 
   ngOnInit() {
     this.mapStore.roleChange(this.role);
-    this.loading$ = this.mapStore.loading;
+    this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
     this.mapController.availableLayers = this.availableLayers;
   }
 
@@ -67,7 +73,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       showOnlyApplicationArea: this.showOnlyApplicationArea
     });
     this.initSubscriptions();
-    Some(this.projectId).do(id => this.drawProject(id));
   }
 
   ngOnDestroy() {
@@ -91,27 +96,39 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  public centerAndZoomOnDrawn() {
+  private drawAndFocusApplications(applications: Application[]) {
+    this.mapController.clearDrawn();
+    this.drawApplications(applications);
     this.mapController.centerAndZoomOnDrawn();
   }
 
-  private drawProject(id: number) {
-    this.projectService.getProjectApplications(id).subscribe(apps => {
-      this.drawApplications(apps);
-      this.centerAndZoomOnDrawn();
+  private drawApplications(applications: Array<Application>) {
+    const drawnApplications = applications
+      .filter(app => this.applicationShouldBeDrawn(app))
+      .filter(app => app.id !== this.applicationId); // Only draw other than edited application
+
+    const featureGroupsByType = drawnApplications.reduce((acc, app) => {
+      const featureCollections = app.locations
+        .map(loc => loc.geometry)
+        .map(gc => this.mapUtil.createFeatureCollection(gc, this.createFeatureInfo(app)));
+
+      if (acc[app.type] === undefined) {
+        acc[app.type] = this.mapUtil.mergeFeatureCollections(featureCollections);
+      } else {
+        const existing = [acc[app.type]];
+        acc[app.type] = this.mapUtil.mergeFeatureCollections(existing.concat(featureCollections));
+      }
+      return acc;
+    }, {});
+
+    EnumUtil.enumValues(ApplicationType).forEach(type => {
+      const layerName = findTranslation(['application.type', type]);
+      this.mapController.drawToLayer(layerName, featureGroupsByType[type], styleByApplicationType[type]);
     });
   }
 
-  private drawApplications(applications: Array<Application>) {
-    this.mapController.clearDrawn();
-    applications
-      .filter(app => this.applicationShouldBeDrawn(app))
-      .filter(app => app.id !== this.applicationId) // Only draw other than edited application
-      .forEach(app => this.drawApplication(app));
-  }
-
-  private drawApplication(application: Application): void {
-    const featureInfo = {
+  private createFeatureInfo(application: Application): MapFeatureInfo {
+    return {
       id: application.id,
       name: application.name,
       applicationId: application.applicationId,
@@ -119,12 +136,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       endTime: TimeUtil.getUiDateString(application.endTime),
       applicant: Some(application.applicant.customer).map(c => c.name).orElse(undefined)
     };
-
-    this.mapController.drawGeometry(
-      application.locations.map(loc => loc.geometry),
-      findTranslation(['application.type', application.type]),
-      styleByApplicationType[application.type],
-      featureInfo);
   }
 
   private applicationShouldBeDrawn(application: Application): boolean {
@@ -174,7 +185,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private featuresToGeoJSON(featureGroup: L.FeatureGroup): GeoJSON.FeatureCollection<GeoJSON.GeometryObject> {
+  private featuresToGeoJSON(featureGroup: L.FeatureGroup): FeatureCollection<GeometryObject> {
     const features = L.featureGroup();
     featureGroup.eachLayer(l => {
       if (l instanceof L.Circle) {
@@ -185,7 +196,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
-    return <GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>features.toGeoJSON();
+    return <FeatureCollection<GeometryObject>>features.toGeoJSON();
   }
 
   private initSubscriptions(): void {
@@ -197,8 +208,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapController.shapes.pipe(takeUntil(this.destroy))
       .subscribe(shapes => this.addShape(shapes));
 
-    this.mapStore.applications.pipe(takeUntil(this.destroy))
-      .subscribe(applications => this.drawApplications(applications));
+    this.store.pipe(
+      select(fromMap.getApplications),
+      takeUntil(this.destroy)
+    ).subscribe(applications => {
+      if (NumberUtil.isDefined(this.projectId) || NumberUtil.isDefined(this.applicationId)) {
+        this.drawAndFocusApplications(applications);
+      } else {
+        this.drawApplications(applications);
+      }
+    });
 
     this.mapStore.selectedApplication.pipe(
       takeUntil(this.destroy),

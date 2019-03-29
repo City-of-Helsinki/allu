@@ -18,6 +18,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatTreeModule} from '@angular/material';
 import {SimpleMapComponent} from '@feature/map/simple-map.component';
 import {AddressSearchEffects} from '@feature/map/effects/address-search-effects';
+import {ApplicationEffects} from '@feature/map/effects/application-effects';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import {AddressSearchEffects} from '@feature/map/effects/address-search-effects'
     StoreModule.forFeature('map', reducersToken),
     EffectsModule.forFeature([
       MapLayerEffects,
-      AddressSearchEffects
+      AddressSearchEffects,
+      ApplicationEffects
     ]),
     ReactiveFormsModule,
     MatTreeModule

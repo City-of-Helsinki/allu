@@ -6,7 +6,6 @@ import {LocationService} from '@service/location.service';
 import {Location} from '@model/common/location';
 import {defaultFilter, MapSearchFilter} from '@service/map-search-filter';
 import {PostalAddress} from '@model/common/postal-address';
-import {MapDataService} from './map-data-service';
 import {LatLngBounds} from 'leaflet';
 import {ObjectUtil} from '@util/object.util';
 import {StoredFilter} from '@model/user/stored-filter';
@@ -14,8 +13,11 @@ import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '../stored-filter/stored-filter-store';
 import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
+import {Store} from '@ngrx/store';
+import * as fromMap from '@feature/map/reducers';
+import {Search} from '@feature/map/actions/application-actions';
 
-export type MapRole = 'SEARCH' | 'LOCATION';
+export type MapRole = 'SEARCH' | 'LOCATION' | 'OTHER';
 
 export interface MapState {
   role: MapRole;
@@ -24,7 +26,6 @@ export interface MapState {
   locationSearchFilter: MapSearchFilter;
   matchingAddresses: PostalAddress[];
   selectedApplication: Application;
-  visibleApplications: Array<Application>;
   editedLocation: Location;
   locationsToDraw: Array<Location>;
   shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
@@ -41,7 +42,6 @@ const initialState: MapState = {
   locationSearchFilter: defaultFilter,
   matchingAddresses: [],
   selectedApplication: undefined,
-  visibleApplications: [],
   editedLocation: undefined,
   locationsToDraw: [],
   shape: undefined,
@@ -55,15 +55,14 @@ const initialState: MapState = {
 export class MapStore {
   private state$ = new BehaviorSubject<MapState>(initialState);
 
-  constructor(private mapDataService: MapDataService,
-              private locationService: LocationService,
-              private storedFilterStore: StoredFilterStore) {
+  constructor(private locationService: LocationService,
+              private storedFilterStore: StoredFilterStore,
+              private store: Store<fromMap.State>) {
 
     // Search when either of filters change
     merge(this.mapSearchFilter, this.locationSearchFilter).pipe(
-      debounceTime(300),
-      filter(storedFilter => !!storedFilter.geometry)
-    ).subscribe(storedFilter => this.fetchMapDataByFilter(storedFilter));
+      debounceTime(100),
+    ).subscribe(storedFilter => this.store.dispatch(new Search(storedFilter)));
 
     this.storedFilterStore.getCurrent(StoredFilterType.MAP)
       .subscribe(sf => this.storedFilterChange(sf));
@@ -83,13 +82,6 @@ export class MapStore {
 
   get snapshot(): MapState {
     return this.state$.getValue();
-  }
-
-  get applications(): Observable<Array<Application>> {
-    return this.state$.pipe(
-      map(state => state.visibleApplications),
-      distinctUntilChanged()
-    );
   }
 
   get selectedApplication(): Observable<Application> {
@@ -174,10 +166,6 @@ export class MapStore {
     this.state$.next({...this.state$.getValue(), selectedApplication: application});
   }
 
-  applicationsChange(applications: Application[]): void {
-    this.state$.next({...this.state$.getValue(), visibleApplications: applications, loading: false});
-  }
-
   editedLocationChange(location: Location): void {
     this.state$.next({...this.state$.getValue(), editedLocation: location});
   }
@@ -205,7 +193,7 @@ export class MapStore {
     if ('LOCATION' === role) {
       const locationSearchFilter = {...this.snapshot.locationSearchFilter, geometry: bounds};
       this.state$.next({...this.state$.getValue(), locationSearchFilter });
-    } else {
+    } else if ('SEARCH' === role) {
       const mapSearchFilter = {...this.snapshot.mapSearchFilter, geometry: bounds};
       this.state$.next({...this.state$.getValue(), mapSearchFilter });
     }
@@ -240,11 +228,5 @@ export class MapStore {
 
   invalidGeometryChange(invalidGeometry: boolean): void {
     this.state$.next({...this.snapshot, invalidGeometry});
-  }
-
-  private fetchMapDataByFilter(searchFilter: MapSearchFilter): void {
-    this.state$.next({...this.snapshot, loading: true});
-    this.mapDataService.applicationsByLocation(searchFilter)
-      .subscribe(applications => this.applicationsChange(applications));
   }
 }

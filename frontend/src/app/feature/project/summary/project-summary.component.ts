@@ -5,18 +5,17 @@ import {select, Store} from '@ngrx/store';
 import {Project} from '@model/project/project';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromProject from '../reducers';
-import * as fromMapLayers from '@feature/map/reducers';
 import {CityDistrict} from '@model/common/city-district';
-import {MapStore} from '@service/map/map-store';
 import {MapComponent} from '@feature/map/map.component';
 import {Comment} from '@model/application/comment/comment';
-import {takeUntil} from 'rxjs/internal/operators';
+import {filter, takeUntil, takeWhile} from 'rxjs/operators';
 import {ChangeHistoryItem} from '@model/history/change-history-item';
 import {MatSlideToggleChange} from '@angular/material';
 import {ShowBasicInfo} from '../actions/project-actions';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
+import {SearchSuccess} from '@feature/map/actions/application-actions';
 
 @Component({
   selector: 'project-summary',
@@ -38,7 +37,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   private destroy$ = new Subject<boolean>();
   @ViewChild(MapComponent) private map: MapComponent;
 
-  constructor(private store: Store<fromRoot.State>, private mapStore: MapStore) {}
+  constructor(private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
     this.districts$ = this.store.pipe(select(fromProject.getProjectDistricts));
@@ -58,13 +57,14 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
       this.store.select(fromProject.getApplications),
       this.store.select(fromProject.getShowBasicInfo)
     ).pipe(
-      takeUntil(this.destroy$)
+      takeUntil(this.destroy$),
+      takeWhile(() => !!this.map),
+      filter(([applications, show]) => show)
     ).subscribe(([applications, show]) => {
-        this.mapStore.applicationsChange(applications);
-        if (show && !!this.map) {
-          this.map.centerAndZoomOnDrawn();
-        }
-      });
+      if (show && !!this.map) {
+        this.store.dispatch(new SearchSuccess(applications));
+      }
+    });
   }
 
   ngOnDestroy(): void {

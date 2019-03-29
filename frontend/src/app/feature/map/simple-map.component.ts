@@ -61,7 +61,7 @@ export class SimpleMapComponent implements AfterViewInit, OnDestroy {
   }
 
   private featureToGeoJSON(feature: MapFeature): L.GeoJSON {
-    const fc = this.mapUtil.geometryCollectionToFeatureCollection(feature.geometry);
+    const fc = this.mapUtil.createFeatureCollection(feature.geometry);
     if (feature.id === this.selectedFeature) {
       return L.geoJSON(fc, {style: () => pathStyle.HIGHLIGHT});
     } else {

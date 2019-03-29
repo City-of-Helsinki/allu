@@ -1,5 +1,5 @@
 <mat-list class="search-results">
-  <ng-container *ngFor="let application of applications | async">
+  <ng-container *ngFor="let application of applications$ | async">
     <mat-divider></mat-divider>
     <mat-list-item>
       <h1 matLine fxLayout="row" fxLayoutAlign="start center">
@@ -25,5 +25,11 @@
       <div matLine *ngIf="application.applicant.customer as applicant">{{applicant.name}}</div>
       <div matLine>{{application.startTime | date:'shortDate'}} - {{application.endTime | date:'shortDate'}}</div>
     </mat-list-item>
+  </ng-container>
+  <ng-container *ngIf="remaining$ | async as remaining">
+    <div *ngIf="remaining > 0" class="search-result-footer">
+      <span>{{remaining}} hakemusta vielä näytettäväksi. </span>
+      <button class="button-link" (click)="showMore()">Näytä lisää</button>
+    </div>
   </ng-container>
 </mat-list>
