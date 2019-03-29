@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.hel.allu.common.util.TimeUtil;
 
 /**
@@ -298,6 +299,7 @@ public class DecisionJson {
     this.numReservationDays = numReservationDays;
   }
 
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   public String getRecurringEndTime() {
     return Optional.ofNullable(recurringEndTime)
             .map(date -> TimeUtil.dateAsString(date))
@@ -308,18 +310,21 @@ public class DecisionJson {
     this.recurringEndTime = recurringEndTime;
   }
 
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   public String getReservationStartDayMonth() {
     return Optional.ofNullable(reservationStartDate)
             .map(date -> TimeUtil.dateAsDayMonthString(date))
             .orElse(null);
   }
 
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   public String getReservationEndDayMonth() {
     return Optional.ofNullable(reservationEndDate)
             .map(date -> TimeUtil.dateAsDayMonthString(date))
             .orElse(null);
   }
 
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   public String getReservationStartYear() {
     return Optional.ofNullable(reservationStartDate)
             .map(date -> date.getYear())
@@ -327,6 +332,7 @@ public class DecisionJson {
             .orElse(null);
   }
 
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   public String getRecurringEndYear() {
     return Optional.ofNullable(recurringEndTime)
             .map(date -> date.getYear())
@@ -334,10 +340,11 @@ public class DecisionJson {
             .orElse(null);
   }
 
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   public boolean getRecurringIndefinitely() {
     return Optional.ofNullable(recurringEndTime)
             .map(date -> date.getYear() == MAX_RECURRING_YEAR)
-            .orElse(null);
+            .orElse(false);
   }
 
   public String getBuildStartDate() {
