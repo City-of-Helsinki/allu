@@ -65,7 +65,6 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
       }
     });
     this.invoices$ = this.store.select(fromInvoicing.getAllInvoices);
-    this.store.dispatch(new LoadInvoicingPeriods());
   }
 
   onSubmit(): void {

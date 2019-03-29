@@ -12,11 +12,13 @@ import {
   LoadSuccess,
   OperationFailed, Remove, RemoveSuccess
 } from '@feature/application/invoicing/actions/invoicing-period-actions';
+import * as ApplicationAction from '@feature/application/actions/application-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {catchError, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {InvoicingPeriodService} from '@feature/application/invoicing/invoicing-period/invoicing-period.service';
 import {from} from 'rxjs/internal/observable/from';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {ApplicationActionType} from '@feature/application/actions/application-actions';
 
 @Injectable()
 export class InvoicingPeriodEffects {
@@ -69,5 +71,11 @@ export class InvoicingPeriodEffects {
         new OperationFailed()
       ]))
     ))
+  );
+
+  @Effect()
+  onApplicationLoad: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationAction.LoadSuccess>(ApplicationActionType.LoadSuccess),
+    map(() => new Load())
   );
 }

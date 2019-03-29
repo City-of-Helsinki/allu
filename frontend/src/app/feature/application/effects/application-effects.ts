@@ -14,10 +14,6 @@ import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
-import {
-  InvoicingPeriodSuccessActions,
-  invoicingPeriodSuccessActionTypes
-} from '@feature/application/invoicing/actions/invoicing-period-actions';
 import {ClearCoordinates} from '@feature/map/actions/address-search-actions';
 
 @Injectable()
@@ -64,13 +60,6 @@ export class ApplicationEffects {
         new NotifyFailure(error)
       ]))
     ))
-  );
-
-  @Effect()
-  onInvoicingPeriodChange: Observable<Action> = this.actions.pipe(
-    ofType<InvoicingPeriodSuccessActions>(...invoicingPeriodSuccessActionTypes),
-    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
-    map(([_, app]) => new ApplicationAction.Load(app.id))
   );
 
   @Effect()
