@@ -225,6 +225,11 @@ export const getLatestComments = (direction: SortDirection) => createSelector(
   comments => comments.slice().sort(fromComments.sort(direction))
 );
 
+export const getCommentsLoading = createSelector(
+  getCommentsEntitiesState,
+  fromComments.getLoading
+);
+
 // History selectors
 export const getHistoryState = createSelector(
   getProjectState,

@@ -4,13 +4,13 @@ import {MatDialog} from '@angular/material';
 import {Store} from '@ngrx/store';
 import {Remove, Save, ToggleDirection} from './actions/comment-actions';
 import {CommentListComponent} from './comment-list.component';
-import {findTranslation} from '../../util/translations';
-import {ConfirmDialogComponent} from '../common/confirm-dialog/confirm-dialog.component';
-import {Comment} from '../../model/application/comment/comment';
+import {findTranslation} from '@util/translations';
+import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
+import {Comment} from '@model/application/comment/comment';
 import * as fromApplication from '../application/reducers';
 import * as fromProject from '../project/reducers';
 import * as fromRoot from '../allu/reducers';
-import {SortDirection} from '../../model/common/sort';
+import {SortDirection} from '@model/common/sort';
 import {ActionTargetType} from '../allu/actions/action-target-type';
 
 @Component({
@@ -21,6 +21,7 @@ import {ActionTargetType} from '../allu/actions/action-target-type';
 export class CommentsComponent implements OnInit {
   @Input() targetType: ActionTargetType;
   comments$: Observable<Comment[]>;
+  loading$: Observable<boolean>;
   direction$: Observable<SortDirection>;
 
   @ViewChild(CommentListComponent) commentListComponent: CommentListComponent;
@@ -34,6 +35,7 @@ export class CommentsComponent implements OnInit {
       : fromProject;
 
     this.comments$ = this.store.select(target.getSortedComments);
+    this.loading$ = this.store.select(target.getCommentsLoading);
     this.direction$ = this.store.select(target.getDirection);
   }
 

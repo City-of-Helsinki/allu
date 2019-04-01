@@ -10,6 +10,7 @@ import {CommentComponent} from './comment.component';
 })
 export class CommentListComponent {
   @Input() comments: Comment[];
+  @Input() loading = false;
   @Output('save') onSave: EventEmitter<Comment> = new EventEmitter<Comment>();
   @Output('remove') onRemove: EventEmitter<Comment> = new EventEmitter<Comment>();
 

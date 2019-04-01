@@ -145,6 +145,11 @@ export const getSortedComments = createSelector(
   (comments, direction) => comments.slice().sort(fromComments.sort(direction))
 );
 
+export const getCommentsLoading = createSelector(
+  getCommentsEntitiesState,
+  fromComments.getLoading
+);
+
 /**
  * Selectors for tags
  */

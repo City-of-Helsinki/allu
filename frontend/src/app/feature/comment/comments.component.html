@@ -18,6 +18,7 @@
   </div>
 
   <comment-list [comments]="comments"
+                [loading]="loading$ | async"
                 (save)="save($event)"
                 (remove)="remove($event)"></comment-list>
 </ng-container>
