@@ -26,10 +26,10 @@ const initialState: State = adapter.getInitialState({
 export function reducer(state: State = initialState, action: SupervisionTaskActions) {
   switch (action.type) {
     case SupervisionTaskActionType.Load: {
-      return {
+      return adapter.removeAll({
         ...state,
         loading: true
-      };
+      });
     }
 
     case SupervisionTaskActionType.LoadSuccess: {

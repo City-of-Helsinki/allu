@@ -1,8 +1,8 @@
 import {CommentActions, CommentActionType} from '../actions/comment-actions';
-import {Comment} from '../../../model/application/comment/comment';
+import {Comment} from '@model/application/comment/comment';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {SortDirection, toggle} from '../../../model/common/sort';
-import {TimeUtil} from '../../../util/time.util';
+import {SortDirection, toggle} from '@model/common/sort';
+import {TimeUtil} from '@util/time.util';
 
 export interface State extends EntityState<Comment> {
   loading: boolean;
@@ -20,6 +20,13 @@ export const initialState: State = adapter.getInitialState({
 
 export function reducer(state: State = initialState, action: CommentActions) {
   switch (action.type) {
+    case CommentActionType.Load: {
+      return adapter.removeAll({
+        ...state,
+        loading: true
+      });
+    }
+
     case CommentActionType.LoadSuccess: {
       return adapter.addAll(action.payload, {
         ...state,

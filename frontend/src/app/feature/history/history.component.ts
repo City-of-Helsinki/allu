@@ -31,7 +31,6 @@ export class HistoryComponent implements OnInit {
   constructor(private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
-    this.store.dispatch(new Load(this.targetType));
     const target = this.targetType === ActionTargetType.Project
       ? fromProject
       : fromApplication;

@@ -18,6 +18,7 @@ export function reducer(state: State = initialState, action: HistoryActions) {
     case HistoryActionType.Load: {
       return {
         ...state,
+        history: [],
         loading: true
       };
     }
