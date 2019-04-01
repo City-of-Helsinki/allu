@@ -32,6 +32,11 @@ export const getSaving = createSelector(
   fromSupervisionTask.getSaving
 );
 
+export const getLoading = createSelector(
+  getSupervisionTasksEntityState,
+  fromSupervisionTask.getLoading
+);
+
 export const getTaskBy = (type: SupervisionTaskType, status: SupervisionTaskStatusType) => createSelector(
   getAllSupervisionTasks,
   (tasks: SupervisionTask[]) => ArrayUtil.first(tasks, task => task.type === type && task.status === status)

@@ -14,7 +14,6 @@ import * as fromApplication from '@feature/application/reducers';
 import {Application} from '@model/application/application';
 import {UserService} from '@service/user/user-service';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 
 
 @Component({
@@ -27,6 +26,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   supervisors: Array<User> = [];
   application$: Observable<Application>;
   hasDisablingTags$: Observable<boolean>;
+  loading$: Observable<boolean>;
 
   private supervisionTaskSubscription: Subscription;
 
@@ -42,6 +42,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
       tasks.forEach(task => this.addNew(task));
     });
     this.application$ = this.store.pipe(select(fromApplication.getCurrentApplication));
+    this.loading$ = this.store.pipe(select(fromSupervisionTask.getLoading));
 
     this.userService.getByRole(RoleType.ROLE_SUPERVISE).subscribe(users => this.supervisors = users);
     this.hasDisablingTags$ = this.store.pipe(

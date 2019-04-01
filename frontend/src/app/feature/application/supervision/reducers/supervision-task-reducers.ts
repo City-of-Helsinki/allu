@@ -79,3 +79,5 @@ export function reducer(state: State = initialState, action: SupervisionTaskActi
 export const getSelectedTaskId = (state: State) => state.selectedId;
 
 export const getSaving = (state: State) => state.saving;
+
+export const getLoading = (state: State) => state.loading;
