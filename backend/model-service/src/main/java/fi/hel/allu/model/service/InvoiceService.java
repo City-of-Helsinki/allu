@@ -32,10 +32,12 @@ public class InvoiceService {
   private final CustomerDao customerDao;
   private final HistoryDao historyDao;
   private final InvoicingPeriodService invoicingPeriodService;
+  private final InvoicingDateService invoicingDateService;
+
   @Autowired
   public InvoiceService(ChargeBasisService chargeBasisService, InvoiceDao invoiceDao, PricingService pricingService,
                         ApplicationDao applicationDao, InvoiceRecipientDao invoiceRecipientDao, CustomerDao customerDao,
-                        HistoryDao historyDao, InvoicingPeriodService invoicingPeriodService) {
+                        HistoryDao historyDao, InvoicingPeriodService invoicingPeriodService, InvoicingDateService invoicingDateService) {
     this.chargeBasisService = chargeBasisService;
     this.invoiceDao = invoiceDao;
     this.pricingService = pricingService;
@@ -44,6 +46,7 @@ public class InvoiceService {
     this.customerDao = customerDao;
     this.historyDao = historyDao;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.invoicingDateService = invoicingDateService;
   }
 
   @Transactional(readOnly = true)
@@ -72,7 +75,7 @@ public class InvoiceService {
 
     if (!CollectionUtils.isEmpty(openPeriods)) {
       final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
-      openPeriods.forEach(p -> addInvoiceForPeriod(p, applicationId, invoiceRecipientId, sapIdPending));
+      openPeriods.forEach(p -> addInvoiceForPeriod(p, application, invoiceRecipientId, sapIdPending));
     } else {
       addInvoiceForApplication(applicationId, sapIdPending, application, invoiceRecipient);
     }
@@ -89,12 +92,12 @@ public class InvoiceService {
     }
   }
 
-  private void addInvoiceForPeriod(InvoicingPeriod period, int applicationId, Integer invoiceRecipientId, boolean sapIdPending) {
-    List<InvoiceRow> invoiceRows = getInvoiceRows(applicationId, period.getId());
+  private void addInvoiceForPeriod(InvoicingPeriod period, Application application, Integer invoiceRecipientId, boolean sapIdPending) {
+    List<InvoiceRow> invoiceRows = getInvoiceRows(application.getId(), period.getId());
     if (!invoiceRows.isEmpty()) {
-      ZonedDateTime invoicingDate = period.getEndTime();
-      Invoice invoice = new Invoice(null, applicationId, invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId, period.getId());
-      invoiceDao.insert(applicationId, invoice);
+      ZonedDateTime invoicingDate = invoicingDateService.getInvoicingDateForPeriod(application, period);
+      Invoice invoice = new Invoice(null, application.getId(), invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId, period.getId());
+      invoiceDao.insert(application.getId(), invoice);
     }
   }
 
@@ -120,7 +123,7 @@ public class InvoiceService {
       // Area rentals invoiced when work finished date approved
       return null;
     }
-    return application.getInvoicingDate();
+    return invoicingDateService.getInvoicingDate(application);
   }
 
   @Transactional

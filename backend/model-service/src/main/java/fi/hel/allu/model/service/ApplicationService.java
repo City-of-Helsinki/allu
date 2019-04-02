@@ -209,9 +209,9 @@ public class ApplicationService {
     Application result = applicationDao.insert(application);
     application.getLocations().forEach(l -> l.setApplicationId(result.getId()));
     List<Location> locations = locationService.insert(application.getLocations(), userId);
+    result.setLocations(locations);
     // Calculate application price. This must be done after locations have been inserted.
     calculateApplicationPrice(result);
-    result.setLocations(locations);
     // Fetch from DB because location insert updates start / end time
     return applicationDao.findById(result.getId());
   }

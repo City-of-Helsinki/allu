@@ -54,7 +54,7 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex *ngIf="billable && showDeposit">
+            <div fxFlex *ngIf="billable && showInvoicingDate">
               <mat-form-field class="input-full-width">
                 <input matInput formControlName="invoicingDate" required
                        [placeholder]="'invoice.info.invoicingDate' | translation"

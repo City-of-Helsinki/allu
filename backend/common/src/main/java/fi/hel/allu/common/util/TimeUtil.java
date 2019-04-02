@@ -1,9 +1,6 @@
 package fi.hel.allu.common.util;
 
-import java.time.Instant;
-import java.time.Period;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
@@ -53,6 +50,10 @@ public class TimeUtil {
 
   public static ZonedDateTime startOfDay(ZonedDateTime time) {
     return time.toLocalDate().atStartOfDay(HelsinkiZoneId);
+  }
+
+  public static ZonedDateTime startOfDay(LocalDate date) {
+    return date.atStartOfDay(HelsinkiZoneId);
   }
 
   public static ZonedDateTime endOfDay(ZonedDateTime time) {

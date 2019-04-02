@@ -82,4 +82,8 @@ public enum ApplicationKind {
   public static List<ApplicationKind> forApplicationType(ApplicationType type) {
     return Arrays.stream(ApplicationKind.values()).filter(k -> k.types.contains(type)).collect(Collectors.toList());
   }
+
+  public boolean isTerrace() {
+    return this == SUMMER_TERRACE || this == WINTER_TERRACE || this == PARKLET;
+  }
 }

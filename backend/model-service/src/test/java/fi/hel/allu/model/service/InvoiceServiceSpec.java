@@ -38,6 +38,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
   private CustomerDao customerDao;
   private HistoryDao historyDao;
   private InvoicingPeriodService invoicingPeriodService;
+  private InvoicingDateService invoicingDateService;
 
   private InvoiceService invoiceService;
 
@@ -51,8 +52,10 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
       customerDao = Mockito.mock(CustomerDao.class);
       historyDao = Mockito.mock(HistoryDao.class);
       invoicingPeriodService = Mockito.mock(InvoicingPeriodService.class);
+      invoicingDateService = Mockito.mock(InvoicingDateService.class);
 
-      invoiceService = new InvoiceService(chargeBasisService, invoiceDao, pricingService, applicationDao, invoiceRecipientDao, customerDao, historyDao, invoicingPeriodService);
+      invoiceService = new InvoiceService(chargeBasisService, invoiceDao, pricingService, applicationDao,
+          invoiceRecipientDao, customerDao, historyDao, invoicingPeriodService, invoicingDateService);
     });
 
     describe("InvoiceService", () -> {
@@ -71,6 +74,7 @@ public class InvoiceServiceSpec extends SpeccyTestBase {
         Mockito.when(customerDao.findById(INVOICE_RECIPIENT_ID)).thenReturn(Optional.of(customer));
         Mockito.when(invoiceRecipientDao.insert(Mockito.any())).thenReturn(INVOICE_RECIPIENT_ID);
         Mockito.when(applicationDao.findById(APPLICATION_ID)).thenReturn(application);
+        Mockito.when(invoicingDateService.getInvoicingDate(Mockito.any(Application.class))).thenReturn(null);
         invoiceService.createInvoices(APPLICATION_ID, false);
         Mockito.verify(invoiceDao).deleteOpenInvoicesByApplication(Mockito.eq(APPLICATION_ID));
         ArgumentCaptor<Invoice> invoiceCaptor = ArgumentCaptor.forClass(Invoice.class);

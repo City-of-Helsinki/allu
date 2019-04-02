@@ -51,6 +51,12 @@ export enum ApplicationKind {
   OTHER = 'OTHER'
 }
 
+export const terraceKinds: ApplicationKind[] = [
+  ApplicationKind.SUMMER_TERRACE,
+  ApplicationKind.WINTER_TERRACE,
+  ApplicationKind.PARKLET
+];
+
 export const disabledKinds: ApplicationKind[] = [
   ApplicationKind.DOG_TRAINING_EVENT
 ];

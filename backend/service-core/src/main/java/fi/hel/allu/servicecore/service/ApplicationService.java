@@ -262,7 +262,7 @@ public class ApplicationService {
   }
 
   private boolean needsPaymentZone(ApplicationJson application) {
-    return isShortTermRental(application.getType()) && isTerrace(application.getKind());
+    return isShortTermRental(application.getType()) && application.getKind().isTerrace();
   }
 
   private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
@@ -500,7 +500,7 @@ public class ApplicationService {
     if (isRecurringTerraceApplication(application)) {
       invoicingPeriodService.createPeriodsForRecurringApplication(application.getId());
       return findApplicationById(application.getId());
-    } else if (isShortTermRental(application.getType()) && isTerrace(application.getKind())) {
+    } else if (isShortTermRental(application.getType()) && application.getKind().isTerrace()) {
       // Recurring application possibly changed to not recurring
       invoicingPeriodService.deleteInvoicingPeriods(application.getId());
       return findApplicationById(application.getId());
@@ -512,14 +512,9 @@ public class ApplicationService {
   private boolean isShortTermRental(ApplicationType type) {
     return type == ApplicationType.SHORT_TERM_RENTAL;
   }
-  private boolean isTerrace(ApplicationKind kind) {
-    return kind == ApplicationKind.SUMMER_TERRACE
-          || kind == ApplicationKind.WINTER_TERRACE
-          || kind == ApplicationKind.PARKLET;
-  }
 
   private boolean isRecurringTerraceApplication(Application application) {
-    return isShortTermRental(application.getType()) && isTerrace(application.getKind()) && isRecurringApplication(application);
+    return isShortTermRental(application.getType()) && application.getKind().isTerrace() && isRecurringApplication(application);
   }
 
   private boolean isRecurringApplication(Application application) {

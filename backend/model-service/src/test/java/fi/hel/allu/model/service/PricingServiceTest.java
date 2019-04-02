@@ -143,6 +143,7 @@ public class PricingServiceTest {
   @Test
   public void testBridgeBanner() {
     Application application = new Application();
+    application.setId(1);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     ShortTermRental event = new ShortTermRental();
     event.setCommercial(false);
@@ -168,6 +169,7 @@ public class PricingServiceTest {
   @Test
   public void testCircus() {
     Application application = new Application();
+    application.setId(1);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setExtension(new ShortTermRental());
     application
@@ -182,6 +184,7 @@ public class PricingServiceTest {
   @Test
   public void testDogTrainingEvent() {
     Application application = new Application();
+    application.setId(1);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setExtension(new ShortTermRental());
     application
@@ -200,6 +203,7 @@ public class PricingServiceTest {
   @Test
   public void testDogTrainingField() {
     Application application = new Application();
+    application.setId(1);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setExtension(new ShortTermRental());
     application
@@ -270,6 +274,7 @@ public class PricingServiceTest {
   public void testSummerTheatre() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
+    application.setId(1);
     application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
     application.setExtension(new ShortTermRental());

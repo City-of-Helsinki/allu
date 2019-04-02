@@ -22,6 +22,7 @@ import {Customer} from '@model/customer/customer';
 import {ApplicationType} from '@app/model/application/type/application-type';
 import {Application} from '@model/application/application';
 import {ArrayUtil} from '@util/array-util';
+import {ApplicationKind, terraceKinds} from '@app/model/application/type/application-kind';
 
 @Component({
   selector: 'invoicing-info',
@@ -38,6 +39,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
   recipientForm: FormGroup;
   showDeposit: boolean;
+  showInvoicingDate: boolean;
   applicationType: ApplicationType;
 
   private notBillableCtrl: FormControl;
@@ -141,6 +143,8 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
       this.setEditable(app);
       this.showDeposit = !ArrayUtil.contains([ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT], app.type);
+      this.showInvoicingDate = !ArrayUtil.contains([ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT], app.type)
+      && !ArrayUtil.anyMatch(terraceKinds, app.kinds);
       this.applicationType = app.type;
     });
 
