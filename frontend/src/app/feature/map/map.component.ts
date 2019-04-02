@@ -40,6 +40,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() showOnlyApplicationArea = false;
   @Input() role: MapRole = 'SEARCH';
   @Input() availableLayers: MapLayer[] = [];
+  @Input() focusOnDrawn = false;
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
@@ -212,7 +213,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       select(fromMap.getApplications),
       takeUntil(this.destroy)
     ).subscribe(applications => {
-      if (NumberUtil.isDefined(this.projectId) || NumberUtil.isDefined(this.applicationId)) {
+      if (this.focusOnDrawn) {
         this.drawAndFocusApplications(applications);
       } else {
         this.drawApplications(applications);

@@ -38,6 +38,7 @@
 
         <map [zoom]="true"
              [projectId]="project.id"
+             [focusOnDrawn]="true"
              role="OTHER"
              [availableLayers]="availableLayers$ | async"
              [selectedLayers]="selectedLayers$ | async">Loading map</map>
