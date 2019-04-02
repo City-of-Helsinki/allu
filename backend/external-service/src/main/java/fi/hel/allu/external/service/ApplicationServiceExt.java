@@ -236,9 +236,8 @@ public class ApplicationServiceExt {
   }
 
   public List<AttachmentInfoExt> getDecisionAttachments(Integer applicationId) {
-    return attachmentService.findAttachmentsForApplication(applicationId)
+    return attachmentService.findDecisionAttachmentsForApplication(applicationId)
         .stream()
-        .filter(a -> a.isDecisionAttachment() && "application/pdf".equals(a.getMimeType()))
         .map(a -> new AttachmentInfoExt(a.getId(), a.getMimeType(), a.getName(), a.getDescription()))
         .collect(Collectors.toList());
   }
