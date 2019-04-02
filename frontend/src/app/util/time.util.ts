@@ -125,6 +125,10 @@ export class TimeUtil {
     return moment(date).endOf('day').toDate();
   }
 
+  public static getStartOfDay(date: Date): Date {
+    return moment(date).startOf('day').toDate();
+  }
+
   /**
    * Returns whether first argument is before second
    *
@@ -182,7 +186,7 @@ export class TimeUtil {
       if (date.getMonth() > periodEnd.getMonth()) {
         year = year + 1;
       }
-      return moment(periodEnd).year(year).toDate();
+      return this.getEndOfDay(moment(periodEnd).year(year).toDate());
     } else {
       return undefined;
     }
@@ -194,7 +198,7 @@ export class TimeUtil {
       if (date.getMonth() < periodStart.getMonth()) {
         year = year - 1;
       }
-      return moment(periodStart).year(year).toDate();
+      return this.getStartOfDay(moment(periodStart).year(year).toDate());
     } else {
       return undefined;
     }

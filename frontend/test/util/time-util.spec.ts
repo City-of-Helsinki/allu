@@ -1,8 +1,8 @@
 import moment from 'moment';
 import {TimeUtil} from '@util/time.util';
 
-const WINTER_TIME_START = TimeUtil.dateFromBackend('1973-12-01');
-const WINTER_TIME_END = TimeUtil.dateFromBackend('1973-05-14');
+const WINTER_TIME_START = TimeUtil.toStartDate(TimeUtil.dateFromBackend('1973-12-01'));
+const WINTER_TIME_END = TimeUtil.toEndDate(TimeUtil.dateFromBackend('1973-05-14'));
 
 describe('Time util', () => {
   it('should show is in winter time', () => {
