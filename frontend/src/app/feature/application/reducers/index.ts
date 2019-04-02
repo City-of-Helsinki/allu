@@ -192,6 +192,11 @@ export const getFieldsVisible = createSelector(
   fromHistory.getFieldsVisible
 );
 
+export const getHistoryLoading = createSelector(
+  getHistoryState,
+  fromHistory.getLoading
+);
+
 // Replacement history selectors
 export const getReplacementHistoryState = createSelector(
   getApplicationState,

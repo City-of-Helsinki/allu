@@ -25,6 +25,7 @@ export class HistoryComponent implements OnInit {
   changesWithinWeek$ = new BehaviorSubject<ChangeHistoryItem[]>([]);
   olderChanges$ = new BehaviorSubject<ChangeHistoryItem[]>([]);
   fieldsVisible$: Observable<boolean>;
+  loading$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
 
@@ -38,6 +39,8 @@ export class HistoryComponent implements OnInit {
     this.store.select(target.getHistory)
       .pipe(takeUntil(this.destroy))
       .subscribe(changes => this.splitByTime(changes));
+
+    this.loading$ = this.store.select(target.getHistoryLoading);
 
     this.meta$ = this.store.select(target.getMeta);
     this.fieldsVisible$ = this.store.select(target.getFieldsVisible);

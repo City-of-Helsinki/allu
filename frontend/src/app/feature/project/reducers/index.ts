@@ -246,3 +246,8 @@ export const getFieldsVisible = createSelector(
   fromHistory.getFieldsVisible
 );
 
+export const getHistoryLoading = createSelector(
+  getHistoryState,
+  fromHistory.getLoading
+);
+

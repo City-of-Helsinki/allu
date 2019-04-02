@@ -1,4 +1,4 @@
-import {ChangeHistoryItem} from '../../../model/history/change-history-item';
+import {ChangeHistoryItem} from '@model/history/change-history-item';
 import {HistoryActions, HistoryActionType} from '../actions/history-actions';
 
 export interface State {
@@ -55,3 +55,5 @@ export function reducer(state: State = initialState, action: HistoryActions) {
 export const getHistory = (state: State) => state.history;
 
 export const getFieldsVisible = (state: State) => state.fieldsVisible;
+
+export const getLoading = (state: State) => state.loading;
