@@ -41,6 +41,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   showDeposit: boolean;
   showInvoicingDate: boolean;
   applicationType: ApplicationType;
+  customerLoading$: Observable<boolean>;
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
@@ -62,6 +63,7 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     this.invoicingDateCtrl = <FormControl>this.form.get('invoicingDate');
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
     this.initForm();
+    this.customerLoading$ = this.store.pipe(select(fromInvoicing.getInvoicingCustomerLoading));
   }
 
   ngOnDestroy(): void {

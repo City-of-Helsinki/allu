@@ -38,3 +38,5 @@ export function reducer(state: State = initialState, action: InvoicingCustomerAc
 }
 
 export const getCustomer = (state: State) => state.customer;
+
+export const getLoading = (state: State) => state.loading;

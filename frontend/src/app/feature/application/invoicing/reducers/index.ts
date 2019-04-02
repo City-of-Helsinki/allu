@@ -52,6 +52,11 @@ export const getInvoicingCustomer = createSelector(
   fromCustomer.getCustomer
 );
 
+export const getInvoicingCustomerLoading = createSelector(
+  getCustomerEntityState,
+  fromCustomer.getLoading
+);
+
 export const getInvoiceEntityState = createSelector(
   getInvoicingState,
   (state: InvoicingState) => state.invoice
