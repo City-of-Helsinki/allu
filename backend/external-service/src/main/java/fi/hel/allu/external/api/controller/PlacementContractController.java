@@ -16,12 +16,12 @@ import fi.hel.allu.common.domain.ContractInfo;
 import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.util.PdfMerger;
 import fi.hel.allu.external.domain.ContractExt;
 import fi.hel.allu.external.domain.ContractSigningInfoExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
-import fi.hel.allu.external.service.PdfMerger;
 import fi.hel.allu.servicecore.service.ContractService;
 import io.swagger.annotations.*;
 

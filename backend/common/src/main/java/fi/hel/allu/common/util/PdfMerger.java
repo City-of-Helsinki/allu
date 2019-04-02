@@ -1,4 +1,4 @@
-package fi.hel.allu.external.service;
+package fi.hel.allu.common.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

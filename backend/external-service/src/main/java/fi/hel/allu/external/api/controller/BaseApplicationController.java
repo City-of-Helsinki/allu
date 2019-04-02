@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.common.util.PdfMerger;
 import fi.hel.allu.external.domain.BaseApplicationExt;
 import fi.hel.allu.external.domain.DecisionExt;
 import fi.hel.allu.external.domain.InformationRequestResponseExt;
 import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
-import fi.hel.allu.external.service.PdfMerger;
 import fi.hel.allu.external.validation.ApplicationExtGeometryValidator;
 import fi.hel.allu.external.validation.DefaultImageValidator;
 import fi.hel.allu.servicecore.service.DecisionService;
