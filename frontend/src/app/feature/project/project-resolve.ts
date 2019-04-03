@@ -41,13 +41,13 @@ export class ProjectResolve implements Resolve<Project> {
     return this.store.select(fromProject.getProjectLoaded).pipe(
       filter(loaded => loaded),
       switchMap(() => this.store.select(fromProject.getCurrentProject)),
+      take(1),
       tap(() => this.store.dispatch(new commentActions.Load(ActionTargetType.Project))),
       tap(() => this.store.dispatch(new historyActions.Load(ActionTargetType.Project))),
       tap(() => this.store.dispatch(new childActions.Load())),
       tap(() => this.store.dispatch(new parentActions.Load())),
       tap(() => this.store.dispatch(new applicationActions.Load())),
-      tap(app => this.store.dispatch(new ResetLayers(ActionTargetType.Location))),
-      take(1)
+      tap(() => this.store.dispatch(new ResetLayers(ActionTargetType.Location)))
     );
   }
 }

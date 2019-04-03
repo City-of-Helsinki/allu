@@ -6,10 +6,7 @@ import {Observable} from 'rxjs';
 import * as fromProject from './reducers';
 import {Store} from '@ngrx/store';
 import {Application} from '../../model/application/application';
-import * as parentProjects from './actions/parent-project-actions';
-import * as childProjects from './actions/child-project-actions';
-import * as application from './actions/application-actions';
-import {map, tap} from 'rxjs/internal/operators';
+import {map} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'project',
@@ -29,7 +26,7 @@ export class ProjectComponent implements OnInit {
     this.project$ = this.store.select(fromProject.getCurrentProject);
     this.applications$ = this.store.select(fromProject.getApplications);
     this.relatedProjectCount$ = this.store.select(fromProject.getRelatedProjects).pipe(map(projects => projects.length));
-    this.parent$ = this.store.select(fromProject.getParentProject).pipe(tap(parent => console.log('parent', parent)));
+    this.parent$ = this.store.select(fromProject.getParentProject);
     this.sidebarItems = this.sidebar();
   }
 

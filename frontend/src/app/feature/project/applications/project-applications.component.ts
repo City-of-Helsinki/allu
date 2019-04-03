@@ -27,7 +27,6 @@ export class ProjectApplicationsComponent implements OnInit {
   constructor(private projectState: ProjectState, private store: Store<fromProject.State>) {}
 
   ngOnInit(): void {
-    this.store.dispatch(new application.Load());
     this.applications$ = this.store.select(fromProject.getApplications);
     this.applicationsLoading$ = this.store.select(fromProject.getApplicationsLoading);
     this.applicationsInBasket$ = this.store.select(fromProject.getApplicationCountInBasket);
