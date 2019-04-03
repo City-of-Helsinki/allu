@@ -87,7 +87,7 @@ public class TerracePrice {
   }
 
   public String getPaymentClass() {
-    return getApplicationLocation().getPaymentTariff();
+    return getApplicationLocation().getEffectivePaymentTariff();
   }
 
   public ChargeBasisTag getTag() {
