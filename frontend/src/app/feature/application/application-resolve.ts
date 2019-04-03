@@ -51,10 +51,10 @@ export class ApplicationResolve implements Resolve<Application> {
       select(fromApplication.getApplicationLoaded),
       filter(loaded => loaded),
       switchMap(() => this.store.pipe(select(fromApplication.getCurrentApplication))),
+      take(1),
       tap(app => this.store.dispatch(new LoadSuccess(app))),
       tap(app => this.loadRelatedInfo(app)),
       tap(app => this.store.dispatch(new ResetLayers(ActionTargetType.Location))),
-      take(1),
       catchError(err => this.handleError(err))
     );
   }
