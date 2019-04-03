@@ -26,6 +26,9 @@ map_layers_restricted:
   - name: helsinki_johtokartta_kaukolampo
     title: Helsinki Johtokartta kaukolampo
     sources: [hki_johtokartta_kaukolampo_cache]
+  - name: helsinki_johtokartta_kaukojaahdytys
+    title: Helsinki Johtokartta Kaukojäähdytys
+    sources: [hki_johtokartta_kaukojaahdytys_cache]
   - name: helsinki_johtokartta_kaasu
     title: Helsinki Johtokartta kaasu
     sources: [hki_johtokartta_kaasu_cache]
