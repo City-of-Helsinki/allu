@@ -20,6 +20,23 @@ public class AttachmentInfoJson {
   private String name;
   private String description;
   private Long size;
+
+  public AttachmentInfoJson() {
+  }
+
+  public AttachmentInfoJson(Integer id, String handlerName, AttachmentType type, String mimeType, String name,
+      String description, Long size, ZonedDateTime creationTime, boolean decisionAttachment) {
+    this.id = id;
+    this.handlerName = handlerName;
+    this.type = type;
+    this.mimeType = mimeType;
+    this.name = name;
+    this.description = description;
+    this.size = size;
+    this.creationTime = creationTime;
+    this.decisionAttachment = decisionAttachment;
+  }
+
   private ZonedDateTime creationTime;
   private boolean decisionAttachment;
 

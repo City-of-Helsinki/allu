@@ -329,16 +329,17 @@ public class AttachmentService {
     List<Integer> defaultImageIdsToDelete = oldDefaultImageIds.stream().filter(d -> !trafficArrangementImages.contains(d)).collect(Collectors.toList());
     List<Integer> defaultImageIdsToAdd = trafficArrangementImages.stream().filter(d -> !oldDefaultImageIds.contains(d)).collect(Collectors.toList());
     deleteDefaultImages(applicationId, defaultImageIdsToDelete);
-    addDefaultImages(applicationId, defaultImageIdsToAdd);
+    addDefaultAttachments(applicationId, defaultImageIdsToAdd);
   }
 
   private void deleteDefaultImages(Integer applicationId, List<Integer> defaultImageIdsToDelete) {
     restTemplate.exchange(applicationProperties.getApplicationDefaultAttachmentUrl(), HttpMethod.DELETE, new HttpEntity<>(defaultImageIdsToDelete), Void.class, applicationId);
   }
 
-  private void addDefaultImages(Integer applicationId, List<Integer> defaultImageIdsToAdd) {
-    restTemplate.put(applicationProperties.getApplicationDefaultAttachmentUrl(), new HttpEntity<>(defaultImageIdsToAdd), applicationId);
+  public void addDefaultAttachments(Integer applicationId, List<Integer> defaultAttachmentsIds) {
+    restTemplate.put(applicationProperties.getApplicationDefaultAttachmentUrl(), new HttpEntity<>(defaultAttachmentsIds), applicationId);
   }
+
 
   private List<Integer> getDefaultImageIdsForApplication(Integer applicationId) {
     return findAttachmentsForApplication(applicationId).stream()
