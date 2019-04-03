@@ -1,5 +1,6 @@
 <div class="main-content">
-  <div [formGroup]="searchForm" fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start center">
+  <form [formGroup]="searchForm" (ngSubmit)="search()" fxLayout="row wrap"
+        fxLayoutGap="18px" fxLayoutAlign="start center" class="control-row">
     <div fxFlex="calc(25% - 18px)">
       <input-box>
         <input inputBoxInput type="text" formControlName="name" [placeholder]="'customer.search.name' | translation"/>
@@ -21,12 +22,12 @@
       </input-box>
     </div>
     <div fxFlex="calc(25% - 18px)">
-      <button mat-raised-button type="button" color="primary" (click)="search()">
+      <button type="submit" mat-raised-button color="primary">
         {{'common.button.search' | translation}}
       </button>
     </div>
-  </div>
-  <div fxLayout="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+  </form>
+  <div fxLayout="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']" class="control-row">
     <div fxFlex>
       <button mat-raised-button type="button" color="primary" (click)="newCustomer()">
         {{'customer.addNew' | translation}}

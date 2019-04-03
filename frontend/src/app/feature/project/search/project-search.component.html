@@ -1,7 +1,7 @@
 <div class="main-content">
   <div class="search-bar">
     <h1>HAKU</h1>
-    <form [formGroup]="queryForm">
+    <form [formGroup]="queryForm" (ngSubmit)="search()">
       <div class="row">
         <div class="col m3">
           <mat-form-field class="input-full-width">
@@ -51,7 +51,7 @@
       </div>
       <div class="row">
         <div class="col m12 s12">
-          <button (click)="search()" mat-raised-button type="button" color="primary">HAE</button>
+          <button mat-raised-button type="submit" color="primary">HAE</button>
         </div>
       </div>
     </form>
