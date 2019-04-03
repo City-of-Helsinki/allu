@@ -198,10 +198,12 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case SUMMER_TERRACE:
     case WINTER_TERRACE:
-    case PARKLET:
       if (billableSalesArea) {
         updateTerracePrice();
       }
+      break;
+    case PARKLET:
+      updateTerracePrice();
       break;
     default:
       break;
