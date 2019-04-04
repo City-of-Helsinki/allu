@@ -107,7 +107,7 @@ public class CommentService {
   /*
    * Map a model-domain Comment to UI-domain
    */
-  private CommentJson mapToJson(Comment comment) {
+  public CommentJson mapToJson(Comment comment) {
     CommentJson commentJson = new CommentJson();
     commentJson.setId(comment.getId());
     commentJson.setType(comment.getType());

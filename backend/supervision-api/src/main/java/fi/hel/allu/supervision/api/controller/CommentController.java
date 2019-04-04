@@ -59,6 +59,20 @@ public class CommentController {
     return ResponseEntity.ok(commentService.findByApplicationId(id));
   }
 
+  @ApiOperation(value = "Get comment by ID. ",
+      produces = "application/json",
+      response = CommentJson.class,
+      authorizations = @Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Comment fetched successfully", response = CommentJson.class),
+      @ApiResponse(code = 404, message = "Comment with given ID not found", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/comments/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CommentJson> findById(@PathVariable Integer id) {
+    return ResponseEntity.ok(commentService.mapToJson(commentService.findById(id)));
+  }
+
   @ApiOperation(value = "Remove comment with given ID.",
       notes = "User is allowed to remove <b>own</b> comments with following types:"
       + "<ul>"
