@@ -8,12 +8,15 @@ import fi.hel.allu.servicecore.util.WfsRestTemplate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,9 @@ public class AddressServiceTest {
 
   private static final String GEOCODE_URL = "http://geocode";
   private static final String SEARCH_URL = "http://search";
+  private static final String STREETNAME_FILTER = "katunimi='%s'";
+  private static final String STREETNUMBER_FILTER = "osoitenumero='%s'";
+  private static final String STREETLETTER_FILTER = "osoitekirjain='%s'";
 
   private static final String wfsGeocodeXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
       "<wfs:FeatureCollection xmlns=\"http://www.opengis.net/wfs\" xmlns:wfs=\"http://www.opengis.net/wfs\" " +
@@ -61,38 +67,47 @@ public class AddressServiceTest {
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     Mockito.when(applicationProperties.getStreetGeocodeUrl()).thenReturn(GEOCODE_URL);
-    Mockito.when(applicationProperties.getStreetGeocodeUrlWithLetter()).thenReturn(GEOCODE_URL);
     Mockito.when(applicationProperties.getStreetSearchUrl()).thenReturn(SEARCH_URL);
     addressService = new AddressService(applicationProperties, wfsRestTemplate);
   }
 
   @Test
   public void testGeocodeAddress() {
+    URI uri = UriComponentsBuilder.fromUriString(GEOCODE_URL + "?cql_filter=(katunimi='Testikatu' AND osoitenumero='1')")
+            .build().encode().toUri();
+
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"))).thenReturn(wfsXmlEntity);
-    CoordinateJson coordinateJson = addressService.geocodeAddress("Testikatu", 1, Optional.empty());
+        Mockito.eq(uri), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class))).thenReturn(wfsXmlEntity);
+
+    CoordinateJson coordinateJson = addressService.geocodeAddress("Testikatu", Optional.of(1), Optional.empty());
     Assert.assertEquals(25496886, coordinateJson.getX(), 0);
     Assert.assertEquals(6675339, coordinateJson.getY(), 0);
   }
 
   @Test
   public void testGeocodeAddressWithLetter() {
+    URI uri = UriComponentsBuilder.fromUriString(GEOCODE_URL + "?cql_filter=(katunimi='Testikatu' AND osoitenumero='1' AND osoitekirjain='a')")
+            .build().encode().toUri();
+
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"), Mockito.eq("a"))).thenReturn(wfsXmlEntity);
-    CoordinateJson coordinateJson = addressService.geocodeAddress("Testikatu", 1, Optional.of("a"));
+        Mockito.eq(uri), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class))).thenReturn(wfsXmlEntity);
+    CoordinateJson coordinateJson = addressService.geocodeAddress("Testikatu", Optional.of(1), Optional.of("a"));
     Assert.assertEquals(25496886, coordinateJson.getX(), 0);
     Assert.assertEquals(6675339, coordinateJson.getY(), 0);
   }
 
   @Test(expected = NoSuchEntityException.class)
   public void testGeocodeMissingAddress() {
+    URI uri = UriComponentsBuilder.fromUriString(GEOCODE_URL + "?cql_filter=(katunimi='Testikatu' AND osoitenumero='1')")
+            .build().encode().toUri();
+
     // use regex to remove the featureMember part of XML to simulate WFS answer for unknown location
     Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml.replaceAll("<gml:featureMember>.+</gml:featureMember>", ""));
     Mockito.when(wfsRestTemplate.exchange(
-        Mockito.eq(GEOCODE_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"), Mockito.eq("1"))).thenReturn(wfsXmlEntity);
-    addressService.geocodeAddress("Testikatu", 1, Optional.empty());
+        Mockito.eq(uri), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class))).thenReturn(wfsXmlEntity);
+    addressService.geocodeAddress("Testikatu", Optional.of(1), Optional.empty());
   }
 
   @Test

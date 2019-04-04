@@ -17,7 +17,6 @@ public class ApplicationProperties implements AdfsAuthenticationProperties {
   private final Environment environment;
   private final String versionNumber;
   private final String geocodeUrl;
-  private final String geocodeUrlWithLetter;
   private final String streetSearchUrl;
   private final String wfsUsername;
   private final String wfsPassword;
@@ -35,7 +34,6 @@ public class ApplicationProperties implements AdfsAuthenticationProperties {
   public ApplicationProperties(@Value("${environment}") String environment,
                                @Value("${version.number}") String versionNumber,
                                @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
-                               @Value("${wfs.template.street.geocode.with.letter}") @NotEmpty String geocodeUrlWithLetter,
                                @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
                                @Value("${wfs.username}") @NotEmpty String wfsUsername,
                                @Value("${wfs.password}") @NotEmpty String wfsPassword,
@@ -51,7 +49,6 @@ public class ApplicationProperties implements AdfsAuthenticationProperties {
     this.environment = Environment.valueOf(environment);
     this.versionNumber = versionNumber;
     this.geocodeUrl = geocodeUrl;
-    this.geocodeUrlWithLetter = geocodeUrlWithLetter;
     this.streetSearchUrl = streetSearchUrl;
     this.wfsUsername = wfsUsername;
     this.wfsPassword = wfsPassword;
@@ -79,10 +76,6 @@ public class ApplicationProperties implements AdfsAuthenticationProperties {
    */
   public String getStreetGeocodeUrl() {
     return this.geocodeUrl;
-  }
-
-  public String getStreetGeocodeUrlWithLetter() {
-    return geocodeUrlWithLetter;
   }
 
   /**

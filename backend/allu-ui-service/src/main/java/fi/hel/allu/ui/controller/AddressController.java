@@ -21,17 +21,20 @@ public class AddressController {
   @Autowired
   private AddressService addressService;
 
-  @RequestMapping(value = "/geocode/{city}/{street}/{number}", method = RequestMethod.GET)
+  @RequestMapping(value = {
+          "/geocode/{city}/{street}",
+          "/geocode/{city}/{street}/{number}",
+          "/geocode/{city}/{street}/{number}/{letter}"
+  }, method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<CoordinateJson> geocode(@PathVariable final String city, @PathVariable final String street, @PathVariable final int number) {
-    return new ResponseEntity<>(addressService.geocodeAddress(street, number, Optional.empty()), HttpStatus.OK);
+  public ResponseEntity<CoordinateJson> geocode(@PathVariable final String city,
+                                                @PathVariable final String street,
+                                                @PathVariable(name = "number", required = false) final Optional<Integer> number,
+                                                @PathVariable(name = "letter", required = false) final Optional<String> letter) {
+    return new ResponseEntity<>(addressService.geocodeAddress(street, number, letter), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/geocode/{city}/{street}/{number}/{letter}", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<CoordinateJson> geocode(@PathVariable final String city, @PathVariable final String street, @PathVariable final int number, @PathVariable final String letter) {
-    return new ResponseEntity<>(addressService.geocodeAddress(street, number, Optional.of(letter)), HttpStatus.OK);
-  }
+
 
   @RequestMapping(value = "/search/{partialStreetName}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")

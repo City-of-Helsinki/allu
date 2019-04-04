@@ -1,28 +1,27 @@
-
-import {throwError as observableThrowError, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 
-import {Geocoordinates} from '../model/common/geocoordinates';
+import {Geocoordinates} from '@model/common/geocoordinates';
 import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
-import {DEFAULT_STREET_AREA_NUMBER, StreetAddress} from '../model/common/street-address';
+import {StreetAddress} from '@model/common/street-address';
 import {MapUtil} from './map/map.util';
-import {None, Option, Some} from '../util/option';
+import {None, Option, Some} from '@util/option';
 import {FixedLocationMapper} from './mapper/fixed-location-mapper';
-import {PostalAddress} from '../model/common/postal-address';
-import {CityDistrict} from '../model/common/city-district';
+import {PostalAddress} from '@model/common/postal-address';
+import {CityDistrict} from '@model/common/city-district';
 import {BackendCityDistrict, CityDistrictMapper} from './mapper/city-district-mapper';
-import {FixedLocationArea} from '../model/common/fixed-location-area';
+import {FixedLocationArea} from '@model/common/fixed-location-area';
 import {ErrorHandler} from './error/error-handler.service';
-import {findTranslation} from '../util/translations';
+import {findTranslation} from '@util/translations';
 import {BackendGeocoordinates} from './backend-model/backend-geocoordinates';
 import {BackendFixedLocationArea} from './backend-model/backend-fixed-location-area';
 import {BackendPostalAddress} from './backend-model/backend-postal-address';
-import {HttpStatus} from '../util/http-status';
+import {HttpStatus} from '@util/http-status';
 import {catchError, map} from 'rxjs/internal/operators';
 
 const ADDRESS_URL = '/api/address';
-const GEOCODE_URL = '/geocode/helsinki';
+const GEOCODE_URL = 'geocode/helsinki';
 const FIXED_LOCATION_URL = '/api/locations/fixed-location-areas';
 const CITY_DISTRICT_URL = '/api/locations/city-district';
 const SEARCH_URL = '/search';
@@ -35,9 +34,8 @@ export class LocationService {
     private mapService: MapUtil,
     private errorHandler: ErrorHandler) {}
 
-  public geocode(address: string): Observable<Option<Geocoordinates>> {
+  public geocode(address: string, ): Observable<Option<Geocoordinates>> {
     return this.http.get<BackendGeocoordinates>(this.geocodeUrl(address)).pipe(
-      catchError(error => this.handleNotFound(error, address)),
       map(response => GeocoordinatesMapper.mapBackend(response, this.mapService)),
       map(coordinates => Some(coordinates)),
       catchError(err => this.handleGeocodeError(err))
@@ -66,25 +64,13 @@ export class LocationService {
     );
   }
 
-  private geocodeUrl(address: string, defaultStreetNumber?: number) {
-    const streetAddress = StreetAddress.fromAddressString(address, defaultStreetNumber);
-    if (!!streetAddress.streetLetter) {
-      return ADDRESS_URL + GEOCODE_URL
-        + '/' + streetAddress.streetName
-        + '/' + streetAddress.streetNumber
-        + '/' + streetAddress.streetLetter;
-
-    } else {
-      return ADDRESS_URL + GEOCODE_URL
-        + '/' + streetAddress.streetName
-        + '/' + streetAddress.streetNumber;
-    }
-  }
-
-  private handleNotFound(error: HttpErrorResponse, address: string): Observable<BackendGeocoordinates> {
-    return error.status === HttpStatus.NOT_FOUND
-      ? this.http.get<BackendGeocoordinates>(this.geocodeUrl(address, DEFAULT_STREET_AREA_NUMBER))
-      : observableThrowError(error);
+  private geocodeUrl(address: string) {
+    const streetAddress = StreetAddress.fromAddressString(address);
+    let urlParts: string[] = [ADDRESS_URL, GEOCODE_URL];
+    urlParts = Some(streetAddress.streetName).map(name => urlParts.concat(name)).orElseGet(() => urlParts);
+    urlParts = Some(streetAddress.streetNumber).map(streetNum => urlParts.concat(streetNum.toLocaleString())).orElseGet(() => urlParts);
+    urlParts = Some(streetAddress.streetLetter).map(streetLetter => urlParts.concat(streetLetter)).orElseGet(() => urlParts);
+    return urlParts.join('/');
   }
 
   private handleGeocodeError(errorResponse: HttpErrorResponse): Observable<Option<Geocoordinates>> {
