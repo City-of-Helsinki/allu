@@ -161,7 +161,12 @@ public class AddressService {
     PostalAddressJson postalAddressJson = new PostalAddressJson();
     postalAddressJson.setCity(featureMember.geocodedAddress.city);
     postalAddressJson.setPostalCode(featureMember.geocodedAddress.postalCode);
-    postalAddressJson.setStreetAddress(featureMember.geocodedAddress.streetName + " " + featureMember.geocodedAddress.streetNumberText);
+    StringBuilder sb = new StringBuilder(featureMember.geocodedAddress.streetName);
+    Optional.ofNullable(featureMember.geocodedAddress.streetNumberText).ifPresent(streetNumber -> {
+      sb.append(" ");
+      sb.append(streetNumber);
+    });
+    postalAddressJson.setStreetAddress(sb.toString());
     return postalAddressJson;
   }
 }
