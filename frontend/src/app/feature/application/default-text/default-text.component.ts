@@ -97,7 +97,7 @@ export class DefaultTextComponent implements OnInit, OnDestroy, ControlValueAcce
   }
 
   writeValue(text: string): void {
-    this.textsControl.setValue(text);
+    this.textsControl.setValue(text, {emitEvent: false});
   }
 
   private _onChange = (_: any) => {};

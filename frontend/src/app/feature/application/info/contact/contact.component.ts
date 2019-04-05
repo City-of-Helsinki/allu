@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Contact} from '@model/customer/contact';
 import {Some} from '@util/option';
@@ -11,7 +11,7 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {createDefaultOrdererId, fromOrdererId, toOrdererId} from '../cable-report/cable-report.form';
 import {FormUtil} from '@util/form.util';
 import {CustomerService} from '@service/customer/customer.service';
-import {debounceTime, filter, map, switchMap, take, tap} from 'rxjs/internal/operators';
+import {debounceTime, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/internal/operators';
 import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {DistributionType} from '@model/common/distribution-type';
@@ -20,6 +20,7 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ContactService} from '@service/customer/contact.service';
+import {Subject} from 'rxjs';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -31,7 +32,7 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
     './contact.component.scss'
   ]
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() customerRoleType: string;
   @Input() readonly: boolean;
@@ -46,6 +47,7 @@ export class ContactComponent implements OnInit {
   showOrderer = false;
 
   private customerIdChanges = new BehaviorSubject<number>(undefined);
+  private destroy: Subject<boolean> = new Subject<boolean>();
 
   constructor(private fb: FormBuilder,
               private customerService: CustomerService,
@@ -66,6 +68,11 @@ export class ContactComponent implements OnInit {
     if (this.readonly) {
       this.contacts.disable();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   contactSelected(contact: Contact, index: number): void {
@@ -223,7 +230,8 @@ export class ContactComponent implements OnInit {
     this.applicationStore.application.pipe(
       map(app => app.customerWithContactsByRole(roleType)),
       tap(cwc => this.customerIdChanges.next(cwc.customerId)),
-      map(cwc => cwc.contacts.length > 0 ? cwc.contacts : defaultContactList)
+      map(cwc => cwc.contacts.length > 0 ? cwc.contacts : defaultContactList),
+      takeUntil(this.destroy)
     ).subscribe(contacts => {
       FormUtil.clearArray(this.contacts);
       contacts.forEach(contact => this.addContact(contact));

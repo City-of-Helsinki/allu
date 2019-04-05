@@ -143,7 +143,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       hasPropertyDeveloper: application.propertyDeveloper.customerId,
       hasRepresentative: application.representative.customerId,
       invoiceRecipientId: application.invoiceRecipientId
-    });
+    }, {emitEvent: false});
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary') || !applicationCanBeEdited(application);
   }
@@ -188,7 +188,6 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
   private onTabChange(tab: SidebarItemType): void {
     if (!this.readonly) {
-      this.applicationForm.enable();
       this.applicationStore.applicationChange(this.update(this.applicationForm.getRawValue()));
     }
   }

@@ -133,7 +133,6 @@ export class ApplicationStore {
   get tab(): Observable<SidebarItemType> {
     return this.appStore.pipe(
       map(state => state.tab),
-      skip(1),
       distinctUntilChanged()
     );
   }
