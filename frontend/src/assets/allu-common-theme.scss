@@ -1,4 +1,4 @@
-@mixin allu-common-theme($theme) {
+@mixin allu-common-theme($theme, $basic) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
 
@@ -13,5 +13,9 @@
 
   .text-primary-light {
     color: mat-color($primary, 400);
+  }
+
+  .text-basic {
+    color: $basic;
   }
 }

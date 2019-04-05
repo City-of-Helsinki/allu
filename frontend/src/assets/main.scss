@@ -36,7 +36,7 @@
 
 // Theme components
 @include angular-material-theme($allu-theme);
-@include allu-common-theme($allu-theme);
+@include allu-common-theme($allu-theme, $black-87-opacity);
 @include allu-icons-theme($allu-theme, $black-50-opacity);
 @include allu-list-theme($allu-theme);
 @include placeholder-theme($allu-theme);

@@ -5,7 +5,7 @@
         <div fxFlex="200px">
           {{'attachment.title' | translation}}
         </div>
-        <div fxFlex="200px" *ngIf="validForDecision">
+        <div fxFlex="200px" *ngIf="validForDecision" class="text-basic">
           <mat-slide-toggle formControlName="decisionAttachment">
             {{'attachment.decisionAttachment' | translation}}
           </mat-slide-toggle>
