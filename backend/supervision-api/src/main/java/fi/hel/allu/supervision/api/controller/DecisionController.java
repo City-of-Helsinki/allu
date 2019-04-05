@@ -31,15 +31,16 @@ public class DecisionController {
   @Autowired
   private AttachmentService attachmentService;
 
-  @ApiOperation(value = "Gets decision document for application with given ID",
+  @ApiOperation(value = "Gets decision document for application with given ID. Returns draft if decision is not yet made.",
       authorizations = @Authorization(value ="api_key"),
       response = byte.class,
-      responseContainer = "Array")
+      responseContainer = "Array"
+      )
   @ApiResponses( value = {
       @ApiResponse(code = 200, message = "Decision document retrieved successfully", response = byte.class, responseContainer = "Array"),
       @ApiResponse(code = 404, message = "No decision document found for given application", response = ErrorInfo.class)
   })
-  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = "application/pdf")
+  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) throws IOException {
     byte[] decision = decisionService.getDecision(id);

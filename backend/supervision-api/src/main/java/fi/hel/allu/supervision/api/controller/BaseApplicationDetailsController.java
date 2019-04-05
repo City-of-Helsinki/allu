@@ -6,28 +6,38 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.ApprovalDocumentService;
+import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.supervision.api.domain.BaseApplication;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 
-public abstract class BaseApplicationDetailsController <A extends BaseApplication<?>> {
+public abstract class BaseApplicationDetailsController<A extends BaseApplication<?>> {
+
 
   protected abstract ApplicationType getApplicationType();
   protected abstract A mapApplication(ApplicationJson application);
 
+  @Autowired
+  private ApprovalDocumentService approvalDocumentService;
+  @Autowired
+  private ChargeBasisService chargeBasisService;
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
 
@@ -42,7 +52,7 @@ public abstract class BaseApplicationDetailsController <A extends BaseApplicatio
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<A> getApplicationDetails(@PathVariable Integer id) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(id);
-    validateType(application, getApplicationType());
+    validateType(application);
     return ResponseEntity.ok(mapApplication(application));
   }
 
@@ -58,7 +68,7 @@ public abstract class BaseApplicationDetailsController <A extends BaseApplicatio
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<List<A>> getApplicationsWithIds(@RequestParam("ids") final List<Integer> ids) {
     List<ApplicationJson> applications = applicationServiceComposer.findApplicationsByIds(ids);
-    applications.forEach(a -> validateType(a, getApplicationType()));
+    applications.forEach(a -> validateType(a));
     return ResponseEntity.ok(applications.stream().map(a -> mapApplication(a)).collect(Collectors.toList()));
   }
 
@@ -103,9 +113,26 @@ public abstract class BaseApplicationDetailsController <A extends BaseApplicatio
     return applicationServiceComposer.getApplicationExternalOwner(id) != null;
   }
 
-  private void validateType(ApplicationJson application, ApplicationType expectedType) {
-    if (application.getType() != expectedType) {
+  protected void validateType(Integer applicationId) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    validateType(application);
+  }
+
+  private void validateType(ApplicationJson application) {
+    if (application.getType() != getApplicationType()) {
       throw new IllegalOperationException("applicationtype.invalid");
     }
   }
+
+  protected ResponseEntity<byte[]> getApprovalDocument(Integer applicationId, ApprovalDocumentType type) {
+    return pdfResult(approvalDocumentService.getApprovalDocument(applicationId, type,
+        chargeBasisService.getUnlockedAndInvoicableChargeBasis(applicationId)));
+  }
+
+  protected ResponseEntity<byte[]> pdfResult(byte[] bytes) {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.APPLICATION_PDF);
+    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+  }
+
 }

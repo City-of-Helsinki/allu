@@ -210,4 +210,8 @@ public class ContractService {
     }
   }
 
+  public boolean hasContract(Integer id) {
+    return getContractInfo(id) != null;
+  }
+
 }
