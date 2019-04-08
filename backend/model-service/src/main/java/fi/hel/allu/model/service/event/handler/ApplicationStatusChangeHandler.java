@@ -91,6 +91,12 @@ public class ApplicationStatusChangeHandler {
     applicationService.setTargetState(application.getId(), null);
   }
 
+  protected void setOwner(Integer ownerId, Integer applicationId) {
+    if (ownerId != null) {
+      applicationDao.updateOwner(ownerId, Collections.singletonList(applicationId));
+    }
+  }
+
   protected void clearOwner(Application application) {
     applicationDao.removeOwner(Collections.singletonList(application.getId()));
   }
