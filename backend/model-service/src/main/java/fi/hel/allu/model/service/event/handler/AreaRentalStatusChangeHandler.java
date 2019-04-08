@@ -49,6 +49,7 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
     lockChargeBasisEntries(application.getId());
     cancelOpenSupervisionTasks(application.getId());
     clearTargetState(application);
+    clearOwner(application);
   }
 
 }

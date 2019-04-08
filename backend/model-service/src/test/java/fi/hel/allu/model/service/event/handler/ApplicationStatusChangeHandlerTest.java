@@ -21,6 +21,8 @@ import fi.hel.allu.model.service.LocationService;
 import fi.hel.allu.model.service.SupervisionTaskService;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
+import java.util.Collections;
+
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -91,6 +93,12 @@ public class ApplicationStatusChangeHandlerTest {
   public void onCancelShouldCloseInformationRequests() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.CANCELLED, USER_ID));
     verify(informationRequestDao, times(1)).closeInformationRequestOf(application.getId());
+  }
+
+  @Test
+  public void onFinishedShouldClearOwner() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(applicationDao, times(1)).removeOwner(eq(Collections.singletonList(application.getId())));
   }
 
 

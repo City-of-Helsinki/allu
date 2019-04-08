@@ -1,6 +1,7 @@
 package fi.hel.allu.model.service.event.handler;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 
 import fi.hel.allu.model.dao.InformationRequestDao;
 import org.slf4j.Logger;
@@ -90,6 +91,10 @@ public class ApplicationStatusChangeHandler {
     applicationService.setTargetState(application.getId(), null);
   }
 
+  protected void clearOwner(Application application) {
+    applicationDao.removeOwner(Collections.singletonList(application.getId()));
+  }
+
   protected void finishInvoicing(Application application) {
     applicationDao.setInvoicingChanged(application.getId(), false);
     lockChargeBasisEntries(application.getId());
@@ -97,6 +102,7 @@ public class ApplicationStatusChangeHandler {
 
   protected void handleFinishedStatus(Application application) {
     clearTargetState(application);
+    clearOwner(application);
   }
 
   protected void handleOperationalConditionStatus(Application application) {

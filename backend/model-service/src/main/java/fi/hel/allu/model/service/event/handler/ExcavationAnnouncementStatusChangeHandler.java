@@ -86,5 +86,6 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
     setExcavationAnnouncementInvoicable(application, extension.getWorkFinished());
     clearTargetState(application);
+    clearOwner(application);
   }
 }
