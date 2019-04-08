@@ -39,6 +39,7 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
     createSupervisionTask(application, SupervisionTaskType.FINAL_SUPERVISION, userId,
                           TimeUtil.nextDay(application.getEndTime()));
     removeTag(application.getId(), ApplicationTagType.PRELIMINARY_SUPERVISION_DONE);
+    removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   @Override
@@ -50,6 +51,7 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
     cancelOpenSupervisionTasks(application.getId());
     clearTargetState(application);
     clearOwner(application);
+    removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
 }

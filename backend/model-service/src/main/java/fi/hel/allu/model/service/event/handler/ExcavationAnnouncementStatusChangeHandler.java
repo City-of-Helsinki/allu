@@ -55,6 +55,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
       }
     }
     removeTag(application.getId(), ApplicationTagType.PRELIMINARY_SUPERVISION_DONE);
+    removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   protected void setExcavationAnnouncementInvoicable(Application application, ZonedDateTime invoicableTime) {
@@ -69,6 +70,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     ZonedDateTime invoicableTime = getInvoicableTimeForOperationalCondition(extension);
     setExcavationAnnouncementInvoicable(application, invoicableTime);
     removeTag(application.getId(), ApplicationTagType.OPERATIONAL_CONDITION_REPORTED);
+    removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
     clearTargetState(application);
     setOwner(application.getHandler(), application.getId());
   }
@@ -88,5 +90,6 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     setExcavationAnnouncementInvoicable(application, extension.getWorkFinished());
     clearTargetState(application);
     clearOwner(application);
+    removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 }

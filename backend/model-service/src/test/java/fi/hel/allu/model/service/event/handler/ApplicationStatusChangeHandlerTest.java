@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service.event.handler;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,6 +85,12 @@ public class ApplicationStatusChangeHandlerTest {
   }
 
   @Test
+  public void onDecisionShouldRemoveSupervisionDoneTag() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
+  }
+
+  @Test
   public void onCancelShouldCancelOpenSupervisionTasks() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.CANCELLED, USER_ID));
     verify(supervisionTaskService, times(1)).cancelOpenTasksOfApplication(application.getId());
@@ -99,6 +106,12 @@ public class ApplicationStatusChangeHandlerTest {
   public void onFinishedShouldClearOwner() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(applicationDao, times(1)).removeOwner(eq(Collections.singletonList(application.getId())));
+  }
+
+  @Test
+  public void onFinishedShouldRemoveSupervisionDoneTag() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
 

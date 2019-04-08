@@ -85,6 +85,7 @@ public class ApplicationStatusChangeHandler {
     // Clear target state on decision
     clearTargetState(application);
     finishInvoicing(application);
+    removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   protected void clearTargetState(Application application) {
@@ -109,6 +110,7 @@ public class ApplicationStatusChangeHandler {
   protected void handleFinishedStatus(Application application) {
     clearTargetState(application);
     clearOwner(application);
+    removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   protected void handleOperationalConditionStatus(Application application) {

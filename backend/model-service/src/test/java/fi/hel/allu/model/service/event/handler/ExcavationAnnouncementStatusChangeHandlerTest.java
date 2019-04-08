@@ -3,6 +3,7 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,11 +76,27 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   }
 
   @Test
+  public void onDecisionShouldRemoveSupervisionDoneTag() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    application.setExtension(new ExcavationAnnouncement());
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
+  }
+
+  @Test
   public void onOperationalConditionShouldLockChargeBasisEntries() {
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
     verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
+  }
+
+  @Test
+  public void onOperationalConditionShouldRemoveSupervisionDoneTag() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    application.setExtension(new ExcavationAnnouncement());
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
+    verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   @Test
@@ -110,6 +127,17 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
     application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(workFinishedDate));
+  }
+
+  @Test
+  public void onFinishedShouldRemoveSupervisionDoneTag() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ZonedDateTime workFinishedDate = LocalDate.parse("2019-05-10").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setWorkFinished(workFinishedDate);
+    application.setExtension(extension);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   private void createApplication() {

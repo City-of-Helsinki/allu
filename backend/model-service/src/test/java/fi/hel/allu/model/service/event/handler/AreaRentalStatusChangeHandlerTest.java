@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +15,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
@@ -115,6 +112,13 @@ public class AreaRentalStatusChangeHandlerTest {
   }
 
   @Test
+  public void onDecisionShouldRemoveSupervisionDoneTag() {
+    application.setType(ApplicationType.AREA_RENTAL);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
+  }
+
+  @Test
   public void onFinishedShuoldLockChargeBasisEntries() {
     application.setType(ApplicationType.AREA_RENTAL);
     application.setExtension(new AreaRental());
@@ -142,6 +146,17 @@ public class AreaRentalStatusChangeHandlerTest {
     application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(supervisionTaskService, times(1)).cancelOpenTasksOfApplication(eq(application.getId()));
+  }
+
+  @Test
+  public void onFinishedShouldRemoveSupervisionDoneTag() {
+    application.setType(ApplicationType.AREA_RENTAL);
+    ZonedDateTime workFinishedDate = LocalDate.parse("2019-11-11").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    AreaRental extension = new AreaRental();
+    extension.setWorkFinished(workFinishedDate);
+    application.setExtension(extension);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   private void createApplicationWithLocations() {
