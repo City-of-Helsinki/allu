@@ -186,8 +186,15 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
     return customers;
   }
 
+  /**
+   * Handle tab change events
+   *
+   * No need to do anything if
+   * 1. readonly mode
+   * 2. we already are in the basic info tab (eg. no actual tab change)
+   * */
   private onTabChange(tab: SidebarItemType): void {
-    if (!this.readonly) {
+    if (!this.readonly && tab !== 'BASIC_INFO') {
       this.applicationStore.applicationChange(this.update(this.applicationForm.getRawValue()));
     }
   }
