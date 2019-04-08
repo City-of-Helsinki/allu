@@ -107,8 +107,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               </xsl:when>
               <!-- Toistuva varaus -->
               <xsl:otherwise>
-                Käyttöoikeus vuosittain <xsl:value-of select="data/reservationStartDayMonth"/>
-                &#8211; <xsl:value-of select="data/reservationEndDayMonth"/>
+                Käyttöoikeus vuosittain <xsl:value-of select="data/reservationStartDayMonth"/>.
+                &#8211; <xsl:value-of select="data/reservationEndDayMonth"/>.
+                <br/>
                 <xsl:choose>
                   <xsl:when test="data/recurringIndefinitely = 'true'">
                     vuodesta <xsl:value-of select="data/reservationStartYear"/> lähtien
