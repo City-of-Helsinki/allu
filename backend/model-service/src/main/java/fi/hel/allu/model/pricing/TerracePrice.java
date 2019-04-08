@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PostalAddress;
@@ -58,8 +59,8 @@ public class TerracePrice {
   public TerracePrice(int unitPrice, int billableArea, ZonedDateTime start, ZonedDateTime end, Application application, Integer invoicingPeriodId) {
     this.billableArea = billableArea;
     this.unitPrice = unitPrice;
-    this.start = start;
-    this.end = end;
+    this.start = TimeUtil.homeTime(start);
+    this.end = TimeUtil.homeTime(end);
     this.application = application;
     this.invoicingPeriodId = invoicingPeriodId;
   }
