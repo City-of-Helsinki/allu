@@ -2,6 +2,7 @@ package fi.hel.allu.model.pricing;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -14,14 +15,17 @@ import fi.hel.allu.model.domain.util.Printable;
 
 public class TerracePrice {
 
+
+
   private static enum TerracePriceInfo {
-    SUMMER_TERRACE(ApplicationKind.SUMMER_TERRACE, ChargeBasisTag::SummerTerrace, "Kesäterassi, maksuvyöhyke %s"),
-    WINTER_TERRACE(ApplicationKind.WINTER_TERRACE, ChargeBasisTag::WinterTerrace, "Talviterassi, maksuvyöhyke %s"),
-    PARKLET(ApplicationKind.PARKLET, ChargeBasisTag::Parklet, "Parklet, maksuvyöhyke %s");
+    SUMMER_TERRACE(ApplicationKind.SUMMER_TERRACE, ChargeBasisTag::SummerTerrace, "Kesäterassi, maksuvyöhyke %s, %.2f €/m²/kk"),
+    WINTER_TERRACE(ApplicationKind.WINTER_TERRACE, ChargeBasisTag::WinterTerrace, "Talviterassi, maksuvyöhyke %s, %.2f €/m²/kk"),
+    PARKLET(ApplicationKind.PARKLET, ChargeBasisTag::Parklet, "Parklet, maksuvyöhyke %s, %.2f €/m²/kk");
 
     private final ApplicationKind kind;
     private final Function<Integer, ChargeBasisTag> tagGetter;
     private final String invoiceLineText;
+    private static final Locale DEFAULT_LOCALE = new Locale("fi", "FI");
 
     private TerracePriceInfo(ApplicationKind kind, Function<Integer, ChargeBasisTag> tagGetter, String invoiceLineText) {
       this.kind = kind;
@@ -33,8 +37,9 @@ public class TerracePrice {
       return forApplicationKind(kind).tagGetter.apply(invoicingPeriod);
     }
 
-    private static String invoiceLineText(ApplicationKind kind, String paymentClass) {
-      return String.format(forApplicationKind(kind).invoiceLineText, paymentClass);
+    private static String invoiceLineText(ApplicationKind kind, String paymentClass, int unitPriceInCents) {
+      return String.format(DEFAULT_LOCALE, forApplicationKind(kind).invoiceLineText, paymentClass,
+          unitPriceInCents / 100.0);
     }
 
     private static TerracePriceInfo forApplicationKind(ApplicationKind kind) {
@@ -96,7 +101,7 @@ public class TerracePrice {
   }
 
   public String getInvoiceLineText() {
-    return TerracePriceInfo.invoiceLineText(application.getKind(), getPaymentClass());
+    return TerracePriceInfo.invoiceLineText(application.getKind(), getPaymentClass(), unitPrice);
   }
 
   private Location getApplicationLocation() {
