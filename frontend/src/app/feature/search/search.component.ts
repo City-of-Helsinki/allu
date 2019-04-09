@@ -87,7 +87,10 @@ export class SearchComponent implements OnInit, OnDestroy {
       map(state => state.selectedItems),
       distinctUntilChanged(),
       takeUntil(this.destroy)
-    ).subscribe(selected => this.selectedItems = selected);
+    ).subscribe(selected => {
+      this.selectedItems = selected;
+      this.noneSelected = selected.length === 0;
+    });
 
     this.itemStore.changes.pipe(
       map(state => state.allSelected),
@@ -95,11 +98,9 @@ export class SearchComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy)
     ).subscribe(allSelected => this.allSelected = allSelected);
 
-    this.itemStore.changes.pipe(
-      map(state => state.selectedItems),
-      distinctUntilChanged(),
-      takeUntil(this.destroy),
-    ).subscribe(items => this.noneSelected = (items.length === 0));
+    this.dataSource.pageChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(page => this.itemStore.pageChange(page));
   }
 
   ngOnDestroy(): void {

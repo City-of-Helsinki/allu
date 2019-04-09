@@ -2,12 +2,12 @@ import {DataSource} from '@angular/cdk/collections';
 import {Subject, Observable, merge, of} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
 import {ApplicationService} from './application.service';
-import {Application} from '../../model/application/application';
-import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
-import {Sort} from '../../model/common/sort';
-import {PageRequest} from '../../model/common/page-request';
-import {Page} from '../../model/common/page';
-import {NotificationService} from '../../feature/notification/notification.service';
+import {Application} from '@model/application/application';
+import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
+import {Sort} from '@model/common/sort';
+import {PageRequest} from '@model/common/page-request';
+import {Page} from '@model/common/page';
+import {NotificationService} from '@feature/notification/notification.service';
 import {catchError, map, skipUntil, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
 
 export class ApplicationSearchDatasource extends DataSource<any> {
@@ -16,7 +16,6 @@ export class ApplicationSearchDatasource extends DataSource<any> {
 
   private searchChanges = new Subject<ApplicationSearchQuery>();
   private destroy = new Subject<boolean>();
-  private _page: Observable<Page<Application>>;
   private _pageSnapshot = new Page<Application>();
   private _search: ApplicationSearchQuery;
 
@@ -28,7 +27,6 @@ export class ApplicationSearchDatasource extends DataSource<any> {
   }
 
   connect(): Observable<Application[]> {
-    this._page = this.pageChanges();
     this.resetPageIndexOnSearchSortChange();
     return this.data;
   }
@@ -44,14 +42,14 @@ export class ApplicationSearchDatasource extends DataSource<any> {
   }
 
   get data(): Observable<Application[]> {
-    return this._page.pipe(map(page => page.content));
+    return this.pageChanges.pipe(map(page => page.content));
   }
 
   get pageSnapshot(): Page<Application> {
     return this._pageSnapshot;
   }
 
-  private pageChanges(): Observable<Page<Application>> {
+  get pageChanges(): Observable<Page<Application>> {
     const displayDataChanges = [
       this.searchChanges,
       this.sort.sortChange,
