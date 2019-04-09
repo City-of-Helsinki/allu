@@ -52,7 +52,11 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
   protected void initBinder(WebDataBinder binder) {
     if (binder.getTarget() != null && BaseApplicationExt.class.isAssignableFrom(binder.getTarget().getClass())) {
       binder.addValidators(geometryValidator, defaultImageValidator);
+      addApplicationTypeSpecificValidators(binder);
     }
+  }
+
+  protected void addApplicationTypeSpecificValidators(WebDataBinder binder) {
   }
 
   @ApiOperation(value = "Create new application. Returns ID of the created application. "
