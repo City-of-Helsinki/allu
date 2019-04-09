@@ -203,8 +203,8 @@ public class AlluMapper {
 
   // Material definitions for SAP (from 2017-10-16_Pelkat_Allun_nimikkeet.xlsx)
 
-  private static String SAP_MATERIAL_AREA_RENTAL = "10002493";
-  private static String SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT = "10002492";
+  private static String SAP_MATERIAL_AREA_RENTAL = "10002502";
+  private static String SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT = "10002501";
   private static String SAP_MATERIAL_FREE_EVENT = "27100024";
   private static String SAP_MATERIAL_NONFREE_EVENT = "27100025";
   private static String SAP_MATERIAL_CLOSED_EVENT = "27100026";
