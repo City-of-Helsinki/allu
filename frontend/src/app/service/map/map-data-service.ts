@@ -19,6 +19,7 @@ import {PageMapper} from '@app/service/common/page-mapper';
 import {BackendPage} from '@app/service/backend-model/backend-page';
 import {PageRequest} from '@app/model/common/page-request';
 import {Sort} from '@app/model/common/sort';
+import {TimeUtil} from '@util/time.util';
 
 
 const APPLICATION_SEARCH_URL = '/api/applications/search';
@@ -91,7 +92,12 @@ export class MapDataService {
     const queryParameters: Array<BackendQueryParameter> = [];
     const statuses = this.statusesFromGroup(filter.statuses);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'status', statuses);
-    QueryParametersMapper.mapDateParameter(queryParameters, 'recurringApplication', filter.startDate, filter.endDate, true);
+    QueryParametersMapper.mapDateParameter(
+      queryParameters,
+      'recurringApplication',
+      TimeUtil.toStartDate(filter.startDate),
+      TimeUtil.toEndDate(filter.endDate),
+      true);
     return queryParameters;
   }
 
