@@ -256,8 +256,7 @@ export class MapController {
         L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
       crs: this.mapUtil.EPSG3879,
       continuousWorld: true,
-      worldCopyJump: false,
-      preferCanvas: true
+      worldCopyJump: false
     };
     return L.map('map', mapOption);
   }
