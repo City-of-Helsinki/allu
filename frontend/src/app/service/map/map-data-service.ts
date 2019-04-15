@@ -98,6 +98,7 @@ export class MapDataService {
       TimeUtil.toStartDate(filter.startDate),
       TimeUtil.toEndDate(filter.endDate),
       true);
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'type', filter.types);
     return queryParameters;
   }
 

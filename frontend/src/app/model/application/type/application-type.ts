@@ -15,6 +15,8 @@ export enum ApplicationType {
   NOTE = 'NOTE' // Muistiinpano
 }
 
+export const applicationTypeList = Object.keys(ApplicationType).map(type => ApplicationType[type]);
+
 export interface ApplicationTypeTree {
   [type: string]: KindsWithSpecifiers;
 }

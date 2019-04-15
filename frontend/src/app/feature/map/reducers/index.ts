@@ -8,6 +8,8 @@ import * as fromApplication from './application-reducer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {Dictionary} from '@ngrx/entity';
 import {MapLayer} from '@service/map/map-layer';
+import {ApplicationType, applicationTypeList} from '@model/application/type/application-type';
+import {ArrayUtil} from '@util/array-util';
 
 export interface MapState {
   layers: fromLayers.State;
@@ -47,6 +49,12 @@ export const createIdSelector = (getState: MemoizedSelector<object, fromLayers.S
   fromLayers.getSelected
 );
 
+const getLayers = (ids: string[] = [], layers: Dictionary<MapLayer>) => ids.map(id => layers[id]);
+
+const getApplicationLayers = (ids: string[] = [], layers: Dictionary<MapLayer>) => getLayers(ids, layers)
+  .filter(layer => layer && layer.applicationType)
+  .filter(layer => applicationTypeList.indexOf(layer.applicationType) >= 0);
+
 export function createMapLayerSelectors(getState: MemoizedSelector<object, fromLayers.State>) {
   const entitySelectors = fromLayers.adapter.getSelectors(getState);
   const selectIds = createIdSelector(getState);
@@ -57,11 +65,16 @@ export function createMapLayerSelectors(getState: MemoizedSelector<object, fromL
     getSelectedLayers: createSelector(
       selectIds,
       entitySelectors.selectEntities,
-      (ids: string[] = [], layers: Dictionary<MapLayer>) => ids.map(id => layers[id])
+      getLayers
     ),
     getTreeStructure: createSelector(
       getState,
       fromLayers.getTreeStructure
+    ),
+    getSelectedApplicationLayers: createSelector(
+      selectIds,
+      entitySelectors.selectEntities,
+      getApplicationLayers
     )
   };
 }
@@ -73,7 +86,8 @@ export const {
   selectTotal: getLayersCount,
   getSelectedLayerIds: getSelectedLayerIds,
   getSelectedLayers,
-  getTreeStructure
+  getTreeStructure,
+  getSelectedApplicationLayers
 } = createMapLayerSelectors(getMapLayersEntityState);
 
 

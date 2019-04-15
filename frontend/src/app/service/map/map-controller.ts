@@ -19,12 +19,14 @@ import {MapStore} from './map-store';
 import {MapEventHandler} from './map-event-handler';
 import {MapFeatureInfo} from './map-feature-info';
 import {MapPopupService} from './map-popup.service';
-import {Injectable} from '@angular/core';
+import {Injectable, Optional} from '@angular/core';
 import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
 import GeoJSONOptions = L.GeoJSONOptions;
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {FeatureCollection, GeometryObject} from 'geojson';
+import {ArrayUtil} from '@util/array-util';
+import {FeatureGroup} from 'leaflet';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -106,7 +108,7 @@ export class MapController {
 
   public clearDrawn() {
     this.mapLayerService.contentLayerArray
-      .forEach(featureGroup => featureGroup.clearLayers());
+      .forEach(fg => fg.clearLayers());
   }
 
   public clearEdited() {
@@ -149,10 +151,11 @@ export class MapController {
   }
 
   public drawToLayer(layerName: string, featureCollection: FeatureCollection<GeometryObject>, style?: GeoJSONOptions) {
-    const layer = this.mapLayerService.contentLayers[layerName];
+    const mapLayer = ArrayUtil.first(this.mapLayerService.contentLayers, (l => l.id === layerName));
+    const layer = <FeatureGroup>mapLayer.layer;
     layer.clearLayers();
 
-    if (featureCollection) {
+    if (layer && featureCollection) {
       style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
         .bindPopup((l: any) => this.popupService.create([l.feature]), {className: 'allu-map-popup'});
       const geoJSON = L.geoJSON(featureCollection, style);

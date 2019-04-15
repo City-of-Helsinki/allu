@@ -8,7 +8,6 @@ import {defer} from 'rxjs/internal/observable/defer';
 import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
 import {Control} from 'leaflet';
-import {FeatureGroupsObject} from '@model/map/feature-groups-object';
 import {AddLayers, AddTreeStructure, MapLayerActionType, SelectLayers} from '@feature/map/actions/map-layer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {MapLayerService} from '@feature/map/map-layer.service';
@@ -55,7 +54,7 @@ export class MapLayerEffects {
   private getMapLayers(): MapLayer[] {
     return [
       ...this.toMapLayers(this.layerService.createOverlays()),
-      ...this.toMapLayers(this.layerService.contentLayers),
+      ...this.layerService.contentLayers,
       ...this.toMapLayers(this.layerService.winkkiRoadWorks),
       ...this.toMapLayers(this.layerService.winkkiEvents),
       ...this.toMapLayers(this.layerService.other),
@@ -63,7 +62,7 @@ export class MapLayerEffects {
       ];
   }
 
-  private toMapLayers(layersObject: LayersObject | FeatureGroupsObject): MapLayer[] {
+  private toMapLayers(layersObject: LayersObject): MapLayer[] {
     return Object.keys(layersObject).map(k => new MapLayer(k, layersObject[k]));
   }
 }

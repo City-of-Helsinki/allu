@@ -1,9 +1,8 @@
-import {ApplicationType} from '@model/application/type/application-type';
+import {ApplicationType, applicationTypeList} from '@model/application/type/application-type';
 import {findTranslation} from '@util/translations';
 import {AuthService} from '@service/authorization/auth.service';
 import {Injectable} from '@angular/core';
 import {ConfigService} from '@service/config/config.service';
-import {FeatureGroupsObject} from '../../model/map/feature-groups-object';
 import {CITY_DISTRICTS, pathStyle, winkki} from '../../service/map/map-draw-styles';
 import {MapUtil} from '@service/map/map.util';
 import * as L from 'leaflet';
@@ -16,6 +15,7 @@ import 'leaflet-wfst';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/internal/operators';
 import TimeoutOptions = L.TimeoutOptions;
+import {MapLayer} from '@service/map/map-layer';
 
 const timeout: TimeoutOptions = {
   response: 60000, // Wait max x seconds for the server to start sending,
@@ -73,7 +73,7 @@ export const applicationLayers = Object.keys(ApplicationType)
 
 @Injectable()
 export class MapLayerService {
-  public readonly contentLayers: FeatureGroupsObject;
+  public readonly contentLayers: MapLayer[];
   public readonly winkkiRoadWorks: L.Control.LayersObject;
   public readonly winkkiEvents: L.Control.LayersObject;
   public readonly other: L.Control.LayersObject;
@@ -86,9 +86,8 @@ export class MapLayerService {
   });
 
   constructor(private authService: AuthService, private config: ConfigService, private mapUtil: MapUtil) {
-    const contentLayers = {};
-    applicationLayers.forEach(type => contentLayers[type] = L.featureGroup());
-    this.contentLayers = contentLayers;
+    this.contentLayers = applicationTypeList
+      .map(type => new MapLayer(findTranslation(['application.type', type]), L.featureGroup(), type));
 
     this.winkkiRoadWorks = {
       'Tulevat katutyöt': this.createWinkkiLayer('winkki_works', STATUS_PLAN, winkki.ROAD_WORKS),
@@ -106,13 +105,15 @@ export class MapLayerService {
     };
 
     this.clickableLayers = []
-      .concat(this.toArray(this.contentLayers))
+      .concat(Object.keys(this.contentLayers).map(key => this.contentLayers[key].layer))
       .concat(this.toArray(this.winkkiRoadWorks))
       .concat(this.toArray(this.winkkiEvents));
   }
 
-  get contentLayerArray(): Array<L.FeatureGroup> {
-    return Object.keys(this.contentLayers).map(k => this.contentLayers[k]);
+  get contentLayerArray(): L.FeatureGroup[] {
+    return this.contentLayers
+      .map(cl => cl.layer)
+      .map(layer => <L.FeatureGroup>layer);
   }
 
   createLayerTreeStructure(): Observable<any> {
