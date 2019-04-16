@@ -16,6 +16,9 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/internal/operators';
 import TimeoutOptions = L.TimeoutOptions;
 import {MapLayer} from '@service/map/map-layer';
+import {ArrayUtil} from '@util/array-util';
+import {FeatureGroup} from 'leaflet';
+import {Some} from '@util/option';
 
 const timeout: TimeoutOptions = {
   response: 60000, // Wait max x seconds for the server to start sending,
@@ -108,6 +111,12 @@ export class MapLayerService {
       .concat(Object.keys(this.contentLayers).map(key => this.contentLayers[key].layer))
       .concat(this.toArray(this.winkkiRoadWorks))
       .concat(this.toArray(this.winkkiEvents));
+  }
+
+  getContentLayer(layerName: string): L.FeatureGroup {
+    return Some(ArrayUtil.first(this.contentLayers, (l => l.id === layerName)))
+      .map(mapLayer => <FeatureGroup>mapLayer.layer)
+      .orElse(undefined);
   }
 
   get contentLayerArray(): L.FeatureGroup[] {

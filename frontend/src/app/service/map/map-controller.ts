@@ -151,8 +151,7 @@ export class MapController {
   }
 
   public drawToLayer(layerName: string, featureCollection: FeatureCollection<GeometryObject>, style?: GeoJSONOptions) {
-    const mapLayer = ArrayUtil.first(this.mapLayerService.contentLayers, (l => l.id === layerName));
-    const layer = <FeatureGroup>mapLayer.layer;
+    const layer = this.mapLayerService.getContentLayer(layerName);
     layer.clearLayers();
 
     if (layer && featureCollection) {
@@ -165,7 +164,7 @@ export class MapController {
 
   public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
                       style?: Object, featureInfo?: MapFeatureInfo) {
-    const layer = this.mapLayerService.contentLayers[layerName];
+    const layer = this.mapLayerService.getContentLayer(layerName);
     if (layer) {
       geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, featureInfo));
     } else {
@@ -345,6 +344,7 @@ export class MapController {
         allLayers.addLayer(currentLayer);
         return allLayers;
       }, L.featureGroup());
+
   }
 
   private showMeasurements(layers: L.FeatureGroup) {
