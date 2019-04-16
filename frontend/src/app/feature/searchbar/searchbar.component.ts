@@ -12,14 +12,13 @@ import {EnumUtil} from '@util/enum.util';
 import {StoredFilterType} from '@model/user/stored-filter-type';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {StoredFilter} from '@model/user/stored-filter';
-import {map, debounceTime, filter, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, map, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromMap from '@feature/map/reducers';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {merge} from 'rxjs/internal/observable/merge';
 import {FetchCoordinates, Search} from '@feature/map/actions/address-search-actions';
 import {setValidatorsAndValidate} from '@feature/common/validation/validation-util';
 import {DateFilter, defaultDateFilter} from '@util/date-filter';
@@ -27,13 +26,19 @@ import {TimePeriod} from '@feature/application/info/time-period';
 import {ComplexValidator} from '@util/complex-validator';
 import {TimeUtil} from '@util/time.util';
 import {ApplicationKind} from '@model/application/type/application-kind';
-import {Some} from '@util/option';
 
 
 enum BarType {
   SIMPLE = 'SIMPLE', // Front page
   BAR = 'BAR', // Location
   ADVANCED = 'ADVANCED' // Front page
+}
+
+interface SearchForm {
+  address?: string;
+  startDate?: Date;
+  endDate?: Date;
+  statuses?: ApplicationStatusGroup[];
 }
 
 @Component({
@@ -47,6 +52,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   @Input() targetType: ActionTargetType = ActionTargetType.Home;
 
   @Output() onShowAdvanced = new EventEmitter<boolean>();
+  @Output() addressChange = new EventEmitter<string>();
   @Output() searchChange = new EventEmitter<MapSearchFilter>();
 
   searchForm: FormGroup;
@@ -97,10 +103,12 @@ export class SearchbarComponent implements OnInit, OnDestroy {
       filter(term => !!term && term.length >= 3)
     ).subscribe(term => this.store.dispatch(new Search(term)));
 
-    merge(
-      this.searchForm.get('address').valueChanges,
-      this.searchForm.get('statuses').valueChanges
-    ).pipe(
+
+    this.searchForm.get('address').valueChanges.pipe(
+      takeUntil(this.destroy)
+    ).subscribe(address => this.addressChange.emit(address));
+
+    this.searchForm.get('statuses').valueChanges.pipe(
       takeUntil(this.destroy)
     ).subscribe(() => this.onFormChange(this.searchForm.getRawValue()));
 
@@ -130,8 +138,17 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  onFormChange(value: MapSearchFilter): void {
-    this.notifySearchUpdated(value);
+  onFormChange(value: SearchForm): void {
+    this.notifySearchUpdated({
+      startDate: value.startDate,
+      endDate: value.endDate,
+      statuses: value.statuses
+    });
+  }
+
+  @Input()
+  set address(address: string) {
+    this.searchForm.patchValue({address: address}, {emitEvent: false});
   }
 
   @Input()
@@ -169,7 +186,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   public addressSelected(streetAddress: string) {
     this.store.dispatch(new FetchCoordinates(StringUtil.capitalize(streetAddress)));
-    // this.mapStore.coordinateSearchChange();
     this.searchForm.patchValue({address: streetAddress});
   }
 

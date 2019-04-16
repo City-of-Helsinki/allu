@@ -78,6 +78,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
   timePeriod$: Observable<TimePeriod>;
+  address$: Observable<string>;
 
   private submitPending = false;
   private destroy = new Subject<boolean>();
@@ -150,6 +151,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.mapStore.editedLocation.pipe(takeUntil(this.destroy))
       .subscribe(loc => this.editLocation(loc));
+
+    this.address$ = this.mapStore.editedLocation.pipe(
+      takeUntil(this.destroy),
+      filter(loc => !!loc),
+      map(loc => loc.postalAddress.streetAddress)
+    );
 
     this.mapStore.invalidGeometry.pipe(takeUntil(this.destroy))
       .subscribe(invalid => this.invalidGeometry = invalid);
@@ -243,9 +250,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.application.receivedTime = date;
   }
 
+  onAddressChange(address: string) {
+    this.locationForm.patchValue({streetAddress: address});
+  }
+
   searchUpdated(searchFilter: MapSearchFilter) {
     this.locationForm.patchValue({
-      streetAddress: searchFilter.address,
       startTime: searchFilter.startDate,
       endTime: searchFilter.endDate
     });
@@ -477,7 +487,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private createFilter(location: Location): MapSearchFilter {
     return {
-      address: location.postalAddress.streetAddress,
       startDate: location.startTime,
       endDate: location.endTime
     };
@@ -486,7 +495,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private resetForm(form: LocationForm = new LocationForm()): void {
     const location = LocationForm.to(form);
     this.locationForm.reset({streetAddress: form.streetAddress, startTime: form.startTime, endTime: form.endTime, sections: []});
-    this.mapStore.locationSearchFilterChange({address: form.streetAddress, startDate: location.startTime, endDate: location.endTime});
+    this.mapStore.locationSearchFilterChange({startDate: location.startTime, endDate: location.endTime});
   }
 
   private sortedActiveSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {

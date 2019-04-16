@@ -4,7 +4,6 @@ import {applicationLayers} from '@feature/map/map-layer.service';
 import {ApplicationType} from '@model/application/type/application-type';
 
 export interface MapSearchFilter {
-  address?: string;
   startDate?: Date;
   endDate?: Date;
   statuses?: ApplicationStatusGroup[];
@@ -14,7 +13,6 @@ export interface MapSearchFilter {
 }
 
 export const defaultFilter = {
-  address: undefined,
   startDate: undefined,
   endDate: undefined,
   statuses: [

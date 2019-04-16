@@ -16,11 +16,13 @@
               <div class="mapcontainer">
                 <div class="map-overlay">
                   <searchbar
+                    [address]="address$ | async"
                     [datesRequired]="true"
                     [timePeriod]="timePeriod$ | async"
                     [filter]="searchFilter$ | async"
                     targetType="Location"
-                    (searchChange)="onSearchChange($event)">Loading searchbar</searchbar>
+                    (searchChange)="onSearchChange($event)"
+                    (addressChange)="onAddressChange($event)">Loading searchbar</searchbar>
                 </div>
                 <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
                      [applicationId]="application.id"

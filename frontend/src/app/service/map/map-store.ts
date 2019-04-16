@@ -21,7 +21,6 @@ export type MapRole = 'SEARCH' | 'LOCATION' | 'OTHER';
 
 export interface MapState {
   role: MapRole;
-  coordinateSearch: string;
   mapSearchFilter: MapSearchFilter;
   locationSearchFilter: MapSearchFilter;
   matchingAddresses: PostalAddress[];
@@ -37,7 +36,6 @@ export interface MapState {
 
 const initialState: MapState = {
   role: undefined,
-  coordinateSearch: undefined,
   mapSearchFilter: defaultFilter,
   locationSearchFilter: defaultFilter,
   matchingAddresses: [],
