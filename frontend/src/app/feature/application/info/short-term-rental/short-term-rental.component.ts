@@ -90,16 +90,16 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
     this.maxEndDate$ = combineLatest(
       this.applicationForm.get('rentalTimes.startTime').valueChanges,
-      this.timePeriod$
+      this.timePeriod$.pipe(map(period => period ? period.endTime : undefined))
     ).pipe(
-      map(([startTime, timePeriod]) => TimeUtil.toTimePeriodEnd(startTime, timePeriod.endTime))
+      map(([startTime, endTime]) => TimeUtil.toTimePeriodEnd(startTime, endTime))
     );
 
     this.minStartDate$ = combineLatest(
       this.applicationForm.get('rentalTimes.endTime').valueChanges,
-      this.timePeriod$
+      this.timePeriod$.pipe(map(period => period ? period.startTime : undefined))
     ).pipe(
-      map(([endTime, timePeriod]) => TimeUtil.toTimePeriodStart(endTime, timePeriod.startTime))
+      map(([endTime, startTime]) => TimeUtil.toTimePeriodStart(endTime, startTime))
     );
 
     this.timePeriod$.subscribe(timePeriod => this.onTimePeriodChange(timePeriod));
