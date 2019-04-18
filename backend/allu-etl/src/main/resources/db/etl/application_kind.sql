@@ -49,6 +49,7 @@ WITH hakemuslajit (en, fi) AS (
         ('REPAVING', 'Uudelleenpäällystykset'),
         ('ELECTION_ADD_STAND', 'Vaalimainosteline'),
         ('PUBLIC_EVENT', 'Yleisötilaisuus'),
+        ('BIG_EVENT', 'Suuret tapahtumat'),
         ('OTHER', 'Muu'))
 INSERT INTO allureport.hakemuslaji (
   id,
