@@ -118,6 +118,10 @@ export class ArrayUtil {
     return array ? array.map(mapFn) : undefined;
   }
 
+  static empty<T>(array: T[]): boolean {
+    return array === undefined || array === null || array.length === 0;
+  }
+
   private static compareNumeric(left: Array<number>, right: Array<number>): number {
     while (left.length && right.length) {
       const leftHead = left.shift();

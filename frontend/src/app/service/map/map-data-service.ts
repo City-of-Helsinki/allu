@@ -63,7 +63,7 @@ export class MapDataService {
   }
 
   applicationsByLocation(filter: MapSearchFilter): Observable<Application[]> {
-    if (filter.geometry && filter.statuses && filter.statuses.length) {
+    if (filter.geometry && !ArrayUtil.empty(filter.statuses) && !ArrayUtil.empty(filter.types)) {
       const query = this.toApplicationLocationQuery(filter);
       return this.http.post<BackendPage<SearchResultApplication>>(
         APPLICATION_SEARCH_URL,
