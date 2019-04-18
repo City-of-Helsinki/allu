@@ -10,13 +10,27 @@ export interface ActionWithTarget extends Action {
 }
 
 export function ofTargetAndType<T extends ActionWithTarget>(targetType: ActionTargetType,
-                                                            latestTarget: Observable<any>,
-                                                            ...allowedTypes: string[]) {
-  return (source: Observable<ActionWithTarget>) => source.pipe(
+                                                        latestTarget: Observable<any>,
+                                                        ...allowedTypes: string[]) {
+  return (source: Observable<T>) => fromSource<T>(source, targetType, latestTarget, ...allowedTypes);
+}
+
+export function ofExistingTargetAndType<T extends ActionWithTarget>(targetType: ActionTargetType,
+                                                                    latestTarget: Observable<any>,
+                                                                    ...allowedTypes: string[]) {
+  return (source: Observable<T>) => fromSource<T>(source, targetType, latestTarget, ...allowedTypes).pipe(
+    filter(([action, target]) => NumberUtil.isExisting(target))
+  );
+}
+
+function fromSource<T extends ActionWithTarget>(source: Observable<T>,
+                    targetType: ActionTargetType,
+                    latestTarget: Observable<any>,
+                    ...allowedTypes: string[]) {
+  return source.pipe(
     ofType<T>(...allowedTypes),
     filter(action => targetType === action.targetType),
-    withLatestFrom(latestTarget),
-    filter(([action, target]) => NumberUtil.isExisting(target))
+    withLatestFrom(latestTarget)
   );
 }
 

@@ -9,7 +9,7 @@ import {CommentActionType, Load, LoadFailed, LoadSuccess, Remove, RemoveSuccess,
 import {CommentService} from '@service/application/comment/comment.service';
 import {Comment} from '@model/application/comment/comment';
 import {ActionTargetType} from '../../allu/actions/action-target-type';
-import {ofTargetAndType} from '../../allu/actions/action-with-target';
+import {ofExistingTargetAndType} from '../../allu/actions/action-with-target';
 import * as fromProject from '../../project/reducers';
 import * as fromApplication from '../../application/reducers';
 import {ApproveSuccess, ContractActionType} from '@feature/decision/actions/contract-actions';
@@ -23,25 +23,25 @@ export class CommentEffects {
 
   @Effect()
   loadApplicationComments: Observable<Action> = this.actions.pipe(
-    ofTargetAndType<Load>(ActionTargetType.Application, this.currentApplication, CommentActionType.Load),
+    ofExistingTargetAndType<Load>(ActionTargetType.Application, this.currentApplication, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
   );
 
   @Effect()
   saveApplicationComment: Observable<Action> = this.actions.pipe(
-    ofTargetAndType<Save>(ActionTargetType.Application, this.currentApplication, CommentActionType.Save),
+    ofExistingTargetAndType<Save>(ActionTargetType.Application, this.currentApplication, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
   );
 
   @Effect()
   loadProjectComments: Observable<Action> = this.actions.pipe(
-    ofTargetAndType<Load>(ActionTargetType.Project, this.currentProject, CommentActionType.Load),
+    ofExistingTargetAndType<Load>(ActionTargetType.Project, this.currentProject, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
   );
 
   @Effect()
   saveProjectComment: Observable<Action> = this.actions.pipe(
-    ofTargetAndType<Save>(ActionTargetType.Project, this.currentProject, CommentActionType.Save),
+    ofExistingTargetAndType<Save>(ActionTargetType.Project, this.currentProject, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
   );
 
