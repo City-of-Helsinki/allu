@@ -13,7 +13,6 @@ import {ChangeHistoryItem} from '@model/history/change-history-item';
 import {MatSlideToggleChange} from '@angular/material';
 import {ShowBasicInfo} from '../actions/project-actions';
 import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
-import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
 import {SearchSuccess} from '@feature/map/actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
@@ -46,10 +45,10 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
     this.comments$ = this.store.pipe(select(fromProject.getLatestComments('desc')));
     this.changes$ = this.store.pipe(select(fromProject.getHistory));
     this.showBasicInfo$ = this.store.pipe(select(fromProject.getShowBasicInfo));
-    this.availableLayerIds$ = this.store.pipe(select(fromLocationMapLayers.getLayerIds));
-    this.selectedLayersIds$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayerIds));
-    this.availableLayers$ = this.store.pipe(select(fromLocationMapLayers.getAllLayers));
-    this.selectedLayers$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayers));
+    this.availableLayerIds$ = this.store.pipe(select(fromProject.getLayerIds));
+    this.selectedLayersIds$ = this.store.pipe(select(fromProject.getSelectedLayerIds));
+    this.availableLayers$ = this.store.pipe(select(fromProject.getAllLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromProject.getSelectedLayers));
   }
 
   ngAfterViewInit(): void {

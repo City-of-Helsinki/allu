@@ -29,7 +29,8 @@ export class MapLayerEffects {
     map(() => this.getMapLayers()),
     switchMap(layers => [
       new AddLayers(ActionTargetType.Home, layers),
-      new AddLayers(ActionTargetType.Location, layers)
+      new AddLayers(ActionTargetType.Location, layers),
+      new AddLayers(ActionTargetType.Project, layers)
     ])
   ));
 
@@ -40,7 +41,8 @@ export class MapLayerEffects {
     switchMap(() => this.layerService.createLayerTreeStructure()),
     switchMap(structure => [
       new AddTreeStructure(ActionTargetType.Home, structure),
-      new AddTreeStructure(ActionTargetType.Location, structure)
+      new AddTreeStructure(ActionTargetType.Location, structure),
+      new AddTreeStructure(ActionTargetType.Project, structure)
     ])
   ));
 
@@ -50,7 +52,7 @@ export class MapLayerEffects {
     tap((action: SelectLayers) => {
       if (action.targetType === ActionTargetType.Location) {
         this.mapStore.locationSearchFilterChange({layers: action.payload});
-      } else {
+      } else if (action.targetType === ActionTargetType.Home) {
         this.mapStore.mapSearchFilterChange({layers: action.payload});
       }
     })

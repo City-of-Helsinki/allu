@@ -11,11 +11,14 @@ import * as fromComments from '@feature/comment/reducers/comment-reducer';
 import * as fromProjectComments from './project-comments-reducer';
 import * as fromHistory from '@feature/history/reducers/history-reducer';
 import * as fromProjectHistory from './project-history-reducer';
+import * as fromLayers from '@feature/map/reducers/map-layer-reducer';
 import {Project} from '@model/project/project';
 import {SortDirection} from '@model/common/sort';
 import {ArrayUtil} from '@util/array-util';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {InjectionToken} from '@angular/core';
+import {createMapLayerSelectors} from '@feature/map/reducers';
+
 
 export interface ProjectState {
   project: fromProject.State;
@@ -27,6 +30,7 @@ export interface ProjectState {
   applicationBasket: fromApplicationBasket.State;
   comments: fromComments.State;
   history: fromHistory.State;
+  layers: fromLayers.State;
 }
 
 export interface State extends fromRoot.State {
@@ -42,7 +46,8 @@ export const reducers: ActionReducerMap<ProjectState> = {
   children: fromChildProjects.reducer,
   applicationBasket: fromApplicationBasket.reducer,
   comments: fromProjectComments.reducer,
-  history: fromProjectHistory.reducer
+  history: fromProjectHistory.reducer,
+  layers: fromLayers.createReducerFor(ActionTargetType.Project)
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Project reducers');
@@ -250,4 +255,21 @@ export const getHistoryLoading = createSelector(
   getHistoryState,
   fromHistory.getLoading
 );
+
+// Map layer selectors
+export const getMapLayersEntityState = createSelector(
+  getProjectState,
+  (state: ProjectState) => state.layers
+);
+
+export const {
+  selectIds: getLayerIds,
+  selectEntities: getLayerEntities,
+  selectAll: getAllLayers,
+  selectTotal: getLayersCount,
+  getSelectedLayerIds: getSelectedLayerIds,
+  getSelectedLayers,
+  getTreeStructure,
+  getSelectedApplicationLayers
+} = createMapLayerSelectors(getMapLayersEntityState);
 
