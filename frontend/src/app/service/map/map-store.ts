@@ -16,6 +16,7 @@ import {ArrayUtil} from '@util/array-util';
 import {Store} from '@ngrx/store';
 import * as fromMap from '@feature/map/reducers';
 import {Search} from '@feature/map/actions/application-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 export type MapRole = 'SEARCH' | 'LOCATION' | 'OTHER';
 
@@ -57,10 +58,8 @@ export class MapStore {
               private storedFilterStore: StoredFilterStore,
               private store: Store<fromMap.State>) {
 
-    // Search when either of filters change
-    merge(this.mapSearchFilter, this.locationSearchFilter).pipe(
-      debounceTime(100),
-    ).subscribe(storedFilter => this.store.dispatch(new Search(storedFilter)));
+    this.mapSearchFilter.subscribe(storedFilter => this.store.dispatch(new Search(ActionTargetType.Home, storedFilter)));
+    this.locationSearchFilter.subscribe(storedFilter => this.store.dispatch(new Search(ActionTargetType.Location, storedFilter)));
 
     this.storedFilterStore.getCurrent(StoredFilterType.MAP)
       .subscribe(sf => this.storedFilterChange(sf));

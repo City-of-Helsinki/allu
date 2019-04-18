@@ -38,5 +38,6 @@ export const {
   selectTotal: getLayersCount,
   getSelectedLayerIds: getSelectedLayerIds,
   getSelectedLayers,
-  getTreeStructure
+  getTreeStructure,
+  getSelectedApplicationLayers
 } = createMapLayerSelectors(getMapLayersEntityState);

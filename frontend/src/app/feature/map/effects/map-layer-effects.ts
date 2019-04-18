@@ -47,8 +47,13 @@ export class MapLayerEffects {
   @Effect({dispatch: false})
   layersSelected: Observable<Action> = this.actions.pipe(
     ofType<SelectLayers>(MapLayerActionType.SelectLayers),
-    filter(action => action.targetType === ActionTargetType.Home),
-    tap((action: SelectLayers) => this.mapStore.mapSearchFilterChange({layers: action.payload}))
+    tap((action: SelectLayers) => {
+      if (action.targetType === ActionTargetType.Location) {
+        this.mapStore.locationSearchFilterChange({layers: action.payload});
+      } else {
+        this.mapStore.mapSearchFilterChange({layers: action.payload});
+      }
+    })
   );
 
   private getMapLayers(): MapLayer[] {

@@ -16,6 +16,7 @@ import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
 import * as fromLocationMapLayers from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
 import {SearchSuccess} from '@feature/map/actions/application-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 @Component({
   selector: 'project-summary',
@@ -62,7 +63,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
       filter(([applications, show]) => show)
     ).subscribe(([applications, show]) => {
       if (show && !!this.map) {
-        this.store.dispatch(new SearchSuccess(applications));
+        this.store.dispatch(new SearchSuccess(ActionTargetType.Project, applications));
       }
     });
   }
