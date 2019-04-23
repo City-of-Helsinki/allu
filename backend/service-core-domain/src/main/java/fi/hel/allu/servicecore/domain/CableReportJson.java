@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -34,6 +35,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return cableSurveyRequired;
   }
 
+  @UpdatableProperty
   public void setCableSurveyRequired(Boolean cableSurveyRequired) {
     this.cableSurveyRequired = cableSurveyRequired;
   }
@@ -43,6 +45,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return cableReportId;
   }
 
+  @UpdatableProperty
   public void setCableReportId(String cableReportId) {
     this.cableReportId = cableReportId;
   }
@@ -53,6 +56,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return workDescription;
   }
 
+  @UpdatableProperty
   public void setWorkDescription(String workDescription) {
     this.workDescription = workDescription;
   }
@@ -62,6 +66,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return mapExtractCount;
   }
 
+  @UpdatableProperty
   public void setMapExtractCount(Integer mapExtractCount) {
     this.mapExtractCount = mapExtractCount;
   }
@@ -71,6 +76,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return infoEntries;
   }
 
+  @UpdatableProperty
   public void setInfoEntries(List<CableInfoEntryJson> infoEntries) {
     this.infoEntries = infoEntries;
   }
@@ -80,6 +86,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return mapUpdated;
   }
 
+  @UpdatableProperty
   public void setMapUpdated(Boolean mapUpdated) {
     this.mapUpdated = mapUpdated;
   }
@@ -89,6 +96,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return constructionWork;
   }
 
+  @UpdatableProperty
   public void setConstructionWork(Boolean constructionWork) {
     this.constructionWork = constructionWork;
   }
@@ -98,6 +106,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return maintenanceWork;
   }
 
+  @UpdatableProperty
   public void setMaintenanceWork(Boolean maintenanceWork) {
     this.maintenanceWork = maintenanceWork;
   }
@@ -107,6 +116,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return emergencyWork;
   }
 
+  @UpdatableProperty
   public void setEmergencyWork(Boolean emergencyWork) {
     this.emergencyWork = emergencyWork;
   }
@@ -116,6 +126,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return propertyConnectivity;
   }
 
+  @UpdatableProperty
   public void setPropertyConnectivity(Boolean propertyConnectivity) {
     this.propertyConnectivity = propertyConnectivity;
   }
@@ -125,6 +136,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return validityTime;
   }
 
+  @UpdatableProperty
   public void setValidityTime(ZonedDateTime validityTime) {
     this.validityTime = validityTime;
   }
@@ -134,6 +146,7 @@ public class CableReportJson extends ApplicationExtensionJson {
     return orderer;
   }
 
+  @UpdatableProperty
   public void setOrderer(Integer orderer) {
     this.orderer = orderer;
   }

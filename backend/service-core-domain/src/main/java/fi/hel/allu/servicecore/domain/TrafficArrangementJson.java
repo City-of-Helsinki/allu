@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -25,6 +26,7 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
     return workPurpose;
   }
 
+  @UpdatableProperty
   public void setWorkPurpose(String workPurpose) {
     this.workPurpose = workPurpose;
   }
@@ -34,6 +36,7 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
     return trafficArrangements;
   }
 
+  @UpdatableProperty
   public void setTrafficArrangements(String trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
   }
@@ -43,6 +46,7 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
     return trafficArrangementImpedimentType;
   }
 
+  @UpdatableProperty
   public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
   }

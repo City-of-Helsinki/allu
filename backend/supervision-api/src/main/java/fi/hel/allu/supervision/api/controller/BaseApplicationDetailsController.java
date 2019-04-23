@@ -1,9 +1,8 @@
 package fi.hel.allu.supervision.api.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,9 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
-import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -23,10 +23,8 @@ import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.ApprovalDocumentService;
 import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.supervision.api.domain.BaseApplication;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import fi.hel.allu.supervision.api.service.ApplicationUpdateService;
+import io.swagger.annotations.*;
 
 public abstract class BaseApplicationDetailsController<A extends BaseApplication<?>> {
 
@@ -40,6 +38,8 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
   private ChargeBasisService chargeBasisService;
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
+  @Autowired
+  private ApplicationUpdateService applicationUpdateService;
 
   @ApiOperation(value = "Get application details",
       authorizations = @Authorization(value ="api_key"),
@@ -72,9 +72,12 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
     return ResponseEntity.ok(applications.stream().map(a -> mapApplication(a)).collect(Collectors.toList()));
   }
 
-  @ApiOperation(value = "Update application. "
-      + "Update is allowed only if the status of the application is PENDING and application is not an external application "
-      + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.",
+  @ApiOperation(value = "Update application with given version number.",
+      notes =
+        "<p>Data is given as key/value pair updated field being the key and it's new value (as JSON) the value. "
+      + "All fields that are not marked as read only can be updated through this API.</p>"
+      + "<p>Update is allowed only if the status of the application is PENDING and application is not an external application "
+      + "or status of the application is HANDLING, PRE_RESERVED or RETURNED_TO_PREPARATION.</p>",
       authorizations = @Authorization(value ="api_key"),
       produces = "application/json"
       )
@@ -84,33 +87,13 @@ public abstract class BaseApplicationDetailsController<A extends BaseApplication
       @ApiResponse(code = 403, message = "Application update forbidden", response = ErrorInfo.class),
 
   })
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+  @RequestMapping(value = "/{id}/version/{version}", method = RequestMethod.PUT, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<A> updateApplication(@PathVariable Integer id, @RequestBody @Valid A application) {
-    ApplicationJson updatedApplication = doUpdate(id, application);
+  public ResponseEntity<A> updateApplication(@PathVariable Integer id, @PathVariable Integer version,
+      @RequestBody @ApiParam("Map containing field names with their new values.") Map<String, Object> fields) {
+    validateType(id);
+    ApplicationJson updatedApplication = applicationUpdateService.update(id, version, fields);
     return ResponseEntity.ok(mapApplication(updatedApplication));
-  }
-
-  private <T extends BaseApplication<?>> ApplicationJson doUpdate(Integer id, A application) {
-    ApplicationJson applicationJson = application.getApplication();
-    applicationJson.setExtension(application.getExtension());
-    validateUpdateAllowed(id);
-    return applicationServiceComposer.updateApplication(id, applicationJson);
-  }
-
-  private void validateUpdateAllowed(Integer id) {
-    StatusType status = applicationServiceComposer.getApplicationStatus(id).getStatus();
-    if (status != StatusType.NOTE
-        && status != StatusType.HANDLING
-        && status != StatusType.PRE_RESERVED
-        && status != StatusType.RETURNED_TO_PREPARATION
-        && (status != StatusType.PENDING || isExternalApplication(id))) {
-      throw new IllegalArgumentException("application.applicationStatus.forbidden");
-    }
-  }
-
-  private boolean isExternalApplication(Integer id) {
-    return applicationServiceComposer.getApplicationExternalOwner(id) != null;
   }
 
   protected void validateType(Integer applicationId) {

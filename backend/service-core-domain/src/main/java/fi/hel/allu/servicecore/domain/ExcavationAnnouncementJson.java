@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -55,6 +56,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return pksCard;
   }
 
+  @UpdatableProperty
   public void setPksCard(Boolean pksCard) {
     this.pksCard = pksCard;
   }
@@ -64,6 +66,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return constructionWork;
   }
 
+  @UpdatableProperty
   public void setConstructionWork(Boolean constructionWork) {
     this.constructionWork = constructionWork;
   }
@@ -73,6 +76,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return maintenanceWork;
   }
 
+  @UpdatableProperty
   public void setMaintenanceWork(Boolean maintenanceWork) {
     this.maintenanceWork = maintenanceWork;
   }
@@ -82,6 +86,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return emergencyWork;
   }
 
+  @UpdatableProperty
   public void setEmergencyWork(Boolean emergencyWork) {
     this.emergencyWork = emergencyWork;
   }
@@ -91,6 +96,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return propertyConnectivity;
   }
 
+  @UpdatableProperty
   public void setPropertyConnectivity(Boolean propertyConnectivity) {
     this.propertyConnectivity = propertyConnectivity;
   }
@@ -100,6 +106,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return selfSupervision;
   }
 
+  @UpdatableProperty
   public void setSelfSupervision(Boolean selfSupervision) {
     this.selfSupervision = selfSupervision;
   }
@@ -109,6 +116,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return compactionAndBearingCapacityMeasurement;
   }
 
+  @UpdatableProperty
   public void setCompactionAndBearingCapacityMeasurement(Boolean compactionAndBearingCapacityMeasurement) {
     this.compactionAndBearingCapacityMeasurement = compactionAndBearingCapacityMeasurement;
   }
@@ -118,6 +126,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return qualityAssuranceTest;
   }
 
+  @UpdatableProperty
   public void setQualityAssuranceTest(Boolean qualityAssuranceTest) {
     this.qualityAssuranceTest = qualityAssuranceTest;
   }
@@ -127,11 +136,12 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return winterTimeOperation;
   }
 
+  @UpdatableProperty
   public void setWinterTimeOperation(ZonedDateTime winterTimeOperation) {
     this.winterTimeOperation = winterTimeOperation;
   }
 
-  @ApiModelProperty(value = "Work finished date")
+  @ApiModelProperty(value = "Work finished date", readOnly = true)
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
@@ -145,6 +155,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return unauthorizedWorkStartTime;
   }
 
+  @UpdatableProperty
   public void setUnauthorizedWorkStartTime(ZonedDateTime unauthorizedWorkStartTime) {
     this.unauthorizedWorkStartTime = unauthorizedWorkStartTime;
   }
@@ -154,11 +165,12 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return unauthorizedWorkEndTime;
   }
 
+  @UpdatableProperty
   public void setUnauthorizedWorkEndTime(ZonedDateTime unauthorizedWorkEndTime) {
     this.unauthorizedWorkEndTime = unauthorizedWorkEndTime;
   }
 
-  @ApiModelProperty(value = "Guarantee end time")
+  @ApiModelProperty(value = "Guarantee end time", readOnly = true)
   public ZonedDateTime getGuaranteeEndTime() {
     return guaranteeEndTime;
   }
@@ -167,7 +179,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.guaranteeEndTime = guaranteeEndTime;
   }
 
-  @ApiModelProperty(value = "Start time reported by customer")
+  @ApiModelProperty(value = "Start time reported by customer", readOnly = true)
   public ZonedDateTime getCustomerStartTime() {
     return customerStartTime;
   }
@@ -176,7 +188,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerStartTime = customerStartTime;
   }
 
-  @ApiModelProperty(value = "End time reported by customer")
+  @ApiModelProperty(value = "End time reported by customer", readOnly = true)
   public ZonedDateTime getCustomerEndTime() {
     return customerEndTime;
   }
@@ -185,7 +197,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerEndTime = customerEndTime;
   }
 
-  @ApiModelProperty(value = "Operational condition date reported by customer")
+  @ApiModelProperty(value = "Operational condition date reported by customer", readOnly = true)
   public ZonedDateTime getCustomerWinterTimeOperation() {
     return customerWinterTimeOperation;
   }
@@ -194,7 +206,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.customerWinterTimeOperation = customerWinterTimeOperation;
   }
 
-  @ApiModelProperty(value = "Work finished date reported by customer")
+  @ApiModelProperty(value = "Work finished date reported by customer", readOnly = true)
   public ZonedDateTime getCustomerWorkFinished() {
     return customerWorkFinished;
   }
@@ -208,6 +220,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return workPurpose;
   }
 
+  @UpdatableProperty
   public void setWorkPurpose(String workPurpose) {
     this.workPurpose = workPurpose;
   }
@@ -217,6 +230,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return additionalInfo;
   }
 
+  @UpdatableProperty
   public void setAdditionalInfo(String additionalInfo) {
     this.additionalInfo = additionalInfo;
   }
@@ -226,6 +240,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return trafficArrangements;
   }
 
+  @UpdatableProperty
   public void setTrafficArrangements(String trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
   }
@@ -235,11 +250,12 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return trafficArrangementImpedimentType;
   }
 
+  @UpdatableProperty
   public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
   }
 
-  @ApiModelProperty(value = "Date when customer reported operational condition date")
+  @ApiModelProperty(value = "Date when customer reported operational condition date", readOnly = true)
   public ZonedDateTime getOperationalConditionReported() {
     return operationalConditionReported;
   }
@@ -248,7 +264,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.operationalConditionReported = operationalConditionReported;
   }
 
-  @ApiModelProperty(value = "Date when customer reported work finished date")
+  @ApiModelProperty(value = "Date when customer reported work finished date", readOnly = true)
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
@@ -257,7 +273,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     this.workFinishedReported = workFinishedReported;
   }
 
-  @ApiModelProperty(value = "Date when customer reported application validity dates")
+  @ApiModelProperty(value = "Date when customer reported application validity dates", readOnly = true)
   public ZonedDateTime getValidityReported() {
     return validityReported;
   }
@@ -271,6 +287,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return placementContracts;
   }
 
+  @UpdatableProperty
   public void setPlacementContracts(List<String> placementContracts) {
     this.placementContracts = placementContracts;
   }
@@ -280,6 +297,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
     return cableReports;
   }
 
+  @UpdatableProperty
   public void setCableReports(List<String> cableReports) {
     this.cableReports = cableReports;
   }

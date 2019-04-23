@@ -21,6 +21,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.validator.NotFalse;
+import fi.hel.allu.servicecore.domain.mapper.*;
 import fi.hel.allu.servicecore.domain.validator.ValidApplication;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -111,7 +112,7 @@ public class ApplicationJson {
   private Integer version;
 
 
-  @ApiModelProperty(value = "ID of the application")
+  @ApiModelProperty(value = "ID of the application", readOnly = true)
   public Integer getId() {
     return id;
   }
@@ -119,7 +120,6 @@ public class ApplicationJson {
   public void setId(Integer id) {
     this.id = id;
   }
-
 
   @ApiModelProperty(value = "Human readable application identifier (hakemustunniste). The format is XXYYZZZZZ where XX is application type abbreviation, " +
       "YY is year and ZZZZZ is serial number for the given year. For example TP1600001", readOnly = true)
@@ -136,11 +136,12 @@ public class ApplicationJson {
     return project;
   }
 
+  @UpdatableProperty
   public void setProject(ProjectJson project) {
     this.project = project;
   }
 
-  @ApiModelProperty(value = "Owner of the application")
+  @ApiModelProperty(value = "Owner of the application", readOnly = true)
   public UserJson getOwner() {
     return owner;
   }
@@ -149,7 +150,7 @@ public class ApplicationJson {
     this.owner = owner;
   }
 
-  @ApiModelProperty(value = "Handler of the application")
+  @ApiModelProperty(value = "Handler of the application", readOnly = true)
   public UserJson getHandler() {
     return handler;
   }
@@ -202,6 +203,7 @@ public class ApplicationJson {
     return name;
   }
 
+  @UpdatableProperty
   public void setName(String name) {
     this.name = name;
   }
@@ -220,6 +222,7 @@ public class ApplicationJson {
     return startTime;
   }
 
+  @UpdatableProperty
   public void setStartTime(ZonedDateTime startTime) {
     this.startTime = startTime;
   }
@@ -229,6 +232,7 @@ public class ApplicationJson {
     return endTime;
   }
 
+  @UpdatableProperty
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
   }
@@ -240,11 +244,12 @@ public class ApplicationJson {
     return recurringEndTime;
   }
 
+  @UpdatableProperty
   public void setRecurringEndTime(ZonedDateTime recurringEndTime) {
     this.recurringEndTime = recurringEndTime;
   }
 
-  @ApiModelProperty(value = "Application customers with contacts", required = true)
+  @ApiModelProperty(value = "Application customers with their contacts", readOnly = true)
   public List<CustomerWithContactsJson> getCustomersWithContacts() {
     return customersWithContacts;
   }
@@ -253,7 +258,7 @@ public class ApplicationJson {
     this.customersWithContacts = customersWithContacts;
   }
 
-  @ApiModelProperty(value = "Application locations", required = true)
+  @ApiModelProperty(value = "Application locations", readOnly = true)
   public List<LocationJson> getLocations() {
     return locations;
   }
@@ -270,11 +275,12 @@ public class ApplicationJson {
     this.extension = event;
   }
 
-  @ApiModelProperty(value = "Publicity of the decision")
+  @ApiModelProperty(value = "Decision publicity type")
   public PublicityType getDecisionPublicityType() {
     return decisionPublicityType;
   }
 
+  @UpdatableProperty
   public void setDecisionPublicityType(PublicityType decisionPublicityType) {
     this.decisionPublicityType = decisionPublicityType;
   }
@@ -297,7 +303,7 @@ public class ApplicationJson {
     this.decisionMaker = decisionMaker;
   }
 
-  @ApiModelProperty(value = "Decision distribution list")
+  @ApiModelProperty(value = "Decision distribution list", readOnly = true)
   public List<DistributionEntryJson> getDecisionDistributionList() {
     return decisionDistributionList;
   }
@@ -338,6 +344,7 @@ public class ApplicationJson {
     return notBillable;
   }
 
+  @UpdatableProperty
   public void setNotBillable(Boolean notBillable) {
     this.notBillable = notBillable;
   }
@@ -347,6 +354,7 @@ public class ApplicationJson {
     return notBillableReason;
   }
 
+  @UpdatableProperty
   public void setNotBillableReason(String notBillableReason) {
     this.notBillableReason = notBillableReason;
   }
@@ -356,6 +364,7 @@ public class ApplicationJson {
     return kindsWithSpecifiers;
   }
 
+  @UpdatableProperty
   public void setKindsWithSpecifiers(Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
     this.kindsWithSpecifiers = kindsWithSpecifiers;
   }
@@ -365,6 +374,7 @@ public class ApplicationJson {
     return invoiceRecipientId;
   }
 
+  @UpdatableProperty
   public void setInvoiceRecipientId(Integer invoiceRecipientId) {
     this.invoiceRecipientId = invoiceRecipientId;
   }
@@ -443,6 +453,7 @@ public class ApplicationJson {
     return customerReference;
   }
 
+  @UpdatableProperty
   public void setCustomerReference(String customerReference) {
     this.customerReference = customerReference;
   }
@@ -452,6 +463,7 @@ public class ApplicationJson {
     return invoicingDate;
   }
 
+  @UpdatableProperty
   public void setInvoicingDate(ZonedDateTime invoicingDate) {
     this.invoicingDate = invoicingDate;
   }
@@ -470,6 +482,7 @@ public class ApplicationJson {
     return skipPriceCalculation;
   }
 
+  @UpdatableProperty
   public void setSkipPriceCalculation(boolean skipPriceCalculation) {
     this.skipPriceCalculation = skipPriceCalculation;
   }
@@ -496,6 +509,7 @@ public class ApplicationJson {
     return identificationNumber;
   }
 
+  @UpdatableProperty
   public void setIdentificationNumber(String identificationNumber) {
     this.identificationNumber = identificationNumber;
   }
@@ -523,6 +537,7 @@ public class ApplicationJson {
     return receivedTime;
   }
 
+  @UpdatableProperty
   public void setReceivedTime(ZonedDateTime receivedTime) {
     this.receivedTime= receivedTime;
   }
@@ -536,7 +551,7 @@ public class ApplicationJson {
     this.externalApplicationId = externalApplicationId;
   }
 
-  @ApiModelProperty(value = "Invoicing period length for this application")
+  @ApiModelProperty(value = "Invoicing period length for this application", readOnly = true)
   public Integer getInvoicingPeriodLength() {
     return invoicingPeriodLength;
   }
@@ -545,7 +560,7 @@ public class ApplicationJson {
     this.invoicingPeriodLength = invoicingPeriodLength;
   }
 
-  @ApiModelProperty(value = "Application version number. Used for optimistic locking, required when updating application")
+  @ApiModelProperty(value = "Application version number. Used for optimistic locking, required when updating application", readOnly = true)
   public Integer getVersion() {
     return version;
   }
@@ -554,7 +569,7 @@ public class ApplicationJson {
     this.version = version;
   }
 
-  @ApiModelProperty(value = "Value indicating whether application is received from external system")
+  @ApiModelProperty(value = "Value indicating whether application is received from external system", readOnly = true)
   public boolean isExternalApplication() {
     return externalOwnerId != null;
   }

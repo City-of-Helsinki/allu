@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -36,6 +37,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     return pksCard;
   }
 
+  @UpdatableProperty
   public void setPksCard(Boolean pksCard) {
     this.pksCard = pksCard;
   }
@@ -48,6 +50,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     return majorDisturbance;
   }
 
+  @UpdatableProperty
   public void setMajorDisturbance(Boolean majorDisturbance) {
     this.majorDisturbance = majorDisturbance;
   }
@@ -57,6 +60,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     return workPurpose;
   }
 
+  @UpdatableProperty
   public void setWorkPurpose(String workPurpose) {
     this.workPurpose = workPurpose;
   }
@@ -66,6 +70,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     return additionalInfo;
   }
 
+  @UpdatableProperty
   public void setAdditionalInfo(String additionalInfo) {
     this.additionalInfo = additionalInfo;
   }
@@ -75,11 +80,12 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     return trafficArrangements;
   }
 
+  @UpdatableProperty
   public void setTrafficArrangements(String trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
   }
 
-  @ApiModelProperty(value = "Work finished date")
+  @ApiModelProperty(value = "Work finished date", readOnly = true)
   public ZonedDateTime getWorkFinished() {
     return workFinished;
   }
@@ -88,7 +94,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.workFinished = workFinished;
   }
 
-  @ApiModelProperty(value = "Work finished date reported by customer")
+  @ApiModelProperty(value = "Work finished date reported by customer", readOnly = true)
   public ZonedDateTime getCustomerWorkFinished() {
     return customerWorkFinished;
   }
@@ -97,7 +103,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     this.customerWorkFinished = customerWorkFinished;
   }
 
-  @ApiModelProperty(value = "Date when customer reported work finished date")
+  @ApiModelProperty(value = "Date when customer reported work finished date", readOnly = true)
   public ZonedDateTime getWorkFinishedReported() {
     return workFinishedReported;
   }
@@ -111,6 +117,7 @@ public class AreaRentalJson extends ApplicationExtensionJson {
     return trafficArrangementImpedimentType;
   }
 
+  @UpdatableProperty
   public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
   }

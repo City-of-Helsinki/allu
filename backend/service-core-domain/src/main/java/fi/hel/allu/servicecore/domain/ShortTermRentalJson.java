@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -22,6 +23,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
     return description;
   }
 
+  @UpdatableProperty
   public void setDescription(String description) {
     this.description = description;
   }
@@ -31,6 +33,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
     return commercial;
   }
 
+  @UpdatableProperty
   public void setCommercial(Boolean commercial) {
     this.commercial = commercial;
   }
@@ -40,6 +43,7 @@ public class ShortTermRentalJson extends ApplicationExtensionJson {
     return billableSalesArea;
   }
 
+  @UpdatableProperty
   public void setBillableSalesArea(Boolean billableSalesArea) {
     this.billableSalesArea = billableSalesArea;
   }

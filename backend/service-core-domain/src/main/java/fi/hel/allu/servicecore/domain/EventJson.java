@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SurfaceHardness;
 import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -38,11 +39,12 @@ public class EventJson extends ApplicationExtensionJson {
   }
 
 
-  @ApiModelProperty(value = "Event nature")
+  @ApiModelProperty(value = "Event nature. Can be changed only for outdoor events (allowed natures for outdoor events: PUBLIC_FREE, PUBLIC_NONFREE, CLOSED)")
   public EventNature getNature() {
     return nature;
   }
 
+  @UpdatableProperty
   public void setNature(EventNature nature) {
     this.nature = nature;
   }
@@ -52,6 +54,7 @@ public class EventJson extends ApplicationExtensionJson {
     return description;
   }
 
+  @UpdatableProperty
   public void setDescription(String description) {
     this.description = description;
   }
@@ -64,6 +67,7 @@ public class EventJson extends ApplicationExtensionJson {
     return url;
   }
 
+  @UpdatableProperty
   public void setUrl(String url) {
     this.url = url;
   }
@@ -73,6 +77,7 @@ public class EventJson extends ApplicationExtensionJson {
     return eventStartTime;
   }
 
+  @UpdatableProperty
   public void setEventStartTime(ZonedDateTime eventStartTime) {
     this.eventStartTime = eventStartTime;
   }
@@ -82,6 +87,7 @@ public class EventJson extends ApplicationExtensionJson {
     return eventEndTime;
   }
 
+  @UpdatableProperty
   public void setEventEndTime(ZonedDateTime eventEndTime) {
     this.eventEndTime = eventEndTime;
   }
@@ -91,6 +97,7 @@ public class EventJson extends ApplicationExtensionJson {
     return attendees;
   }
 
+  @UpdatableProperty
   public void setAttendees(int attendees) {
     this.attendees = attendees;
   }
@@ -100,6 +107,7 @@ public class EventJson extends ApplicationExtensionJson {
     return entryFee;
   }
 
+  @UpdatableProperty
   public void setEntryFee(int entryFee) {
     this.entryFee = entryFee;
   }
@@ -109,6 +117,7 @@ public class EventJson extends ApplicationExtensionJson {
     return ecoCompass;
   }
 
+  @UpdatableProperty
   public void setEcoCompass(boolean ecoCompass) {
     this.ecoCompass = ecoCompass;
   }
@@ -118,6 +127,7 @@ public class EventJson extends ApplicationExtensionJson {
     return foodSales;
   }
 
+  @UpdatableProperty
   public void setFoodSales(boolean foodSales) {
     this.foodSales = foodSales;
   }
@@ -127,6 +137,7 @@ public class EventJson extends ApplicationExtensionJson {
     return foodProviders;
   }
 
+  @UpdatableProperty
   public void setFoodProviders(String foodProviders) {
     this.foodProviders = foodProviders;
   }
@@ -136,6 +147,7 @@ public class EventJson extends ApplicationExtensionJson {
     return marketingProviders;
   }
 
+  @UpdatableProperty
   public void setMarketingProviders(String marketingProviders) {
     this.marketingProviders = marketingProviders;
   }
@@ -145,6 +157,7 @@ public class EventJson extends ApplicationExtensionJson {
     return structureArea;
   }
 
+  @UpdatableProperty
   public void setStructureArea(float structureArea) {
     this.structureArea = structureArea;
   }
@@ -154,6 +167,7 @@ public class EventJson extends ApplicationExtensionJson {
     return structureDescription;
   }
 
+  @UpdatableProperty
   public void setStructureDescription(String structureDescription) {
     this.structureDescription = structureDescription;
   }
@@ -164,6 +178,7 @@ public class EventJson extends ApplicationExtensionJson {
     return timeExceptions;
   }
 
+  @UpdatableProperty
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
   }
@@ -173,6 +188,7 @@ public class EventJson extends ApplicationExtensionJson {
     return surfaceHardness;
   }
 
+  @UpdatableProperty
   public void setSurfaceHardness(SurfaceHardness surfaceHardness) {
     this.surfaceHardness = surfaceHardness;
   }

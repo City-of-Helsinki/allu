@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -39,6 +40,7 @@ public abstract class ApplicationExtensionJson {
     return terms;
   }
 
+  @UpdatableProperty
   public void setTerms(String terms) {
     this.terms = terms;
   }

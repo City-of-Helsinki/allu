@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.domain;
 import java.time.ZonedDateTime;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.servicecore.domain.mapper.UpdatableProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -27,6 +28,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     return propertyIdentificationNumber;
   }
 
+  @UpdatableProperty
   public void setPropertyIdentificationNumber(String propertyIdentificationNumber) {
     this.propertyIdentificationNumber = propertyIdentificationNumber;
   }
@@ -36,6 +38,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     return additionalInfo;
   }
 
+  @UpdatableProperty
   public void setAdditionalInfo(String additionalInfo) {
     this.additionalInfo = additionalInfo;
   }
@@ -45,6 +48,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     return contractText;
   }
 
+  @UpdatableProperty
   public void setContractText(String contractText) {
     this.contractText = contractText;
   }
@@ -54,6 +58,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     return terminationDate;
   }
 
+  @UpdatableProperty
   public void setTerminationDate(ZonedDateTime terminationDate) {
     this.terminationDate = terminationDate;
   }
@@ -63,6 +68,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     return sectionNumber;
   }
 
+  @UpdatableProperty
   public void setSectionNumber(Integer sectionNumber) {
     this.sectionNumber = sectionNumber;
   }
@@ -72,6 +78,7 @@ public class PlacementContractJson extends ApplicationExtensionJson {
     return rationale;
   }
 
+  @UpdatableProperty
   public void setRationale(String rationale) {
     this.rationale = rationale;
   }
