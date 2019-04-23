@@ -296,46 +296,6 @@ public class LocationDaoTest {
     assertEquals(1, queryResult.stream().filter(fl -> fl.getArea().equals("Kauppatori")).count());
   }
 
-  @Test
-  public void testListFixedLocationAreas() {
-    // Setup: add five sections on three areas, two of them passive
-    int kauppatoriId = queryFactory.insert(locationArea).set(locationArea.name, "Kauppatori")
-        .executeWithKey(locationArea.id);
-    int senaatintoriToriId = queryFactory.insert(locationArea).set(locationArea.name, "Senaatintori")
-        .executeWithKey(locationArea.id);
-    int kaivopuistoId = queryFactory.insert(locationArea).set(locationArea.name, "Kaivopuisto")
-        .executeWithKey(locationArea.id);
-    long insertCount = queryFactory.insert(fixedLocation).set(fixedLocation.areaId, kauppatoriId)
-        .set(fixedLocation.section, "lohko A").set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT)
-        .set(fixedLocation.isActive, true).addBatch().set(fixedLocation.areaId, kauppatoriId)
-        .set(fixedLocation.section, "lohko B").set(fixedLocation.applicationKind, ApplicationKind.BRIDGE_BANNER)
-        .set(fixedLocation.isActive, true).addBatch().set(fixedLocation.areaId, senaatintoriToriId)
-        .set(fixedLocation.applicationKind, ApplicationKind.ART).set(fixedLocation.isActive, true).addBatch()
-        .set(fixedLocation.areaId, kauppatoriId).set(fixedLocation.section, "lohko Q")
-        .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, false).addBatch()
-        .set(fixedLocation.areaId, kaivopuistoId).set(fixedLocation.applicationKind, ApplicationKind.SEASON_SALE)
-        .set(fixedLocation.isActive, false).addBatch().execute();
-    assertEquals(5, insertCount);
-
-    // Test: read them back
-    List<FixedLocationArea> areas = locationDao.getFixedLocationAreas(null);
-    // Should contain all areas
-    assertEquals(3, areas.size());
-
-    // Kauppatori should have two active sections
-    assertEquals(2, areas.stream()
-            .filter(a -> a.getId() == kauppatoriId)
-            .flatMap(area -> area.getSections().stream())
-            .filter(section -> section.isActive())
-            .count());
-
-    // Senaatintori should have one section
-    assertEquals(1, areas.stream()
-            .filter(a -> a.getId() == senaatintoriToriId)
-            .flatMap(area -> area.getSections().stream())
-            .count());
-  }
-
   // Polygon that's mostly in Herttoniemi:
   private static final Polygon2DToken herttoniemi_polygon = polygon(
       ring(c(25502404.097045037895441, 6675352.16425826959312), c(25502772.543876249343157, 6675370.854831204749644),

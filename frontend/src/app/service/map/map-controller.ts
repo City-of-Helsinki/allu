@@ -378,13 +378,13 @@ export class MapController {
 
   private handleDrawingAllowedChanges(): void {
     const drawingAllowed = (drawing: boolean, sections: number[]) => {
-      const noSelectedSections = sections === undefined || sections.length === 0;
+      const noSelectedSections = !sections || sections.length === 0;
       return drawing && noSelectedSections;
     };
 
     combineLatest(
       this.mapStore.drawingAllowed,
-      this.mapStore.selectedSections
+      this.mapStore.fixedLocations
     ).pipe(
       map(([drawing, sections]) => drawingAllowed(drawing, sections)),
       takeUntil(this.destroy),

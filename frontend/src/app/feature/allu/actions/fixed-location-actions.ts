@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {FixedLocationArea} from '@model/common/fixed-location-area';
+import {FixedLocation} from '@model/common/fixed-location';
 
 export enum FixedLocationActionType {
   LoadSuccess = '[FixedLocation] Load city districts success'
@@ -8,7 +8,7 @@ export enum FixedLocationActionType {
 export class LoadSuccess implements Action {
   readonly type = FixedLocationActionType.LoadSuccess;
 
-  constructor(public payload: FixedLocationArea[]) {}
+  constructor(public payload: FixedLocation[]) {}
 }
 
 export type FixedLocationActions =

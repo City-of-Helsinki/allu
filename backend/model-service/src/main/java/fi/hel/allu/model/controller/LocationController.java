@@ -93,18 +93,6 @@ public class LocationController {
   }
 
   /**
-   * Get all fixed location areas
-   *
-   * @param   srid  SRID of geometry (spatial reference system)
-   * @return  List of fixed location areas.
-   */
-
-  @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
-  public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas(@RequestParam(value="srid", required=false) Integer srId) {
-    return new ResponseEntity<>(locationDao.getFixedLocationAreas(srId), HttpStatus.OK);
-  }
-
-  /**
    * Get the list of known city districts.
    *
    * @return city district list

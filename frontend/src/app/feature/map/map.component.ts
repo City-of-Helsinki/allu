@@ -5,7 +5,6 @@ import {Application} from '@model/application/application';
 import {Some} from '@util/option';
 import {findTranslation} from '@util/translations';
 import {pathStyle, styleByApplicationType} from '@service/map/map-draw-styles';
-import {FixedLocationSection} from '@model/common/fixed-location-section';
 import {Location} from '@model/common/location';
 import * as L from 'leaflet';
 import {MapController, ShapeAdded} from '@service/map/map-controller';
@@ -20,9 +19,9 @@ import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromMap from '@feature/map/reducers';
 import {MapFeatureInfo} from '@service/map/map-feature-info';
-import {NumberUtil} from '@util/number.util';
 import {EnumUtil} from '@util/enum.util';
 import {ApplicationType} from '@model/application/type/application-type';
+import {FixedLocation} from '@model/common/fixed-location';
 
 @Component({
   selector: 'map',
@@ -167,7 +166,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private drawFixedLocations(fixedLocations: Array<FixedLocationSection>) {
+  private drawFixedLocations(fixedLocations: FixedLocation[]) {
     this.mapController.clearEdited();
 
     const geometries = fixedLocations.map(fl => fl.geometry);
@@ -225,9 +224,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       filter(app => !!app)
     ).subscribe(app => this.applicationSelected(app));
 
-      this.mapStore.selectedSections.pipe(
+      this.mapStore.fixedLocations.pipe(
         takeUntil(this.destroy),
-        switchMap(ids => this.store.pipe(select(fromRoot.getFixedLocationSectionsByIds(ids)))),
+        switchMap(ids => this.store.pipe(select(fromRoot.getFixedLocationsByIds(ids)))),
       ).subscribe(fxs => this.drawFixedLocations(fxs));
 
     this.mapStore.editedLocation.pipe(takeUntil(this.destroy))

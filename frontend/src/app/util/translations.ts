@@ -1113,6 +1113,7 @@ export const translations = {
     additionalInfo: 'Lisätietoja paikasta',
     fixedArea: 'Alue',
     sections: 'Lohkot',
+    fixedLocations: 'Kiinteät sijainnit',
     area: 'Alueen pinta-ala',
     areaOverride: 'Käsittelijän syöttämä pinta-ala',
     cityDistrict: 'Kaupunginosa',
@@ -1126,7 +1127,6 @@ export const translations = {
     customerStartTime: 'Asiakkaan ilmoittama aloitus',
     customerEndTime: 'Asiakkaan ilmoittama lopetus',
     fixedLocationNotAllowed: 'Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty',
-    noAreaSelected: 'Ei valittua sijaintia',
     geometry: 'Alue',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',

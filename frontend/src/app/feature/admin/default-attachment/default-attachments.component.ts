@@ -54,7 +54,7 @@ export class DefaultAttachmentsComponent implements OnInit {
   areaName(areaId: number): Observable<string> {
     return Some(areaId)
       .map(id => this.store.pipe(
-        select(fromRoot.getFixedLocationAreaById(id)),
+        select(fromRoot.getFixedLocationById(id)),
         map(area => area.name)
       )).orElse(EMPTY);
   }

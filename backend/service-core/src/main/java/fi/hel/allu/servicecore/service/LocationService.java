@@ -25,7 +25,6 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
-import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
 import fi.hel.allu.servicecore.domain.FixedLocationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.LocationMapper;
@@ -111,18 +110,6 @@ public class LocationService {
     CityDistrictInfo cityDistrict = restTemplate.getForObject(applicationProperties.getCityDistrictByIdUrl(),
         CityDistrictInfo.class, id);
     return LocationMapper.mapToJson(cityDistrict);
-  }
-  /**
-   * Retrieve the list of defined fixed locations areas
-   *
-   * @return list of fixed location areas
-   */
-  public List<FixedLocationAreaJson> getFixedLocationAreaList() {
-    ResponseEntity<FixedLocationArea[]> queryResult = restTemplate
-        .getForEntity(applicationProperties.getFixedLocationAreaUrl(), FixedLocationArea[].class);
-    List<FixedLocationAreaJson> resultList = Arrays.stream(queryResult.getBody())
-        .map(fla -> LocationMapper.mapToFixedLocationAreaJson(fla)).collect(Collectors.toList());
-    return resultList;
   }
 
   public boolean isValidGeometry(Geometry geometry) {

@@ -8,7 +8,7 @@ import {Some} from '@util/option';
 import {CodeSetTypeMap} from '@model/codeset/codeset';
 import {User} from '@model/user/user';
 import {Configuration} from '@model/config/configuration';
-import {ArrayUtil} from '@util/array-util';
+import {ApplicationKind} from '@model/application/type/application-kind';
 
 
 export interface State {
@@ -100,23 +100,17 @@ export const {
   selectTotal: getFixedLocationTotal
 } = fromFixedLocations.adapter.getSelectors(getFixedLocationsState);
 
-export const getFixedLocationAreaById = (id: number) => createSelector(
+export const getFixedLocationById = (id: number) => createSelector(
   getFixedLocationEntities,
   (fixedLocations) => fixedLocations[id]
 );
 
-export const getFixedLocationAreaBySectionIds = (sectionIds: number[] = []) => createSelector(
-  getAllFixedLocations,
-  (fixedLocations) => {
-    const matching = fixedLocations.filter(a => a.hasSectionIds(sectionIds));
-    return ArrayUtil.first(matching);
-  }
+export const getFixedLocationsByIds = (ids: number[] = []) => createSelector(
+  getFixedLocationEntities,
+  (fixedLocations) => !!ids ? ids.map(id => fixedLocations[id]).filter(fl => !!fl) : []
 );
 
-export const getFixedLocationSectionsByIds = (sectionIds: number[] = []) => createSelector(
+export const getFixedLocationsByKind = (kind: ApplicationKind) => createSelector(
   getAllFixedLocations,
-  (fixedLocations) => {
-    const sections = fixedLocations.reduce((acc, cur) => acc.concat(cur.sections), []);
-    return sections.filter(section => sectionIds.indexOf(section.id) >= 0);
-  }
+  (fixedLocations) => fixedLocations.filter(fl => fl.applicationKind === kind)
 );

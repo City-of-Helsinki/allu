@@ -7,22 +7,21 @@ import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
 import {StreetAddress} from '@model/common/street-address';
 import {MapUtil} from './map/map.util';
 import {None, Option, Some} from '@util/option';
-import {FixedLocationMapper} from './mapper/fixed-location-mapper';
 import {PostalAddress} from '@model/common/postal-address';
 import {CityDistrict} from '@model/common/city-district';
 import {BackendCityDistrict, CityDistrictMapper} from './mapper/city-district-mapper';
-import {FixedLocationArea} from '@model/common/fixed-location-area';
 import {ErrorHandler} from './error/error-handler.service';
 import {findTranslation} from '@util/translations';
 import {BackendGeocoordinates} from './backend-model/backend-geocoordinates';
-import {BackendFixedLocationArea} from './backend-model/backend-fixed-location-area';
 import {BackendPostalAddress} from './backend-model/backend-postal-address';
 import {HttpStatus} from '@util/http-status';
 import {catchError, map} from 'rxjs/internal/operators';
+import {FixedLocation} from '@model/common/fixed-location';
+import {BackendFixedLocation, FixedLocationMapper} from '@service/mapper/fixed-location-mapper';
 
 const ADDRESS_URL = '/api/address';
 const GEOCODE_URL = 'geocode/helsinki';
-const FIXED_LOCATION_URL = '/api/locations/fixed-location-areas';
+const FIXED_LOCATION_URL = '/api/locations/fixed-location';
 const CITY_DISTRICT_URL = '/api/locations/city-district';
 const SEARCH_URL = '/search';
 
@@ -42,9 +41,9 @@ export class LocationService {
     );
   }
 
-  public getFixedLocations(): Observable<Array<FixedLocationArea>> {
-    return this.http.get<BackendFixedLocationArea[]>(FIXED_LOCATION_URL).pipe(
-      map(json => json.map(ss => FixedLocationMapper.mapBackend(ss))),
+  public getFixedLocations(): Observable<FixedLocation[]> {
+    return this.http.get<BackendFixedLocation[]>(FIXED_LOCATION_URL).pipe(
+      map(response => FixedLocationMapper.mapBackendArray(response)),
       catchError(err => this.errorHandler.handle(err, findTranslation('location.error.fetchFixedLocations')))
     );
   }

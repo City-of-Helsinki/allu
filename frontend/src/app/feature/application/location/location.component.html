@@ -33,33 +33,23 @@
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
-              <ng-container *ngIf="areas.length > 0">
-                <div fxFlex="0 1 calc(50% - 18px)" *ngIf="editedItemCount > 0" class="col m6">
+              <ng-container *ngIf="fixedLocations.length > 0">
+                <div fxFlex="0 1 calc(40% - 18px)" *ngIf="editedItemCount > 0" class="col m6">
                   <div class="input-field-info-text">
                     {{'location.fixedLocationNotAllowed' | translation}}
                   </div>
                 </div>
-                <div fxFlex="0 1 calc(30% - 18px)" *ngIf="editedItemCount === 0">
+                <div fxFlex="0 1 calc(40% - 18px)" *ngIf="editedItemCount === 0">
                   <mat-form-field class="input-full-width">
                     <mat-select class="input-full-width"
-                                formControlName="area"
-                                [placeholder]="'location.fixedArea' | translation">
-                      <mat-option value="" selected>{{'location.noAreaSelected' | translation}}</mat-option>
-                      <mat-option *ngFor="let area of areas" [value]="area.id">{{area.name}}</mat-option>
+                                formControlName="fixedLocations"
+                                multiple
+                                [placeholder]="'location.fixedLocations' | translation">
+                      <mat-option *ngFor="let fixedLocation of fixedLocations" [value]="fixedLocation.id">
+                        {{fixedLocation.name}}
+                      </mat-option>
                     </mat-select>
                   </mat-form-field>
-                </div>
-                <div fxFlex="0 1 calc(30% - 18px)">
-                  <div *ngIf="areaSections.length">
-                    <mat-form-field class="input-full-width">
-                      <mat-select class="input-full-width" multiple
-                                  formControlName="sections"
-                                  [placeholder]="'location.sections' | translation">
-                        <mat-option *ngFor="let section of areaSections" [value]="section.id">{{section.name}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
                 </div>
               </ng-container>
             </div>

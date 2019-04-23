@@ -57,7 +57,13 @@ export class ArrayUtil {
   }
 
   static numberArrayEqual(left: Array<number>, right: Array<number>): boolean {
-    return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;
+    if (left === right) {
+      return true;
+    } else if (!!left || !!right) {
+      return false;
+    } else {
+      return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;
+    }
   }
 
   static createOrReplace<T>(array: Array<T>, item: T, predicate: (item: T) => boolean): Array<T> {

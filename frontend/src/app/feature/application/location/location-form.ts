@@ -1,5 +1,6 @@
-import {Location} from '../../../model/common/location';
-import {Some} from '../../../util/option';
+import {Location} from '@model/common/location';
+import {Some} from '@util/option';
+
 export class LocationForm {
   constructor(
     public id?: number,
@@ -8,7 +9,7 @@ export class LocationForm {
     public startTime?: string,
     public endTime?: string,
     public geometry?: GeoJSON.GeometryCollection,
-    public sections?: Array<number>,
+    public fixedLocations?: Array<number>,
     public areaSize?: number,
     public areaOverride?: number,
     public streetAddress?: string,
@@ -31,7 +32,7 @@ export class LocationForm {
     form.startTime = location.uiStartTime;
     form.endTime = location.uiEndTime;
     form.geometry = location.geometry;
-    form.sections = location.fixedLocationIds;
+    form.fixedLocations = location.fixedLocationIds;
     form.areaSize = location.uiArea;
     form.areaOverride = location.areaOverride;
     Some(location.postalAddress).do(address => {
@@ -56,7 +57,7 @@ export class LocationForm {
     location.uiStartTime = form.startTime;
     location.uiEndTime = form.endTime;
     location.geometry = form.geometry;
-    location.fixedLocationIds = form.sections;
+    location.fixedLocationIds = form.fixedLocations;
     location.area = form.areaSize;
     location.areaOverride = form.areaOverride;
     if (form.streetAddress) {

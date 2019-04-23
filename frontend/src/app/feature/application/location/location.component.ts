@@ -7,7 +7,7 @@ import {MapUtil} from '@service/map/map.util';
 import {MapStore} from '@service/map/map-store';
 import {Some} from '@util/option';
 import {ApplicationType, hasSingleKind} from '@model/application/type/application-type';
-import {ApplicationKind, drawingAllowedForKind} from '@model/application/type/application-kind';
+import {drawingAllowedForKind} from '@model/application/type/application-kind';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationExtension} from '@model/application/type/application-extension';
 import {CableReport} from '@model/application/cable-report/cable-report';
@@ -18,12 +18,9 @@ import {Note} from '@model/application/note/note';
 import {CityDistrict} from '@model/common/city-district';
 import {TrafficArrangement} from '@model/application/traffic-arrangement/traffic-arrangement';
 import {PlacementContract} from '@model/application/placement-contract/placement-contract';
-import {ArrayUtil} from '@util/array-util';
 import {NotificationService} from '@feature/notification/notification.service';
 import {findTranslation, findTranslationWithDefault} from '@util/translations';
 import {AreaRental} from '@model/application/area-rental/area-rental';
-import {FixedLocationArea} from '@model/common/fixed-location-area';
-import {FixedLocationSection} from '@model/common/fixed-location-section';
 import {NumberUtil} from '@util/number.util';
 import {LocationForm} from './location-form';
 import {LocationState} from '@service/application/location-state';
@@ -32,7 +29,7 @@ import {defaultFilter, MapSearchFilter} from '@service/map-search-filter';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import {select, Store} from '@ngrx/store';
-import {distinctUntilChanged, filter, map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
+import {filter, map, switchMap, takeUntil, takeWhile} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
@@ -48,10 +45,8 @@ import {TypeComponent} from '@feature/application/type/type.component';
 import {SearchbarComponent} from '@feature/searchbar/searchbar.component';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 import {TimePeriod} from '@feature/application/info/time-period';
-import {
-  getPaymentTariffs,
-  needsPaymentTariff,
-} from '@feature/common/payment-tariff';
+import {getPaymentTariffs, needsPaymentTariff} from '@feature/common/payment-tariff';
+import {FixedLocation, fixedLocationInfo, groupByArea} from '@model/common/fixed-location';
 
 @Component({
   selector: 'type',
@@ -63,12 +58,11 @@ import {
 })
 export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   locationForm: FormGroup;
-  areaCtrl: FormControl;
-  sectionsCtrl: FormControl;
+  fixedLocationsCtrl: FormControl;
+  fixedLocationInfos: string[];
 
   location: Location;
-  areas = new Array<FixedLocationArea>();
-  areaSections = new Array<FixedLocationSection>();
+  fixedLocations: FixedLocation[] = [];
   editedItemCount = 0;
   application: Application;
   districts: Observable<Array<CityDistrict>>;
@@ -102,8 +96,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private currentUser: CurrentUser,
     private configurationHelper: ConfigurationHelperService) {
 
-    this.areaCtrl = this.fb.control(undefined);
-    this.sectionsCtrl = this.fb.control([]);
+    this.fixedLocationsCtrl = this.fb.control([]);
 
     this.locationForm = this.fb.group({
       id: [undefined],
@@ -112,8 +105,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       geometry: [undefined],
-      area: this.areaCtrl,
-      sections: this.sectionsCtrl,
+      fixedLocations: this.fixedLocationsCtrl,
       areaSize: [{value: undefined, disabled: true}],
       areaOverride: [undefined],
       streetAddress: [''],
@@ -167,20 +159,16 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.select(fromApplication.getKindsWithSpecifiers).pipe(takeUntil(this.destroy))
       .subscribe(kindsWithSpecifiers => this.onKindSpecifierChange(kindsWithSpecifiers));
 
-    this.areaCtrl.valueChanges.pipe(takeUntil(this.destroy))
-      .subscribe(id => this.onAreaChange(id));
-
-    this.sectionsCtrl.valueChanges.pipe(
+    this.fixedLocationsCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
-      distinctUntilChanged(ArrayUtil.numberArrayEqual)
-    ).subscribe(ids => this.onSectionsChange(ids));
+    ).subscribe(ids => this.onFixedLocationChange(ids));
 
     this.searchFilter$.pipe(takeUntil(this.destroy)).subscribe(sf => this.searchUpdated(sf));
 
-    this.loadAreas().pipe(
+    this.loadFixedLocations().pipe(
       takeUntil(this.destroy)
-    ).subscribe(areas => {
-      this.setSelectableAreas(areas);
+    ).subscribe(fixedLocations => {
+      this.fixedLocations = fixedLocations;
       this.setInitialSelections();
     });
 
@@ -239,9 +227,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onKindSpecifierChange(kindsWithSpecifiers: KindsWithSpecifiers) {
     this.application.kindsWithSpecifiers = kindsWithSpecifiers;
-    this.loadAreas().pipe(
+    this.loadFixedLocations().pipe(
       takeUntil(this.destroy)
-    ).subscribe(areas => this.setSelectableAreas(areas));
+    ).subscribe(fixedLocations => this.fixedLocations = fixedLocations);
     this.notifyEditingAllowed();
     this.resetFixedLocations();
   }
@@ -317,9 +305,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   editedItemCountChanged(editedItemCount: number) {
     this.editedItemCount = editedItemCount;
     if (editedItemCount > 0) {
-      this.areaCtrl.disable({emitEvent: false});
+      this.fixedLocationsCtrl.disable({emitEvent: false});
     } else {
-      this.areaCtrl.enable({emitEvent: false});
+      this.fixedLocationsCtrl.enable({emitEvent: false});
     }
   }
 
@@ -375,15 +363,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private loadAreas(): Observable<FixedLocationArea[]> {
+  private loadFixedLocations(): Observable<FixedLocation[]> {
     if (hasSingleKind(this.application.type)) {
       return this.store.pipe(
-        select(fromRoot.getAllFixedLocations),
+        select(fromRoot.getFixedLocationsByKind(this.application.kind)),
         takeUntil(this.destroy),
-        map(fixedLocations => fixedLocations
-          .filter(f => f.hasActiveSectionsForKind(this.application.kind))
-          .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name))
-        )
+        map(fixedLocations => fixedLocations.filter(fl => fl.active))
       );
     } else {
       return EMPTY;
@@ -392,19 +377,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private setInitialSelections() {
     Some(this.application.firstLocation)
-      .map(location => this.areas.filter(area => area.hasSectionIds(location.fixedLocationIds)))
-      .filter(areas => areas.length > 0)
-      .map(areas => areas[0])
-      .do(area => {
-        this.locationForm.patchValue({area: area.id});
-        this.areaSections = this.sortedActiveSectionsFrom(area);
-      });
-
-    Some(this.application.firstLocation)
       .map(location => location.fixedLocationIds)
       .filter(ids => ids.length > 0)
       .do(ids => {
-        this.sectionsCtrl.patchValue(ids);
+        this.fixedLocationsCtrl.patchValue(ids);
       });
   }
 
@@ -421,23 +397,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private onAreaChange(id: number): void {
-    if (NumberUtil.isDefined(id) && hasSingleKind(this.application.type)) {
-      const area = this.areas.find(a => a.id === id);
-      const kind = this.application.kind;
-
-      this.areaSections = this.sortedActiveSectionsFrom(area);
-
-      area.singleDefaultSectionForKind(kind)
-        .do(defaultSection => this.sectionsCtrl.patchValue([defaultSection.id]));
-    } else {
-      this.areaSections = [];
-      this.locationForm.patchValue({sections: []});
-    }
-  }
-
-  private onSectionsChange(ids: Array<number>) {
-    this.mapStore.selectedSectionsChange(ids);
+  private onFixedLocationChange(ids: number[]) {
+    ids = ids || [];
+    this.mapStore.selectedFixedLocationsChange(ids);
+    const selected = this.fixedLocations.filter(fl => ids.indexOf(fl.id) >= 0);
+    const grouped = groupByArea(selected);
+    this.fixedLocationInfos = Object.keys(grouped).map(key => fixedLocationInfo(key, grouped[key]));
   }
 
   private initForm(): void {
@@ -498,26 +463,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.locationSearchFilterChange({startDate: location.startTime, endDate: location.endTime});
   }
 
-  private sortedActiveSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {
-    if (hasSingleKind(this.application.type)) {
-      const kind = this.application.kind;
-      return area.namedActiveSectionsForKind(kind)
-        .sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
-    } else {
-      return [];
-    }
-  }
-
   private resetFixedLocations(): void {
-    if (this.areaCtrl.value) {
-      this.areaCtrl.reset(undefined);
-      this.sectionsCtrl.reset([]);
-    }
-  }
-
-  private setSelectableAreas(areas: FixedLocationArea[]): void {
-    this.areas = areas;
-    this.areaSections = [];
+    this.fixedLocationsCtrl.reset([]);
   }
 
   private initDistribution(application: Application): void {

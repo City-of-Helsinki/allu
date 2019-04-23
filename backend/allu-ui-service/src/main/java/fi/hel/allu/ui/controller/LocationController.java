@@ -1,7 +1,6 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
-import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
 import fi.hel.allu.servicecore.domain.FixedLocationJson;
 import fi.hel.allu.servicecore.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +30,9 @@ public class LocationController {
     return new ResponseEntity<>(locationService.getFixedLocationList(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<FixedLocationAreaJson>> getFixedLocationAreaList() {
-    return new ResponseEntity<>(locationService.getFixedLocationAreaList(), HttpStatus.OK);
-  }
-
   @RequestMapping(value = "/city-district", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<CityDistrictInfoJson>> getCityDistrictList() {
     return new ResponseEntity<>(locationService.getCityDistrictList(), HttpStatus.OK);
   }
-
 }

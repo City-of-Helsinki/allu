@@ -57,9 +57,9 @@ export class AttachmentHub {
   /**
    * Fetches default attachment infos which are for given application type and area
    */
-  defaultAttachmentInfosByArea = (applicationType: ApplicationType, areaId: number) =>
+  defaultAttachmentInfosByArea = (applicationType: ApplicationType, fixedLocationIds: number[]) =>
     this.defaultAttachmentInfosBy(applicationType).pipe(
-      map(attachments => attachments.filter((a: DefaultAttachmentInfo) => a.fixedLocationId === areaId))
+      map(attachments => attachments.filter((a: DefaultAttachmentInfo) => fixedLocationIds.indexOf(a.fixedLocationId) >= 0))
     )
 
   /**

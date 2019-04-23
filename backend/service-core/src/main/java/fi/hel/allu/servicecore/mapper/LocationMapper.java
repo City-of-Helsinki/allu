@@ -84,27 +84,9 @@ public class LocationMapper {
     fixedLocationJson.setSection(fixedLocation.getSection());
     fixedLocationJson.setApplicationKind(fixedLocation.getApplicationKind());
     fixedLocationJson.setGeometry(fixedLocation.getGeometry());
+    fixedLocationJson.setActive(fixedLocation.isActive());
 
     return fixedLocationJson;
-  }
-
-  public static FixedLocationAreaJson mapToFixedLocationAreaJson(FixedLocationArea fixedLocationArea) {
-    FixedLocationAreaJson fixedLocationAreaJson = new FixedLocationAreaJson();
-    fixedLocationAreaJson.setId(fixedLocationArea.getId());
-    fixedLocationAreaJson.setName(fixedLocationArea.getName());
-    fixedLocationAreaJson.setSections(fixedLocationArea.getSections().stream()
-        .map(fls -> mapToFixedLocationSectionJson(fls)).collect(Collectors.toList()));
-    return fixedLocationAreaJson;
-  }
-
-  public static FixedLocationSectionJson mapToFixedLocationSectionJson(FixedLocationSection fixedLocationSection) {
-    FixedLocationSectionJson fixedLocationSectionJson = new FixedLocationSectionJson();
-    fixedLocationSectionJson.setId(fixedLocationSection.getId());
-    fixedLocationSectionJson.setName(fixedLocationSection.getSection());
-    fixedLocationSectionJson.setApplicationKind(fixedLocationSection.getApplicationKind());
-    fixedLocationSectionJson.setGeometry(fixedLocationSection.getGeometry());
-    fixedLocationSectionJson.setActive(fixedLocationSection.isActive());
-    return fixedLocationSectionJson;
   }
 
   public static CityDistrictInfoJson mapToJson(CityDistrictInfo cityDistrictInfo) {

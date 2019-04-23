@@ -506,13 +506,6 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return url for fetching fixed location areas for given application type.
-   */
-  public String getFixedLocationAreaUrl() {
-    return getModelServiceUrl("/locations/fixed-location-areas");
-  }
-
-  /**
    * @return url for fetching the list of city districts.
    */
   public String getCityDistrictsUrl() {

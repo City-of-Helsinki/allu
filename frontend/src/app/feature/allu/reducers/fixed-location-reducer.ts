@@ -1,13 +1,18 @@
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {FixedLocationArea} from '@model/common/fixed-location-area';
 import {FixedLocationActions, FixedLocationActionType} from '@feature/allu/actions/fixed-location-actions';
+import {FixedLocation} from '@model/common/fixed-location';
 
-export interface State extends EntityState<FixedLocationArea> {
+export function sortFixedLocations(left: FixedLocation, right: FixedLocation) {
+  return left.name.localeCompare(right.name);
+}
+
+export interface State extends EntityState<FixedLocation> {
   selectedId: number;
 }
 
-export const adapter: EntityAdapter<FixedLocationArea> = createEntityAdapter<FixedLocationArea>({
-  selectId: (fixedLocationArea: FixedLocationArea) => fixedLocationArea.id
+export const adapter: EntityAdapter<FixedLocation> = createEntityAdapter<FixedLocation>({
+  selectId: (fixedLocation: FixedLocation) => fixedLocation.id,
+  sortComparer: sortFixedLocations
 });
 
 const initialState: State = adapter.getInitialState({

@@ -282,7 +282,7 @@ public class LocationDao {
 
     List<FixedLocation> fxs = queryFactory
         .select(bean(FixedLocation.class, fixedLocation.id, locationArea.name.as("area"), fixedLocation.section,
-            fixedLocation.applicationKind, fixedLocation.geometry))
+            fixedLocation.applicationKind, fixedLocation.geometry, fixedLocation.isActive.as("active")))
         .from(fixedLocation).innerJoin(locationArea).on(fixedLocation.areaId.eq(locationArea.id))
         .where(locationPredicate)
         .fetch();
@@ -304,29 +304,6 @@ public class LocationDao {
 
   private BooleanExpression activeFixedLocation() {
     return fixedLocation.isActive.eq(true);
-  }
-
-  /**
-   * Get all defined fixed location areas (even inactive) as a list
-   *
-   * @return list of FixedLocationAreas
-   */
-  @Transactional(readOnly = true)
-  public List<FixedLocationArea> getFixedLocationAreas(Integer srId) {
-    List<FixedLocationArea> areas = queryFactory.from(locationArea, fixedLocation)
-        .where(fixedLocation.areaId.eq(locationArea.id))
-        .transform(groupBy(locationArea.id).as(
-            Projections.constructor(FixedLocationArea.class, locationArea.id, locationArea.name,
-                list(bean(FixedLocationSection.class, fixedLocation.all())))))
-        .entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toList());
-
-    // Force all section geometries to be geometry collections:
-    areas.forEach(fla -> fla.getSections().forEach(fls -> fls.setGeometry(Optional.ofNullable(fls.getGeometry())
-                .map(geometry -> toGeometryCollectionIfNeeded(geometry))
-        .orElse(GeometryCollection.createEmpty()))));
-    areas.forEach(a -> transformCoordinates(a, srId));
-
-    return areas;
   }
 
   @Transactional(readOnly = true)
@@ -549,10 +526,6 @@ public class LocationDao {
 
   private void transformCoordinates(Location locationData, Integer targetSrId) {
     locationData.setGeometry(coordinateTransformation.transformCoordinates(locationData.getGeometry(), targetSrId));
-  }
-
-  private void transformCoordinates(FixedLocationArea area, Integer targetSrId) {
-    area.getSections().forEach(s -> s.setGeometry(coordinateTransformation.transformCoordinates(s.getGeometry(), targetSrId)));
   }
 
   private void transformCoordinates(List<FixedLocation> fixedLocations, Integer targetSrId) {

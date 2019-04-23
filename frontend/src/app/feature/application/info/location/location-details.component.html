@@ -39,21 +39,13 @@
         </ng-container>
       </div>
     </div>
-    <div fxLayout="row" fxLayoutGap="18px" *ngIf="area">
-      <div fxFlex="0 1 calc(20% - 18px)">
+    <div fxLayout="row" fxLayoutGap="18px" *ngIf="fixedLocationInfo$ | async as fixedLocationInfo">
+      <div fxFlex="0 1 calc(40% - 18px)">
         <mat-form-field class="input-full-width">
           <input matInput type="text"
-                 [ngModel]="area"
+                 [ngModel]="fixedLocationInfo"
                  [disabled]="readonly"
-                 [placeholder]="'location.fixedArea' | translation"/>
-        </mat-form-field>
-      </div>
-      <div fxFlex="0 1 calc(20% - 18px)">
-        <mat-form-field class="input-full-width">
-          <input matInput type="text"
-                 [ngModel]="sections"
-                 [disabled]="readonly"
-                 [placeholder]="'location.sections' | translation"/>
+                 [placeholder]="'location.fixedLocations' | translation"/>
         </mat-form-field>
       </div>
     </div>

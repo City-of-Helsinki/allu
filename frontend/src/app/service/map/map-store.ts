@@ -29,7 +29,7 @@ export interface MapState {
   editedLocation: Location;
   locationsToDraw: Array<Location>;
   shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
-  selectedSections: Array<number>;
+  fixedLocations: Array<number>;
   drawingAllowed: boolean;
   invalidGeometry: boolean;
   loading: boolean;
@@ -44,7 +44,7 @@ const initialState: MapState = {
   editedLocation: undefined,
   locationsToDraw: [],
   shape: undefined,
-  selectedSections: [],
+  fixedLocations: [],
   drawingAllowed: true,
   invalidGeometry: false,
   loading: false
@@ -124,9 +124,9 @@ export class MapStore {
     );
   }
 
-  get selectedSections(): Observable<number[]> {
+  get fixedLocations(): Observable<number[]> {
     return this.state$.pipe(
-      map(state => state.selectedSections),
+      map(state => state.fixedLocations),
       distinctUntilChanged(ArrayUtil.numberArrayEqual)
     );
   }
@@ -200,8 +200,8 @@ export class MapStore {
     this.state$.next({...this.state$.getValue(), shape});
   }
 
-  selectedSectionsChange(sectionIds: Array<number>): void {
-    this.state$.next({...this.state$.getValue(), selectedSections: sectionIds});
+  selectedFixedLocationsChange(fixedLocationIds: number[]): void {
+    this.state$.next({...this.state$.getValue(), fixedLocations: fixedLocationIds});
   }
 
   drawingAllowedChange(allowed: boolean): void {
