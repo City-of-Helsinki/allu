@@ -1,6 +1,6 @@
 <div class="action-row">
   <ng-container *ngIf="showProposal">
-    <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+    <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']; types:[type]">
       <div class="action-item">
         <button mat-raised-button type="button" color="primary"
                 [disabled]="!isValidForDecision"
@@ -11,7 +11,7 @@
     </ng-container>
   </ng-container>
   <ng-container *ngIf="skipProposal">
-    <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
+    <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
       <div class="action-item">
         <button mat-raised-button type="button" color="primary"
                 [disabled]="!isValidForDecision"
@@ -23,7 +23,7 @@
   </ng-container>
   <ng-container *ngIf="showDecision">
     <ng-container *ngIf="application.type === 'CABLE_REPORT'">
-      <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
+      <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
         <div class="action-item">
           <button mat-raised-button type="button" color="primary" (click)="decision()">
             {{'decision.type.DECISION.confirmText' | translation | uppercase}}
@@ -32,7 +32,7 @@
       </ng-container>
     </ng-container>
     <ng-container *ngIf="application.type !== 'CABLE_REPORT'">
-      <ng-container *availableTo="['ROLE_DECISION']">
+      <ng-container *availableTo="['ROLE_DECISION']; types:[type]">
         <div class="action-item">
           <button mat-raised-button type="button" color="primary" (click)="decision()">
             {{['decision.type', application.targetState, 'confirmText'] | translation | uppercase }}
@@ -52,7 +52,7 @@
     </ng-container>
   </ng-container>
   <ng-container *ngIf="showResend">
-    <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
+    <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
       <div class="action-item">
         <button mat-raised-button type="button" color="primary"
                 (click)="resendDecision()">

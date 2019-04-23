@@ -61,6 +61,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showInformationRequest = false;
   showActions = true;
   applicationId: number;
+  type: ApplicationType;
 
   private applicationSub: Subscription;
 
@@ -88,6 +89,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showActions = (status !== ApplicationStatus.PENDING_CLIENT) && (status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL);
       this.showInformationRequest = ApplicationUtil.validForInformationRequest(app);
       this.applicationId = app.id;
+      this.type = app.type;
     });
   }
 

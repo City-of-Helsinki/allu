@@ -45,6 +45,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   showToOperationalCondition = false;
   showResend = false;
   isValidForDecision = false;
+  type: ApplicationType;
 
   constructor(private applicationStore: ApplicationStore,
               private store: Store<fromApplication.State>,
@@ -67,6 +68,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
     this.showToOperationalCondition = this.approvedOperationalCondition && this.application.targetState === ApplicationStatus.DECISION;
     this.isValidForDecision = validForDecision(this.application);
+    this.type = this.application.type;
   }
 
   public decisionProposal(proposalType: string): void {

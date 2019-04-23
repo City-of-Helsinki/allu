@@ -29,7 +29,7 @@
         </button>
         <ng-container *ngIf="canBeEdited">
           <button
-            *availableTo="MODIFY_ROLES"
+            *availableTo="MODIFY_ROLES; types:[application.type]"
             mat-raised-button
             type="button"
             color="primary"

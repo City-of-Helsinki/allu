@@ -9,12 +9,12 @@
   <ng-template #normalActions>
     <ng-container *ngIf="showActions">
       <div class="bottom-bar-item">
-        <ng-container *availableTo="MODIFY_ROLES">
+        <ng-container *availableTo="MODIFY_ROLES; types:[type]">
           <button *ngIf="showReplace" mat-raised-button type="button" color="primary" (click)="replace()">
             {{'application.button.replace' | translation | uppercase}}
           </button>
         </ng-container>
-        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']; types:[type]">
           <button *ngIf="showEdit" mat-raised-button type="button" color="primary"
                   [routerLink]="['/applications', applicationId, 'edit']">
             {{'common.button.edit' | translation | uppercase}}
@@ -41,7 +41,7 @@
           </button>
         </ng-container>
         <ng-container *ngIf="readonly">
-          <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
+          <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
             <button *ngIf="showCancel" mat-raised-button type="button" color="primary" (click)="cancel()">
               {{'application.button.cancel' | translation | uppercase}}
             </button>
