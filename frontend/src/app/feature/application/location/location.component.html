@@ -45,6 +45,9 @@
                                 formControlName="fixedLocations"
                                 multiple
                                 [placeholder]="'location.fixedLocations' | translation">
+                      <mat-select-trigger>
+                        <partial-list-display [items]="fixedLocationInfos" [show]="2"></partial-list-display>
+                      </mat-select-trigger>
                       <mat-option *ngFor="let fixedLocation of fixedLocations" [value]="fixedLocation.id">
                         {{fixedLocation.name}}
                       </mat-option>

@@ -1,0 +1,8 @@
+<div *ngIf="displayedContent$ | async as content" class="flex-container partial-display-container">
+  <div class="partial-display-content">
+    {{content.items | commaSeparated}}
+  </div>
+  <div *ngIf="content.restCount > 0" class="partial-display-rest text-hint">
+    (+{{content.restCount}} {{'common.list.more' | translation}})
+  </div>
+</div>

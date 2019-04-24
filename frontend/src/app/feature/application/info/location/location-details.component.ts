@@ -36,7 +36,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   availableLayerIds$: Observable<string[] | number[]>;
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
-  fixedLocationInfo$: Observable<string>;
+  fixedLocationInfos$: Observable<string[]>;
 
   private _application: Application;
 
@@ -53,11 +53,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     this.locationState.initLocations(this._application.locations);
     this.multipleLocations = this._application.type === ApplicationType[ApplicationType.AREA_RENTAL];
 
-    this.fixedLocationInfo$ = this.store.pipe(
+    this.fixedLocationInfos$ = this.store.pipe(
       select(fromRoot.getFixedLocationsByIds(this.location.fixedLocationIds)),
       map(fls => groupByArea(fls)),
-      map(grouped => Object.keys(grouped).map(key => fixedLocationInfo(key, grouped[key]))),
-      map(info => info.join(', '))
+      map(grouped => Object.keys(grouped).map(key => fixedLocationInfo(key, grouped[key])))
     );
 
     this.mapStore.editedLocation.subscribe(loc => this.editLocation(loc));

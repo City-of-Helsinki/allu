@@ -39,6 +39,7 @@ import {AlluCardComponent} from './card/allu-card.component';
 import {KeysPipe} from '@app/pipe/keys-pipe';
 import {CentsToEurosPipe} from '@app/pipe/cents-to-euros.pipe';
 import {CountryNamePipe} from '@app/pipe/country-name-pipe';
+import {PartialListDisplayComponent} from '@feature/common/partial-list-display/partial-list-display.component';
 
 @NgModule({
   imports: [
@@ -62,7 +63,8 @@ import {CountryNamePipe} from '@app/pipe/country-name-pipe';
     InputWarningDirective,
     AvailableToDirective,
     BottomBarComponent,
-    AlluCardComponent
+    AlluCardComponent,
+    PartialListDisplayComponent
   ],
   providers: [],
   exports: [
@@ -103,7 +105,8 @@ import {CountryNamePipe} from '@app/pipe/country-name-pipe';
     AlluCardComponent,
     KeysPipe,
     CentsToEurosPipe,
-    CountryNamePipe
+    CountryNamePipe,
+    PartialListDisplayComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

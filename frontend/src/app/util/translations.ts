@@ -1204,7 +1204,10 @@ export const translations = {
       of: '/'
     },
     fromHere: 'tästä',
-    totalPrice: 'Kokonaissumma'
+    totalPrice: 'Kokonaissumma',
+    list: {
+      more: 'lisää'
+    }
   },
   map: {
     zoomIn: 'Lähennä',

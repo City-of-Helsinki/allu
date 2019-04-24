@@ -1,0 +1,14 @@
+.partial-display-container {
+  align-items: center;
+}
+
+.partial-display-content {
+  flex: 0 1 auto;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+.partial-display-rest {
+  padding: 0 2px;
+  flex: 1 0 auto;
+}
