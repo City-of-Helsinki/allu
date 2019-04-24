@@ -3,6 +3,7 @@ import * as fromCodeSets from './code-set-reducer';
 import * as fromConfigurations from './configuration-reducer';
 import * as fromUsers from './user-reducer';
 import * as fromFixedLocations from './fixed-location-reducer';
+import * as fromFixedLocationAreas from './fixed-location-area-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {Some} from '@util/option';
 import {CodeSetTypeMap} from '@model/codeset/codeset';
@@ -17,6 +18,7 @@ export interface State {
   configurations: fromConfigurations.State;
   users: fromUsers.State;
   fixedLocations: fromFixedLocations.State;
+  fixedLocationAreas: fromFixedLocationAreas.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
@@ -24,7 +26,8 @@ export const reducers: ActionReducerMap<State> = {
   codeSets: fromCodeSets.reducer,
   configurations: fromConfigurations.reducer,
   users: fromUsers.reducer,
-  fixedLocations: fromFixedLocations.reducer
+  fixedLocations: fromFixedLocations.reducer,
+  fixedLocationAreas: fromFixedLocationAreas.reducer
 };
 
 export const getCityDistrictsState = createFeatureSelector<fromCityDistricts.State>('cityDistricts');
@@ -114,3 +117,12 @@ export const getFixedLocationsByKind = (kind: ApplicationKind) => createSelector
   getAllFixedLocations,
   (fixedLocations) => fixedLocations.filter(fl => fl.applicationKind === kind)
 );
+
+export const getFixedLocationAreaState = createFeatureSelector<fromFixedLocationAreas.State>('fixedLocationAreas');
+
+export const {
+  selectIds: getFixedLocationAreaIds,
+  selectEntities: getFixedLocationAreaEntities,
+  selectAll: getAllFixedLocationAreas,
+  selectTotal: getFixedLocationAreaTotal
+} = fromFixedLocationAreas.adapter.getSelectors(getFixedLocationAreaState);

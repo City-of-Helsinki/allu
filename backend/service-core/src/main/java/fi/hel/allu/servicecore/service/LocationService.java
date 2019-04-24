@@ -74,6 +74,12 @@ public class LocationService {
     return LocationMapper.mapToFixedLocationJson(fixedLocation);
   }
 
+  public List<FixedLocationArea> getFixedLocationAreas() {
+    ResponseEntity<FixedLocationArea[]> queryResult = restTemplate.getForEntity(
+            applicationProperties.getFixedLocationAreasUrl(), FixedLocationArea[].class);
+    return Arrays.asList(queryResult.getBody());
+  }
+
   public List<Location> getLocationsByApplication(Integer applicationId) {
     ResponseEntity<Location[]> queryResult = restTemplate
         .getForEntity(applicationProperties.getLocationsByApplicationIdUrl(), Location[].class, applicationId);

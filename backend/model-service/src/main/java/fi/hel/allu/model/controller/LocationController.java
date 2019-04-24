@@ -92,6 +92,11 @@ public class LocationController {
     return ResponseEntity.ok(locationDao.findFixedLocation(id, srId));
   }
 
+  @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
+  public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas() {
+    return ResponseEntity.ok(locationDao.getFixedLocationAreas());
+  }
+
   /**
    * Get the list of known city districts.
    *

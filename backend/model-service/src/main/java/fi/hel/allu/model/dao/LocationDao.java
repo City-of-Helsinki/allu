@@ -69,6 +69,7 @@ public class LocationDao {
   final QBean<Location> locationBean = bean(Location.class, location.all());
   final QBean<PostalAddress> postalAddressBean = bean(PostalAddress.class, postalAddress.all());
   final QBean<CustomerLocationValidity> customerLocationValidityBean = bean(CustomerLocationValidity.class, customerLocationValidity.all());
+  final QBean<FixedLocationArea> locationAreaBean = bean(FixedLocationArea.class, locationArea.all());
 
   @Transactional(readOnly = true)
   public Optional<Location> findById(int id) {
@@ -318,6 +319,14 @@ public class LocationDao {
         queryFactory.select(bean(CityDistrict.class, QCityDistrict.cityDistrict.all()))
         .from(QCityDistrict.cityDistrict).where(cityDistrict.id.eq(id)).fetchOne()
     );
+  }
+
+  @Transactional(readOnly = true)
+  public List<FixedLocationArea> getFixedLocationAreas() {
+    return queryFactory
+            .select(locationAreaBean)
+            .from(locationArea)
+            .fetch();
   }
 
   private void setGeometry(int locationId, Geometry geometry) {

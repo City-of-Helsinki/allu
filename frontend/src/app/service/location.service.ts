@@ -18,10 +18,12 @@ import {HttpStatus} from '@util/http-status';
 import {catchError, map} from 'rxjs/internal/operators';
 import {FixedLocation} from '@model/common/fixed-location';
 import {BackendFixedLocation, FixedLocationMapper} from '@service/mapper/fixed-location-mapper';
+import {FixedLocationArea} from '@model/common/fixed-location-area';
 
 const ADDRESS_URL = '/api/address';
 const GEOCODE_URL = 'geocode/helsinki';
 const FIXED_LOCATION_URL = '/api/locations/fixed-location';
+const FIXED_LOCATION_AREA_URL = '/api/locations/fixed-location-areas';
 const CITY_DISTRICT_URL = '/api/locations/city-district';
 const SEARCH_URL = '/search';
 
@@ -45,6 +47,12 @@ export class LocationService {
     return this.http.get<BackendFixedLocation[]>(FIXED_LOCATION_URL).pipe(
       map(response => FixedLocationMapper.mapBackendArray(response)),
       catchError(err => this.errorHandler.handle(err, findTranslation('location.error.fetchFixedLocations')))
+    );
+  }
+
+  public getFixedLocationAreas(): Observable<FixedLocationArea[]> {
+    return this.http.get<FixedLocationArea[]>(FIXED_LOCATION_AREA_URL).pipe(
+      catchError(err => this.errorHandler.handle(err, findTranslation('location.error.fetchFixedLocationAreas')))
     );
   }
 

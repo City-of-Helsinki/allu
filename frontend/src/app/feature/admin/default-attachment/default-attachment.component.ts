@@ -13,7 +13,7 @@ import {select, Store} from '@ngrx/store';
 import * as fromRoot from '../../allu/reducers';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
 import {NotificationService} from '../../notification/notification.service';
-import {FixedLocation} from '@model/common/fixed-location';
+import {FixedLocationArea} from '@model/common/fixed-location-area';
 
 @Component({
   selector: 'default-attachment',
@@ -28,7 +28,7 @@ export class DefaultAttachmentComponent implements OnInit {
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   hasFileOverDropzone = false;
   attachmentType: string;
-  areas: Observable<FixedLocation[]>;
+  areas: Observable<FixedLocationArea[]>;
 
   file: Blob;
 
@@ -54,11 +54,7 @@ export class DefaultAttachmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
-
-    this.areas = this.store.pipe(
-      select(fromRoot.getAllFixedLocations),
-      map(areas => areas.sort(ArrayUtil.naturalSort((fl: FixedLocation) => fl.name)))
-    );
+    this.areas = this.store.pipe(select(fromRoot.getAllFixedLocationAreas));
 
     this.route.params.pipe(
       map(params => params['id']),

@@ -505,6 +505,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/fixed-location/{id}") ;
   }
 
+  public String getFixedLocationAreasUrl() {
+    return getModelServiceUrl("/locations/fixed-location-areas");
+  }
+
   /**
    * @return url for fetching the list of city districts.
    */

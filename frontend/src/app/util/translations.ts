@@ -1130,6 +1130,7 @@ export const translations = {
     geometry: 'Alue',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
+      fetchFixedLocationAreas: 'Vakiosijaintien hakeminen epäonnistui',
       fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',
       addressSearch: 'Osoitehaku epäonnistui'
     },
