@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  padding: 18px;
+}
+
+:host ::ng-deep {
+  .mat-list-base .mat-list-item {
+    font-size: 14px;
+    height: 38px;
+  }
+}

@@ -6,19 +6,22 @@ import {Store} from '@ngrx/store';
 import {Application} from '@model/application/application';
 import {InformationRequestFieldKey, LocationKeys} from '@model/information-request/information-request-field-key';
 import {Observable, Subject} from 'rxjs/index';
-import {distinctUntilChanged, map} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, skipUntil} from 'rxjs/internal/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
 import {InformationRequestResultService} from '@feature/information-request/acceptance/result/information-request-result.service';
 import {ApplicationStore} from '@service/application/application-store';
-import {applicationCanBeEdited, ApplicationStatus, isBefore, isBetween} from '@model/application/application-status';
+import {ApplicationStatus, isBetween} from '@model/application/application-status';
 import {ArrayUtil} from '@util/array-util';
 import {ApplicationType} from '@model/application/type/application-type';
+import {InformationRequest} from '@model/information-request/information-request';
+import {Some} from '@util/option';
+import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
 
 export interface InformationAcceptanceData {
   readonly?: boolean;
-  informationRequestId?: number;
+  informationRequest?: InformationRequest;
   oldInfo: Application;
   newInfo: Application;
   updatedFields: InformationRequestFieldKey[];
@@ -33,7 +36,8 @@ export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcc
 @Component({
   selector: 'information-acceptance-modal',
   templateUrl: './information-acceptance-modal.component.html',
-  styleUrls: ['./information-acceptance-modal.component.scss']
+  styleUrls: ['./information-acceptance-modal.component.scss'],
+  animations: [shrinkFadeInOut]
 })
 export class InformationAcceptanceModalComponent implements OnInit, AfterViewInit {
   readonly: boolean;
@@ -45,6 +49,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
   hasLocationChanges: boolean;
   applicationTypeBillable: boolean;
+  showRequest = true;
 
   private childrenLoaded$ = new Subject<boolean>();
 
@@ -60,6 +65,7 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     // Need to wait until viewChildren are loaded so they wont emit
     // form changes before component tree has been stabilized
     this.submitDisabled = this.form.statusChanges.pipe(
+      skipUntil(this.childrenLoaded$),
       map(status => status !== 'VALID'),
       distinctUntilChanged()
     );
@@ -84,7 +90,8 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
   }
 
   onSubmit(): void {
-    this.resultService.getResult(this.data.informationRequestId)
+    const requestId = Some(this.data.informationRequest).map(request => request.informationRequestId).orElse(undefined);
+    this.resultService.getResult(requestId)
       .subscribe(result => this.dialogRef.close(result));
   }
 

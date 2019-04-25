@@ -1,5 +1,21 @@
-<h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.acceptance.title' | translation}}</h1>
-<h1 mat-dialog-title *ngIf="readonly">{{'informationRequest.acceptance.readonlyTitle' | translation}}</h1>
+<div fxLayout="row" fxLayoutAlign="space-between center">
+  <div fxFlex="auto">
+    <h1 mat-dialog-title *ngIf="!readonly">{{'informationRequest.acceptance.title' | translation}}</h1>
+    <h1 mat-dialog-title *ngIf="readonly">{{'informationRequest.acceptance.readonlyTitle' | translation}}</h1>
+  </div>
+  <div fxFlex="none" *ngIf="data.informationRequest">
+    <mat-slide-toggle
+      class="text-primary"
+      labelPosition="before"
+      [(ngModel)]="showRequest">
+      {{'informationRequest.acceptance.showRequestedInfo' | translation}}
+    </mat-slide-toggle>
+  </div>
+</div>
+
+<div *ngIf="data.informationRequest && showRequest" [@shrinkFadeInOut]="'visible'" class="info-bordered info-section">
+  <information-request-summary [request]="data.informationRequest"></information-request-summary>
+</div>
 
 <div fxLayout="row" class="acceptance-info-header">
   <h2 mat-dialog-title fxFlex>{{'informationRequest.acceptance.existingInfo' | translation}}</h2>

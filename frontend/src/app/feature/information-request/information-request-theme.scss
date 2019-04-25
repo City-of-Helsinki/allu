@@ -5,6 +5,10 @@
 
   @include field-acceptance-theme($theme);
   @include info-acceptance-theme($border-color);
+
+  .info-bordered {
+    border-color: $border-color;
+  }
 }
 
 @mixin field-acceptance-theme($theme) {

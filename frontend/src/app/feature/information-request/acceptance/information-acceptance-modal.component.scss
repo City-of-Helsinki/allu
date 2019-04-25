@@ -5,3 +5,14 @@
 .acceptance-info-header > .mat-dialog-title {
   margin: 0;
 }
+
+.info-bordered {
+  display: block;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 4px;
+}
+
+.info-section {
+  margin-bottom: 14px;
+}
