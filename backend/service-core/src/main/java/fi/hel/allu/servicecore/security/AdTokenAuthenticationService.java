@@ -27,14 +27,14 @@ import fi.hel.allu.servicecore.service.UserService;
  */
 public abstract class AdTokenAuthenticationService extends AuthenticationServiceInterface {
 
-  @Autowired
-  private AadService aadService;
 
   private static final Logger logger = LoggerFactory.getLogger(AdTokenAuthenticationService.class);
 
   private AdAuthenticationProperties properties;
   private UserService userService;
   private TokenUtil tokenUtil;
+  private AadService aadService;
+
 
   protected AdTokenAuthenticationService(AdAuthenticationProperties properties, UserService userService, AadService aadService) {
     this.properties = properties;

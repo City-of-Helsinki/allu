@@ -5,6 +5,7 @@ import java.net.URL;
 import java.security.PublicKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import com.auth0.jwk.UrlJwkProvider;
 @Service
 public class JwksService {
 
+  @Lazy
   @Autowired
   private AdAuthenticationProperties properties;
 

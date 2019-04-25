@@ -5,6 +5,7 @@ import java.security.PublicKey;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -33,6 +34,7 @@ public class AadService {
   private static final String OAUTH2_GRANT_TYPE_PARAM = "grant_type";
   private static final String OAUTH2_GRANT_TYPE = "authorization_code";
 
+  @Lazy
   @Autowired
   private AdAuthenticationProperties properties;
 
