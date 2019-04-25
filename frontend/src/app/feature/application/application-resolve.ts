@@ -72,6 +72,8 @@ export class ApplicationResolve implements Resolve<Application> {
   private loadInformationRequestResponse(status: ApplicationStatus) {
     if (ApplicationStatus.INFORMATION_RECEIVED === status) {
       this.store.dispatch(new informationRequestActions.LoadLatestResponse());
+    } else {
+      this.store.dispatch(new informationRequestActions.LoadLatestResponseSuccess(undefined));
     }
   }
 
