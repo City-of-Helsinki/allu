@@ -94,6 +94,7 @@ export const searchable = [
 ];
 
 export const workqueue_searchable = [
+  ApplicationStatus.PENDING_CLIENT,
   ApplicationStatus.PRE_RESERVED,
   ApplicationStatus.PENDING,
   ApplicationStatus.WAITING_INFORMATION,
