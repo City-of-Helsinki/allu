@@ -65,7 +65,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
       ownerId: [undefined, Validators.required],
       ownerName: [undefined],
       creationTime: [undefined],
-      plannedFinishingTime: [undefined, [Validators.required, ComplexValidator.inThePast]],
+      plannedFinishingTime: [undefined, Validators.required],
       actualFinishingTime: [undefined],
       status: [undefined],
       description: [undefined],

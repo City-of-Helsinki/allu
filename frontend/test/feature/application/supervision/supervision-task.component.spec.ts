@@ -38,7 +38,7 @@ const taskForm = {
   ownerId: [undefined, Validators.required],
   ownerName: [undefined],
   creationTime: [undefined],
-  plannedFinishingTime: [undefined, [Validators.required, ComplexValidator.inThePast]],
+  plannedFinishingTime: [undefined, Validators.required],
   actualFinishingTime: [undefined],
   status: [undefined],
   description: [undefined],
@@ -201,17 +201,15 @@ describe('SupervisionTaskComponent', () => {
     expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(0);
   }));
 
-  it('should display error when planned finishing time is in the past', fakeAsync(() => {
+  it('should display error when planned finishing time is not set', fakeAsync(() => {
     const dateInput = de.query(By.css('[formControlName="plannedFinishingTime"]')).nativeElement;
-    const date = new Date();
-    date.setFullYear(2000);
-    dateInput.value = date;
+    dateInput.value = undefined;
     dateInput.dispatchEvent(new Event('input'));
     dateInput.dispatchEvent(new Event('blur'));
     detectAndTick();
     const error = de.query(By.css('.mat-error')).nativeElement;
     expect(error).toBeDefined();
-    expect(error.textContent).toMatch(findTranslation('supervision.task.field.plannedFinishingTimeInThePast'));
+    expect(error.textContent).toMatch(findTranslation('supervision.task.field.plannedFinishingTimeMissing'));
   }));
 
   it('should preset supervisor when creating new task', fakeAsync(() => {
