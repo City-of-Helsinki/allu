@@ -18,6 +18,7 @@ import fi.hel.allu.model.domain.*;
 
 public class ShortTermRentalPricing extends Pricing {
   private final Application application;
+  private final List<Location> locations;
   private final PricingExplanator explanationService;
   private final PricingDao pricingDao;
   private final double applicationArea;
@@ -54,7 +55,7 @@ public class ShortTermRentalPricing extends Pricing {
   }
 
   public ShortTermRentalPricing(Application application, PricingExplanator explanationService, PricingDao pricingDao,
-      double applicationArea, boolean customerIsCompany, List<InvoicingPeriod> recurringPeriods) {
+      double applicationArea, boolean customerIsCompany, List<InvoicingPeriod> recurringPeriods, List<Location> locations) {
     super();
     this.application = application;
     this.applicationArea = applicationArea;
@@ -63,10 +64,10 @@ public class ShortTermRentalPricing extends Pricing {
     this.pricingDao = pricingDao;
     this.recurringPeriods = recurringPeriods;
     this.decimalFormat = new DecimalFormat("#.00");
+    this.locations = locations;
     final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
     symbols.setDecimalSeparator(',');
     decimalFormat.setDecimalFormatSymbols(symbols);
-
   }
 
 
@@ -335,7 +336,7 @@ public class ShortTermRentalPricing extends Pricing {
         ChronoUnit.WEEKS);
     int priceInCents = centsPerUnit * units;
 
-    Location location = application.getLocations().get(0);
+    Location location = locations.get(0);
     // Charge basis entry for each selected fixed location
     location.getFixedLocationIds().forEach(fixedLocationId -> {
       addChargeBasisEntry(ChargeBasisTag.ShortTermRentalBridgeBanner(fixedLocationId), toChargeBasisUnit(ChronoUnit.WEEKS), units, centsPerUnit, invoiceLine,

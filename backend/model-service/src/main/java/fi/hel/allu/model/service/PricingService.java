@@ -143,7 +143,7 @@ public class PricingService {
     }
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, pricingExplanator,
-        pricingDao, applicationArea, isCompany(application), invoicingPeriodService.findForApplicationId(application.getId()));
+        pricingDao, applicationArea, isCompany(application), invoicingPeriodService.findForApplicationId(application.getId()), locations);
     pricing.calculatePrice();
     return pricing.getChargeBasisEntries();
   }

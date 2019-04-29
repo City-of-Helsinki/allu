@@ -145,18 +145,28 @@ public class PricingServiceTest {
     Application application = new Application();
     application.setId(1);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    ShortTermRental event = new ShortTermRental();
-    event.setCommercial(false);
+    ShortTermRental extension = new ShortTermRental();
+    extension.setCommercial(false);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T23:00:00+02:00"));
-    application.setExtension(event);
+    application.setExtension(extension);
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.BRIDGE_BANNER, Collections.emptyList()));
     addDummyCustomer(application, CustomerType.PERSON);
+    application.setNotBillable(false);
+    application = applicationDao.insert(application);
+    Location location = newLocationWithDefaults();
+    List<Integer> fixedLocationIds = Collections.singletonList(
+        Triple.of(ApplicationKind.BRIDGE_BANNER, "34a Vuotie – Kallvikintie, Kaupunkiin päin ajettaessa", null))
+        .stream().map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
+    location.setFixedLocationIds(fixedLocationIds);
+    location.setApplicationId(application.getId());
+    locationDao.insert(location);
     // Five weeks non-commercial -> 750 EUR
     checkPrice(application, 75000);
 
-    event.setCommercial(true);
+    extension.setCommercial(true);
+    application.setExtension(extension);
     application.setStartTime(ZonedDateTime.parse("2016-11-14T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-11-28T05:59:59+02:00"));
     // Three calendar week commercial -> 2250 EUR
