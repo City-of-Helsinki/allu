@@ -23,7 +23,7 @@ import {
   InformationAcceptanceData,
   InformationAcceptanceModalComponent
 } from '@feature/information-request/acceptance/information-acceptance-modal.component';
-import {applicationCanBeEdited, ApplicationStatus} from '@model/application/application-status';
+import {ApplicationStatus} from '@model/application/application-status';
 import {Application} from '@model/application/application';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
@@ -215,11 +215,11 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   }
 
   private createRequestModalConfig(request: InformationRequest, applicationId: number): MatDialogConfig<InformationRequestData> {
-    const result = request !== undefined
-      ? request
-      : new InformationRequest(undefined, applicationId, [], InformationRequestStatus.DRAFT);
+    const requestData = request === undefined || request.status === InformationRequestStatus.CLOSED
+      ? new InformationRequest(undefined, applicationId, [], InformationRequestStatus.DRAFT)
+      : request;
 
-    const data = {request: result};
+    const data = {request: requestData};
 
     return {
       ...INFORMATION_REQUEST_MODAL_CONFIG,

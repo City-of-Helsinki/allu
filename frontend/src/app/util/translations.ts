@@ -652,6 +652,9 @@ export const translations = {
       valueDiffers: 'Kentän sisältö poikkeaa nykyisestä',
       descriptionMissing: 'Selite puuttuu'
     },
+    action: {
+      responseHandled: 'Täydennyspyyntö käsitelty'
+    },
     error: {
       create: 'Täydennyspyynnön luominen epäonnistui',
       update: 'Täydennyspyynnön päivittäminen epäonnistui',

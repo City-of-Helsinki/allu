@@ -51,7 +51,7 @@
             <button *ngIf="showInformationRequest" mat-raised-button type="button" color="primary" (click)="showInformationRequestInfo()">
               {{'application.button.informationRequest' | translation | uppercase}}
             </button>
-            <button *ngIf="informationRequest" mat-raised-button type="button" color="primary" (click)="cancelInformationRequest()">
+            <button *ngIf="informationRequest && informationRequest.status !== 'CLOSED'" mat-raised-button type="button" color="primary" (click)="cancelInformationRequest()">
               {{'application.button.cancelInformationRequest' | translation | uppercase}}
             </button>
             <button *ngIf="showHandling" mat-raised-button type="button" color="primary" (click)="moveToHandling()">

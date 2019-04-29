@@ -15,8 +15,9 @@ import {InformationRequestResultActionType} from '@feature/information-request/a
 import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus} from '@model/application/application-status';
-import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
+import {findTranslation} from '@util/translations';
 
 @Injectable()
 export class InformationRequestEffects {
@@ -87,7 +88,9 @@ export class InformationRequestEffects {
     ofType<InformationRequestResultAction.SaveSuccess>(InformationRequestResultActionType.SaveSuccess),
     filter(action => NumberUtil.isDefined(action.payload.informationRequestId)),
     switchMap(action => this.informationRequestService.closeInformationRequest(action.payload.informationRequestId).pipe(
-      switchMap(() => [
+      switchMap((closed) => [
+        new InformationRequestAction.LoadLatestRequestSuccess(closed),
+        new NotifySuccess(findTranslation('informationRequest.action.responseHandled')),
         new InformationRequestAction.LoadLatestResponseSuccess(undefined),
         new ApplicationAction.Load(action.payload.application.id)
       ]),

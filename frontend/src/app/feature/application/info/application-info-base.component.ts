@@ -16,12 +16,12 @@ import {Observable, Subject} from 'rxjs';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
 import {FormUtil} from '../../../util/form.util';
 import {ProjectService} from '../../../service/project/project.service';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {distinctUntilChanged, map, takeUntil, tap} from 'rxjs/internal/operators';
 import {ApplicationService} from '../../../service/application/application.service';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {InformationRequest} from '@model/information-request/information-request';
 
 /**
@@ -75,10 +75,12 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
 
     this.pendingClientData$ = this.store.select(fromApplication.hasPendingClientData);
     this.pendingCustomerInfo$ = this.store.select(fromApplication.hasPendingCustomerInfo);
-    this.pendingInformationRequestResponse$ = this.store.select(fromInformationRequest.getInformationRequestResponse).pipe(
+    this.pendingInformationRequestResponse$ = this.store.pipe(
+      select(fromInformationRequest.getInformationRequestResponse),
       map(response => !!response)
     );
-    this.informationRequest$ = this.store.select(fromInformationRequest.getInformationRequest);
+
+    this.informationRequest$ = this.store.pipe(select(fromInformationRequest.getInformationRequest));
 
     this.applicationStore.changes.pipe(
       map(change => change.draft),
