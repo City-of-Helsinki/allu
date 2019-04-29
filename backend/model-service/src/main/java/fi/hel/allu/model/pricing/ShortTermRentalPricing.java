@@ -3,10 +3,8 @@ package fi.hel.allu.model.pricing;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.util.CollectionUtils;
@@ -16,10 +14,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.InvoicingPeriod;
-import fi.hel.allu.model.domain.PricingKey;
-import fi.hel.allu.model.domain.ShortTermRental;
+import fi.hel.allu.model.domain.*;
 
 public class ShortTermRentalPricing extends Pricing {
   private final Application application;
@@ -106,14 +101,7 @@ public class ShortTermRentalPricing extends Pricing {
     case BRIDGE_BANNER:
       // Non-commercial organizer: 150 EUR/week
       // Commercial organizer: 750 EUR/week
-      if (isCommercial()) {
-        updatePricePerUnit(ChargeBasisTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
-            getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL), InvoiceLines.BANDEROL_COMMERCIAL);
-      } else {
-        updatePricePerUnit(ChargeBasisTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
-            getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL),
-            InvoiceLines.BANDEROL_NONCOMMERCIAL);
-      }
+      updateBridgeBannerPrice();
       break;
     case CIRCUS: {
       final int price = getPrice(PricingKey.CIRCUS_DAILY_PRICE);
@@ -336,6 +324,24 @@ public class ShortTermRentalPricing extends Pricing {
 
   private String getPaymentClass(Application application) {
     return application.getLocations().get(0).getEffectivePaymentTariff();
+  }
+
+  private void updateBridgeBannerPrice() {
+    int centsPerUnit = isCommercial() ? getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL) :
+      getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
+    String invoiceLine = isCommercial() ? InvoiceLines.BANDEROL_COMMERCIAL : InvoiceLines.BANDEROL_NONCOMMERCIAL;
+
+    final int units = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
+        ChronoUnit.WEEKS);
+    int priceInCents = centsPerUnit * units;
+
+    Location location = application.getLocations().get(0);
+    // Charge basis entry for each selected fixed location
+    location.getFixedLocationIds().forEach(fixedLocationId -> {
+      addChargeBasisEntry(ChargeBasisTag.ShortTermRentalBridgeBanner(fixedLocationId), toChargeBasisUnit(ChronoUnit.WEEKS), units, centsPerUnit, invoiceLine,
+          priceInCents, explanationService.getExplanation(location, fixedLocationId));
+      setPriceInCents(getPriceInCents() + priceInCents);
+    });
   }
 
 }

@@ -107,8 +107,8 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.STRBe);
   }
 
-  public static ChargeBasisTag ShortTermRentalBridgeBanner() {
-    return new ChargeBasisTag(TagText.STRBB);
+  public static ChargeBasisTag ShortTermRentalBridgeBanner(Integer fixedLocationId) {
+    return new ChargeBasisTag(TagText.STRBB, fixedLocationId.toString());
   }
 
   public static ChargeBasisTag ShortTermRentalCircus() {

@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.FixedLocation;
@@ -26,6 +27,14 @@ public class PricingExplanator {
 
   public List<String> getExplanation(Application application) {
     return formatExplanation(application, null);
+  }
+
+  public List<String> getExplanation(Location location, Integer fixedLocationId) {
+    final FixedLocation fixedLocation = locationDao.findFixedLocation(fixedLocationId)
+        .orElseThrow(() -> new NoSuchEntityException("Fixed location not found", fixedLocationId));
+    final String fixedLocationAddress = Printable.forFixedLocation(fixedLocation);
+    final String period = Printable.forDayPeriod(location.getStartTime(), location.getEndTime());
+    return limitExplanationRowLength(fixedLocationAddress + " (" + period + ")");
   }
 
   public List<String> getExplanationWithCustomPeriod(Application application, String customPeriod) {
