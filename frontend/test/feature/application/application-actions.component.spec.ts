@@ -371,25 +371,7 @@ describe('ApplicationActionsComponent', () => {
     expect(decisionBtn.getAttribute('ng-reflect-disabled')).toEqual('false');
   });
 
-  it('should change status of Cable report to decision making', fakeAsync(() => {
-    const app = applicationStore.snapshot.application;
-    app.status = ApplicationStatus.HANDLING;
-    app.type = ApplicationType[ApplicationType.CABLE_REPORT];
-    app.invoiceRecipientId = 1;
-    applicationStore.applicationChange(app);
-    setAndInit(true);
-    spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.callThrough();
-
-    const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
-    decisionBtn.click();
-    tickAndDetect();
-
-    expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.DECISIONMAKING);
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', app.id, 'summary', 'decision']);
-  }));
-
-  it('should navigate to decision making for other application types', fakeAsync(() => {
+  it('should navigate to decision making', fakeAsync(() => {
     const app = applicationStore.snapshot.application;
     app.status = ApplicationStatus.HANDLING;
     app.type = ApplicationType[ApplicationType.EVENT];
