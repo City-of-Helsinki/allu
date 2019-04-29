@@ -1,18 +1,20 @@
 package fi.hel.allu.model.domain.util;
 
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.PostalAddress;
-
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
+import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.PostalAddress;
 
 /**
  * Utilities for generating printable strings for various model-domain objects
@@ -65,7 +67,7 @@ public class Printable {
     if (fixedLocation != null) {
       builder.append(fixedLocation.getArea());
       if (fixedLocation.getSection() != null) {
-        builder.append(", lohko ");
+        builder.append(" - ");
         builder.append(fixedLocation.getSection());
       }
     }
@@ -73,17 +75,34 @@ public class Printable {
   }
 
   public static String forFixedLocations(List<FixedLocation> fixedLocations) {
+    Map<String, List<String>> areasWithSections = getAreasWithSections(fixedLocations);
+    return forAreasWithSections(areasWithSections);
+  }
+
+  public static String forAreasWithSections(Map<String, List<String>> areasWithSections) {
+    List<String> areasWithSectionsStrs = areasWithSections
+        .entrySet()
+        .stream()
+        .map(a -> getAreaString(a))
+        .collect(Collectors.toList());
+    return String.join(", ", areasWithSectionsStrs);
+  }
+
+  private static Map<String, List<String>> getAreasWithSections(List<FixedLocation> fixedLocations) {
+    return fixedLocations.stream().
+        collect(Collectors.groupingBy(FixedLocation::getArea,
+            Collectors.mapping(FixedLocation::getSection, Collectors.toList())));
+  }
+
+  public static String getAreaString(Entry<String, List<String>> areaWithSections) {
     final StringBuilder builder = new StringBuilder();
-    for (FixedLocation fixedLocation : fixedLocations) {
-      if (fixedLocation != null) {
-        if (builder.length() == 0) {
-          builder.append(fixedLocation.getArea());
-        }
-        if (fixedLocation.getSection() != null) {
-          builder.append(", lohko ");
-          builder.append(fixedLocation.getSection());
-        }
-      }
+    builder.append(areaWithSections.getKey());
+    List<String> sections = areaWithSections.getValue().stream()
+        .filter(s -> s != null)
+        .collect(Collectors.toList());
+    if (sections.size() > 0) {
+      builder.append(" - ");
+      builder.append(String.join(", ", sections));
     }
     return builder.toString();
   }
