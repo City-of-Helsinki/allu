@@ -21,7 +21,10 @@ import {InformationRequest} from '@model/information-request/information-request
 import {ApplicationUtil} from '@feature/application/application-util';
 import {UserService} from '@service/user/user-service';
 import {
-  ApplicationExtension, isCustomerStartEndTimes, isGuaranteeEndTime, isOperationalConditionDates,
+  ApplicationExtension,
+  isCustomerStartEndTimes,
+  isGuaranteeEndTime,
+  isOperationalConditionDates,
   isWorkFinishedDates,
   OperationalConditionDates,
   WorkFinishedDates
@@ -29,6 +32,7 @@ import {
 import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
+import {InformationRequestStatus} from '@model/information-request/information-request-status';
 
 @Component({
   selector: 'application-actions',
@@ -46,7 +50,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   @Input() valid: boolean;
   @Input() pendingClientData: boolean;
   @Input() pendingInformationRequestResponse: boolean;
-  @Input() informationRequest: InformationRequest;
 
   MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
 
@@ -59,10 +62,12 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showReplace = false;
   showConvertToApplication = false;
   showInformationRequest = false;
+  showCancelInformationRequest = false;
   showActions = true;
   applicationId: number;
   type: ApplicationType;
 
+  private _informationRequest: InformationRequest;
   private applicationSub: Subscription;
 
   constructor(private router: Router,
@@ -95,6 +100,18 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.applicationSub.unsubscribe();
+  }
+
+  @Input() set informationRequest(informationRequest: InformationRequest) {
+    this._informationRequest = informationRequest;
+
+    this.showCancelInformationRequest = Some(this.informationRequest)
+      .map(ir => ArrayUtil.contains([InformationRequestStatus.DRAFT, InformationRequestStatus.OPEN], ir.status))
+      .orElse(false);
+  }
+
+  get informationRequest() {
+    return this._informationRequest;
   }
 
   copyApplicationAsNew(): void {
