@@ -1,6 +1,8 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationMapItemJson;
 import fi.hel.allu.servicecore.domain.FixedLocationJson;
@@ -10,6 +12,7 @@ import fi.hel.allu.servicecore.mapper.LocationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -105,16 +108,8 @@ public class ApplicationJsonService {
       applicationJson.getLocations().stream().filter((loc) -> (loc.getFixedLocationIds() != null))
         .forEachOrdered((loc) -> {
           String address = "";
-          for (Integer id : loc.getFixedLocationIds()) {
-            final FixedLocationJson fixedLocation = fixedLocations().get(id);
-            if (fixedLocation != null) {
-              if (address.isEmpty()) {
-                address = fixedLocation.getArea() + getSectionString(fixedLocation.getSection());
-              } else {
-                address += getSectionString(fixedLocation.getSection());
-              }
-            }
-          }
+          List<FixedLocationJson> fixedLocations = loc.getFixedLocationIds().stream().map(id -> fixedLocations().get(id)).collect(Collectors.toList());
+          address = getFixedLocationAddresses(fixedLocations);
           if (!address.isEmpty()) {
             loc.setAddress(address);
           } else {
@@ -125,11 +120,14 @@ public class ApplicationJsonService {
     }
   }
 
-  private String getSectionString(String section) {
-    if (section != null) {
-      return ", " + section;
-    }
-    return "";
+  private String getFixedLocationAddresses(List<FixedLocationJson> fixedLocations) {
+    return Printable.forAreasWithSections(getAreasWithSections(fixedLocations));
+  }
+
+  private static Map<String, List<String>> getAreasWithSections(List<FixedLocationJson> fixedLocations) {
+    return fixedLocations.stream().
+        collect(Collectors.groupingBy(FixedLocationJson::getArea,
+            Collectors.mapping(FixedLocationJson::getSection, Collectors.toList())));
   }
 
   private Map<Integer, FixedLocationJson> fixedLocations() {
