@@ -13,7 +13,6 @@ import {Application} from '@model/application/application';
 import set from 'lodash/set';
 import {Customer} from '@model/customer/customer';
 import {Contact} from '@model/customer/contact';
-import {FieldNameMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {TimeUtil} from '@util/time.util';
 
@@ -58,8 +57,7 @@ export class InformationRequestResultService {
   private patchOtherInfo(application: Application, otherInfo: FieldValues): void {
     if (otherInfo) {
       Object.keys(otherInfo).forEach(fieldName => {
-        const valueField = FieldNameMapping[fieldName];
-        set(application, valueField, otherInfo[fieldName]);
+        set(application, fieldName, otherInfo[fieldName]);
       });
     }
   }

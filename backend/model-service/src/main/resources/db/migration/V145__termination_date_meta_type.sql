@@ -1,0 +1,1 @@
+update allu.attribute_meta set data_type = 'DATETIME' where name = 'terminationDate';

@@ -4,10 +4,12 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FieldSelectComponent, FieldValues} from '../field-select/field-select.component';
 import {Subject} from 'rxjs';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
+import {StructureMeta} from '@model/application/meta/structure-meta';
 
 export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() id: string;
+  @Input() meta: StructureMeta;
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
@@ -77,7 +79,7 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
 
   onNewValuesSelected(fields: string[] = []): void {
     fields.forEach(f => {
-      this.form.get(f).patchValue(this.newValues[f], {emitEvent: false});
+      this.form.get([f]).patchValue(this.newValues[f], {emitEvent: false});
       this.oldValuesSelect.deselect(f);
     });
     this.form.updateValueAndValidity();

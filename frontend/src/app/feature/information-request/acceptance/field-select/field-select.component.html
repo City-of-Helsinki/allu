@@ -28,7 +28,10 @@
             [matTooltip]="'informationRequest.field.valueDiffers' | translation">warning</mat-icon>
         </div>
         <div fxFlex [class.value-change]="fieldHasChange(description.field)">
-          <field-value [value]="fieldValues[description.field]"></field-value>
+          <field-value
+            [field]="description.field"
+            [value]="fieldValues[description.field]"
+            [meta]="meta"></field-value>
         </div>
       </ng-template>
     </div>

@@ -5,6 +5,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
 import {MapFeature} from '@feature/map/map-feature';
 import {pathStyle} from '@service/map/map-draw-styles';
+import {StructureMeta} from '@model/application/meta/structure-meta';
 
 export interface FieldValues {
   [field: string]: any;
@@ -27,6 +28,7 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
 
   @Input() id = '';
   @Input() descriptions: FieldDescription[] = [];
+  @Input() meta: StructureMeta;
 
   @ViewChild(MatSelectionList) selectionList: MatSelectionList;
 

@@ -29,5 +29,6 @@ export const LocationKeys: InformationRequestFieldKey[] = [
 export const OtherInfoKeys: InformationRequestFieldKey[] = [
   InformationRequestFieldKey.IDENTIFICATION_NUMBER,
   InformationRequestFieldKey.WORK_DESCRIPTION,
-  InformationRequestFieldKey.PROPERTY_IDENTIFICATION_NUMBER
+  InformationRequestFieldKey.PROPERTY_IDENTIFICATION_NUMBER,
+  InformationRequestFieldKey.OTHER
 ];

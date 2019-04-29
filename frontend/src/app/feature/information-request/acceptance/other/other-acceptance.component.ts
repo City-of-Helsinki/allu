@@ -2,10 +2,13 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Application} from '@model/application/application';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {InformationRequestFieldKey, OtherInfoKeys} from '@model/information-request/information-request-field-key';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
+import * as fromApplication from '@feature/application/reducers';
 import {SetOtherInfo} from '@feature/information-request/actions/information-request-result-actions';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
+import {Observable} from 'rxjs';
+import {StructureMeta} from '@model/application/meta/structure-meta';
 
 @Component({
   selector: 'other-acceptance',
@@ -21,6 +24,7 @@ export class OtherAcceptanceComponent implements OnInit {
 
   form: FormGroup;
   otherInfoKeys: string[] = [];
+  meta$: Observable<StructureMeta>;
 
   constructor(private fb: FormBuilder, private store: Store<fromRoot.State>) {
     this.form = this.fb.group({});
@@ -30,6 +34,7 @@ export class OtherAcceptanceComponent implements OnInit {
     this.parentForm.addControl('other', this.form);
     this.otherInfoKeys = this.fieldKeys
       .filter(key => OtherInfoKeys.some(otherInfoKey => otherInfoKey ===  key));
+    this.meta$ = this.store.pipe(select(fromApplication.getMeta));
   }
 
   otherInfoChanges(fieldValues: FieldValues): void {

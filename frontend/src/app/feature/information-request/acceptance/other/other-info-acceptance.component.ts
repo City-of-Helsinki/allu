@@ -1,12 +1,16 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Application} from '@model/application/application';
 import {InfoAcceptanceComponent} from '@feature/information-request/acceptance/info-acceptance/info-acceptance.component';
-import {findTranslation} from '@util/translations';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import {FieldKeyMapping} from '@feature/information-request/acceptance/other/application-acceptance-field-mapping';
 import {FormBuilder} from '@angular/forms';
 import {FieldValues} from '@feature/information-request/acceptance/field-select/field-select.component';
 import {FieldDescription} from '@feature/information-request/acceptance/field-select/field-description';
+import {ApplicationExtension} from '@model/application/type/application-extension';
+import {ArrayUtil} from '@util/array-util';
+import {formatValue, StructureMeta} from '@model/application/meta/structure-meta';
+import {blacklistForType} from '@feature/information-request/acceptance/other/field-update-rules';
 
 const requiredFields = {
   startTime: true,
@@ -24,6 +28,7 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> i
   @Input() newInfo: Application;
   @Input() readonly: boolean;
   @Input() fieldKeys: string[];
+  @Input() meta: StructureMeta;
 
   @Output() otherInfoChanges = new EventEmitter<FieldValues>();
 
@@ -32,12 +37,14 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> i
   }
 
   ngOnInit(): void {
-    this.oldValues = this.toFieldValues(this.oldInfo);
+    const keys = this.getFieldKeys();
+
+    this.oldValues = this.toFieldValues(this.oldInfo, keys);
     this.oldDisplayValues = this.toDisplayValues(this.oldValues);
 
-    this.newValues = this.toFieldValues(this.newInfo);
+    this.newValues = this.toFieldValues(this.newInfo, keys);
     this.newDisplayValues = this.toDisplayValues(this.newValues);
-    this.fieldDescriptions = this.createDescriptions();
+    this.fieldDescriptions = this.createDescriptions(keys);
 
     super.ngOnInit();
   }
@@ -50,8 +57,16 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> i
     return requiredFields[field];
   }
 
-  private toFieldValues(application: Application): FieldValues {
-    return this.fieldKeys.reduce((values: FieldValues, key: string) => {
+  private getFieldKeys(notifiedFieldKeys: string[] = []): string[] {
+    const fieldKeys = notifiedFieldKeys.map(key => FieldKeyMapping[key]);
+    return this.getChangedFields(this.oldInfo.extension, this.newInfo.extension)
+      .concat(fieldKeys)
+      .filter(ArrayUtil.unique)
+      .filter(key => blacklistForType(this.oldInfo.type).indexOf(key) < 0);
+  }
+
+  private toFieldValues(application: Application, fieldKeys: string[]): FieldValues {
+    return fieldKeys.reduce((values: FieldValues, key: string) => {
       const newValue = this.toFieldValue(key, application);
       return {
         ...values,
@@ -65,26 +80,37 @@ export class OtherInfoAcceptanceComponent extends InfoAcceptanceComponent<any> i
   }
 
   private toFieldValue(fieldKey: string, application: Application): FieldValues {
-    const fieldInfo = FieldKeyMapping[fieldKey];
     const fieldValues = {};
-    if (fieldInfo) {
-      fieldValues[fieldInfo.fieldName] = get(application, fieldInfo.valueField);
-    }
+    fieldValues[fieldKey] = get(application, fieldKey);
     return fieldValues;
   }
 
-  private createDescriptions(): FieldDescription[] {
-    return this.fieldKeys
+  private createDescriptions(fieldKeys: string[]): FieldDescription[] {
+    return fieldKeys
       .map(key => this.createDescription(key))
       .filter(desc => !!desc);
   }
 
   private createDescription(fieldKey: string): FieldDescription {
-    const fieldInfo = FieldKeyMapping[fieldKey];
-    if (fieldInfo) {
-      return new FieldDescription(fieldInfo.fieldName, findTranslation(['informationRequest.field', fieldKey]));
+    return new FieldDescription(fieldKey, this.meta.uiName(fieldKey));
+  }
+
+  private getChangedFields(oldExtension: ApplicationExtension, newExtension: ApplicationExtension): string[] {
+    return Object.keys(newExtension).reduce((changedFields, field) => {
+      if (this.fieldHasChange(get(oldExtension, field), get(newExtension, field))) {
+        return changedFields.concat(`extension.${field}`);
+      } else {
+        return changedFields;
+      }
+    }, []);
+  }
+
+  fieldHasChange<T>(oldValue: T, newValue: T): boolean {
+    // Check with == to handle null and undefined
+    if (oldValue == null && newValue == null) {
+      return false;
     } else {
-      return undefined;
+      return !isEqual(oldValue, newValue);
     }
   }
 }
