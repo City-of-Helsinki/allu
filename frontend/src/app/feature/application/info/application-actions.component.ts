@@ -199,10 +199,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   toDecisionmaking(): void {
-    this.moveToDecisionMaking().subscribe(
-      app => this.router.navigate(['/applications', app.id, 'summary', 'decision']),
-      err => this.notification.translateErrorMessage('application.error.toDecisionmaking')
-    );
+    this.router.navigate(['/applications', this.applicationStore.snapshot.application.id, 'summary', 'decision']);
   }
 
   delete(): void {
@@ -247,19 +244,6 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       .subscribe(
         () => this.router.navigate(['/workqueue']),
         err => this.notification.translateErrorMessage('application.error.cancel'));
-  }
-
-  private moveToDecisionMaking(): Observable<Application> {
-    if (this.shouldMoveToDecisionMaking()) {
-      return this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.DECISIONMAKING);
-    } else {
-      return of(this.applicationStore.snapshot.application);
-    }
-  }
-
-  private shouldMoveToDecisionMaking(): boolean {
-    const app = this.applicationStore.snapshot.application;
-    return automaticDecisionMaking(app.type) && app.status === ApplicationStatus.HANDLING;
   }
 
   private showDecisionForApplication(app: Application): boolean {
