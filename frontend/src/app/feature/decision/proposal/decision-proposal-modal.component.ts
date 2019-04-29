@@ -7,10 +7,8 @@ import {Observable} from 'rxjs';
 import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
 import {UserService} from '@service/user/user-service';
-import {take, tap} from 'rxjs/internal/operators';
-import {ArrayUtil} from '@util/array-util';
+import {filter, take} from 'rxjs/operators';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
-import {ConfigurationKey} from '@model/config/configuration-key';
 import {ApplicationType} from '@model/application/type/application-type';
 
 export const DECISION_PROPOSAL_MODAL_CONFIG = {width: '800px'};
@@ -44,9 +42,8 @@ export class DecisionProposalModalComponent implements OnInit {
       handler: [undefined, Validators.required]
     });
 
-    this.handlers = this.userService.getByRole(RoleType.ROLE_DECISION).pipe(
-      tap(decisionMakers => this.selectDefaultDecisionMaker(decisionMakers))
-    );
+    this.handlers = this.userService.getByRole(RoleType.ROLE_DECISION);
+    this.selectDefaultDecisionMaker();
   }
 
   confirm() {
@@ -58,15 +55,10 @@ export class DecisionProposalModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  private selectDefaultDecisionMaker(decisionMakers: User[]): void {
-    this.configHelper.getSingleConfiguration(ConfigurationKey[this.data.applicationType + '_DECISION_MAKER']).pipe(
-      take(1)
-    ).subscribe(
-        config => {
-          const user = ArrayUtil.first(decisionMakers, u => u.userName === config.value);
-          if (user) {
-            this.proposalForm.patchValue({handler: user.id});
-          }
-        });
+  private selectDefaultDecisionMaker(): void {
+    this.configHelper.getDecisionMaker(this.data.applicationType).pipe(
+      take(1),
+      filter(user => !!user)
+    ).subscribe(user => this.proposalForm.patchValue({handler: user.id}));
   }
 }

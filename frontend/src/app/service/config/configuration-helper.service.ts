@@ -10,10 +10,17 @@ import {Configuration} from '@model/config/configuration';
 import {ApplicationKind} from '@model/application/type/application-kind';
 import {of} from 'rxjs/internal/observable/of';
 import {TimePeriod} from '@feature/application/info/time-period';
+import {ApplicationType} from '@model/application/type/application-type';
+import {User} from '@model/user/user';
+import {UserService} from '@service/user/user-service';
+import {RoleType} from '@model/user/role-type';
+import {ArrayUtil} from '@util/array-util';
 
 @Injectable()
 export class ConfigurationHelperService {
-  constructor(private store: Store<fromRoot.State>) {}
+  constructor(
+    private store: Store<fromRoot.State>,
+    private userService: UserService) {}
 
   public getConfiguration(key: ConfigurationKey): Observable<Configuration[]> {
     return this.store.pipe(
@@ -63,5 +70,15 @@ export class ConfigurationHelperService {
       default:
         return of(undefined);
     }
+  }
+
+  public getDecisionMaker(applicationType: ApplicationType): Observable<User> {
+    const key = ConfigurationKey[applicationType + '_DECISION_MAKER'];
+    return combineLatest(
+      this.userService.getByRole(RoleType.ROLE_DECISION),
+      this.getSingleConfiguration(key)
+    ).pipe(
+      map(([decisionMakers, config]) => ArrayUtil.first(decisionMakers, u => u.userName === config.value))
+    );
   }
 }

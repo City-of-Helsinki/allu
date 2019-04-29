@@ -6,10 +6,11 @@ import {Approve, CreateProposal} from '@feature/decision/actions/contract-action
 import {MatDialog} from '@angular/material';
 import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
 import {Observable, Subject} from 'rxjs/index';
-import {filter, map, takeUntil} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Application} from '@model/application/application';
 import {NumberUtil} from '@util/number.util';
 import {validForDecision} from '@feature/application/application-util';
+import {ApplicationType} from '@model/application/type/application-type';
 
 @Component({
   selector: 'contract-actions',
@@ -46,9 +47,21 @@ export class ContractActionsComponent implements OnInit, OnDestroy {
   }
 
   approve(): void {
-    const dialogRef = this.dialog.open<ContractApprovalModalComponent>(ContractApprovalModalComponent, CONTRACT_APPROVAL_MODAL_CONFIG);
-    dialogRef.afterClosed().pipe(
+    this.store.select(fromApplication.getCurrentApplication).pipe(
+      take(1),
+      map(app => this.createConfig(app)),
+      map(config => this.dialog.open<ContractApprovalModalComponent>(ContractApprovalModalComponent, config)),
+      switchMap(modalRef => modalRef.afterClosed()),
       filter(result => !!result)
     ).subscribe(approval => this.store.dispatch(new Approve(approval)));
+  }
+
+  private createConfig(app: Application) {
+    return {
+      ...CONTRACT_APPROVAL_MODAL_CONFIG,
+      data: {
+        applicationType: app.type
+      }
+    };
   }
 }
