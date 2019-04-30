@@ -38,6 +38,8 @@ import fi.hel.allu.search.domain.util.CustomerAnonymizer;
 @Service
 public class ApplicationSearchService extends GenericSearchService<ApplicationES, ApplicationQueryParameters> {
 
+  private static final String[] RESPONSE_FILTERED_FIELDS = new String[] {"*.searchGeometry", "applicationTypeData"};
+
   @Autowired
   public ApplicationSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
@@ -83,6 +85,11 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     if (BooleanUtils.isTrue(queryParameters.getHasProject())) {
       qb.must(QueryBuilders.existsQuery("project"));
     }
+  }
+
+  @Override
+  protected SearchRequestBuilder addFieldFilter(SearchRequestBuilder srBuilder) {
+    return srBuilder.setFetchSource(null, RESPONSE_FILTERED_FIELDS);
   }
 
   private void addGeometryParameter(Geometry intersectingGeometry, BoolQueryBuilder qb) {

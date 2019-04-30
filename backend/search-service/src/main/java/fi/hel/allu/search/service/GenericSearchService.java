@@ -351,6 +351,10 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexAliasName())
         .setFrom(pageRequest.getOffset()).setSize(pageRequest.getPageSize())
         .setTypes(indexTypeName).setQuery(qb);
+    return addFieldFilter(srBuilder);
+  }
+
+  protected SearchRequestBuilder addFieldFilter(SearchRequestBuilder srBuilder) {
     return srBuilder;
   }
 
