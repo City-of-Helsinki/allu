@@ -2,6 +2,7 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.ZonedDateTime;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.InformationRequestDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,11 @@ public class CableReportStatusChangeHandler extends ApplicationStatusChangeHandl
       HistoryDao historyDao, InformationRequestDao informationRequestDao) {
     super(applicationService, supervisionTaskService, locationService,
             applicationDao, chargeBasisService, historyDao, informationRequestDao);
+  }
+
+  @Override
+  protected void handleHandlingStatus(Application application) {
+    getApplicationService().setTargetState(application.getId(), StatusType.DECISION);
   }
 
   @Override

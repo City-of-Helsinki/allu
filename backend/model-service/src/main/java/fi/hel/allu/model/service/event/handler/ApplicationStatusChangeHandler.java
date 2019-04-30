@@ -44,9 +44,9 @@ public class ApplicationStatusChangeHandler {
 
   @Autowired
   public ApplicationStatusChangeHandler(ApplicationService applicationService,
-      SupervisionTaskService supervisionTaskService, LocationService locationService,
-      ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
-      HistoryDao historyDao, InformationRequestDao informationRequestDao) {
+                                        SupervisionTaskService supervisionTaskService, LocationService locationService,
+                                        ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
+                                        HistoryDao historyDao, InformationRequestDao informationRequestDao) {
     this.applicationService = applicationService;
     this.supervisionTaskService = supervisionTaskService;
     this.locationService = locationService;
@@ -58,26 +58,32 @@ public class ApplicationStatusChangeHandler {
 
   public void handleStatusChange(ApplicationStatusChangeEvent statusChangeEvent) {
     switch (statusChangeEvent.getNewStatus()) {
-    case DECISIONMAKING:
-      handleDecisionMakingStatus(statusChangeEvent.getApplication());
-      break;
-    case DECISION:
-      handleDecisionStatus(statusChangeEvent.getApplication(), statusChangeEvent.getUserId());
-      break;
-    case OPERATIONAL_CONDITION:
-      handleOperationalConditionStatus(statusChangeEvent.getApplication());
-      break;
-    case FINISHED:
-      handleFinishedStatus(statusChangeEvent.getApplication());
-      break;
-    case CANCELLED:
-      handleCancelledStatus(statusChangeEvent.getApplication());
-      break;
-    default:
-      // By default nothing
+      case HANDLING:
+        handleHandlingStatus(statusChangeEvent.getApplication());
+        break;
+      case DECISIONMAKING:
+        handleDecisionMakingStatus(statusChangeEvent.getApplication());
+        break;
+      case DECISION:
+        handleDecisionStatus(statusChangeEvent.getApplication(), statusChangeEvent.getUserId());
+        break;
+      case OPERATIONAL_CONDITION:
+        handleOperationalConditionStatus(statusChangeEvent.getApplication());
+        break;
+      case FINISHED:
+        handleFinishedStatus(statusChangeEvent.getApplication());
+        break;
+      case CANCELLED:
+        handleCancelledStatus(statusChangeEvent.getApplication());
+        break;
+      default:
+        // By default nothing
         break;
     }
 
+  }
+
+  protected void handleHandlingStatus(Application application) {
   }
 
   protected void handleDecisionStatus(Application application, Integer userId) {
@@ -167,10 +173,10 @@ public class ApplicationStatusChangeHandler {
   }
 
   protected void createSupervisionTask(Application application, SupervisionTaskType type, Integer userId,
-      ZonedDateTime plannedTime, Integer locationId) {
+                                       ZonedDateTime plannedTime, Integer locationId) {
     SupervisionTask supervisionTask = new SupervisionTask(null,
-        application.getId(), type, userId, getSupervisionTaskOwner(application), null,
-        plannedTime, null, SupervisionTaskStatusType.OPEN, null, null, locationId);
+            application.getId(), type, userId, getSupervisionTaskOwner(application), null,
+            plannedTime, null, SupervisionTaskStatusType.OPEN, null, null, locationId);
     supervisionTaskService.insert(supervisionTask);
   }
 
@@ -187,7 +193,7 @@ public class ApplicationStatusChangeHandler {
     Integer supervisionTaskOwner = null;
     if (cityDistrict != null) {
       supervisionTaskOwner = locationService.findSupervisionTaskOwner(application.getType(), cityDistrict).map(u -> u.getId())
-        .orElse(null);
+              .orElse(null);
     }
     if (supervisionTaskOwner == null) {
       logger.warn("No final supervision task owner found for application {}", application.getId());

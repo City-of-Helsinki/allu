@@ -100,13 +100,6 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     ).subscribe(app => {}); // Nothing to do but must subscribe so observable is run
   }
 
-  public decisionMaking(): void {
-    this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING).subscribe(
-      (application) => this.statusChanged(application),
-      (err) => this.notification.error(findTranslation('application.error.toDecisionmaking'))
-    );
-  }
-
   public returnToPreparation(): void {
     this.confirmDecisionSend(ApplicationStatus.RETURNED_TO_PREPARATION, ApplicationStatus.RETURNED_TO_PREPARATION)
       .subscribe(result => this.decisionConfirmed(result));
