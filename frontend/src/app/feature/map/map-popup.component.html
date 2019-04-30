@@ -6,7 +6,7 @@
         <a [routerLink]="row.link">{{row.content}}</a>
       </div>
       <div fxFlex="none" *ngIf="row.idForBasket">
-        <button mat-icon-button class="mat-icon-button-18" (click)="addToBasket(row.idForBasket)">
+        <button mat-icon-button type="button" class="mat-icon-button-18" (click)="addToBasket(row.idForBasket)">
           <mat-icon color="primary">shopping_basket</mat-icon>
         </button>
       </div>
