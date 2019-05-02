@@ -38,7 +38,7 @@ import fi.hel.allu.search.domain.util.CustomerAnonymizer;
 @Service
 public class ApplicationSearchService extends GenericSearchService<ApplicationES, ApplicationQueryParameters> {
 
-  private static final String[] RESPONSE_FILTERED_FIELDS = new String[] {"*.searchGeometry", "applicationTypeData"};
+  private static final String[] RESPONSE_FILTERED_FIELDS = new String[] {"locations.searchGeometry", "applicationTypeData"};
 
   @Autowired
   public ApplicationSearchService(
