@@ -12,6 +12,7 @@ import {TypeModule} from '@feature/application/type/type.module';
 import {StoredLocationsComponent} from './stored-locations.component';
 import {StoreModule} from '@ngrx/store';
 import {reducersProvider, reducersToken} from '@feature/application/location/reducers';
+import {GeometrySelectComponent} from '@feature/application/location/geometry-select/geometry-select.component';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import {reducersProvider, reducersToken} from '@feature/application/location/red
   ],
   declarations: [
     LocationComponent,
-    StoredLocationsComponent
+    StoredLocationsComponent,
+    GeometrySelectComponent
   ],
   providers: [
     reducersProvider

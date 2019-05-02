@@ -51,6 +51,7 @@ export class LocationMapper {
   public static mapSearchResult(backendLocation: SearchResultLocation): Location {
     if (backendLocation) {
       const location = new Location();
+      location.locationKey = backendLocation.locationKey;
       location.address = backendLocation.address;
       location.cityDistrictId = backendLocation.cityDistrictId;
       location.geometry = backendLocation.geometry;

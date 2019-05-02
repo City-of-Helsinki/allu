@@ -154,8 +154,8 @@ public class ApplicationSearchTest {
     applicationES1.setCustomers(roleTypedCustomerES);
 
     applicationES1.setLocations(Arrays.asList(
-        new LocationES("AEnsimmäinen osoite 9", "00100", "Sinki", 1, "Eka lisätieto"),
-        new LocationES("Zviimonen 777", "00100", "Sinki", 5, "Vika lisätieto")));
+        new LocationES(1, "AEnsimmäinen osoite 9", "00100", "Sinki", 1, "Eka lisätieto"),
+        new LocationES(2, "Zviimonen 777", "00100", "Sinki", 5, "Vika lisätieto")));
 
     ApplicationES applicationES2 = createApplication(2);
     applicationES2.setName(USERNAME + " " + 2);
@@ -166,7 +166,7 @@ public class ApplicationSearchTest {
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
     applicationES2.setCustomers(roleTypedCustomerES);
     applicationES2.setLocations(
-        Collections.singletonList(new LocationES("bToinen osoite 1", "00100", "Sinki", 2, "Toka lisätieto")));
+        Collections.singletonList(new LocationES(3, "bToinen osoite 1", "00100", "Sinki", 2, "Toka lisätieto")));
 
     ApplicationES applicationES3 = createApplication(3);
     applicationES3.setName(USERNAME + " " + 3);
@@ -177,8 +177,8 @@ public class ApplicationSearchTest {
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
     applicationES3.setCustomers(roleTypedCustomerES);
     applicationES3.setLocations(Arrays.asList(
-        new LocationES("Zviimonen 777", "00100", "Sinki", 3, "Vika lisätieto"),
-        new LocationES("Ckolmas osoite 5", "00100", "Sinki", 4, "Kolmoslisätieto")));
+        new LocationES(4, "Zviimonen 777", "00100", "Sinki", 3, "Vika lisätieto"),
+        new LocationES(5, "Ckolmas osoite 5", "00100", "Sinki", 4, "Kolmoslisätieto")));
 
     applicationSearchService.insert(applicationES1);
     applicationSearchService.insert(applicationES2);

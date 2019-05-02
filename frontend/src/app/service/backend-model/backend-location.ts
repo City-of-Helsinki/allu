@@ -24,6 +24,7 @@ export interface BackendLocation {
 }
 
 export interface SearchResultLocation {
+  locationKey: number;
   address: string;
   cityDistrictId: number;
   geometry: GeoJSON.GeometryCollection;

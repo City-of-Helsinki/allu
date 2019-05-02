@@ -1132,6 +1132,7 @@ export const translations = {
     customerEndTime: 'Asiakkaan ilmoittama lopetus',
     fixedLocationNotAllowed: 'Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty',
     geometry: 'Alue',
+    searchAndAddGeometry: 'Etsi ja lisää geometrioita hakemukselta',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
       fetchFixedLocationAreas: 'Vakiosijaintien hakeminen epäonnistui',

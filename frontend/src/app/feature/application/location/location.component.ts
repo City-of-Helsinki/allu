@@ -34,7 +34,7 @@ import {TimeUtil} from '@util/time.util';
 import {KindsWithSpecifiers} from '@model/application/type/application-specifier';
 import {MapController} from '@service/map/map-controller';
 import {EMPTY} from 'rxjs/internal/observable/empty';
-import * as fromLocationMapLayers from '@feature/application/location/reducers';
+import * as fromLocation from '@feature/application/location/reducers';
 import {MapLayer} from '@service/map/map-layer';
 import {DistributionEntry} from '@model/common/distribution-entry';
 import {DistributionType} from '@model/common/distribution-type';
@@ -47,6 +47,10 @@ import {ConfigurationHelperService} from '@service/config/configuration-helper.s
 import {TimePeriod} from '@feature/application/info/time-period';
 import {getPaymentTariffs, needsPaymentTariff} from '@feature/common/payment-tariff';
 import {FixedLocation, fixedLocationInfo, groupByArea} from '@model/common/fixed-location';
+import {SearchByNameOrId} from '@feature/application/actions/application-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {GeometryCollection} from 'geojson';
+import {MapComponent} from '@feature/map/map.component';
 
 @Component({
   selector: 'type',
@@ -73,6 +77,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   availableLayers$: Observable<MapLayer[]>;
   timePeriod$: Observable<TimePeriod>;
   address$: Observable<string>;
+  matchingApplications$: Observable<Application[]>;
 
   private submitPending = false;
   private destroy = new Subject<boolean>();
@@ -81,6 +86,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private typeComponent: TypeComponent;
   @ViewChild(SearchbarComponent)
   private searchbarComponent: SearchbarComponent;
+  @ViewChild(MapComponent)
+  private mapComponent: MapComponent;
 
   constructor(
     private applicationStore: ApplicationStore,
@@ -172,8 +179,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.setInitialSelections();
     });
 
-    this.availableLayers$ = this.store.pipe(select(fromLocationMapLayers.getAllLayers));
-    this.selectedLayers$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayers));
+    this.availableLayers$ = this.store.pipe(select(fromLocation.getAllLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromLocation.getSelectedLayers));
 
     this.locationForm.get('areaOverride').valueChanges.pipe(
       takeUntil(this.destroy),
@@ -184,6 +191,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       select(fromApplication.getKind),
       switchMap(kind => this.configurationHelper.getTimePeriodForKind(kind))
     );
+
+    this.matchingApplications$ = this.store.pipe(select(fromLocation.getMatchingApplications));
   }
 
   ngOnDestroy() {
@@ -232,6 +241,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     ).subscribe(fixedLocations => this.fixedLocations = fixedLocations);
     this.notifyEditingAllowed();
     this.resetFixedLocations();
+  }
+
+  applicationSearchChange(term: string): void {
+    this.store.dispatch(new SearchByNameOrId(ActionTargetType.Location, term));
+  }
+
+  geometrySelected(geometry: GeometryCollection): void {
+    this.mapComponent.addGeometry(geometry);
   }
 
   updateReceivedTime(date: Date): void {

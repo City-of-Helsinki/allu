@@ -18,6 +18,7 @@ import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
  * ElasticSearch mapping for location.
  */
 public class LocationES {
+  private Integer locationKey;
   private String streetAddress;
   private String postalCode;
   private String city;
@@ -41,13 +42,22 @@ public class LocationES {
     // for JSON serialization
   }
 
-  public LocationES(String streetAddress, String postalCode, String city, Integer cityDistrictId,
+  public LocationES(Integer locationKey, String streetAddress, String postalCode, String city, Integer cityDistrictId,
       String additionalInfo) {
+    this.locationKey = locationKey;
     this.streetAddress = streetAddress;
     this.postalCode = postalCode;
     this.city = city;
     this.cityDistrictId = cityDistrictId;
     this.additionalInfo = additionalInfo;
+  }
+
+  public Integer getLocationKey() {
+    return locationKey;
+  }
+
+  public void setLocationKey(Integer locationKey) {
+    this.locationKey = locationKey;
   }
 
   public String getStreetAddress() {

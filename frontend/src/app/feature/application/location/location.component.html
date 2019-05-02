@@ -55,6 +55,13 @@
                   </mat-form-field>
                 </div>
               </ng-container>
+              <div fxFlex="0 1 calc(40% - 18px)">
+                <geometry-select
+                  [matchingApplications]="matchingApplications$ | async"
+                  (searchChange)="applicationSearchChange($event)"
+                  (selectedChange)="geometrySelected($event)">
+                </geometry-select>
+              </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
               <div fxFlex="0 1 calc(20% - 18px)">

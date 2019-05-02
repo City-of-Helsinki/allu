@@ -414,6 +414,7 @@ public class ApplicationMapper {
 
   private LocationES createLocationES(LocationJson json) {
     LocationES locationEs = new LocationES();
+    locationEs.setLocationKey(json.getLocationKey());
     Optional.ofNullable(json.getPostalAddress()).ifPresent(address -> {
       locationEs.setStreetAddress(address.getStreetAddress());
       locationEs.setPostalCode(address.getPostalCode());

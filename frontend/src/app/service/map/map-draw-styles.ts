@@ -21,5 +21,6 @@ export const pathStyle = {
   DEFAULT_DRAW: {color: '#F43352', dashArray: '8,6', opacity: 1, fillOpacity: 0.4},
   DEFAULT_EDIT: {color: '#F43352', dashArray: '8,6', moveMarkers: false, opacity: 1, fillOpacity: 0.4},
   HIGHLIGHT: {color: '#F43352', opacity: 1, fillOpacity: 0.4},
+  HIGHLIGHT_ADDED: {color: '#F43352', weight: 5, opacity: 1, fillOpacity: 0.4, dashArray: '8, 6'},
   WARNING: {color: '#ff6f00', dashArray: '8,6', opacity: 1, fillOpacity: 0.4}
 };

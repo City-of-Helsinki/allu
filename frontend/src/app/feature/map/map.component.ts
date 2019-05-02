@@ -96,6 +96,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  addGeometry(geometry: GeometryCollection): void {
+    this.mapController.drawFixedGeometries([geometry], pathStyle.HIGHLIGHT_ADDED);
+    this.mapController.fitEditedToView();
+  }
+
   private drawAndFocusApplications(applications: Application[]) {
     this.mapController.clearDrawn();
     this.drawApplications(applications);
@@ -171,7 +176,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const geometries = fixedLocations.map(fl => fl.geometry);
     if (geometries.length > 0) {
-      this.mapController.drawFixedLocations(geometries);
+      this.mapController.drawFixedGeometries(geometries);
       this.mapController.fitEditedToView();
     }
   }

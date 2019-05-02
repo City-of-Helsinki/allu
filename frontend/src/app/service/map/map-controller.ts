@@ -176,7 +176,7 @@ export class MapController {
     geometries.forEach(g => this.drawGeometryToLayer(g, this.focusedItems, style));
   }
 
-  public drawFixedLocations(geometries: Array<GeoJSON.GeometryCollection>, style?: Object) {
+  public drawFixedGeometries(geometries: Array<GeoJSON.GeometryCollection>, style?: Object) {
     geometries.forEach(geometry => this.drawEditableGeometry(geometry, style));
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
   }

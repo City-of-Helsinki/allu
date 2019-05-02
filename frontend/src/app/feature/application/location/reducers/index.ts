@@ -5,9 +5,11 @@ import * as fromRoot from '@feature/allu/reducers';
 import * as fromLayers from '@feature/map/reducers/map-layer-reducer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {createMapLayerSelectors} from '@feature/map/reducers';
+import * as fromApplicationSearch from '@feature/application/reducers/application-search-reducer';
 
 export interface LocationState {
   layers: fromLayers.State;
+  applicationSearch: fromApplicationSearch.State;
 }
 
 export interface State extends fromRoot.State {
@@ -15,7 +17,8 @@ export interface State extends fromRoot.State {
 }
 
 export const reducers: ActionReducerMap<LocationState> = {
-  layers: fromLayers.createReducerFor(ActionTargetType.Location)
+  layers: fromLayers.createReducerFor(ActionTargetType.Location),
+  applicationSearch: fromApplicationSearch.createReducerFor(ActionTargetType.Location)
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Location reducers');
@@ -41,3 +44,14 @@ export const {
   getTreeStructure,
   getSelectedApplicationLayers
 } = createMapLayerSelectors(getMapLayersEntityState);
+
+// Application search selectors
+export const getApplicationSearchState = createSelector(
+  getLocationState,
+  (state: LocationState) => state.applicationSearch
+);
+
+export const getMatchingApplications = createSelector(
+  getApplicationSearchState,
+  fromApplicationSearch.getMatchingApplications
+);
