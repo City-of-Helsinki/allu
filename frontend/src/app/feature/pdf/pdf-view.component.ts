@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'pdf-view',
@@ -13,15 +13,25 @@ export class PdfViewComponent {
   @Input() processing;
 
   pdfUrl: SafeResourceUrl;
+  pdfIEElem: SafeHtml;
   pdfDownloadUrl: SafeUrl;
+  isIEorEdge = false;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer) {
+    this.isIEorEdge = /(MSIE|Trident\/|Edge\/)/i.test(navigator.userAgent);
+  }
 
   @Input() set pdf(pdf: Blob) {
     if (pdf) {
       const url = URL.createObjectURL(pdf);
-      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-      this.pdfDownloadUrl = this.sanitizer.bypassSecurityTrustUrl(url);
+      if (this.isIEorEdge) {
+        // IE / EDGE needs special handling since they block angulars sanitized url
+        // Issue https://github.com/angular/angular/issues/25980
+        this.pdfIEElem = this.sanitizer.bypassSecurityTrustHtml(`<embed src="${url}" type="application/pdf" height="100%" width="100%" />`);
+      } else {
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        this.pdfDownloadUrl = this.sanitizer.bypassSecurityTrustUrl(url);
+      }
     }
   }
 }

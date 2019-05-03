@@ -1,13 +1,18 @@
 <div class="pdf-view-content">
   <mat-progress-bar mode="indeterminate" *ngIf="processing"></mat-progress-bar>
   <div *ngIf="!loading" class="content-pdf">
-    <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
-      <p class="cannot-show">
-        <span>{{'decision.cannotShow' | translation}}</span>
-        <span>{{'common.action.canDownload' | translation}}</span>
-        <a [href]="pdfDownloadUrl">{{'common.fromHere' | translation}}</a>
-      </p>
-    </object>
+    <ng-container *ngIf="isIEorEdge; else otherBrowser">
+      <div [innerHTML]="pdfIEElem" class="content-ie"></div>
+    </ng-container>
+    <ng-template #otherBrowser>
+      <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
+        <p class="cannot-show">
+          <span>{{'decision.cannotShow' | translation}}</span>
+          <span>{{'common.action.canDownload' | translation}}</span>
+          <a [href]="pdfDownloadUrl">{{'common.fromHere' | translation}}</a>
+        </p>
+      </object>
+    </ng-template>
   </div>
   <div *ngIf="loading" class="content-placeholder">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
