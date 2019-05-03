@@ -4,25 +4,36 @@ public enum SupervisionTaskType {
   /**
    * Aloitusvalvonta
    */
-  PRELIMINARY_SUPERVISION,
+  PRELIMINARY_SUPERVISION(true),
   /**
    * Toiminnallisen kunnon valvonta
    */
-  OPERATIONAL_CONDITION,
+  OPERATIONAL_CONDITION(false),
   /**
    * Valvonta
    */
-  SUPERVISION,
+  SUPERVISION(true),
   /**
    * Työnaikainen valvonta
    */
-  WORK_TIME_SUPERVISION,
+  WORK_TIME_SUPERVISION(false),
   /**
    * Loppuvalvonta
    */
-  FINAL_SUPERVISION,
+  FINAL_SUPERVISION(true),
   /**
    * Takuuvalvonta
    */
-  WARRANTY
+  WARRANTY(false);
+
+  private final boolean manuallyAdded;
+
+  private SupervisionTaskType(boolean manuallyAdded) {
+    this.manuallyAdded = manuallyAdded;
+  }
+
+  public boolean isManuallyAdded()  {
+    return manuallyAdded;
+  }
+
 }

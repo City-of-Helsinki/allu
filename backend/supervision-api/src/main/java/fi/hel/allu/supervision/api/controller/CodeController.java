@@ -1,6 +1,7 @@
 package fi.hel.allu.supervision.api.controller;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.*;
+import fi.hel.allu.supervision.api.domain.CodeMetadata;
+import fi.hel.allu.supervision.api.domain.CodeType;
 import fi.hel.allu.supervision.api.translation.EnumTranslator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,8 +35,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/applicationtypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ApplicationType, String>> getApplicationTypes() {
-    return ResponseEntity.ok(getTranslations(ApplicationType.values()));
+  public ResponseEntity<Map<ApplicationType, CodeMetadata>> getApplicationTypes() {
+    return ResponseEntity.ok(getCodeMetadata(ApplicationType.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing application status codes with descriptions ",
@@ -42,8 +45,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/applicationstatustypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<StatusType, String>> getApplicationStatusTypes() {
-    return ResponseEntity.ok(getTranslations(StatusType.values()));
+  public ResponseEntity<Map<StatusType, CodeMetadata>> getApplicationStatusTypes() {
+    return ResponseEntity.ok(getCodeMetadata(StatusType.values(), a -> CodeType.SYSTEM));
   }
 
   @ApiOperation(value = "Gets map containing application kinds with descriptions ",
@@ -52,8 +55,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/applicationkinds", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ApplicationKind, String>> getApplicationKinds() {
-    return ResponseEntity.ok(getTranslations(ApplicationKind.values()));
+  public ResponseEntity<Map<ApplicationKind, CodeMetadata>> getApplicationKinds() {
+    return ResponseEntity.ok(getCodeMetadata(ApplicationKind.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing application specifiers with descriptions ",
@@ -62,8 +65,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/applicationspecifiers", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ApplicationSpecifier, String>> getApplicationSpecifiers() {
-    return ResponseEntity.ok(getTranslations(ApplicationSpecifier.values()));
+  public ResponseEntity<Map<ApplicationSpecifier, CodeMetadata>> getApplicationSpecifiers() {
+    return ResponseEntity.ok(getCodeMetadata(ApplicationSpecifier.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing supervision task types with descriptions ",
@@ -72,8 +75,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/supervisiontasktypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<SupervisionTaskType, String>> getSupervisionTaskTypes() {
-    return ResponseEntity.ok(getTranslations(SupervisionTaskType.values()));
+  public ResponseEntity<Map<SupervisionTaskType, CodeMetadata>> getSupervisionTaskTypes() {
+    return ResponseEntity.ok(getCodeMetadata(SupervisionTaskType.values(), a -> a.isManuallyAdded() ? CodeType.USER : CodeType.SYSTEM));
   }
 
   @ApiOperation(value = "Gets map containing supervision task status types with descriptions ",
@@ -82,8 +85,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/supervisiontaskstatustypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<SupervisionTaskStatusType, String>> getSupervisionTaskStatusTypes() {
-    return ResponseEntity.ok(getTranslations(SupervisionTaskStatusType.values()));
+  public ResponseEntity<Map<SupervisionTaskStatusType, CodeMetadata>> getSupervisionTaskStatusTypes() {
+    return ResponseEntity.ok(getCodeMetadata(SupervisionTaskStatusType.values(), a -> CodeType.SYSTEM));
   }
 
   @ApiOperation(value = "Gets map containing comment types with descriptions ",
@@ -92,8 +95,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/commenttypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<CommentType, String>> getCommentTypes() {
-    return ResponseEntity.ok(getTranslations(CommentType.values()));
+  public ResponseEntity<Map<CommentType, CodeMetadata>> getCommentTypes() {
+    return ResponseEntity.ok(getCodeMetadata(CommentType.values(), a -> a.isManuallyAdded() ? CodeType.USER : CodeType.SYSTEM));
   }
 
   @ApiOperation(value = "Gets map containing customer types with descriptions ",
@@ -102,8 +105,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/customertypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<CustomerType, String>> getCustomerTypes() {
-    return ResponseEntity.ok(getTranslations(CustomerType.values()));
+  public ResponseEntity<Map<CustomerType, CodeMetadata>> getCustomerTypes() {
+    return ResponseEntity.ok(getCodeMetadata(CustomerType.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing customer role types with descriptions ",
@@ -112,8 +115,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/customerroletypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<CustomerRoleType, String>> getCustomerRoleTypes() {
-    return ResponseEntity.ok(getTranslations(CustomerRoleType.values()));
+  public ResponseEntity<Map<CustomerRoleType, CodeMetadata>> getCustomerRoleTypes() {
+    return ResponseEntity.ok(getCodeMetadata(CustomerRoleType.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing attachment types with descriptions ",
@@ -122,8 +125,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/attachmenttypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<AttachmentType, String>> getAttachmentTypes() {
-    return ResponseEntity.ok(getTranslations(AttachmentType.values()));
+  public ResponseEntity<Map<AttachmentType, CodeMetadata>> getAttachmentTypes() {
+    return ResponseEntity.ok(getCodeMetadata(AttachmentType.values(), a -> a.isDefaultAttachment() ? CodeType.SYSTEM: CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing decision distribution types with descriptions ",
@@ -132,8 +135,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/distributiontypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<DistributionType, String>> getDistributionTypes() {
-    return ResponseEntity.ok(getTranslations(DistributionType.values()));
+  public ResponseEntity<Map<DistributionType, CodeMetadata>> getDistributionTypes() {
+    return ResponseEntity.ok(getCodeMetadata(DistributionType.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing decision publicity types with descriptions ",
@@ -142,8 +145,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/publicitytypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<PublicityType, String>> getPublicityTypes() {
-    return ResponseEntity.ok(getTranslations(PublicityType.values()));
+  public ResponseEntity<Map<PublicityType, CodeMetadata>> getPublicityTypes() {
+    return ResponseEntity.ok(getCodeMetadata(PublicityType.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing traffic arrangement impediment types with descriptions ",
@@ -152,8 +155,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/trafficarrangementimpedimenttypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<TrafficArrangementImpedimentType, String>> getTrafficArrangementImpedimentTypes() {
-    return ResponseEntity.ok(getTranslations(TrafficArrangementImpedimentType.values()));
+  public ResponseEntity<Map<TrafficArrangementImpedimentType, CodeMetadata>> getTrafficArrangementImpedimentTypes() {
+    return ResponseEntity.ok(getCodeMetadata(TrafficArrangementImpedimentType.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets map containing application tag types with descriptions ",
@@ -162,8 +165,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/applicationtagtypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ApplicationTagType, String>> getApplicationTagTypes() {
-    return ResponseEntity.ok(getTranslations(ApplicationTagType.values()));
+  public ResponseEntity<Map<ApplicationTagType, CodeMetadata>> getApplicationTagTypes() {
+    return ResponseEntity.ok(getCodeMetadata(ApplicationTagType.values(), a -> a.isManuallyAdded() ? CodeType.USER : CodeType.SYSTEM));
   }
 
   @ApiOperation(value = "Gets cable info types",
@@ -172,8 +175,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/cableinfotypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<DefaultTextType, String>> getCableInfoTypes() {
-    return ResponseEntity.ok(getTranslations(DefaultTextType.getCableInfoTypes()));
+  public ResponseEntity<Map<DefaultTextType, CodeMetadata>> getCableInfoTypes() {
+    return ResponseEntity.ok(getCodeMetadata(DefaultTextType.getCableInfoTypes(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets event natures",
@@ -182,8 +185,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/eventnatures", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<EventNature, String>> getEventNatures() {
-    return ResponseEntity.ok(getTranslations(EventNature.values()));
+  public ResponseEntity<Map<EventNature, CodeMetadata>> getEventNatures() {
+    return ResponseEntity.ok(getCodeMetadata(EventNature.values(), a -> a == EventNature.PROMOTION ? CodeType.SYSTEM : CodeType.USER));
   }
 
   @ApiOperation(value = "Gets charge basis types",
@@ -192,8 +195,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/chargebasistypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ChargeBasisType, String>> getChargeBasisTypes() {
-    return ResponseEntity.ok(getTranslations(ChargeBasisType.values()));
+  public ResponseEntity<Map<ChargeBasisType, CodeMetadata>> getChargeBasisTypes() {
+    return ResponseEntity.ok(getCodeMetadata(ChargeBasisType.values(), a -> a == ChargeBasisType.CALCULATED ? CodeType.SYSTEM : CodeType.USER));
   }
 
   @ApiOperation(value = "Gets charge basis units",
@@ -202,8 +205,8 @@ public class CodeController {
   )
   @RequestMapping(value = "/chargebasisunits", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<ChargeBasisUnit, String>> getChargeBasisUnits() {
-    return ResponseEntity.ok(getTranslations(ChargeBasisUnit.values()));
+  public ResponseEntity<Map<ChargeBasisUnit, CodeMetadata>> getChargeBasisUnits() {
+    return ResponseEntity.ok(getCodeMetadata(ChargeBasisUnit.values(), a -> CodeType.USER));
   }
 
   @ApiOperation(value = "Gets surface hardness types",
@@ -212,13 +215,13 @@ public class CodeController {
   )
   @RequestMapping(value = "/surfacehardnesstypes", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
-  public ResponseEntity<Map<SurfaceHardness, String>> getSurfaceHardnessTypes() {
-    return ResponseEntity.ok(getTranslations(SurfaceHardness.values()));
+  public ResponseEntity<Map<SurfaceHardness, CodeMetadata>> getSurfaceHardnessTypes() {
+    return ResponseEntity.ok(getCodeMetadata(SurfaceHardness.values(), a -> CodeType.USER));
   }
 
-  private <T extends Enum<T>> Map<T, String> getTranslations(T[] values) {
+  private <T extends Enum<T>> Map<T, CodeMetadata> getCodeMetadata(T[] values, Function<T, CodeType> typeFunction) {
     return Stream.of(values)
-        .collect(Collectors.toMap(a -> a, a -> enumTranslator.getTranslation(a)));
+        .collect(Collectors.toMap(a -> a, a -> new CodeMetadata(enumTranslator.getTranslation(a), typeFunction.apply(a))));
   }
 
 }
