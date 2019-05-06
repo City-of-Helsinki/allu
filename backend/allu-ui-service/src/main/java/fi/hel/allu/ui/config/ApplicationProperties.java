@@ -14,60 +14,55 @@ import fi.hel.allu.servicecore.security.AdAuthenticationProperties;
 @Component
 public class ApplicationProperties implements AdAuthenticationProperties {
 
-  private final Environment environment;
-  private final String versionNumber;
-  private final String geocodeUrl;
-  private final String streetSearchUrl;
-  private final String wfsUsername;
-  private final String wfsPassword;
-  private final String jwtSecret;
-  private final Integer jwtExpirationHours;
-  private final String jwtSecretExternalService;
-  private final String oauth2AuthorizationEndpointUrl;
-  private final String oauth2TokenUrl;
-  private final String oauth2ClientId;
-  private final String oauth2RedirectUri;
-  private final String oauth2JwksUri;
-  private final String oauth2ClientSecret;
-  private final String alluAdGroupId;
-  private final List<String> anonymousAccessPaths;
-
-  @Autowired
-  public ApplicationProperties(@Value("${environment}") String environment,
-                               @Value("${version.number}") String versionNumber,
-                               @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
-                               @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
-                               @Value("${wfs.username}") @NotEmpty String wfsUsername,
-                               @Value("${wfs.password}") @NotEmpty String wfsPassword,
-                               @Value("${jwt.secret}") @NotEmpty String jwtSecret,
-                               @Value("${jwt.expiration.hours:12}") @NotNull Integer jwtExpirationHours,
-                               @Value("${jwt.secret.external.service}") @NotEmpty String jwtSecretExternalService,
-                               @Value("${oauth2.url.authorization}") @NotEmpty String oauth2AuthorizationEndpointUrl,
-                               @Value("${oauth2.url.token}") @NotEmpty String oauth2TokenUrl,
-                               @Value("${oauth2.clientid}") @NotEmpty String oauth2ClientId,
-                               @Value("${oauth2.redirect.uri}") @NotEmpty String oauth2RedirectUri,
-                               @Value("${oauth2.jwks_uri}") @NotEmpty String oauth2JwksUri,
-                               @Value("${oauth2.clientsecret}") @NotEmpty String oauth2ClientSecret,
-                               @Value("${ad.allu.group.id}") @NotEmpty String alluAdGroupId,
-                               @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
-    this.environment = Environment.valueOf(environment);
-    this.versionNumber = versionNumber;
-    this.geocodeUrl = geocodeUrl;
-    this.streetSearchUrl = streetSearchUrl;
-    this.wfsUsername = wfsUsername;
-    this.wfsPassword = wfsPassword;
-    this.jwtSecret = jwtSecret;
-    this.jwtExpirationHours = jwtExpirationHours;
-    this.jwtSecretExternalService = jwtSecretExternalService;
-    this.oauth2AuthorizationEndpointUrl = oauth2AuthorizationEndpointUrl;
-    this.oauth2TokenUrl = oauth2TokenUrl;
-    this.oauth2ClientId = oauth2ClientId;
-    this.oauth2RedirectUri = oauth2RedirectUri;
-    this.oauth2JwksUri = oauth2JwksUri;
-    this.oauth2ClientSecret = oauth2ClientSecret;
-    this.alluAdGroupId = alluAdGroupId;
-    this.anonymousAccessPaths = anonymousAccessPaths;
-  }
+  @Value("${environment}")
+  private Environment environment;
+  @Value("${version.number}")
+  private String versionNumber;
+  @NotEmpty
+  @Value("${wfs.template.street.geocode}")
+  private String geocodeUrl;
+  @NotEmpty
+  @Value("${wfs.template.street.search}")
+  private String streetSearchUrl;
+  @NotEmpty
+  @Value("${wfs.username}")
+  private String wfsUsername;
+  @NotEmpty
+  @Value("${wfs.password}")
+  private String wfsPassword;
+  @NotEmpty
+  @Value("${jwt.secret}")
+  private String jwtSecret;
+  @NotNull
+  @Value("${jwt.expiration.hours:12}")
+  private Integer jwtExpirationHours;
+  @NotEmpty
+  @Value("${jwt.secret.external.service}")
+  private String jwtSecretExternalService;
+  @NotEmpty
+  @Value("${oauth2.url.authorization}")
+  private String oauth2AuthorizationEndpointUrl;
+  @NotEmpty
+  @Value("${oauth2.url.token}")
+  private String oauth2TokenUrl;
+  @NotEmpty
+  @Value("${oauth2.clientid}")
+  private String oauth2ClientId;
+  @NotEmpty
+  @Value("${oauth2.redirect.uri}")
+  private String oauth2RedirectUri;
+  @NotEmpty
+  @Value("${oauth2.jwks_uri}")
+  private String oauth2JwksUri;
+  @NotEmpty
+  @Value("${oauth2.clientsecret}")
+  private String oauth2ClientSecret;
+  @NotEmpty
+  @Value("${ad.allu.group.id}")
+  private String alluAdGroupId;
+  @NotNull
+  @Value("#{'${anonymous.access.paths:}'.split(',')}")
+  private List<String> anonymousAccessPaths;
 
   /**
    * @return Current environment
