@@ -1,17 +1,14 @@
 package fi.hel.allu.model.service.event.handler;
 
-import fi.hel.allu.model.dao.InformationRequestDao;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import fi.hel.allu.model.service.*;
 
 @Service
 public class TrafficArrangementStatusChangeHandler extends ApplicationStatusChangeHandler {
@@ -19,8 +16,9 @@ public class TrafficArrangementStatusChangeHandler extends ApplicationStatusChan
   public TrafficArrangementStatusChangeHandler(ApplicationService applicationService,
      SupervisionTaskService supervisionTaskService, LocationService locationService,
      ApplicationDao applicationDao, ChargeBasisService chargeBasisService, HistoryDao historyDao,
-     InformationRequestDao informationRequestDao) {
-    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao);
+     InformationRequestDao informationRequestDao, InvoiceService invoiceService) {
+    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
+        informationRequestDao, invoiceService);
   }
 
   @Override

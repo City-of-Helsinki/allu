@@ -150,6 +150,13 @@ public class InvoiceDao {
         .forEach(id -> delete(id));
   }
 
+  @Transactional
+  public void deleteUninvoicedByApplication(int applicationId) {
+    queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse()).fetch()
+        .forEach(id -> delete(id));
+  }
+
   /**
    * Retrieve the list of invoices waiting to be sent
    *

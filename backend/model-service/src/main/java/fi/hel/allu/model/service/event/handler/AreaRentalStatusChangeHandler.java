@@ -1,14 +1,13 @@
 package fi.hel.allu.model.service.event.handler;
 
-import fi.hel.allu.model.dao.InformationRequestDao;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.model.service.*;
@@ -16,16 +15,14 @@ import fi.hel.allu.model.service.*;
 @Service
 public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandler {
 
-  private final InvoiceService invoiceService;
-
   public AreaRentalStatusChangeHandler(ApplicationService applicationService,
        SupervisionTaskService supervisionTaskService, LocationService locationService,
        ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
        HistoryDao historyDao, InformationRequestDao informationRequestDao,
        InvoiceService invoiceService) {
     super(applicationService, supervisionTaskService, locationService,
-            applicationDao, chargeBasisService, historyDao, informationRequestDao);
-    this.invoiceService = invoiceService;
+            applicationDao, chargeBasisService, historyDao, informationRequestDao,
+            invoiceService);
   }
 
   @Override
@@ -45,8 +42,8 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
   @Override
   protected void handleFinishedStatus(Application application) {
     AreaRental extension = (AreaRental)application.getExtension();
-    invoiceService.lockInvoices(application.getId());
-    invoiceService.setInvoicableTime(application.getId(), extension.getWorkFinished());
+    getInvoiceService().lockInvoices(application.getId());
+    getInvoiceService().setInvoicableTime(application.getId(), extension.getWorkFinished());
     lockChargeBasisEntries(application.getId());
     cancelOpenSupervisionTasks(application.getId());
     clearTargetState(application);

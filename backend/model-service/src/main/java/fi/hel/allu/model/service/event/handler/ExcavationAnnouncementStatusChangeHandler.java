@@ -20,7 +20,6 @@ import fi.hel.allu.model.service.*;
 public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatusChangeHandler {
 
   private final WinterTimeService winterTimeService;
-  private final InvoiceService invoiceService;
 
   public ExcavationAnnouncementStatusChangeHandler(ApplicationService applicationService,
        SupervisionTaskService supervisionTaskService, LocationService locationService,
@@ -28,8 +27,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
        HistoryDao historyDao, InformationRequestDao informationRequestDao,
        InvoiceService invoiceService, WinterTimeService winterTimeService) {
     super(applicationService, supervisionTaskService, locationService,
-            applicationDao, chargeBasisService, historyDao, informationRequestDao);
-    this.invoiceService = invoiceService;
+            applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService);
     this.winterTimeService = winterTimeService;
   }
 
@@ -59,8 +57,8 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   }
 
   protected void setExcavationAnnouncementInvoicable(Application application, ZonedDateTime invoicableTime) {
-    invoiceService.lockInvoices(application.getId());
-    invoiceService.setInvoicableTime(application.getId(), invoicableTime);
+    getInvoiceService().lockInvoices(application.getId());
+    getInvoiceService().setInvoicableTime(application.getId(), invoicableTime);
     finishInvoicing(application);
   }
 

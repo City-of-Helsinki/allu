@@ -1,7 +1,7 @@
 package fi.hel.allu.model.service.event.handler;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.model.dao.InformationRequestDao;
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,20 +9,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
-
-import java.util.Collections;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -49,12 +45,14 @@ public class ApplicationStatusChangeHandlerTest {
   private HistoryDao historyDao;
   @Mock
   private InformationRequestDao informationRequestDao;
+  @Mock
+  private InvoiceService invoiceService;
 
   @Before
   public void setup() {
     statusChangeHandler = new ApplicationStatusChangeHandler(applicationService,
         supervisionTaskService, locationService, applicationDao, chargeBasisService,
-        historyDao, informationRequestDao);
+        historyDao, informationRequestDao, invoiceService);
     application = createApplication();
   }
 
@@ -100,6 +98,12 @@ public class ApplicationStatusChangeHandlerTest {
   public void onCancelShouldCloseInformationRequests() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.CANCELLED, USER_ID));
     verify(informationRequestDao, times(1)).closeInformationRequestOf(application.getId());
+  }
+
+  @Test
+  public void onCancelShouldRemoveOpenInvoices() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.CANCELLED, USER_ID));
+    verify(invoiceService, times(1)).deleteUninvoicedInvoices(application.getId());
   }
 
   @Test

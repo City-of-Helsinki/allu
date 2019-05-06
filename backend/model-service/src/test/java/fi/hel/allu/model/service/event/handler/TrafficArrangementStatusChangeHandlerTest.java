@@ -55,7 +55,8 @@ public class TrafficArrangementStatusChangeHandlerTest {
   private HistoryDao historyDao;
   @Mock
   private InformationRequestDao informationRequestDao;
-
+  @Mock
+  private InvoiceService invoiceService;
 
   @Captor
   ArgumentCaptor<SupervisionTask> supervisionTaskCaptor;
@@ -66,7 +67,8 @@ public class TrafficArrangementStatusChangeHandlerTest {
     supervisor.setId(228);
     createApplicationWithLocation();
     statusChangeHandler = new TrafficArrangementStatusChangeHandler(applicationService,
-        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao);
+        supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
+        informationRequestDao, invoiceService);
     when(locationService.findSupervisionTaskOwner(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
         location.getCityDistrictId())).thenReturn(Optional.of(supervisor));
   }

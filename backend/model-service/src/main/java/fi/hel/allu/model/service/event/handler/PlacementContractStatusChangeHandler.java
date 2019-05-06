@@ -3,7 +3,6 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import fi.hel.allu.model.dao.InformationRequestDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +10,11 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import fi.hel.allu.model.service.*;
 
 @Service
 public class PlacementContractStatusChangeHandler extends ApplicationStatusChangeHandler {
@@ -29,10 +26,10 @@ public class PlacementContractStatusChangeHandler extends ApplicationStatusChang
   public PlacementContractStatusChangeHandler(ApplicationService applicationService,
       SupervisionTaskService supervisionTaskService, LocationService locationService,
       ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
-      HistoryDao historyDao, InformationRequestDao informationRequestDao,
+      HistoryDao historyDao, InformationRequestDao informationRequestDao, InvoiceService invoiceService,
       DecisionDao decisionDao) {
-    super(applicationService, supervisionTaskService, locationService,
-            applicationDao, chargeBasisService, historyDao, informationRequestDao);
+    super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
+        informationRequestDao, invoiceService);
     this.decisionDao = decisionDao;
   }
 

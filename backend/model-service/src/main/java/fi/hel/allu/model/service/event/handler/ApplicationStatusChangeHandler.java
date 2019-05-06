@@ -3,7 +3,6 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import fi.hel.allu.model.dao.InformationRequestDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +15,11 @@ import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
 /**
@@ -40,13 +37,14 @@ public class ApplicationStatusChangeHandler {
   private final ChargeBasisService chargeBasisService;
   private final HistoryDao historyDao;
   private final InformationRequestDao informationRequestDao;
-
+  private final InvoiceService invoiceService;
 
   @Autowired
   public ApplicationStatusChangeHandler(ApplicationService applicationService,
                                         SupervisionTaskService supervisionTaskService, LocationService locationService,
                                         ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
-                                        HistoryDao historyDao, InformationRequestDao informationRequestDao) {
+                                        HistoryDao historyDao, InformationRequestDao informationRequestDao,
+                                        InvoiceService invoiceService) {
     this.applicationService = applicationService;
     this.supervisionTaskService = supervisionTaskService;
     this.locationService = locationService;
@@ -54,6 +52,7 @@ public class ApplicationStatusChangeHandler {
     this.chargeBasisService = chargeBasisService;
     this.historyDao = historyDao;
     this.informationRequestDao = informationRequestDao;
+    this.invoiceService = invoiceService;
   }
 
   public void handleStatusChange(ApplicationStatusChangeEvent statusChangeEvent) {
@@ -132,6 +131,7 @@ public class ApplicationStatusChangeHandler {
   protected void handleCancelledStatus(Application application) {
     supervisionTaskService.cancelOpenTasksOfApplication(application.getId());
     informationRequestDao.closeInformationRequestOf(application.getId());
+    invoiceService.deleteUninvoicedInvoices(application.getId());
     if (application.getReplacesApplicationId() != null) {
       // If replacing application cancelled, clear replacing application ID from replaced application
       applicationDao.setApplicationReplaced(application.getReplacesApplicationId(), null);
@@ -211,6 +211,10 @@ public class ApplicationStatusChangeHandler {
 
   protected LocationService getLocationService() {
     return locationService;
+  }
+
+  protected InvoiceService getInvoiceService() {
+    return invoiceService;
   }
 
 }

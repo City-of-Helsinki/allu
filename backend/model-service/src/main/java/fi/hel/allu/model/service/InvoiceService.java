@@ -201,4 +201,8 @@ public class InvoiceService {
   public void lockInvoices(int applicationId) {
     invoiceDao.lockInvoices(applicationId);
   }
+
+  public void deleteUninvoicedInvoices(Integer id) {
+    invoiceDao.deleteUninvoicedByApplication(id);
+  }
 }

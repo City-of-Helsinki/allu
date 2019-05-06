@@ -5,7 +5,6 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import fi.hel.allu.model.dao.InformationRequestDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,13 +19,11 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.ChargeBasisService;
-import fi.hel.allu.model.service.LocationService;
-import fi.hel.allu.model.service.SupervisionTaskService;
+import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
 import static org.junit.Assert.assertEquals;
@@ -59,7 +56,8 @@ public class PlacementContractStatusChangeHandlerTest {
   private HistoryDao historyDao;
   @Mock
   private InformationRequestDao informationRequestDao;
-
+  @Mock
+  private InvoiceService invoiceService;
 
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
@@ -69,7 +67,8 @@ public class PlacementContractStatusChangeHandlerTest {
   @Before
   public void setup() {
     statusChangeHandler = new PlacementContractStatusChangeHandler(applicationService, supervisionTaskService,
-        locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao, decisionDao);
+        locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService,
+        decisionDao);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);
