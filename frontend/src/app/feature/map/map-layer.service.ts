@@ -93,13 +93,13 @@ export class MapLayerService {
       .map(type => new MapLayer(findTranslation(['application.type', type]), L.featureGroup(), type));
 
     this.winkkiRoadWorks = {
-      'Tulevat katutyöt': this.createWinkkiLayer('winkki_works', STATUS_PLAN, winkki.ROAD_WORKS),
-      'Aktiiviset katutyöt': this.createWinkkiLayer('winkki_works', STATUS_ACTIVE, winkki.ROAD_WORKS)
+      'Tulevat katutyöt': this.createWinkkiLayer('Winkki_works', STATUS_PLAN, winkki.ROAD_WORKS),
+      'Aktiiviset katutyöt': this.createWinkkiLayer('Winkki_works', STATUS_ACTIVE, winkki.ROAD_WORKS)
     };
 
     this.winkkiEvents = {
-      'Tulevat vuokraukset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_PLAN, winkki.EVENT),
-      'Aktiiviset vuokraukset': this.createWinkkiLayer('winkki_rents_audiences', STATUS_ACTIVE, winkki.EVENT)
+      'Tulevat vuokraukset': this.createWinkkiLayer('Winkki_rents_audiences', STATUS_PLAN, winkki.EVENT),
+      'Aktiiviset vuokraukset': this.createWinkkiLayer('Winkki_rents_audiences', STATUS_ACTIVE, winkki.EVENT)
     };
 
     this.cityDistricts = this.createCityDistrictLayer();
@@ -176,10 +176,10 @@ export class MapLayerService {
 
   private winkkiWFS(layerName: string, wfsFilter: L.Filter, style: PathOptions): L.FeatureGroup {
     return L.wfs({
-      url: '/geoserver/hkr/ows',
-      typeNS: 'hkr',
+      url: 'https://kartta.hel.fi/ws/geoserver/avoindata/wfs',
+      typeNS: 'avoindata',
       typeName: layerName,
-      geometryField: 'wkb_geometry',
+      geometryField: 'geom',
       crs: this.mapUtil.EPSG3879,
       style: style,
       opacity: style.opacity,
