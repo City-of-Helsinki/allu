@@ -155,13 +155,10 @@ public class PricingServiceTest {
     addDummyCustomer(application, CustomerType.PERSON);
     application.setNotBillable(false);
     application = applicationDao.insert(application);
-    Location location = newLocationWithDefaults();
     List<Integer> fixedLocationIds = Collections.singletonList(
         Triple.of(ApplicationKind.BRIDGE_BANNER, "34a Vuotie – Kallvikintie, Kaupunkiin päin ajettaessa", null))
         .stream().map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
-    location.setFixedLocationIds(fixedLocationIds);
-    location.setApplicationId(application.getId());
-    locationDao.insert(location);
+    insertLocationWithFixedLocations(fixedLocationIds, application.getId());
     // Five weeks non-commercial -> 750 EUR
     checkPrice(application, 75000);
 
@@ -218,9 +215,17 @@ public class PricingServiceTest {
     application.setExtension(new ShortTermRental());
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.DOG_TRAINING_FIELD, Collections.emptyList()));
+    addDummyCustomer(application, CustomerType.PERSON);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-10T05:59:59+02:00"));
-    addDummyCustomer(application, CustomerType.PERSON);
+    application.setNotBillable(false);
+    application = applicationDao.insert(application);
+    List<Integer> fixedLocationIds = Collections.singletonList(
+        Triple.of(ApplicationKind.DOG_TRAINING_FIELD, "Kivikon kenttä", null))
+        .stream().map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
+    insertLocationWithFixedLocations(fixedLocationIds, application.getId());
+
+
     // association -> 100 EUR /year -> 300 EUR total
     checkPrice(application, 30000);
 
@@ -372,6 +377,13 @@ public class PricingServiceTest {
       double error = Math.abs(r.getNetPrice() - r.getUnitPrice() * r.getQuantity());
       assertTrue(error < 0.00001);
     });
+  }
+
+  private void insertLocationWithFixedLocations(List<Integer> fixedLocationIds, Integer applicationId) {
+    Location location = newLocationWithDefaults();
+    location.setFixedLocationIds(fixedLocationIds);
+    location.setApplicationId(applicationId);
+    locationDao.insert(location);
   }
 
  private Location newLocationWithDefaults() {

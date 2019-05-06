@@ -119,8 +119,8 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.STRDTE);
   }
 
-  public static ChargeBasisTag ShortTermRentalDogTrainingField() {
-    return new ChargeBasisTag(TagText.STRDTF);
+  public static ChargeBasisTag ShortTermRentalDogTrainingField(Integer fixedLocationId) {
+    return new ChargeBasisTag(TagText.STRDTF, fixedLocationId.toString());
   }
 
   public static ChargeBasisTag ShortTermRentalKeskuskatuSales() {

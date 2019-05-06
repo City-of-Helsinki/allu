@@ -5,6 +5,7 @@ import java.text.DecimalFormatSymbols;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.springframework.util.CollectionUtils;
@@ -126,17 +127,7 @@ public class ShortTermRentalPricing extends Pricing {
       }
       break;
     case DOG_TRAINING_FIELD:
-      // Associations: 100 EUR/year
-      // Companies: 300 EUR/year
-      if (customerIsCompany) {
-        final int price = getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_COMPANY);
-        updatePricePerUnit(ChargeBasisTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
-            price, priceText(price, InvoiceLines.DOG_TRAINING_FIELD_COM));
-      } else {
-        final int price = getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
-        updatePricePerUnit(ChargeBasisTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
-            price, priceText(price, InvoiceLines.DOG_TRAINING_FIELD_ORG));
-      }
+      updateDogTrainingFieldPrice();
       break;
     case KESKUSKATU_SALES: {
       // 50 EUR/day/starting 10 sqm
@@ -331,18 +322,28 @@ public class ShortTermRentalPricing extends Pricing {
     int centsPerUnit = isCommercial() ? getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL) :
       getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
     String invoiceLine = isCommercial() ? InvoiceLines.BANDEROL_COMMERCIAL : InvoiceLines.BANDEROL_NONCOMMERCIAL;
+    pricePerFixedLocation(centsPerUnit, ChronoUnit.WEEKS, invoiceLine, ChargeBasisTag::ShortTermRentalDogTrainingField);
+  }
 
-    final int units = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
-        ChronoUnit.WEEKS);
+  private void updateDogTrainingFieldPrice() {
+    int centsPerUnit = customerIsCompany ? getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_COMPANY)
+        : getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
+    String invoiceLine = customerIsCompany ? InvoiceLines.DOG_TRAINING_FIELD_COM : InvoiceLines.DOG_TRAINING_FIELD_ORG;
+    pricePerFixedLocation(centsPerUnit, ChronoUnit.YEARS, invoiceLine, ChargeBasisTag::ShortTermRentalDogTrainingField);
+  }
+
+  private void pricePerFixedLocation(int centsPerUnit, ChronoUnit unit, String invoiceLine,
+      Function<Integer, ChargeBasisTag> fixedLocationToTag) {
+    int units = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(), unit);
     int priceInCents = centsPerUnit * units;
-
     Location location = locations.get(0);
     // Charge basis entry for each selected fixed location
     location.getFixedLocationIds().forEach(fixedLocationId -> {
-      addChargeBasisEntry(ChargeBasisTag.ShortTermRentalBridgeBanner(fixedLocationId), toChargeBasisUnit(ChronoUnit.WEEKS), units, centsPerUnit, invoiceLine,
+      addChargeBasisEntry(fixedLocationToTag.apply(fixedLocationId), toChargeBasisUnit(unit), units, centsPerUnit, invoiceLine,
           priceInCents, explanationService.getExplanation(location, fixedLocationId));
       setPriceInCents(getPriceInCents() + priceInCents);
     });
+
   }
 
 }
