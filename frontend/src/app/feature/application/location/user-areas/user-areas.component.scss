@@ -1,0 +1,26 @@
+.menu-row {
+  font-size: 12px;
+  padding-bottom: 5px;
+}
+
+.menu-row .menu-row-header {
+  font-weight: bold;
+}
+
+.menu-row .row-details {
+  overflow-wrap: break-word;
+}
+
+.menu-row .menu-row-content {
+  display: flex;
+  align-items: center;
+}
+
+.content-item:not(:first-of-type) {
+  padding-left: 8px;
+}
+
+.centered {
+  width: 100%;
+  text-align: center;
+}

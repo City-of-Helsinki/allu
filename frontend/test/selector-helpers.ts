@@ -2,6 +2,7 @@ import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {ArrayUtil} from '../src/app/util/array-util';
 import {MatIcon} from '@angular/material';
+import {Some} from '@util/option';
 
 export function getMatIconButton(debugElement: DebugElement, buttonIcon: string) {
   return ArrayUtil.first(debugElement.queryAll(By.css('button.mat-icon-button'))
@@ -25,4 +26,12 @@ export function getMatIcon(debugElement: DebugElement, iconName: string) {
   return ArrayUtil.first(debugElement.queryAll(By.directive(MatIcon))
     .map(icon => icon.nativeElement)
     .filter(iconElem => iconElem.textContent === iconName));
+}
+
+export function getElementText(debugElement: DebugElement, elementSelector: string): string {
+  return Some(debugElement.query(By.css(elementSelector)))
+    .map(elem => elem.nativeElement)
+    .map(nativeElem => nativeElem.textContent)
+    .map(text => text.trim())
+    .orElse('');
 }

@@ -19,6 +19,7 @@ import {catchError, map} from 'rxjs/internal/operators';
 import {FixedLocation} from '@model/common/fixed-location';
 import {BackendFixedLocation, FixedLocationMapper} from '@service/mapper/fixed-location-mapper';
 import {FixedLocationArea} from '@model/common/fixed-location-area';
+import {FeatureCollection, GeometryObject} from 'geojson';
 
 const ADDRESS_URL = '/api/address';
 const GEOCODE_URL = 'geocode/helsinki';
@@ -26,6 +27,7 @@ const FIXED_LOCATION_URL = '/api/locations/fixed-location';
 const FIXED_LOCATION_AREA_URL = '/api/locations/fixed-location-areas';
 const CITY_DISTRICT_URL = '/api/locations/city-district';
 const SEARCH_URL = '/search';
+const USER_AREAS_URL = '/api/wfs/user-areas';
 
 @Injectable()
 export class LocationService {
@@ -68,6 +70,12 @@ export class LocationService {
     return this.http.get<BackendPostalAddress[]>(searchUrl).pipe(
       map(addressses => addressses.map(address => PostalAddress.fromBackend(address))),
       catchError(err => this.errorHandler.handle(err, findTranslation('location.error.addressSearch')))
+    );
+  }
+
+  public getUserAreas(): Observable<FeatureCollection<GeometryObject>> {
+    return this.http.get<FeatureCollection<GeometryObject>>(USER_AREAS_URL).pipe(
+      catchError(err => this.errorHandler.handle(err, findTranslation('location.error.userAreas')))
     );
   }
 

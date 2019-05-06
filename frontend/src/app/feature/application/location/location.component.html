@@ -32,9 +32,9 @@
                      [selectedLayers]="selectedLayers$ | async"></map>
               </div>
             </div>
-            <div fxLayout="row" fxLayoutGap="18px">
+            <div fxLayout="row" fxLayoutGap="18px" fxLayoutAlign="start center">
               <ng-container *ngIf="fixedLocations.length > 0">
-                <div fxFlex="0 1 calc(40% - 18px)" *ngIf="editedItemCount > 0" class="col m6">
+                <div fxFlex="0 1 calc(40% - 18px)" *ngIf="editedItemCount > 0">
                   <div class="input-field-info-text">
                     {{'location.fixedLocationNotAllowed' | translation}}
                   </div>
@@ -61,6 +61,13 @@
                   (searchChange)="applicationSearchChange($event)"
                   (selectedChange)="geometrySelected($event)">
                 </geometry-select>
+              </div>
+              <div fxFlex="0 1 calc(20% - 18px)">
+                <button type="button" mat-raised-button color="primary"
+                        [matMenuTriggerFor]="userAreaMenu"
+                        [disabled]="(userAreaCount$ | async) === 0">
+                  {{'location.button.ownAreas' | translation}} ({{userAreaCount$ | async}})
+                </button>
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
@@ -193,3 +200,13 @@
     </div>
   </form>
 </div>
+
+<mat-menu #userAreaMenu="matMenu" [overlapTrigger]="false">
+  <div (click)="$event.stopPropagation()">
+    <user-areas
+      [loading]="userAreasLoading$ | async"
+      [userAreas]="userAreas$ | async"
+      (areasSelected)="userAreasSelected($event)"
+      ></user-areas>
+  </div>
+</mat-menu>

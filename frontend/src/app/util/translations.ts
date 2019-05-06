@@ -1133,16 +1133,19 @@ export const translations = {
     fixedLocationNotAllowed: 'Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty',
     geometry: 'Alue',
     searchAndAddGeometry: 'Etsi ja lisää geometrioita hakemukselta',
+    noUserAreas: 'Ei käyttäjän alueita',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
       fetchFixedLocationAreas: 'Vakiosijaintien hakeminen epäonnistui',
       fetchCityDistricts: 'Kaupunginosien hakeminen epäonnistui',
-      addressSearch: 'Osoitehaku epäonnistui'
+      addressSearch: 'Osoitehaku epäonnistui',
+      userAreas: 'Käyttäjän alueiden hakeminen epäonnistui'
     },
     button: {
       save: 'Tallenna sijaintitiedot',
       edit: 'Muokkaa sijaintia',
-      viewOnMap: 'Kartalle'
+      viewOnMap: 'Kartalle',
+      ownAreas: 'Omat alueet'
     },
     action: {
       saved: 'Sijaintitiedot tallennettu'

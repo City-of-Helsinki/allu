@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.wfs.WfsFilter;
 import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CoordinateJson;
@@ -35,9 +36,9 @@ public class AddressService {
   private static final Pattern NUMBER_PATTERN = Pattern.compile(NUMBER_REGEX);
   private static final String NUMBER_LETTER_REGEX = "\\d+\\s*[a-zA-Z]*";
   private static final String GEOCODE_FILTER = "cql_filter";
-  private static final String STREETNAME_FILTER = "katunimi='%s'";
-  private static final String STREETNUMBER_FILTER = "osoitenumero='%s'";
-  private static final String STREETLETTER_FILTER = "osoitekirjain='%s'";
+  private static final String STREETNAME_FILTER = "katunimi";
+  private static final String STREETNUMBER_FILTER = "osoitenumero";
+  private static final String STREETLETTER_FILTER = "osoitekirjain";
   private static final Integer DEFAULT_STREET_NUMBER = 1;
   private final ApplicationProperties applicationProperties;
   private final WfsRestTemplate restTemplate;
@@ -120,21 +121,10 @@ public class AddressService {
   }
 
   private String geoCodeFilter(String streetName, Optional<Integer> streetNumber, Optional<String> streetLetter) {
-    StringBuilder sb = new StringBuilder("(");
-    sb.append(String.format(STREETNAME_FILTER, streetName));
-
-    streetNumber.ifPresent(sn -> {
-      sb.append(" AND ");
-      sb.append(String.format(STREETNUMBER_FILTER, sn));
-    });
-
-    streetLetter.ifPresent(sl -> {
-      sb.append(" AND ");
-      sb.append(String.format(STREETLETTER_FILTER, sl));
-    });
-
-    sb.append(")");
-    return sb.toString();
+    return new WfsFilter(STREETNAME_FILTER, streetName)
+        .and(STREETNUMBER_FILTER, streetNumber)
+        .and(STREETLETTER_FILTER, streetLetter)
+        .build();
   }
 
   private Optional<String> findStreetNumber(String partialStreetName) {

@@ -43,6 +43,10 @@ export class MapUtil {
       .map(geometries => geometries.map(g => this.createFeature(g, featureInfo)))
       .orElse([]);
 
+    return this.wrapToFeatureCollection(features);
+  }
+
+  public wrapToFeatureCollection(features: Feature<GeometryObject>[]): FeatureCollection<GeometryObject> {
     return {
       type: 'FeatureCollection',
       features: features

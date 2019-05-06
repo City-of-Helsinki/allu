@@ -181,6 +181,12 @@ export class MapController {
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
   }
 
+  public drawFeatures(featureCollection: FeatureCollection<GeometryObject>, style?: Object): void {
+    this.drawFeaturesToLayer(featureCollection, this.editedItems, style);
+    this.showMeasurements(this.editedItems);
+    this.shapes$.next(new ShapeAdded(this.editedItems, false));
+  }
+
   public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: Object) {
     if (geometry) {
       this.drawGeometryToLayer(geometry, this.editedItems, style);
@@ -210,13 +216,19 @@ export class MapController {
                               drawLayer: L.LayerGroup,
                               style?: GeoJSONOptions, featureInfo?: MapFeatureInfo) {
     if (geometryCollection.geometries.length) {
-      style = style || {};
       const featureCollection = this.mapUtil.createFeatureCollection(geometryCollection, featureInfo);
-      style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
-        .bindPopup((layer: any) => this.popupService.create([layer.feature]), {className: 'allu-map-popup'});
-      const geoJSON = L.geoJSON(featureCollection, style);
-      this.drawGeoJSON(geoJSON, drawLayer);
+      this.drawFeaturesToLayer(featureCollection, drawLayer, style);
     }
+  }
+
+  private drawFeaturesToLayer(featureCollection: FeatureCollection<GeometryObject>,
+                              drawLayer: L.LayerGroup,
+                              style?: GeoJSONOptions): void {
+    style = style || {};
+    style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon})
+      .bindPopup((layer: any) => this.popupService.create([layer.feature]), {className: 'allu-map-popup'});
+    const geoJSON = L.geoJSON(featureCollection, style);
+    this.drawGeoJSON(geoJSON, drawLayer);
   }
 
   private drawGeoJSON(geoJSON: L.GeoJSON, drawLayer: L.LayerGroup): void {

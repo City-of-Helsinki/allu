@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -63,6 +62,9 @@ public class ApplicationProperties implements AdAuthenticationProperties {
   @NotNull
   @Value("#{'${anonymous.access.paths:}'.split(',')}")
   private List<String> anonymousAccessPaths;
+  @NotEmpty
+  @Value("${wfs.userAreas.url}")
+  private String wfsUserAreasUrl;
 
   /**
    * @return Current environment
@@ -201,5 +203,9 @@ public class ApplicationProperties implements AdAuthenticationProperties {
   @Override
   public String getAlluAdGroupId() {
     return alluAdGroupId;
+  }
+
+  public String getWfsUserAreasUrl() {
+    return wfsUserAreasUrl;
   }
 }

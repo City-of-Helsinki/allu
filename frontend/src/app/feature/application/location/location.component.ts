@@ -49,7 +49,8 @@ import {getPaymentTariffs, needsPaymentTariff} from '@feature/common/payment-tar
 import {FixedLocation, fixedLocationInfo, groupByArea} from '@model/common/fixed-location';
 import {SearchByNameOrId} from '@feature/application/actions/application-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {GeometryCollection} from 'geojson';
+import * as UserAreaActions from '@feature/application/location/actions/user-area-actions';
+import {Feature, GeometryCollection, GeometryObject} from 'geojson';
 import {MapComponent} from '@feature/map/map.component';
 
 @Component({
@@ -78,6 +79,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   timePeriod$: Observable<TimePeriod>;
   address$: Observable<string>;
   matchingApplications$: Observable<Application[]>;
+  userAreaCount$: Observable<number>;
+  userAreas$: Observable<Feature<GeometryObject>[]>;
+  userAreasLoading$: Observable<boolean>;
 
   private submitPending = false;
   private destroy = new Subject<boolean>();
@@ -193,6 +197,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     );
 
     this.matchingApplications$ = this.store.pipe(select(fromLocation.getMatchingApplications));
+
+    this.userAreasLoading$ = this.store.pipe(select(fromLocation.getUserAreasLoading));
+    this.userAreas$ = this.store.pipe(select(fromLocation.getAllUserAreas));
+    this.userAreaCount$ = this.store.pipe(select(fromLocation.getUserAreaCount));
+
+    this.store.dispatch(new UserAreaActions.Load());
   }
 
   ngOnDestroy() {
@@ -249,6 +259,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   geometrySelected(geometry: GeometryCollection): void {
     this.mapComponent.addGeometry(geometry);
+  }
+
+  userAreasSelected(features: Feature<GeometryObject>[]) {
+    this.mapComponent.addFeatures(features);
   }
 
   updateReceivedTime(date: Date): void {

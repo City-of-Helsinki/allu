@@ -6,10 +6,12 @@ import * as fromLayers from '@feature/map/reducers/map-layer-reducer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {createMapLayerSelectors} from '@feature/map/reducers';
 import * as fromApplicationSearch from '@feature/application/reducers/application-search-reducer';
+import * as fromUserAreas from '@feature/application/location/reducers/user-area-reducer';
 
 export interface LocationState {
   layers: fromLayers.State;
   applicationSearch: fromApplicationSearch.State;
+  userAreas: fromUserAreas.State;
 }
 
 export interface State extends fromRoot.State {
@@ -18,7 +20,8 @@ export interface State extends fromRoot.State {
 
 export const reducers: ActionReducerMap<LocationState> = {
   layers: fromLayers.createReducerFor(ActionTargetType.Location),
-  applicationSearch: fromApplicationSearch.createReducerFor(ActionTargetType.Location)
+  applicationSearch: fromApplicationSearch.createReducerFor(ActionTargetType.Location),
+  userAreas: fromUserAreas.reducer
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Location reducers');
@@ -54,4 +57,22 @@ export const getApplicationSearchState = createSelector(
 export const getMatchingApplications = createSelector(
   getApplicationSearchState,
   fromApplicationSearch.getMatchingApplications
+);
+
+// User geometry selectors
+export const getUserAreasState = createSelector(
+  getLocationState,
+  (state: LocationState) => state.userAreas
+);
+
+export const {
+  selectIds: getUserAreaIds,
+  selectEntities: getUserAreaEntities,
+  selectAll: getAllUserAreas,
+  selectTotal: getUserAreaCount,
+} = fromUserAreas.adapter.getSelectors(getUserAreasState);
+
+export const getUserAreasLoading = createSelector(
+  getUserAreasState,
+  fromUserAreas.getLoading
 );

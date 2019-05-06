@@ -13,7 +13,7 @@ import {ProjectService} from '@service/project/project.service';
 import {filter, switchMap, takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '@util/time.util';
 import {MapUtil} from '@service/map/map.util';
-import {FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
+import {Feature, FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
 import {MapLayer} from '@service/map/map-layer';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
@@ -98,6 +98,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   addGeometry(geometry: GeometryCollection): void {
     this.mapController.drawFixedGeometries([geometry], pathStyle.HIGHLIGHT_ADDED);
+    this.mapController.fitEditedToView();
+  }
+
+  addFeatures(features: Feature<GeometryObject>[]): void {
+    const featureCollection = this.mapUtil.wrapToFeatureCollection(features);
+    this.mapController.drawFeatures(featureCollection, pathStyle.HIGHLIGHT_ADDED);
     this.mapController.fitEditedToView();
   }
 

@@ -13,6 +13,9 @@ import {StoredLocationsComponent} from './stored-locations.component';
 import {StoreModule} from '@ngrx/store';
 import {reducersProvider, reducersToken} from '@feature/application/location/reducers';
 import {GeometrySelectComponent} from '@feature/application/location/geometry-select/geometry-select.component';
+import {EffectsModule} from '@ngrx/effects';
+import {UserAreaEffects} from '@feature/application/location/effects/user-area-effects.service';
+import {UserAreasComponent} from '@feature/application/location/user-areas/user-areas.component';
 
 @NgModule({
   imports: [
@@ -20,6 +23,7 @@ import {GeometrySelectComponent} from '@feature/application/location/geometry-se
     ReactiveFormsModule,
     RouterModule,
     StoreModule.forFeature('location', reducersToken),
+    EffectsModule.forFeature([UserAreaEffects]),
     AlluCommonModule,
     MatCardModule,
     SearchBarModule,
@@ -30,7 +34,8 @@ import {GeometrySelectComponent} from '@feature/application/location/geometry-se
   declarations: [
     LocationComponent,
     StoredLocationsComponent,
-    GeometrySelectComponent
+    GeometrySelectComponent,
+    UserAreasComponent
   ],
   providers: [
     reducersProvider
