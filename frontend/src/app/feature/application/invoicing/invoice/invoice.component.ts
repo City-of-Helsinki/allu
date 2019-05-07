@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Invoice} from '@model/application/invoice/invoice';
 import {AlluThemeColor} from '@model/common/allu-theme-color';
 import {InvoiceRow} from '@model/application/invoice/invoice-row';
+import {Some} from '@app/util/option';
 
 export enum InvoiceStatus {
   open = 'open',
@@ -32,5 +33,11 @@ export class InvoiceComponent {
 
   get totalPrice() {
     return this.invoice ? this.invoice.rows.reduce((total: number, current: InvoiceRow) => total + current.netPrice, 0) : 0;
+  }
+
+  get invoicingDate() {
+    return Some(this.invoice)
+    .map(i => i.sentTime ? i.sentTime : i.invoicableTime)
+    .orElse(undefined);
   }
 }

@@ -5,6 +5,7 @@ export class Invoice {
     public id?: number,
     public applicationId?: number,
     public invoicableTime?: Date,
+    public sentTime?: Date,
     public invoiced?: boolean,
     public sapIdPending?: boolean,
     public rows: InvoiceRow[] = []

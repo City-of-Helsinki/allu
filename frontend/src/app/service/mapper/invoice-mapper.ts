@@ -16,6 +16,7 @@ export interface BackendInvoice {
   id: number;
   applicationId: number;
   invoicableTime: string;
+  sentTime: string;
   invoiced: boolean;
   sapIdPending: boolean;
   rows: BackendInvoiceRow[];
@@ -31,6 +32,7 @@ export class InvoiceMapper {
       invoice.id,
       invoice.applicationId,
       TimeUtil.dateFromBackend(invoice.invoicableTime),
+      TimeUtil.dateFromBackend(invoice.sentTime),
       invoice.invoiced,
       invoice.sapIdPending,
       this.mapBackendRows(invoice.rows)

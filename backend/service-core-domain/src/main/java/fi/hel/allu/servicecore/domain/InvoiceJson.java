@@ -9,20 +9,21 @@ public class InvoiceJson {
   private Integer id;
   private Integer applicationId;
   private ZonedDateTime invoicableTime;
+  private ZonedDateTime sentTime;
   private boolean invoiced;
   private boolean sapIdPending;
   @NotNull
   private List<InvoiceRowJson> rows;
 
   public InvoiceJson(Integer id, Integer applicationId, ZonedDateTime invoicableTime, boolean invoiced,
-      boolean sapIdPending,
-      List<InvoiceRowJson> rows) {
+      boolean sapIdPending, ZonedDateTime sentTime, List<InvoiceRowJson> rows) {
     this.id = id;
     this.applicationId = applicationId;
     this.invoicableTime = invoicableTime;
     this.invoiced = invoiced;
     this.sapIdPending = sapIdPending;
     this.rows = rows;
+    this.sentTime = sentTime;
   }
 
   public InvoiceJson() {
@@ -102,6 +103,14 @@ public class InvoiceJson {
 
   public void setRows(List<InvoiceRowJson> rows) {
     this.rows = rows;
+  }
+
+  public ZonedDateTime getSentTime() {
+    return sentTime;
+  }
+
+  public void setSentTime(ZonedDateTime sentTime) {
+    this.sentTime = sentTime;
   }
 
 }

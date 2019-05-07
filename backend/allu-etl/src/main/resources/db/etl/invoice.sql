@@ -11,6 +11,7 @@ INSERT INTO allureport.lasku  (
   asiakas_postinumero,
   asiakas_postitoimipaikka,
   laskutettava_aika,
+  laskutettu_aika,
   laskutettu,
   sap_tunnus_puuttuu,
   laskutusjakso_id
@@ -56,6 +57,7 @@ SELECT
         ELSE ''
     END AS asiakas_postitoimipaikka,
     i.invoicable_time AS laskutettava_aika,
+    i.invoicable_time AS laskutettu_aika,
     i.invoiced AS laskutettu,
     i.sap_id_pending AS sap_tunnus_puuttuu,
     i.invoicing_period_id AS laskutusjakso_id
@@ -73,6 +75,7 @@ ON CONFLICT (id) DO UPDATE SET
     asiakas_postinumero = EXCLUDED.asiakas_postinumero,
     asiakas_postitoimipaikka = EXCLUDED.asiakas_postitoimipaikka,
     laskutettava_aika = EXCLUDED.laskutettava_aika,
+    laskutettu_aika = EXCLUDED.laskutettu_aika,
     laskutettu = EXCLUDED.laskutettu,
     sap_tunnus_puuttuu = EXCLUDED.sap_tunnus_puuttuu,
     laskutusjakso_id = EXCLUDED.laskutusjakso_id

@@ -11,6 +11,7 @@ public class Invoice {
   private Integer id;
   private Integer applicationId;
   private ZonedDateTime invoicableTime;
+  private ZonedDateTime sentTime;
   private boolean invoiced;
   private boolean sapIdPending;
   private List<InvoiceRow> rows;
@@ -135,6 +136,14 @@ public class Invoice {
 
   public void setInvoicingPeriodId(Integer invoicingPeriodId) {
     this.invoicingPeriodId = invoicingPeriodId;
+  }
+
+  public ZonedDateTime getSentTime() {
+    return sentTime;
+  }
+
+  public void setSentTime(ZonedDateTime sentTime) {
+    this.sentTime = sentTime;
   }
 
 }

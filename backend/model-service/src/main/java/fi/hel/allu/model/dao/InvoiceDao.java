@@ -191,7 +191,11 @@ public class InvoiceDao {
    */
   @Transactional
   public void markSent(List<Integer> invoiceIds) {
-    queryFactory.update(invoice).set(invoice.invoiced, true).where(invoice.id.in(invoiceIds)).execute();
+    queryFactory.update(invoice)
+      .set(invoice.invoiced, true)
+      .set(invoice.sentTime, ZonedDateTime.now())
+      .where(invoice.id.in(invoiceIds))
+      .execute();
   }
 
   /**

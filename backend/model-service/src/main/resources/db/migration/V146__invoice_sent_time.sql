@@ -1,0 +1,1 @@
+alter table allu.invoice add column sent_time timestamp with time zone;
