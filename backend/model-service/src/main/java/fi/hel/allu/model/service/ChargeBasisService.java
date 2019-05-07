@@ -57,7 +57,8 @@ public class ChargeBasisService {
     List<ChargeBasisEntry> calculatedEntries = entries.stream().filter(e -> !e.getManuallySet()).collect(Collectors.toList());
     ChargeBasisModification modification = chargeBasisDao.getModifications(applicationId,
         calculatedEntries, false);
-    handleModifications(modification);
+    // Filter locked entries when updating calculated entries
+    handleModifications(modification.filtered(chargeBasisDao.getLockedChargeBasisIds(applicationId)));
     return modification.hasChanges();
   }
 

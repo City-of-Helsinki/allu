@@ -1,19 +1,16 @@
 package fi.hel.allu.model.dao;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 
 public class ChargeBasisModification {
 
-  private List<ChargeBasisEntry> entriesToInsert;
-  private Set<Integer> entryIdsToDelete;
-  private Map<Integer, ChargeBasisEntry> entriesToUpdate;
-  private boolean manuallySet;
-  private int applicationId;
+  private final List<ChargeBasisEntry> entriesToInsert;
+  private final Set<Integer> entryIdsToDelete;
+  private final Map<Integer, ChargeBasisEntry> entriesToUpdate;
+  private final boolean manuallySet;
+  private final int applicationId;
 
   public ChargeBasisModification(int applicationId, List<ChargeBasisEntry> entriesToInsert, Set<Integer> entryIdsToDelete,
       Map<Integer, ChargeBasisEntry> entriesToUpdate, boolean manuallySet) {
@@ -56,5 +53,17 @@ public class ChargeBasisModification {
     Set<Integer> ids = new HashSet<>(entriesToUpdate.keySet());
     ids.addAll(entryIdsToDelete);
     return ids;
+  }
+
+  public ChargeBasisModification filtered(List<Integer> ingoredChargeBasisEntryIds) {
+    Map<Integer, ChargeBasisEntry> filteredUpdates = new HashMap<>(entriesToUpdate);
+    filteredUpdates.keySet().removeAll(ingoredChargeBasisEntryIds);
+    Set<Integer> filteredDelete = new HashSet<>(entryIdsToDelete);
+    filteredDelete.removeAll(ingoredChargeBasisEntryIds);
+    return new ChargeBasisModification(this.applicationId,
+                                       entriesToInsert,
+                                       filteredDelete,
+                                       filteredUpdates,
+                                       manuallySet);
   }
 }
