@@ -57,7 +57,7 @@ SELECT
         ELSE ''
     END AS asiakas_postitoimipaikka,
     i.invoicable_time AS laskutettava_aika,
-    i.invoicable_time AS laskutettu_aika,
+    i.sent_time AS laskutettu_aika,
     i.invoiced AS laskutettu,
     i.sap_id_pending AS sap_tunnus_puuttuu,
     i.invoicing_period_id AS laskutusjakso_id
