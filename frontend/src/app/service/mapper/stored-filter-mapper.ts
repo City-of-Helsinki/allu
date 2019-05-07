@@ -51,7 +51,6 @@ export class StoredFilterMapper {
 
   private static mapBackendMap(filter: any): any {
     return {
-      address: filter.address,
       startDate: TimeUtil.dateFromBackend(filter.startDate),
       endDate: TimeUtil.dateFromBackend(filter.endDate),
       statuses: filter.statuses,
