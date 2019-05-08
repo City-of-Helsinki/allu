@@ -44,6 +44,8 @@ public enum ApplicationTagType {
   CONTRACT_REJECTED,
   // Aikamuutos
   DATE_CHANGE,
+  // Kartoitettava
+  SURVEY_REQUIRED,
   // Muut muutokset
   OTHER_CHANGES;
 

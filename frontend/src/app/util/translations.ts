@@ -273,6 +273,7 @@ export const translations = {
         DECISION_NOT_SENT: 'Päätös lähettämättä',
         CONTRACT_REJECTED: 'Sopimusta ei hyväksytty',
         DATE_CHANGE: 'Aikamuutos',
+        SURVEY_REQUIRED: 'Kartoitettava',
         OTHER_CHANGES: 'Muut muutokset'
       },
       action: {

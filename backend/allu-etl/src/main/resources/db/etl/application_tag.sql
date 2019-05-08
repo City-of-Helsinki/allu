@@ -22,6 +22,7 @@ WITH tunnisteet (en, fi) AS (
         ('SAP_ID_MISSING', 'Laskutettavan SAP-tunnus puuttuu'),
         ('DECISION_NOT_SENT', 'Päätös lähettämättä'),
         ('CONTRACT_REJECTED', 'Sopimusta ei hyväksytty'),
+        ('SURVEY_REQUIRED', 'Kartoitettava'),
         ('DATE_CHANGE', 'Aikamuutos'),
         ('OTHER_CHANGES', 'Muut muutokset')
 )

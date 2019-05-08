@@ -35,6 +35,8 @@ export enum ApplicationTagType {
   CONTRACT_REJECTED = 'CONTRACT_REJECTED',
   // Aikamuutos
   DATE_CHANGE = 'DATE_CHANGE',
+  // Kartoitettava
+  SURVEY_REQUIRED = 'SURVEY_REQUIRED',
   // Muut muutokset
   OTHER_CHANGES = 'OTHER_CHANGES'
 }
@@ -47,6 +49,7 @@ export const manuallyAddedTagTypes = [
   ApplicationTagType.PAYMENT_BASIS_CORRECTION,
   ApplicationTagType.DECISION_NOT_SENT,
   ApplicationTagType.CONTRACT_REJECTED,
+  ApplicationTagType.SURVEY_REQUIRED,
   ApplicationTagType.OTHER_CHANGES
 ];
 
