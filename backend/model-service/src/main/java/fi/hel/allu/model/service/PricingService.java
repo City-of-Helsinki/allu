@@ -241,25 +241,34 @@ public class PricingService {
    */
   private List<OutdoorPricingConfiguration> getEventPricing(Location location, EventNature nature, SurfaceHardness surfaceHardness) {
     List<Integer> fixedLocationIds = location.getFixedLocationIds();
-    List<OutdoorPricingConfiguration> pricingConfigurations = Collections.emptyList();
-    if (fixedLocationIds != null && !fixedLocationIds.isEmpty()) {
-      // fixed locations exist, so they define the pricing
-      pricingConfigurations = fixedLocationIds.stream().map(flId -> pricingDao.findByFixedLocationAndNature(flId, nature))
-          .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+    List<OutdoorPricingConfiguration> pricingConfigurations = fixedLocationIds.stream()
+        .map(f -> getPricingConfigurationForFixedLocation(f, location, nature, surfaceHardness))
+        .filter(c -> c != null)
+        .collect(Collectors.toList());
+
+    if (CollectionUtils.isEmpty(pricingConfigurations)) {
+      pricingConfigurations = Optional.ofNullable(getPricingConfigurationByDistrictAndNature(location, nature, surfaceHardness))
+          .map(Collections::singletonList)
+          .orElse(Collections.emptyList());
     }
-    if (CollectionUtils.isEmpty(pricingConfigurations) && surfaceHardness != null) {
-      // Check if district is defined:
-      Integer cityDistrictId = location.getEffectiveCityDistrictId();
-      if (cityDistrictId != null) {
-        pricingConfigurations = pricingDao.findByDisctrictAndNature(cityDistrictId, nature, surfaceHardness)
-            .map(Collections::singletonList)
-            .orElse(Collections.emptyList());
-      }
-    }
-    // No pricing could be found:
     return pricingConfigurations;
   }
 
+  private OutdoorPricingConfiguration getPricingConfigurationForFixedLocation(Integer fixedLocationId, Location location,
+      EventNature nature, SurfaceHardness surfaceHardness) {
+     Optional<OutdoorPricingConfiguration> configuration = pricingDao.findByFixedLocationAndNature(fixedLocationId, nature);
+     return configuration.orElse(getPricingConfigurationByDistrictAndNature(location, nature, surfaceHardness));
+  }
+
+  private OutdoorPricingConfiguration getPricingConfigurationByDistrictAndNature(Location location,
+      EventNature nature, SurfaceHardness surfaceHardness) {
+    OutdoorPricingConfiguration configuration = null;
+    if (location.getEffectiveCityDistrictId() != null && surfaceHardness != null) {
+      configuration = pricingDao.findByDisctrictAndNature(location.getEffectiveCityDistrictId(), nature, surfaceHardness)
+          .orElse(null);
+    }
+    return configuration;
+  }
 
   private boolean isCompany(Application application) {
     if (application.getCustomersWithContacts().isEmpty()) {
