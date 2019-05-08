@@ -23,24 +23,9 @@ export class HistoryFieldFormatter {
       .subscribe(districts => this.cityDistricts = districts);
   }
 
-  public toFormattedFieldNames(fieldChange: FieldChange, meta: StructureMeta): FieldChange {
-    this.meta = meta;
-    let uiFieldName = this.meta.uiName(fieldChange.fieldName);
-
-    switch (fieldChange.fieldChangeType) {
-      case FieldChangeType.CUSTOMER:
-      case FieldChangeType.CONTACT:
-        uiFieldName = findTranslation(['history.change.field', fieldChange.uiFieldChangeType]) + ' '
-          + findTranslation(['history.change.operation', fieldChange.uiFieldChangeOperationType]);
-        break;
-      default:
-    }
-    return new FieldChange(fieldChange.fieldName, fieldChange.oldValue, fieldChange.newValue, uiFieldName);
-  }
-
   public toFormattedChange(fieldChange: FieldChange, meta: StructureMeta): FieldChange {
     this.meta = meta;
-    const dataType = this.meta.dataType(fieldChange.fieldName);
+    const dataType = this.meta.dataType(fieldChange.fieldName, '/');
     return this.formatByDataType(dataType, fieldChange);
   }
 
@@ -51,19 +36,19 @@ export class HistoryFieldFormatter {
           fieldChange.fieldName,
           TimeUtil.formatHistoryDateTimeString(fieldChange.oldValue),
           TimeUtil.formatHistoryDateTimeString(fieldChange.newValue),
-          this.meta.uiName(fieldChange.fieldName));
+          this.meta.uiName(fieldChange.fieldName, '/'));
       case AttributeDataType.BOOLEAN:
         return new FieldChange(
           fieldChange.fieldName,
           this.formatAndTranslate('common.boolean', fieldChange.oldValue),
           this.formatAndTranslate('common.boolean', fieldChange.newValue),
-          this.meta.uiName(fieldChange.fieldName));
+          this.meta.uiName(fieldChange.fieldName, '/'));
       case AttributeDataType.ENUMERATION:
         return new FieldChange(
           fieldChange.fieldName,
           this.formatNonEmpty(fieldChange.fieldName, fieldChange.oldValue),
           this.formatNonEmpty(fieldChange.fieldName, fieldChange.newValue),
-          this.meta.uiName(fieldChange.fieldName));
+          this.meta.uiName(fieldChange.fieldName, '/'));
       default:
         return this.formatDefault(fieldChange);
     }
@@ -78,14 +63,15 @@ export class HistoryFieldFormatter {
   private formatNonEmpty(path: string, value: string) {
     return Some(value)
       .filter(v => !StringUtil.isEmpty(v))
-      .map(v => this.meta.uiName(path, v))
+      .map(v => `${path}/${v}`)
+      .map(valuePath => this.meta.uiName(valuePath, '/'))
       .orElse('');
   }
 
   private formatDefault(fieldChange: FieldChange): FieldChange {
     let oldValue = StringUtil.replaceNull(fieldChange.oldValue);
     let newValue = StringUtil.replaceNull(fieldChange.newValue);
-    let uiFieldName = this.meta.uiName(fieldChange.fieldName);
+    let uiFieldName = this.meta.uiName(fieldChange.fieldName, '/');
 
     switch (fieldChange.fieldChangeType) {
       case FieldChangeType.DISTRICT_ID:
