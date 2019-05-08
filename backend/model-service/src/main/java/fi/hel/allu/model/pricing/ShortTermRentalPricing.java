@@ -322,7 +322,7 @@ public class ShortTermRentalPricing extends Pricing {
     int centsPerUnit = isCommercial() ? getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL) :
       getPrice(PricingKey.BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
     String invoiceLine = isCommercial() ? InvoiceLines.BANDEROL_COMMERCIAL : InvoiceLines.BANDEROL_NONCOMMERCIAL;
-    pricePerFixedLocation(centsPerUnit, ChronoUnit.WEEKS, invoiceLine, ChargeBasisTag::ShortTermRentalDogTrainingField);
+    pricePerFixedLocation(centsPerUnit, ChronoUnit.WEEKS, invoiceLine, ChargeBasisTag::ShortTermRentalBridgeBanner);
   }
 
   private void updateDogTrainingFieldPrice() {
