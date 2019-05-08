@@ -125,7 +125,7 @@ export function outdoorEventDraft(fb: FormBuilder): { [key: string]: any; } {
 
 export function structureTimes(application: Application, event: Event): TimePeriod {
   const tp = new TimePeriod();
-  tp.startTime = TimeUtil.equals(application.startTime, event.eventStartTime) ? undefined : application.startTime;
-  tp.endTime = TimeUtil.equals(application.endTime, event.eventEndTime) ? undefined : application.endTime;
+  tp.startTime = TimeUtil.isSame(application.startTime, event.eventStartTime, 'day') ? undefined : application.startTime;
+  tp.endTime = TimeUtil.isSame(application.endTime, event.eventEndTime, 'day') ? undefined : application.endTime;
   return tp;
 }
