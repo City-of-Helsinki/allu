@@ -15,10 +15,5 @@
     "target": "https://185.26.49.172",
     "secure": false,
     "changeOrigin": true
-  },
-  "/geoserver/hkr/ows": {
-    "target": "https://185.26.49.172/geoserver/hkr/ows",
-    "secure": false,
-    "changeOrigin": true
   }
 }
