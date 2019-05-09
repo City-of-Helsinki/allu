@@ -328,7 +328,8 @@ public class ShortTermRentalPricing extends Pricing {
   private void updateDogTrainingFieldPrice() {
     int centsPerUnit = customerIsCompany ? getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_COMPANY)
         : getPrice(PricingKey.DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
-    String invoiceLine = customerIsCompany ? InvoiceLines.DOG_TRAINING_FIELD_COM : InvoiceLines.DOG_TRAINING_FIELD_ORG;
+    String invoiceLine = customerIsCompany ? priceText(centsPerUnit, InvoiceLines.DOG_TRAINING_FIELD_COM) :
+      priceText(centsPerUnit, InvoiceLines.DOG_TRAINING_FIELD_ORG);
     pricePerFixedLocation(centsPerUnit, ChronoUnit.YEARS, invoiceLine, ChargeBasisTag::ShortTermRentalDogTrainingField);
   }
 
