@@ -441,6 +441,9 @@ public class ApplicationServiceComposer {
     return applicationService.findApplicationIdsByInvoiceRecipient(customerId);
   }
 
+  /**
+   * @deprecated use removeTag for its simpler implementation
+   */
   public void removeTagFromApplication(int id, ApplicationTagType tagType) {
     List<ApplicationTagJson> updatedTags = applicationService.findTagsByApplicationId(id).stream()
         .filter(t -> !t.getType().equals(tagType)).collect(Collectors.toList());
