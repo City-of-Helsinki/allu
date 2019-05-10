@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -193,6 +194,10 @@ public class ApplicationServiceExt {
   public void cancelApplication(Integer id) {
     applicationServiceComposer.changeStatus(
         id, StatusType.CANCELLED, new StatusChangeInfoJson());
+  }
+
+  public void markSurveyDone(Integer id) {
+    applicationServiceComposer.removeTag(id, ApplicationTagType.SURVEY_REQUIRED);
   }
 
   private Integer getExternalUserId() {

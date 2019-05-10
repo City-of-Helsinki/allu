@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -104,6 +105,8 @@ public abstract class ApplicationExtMapper<T extends BaseApplicationExt> {
     applicationExt.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
     applicationExt.setTerms(application.getExtension().getTerms());
     applicationExt.setCustomerReference(application.getCustomerReference());
+    applicationExt.setSurveyRequired(application.getApplicationTags().stream()
+      .anyMatch(applicationTagJson -> applicationTagJson.getType() == ApplicationTagType.SURVEY_REQUIRED));
   }
 
 }

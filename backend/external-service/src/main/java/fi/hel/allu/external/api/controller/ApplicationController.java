@@ -133,4 +133,15 @@ public class ApplicationController {
     return ResponseEntity.ok(supervisionTasks);
   }
 
+  @ApiOperation(value = "Marks required survey done for given application ID",
+    produces = "application/json",
+    authorizations=@Authorization(value ="api_key"))
+  @RequestMapping(value = "/{id}/surveydone", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<Void> markSurveyDone(@ApiParam(value = "Id of the application to mark survey done for.") @PathVariable Integer id) {
+    Integer applicationId = applicationService.getApplicationIdForExternalId(id);
+    applicationService.validateOwnedByExternalUser(applicationId);
+    applicationService.markSurveyDone(applicationId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

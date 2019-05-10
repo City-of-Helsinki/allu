@@ -27,6 +27,7 @@ public class ApplicationExt {
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
   private String terms;
   private String customerReference;
+  private boolean surveyRequired;
 
   @ApiModelProperty(value = "Id of the application")
   public Integer getId() {
@@ -116,5 +117,13 @@ public class ApplicationExt {
 
   public void setCustomerReference(String customerReference) {
     this.customerReference = customerReference;
+  }
+
+  public boolean isSurveyRequired() {
+    return surveyRequired;
+  }
+
+  public void setSurveyRequired(boolean surveyRequired) {
+    this.surveyRequired = surveyRequired;
   }
 }
