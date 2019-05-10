@@ -2,10 +2,18 @@ import {Injectable} from '@angular/core';
 import * as L from 'leaflet';
 import {MapFeatureInfo} from './map-feature-info';
 import {ALLU_PREFIX} from './map-layer-id';
-import {Feature, FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
+import {DirectGeometryObject, Feature, FeatureCollection, GeometryCollection, GeometryObject, MultiPolygon} from 'geojson';
 import area from '@turf/area';
 import {Some} from '@util/option';
 import {Projection} from '@feature/map/projection';
+
+function isDirectGeometryObject(geometryObject: GeometryObject): geometryObject is DirectGeometryObject {
+  return geometryObject !== undefined && (<DirectGeometryObject>geometryObject).coordinates !== undefined;
+}
+
+function isMultiPolygon(geometryObject: GeometryObject): geometryObject is MultiPolygon {
+  return isDirectGeometryObject(geometryObject) && geometryObject.type === 'MultiPolygon';
+}
 
 @Injectable()
 export class MapUtil {
@@ -31,7 +39,7 @@ export class MapUtil {
           properties: {name: 'EPSG:3879'},
           type: 'name'
         },
-        geometries: geometries.map(g => this.mapWgs84Geometry(g))
+        geometries: geometries.map(g => this.project(g))
       };
     }
     return geometryCollection;
@@ -86,33 +94,75 @@ export class MapUtil {
     }
   }
 
+  public unprojectFeatureCollection(featureCollection: FeatureCollection<GeometryObject>): FeatureCollection<GeometryObject> {
+    return {
+      ...featureCollection,
+      features: featureCollection.features.map(feature => this.unprojectFeature(feature))
+    };
+  }
+
+  /**
+   * Leaflet Draw cannot handle MultiPolygons so they are transformed as multiple Polygons
+   */
+  public sanitizeForLeaflet(featureCollection: FeatureCollection<GeometryObject>): FeatureCollection<GeometryObject> {
+    const sanitized = featureCollection.features
+      .map(feature => this.sanitizeFeatureForLeaflet(feature))
+      .reduce((acc, cur) => acc.concat(cur), []);
+    return this.wrapToFeatureCollection(sanitized);
+  }
+
   private createFeature(geometry: GeometryObject, featureInfo?: MapFeatureInfo): Feature<GeometryObject> {
     return {
       id: featureInfo ? `${ALLU_PREFIX}.${featureInfo.id}` : undefined,
       type: 'Feature',
-      geometry: this.mapEPSG3879Geometry(geometry),
+      geometry: this.unproject(geometry),
       properties: featureInfo
     };
 
   }
 
+  private unprojectFeature(feature: Feature<GeometryObject>): Feature<GeometryObject> {
+    if (isDirectGeometryObject(feature.geometry)) {
+      return {
+        ...feature,
+        geometry: this.unproject(feature.geometry)
+      };
+    } else {
+      return feature;
+    }
+  }
+
+
   private createGeometry(feature: Feature<GeometryObject>): GeometryObject {
-    return this.mapWgs84Geometry(feature.geometry);
+    return this.project(feature.geometry);
   }
 
-  private mapWgs84Geometry(geometry: any): any {
-    return { type: geometry.type, coordinates: this.mapWgs84GeometryObject(geometry) };
+  private project(geometry: any): any {
+    return {
+      type: geometry.type,
+      coordinates: this.projection.project(geometry.coordinates)
+    };
   }
 
-  private mapWgs84GeometryObject(geometry: any): any {
-    return this.projection.project(geometry.coordinates);
+  private unproject(geometry: any): any {
+    return {
+      type: geometry.type,
+      coordinates: this.projection.unproject(geometry.coordinates)
+    };
   }
 
-  private mapEPSG3879Geometry(geometry: any): any {
-    return { type: geometry.type, coordinates: this.mapEPSG3879GeometryObject(geometry) };
+  private sanitizeFeatureForLeaflet(feature: Feature<GeometryObject>): Feature<GeometryObject>[] {
+    return this.sanitizeGeometryObjectForLeaflet(feature.geometry).map(geometry => ({
+      ...feature,
+      geometry
+    }));
   }
 
-  private mapEPSG3879GeometryObject(geometry: any): any {
-    return this.projection.unproject(geometry.coordinates);
+  private sanitizeGeometryObjectForLeaflet(geometryObject: GeometryObject): GeometryObject[] {
+    if (isMultiPolygon(geometryObject)) {
+      return geometryObject.coordinates.map(coordinates => ({type: 'Polygon', coordinates}));
+    } else {
+      return [geometryObject];
+    }
   }
 }

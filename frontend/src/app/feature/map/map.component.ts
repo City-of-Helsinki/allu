@@ -102,9 +102,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   addFeatures(features: Feature<GeometryObject>[]): void {
-    const featureCollection = this.mapUtil.wrapToFeatureCollection(features);
-    this.mapController.drawFeatures(featureCollection, pathStyle.HIGHLIGHT_ADDED);
-    this.mapController.fitEditedToView();
+    Some(this.mapUtil.wrapToFeatureCollection(features))
+      .map(featureCollection => this.mapUtil.sanitizeForLeaflet(featureCollection))
+      .map(sanitized => this.mapUtil.unprojectFeatureCollection(sanitized))
+      .do(unprojected => {
+        this.mapController.drawFeatures(unprojected, pathStyle.HIGHLIGHT_ADDED);
+        this.mapController.fitEditedToView();
+      });
   }
 
   private drawAndFocusApplications(applications: Application[]) {
