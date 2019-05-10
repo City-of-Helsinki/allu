@@ -27,7 +27,8 @@ public class ApplicationTagController {
       ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
       ApplicationTagType.STATEMENT_REQUESTED,
       ApplicationTagType.COMPENSATION_CLARIFICATION,
-      ApplicationTagType.PAYMENT_BASIS_CORRECTION
+      ApplicationTagType.PAYMENT_BASIS_CORRECTION,
+      ApplicationTagType.SURVEY_REQUIRED
   );
 
   @ApiOperation(value = "Add new tag for an application with given ID. If application already has a tag with given type no new tag is added.",
@@ -38,6 +39,7 @@ public class ApplicationTagController {
       + " <li>STATEMENT_REQUESTED</li>"
       + " <li>COMPENSATION_CLARIFICATION</li>"
       + " <li>PAYMENT_BASIS_CORRECTION</li>"
+      + " <li>SURVEY_REQUIRED</li>"
       + "</ul>",
       produces = "application/json",
       consumes = "application/json",
@@ -62,7 +64,7 @@ public class ApplicationTagController {
       + " <li>STATEMENT_REQUESTED</li>"
       + " <li>COMPENSATION_CLARIFICATION</li>"
       + " <li>PAYMENT_BASIS_CORRECTION</li>"
-      + " <li>PAYMENT_BASIS_CORRECTION</li>"
+      + " <li>SURVEY_REQUIRED</li>"
       + "</ul>",
       produces = "application/json",
       consumes = "application/json",
