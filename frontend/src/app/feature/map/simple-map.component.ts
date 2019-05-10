@@ -5,6 +5,7 @@ import {MapUtil} from '@service/map/map.util';
 import {DEFAULT_OVERLAY, MapLayerService} from '@feature/map/map-layer.service';
 import {MapFeature} from '@feature/map/map-feature';
 import {pathStyle} from '@service/map/map-draw-styles';
+import {Projection} from '@feature/map/projection';
 
 @Component({
   selector: 'simple-map',
@@ -21,6 +22,7 @@ export class SimpleMapComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private mapUtil: MapUtil,
+    private projection: Projection,
     private mapLayerService: MapLayerService) {}
 
   ngAfterViewInit(): void {
@@ -44,7 +46,7 @@ export class SimpleMapComponent implements AfterViewInit, OnDestroy {
         L.latLng(59.9084989595170114, 24.4555930248625906),
         L.latLng(60.4122137731072542, 25.2903558783246289)
       ),
-      crs: this.mapUtil.EPSG3879,
+      crs: this.projection.EPSG3879,
       continuousWorld: true,
       worldCopyJump: false
     };

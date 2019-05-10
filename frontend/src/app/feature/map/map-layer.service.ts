@@ -4,7 +4,7 @@ import {AuthService} from '@service/authorization/auth.service';
 import {Injectable} from '@angular/core';
 import {ConfigService} from '@service/config/config.service';
 import {CITY_DISTRICTS, pathStyle, winkki} from '../../service/map/map-draw-styles';
-import {MapUtil} from '@service/map/map.util';
+import {Projection} from '@feature/map/projection';
 import * as L from 'leaflet';
 import {PathOptions} from 'leaflet';
 import 'leaflet.markercluster';
@@ -88,7 +88,7 @@ export class MapLayerService {
     zoomToBoundsOnClick: true
   });
 
-  constructor(private authService: AuthService, private config: ConfigService, private mapUtil: MapUtil) {
+  constructor(private authService: AuthService, private config: ConfigService, private projection: Projection) {
     this.contentLayers = applicationTypeList
       .map(type => new MapLayer(findTranslation(['application.type', type]), L.featureGroup(), type));
 
@@ -180,7 +180,7 @@ export class MapLayerService {
       typeNS: 'avoindata',
       typeName: layerName,
       geometryField: 'geom',
-      crs: this.mapUtil.EPSG3879,
+      crs: this.projection.EPSG3879,
       style: style,
       opacity: style.opacity,
       fillOpacity: style.fillOpacity,
@@ -193,7 +193,7 @@ export class MapLayerService {
     return L.wfsGeoJSON({
       url: 'https://kartta.hel.fi/ws/geoserver/avoindata/wfs',
       typeName: 'avoindata:Kaupunginosajako',
-      crs: this.mapUtil.EPSG3879,
+      crs: this.projection.EPSG3879,
       style: CITY_DISTRICTS
     });
   }

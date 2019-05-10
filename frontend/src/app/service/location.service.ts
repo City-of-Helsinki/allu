@@ -20,6 +20,7 @@ import {FixedLocation} from '@model/common/fixed-location';
 import {BackendFixedLocation, FixedLocationMapper} from '@service/mapper/fixed-location-mapper';
 import {FixedLocationArea} from '@model/common/fixed-location-area';
 import {FeatureCollection, GeometryObject} from 'geojson';
+import {Projection} from '@feature/map/projection';
 
 const ADDRESS_URL = '/api/address';
 const GEOCODE_URL = 'geocode/helsinki';
@@ -34,12 +35,12 @@ export class LocationService {
 
   constructor(
     private http: HttpClient,
-    private mapService: MapUtil,
+    private projection: Projection,
     private errorHandler: ErrorHandler) {}
 
   public geocode(address: string, ): Observable<Option<Geocoordinates>> {
     return this.http.get<BackendGeocoordinates>(this.geocodeUrl(address)).pipe(
-      map(response => GeocoordinatesMapper.mapBackend(response, this.mapService)),
+      map(response => GeocoordinatesMapper.mapBackend(response, this.projection)),
       map(coordinates => Some(coordinates)),
       catchError(err => this.handleGeocodeError(err))
     );

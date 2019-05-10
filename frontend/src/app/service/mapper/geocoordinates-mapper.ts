@@ -1,18 +1,19 @@
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {BackendGeocoordinates} from '../backend-model/backend-geocoordinates';
 import {MapUtil} from '../map/map.util';
+import {Projection} from '@feature/map/projection';
 
 
 export class GeocoordinatesMapper {
 
-  public static mapBackend(backendGeocoordinates: BackendGeocoordinates, mapService: MapUtil): Geocoordinates {
-    const coordinates = mapService.epsg3879ToWgs84([backendGeocoordinates.x, backendGeocoordinates.y]);
+  public static mapBackend(backendGeocoordinates: BackendGeocoordinates, projection: Projection): Geocoordinates {
+    const coordinates = projection.unproject([backendGeocoordinates.x, backendGeocoordinates.y]);
     return Geocoordinates.fromArray(coordinates);
   }
 
-  public static mapFrontend(geocoordinates: Geocoordinates, mapService: MapUtil): BackendGeocoordinates {
+  public static mapFrontend(geocoordinates: Geocoordinates, projection: Projection): BackendGeocoordinates {
     if (geocoordinates) {
-      const coordinates = mapService.wgs84ToEpsg3879(geocoordinates.toArray());
+      const coordinates = projection.project(geocoordinates.toArray());
       return {
         x: coordinates[0],
         y: coordinates[1]

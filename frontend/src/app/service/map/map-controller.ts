@@ -27,6 +27,7 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {FeatureCollection, GeometryObject} from 'geojson';
 import {ArrayUtil} from '@util/array-util';
 import {FeatureGroup} from 'leaflet';
+import {Projection} from '@feature/map/projection';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -61,6 +62,7 @@ export class MapController {
   private _selectedLayers$: BehaviorSubject<MapLayer[]> = new BehaviorSubject([]);
 
   constructor(private mapUtil: MapUtil,
+              private projection: Projection,
               private mapStore: MapStore,
               private mapLayerService: MapLayerService,
               private popupService: MapPopupService,
@@ -268,7 +270,7 @@ export class MapController {
       maxZoom: 12,
       maxBounds:
         L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
-      crs: this.mapUtil.EPSG3879,
+      crs: this.projection.EPSG3879,
       continuousWorld: true,
       worldCopyJump: false
     };

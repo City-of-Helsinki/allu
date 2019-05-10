@@ -1,16 +1,17 @@
 import {Injectable} from '@angular/core';
 import * as L from 'leaflet';
-import 'proj4leaflet';
 import {MapFeatureInfo} from './map-feature-info';
 import {ALLU_PREFIX} from './map-layer-id';
 import {Feature, FeatureCollection, GeometryCollection, GeometryObject} from 'geojson';
 import area from '@turf/area';
 import {Some} from '@util/option';
+import {Projection} from '@feature/map/projection';
 
 @Injectable()
 export class MapUtil {
 
-  private epsg3879: L.Proj.CRS;
+  constructor(private projection: Projection) {
+  }
 
   public static geometryCount(geometryCollection: GeometryCollection): number {
     return geometryCollection
@@ -85,35 +86,6 @@ export class MapUtil {
     }
   }
 
-  constructor() {
-    this.epsg3879 = this.createCrsEPSG3879();
-  }
-
-  get EPSG3879(): L.Proj.CRS {
-    return this.epsg3879;
-  }
-
-  public wgs84ToEpsg3879(coordinate: Array<number>): Array<number> {
-    const projected = this.EPSG3879.projection.project(L.latLng(coordinate[1], coordinate[0]));
-    return [projected.x, projected.y];
-  }
-
-  public epsg3879ToWgs84(coordinate: Array<number>): Array<number> {
-    const projected = this.EPSG3879.projection.unproject(L.point(coordinate[0], coordinate[1]));
-    return [projected.lng, projected.lat];
-  }
-
-  private createCrsEPSG3879(): L.Proj.CRS {
-    const crsName = 'EPSG:3879';
-    const bounds = L.bounds([25440000, 6630000], [25571072, 6761072]);
-    const projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
-    return new L.Proj.CRS(crsName, projDef, {
-      resolutions: [128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125],
-      bounds: bounds,
-      origin: [25440000, 6630000]
-    });
-  }
-
   private createFeature(geometry: GeometryObject, featureInfo?: MapFeatureInfo): Feature<GeometryObject> {
     return {
       id: featureInfo ? `${ALLU_PREFIX}.${featureInfo.id}` : undefined,
@@ -133,23 +105,7 @@ export class MapUtil {
   }
 
   private mapWgs84GeometryObject(geometry: any): any {
-    switch (geometry.type) {
-      case 'Point':
-        return this.wgs84ToEpsg3879(geometry.coordinates);
-      case 'LineString':
-        return this.mapWgs84CoordinateArray(geometry.coordinates);
-      default: {
-        return this.mapWgs84GeometryArray(geometry.coordinates);
-      }
-    }
-  }
-
-  private mapWgs84GeometryArray(geometryArray: Array<Array<Array<number>>>): Array<Array<Array<number>>> {
-    return geometryArray.map(ga => this.mapWgs84CoordinateArray(ga));
-  }
-
-  private mapWgs84CoordinateArray(coordinateArray: Array<Array<number>>): Array<Array<number>> {
-    return coordinateArray.map(c => this.wgs84ToEpsg3879(c));
+    return this.projection.project(geometry.coordinates);
   }
 
   private mapEPSG3879Geometry(geometry: any): any {
@@ -157,22 +113,6 @@ export class MapUtil {
   }
 
   private mapEPSG3879GeometryObject(geometry: any): any {
-    switch (geometry.type) {
-      case 'Point':
-        return this.epsg3879ToWgs84(geometry.coordinates);
-      case 'LineString':
-        return this.mapEPSG3879CoordinateArray(geometry.coordinates);
-      default: {
-        return this.mapEPSG3879GeometryArray(geometry.coordinates);
-      }
-    }
-  }
-
-  private mapEPSG3879GeometryArray(geometryArray: Array<Array<Array<number>>>): Array<Array<Array<number>>> {
-    return geometryArray.map(ga => this.mapEPSG3879CoordinateArray(ga));
-  }
-
-  private mapEPSG3879CoordinateArray(coordinateArray: Array<Array<number>>): Array<Array<number>> {
-    return coordinateArray.map(c => this.epsg3879ToWgs84(c));
+    return this.projection.unproject(geometry.coordinates);
   }
 }

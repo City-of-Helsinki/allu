@@ -19,6 +19,7 @@ import {MatTreeModule} from '@angular/material';
 import {SimpleMapComponent} from '@feature/map/simple-map.component';
 import {AddressSearchEffects} from '@feature/map/effects/address-search-effects';
 import {ApplicationEffects} from '@feature/map/effects/application-effects';
+import {Projection} from '@feature/map/projection';
 
 @NgModule({
   imports: [
@@ -51,7 +52,8 @@ import {ApplicationEffects} from '@feature/map/effects/application-effects';
     MapPopupService,
     MapController,
     MapDataService,
-    reducersProvider
+    reducersProvider,
+    Projection
   ],
   entryComponents: [
     MapPopupComponent
