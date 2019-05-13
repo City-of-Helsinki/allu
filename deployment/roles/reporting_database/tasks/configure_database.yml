@@ -135,7 +135,6 @@
           location_geometry,
           postal_address,
           project,
-          recurring_period,
           supervision_task,
           "user",
           invoicing_period,

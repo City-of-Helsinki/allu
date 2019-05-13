@@ -17,7 +17,6 @@ DELETE FROM allureport.kiinteasijainti k WHERE NOT EXISTS (SELECT id FROM allu_o
 DELETE FROM allureport.alue a WHERE NOT EXISTS (SELECT id FROM allu_operative.location_area ol WHERE ol.id = a.id);
 DELETE FROM allureport.vakuus v WHERE NOT EXISTS (SELECT id FROM allu_operative.deposit od WHERE od.id = v.id);
 DELETE FROM allureport.hakemustunniste h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_tag ot WHERE ot.id = h.id);
-DELETE FROM allureport.toistuvuusjakso t WHERE NOT EXISTS (SELECT id FROM allu_operative.recurring_period op WHERE op.id = t.id);
 DELETE FROM allureport.hakemus_asiakas a WHERE NOT EXISTS (SELECT id FROM allu_operative.application_customer oc WHERE oc.id = a.id);
 DELETE FROM allureport.hakemuslaji_tarkenne h WHERE NOT EXISTS (SELECT id FROM allu_operative.kind_specifier ok WHERE ok.id = h.id);
 DELETE FROM allureport.hakemuslaji h WHERE NOT EXISTS (SELECT id FROM allu_operative.application_kind ok WHERE ok.id = h.id);
