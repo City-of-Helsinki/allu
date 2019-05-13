@@ -5,8 +5,8 @@ import * as fromInformationRequestResult from '../reducers';
 import {Store} from '@ngrx/store';
 import {Application} from '@model/application/application';
 import {InformationRequestFieldKey, LocationKeys} from '@model/information-request/information-request-field-key';
-import {Observable, Subject} from 'rxjs/index';
-import {distinctUntilChanged, map, skipUntil} from 'rxjs/internal/operators';
+import {Observable, Subject} from 'rxjs';
+import {distinctUntilChanged, map, skipUntil, startWith} from 'rxjs/operators';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
@@ -61,11 +61,11 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
               private applicationStore: ApplicationStore) {
     this.form = this.fb.group({});
     this.readonly = data.readonly;
-
     // Need to wait until viewChildren are loaded so they wont emit
     // form changes before component tree has been stabilized
     this.submitDisabled = this.form.statusChanges.pipe(
       skipUntil(this.childrenLoaded$),
+      startWith('INVALID'),
       map(status => status !== 'VALID'),
       distinctUntilChanged()
     );
