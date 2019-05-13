@@ -22,6 +22,7 @@ SELECT
         WHEN i.unit = 'MONTH' THEN 'kk'
         WHEN i.unit = 'YEAR' THEN 'v'
         WHEN i.unit = 'PERCENT' THEN '%'
+        WHEN c.unit = 'METER' THEN 'm'
     END AS yksikko,
     i.quantity AS maara,
     i.text AS teksti,
