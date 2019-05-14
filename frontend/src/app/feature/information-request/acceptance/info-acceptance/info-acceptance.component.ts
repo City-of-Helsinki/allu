@@ -79,7 +79,7 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
 
   onNewValuesSelected(fields: string[] = []): void {
     fields.forEach(f => {
-      this.form.get([f]).patchValue(this.newValues[f], {emitEvent: false});
+      this.patchField(f, this.newValues);
       this.oldValuesSelect.deselect(f);
     });
     this.form.updateValueAndValidity();
@@ -97,8 +97,7 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
 
   protected initResultForm(): void {
     this.fieldDescriptions.forEach(desc => {
-      const validators = this.isRequired(desc.field) ? [Validators.required] : [];
-      const ctrl = this.fb.control(undefined, validators);
+      const ctrl = this.fb.control(undefined, [Validators.required]);
       this.form.addControl(desc.field, ctrl);
     });
 
@@ -107,15 +106,14 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
     ).subscribe((selectedValues) => this.resultChanges(selectedValues));
   }
 
-  protected isRequired(field: string): boolean {
-    return false;
-  }
-
   protected abstract resultChanges(result: FieldValues): void;
 
   private patchField(field: string, valuesFrom: FieldValues): void {
     if (this.form.contains(field)) {
       this.form.get(field).patchValue(valuesFrom[field], {emitEvent: false});
+      // Required validator need to be cleared so that undefined value can be selected
+      // Required validator can be cleared because user cannot deselect row whole row selection once selected
+      this.form.get(field).clearValidators();
     }
   }
 }

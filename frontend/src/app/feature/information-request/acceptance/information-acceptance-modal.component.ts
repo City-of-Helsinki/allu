@@ -1,12 +1,11 @@
-import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as fromInformationRequestResult from '../reducers';
 import {Store} from '@ngrx/store';
 import {Application} from '@model/application/application';
 import {InformationRequestFieldKey, LocationKeys} from '@model/information-request/information-request-field-key';
-import {Observable, Subject} from 'rxjs';
-import {distinctUntilChanged, map, skipUntil, startWith} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {SetApplication, SetKindsWithSpecifiers, SetLocations} from '../actions/information-request-result-actions';
 import * as fromRoot from '../../allu/reducers';
@@ -39,19 +38,16 @@ export const INFORMATION_ACCEPTANCE_MODAL_CONFIG: MatDialogConfig<InformationAcc
   styleUrls: ['./information-acceptance-modal.component.scss'],
   animations: [shrinkFadeInOut]
 })
-export class InformationAcceptanceModalComponent implements OnInit, AfterViewInit {
+export class InformationAcceptanceModalComponent implements OnInit {
   readonly: boolean;
   oldInfo: Application;
   newInfo: Application;
   form: FormGroup;
   updatedFields: InformationRequestFieldKey[];
-  submitDisabled: Observable<boolean>;
   useCustomerForInvoicing$: Observable<CustomerRoleType>;
   hasLocationChanges: boolean;
   applicationTypeBillable: boolean;
   showRequest = true;
-
-  private childrenLoaded$ = new Subject<boolean>();
 
   constructor(private dialogRef: MatDialogRef<InformationAcceptanceModalComponent>,
               private store: Store<fromRoot.State>,
@@ -61,14 +57,6 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
               private applicationStore: ApplicationStore) {
     this.form = this.fb.group({});
     this.readonly = data.readonly;
-    // Need to wait until viewChildren are loaded so they wont emit
-    // form changes before component tree has been stabilized
-    this.submitDisabled = this.form.statusChanges.pipe(
-      skipUntil(this.childrenLoaded$),
-      startWith('INVALID'),
-      map(status => status !== 'VALID'),
-      distinctUntilChanged()
-    );
   }
 
   ngOnInit(): void {
@@ -83,10 +71,6 @@ export class InformationAcceptanceModalComponent implements OnInit, AfterViewIni
     this.useCustomerForInvoicing$ = this.store.select(fromInformationRequestResult.useCustomerForInvoicing);
     this.applicationTypeBillable = [ApplicationType.CABLE_REPORT, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS]
       .indexOf(this.oldInfo.type) < 0;
-  }
-
-  ngAfterViewInit(): void {
-    this.childrenLoaded$.next(true);
   }
 
   onSubmit(): void {
