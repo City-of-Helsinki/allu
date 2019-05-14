@@ -23,15 +23,13 @@ public class AddressController {
 
   @RequestMapping(value = {
           "/geocode/{city}/{street}",
-          "/geocode/{city}/{street}/{number}",
-          "/geocode/{city}/{street}/{number}/{letter}"
+          "/geocode/{city}/{street}/{specifier}"
   }, method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<CoordinateJson> geocode(@PathVariable final String city,
                                                 @PathVariable final String street,
-                                                @PathVariable(name = "number", required = false) final Optional<Integer> number,
-                                                @PathVariable(name = "letter", required = false) final Optional<String> letter) {
-    return new ResponseEntity<>(addressService.geocodeAddress(street, number, letter), HttpStatus.OK);
+                                                @PathVariable(name = "specifier", required = false) final Optional<String> specifier) {
+    return new ResponseEntity<>(addressService.geocodeAddress(street, specifier), HttpStatus.OK);
   }
 
 

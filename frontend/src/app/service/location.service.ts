@@ -4,8 +4,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 
 import {Geocoordinates} from '@model/common/geocoordinates';
 import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
-import {StreetAddress} from '@model/common/street-address';
-import {MapUtil} from './map/map.util';
+import {StreetAddress} from '@feature/map/street-address';
 import {None, Option, Some} from '@util/option';
 import {PostalAddress} from '@model/common/postal-address';
 import {CityDistrict} from '@model/common/city-district';
@@ -38,7 +37,7 @@ export class LocationService {
     private projection: Projection,
     private errorHandler: ErrorHandler) {}
 
-  public geocode(address: string, ): Observable<Option<Geocoordinates>> {
+  public geocode(address: string): Observable<Option<Geocoordinates>> {
     return this.http.get<BackendGeocoordinates>(this.geocodeUrl(address)).pipe(
       map(response => GeocoordinatesMapper.mapBackend(response, this.projection)),
       map(coordinates => Some(coordinates)),
@@ -84,8 +83,7 @@ export class LocationService {
     const streetAddress = StreetAddress.fromAddressString(address);
     let urlParts: string[] = [ADDRESS_URL, GEOCODE_URL];
     urlParts = Some(streetAddress.streetName).map(name => urlParts.concat(name)).orElseGet(() => urlParts);
-    urlParts = Some(streetAddress.streetNumber).map(streetNum => urlParts.concat(streetNum.toLocaleString())).orElseGet(() => urlParts);
-    urlParts = Some(streetAddress.streetLetter).map(streetLetter => urlParts.concat(streetLetter)).orElseGet(() => urlParts);
+    urlParts = Some(streetAddress.specifier).map(specifier => urlParts.concat(specifier)).orElseGet(() => urlParts);
     return urlParts.join('/');
   }
 
