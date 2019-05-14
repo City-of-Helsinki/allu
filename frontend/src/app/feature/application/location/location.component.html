@@ -55,14 +55,14 @@
                   </mat-form-field>
                 </div>
               </ng-container>
-              <div fxFlex="0 1 calc(40% - 18px)">
+              <div fxFlex="0 1 calc(40% - 18px)" *ngIf="drawingAllowed">
                 <geometry-select
                   [matchingApplications]="matchingApplications$ | async"
                   (searchChange)="applicationSearchChange($event)"
                   (selectedChange)="geometrySelected($event)">
                 </geometry-select>
               </div>
-              <div fxFlex="0 1 calc(20% - 18px)">
+              <div fxFlex="0 1 calc(20% - 18px)" *ngIf="drawingAllowed">
                 <button type="button" mat-raised-button color="primary"
                         [matMenuTriggerFor]="userAreaMenu"
                         [disabled]="(userAreaCount$ | async) === 0">

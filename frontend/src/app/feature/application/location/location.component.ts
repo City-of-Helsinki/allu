@@ -72,6 +72,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   application: Application;
   districts: Observable<Array<CityDistrict>>;
   multipleLocations = false;
+  drawingAllowed = true;
   invalidGeometry = false;
   searchFilter$: Observable<MapSearchFilter>;
   selectedLayers$: Observable<MapLayer[]>;
@@ -350,6 +351,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const isAllowedForKind = Some(this.application.kinds)
       .map(kinds => kinds.every(kind => drawingAllowedForKind(kind)))
       .orElse(true);
+    this.drawingAllowed = isAllowedForKind;
     this.mapStore.drawingAllowedChange(isAllowedForKind);
   }
 
