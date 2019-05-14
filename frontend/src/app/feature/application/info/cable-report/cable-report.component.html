@@ -94,6 +94,14 @@
               <mat-checkbox formControlName="emergencyWork">Hätätyö</mat-checkbox>
             </div>
           </div>
+          <div class="row form-group">
+            <button *ngIf="!(isSurveyRequired | async)" type="button" mat-raised-button color="primary" (click)="markSurveyRequired()">
+              Lisää tunniste: Kartoitettava
+            </button>
+            <button *ngIf="isSurveyRequired | async" type="button" mat-raised-button color="accent" (click)="markSurveyDone()">
+              Poista tunniste: Kartoitettava
+            </button>
+          </div>
         </mat-card-content>
       </allu-card>
     </div>
