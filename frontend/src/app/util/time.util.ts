@@ -151,12 +151,19 @@ export class TimeUtil {
   }
 
   public static compareTo(left: Date, right: Date): number {
-    if (left > right) {
-      return 1;
-    } else if (left < right) {
-      return -1;
-    } else {
+    const leftMillis = !!left ? left.getTime() : undefined;
+    const rightMillis = !!right ? right.getTime() : undefined;
+
+    if (leftMillis === rightMillis) {
       return 0;
+    } else if (leftMillis === undefined) {
+      return 1;
+    } else if (right === undefined) {
+      return -1;
+    } else if (leftMillis > rightMillis) {
+      return 1;
+    } else {
+      return -1;
     }
   }
 

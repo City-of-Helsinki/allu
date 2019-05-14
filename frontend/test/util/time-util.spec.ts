@@ -27,4 +27,26 @@ describe('Time util', () => {
     const winterTimeEnd = TimeUtil.toTimePeriodEnd(original.toDate(), WINTER_TIME_END);
     expect(winterTimeEnd).toEqual(moment(WINTER_TIME_END).year(original.year() + 1).toDate());
   });
+
+  it('should compare undefined at the end', () => {
+    const date = new Date();
+    expect(TimeUtil.compareTo(date, undefined)).toEqual(-1);
+    expect(TimeUtil.compareTo(undefined, date)).toEqual(1);
+  });
+
+  it('should compare equal as equal', () => {
+    const date = new Date();
+    expect(TimeUtil.compareTo(date, date)).toEqual(0);
+  });
+
+  it('should compare two undefined as equal', () => {
+    expect(TimeUtil.compareTo(undefined, undefined)).toEqual(0);
+  });
+
+  it('should compare defined dates correctly', () => {
+    const earlier = moment('2019-10-10').toDate();
+    const later = moment('2019-11-11').toDate();
+    expect(TimeUtil.compareTo(earlier, later)).toEqual(-1);
+    expect(TimeUtil.compareTo(later, earlier)).toEqual(1);
+  });
 });
