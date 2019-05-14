@@ -74,6 +74,6 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   }
 
   markSurveyDone(): void {
-    this.store.dispatch(new Remove(new ApplicationTag(ApplicationTagType.SURVEY_REQUIRED, undefined, new Date())));
+    this.store.dispatch(new Remove(ApplicationTagType.SURVEY_REQUIRED));
   }
 }

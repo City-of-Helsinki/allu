@@ -52,7 +52,7 @@ export class TagBarComponent implements OnInit {
   }
 
   remove(tag: ApplicationTag): void {
-    this.store.dispatch(new Remove(tag));
+    this.store.dispatch(new Remove(tag.type));
   }
 
   add(type: ApplicationTagType): void {

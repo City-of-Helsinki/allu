@@ -9,6 +9,7 @@ import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {ApplicationQueryParametersMapper} from '../mapper/query/application-query-parameters-mapper';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
+import {ApplicationTagType} from "@model/application/tag/application-tag-type";
 import {ApplicationTagMapper, BackendApplicationTag} from '../mapper/application-tag-mapper';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {StatusChangeInfoMapper} from '../mapper/status-change-info-mapper';
@@ -206,8 +207,8 @@ export class ApplicationService {
     );
   }
 
-  public removeTag(appId: number, tag: ApplicationTag): Observable<{}> {
-    const url = `${APPLICATIONS_URL}/${appId}/tags/${tag.type}`;
+  public removeTag(appId: number, tagType: ApplicationTagType): Observable<{}> {
+    const url = `${APPLICATIONS_URL}/${appId}/tags/${tagType}`;
     return this.http.delete(url).pipe(
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.tagRemoveFailed')))
     );

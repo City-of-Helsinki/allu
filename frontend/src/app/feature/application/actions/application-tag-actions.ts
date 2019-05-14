@@ -1,4 +1,5 @@
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
+import {ApplicationTagType} from "@model/application/tag/application-tag-type";
 import {Action} from '@ngrx/store';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ErrorInfo} from '../../../service/error/error-info';
@@ -55,13 +56,13 @@ export class AddFailed implements ActionWithPayload<ErrorInfo> {
 export class Remove implements Action {
   readonly type = ApplicationTagActionType.Remove;
 
-  constructor(public payload: ApplicationTag) {}
+  constructor(public payload: ApplicationTagType) {}
 }
 
 export class RemoveSuccess implements Action {
   readonly type = ApplicationTagActionType.RemoveSuccess;
 
-  constructor(public payload: ApplicationTag) {}
+  constructor(public payload: ApplicationTagType) {}
 }
 
 export class RemoveFailed implements ActionWithPayload<ErrorInfo> {

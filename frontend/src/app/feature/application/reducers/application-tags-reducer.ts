@@ -30,7 +30,7 @@ export function reducer(state: State = initialState, action: ApplicationTagActio
     case ApplicationTagActionType.RemoveSuccess: {
       return {
         ...state,
-        current: state.current.filter(tag => tag.type !== action.payload.type)
+        current: state.current.filter(tag => tag.type !== action.payload)
       };
     }
 
