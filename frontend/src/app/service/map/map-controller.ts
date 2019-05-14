@@ -144,7 +144,7 @@ export class MapController {
     });
     this.setLocalizations();
 
-    if (this.config.draw) {
+    if (this.map && this.config.draw) {
       // remove old control
       Some(this.drawControl).do(control => this.map.removeControl(control));
       this.map.addControl(drawControl);
