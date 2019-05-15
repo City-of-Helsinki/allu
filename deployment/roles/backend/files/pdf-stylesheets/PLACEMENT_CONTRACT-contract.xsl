@@ -195,13 +195,16 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <section>
           <h2>Sopimuksen allekirjoitukset</h2>
 
-          <p class="indented">Helsingin kaupungin puolesta alueidenkäyttö ja -valvonta yksikön päällikkö on
-                              allekirjoittanut tämän asiakirjan sähköisesti</p>
-          <p class="indented">
-            <xsl:value-of select="data/decisionTimestamp"/>,
-            <xsl:value-of select="data/deciderTitle"/>,
-            <xsl:value-of select="data/deciderName"/>
-          </p>
+          <xsl:if test="data/draft = 'false'">
+            <p class="indented">Helsingin kaupungin puolesta alueidenkäyttö ja -valvonta yksikön päällikkö on
+                                allekirjoittanut tämän asiakirjan sähköisesti</p>
+            <p class="indented">
+              <xsl:value-of select="data/decisionTimestamp"/>,
+              <xsl:value-of select="data/deciderTitle"/>,
+              <xsl:value-of select="data/deciderName"/>
+            </p>
+          </xsl:if>
+          
           <xsl:choose>
             <xsl:when test="data/frameAgreement = 'true'">
               <p class="indented space-above">
