@@ -87,6 +87,7 @@ public class ApplicationArchiverService {
    * <li>Application is invoiced or not billable</li>
    * <li>Application does not have open supervision tasks</li>
    * <li>Application does not have open deposit</li>
+   * <li>Application does not require a survey</li>
    * </ul>
    */
   public ApplicationJson archiveApplicationIfNecessary(Integer applicationId) {
@@ -108,7 +109,8 @@ public class ApplicationArchiverService {
         && isFinished(application)
         && isInvoiced(application)
         && !hasOpenSupervisionTasks(application)
-        && !hasOpenDeposits(application);
+        && !hasOpenDeposits(application)
+        && !requiresSurvey(application);
   }
 
   private boolean isArchivedStatus(ApplicationJson application) {
@@ -135,5 +137,9 @@ public class ApplicationArchiverService {
   private boolean hasOpenSupervisionTasks(ApplicationJson application) {
     List<SupervisionTaskJson> tasks = supervisionTaskService.findByApplicationId(application.getId());
     return tasks.stream().anyMatch(t -> SupervisionTaskStatusType.OPEN.equals(t.getStatus()));
+  }
+
+  private boolean requiresSurvey(ApplicationJson application) {
+    return application.getApplicationTags().stream().anyMatch(t -> t.getType() == ApplicationTagType.SURVEY_REQUIRED);
   }
 }
