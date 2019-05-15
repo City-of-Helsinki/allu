@@ -13,6 +13,7 @@ import {ArrayUtil} from '@util/array-util';
 import {DistributionType} from '@model/common/distribution-type';
 import {filter, map} from 'rxjs/internal/operators';
 import {UserService} from '@service/user/user-service';
+import {of} from 'rxjs/internal/observable/of';
 
 export type DecisionModalType = 'DECISIONMAKING' | 'RETURNED_TO_PREPARATION' | 'REJECTED' | 'RESEND_EMAIL';
 
@@ -105,16 +106,20 @@ export class DecisionModalComponent implements OnInit {
     if (ownerSelection) {
       this.owners = this.userService.getByRole(RoleType.ROLE_PROCESS_APPLICATION);
       this.decisionForm.addControl('owner', this.fb.control(undefined, Validators.required));
-        this.preferredOwner().subscribe(preferred => this.decisionForm.patchValue({owner: preferred.id}));
+      this.preferredOwner().subscribe(preferred => this.decisionForm.patchValue({owner: preferred.id}));
     }
   }
 
   private preferredOwner(): Observable<User> {
     const app = this.applicationStore.snapshot.application;
-    const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.type, app.firstLocation.effectiveCityDistrictId);
-    return this.userService.search(criteria).pipe(
-      map(preferred => ArrayUtil.first(preferred)),
-      filter(preferred => !!preferred)
-    );
+    if (this.data.status === ApplicationStatus.RETURNED_TO_PREPARATION) {
+      return of(app.handler);
+    } else {
+      const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.type, app.firstLocation.effectiveCityDistrictId);
+      return this.userService.search(criteria).pipe(
+        map(preferred => ArrayUtil.first(preferred)),
+        filter(preferred => !!preferred)
+      );
+    }
   }
 }
