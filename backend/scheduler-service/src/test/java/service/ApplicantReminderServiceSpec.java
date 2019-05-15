@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import fi.hel.allu.model.domain.*;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -18,10 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.AlluMailService;
 import fi.hel.allu.scheduler.service.ApplicantReminderService;
@@ -101,6 +98,24 @@ public class ApplicantReminderServiceSpec {
           });
         });
 
+        context("with work finished dates", () -> {
+          final Integer APP_ID = 123;
+
+          beforeEach(() -> {
+            ExcavationAnnouncement extension = new ExcavationAnnouncement();
+            extension.setCustomerWorkFinished(ZonedDateTime.now());
+            Application application = dummyExcavation(APP_ID, extension);
+            final Application[] expiring = new Application[] { application };
+
+            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
+                .thenReturn(expiring);
+            applicantReminderService.sendReminders();
+          });
+
+          it("should skip application with customer work finished date", () -> {
+            verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString(), anyString(), anyList());
+          });
+        });
       });
 
     });
@@ -111,6 +126,13 @@ public class ApplicantReminderServiceSpec {
     when(a.getEndTime()).thenReturn(ZonedDateTime.now());
     when(a.getId()).thenReturn(id);
     when(a.getCustomersWithContacts()).thenReturn(dummyCustomersWithContacts());
+    when(a.getExtension()).thenReturn(new Event());
+    return a;
+  }
+
+  private Application dummyExcavation(Integer id, ExcavationAnnouncement extension) {
+    Application a = dummyApplication(id);
+    when(a.getExtension()).thenReturn(extension);
     return a;
   }
 

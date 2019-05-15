@@ -1,12 +1,12 @@
 package fi.hel.allu.scheduler.service;
 
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.ResourceUtil;
+import fi.hel.allu.mail.model.MailMessage.InlineResource;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.scheduler.config.ApplicationProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
@@ -15,13 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.util.ResourceUtil;
-import fi.hel.allu.mail.model.MailMessage.InlineResource;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.scheduler.config.ApplicationProperties;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicantReminderService {
@@ -42,6 +41,16 @@ public class ApplicantReminderService {
 
   private static final String MAIL_SUBJECT = "Päätöksenne %s voimassaolo on päättymässä";
   private static final String MAIL_TEMPLATE = "/templates/applicant-reminder";
+
+  private static final Predicate<Application> excludeApplicationsWithCustomerWorkFinished = (application) -> {
+    ApplicationExtension extension = application.getExtension();
+    if (WorkFinishedDates.class.isAssignableFrom(extension.getClass())) {
+      return ((WorkFinishedDates) extension).getCustomerWorkFinished() == null;
+    } else {
+      return true;
+    }
+  };
+
   private final RestTemplate restTemplate;
   private final ApplicationProperties applicationProperties;
   private final AlluMailService alluMailService;
@@ -59,10 +68,7 @@ public class ApplicantReminderService {
    */
   public void sendReminders() {
     logger.info("ApplicantReminder: sending reminders");
-    DeadlineCheckParams checkParams = new DeadlineCheckParams(APPLICATION_TYPES, STATUS_TYPES,
-        ZonedDateTime.now(), ZonedDateTime.now().plusDays(DAYS_BEFORE));
-    List<Application> apps = Arrays.asList(restTemplate
-        .postForObject(applicationProperties.getDeadlineCheckUrl(), checkParams, Application[].class));
+    List<Application> apps = getApplicationsNeedingReminder();
     if (apps.isEmpty()) {
       logger.debug("No applications about to end");
     } else {
@@ -70,6 +76,16 @@ public class ApplicantReminderService {
       List<Integer> appIds = apps.stream().map(a -> a.getId()).collect(Collectors.toList());
       restTemplate.postForObject(applicationProperties.getMarkReminderSentUrl(), appIds, Void.class);
     }
+  }
+
+  private List<Application> getApplicationsNeedingReminder() {
+    DeadlineCheckParams checkParams = new DeadlineCheckParams(APPLICATION_TYPES, STATUS_TYPES,
+        ZonedDateTime.now(), ZonedDateTime.now().plusDays(DAYS_BEFORE));
+
+    return Arrays.stream(
+        restTemplate.postForObject(applicationProperties.getDeadlineCheckUrl(), checkParams, Application[].class))
+        .filter(excludeApplicationsWithCustomerWorkFinished)
+        .collect(Collectors.toList());
   }
 
   private void sendReminder(Application application) {
