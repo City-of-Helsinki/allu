@@ -899,7 +899,7 @@ export const translations = {
     contractAttachments: 'Sopimuksen liitteet',
     reason: 'Perustelut',
     emailMessage: 'Sähköpostiviesti',
-    sendDecision: 'Lähetä päätös',
+    resend: 'Lähetä päätös uudelleen',
     cannotShow: 'Päätöksen näyttäminen ei onnistu selaimellasi.',
     toOperationalCondition: 'Päätä toiminnalliseen kuntoon',
     type: {
@@ -934,7 +934,7 @@ export const translations = {
         confirmation: 'Hakemus hylätty'
       },
       RESEND_EMAIL: {
-        title: 'Lähetä päätös',
+        title: 'Lähetä päätös uudelleen',
         confirmText: 'Lähetä',
         confirmation: 'Päätös lähetetty'
       }
