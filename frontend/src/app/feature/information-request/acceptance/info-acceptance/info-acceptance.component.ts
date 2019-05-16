@@ -110,10 +110,10 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
 
   private patchField(field: string, valuesFrom: FieldValues): void {
     if (this.form.contains(field)) {
-      this.form.get(field).patchValue(valuesFrom[field], {emitEvent: false});
+      this.form.get([field]).patchValue(valuesFrom[field], {emitEvent: false});
       // Required validator need to be cleared so that undefined value can be selected
       // Required validator can be cleared because user cannot deselect row whole row selection once selected
-      this.form.get(field).clearValidators();
+      this.form.get([field]).clearValidators();
     }
   }
 }
