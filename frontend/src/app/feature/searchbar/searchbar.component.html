@@ -5,7 +5,8 @@
 
     <div fxFlex="none" *ngIf="defaultFilter | async as filter">
       <input-box class="input-raised input-box-icon-button">
-        <button inputBoxInput
+        <button type="button"
+                inputBoxInput
                 class="input-box-content allu-icon-button"
                 (click)="selectFilter(filter)">
           <mat-icon color="primary" class="mat-icon-36">home</mat-icon>
