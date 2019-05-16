@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,8 +82,15 @@ public class LocationController {
   }
 
   @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
-  public ResponseEntity<List<FixedLocation>> getFixedLocationList(@RequestParam(value = "applicationkind", required=false) ApplicationKind applicationKind, @RequestParam(value="srid", required=false) Integer srId) {
-    return new ResponseEntity<>(locationDao.getFixedLocationList(applicationKind, srId), HttpStatus.OK);
+  public ResponseEntity<List<FixedLocation>> getActiveLocations(@RequestParam(value = "applicationkind", required=false) ApplicationKind applicationKind,
+                                                                @RequestParam(value="srid", required=false) Integer srId) {
+    return new ResponseEntity<>(locationDao.getActiveFixedLocations(applicationKind, srId), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/fixed-location/all", method = RequestMethod.GET)
+  public ResponseEntity<List<FixedLocation>> getAllFixedLocations(@RequestParam(value = "applicationkind", required=false) ApplicationKind applicationKind,
+                                                                  @RequestParam(value="srid", required=false) Integer srId) {
+    return new ResponseEntity<>(locationDao.getAllFixedLocation(applicationKind, srId), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/fixed-location/{id}", method = RequestMethod.GET)

@@ -755,7 +755,7 @@ public class DecisionJsonMapper {
       return Collections.emptyMap();
     } else {
       final ApplicationKind applicationKind = applicationJson.getKind();
-      return locationService.getFixedLocationList().stream()
+      return locationService.getAllFixedLocations().stream()
           .filter(fl -> fl.getApplicationKind() == applicationKind)
           .collect(Collectors.toMap(FixedLocationJson::getId, Function.identity()));
     }

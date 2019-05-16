@@ -136,8 +136,8 @@ public class ApplicationJsonService {
       synchronized (ApplicationJsonService.class) {
         fixedLocations = this.fixedLocations;
         if (fixedLocations == null) {
-          this.fixedLocations = fixedLocations = locationService.getFixedLocationList().stream().collect(
-                  Collectors.toMap(FixedLocationJson::getId, item -> item));
+          this.fixedLocations = fixedLocations = locationService.getAllFixedLocations().stream()
+              .collect(Collectors.toMap(FixedLocationJson::getId, item -> item));
         }
       }
     }

@@ -291,7 +291,7 @@ public class LocationDaoTest {
             .execute();
     assertEquals(4, insertCount);
     // Test: get list, should only one 2 items, and only one at Kauppatori
-    List<FixedLocation> queryResult = locationDao.getFixedLocationList(null, null);
+    List<FixedLocation> queryResult = locationDao.getActiveFixedLocations(null, null);
     assertEquals(3, queryResult.size());
     assertEquals(1, queryResult.stream().filter(fl -> fl.getArea().equals("Kauppatori")).count());
   }

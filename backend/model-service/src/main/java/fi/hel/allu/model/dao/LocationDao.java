@@ -249,8 +249,16 @@ public class LocationDao {
    * Get the list of all active fixed locations
    */
   @Transactional(readOnly = true)
-  public List<FixedLocation> getFixedLocationList(ApplicationKind kind, Integer srId) {
+  public List<FixedLocation> getActiveFixedLocations(ApplicationKind kind, Integer srId) {
     List<FixedLocation> fixedLocations = findFixedLocations(Collections.emptyList(), kind);
+    transformCoordinates(fixedLocations, srId);
+    return fixedLocations;
+  }
+
+  @Transactional(readOnly = true)
+  public List<FixedLocation> getAllFixedLocation(ApplicationKind kind, Integer srId) {
+    Predicate hasKind = Optional.ofNullable(kind).map(k -> fixedLocation.applicationKind.eq(kind)).orElse(null);
+    List<FixedLocation> fixedLocations = findFixedLocationsWhere(hasKind);
     transformCoordinates(fixedLocations, srId);
     return fixedLocations;
   }
@@ -281,22 +289,27 @@ public class LocationDao {
             (kind != null ? activeFixedLocationWithKind(kind) : activeFixedLocation())
             : fixedLocation.id.in(ids);
 
+    return findFixedLocationsWhere(locationPredicate);
+  }
+
+  private List<FixedLocation> findFixedLocationsWhere(Predicate predicate) {
     List<FixedLocation> fxs = queryFactory
         .select(bean(FixedLocation.class, fixedLocation.id, locationArea.name.as("area"), fixedLocation.section,
             fixedLocation.applicationKind, fixedLocation.geometry, fixedLocation.isActive.as("active")))
         .from(fixedLocation).innerJoin(locationArea).on(fixedLocation.areaId.eq(locationArea.id))
-        .where(locationPredicate)
+        .where(predicate)
         .fetch();
 
-    return fxs.stream()
-            .map(fx -> {
-              GeometryCollection gc = Optional.ofNullable(fx.getGeometry())
-                .map(geometry -> toGeometryCollectionIfNeeded(geometry))
-                .orElse(GeometryCollection.createEmpty());
+    return fxs.stream().map(this::mapGeometryIfNeeded).collect(Collectors.toList());
+  }
 
-              fx.setGeometry(gc);
-              return fx;
-            }).collect(Collectors.toList());
+  private FixedLocation mapGeometryIfNeeded(FixedLocation fixedLocation) {
+    GeometryCollection gc = Optional.ofNullable(fixedLocation.getGeometry())
+        .map(geometry -> toGeometryCollectionIfNeeded(geometry))
+        .orElse(GeometryCollection.createEmpty());
+
+    fixedLocation.setGeometry(gc);
+    return fixedLocation;
   }
 
   private BooleanExpression activeFixedLocationWithKind(ApplicationKind kind) {

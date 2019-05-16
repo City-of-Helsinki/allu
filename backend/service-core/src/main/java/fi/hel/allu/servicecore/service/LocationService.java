@@ -54,6 +54,16 @@ public class LocationService {
     return getFixedLocationList(null, null);
   }
 
+  public List<FixedLocationJson> getAllFixedLocations() {
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getAllFixedLocationsUrl())
+        .buildAndExpand().toUri();
+
+    ResponseEntity<FixedLocation[]> queryResult =
+        restTemplate.getForEntity(uri, FixedLocation[].class);
+    return Arrays.stream(queryResult.getBody()).map(fl -> LocationMapper.mapToFixedLocationJson(fl))
+        .collect(Collectors.toList());
+  }
+
   public List<FixedLocationJson> getFixedLocationList(ApplicationKind applicationKind, Integer srId) {
     URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getFixedLocationUrl())
         .queryParam("applicationkind", applicationKind)

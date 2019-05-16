@@ -501,6 +501,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/fixed-location");
   }
 
+  public String getAllFixedLocationsUrl() {
+    return getModelServiceUrl("/locations/fixed-location/all");
+  }
+
   public String getFixedLocationByIdUrl() {
     return getModelServiceUrl("/locations/fixed-location/{id}") ;
   }
