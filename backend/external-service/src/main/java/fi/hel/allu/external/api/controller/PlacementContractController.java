@@ -1,6 +1,7 @@
 package fi.hel.allu.external.api.controller;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -137,4 +138,11 @@ public class PlacementContractController extends BaseApplicationController<Place
     contractService.rejectContractProposal(applicationId, rejectReason);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @Override
+  protected List<byte[]> getDecisionAttachments(Integer applicationId) {
+    // For placement contract attachments are for contracts, not for decisions
+    return Collections.emptyList();
+  }
+
 }

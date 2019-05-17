@@ -134,8 +134,13 @@ public abstract class BaseApplicationController<T extends BaseApplicationExt, M 
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
     byte[] decision = decisionService.getFinalDecision(applicationId);
-    List<byte[]> attachments = applicationService.getDecisionAttachmentDocuments(applicationId);
+
+    List<byte[]> attachments = getDecisionAttachments(applicationId);
     return returnPdfResponse(PdfMerger.appendDocuments(decision, attachments));
+  }
+
+  protected List<byte[]> getDecisionAttachments(Integer applicationId) {
+    return applicationService.getDecisionAttachmentDocuments(applicationId);
   }
 
   @ApiOperation(value = "Gets decision metadata for application with given ID. If there's not yet decision for application, decision maker is null",
