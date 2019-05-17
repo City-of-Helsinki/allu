@@ -1016,6 +1016,7 @@ export const translations = {
       ROLE_INVOICING: 'Laskutus',
       ROLE_VIEW: 'Katselu',
       ROLE_DECLARANT: 'Lausunnonantaja',
+      ROLE_MANAGE_SURVEY: 'Kartoitustiedon päivitys',
       ROLE_ADMIN: 'Ylläpito'
     },
     userInfo: 'Käyttäjän tiedot',

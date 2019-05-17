@@ -1,13 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationTag} from '@model/application/tag/application-tag';
-import {ApplicationTagType, manuallyAddedTagTypes, removableTagTypes} from '@model/application/tag/application-tag-type';
-import {Observable} from 'rxjs';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+import {combineLatest, Observable} from 'rxjs';
 import {NotificationService} from '@feature/notification/notification.service';
 import {MODIFY_ROLES, RoleType} from '@model/user/role-type';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '../reducers';
+import * as fromAuth from '@feature/auth/reducers';
 import {Add, Remove} from '../actions/application-tag-actions';
-import {map, startWith} from 'rxjs/internal/operators';
+import {map} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
 
 @Component({
@@ -20,13 +21,11 @@ import {ArrayUtil} from '@util/array-util';
 export class TagBarComponent implements OnInit {
   @Input() readonly: boolean;
 
-  MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
+  MODIFY_ROLES = MODIFY_ROLES.concat(RoleType.ROLE_MANAGE_SURVEY);
 
-  tags: Observable<Array<ApplicationTag>>;
-  availableTagTypes: Observable<string[]>;
+  tags: Observable<ApplicationTag[]>;
+  availableTagTypes: Observable<ApplicationTagType[]>;
   availableTagCount: Observable<number>;
-  manuallyAddedTags: ApplicationTagType[] = manuallyAddedTagTypes;
-  removableTags: ApplicationTagType[] = removableTagTypes;
 
 
   constructor(private notification: NotificationService,
@@ -34,17 +33,22 @@ export class TagBarComponent implements OnInit {
 
   ngOnInit() {
     this.tags = this.store.pipe(select(fromApplication.getTags));
-    this.availableTagTypes = this.tags.pipe(
-      map(tags => tags.map(tag => tag.type)),
-      startWith(this.manuallyAddedTags),
-      map(current => this.manuallyAddedTags.filter(type => !current.some(c => type === c))),
+    this.availableTagTypes = combineLatest(
+      this.store.pipe(select(fromAuth.getAllowedTags)),
+      this.tags
+    ).pipe(
+      map(([allowed, current]) => allowed.filter(type => !current.some(c => type === c.type))),
       map(tags => tags.sort(ArrayUtil.naturalSortTranslated(['application.tag.type'], tag => tag)))
     );
+
     this.availableTagCount = this.availableTagTypes.pipe(map(types => types.length));
   }
 
-  canBeRemoved(type: ApplicationTagType) {
-    return this.removableTags.indexOf(type) >= 0;
+  canBeRemoved(type: ApplicationTagType): Observable<boolean> {
+    return this.store.pipe(
+      select(fromAuth.getRemovableTags),
+      map(removable => removable.indexOf(type) >= 0)
+    );
   }
 
   remove(tag: ApplicationTag): void {

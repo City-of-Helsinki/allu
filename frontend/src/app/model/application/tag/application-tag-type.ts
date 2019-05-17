@@ -1,3 +1,6 @@
+import {RoleType} from '@model/user/role-type';
+import {ArrayUtil} from '@util/array-util';
+
 export enum ApplicationTagType {
   // täydennyspyyntö lähetetty
   ADDITIONAL_INFORMATION_REQUESTED = 'ADDITIONAL_INFORMATION_REQUESTED',
@@ -56,3 +59,23 @@ export const manuallyAddedTagTypes = [
 export const removableTagTypes = manuallyAddedTagTypes.concat([
   ApplicationTagType.DATE_CHANGE
 ]);
+
+export function allowedTagsByRoles(roles: RoleType[]): ApplicationTagType[] {
+  if (ArrayUtil.anyMatch(roles, [RoleType.ROLE_CREATE_APPLICATION, RoleType.ROLE_PROCESS_APPLICATION])) {
+    return manuallyAddedTagTypes;
+  } else if (ArrayUtil.anyMatch(roles, [RoleType.ROLE_MANAGE_SURVEY])) {
+    return [ApplicationTagType.SURVEY_REQUIRED];
+  } else {
+    return [];
+  }
+}
+
+export function removableTagsByRoles(roles: RoleType[]): ApplicationTagType[] {
+  if (ArrayUtil.anyMatch(roles, [RoleType.ROLE_CREATE_APPLICATION, RoleType.ROLE_PROCESS_APPLICATION])) {
+    return removableTagTypes;
+  } else if (ArrayUtil.anyMatch(roles, [RoleType.ROLE_MANAGE_SURVEY])) {
+    return [ApplicationTagType.SURVEY_REQUIRED];
+  } else {
+    return [];
+  }
+}

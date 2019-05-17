@@ -7,6 +7,15 @@ import {StringUtil} from '@util/string.util';
 import {take} from 'rxjs/internal/operators';
 import {combineLatest} from 'rxjs';
 import {CurrentUser} from '@service/user/current-user';
+import {RoleType} from '@model/user/role-type';
+
+const commentEditRoles = [
+  RoleType.ROLE_CREATE_APPLICATION,
+  RoleType.ROLE_PROCESS_APPLICATION,
+  RoleType.ROLE_DECISION,
+  RoleType.ROLE_DECLARANT,
+  RoleType.ROLE_MANAGE_SURVEY
+];
 
 @Component({
   selector: 'comment',
@@ -81,7 +90,7 @@ export class CommentComponent implements OnInit {
   private currentUserCanEdit(creatorId: number): void {
     combineLatest(
         this.currentUser.isCurrentUser(creatorId),
-        this.currentUser.hasRole(['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION', 'ROLE_DECLARANT']),
+        this.currentUser.hasRole(commentEditRoles),
         this.currentUser.hasRole(['ROLE_ADMIN'])
       ).pipe(
         take(1)

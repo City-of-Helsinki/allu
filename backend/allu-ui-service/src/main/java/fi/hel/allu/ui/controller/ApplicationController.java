@@ -144,7 +144,7 @@ public class ApplicationController {
    * @throws IllegalArgumentException
    */
   @RequestMapping(value = "/{id}/attachments", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY')")
   public ResponseEntity<List<AttachmentInfoJson>> addAttachments(
       @PathVariable int id,
       @RequestPart("meta") @Valid AttachmentInfoJson[] infos, @RequestPart("file") MultipartFile[] files)
@@ -185,7 +185,7 @@ public class ApplicationController {
    * @return
    */
   @RequestMapping(value = "/attachments/{id}", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY')")
   public ResponseEntity<AttachmentInfoJson> updateAttachmentInfo(@PathVariable int id,
       @Valid @RequestBody AttachmentInfoJson attachmentInfoJson) {
     return new ResponseEntity<>(attachmentService.updateAttachment(id, attachmentInfoJson), HttpStatus.OK);
@@ -199,7 +199,7 @@ public class ApplicationController {
    * @return
    */
   @RequestMapping(value = "/{applicationId}/attachments/{attachmentId}", method = RequestMethod.DELETE)
-  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT')")
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECLARANT', 'ROLE_MANAGE_SURVEY')")
   public ResponseEntity<Void> deleteAttachment(
       @PathVariable int applicationId,
       @PathVariable int attachmentId) {
@@ -325,14 +325,13 @@ public class ApplicationController {
   }
 
   @RequestMapping(value = "/{id}/tags", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<ApplicationTagJson> addTag(@PathVariable int id,
-                                                         @Valid @RequestBody ApplicationTagJson tag) {
+  @PreAuthorize("@applicationSecurityService.canModifyTag(#tag.getType())")
+  public ResponseEntity<ApplicationTagJson> addTag(@PathVariable int id, @Valid @RequestBody ApplicationTagJson tag) {
     return new ResponseEntity<>(applicationServiceComposer.addTag(id, tag), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/tags/{tagType}", method = RequestMethod.DELETE)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("@applicationSecurityService.canModifyTag(#tagType)")
   public ResponseEntity<ApplicationTagJson> removeTag(@PathVariable int id, @PathVariable ApplicationTagType tagType) {
     applicationServiceComposer.removeTag(id, tagType);
     return new ResponseEntity<>(HttpStatus.OK);

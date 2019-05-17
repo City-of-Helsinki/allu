@@ -1,7 +1,8 @@
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import * as fromAuth from './auth-reducer';
-import * as fromRoot from '../../allu/reducers';
-import {User} from '../../../model/user/user';
+import * as fromRoot from '@feature/allu/reducers';
+import {User} from '@model/user/user';
+import {allowedTagsByRoles, removableTagsByRoles} from '@model/application/tag/application-tag-type';
 
 export interface AuthState {
   status: fromAuth.State;
@@ -35,4 +36,14 @@ export const getLoggedIn = createSelector(
 export const getAllowedApplicationTypes = createSelector(
   getUser,
   (user: User) => !!user ? user.allowedApplicationTypes : []
+);
+
+export const getAllowedTags = createSelector(
+  getUser,
+  (user: User) => !!user ? allowedTagsByRoles(user.assignedRoles) : []
+);
+
+export const getRemovableTags = createSelector(
+  getUser,
+  (user: User) => !!user ? removableTagsByRoles(user.assignedRoles) : []
 );

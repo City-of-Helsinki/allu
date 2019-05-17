@@ -24,6 +24,10 @@ export enum RoleType {
    */
   ROLE_DECLARANT = 'ROLE_DECLARANT',
   /**
+   * Allowed to manage survey required tag.
+   */
+  ROLE_MANAGE_SURVEY = 'ROLE_MANAGE_SURVEY',
+  /**
    * Allowed to login and view applications
    */
   ROLE_VIEW = 'ROLE_VIEW',
