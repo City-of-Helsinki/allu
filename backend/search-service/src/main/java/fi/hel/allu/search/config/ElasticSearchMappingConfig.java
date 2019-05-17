@@ -40,9 +40,10 @@ public class ElasticSearchMappingConfig {
   private static final String ANALYZER_AUTOCOMPLETE = "autocomplete";
   private static final String ANALYZER_AUTOCOMPLETE_KEYWORD = "autocomplete_keyword";
   private static final String FILTER_AUTOCOMPLETE = "autocomplete_filter";
+  private static final String FILTER_AUTOCOMPLETE_KEYWORD = "autocomplete_keyword_filter";
 
   // Note! Change this version number if you edit mappings. Then changes will be updated to elastic on next startup.
-  private static final String MAPPINGS_VERSION_NUMBER = "19";
+  private static final String MAPPINGS_VERSION_NUMBER = "20";
 
   private static final String VERSION_INDEX_NAME = "versions";
   private static final String VERSION_TYPE_NAME = "version";
@@ -299,14 +300,24 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentBuilder autocompleteSettingsFilter() throws IOException {
+    return ngramTokenFilter(2, 20);
+  }
+
+  private XContentBuilder autocompleteKeywordSettingsFilter() throws IOException {
+    return ngramTokenFilter(2, 50);
+  }
+
+  private XContentBuilder ngramTokenFilter(int minGram, int maxGram) throws IOException {
     XContentBuilder builder =  XContentFactory.jsonBuilder()
         .startObject()
           .field("type", "edge_ngram")
-          .field("min_gram", "1")
-          .field("max_gram", "20")
+          .field("min_gram", String.valueOf(minGram))
+          .field("max_gram", String.valueOf(maxGram))
         .endObject();
     return builder;
+
   }
+
 
   private XContentBuilder autocompleteSettingsAnalyzer() throws IOException {
     XContentBuilder builder = XContentFactory.jsonBuilder()
@@ -323,7 +334,7 @@ public class ElasticSearchMappingConfig {
       .startObject()
         .field("type", "custom")
         .field("tokenizer", "keyword")
-        .array("filter", "lowercase", FILTER_AUTOCOMPLETE)
+        .array("filter", "lowercase", FILTER_AUTOCOMPLETE_KEYWORD)
       .endObject();
     return builder;
   }
@@ -380,6 +391,7 @@ public class ElasticSearchMappingConfig {
           .startObject("analysis")
             .startObject("filter")
               .field(FILTER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsFilter()))
+              .field(FILTER_AUTOCOMPLETE_KEYWORD).copyCurrentStructure(parser(autocompleteKeywordSettingsFilter()))
             .endObject()
             .startObject("analyzer")
               .field(ANALYZER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsAnalyzer()))
