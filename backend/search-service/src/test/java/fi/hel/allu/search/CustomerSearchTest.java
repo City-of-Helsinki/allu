@@ -108,9 +108,9 @@ public class CustomerSearchTest {
     CustomerES customerES1 = createCustomer("1", 1);
     customerES1.setRegistryKey("9444-9231");
     CustomerES customerES2 = createCustomer("2", 2);
-    customerES2.setRegistryKey("9233-2311");
+    customerES2.setRegistryKey("9433-2311");
     CustomerES customerES3 = createCustomer("3", 3);
-    customerES3.setRegistryKey("9222-5551");
+    customerES3.setRegistryKey("9422-5551");
     customerSearchService.insert(customerES1);
     customerSearchService.insert(customerES2);
     customerSearchService.insert(customerES3);
@@ -118,7 +118,7 @@ public class CustomerSearchTest {
     customerSearchService.refreshIndex();
 
     // test finding partial and sorting alphabetically: 9
-    QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "9");
+    QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "94");
 
     List<Integer> appList = customerSearchService.findByField(params,
         new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
@@ -126,7 +126,7 @@ public class CustomerSearchTest {
     assertEquals(Arrays.asList(3, 2, 1), appList);
 
     // test searching only from beginning of word (dash is part of word)
-    params = SearchTestUtil.createQueryParameters("registryKey", "9222");
+    params = SearchTestUtil.createQueryParameters("registryKey", "9422");
 
     appList = customerSearchService.findByField(params,
         new PageRequest(0, 100, Direction.ASC, "registryKey")).getContent();
