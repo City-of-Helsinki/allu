@@ -47,6 +47,7 @@ public class SupervisionTaskMapper {
     result.setCreationTime(task.getCreationTime());
     result.setDescription(task.getDescription());
     result.setId(task.getId());
+    result.setLocationId(task.getLocationId());
     result.setPlannedFinishingTime(task.getPlannedFinishingTime());
     result.setResult(task.getResult());
     result.setStatus(task.getStatus());
