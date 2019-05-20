@@ -108,9 +108,15 @@ describe('Cable report application', () => {
         'STREET_AND_GREEN': ['STREET_OR_PARK', 'BRIDGE'],
         'DATA_TRANSFER': ['DATA_CABLE']},
       'notBillable': 'false',
+      'applicationTags': [
+        {
+          'addedBy': 1,
+          'type': 'SURVEY_REQUIRED',
+          'creationTime': '2016-07-15T05:08:10.514Z'
+        }
+      ],
       'extension': {
         'mapExtractCount': 0,
-        'cableSurveyRequired': true,
         'applicationType': 'CABLE_REPORT',
         'infoEntries': [
           {
@@ -118,7 +124,6 @@ describe('Cable report application', () => {
             'additionalInfo': ' Tilattava näyttö.'
           }
         ],
-        'mapUpdated': true,
         'maintenanceWork': true
       },
       'locations': [

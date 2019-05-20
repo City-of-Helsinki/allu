@@ -277,10 +277,8 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
 INSERT INTO allureport.johtoselvitys (
   hakemus_id,
   ehdot,
-  johtokartoitettava,
   tyon_kuvaus,
   karttaotteiden_maara,
-  kartta_paivitetty,
   rakentaminen,
   kunnossapito,
   hatatyo,
@@ -290,10 +288,8 @@ INSERT INTO allureport.johtoselvitys (
 SELECT
   a.id AS hakemus_id,
   a.extension::json ->> 'terms' AS ehdot,
-  (a.extension::json ->> 'cableSurveyRequired')::boolean  AS johtokartoitettava,
   a.extension::json ->> 'workDescription' AS tyonkuvaus,
   (a.extension::json ->> 'mapExtractCount')::integer AS karttaotteiden_maara,
-  (a.extension::json ->> 'mapUpdated')::boolean  AS kartta_paivitetty,
   (a.extension::json ->> 'constructionWork')::boolean AS rakentaminen,
   (a.extension::json ->> 'maintenanceWork')::boolean AS kunnossapito,
   (a.extension::json ->> 'emergencyWork')::boolean AS hatatyo,
@@ -303,10 +299,8 @@ FROM allu_operative.application a
 WHERE a.type = 'CABLE_REPORT'
 ON CONFLICT (hakemus_id) DO UPDATE SET
     ehdot = EXCLUDED.ehdot,
-	  johtokartoitettava = EXCLUDED.johtokartoitettava,
 	  tyon_kuvaus = EXCLUDED.tyon_kuvaus,
 	  karttaotteiden_maara = EXCLUDED.karttaotteiden_maara,
-	  kartta_paivitetty = EXCLUDED.kartta_paivitetty,
 	  rakentaminen = EXCLUDED.rakentaminen,
 	  kunnossapito = EXCLUDED.kunnossapito,
 	  hatatyo = EXCLUDED.hatatyo,

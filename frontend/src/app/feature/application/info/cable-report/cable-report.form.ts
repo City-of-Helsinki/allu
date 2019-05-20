@@ -40,8 +40,6 @@ export function createDefaultOrdererId(): OrdererIdForm {
 
 export interface CableReportForm extends ApplicationForm {
    validityTime?: Date;
-   cableSurveyRequired?: boolean;
-   mapUpdated?: boolean;
    constructionWork?: boolean;
    maintenanceWork?: boolean;
    emergencyWork?: boolean;
@@ -57,8 +55,6 @@ export interface CableReportForm extends ApplicationForm {
 export function to(form: CableReportForm, validityTime: Date): CableReport {
   const cableReport = new CableReport();
   cableReport.validityTime = validityTime;
-  cableReport.cableSurveyRequired = form.cableSurveyRequired;
-  cableReport.mapUpdated = form.mapUpdated;
   cableReport.constructionWork = form.constructionWork;
   cableReport.maintenanceWork = form.maintenanceWork;
   cableReport.emergencyWork = form.emergencyWork;
@@ -81,8 +77,6 @@ export function from(application: Application): CableReportForm {
   return {
     name: application.name || 'Johtoselvitys', // Cable reports have no name so set default
     validityTime: getValidityTime(ApplicationStatus[application.status], cableReport),
-    cableSurveyRequired: cableReport.cableSurveyRequired,
-    mapUpdated: cableReport.mapUpdated,
     constructionWork: cableReport.constructionWork,
     maintenanceWork: cableReport.maintenanceWork,
     emergencyWork: cableReport.emergencyWork,

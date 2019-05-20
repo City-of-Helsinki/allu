@@ -47,8 +47,6 @@ export class ApplicationExtensionMapper {
       case ApplicationType.CABLE_REPORT:
         return new CableReport(
           TimeUtil.dateFromBackend(backendExtension.validityTime),
-          backendExtension.cableSurveyRequired,
-          backendExtension.mapUpdated,
           backendExtension.constructionWork,
           backendExtension.maintenanceWork,
           backendExtension.emergencyWork,
@@ -190,8 +188,6 @@ export class ApplicationExtensionMapper {
     return {
       applicationType: cableReport.applicationType,
       validityTime: TimeUtil.dateToBackend(cableReport.validityTime),
-      cableSurveyRequired: cableReport.cableSurveyRequired,
-      mapUpdated: cableReport.mapUpdated,
       constructionWork: cableReport.constructionWork,
       maintenanceWork: cableReport.maintenanceWork,
       emergencyWork: cableReport.emergencyWork,

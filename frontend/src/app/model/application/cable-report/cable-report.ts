@@ -7,8 +7,6 @@ import {OrdererId} from './orderer-id';
 export class CableReport extends ApplicationExtension {
   constructor(
     public validityTime?: Date,
-    public cableSurveyRequired?: boolean,
-    public mapUpdated?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
     public emergencyWork?: boolean,

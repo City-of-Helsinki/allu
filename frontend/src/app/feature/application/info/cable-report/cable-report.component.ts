@@ -34,8 +34,6 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   protected createExtensionForm(): FormGroup {
     return this.fb.group({
       validityTime: [{value: undefined, disabled: true}],
-      cableSurveyRequired: [false],
-      mapUpdated: [false],
       constructionWork: [{value: false, disabled: this.readonly}],
       maintenanceWork: [{value: false, disabled: this.readonly}],
       emergencyWork: [{value: false, disabled: this.readonly}],

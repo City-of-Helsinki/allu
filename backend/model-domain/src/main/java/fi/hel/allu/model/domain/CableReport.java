@@ -7,12 +7,10 @@ import java.util.List;
 
 public class CableReport extends ApplicationExtension {
 
-  private Boolean cableSurveyRequired;
   private String cableReportId;
   private String workDescription;
   private Integer mapExtractCount;
   private List<CableInfoEntry> infoEntries;
-  private Boolean mapUpdated;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
@@ -23,17 +21,6 @@ public class CableReport extends ApplicationExtension {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.CABLE_REPORT;
-  }
-
-  /**
-   * Whether cable survey is needed for cable report (in Finnish: "Johtokartoitettava")
-   */
-  public Boolean isCableSurveyRequired() {
-    return cableSurveyRequired;
-  }
-
-  public void setCableSurveyRequired(Boolean cableSurveyRequired) {
-    this.cableSurveyRequired = cableSurveyRequired;
   }
 
   /**
@@ -86,17 +73,6 @@ public class CableReport extends ApplicationExtension {
 
   public void setInfoEntries(List<CableInfoEntry> infoEntries) {
     this.infoEntries = infoEntries;
-  }
-
-  /**
-   * In Finnish: Kartta päivitetty.
-   */
-  public Boolean getMapUpdated() {
-    return mapUpdated;
-  }
-
-  public void setMapUpdated(Boolean mapUpdated) {
-    this.mapUpdated = mapUpdated;
   }
 
   /**

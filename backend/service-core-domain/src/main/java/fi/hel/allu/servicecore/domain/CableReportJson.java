@@ -11,12 +11,10 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("Cable report specific fields")
 public class CableReportJson extends ApplicationExtensionJson {
 
-  private Boolean cableSurveyRequired;
   private String cableReportId;
   private String workDescription;
   private Integer mapExtractCount;
   private List<CableInfoEntryJson> infoEntries;
-  private Boolean mapUpdated;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
@@ -28,16 +26,6 @@ public class CableReportJson extends ApplicationExtensionJson {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.CABLE_REPORT;
-  }
-
-  @ApiModelProperty(value = "True, if cable survey is required (johtokartoitettava)")
-  public Boolean getCableSurveyRequired() {
-    return cableSurveyRequired;
-  }
-
-  @UpdatableProperty
-  public void setCableSurveyRequired(Boolean cableSurveyRequired) {
-    this.cableSurveyRequired = cableSurveyRequired;
   }
 
   @ApiModelProperty(value = "Cable report identifier (johtoselvitystunnus)")
@@ -79,16 +67,6 @@ public class CableReportJson extends ApplicationExtensionJson {
   @UpdatableProperty
   public void setInfoEntries(List<CableInfoEntryJson> infoEntries) {
     this.infoEntries = infoEntries;
-  }
-
-  @ApiModelProperty(value = "True if map is updated")
-  public Boolean getMapUpdated() {
-    return mapUpdated;
-  }
-
-  @UpdatableProperty
-  public void setMapUpdated(Boolean mapUpdated) {
-    this.mapUpdated = mapUpdated;
   }
 
   @ApiModelProperty(value = "Construction work")
