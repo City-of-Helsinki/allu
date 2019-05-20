@@ -48,7 +48,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
       Sort.class
   };
 
-  private static final String[] FILTERED_APPLICATION_FIELDS = { "extension", "metadataVersion", "creationTime",
+  private static final String[] FILTERED_APPLICATION_FIELDS = { "extension", "metadataVersion",
       "clientApplicationData", "externalOwnerId", "externalApplicationId", "invoicingChanged", "targetState" };
 
   @Value("${supervision.api.basepath}")
