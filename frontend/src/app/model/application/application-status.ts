@@ -1,6 +1,7 @@
 import {Application} from '@model/application/application';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ArrayUtil} from '@util/array-util';
+import {Some} from '@util/option';
 
 export enum ApplicationStatus {
   PENDING_CLIENT = 'PENDING_CLIENT',
@@ -25,8 +26,9 @@ export enum ApplicationStatus {
 export const statusNames = Object.keys(ApplicationStatus);
 
 export function applicationCanBeEdited(application: Application): boolean {
-  const editableByStatus = application.status === undefined ||
-    isBetween(application.status, ApplicationStatus.PENDING_CLIENT, ApplicationStatus.WAITING_CONTRACT_APPROVAL);
+  const editableByStatus = Some(application.status)
+    .map(status => editable.indexOf(status) >= 0)
+    .orElse(true);
   const noPendingClientData = application.clientApplicationData === undefined;
   return editableByStatus && noPendingClientData;
 }
@@ -73,6 +75,15 @@ export function isSameOrBefore(first: ApplicationStatus, second: ApplicationStat
 export function isSameOrAfter(first: ApplicationStatus, second: ApplicationStatus): boolean {
   return !isBefore(first, second);
 }
+
+export const editable = [
+  ApplicationStatus.PRE_RESERVED,
+  ApplicationStatus.PENDING,
+  ApplicationStatus.WAITING_INFORMATION,
+  ApplicationStatus.HANDLING,
+  ApplicationStatus.NOTE,
+  ApplicationStatus.RETURNED_TO_PREPARATION,
+];
 
 export const searchable = [
   ApplicationStatus.PENDING_CLIENT,
