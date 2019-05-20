@@ -1,5 +1,6 @@
 package fi.hel.allu.supervision.api.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.servicecore.service.ApplicationService;
 import fi.hel.allu.servicecore.service.ChargeBasisService;
 import fi.hel.allu.servicecore.service.InvoicingPeriodService;
 import fi.hel.allu.supervision.api.domain.ChargeBasisEntryJson;
@@ -31,6 +33,9 @@ public class ChargeBasisController {
   @Autowired
   private InvoicingPeriodService invoicingPeriodService;
 
+  @Autowired
+  private ApplicationService applicationService;
+
   @ApiOperation(value = "List charge basis entries for application with given ID",
       authorizations = @Authorization(value ="api_key"),
       produces = "application/json",
@@ -43,10 +48,15 @@ public class ChargeBasisController {
   @RequestMapping(value = "/applications/{id}/chargebasisentries", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<List<ChargeBasisEntryJson>> findByApplication(@PathVariable Integer id) {
-    List<ChargeBasisEntryJson> result = chargeBasisService.getChargeBasis(id)
+    List<ChargeBasisEntryJson> result;
+    if (applicationService.isBillable(id)) {
+      result = chargeBasisService.getChargeBasis(id)
         .stream()
         .map(e -> ChargeBasisEntryMapper.mapToJson(e))
         .collect(Collectors.toList());
+    } else {
+      result = Collections.emptyList();
+    }
     return ResponseEntity.ok(result);
   }
 
@@ -62,10 +72,15 @@ public class ChargeBasisController {
   @RequestMapping(value = "/applications/{id}/invoicingperiods", method = RequestMethod.GET, produces = "application/json")
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<List<InvoicingPeriodJson>> findPeriodsByApplication(@PathVariable Integer id) {
-    List<InvoicingPeriodJson> result = invoicingPeriodService.getInvoicingPeriods(id)
+    List<InvoicingPeriodJson> result;
+    if (applicationService.isBillable(id)) {
+      result = invoicingPeriodService.getInvoicingPeriods(id)
         .stream()
         .map(i -> new InvoicingPeriodJson(i.getId(), i.getStartTime(), i.getEndTime()))
         .collect(Collectors.toList());
+    } else {
+      result = Collections.emptyList();
+    }
     return ResponseEntity.ok(result);
   }
 

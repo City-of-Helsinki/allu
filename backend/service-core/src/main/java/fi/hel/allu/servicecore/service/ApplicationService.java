@@ -523,5 +523,7 @@ public class ApplicationService {
            application.getRecurringEndTime().getYear() > application.getEndTime().getYear();
   }
 
-
+  public boolean isBillable(Integer id) {
+    return BooleanUtils.isNotTrue(findApplicationById(id).getNotBillable());
+  }
 }
