@@ -9,7 +9,7 @@ import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {ApplicationQueryParametersMapper} from '../mapper/query/application-query-parameters-mapper';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
-import {ApplicationTagType} from "@model/application/tag/application-tag-type";
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 import {ApplicationTagMapper, BackendApplicationTag} from '../mapper/application-tag-mapper';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {StatusChangeInfoMapper} from '../mapper/status-change-info-mapper';

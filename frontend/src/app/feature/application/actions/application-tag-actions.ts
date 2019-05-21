@@ -1,5 +1,5 @@
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import {ApplicationTagType} from "@model/application/tag/application-tag-type";
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 import {Action} from '@ngrx/store';
 import {ActionWithPayload} from '../../common/action-with-payload';
 import {ErrorInfo} from '../../../service/error/error-info';

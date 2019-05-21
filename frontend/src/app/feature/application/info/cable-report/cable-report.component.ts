@@ -10,9 +10,9 @@ import {ApplicationInfoBaseComponent} from '@feature/application/info/applicatio
 import {CableReport} from '@model/application/cable-report/cable-report';
 import {ApplicationStatus, isSameOrAfter} from '@model/application/application-status';
 import * as fromApplication from '@feature/application/reducers';
-import {Add, Remove} from "@feature/application/actions/application-tag-actions";
+import {Add, Remove} from '@feature/application/actions/application-tag-actions';
 import {select} from '@ngrx/store';
-import {Observable} from "rxjs/index";
+import {Observable} from 'rxjs/index';
 import {TimeUtil} from '@util/time.util';
 
 @Component({

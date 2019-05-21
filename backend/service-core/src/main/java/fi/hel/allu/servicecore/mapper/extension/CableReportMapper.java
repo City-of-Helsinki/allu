@@ -16,11 +16,9 @@ public class CableReportMapper {
     cableReportJson.setCableReportId(cableReport.getCableReportId());
     cableReportJson.setWorkDescription(cableReport.getWorkDescription());
     cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
-    cableReportJson.setCableSurveyRequired(cableReport.isCableSurveyRequired());
     List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
         .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
     cableReportJson.setInfoEntries(infoEntries);
-    cableReportJson.setMapUpdated(cableReport.getMapUpdated());
     cableReportJson.setConstructionWork(cableReport.getConstructionWork());
     cableReportJson.setMaintenanceWork(cableReport.getMaintenanceWork());
     cableReportJson.setEmergencyWork(cableReport.getEmergencyWork());
@@ -35,11 +33,9 @@ public class CableReportMapper {
     cableReport.setCableReportId(json.getCableReportId());
     cableReport.setWorkDescription(json.getWorkDescription());
     cableReport.setMapExtractCount(json.getMapExtractCount());
-    cableReport.setCableSurveyRequired(json.getCableSurveyRequired());
     List<CableInfoEntry> infoEntries = Optional.ofNullable(json.getInfoEntries())
         .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
     cableReport.setInfoEntries(infoEntries);
-    cableReport.setMapUpdated(json.getMapUpdated());
     cableReport.setConstructionWork(json.getConstructionWork());
     cableReport.setMaintenanceWork(json.getMaintenanceWork());
     cableReport.setEmergencyWork(json.getEmergencyWork());
