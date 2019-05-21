@@ -27,7 +27,9 @@
   <div class="row">
     <div class="col m12">
       <allu-card>
-        <mat-card-title>Johtoselvityksen tiedot</mat-card-title>
+        <mat-card-title>
+          {{'application.cableReport.title' | translation}}
+        </mat-card-title>
         <mat-card-content>
           <div class="row form-group">
             <div class="col m12">
@@ -41,7 +43,7 @@
             <div formGroupName="reportTimes">
               <div class="col m3">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Arvioitu aloitus*"
+                  <input matInput type="text" formControlName="startTime" placeholder="{{'application.cableReport.field.startTime' | translation}}"
                          [matDatepicker]="startTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="startTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
@@ -55,7 +57,7 @@
               </div>
               <div class="col m3">
                 <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Arvioitu lopetus*"
+                  <input matInput type="text" formControlName="endTime" placeholder="{{'application.cableReport.field.endTime' | translation}}"
                          [matDatepicker]="endTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
@@ -74,26 +76,34 @@
           </div>
           <div class="row form-group">
             <div class="col m2">
-              <mat-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</mat-checkbox>
+              <mat-checkbox formControlName="propertyConnectivity">
+                {{'application.cableReport.field.propertyConnectivity' | translation}}
+              </mat-checkbox>
             </div>
             <div class="col m2">
-              <mat-checkbox formControlName="constructionWork">Rakentaminen</mat-checkbox>
+              <mat-checkbox formControlName="constructionWork">
+                {{'application.cableReport.field.constructionWork' | translation}}
+              </mat-checkbox>
             </div>
           </div>
           <div class="row form-group">
             <div class="col m2">
-              <mat-checkbox formControlName="maintenanceWork">Kunnossapito</mat-checkbox>
+              <mat-checkbox formControlName="maintenanceWork">
+                {{'application.cableReport.field.maintenanceWork' | translation}}
+              </mat-checkbox>
             </div>
             <div class="col m2">
-              <mat-checkbox formControlName="emergencyWork">Hätätyö</mat-checkbox>
+              <mat-checkbox formControlName="emergencyWork">
+                {{'application.cableReport.field.emergencyWork' | translation}}
+              </mat-checkbox>
             </div>
           </div>
           <div class="row form-group">
             <button *ngIf="!(isSurveyRequired | async)" type="button" mat-raised-button color="primary" (click)="markSurveyRequired()">
-              Lisää tunniste: Kartoitettava
+              {{'application.cableReport.action.markSurveyRequired' | translation}}
             </button>
             <button *ngIf="isSurveyRequired | async" type="button" mat-raised-button color="accent" (click)="markSurveyDone()">
-              Poista tunniste: Kartoitettava
+              {{'application.cableReport.action.markSurveyDone' | translation}}
             </button>
           </div>
         </mat-card-content>

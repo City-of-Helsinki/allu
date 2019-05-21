@@ -407,6 +407,7 @@ export const translations = {
         ' saa käyttää ulkotarjoiluun korvauksetta',
     },
     cableReport: {
+      title: 'Johtoselvityksen tiedot',
       cableInfo: {
         title: 'Johtotiedot',
         selectInfoType: 'Valitse tyyppi',
@@ -414,7 +415,18 @@ export const translations = {
         additionalInfo: 'Lisätietoja'
       },
       field: {
-        startBeforeEnd: 'Lopetuspäivä ei voi olla ennen aloituspäivää'
+        workDescription: '"Työn kuvaus"',
+        startTime: 'Arvioitu aloitus*',
+        endTime: 'Arvioitu lopetus*',
+        startBeforeEnd: 'Lopetuspäivä ei voi olla ennen aloituspäivää',
+        propertyConnectivity: 'Tontti- / Kiinteistöliitos',
+        constructionWork: 'Rakentaminen',
+        maintenanceWork: 'Kunnossapito',
+        emergencyWork: 'Hätätyö'
+      },
+      action: {
+        markSurveyRequired: 'Lisää tunniste: Kartoitettava',
+        markSurveyDone: 'Poista tunniste: Kartoitettava'
       }
     },
     excavationAnnouncement: {
