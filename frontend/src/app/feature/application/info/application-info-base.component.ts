@@ -62,6 +62,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
               protected store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
+    this.applicationStore.changeTab('BASIC_INFO');
     this.initForm();
     this.hasPropertyDeveloperCtrl = this.fb.control(false);
     this.hasRepresentativeCtrl = this.fb.control(false);
