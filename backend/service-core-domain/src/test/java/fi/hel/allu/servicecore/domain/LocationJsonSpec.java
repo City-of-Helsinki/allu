@@ -48,6 +48,16 @@ public class LocationJsonSpec {
           assertEquals(1, constraintViolations.size());
         });
       });
+
+      context("when start time is equal to end time", () -> {
+        it("should validate ok", () -> {
+          ZonedDateTime dateTime = ZonedDateTime.now();
+          locationJson.setStartTime(dateTime);
+          locationJson.setEndTime(dateTime);
+          Set<ConstraintViolation<LocationJson>> constraintViolations = validator.validate(locationJson);
+          assertEquals(0, constraintViolations.size());
+        });
+      });
     });
   }
 }

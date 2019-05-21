@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
  * in Finnish: Hakemuksen sijainti
  */
 @ApiModel(value = "Application location")
-@NotFalse(rules = {"startTime, startTimeBeforeEndTimeValidation, start time must be before end time"})
+@NotFalse(rules = {"startTime, startTimeNotAfterEndTimeValidation, start time must be before end time"})
 public class LocationJson {
   private Integer id;
   private Integer locationKey;
@@ -201,8 +201,8 @@ public class LocationJson {
   }
 
   @JsonIgnore
-  public boolean getStartTimeBeforeEndTimeValidation() {
-    return startTime.isBefore(endTime);
+  public boolean getStartTimeNotAfterEndTimeValidation() {
+    return !startTime.isAfter(endTime);
   }
 
   public String getAddress() {
