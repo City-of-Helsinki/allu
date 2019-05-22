@@ -107,6 +107,13 @@ public class ApplicationStatusChangeHandler {
     applicationDao.removeOwner(Collections.singletonList(application.getId()));
   }
 
+  protected void setHandler(Integer handlerId, Integer applicationId) {
+    if (handlerId != null) {
+      applicationDao.updateHandler(applicationId, handlerId);
+    }
+  }
+
+
   protected void finishInvoicing(Application application) {
     applicationDao.setInvoicingChanged(application.getId(), false);
     lockChargeBasisEntries(application.getId());

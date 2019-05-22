@@ -39,7 +39,7 @@ public class CableReportStatusChangeHandler extends ApplicationStatusChangeHandl
     CableReport cableReport = (CableReport)application.getExtension();
     cableReport.setValidityTime(validityTime);
     getApplicationService().update(application.getId(), application, userId);
+    setOwner(userId, application.getId());
+    setHandler(userId, application.getId());
   }
-
-
 }
