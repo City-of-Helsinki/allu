@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.service;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import fi.hel.allu.servicecore.domain.CableReportJson;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -123,7 +124,13 @@ public class ApplicationArchiverService {
   }
 
   private boolean isFinished(ApplicationJson application) {
-    return ZonedDateTime.now().isAfter(application.getEndTime());
+    boolean isFinishedStatus = ZonedDateTime.now().isAfter(application.getEndTime());
+    if (application.getType() == ApplicationType.CABLE_REPORT
+      && application.getExtension() != null && application.getExtension() instanceof CableReportJson) {
+      CableReportJson extension = (CableReportJson) application.getExtension();
+      isFinishedStatus &= ZonedDateTime.now().isAfter(extension.getValidityTime());
+    }
+    return isFinishedStatus;
   }
 
   private boolean isInvoiced(ApplicationJson application) {
