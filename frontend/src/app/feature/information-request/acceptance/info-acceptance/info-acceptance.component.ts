@@ -58,7 +58,10 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
 
   selectAllOld(): void {
     if (this.oldValues) {
-      this.oldValuesSelect.selectAll();
+      // Timeout forces selectAll function to be called on next angular update cycle
+      // which allows view to update with selected values. Without timeout it seems
+      // that values update but the view does not.
+      setTimeout(() => this.oldValuesSelect.selectAll(), 0);
       this.onOldValuesSelected(Object.keys(this.oldValues));
     }
   }
