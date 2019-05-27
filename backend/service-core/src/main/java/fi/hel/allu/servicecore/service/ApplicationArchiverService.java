@@ -57,9 +57,10 @@ public class ApplicationArchiverService {
   }
 
   private void moveToFinishedOrArchived(Integer applicationId) {
-    if (readyForArchive(applicationServiceComposer.findApplicationById(applicationId))) {
+    ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
+    if (readyForArchive(application)) {
       archiveApplication(applicationId);
-    } else {
+    } else if (readyForFinished(application)){
       applicationServiceComposer.changeStatus(applicationId, StatusType.FINISHED);
     }
   }
@@ -103,6 +104,10 @@ public class ApplicationArchiverService {
   private ApplicationJson archiveApplication(Integer applicationId) {
     // Sets owner of application to null
     return applicationServiceComposer.changeStatus(applicationId, StatusType.ARCHIVED, new StatusChangeInfoJson());
+  }
+
+  private boolean readyForFinished(ApplicationJson application) {
+    return !requiresSurvey(application);
   }
 
   private boolean readyForArchive(ApplicationJson application) {

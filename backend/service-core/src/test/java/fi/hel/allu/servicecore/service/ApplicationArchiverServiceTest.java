@@ -1,8 +1,10 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.CableReportJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import org.junit.Before;
@@ -22,6 +24,7 @@ public class ApplicationArchiverServiceTest {
   private ApplicationArchiverService archiverService;
 
   private Integer APPLICATION_ID = 2;
+  private Integer USER_ID = 3;
   private ApplicationJson applicationJson;
   private CableReportJson extensionJson;
 
@@ -37,6 +40,8 @@ public class ApplicationArchiverServiceTest {
     createApplication();
     when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
     when(supervisionTaskService.findByApplicationId(anyInt())).thenReturn(Collections.emptyList());
+    when(applicationServiceComposer.findFinishedApplications(anyList(), anyList()))
+        .thenReturn(Collections.singletonList(APPLICATION_ID));
   }
 
   // Both the end time and validity time are expired
@@ -111,6 +116,41 @@ public class ApplicationArchiverServiceTest {
     archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
     verify(applicationServiceComposer, never())
       .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+  }
+
+  @Test
+  public void shouldUpdateToArchivedOtherTypesWithExpiredEndAndValidityTime() {
+    applicationJson.setType(ApplicationType.EVENT);
+    applicationJson.setEndTime(ZonedDateTime.now().minusDays(1));
+    extensionJson.setValidityTime(ZonedDateTime.now().minusDays(1));
+
+    archiverService.updateStatusForFinishedApplications();
+    verify(applicationServiceComposer, times(1))
+        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+  }
+
+  @Test
+  public void shouldUpdateToFinishedIfNotArchivedAndNoSurveyRequired() {
+    applicationJson.setType(ApplicationType.EVENT);
+    applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
+    extensionJson.setValidityTime(ZonedDateTime.now().plusDays(1));
+
+    archiverService.updateStatusForFinishedApplications();
+    verify(applicationServiceComposer, times(1))
+        .changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
+  }
+
+  @Test
+  public void shouldUpdateNothingWhenSurveyRequired() {
+    ApplicationTagJson surveyRequired = new ApplicationTagJson(USER_ID, ApplicationTagType.SURVEY_REQUIRED, ZonedDateTime.now());
+    applicationJson.setApplicationTags(Collections.singletonList(surveyRequired));
+    applicationJson.setType(ApplicationType.EVENT);
+    applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
+    extensionJson.setValidityTime(ZonedDateTime.now().plusDays(1));
+
+    archiverService.updateStatusForFinishedApplications();
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED));
   }
 
   private void createApplication() {
