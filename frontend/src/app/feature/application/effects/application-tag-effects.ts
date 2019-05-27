@@ -18,6 +18,8 @@ import {
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
 import {Application} from '../../../model/application/application';
 import {NumberUtil} from '../../../util/number.util';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import * as historyActions from '@feature/history/actions/history-actions';
 
 @Injectable()
 export class ApplicationTagEffects {
@@ -43,7 +45,10 @@ export class ApplicationTagEffects {
     switchMap(([action, application]) => {
       if (NumberUtil.isDefined(application.id)) {
         return this.applicationService.saveTag(application.id, action.payload).pipe(
-          map(saved => new AddSuccess(saved)),
+          switchMap(saved => [
+            new AddSuccess(saved),
+            new historyActions.Load(ActionTargetType.Application)
+          ]),
           catchError(error => of(new AddFailed(error)))
         );
       } else {
@@ -59,7 +64,10 @@ export class ApplicationTagEffects {
     switchMap(([action, application]) => {
       if (NumberUtil.isDefined(application.id)) {
         return this.applicationService.removeTag(application.id, action.payload).pipe(
-          map(() => new RemoveSuccess(action.payload)),
+          switchMap(() => [
+            new RemoveSuccess(action.payload),
+            new historyActions.Load(ActionTargetType.Application)
+          ]),
           catchError(error => of(new RemoveFailed(error)))
         );
       } else {
