@@ -62,9 +62,9 @@ export class MapDataService {
     ]);
   }
 
-  applicationsByLocation(filter: MapSearchFilter): Observable<Application[]> {
+  applicationsByLocation(filter: MapSearchFilter, includeSurveyRequired?: boolean): Observable<Application[]> {
     if (filter.geometry && !ArrayUtil.empty(filter.statuses) && !ArrayUtil.empty(filter.types)) {
-      const query = this.toApplicationLocationQuery(filter);
+      const query = this.toApplicationLocationQuery(filter, includeSurveyRequired);
       return this.http.post<BackendPage<SearchResultApplication>>(
         APPLICATION_SEARCH_URL,
         JSON.stringify(query),
@@ -79,12 +79,13 @@ export class MapDataService {
     }
   }
 
-  private toApplicationLocationQuery(filter: MapSearchFilter): BackendQueryParameters {
+  private toApplicationLocationQuery(filter: MapSearchFilter, includeSurveyRequired?: boolean): BackendQueryParameters {
     const viewPoly = this.mapUtil.polygonFromBounds(filter.geometry);
     const geometry = this.mapUtil.featureToGeometry(viewPoly.toGeoJSON());
     return {
       queryParameters: this.mapSearchParameters(filter),
-      intersectingGeometry: geometry
+      intersectingGeometry: geometry,
+      surveyRequired: includeSurveyRequired
     };
   }
 

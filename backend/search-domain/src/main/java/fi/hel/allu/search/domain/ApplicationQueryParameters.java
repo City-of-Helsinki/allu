@@ -10,11 +10,22 @@ import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 
 public class ApplicationQueryParameters extends QueryParameters {
 
+  /**
+   * intersectingGeometry is added to query as AND
+   */
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry intersectingGeometry;
 
+  /**
+   * hasProject is added to query as AND
+   */
   private Boolean hasProject;
+
+  /**
+   * surveyRequired is added to query as OR
+   */
+  private Boolean surveyRequired;
 
   public Geometry getIntersectingGeometry() {
     return intersectingGeometry;
@@ -32,4 +43,11 @@ public class ApplicationQueryParameters extends QueryParameters {
     this.hasProject = hasProject;
   }
 
+  public Boolean getSurveyRequired() {
+    return surveyRequired;
+  }
+
+  public void setSurveyRequired(Boolean surveyRequired) {
+    this.surveyRequired = surveyRequired;
+  }
 }

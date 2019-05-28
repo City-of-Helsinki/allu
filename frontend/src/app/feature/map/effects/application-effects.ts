@@ -38,7 +38,8 @@ export class ApplicationEffects {
 
   private loadByType(type: ActionTargetType, baseFilter: MapSearchFilter, layers: MapLayer[]): Observable<Action> {
     const searchFilter = this.withApplicationTypes(baseFilter, layers);
-    return this.mapDataService.applicationsByLocation(searchFilter).pipe(
+    const includeSurveyRequired = type === ActionTargetType.Location;
+    return this.mapDataService.applicationsByLocation(searchFilter, includeSurveyRequired).pipe(
       map(applications => new SearchSuccess(type, applications)),
       catchError(error => of(new NotifyFailure(error)))
     );

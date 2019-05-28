@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -326,8 +327,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
       Boolean matchAny) {
     BoolQueryBuilder qb = QueryBuilders.boolQuery();
     addQueryParameters(queryParameters, matchAny, qb);
-    addAdditionalQueryParameters(qb, queryParameters);
-    SearchRequestBuilder srBuilder = prepareSearch(pageRequest, qb);
+    BoolQueryBuilder withAdditionalParameters = addAdditionalQueryParameters(qb, queryParameters);
+    SearchRequestBuilder srBuilder = prepareSearch(pageRequest, withAdditionalParameters);
     addSearchOrder(pageRequest, srBuilder);
 
     logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
@@ -370,7 +371,15 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     }));
   }
 
-  protected void addAdditionalQueryParameters(BoolQueryBuilder qb, Q queryParameters) {
+  protected BoolQueryBuilder addAdditionalQueryParameters(BoolQueryBuilder qb, Q queryParameters) {
+    return qb;
+  }
+
+  protected BoolQueryBuilder should(QueryBuilder left, QueryBuilder right) {
+    BoolQueryBuilder shouldBuilder = QueryBuilders.boolQuery();
+    shouldBuilder.should(left);
+    shouldBuilder.should(right);
+    return shouldBuilder;
   }
 
   public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {

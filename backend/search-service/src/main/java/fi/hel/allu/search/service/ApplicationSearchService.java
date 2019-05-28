@@ -6,16 +6,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.geo.ShapeRelation;
 import org.elasticsearch.common.geo.builders.ShapeBuilders;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.search.MatchQuery;
 import org.elasticsearch.search.SearchHit;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.PointCollection;
@@ -74,7 +74,7 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
   }
 
   @Override
-  protected void addAdditionalQueryParameters(BoolQueryBuilder qb, ApplicationQueryParameters queryParameters) {
+  protected BoolQueryBuilder addAdditionalQueryParameters(BoolQueryBuilder qb, ApplicationQueryParameters queryParameters) {
     qb.mustNot(
         QueryBuilders.matchQuery(
             QueryParameter.FIELD_NAME_APPLICATION_STATUS, StatusType.REPLACED.name()).operator(Operator.AND)
@@ -85,6 +85,8 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
     if (BooleanUtils.isTrue(queryParameters.getHasProject())) {
       qb.must(QueryBuilders.existsQuery("project"));
     }
+
+    return addOrSurveyRequired(qb, queryParameters);
   }
 
   @Override
@@ -103,6 +105,15 @@ public class ApplicationSearchService extends GenericSearchService<ApplicationES
       qb.must(geomQb);
     } catch (IOException ex) {
       throw new SearchException(ex);
+    }
+  }
+
+  private BoolQueryBuilder addOrSurveyRequired(BoolQueryBuilder qb, ApplicationQueryParameters queryParameters) {
+    if (BooleanUtils.isTrue(queryParameters.getSurveyRequired())) {
+      MatchQueryBuilder surveyRequired = QueryBuilders.matchQuery("applicationTags", ApplicationTagType.SURVEY_REQUIRED.name());
+      return should(surveyRequired, qb);
+    } else {
+      return qb;
     }
   }
 
