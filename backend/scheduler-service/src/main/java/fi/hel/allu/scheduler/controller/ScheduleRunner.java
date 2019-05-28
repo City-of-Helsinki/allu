@@ -26,6 +26,7 @@ public class ScheduleRunner {
   private final SapCustomerNotificationService sapCustomerNotificationService;
   private final SearchSynchService searchSyncService;
   private final ApplicationStatusUpdaterService applicationStatusUpdaterService;
+  private final CityDistrictUpdaterService cityDistrictUpdaterService;
   private final ApplicationProperties applicationProperties;
 
   @Autowired
@@ -33,6 +34,7 @@ public class ScheduleRunner {
       SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService,
       SearchSynchService searchSynchService,
       ApplicationStatusUpdaterService applicationStatusUpdaterService,
+      CityDistrictUpdaterService cityDistrictUpdaterService,
       ApplicationProperties applicationProperties
       ) {
     this.applicantReminderService = applicantReminderService;
@@ -41,6 +43,7 @@ public class ScheduleRunner {
     this.sapCustomerNotificationService = sapCustomerNotificationService;
     this.searchSyncService = searchSynchService;
     this.applicationStatusUpdaterService = applicationStatusUpdaterService;
+    this.cityDistrictUpdaterService = cityDistrictUpdaterService;
     this.applicationProperties = applicationProperties;
   }
 
@@ -87,5 +90,8 @@ public class ScheduleRunner {
     applicationStatusUpdaterService.updateApplicationStatuses();
   }
 
-
+  @Scheduled(cron = "${cityDistricts.update.cronstring}")
+  public void updateCityDistricts() {
+    cityDistrictUpdaterService.updateCityDistricts();
+  }
 }

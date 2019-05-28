@@ -4,6 +4,7 @@ import com.querydsl.sql.Configuration;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.spatial.PostGISTemplates;
+import fi.hel.allu.common.domain.serialization.helsinkixml.CityDistrictXml;
 import fi.hel.allu.common.wfs.WfsUtil;
 import fi.hel.allu.model.domain.CityDistrict;
 import org.geolatte.geom.Polygon;

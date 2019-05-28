@@ -1,5 +1,6 @@
 package fi.hel.allu.model.deployment.citydistrict;
 
+import fi.hel.allu.common.domain.serialization.helsinkixml.CityDistrictXml;
 import fi.hel.allu.common.wfs.WfsUtil;
 import org.junit.Assert;
 import org.junit.Test;

@@ -375,4 +375,8 @@ public class ApplicationProperties {
   public boolean isInvoiceSendingEnabled() {
     return invoiceSendingEnabled;
   }
+
+  public String getUpdateCityDistrictsUrl() {
+    return getExtServiceUrl("/v1/citydistricts");
+  }
 }

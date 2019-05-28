@@ -1,7 +1,4 @@
-package fi.hel.allu.model.deployment.citydistrict;
-
-import fi.hel.allu.model.deployment.helsinkixml.HelsinkiGeom;
-
+package fi.hel.allu.common.domain.serialization.helsinkixml;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,7 +13,7 @@ public class CityDistrictXml {
   public List<FeatureMember> featureMember;
 
   public static class FeatureMember {
-    @XmlElement(name = "Kaupunginosajako", namespace = "http://www.hel.fi/hel")
+    @XmlElement(name = "Kaupunginosajako", namespace = "https://www.hel.fi/avoindata")
     public HelsinkiKaupunginosajako cityDistrict;
 
     @Override
@@ -28,11 +25,11 @@ public class CityDistrictXml {
   }
 
   public static class HelsinkiKaupunginosajako {
-    @XmlElement(name = "tunnus", namespace = "http://www.hel.fi/hel")
+    @XmlElement(name = "tunnus", namespace = "https://www.hel.fi/avoindata")
     public int districtId;
-    @XmlElement(name = "nimi_fi", namespace = "http://www.hel.fi/hel")
+    @XmlElement(name = "nimi_fi", namespace = "https://www.hel.fi/avoindata")
     public String districtName;
-    @XmlElement(name = "geom", namespace = "http://www.hel.fi/hel")
+    @XmlElement(name = "geom", namespace = "https://www.hel.fi/avoindata")
     public HelsinkiGeom geometry;
 
     @Override

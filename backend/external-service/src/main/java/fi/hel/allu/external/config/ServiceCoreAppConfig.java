@@ -24,7 +24,8 @@ public class ServiceCoreAppConfig {
       @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths,
       @Value("${wfs.paymentclass.url}") @NotEmpty String paymentClassUrl,
       @Value("${wfs.username}") @NotEmpty String paymentClassUsername,
-      @Value("${wfs.password}") @NotEmpty String paymentClassPassword) {
+      @Value("${wfs.password}") @NotEmpty String paymentClassPassword,
+      @Value("${wfs.citydistrict.url}") @NotEmpty String cityDistrictUrl) {
     return new ApplicationProperties(
         modelServiceHost,
         modelServicePort,
@@ -37,6 +38,7 @@ public class ServiceCoreAppConfig {
         anonymousAccessPaths,
         paymentClassUrl,
         paymentClassUsername,
-        paymentClassPassword);
+        paymentClassPassword,
+        cityDistrictUrl);
   }
 }

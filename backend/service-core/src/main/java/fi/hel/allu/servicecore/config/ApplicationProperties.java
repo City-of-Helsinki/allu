@@ -20,6 +20,7 @@ public class ApplicationProperties {
   private final String paymentClassUrl;
   private final String paymentClassUsername;
   private final String paymentClassPassword;
+  private final String cityDistrictUrl;
 
   public ApplicationProperties(
       String modelServiceHost,
@@ -33,7 +34,8 @@ public class ApplicationProperties {
       List<String> anonymousAccessPaths,
       String paymentClassUrl,
       String paymentClassUsername,
-      String paymentClassPassword) {
+      String paymentClassPassword,
+      String cityDistrictUrl) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -46,6 +48,7 @@ public class ApplicationProperties {
     this.paymentClassUrl = paymentClassUrl;
     this.paymentClassUsername = paymentClassUsername;
     this.paymentClassPassword = paymentClassPassword;
+    this.cityDistrictUrl = cityDistrictUrl;
   }
 
   public static final String PATH_PREFIX = "http://";
@@ -1442,5 +1445,13 @@ public class ApplicationProperties {
 
   public String getPaymentClassPassword() {
     return paymentClassPassword;
+  }
+
+  public String getCityDistrictUpdateUrl() {
+    return cityDistrictUrl;
+  }
+
+  public String getUpsertCityDistrictsUrl() {
+    return getModelServiceUrl("/citydistricts");
   }
 }

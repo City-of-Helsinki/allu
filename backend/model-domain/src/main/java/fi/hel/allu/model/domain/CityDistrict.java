@@ -1,5 +1,9 @@
 package fi.hel.allu.model.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
+import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 import org.geolatte.geom.Geometry;
 
 /**
@@ -9,6 +13,8 @@ public class CityDistrict {
   private Integer id;
   private Integer districtId;
   private String name;
+  @JsonSerialize(using = GeometrySerializerProxy.class)
+  @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
 
   /**
