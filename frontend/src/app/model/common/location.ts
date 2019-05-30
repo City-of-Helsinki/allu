@@ -66,7 +66,7 @@ export class Location {
   }
 
   public hasFixedGeometry(): boolean {
-    return this.fixedLocationIds.length > 0;
+    return this.fixedLocationIds && this.fixedLocationIds.length > 0;
   }
 
   public copyAsNew(): Location {
