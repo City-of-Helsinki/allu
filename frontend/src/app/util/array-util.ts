@@ -57,9 +57,9 @@ export class ArrayUtil {
   }
 
   static numberArrayEqual(left: Array<number>, right: Array<number>): boolean {
-    if (left === right || (left.length === 0 && right.length === 0)) {
+    if (left === right) {
       return true;
-    } else if (!!left || !!right) {
+    } else if (!left || !right) {
       return false;
     } else {
       return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;

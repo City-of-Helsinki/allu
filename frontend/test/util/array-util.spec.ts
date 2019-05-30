@@ -36,4 +36,33 @@ describe('Array util', () => {
     const array = [[1, 2], [3, 4]];
     expect(ArrayUtil.flatten(array)).toEqual([1, 2, 3, 4]);
   });
+
+  it('should result equal on same array', () => {
+    const array = [1, 2, 3];
+    expect(ArrayUtil.numberArrayEqual(array, array)).toBeTruthy();
+  });
+
+  it('should result not equal when other is undefined', () => {
+    const array = [1, 2, 3];
+    const otherArray = undefined;
+    expect(ArrayUtil.numberArrayEqual(array, otherArray)).toBeFalsy();
+  });
+
+  it('should result equal on arrays with same values', () => {
+    const array = [1, 2, 3];
+    const otherArray = [1, 2, 3];
+    expect(ArrayUtil.numberArrayEqual(array, otherArray)).toBeTruthy();
+  });
+
+  it('should result not equal on arrays with different values', () => {
+    const array = [1, 2, 3];
+    const otherArray = [1, 2, 4];
+    expect(ArrayUtil.numberArrayEqual(array, otherArray)).toBeFalsy();
+  });
+
+  it('should result not equal on arrays with different length', () => {
+    const array = [1, 2, 3];
+    const otherArray = [1, 2, 3, 3];
+    expect(ArrayUtil.numberArrayEqual(array, otherArray)).toBeFalsy();
+  });
 });
