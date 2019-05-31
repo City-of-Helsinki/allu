@@ -7,6 +7,7 @@ import {Subject} from 'rxjs/index';
 import {SetContact} from '@feature/information-request/actions/information-request-result-actions';
 import {takeUntil} from 'rxjs/internal/operators';
 import {InformationRequestFieldKey} from '@model/information-request/information-request-field-key';
+import {config as acceptanceConfig} from '@feature/information-request/acceptance/customer/customer-acceptance-config';
 
 @Component({
   selector: 'contacts-acceptance',
@@ -29,8 +30,10 @@ export class ContactsAcceptanceComponent implements OnInit, OnDestroy, AfterView
               private store: Store<fromRoot.State>) {}
 
   ngOnInit(): void {
+    const config = acceptanceConfig[this.fieldKey];
+    const formName = `${config.formName}-contacts`;
     this.contactForms = this.fb.array([]);
-    this.parentForm.addControl('contacts', this.contactForms);
+    this.parentForm.addControl(formName, this.contactForms);
   }
 
   ngOnDestroy(): void {
