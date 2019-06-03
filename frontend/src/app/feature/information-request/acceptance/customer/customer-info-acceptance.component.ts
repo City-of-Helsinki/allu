@@ -72,7 +72,8 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
 
   protected initResultForm(): void {
     super.initResultForm();
-    const ctrl = this.fb.control(undefined, Validators.required);
+    const customerId = this._oldCustomer ? this._oldCustomer.id : undefined;
+    const ctrl = this.fb.control(customerId, Validators.required);
     this.form.addControl('id', ctrl);
   }
 

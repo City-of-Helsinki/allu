@@ -117,6 +117,7 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
       // Required validator need to be cleared so that undefined value can be selected
       // Required validator can be cleared because user cannot deselect row whole row selection once selected
       this.form.get([field]).clearValidators();
+      this.form.get([field]).updateValueAndValidity();
     }
   }
 }

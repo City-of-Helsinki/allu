@@ -116,11 +116,9 @@
       </button>
     </ng-container>
     <ng-template #normalActions>
-      <ng-container>
-        <button  type="submit" mat-raised-button color="primary" [disabled]="form.status !== 'VALID'">
-          {{'common.button.save' | translation | uppercase}}
-        </button>
-      </ng-container>
+      <button  type="submit" mat-raised-button color="primary" [disabled]="form.status !== 'VALID'">
+        {{'common.button.save' | translation | uppercase}}
+      </button>
 
       <button type="button" mat-raised-button color="primary" (click)="cancel()">
         {{'common.button.cancel' | translation | uppercase}}
