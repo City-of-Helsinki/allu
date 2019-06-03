@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, HostBinding, Input, OnInit} from '@angular/core';
 import {AttachmentInfo} from '@model/application/attachment/attachment-info';
-import {ArrayUtil} from '@util/array-util';
 import {TimeUtil} from '@util/time.util';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'attachments-acceptance',
@@ -16,16 +16,25 @@ export class AttachmentsAcceptanceComponent implements OnInit {
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
-  private _attachments: AttachmentInfo[] = [];
+  @Input() parentForm: FormGroup;
 
-  constructor() {}
+  private _attachments: AttachmentInfo[] = [];
+  private form: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.form = fb.group({
+      attachments: [undefined, Validators.requiredTrue]
+    });
+  }
 
   ngOnInit(): void {
+    this.parentForm.addControl('attachments', this.form);
   }
 
   @Input() set attachments(attachments: AttachmentInfo[]) {
     this._attachments = [...attachments];
     this._attachments.sort((left, right) => TimeUtil.compareTo(left.creationTime, right.creationTime));
+    this.form.patchValue({attachments: true});
   }
 
   get attachments() {

@@ -83,6 +83,7 @@
 
         <attachments-acceptance
           *ngSwitchCase="'ATTACHMENT'"
+          [parentForm]="form"
           [attachments]="oldInfo?.attachmentList"></attachments-acceptance>
 
         <div *ngSwitchDefault>
@@ -115,9 +116,12 @@
       </button>
     </ng-container>
     <ng-template #normalActions>
-      <button  type="submit" mat-raised-button color="primary" [disabled]="(form.statusChanges | async) !== 'VALID'">
-        {{'common.button.save' | translation | uppercase}}
-      </button>
+      <ng-container>
+        <button  type="submit" mat-raised-button color="primary" [disabled]="form.status !== 'VALID'">
+          {{'common.button.save' | translation | uppercase}}
+        </button>
+      </ng-container>
+
       <button type="button" mat-raised-button color="primary" (click)="cancel()">
         {{'common.button.cancel' | translation | uppercase}}
       </button>
