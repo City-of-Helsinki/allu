@@ -58,6 +58,7 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.availableContacts = this.customerIdChanges.pipe(
+      takeUntil(this.destroy),
       filter(id => NumberUtil.isDefined(id)),
       switchMap(id => this.customerService.findCustomerActiveContacts(id))
     );
