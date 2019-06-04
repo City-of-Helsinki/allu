@@ -502,7 +502,8 @@ export const translations = {
       showPending: 'Näytä uudet tiedot',
       handleInformationRequestResponse: 'Käsittele täydennyspyyntö',
       toDecisionMaking: 'Ehdota päätettäväksi',
-      basicInfo: 'Jatka perustietoihin'
+      basicInfo: 'Jatka perustietoihin',
+      toTermination: "Irtisano hakemus"
     },
     confirmCancel: {
       title: 'Haluatko varmasti perua hakemuksen?',
@@ -972,6 +973,23 @@ export const translations = {
       field: {
         commentMissing: 'Perustelut puuttuvat',
         handlerMissing: 'Päättäjä puuttuu'
+      }
+    },
+    termination: {
+      title: 'Ehdota irtisanomista',
+      field: {
+        terminationTime: 'Sopimuksen voimassaolon päättymisen päivä',
+        comment: 'Irtisanomisteksti',
+        selectDecisionMaker: 'Valitse päättäjä'
+      },
+      error: {
+        terminationTimeMissing: 'Sopimuksen voimassaolon päättymisen päivä puuttuu',
+        commentMissing: 'Irtisanomisteksti puuttuu',
+        handlerMissing: 'Päättäjä puuttuu'
+      },
+      action: {
+        toDecisionMaking: 'Ehdota päätettäväksi',
+        saveDraft: 'Tallenna luonnos'
       }
     },
     distribution: {
@@ -1466,6 +1484,7 @@ export const translations = {
       SUPERVISION: 'Valvonta',
       PROPOSE_APPROVAL: 'Ehdotettu hyväksyttäväksi',
       PROPOSE_REJECT: 'Ehdotettu hylättäväksi',
+      PROPOSE_TERMINATION: 'Ehdotettu irtisanottavaksi',
       EXTERNAL_SYSTEM: 'Ulkoinen järjestelmä'
     },
     addComment: 'LISÄÄ KOMMENTTI',

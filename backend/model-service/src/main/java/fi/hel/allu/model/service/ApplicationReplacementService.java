@@ -24,7 +24,7 @@ import static fi.hel.allu.common.domain.types.ApplicationTagType.*;
 @Service
 public class ApplicationReplacementService {
   private static final Set<CommentType> COMMENT_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(CommentType.PROPOSE_APPROVAL,
-      CommentType.PROPOSE_REJECT));
+      CommentType.PROPOSE_REJECT, CommentType.PROPOSE_TERMINATION));
 
   private static final Set<ApplicationTagType> TAG_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(
       // If SAP ID missing also from replacing application,

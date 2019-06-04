@@ -20,6 +20,7 @@ SELECT
         WHEN type = 'REJECT' THEN 'Hylkääjän kommentti'
         WHEN type = 'PROPOSE_APPROVAL' THEN 'Ehdotettu hyväksyttäväksi'
         WHEN type = 'PROPOSE_REJECT' THEN 'Ehdotettu hylättäväksi'
+        WHEN type = 'PROPOSE_TERMINATION' THEN 'Ehdotettu irtisanottavaksi'
         WHEN type = 'EXTERNAL_SYSTEM' THEN 'Asiakasjärjestelmän kommentti'
     END AS tyyppi,
     c.text AS teksti,

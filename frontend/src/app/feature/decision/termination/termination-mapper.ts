@@ -14,6 +14,8 @@ export class TerminationInfoMapper {
     return new TerminationInfo(
       backendTerminationInfo.id,
       backendTerminationInfo.applicationId,
+      null,
+      null,
       TimeUtil.dateFromBackend(backendTerminationInfo.creationTime),
       TimeUtil.dateFromBackend(backendTerminationInfo.terminationTime),
       backendTerminationInfo.reason
@@ -26,7 +28,7 @@ export class TerminationInfoMapper {
       applicationId: terminationInfo.applicationId,
       creationTime: TimeUtil.dateToBackend(terminationInfo.creationTime),
       terminationTime: TimeUtil.dateToBackend(terminationInfo.terminationTime),
-      reason: terminationInfo.reason
+      reason: terminationInfo.comment
     };
   }
 }

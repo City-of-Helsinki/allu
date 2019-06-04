@@ -27,6 +27,7 @@ import {ContractActionsComponent} from '@feature/decision/contract-actions.compo
 import {ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
 import {ApprovalDocumentService} from '@service/decision/approval-document.service';
 import {ApprovalDocumentEffects} from '@feature/decision/effects/approval-document-effects';
+import {TerminationModalComponent} from '@feature/decision/termination/termination-modal.component';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import {ApprovalDocumentEffects} from '@feature/decision/effects/approval-docume
     DecisionProposalModalComponent,
     DecisionProposalComponent,
     AttachmentThumbnailsComponent,
-    ContractApprovalModalComponent
+    ContractApprovalModalComponent,
+    TerminationModalComponent
   ],
   providers: [
     DecisionService,
@@ -68,7 +70,8 @@ import {ApprovalDocumentEffects} from '@feature/decision/effects/approval-docume
   entryComponents: [
     DecisionModalComponent,
     DecisionProposalModalComponent,
-    ContractApprovalModalComponent
+    ContractApprovalModalComponent,
+    TerminationModalComponent
   ],
   exports: [
     DecisionComponent

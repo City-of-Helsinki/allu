@@ -1,0 +1,63 @@
+<h1 mat-dialog-title>
+  {{'decision.termination.title' | translation}}
+</h1>
+<div mat-dialog-content>
+  <form [formGroup]="terminationForm">
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width">
+          <input matInput type="text" formControlName="terminationTime" required
+                 [placeholder]="'decision.termination.field.terminationTime' | translation"
+                 [matDatepicker]="terminationTimePicker"
+                 [max]="maxEventStartTime"/>
+          <mat-datepicker-toggle matSuffix [for]="terminationTimePicker"
+                                 [disabled]="readonly"></mat-datepicker-toggle>
+          <mat-datepicker #terminationTimePicker></mat-datepicker>
+          <mat-hint>
+            <field-error [form]="terminationForm" field="terminationTime" hasError="required">
+              {{'decision.termination.error.terminationTimeMissing' | translation}}
+            </field-error>
+          </mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width">
+          <textarea matInput matTextareaAutosize formControlName="comment" required
+                    [placeholder]="'decision.termination.field.comment' | translation"></textarea>
+          <mat-error *ngIf="terminationForm.get('comment').hasError('required')">
+            {{'decision.termination.error.commentMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width">
+          <mat-select [placeholder]="'decision.termination.field.selectDecisionMaker' | translation"
+                      class="input-full-width"
+                      formControlName="handler" required>
+            <mat-option *ngFor="let handler of handlers | async" [value]="handler.id">
+              {{handler.realName}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="terminationForm.get('handler').hasError('required')">
+            {{'decision.termination.error.handlerMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="confirm()">
+    {{'decision.termination.action.saveDraft' | translation}}
+  </button>
+  <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="confirm()">
+    {{'decision.termination.action.toDecisionMaking' | translation}}
+  </button>
+  <button mat-raised-button type="button" color="primary" (click)="cancel()">
+    {{'common.button.cancel' | translation}}
+  </button>
+</div>

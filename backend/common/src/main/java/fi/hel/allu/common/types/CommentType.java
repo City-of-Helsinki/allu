@@ -10,6 +10,7 @@ public enum CommentType {
   INTERNAL(true),
   PROPOSE_APPROVAL(false),
   PROPOSE_REJECT(false),
+  PROPOSE_TERMINATION(false),
   EXTERNAL_SYSTEM(false);
 
   private final boolean manuallyAdded;

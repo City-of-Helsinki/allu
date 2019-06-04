@@ -15,10 +15,11 @@ import {findTranslation} from '@util/translations';
 import {User} from '@model/user/user';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ArrayUtil} from '@util/array-util';
-import {filter, map} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take} from 'rxjs/operators';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
+import * as fromApplication from '@feature/application/reducers';
 import {UserService} from '@service/user/user-service';
 import {
   ApplicationExtension,
@@ -33,6 +34,7 @@ import {Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
+import {TERMINATION_MODAL_CONFIG, TerminationModalComponent} from '@feature/decision/termination/termination-modal.component';
 
 @Component({
   selector: 'application-actions',
@@ -63,6 +65,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showConvertToApplication = false;
   showInformationRequest = false;
   showCancelInformationRequest = false;
+  showTermination = false;
   showActions = true;
   applicationId: number;
   type: ApplicationType;
@@ -93,6 +96,10 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showConvertToApplication = status === ApplicationStatus.PRE_RESERVED;
       this.showActions = (status !== ApplicationStatus.PENDING_CLIENT) && (status !== ApplicationStatus.WAITING_CONTRACT_APPROVAL);
       this.showInformationRequest = ApplicationUtil.validForInformationRequest(app);
+      this.showTermination =
+        (app.type === ApplicationType.SHORT_TERM_RENTAL && status === ApplicationStatus.DECISION) ||
+        (app.type === ApplicationType.PLACEMENT_CONTRACT && status === ApplicationStatus.DECISION) ||
+        (app.type === ApplicationType.PLACEMENT_CONTRACT && status === ApplicationStatus.ARCHIVED);
       this.applicationId = app.id;
       this.type = app.type;
     });
@@ -262,4 +269,25 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       map(preferred => ArrayUtil.first(preferred))
     );
   }
+
+  showTerminationModal(): void {
+    this.store.select(fromApplication.getCurrentApplication).pipe(
+      take(1),
+      map(app => this.createConfig(app)),
+      map(config => this.dialog.open<TerminationModalComponent>(TerminationModalComponent, config)),
+      switchMap(modalRef => modalRef.afterClosed()),
+      filter(result => !!result)
+    ).subscribe(termination => console.log("this.store.dispatch(new Termination(termination))", termination));
+  }
+
+  private createConfig(app: Application) {
+    return {
+      ...TERMINATION_MODAL_CONFIG,
+      data: {
+        applicationType: app.type,
+        applicationId: app.id
+      }
+    };
+  }
+
 }

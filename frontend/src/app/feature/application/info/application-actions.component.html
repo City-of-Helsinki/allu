@@ -58,6 +58,9 @@
             <button *ngIf="showHandling" mat-raised-button type="button" color="primary" (click)="moveToHandling()">
               {{'application.button.toHandling' | translation | uppercase}}
             </button>
+            <button *ngIf="showTermination" mat-raised-button type="button" color="primary" (click)="showTerminationModal()">
+              {{'application.button.toTermination' | translation | uppercase}}
+            </button>
           </ng-container>
           <button *ngIf="showDecision" [disabled]="decisionDisabled" mat-raised-button type="button" color="primary"
                   (click)="toDecisionmaking()">
