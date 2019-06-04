@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.ApplicationIdUtil;
@@ -55,11 +56,12 @@ public class ApplicationReplacementService {
   private final SupervisionTaskDao supervisionTaskDao;
   private final ChargeBasisDao chargeBasisDao;
   private final InvoiceDao invoiceDao;
+  private final InvoicingPeriodService invoicingPeriodService;
 
   @Autowired
   public ApplicationReplacementService(ApplicationService applicationService, ApplicationDao applicationDao, CommentDao commentDao,
       LocationService locationService, DepositDao depositDao, SupervisionTaskDao supervisionTaskDao, ChargeBasisDao chargeBasisDao,
-      InvoiceDao invoiceDao) {
+      InvoiceDao invoiceDao, InvoicingPeriodService invoicingPeriodService) {
     this.applicationService = applicationService;
     this.locationService = locationService;
     this.applicationDao = applicationDao;
@@ -68,6 +70,7 @@ public class ApplicationReplacementService {
     this.supervisionTaskDao = supervisionTaskDao;
     this.chargeBasisDao = chargeBasisDao;
     this.invoiceDao = invoiceDao;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   /**
@@ -107,6 +110,10 @@ public class ApplicationReplacementService {
     applicationDao.updateProject(null, Collections.singletonList(applicationToReplace.getId()));
     // Set replaces and replaced by
     applicationDao.setApplicationReplaced(applicationId, replacingApplication.getId());
+    // Create invoicing periods if excavation announcement
+    if (replacingApplication.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      invoicingPeriodService.setExcavationAnnouncementPeriods(replacingApplication.getId());
+    }
     return replacingApplication.getId();
   }
 

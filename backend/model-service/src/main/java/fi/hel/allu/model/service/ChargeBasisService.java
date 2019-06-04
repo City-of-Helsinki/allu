@@ -225,6 +225,11 @@ public class ChargeBasisService {
   }
 
   @Transactional
+  public void lockEntriesOfPeriod(Integer invoicingPeriodId) {
+    chargeBasisDao.lockEntriesOfPeriod(invoicingPeriodId);
+  }
+
+  @Transactional
   public ChargeBasisEntry setInvoicable(int applicationId, int entryId, boolean invoiced) {
     validateModificationsAllowed(Collections.singleton(entryId), applicationId);
     ChargeBasisEntry entry = chargeBasisDao.setInvoicable(entryId, invoiced);

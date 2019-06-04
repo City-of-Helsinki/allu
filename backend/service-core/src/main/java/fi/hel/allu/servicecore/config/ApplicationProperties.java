@@ -1451,6 +1451,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/recurring/invoicingperiods");
   }
 
+  public String getExcavationAnnouncementPeriodsUrl() {
+    return getModelServiceUrl("/applications/{id}/excavation/invoicingperiods");
+  }
+
   public String getPaymentClassUrl() {
     return paymentClassUrl;
   }

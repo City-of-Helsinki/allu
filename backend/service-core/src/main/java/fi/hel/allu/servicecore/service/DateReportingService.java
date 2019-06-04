@@ -12,10 +12,8 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.GuaranteeEndTime;
 import fi.hel.allu.model.domain.InvoicingPeriod;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ApplicationTagJson;
-import fi.hel.allu.servicecore.domain.LocationJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.model.domain.OperationalConditionDates;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.slf4j.Logger;
@@ -110,13 +108,21 @@ public class DateReportingService {
 
   public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate) {
     final ApplicationJson oldApplicationJson = getApplicationJson(id);
-
     applicationService.setOperationalConditionDate(id, operationalConditionDate);
     final Application newApplication = applicationService.setTargetState(id, StatusType.OPERATIONAL_CONDITION);
     final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
-
     applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
+    // If there was no previously set operational condition date for excavation announcement add
+    // invoicing period for operational condition phase
+    if (!hasOperationalConditionDate(oldApplicationJson)) {
+      invoicingPeriodService.setPeriodsForExcavationAnnouncement(id);
+    }
     return newApplicationJson;
+  }
+
+  private boolean hasOperationalConditionDate(ApplicationJson application) {
+    return application.getExtension() instanceof ExcavationAnnouncementJson &&
+        ((ExcavationAnnouncementJson)application.getExtension()).getWinterTimeOperation() != null;
   }
 
   public ApplicationJson reportWorkFinished(Integer id, ZonedDateTime workFinishedDate) {
@@ -198,7 +204,10 @@ public class DateReportingService {
   }
 
   private ZonedDateTime firstAllowedInvoicingDate(int applicationId) {
-    final List<InvoicingPeriod> periods = invoicingPeriodService.getInvoicingPeriods(applicationId);
+    final List<InvoicingPeriod> periods = invoicingPeriodService.getInvoicingPeriods(applicationId)
+        .stream()
+        .filter(p -> p.getStartTime() != null)
+        .collect(Collectors.toList());
     if (periods.isEmpty()) {
       // No periods -> applications is not periodized -> periodization doesn't limit start time
       return ZonedDateTime.of(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), TimeUtil.HelsinkiZoneId);

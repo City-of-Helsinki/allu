@@ -162,7 +162,7 @@ public class PricingService {
    */
   private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application) {
     return calculateChargeBasis(application, new ExcavationPricing(
-        application, winterTimeService, pricingExplanator, pricingDao));
+        application, winterTimeService, pricingExplanator, pricingDao, invoicingPeriodService.findForApplicationId(application.getId())));
   }
 
   /*

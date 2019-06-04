@@ -25,6 +25,12 @@ public abstract class Pricing {
   }
 
   protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
+      String text, int netPrice, List<String> explanation, Integer invoicingPeriodId) {
+    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, explanation, null, invoicingPeriodId, null);
+  }
+
+
+  protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
       String text, int netPrice) {
     addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, null, null, null, null);
   }

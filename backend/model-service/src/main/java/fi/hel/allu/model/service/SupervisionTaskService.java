@@ -18,7 +18,6 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.SupervisionTaskToTag;
-import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.*;
@@ -31,14 +30,15 @@ import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
 @Service
 public class SupervisionTaskService {
   private SupervisionTaskDao supervisionTaskDao;
-  private ApplicationDao applicationDao;
   private LocationDao locationDao;
+  private ApplicationService applicationService;
 
   @Autowired
-  public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, ApplicationDao applicationDao, LocationDao locationDao) {
+  public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, LocationDao locationDao,
+      ApplicationService applicationService) {
     this.supervisionTaskDao = supervisionTaskDao;
-    this.applicationDao = applicationDao;
     this.locationDao = locationDao;
+    this.applicationService = applicationService;
   }
 
   @Transactional(readOnly = true)
@@ -84,7 +84,7 @@ public class SupervisionTaskService {
   public void delete(int id) {
     supervisionTaskDao.findById(id).ifPresent(task -> {
       SupervisionTaskToTag.onTaskDeleteRemoveTags(task.getType())
-          .forEach(type -> applicationDao.removeTagByType(task.getApplicationId(), type));
+          .forEach(type -> applicationService.removeTag(task.getApplicationId(), type));
       supervisionTaskDao.delete(id);
     });
   }
@@ -119,14 +119,14 @@ public class SupervisionTaskService {
         .filter(t -> t.getStatus() == OPEN).collect(Collectors.toList());
     if (!openOperationalConditionTasks.isEmpty()) {
       // Clear operational condition date from application
-      applicationDao.setOperationalConditionDate(applicationId, null);
+      applicationService.clearExcavationAnnouncementOperationalConditionDate(applicationId);
       // Remove open operation condition supervision tasks
       openOperationalConditionTasks.forEach(o -> supervisionTaskDao.delete(o.getId()));
     }
   }
 
   private boolean isExcavationAnnouncement(Integer applicationId) {
-    return ApplicationType.EXCAVATION_ANNOUNCEMENT == applicationDao.getType(applicationId);
+    return ApplicationType.EXCAVATION_ANNOUNCEMENT == applicationService.getApplicationType(applicationId);
   }
 
   @Transactional
@@ -174,8 +174,8 @@ public class SupervisionTaskService {
 
   private void createTag(ApplicationTagType tagType, Integer applicationId, Integer creatorId) {
     ApplicationTag tag = new ApplicationTag(creatorId, tagType, ZonedDateTime.now());
-    applicationDao.addTag(applicationId, tag);
-    tag.getType().getReplaces().forEach(type -> applicationDao.removeTagByType(applicationId, type));
+    applicationService.addTag(applicationId, tag);
+    tag.getType().getReplaces().forEach(type -> applicationService.removeTag(applicationId, type));
   }
 
   @Transactional

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.hel.allu.common.domain.ApplicationDateReport;
 import fi.hel.allu.common.domain.RequiredTasks;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.user.Constants;
@@ -583,4 +584,15 @@ public class ApplicationService {
   public Integer getApplicationOwner(Integer applicationId) {
     return applicationDao.getApplicationOwner(applicationId);
   }
+
+  @Transactional(readOnly = true)
+  public ApplicationType getApplicationType(Integer applicationId) {
+    return applicationDao.getType(applicationId);
+  }
+
+  public void clearExcavationAnnouncementOperationalConditionDate(Integer applicationId) {
+    applicationDao.setOperationalConditionDate(applicationId, null);
+    invoicingPeriodService.setExcavationAnnouncementPeriods(applicationId);
+  }
+
 }

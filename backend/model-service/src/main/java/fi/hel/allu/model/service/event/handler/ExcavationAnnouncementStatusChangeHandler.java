@@ -3,37 +3,41 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-import fi.hel.allu.model.dao.InformationRequestDao;
-import fi.hel.allu.model.dao.TerminationDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.service.*;
 
 @Service
 public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatusChangeHandler {
 
   private final WinterTimeService winterTimeService;
+  private final InvoicingPeriodService invoicingPeriodService;
 
   public ExcavationAnnouncementStatusChangeHandler(ApplicationService applicationService,
        SupervisionTaskService supervisionTaskService, LocationService locationService,
        ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
        HistoryDao historyDao, InformationRequestDao informationRequestDao,
        InvoiceService invoiceService, WinterTimeService winterTimeService,
-       TerminationDao terminationDao) {
+       TerminationDao terminationDao, InvoicingPeriodService invoicingPeriodService) {
     super(applicationService, supervisionTaskService, locationService,
         applicationDao, chargeBasisService, historyDao, informationRequestDao,
         invoiceService, terminationDao);
     this.winterTimeService = winterTimeService;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   @Override
@@ -61,7 +65,7 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
-  protected void setExcavationAnnouncementInvoicable(Application application, ZonedDateTime invoicableTime) {
+  private void setExcavationAnnouncementInvoicable(Application application, ZonedDateTime invoicableTime) {
     getInvoiceService().lockInvoices(application.getId());
     getInvoiceService().setInvoicableTime(application.getId(), invoicableTime);
     finishInvoicing(application);
@@ -71,11 +75,34 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   protected void handleOperationalConditionStatus(Application application) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
     ZonedDateTime invoicableTime = getInvoicableTimeForOperationalCondition(extension);
-    setExcavationAnnouncementInvoicable(application, invoicableTime);
+
+    Integer operationalConditionPeriodId = getOperationalConditionPeriodId(application.getId());
+    if (operationalConditionPeriodId != null) {
+      setPeriodInvoicable(application, invoicableTime, operationalConditionPeriodId);
+    } else {
+      setExcavationAnnouncementInvoicable(application, invoicableTime);
+    }
     removeTag(application.getId(), ApplicationTagType.OPERATIONAL_CONDITION_REPORTED);
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
     clearTargetState(application);
     setOwner(application.getHandler(), application.getId());
+  }
+
+  private Integer getOperationalConditionPeriodId(Integer id) {
+    return invoicingPeriodService.findOpenPeriodsForApplicationId(id).stream()
+        .filter(p -> p.getInvoicableStatus() == StatusType.OPERATIONAL_CONDITION)
+        .findFirst()
+        .map(InvoicingPeriod::getId)
+        .orElse(null);
+  }
+
+  private void setPeriodInvoicable(Application application, ZonedDateTime invoicableTime, Integer periodId) {
+    if (periodId != null) {
+      getInvoiceService().lockInvoicesOfPeriod(periodId);
+      getInvoiceService().setInvoicableTimeForPeriod(periodId, invoicableTime);
+      finishInvoicingForPeriod(application, periodId);
+      invoicingPeriodService.closeInvoicingPeriod(periodId);
+    }
   }
 
   private ZonedDateTime getInvoicableTimeForOperationalCondition(ExcavationAnnouncement extension) {

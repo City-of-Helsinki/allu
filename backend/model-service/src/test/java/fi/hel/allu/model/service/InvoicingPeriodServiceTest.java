@@ -75,7 +75,7 @@ public class InvoicingPeriodServiceTest {
   }
 
   @Test(expected = IllegalOperationException.class)
-  public void shouldNotUpdateInvoicedPeriods() {
+  public void shouldNotUpdateClosedPeriods() {
     List<InvoicingPeriod> existingPeriods = new ArrayList<>();
     existingPeriods.add(new InvoicingPeriod(APPLICATION_ID, START_TIME, START_TIME.plusMonths(6).minusDays(1)));
     existingPeriods.add(new InvoicingPeriod(APPLICATION_ID, START_TIME.plusMonths(6), END_TIME));

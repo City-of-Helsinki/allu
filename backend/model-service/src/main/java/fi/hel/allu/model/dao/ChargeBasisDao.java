@@ -188,6 +188,12 @@ public class ChargeBasisDao {
     queryFactory.update(chargeBasis).set(chargeBasis.locked, isLocked).where(chargeBasis.applicationId.eq(applicationId)).execute();
   }
 
+  @Transactional
+  public void lockEntriesOfPeriod(Integer periodId) {
+    queryFactory.update(chargeBasis).set(chargeBasis.locked, true).where(chargeBasis.invoicingPeriodId.eq(periodId)).execute();
+  }
+
+
   @Transactional(readOnly = true)
   public List<Integer> getLockedChargeBasisIds(int applicationId) {
     return queryFactory.select(chargeBasis.id).from(chargeBasis).where(chargeBasis.applicationId.eq(applicationId), chargeBasis.locked.isTrue()).fetch();

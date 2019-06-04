@@ -527,9 +527,17 @@ public class ApplicationService {
       // Recurring application possibly changed to not recurring
       invoicingPeriodService.deleteInvoicingPeriods(application.getId());
       return findApplicationById(application.getId());
-    } else {
+    } else if (isExcavationAnnouncement(application)) {
+      invoicingPeriodService.setPeriodsForExcavationAnnouncement(application.getId());
+      return findApplicationById(application.getId());
+    }
+    else {
       return application;
     }
+  }
+
+  private boolean isExcavationAnnouncement(Application application) {
+    return application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT;
   }
 
   private boolean isShortTermRental(ApplicationType type) {

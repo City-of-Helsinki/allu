@@ -77,6 +77,15 @@ export function isSameOrAfter(first: ApplicationStatus, second: ApplicationStatu
   return !isBefore(first, second);
 }
 
+export function compareTo(first: ApplicationStatus, second: ApplicationStatus): number {
+  if (isAfter(second, first)) {
+    return -1;
+  } else if (isAfter(first, second)) {
+    return 1;
+  }
+  return 0;
+}
+
 export const editable = [
   ApplicationStatus.PRE_RESERVED,
   ApplicationStatus.PENDING,

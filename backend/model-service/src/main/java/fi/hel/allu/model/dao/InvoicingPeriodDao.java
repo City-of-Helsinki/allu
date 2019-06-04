@@ -70,4 +70,10 @@ public class InvoicingPeriodDao {
      // Deletes also invoices and charge basis entries
      queryFactory.delete(invoicingPeriod).where(invoicingPeriod.id.eq(periodId)).execute();
    }
+
+   public void closeInvoicingPeriod(Integer invoicingPeriodId) {
+    queryFactory.update(invoicingPeriod).set(invoicingPeriod.closed, true)
+        .where(invoicingPeriod.id.eq(invoicingPeriodId)).execute();
+   }
+
 }

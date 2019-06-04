@@ -1,13 +1,23 @@
 import {InvoicingPeriodActions, InvoicingPeriodActionType} from '@feature/application/invoicing/actions/invoicing-period-actions';
 import {InvoicingPeriod} from '@feature/application/invoicing/invoicing-period/invoicing-period';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import {compareTo} from '@app/model/application/application-status';
+
+export function sortInvoicingPeriods(left: InvoicingPeriod, right: InvoicingPeriod) {
+  if (left.startTime && right.startTime) {
+    return left.startTime.getTime() - right.startTime.getTime();
+  } else if (left.invoicableStatus && right.invoicableStatus) {
+    return compareTo(left.invoicableStatus, right.invoicableStatus);
+  }
+  return 0;
+}
 
 export interface State extends EntityState<InvoicingPeriod> {
   processing: boolean;
 }
-
 export const adapter: EntityAdapter<InvoicingPeriod> = createEntityAdapter<InvoicingPeriod>({
-  selectId: (period: InvoicingPeriod) => period.id
+  selectId: (period: InvoicingPeriod) => period.id,
+  sortComparer: sortInvoicingPeriods
 });
 
 export const initialState: State = adapter.getInitialState({

@@ -2,10 +2,9 @@ package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,10 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoicingPeriodDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.service.event.InvoicingPeriodChangeEvent;
 
@@ -118,7 +120,7 @@ public class InvoicingPeriodService {
   @Transactional(readOnly = true)
   public Optional<InvoicingPeriod> findFirstOpenPeriod(Integer applicationId) {
     return invoicingPeriodDao.findOpenPeriodsForApplicationId(applicationId).stream()
-    .sorted(Comparator.comparing(InvoicingPeriod::getStartTime))
+    .sorted()
     .findFirst();
   }
 
@@ -152,5 +154,43 @@ public class InvoicingPeriodService {
     if (!CollectionUtils.isEmpty(periodIds)) {
       invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
     }
+  }
+
+  @Transactional
+  public void closeInvoicingPeriod(Integer invoicePeriodId) {
+    invoicingPeriodDao.closeInvoicingPeriod(invoicePeriodId);
+  }
+
+  @Transactional
+  public void setExcavationAnnouncementPeriods(Integer applicationId) {
+    Map<StatusType, InvoicingPeriod> periods = new HashMap<>();
+    if (isWinterTimeOperation(applicationId)) {
+      periods.put(StatusType.OPERATIONAL_CONDITION, new InvoicingPeriod(applicationId, StatusType.OPERATIONAL_CONDITION));
+    }
+    periods.put(StatusType.FINISHED, new InvoicingPeriod(applicationId, StatusType.FINISHED));
+    Map<StatusType, InvoicingPeriod> currentPeriods = findForApplicationId(applicationId).stream()
+        .collect(Collectors.toMap(InvoicingPeriod::getInvoicableStatus, Function.identity() ));
+    periods.entrySet().stream().filter(p -> !currentPeriods.containsKey(p.getKey()))
+        .forEach(p -> invoicingPeriodDao.insertInvoicingPeriod(p.getValue()));
+    currentPeriods.entrySet().stream().filter(c -> !periods.containsKey(c.getKey())).forEach(c -> deletePeriod(c.getValue()));
+    if (currentPeriods.keySet().size() != periods.size()) {
+      invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+    }
+  }
+
+  private void deletePeriod(InvoicingPeriod invoicingPeriod) {
+    if (invoicingPeriod.isClosed()) {
+      throw new IllegalOperationException("invoicingPeriod.invoiced");
+    }
+    invoicingPeriodDao.deletePeriod(invoicingPeriod.getId());
+  }
+
+  private boolean isWinterTimeOperation(Integer applicationId) {
+    Application application = applicationDao.findById(applicationId);
+    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT &&
+        ((ExcavationAnnouncement)application.getExtension()).getWinterTimeOperation() != null) {
+      return true;
+    }
+    return false;
   }
 }

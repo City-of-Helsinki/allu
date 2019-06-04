@@ -2,32 +2,37 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.model.dao.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExcavationAnnouncementStatusChangeHandlerTest {
 
   private static final Integer USER_ID = Integer.valueOf(99);
+  private static final Integer OPERATIONAL_CONDITION_PERIOD_ID = Integer.valueOf(3);
   private ExcavationAnnouncementStatusChangeHandler statusChangeHandler;
   private Application application;
   private ExcavationAnnouncement extension;
@@ -54,13 +59,14 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   private InformationRequestDao informationRequestDao;
   @Mock
   private TerminationDao terminationDao;
-
+  @Mock
+  private InvoicingPeriodService invoicingPeriodService;
 
   @Before
   public void setup() {
     statusChangeHandler = new ExcavationAnnouncementStatusChangeHandler(applicationService,
         supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
-        informationRequestDao, invoiceService, winterTimeService, terminationDao);
+        informationRequestDao, invoiceService, winterTimeService, terminationDao, invoicingPeriodService);
     createApplication();
     application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
     extension = new ExcavationAnnouncement();
@@ -68,7 +74,12 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
     when(winterTimeService.getWinterTime()).thenReturn(winterTime);
     when(winterTime.getWinterTimeStart(any(ZonedDateTime.class))).thenReturn(LocalDate.parse("2019-12-01"));
     when(winterTime.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
+    InvoicingPeriod operationalConditionPeriod = new InvoicingPeriod(1, StatusType.OPERATIONAL_CONDITION);
+    InvoicingPeriod workFinishedPeriod = new InvoicingPeriod(2, StatusType.FINISHED);
+    operationalConditionPeriod.setId(OPERATIONAL_CONDITION_PERIOD_ID);
 
+    when(invoicingPeriodService.findOpenPeriodsForApplicationId(anyInt()))
+    .thenReturn(Arrays.asList(workFinishedPeriod, operationalConditionPeriod));
   }
 
   @Test
@@ -84,9 +95,11 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   }
 
   @Test
-  public void onOperationalConditionShouldLockChargeBasisEntries() {
+  public void onOperationalConditionShouldLockChargeBasisEntriesForPeriod() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
-    verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
+    verify(chargeBasisService, times(1)).lockEntriesOfPeriod(eq(OPERATIONAL_CONDITION_PERIOD_ID));
   }
 
   @Test
@@ -102,10 +115,14 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   }
 
   @Test
-  public void onOperationalConditionShouldSetInvoicable() {
-    extension.setWinterTimeOperation(LocalDate.parse("2018-12-22").atStartOfDay(TimeUtil.HelsinkiZoneId));
+  public void onOperationalConditionShouldSetPeriodInvoicable() {
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    ZonedDateTime operationalConditionDate = LocalDate.parse("2018-12-22").atStartOfDay(TimeUtil.HelsinkiZoneId);
+    ExcavationAnnouncement extension = new ExcavationAnnouncement();
+    extension.setWinterTimeOperation(operationalConditionDate);
+    application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
-    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(extension.getWinterTimeOperation()));
+    verify(invoiceService, times(1)).setInvoicableTimeForPeriod(eq(OPERATIONAL_CONDITION_PERIOD_ID), eq(operationalConditionDate));
   }
 
   @Test

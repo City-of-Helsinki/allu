@@ -1,10 +1,20 @@
 package fi.hel.allu.servicecore.service;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ApprovalDocumentType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.InvoicingPeriod;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -12,13 +22,6 @@ import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
 import fi.hel.allu.servicecore.domain.DecisionDocumentType;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApprovalDocumentMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.*;
 
 @Service
 public class ApprovalDocumentService {
@@ -33,6 +36,7 @@ public class ApprovalDocumentService {
   private final ApplicationServiceComposer applicationServiceComposer;
   private final UserService userService;
   private final MailComposerService mailComposerService;
+  private final InvoicingPeriodService invoicingPeriodService;
 
   @Autowired
   public ApprovalDocumentService(ApplicationProperties applicationProperties,
@@ -40,13 +44,15 @@ public class ApprovalDocumentService {
                                  ApprovalDocumentMapper approvalDocumentMapper,
                                  ApplicationServiceComposer applicationServiceComposer,
                                  UserService userService,
-                                 @Lazy MailComposerService mailComposerService) {
+                                 @Lazy MailComposerService mailComposerService,
+                                 InvoicingPeriodService invoicingPeriodService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.approvalDocumentMapper = approvalDocumentMapper;
     this.applicationServiceComposer = applicationServiceComposer;
     this.userService = userService;
     this.mailComposerService = mailComposerService;
+    this.invoicingPeriodService = invoicingPeriodService;
   }
 
   public byte[] getApprovalDocument(Integer applicationId,
@@ -74,7 +80,8 @@ public class ApprovalDocumentService {
       ApplicationJson application, List<ChargeBasisEntry> chargeBasisEntries) {
     if (hasFinalApprovalDocument.contains(application.getType())) {
       if (application.getStatus()== StatusType.OPERATIONAL_CONDITION) {
-        generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.OPERATIONAL_CONDITION, chargeBasisEntries);
+        generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.OPERATIONAL_CONDITION,
+            getOperationalConditionPeriodEntries(application.getId(), chargeBasisEntries));
       } else if (application.getStatus() == StatusType.FINISHED) {
         generateFinalApprovalDocument(prevApplication, application, ApprovalDocumentType.WORK_FINISHED, chargeBasisEntries);
       }
@@ -83,10 +90,37 @@ public class ApprovalDocumentService {
 
   private byte[] generateApprovalDocumentPreview(ApplicationJson application,
       ApprovalDocumentType type, List<ChargeBasisEntry> chargeBasisEntries) {
-    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, chargeBasisEntries, true, type);
+    List<ChargeBasisEntry> documentChargeBasisEntries;
+    if (type == ApprovalDocumentType.OPERATIONAL_CONDITION) {
+      documentChargeBasisEntries = getOperationalConditionPeriodEntries(application.getId(), chargeBasisEntries);
+    } else {
+      documentChargeBasisEntries = chargeBasisEntries;
+    }
+
+    final DecisionJson decisionJson = approvalDocumentMapper.mapApprovalDocument(application, documentChargeBasisEntries, true, type);
     clearDeciderData(decisionJson);
     return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application, type));
+  }
+
+  private List<ChargeBasisEntry> getOperationalConditionPeriodEntries(Integer applicationId, List<ChargeBasisEntry> chargeBasisEntries) {
+    List<InvoicingPeriod> periods = invoicingPeriodService.getInvoicingPeriods(applicationId);
+    if (periods.size() != 0) {
+      return invoicingPeriodService.getInvoicingPeriods(applicationId)
+          .stream()
+          .filter(p -> p.getInvoicableStatus() == StatusType.OPERATIONAL_CONDITION)
+          .findFirst()
+          .map(p -> getEntriesOfPeriod(p, chargeBasisEntries))
+          .orElse(Collections.emptyList());
+    } else {
+      return chargeBasisEntries;
+    }
+  }
+
+  private List<ChargeBasisEntry> getEntriesOfPeriod(InvoicingPeriod period, List<ChargeBasisEntry> chargeBasisEntries) {
+    return chargeBasisEntries.stream()
+        .filter(c -> Objects.equals(period.getId(), c.getInvoicingPeriodId()))
+        .collect(Collectors.toList());
   }
 
   private void generateFinalApprovalDocument(ApplicationJson prevApplication, ApplicationJson application,

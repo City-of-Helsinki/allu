@@ -1,20 +1,24 @@
 package fi.hel.allu.model.pricing;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
+import fi.hel.allu.model.domain.InvoicingPeriod;
+import fi.hel.allu.model.domain.PricingKey;
 import fi.hel.allu.model.service.WinterTimeService;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.PricingKey;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Spectrum.class)
@@ -30,6 +34,8 @@ public class ExcavationPricingSpec extends LocationBasedPricing {
     describe("Excavation Announcement Pricing", () -> {
       final ZonedDateTime start = ZonedDateTime.parse("2017-04-20T08:00:00+03:00");
       final ZonedDateTime end = ZonedDateTime.parse("2017-04-22T17:00:00+03:00");
+      final List<InvoicingPeriod> periods = Arrays.asList(new InvoicingPeriod(1, StatusType.OPERATIONAL_CONDITION),
+          new InvoicingPeriod(1, StatusType.FINISHED));
 
       context("with a three-day application", () -> {
         beforeEach(()-> {
@@ -45,7 +51,7 @@ public class ExcavationPricingSpec extends LocationBasedPricing {
           app.setExtension(new ExcavationAnnouncement());
           app.setStartTime(start);
           app.setEndTime(end);
-          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao);
+          exc = new ExcavationPricing(app, winterTimeService, pricingExplanator, pricingDao, periods);
         });
         context("On price class 2, with area of 65 sqm", () -> {
           it("should cost 3 * 32.50 +  180 EUR", () -> {

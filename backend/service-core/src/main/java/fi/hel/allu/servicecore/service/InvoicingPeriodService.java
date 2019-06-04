@@ -52,4 +52,8 @@ public class InvoicingPeriodService {
 
   }
 
+  public void setPeriodsForExcavationAnnouncement(Integer applicationId) {
+    restTemplate.exchange(applicationProperties.getExcavationAnnouncementPeriodsUrl(), HttpMethod.PUT,
+        null, Void.class, applicationId);
+  }
 }

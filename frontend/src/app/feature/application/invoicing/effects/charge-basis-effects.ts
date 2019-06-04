@@ -56,7 +56,7 @@ export class ChargeBasisEffects {
     ofType<SetInvoicable>(ChargeBasisActionType.SetInvoicable),
     withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
     switchMap(([action, app]) => this.invoiceService.setInvoicable(app.id, action.payload.id, action.payload.invoicable).pipe(
-      map(entry => new UpdateEntrySuccess(entry)),
+      switchMap(entry => [new UpdateEntrySuccess(entry), new ApplicationActions.Load(app.id)]),
       catchError(error => from([new NotifyFailure(error), new SetInvoicableFailed(action.payload.id, action.payload.invoicable)]))
     ))
   );

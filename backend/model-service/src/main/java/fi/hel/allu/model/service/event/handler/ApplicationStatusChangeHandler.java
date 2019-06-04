@@ -131,6 +131,11 @@ public class ApplicationStatusChangeHandler {
     lockChargeBasisEntries(application.getId());
   }
 
+  protected void finishInvoicingForPeriod(Application application, Integer invoicingPeriodId) {
+    applicationDao.setInvoicingChanged(application.getId(), false);
+    chargeBasisService.lockEntriesOfPeriod(invoicingPeriodId);
+  }
+
   protected void handleFinishedStatus(Application application) {
     clearTargetState(application);
     clearOwner(application);

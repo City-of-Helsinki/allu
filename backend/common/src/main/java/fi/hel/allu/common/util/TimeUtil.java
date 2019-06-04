@@ -77,6 +77,11 @@ public class TimeUtil {
   }
 
   public static boolean isSameDate(ZonedDateTime date1, ZonedDateTime date2) {
+    if (date1 == null) {
+      return date2 == null;
+    } else if (date2 == null) {
+      return false;
+    }
     return homeTime(date1).truncatedTo(ChronoUnit.DAYS).equals(homeTime(date2).truncatedTo(ChronoUnit.DAYS));
   }
 

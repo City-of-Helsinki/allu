@@ -1,30 +1,28 @@
 package fi.hel.allu.model.pricing;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.CalendarUtil;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
 import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ExcavationAnnouncement;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PricingKey;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.util.PriceUtil;
 import fi.hel.allu.model.domain.util.Printable;
 import fi.hel.allu.model.service.WinterTimeService;
-
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class ExcavationPricing extends Pricing {
 
   private final Application application;
   private final ExcavationAnnouncement extension;
+  private final List<InvoicingPeriod> invoicingPeriods;
   private final WinterTime winterTime;
   private final PricingExplanator pricingExplanator;
   private final PricingDao pricingDao;
@@ -37,16 +35,34 @@ public class ExcavationPricing extends Pricing {
   private static final double LARGE_AREA_LIMIT = 120.0;
 
   public ExcavationPricing(Application application,
-      WinterTimeService winterTimeService, PricingExplanator pricingExplanator, PricingDao pricingDao) {
+      WinterTimeService winterTimeService, PricingExplanator pricingExplanator, PricingDao pricingDao,
+      List<InvoicingPeriod> invoicingPeriods) {
     this.application = application;
     this.winterTime = winterTimeService.getWinterTime();
     this.extension = (ExcavationAnnouncement)application.getExtension();
     this.pricingExplanator = pricingExplanator;
     this.pricingDao = pricingDao;
+    this.invoicingPeriods = invoicingPeriods;
     final int handlingFee = getHandlingFee(extension);
     setPriceInCents(handlingFee);
     addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, handlingFee,
-        HANDLING_FEE_TEXT, handlingFee, getHandlingFeeExplanation(extension));
+        HANDLING_FEE_TEXT, handlingFee, getHandlingFeeExplanation(extension), getFirstOpenPeriodId());
+  }
+
+  private Integer getFirstOpenPeriodId() {
+    return invoicingPeriods.stream()
+      .filter(p -> !p.isClosed()).sorted()
+      .findFirst()
+      .map(InvoicingPeriod::getId)
+      .orElse(null);
+  }
+
+  private Integer getWorkFinishedPeriodId() {
+    return invoicingPeriods.stream()
+        .filter(p -> p.getInvoicableStatus() == StatusType.FINISHED)
+        .findFirst()
+        .map(InvoicingPeriod::getId)
+        .orElse(null);
   }
 
   @Override
@@ -81,7 +97,7 @@ public class ExcavationPricing extends Pricing {
     addChargeBasisEntry(tag, ChargeBasisUnit.DAY, invoicedPeriod.getNumberOfDays(),
         dailyFee, rowText, totalPrice,
         pricingExplanator.getExplanationWithCustomPeriod(
-          application, Printable.forDayPeriod(invoicedPeriod.start, invoicedPeriod.end)));
+          application, Printable.forDayPeriod(invoicedPeriod.start, invoicedPeriod.end)), invoicedPeriod.invoicingPeriodId);
     setPriceInCents(totalPrice + getPriceInCents());
   }
 
@@ -102,14 +118,14 @@ public class ExcavationPricing extends Pricing {
     ZonedDateTime winterTimeEnd = winterTime.getWinterTimeEnd(extension.getWinterTimeOperation()).atStartOfDay(TimeUtil.HelsinkiZoneId);
     ZonedDateTime applicationEnd = getEndTimeForApplication().truncatedTo(ChronoUnit.DAYS);
     if (applicationEnd != null && applicationEnd.isAfter(winterTimeEnd)) {
-      result.add(new PricedPeriod(winterTimeEnd.plusDays(1), applicationEnd));
+      result.add(new PricedPeriod(winterTimeEnd.plusDays(1), applicationEnd, getWorkFinishedPeriodId()));
     }
   }
 
   private void addApplicationPeriod(List<PricedPeriod> periods) {
     ZonedDateTime end = getEndTimeForApplication();
     if (end != null) {
-      periods.add(new PricedPeriod(application.getStartTime(), end.withZoneSameInstant(TimeUtil.HelsinkiZoneId)));
+      periods.add(new PricedPeriod(application.getStartTime(), end.withZoneSameInstant(TimeUtil.HelsinkiZoneId), getWorkFinishedPeriodId()));
     }
   }
 
@@ -131,15 +147,18 @@ public class ExcavationPricing extends Pricing {
     } else {
       endTime = winterTimeOperation;
     }
-    periods.add(new PricedPeriod(application.getStartTime(), endTime));
+    periods.add(new PricedPeriod(application.getStartTime(), endTime, getFirstOpenPeriodId()));
   }
 
   private static class PricedPeriod {
     ZonedDateTime start;
     ZonedDateTime end;
-    public PricedPeriod(ZonedDateTime start, ZonedDateTime end) {
+    Integer invoicingPeriodId;
+
+    public PricedPeriod(ZonedDateTime start, ZonedDateTime end, Integer invoicingPeriodId) {
       this.start = start;
       this.end = end;
+      this.invoicingPeriodId = invoicingPeriodId;
     }
     int getNumberOfDays() {
       return (int) CalendarUtil.startingUnitsBetween(start, end, ChronoUnit.DAYS);

@@ -138,6 +138,11 @@ public class InvoiceService {
     invoiceDao.setInvoicableTime(applicationId, invoicableTime);
   }
 
+  @Transactional
+  public void setInvoicableTimeForPeriod(int periodId, ZonedDateTime invoicableTime) {
+    invoiceDao.setInvoicableTimeForPeriod(periodId, invoicableTime);
+  }
+
   /**
    * Retrieve the list of invoices waiting to be sent
    *
@@ -206,6 +211,10 @@ public class InvoiceService {
 
   public void lockInvoices(int applicationId) {
     invoiceDao.lockInvoices(applicationId);
+  }
+
+  public void lockInvoicesOfPeriod(int periodId) {
+    invoiceDao.lockInvoicesOfPeriod(periodId);
   }
 
   public void deleteUninvoicedInvoices(Integer id) {

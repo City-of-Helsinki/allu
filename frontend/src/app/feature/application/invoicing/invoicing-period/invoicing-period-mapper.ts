@@ -1,5 +1,6 @@
 import {InvoicingPeriod} from '@feature/application/invoicing/invoicing-period/invoicing-period';
 import {TimeUtil} from '@util/time.util';
+import {ApplicationStatus} from '@app/model/application/application-status';
 
 export interface BackendInvoicingPeriod {
   id: number;
@@ -7,6 +8,7 @@ export interface BackendInvoicingPeriod {
   startTime: string;
   endTime: string;
   invoiced: boolean;
+  invoicableStatus: ApplicationStatus;
 }
 
 export class InvoicingPeriodMapper {
@@ -20,7 +22,8 @@ export class InvoicingPeriodMapper {
       backendPeriod.applicationId,
       TimeUtil.dateFromBackend(backendPeriod.startTime),
       TimeUtil.dateFromBackend(backendPeriod.endTime),
-      backendPeriod.invoiced
+      backendPeriod.invoiced,
+      backendPeriod.invoicableStatus
     );
   }
 }

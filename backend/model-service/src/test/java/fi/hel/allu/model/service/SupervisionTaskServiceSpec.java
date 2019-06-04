@@ -30,17 +30,16 @@ public class SupervisionTaskServiceSpec {
   private SupervisionTaskService service;
 
   private SupervisionTaskDao supervisionTaskDao;
-  private ApplicationDao applicationDao;
+  private ApplicationService applicationService;
   private LocationDao locationDao;
-
 
   {
     describe("SupervisionTaskService", () -> {
       beforeEach(() -> {
         supervisionTaskDao = mock(SupervisionTaskDao.class);
-        applicationDao = mock(ApplicationDao.class);
+        applicationService = mock(ApplicationService.class);
         locationDao = mock(LocationDao.class);
-        service = new SupervisionTaskService(supervisionTaskDao, applicationDao, locationDao);
+        service = new SupervisionTaskService(supervisionTaskDao, locationDao, applicationService);
       });
 
       describe("Insert", () -> {
@@ -58,7 +57,7 @@ public class SupervisionTaskServiceSpec {
 
         it("should add tag", () -> {
           service.insert(task);
-          Mockito.verify(applicationDao).addTag(eq(task.getApplicationId()), any(ApplicationTag.class));
+          Mockito.verify(applicationService).addTag(eq(task.getApplicationId()), any(ApplicationTag.class));
         });
       });
 
@@ -80,10 +79,10 @@ public class SupervisionTaskServiceSpec {
           SupervisionTask task = createTask();
           service.approve(task);
           ArgumentCaptor<ApplicationTag> addedTagsCaptor = ArgumentCaptor.forClass(ApplicationTag.class);
-          Mockito.verify(applicationDao).addTag(eq(task.getApplicationId()), addedTagsCaptor.capture());
+          Mockito.verify(applicationService).addTag(eq(task.getApplicationId()), addedTagsCaptor.capture());
           assertEquals(task.getCreatorId(), addedTagsCaptor.getValue().getAddedBy());
-          Mockito.verify(applicationDao, Mockito.times(2))
-              .removeTagByType(eq(task.getApplicationId()), any(ApplicationTagType.class));
+          Mockito.verify(applicationService, Mockito.times(2))
+              .removeTag(eq(task.getApplicationId()), any(ApplicationTagType.class));
         });
       });
 
@@ -118,10 +117,10 @@ public class SupervisionTaskServiceSpec {
           SupervisionTask task = createTask();
           service.reject(task, ZonedDateTime.now());
           ArgumentCaptor<ApplicationTag> addedTagsCaptor = ArgumentCaptor.forClass(ApplicationTag.class);
-          Mockito.verify(applicationDao).addTag(eq(task.getApplicationId()), addedTagsCaptor.capture());
+          Mockito.verify(applicationService).addTag(eq(task.getApplicationId()), addedTagsCaptor.capture());
           assertEquals(task.getCreatorId(), addedTagsCaptor.getValue().getAddedBy());
-          Mockito.verify(applicationDao, Mockito.times(1))
-              .removeTagByType(eq(task.getApplicationId()), any(ApplicationTagType.class));
+          Mockito.verify(applicationService, Mockito.times(1))
+              .removeTag(eq(task.getApplicationId()), any(ApplicationTagType.class));
         });
       });
     });

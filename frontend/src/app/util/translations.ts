@@ -1661,6 +1661,10 @@ export const translations = {
         create: 'Laskutuksen jaksotus epäonnistui',
         update: 'Laskutuksen jaksotuksen muuttaminen epäonnistui',
         remove: 'Laskutuksen jaksotuksen poistaminen epäonnistui'
+      },
+      invoicableStatus: {
+        OPERATIONAL_CONDITION: 'Toiminnallinen kunto',
+        FINISHED: 'Työ valmis'
       }
     },
     requiredInvoicingInfoMissing: 'Hakemuksen laskutustiedot ovat puutteelliset'

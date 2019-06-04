@@ -214,6 +214,12 @@ public class InvoiceDao {
         .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse()).execute();
   }
 
+  @Transactional
+  public void setInvoicableTimeForPeriod(int periodId, ZonedDateTime invoicableTime) {
+    queryFactory.update(invoice).set(invoice.invoicableTime, invoicableTime)
+        .where(invoice.invoicingPeriodId.eq(periodId), invoice.invoiced.isFalse()).execute();
+  }
+
   private void deleteRows(int invoiceId) {
     queryFactory.delete(invoiceRow).where(invoiceRow.invoiceId.eq(invoiceId)).execute();
   }
@@ -253,6 +259,11 @@ public class InvoiceDao {
 
   private void setInvoicingLocked(int applicationId, boolean isLocked) {
     queryFactory.update(invoice).set(invoice.locked, isLocked).where(invoice.applicationId.eq(applicationId)).execute();
+  }
+
+  @Transactional
+  public void lockInvoicesOfPeriod(int periodId) {
+    queryFactory.update(invoice).set(invoice.locked, true).where(invoice.invoicingPeriodId.eq(periodId)).execute();
   }
 
   public List<Integer> getChargeBasisIdsInLockedInvoice(int applicationId) {

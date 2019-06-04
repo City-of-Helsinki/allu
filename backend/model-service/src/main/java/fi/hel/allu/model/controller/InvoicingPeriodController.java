@@ -27,6 +27,12 @@ public class InvoicingPeriodController {
     return ResponseEntity.ok(invoicingPeriodService.createRecurringApplicationPeriods(id));
   }
 
+  @RequestMapping(value = "/{id}/excavation/invoicingperiods", method = RequestMethod.PUT)
+  public ResponseEntity<Void> setExcavationAnnouncementPeriods(@PathVariable Integer id) {
+    invoicingPeriodService.setExcavationAnnouncementPeriods(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/{id}/invoicingperiods", method = RequestMethod.PUT)
   public ResponseEntity<List<InvoicingPeriod>> updateInvoicingPeriods(@PathVariable Integer id, @RequestParam(value = "periodLength") int periodLength) {
     return ResponseEntity.ok(invoicingPeriodService.updateInvoicingPeriods(id, periodLength));
