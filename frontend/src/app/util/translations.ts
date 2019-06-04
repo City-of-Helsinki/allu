@@ -431,7 +431,7 @@ export const translations = {
     },
     excavationAnnouncement: {
       validity: 'Kaivuilmoituksen voimassaolo',
-      setToWinterTimeEnd: 'Aseta loppupäivämääräksi talviajan loppupäivä (14.5.)',
+      setToWinterTimeEnd: 'Aseta loppupäivämääräksi talviajan loppupäivä',
       unauthorizedStartTime: 'Luvattoman kaivun aloitus',
       unauthorizedEndTime: 'Luvattoman kaivun lopetus',
       winterTimeOperation: 'Talvityön toiminn. kunto',

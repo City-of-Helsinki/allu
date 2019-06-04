@@ -49,7 +49,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   private winterTimeOperationCtrl: AbstractControl;
   private winterTimeStart: string;
-  private winterTimeEnd: string;
+  public winterTimeEnd: string;
 
   constructor(fb: FormBuilder,
               route: ActivatedRoute,

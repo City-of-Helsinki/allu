@@ -57,7 +57,7 @@
                           (click)="onValidityEndTimePickerClick(endTimePicker)">
                     <mat-icon [color]="validityEndTimeIcon.color"
                               [matTooltipDisabled]="validityEndTimeIcon.tooltipDisabled"
-                              matTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}}"
+                              matTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}} ({{winterTimeEnd | date:'shortDate'}})"
                               matTooltipPosition="above">
                       {{validityEndTimeIcon.icon}}
                     </mat-icon>
@@ -68,7 +68,7 @@
                       {{'application.common.field.validityEndTimeMissing' | translation}}
                     </field-error>
                     <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="inWinterTime">
-                      <span>{{'application.excavationAnnouncement.field.inWinterTimeWarn' | translation}}</span>
+                      <span>{{'application.excavationAnnouncement.field.inWinterTime' | translation}}</span>
                     </field-error>
                   </mat-hint>
                 </mat-form-field>
