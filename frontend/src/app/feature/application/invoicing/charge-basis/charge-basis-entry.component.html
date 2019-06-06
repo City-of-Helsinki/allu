@@ -1,7 +1,7 @@
  <div fxLayout="row wrap" fxLayout.sm="column" fxLayoutAlign="start center" class="slim entry-content">
   <div fxFlex.gt-sm="120px" fxFlexAlign="center" class="centered">
     <mat-checkbox
-      [disabled]="entry.locked"
+      [disabled]="entry.locked || !changesAllowed"
       [checked]="entry.invoicable"
       (change)="invoicableChange.emit($event.checked)"></mat-checkbox>
   </div>
