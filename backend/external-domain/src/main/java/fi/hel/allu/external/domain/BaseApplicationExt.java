@@ -10,17 +10,20 @@ import javax.validation.constraints.NotNull;
 import org.geolatte.geom.Geometry;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
+import fi.hel.allu.common.validator.NotFalse;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Abstract base class for application input data in external API
  *
  */
+@NotFalse(rules = {"startTime, startTimeNotAfterEndTime, {application.startTime}"})
 public abstract class BaseApplicationExt {
 
   private PostalAddressExt postalAddress;
@@ -171,6 +174,11 @@ public abstract class BaseApplicationExt {
 
   public void setTrafficArrangementImages(List<Integer> trafficArrangementImages) {
     this.trafficArrangementImages = trafficArrangementImages;
+  }
+
+  @JsonIgnore
+  public boolean getStartTimeNotAfterEndTime() {
+    return !startTime.isAfter(endTime);
   }
 
 }
