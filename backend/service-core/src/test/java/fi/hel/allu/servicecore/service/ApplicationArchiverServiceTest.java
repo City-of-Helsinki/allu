@@ -130,17 +130,6 @@ public class ApplicationArchiverServiceTest {
   }
 
   @Test
-  public void shouldUpdateToFinishedIfNotArchivedAndNoSurveyRequired() {
-    applicationJson.setType(ApplicationType.EVENT);
-    applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
-    extensionJson.setValidityTime(ZonedDateTime.now().plusDays(1));
-
-    archiverService.updateStatusForFinishedApplications();
-    verify(applicationServiceComposer, times(1))
-        .changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
-  }
-
-  @Test
   public void shouldUpdateNothingWhenSurveyRequired() {
     ApplicationTagJson surveyRequired = new ApplicationTagJson(USER_ID, ApplicationTagType.SURVEY_REQUIRED, ZonedDateTime.now());
     applicationJson.setApplicationTags(Collections.singletonList(surveyRequired));

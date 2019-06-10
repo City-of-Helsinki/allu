@@ -107,7 +107,7 @@ public class ApplicationArchiverService {
   }
 
   private boolean readyForFinished(ApplicationJson application) {
-    return !requiresSurvey(application);
+    return isFinished(application) && !requiresSurvey(application);
   }
 
   private boolean readyForArchive(ApplicationJson application) {
