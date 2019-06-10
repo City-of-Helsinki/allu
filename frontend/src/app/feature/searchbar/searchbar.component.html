@@ -25,7 +25,6 @@
                class="input-addon-field last-item"
                [placeholder]="'searchbar.address' | translation"
                (keyup.enter)="addressSelected(searchForm.value.address)"
-               (blur)="addressSelected(searchForm.value.address)"
                [matAutocomplete]="addressSearch"/>
         <mat-autocomplete #addressSearch="matAutocomplete">
           <mat-option *ngFor="let address of matchingAddresses$ | async"
@@ -62,7 +61,6 @@
                inputBoxInput
                [placeholder]="'searchbar.address' | translation"
                (keyup.enter)="addressSelected(searchForm.value.address)"
-               (blur)="addressSelected(searchForm.value.address)"
                [matAutocomplete]="addressSearch"/>
       </input-box>
       <mat-autocomplete #addressSearch="matAutocomplete">
@@ -134,7 +132,6 @@
           <input matInput type="text" formControlName="address"
                  [placeholder]="'searchbar.address' | translation"
                  (keyup.enter)="addressSelected(searchForm.value.address)"
-                 (blur)="addressSelected(searchForm.value.address)"
                  [matAutocomplete]="addressSearch"/>
           <mat-autocomplete #addressSearch="matAutocomplete">
             <mat-option *ngFor="let address of matchingAddresses$ | async"
