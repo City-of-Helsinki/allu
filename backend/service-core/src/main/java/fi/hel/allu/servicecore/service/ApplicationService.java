@@ -526,4 +526,8 @@ public class ApplicationService {
   public boolean isBillable(Integer id) {
     return BooleanUtils.isNotTrue(findApplicationById(id).getNotBillable());
   }
+
+  public ApplicationType getApplicationType(Integer id) {
+    return findApplicationById(id).getType();
+  }
 }

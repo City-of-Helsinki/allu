@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.ErrorInfo;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.PdfMerger;
+import fi.hel.allu.servicecore.service.ApplicationService;
 import fi.hel.allu.servicecore.service.AttachmentService;
 import fi.hel.allu.servicecore.service.DecisionService;
 import io.swagger.annotations.*;
@@ -30,8 +33,11 @@ public class DecisionController {
   private DecisionService decisionService;
   @Autowired
   private AttachmentService attachmentService;
+  @Autowired
+  private ApplicationService applicationService;
 
-  @ApiOperation(value = "Gets decision document for application with given ID. Returns draft if decision is not yet made.",
+  @ApiOperation(value = "Gets decision document for application with given ID. Returns draft if decision is not yet made. "
+      + "Available for all application types except notes.",
       authorizations = @Authorization(value ="api_key"),
       response = byte.class,
       responseContainer = "Array"
@@ -43,6 +49,7 @@ public class DecisionController {
   @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET, produces = {"application/pdf", "application/json"})
   @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
   public ResponseEntity<byte[]> getDecision(@PathVariable Integer id) throws IOException {
+    validateHasDecision(id);
     byte[] decision = decisionService.getDecision(id);
     List<byte[]> attachments = attachmentService.findDecisionAttachmentsForApplication(id)
         .stream()
@@ -51,6 +58,12 @@ public class DecisionController {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.APPLICATION_PDF);
     return new ResponseEntity<>(PdfMerger.appendDocuments(decision, attachments), httpHeaders, HttpStatus.OK);
+  }
+
+  private void validateHasDecision(Integer id) {
+    if (applicationService.getApplicationType(id) == ApplicationType.NOTE) {
+      throw new NoSuchEntityException("note.decision");
+    }
   }
 
 }
