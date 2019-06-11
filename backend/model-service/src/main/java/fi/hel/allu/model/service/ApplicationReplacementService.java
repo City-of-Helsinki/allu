@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,7 +102,7 @@ public class ApplicationReplacementService {
     copyApplicationRelatedData(applicationId, replacingApplication, userId);
 
     // Update application status
-    applicationDao.updateStatus(replacingApplication.getId(), StatusType.HANDLING);
+    updateStatus(replacingApplication);
     // Remove replaced application from project
     applicationDao.updateProject(null, Collections.singletonList(applicationToReplace.getId()));
     // Set replaces and replaced by
@@ -187,5 +188,13 @@ public class ApplicationReplacementService {
       applicationId = appIds.get(0).getApplicationId();
     }
     return ApplicationIdUtil.generateReplacingApplicationId(applicationId);
+  }
+
+  private void updateStatus(Application replacingApplication) {
+    applicationDao.updateStatus(replacingApplication.getId(), StatusType.HANDLING);
+
+    if (ApplicationType.CABLE_REPORT == replacingApplication.getType()) {
+      applicationDao.setTargetState(replacingApplication.getId(), StatusType.DECISION);
+    }
   }
 }

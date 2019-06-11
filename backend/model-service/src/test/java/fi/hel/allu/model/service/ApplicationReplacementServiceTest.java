@@ -95,6 +95,27 @@ public class ApplicationReplacementServiceTest {
   }
 
   @Test
+  public void shouldSetTargetStateForCableReport() {
+    CustomerWithContacts customer = new CustomerWithContacts(CustomerRoleType.APPLICANT, testCommon.insertPerson(), Collections.emptyList());
+    Application cableReport = new Application();
+    cableReport.setCustomersWithContacts(Collections.singletonList(customer));
+    cableReport.setEndTime(ENDTIME);
+    cableReport.setExtension(new CableReport());
+    cableReport.setKind(ApplicationKind.ELECTRICITY);
+    cableReport.setName("Application name");
+    cableReport.setStartTime(STARTTIME);
+    cableReport.setType(ApplicationType.CABLE_REPORT);
+    cableReport.setNotBillable(false);
+    cableReport = applicationDao.insert(cableReport);
+    insertLocations(cableReport);
+
+    setToDecisionState(cableReport.getId());
+    int applicationId = applicationReplacementService.replaceApplication(cableReport.getId(), testUser.getId());
+    Application updatedOriginalApplication = applicationService.findById(applicationId);
+    assertEquals(StatusType.DECISION, updatedOriginalApplication.getTargetState());
+  }
+
+  @Test
   public void shouldCopyComments() {
     insertComment();
     Application application = replaceApplication();
