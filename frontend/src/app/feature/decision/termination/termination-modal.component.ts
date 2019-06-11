@@ -45,11 +45,20 @@ export class TerminationModalComponent implements OnInit {
     this.selectDefaultDecisionMaker();
   }
 
-  confirm() {
+  saveDraft() {
+    this.terminateImpl(true);
+  }
+
+  terminate() {
+    this.terminateImpl(false);
+  }
+
+  terminateImpl(draft: boolean) {
     const formValue = this.terminationForm.value;
     const terminationTime = formValue.terminationTime;
     const comment = formValue.comment;
     const terminationInfo = new TerminationInfo(
+      draft,
       null,
       this.data.applicationId,
       CommentType.PROPOSE_TERMINATION,

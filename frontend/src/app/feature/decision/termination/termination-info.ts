@@ -3,6 +3,7 @@ import {CommentType} from '@model/application/comment/comment-type';
 
 export class TerminationInfo extends StatusChangeInfo {
   constructor(
+    public draft: boolean,
     public id?: number,
     public applicationId?: number,
     public type?: CommentType,

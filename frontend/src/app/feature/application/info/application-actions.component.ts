@@ -35,6 +35,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import {CancelRequest} from '@feature/information-request/actions/information-request-actions';
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {TERMINATION_MODAL_CONFIG, TerminationModalComponent} from '@feature/decision/termination/termination-modal.component';
+import {Terminate} from '@feature/decision/actions/termination-actions';
 
 @Component({
   selector: 'application-actions',
@@ -277,7 +278,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       map(config => this.dialog.open<TerminationModalComponent>(TerminationModalComponent, config)),
       switchMap(modalRef => modalRef.afterClosed()),
       filter(result => !!result)
-    ).subscribe(termination => console.log("this.store.dispatch(new Termination(termination))", termination));
+    ).subscribe(termination => this.store.dispatch(new Terminate(termination)));
   }
 
   private createConfig(app: Application) {

@@ -1,6 +1,7 @@
 import * as fromDecision from './decision-reducer';
 import * as fromContract from './contract-reducer';
 import * as fromDocument from './document-reducer';
+import * as fromTermination from './termination-reducer';
 import * as fromApprovalDocument from './approval-document-reducer';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
@@ -13,6 +14,7 @@ export interface DecisionState {
   decision: fromDecision.State;
   contract: fromContract.State;
   document: fromDocument.State;
+  termination: fromTermination.State;
   operationalConditionApproval: fromApprovalDocument.State;
   workFinishedApproval: fromApprovalDocument.State;
 }
@@ -25,6 +27,7 @@ export const reducers: ActionReducerMap<DecisionState> = {
   decision: fromDecision.reducer,
   contract: fromContract.reducer,
   document: fromDocument.reducer,
+  termination: fromTermination.reducer,
   operationalConditionApproval: fromApprovalDocument.reducerFor(ApprovalDocumentType.OPERATIONAL_CONDITION),
   workFinishedApproval: fromApprovalDocument.reducerFor(ApprovalDocumentType.WORK_FINISHED)
 };
@@ -75,6 +78,21 @@ export const getContract = createSelector(
 export const getContractPdf = createSelector(
   getContract,
   (contract: Contract) => contract ? contract.pdf : undefined
+);
+
+export const getTerminationEntitiesState = createSelector(
+  getDecisionState,
+  (state: DecisionState) => state.termination
+);
+
+export const getTerminationLoading = createSelector(
+  getTerminationEntitiesState,
+  fromTermination.getLoading
+);
+
+export const getTermination = createSelector(
+  getTerminationEntitiesState,
+  fromTermination.getTermination
 );
 
 export const getDocumentEntitiesState = createSelector(

@@ -28,6 +28,8 @@ import {ContractApprovalModalComponent} from '@feature/decision/contract/contrac
 import {ApprovalDocumentService} from '@service/decision/approval-document.service';
 import {ApprovalDocumentEffects} from '@feature/decision/effects/approval-document-effects';
 import {TerminationModalComponent} from '@feature/decision/termination/termination-modal.component';
+import {TerminationEffects} from '@feature/decision/effects/termination-effects';
+import {TerminationService} from '@feature/decision/termination/termination-service';
 
 @NgModule({
   imports: [
@@ -38,7 +40,8 @@ import {TerminationModalComponent} from '@feature/decision/termination/terminati
     EffectsModule.forFeature([
       DecisionEffects,
       ContractEffects,
-      ApprovalDocumentEffects
+      ApprovalDocumentEffects,
+      TerminationEffects
     ]),
     AlluCommonModule,
     ProgressBarModule,
@@ -63,6 +66,7 @@ import {TerminationModalComponent} from '@feature/decision/termination/terminati
     DecisionService,
     ContractService,
     ApprovalDocumentService,
+    TerminationService,
     DecisionTabResolve,
     ContractGuard,
     reducersProvider

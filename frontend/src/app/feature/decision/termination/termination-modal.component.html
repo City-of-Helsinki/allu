@@ -51,10 +51,10 @@
   </form>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="confirm()">
+  <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="saveDraft()">
     {{'decision.termination.action.saveDraft' | translation}}
   </button>
-  <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="confirm()">
+  <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="terminate()">
     {{'decision.termination.action.toDecisionMaking' | translation}}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">

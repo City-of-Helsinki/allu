@@ -12,6 +12,7 @@ export interface BackendTerminationInfo {
 export class TerminationInfoMapper {
   static mapBackend(backendTerminationInfo: BackendTerminationInfo): TerminationInfo {
     return new TerminationInfo(
+      false,
       backendTerminationInfo.id,
       backendTerminationInfo.applicationId,
       null,

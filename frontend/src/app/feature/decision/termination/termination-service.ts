@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import {delay} from 'rxjs/operators';
 import {TerminationInfo} from '@feature/decision/termination/termination-info';
 import {BackendTerminationInfo, TerminationInfoMapper} from '@feature/decision/termination/termination-mapper';
 import {catchError, map} from 'rxjs/operators';
@@ -52,6 +53,12 @@ export class TerminationService {
     return this.http.put<BackendTerminationInfo>(url, info).pipe(
       map(saved => TerminationInfoMapper.mapBackend(saved)),
       catchError(error => this.errorHandler.handle(error, findTranslation('termination.error.saveInfo')))
+    );
+  }
+
+  public moveTerminationToDecision(applicationId: number): Observable<{}>  {
+    return of(applicationId).pipe(
+      delay(1000)
     );
   }
 }
