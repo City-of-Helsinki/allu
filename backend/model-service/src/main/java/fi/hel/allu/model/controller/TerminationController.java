@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -47,5 +48,10 @@ public class TerminationController {
   @RequestMapping(value = "/{id}/termination/info", method = RequestMethod.PUT)
   public ResponseEntity<TerminationInfo> updateTerminationInfo(@PathVariable Integer id, @RequestBody TerminationInfo terminationInfo) {
     return ResponseEntity.ok(terminationDao.updateTerminationInfo(id, terminationInfo));
+  }
+
+  @RequestMapping(value = "/termination/pending", method = RequestMethod.GET)
+  public ResponseEntity<List<Integer>> getApplicationsPendingForTermination() {
+    return ResponseEntity.ok(terminationDao.getApplicationsPendingForTermination());
   }
 }

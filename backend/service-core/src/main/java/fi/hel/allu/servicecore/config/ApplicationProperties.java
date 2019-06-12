@@ -155,6 +155,10 @@ public class ApplicationProperties {
     return getTerminationUrl() + "/info";
   }
 
+  public String getPendingForTerminationUrl() {
+    return getModelServiceUrl("/applications/termination/pending");
+  }
+
   /**
    * @return url to request metadata from model service.
    */

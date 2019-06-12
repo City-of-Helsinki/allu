@@ -2,6 +2,8 @@ package fi.hel.allu.scheduler.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -12,7 +14,9 @@ import org.springframework.web.client.RestTemplate;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
 /**
- * Updates finished status for finished applications.
+ * Updates application statuses
+ * - finished status for finished applications.
+ * - terminated status for applications which has reached termination date
  */
 @Service
 public class ApplicationStatusUpdaterService {
@@ -20,6 +24,7 @@ public class ApplicationStatusUpdaterService {
   private final RestTemplate restTemplate;
   private final ApplicationProperties applicationProperties;
   private final AuthenticationService authenticationService;
+  private final Logger logger = LoggerFactory.getLogger(ApplicationStatusUpdaterService.class);
 
   @Autowired
   public ApplicationStatusUpdaterService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
@@ -33,6 +38,7 @@ public class ApplicationStatusUpdaterService {
   }
 
   public void updateApplicationStatuses() {
+    logger.info("Updating statuses for finished applications");
     restTemplate.exchange(
         applicationProperties.getUpdateFinishedApplicationsUrl(), HttpMethod.PATCH,
         new HttpEntity<>(null, authenticationService.createAuthenticationHeader()), Void.class).getBody();
@@ -42,5 +48,12 @@ public class ApplicationStatusUpdaterService {
     restTemplate.exchange(
         applicationProperties.getArchiveApplicationsUrl(), HttpMethod.PATCH,
         new HttpEntity<>(applicationIds, authenticationService.createAuthenticationHeader()), Void.class).getBody();
+  }
+
+  public void terminateApplicationsPendingForTermination() {
+    logger.info("Terminating applications with pending termination");
+    restTemplate.exchange(
+        applicationProperties.getTerminateApplicationsPendingForTermination(), HttpMethod.PATCH,
+        new HttpEntity<>(null, authenticationService.createAuthenticationHeader()), Void.class).getBody();
   }
 }

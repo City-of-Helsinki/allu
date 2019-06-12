@@ -379,4 +379,8 @@ public class ApplicationProperties {
   public String getUpdateCityDistrictsUrl() {
     return getExtServiceUrl("/v1/citydistricts");
   }
+
+  public String getTerminateApplicationsPendingForTermination() {
+    return getExtServiceUrl("/v1/applications/termination/terminate");
+  }
 }

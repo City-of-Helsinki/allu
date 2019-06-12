@@ -52,6 +52,7 @@ SELECT
         WHEN a.status = 'REPLACED' THEN 'Korvattu'
         WHEN a.status = 'ARCHIVED' THEN 'Arkistoitu'
         WHEN a.status = 'NOTE' THEN 'Muistiinpano'
+        WHEN a.status = 'TERMINATED' THEN 'Irtisanottu'
         ELSE 'NA'
     END AS tila,
     CASE

@@ -88,6 +88,7 @@ public class ScheduleRunner {
   @Scheduled(cron = "${application.status.update.cronstring}")
   public void updateApplicationStatuses() {
     applicationStatusUpdaterService.updateApplicationStatuses();
+    applicationStatusUpdaterService.terminateApplicationsPendingForTermination();
   }
 
   @Scheduled(cron = "${cityDistricts.update.cronstring}")

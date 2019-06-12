@@ -137,6 +137,15 @@ public class TestCommon {
     app.setExtension(dummyNote());
     return app;
   }
+
+  public Application dummyPlacementContractApplication(String name, String owner) {
+    Application app = dummyBasicApplication(name, owner);
+    app.setType(ApplicationType.PLACEMENT_CONTRACT);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.STREET_AND_GREEN, Collections.emptyList()));
+    app.setExtension(dummyPlacementContract());
+    return app;
+  }
+
   /**
    * Create a dummy outdoor applicationExtension.
    *
@@ -170,6 +179,12 @@ public class TestCommon {
     return note;
   }
 
+  public ApplicationExtension dummyPlacementContract() {
+    PlacementContract placementContract = new PlacementContract();
+    placementContract.setAdditionalInfo("Some additional info");
+    return placementContract;
+  }
+
   public ApplicationTag dummyTag(ApplicationTagType tagType) {
     ApplicationTag tag = new ApplicationTag();
     tag.setType(tagType);
@@ -189,6 +204,10 @@ public class TestCommon {
   public Integer insertApplication(String name, String owner) {
     Application appl = dummyOutdoorApplication(name, owner);
     return applicationDao.insert(appl).getId();
+  }
+
+  public Integer insertApplication(Application application) {
+    return applicationDao.insert(application).getId();
   }
 
   /**

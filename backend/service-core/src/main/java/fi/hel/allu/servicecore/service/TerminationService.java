@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.pdf.domain.TerminationJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -12,6 +13,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class TerminationService {
@@ -75,5 +79,23 @@ public class TerminationService {
     return restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), terminationJson, byte[].class,
         TEMPLATE_NAME);
+  }
+
+  /**
+   * Terminates applications which have been marked for termination and their termination date is reached.
+   */
+  public void terminateApplicationsPendingForTermination() {
+    fetchApplicationsPendingForTermination().stream()
+        .forEach(appId -> moveToTerminated(appId));
+  }
+
+  private List<Integer> fetchApplicationsPendingForTermination() {
+    ResponseEntity<Integer[]> response = restTemplate.getForEntity(
+        applicationProperties.getPendingForTerminationUrl(), Integer[].class);
+    return Arrays.asList(response.getBody());
+  }
+
+  private void moveToTerminated(int applicationId) {
+    applicationServiceComposer.changeStatus(applicationId, StatusType.TERMINATED);
   }
 }

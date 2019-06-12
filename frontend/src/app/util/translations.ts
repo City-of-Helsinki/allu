@@ -98,7 +98,8 @@ export const translations = {
       FINISHED: 'Valmis',
       CANCELLED: 'Peruttu',
       REPLACED: 'Korvattu',
-      ARCHIVED: 'Arkistoitu'
+      ARCHIVED: 'Arkistoitu',
+      TERMINATED: 'Irtisanottu'
     },
     statusChange: {
       PRE_RESERVED: 'Alustava varaus luotu',

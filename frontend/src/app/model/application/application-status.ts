@@ -20,7 +20,8 @@ export enum ApplicationStatus {
   FINISHED = 'FINISHED',
   CANCELLED = 'CANCELLED',
   REPLACED = 'REPLACED',
-  ARCHIVED = 'ARCHIVED'
+  ARCHIVED = 'ARCHIVED',
+  TERMINATED = 'TERMINATED'
 }
 
 export const statusNames = Object.keys(ApplicationStatus);

@@ -106,4 +106,8 @@ public class ApplicationStatusController {
     return new ResponseEntity<>(applicationStatusService.returnToStatus(id, status), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{id}/status/terminated", method = RequestMethod.PUT)
+  public ResponseEntity<Application> changeStatusToTerminated(@PathVariable int id) {
+    return new ResponseEntity<>(applicationStatusService.changeApplicationStatus(id, StatusType.TERMINATED, null), HttpStatus.OK);
+  }
 }
