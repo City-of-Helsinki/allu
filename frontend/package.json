@@ -9,6 +9,7 @@
     "hmr": "npm run ng-high-mem serve -- --configuration hmr --proxy-config proxy.conf.json",
     "build": "ng build",
     "build-prod": "npm run ng-high-mem build  -- --prod",
+    "build-test": "npm run ng-high-mem build  -- --configuration=test",
     "test": " ng lint && ng test --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e"
