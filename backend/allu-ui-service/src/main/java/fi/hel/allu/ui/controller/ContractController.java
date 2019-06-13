@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.ContractInfo;
 import fi.hel.allu.servicecore.domain.ContractApprovalInfo;
-import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.service.ContractService;
 
 @RestController
@@ -67,6 +66,13 @@ public class ContractController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<ContractInfo> getContractInfo(@PathVariable int id) {
     return ResponseEntity.ok(contractService.getContractInfo(id));
+  }
+
+  @RequestMapping(value = "/{id}/contract/rejected", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> rejectContract(@PathVariable Integer id, @RequestBody String rejectReason) {
+    contractService.rejectContractProposal(id, rejectReason);
+    return new ResponseEntity<Void>(HttpStatus.OK);
   }
 
   protected ResponseEntity<byte[]> pdfResult(byte[] data) {

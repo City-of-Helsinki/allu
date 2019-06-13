@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Store} from '@ngrx/store';
-import {Approve, CreateProposal} from '@feature/decision/actions/contract-actions';
+import {Approve, CreateProposal, Reject} from '@feature/decision/actions/contract-actions';
 import {MatDialog} from '@angular/material';
 import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@feature/decision/contract/contract-approval-modal.component';
 import {Observable, Subject} from 'rxjs/index';
@@ -11,6 +11,8 @@ import {Application} from '@model/application/application';
 import {NumberUtil} from '@util/number.util';
 import {validForDecision} from '@feature/application/application-util';
 import {ApplicationType} from '@model/application/type/application-type';
+import {findTranslation} from '@util/translations';
+import {ApplicationStatus} from '@model/application/application-status';
 
 @Component({
   selector: 'contract-actions',
@@ -21,6 +23,7 @@ export class ContractActionsComponent implements OnInit, OnDestroy {
 
   isFromExternalSystem$: Observable<boolean>;
   isValidForDecision: boolean;
+  isWaitingForContract: boolean;
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
@@ -34,6 +37,7 @@ export class ContractActionsComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy)
     ).subscribe(app => {
       this.isValidForDecision = validForDecision(app);
+      this.isWaitingForContract = ApplicationStatus.WAITING_CONTRACT_APPROVAL === app.status;
     });
   }
 
@@ -44,6 +48,10 @@ export class ContractActionsComponent implements OnInit, OnDestroy {
 
   createProposal(): void {
     this.store.dispatch(new CreateProposal());
+  }
+
+  rejectProposal(): void {
+    this.store.dispatch(new Reject(findTranslation('contract.reject.defaultReason')));
   }
 
   approve(): void {

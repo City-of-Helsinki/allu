@@ -14,6 +14,8 @@ export enum ContractActionType {
   Approve = '[Contract] Approve contract',
   ApproveSuccess = '[Contract] Approve contract success',
   ApproveFailed = '[Contract] Approve contract failed',
+  Reject = '[Contract] Reject contract',
+  RejectSuccess = '[Contract] Reject contract success'
 }
 
 export class Load implements Action {
@@ -59,6 +61,15 @@ export class ApproveFailed implements ActionWithPayload<ErrorInfo> {
   constructor(public payload: ErrorInfo) {}
 }
 
+export class Reject implements Action {
+  readonly type = ContractActionType.Reject;
+  constructor(public payload: string) {}
+}
+
+export class RejectSuccess implements Action {
+  readonly type = ContractActionType.RejectSuccess;
+}
+
 export type ContractActions =
   | Load
   | LoadSuccess
@@ -68,4 +79,6 @@ export type ContractActions =
   | CreateProposalFailed
   | Approve
   | ApproveSuccess
-  | ApproveFailed;
+  | ApproveFailed
+  | Reject
+  | RejectSuccess;

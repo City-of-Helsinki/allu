@@ -4,9 +4,7 @@ import {Observable} from 'rxjs';
 import {catchError, map} from 'rxjs/internal/operators';
 import {ErrorHandler} from '@service/error/error-handler.service';
 import {Contract} from '@model/contract/contract';
-import {ContractInfo} from '@model/contract/contract-info';
 import {findTranslation} from '@util/translations';
-import {StatusChangeInfo} from '@model/application/status-change-info';
 import {ContractApprovalInfo} from '@model/decision/contract-approval-info';
 import {ContractApprovalInfoMapper} from '@service/mapper/contract-approval-info-mapper';
 
@@ -49,6 +47,13 @@ export class ContractService {
     return this.http.post(url, JSON.stringify(ContractApprovalInfoMapper.mapFrontEnd(approvalInfo)), {responseType: 'blob'}).pipe(
       map(pdf => new Contract(applicationId, pdf)),
       catchError(error => this.errorHandler.handle(error, findTranslation('contract.error.approveFailed')))
+    );
+  }
+
+  public reject(applicationId: number, reason: string): Observable<{}> {
+    const url = `${URL_PREFIX}/${applicationId}/contract/rejected`;
+    return this.http.post<{}>(url, reason).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('contract.error.rejectFailed')))
     );
   }
 }

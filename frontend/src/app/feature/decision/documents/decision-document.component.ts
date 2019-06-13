@@ -111,7 +111,9 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
 
   private showContractActions(app: Application): boolean {
     const showByType = app.type === ApplicationType.PLACEMENT_CONTRACT;
-    const showByStatus = ArrayUtil.contains([ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION], app.status);
+    const showByStatus = ArrayUtil.contains(
+      [ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION, ApplicationStatus.WAITING_CONTRACT_APPROVAL],
+      app.status);
     return showByType && showByStatus;
   }
 }

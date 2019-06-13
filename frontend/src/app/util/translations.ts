@@ -996,6 +996,7 @@ export const translations = {
   contract: {
     createProposal: 'Hyväksytä asiakkaalla',
     proposeApproval: 'Ehdota hyväksymistä',
+    rejectProposal: 'Hylkää sopimusehdotus',
     approval: {
       title: 'Ehdota hyväksymistä',
       basis: {
@@ -1009,9 +1010,16 @@ export const translations = {
         commentMissing: 'Perustelut puuttuvat'
       },
     },
+    reject: {
+      defaultReason: 'Käsittelijän tekemä luonnoksen hylkäys'
+    },
+    action: {
+      rejected: 'Sopimusluonnos hylätty'
+    },
     error: {
       createProposalFailed: 'Sopimusluonnoksen luonti epäonnistui',
-      approveFailed: 'Sopimuksen hyväksyntä epäonnistui'
+      approveFailed: 'Sopimuksen hyväksyntä epäonnistui',
+      rejectFailed: 'Sopimusluonnoksen hylkääminen epäonnistui'
     }
   },
   approvalDocument: {

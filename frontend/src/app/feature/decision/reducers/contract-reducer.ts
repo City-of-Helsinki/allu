@@ -16,7 +16,8 @@ export function reducer(state: State = initialState, action: ContractActions | A
   switch (action.type) {
     case ContractActionType.Load:
     case ContractActionType.CreateProposal:
-    case ContractActionType.Approve: {
+    case ContractActionType.Approve:
+    case ContractActionType.Reject: {
       return {
         ...state,
         loading: true
@@ -39,6 +40,14 @@ export function reducer(state: State = initialState, action: ContractActions | A
       return {
         ...state,
         loading: false
+      };
+    }
+
+    case ContractActionType.RejectSuccess: {
+      return {
+        ...state,
+        loading: false,
+        contract: undefined
       };
     }
 

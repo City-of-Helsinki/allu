@@ -14,7 +14,7 @@ import {
   CreateProposalSuccess,
   Load,
   LoadFailed,
-  LoadSuccess
+  LoadSuccess, Reject, RejectSuccess
 } from '@feature/decision/actions/contract-actions';
 import * as ApplicationAction from '@feature/application/actions/application-actions';
 import {catchError, filter, map, switchMap, withLatestFrom} from 'rxjs/internal/operators';
@@ -24,7 +24,8 @@ import {Application} from '@model/application/application';
 import {ApplicationStatus, isBefore} from '@model/application/application-status';
 import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
-import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
+import {findTranslation} from '@util/translations';
 
 @Injectable()
 export class ContractEffects {
@@ -84,8 +85,24 @@ export class ContractEffects {
   );
 
   @Effect()
+  reject: Observable<Action> = this.actions.pipe(
+    ofType<Reject>(ContractActionType.Reject),
+    withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+    filter(([action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([action, application]) => this.contractService.reject(application.id, action.payload).pipe(
+      switchMap(() => [
+        new RejectSuccess(),
+        new NotifySuccess(findTranslation('contract.action.rejected'))
+      ]),
+      catchError(error => from([
+        new NotifyFailure(error)
+      ]))
+    ))
+  );
+
+  @Effect()
   reloadApplication: Observable<Action> = this.actions.pipe(
-    ofType(ContractActionType.ApproveSuccess, ContractActionType.CreateProposalSuccess),
+    ofType(ContractActionType.ApproveSuccess, ContractActionType.CreateProposalSuccess, ContractActionType.RejectSuccess),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     map(([contract, application]) => new ApplicationAction.Load(application.id))
   );
