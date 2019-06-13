@@ -92,4 +92,19 @@ public class CommentController {
     commentService.deleteComment(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @ApiOperation(value = "Update comment with given ID.",
+      notes = "User is allowed to update only <b>own</b> comments",
+      authorizations = @Authorization(value ="api_key"))
+  @ApiResponses(value =  {
+      @ApiResponse(code = 200, message = "Comment updated successfully"),
+      @ApiResponse(code = 400, message = "Invalid comment type", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/comments/{id}", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CommentJson> updateComment(@PathVariable Integer id, @RequestBody String commentText) {
+    commentService.validateIsOwnedByCurrentUser(id);
+    CommentJson updatedComment = commentService.updateComment(id, commentText);
+    return ResponseEntity.ok(updatedComment);
+  }
 }

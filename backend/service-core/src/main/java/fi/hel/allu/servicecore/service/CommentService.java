@@ -84,6 +84,10 @@ public class CommentService {
 
   public CommentJson updateComment(int id, CommentJson commentJson) {
     Comment comment = mapToModel(commentJson, userService.getCurrentUser());
+    return updateComment(id, comment);
+  }
+
+  private CommentJson updateComment(int id, Comment comment) {
     HttpEntity<Comment> request = new HttpEntity<>(comment);
     ResponseEntity<Comment> result = restTemplate.exchange(applicationProperties.getCommentsUpdateUrl(), HttpMethod.PUT,
         request, Comment.class, id);
@@ -174,7 +178,13 @@ public class CommentService {
     if (!Objects.equals(comment.getUserId(), userService.getCurrentUser().getId())) {
       throw new IllegalOperationException("comment.owner");
     }
+  }
 
+  public CommentJson updateComment(Integer id, String commentText) {
+    Comment comment = findById(id);
+    validateCommentType(comment.getType());
+    comment.setText(commentText);
+    return updateComment(id, comment);
   }
 
 }
