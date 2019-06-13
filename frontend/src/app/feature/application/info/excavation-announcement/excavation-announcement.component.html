@@ -57,7 +57,7 @@
                           (click)="onValidityEndTimePickerClick(endTimePicker)">
                     <mat-icon [color]="validityEndTimeIcon.color"
                               [matTooltipDisabled]="validityEndTimeIcon.tooltipDisabled"
-                              matTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}} ({{winterTimeEnd | date:'shortDate'}})"
+                              matTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}} ({{winterTimeEnd | date:'d.M.'}})"
                               matTooltipPosition="above">
                       {{validityEndTimeIcon.icon}}
                     </mat-icon>
