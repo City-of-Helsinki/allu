@@ -35,9 +35,9 @@ export class Terminate implements Action {
   constructor(public payload: TerminationInfo) {}
 }
 
-export class TerminationDraftSuccess implements Action {
+export class TerminationDraftSuccess implements ActionWithPayload<TerminationInfo> {
   readonly type = TerminationActionType.TerminationDraftSuccess;
-  constructor() {}
+  constructor(public payload: TerminationInfo) {}
 }
 
 export class TerminationDraftFailed implements ActionWithPayload<ErrorInfo> {

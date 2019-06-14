@@ -8,7 +8,7 @@ import {from, Observable} from 'rxjs/index';
 import {
   TerminationActionType,
   Terminate, TerminationDraftSuccess, TerminationDraftFailed,
-  MoveTerminationToDecision, MoveTerminationToDecisionSuccess, MoveTerminationToDecisionFailed
+  MoveTerminationToDecision, MoveTerminationToDecisionSuccess, MoveTerminationToDecisionFailed, LoadSuccess, LoadFailed
 } from '@feature/decision/actions/termination-actions';
 import {catchError, filter, map, switchMap, withLatestFrom, tap} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
@@ -24,16 +24,32 @@ export class TerminationEffects {
   }
 
   @Effect()
+  loadDecision: Observable<Action> = this.actions.pipe(
+    ofType<Terminate>(TerminationActionType.Load),
+    withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+    filter(([action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([action, application]) => {
+      return this.terminationService.getTerminationInfo(application.id).pipe(
+        map((terminationInfo) => new LoadSuccess(terminationInfo)),
+        catchError(error => from([
+          new LoadFailed(error),
+          new NotifyFailure(error)
+        ]))
+      );
+    })
+  );
+
+  @Effect()
   terminateDecision: Observable<Action> = this.actions.pipe(
     ofType<Terminate>(TerminationActionType.Terminate),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => {
-      let draft: boolean = action.payload.draft;
+      const draft: boolean = action.payload.draft;
       return this.terminationService.saveTerminationInfo(application.id, action.payload).pipe(
-        map(() => {
+        map((savedInfo) => {
           if (draft) {
-            return new TerminationDraftSuccess();
+            return new TerminationDraftSuccess(savedInfo);
           } else {
             return new MoveTerminationToDecision();
           }
@@ -52,7 +68,8 @@ export class TerminationEffects {
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.terminationService.moveTerminationToDecision(application.id).pipe(
-      tap( applicationId => this.router.navigate(['/applications', applicationId, 'summary', 'decision'])), // TODO move to termination tab instead of decision tab after it's implemented
+      // TODO move to termination tab instead of decision tab after it's implemented
+      tap( applicationId => this.router.navigate(['/applications', applicationId, 'summary', 'decision'])),
       map( () => new MoveTerminationToDecisionSuccess()),
       catchError(error => from([
         new MoveTerminationToDecisionFailed(error),

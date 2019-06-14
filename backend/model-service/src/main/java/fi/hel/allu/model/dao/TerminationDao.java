@@ -49,8 +49,8 @@ public class TerminationDao {
     }
 
     queryFactory.insert(termination)
-        .columns(termination.applicationId, termination.creationTime, termination.terminationTime, termination.reason)
-        .values(applicationId, ZonedDateTime.now(), info.getTerminationTime(), info.getReason())
+        .columns(termination.applicationId, termination.creationTime, termination.terminationTime, termination.reason, termination.terminator)
+        .values(applicationId, ZonedDateTime.now(), info.getTerminationTime(), info.getReason(), info.getTerminator())
         .execute();
     return getTerminationInfo(applicationId);
   }

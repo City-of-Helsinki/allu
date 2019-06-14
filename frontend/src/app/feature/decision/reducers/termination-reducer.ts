@@ -14,6 +14,29 @@ const initialState: State = {
 
 export function reducer(state: State = initialState, action: TerminationActions | ApplicationActions) {
   switch (action.type) {
+    case TerminationActionType.Load: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case TerminationActionType.LoadSuccess: {
+      return {
+        ...state,
+        loading: false,
+        termination: action.payload
+      };
+    }
+
+    case TerminationActionType.LoadFailed: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
+
     case TerminationActionType.Terminate: {
       return {
         ...state,
@@ -24,7 +47,8 @@ export function reducer(state: State = initialState, action: TerminationActions 
     case TerminationActionType.TerminationDraftSuccess: {
       return {
         ...state,
-        loading: false
+        loading: false,
+        termination: action.payload
       };
     }
 

@@ -14,6 +14,8 @@ public class TerminationInfo {
   private ZonedDateTime terminationTime;
   @NotBlank
   private String reason;
+  @NotNull
+  private Integer terminator;
 
   public Integer getId() {
     return id;
@@ -53,5 +55,13 @@ public class TerminationInfo {
 
   public void setReason(String reason) {
     this.reason = reason;
+  }
+
+  public Integer getTerminator() {
+    return terminator;
+  }
+
+  public void setTerminator(Integer terminator) {
+    this.terminator = terminator;
   }
 }

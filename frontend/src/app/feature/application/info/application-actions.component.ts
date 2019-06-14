@@ -15,7 +15,7 @@ import {findTranslation} from '@util/translations';
 import {User} from '@model/user/user';
 import {UserSearchCriteria} from '@model/user/user-search-criteria';
 import {ArrayUtil} from '@util/array-util';
-import {filter, map, switchMap, take} from 'rxjs/operators';
+import {filter, map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {InformationRequest} from '@model/information-request/information-request';
 import {ApplicationUtil} from '@feature/application/application-util';
@@ -36,6 +36,9 @@ import {CancelRequest} from '@feature/information-request/actions/information-re
 import {InformationRequestStatus} from '@model/information-request/information-request-status';
 import {TERMINATION_MODAL_CONFIG, TerminationModalComponent} from '@feature/decision/termination/termination-modal.component';
 import {Terminate} from '@feature/decision/actions/termination-actions';
+import {TerminationInfo} from '@feature/decision/termination/termination-info';
+import * as fromDecision from '@feature/decision/reducers';
+import {TerminationService} from '@feature/decision/termination/termination-service';
 
 @Component({
   selector: 'application-actions',
@@ -80,7 +83,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
               private dialog: MatDialog,
               private userService: UserService,
               private notification: NotificationService,
-              private modalState: InformationRequestModalEvents) {
+              private modalState: InformationRequestModalEvents,
+              private terminationService: TerminationService) {
   }
 
   ngOnInit(): void {
@@ -274,19 +278,21 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   showTerminationModal(): void {
     this.store.select(fromApplication.getCurrentApplication).pipe(
       take(1),
-      map(app => this.createConfig(app)),
+      withLatestFrom(this.store.select(fromDecision.getTermination)),
+      map(([app, termination]) => this.createConfig(app, termination)),
       map(config => this.dialog.open<TerminationModalComponent>(TerminationModalComponent, config)),
       switchMap(modalRef => modalRef.afterClosed()),
       filter(result => !!result)
     ).subscribe(termination => this.store.dispatch(new Terminate(termination)));
   }
 
-  private createConfig(app: Application) {
+  private createConfig(app: Application, termination: TerminationInfo) {
     return {
       ...TERMINATION_MODAL_CONFIG,
       data: {
         applicationType: app.type,
-        applicationId: app.id
+        applicationId: app.id,
+        termination: termination
       }
     };
   }

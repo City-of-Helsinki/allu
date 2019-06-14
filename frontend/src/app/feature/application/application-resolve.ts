@@ -17,6 +17,7 @@ import * as metaActions from './actions/application-meta-actions';
 import * as informationRequestActions from '@feature/information-request/actions/information-request-actions';
 import * as supervisionTaskActions from '@feature/application/supervision/actions/supervision-task-actions';
 import * as invoicingCustomerActions from '@feature/application/invoicing/actions/invoicing-customer-actions';
+import * as terminationActions from '@feature/decision/actions/termination-actions';
 import {NumberUtil} from '@util/number.util';
 import {ApplicationStatus} from '@model/application/application-status';
 import {ResetLayers} from '@feature/map/actions/map-layer-actions';
@@ -66,6 +67,7 @@ export class ApplicationResolve implements Resolve<Application> {
     this.store.dispatch(new supervisionTaskActions.Load());
     this.store.dispatch(new invoicingCustomerActions.Load());
     this.store.dispatch(new informationRequestActions.LoadLatestRequest());
+    this.store.dispatch(new terminationActions.Load());
     this.loadInformationRequestResponse(app.status);
   }
 

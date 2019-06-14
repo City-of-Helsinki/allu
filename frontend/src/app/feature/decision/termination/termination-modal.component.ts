@@ -16,6 +16,7 @@ export const TERMINATION_MODAL_CONFIG = {width: '800px'};
 export interface TerminationData {
   applicationType: ApplicationType;
   applicationId: number;
+  termination: TerminationInfo;
 }
 
 @Component({
@@ -24,6 +25,8 @@ export interface TerminationData {
 })
 export class TerminationModalComponent implements OnInit {
   terminationForm: FormGroup;
+
+  existingTermination: TerminationInfo;
 
   handlers: Observable<Array<User>>;
 
@@ -35,14 +38,17 @@ export class TerminationModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.existingTermination = this.data.termination || new TerminationInfo(true);
     this.terminationForm = this.fb.group({
-      comment: ['', Validators.required],
-      handler: [undefined, Validators.required],
-      terminationTime: [undefined, Validators.required]
+      comment: [this.existingTermination.comment, Validators.required],
+      handler: [this.existingTermination.owner, Validators.required],
+      terminationTime: [this.existingTermination.terminationTime, Validators.required]
     });
 
     this.handlers = this.userService.getByRole(RoleType.ROLE_DECISION);
-    this.selectDefaultDecisionMaker();
+    if (!this.existingTermination.owner) {
+      this.selectDefaultDecisionMaker();
+    }
   }
 
   saveDraft() {
@@ -55,18 +61,15 @@ export class TerminationModalComponent implements OnInit {
 
   terminateImpl(draft: boolean) {
     const formValue = this.terminationForm.value;
-    const terminationTime = formValue.terminationTime;
-    const comment = formValue.comment;
-    const terminationInfo = new TerminationInfo(
-      draft,
-      null,
-      this.data.applicationId,
-      CommentType.PROPOSE_TERMINATION,
-      formValue.handler,
-      null,
-      terminationTime,
-      comment,
-    );
+
+    const terminationInfo: TerminationInfo = {...this.existingTermination};
+
+    terminationInfo.draft = draft;
+    terminationInfo.applicationId = this.data.applicationId;
+    terminationInfo.type = CommentType.PROPOSE_TERMINATION;
+    terminationInfo.owner = formValue.handler;
+    terminationInfo.terminationTime = formValue.terminationTime;
+    terminationInfo.comment = formValue.comment;
 
     this.dialogRef.close(terminationInfo);
   }
