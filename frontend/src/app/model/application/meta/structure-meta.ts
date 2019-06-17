@@ -40,7 +40,8 @@ export class StructureMeta {
     const fullPath = StringUtil.toPath(path, '/');
     const metaPath = `${META_PATH_PREFIX}${fullPath}`;
     const currentAttributeName = metaPath.replace( /\d+/g, '*');
-    return ArrayUtil.first(this.attributes, this.attributeMatcher(currentAttributeName));
+    const matching = ArrayUtil.first(this.attributes, this.attributeMatcher(currentAttributeName));
+    return matching ? matching : ArrayUtil.first(this.attributes, this.attributeMatcher(currentAttributeName + '/*'));
   }
 
   private attributeMatcher(matches: string): (attr: AttributeMeta) => boolean {
