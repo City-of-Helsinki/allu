@@ -12,7 +12,7 @@ import {ActionTargetType} from '../../allu/actions/action-target-type';
 import {ofExistingTargetAndType} from '../../allu/actions/action-with-target';
 import * as fromProject from '../../project/reducers';
 import * as fromApplication from '../../application/reducers';
-import {ApproveSuccess, ContractActionType} from '@feature/decision/actions/contract-actions';
+import {ApproveSuccess, RejectSuccess, ContractActionType} from '@feature/decision/actions/contract-actions';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
@@ -59,6 +59,13 @@ export class CommentEffects {
     ofType<ApproveSuccess>(ContractActionType.ApproveSuccess),
     map(() => new Load(ActionTargetType.Application))
   );
+
+  @Effect()
+  contractRejected: Observable<Action> = this.actions.pipe(
+    ofType<RejectSuccess>(ContractActionType.RejectSuccess),
+    map(() => new Load(ActionTargetType.Application))
+  );
+
 
   private loadByType(type: ActionTargetType, id): Observable<Action> {
     return this.commentService.getCommentsFor(type, id).pipe(

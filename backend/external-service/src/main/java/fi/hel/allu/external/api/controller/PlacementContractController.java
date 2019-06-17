@@ -17,12 +17,15 @@ import fi.hel.allu.common.domain.ContractInfo;
 import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.common.util.PdfMerger;
 import fi.hel.allu.external.domain.ContractExt;
 import fi.hel.allu.external.domain.ContractSigningInfoExt;
 import fi.hel.allu.external.domain.PlacementContractExt;
 import fi.hel.allu.external.domain.UserExt;
 import fi.hel.allu.external.mapper.PlacementContractExtMapper;
+import fi.hel.allu.servicecore.domain.CommentJson;
+import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.ContractService;
 import io.swagger.annotations.*;
 
@@ -36,6 +39,9 @@ public class PlacementContractController extends BaseApplicationController<Place
 
   @Autowired
   private ContractService contractService;
+
+  @Autowired
+  private CommentService commentService;
 
   @Override
   protected PlacementContractExtMapper getMapper() {
@@ -135,6 +141,7 @@ public class PlacementContractController extends BaseApplicationController<Place
                                      @ApiParam(value = "Reject reason", required = true) @NotBlank(message = "{contract.rejectreason}") @RequestBody String rejectReason) {
     Integer applicationId = applicationService.getApplicationIdForExternalId(id);
     applicationService.validateOwnedByExternalUser(applicationId);
+    commentService.addApplicationComment(applicationId, new CommentJson(CommentType.EXTERNAL_SYSTEM, rejectReason));
     contractService.rejectContractProposal(applicationId, rejectReason);
     return new ResponseEntity<>(HttpStatus.OK);
   }

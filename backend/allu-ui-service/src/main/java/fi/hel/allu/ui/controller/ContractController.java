@@ -9,7 +9,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import fi.hel.allu.common.domain.ContractInfo;
+import fi.hel.allu.common.types.CommentType;
+import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.ContractApprovalInfo;
+import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.ContractService;
 
 @RestController
@@ -19,6 +22,8 @@ public class ContractController {
   @Autowired
   private ContractService contractService;
 
+  @Autowired
+  private CommentService commentService;
 
   /**
    * Gets preview of contract pdf.
@@ -71,6 +76,8 @@ public class ContractController {
   @RequestMapping(value = "/{id}/contract/rejected", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> rejectContract(@PathVariable Integer id, @RequestBody String rejectReason) {
+    CommentJson comment = new CommentJson(CommentType.INTERNAL, rejectReason);
+    commentService.addApplicationComment(id, comment);
     contractService.rejectContractProposal(id, rejectReason);
     return new ResponseEntity<Void>(HttpStatus.OK);
   }
