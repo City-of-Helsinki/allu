@@ -1,11 +1,10 @@
 package fi.hel.allu.servicecore.mapper;
 
 import fi.hel.allu.pdf.domain.DecisionJson;
+import fi.hel.allu.servicecore.domain.PostalAddressJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import fi.hel.allu.servicecore.domain.PostalAddressJson;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +15,7 @@ public class DecisionJsonMapperTest {
 
   @Before
   public void setup() {
-    decisionMapper = new DecisionJsonMapper(null, null, null, null, null, null);
+    decisionMapper = new DecisionJsonMapper(null, null, null, null, null);
   }
 
   @Test

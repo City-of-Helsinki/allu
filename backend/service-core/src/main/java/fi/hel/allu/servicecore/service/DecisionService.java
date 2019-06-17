@@ -46,7 +46,7 @@ public class DecisionService {
    */
   public void generateDecision(int applicationId, ApplicationJson application) throws IOException {
 
-    DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, false);
+    DecisionJson decisionJson = decisionJsonMapper.mapToDocumentJson(application, false);
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,
         styleSheetName(application));
@@ -89,7 +89,7 @@ public class DecisionService {
    * @return PDF data
    */
   public byte[] getDecisionPreview(ApplicationJson application) {
-    DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, true);
+    DecisionJson decisionJson = decisionJsonMapper.mapToDocumentJson(application, true);
     return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
         decisionJson, byte[].class, styleSheetName(application));
   }

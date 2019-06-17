@@ -12,7 +12,6 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -75,7 +74,7 @@ public class DecisionServiceTest {
     application.setDecisionTime(ZonedDateTime.now());
     Mockito.when(applicationServiceComposer.findApplicationById(Mockito.anyInt())).thenReturn(application);
 
-    DecisionJsonMapper decisionMapper = new DecisionJsonMapper(locationService, applicationServiceComposer, customerService, contactService, chargeBasisService, metaService);
+    DecisionJsonMapper decisionMapper = new DecisionJsonMapper(locationService, customerService, contactService, chargeBasisService, metaService);
     decisionService = new DecisionService(applicationProperties, restTemplate,
         applicationServiceComposer, decisionMapper);
   }

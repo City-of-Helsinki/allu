@@ -147,6 +147,14 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/approvalDocument/{type}");
   }
 
+  public String getTerminationUrl() {
+    return getModelServiceUrl("/applications/{id}/termination");
+  }
+
+  public String getTerminationInfoUrl() {
+    return getTerminationUrl() + "/info";
+  }
+
   /**
    * @return url to request metadata from model service.
    */

@@ -177,7 +177,7 @@ public class ContractService {
   }
 
   private byte[] generateContractPdf(ApplicationJson application, ContractInfo contractInfo, boolean draft) {
-    DecisionJson decisionJson = decisionJsonMapper.mapDecisionJson(application, draft);
+    DecisionJson decisionJson = decisionJsonMapper.mapToDocumentJson(application, draft);
     setContractData(contractInfo, decisionJson);
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,

@@ -1022,6 +1022,13 @@ export const translations = {
       rejectFailed: 'Sopimusluonnoksen hylkääminen epäonnistui'
     }
   },
+  termination: {
+    error: {
+      fetchInfo: 'Irtisanomistietojen hakeminen epäonnistui',
+      saveInfo: 'Irtisanomistietojen tallentaminen epäonnistui',
+      fetchDocument: 'Irtisanomisdokumentin hakeminen epäonnistui'
+    }
+  },
   approvalDocument: {
     error: {
       fetchFailed: 'Hyväksyntädokumentin hakeminen epäonnistui'

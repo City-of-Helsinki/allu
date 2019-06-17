@@ -43,7 +43,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 @Component
-public class DecisionJsonMapper {
+public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
 
   private static final Logger logger = LoggerFactory.getLogger(DecisionJsonMapper.class);
 
@@ -83,22 +83,18 @@ public class DecisionJsonMapper {
   private final Locale locale;
 
   private final LocationService locationService;
-  private final CustomerService customerService;
-  private final ContactService contactService;
   private final MetaService metaService;
   private final ChargeBasisService chargeBasisService;
   private final DecimalFormat decimalFormat;
 
   @Autowired
   public DecisionJsonMapper(LocationService locationService,
-      ApplicationServiceComposer applicationServiceComposer,
       CustomerService customerService,
       ContactService contactService,
       ChargeBasisService chargeBasisService,
       MetaService metaService) {
+    super(customerService, contactService);
     this.locationService = locationService;
-    this.customerService = customerService;
-    this.contactService = contactService;
     this.chargeBasisService = chargeBasisService;
     this.metaService = metaService;
     decimalFormat = new DecimalFormat("0.##");
@@ -107,7 +103,7 @@ public class DecisionJsonMapper {
   }
 
 
-  public DecisionJson mapDecisionJson(ApplicationJson application, boolean draft) {
+  public DecisionJson mapToDocumentJson(ApplicationJson application, boolean draft) {
     DecisionJson decisionJson = new DecisionJson();
     decisionJson.setDraft(draft);
     decisionJson.setEventName(application.getName());
@@ -222,16 +218,6 @@ public class DecisionJsonMapper {
   private Double getEffectiveArea(LocationJson location) {
     return Optional.ofNullable(location.getAreaOverride())
       .orElse(location.getArea());
-  }
-
-  /*
-   * Split the given string into a list of strings. For empty Optional, give
-   * empty list.
-   */
-  private List<String> splitToList(Optional<String> string) {
-    return string.map(s -> s.split("\n"))
-        .map(a -> Arrays.stream(a)).map(s -> s.collect(Collectors.toList()))
-        .orElse(Collections.emptyList());
   }
 
   /*
@@ -638,67 +624,10 @@ public class DecisionJsonMapper {
     return TimeUtil.dateAsDayMonthString(zonedDateTime);
   }
 
-  private List<String> customerAddressLines(ApplicationJson applicationJson) {
-    return addressLines(applicationJson, CustomerRoleType.APPLICANT);
-  }
-
-  private List<String> customerContactLines(ApplicationJson application) {
-    return contactLines(application, CustomerRoleType.APPLICANT);
-  }
-
   private String applicantName(ApplicationJson applicationJson) {
     Optional<CustomerWithContactsJson> cwcOpt =
         applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
     return cwcOpt.map(cwc -> cwc.getCustomer().getName()).orElse(null);
-  }
-
-  private List<String> addressLines(ApplicationJson application, CustomerRoleType roleType) {
-    // return lines in format {"[Customer name], [SSID]", "[address, Postal
-    // code + city]",
-    // "[email, phone]"}
-    Optional<CustomerWithContactsJson> cwcOpt =
-        application.getCustomersWithContacts().stream().filter(cwc -> roleType.equals(cwc.getRoleType())).findFirst();
-
-    return addressLines(cwcOpt.map(cwc -> cwc.getCustomer()));
-  }
-
-  private List<String> addressLines(Optional<CustomerJson> customer) {
-    final List<String> addressLines = new ArrayList<>();
-    customer.ifPresent(c -> {
-      addressLines.addAll(
-          Arrays.asList(
-              combinePossibleBlankStrings(c.getName(), getCustomerRegistryKey(c)),
-              postalAddress(c.getPostalAddress()),
-              combinePossibleBlankStrings(c.getEmail(), c.getPhone())));
-    });
-    return addressLines;
-  }
-
-  private List<String> contactLines(ApplicationJson application, CustomerRoleType roleType) {
-    // returns {"[Yhteyshenkilön nimi]", "[Sähköpostiosoite, puhelin]"}
-
-    Optional<CustomerWithContactsJson> cwcOpt =
-        application.getCustomersWithContacts().stream().filter(cwc -> roleType.equals(cwc.getRoleType())).findFirst();
-    final List<String> contactLines = new ArrayList<>();
-    cwcOpt.ifPresent(cwc ->
-      contactLines.addAll(
-          cwc.getContacts().stream()
-            .flatMap(c -> Stream.of(c.getName(), combinePossibleBlankStrings(c.getEmail(), c.getPhone())))
-            .collect(Collectors.toList())));
-    return contactLines;
-
-  }
-  private String combinePossibleBlankStrings(String first, String second) {
-    if (StringUtils.isBlank(first) && StringUtils.isBlank(second)) {
-      return "";
-    }
-    if (StringUtils.isBlank(first)) {
-      return second;
-    }
-    if (StringUtils.isBlank(second)) {
-      return first;
-    }
-    return String.format("%s, %s", first, second);
   }
 
   private String getCustomerRegistryKey(CustomerJson customer) {
@@ -812,19 +741,6 @@ public class DecisionJsonMapper {
     return line;
   }
 
-  /*
-   * Return address like "Mannerheimintie 3, 00100 Helsinki", skip null/empty
-   * values
-   */
-  public String postalAddress(PostalAddressJson a) {
-    final String postalCodeAndCity = Arrays.asList(a.getPostalCode(), a.getCity()).stream()
-        .filter(s -> s != null && !s.isEmpty())
-        .collect(Collectors.joining(" "));
-    return Arrays.asList(a.getStreetAddress(), postalCodeAndCity).stream()
-        .filter(s -> s != null && !s.isEmpty())
-        .collect(Collectors.joining(", "));
-  }
-
   private String eventNature(EventNature nature) {
     switch (nature) {
     case CLOSED:
@@ -884,57 +800,5 @@ public class DecisionJsonMapper {
 
   private String translate(ApplicationSpecifier specifier) {
     return metaService.findTranslation("ApplicationSpecifier", specifier.name());
-  }
-
-  void convertNonBreakingSpacesToSpaces(DecisionJson decision) {
-    final Field[] fields = decision.getClass().getDeclaredFields();
-    for (Field field : fields) {
-      if (field.getType().equals(String.class)) {
-        try {
-          final boolean accessible = field.isAccessible();
-          field.setAccessible(true);
-          String value = (String)field.get(decision);
-          value = convertNonBreakingSpaceToSpace(value);
-          field.set(decision, value);
-          field.setAccessible(accessible);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-          logger.error("Error while converting non-breaking spaces", e);
-        }
-      } else if (field.getType().equals(List.class)) {
-        final Type genericFieldType = field.getGenericType();
-        if (genericFieldType instanceof ParameterizedType){
-          final ParameterizedType aType = (ParameterizedType)genericFieldType;
-          final Type[] fieldArgTypes = aType.getActualTypeArguments();
-          if (fieldArgTypes.length == 1) {
-            final Class fieldArgClass = (Class)fieldArgTypes[0];
-            if (fieldArgClass.equals(String.class)) {
-              try {
-                final boolean accessible = field.isAccessible();
-                field.setAccessible(true);
-                final List<String> values = (List<String>)field.get(decision);
-                if (values != null) {
-                  final List<String> newValues = new ArrayList<>();
-                  for (String value : values) {
-                      newValues.add(convertNonBreakingSpaceToSpace(value));
-                  }
-                  field.set(decision, newValues);
-                  field.setAccessible(accessible);
-                }
-              } catch (IllegalArgumentException | IllegalAccessException e) {
-                logger.error("Error while converting non-breaking spaces", e);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private String convertNonBreakingSpaceToSpace(String value) {
-    if (value != null) {
-      return value.replace('\u00A0',' ');
-    } else {
-      return null;
-    }
   }
 }
