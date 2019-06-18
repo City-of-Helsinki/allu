@@ -176,6 +176,6 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       ? {name, registryKey}
       : {name};
 
-    this.store.dispatch(new SearchByType(this.actionTargetType, {type, searchQuery, matchAny: true}));
+    this.store.dispatch(new SearchByType(this.actionTargetType, {type, searchQuery, matchAny: true, active: true}));
   }
 }

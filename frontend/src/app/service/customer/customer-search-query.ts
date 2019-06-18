@@ -14,6 +14,7 @@ export interface CustomerSearchQuery {
 export interface CustomerSearchByType {
   type: CustomerType;
   searchQuery: CustomerSearchQuery;
+  active?: boolean;
   sort?: Sort;
   pageRequest?: PageRequest;
   matchAny?: boolean;

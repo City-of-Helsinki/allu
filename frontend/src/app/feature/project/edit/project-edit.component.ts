@@ -118,7 +118,7 @@ export class ProjectEditComponent {
       takeUntil(this.destroy),
       debounceTime(300)
     ).subscribe(([type, name]) => {
-      const payload = {type, name, invoicingOnly: false};
+      const payload = {type, name, invoicingOnly: false, active: true};
       this.store.dispatch(new CustomerSearchAction.Search(ActionTargetType.Customer, payload));
     });
 
