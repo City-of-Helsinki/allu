@@ -1,22 +1,18 @@
 package fi.hel.allu.servicecore.service;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StyleSheet;
 import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import static fi.hel.allu.common.domain.types.ApplicationType.*;
+import java.io.IOException;
 
 @Service
 public class DecisionService {
@@ -49,7 +45,7 @@ public class DecisionService {
     DecisionJson decisionJson = decisionJsonMapper.mapToDocumentJson(application, false);
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), decisionJson, byte[].class,
-        styleSheetName(application));
+        StyleSheet.name(application));
     ResponseEntity<String> response = restTemplate.exchange(
         applicationProperties.getStoreDecisionUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("file", pdfData), String.class, applicationId);
@@ -91,24 +87,10 @@ public class DecisionService {
   public byte[] getDecisionPreview(ApplicationJson application) {
     DecisionJson decisionJson = decisionJsonMapper.mapToDocumentJson(application, true);
     return restTemplate.postForObject(applicationProperties.getGeneratePdfUrl(),
-        decisionJson, byte[].class, styleSheetName(application));
+        decisionJson, byte[].class, StyleSheet.name(application));
   }
 
-  // Get the stylesheet name to use for given application.
-  private String styleSheetName(ApplicationJson application) {
-    final List<ApplicationType> implementedTypes = Arrays.asList(
-        EVENT,
-        SHORT_TERM_RENTAL,
-        CABLE_REPORT,
-        PLACEMENT_CONTRACT,
-        TEMPORARY_TRAFFIC_ARRANGEMENTS,
-        EXCAVATION_ANNOUNCEMENT,
-        AREA_RENTAL);
-    if (implementedTypes.contains(application.getType())) {
-      return application.getType().name();
-    }
-    return "DUMMY";
-  }
+
 
 
 

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.xml.transform.TransformerException;
@@ -26,6 +28,7 @@ public class PdfService {
   private static final Logger logger = LoggerFactory.getLogger(PdfService.class);
 
   private static final String COMMON_STYLESHEET = "COMMON";
+  private static final String STYLESHEET_SEPARATOR = "-";
 
   // filename suffixes for header and footer
   private static final String HEADER_SUFFIX = "-header";
@@ -78,7 +81,11 @@ public class PdfService {
 
   private Path writeHtml(String xml, String stylesheet, String suffix)  throws IOException, TransformerException {
     Path path = writeHtml(xml, stylesheet + suffix);
-    return path != null ? path : writeHtml(xml, COMMON_STYLESHEET + suffix);
+    if (path != null) {
+      return path;
+    } else {
+      return writeHtml(xml, getFallbackStyleSheetName(stylesheet + suffix));
+    }
   }
 
   private Path writeHtml(String xml, String stylesheet) throws IOException, TransformerException {
@@ -118,4 +125,9 @@ public class PdfService {
     return pdfPath;
   }
 
+  private String getFallbackStyleSheetName(String styleSheet) {
+    String[] parts = styleSheet.split(STYLESHEET_SEPARATOR);
+    parts[0] = COMMON_STYLESHEET;
+    return String.join("-", parts);
+  }
 }

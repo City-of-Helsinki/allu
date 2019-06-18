@@ -47,18 +47,13 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
 
   private static final Logger logger = LoggerFactory.getLogger(DecisionJsonMapper.class);
 
-  private static final String ADDRESS_LINE_SEPARATOR = "; ";
-  private static final String CITY_DISTRICT_SEPARATOR = ", ";
+
   private static final Map<DefaultTextType, String> defaultTextTypeTranslations;
-  private static final String UNKNOWN_ADDRESS = "[Osoite ei tiedossa]";
-  private static final FixedLocationJson BAD_LOCATION;
   private static final String UNDERPASS_YES = "Kyllä";
   private static final String UNDERPASS_NO = "Ei";
   private static final Set<ApplicationKind> vat0Kinds;
 
   static {
-    BAD_LOCATION = new FixedLocationJson();
-    BAD_LOCATION.setArea("Tuntematon alue");
     Map<DefaultTextType, String> tempMap = new HashMap<>();
     tempMap.put(DefaultTextType.TELECOMMUNICATION, "Tietoliikenne");
     tempMap.put(DefaultTextType.ELECTRICITY, "Sähkö");
@@ -82,7 +77,6 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
   private final NumberFormat currencyFormat;
   private final Locale locale;
 
-  private final LocationService locationService;
   private final MetaService metaService;
   private final ChargeBasisService chargeBasisService;
   private final DecimalFormat decimalFormat;
@@ -93,8 +87,7 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       ContactService contactService,
       ChargeBasisService chargeBasisService,
       MetaService metaService) {
-    super(customerService, contactService);
-    this.locationService = locationService;
+    super(customerService, contactService, locationService);
     this.chargeBasisService = chargeBasisService;
     this.metaService = metaService;
     decimalFormat = new DecimalFormat("0.##");
@@ -564,13 +557,6 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
     }
   }
 
-  /*
-   * Helper to create streams for possibly null collections
-   */
-  private static <T> Stream<T> streamFor(Collection<T> coll) {
-    return Optional.ofNullable(coll).orElse(Collections.emptyList()).stream();
-  }
-
   /* Find the customer and contact that ordered the application */
   private Optional<Pair<CustomerJson, ContactJson>> cableReportOrderer(
       ApplicationJson applicationJson) {
@@ -636,109 +622,6 @@ public class DecisionJsonMapper extends AbstractDocumentMapper<DecisionJson> {
       return null;
     }
     return customer.getRegistryKey();
-  }
-
-  private String siteAddressLine(ApplicationJson application) {
-    if (application.getLocations() == null || application.getLocations().isEmpty()) {
-      return "";
-    }
-    final Map<Integer, FixedLocationJson> fixedLocationsById = fetchFixedLocations(application);
-    return application.getLocations().stream().map(l -> locationAddress(l, fixedLocationsById))
-        .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR));
-  }
-
-  private String siteCityDistrict(ApplicationJson application) {
-    if (application.getLocations() == null || application.getLocations().isEmpty()) {
-      return "";
-    }
-    final List<CityDistrictInfoJson> cityDistricts = locationService.getCityDistrictList();
-    return application.getLocations().stream().map(l -> getCityDistrict(l, cityDistricts))
-        .collect(Collectors.joining(CITY_DISTRICT_SEPARATOR));
-  }
-
-  private String getCityDistrict(LocationJson location, List<CityDistrictInfoJson> cityDistricts) {
-    final Integer cityDistrictId = getCityDistrictId(location);
-    if (cityDistrictId != null) {
-      final Optional<CityDistrictInfoJson> cityDistrictInfo = getCityDistrictInfo(cityDistrictId, cityDistricts);
-      return cityDistrictInfo.map(c -> c.getName()).orElse("");
-    }
-    return "";
-  }
-
-  private Integer getCityDistrictId(LocationJson locationJson) {
-    return Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
-  }
-
-  private Optional<CityDistrictInfoJson> getCityDistrictInfo(Integer cityDistrictId, List<CityDistrictInfoJson> cityDistricts) {
-    return cityDistricts.stream().filter(c -> c.getId().equals(cityDistrictId)).findAny();
-  }
-
-  /*
-   * If the application references any fixed locations, fetches all fixed
-   * locations that match the application's kind and creates a lookup map.
-   * Otherwise, just returns an empty map.
-   */
-  Map<Integer, FixedLocationJson> fetchFixedLocations(ApplicationJson applicationJson) {
-    if (applicationJson.getLocations().stream().map(l -> l.getFixedLocationIds())
-        .allMatch(flIds -> flIds == null || flIds.isEmpty())) {
-      return Collections.emptyMap();
-    } else {
-      final ApplicationKind applicationKind = applicationJson.getKind();
-      return locationService.getAllFixedLocations().stream()
-          .filter(fl -> fl.getApplicationKind() == applicationKind)
-          .collect(Collectors.toMap(FixedLocationJson::getId, Function.identity()));
-    }
-  }
-
-  /*
-   * Generate a location address text. If the location refers to fixed
-   * locations, create the string "[Fixed location name], [Segments]". Otherwise
-   * use location's postal address.
-   */
-  private String locationAddress(LocationJson locationJson, Map<Integer, FixedLocationJson> fixedLocationsById) {
-    if (locationJson.getFixedLocationIds() != null && !locationJson.getFixedLocationIds().isEmpty()) {
-      return fixedLocationAddresses(locationJson.getFixedLocationIds(), fixedLocationsById);
-    } else {
-      return Optional.ofNullable(locationJson.getPostalAddress()).map(pa -> postalAddress(pa)).orElse(UNKNOWN_ADDRESS);
-    }
-  }
-
-  /*
-   * Given a list of fixed locations, return an address line
-   */
-  private String fixedLocationAddresses(List<Integer> fixedLocationIds,
-      Map<Integer, FixedLocationJson> fixedLocationsById) {
-    Map<String, List<FixedLocationJson>> grouped = fixedLocationIds.stream()
-        .map(id -> fixedLocationsById.get(id))
-        .filter(fl -> fl != null)
-        .collect(Collectors.groupingBy(FixedLocationJson::getArea));
-    if (grouped.isEmpty()) {
-      return BAD_LOCATION.getArea();
-    }
-    return grouped.entrySet().stream().map(es -> addressLineFor(es.getValue()))
-        .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR));
-  }
-
-
-  // Generate a line like "Rautatientori, lohkot A, C, D".
-  // all locations are from same area, there is always at least one location.
-  private CharSequence addressLineFor(List<FixedLocationJson> locations) {
-    // Start with area name (e.g., "Rautatientori"):
-    StringBuilder line = new StringBuilder(locations.get(0).getArea());
-    String firstSection = locations.get(0).getSection();
-    if (locations.size() == 1) {
-      // Only one section and could be nameless:
-      if (firstSection != null) {
-        line.append(", lohko " + firstSection);
-      }
-    } else {
-      // Many sections, so they all have names
-      line.append(", lohkot " + firstSection);
-      for (int i = 1; i < locations.size(); ++i) {
-        line.append(String.format(", %s", locations.get(i).getSection()));
-      }
-    }
-    return line;
   }
 
   private String eventNature(EventNature nature) {

@@ -21,6 +21,10 @@ public class TerminationJson {
   private List<String> terminationInfo;
   private List<String> customerAddressLines;
   private List<String> customerContactLines;
+  private String siteAddressLine;
+  private String siteAdditionalInfo;
+  private String siteCityDistrict;
+  private String name;
 
   public boolean isDraft() {
     return isDraft;
@@ -127,5 +131,37 @@ public class TerminationJson {
 
   public void setCustomerContactLines(List<String> customerContactLines) {
     this.customerContactLines = customerContactLines;
+  }
+
+  public String getSiteAddressLine() {
+    return siteAddressLine;
+  }
+
+  public void setSiteAddressLine(String siteAddressLine) {
+    this.siteAddressLine = siteAddressLine;
+  }
+
+  public String getSiteAdditionalInfo() {
+    return siteAdditionalInfo;
+  }
+
+  public void setSiteAdditionalInfo(String siteAdditionalInfo) {
+    this.siteAdditionalInfo = siteAdditionalInfo;
+  }
+
+  public String getSiteCityDistrict() {
+    return siteCityDistrict;
+  }
+
+  public void setSiteCityDistrict(String siteCityDistrict) {
+    this.siteCityDistrict = siteCityDistrict;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

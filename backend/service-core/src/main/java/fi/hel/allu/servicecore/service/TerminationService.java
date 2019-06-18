@@ -6,6 +6,7 @@ import fi.hel.allu.common.util.MultipartRequestBuilder;
 import fi.hel.allu.pdf.domain.TerminationJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StyleSheet;
 import fi.hel.allu.servicecore.mapper.TerminationJsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Service
 public class TerminationService {
-  private static final String TEMPLATE_NAME = "COMMON-termination";
+  private static final String TEMPLATE_SUFFIX = "-termination";
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final TerminationJsonMapper terminationJsonMapper;
@@ -55,7 +56,7 @@ public class TerminationService {
     TerminationJson terminationJson = terminationJsonMapper.mapToDocumentJson(application, info, false);
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), terminationJson, byte[].class,
-        TEMPLATE_NAME);
+        StyleSheet.name(application, TEMPLATE_SUFFIX));
     restTemplate.exchange(
         applicationProperties.getTerminationUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("file", pdfData), Void.class, applicationId);
@@ -78,7 +79,7 @@ public class TerminationService {
     TerminationJson terminationJson = terminationJsonMapper.mapToDocumentJson(application, info, false);
     return restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), terminationJson, byte[].class,
-        TEMPLATE_NAME);
+        StyleSheet.name(application, TEMPLATE_SUFFIX));
   }
 
   /**
