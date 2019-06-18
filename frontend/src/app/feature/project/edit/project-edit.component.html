@@ -30,7 +30,16 @@
                                     (optionSelected)="selectCustomer($event.option)">
                     <mat-option *ngFor="let customer of matchingCustomers$ | async"
                                 [value]="customer">
-                      {{ customer.name }}
+                      <div fxFlex="auto">
+                        <h4 class="mat-option-header">{{customer.name}}</h4>
+                        <div class="mat-option-line">{{customer.registryKey}}</div>
+                        <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
+                          {{postalAddress.uiAddress}}
+                        </div>
+                        <div class="mat-option-line" *ngIf="customer.sapCustomerNumber">
+                          {{customer.sapCustomerNumber}}
+                        </div>
+                      </div>
                     </mat-option>
                   </mat-autocomplete>
 
