@@ -1,7 +1,12 @@
 package fi.hel.allu.model.service.event.handler;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
+import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.model.dao.TerminationDao;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SupervisionTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +26,7 @@ import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationStatusChangeHandlerTest {
@@ -47,12 +51,14 @@ public class ApplicationStatusChangeHandlerTest {
   private InformationRequestDao informationRequestDao;
   @Mock
   private InvoiceService invoiceService;
+  @Mock
+  private TerminationDao terminationDao;
 
   @Before
   public void setup() {
     statusChangeHandler = new ApplicationStatusChangeHandler(applicationService,
         supervisionTaskService, locationService, applicationDao, chargeBasisService,
-        historyDao, informationRequestDao, invoiceService);
+        historyDao, informationRequestDao, invoiceService, terminationDao);
     application = createApplication();
   }
 
@@ -118,10 +124,20 @@ public class ApplicationStatusChangeHandlerTest {
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
+  @Test
+  public void onDecisionShouldCreateSupervisionWhenPendingTermination() {
+    TerminationInfo info = new TerminationInfo();
+    info.setTerminationTime(ZonedDateTime.now());
+    when(terminationDao.getTerminationInfo(application.getId())).thenReturn(info);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    verify(supervisionTaskService, times(1)).insert(any(SupervisionTask.class));
+  }
+
 
   private Application createApplication() {
     application = new Application();
     application.setId(2);
+    application.setLocations(Collections.singletonList(new Location()));
     return application;
   }
 }

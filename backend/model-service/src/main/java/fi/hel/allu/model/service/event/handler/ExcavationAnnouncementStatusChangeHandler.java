@@ -3,6 +3,7 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.ZonedDateTime;
 
 import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -25,9 +26,11 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
        SupervisionTaskService supervisionTaskService, LocationService locationService,
        ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
        HistoryDao historyDao, InformationRequestDao informationRequestDao,
-       InvoiceService invoiceService, WinterTimeService winterTimeService) {
+       InvoiceService invoiceService, WinterTimeService winterTimeService,
+       TerminationDao terminationDao) {
     super(applicationService, supervisionTaskService, locationService,
-            applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService);
+        applicationDao, chargeBasisService, historyDao, informationRequestDao,
+        invoiceService, terminationDao);
     this.winterTimeService = winterTimeService;
   }
 

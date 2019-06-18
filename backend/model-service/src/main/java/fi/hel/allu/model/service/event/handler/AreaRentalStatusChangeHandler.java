@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service.event.handler;
 
+import fi.hel.allu.model.dao.TerminationDao;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
@@ -19,10 +20,10 @@ public class AreaRentalStatusChangeHandler extends ApplicationStatusChangeHandle
        SupervisionTaskService supervisionTaskService, LocationService locationService,
        ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
        HistoryDao historyDao, InformationRequestDao informationRequestDao,
-       InvoiceService invoiceService) {
+       InvoiceService invoiceService, TerminationDao terminationDao) {
     super(applicationService, supervisionTaskService, locationService,
             applicationDao, chargeBasisService, historyDao, informationRequestDao,
-            invoiceService);
+            invoiceService, terminationDao);
   }
 
   @Override

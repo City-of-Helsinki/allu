@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,9 +15,6 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.common.util.WinterTime;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
 import fi.hel.allu.model.service.*;
@@ -54,13 +51,15 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   private HistoryDao historyDao;
   @Mock
   private InformationRequestDao informationRequestDao;
+  @Mock
+  private TerminationDao terminationDao;
 
 
   @Before
   public void setup() {
     statusChangeHandler = new ExcavationAnnouncementStatusChangeHandler(applicationService,
         supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
-        informationRequestDao, invoiceService, winterTimeService);
+        informationRequestDao, invoiceService, winterTimeService, terminationDao);
     createApplication();
     when(winterTimeService.getWinterTime()).thenReturn(winterTime);
     when(winterTime.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);

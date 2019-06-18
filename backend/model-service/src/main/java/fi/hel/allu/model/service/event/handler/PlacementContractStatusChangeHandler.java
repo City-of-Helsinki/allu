@@ -3,14 +3,11 @@ package fi.hel.allu.model.service.event.handler;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
+import fi.hel.allu.model.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
@@ -27,9 +24,9 @@ public class PlacementContractStatusChangeHandler extends ApplicationStatusChang
       SupervisionTaskService supervisionTaskService, LocationService locationService,
       ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
       HistoryDao historyDao, InformationRequestDao informationRequestDao, InvoiceService invoiceService,
-      DecisionDao decisionDao) {
+      DecisionDao decisionDao, TerminationDao terminationDao) {
     super(applicationService, supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
-        informationRequestDao, invoiceService);
+        informationRequestDao, invoiceService, terminationDao);
     this.decisionDao = decisionDao;
   }
 
@@ -50,5 +47,8 @@ public class PlacementContractStatusChangeHandler extends ApplicationStatusChang
 
   }
 
-
+  @Override
+  protected void handleArchivedStatus(Application application, Integer userId) {
+    createSupervisionTaskForTerminated(application, userId);
+  }
 }

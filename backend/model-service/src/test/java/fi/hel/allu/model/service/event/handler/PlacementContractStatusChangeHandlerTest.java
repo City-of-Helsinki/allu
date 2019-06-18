@@ -4,7 +4,11 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.SupervisionTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +20,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
@@ -58,6 +58,8 @@ public class PlacementContractStatusChangeHandlerTest {
   private InformationRequestDao informationRequestDao;
   @Mock
   private InvoiceService invoiceService;
+  @Mock
+  private TerminationDao terminationDao;
 
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
@@ -68,9 +70,10 @@ public class PlacementContractStatusChangeHandlerTest {
   public void setup() {
     statusChangeHandler = new PlacementContractStatusChangeHandler(applicationService, supervisionTaskService,
         locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService,
-        decisionDao);
+        decisionDao, terminationDao);
     createApplicationWithLocation();
     when(locationService.findSingleByApplicationId(application.getId())).thenReturn(location);
+    when(locationService.findSupervisionTaskOwner(eq(application.getType()), anyInt())).thenReturn(Optional.empty());
     when(decisionDao.getPlacementContractSectionNumber()).thenReturn(PLACEMENT_CONTRACT_SECTION_NR);
   }
 
@@ -94,12 +97,22 @@ public class PlacementContractStatusChangeHandlerTest {
     assertEquals(PLACEMENT_CONTRACT_SECTION_NR, pc.getSectionNumber());
   }
 
+  @Test
+  public void onArchiveShouldCreateSupervisionWhenPendingTermination() {
+    TerminationInfo info = new TerminationInfo();
+    info.setTerminationTime(ZonedDateTime.now());
+    when(terminationDao.getTerminationInfo(application.getId())).thenReturn(info);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.ARCHIVED, USER_ID));
+    verify(supervisionTaskService, times(1)).insert(any(SupervisionTask.class));
+  }
+
   private void createApplicationWithLocation() {
     location = new Location();
     location.setCityDistrictId(2);
     application = new Application();
     application.setId(2);
     application.setLocations(Collections.singletonList(location));
+    application.setType(ApplicationType.PLACEMENT_CONTRACT);
   }
 
   private boolean isYearAfterCurrentDate(ZonedDateTime time) {

@@ -2,7 +2,11 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
+import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.dao.TerminationDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +42,14 @@ public class ApplicationStatusChangeHandler {
   private final HistoryDao historyDao;
   private final InformationRequestDao informationRequestDao;
   private final InvoiceService invoiceService;
+  private final TerminationDao terminationDao;
 
   @Autowired
   public ApplicationStatusChangeHandler(ApplicationService applicationService,
                                         SupervisionTaskService supervisionTaskService, LocationService locationService,
                                         ApplicationDao applicationDao, ChargeBasisService chargeBasisService,
                                         HistoryDao historyDao, InformationRequestDao informationRequestDao,
-                                        InvoiceService invoiceService) {
+                                        InvoiceService invoiceService, TerminationDao terminationDao) {
     this.applicationService = applicationService;
     this.supervisionTaskService = supervisionTaskService;
     this.locationService = locationService;
@@ -53,6 +58,7 @@ public class ApplicationStatusChangeHandler {
     this.historyDao = historyDao;
     this.informationRequestDao = informationRequestDao;
     this.invoiceService = invoiceService;
+    this.terminationDao = terminationDao;
   }
 
   public void handleStatusChange(ApplicationStatusChangeEvent statusChangeEvent) {
@@ -75,6 +81,9 @@ public class ApplicationStatusChangeHandler {
       case CANCELLED:
         handleCancelledStatus(statusChangeEvent.getApplication());
         break;
+      case ARCHIVED:
+        handleArchivedStatus(statusChangeEvent.getApplication(), statusChangeEvent.getUserId());
+        break;
       default:
         // By default nothing
         break;
@@ -91,6 +100,7 @@ public class ApplicationStatusChangeHandler {
     clearTargetState(application);
     finishInvoicing(application);
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
+    createSupervisionTaskForTerminated(application, userId);
   }
 
   protected void clearTargetState(Application application) {
@@ -145,10 +155,21 @@ public class ApplicationStatusChangeHandler {
     }
   }
 
+  protected void handleArchivedStatus(Application application, Integer userId) {
+  }
+
   protected void handleReplacedApplicationOnDecision(Application application, Integer userId) {
     if (application.getReplacesApplicationId() != null) {
       changeReplacedApplicationStatus(application.getReplacesApplicationId(), userId);
       cancelDanglingSupervisionTasks(application.getReplacesApplicationId());
+    }
+  }
+
+  protected void createSupervisionTaskForTerminated(Application application, Integer userId) {
+    TerminationInfo info = terminationDao.getTerminationInfo(application.getId());
+    if (info != null) {
+      ZonedDateTime terminationSupervision = TimeUtil.nextDay(info.getTerminationTime());
+      createSupervisionTask(application, SupervisionTaskType.TERMINATION, userId, terminationSupervision);
     }
   }
 

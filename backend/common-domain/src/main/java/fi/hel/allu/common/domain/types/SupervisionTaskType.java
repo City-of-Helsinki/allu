@@ -24,7 +24,11 @@ public enum SupervisionTaskType {
   /**
    * Takuuvalvonta
    */
-  WARRANTY(false);
+  WARRANTY(false),
+  /**
+   * Irtisanomisen valvonta
+   */
+  TERMINATION(false);
 
   private final boolean manuallyAdded;
 

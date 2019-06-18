@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
-import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +18,6 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.SupervisionTask;
@@ -57,6 +54,8 @@ public class TrafficArrangementStatusChangeHandlerTest {
   private InformationRequestDao informationRequestDao;
   @Mock
   private InvoiceService invoiceService;
+  @Mock
+  private TerminationDao terminationDao;
 
   @Captor
   ArgumentCaptor<SupervisionTask> supervisionTaskCaptor;
@@ -68,7 +67,7 @@ public class TrafficArrangementStatusChangeHandlerTest {
     createApplicationWithLocation();
     statusChangeHandler = new TrafficArrangementStatusChangeHandler(applicationService,
         supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
-        informationRequestDao, invoiceService);
+        informationRequestDao, invoiceService, terminationDao);
     when(locationService.findSupervisionTaskOwner(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
         location.getCityDistrictId())).thenReturn(Optional.of(supervisor));
   }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,8 @@ public class AreaRentalStatusChangeHandlerTest {
   private InvoiceService invoiceService;
   @Mock
   private InformationRequestDao informationRequestDao;
+  @Mock
+  private TerminationDao terminationDao;
 
   @Captor
   ArgumentCaptor<SupervisionTask> supervisionTaskCaptor;
@@ -66,7 +69,7 @@ public class AreaRentalStatusChangeHandlerTest {
     supervisor.setId(228);
     createApplicationWithLocations();
     statusChangeHandler = new AreaRentalStatusChangeHandler(applicationService, supervisionTaskService, locationService,
-        applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService);
+        applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService, terminationDao);
     when(locationService.findSupervisionTaskOwner(ApplicationType.AREA_RENTAL,
         location1.getCityDistrictId())).thenReturn(Optional.of(supervisor));
   }

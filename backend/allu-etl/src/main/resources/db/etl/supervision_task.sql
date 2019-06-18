@@ -22,6 +22,7 @@ SELECT
         WHEN s.type = 'FINAL_SUPERVISION' THEN 'Loppuvalvonta'
         WHEN s.type = 'WARRANTY' THEN 'Takuuvalvonta'
         WHEN s.type = 'WORK_TIME_SUPERVISION' THEN 'Työnaikainen valvonta'
+        WHEN s.type = 'TERMINATION' THEN 'Irtisanomisen valvonta'
     END AS tyyppi,
     c.user_name AS lisaaja,
     o.user_name AS omistaja,

@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.dao.InformationRequestDao;
+import fi.hel.allu.model.dao.TerminationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableReport;
 import fi.hel.allu.model.service.*;
@@ -48,6 +49,8 @@ public class CableReportStatusChangeHandlerTest {
   private InformationRequestDao informationRequestDao;
   @Mock
   private InvoiceService invoiceService;
+  @Mock
+  private TerminationDao terminationDao;
 
   @Captor
   ArgumentCaptor<Application> applicationCaptor;
@@ -55,7 +58,8 @@ public class CableReportStatusChangeHandlerTest {
   @Before
   public void setup() {
     statusChangeHandler = new CableReportStatusChangeHandler(applicationService, supervisionTaskService,
-        locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao, invoiceService);
+        locationService, applicationDao, chargeBasisService, historyDao, informationRequestDao,
+        invoiceService, terminationDao);
     createApplication();
   }
 

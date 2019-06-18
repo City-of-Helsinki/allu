@@ -1507,7 +1507,8 @@ export const translations = {
         SUPERVISION: 'Valvonta',
         WORK_TIME_SUPERVISION: 'Työnaikainen valvonta',
         FINAL_SUPERVISION: 'Loppuvalvonta',
-        WARRANTY: 'Takuuvalvonta'
+        WARRANTY: 'Takuuvalvonta',
+        TERMINATION: 'Irtisanomisen valvonta'
       },
       status: {
         OPEN: 'Avoin',

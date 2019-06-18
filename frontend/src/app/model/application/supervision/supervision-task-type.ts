@@ -22,13 +22,18 @@ export enum SupervisionTaskType {
   /**
    * Takuuvalvonta
    */
-  WARRANTY = 'WARRANTY'
+  WARRANTY = 'WARRANTY',
+  /**
+   * Irtisanomisen valvonta
+   */
+  TERMINATION = 'TERMINATION'
 }
 
 export function isAutomaticSupervisionTaskType(type: SupervisionTaskType): boolean {
   return [
     SupervisionTaskType.OPERATIONAL_CONDITION,
     SupervisionTaskType.WARRANTY,
-    SupervisionTaskType.WORK_TIME_SUPERVISION
+    SupervisionTaskType.WORK_TIME_SUPERVISION,
+    SupervisionTaskType.TERMINATION
   ].indexOf(type) >= 0;
 }
