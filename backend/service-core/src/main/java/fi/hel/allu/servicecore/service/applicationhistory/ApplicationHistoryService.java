@@ -251,6 +251,16 @@ public class ApplicationHistoryService {
     addChangeItem(applicationId, change);
   }
 
+  public void addOwnerChange(Integer applicationId, Integer newOwnerId) {
+    String username = Optional.ofNullable(newOwnerId)
+        .map(id -> userService.findUserById(newOwnerId).getUserName())
+        .orElse(null);
+    ChangeHistoryItem change = new ChangeHistoryItem();
+    change.setChangeType(ChangeType.OWNER_CHANGED);
+    change.setFieldChanges(Collections.singletonList(new FieldChange("owner", null, username)));
+    addChangeItem(applicationId, change);
+  }
+
   /**
    * Add a change item that describes application creation.
    *

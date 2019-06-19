@@ -46,6 +46,7 @@ export class HistoryItemComponent implements OnInit {
   }
 
   private showFields(change: ChangeHistoryItem): boolean {
-    return ArrayUtil.contains([ChangeType.CONTENTS_CHANGED, ChangeType.LOCATION_CHANGED], ChangeType[change.changeType]);
+    return ArrayUtil.contains([ChangeType.CONTENTS_CHANGED, ChangeType.LOCATION_CHANGED, ChangeType.OWNER_CHANGED],
+      ChangeType[change.changeType]);
   }
 }

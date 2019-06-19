@@ -23,6 +23,7 @@ SELECT
         WHEN change_type = 'CUSTOMER_CHANGED' THEN 'Asiakas päivitetty'
         WHEN change_type = 'CONTACT_CHANGED' THEN 'Yhteystieto päivitetty'
         WHEN change_type = 'LOCATION_CHANGED' THEN 'Sijainti päivitetty'
+        WHEN change_type = 'OWNER_CHANGED' THEN 'Omistaja päivitetty'
     END AS muutostyyppi,
     CASE
         WHEN c.change_specifier = 'PENDING_CLIENT' THEN 'Vireillä asiakasjärjestelmässä'

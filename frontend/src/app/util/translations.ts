@@ -1786,6 +1786,7 @@ export const translations = {
         APPLICATION_REMOVED: 'Hakemus poistettu',
         CUSTOMER_CHANGED: 'Asiakas muutettu',
         CONTACT_CHANGED: 'Yhteyshenkilö muutettu',
+        OWNER_CHANGED: 'Hakemuksen omistaja muutettu'
       },
       typeWithSpecifier: {
         STATUS_CHANGED: {

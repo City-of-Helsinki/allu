@@ -171,6 +171,7 @@ public class ApplicationServiceComposer {
    */
   public void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds, boolean waitRefresh) {
     applicationService.updateApplicationOwner(updatedOwner, applicationIds);
+    applicationIds.forEach(id -> applicationHistoryService.addOwnerChange(id, updatedOwner));
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
     searchService.updateApplications(applicationJsons, waitRefresh);
@@ -187,6 +188,7 @@ public class ApplicationServiceComposer {
    */
   public void removeApplicationOwner(List<Integer> applicationIds, boolean waitRefresh) {
     applicationService.removeApplicationOwner(applicationIds);
+    applicationIds.forEach(id -> applicationHistoryService.addOwnerChange(id, null));
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
     searchService.updateApplications(applicationJsons, waitRefresh);
