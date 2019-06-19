@@ -117,7 +117,7 @@ public class LocationDao {
 
   @Transactional
   public Location insert(Location locationData) {
-    transformAndCleanupCoordinates(locationData, Constants.ALLU_DEFAULT_SRID);
+    transformCoordinates(locationData, Constants.ALLU_DEFAULT_SRID);
     locationData.setId(null);
     Integer maxLocationKey = queryFactory.select(SQLExpressions.max(location.locationKey))
         .from(location).where(location.applicationId.eq(locationData.getApplicationId())).fetchOne();
@@ -163,7 +163,7 @@ public class LocationDao {
   }
 
   private Location update(Location locationData) {
-    transformAndCleanupCoordinates(locationData, Constants.ALLU_DEFAULT_SRID);
+    transformCoordinates(locationData, Constants.ALLU_DEFAULT_SRID);
     int id = locationData.getId();
     Optional<Location> currentLocationOpt = findById(id);
     if (!currentLocationOpt.isPresent()) {
@@ -350,11 +350,14 @@ public class LocationDao {
         gc = removeOverlaps(gc);
         List<Geometry> flat = new ArrayList<>();
         flatten(gc, flat);
-        flat.forEach(
+        flat.stream()
+          .map(g -> removeRepeatedPoints(g))
+          .forEach(
             geo -> queryFactory.insert(locationGeometry).columns(locationGeometry.locationId, locationGeometry.geometry)
             .values(locationId, geo).execute());
       } else {
-        bufferLineString(geometry);
+        geometry = bufferLineString(geometry);
+        geometry = removeRepeatedPoints(geometry);
         queryFactory.insert(locationGeometry).columns(locationGeometry.locationId, locationGeometry.geometry)
             .values(locationId, geometry)
             .execute();
@@ -442,7 +445,7 @@ public class LocationDao {
 
   private Geometry bufferLineString(Geometry geometry) {
     Geometry resultGeometry = geometry;
-    if (geometry.getGeometryType() == GeometryType.LINE_STRING) {
+    if (geometry.getGeometryType() == GeometryType.LINE_STRING || geometry.getGeometryType() == GeometryType.MULTI_LINE_STRING) {
       resultGeometry = queryFactory
           .select(Expressions.simpleTemplate(Geometry.class, "ST_Buffer({0}, {1}, 'endcap=flat')", geometry, LINE_BUFFER))
           .fetchFirst();
@@ -539,11 +542,15 @@ public class LocationDao {
 
   private void removeRepeatedPoints(Location locationData) {
     if (locationData.getGeometry() != null) {
-      Geometry geometry = queryFactory
-          .select(Expressions.simpleTemplate(Geometry.class, "ST_RemoveRepeatedPoints({0})", locationData.getGeometry()))
-          .fetchFirst();
+      Geometry geometry = removeRepeatedPoints(locationData.getGeometry());
       locationData.setGeometry(geometry);
     }
+  }
+
+  private Geometry removeRepeatedPoints(Geometry geometry) {
+    return queryFactory
+        .select(Expressions.simpleTemplate(Geometry.class, "ST_RemoveRepeatedPoints({0}, 0.2)", geometry))
+        .fetchFirst();
   }
 
   private void transformCoordinates(Location locationData, Integer targetSrId) {
