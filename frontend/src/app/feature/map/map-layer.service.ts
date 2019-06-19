@@ -60,6 +60,7 @@ export const restrictedLayers = {
     'Maanalaiset tilat alueet': null,
   },
   'Johtokartat': {
+    'Imujätehuolto': null,
     'Sähkö': null,
     'Tietoliikenne': null,
     'Kaukolämpö': null,
@@ -161,6 +162,7 @@ export class MapLayerService {
       'Kaasu': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaasu', token, DETAILED_LAYER_MIN_ZOOM),
       'Vesijohto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_vesijohto', token, DETAILED_LAYER_MIN_ZOOM),
       'Viemari': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM),
+      'Imujätehuolto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_imujatehuolto', token, DETAILED_LAYER_MIN_ZOOM),
       'Yhdistelmäjohtokartta': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_yhdistelma', token, DETAILED_LAYER_MIN_ZOOM),
     };
   }

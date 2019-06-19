@@ -38,6 +38,9 @@ map_layers_restricted:
   - name: helsinki_johtokartta_viemari
     title: Helsinki Johtokartta viemari
     sources: [hki_johtokartta_viemari_cache]
+  - name: helsinki_johtokartta_imujatehuolto
+    title: Helsinki Johtokartta Imujätehuolto
+    sources: [hki_johtokartta_imujatehuolto_cache]
   - name: helsinki_johtokartta_yhdistelma
     title: Helsinki Johtokartta yhdistelma
     sources: [hki_johtokartta_yhdistelma_cache]
