@@ -124,13 +124,13 @@ public class InvoicingPeriodService {
 
   private void validatePeriodModificationAllowed(Integer applicationId) {
     List<InvoicingPeriod> existingPeriods = invoicingPeriodDao.findForApplicationId(applicationId);
-    if (hasInvoicedPeriods(existingPeriods)) {
+    if (hasClosedPeriods(existingPeriods)) {
       throw new IllegalOperationException("invoicingPeriod.invoiced");
     }
   }
 
-  private boolean hasInvoicedPeriods(List<InvoicingPeriod> periods) {
-    return periods.stream().anyMatch(InvoicingPeriod::isInvoiced);
+  private boolean hasClosedPeriods(List<InvoicingPeriod> periods) {
+    return periods.stream().anyMatch(InvoicingPeriod::isClosed);
   }
 
   @Transactional

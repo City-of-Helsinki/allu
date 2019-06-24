@@ -12,7 +12,7 @@ public class InvoicingPeriod {
   private Integer applicationId;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
-  private boolean invoiced;
+  private boolean closed;
 
   public InvoicingPeriod() {
   }
@@ -55,17 +55,17 @@ public class InvoicingPeriod {
     this.endTime = endTime;
   }
 
-  public boolean isInvoiced() {
-    return invoiced;
+  public boolean isClosed() {
+    return closed;
   }
 
-  public void setInvoiced(boolean invoiced) {
-    this.invoiced = invoiced;
+  public void setClosed(boolean closed) {
+    this.closed = closed;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(applicationId, endTime, invoiced, startTime);
+    return Objects.hash(applicationId, endTime, closed, startTime);
   }
 
   @Override
@@ -78,7 +78,7 @@ public class InvoicingPeriod {
       return false;
     InvoicingPeriod other = (InvoicingPeriod) obj;
     return Objects.equals(applicationId, other.applicationId) && TimeUtil.isSameDate(endTime, other.endTime)
-        && invoiced == other.invoiced && TimeUtil.isSameDate(startTime, other.startTime);
+        && closed == other.closed && TimeUtil.isSameDate(startTime, other.startTime);
   }
 
 

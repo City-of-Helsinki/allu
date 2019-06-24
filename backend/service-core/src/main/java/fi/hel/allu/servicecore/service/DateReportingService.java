@@ -198,7 +198,7 @@ public class DateReportingService {
     }
 
     return periods.stream()
-        .filter(p -> !p.isInvoiced())
+        .filter(p -> !p.isClosed())
         .min(Comparator.comparing(InvoicingPeriod::getStartTime))
         .map(p -> p.getStartTime())
         .orElse(null);

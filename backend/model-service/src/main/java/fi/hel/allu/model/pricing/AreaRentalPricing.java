@@ -60,7 +60,7 @@ public class AreaRentalPricing extends Pricing {
   }
 
   private Integer getFirstOpenPeriodId() {
-    return invoicingPeriods.stream().filter(p -> !p.isInvoiced()).findFirst().map(p -> p.getId()).orElse(null);
+    return invoicingPeriods.stream().filter(p -> !p.isClosed()).findFirst().map(p -> p.getId()).orElse(null);
   }
 
   @Override

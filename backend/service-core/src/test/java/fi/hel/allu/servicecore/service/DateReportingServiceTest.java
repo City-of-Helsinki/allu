@@ -93,7 +93,7 @@ public class DateReportingServiceTest {
   public void workFinishedDateIsOnInvoicedPeriod() {
     final List<InvoicingPeriod> invoicingPeriods = new ArrayList<>();
     final InvoicingPeriod period = new InvoicingPeriod(APP_ID, ZonedDateTime.now().minusDays(10), ZonedDateTime.now().plusDays(10));
-    period.setInvoiced(true);
+    period.setClosed(true);
     invoicingPeriods.add(period);
     Mockito.when(invoicingPeriodService.getInvoicingPeriods(Mockito.anyObject())).thenReturn(invoicingPeriods);
     thrown.expect(IllegalArgumentException.class);

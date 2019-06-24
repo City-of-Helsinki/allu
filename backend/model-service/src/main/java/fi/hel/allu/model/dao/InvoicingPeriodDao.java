@@ -55,12 +55,12 @@ public class InvoicingPeriodDao {
   @Transactional(readOnly = true)
   public List<InvoicingPeriod> findOpenPeriodsForApplicationId(Integer applicationId) {
     return queryFactory.select(invoicingPeriodBean).from(invoicingPeriod)
-        .where(invoicingPeriod.applicationId.eq(applicationId), invoicingPeriod.invoiced.isFalse()).fetch();
+        .where(invoicingPeriod.applicationId.eq(applicationId), invoicingPeriod.closed.isFalse()).fetch();
   }
 
    @Transactional
    public void closeInvoicingPeriods(List<Integer> invoicingPeriodIds) {
-    queryFactory.update(invoicingPeriod).set(invoicingPeriod.invoiced, true)
+    queryFactory.update(invoicingPeriod).set(invoicingPeriod.closed, true)
         .where(invoicingPeriod.id.in(invoicingPeriodIds)).execute();
    }
 }
