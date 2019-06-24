@@ -1,13 +1,58 @@
 <div class="main-content">
   <progressbar [application]="application"></progressbar>
-  <application-type
-    [typeChangeDisabled]="application.id !== undefined"
-    [receivedTime]="application.receivedTime"
-    (receivedTimeChange)="updateReceivedTime($event)"
-  ></application-type>
-
-  <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="showMap">
-    <div fxLayout="row">
+  <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)">
+    <div fxLayout="row" fxLayoutGap="18px" fxLayoutAlign="start">
+      <div fxFlex="calc(50% - 18px)">
+        <application-type
+          [typeChangeDisabled]="application.id !== undefined"
+          [receivedTime]="application.receivedTime"
+          (receivedTimeChange)="updateReceivedTime($event)"
+        ></application-type>
+      </div>
+      <div fxFlex="calc(50% - 18px)">
+        <allu-card *ngIf="showMap">
+          <mat-card-title>{{'location.existingAreas' | translation}}</mat-card-title>
+          <mat-card-content>
+            <div fxLayout="row" fxLayoutGap="18px" fxLayoutAlign="start center">
+              <ng-container *ngIf="fixedLocations.length > 0">
+                <div fxFlex="0 1 calc(50% - 18px)">
+                  <mat-form-field class="input-full-width">
+                    <mat-select class="input-full-width" multiple
+                                formControlName="fixedLocations"
+                                [placeholder]="'location.fixedLocations' | translation">
+                      <mat-select-trigger>
+                        <partial-list-display [items]="fixedLocationInfos" [show]="2"></partial-list-display>
+                      </mat-select-trigger>
+                      <mat-option *ngFor="let fixedLocation of fixedLocations" [value]="fixedLocation.id">
+                        {{fixedLocation.name}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-hint *ngIf="editedItemCount > 0">{{'location.fixedLocationNotAllowed' | translation}}</mat-hint>
+                  </mat-form-field>
+                </div>
+              </ng-container>
+              <div fxFlex="0 1 calc(50% - 18px)" *ngIf="drawingAllowed">
+                <geometry-select
+                  [matchingApplications]="matchingApplications$ | async"
+                  (searchChange)="applicationSearchChange($event)"
+                  (selectedChange)="geometrySelected($event)">
+                </geometry-select>
+              </div>
+            </div>
+            <div fxLayout="row" fxLayoutGap="18px" fxLayoutAlign="start center">
+              <div fxFlex *ngIf="drawingAllowed">
+                <button type="button" mat-raised-button color="primary"
+                        [matMenuTriggerFor]="userAreaMenu"
+                        [disabled]="(userAreaCount$ | async) === 0">
+                  {{'location.button.ownAreas' | translation}} ({{userAreaCount$ | async}})
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </allu-card>
+      </div>
+    </div>
+    <div fxLayout="row" *ngIf="showMap">
       <div fxFlex>
         <allu-card>
           <mat-card-title>{{'location.title' | translation}}</mat-card-title>
@@ -30,44 +75,6 @@
                      (editedItemCountChanged)="editedItemCountChanged($event)"
                      [availableLayers]="availableLayers$ | async"
                      [selectedLayers]="selectedLayers$ | async"></map>
-              </div>
-            </div>
-            <div fxLayout="row" fxLayoutGap="18px" fxLayoutAlign="start center">
-              <ng-container *ngIf="fixedLocations.length > 0">
-                <div fxFlex="0 1 calc(40% - 18px)" *ngIf="editedItemCount > 0">
-                  <div class="input-field-info-text">
-                    {{'location.fixedLocationNotAllowed' | translation}}
-                  </div>
-                </div>
-                <div fxFlex="0 1 calc(40% - 18px)" *ngIf="editedItemCount === 0">
-                  <mat-form-field class="input-full-width">
-                    <mat-select class="input-full-width"
-                                formControlName="fixedLocations"
-                                multiple
-                                [placeholder]="'location.fixedLocations' | translation">
-                      <mat-select-trigger>
-                        <partial-list-display [items]="fixedLocationInfos" [show]="2"></partial-list-display>
-                      </mat-select-trigger>
-                      <mat-option *ngFor="let fixedLocation of fixedLocations" [value]="fixedLocation.id">
-                        {{fixedLocation.name}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              </ng-container>
-              <div fxFlex="0 1 calc(40% - 18px)" *ngIf="drawingAllowed">
-                <geometry-select
-                  [matchingApplications]="matchingApplications$ | async"
-                  (searchChange)="applicationSearchChange($event)"
-                  (selectedChange)="geometrySelected($event)">
-                </geometry-select>
-              </div>
-              <div fxFlex="0 1 calc(20% - 18px)" *ngIf="drawingAllowed">
-                <button type="button" mat-raised-button color="primary"
-                        [matMenuTriggerFor]="userAreaMenu"
-                        [disabled]="(userAreaCount$ | async) === 0">
-                  {{'location.button.ownAreas' | translation}} ({{userAreaCount$ | async}})
-                </button>
               </div>
             </div>
             <div fxLayout="row" fxLayoutGap="18px">
@@ -177,7 +184,7 @@
         </allu-card>
       </div>
     </div>
-    <div fxLayout="row">
+    <div fxLayout="row" *ngIf="showMap">
       <div fxFlex>
         <allu-card>
           <mat-card-title>{{'common.saving' | translation}}</mat-card-title>
@@ -207,6 +214,6 @@
       [loading]="userAreasLoading$ | async"
       [userAreas]="userAreas$ | async"
       (areasSelected)="userAreasSelected($event)"
-      ></user-areas>
+    ></user-areas>
   </div>
 </mat-menu>

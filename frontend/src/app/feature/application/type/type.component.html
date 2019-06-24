@@ -12,7 +12,7 @@
       <mat-card-content>
         <form [formGroup]="form">
           <div fxLayout="row wrap" fxLayoutGap="18px" fxLayoutAlign="start center" class="inner-row">
-            <div fxFlex="0 1 calc(20% - 18px)" class="type-select">
+            <div fxFlex="0 1 calc(50% - 18px)" class="type-select">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="type" class="input-full-width" required
                             [placeholder]="'application.type.titleLong' | translation">
@@ -22,7 +22,26 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div fxFlex="0 1 calc(20% - 18px)" class="type-select" *ngIf="multipleKinds">
+            <div fxFlex="0 1 calc(50% - 18px)">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" required
+                       formControlName="receivedTime"
+                       [placeholder]="'application.receivedTime' | translation"
+                       [matDatepicker]="receivedTimePicker"
+                       [max]="today"/>
+                <mat-datepicker-toggle matSuffix
+                                       [for]="receivedTimePicker"
+                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #receivedTimePicker></mat-datepicker>
+                <mat-error *ngIf="form.get('receivedTime').hasError('required')">
+                  {{'application.field.receivedTimeMissing' | translation}}
+                </mat-error>
+                <mat-error *ngIf="form.get('receivedTime').hasError('inTheFuture')">
+                  {{'application.field.receivedTimeInFuture' | translation}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div fxFlex="0 1 calc(50% - 18px)" class="type-select" *ngIf="multipleKinds">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="kinds" multiple required
                             class="input-full-width"
@@ -36,7 +55,7 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <div fxFlex="0 1 calc(20% - 18px)" class="type-select" *ngIf="!multipleKinds">
+            <div fxFlex="0 1 calc(50% - 18px)" class="type-select" *ngIf="!multipleKinds">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="kinds" required
                             class="input-full-width"
@@ -50,7 +69,7 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <div fxFlex="0 1 calc(20% - 18px)" class="type-select" *ngIf="showSpecifierSelection()">
+            <div fxFlex="0 1 calc(50% - 18px)" class="type-select" *ngIf="showSpecifierSelection()">
               <mat-form-field class="input-full-width">
                 <mat-select formControlName="specifiers" multiple
                             [placeholder]="'application.specifier.placeholder' | translation"
@@ -63,25 +82,6 @@
                     </mat-option>
                   </mat-optgroup>
                 </mat-select>
-              </mat-form-field>
-            </div>
-            <div fxFlex="1 1 calc(20% - 18px)">
-              <mat-form-field>
-                <input matInput type="text" required
-                       formControlName="receivedTime"
-                       [placeholder]="'application.receivedTime' | translation"
-                       [matDatepicker]="receivedTimePicker"
-                       [max]="today"/>
-                <mat-datepicker-toggle matSuffix
-                       [for]="receivedTimePicker"
-                       [disabled]="readonly"></mat-datepicker-toggle>
-                <mat-datepicker #receivedTimePicker></mat-datepicker>
-                <mat-error *ngIf="form.get('receivedTime').hasError('required')">
-                  {{'application.field.receivedTimeMissing' | translation}}
-                </mat-error>
-                <mat-error *ngIf="form.get('receivedTime').hasError('inTheFuture')">
-                  {{'application.field.receivedTimeInFuture' | translation}}
-                </mat-error>
               </mat-form-field>
             </div>
             <div fxFlex *ngIf="showDraftSelection">

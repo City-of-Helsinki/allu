@@ -35,7 +35,7 @@ import {UserAreasComponent} from '@feature/application/location/user-areas/user-
     LocationComponent,
     StoredLocationsComponent,
     GeometrySelectComponent,
-    UserAreasComponent
+    UserAreasComponent,
   ],
   providers: [
     reducersProvider

@@ -1164,6 +1164,7 @@ export const translations = {
     geometry: 'Alue',
     searchAndAddGeometry: 'Etsi ja lisää geometrioita hakemukselta',
     noUserAreas: 'Ei käyttäjän alueita',
+    existingAreas: 'Valmiit sijainnit',
     error: {
       fetchFixedLocations: 'Vakiosijaintien hakeminen epäonnistui',
       fetchFixedLocationAreas: 'Vakiosijaintien hakeminen epäonnistui',
