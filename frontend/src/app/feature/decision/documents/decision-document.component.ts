@@ -8,6 +8,7 @@ import {Load} from '@feature/decision/actions/decision-actions';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromSupervision from '@feature/application/supervision/reducers';
 import * as fromDecision from '@feature/decision/reducers';
+import * as fromInvoicing from '@feature/application/invoicing/reducers';
 import {ActivatedRoute} from '@angular/router';
 import {ApplicationType} from '@model/application/type/application-type';
 import {ApplicationStatus} from '@model/application/application-status';
@@ -30,6 +31,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   showDecisionActions$: Observable<boolean>;
   showContractActions$: Observable<boolean>;
   approvedOperationalCondition$: Observable<boolean>;
+  hasInvoicing$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
 
@@ -47,6 +49,10 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
     );
     this.approvedOperationalCondition$ = this.store.pipe(
       select(fromSupervision.hasTask(SupervisionTaskType.OPERATIONAL_CONDITION, SupervisionTaskStatusType.APPROVED))
+    );
+    this.hasInvoicing$ = this.store.pipe(
+      select(fromInvoicing.getChargeBasisEntryTotal),
+      map(total => total > 0)
     );
   }
 

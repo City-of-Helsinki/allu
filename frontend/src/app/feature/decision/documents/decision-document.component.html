@@ -9,9 +9,11 @@
     pdfViewFooter
     [application]="application$ | async"
     [approvedOperationalCondition]="approvedOperationalCondition$ | async"
+    [hasInvoicing]="hasInvoicing$ | async"
     (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
 
   <contract-actions
     *ngIf="showContractActions$ | async"
+    [hasInvoicing]="hasInvoicing$ | async"
     pdfViewFooter></contract-actions>
 </div>

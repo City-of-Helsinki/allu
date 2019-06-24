@@ -1612,7 +1612,8 @@ export const translations = {
         update: 'Laskutuksen jaksotuksen muuttaminen epäonnistui',
         remove: 'Laskutuksen jaksotuksen poistaminen epäonnistui'
       }
-    }
+    },
+    requiredInvoicingInfoMissing: 'Hakemuksen laskutustiedot ovat puutteelliset'
   },
   invoice: {
     invoiced: 'Laskutettu',

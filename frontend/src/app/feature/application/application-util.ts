@@ -11,6 +11,6 @@ export class ApplicationUtil {
   }
 }
 
-export function validForDecision(app: Application): boolean {
-  return NumberUtil.isDefined(app.invoiceRecipientId) || app.notBillable;
+export function validForDecision(app: Application, hasInvoicing: boolean): boolean {
+  return app.notBillable || (NumberUtil.isDefined(app.invoiceRecipientId) && hasInvoicing);
 }

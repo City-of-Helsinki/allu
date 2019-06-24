@@ -20,7 +20,6 @@ import * as tagActions from '@feature/application/actions/application-tag-action
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {catchError, filter, map, switchMap, tap} from 'rxjs/internal/operators';
 import {ApplicationType, automaticDecisionMaking, requiresContract} from '@model/application/type/application-type';
-import {NumberUtil} from '@util/number.util';
 import {validForDecision} from '@feature/application/application-util';
 
 const RESEND_ALLOWED = [
@@ -37,6 +36,7 @@ const RESEND_ALLOWED = [
 export class DecisionActionsComponent implements OnInit, OnChanges {
   @Input() application: Application;
   @Input() approvedOperationalCondition = false;
+  @Input() hasInvoicing = false;
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
   showProposal = false;
@@ -67,7 +67,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
     this.showDecision = ApplicationStatus.DECISIONMAKING === status;
     this.showResend = RESEND_ALLOWED.indexOf(status) >= 0;
     this.showToOperationalCondition = this.approvedOperationalCondition && this.application.targetState === ApplicationStatus.DECISION;
-    this.isValidForDecision = validForDecision(this.application);
+    this.isValidForDecision = validForDecision(this.application, this.hasInvoicing);
     this.type = this.application.type;
   }
 

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Store} from '@ngrx/store';
@@ -8,9 +8,7 @@ import {CONTRACT_APPROVAL_MODAL_CONFIG, ContractApprovalModalComponent} from '@f
 import {Observable, Subject} from 'rxjs/index';
 import {filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Application} from '@model/application/application';
-import {NumberUtil} from '@util/number.util';
 import {validForDecision} from '@feature/application/application-util';
-import {ApplicationType} from '@model/application/type/application-type';
 import {findTranslation} from '@util/translations';
 import {ApplicationStatus} from '@model/application/application-status';
 
@@ -20,6 +18,8 @@ import {ApplicationStatus} from '@model/application/application-status';
   styleUrls: ['./contract-actions.component.scss']
 })
 export class ContractActionsComponent implements OnInit, OnDestroy {
+
+  @Input() hasInvoicing = false;
 
   isFromExternalSystem$: Observable<boolean>;
   isValidForDecision: boolean;
@@ -36,7 +36,7 @@ export class ContractActionsComponent implements OnInit, OnDestroy {
     this.store.select(fromApplication.getCurrentApplication).pipe(
       takeUntil(this.destroy)
     ).subscribe(app => {
-      this.isValidForDecision = validForDecision(app);
+      this.isValidForDecision = validForDecision(app, this.hasInvoicing);
       this.isWaitingForContract = ApplicationStatus.WAITING_CONTRACT_APPROVAL === app.status;
     });
   }
