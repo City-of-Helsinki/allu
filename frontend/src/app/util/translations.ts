@@ -503,7 +503,7 @@ export const translations = {
       handleInformationRequestResponse: 'Käsittele täydennyspyyntö',
       toDecisionMaking: 'Ehdota päätettäväksi',
       basicInfo: 'Jatka perustietoihin',
-      toTermination: "Irtisano hakemus"
+      toTermination: 'Irtisano hakemus'
     },
     confirmCancel: {
       title: 'Haluatko varmasti perua hakemuksen?',

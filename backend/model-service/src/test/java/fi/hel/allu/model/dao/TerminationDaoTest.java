@@ -35,11 +35,13 @@ public class TerminationDaoTest {
   TestCommon testCommon;
 
   private Integer applicationId;
+  private Integer userId;
 
   @Before
   public void setup() throws Exception {
     testCommon.deleteAllData();
     applicationId = testCommon.insertApplication("Testihakemus", "Käsittelijä");
+    userId = testCommon.insertUser("testuser").getId();
   }
 
   @Test
@@ -160,6 +162,7 @@ public class TerminationDaoTest {
     TerminationInfo terminationInfo = new TerminationInfo();
     terminationInfo.setTerminationTime(terminationTime);
     terminationInfo.setReason(reason);
+    terminationInfo.setTerminator(userId);
     return terminationInfo;
   }
 }
