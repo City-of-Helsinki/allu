@@ -8,10 +8,8 @@
         <mat-form-field class="input-full-width">
           <input matInput type="text" formControlName="terminationTime" required
                  [placeholder]="'decision.termination.field.terminationTime' | translation"
-                 [matDatepicker]="terminationTimePicker"
-                 [max]="maxEventStartTime"/>
-          <mat-datepicker-toggle matSuffix [for]="terminationTimePicker"
-                                 [disabled]="readonly"></mat-datepicker-toggle>
+                 [matDatepicker]="terminationTimePicker"/>
+          <mat-datepicker-toggle matSuffix [for]="terminationTimePicker"></mat-datepicker-toggle>
           <mat-datepicker #terminationTimePicker></mat-datepicker>
           <mat-hint>
             <field-error [form]="terminationForm" field="terminationTime" hasError="required">
