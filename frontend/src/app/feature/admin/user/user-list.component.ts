@@ -4,8 +4,7 @@ import {User} from '@model/user/user';
 import {UserService} from '@service/user/user-service';
 import * as fromRoot from '@feature/allu/reducers';
 import {Store} from '@ngrx/store';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {formatDate} from '@angular/common';
+import {MatPaginator, MatSort} from '@angular/material';
 import {findTranslation, translateArray} from '@util/translations';
 import {map, withLatestFrom} from 'rxjs/operators';
 import {flattenToString, StringUtil} from '@util/string.util';
@@ -50,7 +49,7 @@ export class UserListComponent implements OnInit {
 
     this.dataSource.filterPredicate = (user: UserElement, filter: string) => {
       const filterValues = filter.trim().toLowerCase().split(' ');
-      const flatUser = flattenToString(user);
+      const flatUser = flattenToString(user, this.localeId);
       return filterValues.reduce((matches, cur) => matches && (StringUtil.isEmpty(cur) || flatUser.includes(cur)), true);
     };
   }
@@ -72,7 +71,7 @@ export class UserListComponent implements OnInit {
       id: user.id,
       userName: user.userName,
       realName: user.realName,
-      lastLogin: user.lastLogin ? formatDate(user.lastLogin, 'short', this.localeId) : undefined,
+      lastLogin: user.lastLogin,
       isActive: findTranslation(['common.boolean', user.isActive.toString()]),
       roles: translateArray('user.role', user.assignedRoles),
       applicationTypes: translateArray('application.type', user.allowedApplicationTypes),
@@ -87,7 +86,7 @@ export interface UserElement {
   id: number;
   userName: string;
   realName: string;
-  lastLogin: string;
+  lastLogin: Date;
   isActive: string;
   roles: string[];
   applicationTypes: string[];

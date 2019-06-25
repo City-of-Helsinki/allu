@@ -27,7 +27,7 @@
 
           <ng-container matColumnDef="lastLogin">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-cell-2">{{'user.lastLogin' | translation}}</mat-header-cell>
-            <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.lastLogin}}</mat-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell-2">{{row.lastLogin | date:'short'}}</mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="isActive">

@@ -1,6 +1,8 @@
 /**
  * Helpers for string handling and conversions
  */
+import {formatDate} from '@angular/common';
+
 export class StringUtil {
   public static filterNumbers(stringArray: string[]): number[] {
     return stringArray
@@ -41,11 +43,13 @@ export class StringUtil {
   }
 }
 
-export function flattenToString(obj: any): string {
+export function flattenToString(obj: any, localeId?: string): string {
   let returnVal = '';
 
   Object.values(obj).forEach((val) => {
-    if (typeof val !== 'object') {
+    if (val instanceof Date) {
+      returnVal = returnVal + ' ' + formatDate(val, 'short', localeId);
+    } else if (typeof val !== 'object') {
       returnVal = returnVal + ' ' + val;
     } else if (val !== null) {
       returnVal = returnVal + ' ' + flattenToString(val);

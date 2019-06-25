@@ -16,9 +16,9 @@ import * as CityDistrictActions from '@feature/allu/actions/city-district-action
 import {CityDistrict} from '@model/common/city-district';
 
 const users: User[] = [
-  new User(2, 'user2', 'realnameSame', 'email', 'phone', 'title', false),
-  new User(3, 'user3', 'realnameSame', 'email', 'phone', 'title', true),
-  new User(1, 'user1', 'realnameOther', 'email', 'phone', 'title', true)
+  new User(2, 'user2', 'realnameSame', 'email', 'phone', 'title', false, new Date(2019, 1, 1)),
+  new User(3, 'user3', 'realnameSame', 'email', 'phone', 'title', true, new Date(2018, 2, 2)),
+  new User(1, 'user1', 'realnameOther', 'email', 'phone', 'title', true, new Date(2018, 3, 3))
 ];
 
 describe('UserListComponent', () => {
@@ -80,6 +80,22 @@ describe('UserListComponent', () => {
     usernameHeader.click();
     const firstRowAfterSort = de.queryAll(By.css('.mat-row'))[0];
     expect(firstRowAfterSort.query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
+  });
+
+  it('should sort by date', () => {
+    const lastLoginHeader = de.query(By.css('.mat-column-lastLogin')).nativeElement;
+
+    lastLoginHeader.click();
+    const rowAscending = de.queryAll(By.css('.mat-row'));
+    expect(rowAscending[0].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[1].userName);
+    expect(rowAscending[1].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
+    expect(rowAscending[2].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[0].userName);
+
+    lastLoginHeader.click();
+    const rowsDescending = de.queryAll(By.css('.mat-row'));
+    expect(rowsDescending[0].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[0].userName);
+    expect(rowsDescending[1].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[2].userName);
+    expect(rowsDescending[2].query(By.css('.mat-column-userName')).nativeElement.textContent).toEqual(users[1].userName);
   });
 
   it('should filter users by given filter', () => {
