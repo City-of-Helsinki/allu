@@ -30,6 +30,7 @@ import {StoreModule} from '@ngrx/store';
 import {UserService} from '@service/user/user-service';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ShortTermRental} from '@app/model/application/short-term-rental/short-term-rental';
+import {TerminationService} from '@feature/decision/termination/termination-service';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -41,6 +42,9 @@ class MatDialogMock {
   open(componentOrTemplateRef: any, config?: any): any {
     return undefined;
   }
+}
+
+class TerminationServiceMock {
 }
 
 @Component({
@@ -91,6 +95,7 @@ describe('ApplicationActionsComponent', () => {
         {provide: MatDialog, useClass: MatDialogMock},
         {provide: UserService, useClass: UserServiceMock},
         {provide: NotificationService, useClass: NotificationServiceMock},
+        {provide: TerminationService, useClass: TerminationServiceMock},
         InformationRequestModalEvents
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
