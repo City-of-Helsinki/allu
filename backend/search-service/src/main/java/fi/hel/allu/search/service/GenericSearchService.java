@@ -382,6 +382,13 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     return shouldBuilder;
   }
 
+  protected BoolQueryBuilder must(QueryBuilder left, QueryBuilder right) {
+    BoolQueryBuilder mustBuilder = QueryBuilders.boolQuery();
+    mustBuilder.must(left);
+    mustBuilder.must(right);
+    return mustBuilder;
+  }
+
   public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {
     return findByField(queryParameters, pageRequest, false);
   }
