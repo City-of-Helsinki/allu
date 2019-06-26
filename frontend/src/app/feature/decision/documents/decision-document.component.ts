@@ -30,6 +30,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   processing$: Observable<boolean>;
   showDecisionActions$: Observable<boolean>;
   showContractActions$: Observable<boolean>;
+  showTerminationActions$: Observable<boolean>;
   approvedOperationalCondition$: Observable<boolean>;
   hasInvoicing$: Observable<boolean>;
 
@@ -84,6 +85,13 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
         break;
       }
 
+      case DecisionTab.TERMINATION: {
+        this.pdf$ = this.store.select(fromDecision.getTerminationPdf);
+        this.loading$ = this.store.select(fromDecision.getTerminationLoading);
+        this.showTerminationActions$ = this.application$.pipe(map(app => this.showTerminationActions(app)));
+        break;
+      }
+
       default: {
         this.pdf$ = this.store.select(fromDecision.getDecisionPdf);
         this.loading$ = this.store.select(fromDecision.getDecisionLoading);
@@ -122,4 +130,9 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
       app.status);
     return showByType && showByStatus;
   }
+
+  private showTerminationActions(app: Application): boolean {
+    return true; // TODO the actions are not implemented yet
+  }
+
 }

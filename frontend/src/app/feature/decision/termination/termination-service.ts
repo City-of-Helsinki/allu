@@ -8,6 +8,7 @@ import {BackendTerminationInfo, TerminationInfoMapper} from '@feature/decision/t
 import {catchError, map} from 'rxjs/operators';
 import {findTranslation} from '@util/translations';
 import {NumberUtil} from '@util/number.util';
+import {TerminationDocument} from '@feature/decision/termination/TerminationDocument';
 
 const APPLICATION_URL = '/api/applications';
 
@@ -17,9 +18,10 @@ export class TerminationService {
   constructor(private http: HttpClient, private errorHandler: ErrorHandler) {
   }
 
-  getTermination(applicationId: number): Observable<Blob> {
+  getTermination(applicationId: number): Observable<TerminationDocument> {
     const url = `${APPLICATION_URL}/${applicationId}/termination`;
     return this.http.get(url, {responseType: 'blob'}).pipe(
+      map(pdf => new TerminationDocument(applicationId, pdf)),
       catchError(error => this.errorHandler.handle(error, findTranslation('termination.error.fetchDocument')))
     );
   }

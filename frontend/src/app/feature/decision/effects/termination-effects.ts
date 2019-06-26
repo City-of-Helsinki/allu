@@ -8,12 +8,15 @@ import {from, Observable} from 'rxjs/index';
 import {
   TerminationActionType,
   Terminate, TerminationDraftSuccess, TerminationDraftFailed,
-  MoveTerminationToDecision, MoveTerminationToDecisionSuccess, MoveTerminationToDecisionFailed, LoadInfoSuccess, LoadInfoFailed
+  MoveTerminationToDecision, MoveTerminationToDecisionSuccess, MoveTerminationToDecisionFailed, LoadInfoSuccess,
+  LoadInfoFailed, LoadDocument, LoadDocumentFailed, LoadDocumentSuccess
 } from '@feature/decision/actions/termination-actions';
 import {catchError, filter, map, switchMap, withLatestFrom, tap} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {Router} from '@angular/router';
+import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
+import {DecisionTab} from '@feature/decision/documents/decision-tab';
 
 @Injectable()
 export class TerminationEffects {
@@ -36,6 +39,34 @@ export class TerminationEffects {
           new NotifyFailure(error)
         ]))
       );
+    })
+  );
+
+  @Effect()
+  loadTerminationDocument: Observable<Action> = this.actions.pipe(
+    ofType<LoadDocument>(TerminationActionType.LoadDocument),
+    withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
+    filter(([action, application]) => NumberUtil.isExisting(application)),
+    switchMap(([action, application]) => this.terminationService.getTermination(application.id).pipe(
+      map(response => new LoadDocumentSuccess(response)),
+      catchError(error => from([
+        new LoadDocumentFailed(error),
+        new NotifyFailure(error)
+      ]))
+    ))
+  );
+
+  @Effect()
+  terminationTabOpen: Observable<Action> = this.actions.pipe(
+    ofType<SetTab>(DocumentActionType.SetTab),
+    filter(action => action.payload === DecisionTab.TERMINATION),
+    withLatestFrom(this.store.select(fromDecision.getTerminationDocument)),
+    map(([action, termination]) => {
+      if (termination) {
+        return new LoadDocumentSuccess(termination);
+      } else {
+        return new LoadDocument();
+      }
     })
   );
 
@@ -68,8 +99,7 @@ export class TerminationEffects {
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => this.terminationService.moveTerminationToDecision(application.id).pipe(
-      // TODO move to termination tab instead of decision tab after it's implemented
-      tap( applicationId => this.router.navigate(['/applications', applicationId, 'summary', 'decision'])),
+      tap( applicationId => this.router.navigate(['/applications', applicationId, 'summary', 'decision', 'termination'])),
       map( () => new MoveTerminationToDecisionSuccess()),
       catchError(error => from([
         new MoveTerminationToDecisionFailed(error),

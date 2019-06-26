@@ -957,7 +957,8 @@ export const translations = {
       DECISION: 'Päätös',
       CONTRACT: 'Sopimus',
       OPERATIONAL_CONDITION: 'Toiminnallinen kunto',
-      WORK_FINISHED: 'Työ valmis'
+      WORK_FINISHED: 'Työ valmis',
+      TERMINATION: 'Irtisanominen'
     },
     field: {
       handlerMissing: 'Käsittelijä puuttuuu',

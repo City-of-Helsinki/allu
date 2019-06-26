@@ -9,6 +9,7 @@ import {Decision} from '@model/decision/Decision';
 import {Contract} from '@model/contract/contract';
 import {ApprovalDocument, ApprovalDocumentType} from '@model/decision/approval-document';
 import {InjectionToken} from '@angular/core';
+import {TerminationDocument} from '@feature/decision/termination/TerminationDocument';
 
 export interface DecisionState {
   decision: fromDecision.State;
@@ -93,6 +94,16 @@ export const getTerminationLoading = createSelector(
 export const getTermination = createSelector(
   getTerminationEntitiesState,
   fromTermination.getTermination
+);
+
+export const getTerminationDocument = createSelector(
+  getTerminationEntitiesState,
+  fromTermination.getTerminationDocument
+);
+
+export const getTerminationPdf = createSelector(
+  getTerminationDocument,
+  (termination: TerminationDocument) => termination ? termination.pdf : undefined
 );
 
 export const getDocumentEntitiesState = createSelector(
