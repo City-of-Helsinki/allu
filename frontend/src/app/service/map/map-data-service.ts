@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
 import {findTranslation} from '../../util/translations';
-import {ApplicationLocationQueryMapper} from '../mapper/application-location-query-mapper';
 import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
-import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {Observable, of} from 'rxjs';
 import {ErrorHandler} from '../error/error-handler.service';
 import {MapUtil} from './map.util';
@@ -51,6 +49,7 @@ export class MapDataService {
     this.groupedStatuses.set(ApplicationStatusGroup.DECISION, [
       ApplicationStatus.DECISION,
       ApplicationStatus.OPERATIONAL_CONDITION,
+      ApplicationStatus.TERMINATED,
       ApplicationStatus.NOTE
     ]);
 

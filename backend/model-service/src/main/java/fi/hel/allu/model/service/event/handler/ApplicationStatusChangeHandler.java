@@ -75,6 +75,9 @@ public class ApplicationStatusChangeHandler {
       case OPERATIONAL_CONDITION:
         handleOperationalConditionStatus(statusChangeEvent.getApplication());
         break;
+      case TERMINATED:
+        handleTerminatedStatus(statusChangeEvent.getApplication(), statusChangeEvent.getUserId());
+        break;
       case FINISHED:
         handleFinishedStatus(statusChangeEvent.getApplication());
         break;
@@ -100,7 +103,6 @@ public class ApplicationStatusChangeHandler {
     clearTargetState(application);
     finishInvoicing(application);
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
-    createSupervisionTaskForTerminated(application, userId);
   }
 
   protected void clearTargetState(Application application) {
@@ -136,6 +138,12 @@ public class ApplicationStatusChangeHandler {
   }
 
   protected void handleOperationalConditionStatus(Application application) {
+  }
+
+  protected void handleTerminatedStatus(Application application, Integer userId) {
+    clearTargetState(application);
+    clearOwner(application);
+    createSupervisionTaskForTerminated(application, userId);
   }
 
   protected void handleDecisionMakingStatus(Application application) {

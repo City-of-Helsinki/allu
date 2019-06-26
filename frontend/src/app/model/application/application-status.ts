@@ -17,11 +17,11 @@ export enum ApplicationStatus {
   DECISION = 'DECISION',
   REJECTED = 'REJECTED',
   OPERATIONAL_CONDITION = 'OPERATIONAL_CONDITION',
+  TERMINATED = 'TERMINATED',
   FINISHED = 'FINISHED',
   CANCELLED = 'CANCELLED',
   REPLACED = 'REPLACED',
-  ARCHIVED = 'ARCHIVED',
-  TERMINATED = 'TERMINATED'
+  ARCHIVED = 'ARCHIVED'
 }
 
 export const statusNames = Object.keys(ApplicationStatus);
@@ -100,6 +100,7 @@ export const searchable = [
   ApplicationStatus.DECISION,
   ApplicationStatus.REJECTED,
   ApplicationStatus.OPERATIONAL_CONDITION,
+  ApplicationStatus.TERMINATED,
   ApplicationStatus.FINISHED,
   ApplicationStatus.CANCELLED,
   ApplicationStatus.ARCHIVED
@@ -118,6 +119,7 @@ export const workqueue_searchable = [
   ApplicationStatus.DECISION,
   ApplicationStatus.REJECTED,
   ApplicationStatus.OPERATIONAL_CONDITION,
+  ApplicationStatus.TERMINATED,
   ApplicationStatus.FINISHED,
   ApplicationStatus.CANCELLED
 ];
@@ -127,6 +129,7 @@ export const decided = [
   ApplicationStatus.REJECTED,
   ApplicationStatus.OPERATIONAL_CONDITION,
   ApplicationStatus.FINISHED,
+  ApplicationStatus.TERMINATED,
   ApplicationStatus.ARCHIVED
 ];
 

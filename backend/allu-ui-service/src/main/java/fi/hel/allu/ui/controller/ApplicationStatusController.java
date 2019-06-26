@@ -2,6 +2,7 @@ package fi.hel.allu.ui.controller;
 
 import java.io.IOException;
 
+import fi.hel.allu.servicecore.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +14,6 @@ import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
-import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
-import fi.hel.allu.servicecore.service.ApprovalDocumentService;
-import fi.hel.allu.servicecore.service.ChargeBasisService;
-import fi.hel.allu.servicecore.service.CommentService;
-import fi.hel.allu.servicecore.service.ContractService;
-import fi.hel.allu.servicecore.service.DecisionService;
 import fi.hel.allu.ui.security.DecisionSecurityService;
 
 import java.util.List;
@@ -34,6 +29,7 @@ public class ApplicationStatusController {
   private final ApprovalDocumentService approvalDocumentService;
   private final ChargeBasisService chargeBasisService;
   private final ApplicationEventPublisher applicationEventPublisher;
+  private final TerminationService terminationService;
 
   @Autowired
   public ApplicationStatusController(
@@ -44,7 +40,8 @@ public class ApplicationStatusController {
       ContractService contractService,
       ApprovalDocumentService approvalDocumentService,
       ChargeBasisService chargeBasisService,
-      ApplicationEventPublisher applicationEventPublisher) {
+      ApplicationEventPublisher applicationEventPublisher,
+      TerminationService terminationService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.commentService = commentService;
     this.decisionSecurityService = decisionSecurityService;
@@ -53,6 +50,7 @@ public class ApplicationStatusController {
     this.approvalDocumentService = approvalDocumentService;
     this.chargeBasisService = chargeBasisService;
     this.applicationEventPublisher = applicationEventPublisher;
+    this.terminationService = terminationService;
   }
 
   @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
@@ -152,4 +150,11 @@ public class ApplicationStatusController {
     return ResponseEntity.ok(applicationServiceComposer.returnToEditing(id, info));
   }
 
+  @RequestMapping(value = "/{id}/status/terminated", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_DECISION')")
+  public ResponseEntity<ApplicationJson> terminate(@PathVariable int id) {
+    ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.TERMINATED);
+    terminationService.generateTermination(id, applicationJson);
+    return ResponseEntity.ok(applicationJson);
+  }
 }

@@ -1,14 +1,14 @@
 package fi.hel.allu.model.service.event.handler;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.dao.*;
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.PlacementContract;
+import fi.hel.allu.model.service.*;
+import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,14 +17,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.util.TimeUtil;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.PlacementContract;
-import fi.hel.allu.model.service.*;
-import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -95,15 +92,6 @@ public class PlacementContractStatusChangeHandlerTest {
     verify(applicationService, times(1)).update(eq(application.getId()), applicationCaptor.capture(), eq(USER_ID));
     PlacementContract pc = (PlacementContract)applicationCaptor.getValue().getExtension();
     assertEquals(PLACEMENT_CONTRACT_SECTION_NR, pc.getSectionNumber());
-  }
-
-  @Test
-  public void onArchiveShouldCreateSupervisionWhenPendingTermination() {
-    TerminationInfo info = new TerminationInfo();
-    info.setTerminationTime(ZonedDateTime.now());
-    when(terminationDao.getTerminationInfo(application.getId())).thenReturn(info);
-    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.ARCHIVED, USER_ID));
-    verify(supervisionTaskService, times(1)).insert(any(SupervisionTask.class));
   }
 
   private void createApplicationWithLocation() {

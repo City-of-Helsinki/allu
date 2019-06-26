@@ -48,6 +48,7 @@ export class ApplicationService {
     this.statusToUrl.set(ApplicationStatus.RETURNED_TO_PREPARATION, 'toPreparation');
     this.statusToUrl.set(ApplicationStatus.OPERATIONAL_CONDITION, 'operational_condition');
     this.statusToUrl.set(ApplicationStatus.FINISHED, 'finished');
+    this.statusToUrl.set(ApplicationStatus.TERMINATED, 'terminated');
   }
 
   /**

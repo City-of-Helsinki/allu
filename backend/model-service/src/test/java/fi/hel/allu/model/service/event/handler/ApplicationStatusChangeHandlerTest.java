@@ -125,11 +125,11 @@ public class ApplicationStatusChangeHandlerTest {
   }
 
   @Test
-  public void onDecisionShouldCreateSupervisionWhenPendingTermination() {
+  public void onTerminatedShouldCreateSupervision() {
     TerminationInfo info = new TerminationInfo();
     info.setTerminationTime(ZonedDateTime.now());
     when(terminationDao.getTerminationInfo(application.getId())).thenReturn(info);
-    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.TERMINATED, USER_ID));
     verify(supervisionTaskService, times(1)).insert(any(SupervisionTask.class));
   }
 

@@ -1,17 +1,16 @@
 package fi.hel.allu.model.service.event.handler;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
-import fi.hel.allu.model.dao.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import fi.hel.allu.common.util.TimeUtil;
+import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PlacementContract;
 import fi.hel.allu.model.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
+import java.util.Collections;
 
 @Service
 public class PlacementContractStatusChangeHandler extends ApplicationStatusChangeHandler {
@@ -45,10 +44,5 @@ public class PlacementContractStatusChangeHandler extends ApplicationStatusChang
     location.setEndTime(endTime);
     getLocationService().updateApplicationLocations(application.getId(), Collections.singletonList(location), userId);
 
-  }
-
-  @Override
-  protected void handleArchivedStatus(Application application, Integer userId) {
-    createSupervisionTaskForTerminated(application, userId);
   }
 }
