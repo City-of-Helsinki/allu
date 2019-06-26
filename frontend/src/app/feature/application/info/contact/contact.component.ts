@@ -219,7 +219,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   private searchForAnyCustomer(term: string): Observable<Contact[]> {
-    return this.contactService.search({name: term});
+    return this.contactService.search({name: term, active: true});
   }
 
   private initContacts(): void {

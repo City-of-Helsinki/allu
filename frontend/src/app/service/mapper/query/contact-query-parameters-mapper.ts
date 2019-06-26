@@ -12,6 +12,7 @@ export class ContactQueryParametersMapper {
   private static mapParameters(query: ContactSearchQuery): Array<BackendQueryParameter> {
     const queryParameters: Array<BackendQueryParameter> = [];
     QueryParametersMapper.mapParameter(queryParameters, 'name', QueryParametersMapper.removeExtraWhitespace(query.name));
+    QueryParametersMapper.mapBooleanParameter(queryParameters, 'active', query.active);
     return queryParameters;
   }
 }
