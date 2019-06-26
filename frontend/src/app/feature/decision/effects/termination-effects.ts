@@ -8,7 +8,7 @@ import {from, Observable} from 'rxjs/index';
 import {
   TerminationActionType,
   Terminate, TerminationDraftSuccess, TerminationDraftFailed,
-  MoveTerminationToDecision, MoveTerminationToDecisionSuccess, MoveTerminationToDecisionFailed, LoadSuccess, LoadFailed
+  MoveTerminationToDecision, MoveTerminationToDecisionSuccess, MoveTerminationToDecisionFailed, LoadInfoSuccess, LoadInfoFailed
 } from '@feature/decision/actions/termination-actions';
 import {catchError, filter, map, switchMap, withLatestFrom, tap} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
@@ -24,15 +24,15 @@ export class TerminationEffects {
   }
 
   @Effect()
-  loadDecision: Observable<Action> = this.actions.pipe(
-    ofType<Terminate>(TerminationActionType.Load),
+  loadTerminationInfo: Observable<Action> = this.actions.pipe(
+    ofType<Terminate>(TerminationActionType.LoadInfo),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
     switchMap(([action, application]) => {
       return this.terminationService.getTerminationInfo(application.id).pipe(
-        map((terminationInfo) => new LoadSuccess(terminationInfo)),
+        map((terminationInfo) => new LoadInfoSuccess(terminationInfo)),
         catchError(error => from([
-          new LoadFailed(error),
+          new LoadInfoFailed(error),
           new NotifyFailure(error)
         ]))
       );

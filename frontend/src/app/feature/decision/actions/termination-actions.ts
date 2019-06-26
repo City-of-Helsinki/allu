@@ -4,9 +4,9 @@ import {ErrorInfo} from '@service/error/error-info';
 import {TerminationInfo} from '@feature/decision/termination/termination-info';
 
 export enum TerminationActionType {
-  Load = '[Termination] Load termination',
-  LoadSuccess = '[Termination] Load termination success',
-  LoadFailed = '[Termination] Load termination failed',
+  LoadInfo = '[Termination] Load termination info',
+  LoadInfoSuccess = '[Termination] Load termination info success',
+  LoadInfoFailed = '[Termination] Load termination info failed',
   Terminate = '[Termination] Terminate termination',
   TerminationDraftSuccess = '[Termination] Termination draft success',
   TerminationDraftFailed = '[Termination] Termination draft failed',
@@ -15,18 +15,18 @@ export enum TerminationActionType {
   MoveTerminationToDecisionFailed = '[Termination] Move termination to decision failed'
 }
 
-export class Load implements Action {
-  readonly type = TerminationActionType.Load;
+export class LoadInfo implements Action {
+  readonly type = TerminationActionType.LoadInfo;
   constructor() {}
 }
 
-export class LoadSuccess implements Action {
-  readonly type = TerminationActionType.LoadSuccess;
+export class LoadInfoSuccess implements Action {
+  readonly type = TerminationActionType.LoadInfoSuccess;
   constructor(public payload: TerminationInfo) {}
 }
 
-export class LoadFailed implements ActionWithPayload<ErrorInfo> {
-  readonly type = TerminationActionType.LoadFailed;
+export class LoadInfoFailed implements ActionWithPayload<ErrorInfo> {
+  readonly type = TerminationActionType.LoadInfoFailed;
   constructor(public payload: ErrorInfo) {}
 }
 
@@ -61,9 +61,9 @@ export class MoveTerminationToDecisionFailed implements ActionWithPayload<ErrorI
 }
 
 export type TerminationActions =
-  | Load
-  | LoadSuccess
-  | LoadFailed
+  | LoadInfo
+  | LoadInfoSuccess
+  | LoadInfoFailed
   | Terminate
   | TerminationDraftSuccess
   | TerminationDraftFailed

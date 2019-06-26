@@ -14,14 +14,14 @@ const initialState: State = {
 
 export function reducer(state: State = initialState, action: TerminationActions | ApplicationActions) {
   switch (action.type) {
-    case TerminationActionType.Load: {
+    case TerminationActionType.LoadInfo: {
       return {
         ...state,
         loading: true
       };
     }
 
-    case TerminationActionType.LoadSuccess: {
+    case TerminationActionType.LoadInfoSuccess: {
       return {
         ...state,
         loading: false,
@@ -29,7 +29,7 @@ export function reducer(state: State = initialState, action: TerminationActions 
       };
     }
 
-    case TerminationActionType.LoadFailed: {
+    case TerminationActionType.LoadInfoFailed: {
       return {
         ...state,
         loading: false
