@@ -142,17 +142,13 @@ public class ApplicationServiceComposerTest {
 
   @Test
   public void testReturnToEditingFromFinishedToOperationalCondition() {
-    ChangeHistoryItemJson[] history = {
-      new ChangeHistoryItemJson(user, new ChangeHistoryItemInfoJson(), ChangeType.STATUS_CHANGED,
-          StatusType.OPERATIONAL_CONDITION.name(), ZonedDateTime.now(), null)
-    };
     applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
     applicationWithOwner.setTargetState(StatusType.FINISHED);
     updatedApplication.setStatus(StatusType.OPERATIONAL_CONDITION);
     updatedApplicationJson.setStatus(StatusType.OPERATIONAL_CONDITION);
     Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
     Mockito.when(applicationService.returnToStatus(applicationId, StatusType.OPERATIONAL_CONDITION)).thenReturn(updatedApplication);
-    Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
+    Mockito.when(applicationHistoryService.hasStatusInHistory(applicationId, StatusType.OPERATIONAL_CONDITION)).thenReturn(true);
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
 
     ApplicationJson json = applicationServiceComposer.returnToEditing(applicationId, info);
@@ -168,7 +164,7 @@ public class ApplicationServiceComposerTest {
     updatedApplicationJson.setStatus(StatusType.DECISION);
     Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
     Mockito.when(applicationService.returnToStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
-    Mockito.when(applicationHistoryService.getStatusChanges(applicationId)).thenReturn(Arrays.asList(history));
+    Mockito.when(applicationHistoryService.hasStatusInHistory(applicationId, StatusType.OPERATIONAL_CONDITION)).thenReturn(false);
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
 
     ApplicationJson json = applicationServiceComposer.returnToEditing(applicationId, info);
@@ -191,4 +187,33 @@ public class ApplicationServiceComposerTest {
     assertEquals(StatusType.DECISION, json.getStatus());
   }
 
+  @Test
+  public void testShouldReturnToDecisionWhenNoArchivedInHistory() {
+    applicationWithOwner.setStatus(StatusType.DECISIONMAKING);
+    applicationWithOwner.setTargetState(StatusType.TERMINATED);
+    updatedApplication.setStatus(StatusType.DECISION);
+    updatedApplicationJson.setStatus(StatusType.DECISION);
+    Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
+    Mockito.when(applicationService.returnToStatus(applicationId, StatusType.DECISION)).thenReturn(updatedApplication);
+    Mockito.when(applicationHistoryService.hasStatusInHistory(applicationId, StatusType.ARCHIVED)).thenReturn(false);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
+
+    applicationServiceComposer.returnToEditing(applicationId, info);
+    Mockito.verify(applicationService, Mockito.times(1)).returnToStatus(applicationId, StatusType.DECISION);
+  }
+
+  @Test
+  public void testShouldReturnToArchivedWhenArchivedInHistory() {
+    applicationWithOwner.setStatus(StatusType.ARCHIVED);
+    applicationWithOwner.setTargetState(StatusType.TERMINATED);
+    updatedApplication.setStatus(StatusType.ARCHIVED);
+    updatedApplicationJson.setStatus(StatusType.ARCHIVED);
+    Mockito.when(applicationService.findApplicationById(applicationId)).thenReturn(applicationWithOwner);
+    Mockito.when(applicationService.returnToStatus(applicationId, StatusType.ARCHIVED)).thenReturn(updatedApplication);
+    Mockito.when(applicationHistoryService.hasStatusInHistory(applicationId, StatusType.ARCHIVED)).thenReturn(true);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applicationWithOwner)).thenReturn(updatedApplicationJson);
+
+    applicationServiceComposer.returnToEditing(applicationId, info);
+    Mockito.verify(applicationService, Mockito.times(1)).returnToStatus(applicationId, StatusType.ARCHIVED);
+  }
 }

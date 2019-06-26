@@ -27,7 +27,7 @@ public class TerminationController {
   }
 
   @RequestMapping(value = "/{id}/termination", method = RequestMethod.POST)
-  public ResponseEntity<Void> storeTerminationDocument(@PathVariable Integer id, @RequestParam("data") MultipartFile file)
+  public ResponseEntity<Void> storeTerminationDocument(@PathVariable Integer id, @RequestParam("file") MultipartFile file)
       throws IOException {
     terminationDao.storeTerminationDocument(id, file.getBytes());
     final HttpHeaders httpHeaders = new HttpHeaders();

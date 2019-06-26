@@ -1,7 +1,9 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.model.dao.TerminationDao;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -25,6 +27,7 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
 
   private ApplicationEventPublisher statusChangeEventPublisher;
   private ApplicationStatusService applicationStatusService;
+  private TerminationDao terminationDao;
   private ApplicationService applicationService;
 
 
@@ -32,8 +35,9 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
     beforeEach(() -> {
       applicationService = Mockito.mock(ApplicationService.class);
       statusChangeEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
+      terminationDao = Mockito.mock(TerminationDao.class);
       applicationStatusService = new ApplicationStatusService(applicationService,
-          Mockito.mock(ApplicationDao.class), statusChangeEventPublisher);
+          Mockito.mock(ApplicationDao.class), terminationDao, statusChangeEventPublisher);
     });
 
     describe("Status change operations", () -> {
@@ -58,6 +62,16 @@ public class ApplicationStatusServiceTest extends SpeccyTestBase {
           assertEquals(app.getId(), captor.getValue().getApplication().getId());
           assertEquals(StatusType.DECISIONMAKING, captor.getValue().getNewStatus());
           assertEquals(app.getOwner(), captor.getValue().getUserId());
+        });
+
+      });
+
+      describe("Return to status", () -> {
+        final Application app = createMockApplication(1, StatusType.DECISIONMAKING, ApplicationType.SHORT_TERM_RENTAL);
+
+        it("Should remove termination info", () -> {
+          applicationStatusService.returnToStatus(app.getId(), StatusType.DECISION);
+          Mockito.verify(terminationDao, Mockito.times(1)).removeTerminationInfo(eq(app.getId()));
         });
 
       });

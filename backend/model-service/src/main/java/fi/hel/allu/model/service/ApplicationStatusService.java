@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.model.dao.TerminationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,16 @@ public class ApplicationStatusService {
 
   private final ApplicationService applicationService;
   private final ApplicationDao applicationDao;
+  private final TerminationDao terminationDao;
   private ApplicationEventPublisher statusChangeEventPublisher;
 
   @Autowired
   public ApplicationStatusService(ApplicationService applicationService,
-      ApplicationDao applicationDao, ApplicationEventPublisher statusChangeEventPublisher) {
+      ApplicationDao applicationDao, TerminationDao terminationDao,
+      ApplicationEventPublisher statusChangeEventPublisher) {
     this.applicationService = applicationService;
     this.applicationDao = applicationDao;
+    this.terminationDao = terminationDao;
     this.statusChangeEventPublisher = statusChangeEventPublisher;
   }
 
@@ -48,7 +52,9 @@ public class ApplicationStatusService {
     return applicationDao.getStatusWithIdentifier(id);
   }
 
+  @Transactional
   public Application returnToStatus(int applicationId, StatusType status) {
+    terminationDao.removeTerminationInfo(applicationId);
     return applicationDao.updateStatus(applicationId, status);
   }
 

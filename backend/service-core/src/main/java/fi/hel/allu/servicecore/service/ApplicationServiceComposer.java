@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import fi.hel.allu.model.domain.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,27 +252,40 @@ public class ApplicationServiceComposer {
 
   public ApplicationJson returnToEditing(int applicationId, StatusChangeInfoJson info) {
     Application application = applicationService.findApplicationById(applicationId);
-    StatusType statusToReturn;
-    switch (application.getTargetState()) {
-      case OPERATIONAL_CONDITION:
-        reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION, info.getComment());
-        statusToReturn = StatusType.DECISION;
-        break;
-      case FINISHED:
-        reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION, info.getComment());
-        final List<ChangeHistoryItemJson> history = applicationHistoryService.getStatusChanges(applicationId);
-        if (history.stream().filter(c -> StatusType.OPERATIONAL_CONDITION.name().equals(c.getChangeSpecifier())).count() > 0) {
-          statusToReturn = StatusType.OPERATIONAL_CONDITION;
-        } else {
-          statusToReturn = StatusType.DECISION;
-        }
-        break;
-      default:
-        statusToReturn = StatusType.RETURNED_TO_PREPARATION;
-    }
+    StatusType statusToReturn = getReturnStatus(applicationId, application.getTargetState());
+    reopenSupervisionTaskByTarget(applicationId, application.getTargetState(), info.getComment());
     application = applicationService.returnToStatus(applicationId, statusToReturn);
     changeOwnerOnStatusChange(application, info);
     return updateSearchServiceOnStatusChange(application, statusToReturn);
+  }
+
+  private StatusType getReturnStatus(int applicationId, StatusType target) {
+    switch (target) {
+      case OPERATIONAL_CONDITION:
+        return StatusType.DECISION;
+      case TERMINATED:
+        if (applicationHistoryService.hasStatusInHistory(applicationId, StatusType.ARCHIVED)) {
+          return StatusType.ARCHIVED;
+        } else {
+          return StatusType.DECISION;
+        }
+      case FINISHED:
+        if (applicationHistoryService.hasStatusInHistory(applicationId, StatusType.OPERATIONAL_CONDITION)) {
+          return StatusType.OPERATIONAL_CONDITION;
+        } else {
+          return StatusType.DECISION;
+        }
+      default:
+        return StatusType.RETURNED_TO_PREPARATION;
+    }
+  }
+
+  private void reopenSupervisionTaskByTarget(int applicationId, StatusType target, String comment) {
+    if (StatusType.OPERATIONAL_CONDITION.equals(target)) {
+      reopenSupervisionTask(applicationId, SupervisionTaskType.OPERATIONAL_CONDITION, comment);
+    } else if (StatusType.FINISHED.equals(target)) {
+      reopenSupervisionTask(applicationId, SupervisionTaskType.FINAL_SUPERVISION, comment);
+    }
   }
 
   private void reopenSupervisionTask(int applicationId, SupervisionTaskType taskType, String comment) {

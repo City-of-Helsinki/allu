@@ -152,7 +152,7 @@ public class ApplicationStatusController {
 
   @RequestMapping(value = "/{id}/status/terminated", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-  public ResponseEntity<ApplicationJson> terminate(@PathVariable int id) {
+  public ResponseEntity<ApplicationJson> changeStatusToTerminated(@PathVariable int id) {
     ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.TERMINATED);
     terminationService.generateTermination(id, applicationJson);
     return ResponseEntity.ok(applicationJson);

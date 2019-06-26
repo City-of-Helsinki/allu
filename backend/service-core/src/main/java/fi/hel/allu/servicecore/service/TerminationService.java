@@ -64,10 +64,12 @@ public class TerminationService {
 
   public byte[] getTermination(int applicationId) {
     ApplicationJson application = applicationServiceComposer.findApplicationById(applicationId);
-    // TODO: Check if application status is terminated or similar -> return final termination document
-    // otherwise return preview
-    return getTerminationPreview(application);
-
+    if (StatusType.TERMINATED.equals(application.getStatus())) {
+      return getFinalTermination(applicationId);
+    } else {
+      // otherwise return preview
+      return getTerminationPreview(application);
+    }
   }
 
   public byte[] getFinalTermination(int applicationId) {

@@ -70,6 +70,13 @@ public class TerminationDao {
   }
 
   @Transactional
+  public void removeTerminationInfo(Integer applicationId) {
+    queryFactory.delete(termination)
+        .where(termination.applicationId.eq(applicationId))
+        .execute();
+  }
+
+  @Transactional
   public void storeTerminationDocument(Integer applicationId, byte[] data) {
     if (getTerminationInfo(applicationId) != null) {
       queryFactory.update(termination)

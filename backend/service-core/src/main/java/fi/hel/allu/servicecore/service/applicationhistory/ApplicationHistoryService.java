@@ -96,6 +96,11 @@ public class ApplicationHistoryService {
           .collect(Collectors.toList());
   }
 
+  public boolean hasStatusInHistory(Integer applicationId, StatusType status) {
+    return getStatusChanges(applicationId).stream()
+        .anyMatch(change -> status.name().equals(change.getChangeSpecifier()));
+  }
+
   public void addInvoiceRecipientChange(Integer applicationId, CustomerJson oldInvoiceRecipient, CustomerJson newInvoiceRecipient) {
     final Integer userId = userService.getCurrentUser().getId();
     final Integer oldCustomerId = oldInvoiceRecipient != null ? oldInvoiceRecipient.getId() : null;
