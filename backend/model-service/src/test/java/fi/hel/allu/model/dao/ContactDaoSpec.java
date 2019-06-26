@@ -92,6 +92,19 @@ public class ContactDaoSpec extends SpeccyTestBase {
             assertContact(contacts.get(0));
             assertPostalAddress(contacts.get(0));
           });
+
+          it("should not find removed contacts", () -> {
+            Contact removedContact = new Contact();
+            removedContact.setCustomerId(customerId);
+            removedContact.setName("removed name");
+            removedContact.setPostalAddress(testPostalAddress);
+            removedContact.setActive(false);
+            contactDao.insert(Arrays.asList(removedContact));
+
+            List<Contact> contacts = contactDao.findByCustomer(insertedContact.getCustomerId());
+            Assert.assertEquals(1, contacts.size());
+            Assert.assertEquals(insertedContact.getId(), contacts.get(0).getId());
+          });
         });
       });
 

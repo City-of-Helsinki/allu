@@ -78,7 +78,9 @@ public class ContactDao {
         .select(contactBean, postalAddressBean)
         .from(contact)
         .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
-        .where(contact.customerId.eq(customerId)).fetch();
+        .where(contact.customerId.eq(customerId)
+            .and(contact.isActive.eq(true))
+        ).fetch();
     List<Contact> contacts = contactPostalAddress.stream()
             .map(cpa -> PostalAddressUtil.mapPostalAddress(cpa).get(0, Contact.class))
             .collect(Collectors.toList());
