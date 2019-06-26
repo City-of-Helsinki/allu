@@ -326,6 +326,8 @@ public class GenericSearchService<T, Q extends QueryParameters> {
   public SearchRequestBuilder buildSearchRequest(Q queryParameters, Pageable pageRequest,
       Boolean matchAny) {
     BoolQueryBuilder qb = QueryBuilders.boolQuery();
+    QueryParameter active = queryParameters.remove("active");
+    handleActive(qb, active);
     addQueryParameters(queryParameters, matchAny, qb);
     BoolQueryBuilder withAdditionalParameters = addAdditionalQueryParameters(qb, queryParameters);
     SearchRequestBuilder srBuilder = prepareSearch(pageRequest, withAdditionalParameters);
@@ -382,11 +384,10 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     return shouldBuilder;
   }
 
-  protected BoolQueryBuilder must(QueryBuilder left, QueryBuilder right) {
-    BoolQueryBuilder mustBuilder = QueryBuilders.boolQuery();
-    mustBuilder.must(left);
-    mustBuilder.must(right);
-    return mustBuilder;
+  protected void handleActive(BoolQueryBuilder qb, QueryParameter active) {
+    Optional.ofNullable(active)
+        .map(a -> QueryBuilders.termQuery(a.getFieldName(), a.getFieldValue()))
+        .ifPresent(activeQuery -> qb.filter(activeQuery));
   }
 
   public Page<Integer> findByField(Q queryParameters, Pageable pageRequest) {
