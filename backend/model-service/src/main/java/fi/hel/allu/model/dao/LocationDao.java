@@ -549,7 +549,7 @@ public class LocationDao {
 
   private Geometry removeRepeatedPoints(Geometry geometry) {
     return queryFactory
-        .select(Expressions.simpleTemplate(Geometry.class, "ST_RemoveRepeatedPoints({0}, 0.2)", geometry))
+        .select(Expressions.simpleTemplate(Geometry.class, "ST_MakeValid(ST_RemoveRepeatedPoints({0}, 0.2))", geometry))
         .fetchFirst();
   }
 
