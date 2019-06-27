@@ -30,6 +30,13 @@ public class ApplicationArchiveController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/terminated/status", method = RequestMethod.PATCH)
+  @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
+  public ResponseEntity<Void> updateStatusForTerminatedApplications() {
+    applicationArchiverService.updateStatusForTerminatedApplications();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/finished/archive", method = RequestMethod.PATCH)
   @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
   public ResponseEntity<Void> archiveFinishedApplications(@RequestBody List<Integer> applicationIds) {

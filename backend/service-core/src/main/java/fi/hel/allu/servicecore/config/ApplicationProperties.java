@@ -155,8 +155,8 @@ public class ApplicationProperties {
     return getTerminationUrl() + "/info";
   }
 
-  public String getPendingForTerminationUrl() {
-    return getModelServiceUrl("/applications/termination/pending");
+  public String getTerminatedApplicationsUrl() {
+    return getModelServiceUrl("/applications/terminated");
   }
 
   /**

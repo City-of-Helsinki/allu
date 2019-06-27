@@ -50,10 +50,10 @@ public class ApplicationStatusUpdaterService {
         new HttpEntity<>(applicationIds, authenticationService.createAuthenticationHeader()), Void.class).getBody();
   }
 
-  public void terminateApplicationsPendingForTermination() {
-    logger.info("Terminating applications with pending termination");
+  public void archiveApplicationStatusesForTerminated() {
+    logger.info("Archiving terminated applications");
     restTemplate.exchange(
-        applicationProperties.getTerminateApplicationsPendingForTermination(), HttpMethod.PATCH,
+        applicationProperties.getUpdateTerminatedApplicationsUrl(), HttpMethod.PATCH,
         new HttpEntity<>(null, authenticationService.createAuthenticationHeader()), Void.class).getBody();
   }
 }

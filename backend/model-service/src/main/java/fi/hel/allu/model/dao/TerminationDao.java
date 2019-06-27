@@ -104,19 +104,13 @@ public class TerminationDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Integer> getApplicationsPendingForTermination() {
-    BooleanExpression pendingShortTermRental = application.type.eq(ApplicationType.SHORT_TERM_RENTAL)
-        .and(application.status.eq(StatusType.DECISION));
-
-    BooleanExpression pendingPlacementContract = application.type.eq(ApplicationType.PLACEMENT_CONTRACT)
-        .and(application.status.in(StatusType.DECISION, StatusType.ARCHIVED));
-
+  public List<Integer> getTerminatedApplications() {
     ZonedDateTime startOfTheDay = TimeUtil.startOfDay(ZonedDateTime.now());
 
     return queryFactory.select(termination.applicationId).from(termination)
         .leftJoin(application).on(termination.applicationId.eq(application.id))
-        .where(termination.terminationTime.before(startOfTheDay)
-            .and(pendingShortTermRental.or(pendingPlacementContract)))
+        .where(application.status.eq(StatusType.TERMINATED)
+            .and(termination.terminationTime.before(startOfTheDay)))
         .fetch();
   }
 }

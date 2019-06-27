@@ -50,8 +50,8 @@ public class TerminationController {
     return ResponseEntity.ok(terminationDao.updateTerminationInfo(id, terminationInfo));
   }
 
-  @RequestMapping(value = "/termination/pending", method = RequestMethod.GET)
-  public ResponseEntity<List<Integer>> getApplicationsPendingForTermination() {
-    return ResponseEntity.ok(terminationDao.getApplicationsPendingForTermination());
+  @RequestMapping(value = "/terminated", method = RequestMethod.GET)
+  public ResponseEntity<List<Integer>> getTerminatedApplications() {
+    return ResponseEntity.ok(terminationDao.getTerminatedApplications());
   }
 }

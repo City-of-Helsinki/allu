@@ -112,9 +112,9 @@ public class TerminationDaoTest {
   }
 
   @Test
-  public void shouldGetPendingWithDecisionStatus() {
+  public void shouldGetTerminated() {
     Application app1 = testCommon.dummyBridgeBannerApplication("bridgeBanner1", "owner1");
-    app1.setStatus(StatusType.DECISION);
+    app1.setStatus(StatusType.TERMINATED);
     Integer id1 = testCommon.insertApplication(app1);
     terminationDao.insertTerminationInfo(id1, createInfo(ZonedDateTime.now().minusDays(5), "Reasons"));
 
@@ -123,39 +123,27 @@ public class TerminationDaoTest {
     Integer id2 = testCommon.insertApplication(app2);
     terminationDao.insertTerminationInfo(id2, createInfo(ZonedDateTime.now().minusDays(5), "Reasons"));
 
-    List<Integer> pending = terminationDao.getApplicationsPendingForTermination();
-    assertEquals(1, pending.size());
-    assertEquals(id1, pending.get(0));
+    List<Integer> terminated = terminationDao.getTerminatedApplications();
+    assertEquals(1, terminated.size());
+    assertEquals(id1, terminated.get(0));
   }
 
   @Test
-  public void shouldNotGetTerminationInSameDay() {
+  public void shouldNotGetTerminationWithExpirationDateToday() {
     Application app1 = testCommon.dummyBridgeBannerApplication("bridgeBanner1", "owner");
-    app1.setStatus(StatusType.DECISION);
+    app1.setStatus(StatusType.TERMINATED);
     Integer id1 = testCommon.insertApplication(app1);
     terminationDao.insertTerminationInfo(id1, createInfo(ZonedDateTime.now(), "Reasons"));
-    assertTrue(terminationDao.getApplicationsPendingForTermination().size() == 0);
+    assertTrue(terminationDao.getTerminatedApplications().size() == 0);
   }
 
   @Test
-  public void shouldGetTerminationInDayBefore() {
+  public void shouldGetTerminationWithExpirationDateInThePast() {
     Application app1 = testCommon.dummyBridgeBannerApplication("bridgeBanner1", "owner");
-    app1.setStatus(StatusType.DECISION);
+    app1.setStatus(StatusType.TERMINATED);
     Integer id1 = testCommon.insertApplication(app1);
     terminationDao.insertTerminationInfo(id1, createInfo(ZonedDateTime.now().minusDays(1), "Reasons"));
-    assertTrue(terminationDao.getApplicationsPendingForTermination().size() == 1);
-  }
-
-  @Test
-  public void shouldGetPendingArchivedPlacementContract() {
-    Application app1 = testCommon.dummyPlacementContractApplication("placementContract", "owner");
-    app1.setStatus(StatusType.ARCHIVED);
-    Integer id1 = testCommon.insertApplication(app1);
-    terminationDao.insertTerminationInfo(id1, createInfo(ZonedDateTime.now().minusDays(1), "Reasons"));
-
-    List<Integer> pending = terminationDao.getApplicationsPendingForTermination();
-    assertEquals(1, pending.size());
-    assertEquals(id1, pending.get(0));
+    assertTrue(terminationDao.getTerminatedApplications().size() == 1);
   }
 
   private TerminationInfo createInfo(ZonedDateTime terminationTime, String reason) {

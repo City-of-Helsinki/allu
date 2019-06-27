@@ -3,6 +3,8 @@ package fi.hel.allu.servicecore.service;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import fi.hel.allu.common.domain.TerminationInfo;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.servicecore.domain.CableReportJson;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +33,14 @@ public class ApplicationArchiverService {
       Arrays.asList(ApplicationTagType.DEPOSIT_PAID, ApplicationTagType.DEPOSIT_REQUESTED));
   private final ApplicationServiceComposer applicationServiceComposer;
   private final SupervisionTaskService supervisionTaskService;
+  private final TerminationService terminationService;
 
   @Autowired
-  public ApplicationArchiverService(ApplicationServiceComposer applicationServiceComposer, SupervisionTaskService supervisionTaskService) {
+  public ApplicationArchiverService(ApplicationServiceComposer applicationServiceComposer,
+      SupervisionTaskService supervisionTaskService, TerminationService terminationService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.supervisionTaskService = supervisionTaskService;
+    this.terminationService = terminationService;
   }
 
   @EventListener
@@ -54,6 +59,13 @@ public class ApplicationArchiverService {
     readyApplications.forEach(id -> moveToFinishedOrArchived(id));
     List<Integer> finishedNotes = fetchFinishedNotes();
     finishedNotes.forEach(id -> archiveApplication(id));
+  }
+
+  public void updateStatusForTerminatedApplications() {
+    terminationService.fetchTerminatedApplications().stream()
+      .map(id -> applicationServiceComposer.findApplicationById(id))
+      .filter(app -> readyForArchive(app))
+      .forEach(app -> archiveApplication(app.getId()));
   }
 
   private void moveToFinishedOrArchived(Integer applicationId) {
@@ -111,7 +123,7 @@ public class ApplicationArchiverService {
   }
 
   private boolean readyForArchive(ApplicationJson application) {
-    return isArchivedStatus(application)
+    return isArchivableStatus(application)
         && isFinished(application)
         && isInvoiced(application)
         && !hasOpenSupervisionTasks(application)
@@ -119,8 +131,9 @@ public class ApplicationArchiverService {
         && !requiresSurvey(application);
   }
 
-  private boolean isArchivedStatus(ApplicationJson application) {
-    boolean isArchivedStatus = application.getStatus() == StatusType.FINISHED;
+  private boolean isArchivableStatus(ApplicationJson application) {
+    boolean isArchivedStatus = application.getStatus() == StatusType.FINISHED
+        || application.getStatus() == StatusType.TERMINATED;
     // Area rentals and excavation announcements never archived from decision status
     if (application.getType() != ApplicationType.EXCAVATION_ANNOUNCEMENT && application.getType() != ApplicationType.AREA_RENTAL) {
       isArchivedStatus |= application.getStatus() == StatusType.DECISION;
@@ -129,13 +142,23 @@ public class ApplicationArchiverService {
   }
 
   private boolean isFinished(ApplicationJson application) {
-    boolean isFinishedStatus = ZonedDateTime.now().isAfter(application.getEndTime());
-    if (application.getType() == ApplicationType.CABLE_REPORT
-      && application.getExtension() != null && application.getExtension() instanceof CableReportJson) {
-      CableReportJson extension = (CableReportJson) application.getExtension();
-      isFinishedStatus &= ZonedDateTime.now().isAfter(extension.getValidityTime());
+    if (application.getStatus() == StatusType.TERMINATED) {
+      return isTerminatedFinished(application);
+    } else {
+      boolean isFinishedStatus = ZonedDateTime.now().isAfter(application.getEndTime());
+      if (application.getType() == ApplicationType.CABLE_REPORT
+          && application.getExtension() != null && application.getExtension() instanceof CableReportJson) {
+        CableReportJson extension = (CableReportJson) application.getExtension();
+        isFinishedStatus &= ZonedDateTime.now().isAfter(extension.getValidityTime());
+      }
+      return isFinishedStatus;
     }
-    return isFinishedStatus;
+  }
+
+  private boolean isTerminatedFinished(ApplicationJson application) {
+    TerminationInfo info = terminationService.getTerminationInfo(application.getId());
+    ZonedDateTime startOfTheDay = TimeUtil.startOfDay(ZonedDateTime.now());
+    return info.getTerminationTime().isBefore(startOfTheDay);
   }
 
   private boolean isInvoiced(ApplicationJson application) {

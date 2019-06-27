@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -32,15 +33,19 @@ public class ApplicationArchiverServiceTest {
   private ApplicationServiceComposer applicationServiceComposer;
   @Mock
   private SupervisionTaskService supervisionTaskService;
+  @Mock
+  private TerminationService terminationService;
 
 
   @Before
   public void setup() {
-    archiverService = new ApplicationArchiverService(applicationServiceComposer, supervisionTaskService);
+    archiverService = new ApplicationArchiverService(applicationServiceComposer, supervisionTaskService, terminationService);
     createApplication();
     when(applicationServiceComposer.findApplicationById(anyInt())).thenReturn(applicationJson);
     when(supervisionTaskService.findByApplicationId(anyInt())).thenReturn(Collections.emptyList());
     when(applicationServiceComposer.findFinishedApplications(anyList(), anyList()))
+        .thenReturn(Collections.singletonList(APPLICATION_ID));
+    when(terminationService.fetchTerminatedApplications())
         .thenReturn(Collections.singletonList(APPLICATION_ID));
   }
 
@@ -142,6 +147,30 @@ public class ApplicationArchiverServiceTest {
     verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED));
   }
 
+  @Test
+  public void shouldArchiveTerminatedWithExpiredTerminationDate() {
+    applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
+    applicationJson.setStatus(StatusType.TERMINATED);
+    when(terminationService.getTerminationInfo(APPLICATION_ID))
+        .thenReturn(createTerminationInfo(ZonedDateTime.now().minusDays(1)));
+
+    archiverService.updateStatusForTerminatedApplications();
+    verify(applicationServiceComposer, times(1))
+        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+  }
+
+  @Test
+  public void shouldNotArchiveTerminatedWithoutExpiredTerminationDate() {
+    applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
+    applicationJson.setStatus(StatusType.TERMINATED);
+    when(terminationService.getTerminationInfo(APPLICATION_ID))
+        .thenReturn(createTerminationInfo(ZonedDateTime.now()));
+
+    archiverService.updateStatusForTerminatedApplications();
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.FINISHED));
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED));
+  }
+
   private void createApplication() {
     applicationJson = new ApplicationJson();
     applicationJson.setStatus(StatusType.FINISHED);
@@ -151,5 +180,13 @@ public class ApplicationArchiverServiceTest {
 
     extensionJson = new CableReportJson();
     applicationJson.setExtension(extensionJson);
+  }
+
+  private TerminationInfo createTerminationInfo(ZonedDateTime terminationTime) {
+    TerminationInfo info = new TerminationInfo();
+    info.setTerminationTime(terminationTime);
+    info.setReason("For testing");
+    info.setTerminator(USER_ID);
+    return info;
   }
 }

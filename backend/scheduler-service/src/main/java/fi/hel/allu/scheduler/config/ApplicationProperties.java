@@ -380,7 +380,7 @@ public class ApplicationProperties {
     return getExtServiceUrl("/v1/citydistricts");
   }
 
-  public String getTerminateApplicationsPendingForTermination() {
-    return getExtServiceUrl("/v1/applications/termination/terminate");
+  public String getUpdateTerminatedApplicationsUrl() {
+    return getExtServiceUrl("/v1/applications/terminated/status");
   }
 }

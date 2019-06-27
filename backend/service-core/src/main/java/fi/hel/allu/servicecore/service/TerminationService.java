@@ -84,21 +84,9 @@ public class TerminationService {
         StyleSheet.name(application, TEMPLATE_SUFFIX));
   }
 
-  /**
-   * Terminates applications which have been marked for termination and their termination date is reached.
-   */
-  public void terminateApplicationsPendingForTermination() {
-    fetchApplicationsPendingForTermination().stream()
-        .forEach(appId -> moveToTerminated(appId));
-  }
-
-  private List<Integer> fetchApplicationsPendingForTermination() {
+  public List<Integer> fetchTerminatedApplications() {
     ResponseEntity<Integer[]> response = restTemplate.getForEntity(
-        applicationProperties.getPendingForTerminationUrl(), Integer[].class);
+        applicationProperties.getTerminatedApplicationsUrl(), Integer[].class);
     return Arrays.asList(response.getBody());
-  }
-
-  private void moveToTerminated(int applicationId) {
-    applicationServiceComposer.changeStatus(applicationId, StatusType.TERMINATED);
   }
 }

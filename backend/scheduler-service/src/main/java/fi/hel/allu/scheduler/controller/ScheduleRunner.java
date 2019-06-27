@@ -1,6 +1,5 @@
 package fi.hel.allu.scheduler.controller;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.*;
 
@@ -88,7 +87,7 @@ public class ScheduleRunner {
   @Scheduled(cron = "${application.status.update.cronstring}")
   public void updateApplicationStatuses() {
     applicationStatusUpdaterService.updateApplicationStatuses();
-    applicationStatusUpdaterService.terminateApplicationsPendingForTermination();
+    applicationStatusUpdaterService.archiveApplicationStatusesForTerminated();
   }
 
   @Scheduled(cron = "${cityDistricts.update.cronstring}")
