@@ -28,13 +28,14 @@ public class InvoicingPeriodDao {
     this.queryFactory = queryFactory;
   }
 
-   @Transactional
-   public List<InvoicingPeriod> insertPeriods(List<InvoicingPeriod> periods) {
+  @Transactional
+  public List<InvoicingPeriod> insertPeriods(List<InvoicingPeriod> periods) {
      periods.forEach(p -> insertInvoicingPeriod(p));
      return periods;
   }
 
-  private InvoicingPeriod insertInvoicingPeriod(InvoicingPeriod p) {
+  @Transactional
+  public InvoicingPeriod insertInvoicingPeriod(InvoicingPeriod p) {
     Integer id = queryFactory.insert(invoicingPeriod).populate(p).executeWithKey(invoicingPeriod.id);
     p.setId(id);
     return p;
@@ -62,5 +63,11 @@ public class InvoicingPeriodDao {
    public void closeInvoicingPeriods(List<Integer> invoicingPeriodIds) {
     queryFactory.update(invoicingPeriod).set(invoicingPeriod.closed, true)
         .where(invoicingPeriod.id.in(invoicingPeriodIds)).execute();
+   }
+
+   @Transactional
+   public void deletePeriod(Integer periodId) {
+     // Deletes also invoices and charge basis entries
+     queryFactory.delete(invoicingPeriod).where(invoicingPeriod.id.eq(periodId)).execute();
    }
 }

@@ -92,6 +92,11 @@ public class InvoiceService {
     }
   }
 
+  @Transactional
+  public void addInvoiceForPeriod(InvoicingPeriod period, Integer invoiceRecipientId, boolean sapIdPending) {
+    addInvoiceForPeriod(period, applicationDao.findById(period.getApplicationId()), invoiceRecipientId, sapIdPending);
+  }
+
   private void addInvoiceForPeriod(InvoicingPeriod period, Application application, Integer invoiceRecipientId, boolean sapIdPending) {
     List<InvoiceRow> invoiceRows = getInvoiceRows(application.getId(), period.getId());
     if (!invoiceRows.isEmpty()) {

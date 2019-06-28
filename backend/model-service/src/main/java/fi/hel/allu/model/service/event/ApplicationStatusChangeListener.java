@@ -15,6 +15,7 @@ public class ApplicationStatusChangeListener {
   private final TrafficArrangementStatusChangeHandler trafficArrangementStatusChangeHandler;
   private final ApplicationStatusChangeHandler applicationStatusChangeHandler;
   private final AreaRentalStatusChangeHandler areaRentalStatusChangeHandler;
+  private final ShortTermRentalStatusChangeHandler shortTermRentalStatusChangeHandler;
 
   @Autowired
   public ApplicationStatusChangeListener(
@@ -23,13 +24,15 @@ public class ApplicationStatusChangeListener {
       CableReportStatusChangeHandler cableReportStatusChangeHandler,
       TrafficArrangementStatusChangeHandler trafficArrangementStatusChangeHandler,
       ApplicationStatusChangeHandler applicationStatusChangeHandler,
-      AreaRentalStatusChangeHandler areaRentalStatusChangeHandler) {
+      AreaRentalStatusChangeHandler areaRentalStatusChangeHandler,
+      ShortTermRentalStatusChangeHandler shortTermRentalStatusChangeHandler) {
     this.placementContractStatusChangeHandler = placementContractStatusChangeHandler;
     this.excavationAnnouncementStatusChangeHandler = excavationAnnouncementStatusChangeHandler;
     this.cableReportStatusChangeHandler = cableReportStatusChangeHandler;
     this.trafficArrangementStatusChangeHandler = trafficArrangementStatusChangeHandler;
     this.applicationStatusChangeHandler = applicationStatusChangeHandler;
     this.areaRentalStatusChangeHandler = areaRentalStatusChangeHandler;
+    this.shortTermRentalStatusChangeHandler = shortTermRentalStatusChangeHandler;
   }
 
   @EventListener
@@ -50,6 +53,8 @@ public class ApplicationStatusChangeListener {
       return trafficArrangementStatusChangeHandler;
     case AREA_RENTAL:
       return areaRentalStatusChangeHandler;
+    case SHORT_TERM_RENTAL:
+      return shortTermRentalStatusChangeHandler;
     default:
       return applicationStatusChangeHandler;
     }

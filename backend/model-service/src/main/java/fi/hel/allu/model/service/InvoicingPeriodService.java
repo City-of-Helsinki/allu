@@ -28,7 +28,8 @@ public class InvoicingPeriodService {
   private final ApplicationEventPublisher invoicingPeriodEventPublisher;
 
   @Autowired
-  public InvoicingPeriodService(InvoicingPeriodDao invoicingPeriodDao, ApplicationDao applicationDao, ApplicationEventPublisher invoicingPeriodEventPublisher) {
+  public InvoicingPeriodService(InvoicingPeriodDao invoicingPeriodDao, ApplicationDao applicationDao,
+      ApplicationEventPublisher invoicingPeriodEventPublisher) {
     this.invoicingPeriodDao = invoicingPeriodDao;
     this.applicationDao = applicationDao;
     this.invoicingPeriodEventPublisher = invoicingPeriodEventPublisher;
@@ -62,11 +63,13 @@ public class InvoicingPeriodService {
     List<InvoicingPeriod> recurringPeriods = new ArrayList<>();
     ZonedDateTime periodStart = application.getStartTime();
     ZonedDateTime periodEnd = application.getEndTime();
+
     while (periodEnd.getYear() <= application.getRecurringEndTime().getYear()) {
       recurringPeriods.add(new InvoicingPeriod(applicationId, periodStart, periodEnd));
       periodStart = periodStart.plusYears(1);
-      periodEnd= periodEnd.plusYears(1);
+      periodEnd = periodEnd.plusYears(1);
     }
+
     List<InvoicingPeriod> result;
     List<InvoicingPeriod> currentPeriods = findForApplicationId(applicationId);
     if (periodsChanged(currentPeriods, recurringPeriods)) {
@@ -77,6 +80,11 @@ public class InvoicingPeriodService {
       result = currentPeriods;
     }
     return result;
+  }
+
+  @Transactional
+  public InvoicingPeriod insertInvoicingPeriod(InvoicingPeriod period) {
+    return invoicingPeriodDao.insertInvoicingPeriod(period);
   }
 
   private boolean periodsChanged(List<InvoicingPeriod> currentPeriods, List<InvoicingPeriod> newPeriods) {
@@ -136,5 +144,13 @@ public class InvoicingPeriodService {
   @Transactional
   public void closeInvoicingPeriods(List<Integer> invoicePeriodIds) {
     invoicingPeriodDao.closeInvoicingPeriods(invoicePeriodIds);
+  }
+
+  @Transactional
+  public void deletePeriods(Integer applicationId, List<Integer> periodIds) {
+    periodIds.forEach(id -> invoicingPeriodDao.deletePeriod(id));
+    if (!CollectionUtils.isEmpty(periodIds)) {
+      invoicingPeriodEventPublisher.publishEvent(new InvoicingPeriodChangeEvent(this, applicationId));
+    }
   }
 }

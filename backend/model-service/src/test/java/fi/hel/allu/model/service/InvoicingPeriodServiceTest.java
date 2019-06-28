@@ -45,7 +45,6 @@ public class InvoicingPeriodServiceTest {
   @Mock
   private ApplicationEventPublisher eventPublisher;
 
-
   private static final ZonedDateTime START_TIME = LocalDate.parse("2018-01-01").atStartOfDay(TimeUtil.HelsinkiZoneId);
   private static final ZonedDateTime END_TIME = LocalDate.parse("2018-10-04").atStartOfDay(TimeUtil.HelsinkiZoneId);
 
