@@ -16,4 +16,8 @@
     *ngIf="showContractActions$ | async"
     [hasInvoicing]="hasInvoicing$ | async"
     pdfViewFooter></contract-actions>
+
+  <termination-actions
+    *ngIf="showTerminationActions$ | async"
+    pdfViewFooter></termination-actions>
 </div>

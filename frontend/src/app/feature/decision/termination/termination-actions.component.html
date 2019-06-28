@@ -1,0 +1,13 @@
+<div class="action-row">
+  <ng-container *availableTo="['ROLE_PROCESS_APPLICATION']">
+    <ng-container *ngIf="!isWaitingForOrTerminated">
+      <div class="action-item">
+        <button mat-raised-button type="button" color="primary"
+                (click)="showTerminationModal()">
+          {{'application.button.toTermination' | translation | uppercase}}
+        </button>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+
