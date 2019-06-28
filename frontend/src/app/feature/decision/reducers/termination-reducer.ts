@@ -74,7 +74,8 @@ export function reducer(state: State = initialState, action: TerminationActions 
       return {
         ...state,
         loading: false,
-        termination: action.payload
+        termination: action.payload,
+        terminationDocument: undefined
       };
     }
 

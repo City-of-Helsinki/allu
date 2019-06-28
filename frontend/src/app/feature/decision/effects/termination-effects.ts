@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {Action, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {TerminationService} from '@feature/decision/termination/termination-service';
-import {from, of, Observable} from 'rxjs/index';
+import {from, Observable} from 'rxjs/index';
 import {
   TerminationActionType,
   Terminate, TerminationDraftSuccess, TerminationDraftFailed,
@@ -80,9 +80,9 @@ export class TerminationEffects {
       return this.terminationService.saveTerminationInfo(application.id, action.payload).pipe(
         switchMap((savedInfo) => {
           if (draft) {
-            return of(new TerminationDraftSuccess(savedInfo));
+            return from([new TerminationDraftSuccess(savedInfo), new LoadDocument()]);
           } else {
-            return from([new TerminationDraftSuccess(savedInfo), new MoveTerminationToDecision()]);
+            return from([new TerminationDraftSuccess(savedInfo), new LoadDocument(), new MoveTerminationToDecision()]);
           }
         }),
         catchError(error => from([
