@@ -133,6 +133,25 @@ public class ApplicationStatusChangeHandlerTest {
     verify(supervisionTaskService, times(1)).insert(any(SupervisionTask.class));
   }
 
+  @Test
+  public void onDecisionMakingWithTerminationShouldSetTargetStateToTerminated() {
+    when(terminationDao.isMarkedForTermination(application.getId())).thenReturn(true);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISIONMAKING, USER_ID));
+    verify(applicationService, times(1)).setTargetState(application.getId(), StatusType.TERMINATED);
+  }
+
+  @Test
+  public void onDecisionMakingWithoutTerminationShouldSetTargetStateToTerminated() {
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISIONMAKING, USER_ID));
+    verify(applicationService, times(1)).setTargetState(application.getId(), StatusType.DECISION);
+  }
+
+  @Test
+  public void onDecisionMakingWithTargetStateShouldNotSetItAgain() {
+    application.setTargetState(StatusType.ARCHIVED);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISIONMAKING, USER_ID));
+    verify(applicationService, never()).setTargetState(eq(application.getId()), any(StatusType.class));
+  }
 
   private Application createApplication() {
     application = new Application();

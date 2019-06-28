@@ -2,7 +2,6 @@ package fi.hel.allu.model.service.event.handler;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Optional;
 
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.common.util.TimeUtil;
@@ -125,7 +124,6 @@ public class ApplicationStatusChangeHandler {
     }
   }
 
-
   protected void finishInvoicing(Application application) {
     applicationDao.setInvoicingChanged(application.getId(), false);
     lockChargeBasisEntries(application.getId());
@@ -148,8 +146,7 @@ public class ApplicationStatusChangeHandler {
 
   protected void handleDecisionMakingStatus(Application application) {
     if (application.getTargetState() == null) {
-      // By default, application is moved to decision state when decision is made.
-      applicationService.setTargetState(application.getId(), StatusType.DECISION);
+      setTargetStateForDecisionMaking(application.getId());
     }
   }
 
@@ -199,6 +196,14 @@ public class ApplicationStatusChangeHandler {
     historyDao.addApplicationChange(replacedApplicationId, change);
   }
 
+  private void setTargetStateForDecisionMaking(Integer applicationId) {
+    if (terminationDao.isMarkedForTermination(applicationId)) {
+      applicationService.setTargetState(applicationId, StatusType.TERMINATED);
+    } else {
+      // By default, application is moved to decision state when decision is made.
+      applicationService.setTargetState(applicationId, StatusType.DECISION);
+    }
+  }
 
   protected void lockChargeBasisEntries(Integer applicationId) {
     chargeBasisService.lockEntries(applicationId);
@@ -252,5 +257,4 @@ public class ApplicationStatusChangeHandler {
   protected InvoiceService getInvoiceService() {
     return invoiceService;
   }
-
 }

@@ -42,6 +42,11 @@ public class TerminationDao {
         .fetchOne();
   }
 
+  @Transactional(readOnly = true)
+  public boolean isMarkedForTermination(Integer applicationId) {
+    return getTerminationInfo(applicationId) != null;
+  }
+
   @Transactional
   public TerminationInfo insertTerminationInfo(Integer applicationId, TerminationInfo info) {
     if (getTerminationInfo(applicationId) != null) {
