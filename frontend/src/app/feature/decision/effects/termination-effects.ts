@@ -6,24 +6,39 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 import {TerminationService} from '@feature/decision/termination/termination-service';
 import {from, Observable} from 'rxjs/index';
 import {
+  LoadDocument,
+  LoadDocumentFailed,
+  LoadDocumentSuccess,
+  LoadInfoFailed,
+  LoadInfoSuccess,
+  MoveTerminationToDecision,
+  MoveTerminationToDecisionFailed,
+  MoveTerminationToDecisionSuccess,
+  Terminate,
   TerminationActionType,
-  Terminate, TerminationDraftSuccess, TerminationDraftFailed,
-  MoveTerminationToDecision, MoveTerminationToDecisionSuccess, MoveTerminationToDecisionFailed, LoadInfoSuccess,
-  LoadInfoFailed, LoadDocument, LoadDocumentFailed, LoadDocumentSuccess
+  TerminationDraftFailed,
+  TerminationDraftSuccess
 } from '@feature/decision/actions/termination-actions';
-import {catchError, filter, map, switchMap, withLatestFrom, tap} from 'rxjs/internal/operators';
+import {catchError, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/internal/operators';
 import {NumberUtil} from '@util/number.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {Router} from '@angular/router';
 import {DocumentActionType, SetTab} from '@feature/decision/actions/document-actions';
 import {DecisionTab} from '@feature/decision/documents/decision-tab';
+import {TerminationInfo} from '@feature/decision/termination/termination-info';
+import {StatusChangeInfo} from '@model/application/status-change-info';
+import {CommentType} from '@model/application/comment/comment-type';
+import {ApplicationStore} from '@service/application/application-store';
+import {ApplicationStatus} from '@model/application/application-status';
+import {Application} from '@model/application/application';
 
 @Injectable()
 export class TerminationEffects {
   constructor(private actions: Actions,
               private router: Router,
               private store: Store<fromDecision.State>,
-              private terminationService: TerminationService) {
+              private terminationService: TerminationService,
+              private applicationStore: ApplicationStore) {
   }
 
   @Effect()
@@ -82,7 +97,7 @@ export class TerminationEffects {
           if (draft) {
             return from([new TerminationDraftSuccess(savedInfo), new LoadDocument()]);
           } else {
-            return from([new TerminationDraftSuccess(savedInfo), new LoadDocument(), new MoveTerminationToDecision()]);
+            return from([new TerminationDraftSuccess(savedInfo), new LoadDocument(), new MoveTerminationToDecision(savedInfo)]);
           }
         }),
         catchError(error => from([
@@ -98,8 +113,8 @@ export class TerminationEffects {
     ofType<Terminate>(TerminationActionType.MoveTerminationToDecision),
     withLatestFrom(this.store.select(fromApplication.getCurrentApplication)),
     filter(([action, application]) => NumberUtil.isExisting(application)),
-    switchMap(([action, application]) => this.terminationService.moveTerminationToDecision(application.id).pipe(
-      tap( applicationId => this.router.navigate(['/applications', applicationId, 'summary', 'decision', 'termination'])),
+    switchMap(([action, application]) => this.changeStatusToDecisionMaking(application.id, action.payload).pipe(
+      tap( updatedApp => this.router.navigate(['/applications', updatedApp.id, 'summary', 'decision', 'termination'])),
       map( () => new MoveTerminationToDecisionSuccess()),
       catchError(error => from([
         new MoveTerminationToDecisionFailed(error),
@@ -108,4 +123,16 @@ export class TerminationEffects {
     ))
   );
 
+  private changeStatusToDecisionMaking(applicationId: number, terminationInfo: TerminationInfo): Observable<Application> {
+    const statusChangeInfo = this.asStatusChangeInfo(terminationInfo);
+    return this.applicationStore.changeStatus(applicationId, ApplicationStatus.DECISIONMAKING, statusChangeInfo);
+  }
+
+  private asStatusChangeInfo(terminationInfo: TerminationInfo): StatusChangeInfo {
+    return new StatusChangeInfo(
+      CommentType.PROPOSE_TERMINATION,
+      terminationInfo.comment,
+      terminationInfo.owner
+    );
+  }
 }

@@ -110,7 +110,7 @@ export function reducer(state: State = initialState, action: TerminationActions 
     case ApplicationActionType.LoadSuccess: {
       return {
         ...state,
-        termination: undefined
+        terminationDocument: undefined
       };
     }
 

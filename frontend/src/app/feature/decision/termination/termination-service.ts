@@ -1,21 +1,21 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorHandler} from '@service/error/error-handler.service';
-import {Observable, of} from 'rxjs';
-import {delay} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 import {TerminationInfo} from '@feature/decision/termination/termination-info';
 import {BackendTerminationInfo, TerminationInfoMapper} from '@feature/decision/termination/termination-mapper';
-import {catchError, map} from 'rxjs/operators';
 import {findTranslation} from '@util/translations';
 import {NumberUtil} from '@util/number.util';
 import {TerminationDocument} from '@feature/decision/termination/TerminationDocument';
+import {ApplicationStore} from '@service/application/application-store';
 
 const APPLICATION_URL = '/api/applications';
 
 @Injectable()
 export class TerminationService {
 
-  constructor(private http: HttpClient, private errorHandler: ErrorHandler) {
+  constructor(private http: HttpClient, private errorHandler: ErrorHandler, private applicationStore: ApplicationStore ) {
   }
 
   getTermination(applicationId: number): Observable<TerminationDocument> {
@@ -55,12 +55,6 @@ export class TerminationService {
     return this.http.put<BackendTerminationInfo>(url, info).pipe(
       map(saved => TerminationInfoMapper.mapBackend(saved)),
       catchError(error => this.errorHandler.handle(error, findTranslation('termination.error.saveInfo')))
-    );
-  }
-
-  public moveTerminationToDecision(applicationId: number): Observable<{}>  {
-    return of(applicationId).pipe(
-      delay(1000)
     );
   }
 }

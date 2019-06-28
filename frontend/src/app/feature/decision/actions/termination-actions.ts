@@ -66,7 +66,7 @@ export class TerminationDraftFailed implements ActionWithPayload<ErrorInfo> {
 
 export class MoveTerminationToDecision implements Action {
   readonly type = TerminationActionType.MoveTerminationToDecision;
-  constructor() {}
+  constructor(public payload: TerminationInfo) {}
 }
 
 export class MoveTerminationToDecisionSuccess implements Action {
