@@ -3,7 +3,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {APP_BASE_HREF} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {StoreModule} from '@ngrx/store';
+import {ActionReducer, State, StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from 'environments/environment';
@@ -60,6 +60,15 @@ import {ConfigurationHelperService} from '@service/config/configuration-helper.s
 import {UserEffects} from '@feature/allu/effects/user-effects';
 import {ContactService} from '@service/customer/contact.service';
 import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects';
+import {storeLogger} from 'ngrx-store-logger';
+
+export function logger(reducer: ActionReducer<any>): any {
+  // default, no options
+  return storeLogger()(reducer);
+}
+
+export const metaReducers = environment.production ? [] : [logger];
+
 
 @NgModule({
   imports: [
@@ -68,7 +77,7 @@ import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects
     FormsModule,
     RouterModule.forRoot(rootRoutes),
     BrowserAnimationsModule,
-    StoreModule.forRoot(reducers),
+    StoreModule.forRoot(reducers, {metaReducers}),
     EffectsModule.forRoot([
       CityDistrictEffects,
       CodeSetEffects,
