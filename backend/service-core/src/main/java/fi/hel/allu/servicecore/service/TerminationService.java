@@ -78,7 +78,7 @@ public class TerminationService {
 
   public byte[] getTerminationPreview(ApplicationJson application) {
     TerminationInfo info = getTerminationInfo(application.getId());
-    TerminationJson terminationJson = terminationJsonMapper.mapToDocumentJson(application, info, false);
+    TerminationJson terminationJson = terminationJsonMapper.mapToDocumentJson(application, info, true);
     return restTemplate.postForObject(
         applicationProperties.getGeneratePdfUrl(), terminationJson, byte[].class,
         StyleSheet.name(application, TEMPLATE_SUFFIX));
