@@ -63,8 +63,9 @@ import {FixedLocationEffects} from '@feature/allu/effects/fixed-location-effects
 import {storeLogger} from 'ngrx-store-logger';
 
 export function logger(reducer: ActionReducer<any>): any {
-  // default, no options
-  return storeLogger()(reducer);
+  return storeLogger({
+    collapsed: true
+  })(reducer);
 }
 
 export const metaReducers = environment.production ? [] : [logger];
