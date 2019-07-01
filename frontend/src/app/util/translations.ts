@@ -115,7 +115,8 @@ export const translations = {
       FINISHED: 'Työn valmistuminen hyväksytty',
       CANCELLED: 'Hakemus peruttu',
       REPLACED: 'Hakemus korvattu',
-      ARCHIVED: 'Hakemus arkistoitu'
+      ARCHIVED: 'Hakemus arkistoitu',
+      TERMINATED: 'Hakemus irtisanottu'
     },
     confirmDiscard: {
       title: 'Hylätäänkö muutokset',
@@ -951,6 +952,11 @@ export const translations = {
         title: 'Lähetä päätös uudelleen',
         confirmText: 'Lähetä',
         confirmation: 'Päätös lähetetty'
+      },
+      TERMINATED: {
+        title: 'Irtisano hakemus',
+        confirmText: 'Päätä',
+        confirmation: 'Hakemus irtisanottu'
       }
     },
     tab: {

@@ -89,6 +89,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
         this.pdf$ = this.store.select(fromDecision.getTerminationPdf);
         this.loading$ = this.store.select(fromDecision.getTerminationLoading);
         this.showTerminationActions$ = this.application$.pipe(map(app => this.showTerminationActions(app)));
+        this.showDecisionActions$ = this.application$.pipe(map(app => this.showDecisionActionsOnTerminationTab(app)));
         break;
       }
 
@@ -132,7 +133,21 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   }
 
   private showTerminationActions(app: Application): boolean {
-    return true; // TODO the actions are not implemented yet
+    const isWaitingForTerminationDecision = ApplicationStatus.DECISIONMAKING === app.status;
+
+    const isTerminated = ApplicationStatus.TERMINATED === app.status;
+
+    // TODO Archived status means that the application either can be terminated,
+    // TODO or is already terminated so we can't hide the button for that status yet.
+    const isExpiredAfterTermination = ApplicationStatus.ARCHIVED === app.status;
+
+    return !isWaitingForTerminationDecision && !isTerminated; // && !isExpiredAfterTermination;
+  }
+
+  private showDecisionActionsOnTerminationTab(app: Application): boolean {
+    const isInDecisionMaking = app.status === ApplicationStatus.DECISIONMAKING && app.targetState === ApplicationStatus.TERMINATED;
+    const isTerminated = app.status === ApplicationStatus.TERMINATED;
+    return isInDecisionMaking || isTerminated;
   }
 
 }
