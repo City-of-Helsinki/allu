@@ -6,14 +6,14 @@
     <div fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="terminationTime" required
-                 [placeholder]="'decision.termination.field.terminationTime' | translation"
-                 [matDatepicker]="terminationTimePicker"/>
-          <mat-datepicker-toggle matSuffix [for]="terminationTimePicker"></mat-datepicker-toggle>
-          <mat-datepicker #terminationTimePicker></mat-datepicker>
+          <input matInput type="text" formControlName="expirationTime" required
+                 [placeholder]="'decision.termination.field.expirationTime' | translation"
+                 [matDatepicker]="expirationTimePicker"/>
+          <mat-datepicker-toggle matSuffix [for]="expirationTimePicker"></mat-datepicker-toggle>
+          <mat-datepicker #expirationTimePicker></mat-datepicker>
           <mat-hint>
-            <field-error [form]="terminationForm" field="terminationTime" hasError="required">
-              {{'decision.termination.error.terminationTimeMissing' | translation}}
+            <field-error [form]="terminationForm" field="expirationTime" hasError="required">
+              {{'decision.termination.error.expirationTimeMissing' | translation}}
             </field-error>
           </mat-hint>
         </mat-form-field>

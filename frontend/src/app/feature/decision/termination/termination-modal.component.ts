@@ -42,7 +42,7 @@ export class TerminationModalComponent implements OnInit {
     this.terminationForm = this.fb.group({
       comment: [this.existingTermination.comment, Validators.required],
       handler: [this.existingTermination.owner, Validators.required],
-      terminationTime: [this.existingTermination.terminationTime, Validators.required]
+      expirationTime: [this.existingTermination.expirationTime, Validators.required]
     });
 
     this.handlers = this.userService.getByRole(RoleType.ROLE_DECISION);
@@ -68,7 +68,7 @@ export class TerminationModalComponent implements OnInit {
     terminationInfo.applicationId = this.data.applicationId;
     terminationInfo.type = CommentType.PROPOSE_TERMINATION;
     terminationInfo.owner = formValue.handler;
-    terminationInfo.terminationTime = formValue.terminationTime;
+    terminationInfo.expirationTime = formValue.expirationTime;
     terminationInfo.comment = formValue.comment;
 
     this.dialogRef.close(terminationInfo);

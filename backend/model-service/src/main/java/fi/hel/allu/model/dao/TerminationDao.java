@@ -2,10 +2,8 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.TerminationInfo;
-import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.NonUniqueException;
@@ -54,8 +52,8 @@ public class TerminationDao {
     }
 
     queryFactory.insert(termination)
-        .columns(termination.applicationId, termination.creationTime, termination.terminationTime, termination.reason, termination.terminator)
-        .values(applicationId, ZonedDateTime.now(), info.getTerminationTime(), info.getReason(), info.getTerminator())
+        .columns(termination.applicationId, termination.creationTime, termination.expirationTime, termination.reason, termination.terminator)
+        .values(applicationId, ZonedDateTime.now(), info.getExpirationTime(), info.getReason(), info.getTerminator())
         .execute();
     return getTerminationInfo(applicationId);
   }
@@ -110,7 +108,7 @@ public class TerminationDao {
     return queryFactory.select(termination.applicationId).from(termination)
         .leftJoin(application).on(termination.applicationId.eq(application.id))
         .where(application.status.eq(StatusType.TERMINATED)
-            .and(termination.terminationTime.before(startOfTheDay)))
+            .and(termination.expirationTime.before(startOfTheDay)))
         .fetch();
   }
 }

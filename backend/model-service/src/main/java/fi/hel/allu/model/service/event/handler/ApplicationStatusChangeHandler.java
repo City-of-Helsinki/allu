@@ -173,7 +173,7 @@ public class ApplicationStatusChangeHandler {
   protected void createSupervisionTaskForTerminated(Application application, Integer userId) {
     TerminationInfo info = terminationDao.getTerminationInfo(application.getId());
     if (info != null) {
-      ZonedDateTime terminationSupervision = TimeUtil.nextDay(info.getTerminationTime());
+      ZonedDateTime terminationSupervision = TimeUtil.nextDay(info.getExpirationTime());
       createSupervisionTask(application, SupervisionTaskType.TERMINATION, userId, terminationSupervision);
     }
   }

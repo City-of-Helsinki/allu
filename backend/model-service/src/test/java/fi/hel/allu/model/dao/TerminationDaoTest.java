@@ -51,7 +51,7 @@ public class TerminationDaoTest {
     assertEquals(applicationId, created.getApplicationId());
     assertNotNull(created.getCreationTime());
     assertEquals(termination.getReason(), created.getReason());
-    assertEquals(termination.getTerminationTime(), TimeUtil.homeTime(created.getTerminationTime()));
+    assertEquals(termination.getExpirationTime(), TimeUtil.homeTime(created.getExpirationTime()));
   }
 
   @Test
@@ -76,7 +76,7 @@ public class TerminationDaoTest {
     terminationDao.updateTerminationInfo(applicationId, update);
 
     TerminationInfo updated = terminationDao.getTerminationInfo(applicationId);
-    assertEquals(update.getTerminationTime(), TimeUtil.homeTime(updated.getTerminationTime()));
+    assertEquals(update.getExpirationTime(), TimeUtil.homeTime(updated.getExpirationTime()));
     assertEquals(update.getReason(), updated.getReason());
   }
 
@@ -146,9 +146,9 @@ public class TerminationDaoTest {
     assertTrue(terminationDao.getTerminatedApplications().size() == 1);
   }
 
-  private TerminationInfo createInfo(ZonedDateTime terminationTime, String reason) {
+  private TerminationInfo createInfo(ZonedDateTime expirationTime, String reason) {
     TerminationInfo terminationInfo = new TerminationInfo();
-    terminationInfo.setTerminationTime(terminationTime);
+    terminationInfo.setExpirationTime(expirationTime);
     terminationInfo.setReason(reason);
     terminationInfo.setTerminator(userId);
     return terminationInfo;

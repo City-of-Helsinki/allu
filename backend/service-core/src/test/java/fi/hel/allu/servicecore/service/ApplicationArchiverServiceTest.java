@@ -182,9 +182,9 @@ public class ApplicationArchiverServiceTest {
     applicationJson.setExtension(extensionJson);
   }
 
-  private TerminationInfo createTerminationInfo(ZonedDateTime terminationTime) {
+  private TerminationInfo createTerminationInfo(ZonedDateTime expirationTime) {
     TerminationInfo info = new TerminationInfo();
-    info.setTerminationTime(terminationTime);
+    info.setExpirationTime(expirationTime);
     info.setReason("For testing");
     info.setTerminator(USER_ID);
     return info;

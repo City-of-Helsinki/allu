@@ -13,7 +13,7 @@ public class TerminationJson {
   private ApplicationType applicationType;
   private ZonedDateTime decisionDate;
   private String applicationId;
-  private ZonedDateTime terminationDate;
+  private ZonedDateTime expirationTime;
   private String deciderTitle;
   private String deciderName;
   private String handlerTitle;
@@ -67,14 +67,14 @@ public class TerminationJson {
     this.applicationId = applicationId;
   }
 
-  public String getTerminationDate() {
-    return Optional.ofNullable(terminationDate)
+  public String getExpirationTime() {
+    return Optional.ofNullable(expirationTime)
         .map(date -> TimeUtil.dateAsDateTimeString(date))
         .orElse(null);
   }
 
-  public void setTerminationDate(ZonedDateTime terminationDate) {
-    this.terminationDate = terminationDate;
+  public void setExpirationTime(ZonedDateTime expirationTime) {
+    this.expirationTime = expirationTime;
   }
 
   public String getDeciderTitle() {

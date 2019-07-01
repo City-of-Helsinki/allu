@@ -81,7 +81,7 @@
                     </p>
                   </xsl:for-each>
                 </xsl:if>
-                <p class="indented space-above">Vuokrasopimuksen voimassaolo päättyy <xsl:value-of select="data/terminationDate" />.</p>
+                <p class="indented space-above">Vuokrasopimuksen voimassaolo päättyy <xsl:value-of select="data/expirationTime" />.</p>
               </section>
             </div>
 

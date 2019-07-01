@@ -1,7 +1,6 @@
 package fi.hel.allu.servicecore.mapper;
 
 import fi.hel.allu.common.domain.TerminationInfo;
-import fi.hel.allu.model.domain.PlacementContract;
 import fi.hel.allu.pdf.domain.TerminationJson;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.LocationJson;
@@ -35,7 +34,7 @@ public class TerminationJsonMapper extends AbstractDocumentMapper<TerminationJso
     termination.setSiteCityDistrict(siteCityDistrict(application));
 
     Optional.ofNullable(terminationInfo).ifPresent(info -> {
-      termination.setTerminationDate(info.getTerminationTime());
+      termination.setExpirationTime(info.getExpirationTime());
       termination.setTerminationInfo(splitToList(Optional.ofNullable(info.getReason())));
     });
 

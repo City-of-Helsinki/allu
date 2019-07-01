@@ -11,7 +11,7 @@ public class TerminationInfo {
   private Integer applicationId;
   private ZonedDateTime creationTime;
   @NotNull
-  private ZonedDateTime terminationTime;
+  private ZonedDateTime expirationTime;
   @NotBlank
   private String reason;
   @NotNull
@@ -41,12 +41,12 @@ public class TerminationInfo {
     this.creationTime = creationTime;
   }
 
-  public ZonedDateTime getTerminationTime() {
-    return terminationTime;
+  public ZonedDateTime getExpirationTime() {
+    return expirationTime;
   }
 
-  public void setTerminationTime(ZonedDateTime terminationTime) {
-    this.terminationTime = terminationTime;
+  public void setExpirationTime(ZonedDateTime expirationTime) {
+    this.expirationTime = expirationTime;
   }
 
   public String getReason() {

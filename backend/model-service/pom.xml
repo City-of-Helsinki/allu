@@ -411,7 +411,7 @@
                         </typeMapping>
                         <typeMapping>
                             <table>termination</table>
-                            <column>termination_time</column>
+                            <column>expiration_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <!-- Map enumeration types -->

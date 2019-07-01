@@ -979,12 +979,12 @@ export const translations = {
     termination: {
       title: 'Ehdota irtisanomista',
       field: {
-        terminationTime: 'Sopimuksen voimassaolon päättymisen päivä',
+        expirationTime: 'Sopimuksen voimassaolon päättymisen päivä',
         comment: 'Irtisanomisteksti',
         selectDecisionMaker: 'Valitse päättäjä'
       },
       error: {
-        terminationTimeMissing: 'Sopimuksen voimassaolon päättymisen päivä puuttuu',
+        expirationTimeMissing: 'Sopimuksen voimassaolon päättymisen päivä puuttuu',
         commentMissing: 'Irtisanomisteksti puuttuu',
         handlerMissing: 'Päättäjä puuttuu'
       },

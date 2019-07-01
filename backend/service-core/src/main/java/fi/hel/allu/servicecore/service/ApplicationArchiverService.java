@@ -158,7 +158,7 @@ public class ApplicationArchiverService {
   private boolean isTerminatedFinished(ApplicationJson application) {
     TerminationInfo info = terminationService.getTerminationInfo(application.getId());
     ZonedDateTime startOfTheDay = TimeUtil.startOfDay(ZonedDateTime.now());
-    return info.getTerminationTime().isBefore(startOfTheDay);
+    return info.getExpirationTime().isBefore(startOfTheDay);
   }
 
   private boolean isInvoiced(ApplicationJson application) {

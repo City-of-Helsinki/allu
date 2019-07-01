@@ -5,7 +5,7 @@ export interface BackendTerminationInfo {
   id: number;
   applicationId: number;
   creationTime: string;
-  terminationTime: string;
+  expirationTime: string;
   reason: string;
   terminator: number;
 }
@@ -22,7 +22,7 @@ export class TerminationInfoMapper {
       null,
       backendTerminationInfo.terminator,
       TimeUtil.dateFromBackend(backendTerminationInfo.creationTime),
-      TimeUtil.dateFromBackend(backendTerminationInfo.terminationTime),
+      TimeUtil.dateFromBackend(backendTerminationInfo.expirationTime),
       backendTerminationInfo.reason
     );
   }
@@ -35,7 +35,7 @@ export class TerminationInfoMapper {
       id: terminationInfo.id,
       applicationId: terminationInfo.applicationId,
       creationTime: TimeUtil.dateToBackend(terminationInfo.creationTime),
-      terminationTime: TimeUtil.dateToBackend(terminationInfo.terminationTime),
+      expirationTime: TimeUtil.dateToBackend(terminationInfo.expirationTime),
       reason: terminationInfo.comment,
       terminator: terminationInfo.owner
     };
