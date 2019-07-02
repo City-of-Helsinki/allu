@@ -26,6 +26,7 @@
                          [placeholder]="'project.info.ownerName' | translation"/>
 
                   <mat-autocomplete #customerSearch="matAutocomplete"
+                                    class="multi-line-option"
                                     [displayWith]="customerName"
                                     (optionSelected)="selectCustomer($event.option)">
                     <mat-option *ngFor="let customer of matchingCustomers$ | async"
