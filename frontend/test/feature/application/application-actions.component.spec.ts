@@ -334,7 +334,7 @@ describe('ApplicationActionsComponent', () => {
     expect(buttons.length).toEqual(0, `Visible action buttons ${buttons.length}`);
   });
 
-  it('should show only show pending data when pending client data', () => {
+  it('should show only show pending data and cancel when pending client data', () => {
     const app = applicationStore.snapshot.application;
     app.status = ApplicationStatus.PENDING;
     app.type = ApplicationType[ApplicationType.EVENT];
@@ -342,8 +342,9 @@ describe('ApplicationActionsComponent', () => {
     comp.pendingClientData = true;
     setAndInit(true);
     const buttons = de.queryAll(By.css('button'));
-    expect(buttons.length).toEqual(1, `More than one button visible ${buttons.length}`);
+    expect(buttons.length).toEqual(2, `More than two buttons visible ${buttons.length}`);
     expect(getButtonWithText(de, findTranslation('application.button.showPending').toUpperCase())).toBeDefined();
+    expect(getButtonWithText(de, findTranslation('application.button.cancel').toUpperCase())).toBeDefined();
   });
 
   it('should disable to decision making button when no invoice recipient is set', () => {

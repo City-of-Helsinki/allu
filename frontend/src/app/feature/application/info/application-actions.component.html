@@ -4,6 +4,11 @@
       <button mat-raised-button type="button" color="primary" (click)="showExternalUpdates()">
         {{'application.button.showPending' | translation | uppercase}}
       </button>
+      <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']; types:[type]">
+        <button *ngIf="showCancel" mat-raised-button type="button" color="primary" (click)="cancel()">
+          {{'application.button.cancel' | translation | uppercase}}
+        </button>
+      </ng-container>
     </div>
   </ng-container>
   <ng-template #normalActions>
