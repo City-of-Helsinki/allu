@@ -291,9 +291,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapController.clearEdited();
   }
 
-  cancelArea(): void {
+  cancelArea(form: LocationForm): void {
     this.locationState.cancelEditing();
-    this.resetForm();
+    this.resetForm({streetAddress: form.streetAddress});
     this.mapController.clearEdited();
   }
 
