@@ -9,3 +9,12 @@
 
 - name: allow SSH connections
   ufw: rule=allow port=22
+
+- name: allow dcf monitoring connections
+  ufw: rule=allow proto=udp port=161:162 src={{ item }}
+  when: "'production' in group_names"
+  with_items:
+    - 10.42.21.37
+    - 10.42.21.38
+    - 10.42.21.39
+    - 10.42.21.40
