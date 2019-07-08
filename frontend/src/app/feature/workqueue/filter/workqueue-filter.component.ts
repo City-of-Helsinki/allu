@@ -1,23 +1,25 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {Observable, Subject} from 'rxjs';
-import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
-import {EnumUtil} from '../../../util/enum.util';
-import {ApplicationStatus, workqueue_searchable} from '../../../model/application/application-status';
-import {ApplicationType} from '../../../model/application/type/application-type';
-import {User} from '../../../model/user/user';
-import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
-import {CityDistrict} from '../../../model/common/city-district';
+import {combineLatest, Observable, Subject} from 'rxjs';
+import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
+import {EnumUtil} from '@util/enum.util';
+import {workqueue_searchable} from '@model/application/application-status';
+import {ApplicationType} from '@model/application/type/application-type';
+import {User} from '@model/user/user';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+import {CityDistrict} from '@model/common/city-district';
 import {WorkQueueTab} from '../workqueue-tab';
-import {ApplicationWorkItemStore} from '../application-work-item-store';
-import {StoredFilter} from '../../../model/user/stored-filter';
-import {StoredFilterType} from '../../../model/user/stored-filter-type';
-import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
-import {Sort} from '../../../model/common/sort';
-import * as fromRoot from '../../allu/reducers';
-import {Store} from '@ngrx/store';
-import {debounceTime, distinctUntilChanged, filter, map, take, takeUntil} from 'rxjs/internal/operators';
+import {StoredFilter} from '@model/user/stored-filter';
+import {StoredFilterType} from '@model/user/stored-filter-type';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
+import {Sort} from '@model/common/sort';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromWorkQueue from '@feature/workqueue/reducers';
+import {select, Store} from '@ngrx/store';
+import {debounceTime, distinctUntilChanged, filter, map, takeUntil} from 'rxjs/operators';
 import {ArrayUtil} from '@util/array-util';
+import {SetSearchQuery} from '@feature/application/actions/application-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 interface ApplicationSearchFilter {
   search?: ApplicationSearchQuery;
@@ -41,7 +43,7 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   applicationTypes = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
-  tab: Observable<string>;
+  tab$: Observable<WorkQueueTab>;
 
   WORKQUEUE_FILTER = StoredFilterType.WORKQUEUE;
   applicationFilter: Observable<ApplicationSearchFilter>;
@@ -53,7 +55,6 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
   constructor(fb: FormBuilder,
               private store: Store<fromRoot.State>,
-              private itemStore: ApplicationWorkItemStore,
               private storedFilterStore: StoredFilterStore) {
     this.queryForm = fb.group({
       type: undefined,
@@ -69,26 +70,26 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
-    this.itemStore.changes.pipe(
-      map(state => state.search)
-    ).subscribe(search => this.queryForm.patchValue(search, {emitEvent: false}));
+    this.store.pipe(
+      select(fromWorkQueue.getApplicationSearchParameters)
+    ).subscribe(search => this.onSearchChange(search));
 
     this.queryForm.valueChanges.pipe(
       takeUntil(this.destroy),
       distinctUntilChanged(),
       debounceTime(300),
     ).subscribe(query => {
-        this.storedFilterStore.resetCurrent(StoredFilterType.WORKQUEUE);
-        this.itemStore.searchChange(ApplicationSearchQuery.from(query));
-      });
+      this.storedFilterStore.resetCurrent(StoredFilterType.WORKQUEUE);
+      this.store.dispatch(new SetSearchQuery(ActionTargetType.ApplicationWorkQueue, query));
+    });
 
-    this.tab = this.itemStore.changes.pipe(
-      map(state => state.tab),
-      map(tab => WorkQueueTab[tab])
-    );
+    this.tab$ = this.store.pipe(select(fromWorkQueue.getTab));
 
-    this.applicationFilter = this.itemStore.changes.pipe(
-      map(state => ({ search: state.search, sort: state.sort }))
+    this.applicationFilter = combineLatest(
+      this.store.pipe(select(fromWorkQueue.getApplicationSearchParameters)),
+      this.store.pipe(select(fromWorkQueue.getApplicationSearchSort)),
+    ).pipe(
+      map(([search, sort]) => ({ search, sort }))
     );
 
     this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.WORKQUEUE);
@@ -99,7 +100,10 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       filter(sf => !!sf),
       map(sf => sf.search)
-    ).subscribe(search => this.itemStore.searchChange(search));
+    ).subscribe(search => {
+      this.queryForm.patchValue(search, {emitEvent: false});
+      this.store.dispatch(new SetSearchQuery(ActionTargetType.ApplicationWorkQueue, search));
+    });
   }
 
   ngOnDestroy(): void {
@@ -109,5 +113,13 @@ export class WorkQueueFilterComponent implements OnInit, OnDestroy {
 
   selectFilter(storedFilter: StoredFilter) {
     this.storedFilterStore.currentChange(storedFilter);
+  }
+
+  private onSearchChange(search: ApplicationSearchQuery): void {
+    if (search) {
+      this.queryForm.patchValue(search, {emitEvent: false});
+    } else {
+      this.store.dispatch(new SetSearchQuery(ActionTargetType.ApplicationWorkQueue, new ApplicationSearchQuery()));
+    }
   }
 }

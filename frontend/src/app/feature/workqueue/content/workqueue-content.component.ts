@@ -1,23 +1,22 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
-import {MatCheckboxChange, MatDialog, MatPaginator, MatSort} from '@angular/material';
-
-import {Application} from '../../../model/application/application';
-import {CommentsModalComponent} from '../../comment/comments-modal.component';
-import {ApplicationStatus} from '../../../model/application/application-status';
-import {ApplicationWorkItemStore} from '../application-work-item-store';
-import {ApplicationWorkItemDatasource, ApplicationWorkItemRow} from './application-work-item-datasource';
-import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
-import {Some} from '../../../util/option';
-import {WorkQueueTab} from '../workqueue-tab';
-import {Sort} from '../../../model/common/sort';
-import {StoredFilterType} from '../../../model/user/stored-filter-type';
-import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
-import {NotificationService} from '../../notification/notification.service';
-import * as fromRoot from '../../allu/reducers';
-import {Store} from '@ngrx/store';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {MatDialog, MatPaginator, MatSort} from '@angular/material';
+import {CommentsModalComponent} from '@feature/comment/comments-modal.component';
+import {ApplicationWorkItemDatasource} from './application-work-item-datasource';
+import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
+import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
+import {Sort} from '@model/common/sort';
+import {StoredFilterType} from '@model/user/stored-filter-type';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromWorkQueue from '@feature/workqueue/reducers';
+import {select, Store} from '@ngrx/store';
+import {map, takeUntil} from 'rxjs/operators';
+import {ResetToFirstPage, ToggleSelect, ToggleSelectAll} from '@feature/application/actions/application-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {SetTab} from '@feature/workqueue/actions/workqueue-actions';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 
 @Component({
   selector: 'workqueue-content',
@@ -31,8 +30,9 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     'creationTime', 'startTime', 'comments'
   ];
   dataSource: ApplicationWorkItemDatasource;
-  allSelected = false;
-  selectedTags: Array<string> = [];
+  allSelected$: Observable<boolean>;
+  someSelected$: Observable<boolean>;
+  selectedTags$: Observable<ApplicationTagType[]>;
   hoveredRowIndex: number;
   length = 0;
   pageIndex = 0;
@@ -41,56 +41,31 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  private selectedItems: Array<number> = [];
   private destroy = new Subject<boolean>();
 
   constructor(private route: ActivatedRoute,
               private store: Store<fromRoot.State>,
               private dialog: MatDialog,
-              private itemStore: ApplicationWorkItemStore,
-              private storedFilterStore: StoredFilterStore,
-              private notification: NotificationService) {
+              private storedFilterStore: StoredFilterStore) {
   }
 
   ngOnInit(): void {
-    this.sort.sort(Sort.toMatSortable(this.itemStore.snapshot.sort));
-
-    this.dataSource = new ApplicationWorkItemDatasource(this.itemStore, this.notification, this.paginator, this.sort);
-
-    this.dataSource.page.pipe(takeUntil(this.destroy))
-      .subscribe(page => {
-        this.length = page.totalElements;
-        this.pageIndex = page.pageNumber;
-      });
+    this.dataSource = new ApplicationWorkItemDatasource(this.store, this.paginator, this.sort);
 
     this.route.data.pipe(
       map(data => data.tab),
       takeUntil(this.destroy)
-    ).subscribe((tab: string) => this.itemStore.tabChange(WorkQueueTab[tab]));
+    ).subscribe((tab: WorkQueueTab) => {
+      this.store.dispatch(new SetTab(tab));
+      this.store.dispatch(new ResetToFirstPage(ActionTargetType.ApplicationWorkQueue));
+    });
 
-    this.itemStore.changes.pipe(
-      map(state => state.selectedItems),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(selected => this.selectedItems = selected);
-
-    this.itemStore.changes.pipe(
-      map(state => state.allSelected),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(allSelected => this.allSelected = allSelected);
-
-     this.itemStore.changes.pipe(
-       map(state => state.search),
-       distinctUntilChanged(),
-       takeUntil(this.destroy)
-     ).subscribe(query => this.selectedTags = query.tags);
-
-    this.itemStore.changes.pipe(
-      map(state => state.loading),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(loading => this.loading = loading);
+    this.allSelected$ = this.store.pipe(select(fromWorkQueue.getAllApplicationsSelected));
+    this.someSelected$ = this.store.pipe(select(fromWorkQueue.getSomeApplicationsSelected));
+    this.selectedTags$ = this.store.pipe(
+      select(fromWorkQueue.getApplicationSearchParameters),
+      map(search => search.tags)
+    );
 
     this.storedFilterStore.getCurrentFilter(StoredFilterType.WORKQUEUE).pipe(
       takeUntil(this.destroy),
@@ -103,16 +78,19 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  selected(id: number): boolean {
-    return this.selectedItems.indexOf(id) >= 0;
+  selected(id: number): Observable<boolean> {
+    return this.store.pipe(
+      select(fromWorkQueue.getSelectedApplications),
+      map(selected => selected.indexOf(id) >= 0)
+    );
   }
 
-  checkAll(change: MatCheckboxChange): void {
-    this.itemStore.toggleAll(change.checked);
+  checkAll(): void {
+    this.store.dispatch(new ToggleSelectAll(ActionTargetType.ApplicationWorkQueue));
   }
 
-  checkSingle(change: MatCheckboxChange, taskId: number) {
-    this.itemStore.toggleSingle(taskId, change.checked);
+  checkSingle(id: number) {
+    this.store.dispatch(new ToggleSelect(ActionTargetType.ApplicationWorkQueue, id));
   }
 
   showComments(applicationId: number): void {
@@ -130,29 +108,22 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
-  isTagRow(index: number, row: ApplicationWorkItemRow): boolean {
-    return Array.isArray(row.content);
-  }
-
-  tagSelected(tagName: string): boolean {
-    return Some(this.selectedTags).map(selected => selected.indexOf(tagName) >= 0).orElse(false);
+  tagSelected(tag: ApplicationTagType): Observable<boolean> {
+    return this.selectedTags$.pipe(
+      map(selected => selected.indexOf(tag) >= 0)
+    );
   }
 
   onMouseEnter(index: number): void {
     this.hoveredRowIndex = index;
   }
 
-  onMouseLeave(index: number): void {
+  onMouseLeave(): void {
     this.hoveredRowIndex = undefined;
   }
 
-  highlight(index: number, row: ApplicationWorkItemRow) {
+  highlight(index: number) {
     const isHoveredRow = this.hoveredRowIndex === index;
-    const isRelatedRow = this.hoveredRowIndex === row.relatedIndex;
-    return this.hoveredRowIndex !== undefined && (isHoveredRow || isRelatedRow);
-  }
-
-  hasTagRow(index: number, row: ApplicationWorkItemRow) {
-    return Some(row.relatedIndex).map(relatedIndex => relatedIndex > index).orElse(false);
+    return this.hoveredRowIndex !== undefined && isHoveredRow;
   }
 }

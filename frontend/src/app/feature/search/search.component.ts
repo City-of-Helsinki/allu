@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
-import {map, take} from 'rxjs/internal/operators';
+import {Observable, Subject, combineLatest} from 'rxjs';
+import {map, take} from 'rxjs/operators';
 
 import {Application} from '@model/application/application';
 import {ApplicationSearchQuery, toForm} from '@model/search/ApplicationSearchQuery';
@@ -17,7 +17,7 @@ import {AddMultiple} from '@feature/project/actions/application-basket-actions';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {select, Store} from '@ngrx/store';
-import {ClearSelected, ToggleSelect, ToggleSelectAll} from '@feature/application/actions/application-search-actions';
+import {ClearSelected, SetSearchQuery, ToggleSelect, ToggleSelectAll} from '@feature/application/actions/application-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ApplicationSearchDatasource} from '@service/application/application-search-datasource';
 
@@ -72,7 +72,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataSource = new ApplicationSearchDatasource(this.store, ActionTargetType.Application, this.paginator, this.sort);
+    this.dataSource = new ApplicationSearchDatasource(this.store, this.paginator, this.sort);
 
     this.store.pipe(
       select(fromApplication.getApplicationSearchParameters),
@@ -99,7 +99,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   search(): void {
     const query = ApplicationSearchQuery.from(this.queryForm.value);
-    this.dataSource.searchChange(query);
+    this.store.dispatch(new SetSearchQuery(ActionTargetType.Application, query));
   }
 
   districtName(id: number): Observable<string> {

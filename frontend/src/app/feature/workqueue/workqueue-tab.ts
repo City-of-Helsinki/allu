@@ -1,4 +1,9 @@
 export enum WorkQueueTab {
-  OWN, // Omat
-  COMMON // Yhteiset
+  OWN = 'OWN', // Omat
+  COMMON = 'COMMON' // Yhteiset
 }
+
+export const workQueueTabs = [
+  WorkQueueTab.OWN,
+  WorkQueueTab.COMMON
+];

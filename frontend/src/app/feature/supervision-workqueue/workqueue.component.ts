@@ -18,7 +18,7 @@ import {UserService} from '@service/user/user-service';
   styleUrls: ['./workqueue.component.scss']
 })
 export class WorkQueueComponent implements OnInit, OnDestroy {
-  tabs = [WorkQueueTab[WorkQueueTab.OWN], WorkQueueTab[WorkQueueTab.COMMON]];
+  tabs = [WorkQueueTab.OWN, WorkQueueTab.COMMON];
   noneSelected = true;
 
   private dialogRef: MatDialogRef<OwnerModalComponent>;

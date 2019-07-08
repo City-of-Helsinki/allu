@@ -2,6 +2,7 @@ import {TimeUtil} from '../../util/time.util';
 import {Sort} from '../common/sort';
 import {ApplicationSearchQueryForm} from './ApplicationSearchQueryForm';
 import {Some} from '../../util/option';
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
 
 export class ApplicationSearchQuery {
   public applicationId: string;
@@ -18,7 +19,7 @@ export class ApplicationSearchQuery {
   public endTime: Date;
   public projectId: number;
   public sort: Sort;
-  public tags: Array<string> = [];
+  public tags: Array<ApplicationTagType> = [];
 
   public get uiStartTime(): string {
     return TimeUtil.getUiDateString(this.startTime);

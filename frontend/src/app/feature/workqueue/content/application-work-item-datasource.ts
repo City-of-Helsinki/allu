@@ -1,85 +1,46 @@
-import {mergeMap, tap} from 'rxjs/operators';
-import {DataSource} from '@angular/cdk/collections';
-import {Observable, of, Subject} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
-import {Sort} from '@model/common/sort';
-import {Page} from '@model/common/page';
-import {PageRequest} from '@model/common/page-request';
-import {ApplicationWorkItemStore} from '../application-work-item-store';
-import {Application} from '@model/application/application';
-import {Some} from '@util/option';
-import {ApplicationTag} from '@model/application/tag/application-tag';
-import {NotificationService} from '@feature/notification/notification.service';
-import {catchError, distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {ApplicationSearchDatasource} from '@service/application/application-search-datasource';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import * as fromWorkQueue from '@feature/workqueue/reducers';
+import * as fromAuth from '@feature/auth/reducers';
+import {combineLatest, Observable} from 'rxjs';
+import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
+import {filter, map} from 'rxjs/operators';
+import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
+import {ObjectUtil} from '@util/object.util';
 
-export interface ApplicationWorkItemRow {
-  content: Application | ApplicationTag[];
-  relatedIndex?: number;
-}
-
-export class ApplicationWorkItemDatasource extends DataSource<any> {
-  private destroy = new Subject<boolean>();
-
-  constructor(private store: ApplicationWorkItemStore,
-              private notification: NotificationService,
-              private paginator: MatPaginator,
-              private sort: MatSort) {
-    super();
+export class ApplicationWorkItemDatasource extends ApplicationSearchDatasource {
+  constructor(store: Store<fromRoot.State>,
+              paginator: MatPaginator,
+              sort: MatSort) {
+    super(store, paginator, sort);
   }
 
-  connect(): Observable<ApplicationWorkItemRow[]> {
-    // Initial paging
-    this.store.pageRequestChange(new PageRequest(this.paginator.pageIndex, this.paginator.pageSize));
-
-    this.sort.sortChange.pipe(
-      takeUntil(this.destroy),
-      distinctUntilChanged()
-    ).subscribe(sortChange => this.store.sortChange(Sort.fromMatSort(sortChange)));
-
-    this.paginator.page.pipe(
-      takeUntil(this.destroy),
-      distinctUntilChanged()
-    ).subscribe(p => this.store.pageRequestChange(new PageRequest(p.pageIndex, p.pageSize)));
-
-    // Material datatable when condition is not run properly if empty data is not provided
-    // between data changes. To fix this we provide an empty array between all data changes.
-    return this.data.pipe(mergeMap(d => of([], d)));
+  protected initTargetType() {
+    this.actionTargetType = ActionTargetType.ApplicationWorkQueue;
   }
 
-  disconnect(): void {
-    this.destroy.next(true);
-    this.destroy.unsubscribe();
+  protected initSelectors() {
+    this.resultSelector = fromWorkQueue.getMatchingApplications;
+    this.searchParametersSelector = fromWorkQueue.getApplicationSearchParameters;
+    this.sortSelector = fromWorkQueue.getApplicationSearchSort;
+    this.pageRequestSelector = fromWorkQueue.getApplicationSearchPageRequest;
+    this.searchingSelector = fromWorkQueue.getSearchingApplications;
   }
 
-  public get page(): Observable<Page<Application>> {
-    return this.store.changes.pipe(
-      takeUntil(this.destroy),
-      map(state => state.page),
-      distinctUntilChanged(),
-      catchError(err => {
-        this.notification.errorInfo(err);
-        return of(new Page<Application>());
+  protected get searchParameters(): Observable<ApplicationSearchQuery> {
+    return combineLatest(
+      this.store.pipe(select(this.searchParametersSelector), filter(params => !!params)),
+      this.store.pipe(select(fromWorkQueue.getTab)),
+      this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
+    ).pipe(
+      map(([query, tab, user]) => {
+        const queryCopy = ObjectUtil.clone(query);
+        queryCopy.owner = WorkQueueTab.OWN === tab ? [user.userName] : query.owner;
+        return queryCopy;
       })
     );
-  }
-
-  public get data(): Observable<ApplicationWorkItemRow[]> {
-    return this.page.pipe(
-      map(page => page.content),
-      map(content => this.toRows(content))
-    );
-  }
-
-  private toRows(applications: Application[]): ApplicationWorkItemRow[] {
-    return applications.reduce((prev, cur) => {
-      const tagRow = Some(cur.applicationTags)
-        .filter(tags => tags.length > 0)
-        .map((tags) => ({content: tags, relatedIndex: prev.length}));
-
-      prev.push({content: cur, relatedIndex: tagRow.map(() => prev.length + 1).orElse(undefined)});
-      tagRow.do(tags => prev.push(tags));
-
-      return prev;
-    }, []);
   }
 }

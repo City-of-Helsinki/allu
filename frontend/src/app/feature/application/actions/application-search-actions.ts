@@ -9,6 +9,10 @@ import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
 
 export enum ApplicationSearchActionType {
+  SetSearchQuery = '[ApplicationSearch] Set search query',
+  SetSort = '[ApplicationSearch] Set search sort',
+  SetPaging = '[ApplicationSearch] Set search paging',
+  ResetToFirstPage = '[ApplicationSearch] Reset paging to first page',
   Search = '[ApplicationSearch] Search applications',
   SearchSuccess = '[ApplicationSearch] Search applications success',
   SearchFailed = '[ApplicationSearch] Search applications failed',
@@ -22,6 +26,30 @@ export interface SearchParams {
   query: ApplicationSearchQuery;
   sort?: Sort;
   pageRequest?: PageRequest;
+}
+
+export class SetSearchQuery implements ActionWithTarget {
+  readonly type = ApplicationSearchActionType.SetSearchQuery;
+
+  constructor(public targetType: ActionTargetType, public payload: ApplicationSearchQuery) {}
+}
+
+export class SetSort implements ActionWithTarget {
+  readonly type = ApplicationSearchActionType.SetSort;
+
+  constructor(public targetType: ActionTargetType, public payload: Sort) {}
+}
+
+export class SetPaging implements ActionWithTarget {
+  readonly type = ApplicationSearchActionType.SetPaging;
+
+  constructor(public targetType: ActionTargetType, public payload: PageRequest) {}
+}
+
+export class ResetToFirstPage implements ActionWithTarget {
+  readonly type = ApplicationSearchActionType.ResetToFirstPage;
+
+  constructor(public targetType: ActionTargetType) {}
 }
 
 export class Search implements ActionWithTarget {
@@ -71,6 +99,10 @@ export class ClearSelected implements ActionWithTarget {
 }
 
 export type ApplicationSearchActions =
+  | SetSearchQuery
+  | SetSort
+  | SetPaging
+  | ResetToFirstPage
   | Search
   | SearchSuccess
   | SearchFailed

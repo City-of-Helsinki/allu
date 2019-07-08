@@ -1,21 +1,30 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {ApplicationService} from '@service/application/application.service';
-import {Action} from '@ngrx/store';
+import {Action, select, Store} from '@ngrx/store';
 import {catchError, filter, map, switchMap} from 'rxjs/operators';
-import {from, Observable, of} from 'rxjs';
+import {combineLatest, from, Observable, of} from 'rxjs';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromWorkQueue from '@feature/workqueue/reducers';
 import {
   ApplicationSearchActionType,
+  ClearSelected,
   Search,
   SearchByNameOrId,
   SearchFailed,
   SearchSuccess
 } from '@feature/application/actions/application-search-actions';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {ApplicationActionType, ChangeOwnerSuccess, RemoveOwnerSuccess} from '@feature/application/actions/application-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
+import {Sort} from '@model/common/sort';
+import {PageRequest} from '@model/common/page-request';
 
 @Injectable()
 export class ApplicationSearchEffects {
   constructor(private actions: Actions,
+              private store: Store<fromRoot.State>,
               private applicationService: ApplicationService) {}
 
   @Effect()
@@ -42,4 +51,22 @@ export class ApplicationSearchEffects {
         ]))
       ))
   );
+
+  @Effect()
+  onOwnerChanges: Observable<Action> = this.actions.pipe(
+    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess>(ApplicationActionType.ChangeOwnerSuccess, ApplicationActionType.RemoveOwnerSuccess),
+    switchMap(() => this.getCurrentWorkQueueSearch()),
+    switchMap(([search, sort, pageRequest]) => [
+      new Search(ActionTargetType.ApplicationWorkQueue, search, sort, pageRequest),
+      new ClearSelected(ActionTargetType.ApplicationWorkQueue)
+    ])
+  );
+
+  private getCurrentWorkQueueSearch(): Observable<[ApplicationSearchQuery, Sort, PageRequest]> {
+    return combineLatest(
+      this.store.pipe(select(fromWorkQueue.getApplicationSearchParameters), filter(search => !!search)),
+      this.store.pipe(select(fromWorkQueue.getApplicationSearchSort)),
+      this.store.pipe(select(fromWorkQueue.getApplicationSearchPageRequest)),
+    );
+  }
 }

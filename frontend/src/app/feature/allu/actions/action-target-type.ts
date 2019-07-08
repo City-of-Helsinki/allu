@@ -10,5 +10,6 @@ export enum ActionTargetType {
   CableReport = 'CableReport',
   PlacementContract = 'PlacementContract',
   Home = 'Home',
-  Location = 'Location'
+  Location = 'Location',
+  ApplicationWorkQueue = 'ApplicationWorkQueue'
 }

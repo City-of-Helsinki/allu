@@ -1,83 +1,88 @@
 <div class="mat-elevation-z8 data-table data-table-with-paging">
-  <div class="loading-shade" *ngIf="loading">
+  <div class="loading-shade" *ngIf="dataSource.loading">
     <mat-spinner></mat-spinner>
   </div>
 
-  <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+  <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort [trackBy]="trackById">
     <ng-container matColumnDef="selected">
       <mat-header-cell *matHeaderCellDef>
         <div>
-          <mat-checkbox [checked]="allSelected" (change)="checkAll($event)"></mat-checkbox>
+          <mat-checkbox
+            [checked]="(someSelected$ | async) && (allSelected$ | async)"
+            [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+            (change)="checkAll()"></mat-checkbox>
         </div>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox [checked]="selected(row.content.id)" (change)="checkSingle($event, row.content.id)"></mat-checkbox>
+        <mat-checkbox
+          [checked]="selected(row.id) | async"
+          (change)="checkSingle(row.id)"></mat-checkbox>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="owner.userName">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.owner' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.owner?.realName}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.owner?.realName}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="applicationId">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicationId' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <a class="row-details-link" [routerLink]="['/applications', row.content.id, 'summary']">
-          {{row.content.applicationId}}
+        <a class="row-details-link" [routerLink]="['/applications', row.id, 'summary']">
+          {{row.applicationId}}
         </a>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="type">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.type.title' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{['application.type', row.content.type] | translation}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{['application.type', row.type] | translation}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.status.title' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{['application.status', row.content.status] | translation}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{['application.status', row.status] | translation}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="project.identifier">
       <mat-header-cell *matHeaderCellDef  mat-sort-header>{{'project.title' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <a *ngIf="row.content.project" class="row-details-link" [routerLink]="['/projects', row.content.project.id]">
-          {{row.content.project.identifier}}
+        <a *ngIf="row.project" class="row-details-link" [routerLink]="['/projects', row.project.id]">
+          {{row.project.identifier}}
         </a>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="customers.applicant.customer.name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.applicant' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.applicant.customer?.name}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.applicant.customer?.name}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="locations.address">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.streetAddress' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.address}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.address}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="locations.cityDistrictId">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.cityDistrict' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{districtName(row.content.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{districtName(row.firstLocation.effectiveCityDistrictId) | async}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="creationTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.creationTime' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.creationTime | date:'shortDate'}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.creationTime | date:'shortDate'}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="startTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header>{{'application.startTime' | translation}}</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.content.startTime | date:'shortDate'}}</mat-cell>
+      <mat-cell *matCellDef="let row">{{row.startTime | date:'shortDate'}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="comments">
       <mat-header-cell *matHeaderCellDef>{{'application.comments' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <span *ngIf="row.content.nrOfComments">
-          <button mat-raised-button type="button" color="primary" (click)="showComments(row.content.id)">
+        <span *ngIf="row.nrOfComments">
+          <button mat-raised-button type="button" color="primary" (click)="showComments(row.id)">
             {{'common.button.show' | translation | uppercase}}
           </button>
         </span>
@@ -85,13 +90,17 @@
     </ng-container>
 
     <ng-container matColumnDef="tags">
-      <mat-cell *matCellDef="let row">
-        <div fxLayout="row wrap" class="tag-row">
-          <div fxFlex="100px" class="tag-row-title">{{'application.tags' | translation}}</div>
+      <mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+        <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="18px"
+             class="tag-details-row"
+             *ngIf="row.applicationTags?.length">
+          <div fxFlex="none" class="tag-details-row-title">{{'application.tags' | translation}}</div>
           <div fxFlex>
             <mat-chip-list>
-              <mat-chip *ngFor="let tag of row.content" [selected]="tagSelected(tag.type)"
-                        class="accent-chip slim-chip" color="accent">
+              <mat-chip *ngFor="let tag of row.applicationTags"
+                        [selected]="tagSelected(tag.type) | async"
+                        class="accent-chip slim-chip"
+                        color="accent">
                 {{['application.tag.type', tag.type] | translation}}
               </mat-chip>
             </mat-chip-list>
@@ -102,20 +111,17 @@
 
     <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
 
-    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;"
-             [class.row-highlight]="highlight(i, row)"
-             [class.multi-row-upper-part]="hasTagRow(i, row)"
-             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns; let i = dataIndex;"
+             class="content-row"
+             [class.row-highlight]="highlight(i)"
+             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave()"></mat-row>
 
-    <mat-row *matRowDef="let row; columns: ['tags']; when: isTagRow; let i = index;"
-             class="bottom-row" [class.row-highlight]="highlight(i, row)"
-             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)"></mat-row>
+    <mat-row *matRowDef="let row; columns: ['tags']; let i = dataIndex;"
+             class="tag-row" [class.row-highlight]="highlight(i)"
+             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave()"></mat-row>
   </mat-table>
 
   <mat-paginator #paginator
-                 [length]="length"
-                 [pageIndex]="pageIndex"
-                 [pageSize]="25"
                  [pageSizeOptions]="[5, 10, 25, 100]">
   </mat-paginator>
 </div>

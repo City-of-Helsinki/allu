@@ -12,9 +12,10 @@ import {WorkQueueContentComponent} from './content/workqueue-content.component';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 import {CommentsModalComponent} from '../comment/comments-modal.component';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
-import {ApplicationWorkItemStore} from './application-work-item-store';
 import {RouterModule} from '@angular/router';
 import {StoredFilterModule} from '../stored-filter/stored-filter.module';
+import {StoreModule} from '@ngrx/store';
+import {reducersToken, reducersProvider} from '@feature/workqueue/reducers';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import {StoredFilterModule} from '../stored-filter/stored-filter.module';
     MatChipsModule,
     SelectionGroupModule,
     OwnerModalModule,
-    StoredFilterModule
+    StoredFilterModule,
+    StoreModule.forFeature('workQueue', reducersToken)
   ],
   declarations: [
     WorkQueueComponent,
@@ -38,7 +40,7 @@ import {StoredFilterModule} from '../stored-filter/stored-filter.module';
     CommentsModalComponent
   ],
   providers: [
-    ApplicationWorkItemStore
+    reducersProvider
   ],
   entryComponents: [
     CommentsModalComponent

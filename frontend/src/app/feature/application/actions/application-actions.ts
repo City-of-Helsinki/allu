@@ -11,7 +11,11 @@ export enum ApplicationActionType {
   LoadFailed = '[Application] Load application failed',
   SetType = '[Application] Set type',
   SetKindsWithSpecifiers = '[Application] Set kinds with specifiers',
-  RemoveClientApplicationData = '[Application] Remove client application data'
+  RemoveClientApplicationData = '[Application] Remove client application data',
+  ChangeOwner = '[Application] Change owner for chosen applications',
+  ChangeOwnerSuccess = '[Application] Change owner for chosen applications success',
+  RemoveOwner = '[Application] Remove owner from chosen applications',
+  RemoveOwnerSuccess = '[Application] Remove owner from chosen applications success',
 }
 
 export class Load implements Action {
@@ -48,10 +52,37 @@ export class RemoveClientApplicationData implements Action  {
   readonly type = ApplicationActionType.RemoveClientApplicationData;
 }
 
+export class ChangeOwner implements Action {
+  readonly type = ApplicationActionType.ChangeOwner;
+  readonly payload: {ownerId: number, applicationIds: number[]};
+
+  constructor(public ownerId: number, public applicationIds: number[] = []) {
+    this.payload = {ownerId, applicationIds};
+  }
+}
+
+export class ChangeOwnerSuccess implements Action {
+  readonly type = ApplicationActionType.ChangeOwnerSuccess;
+}
+
+export class RemoveOwner implements Action {
+  readonly type = ApplicationActionType.RemoveOwner;
+
+  constructor(public payload: number[]) {}
+}
+
+export class RemoveOwnerSuccess implements Action {
+  readonly type = ApplicationActionType.RemoveOwnerSuccess;
+}
+
 export type ApplicationActions =
   | Load
   | LoadSuccess
   | LoadFailed
   | SetType
   | SetKindsWithSpecifiers
-  | RemoveClientApplicationData;
+  | RemoveClientApplicationData
+  | ChangeOwner
+  | ChangeOwnerSuccess
+  | RemoveOwner
+  | RemoveOwnerSuccess;

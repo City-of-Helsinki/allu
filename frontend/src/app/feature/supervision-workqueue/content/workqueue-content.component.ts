@@ -52,7 +52,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.route.data.pipe(
       map(data => data.tab),
       takeUntil(this.destroy)
-    ).subscribe((tab: string) => this.store.tabChange(WorkQueueTab[tab]));
+    ).subscribe((tab: WorkQueueTab) => this.store.tabChange(tab));
 
     this.store.changes.pipe(
       map(state => state.selectedItems),

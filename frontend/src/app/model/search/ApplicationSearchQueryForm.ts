@@ -1,3 +1,5 @@
+import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+
 export interface ApplicationSearchQueryForm {
   applicationId?: string;
   name?: string;
@@ -11,5 +13,5 @@ export interface ApplicationSearchQueryForm {
   freeText?: string;
   startTime?: Date;
   endTime?: Date;
-  tags?: Array<string>;
+  tags?: Array<ApplicationTagType>;
 }

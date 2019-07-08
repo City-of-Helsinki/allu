@@ -28,6 +28,37 @@ const initialState: State = {
 
 export function reducer(state: State = initialState, action: ApplicationSearchActions) {
   switch (action.type) {
+
+    case ApplicationSearchActionType.SetSearchQuery: {
+      return {
+        ...state,
+        parameters: action.payload,
+        pageRequest: {...state.pageRequest, page: 0}
+      };
+    }
+
+    case ApplicationSearchActionType.SetSort: {
+      return {
+        ...state,
+        sort: action.payload,
+        pageRequest: {...state.pageRequest, page: 0}
+      };
+    }
+
+    case ApplicationSearchActionType.SetPaging: {
+      return {
+        ...state,
+        pageRequest: action.payload
+      };
+    }
+
+    case ApplicationSearchActionType.ResetToFirstPage: {
+      return {
+        ...state,
+        pageRequest: {...state.pageRequest, page: 0}
+      };
+    }
+
     case ApplicationSearchActionType.SearchByNameOrId: {
       return {
         ...state,
@@ -40,9 +71,6 @@ export function reducer(state: State = initialState, action: ApplicationSearchAc
     case ApplicationSearchActionType.Search: {
       return {
         ...state,
-        parameters: action.payload.query,
-        sort: action.payload.sort,
-        pageRequest: action.payload.pageRequest,
         searching: true
       };
     }
@@ -120,6 +148,8 @@ export const getSelected = (state: State) => state.selected;
 
 export const getAllSelected = (state: State) => ArrayUtil.containSame(state.selected, getMatchingIds(state));
 
+export const getSomeSelected = (state: State) => state.selected ? state.selected.length > 0 : false;
+
 export function createApplicationSearchSelectors(getState: MemoizedSelector<object, State>) {
   return {
     getMatching: createSelector(getState, getMatchingApplications),
@@ -130,6 +160,7 @@ export function createApplicationSearchSelectors(getState: MemoizedSelector<obje
     getSort: createSelector(getState, getSort),
     getPageRequest: createSelector(getState, getPageRequest),
     getSelected: createSelector(getState, getSelected),
-    getAllSelected: createSelector(getState, getAllSelected)
+    getAllSelected: createSelector(getState, getAllSelected),
+    getSomeSelected: createSelector(getState, getSomeSelected)
   };
 }

@@ -37,7 +37,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="col s2" [hidden]="(tab | async)==='OWN'">
+      <div class="col s2" [hidden]="(tab$ | async)==='OWN'">
         <mat-form-field class="input-full-width">
           <mat-select formControlName="owner" [multiple]="true" class="input-full-width"
                       [placeholder]="'applicationSearch.owner' | translation">

@@ -1,11 +1,15 @@
 @import '../../../../assets/colors';
 
+.content-row {
+  border-bottom: none;
+}
+
 .row-highlight {
   background-color: mat-color($allu-primary, 50);
 }
 
-.bottom-row {
-  border-bottom: 1px solid #d0d0d0;
+.tag-row {
+  min-height: 0px;
 }
 
 .status-text {
@@ -13,11 +17,12 @@
   color: mat-color($allu-primary, 500);
 }
 
-.tag-row {
+.tag-details-row {
   margin-left: 50px;
+  min-height: 48px;
 }
 
-.tag-row .tag-row-title {
+.tag-details-row .tag-details-row-title {
   font-weight: bold;
 }
 
@@ -25,8 +30,4 @@
   margin: 0px 2px;
   line-height: 1.43;
   font-size: 14px;
-}
-
-.multi-row-upper-part {
-  border-bottom: none;
 }

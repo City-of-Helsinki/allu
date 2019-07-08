@@ -12,9 +12,10 @@ import {Injectable} from '@angular/core';
 import {ApplicationActionType} from '@feature/application/actions/application-actions';
 import {ApplicationService} from '@service/application/application.service';
 import {ApplicationStore} from '@service/application/application-store';
-import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {NotifyFailure, NotifySuccess} from '@feature/notification/actions/notification-actions';
 import {withLatestExisting} from '@feature/common/with-latest-existing';
 import {ClearCoordinates} from '@feature/map/actions/address-search-actions';
+import {findTranslation} from '@util/translations';
 
 @Injectable()
 export class ApplicationEffects {
@@ -59,6 +60,30 @@ export class ApplicationEffects {
         new ApplicationAction.LoadFailed(error),
         new NotifyFailure(error)
       ]))
+    ))
+  );
+
+  @Effect()
+  changeOwner: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationAction.ChangeOwner>(ApplicationActionType.ChangeOwner),
+    switchMap(action => this.applicationService.changeOwner(action.payload.ownerId, action.payload.applicationIds).pipe(
+      switchMap(() => [
+        new ApplicationAction.ChangeOwnerSuccess(),
+        new NotifySuccess(findTranslation('workqueue.notifications.ownerChanged')),
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  removeOwner: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationAction.RemoveOwner>(ApplicationActionType.RemoveOwner),
+    switchMap(action => this.applicationService.removeOwner(action.payload).pipe(
+      switchMap(() => [
+        new ApplicationAction.RemoveOwnerSuccess(),
+        new NotifySuccess(findTranslation('workqueue.notifications.ownerRemoved'))
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 

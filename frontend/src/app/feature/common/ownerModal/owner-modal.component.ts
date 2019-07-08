@@ -24,6 +24,7 @@ export class OwnerModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser.user.subscribe(u => this.selectedUser = u);
+    console.log(`users: ${this.data.users}`);
     this.allUsers = this.sort(this.data.users || [this.selectedUser]);
     this.type = this.data.type || 'OWNER';
   }

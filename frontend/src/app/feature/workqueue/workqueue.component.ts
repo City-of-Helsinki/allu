@@ -1,23 +1,24 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {MatDialog} from '@angular/material';
-import {EnumUtil} from '@util/enum.util';
 import {OWNER_MODAL_CONFIG, OwnerModalComponent} from '@feature/common/ownerModal/owner-modal.component';
 import {CurrentUser} from '@service/user/current-user';
 import {User} from '@model/user/user';
-import {DialogCloseReason} from '@feature/common/dialog-close-value';
-import {WorkQueueTab} from './workqueue-tab';
-import {NotificationService} from '@feature/notification/notification.service';
-import {findTranslation} from '@util/translations';
-import {Subject} from 'rxjs';
-import {ApplicationWorkItemStore} from './application-work-item-store';
-import {Store} from '@ngrx/store';
+import {DialogCloseReason, DialogCloseValue} from '@feature/common/dialog-close-value';
+import {workQueueTabs} from './workqueue-tab';
+import {Observable, Subject} from 'rxjs';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
+import * as fromWorkQueue from '@feature/workqueue/reducers';
 import {AddMultiple} from '@feature/project/actions/application-basket-actions';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UserService} from '@service/user/user-service';
 import {ArrayUtil} from '@util/array-util';
 import {RoleType} from '@model/user/role-type';
+import {ClearSelected} from '@feature/application/actions/application-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ChangeOwner, RemoveOwner} from '@feature/application/actions/application-actions';
+import {ApplicationType} from '@model/application/type/application-type';
 
 @Component({
   selector: 'workqueue',
@@ -27,9 +28,9 @@ import {RoleType} from '@model/user/role-type';
   ]
 })
 export class WorkQueueComponent implements OnInit, OnDestroy {
-  tabs = EnumUtil.enumValues(WorkQueueTab);
+  tabs = workQueueTabs;
   owners: Array<User>;
-  noneSelected = true;
+  someSelected$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
   private editRoles = [
@@ -37,11 +38,9 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       RoleType.ROLE_PROCESS_APPLICATION,
       RoleType.ROLE_DECISION];
 
-  constructor(private itemStore: ApplicationWorkItemStore,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
               private userService: UserService,
               private currentUser: CurrentUser,
-              private notification: NotificationService,
               private store: Store<fromRoot.State>) {
   }
 
@@ -49,11 +48,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     this.userService.getActiveUsers().subscribe(
         users => this.owners = users.filter(o => ArrayUtil.anyMatch(this.editRoles, o.roles)));
 
-    this.itemStore.changes.pipe(
-      map(state => state.selectedItems),
-      distinctUntilChanged(),
-      takeUntil(this.destroy),
-    ).subscribe(items => this.noneSelected = (items.length === 0));
+    this.someSelected$ = this.store.pipe(select(fromWorkQueue.getSomeApplicationsSelected));
   }
 
   ngOnDestroy() {
@@ -68,46 +63,65 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   addToBasket(): void {
-    const selected = this.itemStore.snapshot.selectedItems;
-    this.store.dispatch(new AddMultiple(selected));
-    this.itemStore.selectedItemsChange([]);
-  }
-
-  openHandlerModal() {
-    const applicationTypes = this.itemStore.snapshot.page.content
-        .filter(a => this.itemStore.snapshot.selectedItems.indexOf(a.id) >= 0)
-        .map(a => a.type);
-    const config = {
-      ...OWNER_MODAL_CONFIG,
-      data: {
-        type: 'OWNER',
-        users: this.owners
-            .filter(o => applicationTypes.every(lItem => o.allowedApplicationTypes.indexOf(lItem) >= 0))
-      }
-    };
-
-    const dialogRef = this.dialog.open<OwnerModalComponent>(OwnerModalComponent, config);
-
-    dialogRef.afterClosed().subscribe(dialogCloseValue => {
-      if (dialogCloseValue.reason === DialogCloseReason.OK) {
-        if (dialogCloseValue.result) {
-          this.changeOwner(dialogCloseValue.result);
-        } else {
-          this.removeOwner();
-        }
-      }
+    this.store.pipe(
+      select(fromWorkQueue.getSelectedApplications),
+      take(1)
+    ).subscribe(selected => {
+      this.store.dispatch(new AddMultiple(selected));
+      this.store.dispatch(new ClearSelected(ActionTargetType.Application));
     });
   }
 
+  openHandlerModal() {
+    this.store.pipe(
+      select(fromWorkQueue.getSelectedApplicationEntities),
+      take(1),
+      map(selected => selected.map(app => app.type)),
+      map(selectedTypes => this.getOwnersWhoCanOwn(selectedTypes)),
+      map(owners => this.createConfig(owners)),
+      switchMap(config => this.dialog.open<OwnerModalComponent>(OwnerModalComponent, config).afterClosed())
+    ).subscribe(dialogCloseValue => this.handleOwnerChange(dialogCloseValue));
+  }
+
+  /**
+   * Returns users who can own every selected type
+   */
+  private getOwnersWhoCanOwn(selectedTypes: ApplicationType[]): User[] {
+    return this.owners.filter(owner =>
+      selectedTypes.every(type => owner.allowedApplicationTypes.indexOf(type) >= 0));
+  }
+
+  private createConfig(owners: User[]) {
+    return {
+      ...OWNER_MODAL_CONFIG,
+      data: {
+        type: 'OWNER',
+        users: owners
+      }
+    };
+  }
+
+  private handleOwnerChange(dialogCloseValue: DialogCloseValue): void {
+    if (dialogCloseValue.reason === DialogCloseReason.OK) {
+      if (dialogCloseValue.result) {
+        this.changeOwner(dialogCloseValue.result);
+      } else {
+        this.removeOwner();
+      }
+    }
+  }
+
   private changeOwner(owner: User): void {
-    this.itemStore.changeOwnerForSelected(owner.id).subscribe(
-      () => this.notification.success(findTranslation('workqueue.notifications.ownerChanged')),
-      () => this.notification.error(findTranslation('workqueue.notifications.ownerChangeFailed')));
+    this.store.pipe(
+      select(fromWorkQueue.getSelectedApplications),
+      take(1)
+    ).subscribe(selected => this.store.dispatch(new ChangeOwner(owner.id, selected)));
   }
 
   private removeOwner(): void {
-    this.itemStore.removeOwnerFromSelected().subscribe(
-      () => this.notification.success(findTranslation('workqueue.notifications.ownerRemoved')),
-      () => this.notification.error(findTranslation('workqueue.notifications.ownerRemoveFailed')));
+    this.store.pipe(
+      select(fromWorkQueue.getSelectedApplications),
+      take(1)
+    ).subscribe(selected => this.store.dispatch(new RemoveOwner(selected)));
   }
 }
