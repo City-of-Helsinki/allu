@@ -1,10 +1,9 @@
 import {TimeUtil} from '../../util/time.util';
 import {Sort} from '../common/sort';
 import {ApplicationSearchQueryForm} from './ApplicationSearchQueryForm';
-import {SearchQuery} from '../common/search-query';
 import {Some} from '../../util/option';
 
-export class ApplicationSearchQuery implements SearchQuery {
+export class ApplicationSearchQuery {
   public applicationId: string;
   public name: string;
   public type: Array<string> = [];
@@ -79,6 +78,31 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.tags = this.tags;
     return query;
   }
+}
+
+export function fromApplicationIdAndName(applicationId: string, name: string): ApplicationSearchQuery {
+  const searchQuery = new ApplicationSearchQuery();
+  searchQuery.name = applicationId;
+  searchQuery.applicationId = name;
+  return searchQuery;
+}
+
+export function toForm(query: ApplicationSearchQuery = new ApplicationSearchQuery()): ApplicationSearchQueryForm {
+  return {
+    applicationId: query.applicationId,
+    name: query.name,
+    type: query.type,
+    status: query.status,
+    districts: query.districts,
+    owner: query.owner,
+    address: query.address,
+    applicant: query.applicant,
+    contact: query.contact,
+    freeText: query.freeText,
+    startTime: query.startTime,
+    endTime: query.endTime,
+    tags: query.tags
+  };
 }
 
 

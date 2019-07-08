@@ -56,7 +56,7 @@ export const getApplicationSearchState = createSelector(
 
 export const getMatchingApplications = createSelector(
   getApplicationSearchState,
-  fromApplicationSearch.getMatchingApplications
+  fromApplicationSearch.getMatchingApplicationsList
 );
 
 // User geometry selectors

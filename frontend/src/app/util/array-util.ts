@@ -128,6 +128,13 @@ export class ArrayUtil {
     return array === undefined || array === null || array.length === 0;
   }
 
+  static removeExistingAddMissing<T>(array: Array<T> = [], value: T): Array<T> {
+    const filtered = array.filter(val => val !== value);
+    return filtered.length === array.length
+      ? array.concat(value)
+      : filtered;
+  }
+
   private static compareNumeric(left: Array<number>, right: Array<number>): number {
     while (left.length && right.length) {
       const leftHead = left.shift();

@@ -9,7 +9,7 @@ import {CommentActionType, Load, LoadFailed, LoadSuccess, Remove, RemoveSuccess,
 import {CommentService} from '@service/application/comment/comment.service';
 import {Comment} from '@model/application/comment/comment';
 import {ActionTargetType} from '../../allu/actions/action-target-type';
-import {ofExistingTargetAndType} from '../../allu/actions/action-with-target';
+import {withLatestExistingOfTargetAndType} from '../../allu/actions/action-with-target';
 import * as fromProject from '../../project/reducers';
 import * as fromApplication from '../../application/reducers';
 import {ApproveSuccess, RejectSuccess, ContractActionType} from '@feature/decision/actions/contract-actions';
@@ -23,25 +23,25 @@ export class CommentEffects {
 
   @Effect()
   loadApplicationComments: Observable<Action> = this.actions.pipe(
-    ofExistingTargetAndType<Load>(ActionTargetType.Application, this.currentApplication, CommentActionType.Load),
+    withLatestExistingOfTargetAndType<Load>(ActionTargetType.Application, this.currentApplication, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
   );
 
   @Effect()
   saveApplicationComment: Observable<Action> = this.actions.pipe(
-    ofExistingTargetAndType<Save>(ActionTargetType.Application, this.currentApplication, CommentActionType.Save),
+    withLatestExistingOfTargetAndType<Save>(ActionTargetType.Application, this.currentApplication, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
   );
 
   @Effect()
   loadProjectComments: Observable<Action> = this.actions.pipe(
-    ofExistingTargetAndType<Load>(ActionTargetType.Project, this.currentProject, CommentActionType.Load),
+    withLatestExistingOfTargetAndType<Load>(ActionTargetType.Project, this.currentProject, CommentActionType.Load),
     switchMap(([action, app]) => this.loadByType(action.targetType, app.id))
   );
 
   @Effect()
   saveProjectComment: Observable<Action> = this.actions.pipe(
-    ofExistingTargetAndType<Save>(ActionTargetType.Project, this.currentProject, CommentActionType.Save),
+    withLatestExistingOfTargetAndType<Save>(ActionTargetType.Project, this.currentProject, CommentActionType.Save),
     switchMap(([action, app]) => this.saveByType(action.targetType, app.id, action.payload))
   );
 

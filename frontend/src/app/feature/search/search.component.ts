@@ -1,26 +1,25 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {map, take} from 'rxjs/internal/operators';
 
-import {Application} from '../../model/application/application';
-import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
-import {ApplicationStatus, searchable} from '../../model/application/application-status';
-import {ApplicationWorkItemStore} from '../workqueue/application-work-item-store';
-import {EnumUtil} from '../../util/enum.util';
-import {ApplicationType} from '../../model/application/type/application-type';
-import {UserService} from '../../service/user/user-service';
-import {User} from '../../model/user/user';
-import {RoleType} from '../../model/user/role-type';
+import {Application} from '@model/application/application';
+import {ApplicationSearchQuery, toForm} from '@model/search/ApplicationSearchQuery';
+import {searchable} from '@model/application/application-status';
+import {ApplicationType} from '@model/application/type/application-type';
+import {UserService} from '@service/user/user-service';
+import {User} from '@model/user/user';
+import {RoleType} from '@model/user/role-type';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {CityDistrict} from '../../model/common/city-district';
-import {ApplicationService} from '../../service/application/application.service';
-import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
-import {ApplicationSearchDatasource} from '../../service/application/application-search-datasource';
-import {NotificationService} from '../notification/notification.service';
-import {ArrayUtil} from '../../util/array-util';
-import {AddMultiple} from '../project/actions/application-basket-actions';
-import * as fromRoot from '../allu/reducers';
-import {Store} from '@ngrx/store';
+import {CityDistrict} from '@model/common/city-district';
+import {MatPaginator, MatSort} from '@angular/material';
+import {ArrayUtil} from '@util/array-util';
+import {AddMultiple} from '@feature/project/actions/application-basket-actions';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromApplication from '@feature/application/reducers';
+import {select, Store} from '@ngrx/store';
+import {ClearSelected, ToggleSelect, ToggleSelectAll} from '@feature/application/actions/application-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ApplicationSearchDatasource} from '@service/application/application-search-datasource';
 
 const ownerRoles = [RoleType.ROLE_CREATE_APPLICATION,
                       RoleType.ROLE_PROCESS_APPLICATION,
@@ -46,21 +45,17 @@ export class SearchComponent implements OnInit, OnDestroy {
   applicationTypeStrings = Object.keys(ApplicationType)
     .sort(ArrayUtil.naturalSortTranslated(['application.type'], (type: string) => type));
   dataSource: ApplicationSearchDatasource;
-  allSelected = false;
-  noneSelected = true;
+  allSelected$: Observable<boolean>;
+  someSelected$: Observable<boolean>;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  private selectedItems: Array<number> = [];
   private destroy = new Subject<boolean>();
 
-  constructor(private applicationService: ApplicationService,
-              private itemStore: ApplicationWorkItemStore,
-              private userService: UserService,
+  constructor(private userService: UserService,
               private store: Store<fromRoot.State>,
-              private fb: FormBuilder,
-              private notification: NotificationService) {
+              private fb: FormBuilder) {
     this.queryForm = this.fb.group({
       applicationId: undefined,
       type: undefined,
@@ -77,30 +72,24 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataSource = new ApplicationSearchDatasource(this.applicationService, this.notification, this.paginator, this.sort);
+    this.dataSource = new ApplicationSearchDatasource(this.store, ActionTargetType.Application, this.paginator, this.sort);
+
+    this.store.pipe(
+      select(fromApplication.getApplicationSearchParameters),
+      take(1),
+      map(query => toForm(query))
+    ).subscribe(formValues => this.queryForm.patchValue(formValues));
+
     this.owners = this.userService.getActiveUsers().pipe(
       map(users => users.filter(user => user.roles.some(r => ownerRoles.includes(RoleType[r])))),
       map(users => users.sort(ArrayUtil.naturalSort((user: User) => user.realName))));
     this.districts = this.store.select(fromRoot.getAllCityDistricts);
 
-    this.itemStore.changes.pipe(
-      map(state => state.selectedItems),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(selected => {
-      this.selectedItems = selected;
-      this.noneSelected = selected.length === 0;
-    });
-
-    this.itemStore.changes.pipe(
-      map(state => state.allSelected),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(allSelected => this.allSelected = allSelected);
-
-    this.dataSource.pageChanges.pipe(
-      takeUntil(this.destroy)
-    ).subscribe(page => this.itemStore.pageChange(page));
+    this.allSelected$ = this.store.pipe(select(fromApplication.getAllApplicationsSelected));
+    this.someSelected$ = this.store.pipe(
+      select(fromApplication.getSelectedApplications),
+      map(selected => selected.length > 0)
+    );
   }
 
   ngOnDestroy(): void {
@@ -121,21 +110,28 @@ export class SearchComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
-  selected(id: number): boolean {
-    return this.selectedItems.indexOf(id) >= 0;
+  selected(id: number): Observable<boolean> {
+    return this.store.pipe(
+      select(fromApplication.getSelectedApplications),
+      map(selected => selected.indexOf(id) >= 0)
+    );
   }
 
-  checkAll(change: MatCheckboxChange): void {
-    this.itemStore.toggleAll(change.checked);
+  checkAll(): void {
+    this.store.dispatch(new ToggleSelectAll(ActionTargetType.Application));
   }
 
-  checkSingle(change: MatCheckboxChange, taskId: number) {
-    this.itemStore.toggleSingle(taskId, change.checked);
+  checkSingle(id: number) {
+    this.store.dispatch(new ToggleSelect(ActionTargetType.Application, id));
   }
 
   addToBasket(): void {
-    const selected = this.itemStore.snapshot.selectedItems;
-    this.store.dispatch(new AddMultiple(selected));
-    this.itemStore.selectedItemsChange([]);
+    this.store.pipe(
+      select(fromApplication.getSelectedApplications),
+      take(1)
+    ).subscribe(selected => {
+      this.store.dispatch(new AddMultiple(selected));
+      this.store.dispatch(new ClearSelected(ActionTargetType.Application));
+    });
   }
 }

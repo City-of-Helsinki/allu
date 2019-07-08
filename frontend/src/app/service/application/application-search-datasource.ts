@@ -1,34 +1,41 @@
 import {DataSource} from '@angular/cdk/collections';
-import {Subject, Observable, merge, of} from 'rxjs';
+import {Observable, Subject, combineLatest} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
-import {ApplicationService} from './application.service';
 import {Application} from '@model/application/application';
 import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
-import {Page} from '@model/common/page';
-import {NotificationService} from '@feature/notification/notification.service';
-import {catchError, map, skipUntil, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
+import {map, take, takeUntil, tap} from 'rxjs/operators';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromApplication from '@feature/application/reducers';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {Search} from '@feature/application/actions/application-search-actions';
 
-export class ApplicationSearchDatasource extends DataSource<any> {
+
+export class ApplicationSearchDatasource extends DataSource<Application> {
 
   public loading = false;
-
-  private searchChanges = new Subject<ApplicationSearchQuery>();
   private destroy = new Subject<boolean>();
-  private _pageSnapshot = new Page<Application>();
-  private _search: ApplicationSearchQuery;
+  private searchQuery = new Subject<ApplicationSearchQuery>();
 
-  constructor(private applicationService: ApplicationService,
-              private notification: NotificationService,
+  constructor(private store: Store<fromRoot.State>,
+              private targetType: ActionTargetType,
               private paginator: MatPaginator,
               private sort: MatSort) {
     super();
+    this.setupSearch();
+    this.setupInitialValues();
+    this.handleLoadingChanges();
   }
 
   connect(): Observable<Application[]> {
-    this.resetPageIndexOnSearchSortChange();
-    return this.data;
+    return this.store.pipe(
+      select(fromApplication.getMatchingApplications),
+      takeUntil(this.destroy),
+      tap(page => this.updatePaginatorInfo(page.totalElements)),
+      map(page => page.content)
+    );
   }
 
   disconnect(): void {
@@ -37,56 +44,63 @@ export class ApplicationSearchDatasource extends DataSource<any> {
   }
 
   searchChange(search: ApplicationSearchQuery) {
-    this._search = search;
-    this.searchChanges.next(search);
+    this.searchQuery.next(search);
+    this.paginator.firstPage();
   }
 
-  get data(): Observable<Application[]> {
-    return this.pageChanges.pipe(map(page => page.content));
+  private setupSearch(): void {
+    combineLatest(
+      this.searchQuery,
+      this.sortChanges(),
+      this.pagingChanges()
+    ).subscribe(([search, sort, paging]) => {
+      this.store.dispatch(new Search(ActionTargetType.Application, search, sort, paging));
+    });
   }
 
-  get pageSnapshot(): Page<Application> {
-    return this._pageSnapshot;
-  }
-
-  get pageChanges(): Observable<Page<Application>> {
-    const displayDataChanges = [
-      this.searchChanges,
-      this.sort.sortChange,
-      this.paginator.page
-    ];
-
-    return merge(...displayDataChanges).pipe(
+  private pagingChanges(): Observable<PageRequest> {
+    return this.paginator.page.pipe(
       takeUntil(this.destroy),
-      skipUntil(this.searchChanges),
-      switchMap(() => this.load()),
-      tap(page => {
-        this._pageSnapshot = page;
-        this.loading = false;
-      })
+      map(page => new PageRequest(page.pageIndex, page.pageSize))
     );
   }
 
-  private load(): Observable<Page<Application>> {
-    this.loading = true;
-    return this.applicationService.pagedSearch(
-      this._search,
-      new Sort(this.sort.active, this.sort.direction),
-      new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)).pipe(
-      catchError(err => {
-        this.notification.errorInfo(err);
-        return of(new Page<Application>());
-      })
+  private sortChanges(): Observable<Sort> {
+    return this.sort.sortChange.pipe(
+      takeUntil(this.destroy),
+      map(sort => Sort.fromMatSort(sort)),
+      tap(() => this.paginator.firstPage())
     );
   }
 
-  private resetPageIndexOnSearchSortChange(): void {
-    const changes = [
-      this.searchChanges,
-      this.sort.sortChange,
-    ];
-    merge(...changes).pipe(
+  private setupInitialValues(): void {
+    this.store.pipe(
+      select(fromApplication.getApplicationSearchPageRequest),
+      take(1)
+    ).subscribe(pageRequest => {
+      this.paginator.pageIndex = pageRequest.page;
+      // Need to use underscore notation so paginator emits a page change event after setting
+      // can be replaced with this.paginator.pageSize = pageRequest.size when it is fixed
+      this.paginator._changePageSize(pageRequest.size);
+    });
+
+    this.store.pipe(
+      select(fromApplication.getApplicationSearchSort),
+      take(1),
+      map(sort => Sort.toMatSortable(sort))
+    ).subscribe(sort => {
+      this.sort.sort(sort);
+    });
+  }
+
+  private handleLoadingChanges(): void {
+    this.store.pipe(
+      select(fromApplication.getSearchingApplications),
       takeUntil(this.destroy)
-    ).subscribe(() => this.paginator.pageIndex = 0);
+    ).subscribe(loading => this.loading = loading);
+  }
+
+  private updatePaginatorInfo(totalElements: number): void {
+    this.paginator.length = totalElements;
   }
 }

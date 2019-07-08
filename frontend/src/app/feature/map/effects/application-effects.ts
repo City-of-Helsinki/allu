@@ -12,7 +12,7 @@ import * as fromLocation from '@feature/application/location/reducers';
 import {MapSearchFilter} from '@service/map-search-filter';
 import {MapLayer} from '@service/map/map-layer';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {ofTargetAndType} from '@feature/allu/actions/action-with-target';
+import {withLatestOfTargetAndType} from '@feature/allu/actions/action-with-target';
 
 @Injectable()
 export class ApplicationEffects {
@@ -22,7 +22,7 @@ export class ApplicationEffects {
 
   @Effect()
   mapSearch: Observable<Action> = this.actions.pipe(
-    ofTargetAndType<Search>(ActionTargetType.Home,
+    withLatestOfTargetAndType<Search>(ActionTargetType.Home,
       this.store.pipe(select(fromMap.getSelectedApplicationLayers)),
       ApplicationActionType.Search),
     switchMap(([action, layers]) => this.loadByType(action.targetType, action.payload, layers))
@@ -30,7 +30,7 @@ export class ApplicationEffects {
 
   @Effect()
   locationSearch: Observable<Action> = this.actions.pipe(
-    ofTargetAndType<Search>(ActionTargetType.Location,
+    withLatestOfTargetAndType<Search>(ActionTargetType.Location,
       this.store.pipe(select(fromLocation.getSelectedApplicationLayers)),
       ApplicationActionType.Search),
     switchMap(([action, layers]) => this.loadByType(action.targetType, action.payload, layers))

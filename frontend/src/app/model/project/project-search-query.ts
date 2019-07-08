@@ -1,8 +1,7 @@
 import {TimeUtil} from '../../util/time.util';
-import {SearchQuery} from '../common/search-query';
 import {Sort} from '../common/sort';
 
-export class ProjectSearchQuery implements SearchQuery {
+export class ProjectSearchQuery {
   public id: number;
   public identifier: string;
   public startTime: Date;

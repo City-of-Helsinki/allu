@@ -97,7 +97,7 @@
           <button mat-raised-button type="submit" color="primary">
             {{'common.button.search' | translation | uppercase}}
           </button>
-          <button mat-raised-button type="button" color="primary" [disabled]="noneSelected"
+          <button mat-raised-button type="button" color="primary" [disabled]="!(someSelected$ | async)"
                   class="in-front" (click)="addToBasket()"
                   *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
             {{'applicationBasket.addTo' | translation | uppercase}}
@@ -117,11 +117,16 @@
         <ng-container matColumnDef="selected">
           <mat-header-cell *matHeaderCellDef>
             <div>
-              <mat-checkbox [checked]="allSelected" (change)="checkAll($event)"></mat-checkbox>
+              <mat-checkbox
+                [checked]="(someSelected$ | async) && (allSelected$ | async)"
+                [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+                (change)="checkAll()"></mat-checkbox>
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let row">
-            <mat-checkbox [checked]="selected(row.id)" (change)="checkSingle($event, row.id)"></mat-checkbox>
+            <mat-checkbox
+              [checked]="selected(row.id) | async"
+              (change)="checkSingle(row.id)"></mat-checkbox>
           </mat-cell>
         </ng-container>
 
@@ -199,9 +204,6 @@
       </mat-table>
 
       <mat-paginator #paginator
-                     [length]="dataSource.pageSnapshot.totalElements"
-                     [pageIndex]="dataSource.pageSnapshot.pageNumber"
-                     [pageSize]="25"
                      [pageSizeOptions]="[5, 10, 25, 100]">
       </mat-paginator>
     </div>

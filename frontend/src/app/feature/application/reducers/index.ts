@@ -1,4 +1,4 @@
-import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelector} from '@ngrx/store';
 
 import * as fromApplication from './application-reducer';
 import * as fromComments from '@feature/comment/reducers/comment-reducer';
@@ -18,6 +18,8 @@ import {ArrayUtil} from '@util/array-util';
 import {InjectionToken} from '@angular/core';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ApplicationKind} from '@model/application/type/application-kind';
+import * as fromLayers from '@feature/map/reducers/map-layer-reducer';
+import {createApplicationSearchSelectors} from '@feature/application/reducers/application-search-reducer';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -25,6 +27,7 @@ export interface ApplicationState {
   tags: fromTags.State;
   history: fromHistory.State;
   replacementHistory: fromReplacementHistory.State;
+  search: fromApplicationSearch.State;
   cableReportSearch: fromApplicationSearch.State;
   placementContractSearch: fromApplicationSearch.State;
 }
@@ -39,6 +42,7 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   tags: fromTags.reducer,
   history: fromApplicationHistory.reducer,
   replacementHistory: fromReplacementHistory.reducer,
+  search: fromApplicationSearch.createReducerFor(ActionTargetType.Application),
   cableReportSearch: fromApplicationSearch.createReducerFor(ActionTargetType.CableReport),
   placementContractSearch: fromApplicationSearch.createReducerFor(ActionTargetType.PlacementContract)
 };
@@ -208,16 +212,32 @@ export const getReplacementHistory = createSelector(
   fromReplacementHistory.getReplacementHistory
 );
 
+// Application search selectors
+export const getSearchState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.search
+);
+
+export const {
+  getMatching: getMatchingApplications,
+  getMatchingIds: getMatchingApplicationIds,
+  getSearching: getSearchingApplications,
+  getParameters: getApplicationSearchParameters,
+  getSort: getApplicationSearchSort,
+  getPageRequest: getApplicationSearchPageRequest,
+  getSelected: getSelectedApplications,
+  getAllSelected: getAllApplicationsSelected
+} = createApplicationSearchSelectors(getSearchState);
+
 // Cable report search selectors
 export const getCableReportSearchState = createSelector(
   getApplicationState,
   (state: ApplicationState) => state.cableReportSearch
 );
 
-export const getMatchingCableReports = createSelector(
-  getCableReportSearchState,
-  fromApplicationSearch.getMatchingApplications
-);
+export const {
+  getMatchingList: getMatchingCableReports,
+} = createApplicationSearchSelectors(getCableReportSearchState);
 
 // Placement contract search selectors
 export const getPlacementContractSearchState = createSelector(
@@ -225,10 +245,9 @@ export const getPlacementContractSearchState = createSelector(
   (state: ApplicationState) => state.placementContractSearch
 );
 
-export const getMatchingPlacementContracts = createSelector(
-  getPlacementContractSearchState,
-  fromApplicationSearch.getMatchingApplications
-);
+export const {
+  getMatchingList: getMatchingPlacementContracts,
+} = createApplicationSearchSelectors(getPlacementContractSearchState);
 
 export const getMatchingByTargetType = (type: ActionTargetType) => {
   switch (type) {

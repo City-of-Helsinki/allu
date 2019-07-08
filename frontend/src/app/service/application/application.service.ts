@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
 import {ApplicationStatus} from '../../model/application/application-status';
-import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
+import {ApplicationSearchQuery, fromApplicationIdAndName} from '../../model/search/ApplicationSearchQuery';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {ApplicationQueryParametersMapper} from '../mapper/query/application-query-parameters-mapper';
@@ -96,20 +96,9 @@ export class ApplicationService {
     );
   }
 
-  /**
-   * Free text search for applications
-   */
-  public freeTextSearch(term: string): Observable<Application[]> {
-    const searchQuery = new ApplicationSearchQuery();
-    searchQuery.freeText = term;
-    return this.search(searchQuery);
-  }
-
-  public nameOrApplicationIdSearch(term: string): Observable<Application[]> {
-    const searchQuery = new ApplicationSearchQuery();
-    searchQuery.name = term;
-    searchQuery.applicationId = term;
-    return this.search(searchQuery, undefined, undefined, true);
+  public nameOrApplicationIdSearch(term: string): Observable<Page<Application>> {
+    const searchQuery = fromApplicationIdAndName(term, term);
+    return this.pagedSearch(searchQuery, undefined, undefined, true);
   }
 
   /**

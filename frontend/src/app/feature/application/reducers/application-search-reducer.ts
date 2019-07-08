@@ -1,17 +1,29 @@
 import {Application} from '@model/application/application';
 import {ApplicationSearchActions, ApplicationSearchActionType} from '../actions/application-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {ApplicationSearchQuery, fromApplicationIdAndName} from '@model/search/ApplicationSearchQuery';
+import {Page} from '@model/common/page';
+import {Sort} from '@model/common/sort';
+import {PageRequest} from '@model/common/page-request';
+import {createSelector, MemoizedSelector} from '@ngrx/store';
+import {ArrayUtil} from '@util/array-util';
 
 export interface State {
-  term: string;
+  parameters: ApplicationSearchQuery;
+  sort: Sort;
+  pageRequest: PageRequest;
   searching: boolean;
-  matchingApplications: Application[];
+  matchingApplications: Page<Application>;
+  selected: number[];
 }
 
 const initialState: State = {
-  term: undefined,
+  parameters: undefined,
+  sort: new Sort(),
+  pageRequest: new PageRequest(0, 25),
   searching: false,
-  matchingApplications: []
+  matchingApplications: new Page<Application>(),
+  selected: []
 };
 
 export function reducer(state: State = initialState, action: ApplicationSearchActions) {
@@ -19,13 +31,23 @@ export function reducer(state: State = initialState, action: ApplicationSearchAc
     case ApplicationSearchActionType.SearchByNameOrId: {
       return {
         ...state,
-        term: action.payload,
+        parameters: fromApplicationIdAndName(action.payload, action.payload),
         searching: true,
-        matchingApplications: []
+        matchingApplications: new Page<Application>()
       };
     }
 
-    case ApplicationSearchActionType.SearchByNameOrIdSuccess: {
+    case ApplicationSearchActionType.Search: {
+      return {
+        ...state,
+        parameters: action.payload.query,
+        sort: action.payload.sort,
+        pageRequest: action.payload.pageRequest,
+        searching: true
+      };
+    }
+
+    case ApplicationSearchActionType.SearchSuccess: {
       return {
         ...state,
         matchingApplications: action.payload,
@@ -33,11 +55,33 @@ export function reducer(state: State = initialState, action: ApplicationSearchAc
       };
     }
 
-    case ApplicationSearchActionType.SearchByNameOrIdFailed: {
+    case ApplicationSearchActionType.SearchFailed: {
       return {
         ...state,
-        matchingApplications: [],
+        matchingApplications: new Page<Application>(),
         searching: false
+      };
+    }
+
+    case ApplicationSearchActionType.ToggleSelect: {
+      return {
+        ...state,
+        selected: ArrayUtil.removeExistingAddMissing(state.selected, action.payload)
+      };
+    }
+
+    case ApplicationSearchActionType.ToggleSelectAll: {
+      const selected = getAllSelected(state) ? [] : getMatchingIds(state);
+      return {
+        ...state,
+        selected
+      };
+    }
+
+    case ApplicationSearchActionType.ClearSelected: {
+      return {
+        ...state,
+        selected: []
       };
     }
 
@@ -56,4 +100,36 @@ export function createReducerFor(targetType: ActionTargetType) {
   };
 }
 
+export const getMatchingApplicationsList = (state: State) => state.matchingApplications
+  ? state.matchingApplications.content
+  : [];
+
 export const getMatchingApplications = (state: State) => state.matchingApplications;
+
+export const getMatchingIds = (state: State) => getMatchingApplicationsList(state).map(app => app.id);
+
+export const getSearching = (state: State) => state.searching;
+
+export const getParameters = (state: State) => state.parameters;
+
+export const getSort = (state: State) => state.sort;
+
+export const getPageRequest = (state: State) => state.pageRequest;
+
+export const getSelected = (state: State) => state.selected;
+
+export const getAllSelected = (state: State) => ArrayUtil.containSame(state.selected, getMatchingIds(state));
+
+export function createApplicationSearchSelectors(getState: MemoizedSelector<object, State>) {
+  return {
+    getMatching: createSelector(getState, getMatchingApplications),
+    getMatchingList: createSelector(getState, getMatchingApplicationsList),
+    getMatchingIds: createSelector(getState, getMatchingIds),
+    getSearching: createSelector(getState, getSearching),
+    getParameters: createSelector(getState, getParameters),
+    getSort: createSelector(getState, getSort),
+    getPageRequest: createSelector(getState, getPageRequest),
+    getSelected: createSelector(getState, getSelected),
+    getAllSelected: createSelector(getState, getAllSelected)
+  };
+}
