@@ -1,8 +1,7 @@
 # Allu
 
-Allu is a system to manage public area usage.
-
-It is used to handle, grant, monitor, and manage usage billing for use of the right or use notification for use in the region.
+Allu is a system to manage public area usage in Helsinki.
+It is used to handle, grant, monitor and manage rights and notifications to use the public areas. Billing for using the area is also handled via Allu.
 
 Governed public areas include:
 - street
