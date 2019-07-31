@@ -43,6 +43,7 @@ public class ApplicationService {
   private final PaymentClassService paymentClassService;
   private final PaymentZoneService paymentZoneService;
   private final InvoicingPeriodService invoicingPeriodService;
+  private final InvoiceService invoiceService;
 
   @Autowired
   public ApplicationService(
@@ -53,7 +54,8 @@ public class ApplicationService {
       PersonAuditLogService personAuditLogService,
       PaymentClassService paymentClassService,
       PaymentZoneService paymentZoneService,
-      InvoicingPeriodService invoicingPeriodService) {
+      InvoicingPeriodService invoicingPeriodService,
+      InvoiceService invoiceService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
@@ -62,6 +64,7 @@ public class ApplicationService {
     this.paymentClassService = paymentClassService;
     this.paymentZoneService = paymentZoneService;
     this.invoicingPeriodService = invoicingPeriodService;
+    this.invoiceService = invoiceService;
   }
 
 
@@ -389,11 +392,21 @@ public class ApplicationService {
   }
 
   private boolean invoicingDateInFuture(Application application) {
-    if (application.getInvoicingDate() == null) {
+    ZonedDateTime firstInvoicingDate = getFirstInvoicingDateForApplication(application.getId());
+    if (firstInvoicingDate == null) {
       return true;
     }
     ZonedDateTime tomorrow = TimeUtil.startOfDay(ZonedDateTime.now()).plusDays(1);
-    return !application.getInvoicingDate().isBefore(tomorrow);
+    return !firstInvoicingDate.isBefore(tomorrow);
+  }
+
+  private ZonedDateTime getFirstInvoicingDateForApplication(Integer id) {
+    return invoiceService.findByApplication(id).stream()
+      .filter(i -> i.getInvoicableTime() != null)
+      .map(InvoiceJson::getInvoicableTime)
+      .sorted()
+      .findFirst()
+      .orElse(null);
   }
 
   public Application setCustomerOperationalConditionDates(Integer id, ApplicationDateReport dateReport) {
