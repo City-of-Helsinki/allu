@@ -210,4 +210,14 @@ public class InvoiceService {
   public void deleteUninvoicedInvoices(Integer id) {
     invoiceDao.deleteUninvoicedByApplication(id);
   }
+
+  @Transactional
+  public void updateInvoiceRecipient(int applicationId, int customerId, boolean sapIdPending) {
+    final Customer customer = customerDao.findById(customerId)
+        .orElseThrow(() -> new NoSuchEntityException("invoice.create.customer.notFound"));
+    final InvoiceRecipient invoiceRecipient = new InvoiceRecipient(customer);
+    final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
+    invoiceDao.setInvoiceRecipient(applicationId, invoiceRecipientId, sapIdPending);
+  }
+
 }

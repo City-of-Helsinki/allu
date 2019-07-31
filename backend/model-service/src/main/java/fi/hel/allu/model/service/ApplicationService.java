@@ -463,9 +463,13 @@ public class ApplicationService {
     applicationDao.setInvoiceRecipient(id, invoiceRecipientId);
     if (invoiceService.hasInvoices(id)) {
       Application application = findById(id);
-      applicationDao.removeTagByType(id, ApplicationTagType.SAP_ID_MISSING);
-      // Recreates invoice with new invoice recipient
-      createInvoice(id, userId, application);
+      boolean sapIdPending = isSapIdPending(application);
+      if (!sapIdPending) {
+        applicationDao.removeTagByType(id, ApplicationTagType.SAP_ID_MISSING);
+      } else {
+        applicationDao.addTag(id, new ApplicationTag(userId, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
+      }
+      invoiceService.updateInvoiceRecipient(id, invoiceRecipientId, sapIdPending);
     }
   }
 

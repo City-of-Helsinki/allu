@@ -276,4 +276,13 @@ public class InvoiceDao {
     return queryFactory.select(invoice.invoicingPeriodId).from(invoice)
         .where(invoice.id.in(invoiceIds), invoice.invoicingPeriodId.isNotNull()).fetch();
   }
+
+  @Transactional
+  public void setInvoiceRecipient(int applicationId, int invoiceRecipientId, boolean sapIdPending) {
+    queryFactory.update(invoice)
+      .set(invoice.recipientId, invoiceRecipientId)
+      .set(invoice.sapIdPending, sapIdPending)
+      .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse())
+      .execute();
+  }
 }
