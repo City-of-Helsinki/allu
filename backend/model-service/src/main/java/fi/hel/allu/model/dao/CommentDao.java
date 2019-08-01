@@ -69,6 +69,10 @@ public class CommentDao {
     c.setApplicationId(applicationId);
     c.setCreateTime(ZonedDateTime.now());
     c.setUpdateTime(ZonedDateTime.now());
+    return insertComment(c);
+  }
+
+  private Comment insertComment(Comment c) {
     int id = queryFactory.insert(comment)
         .populate(c, DefaultMapper.WITH_NULL_BINDINGS)
         .executeWithKey(comment.id);
@@ -80,18 +84,7 @@ public class CommentDao {
     c.setProjectId(projectId);
     c.setCreateTime(ZonedDateTime.now());
     c.setUpdateTime(ZonedDateTime.now());
-    int id = queryFactory.insert(comment)
-        .populate(c, DefaultMapper.WITH_NULL_BINDINGS)
-        .executeWithKey(comment.id);
-    return findById(id).get();
-  }
-
-  @Transactional
-  public Comment insert(Comment c) {
-    c.setCreateTime(ZonedDateTime.now());
-    c.setUpdateTime(ZonedDateTime.now());
-    int id = queryFactory.insert(comment).populate(c, DefaultMapper.WITH_NULL_BINDINGS).executeWithKey(comment.id);
-    return findById(id).get();
+    return insertComment(c);
   }
 
   @Transactional
@@ -136,7 +129,8 @@ public class CommentDao {
 
   private void copyForApplication(Comment comment, Integer copyToApplicationId) {
     comment.setId(null);
-    insertForApplication(comment, copyToApplicationId);
+    comment.setApplicationId(copyToApplicationId);
+    insertComment(comment);
   }
 
   @Transactional(readOnly = true)
