@@ -23,6 +23,7 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.DecisionJsonMapper;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 @Service
 public class ContractService {
@@ -34,12 +35,14 @@ public class ContractService {
   private final UserService userService;
   private final ConfigurationService configurationService;
   private final CommentService commentService;
+  private final ApplicationHistoryService applicationHistoryService;
 
   private static final String STYLE_SHEET_NAME = "PLACEMENT_CONTRACT-contract";
 
   public ContractService(ApplicationServiceComposer applicationServiceComposer, DecisionJsonMapper decisionJsonMapper,
       ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
-      ConfigurationService configurationService, CommentService commentService) {
+      ConfigurationService configurationService, CommentService commentService,
+      ApplicationHistoryService applicationHistoryService) {
     this.applicationServiceComposer = applicationServiceComposer;
     this.decisionJsonMapper = decisionJsonMapper;
     this.applicationProperties = applicationProperties;
@@ -47,6 +50,7 @@ public class ContractService {
     this.userService = userService;
     this.configurationService = configurationService;
     this.commentService = commentService;
+    this.applicationHistoryService = applicationHistoryService;
   }
 
   public byte[] getContractPreview(Integer applicationId) {
@@ -93,6 +97,7 @@ public class ContractService {
     }
     restTemplate.exchange(applicationProperties.getApprovedContractUrl(), HttpMethod.POST,
         MultipartRequestBuilder.buildByteArrayRequest("data", pdfData, Collections.singletonMap("contractinfo", contractInfo)), String.class, applicationId);
+    applicationHistoryService.addContractStatusChange(applicationId, ContractStatusType.APPROVED);
     applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, contractApprovalInfo);
     return pdfData;
   }
@@ -107,6 +112,7 @@ public class ContractService {
     HttpEntity<?> requestEntity = MultipartRequestBuilder.buildByteArrayRequest("file", data, Collections.singletonMap("info", contractInfo));
     restTemplate.exchange(applicationProperties.getContractUrl(), HttpMethod.PUT, requestEntity, Void.class, applicationId);
 
+    applicationHistoryService.addContractStatusChange(applicationId, ContractStatusType.APPROVED);
     // After contract approval move application to waiting for decision state and remove possible contract rejected -tag
     applicationServiceComposer.changeStatus(applicationId, StatusType.DECISIONMAKING, getDecisionMakerInfo());
     applicationServiceComposer.removeTag(applicationId, ApplicationTagType.CONTRACT_REJECTED);
@@ -151,8 +157,8 @@ public class ContractService {
     contractInfo.setStatus(ContractStatusType.REJECTED);
     contractInfo.setResponseTime(ZonedDateTime.now());
     contractInfo.setRejectionReason(rejectReason);
-
     restTemplate.exchange(applicationProperties.getContractInfoUrl(), HttpMethod.PUT, new HttpEntity<>(contractInfo), Void.class, applicationId);
+    applicationHistoryService.addContractStatusChange(applicationId, ContractStatusType.REJECTED);
   }
 
   public ContractInfo getContractInfo(Integer applicationId) {

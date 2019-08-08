@@ -1815,7 +1815,8 @@ export const translations = {
         APPLICATION_REMOVED: 'Hakemus poistettu',
         CUSTOMER_CHANGED: 'Asiakas muutettu',
         CONTACT_CHANGED: 'Yhteyshenkilö muutettu',
-        OWNER_CHANGED: 'Hakemuksen omistaja muutettu'
+        OWNER_CHANGED: 'Hakemuksen omistaja muutettu',
+        CONTRACT_STATUS_CHANGED: 'Sopimuksen tila muutettu',
       },
       typeWithSpecifier: {
         STATUS_CHANGED: {
@@ -1835,6 +1836,10 @@ export const translations = {
           CANCELLED: 'Hakemus peruttu',
           REPLACED: 'Hakemus korvattu',
           ARCHIVED: 'Hakemus arkistoitu'
+        },
+        CONTRACT_STATUS_CHANGED: {
+          APPROVED: 'Sopimus hyväksytty',
+          REJECTED: 'Sopimus hylätty'
         },
         CUSTOMER_CHANGED: {
           APPLICANT: 'Hakija muutettu',

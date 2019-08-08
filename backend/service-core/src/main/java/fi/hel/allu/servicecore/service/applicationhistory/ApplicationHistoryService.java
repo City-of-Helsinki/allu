@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service.applicationhistory;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ContractStatusType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ChangeType;
@@ -253,6 +254,13 @@ public class ApplicationHistoryService {
     change.setChangeType(ChangeType.STATUS_CHANGED);
     change.setChangeSpecifier(newStatus.name());
     Optional.ofNullable(targetStatus).ifPresent(t -> change.setChangeSpecifier2(t.name()));
+    addChangeItem(applicationId, change);
+  }
+
+  public void addContractStatusChange(Integer applicationId, ContractStatusType contractStatus) {
+    ChangeHistoryItem change = new ChangeHistoryItem();
+    change.setChangeType(ChangeType.CONTRACT_STATUS_CHANGED);
+    change.setChangeSpecifier(contractStatus.name());
     addChangeItem(applicationId, change);
   }
 

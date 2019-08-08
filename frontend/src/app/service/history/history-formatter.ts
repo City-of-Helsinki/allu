@@ -32,6 +32,7 @@ export class HistoryFormatter {
       case ChangeType.CONTACT_CHANGED:
         return this.getContactChangeDescription(change, type);
       case ChangeType.STATUS_CHANGED:
+      case ChangeType.CONTRACT_STATUS_CHANGED:
         return this.getStatusChangeDescription(change, type);
       case ChangeType.LOCATION_CHANGED:
         return this.getLocationChangeDescription(change, type);
