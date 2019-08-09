@@ -2,10 +2,7 @@ package fi.hel.allu.external.service;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,11 +23,13 @@ import fi.hel.allu.common.domain.types.InformationRequestStatus;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.mapper.AttachmentMapper;
 import fi.hel.allu.external.mapper.CustomerExtMapper;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
@@ -46,6 +45,8 @@ import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryServ
  */
 @Service
 public class ApplicationServiceExt {
+
+  private static final List<ChangeType> HISTORY_CHANGE_TYPES_INCLUDED = Arrays.asList(ChangeType.STATUS_CHANGED, ChangeType.CONTRACT_STATUS_CHANGED);
 
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
@@ -66,6 +67,7 @@ public class ApplicationServiceExt {
   @Autowired
   private CustomerExtMapper customerMapper;
 
+
   public <T extends BaseApplicationExt> Integer createApplication(T application, ApplicationExtMapper<T> mapper) throws JsonProcessingException {
     ApplicationJson applicationJson = mapper.mapExtApplication(application, getExternalUserId());
     applicationJson.setReceivedTime(ZonedDateTime.now());
@@ -79,8 +81,8 @@ public class ApplicationServiceExt {
 
   public List<ApplicationHistoryExt> searchApplicationHistory(ApplicationHistorySearchExt searchParameters) {
     Integer externalUserId = getExternalUserId();
-    Map<Integer, List<ChangeHistoryItem>> changeHistory = applicationHistoryService.getExternalOwnerApplicationHistory(externalUserId,
-        searchParameters.getEventsAfter(), searchParameters.getApplicationIds());
+    HistorySearchCriteria searchCriteria = new HistorySearchCriteria(searchParameters.getApplicationIds(), HISTORY_CHANGE_TYPES_INCLUDED, searchParameters.getEventsAfter());
+    Map<Integer, List<ChangeHistoryItem>> changeHistory = applicationHistoryService.getExternalOwnerApplicationHistory(externalUserId, searchCriteria);
     Map<Integer, List<SupervisionTask>> supervisionTaskHistory = supervisionTaskService.getSupervisionTaskHistoryForExternalOwner(externalUserId, searchParameters.getEventsAfter(), searchParameters.getApplicationIds());
     return Sets.union(changeHistory.keySet(), supervisionTaskHistory.keySet()).stream()
       .map(id -> new ApplicationHistoryExt(id, toStatusEvents(id, changeHistory.get(id)), toSupervisionEvents(id, supervisionTaskHistory.get(id))))
@@ -99,17 +101,11 @@ public class ApplicationServiceExt {
             .stream()
             .map(i ->
               new ApplicationStatusEventExt(i.getChangeTime(),
-                  toStatusType(i.getChangeSpecifier()),
+                  i.getChangeSpecifier(),
                   i.getInfo().getApplicationId(),
-                  toStatusType(i.getChangeSpecifier2()))
+                  i.getChangeSpecifier2())
              )
             .collect(Collectors.toList());
-  }
-
-  private StatusType toStatusType(String statusTypeString) {
-    return Optional.ofNullable(statusTypeString)
-        .map(s -> StatusType.valueOf(s))
-        .orElse(null);
   }
 
   public <T extends BaseApplicationExt> Integer updateApplication(Integer id, T applicationExt, ApplicationExtMapper<T> mapper) throws JsonProcessingException {

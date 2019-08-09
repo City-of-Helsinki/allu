@@ -9,6 +9,7 @@ import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.domain.changehistory.CustomerChange;
+import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.domain.history.ApplicationForHistory;
@@ -317,15 +318,10 @@ public class ApplicationHistoryService {
     restTemplate.postForObject(applicationProperties.getAddApplicationHistoryUrl(), change, Void.class, applicationId);
   }
 
-  public Map<Integer, List<ChangeHistoryItem>> getExternalOwnerApplicationHistory(Integer externalOwnerId, ZonedDateTime eventsAfter,
-      List<Integer> includedExternalApplicationIds) {
-    Map<String, Integer> uriParams = new HashMap<>();
-    uriParams.put("externalownerid", externalOwnerId);
-    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getExternalOwnerApplicationHistoryUrl())
-        .queryParam("eventsafter", eventsAfter)
-        .buildAndExpand(uriParams).toUri();
+  public Map<Integer, List<ChangeHistoryItem>> getExternalOwnerApplicationHistory(Integer externalOwnerId, HistorySearchCriteria searchCriteria) {
     ParameterizedTypeReference<Map<Integer, List<ChangeHistoryItem>>> typeRef = new ParameterizedTypeReference<Map<Integer, List<ChangeHistoryItem>>>() {};
-    return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(includedExternalApplicationIds), typeRef).getBody();
+    return restTemplate.exchange(applicationProperties.getExternalOwnerApplicationHistoryUrl(), HttpMethod.POST,
+        new HttpEntity<>(searchCriteria), typeRef, externalOwnerId).getBody();
   }
 
 }

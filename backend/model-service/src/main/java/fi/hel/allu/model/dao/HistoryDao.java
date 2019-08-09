@@ -1,6 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.ChangeHistoryItemInfo;
 import fi.hel.allu.model.domain.FieldChange;
+import fi.hel.allu.model.domain.changehistory.HistorySearchCriteria;
 
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
@@ -189,8 +189,7 @@ public class HistoryDao {
   }
 
   @Transactional(readOnly = true)
-  public Map<Integer, List<ChangeHistoryItem>> getApplicationStatusChangesForExternalOwner(Integer externalOwnerId, ZonedDateTime eventsAfter,
-      List<Integer> includedExternalApplicationIds) {
+  public Map<Integer, List<ChangeHistoryItem>> getApplicationChangesForExternalOwner(Integer externalOwnerId, HistorySearchCriteria searchCriteria) {
     QApplication application = QApplication.application;
 
     final QBean<ExternalApplicationId> applicationIdBean = bean(ExternalApplicationId.class, application.applicationId, application.externalApplicationId);
@@ -198,13 +197,13 @@ public class HistoryDao {
     BooleanBuilder builder = new BooleanBuilder();
     builder.and(application.externalOwnerId.eq(externalOwnerId));
     builder.and(changeHistory.changeSpecifier.isNotNull());
-    builder.and(changeHistory.changeType.eq(ChangeType.STATUS_CHANGED));
+    builder.and(changeHistory.changeType.in(searchCriteria.getChangeTypes()));
 
-    if (eventsAfter != null) {
-      builder.and(changeHistory.changeTime.after(eventsAfter));
+    if (searchCriteria.getEventsAfter() != null) {
+      builder.and(changeHistory.changeTime.after(searchCriteria.getEventsAfter()));
     }
-    if (!includedExternalApplicationIds.isEmpty()) {
-      builder.and(application.externalApplicationId.in(includedExternalApplicationIds));
+    if (!searchCriteria.getApplicationIds().isEmpty()) {
+      builder.and(application.externalApplicationId.in(searchCriteria.getApplicationIds()));
     }
     List<Tuple> result = queryFactory.select(changeHistoryBean, applicationIdBean)
         .from(changeHistory)

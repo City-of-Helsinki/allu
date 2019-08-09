@@ -10,14 +10,14 @@ import io.swagger.annotations.ApiModelProperty;
 public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEventExt> {
 
   private ZonedDateTime eventTime;
-  private StatusType newStatus;
+  private String newStatus;
   private String applicationIdentifier;
-  private StatusType targetStatus;
+  private String targetStatus;
 
   public ApplicationStatusEventExt() {
   }
 
-  public ApplicationStatusEventExt(ZonedDateTime eventTime, StatusType newStatus, String applicationIdentifier, StatusType targetStatus) {
+  public ApplicationStatusEventExt(ZonedDateTime eventTime, String newStatus, String applicationIdentifier, String targetStatus) {
     this.eventTime = eventTime;
     this.newStatus = newStatus;
     this.applicationIdentifier = applicationIdentifier;
@@ -34,11 +34,11 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
   }
 
   @ApiModelProperty(value = "Status of the application after the event")
-  public StatusType getNewStatus() {
+  public String getNewStatus() {
     return newStatus;
   }
 
-  public void setNewStatus(StatusType newStatus) {
+  public void setNewStatus(String newStatus) {
     this.newStatus = newStatus;
   }
 
@@ -54,15 +54,15 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
   @Override
   public int compareTo(ApplicationStatusEventExt o) {
     int result = this.getEventTime().compareTo(o.getEventTime());
-    return result == 0 ? this.newStatus.name().compareTo(o.newStatus.name()) : result;
+    return result == 0 ? this.newStatus.compareTo(o.newStatus) : result;
   }
 
   @ApiModelProperty(value = "Target status. Tells next status (DECISION, OPERATIONAL_CONDITION or FINISHED) if current status is DECISIONMAKING.")
-  public StatusType getTargetStatus() {
+  public String getTargetStatus() {
     return targetStatus;
   }
 
-  public void setTargetStatus(StatusType targetStatus) {
+  public void setTargetStatus(String targetStatus) {
     this.targetStatus = targetStatus;
   }
 
