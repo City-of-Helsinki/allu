@@ -4,6 +4,8 @@ import * as fromInvoice from './invoice-reducer';
 import * as fromInvoicingPeriod from './invoicing-period-reducer';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {ChargeBasisEntry} from '@model/application/invoice/charge-basis-entry';
+import {ArrayUtil} from '@util/array-util';
+import {TimeUtil} from '@util/time.util';
 
 export interface InvoicingState {
   invoice: fromInvoice.State;
@@ -68,6 +70,18 @@ export const {
   selectAll: getAllInvoices,
   selectTotal: getInvoicesTotal
 } = fromInvoice.adapter.getSelectors(getInvoiceEntityState);
+
+export const getSortedInvoicesByDate = createSelector(
+  getAllInvoices,
+  invoices => invoices
+    ? invoices.sort((l, r) => TimeUtil.compareTo(l.invoicableTime, r.invoicableTime))
+    : invoices
+);
+
+export const getEarliestInvoicable = createSelector(
+  getSortedInvoicesByDate,
+  invoices => ArrayUtil.first(invoices, (i) => !!i.invoicableTime)
+);
 
 
 /**

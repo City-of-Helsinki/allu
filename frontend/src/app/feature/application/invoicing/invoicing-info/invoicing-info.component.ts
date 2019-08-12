@@ -23,6 +23,8 @@ import {ApplicationType} from '@app/model/application/type/application-type';
 import {Application} from '@model/application/application';
 import {ArrayUtil} from '@util/array-util';
 import {ApplicationKind, terraceKinds} from '@app/model/application/type/application-kind';
+import {InvoicingPeriod} from '@feature/application/invoicing/invoicing-period/invoicing-period';
+import {Invoice} from '@model/application/invoice/invoice';
 
 @Component({
   selector: 'invoicing-info',
@@ -219,15 +221,24 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
   private invoiceRecipientCanBeEdited(): Observable<boolean> {
     return this.store.pipe(
       select(fromApplication.getCurrentApplication),
-      withLatestFrom(this.store.pipe(select(fromApplication.hasTag(ApplicationTagType.SAP_ID_MISSING)))),
+      withLatestFrom(
+        this.store.pipe(select(fromApplication.hasTag(ApplicationTagType.SAP_ID_MISSING))),
+        this.store.pipe(select(fromInvoicing.getEarliestInvoicable))
+      ),
       takeUntil(this.destroy),
-      map(([app, sapIdMissing]) => {
+      map(([app, sapIdMissing, earliest]) => {
         const noPendingData = app.clientApplicationData === undefined;
         const editableByStatus = isSameOrBefore(app.status, ApplicationStatus.DECISIONMAKING);
-        const tomorrow = TimeUtil.toStartDate(TimeUtil.addDays(new Date(), 1));
-        const dayBeforeInvoicing = !TimeUtil.isBefore(app.invoicingDate, tomorrow);
+        const dayBeforeInvoicing = this.isDayBeforeInvoicing(earliest);
         return (sapIdMissing || editableByStatus || dayBeforeInvoicing) && noPendingData;
       })
     );
+  }
+
+  private isDayBeforeInvoicing(earliestInvoice: Invoice): boolean {
+    const tomorrow = TimeUtil.toStartDate(TimeUtil.addDays(new Date(), 1));
+    return earliestInvoice
+      ? !TimeUtil.isBefore(earliestInvoice.invoicableTime, tomorrow)
+      : true;
   }
 }
