@@ -2,16 +2,16 @@
   <mat-card-title>{{'applicationInfo.title' | translation}}</mat-card-title>
   <mat-card-content>
     <div fxLayout="row wrap" fxLayoutGap="18px">
-      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.type' | translation}}</mat-card-subtitle>
         <div>{{['application.type', application.type] | translation}}</div>
       </div>
-      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.receivedTime' | translation}}
         </mat-card-subtitle>
         <div>{{application.receivedTime | date:'shortDate'}}</div>
       </div>
-      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.kinds' | translation}}</mat-card-subtitle>
         <div>
           <span *ngFor="let kind of application.uiKinds; let last=last">
@@ -19,24 +19,28 @@
           </span>
         </div>
       </div>
-      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.startTime' | translation}}</mat-card-subtitle>
         <div>{{application.startTime | date:'shortDate'}}</div>
       </div>
-      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.name' | translation}}</mat-card-subtitle>
         <div>{{application.name}}</div>
       </div>
-      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.endTime' | translation}}</mat-card-subtitle>
         <div>{{application.endTime | date:'shortDate' }}</div>
       </div>
-      <div fxFlex="calc(50% - 18px)" fxFlex.md="calc(100% - 18px)" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.location' | translation}}</mat-card-subtitle>
-        <div *ngIf="!application.firstLocation.postalAddress.streetAddress">-</div>
-        <div>{{application.firstLocation.postalAddress.streetAddress}}</div>
+        <div *ngIf="!location.postalAddress.streetAddress">-</div>
+        <div>{{location.postalAddress.streetAddress}}</div>
       </div>
-      <div fxFlex="50%" fxFlex.md="100%" class="info-field">
+      <div fxFlex="calc(50% - 18px)" fxFlex.lt-lg="calc(100% - 18px)" class="info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.cityDistrict' | translation}}</mat-card-subtitle>
+        <div>{{cityDistrict$ | async | titlecase}}</div>
+      </div>
+      <div fxFlex="50%" fxFlex.lt-lg="100%" class="info-field">
         <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.handler' | translation}}</mat-card-subtitle>
         <div *ngIf="!application.handler">-</div>
         <div>{{application.handler?.realName}}</div>

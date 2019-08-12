@@ -553,6 +553,7 @@ export const translations = {
     endTime: 'Arvioitu päättyminen',
     name: 'Hakemuksen nimi',
     location: 'Sijainti',
+    cityDistrict: 'Kaupunginosa',
     handler: 'Käsittelijä'
   },
   dateReporting: {
