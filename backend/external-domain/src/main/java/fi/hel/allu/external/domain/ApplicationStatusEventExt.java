@@ -33,7 +33,22 @@ public class ApplicationStatusEventExt implements Comparable<ApplicationStatusEv
     this.eventTime = eventTime;
   }
 
-  @ApiModelProperty(value = "Status of the application after the event")
+  @ApiModelProperty(value = "Status of the application after the event", allowableValues =
+        "PENDING: Application received," +
+        "WAITING_INFORMATION: Application waiting response to information request," +
+        "INFORMATION_RECEIVED: Response to information request received," +
+        "HANDLING: Application handling started," +
+        "RETURNED_TO_PREPARATION: Returned to preparation by decision maker," +
+        "WAITING_CONTRACT_APPROVAL: Waiting approval of contract," +
+        "APPROVED: Contract approved," +
+        "REJECTED: Contract rejected," +
+        "DECISIONMAKING: Waiting decision," +
+        "DECISION: Decision made," +
+        "OPERATIONAL_CONDITION: Application in operational condition," +
+        "TERMINATED: Application terminated," +
+        "FINISHED: Application finished," +
+        "CANCELLED: Application cancelled," +
+        "ARCHIVED: Application archived")
   public String getNewStatus() {
     return newStatus;
   }

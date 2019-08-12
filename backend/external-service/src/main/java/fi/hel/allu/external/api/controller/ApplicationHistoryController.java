@@ -27,7 +27,7 @@ public class ApplicationHistoryController {
   @Autowired
   private ApplicationServiceExt applicationService;
 
-  @ApiOperation(value = "Get Allu application history",
+  @ApiOperation(value = "Get Allu application history. Returns result containing application status changes and supervision events.",
       produces = "application/json",
       response = ApplicationHistoryExt.class,
       responseContainer="List",
