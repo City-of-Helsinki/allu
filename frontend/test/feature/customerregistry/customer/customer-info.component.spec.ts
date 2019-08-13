@@ -72,7 +72,7 @@ describe('CustomerInfoComponent', () => {
     debugElement = fixture.debugElement;
 
     customerForm = fb.group({
-      type: [CustomerType[CustomerType.COMPANY]],
+      type: [CustomerType.COMPANY],
       name: ['NameTest'],
       registryKey: ['12345'],
       ovt: ['003712345'],

@@ -1,94 +1,51 @@
-import {DataSource} from '@angular/cdk/collections';
-import {merge, Observable, of, Subject} from 'rxjs';
+import {combineLatest} from 'rxjs';
 import {MatPaginator, MatSort} from '@angular/material';
-import {Sort} from '../../model/common/sort';
-import {PageRequest} from '../../model/common/page-request';
-import {Page} from '../../model/common/page';
-import {NotificationService} from '../../feature/notification/notification.service';
-import {CustomerService} from './customer.service';
-import {Customer} from '../../model/customer/customer';
-import {CustomerSearchQuery} from './customer-search-query';
-import {catchError, map, skipUntil, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
+import {Customer} from '@model/customer/customer';
+import {filter, takeUntil} from 'rxjs/operators';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromCustomer from '@feature/customerregistry/reducers';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {Search, SetPaging, SetSort} from '@feature/customerregistry/actions/customer-search-actions';
+import {StoreDatasource} from '@service/common/store-datasource';
+import {Sort} from '@model/common/sort';
+import {PageRequest} from '@model/common/page-request';
 
-export class CustomerDatasource extends DataSource<any> {
+export class CustomerDatasource extends StoreDatasource<Customer> {
 
-  public loading = false;
-
-  private searchChanges = new Subject<CustomerSearchQuery>();
-  private destroy = new Subject<boolean>();
-  private _page: Observable<Page<Customer>>;
-  private _search: CustomerSearchQuery;
-  private _pageSnapshot = new Page<Customer>();
-
-  constructor(private service: CustomerService,
-              private notification: NotificationService,
-              private paginator: MatPaginator,
-              private sort: MatSort) {
-    super();
+  constructor(store: Store<fromRoot.State>,
+              paginator: MatPaginator,
+              sort: MatSort) {
+    super(store, paginator, sort);
   }
 
-  connect(): Observable<Customer[]> {
-    this._page = this.pageChanges();
-    this.resetPageIndexOnSearchSortChange();
-    return this.data;
+  protected initSelectors(): void {
+    this.actionTargetType = ActionTargetType.Customer;
   }
 
-  disconnect(): void {
-    this.destroy.next(true);
-    this.destroy.unsubscribe();
+  protected initTargetType(): void {
+    this.resultSelector = fromCustomer.getMatchingCustomers;
+    this.sortSelector = fromCustomer.getCustomerSort;
+    this.pageRequestSelector = fromCustomer.getCustomerPageRequest;
+    this.searchingSelector = fromCustomer.getCustomersLoading;
   }
 
-  searchChange(search: CustomerSearchQuery) {
-    this._search = search;
-    this.searchChanges.next(search);
+  protected dispatchPageRequest(pageRequest: PageRequest): void {
+    this.store.dispatch(new SetPaging(this.actionTargetType, pageRequest));
   }
 
-  get data(): Observable<Customer[]> {
-    return this._page.pipe(map(page => page.content));
+  protected dispatchSort(sort: Sort): void {
+    this.store.dispatch(new SetSort(this.actionTargetType, sort));
   }
 
-  get pageSnapshot(): Page<Customer> {
-    return this._pageSnapshot;
-  }
-
-  private pageChanges(): Observable<Page<Customer>> {
-    const displayDataChanges = [
-      this.searchChanges,
-      this.sort.sortChange,
-      this.paginator.page
-    ];
-
-    return merge(...displayDataChanges).pipe(
-      takeUntil(this.destroy),
-      skipUntil(this.searchChanges),
-      switchMap(() => this.load()),
-      tap(page => {
-        this._pageSnapshot = page;
-        this.loading = false;
-      })
-    );
-  }
-
-  private load(): Observable<Page<Customer>> {
-    this.loading = true;
-    return this.service.pagedSearch(
-      this._search,
-      new Sort(this.sort.active, this.sort.direction),
-      new PageRequest(this.paginator.pageIndex, this.paginator.pageSize)
+  protected setupSearch(): void {
+    combineLatest(
+      this.store.pipe(select(fromCustomer.getCustomerSearch), filter(search => !!search)),
+      this.store.pipe(select(fromCustomer.getCustomerSort)),
+      this.store.pipe(select(fromCustomer.getCustomerPageRequest))
     ).pipe(
-      catchError(err => {
-        this.notification.errorInfo(err);
-        return of(new Page<Customer>());
-    }));
-  }
-
-  private resetPageIndexOnSearchSortChange(): void {
-    const changes = [
-      this.searchChanges,
-      this.sort.sortChange,
-    ];
-    merge(...changes).pipe(
       takeUntil(this.destroy)
-    ).subscribe(() => this.paginator.pageIndex = 0);
+    ).subscribe(([query, sort, pageRequest]) =>
+      this.store.dispatch(new Search(ActionTargetType.Customer, {query, sort, pageRequest})));
   }
 }

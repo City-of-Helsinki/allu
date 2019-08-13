@@ -85,7 +85,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(CustomerNameSearchMinChars)
-    ).subscribe(term => this.searchCustomer(CustomerType[this.newCustomer.type], term, term));
+    ).subscribe(term => this.searchCustomer(this.newCustomer.type, term, term));
 
     this.initialSearch();
     this.init();
@@ -154,7 +154,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
 
   private initialSearch() {
     this.searchCustomer(
-      CustomerType[this.newCustomer.type],
+      this.newCustomer.type,
       this.newCustomer.name,
       this.newCustomer.registryKey
     );
@@ -172,10 +172,10 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   }
 
   private searchCustomer(type: CustomerType, name: string, registryKey: string): void {
-    const searchQuery = registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS
-      ? {name, registryKey, active: true}
-      : {name, active: true};
+    const query = registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS
+      ? {name, registryKey, active: true, matchAny: true}
+      : {name, active: true, matchAny: true};
 
-    this.store.dispatch(new SearchByType(this.actionTargetType, {type, searchQuery, matchAny: true}));
+    this.store.dispatch(new SearchByType(this.actionTargetType, {type, query}));
   }
 }

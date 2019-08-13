@@ -1,36 +1,35 @@
-import {CustomerSearchByType, CustomerSearchQuery} from '../../../service/customer/customer-search-query';
-import {Customer} from '../../../model/customer/customer';
-import {CustomerSearchActions, CustomerSearchActionType} from '../actions/customer-search-actions';
+import {CustomerSearchQuery} from '@service/customer/customer-search-query';
+import {Customer} from '@model/customer/customer';
+import {CustomerSearchActions, CustomerSearchActionType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {Page} from '@model/common/page';
+import {Sort} from '@model/common/sort';
+import {PageRequest} from '@model/common/page-request';
+import {createSelector, MemoizedSelector} from '@ngrx/store';
 
 export interface State {
   search: CustomerSearchQuery;
-  searchByType: CustomerSearchByType;
+  sort: Sort;
+  pageRequest: PageRequest;
   loading: boolean;
-  matching: Customer[];
+  matching: Page<Customer>;
 }
 
 const initialState: State = {
   search: undefined,
-  searchByType: undefined,
   loading: false,
-  matching: []
+  sort: new Sort(),
+  pageRequest: new PageRequest(0, 25),
+  matching: new Page<Customer>()
 };
 
 function reducer(state: State = initialState, action: CustomerSearchActions) {
   switch (action.type) {
-    case CustomerSearchActionType.Search: {
-      return {
-        ...state,
-        search: action.payload,
-        loading: true
-      };
-    }
-
+    case CustomerSearchActionType.Search:
     case CustomerSearchActionType.SearchByType: {
       return {
         ...state,
-        searchByType: action.payload,
+        search: action.payload.query,
         loading: true
       };
     }
@@ -46,8 +45,31 @@ function reducer(state: State = initialState, action: CustomerSearchActions) {
     case CustomerSearchActionType.SearchFailed: {
       return {
         ...state,
-        matching: [],
+        matching: new Page<Customer>(),
         loading: false
+      };
+    }
+
+    case CustomerSearchActionType.SetSearchQuery: {
+      return {
+        ...state,
+        search: action.payload,
+        pageRequest: {...state.pageRequest, page: 0}
+      };
+    }
+
+    case CustomerSearchActionType.SetSort: {
+      return {
+        ...state,
+        sort: action.payload,
+        pageRequest: {...state.pageRequest, page: 0}
+      };
+    }
+
+    case CustomerSearchActionType.SetPaging: {
+      return {
+        ...state,
+        pageRequest: action.payload
       };
     }
 
@@ -69,4 +91,23 @@ export function createReducerFor(targetType: ActionTargetType) {
 
 export const getMatching = (state: State) => state.matching;
 
+export const getMatchingList = (state: State) => getMatching(state).content;
+
 export const getLoading = (state: State) => state.loading;
+
+export const getSearch = (state: State) => state.search;
+
+export const getSort = (state: State) => state.sort;
+
+export const getPageRequest = (state: State) => state.pageRequest;
+
+export function createCustomerSelectors(getState: MemoizedSelector<object, State>) {
+  return {
+    getMatching: createSelector(getState, getMatching),
+    getMatchingList: createSelector(getState, getMatchingList),
+    getLoading: createSelector(getState, getLoading),
+    getSearch: createSelector(getState, getSearch),
+    getSort: createSelector(getState, getSort),
+    getPageRequest: createSelector(getState, getPageRequest),
+  };
+}

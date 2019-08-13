@@ -18,34 +18,34 @@ export const config: {[key: string]: ContactAcceptanceConfig} = {
   CUSTOMER: {
     actionTargetType: ActionTargetType.Applicant,
     getCustomer: fromInformationRequest.getApplicant,
-    getAvailableContacts: fromCustomerSearch.getApplicantContactsSelectors.getAvailableContacts,
-    getMatchingContacts: fromCustomerSearch.getApplicantContactsSelectors.getMatchingContacts,
-    getContactsLoading: fromCustomerSearch.getApplicantContactsSelectors.getContactsLoading,
-    getContactsLoaded: fromCustomerSearch.getApplicantContactsSelectors.getContactsLoaded
+    getAvailableContacts: fromCustomerSearch.getApplicantContactsSelectors.getAvailable,
+    getMatchingContacts: fromCustomerSearch.getApplicantContactsSelectors.getMatching,
+    getContactsLoading: fromCustomerSearch.getApplicantContactsSelectors.getLoading,
+    getContactsLoaded: fromCustomerSearch.getApplicantContactsSelectors.getLoaded
   },
   REPRESENTATIVE: {
     actionTargetType: ActionTargetType.Representative,
     getCustomer: fromInformationRequest.getRepresentative,
-    getAvailableContacts: fromCustomerSearch.getRepresentativeContactsSelectors.getAvailableContacts,
-    getMatchingContacts: fromCustomerSearch.getRepresentativeContactsSelectors.getMatchingContacts,
-    getContactsLoading: fromCustomerSearch.getRepresentativeContactsSelectors.getContactsLoading,
-    getContactsLoaded: fromCustomerSearch.getRepresentativeContactsSelectors.getContactsLoaded
+    getAvailableContacts: fromCustomerSearch.getRepresentativeContactsSelectors.getAvailable,
+    getMatchingContacts: fromCustomerSearch.getRepresentativeContactsSelectors.getMatching,
+    getContactsLoading: fromCustomerSearch.getRepresentativeContactsSelectors.getLoading,
+    getContactsLoaded: fromCustomerSearch.getRepresentativeContactsSelectors.getLoaded
   },
   PROPERTY_DEVELOPER: {
     actionTargetType: ActionTargetType.PropertyDeveloper,
     getCustomer: fromInformationRequest.getPropertyDeveloper,
-    getAvailableContacts: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getAvailableContacts,
-    getMatchingContacts: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getMatchingContacts,
-    getContactsLoading: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getContactsLoading,
-    getContactsLoaded: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getContactsLoaded
+    getAvailableContacts: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getAvailable,
+    getMatchingContacts: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getMatching,
+    getContactsLoading: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getLoading,
+    getContactsLoaded: fromCustomerSearch.getPropertyDeveloperContactsSelectors.getLoaded
   },
   CONTRACTOR: {
     actionTargetType: ActionTargetType.Contractor,
     getCustomer: fromInformationRequest.getContractor,
-    getAvailableContacts: fromCustomerSearch.getContractorContactsSelectors.getAvailableContacts,
-    getMatchingContacts: fromCustomerSearch.getContractorContactsSelectors.getMatchingContacts,
-    getContactsLoading: fromCustomerSearch.getContractorContactsSelectors.getContactsLoading,
-    getContactsLoaded: fromCustomerSearch.getContractorContactsSelectors.getContactsLoaded
+    getAvailableContacts: fromCustomerSearch.getContractorContactsSelectors.getAvailable,
+    getMatchingContacts: fromCustomerSearch.getContractorContactsSelectors.getMatching,
+    getContactsLoading: fromCustomerSearch.getContractorContactsSelectors.getLoading,
+    getContactsLoaded: fromCustomerSearch.getContractorContactsSelectors.getLoaded
   }
 };
 

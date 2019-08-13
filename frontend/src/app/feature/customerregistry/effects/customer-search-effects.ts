@@ -15,7 +15,7 @@ export class CustomerSearchEffects {
   customerSearch: Observable<Action> = this.actions.pipe(
     ofType<Search>(CustomerSearchActionType.Search),
     switchMap(action =>
-      this.customerService.search(action.payload).pipe(
+      this.customerService.pagedSearch(action.payload.query, action.payload.sort, action.payload.pageRequest).pipe(
         map(customers => new SearchSuccess(action.targetType, customers)),
         catchError(error => of(new SearchFailed(action.targetType, error)))
       )
@@ -29,12 +29,11 @@ export class CustomerSearchEffects {
   );
 
   private searchByType(action: SearchByType): Observable<Action> {
-    return this.customerService.searchByType(
+    return this.customerService.pagedSearchByType(
       action.payload.type,
-      action.payload.searchQuery,
+      action.payload.query,
       action.payload.sort,
-      action.payload.pageRequest,
-      action.payload.matchAny).pipe(
+      action.payload.pageRequest).pipe(
       map(customers => new SearchSuccess(action.targetType, customers)),
       catchError(error => of(new SearchFailed(action.targetType, error)))
     );

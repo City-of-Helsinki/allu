@@ -150,9 +150,9 @@ export class CustomerComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onCustomerTypeChange(type: string) {
+  private onCustomerTypeChange(type: CustomerType) {
     const classes = [];
-    if (CustomerType[type] === CustomerType.PERSON) {
+    if (type === CustomerType.PERSON) {
       classes.push('customer-person');
     }
 

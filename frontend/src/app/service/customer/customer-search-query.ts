@@ -1,6 +1,7 @@
 import {CustomerType} from '@model/customer/customer-type';
 import {PageRequest} from '@model/common/page-request';
 import {Sort} from '@model/common/sort';
+import {SearchParameters} from '@feature/common/search-parameters';
 
 export interface CustomerSearchQuery {
   name?: string;
@@ -11,13 +12,8 @@ export interface CustomerSearchQuery {
   matchAny?: boolean;
 }
 
-export interface CustomerSearchByType {
+export interface CustomerSearchByType extends SearchParameters<CustomerSearchQuery> {
   type: CustomerType;
-  searchQuery: CustomerSearchQuery;
-  active?: boolean;
-  sort?: Sort;
-  pageRequest?: PageRequest;
-  matchAny?: boolean;
 }
 
 export const NAME_SEARCH_MIN_CHARS = 2;

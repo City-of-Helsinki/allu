@@ -51,22 +51,14 @@ export class CustomerService {
   }
 
   public pagedSearchByType(type: CustomerType, searchQuery: CustomerSearchQuery,
-                      sort?: Sort, pageRequest?: PageRequest, matchAny?: boolean): Observable<Page<Customer>> {
-    const typename = CustomerType[type];
+                      sort?: Sort, pageRequest?: PageRequest): Observable<Page<Customer>> {
     const query = {...searchQuery, type: undefined};
-    const url = `${CUSTOMERS_SEARCH_URL}/${typename}`;
+    const url = `${CUSTOMERS_SEARCH_URL}/${type}`;
     return this.http.post<BackendPage<BackendCustomer>>(
       url, JSON.stringify(CustomerQueryParametersMapper.mapFrontend(query)),
-      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort, matchAny)}).pipe(
+      {params: QueryParametersMapper.mapPageRequest(pageRequest, sort, query.matchAny)}).pipe(
       map(page => PageMapper.mapBackend(page, CustomerMapper.mapBackend)),
       catchError(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')))
-    );
-  }
-
-  public searchByType(type: CustomerType, searchQuery: CustomerSearchQuery,
-                      sort?: Sort, pageRequest?: PageRequest, matchAny?: boolean): Observable<Customer[]> {
-    return this.pagedSearchByType(type, searchQuery, sort, pageRequest, matchAny).pipe(
-      map(page => page.content)
     );
   }
 

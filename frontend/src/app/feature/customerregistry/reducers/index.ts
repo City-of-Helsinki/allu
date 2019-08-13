@@ -1,9 +1,13 @@
 import {ActionReducerMap, createFeatureSelector, createSelector, MemoizedSelector} from '@ngrx/store';
-import * as fromCustomerSearch from '../../customerregistry/reducers/customer-search-reducer';
-import * as fromContactSearch from '../../customerregistry/reducers/contact-search-reducer';
-import * as fromRoot from '../../allu/reducers/index';
+import * as fromCustomerSearch from '@feature/customerregistry/reducers/customer-search-reducer';
+import * as fromContactSearch from '@feature/customerregistry/reducers/contact-search-reducer';
+import * as fromRoot from '@feature/allu/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {InjectionToken} from '@angular/core';
+import {Customer} from '@model/customer/customer';
+import {Page} from '@model/common/page';
+import {createCustomerSelectors} from '@feature/customerregistry/reducers/customer-search-reducer';
+import {createContactSelectors} from '@feature/customerregistry/reducers/contact-search-reducer';
 
 export interface CustomerState {
   customerSearch: fromCustomerSearch.State;
@@ -55,44 +59,6 @@ export function createContactsStateSelector(selector: (state: CustomerState) => 
   return createSelector(getCustomerState, selector);
 }
 
-function createCustomerSelectors(getState: MemoizedSelector<object, fromCustomerSearch.State>) {
-  return {
-    getMatchingCustomers: createSelector(
-      getState,
-      fromCustomerSearch.getMatching
-    ),
-
-    getLoading: createSelector(
-      getState,
-      fromCustomerSearch.getLoading
-    )
-  };
-}
-
-function createContactSelectors(getState: MemoizedSelector<object, fromContactSearch.State>) {
-  return {
-    getAvailableContacts: createSelector(
-      getState,
-      fromContactSearch.getAvailable
-    ),
-
-    getMatchingContacts: createSelector(
-      getState,
-      fromContactSearch.getMatching
-    ),
-
-    getContactsLoading: createSelector(
-      getState,
-      fromContactSearch.getLoading
-    ),
-
-    getContactsLoaded: createSelector(
-      getState,
-      fromContactSearch.getLoaded
-    )
-  };
-}
-
 export const getCustomerSearchState = createCustomerStateSelector((state: CustomerState) => state.customerSearch);
 export const getContactSearchState = createContactsStateSelector((state: CustomerState) => state.contactSearch);
 export const getApplicantSearchState = createCustomerStateSelector((state: CustomerState) => state.applicantSearch);
@@ -107,15 +73,19 @@ export const getContractorContactSearchState = createContactsStateSelector((stat
 export const getInvoicingCustomerSearchState = createCustomerStateSelector((state: CustomerState) => state.invoicingCustomerSearch);
 
 export const {
-  getMatchingCustomers,
-  getLoading
+  getMatching: getMatchingCustomers,
+  getMatchingList: getMatchingCustomerList,
+  getLoading: getCustomersLoading,
+  getSearch: getCustomerSearch,
+  getSort: getCustomerSort,
+  getPageRequest: getCustomerPageRequest
 } = createCustomerSelectors(getCustomerSearchState);
 
 export const {
-  getAvailableContacts,
-  getMatchingContacts,
-  getContactsLoading,
-  getContactsLoaded
+  getAvailable: getAvailableContacts,
+  getMatching: getMatchingContacts,
+  getLoading: getContactsLoading,
+  getLoaded: getContactsLoaded
 } = createContactSelectors(getContactSearchState);
 
 export const getApplicantSelectors = createCustomerSelectors(getApplicantSearchState);

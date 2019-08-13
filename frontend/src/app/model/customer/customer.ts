@@ -1,9 +1,10 @@
 import {PostalAddress} from '../common/postal-address';
+import {CustomerType} from '@model/customer/customer-type';
 
 export class Customer {
   constructor(
     public id?: number,
-    public type?: string,
+    public type?: CustomerType,
     public name?: string,
     public registryKey?: string,
     public ovt?: string,

@@ -18,6 +18,8 @@ import {NotificationService} from '@feature/notification/notification.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {of} from 'rxjs';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
+import {CustomerType} from '@model/customer/customer-type';
+import {Page} from '@model/common/page';
 
 @Component({
   selector: 'host',
@@ -72,10 +74,10 @@ class MockCustomerInfoAcceptanceComponent {
 })
 class DialogTestModule { }
 
-const oldCustomer = new Customer(1, 'PERSON', 'old existing customer', 'oldKey');
-const newCustomer = new Customer(undefined, 'PERSON', 'new shining customer', 'newKey');
-const existingCustomer1 = new Customer(2, 'PERSON', 'first existing customer', '1key');
-const existingCustomer2 = new Customer(3, 'PERSON', 'second existing customer', '2key');
+const oldCustomer = new Customer(1, CustomerType.PERSON, 'old existing customer', 'oldKey');
+const newCustomer = new Customer(undefined, CustomerType.PERSON, 'new shining customer', 'newKey');
+const existingCustomer1 = new Customer(2, CustomerType.PERSON, 'first existing customer', '1key');
+const existingCustomer2 = new Customer(3, CustomerType.PERSON, 'second existing customer', '2key');
 const codeSet: CodeSetTypeMap = {
   Country: {
     FI: new CodeSet(1, 'Country', 'FI', 'Suomi')
@@ -126,7 +128,7 @@ describe('CustomerAcceptanceComponent', () => {
     hostComp.oldCustomer = oldCustomer;
     hostComp.newCustomer = newCustomer;
 
-    store.dispatch(new SearchSuccess(ActionTargetType.Applicant, [existingCustomer1, existingCustomer2]));
+    store.dispatch(new SearchSuccess(ActionTargetType.Applicant, new Page([existingCustomer1, existingCustomer2])));
     store.dispatch(new CodeSetAction.LoadSuccess(codeSet));
 
     fixture.detectChanges();
@@ -159,7 +161,7 @@ describe('CustomerAcceptanceComponent', () => {
     expect(testedComponent.oldCustomer).toBeUndefined();
 
     testedComponent.ngOnInit();
-    store.dispatch(new SearchSuccess(ActionTargetType.Applicant, [existingCustomer1, existingCustomer2]));
+    store.dispatch(new SearchSuccess(ActionTargetType.Applicant, new Page([existingCustomer1, existingCustomer2])));
     fixture.detectChanges();
 
     const childComp = de.query(By.directive(MockCustomerInfoAcceptanceComponent)).componentInstance;

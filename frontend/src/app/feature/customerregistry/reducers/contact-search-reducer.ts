@@ -1,6 +1,7 @@
 import {Contact} from '@model/customer/contact';
 import {ContactSearchActions, ContactSearchActionType} from '@feature/customerregistry/actions/contact-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {createSelector, MemoizedSelector} from '@ngrx/store';
 
 export interface State {
   loading: boolean;
@@ -86,4 +87,13 @@ export const getLoaded = (state: State) => state.loaded;
 function matchingContacts(available: Contact[] = [], searchTerm: string = ''): Contact[] {
   const lowerCaseTerm = searchTerm.toLocaleLowerCase();
   return available.filter(c => c.name.toLocaleLowerCase().startsWith(lowerCaseTerm));
+}
+
+export function createContactSelectors(getState: MemoizedSelector<object, State>) {
+  return {
+    getAvailable: createSelector(getState, getAvailable),
+    getMatching: createSelector(getState, getMatching),
+    getLoading: createSelector(getState, getLoading),
+    getLoaded: createSelector(getState, getLoaded)
+  };
 }

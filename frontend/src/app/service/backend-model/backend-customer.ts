@@ -1,8 +1,9 @@
 import {BackendPostalAddress} from './backend-postal-address';
+import {CustomerType} from '@model/customer/customer-type';
 
 export interface BackendCustomer {
   id: number;
-  type: string;
+  type: CustomerType;
   name: string;
   registryKey: string;
   ovt: string;

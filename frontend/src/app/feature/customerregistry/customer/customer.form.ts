@@ -2,11 +2,12 @@ import {PostalAddress} from '../../../model/common/postal-address';
 import {FormBuilder, Validators} from '@angular/forms';
 import {postalCodeValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
+import {CustomerType} from '@model/customer/customer-type';
 
 export class CustomerForm {
   constructor(
     public id?: number,
-    public type?: string,
+    public type?: CustomerType,
     public name?: string,
     public registryKey?: string,
     public ovt?: string,

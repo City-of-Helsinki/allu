@@ -19,7 +19,7 @@ export const config: {[key: string]: CustomerAcceptanceConfig} = {
     formName: 'applicant',
     roleType: CustomerRoleType.APPLICANT,
     actionTargetType: ActionTargetType.Applicant,
-    matchingCustomersSelector: fromCustomerSearch.getApplicantSelectors.getMatchingCustomers,
+    matchingCustomersSelector: fromCustomerSearch.getApplicantSelectors.getMatchingList,
     customersLoadingSelector: fromCustomerSearch.getApplicantSelectors.getLoading,
     saveAction: customer => new SetCustomer(ActionTargetType.Applicant, customer)
   },
@@ -27,7 +27,7 @@ export const config: {[key: string]: CustomerAcceptanceConfig} = {
     formName: 'representative',
     roleType: CustomerRoleType.REPRESENTATIVE,
     actionTargetType: ActionTargetType.Representative,
-    matchingCustomersSelector: fromCustomerSearch.getRepresentativeSelectors.getMatchingCustomers,
+    matchingCustomersSelector: fromCustomerSearch.getRepresentativeSelectors.getMatchingList,
     customersLoadingSelector: fromCustomerSearch.getRepresentativeSelectors.getLoading,
     saveAction: customer => new SetCustomer(ActionTargetType.Representative, customer)
   },
@@ -35,7 +35,7 @@ export const config: {[key: string]: CustomerAcceptanceConfig} = {
     formName: 'propertyDeveloper',
     roleType: CustomerRoleType.PROPERTY_DEVELOPER,
     actionTargetType: ActionTargetType.PropertyDeveloper,
-    matchingCustomersSelector: fromCustomerSearch.getPropertyDeveloperSelectors.getMatchingCustomers,
+    matchingCustomersSelector: fromCustomerSearch.getPropertyDeveloperSelectors.getMatchingList,
     customersLoadingSelector: fromCustomerSearch.getPropertyDeveloperSelectors.getLoading,
     saveAction: customer => new SetCustomer(ActionTargetType.PropertyDeveloper, customer)
   },
@@ -43,7 +43,7 @@ export const config: {[key: string]: CustomerAcceptanceConfig} = {
     formName: 'contractor',
     roleType: CustomerRoleType.CONTRACTOR,
     actionTargetType: ActionTargetType.Contractor,
-    matchingCustomersSelector: fromCustomerSearch.getContractorSelectors.getMatchingCustomers,
+    matchingCustomersSelector: fromCustomerSearch.getContractorSelectors.getMatchingList,
     customersLoadingSelector: fromCustomerSearch.getContractorSelectors.getLoading,
     saveAction: customer => new SetCustomer(ActionTargetType.Contractor, customer)
   },
@@ -51,7 +51,7 @@ export const config: {[key: string]: CustomerAcceptanceConfig} = {
     formName: 'invoicingCustomer',
     roleType: undefined,
     actionTargetType: ActionTargetType.InvoicingCustomer,
-    matchingCustomersSelector: fromCustomerSearch.getInvoicingCustomerSelectors.getMatchingCustomers,
+    matchingCustomersSelector: fromCustomerSearch.getInvoicingCustomerSelectors.getMatchingList,
     customersLoadingSelector: fromCustomerSearch.getInvoicingCustomerSelectors.getLoading,
     saveAction: customer => new SetCustomer(ActionTargetType.InvoicingCustomer, customer)
   },

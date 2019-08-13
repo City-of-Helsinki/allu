@@ -4,9 +4,9 @@ import {CustomerSearchQuery} from '../../customer/customer-search-query';
 
 export class CustomerQueryParametersMapper {
   public static mapFrontend(query: CustomerSearchQuery): BackendQueryParameters {
-    return {
-      queryParameters: CustomerQueryParametersMapper.mapCustomerParameters(query)
-    };
+    return query
+      ? { queryParameters: CustomerQueryParametersMapper.mapCustomerParameters(query) }
+      : undefined;
   }
 
   private static mapCustomerParameters(query: CustomerSearchQuery): Array<BackendQueryParameter> {

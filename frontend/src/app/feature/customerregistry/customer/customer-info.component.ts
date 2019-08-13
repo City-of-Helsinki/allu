@@ -72,9 +72,8 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       switchMap(key => this.onSearchChange({registryKey: key}))
     );
 
-    this.typeSubscription = this.typeControl.valueChanges.pipe(
-      map((type: string) => CustomerType[type])
-    ).subscribe(type => this.updateRegistryKeyValidators(type));
+    this.typeSubscription = this.typeControl.valueChanges
+      .subscribe(type => this.updateRegistryKeyValidators(type));
 
     this.countrySubscription = this.countryControl.valueChanges
       .subscribe(country => this.updatePostalAddressValidator(country));

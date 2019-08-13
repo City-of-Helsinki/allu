@@ -7,6 +7,7 @@ import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
 import {Page} from '@model/common/page';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
+import {SearchParameters} from '@feature/common/search-parameters';
 
 export enum ApplicationSearchActionType {
   SetSearchQuery = '[ApplicationSearch] Set search query',
@@ -22,11 +23,7 @@ export enum ApplicationSearchActionType {
   ClearSelected = '[ApplicationSearch] Clear selected applications'
 }
 
-export interface SearchParams {
-  query: ApplicationSearchQuery;
-  sort?: Sort;
-  pageRequest?: PageRequest;
-}
+export interface ApplicationSearchParams extends SearchParameters<ApplicationSearchQuery> {}
 
 export class SetSearchQuery implements ActionWithTarget {
   readonly type = ApplicationSearchActionType.SetSearchQuery;
@@ -54,7 +51,7 @@ export class ResetToFirstPage implements ActionWithTarget {
 
 export class Search implements ActionWithTarget {
   readonly type = ApplicationSearchActionType.Search;
-  readonly payload: SearchParams;
+  readonly payload: ApplicationSearchParams;
 
   constructor(public targetType: ActionTargetType, private query: ApplicationSearchQuery,
               private sort?: Sort, private pageRequest?: PageRequest) {
