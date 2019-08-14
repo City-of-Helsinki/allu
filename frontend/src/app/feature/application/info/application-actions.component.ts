@@ -99,7 +99,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showTermination =
         (app.type === ApplicationType.SHORT_TERM_RENTAL && status === ApplicationStatus.DECISION) ||
         (app.type === ApplicationType.PLACEMENT_CONTRACT && status === ApplicationStatus.DECISION) ||
-        (app.type === ApplicationType.PLACEMENT_CONTRACT && status === ApplicationStatus.ARCHIVED);
+        (app.type === ApplicationType.PLACEMENT_CONTRACT && status === ApplicationStatus.FINISHED);
       this.applicationId = app.id;
       this.type = app.type;
     });
