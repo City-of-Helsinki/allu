@@ -371,10 +371,9 @@ public class ApplicationDao {
   }
 
   @Transactional
-  public Application startDecisionMaking(int applicationId, StatusType status, int userId) {
+  public Application startDecisionMaking(int applicationId, StatusType status) {
     int updated = (int) queryFactory
         .update(application)
-        .set(application.handler, userId)
         .set(application.status, status)
         .where(application.id.eq(applicationId))
         .execute();

@@ -25,6 +25,8 @@ import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.service.*;
 import fi.hel.allu.model.service.event.ApplicationStatusChangeEvent;
 
+import static fi.hel.allu.QApplication.application;
+
 /**
  * Default handler for application status change events
  */
@@ -66,7 +68,7 @@ public class ApplicationStatusChangeHandler {
         handleHandlingStatus(statusChangeEvent.getApplication());
         break;
       case DECISIONMAKING:
-        handleDecisionMakingStatus(statusChangeEvent.getApplication());
+        handleDecisionMakingStatus(statusChangeEvent.getApplication(), statusChangeEvent.getUserId());
         break;
       case DECISION:
         handleDecisionStatus(statusChangeEvent.getApplication(), statusChangeEvent.getUserId());
@@ -144,11 +146,19 @@ public class ApplicationStatusChangeHandler {
     createSupervisionTaskForTerminated(application, userId);
   }
 
-  protected void handleDecisionMakingStatus(Application application) {
-    if (application.getTargetState() == null) {
-      setTargetStateForDecisionMaking(application.getId());
+  protected void handleDecisionMakingStatus(Application application, Integer userId) {
+    StatusType targetState = application.getTargetState();
+    if (targetState == null) {
+      targetState = getTargetStateForDecisionMaking(application.getId());
+      applicationService.setTargetState(application.getId(), targetState);
+    }
+    if (targetState == StatusType.DECISION) {
+      // Handler set only when making first "decision"
+      applicationService.updateHandler(application.getId(), userId);
     }
   }
+
+
 
   protected void handleCancelledStatus(Application application) {
     supervisionTaskService.cancelOpenTasksOfApplication(application.getId());
@@ -200,12 +210,12 @@ public class ApplicationStatusChangeHandler {
     historyDao.addApplicationChange(replacedApplicationId, change);
   }
 
-  private void setTargetStateForDecisionMaking(Integer applicationId) {
+  private StatusType getTargetStateForDecisionMaking(Integer applicationId) {
     if (terminationDao.isMarkedForTermination(applicationId)) {
-      applicationService.setTargetState(applicationId, StatusType.TERMINATED);
+      return StatusType.TERMINATED;
     } else {
       // By default, application is moved to decision state when decision is made.
-      applicationService.setTargetState(applicationId, StatusType.DECISION);
+      return StatusType.DECISION;
     }
   }
 

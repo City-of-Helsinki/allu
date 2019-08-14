@@ -141,7 +141,7 @@ public class ApplicationStatusChangeHandlerTest {
   }
 
   @Test
-  public void onDecisionMakingWithoutTerminationShouldSetTargetStateToTerminated() {
+  public void onDecisionMakingWithoutTerminationShouldSetTargetStateToDecision() {
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISIONMAKING, USER_ID));
     verify(applicationService, times(1)).setTargetState(application.getId(), StatusType.DECISION);
   }

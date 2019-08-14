@@ -189,7 +189,8 @@ public class ApplicationService {
 
   @Transactional
   public void updateHandler(Integer applicationId, Integer handlerId) {
-    applicationDao.updateHandler(applicationId, handlerId);
+    // Never sets external user as handler
+    applicationDao.updateHandler(applicationId, getHandlerId(applicationId, handlerId));
   }
 
   /**
@@ -264,7 +265,7 @@ public class ApplicationService {
         final Application application = findById(applicationId);
         return applicationDao.updateDecision(applicationId, statusType, userId, application.getHandler());
       case DECISIONMAKING:
-        return applicationDao.startDecisionMaking(applicationId, statusType, getHandlerId(applicationId, userId));
+        return applicationDao.startDecisionMaking(applicationId, statusType);
       case CANCELLED:
         addCompensationClarificationForInvoiced(applicationId, userId);
         applicationDao.updateStatus(applicationId, statusType);
@@ -273,6 +274,8 @@ public class ApplicationService {
     }
   }
 
+  // Returns application's current handler if given user ID is
+  // external user's ID. Otherwise returns given user ID.
   private Integer getHandlerId(int applicationId, Integer userId) {
     Application application = applicationDao.findById(applicationId);
     return Optional.ofNullable(userId)
