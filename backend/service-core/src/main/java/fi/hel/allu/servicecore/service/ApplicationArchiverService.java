@@ -27,8 +27,23 @@ import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 @Service
 public class ApplicationArchiverService {
 
-  private static final List<ApplicationType> TYPES_MOVED_TO_FINISHED = Arrays.asList(ApplicationType.CABLE_REPORT, ApplicationType.EVENT, ApplicationType.PLACEMENT_CONTRACT,
-          ApplicationType.SHORT_TERM_RENTAL, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS);
+  private static final List<ApplicationType> TYPES_MOVED_TO_FINISHED = Arrays.asList(
+      ApplicationType.CABLE_REPORT,
+      ApplicationType.EVENT,
+      ApplicationType.PLACEMENT_CONTRACT,
+      ApplicationType.SHORT_TERM_RENTAL,
+      ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS);
+
+  private static final Map<ApplicationType, List<StatusType>> ARCHIVABLE_STATES = new HashMap<ApplicationType, List<StatusType>>() {{
+    put(ApplicationType.PLACEMENT_CONTRACT, Collections.singletonList(StatusType.TERMINATED));
+    put(ApplicationType.EXCAVATION_ANNOUNCEMENT, Arrays.asList(StatusType.FINISHED, StatusType.TERMINATED));
+    put(ApplicationType.AREA_RENTAL, Arrays.asList(StatusType.FINISHED, StatusType.TERMINATED));
+    put(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, Arrays.asList(StatusType.DECISION, StatusType.FINISHED, StatusType.TERMINATED));
+    put(ApplicationType.CABLE_REPORT, Arrays.asList(StatusType.DECISION, StatusType.FINISHED, StatusType.TERMINATED));
+    put(ApplicationType.EVENT, Arrays.asList(StatusType.DECISION, StatusType.FINISHED, StatusType.TERMINATED));
+    put(ApplicationType.SHORT_TERM_RENTAL, Arrays.asList(StatusType.DECISION, StatusType.FINISHED, StatusType.TERMINATED));
+  }};
+
   private static final Set<ApplicationTagType> DEPOSIT_TAG_TYPES = new HashSet<>(
       Arrays.asList(ApplicationTagType.DEPOSIT_PAID, ApplicationTagType.DEPOSIT_REQUESTED));
   private final ApplicationServiceComposer applicationServiceComposer;
@@ -97,11 +112,12 @@ public class ApplicationArchiverService {
   /**
    * Archives application if following conditions fulfill:
    * <ul>
-   * <li>Application is finished i.e. end date before current date and status is finished or decision</li>
-   * <li>Application is invoiced or not billable</li>
-   * <li>Application does not have open supervision tasks</li>
-   * <li>Application does not have open deposit</li>
-   * <li>Application does not require a survey</li>
+   *   <li>Application is finished i.e. end date before current date</li>
+   *   <li>Application is in archivable status (depends on application type)</li>
+   *   <li>Application is fully invoiced or not billable</li>
+   *   <li>Application does not have open supervision tasks</li>
+   *   <li>Application does not have open deposit</li>
+   *   <li>Application does not require a survey</li>
    * </ul>
    */
   public ApplicationJson archiveApplicationIfNecessary(Integer applicationId) {
@@ -131,14 +147,11 @@ public class ApplicationArchiverService {
         && !requiresSurvey(application);
   }
 
+  /**
+   * Checks whether the application is in state that can be archived.
+   */
   private boolean isArchivableStatus(ApplicationJson application) {
-    boolean isArchivedStatus = application.getStatus() == StatusType.FINISHED
-        || application.getStatus() == StatusType.TERMINATED;
-    // Area rentals and excavation announcements never archived from decision status
-    if (application.getType() != ApplicationType.EXCAVATION_ANNOUNCEMENT && application.getType() != ApplicationType.AREA_RENTAL) {
-      isArchivedStatus |= application.getStatus() == StatusType.DECISION;
-    }
-    return isArchivedStatus;
+    return ARCHIVABLE_STATES.get(application.getType()).contains(application.getStatus());
   }
 
   private boolean isFinished(ApplicationJson application) {
