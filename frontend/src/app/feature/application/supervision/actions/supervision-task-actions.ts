@@ -18,6 +18,8 @@ export enum SupervisionTaskActionType {
   RejectSuccess = '[SupervisionTask] Reject task success',
   ChangeOwner = '[SupervisionTask] Change owner',
   ChangeOwnerSuccess = '[SupervisionTask] Change owner success',
+  RemoveOwner = '[SupervisionTask] Remove owner',
+  RemoveOwnerSuccess = '[SupervisionTask] Remove owner success',
 }
 
 export class Load implements Action {
@@ -95,9 +97,17 @@ export class ChangeOwner implements Action {
 
 export class ChangeOwnerSuccess implements Action {
   readonly type = SupervisionTaskActionType.ChangeOwnerSuccess;
-  constructor(public payload: SupervisionTask) {}
 }
 
+export class RemoveOwner implements Action {
+  readonly type = SupervisionTaskActionType.RemoveOwner;
+
+  constructor(public payload: number[]) {}
+}
+
+export class RemoveOwnerSuccess implements Action {
+  readonly type = SupervisionTaskActionType.RemoveOwnerSuccess;
+}
 
 export type SupervisionTaskActions =
   | Load
@@ -112,4 +122,6 @@ export type SupervisionTaskActions =
   | Reject
   | RejectSuccess
   | ChangeOwner
-  | ChangeOwnerSuccess;
+  | ChangeOwnerSuccess
+  | RemoveOwner
+  | RemoveOwnerSuccess;

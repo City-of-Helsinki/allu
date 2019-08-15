@@ -14,7 +14,7 @@ import {
   LoadSuccess,
   Reject,
   RejectSuccess,
-  Remove,
+  Remove, RemoveOwner, RemoveOwnerSuccess,
   RemoveSuccess,
   Save,
   SaveSuccess,
@@ -122,7 +122,21 @@ export class SupervisionTaskEffects {
     switchMap(action => this.taskService.changeOwner(action.payload.ownerId, action.payload.taskIds).pipe(
       switchMap(() => [
         new Load(),
-        new NotifySuccess('supervision.task.action.movedToSelf')
+        new ChangeOwnerSuccess(),
+        new NotifySuccess('supervision.task.action.handlerChanged')
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
+  removeOwner: Observable<Action> = this.actions.pipe(
+    ofType<RemoveOwner>(SupervisionTaskActionType.RemoveOwner),
+    switchMap(action => this.taskService.removeOwner(action.payload).pipe(
+      switchMap(() => [
+        new Load(),
+        new RemoveOwnerSuccess(),
+        new NotifySuccess('supervision.task.action.handlerRemoved')
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))

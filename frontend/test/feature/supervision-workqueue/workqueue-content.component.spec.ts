@@ -1,20 +1,23 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
-import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
-import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
-import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
+import {AvailableToDirective} from '@service/authorization/available-to.directive';
 import {ActivatedRouteMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
-import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
+import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
-import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
-import {WorkQueueContentComponent} from '../../../src/app/feature/supervision-workqueue/content/workqueue-content.component';
-import {Page} from '../../../src/app/model/common/page';
+import {AlluCommonModule} from '@feature/common/allu-common.module';
+import {WorkQueueContentComponent} from '@feature/supervision-workqueue/content/workqueue-content.component';
+import {Page} from '@model/common/page';
 import {ActivatedRoute} from '@angular/router';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 import {RouterTestingModule} from '@angular/router/testing';
 import {StoredFilterStoreMock} from '../common/stored-filter-store.mock';
-import {StoredFilterStore} from '../../../src/app/service/stored-filter/stored-filter-store';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
+import {combineReducers, Store, StoreModule} from '@ngrx/store';
+import * as fromAuth from '@feature/auth/reducers';
+import * as fromSupervisionWorkQueue from '@feature/supervision-workqueue/reducers';
+import {SearchSuccess} from '@feature/application/supervision/actions/supervision-task-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -24,7 +27,7 @@ const defaultItems = new Page([
 describe('SupervisionWorkqueueContentComponent', () => {
   let comp: WorkQueueContentComponent;
   let fixture: ComponentFixture<WorkQueueContentComponent>;
-  let store: SupervisionWorkItemStoreMock;
+  let store: Store<fromSupervisionWorkQueue.State>;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
 
@@ -36,14 +39,17 @@ describe('SupervisionWorkqueueContentComponent', () => {
         RouterTestingModule.withRoutes([]),
         MatTableModule,
         MatSortModule,
-        MatPaginatorModule
+        MatPaginatorModule,
+        StoreModule.forRoot({
+          'supervisionWorkQueue': combineReducers(fromSupervisionWorkQueue.reducers),
+          'auth': combineReducers(fromAuth.reducers)
+        })
       ],
       declarations: [
         WorkQueueContentComponent
       ],
       providers: [
         FormBuilder,
-        {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
         {provide: ActivatedRoute, useValue: new ActivatedRouteMock()},
         {provide: StoredFilterStore, useClass: StoredFilterStoreMock}
       ]
@@ -53,48 +59,35 @@ describe('SupervisionWorkqueueContentComponent', () => {
   }));
 
   beforeEach(() => {
-    store = TestBed.get(SupervisionWorkItemStore) as SupervisionWorkItemStoreMock;
+    store = TestBed.get(Store);
     fixture = TestBed.createComponent(WorkQueueContentComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
-    store.changeSubject.next({...store.changeSubject.getValue(), page: defaultItems});
+    store.dispatch(new SearchSuccess(ActionTargetType.SupervisionTaskWorkQueue, defaultItems));
     comp.ngOnInit();
     fixture.detectChanges();
   });
 
-  it('should show content', fakeAsync(() => {
+  it('should show content', () => {
     expect(de.queryAll(By.css('mat-row')).length).toEqual(defaultItems.content.length);
-  }));
+  });
 
-  it('should check all selected checkbox based on state', fakeAsync(() => {
-    store.changeSubject.next({...store.changeSubject.getValue(), allSelected: true});
+  it('should select all when select all checkbox is clicked', () => {
+    spyOn(store, 'dispatch').and.callThrough();
+    const selectAll: HTMLInputElement = de.query(By.css('mat-header-cell mat-checkbox label')).nativeElement;
+    selectAll.click();
     fixture.detectChanges();
-    tick();
-    expect(de.query(By.css('.mat-header-cell .mat-checkbox-checked'))).toBeDefined();
+    expect(store.dispatch).toHaveBeenCalledTimes(1);
+    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-checkbox-checked')).length).toEqual(defaultItems.content.length);
+  });
 
-    store.changeSubject.next({...store.changeSubject.getValue(), allSelected: false});
+  it('should select item which checkbox is clicked', () => {
+    spyOn(store, 'dispatch').and.callThrough();
+    const checkboxes = de.queryAll(By.css('mat-cell mat-checkbox label')).map(elem => elem.nativeElement);
+    checkboxes[1].click();
     fixture.detectChanges();
-    tick();
-    expect(de.query(By.css('.mat-header-cell .mat-checkbox-checked'))).toBeFalsy();
-  }));
-
-  it('should check item checkboxes based on state', fakeAsync(() => {
-    expect(de.queryAll(By.css('.mat-cell .mat-checkbox-checked')).length).toEqual(0);
-
-    const selected = defaultItems.content.map(item => item.id);
-    store.changeSubject.next({...store.changeSubject.getValue(), selectedItems: selected});
-    fixture.detectChanges();
-    tick();
-    expect(de.queryAll(By.css('.mat-cell .mat-checkbox-checked')).length).toEqual(2);
-  }));
-
-  it('should notify store when items are checked', fakeAsync(() => {
-    const checkbox = de.query(By.css('.mat-cell label.mat-checkbox-layout')).nativeElement;
-    spyOn(store, 'toggleSingle');
-    checkbox.click();
-    fixture.detectChanges();
-    tick();
-    expect(store.toggleSingle).toHaveBeenCalledWith(defaultItems.content[0].id, true);
-  }));
+    expect(store.dispatch).toHaveBeenCalledTimes(1);
+    expect(de.queryAll(By.css('mat-cell mat-checkbox.mat-checkbox-checked')).length).toEqual(1);
+  });
 });

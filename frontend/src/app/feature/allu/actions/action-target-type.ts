@@ -11,5 +11,6 @@ export enum ActionTargetType {
   PlacementContract = 'PlacementContract',
   Home = 'Home',
   Location = 'Location',
-  ApplicationWorkQueue = 'ApplicationWorkQueue'
+  ApplicationWorkQueue = 'ApplicationWorkQueue',
+  SupervisionTaskWorkQueue = 'SupervisionTaskWorkQueue'
 }

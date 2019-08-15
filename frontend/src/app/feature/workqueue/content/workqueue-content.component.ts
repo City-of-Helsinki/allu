@@ -56,7 +56,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
       map(data => data.tab),
       takeUntil(this.destroy)
     ).subscribe((tab: WorkQueueTab) => {
-      this.store.dispatch(new SetTab(tab));
+      this.store.dispatch(new SetTab(ActionTargetType.ApplicationWorkQueue, tab));
       this.store.dispatch(new ResetToFirstPage(ActionTargetType.ApplicationWorkQueue));
     });
 

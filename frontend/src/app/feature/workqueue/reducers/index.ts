@@ -1,10 +1,10 @@
 import * as fromWorkQueue from '@feature/workqueue/reducers/workqueue-reducer';
 import * as fromApplicationSearch from '@feature/application/reducers/application-search-reducer';
+import {createApplicationSearchSelectors} from '@feature/application/reducers/application-search-reducer';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActionReducerMap, createFeatureSelector, createSelector} from '@ngrx/store';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {InjectionToken} from '@angular/core';
-import {createApplicationSearchSelectors} from '@feature/application/reducers/application-search-reducer';
 
 export interface ApplicationWorkQueueState {
   workQueue: fromWorkQueue.State;
@@ -16,7 +16,7 @@ export interface State extends fromRoot.State {
 }
 
 export const reducers: ActionReducerMap<ApplicationWorkQueueState> = {
-  workQueue: fromWorkQueue.reducer,
+  workQueue: fromWorkQueue.createReducerFor(ActionTargetType.ApplicationWorkQueue),
   search: fromApplicationSearch.createReducerFor(ActionTargetType.ApplicationWorkQueue)
 };
 

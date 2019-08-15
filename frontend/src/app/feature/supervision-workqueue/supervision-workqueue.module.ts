@@ -1,18 +1,18 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {
-  MatButtonToggleModule, MatChipsModule, MatPaginatorModule, MatSortModule,
-  MatTableModule
-} from '@angular/material';
+import {MatButtonToggleModule, MatChipsModule, MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {WorkQueueComponent} from './workqueue.component';
 import {WorkQueueFilterComponent} from './filter/workqueue-filter.component';
 import {WorkQueueContentComponent} from './content/workqueue-content.component';
 import {SupervisionTaskService} from '../../service/supervision/supervision-task.service';
-import {SupervisionWorkItemStore} from './supervision-work-item-store';
 import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 import {RouterModule} from '@angular/router';
 import {StoredFilterModule} from '../stored-filter/stored-filter.module';
+import {StoreModule} from '@ngrx/store';
+import {reducersProvider, reducersToken} from './reducers';
+import {EffectsModule} from '@ngrx/effects';
+import {SupervisionTaskSearchEffects} from '@feature/application/supervision/effects/supervision-task-search-effects';
 
 @NgModule({
   imports: [
@@ -26,7 +26,11 @@ import {StoredFilterModule} from '../stored-filter/stored-filter.module';
     MatSortModule,
     MatPaginatorModule,
     OwnerModalModule,
-    StoredFilterModule
+    StoredFilterModule,
+    StoreModule.forFeature('supervisionWorkQueue', reducersToken),
+    EffectsModule.forFeature([
+      SupervisionTaskSearchEffects
+    ]),
   ],
   declarations: [
     WorkQueueComponent,
@@ -35,7 +39,7 @@ import {StoredFilterModule} from '../stored-filter/stored-filter.module';
   ],
   providers: [
     SupervisionTaskService,
-    SupervisionWorkItemStore
+    reducersProvider
   ]
 })
 export class SupervisionWorkqueueModule {}

@@ -1,15 +1,20 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {SupervisionWorkItemStore} from '../supervision-work-item-store';
-import {MatCheckboxChange, MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator, MatSort} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';
-import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
-import {WorkQueueTab} from '../../workqueue/workqueue-tab';
-import {Sort} from '../../../model/common/sort';
-import {StoredFilterType} from '../../../model/user/stored-filter-type';
-import {StoredFilterStore} from '../../../service/stored-filter/stored-filter-store';
-import {distinctUntilChanged, map, takeUntil} from 'rxjs/internal/operators';
+import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
+import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
+import {Sort} from '@model/common/sort';
+import {StoredFilterType} from '@model/user/stored-filter-type';
+import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
+import {map, takeUntil} from 'rxjs/internal/operators';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
+import * as fromSupervisionWorkQueue from '@feature/supervision-workqueue/reducers';
+import {ResetToFirstPage, ToggleSelect, ToggleSelectAll} from '@feature/application/supervision/actions/supervision-task-search-actions';
+import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {SetTab} from '@feature/workqueue/actions/workqueue-actions';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -22,55 +27,32 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     'plannedFinishingTime', 'application.status', 'creator.realName'
   ];
   dataSource: SupervisionWorkItemDatasource;
-  allSelected = false;
-  length = 0;
-  pageIndex = 0;
-  loading = false;
+  allSelected$: Observable<boolean>;
+  someSelected$: Observable<boolean>;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  private selectedItems: Array<number> = [];
   private destroy = new Subject<boolean>();
 
-  constructor(private store: SupervisionWorkItemStore,
+  constructor(private store: Store<fromRoot.State>,
               private route: ActivatedRoute,
               private storedFilterStore: StoredFilterStore) {
   }
 
   ngOnInit(): void {
-    this.sort.sort(Sort.toMatSortable(this.store.snapshot.sort));
-
     this.dataSource = new SupervisionWorkItemDatasource(this.store, this.paginator, this.sort);
-
-    this.dataSource.page.pipe(takeUntil(this.destroy))
-      .subscribe(page => {
-        this.length = page.totalElements;
-        this.pageIndex = page.pageNumber;
-      });
 
     this.route.data.pipe(
       map(data => data.tab),
       takeUntil(this.destroy)
-    ).subscribe((tab: WorkQueueTab) => this.store.tabChange(tab));
+    ).subscribe((tab: WorkQueueTab) => {
+      this.store.dispatch(new SetTab(ActionTargetType.SupervisionTaskWorkQueue, tab));
+      this.store.dispatch(new ResetToFirstPage(ActionTargetType.SupervisionTaskWorkQueue));
+    });
 
-    this.store.changes.pipe(
-      map(state => state.selectedItems),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(selected => this.selectedItems = selected);
-
-    this.store.changes.pipe(
-      map(state => state.allSelected),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(allSelected => this.allSelected = allSelected);
-
-    this.store.changes.pipe(
-      map(state => state.loading),
-      distinctUntilChanged(),
-      takeUntil(this.destroy)
-    ).subscribe(loading => this.loading = loading);
+    this.allSelected$ = this.store.pipe(select(fromSupervisionWorkQueue.getAllSelected));
+    this.someSelected$ = this.store.pipe(select(fromSupervisionWorkQueue.getSomeSelected));
 
     this.storedFilterStore.getCurrentFilter(StoredFilterType.SUPERVISION_WORKQUEUE).pipe(
       takeUntil(this.destroy),
@@ -83,16 +65,19 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  selected(id: number): boolean {
-    return this.selectedItems.indexOf(id) >= 0;
+  selected(id: number): Observable<boolean> {
+    return this.store.pipe(
+      select(fromSupervisionWorkQueue.getSelected),
+      map(selected => selected.indexOf(id) >= 0)
+    );
   }
 
-  checkAll(change: MatCheckboxChange): void {
-    this.store.toggleAll(change.checked);
+  checkAll(): void {
+    this.store.dispatch(new ToggleSelectAll(ActionTargetType.SupervisionTaskWorkQueue));
   }
 
-  checkSingle(change: MatCheckboxChange, taskId: number) {
-    this.store.toggleSingle(taskId, change.checked);
+  checkSingle(taskId: number) {
+    this.store.dispatch(new ToggleSelect(ActionTargetType.SupervisionTaskWorkQueue, taskId));
   }
 
   trackById(index: number, item: SupervisionWorkItem) {

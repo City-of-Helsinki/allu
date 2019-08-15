@@ -1,5 +1,5 @@
 <div class="mat-elevation-z8 data-table data-table-with-paging">
-  <div class="loading-shade" *ngIf="loading">
+  <div class="loading-shade" *ngIf="dataSource.loading">
     <mat-spinner></mat-spinner>
   </div>
 
@@ -7,11 +7,16 @@
     <ng-container matColumnDef="selected">
       <mat-header-cell *matHeaderCellDef>
         <div>
-          <mat-checkbox [checked]="allSelected" (change)="checkAll($event)"></mat-checkbox>
+          <mat-checkbox
+            [checked]="(someSelected$ | async) && (allSelected$ | async)"
+            [indeterminate]="(someSelected$ | async) && !(allSelected$ | async)"
+            (change)="checkAll()"></mat-checkbox>
         </div>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox [checked]="selected(row.id)" (change)="checkSingle($event, row.id)"></mat-checkbox>
+        <mat-checkbox
+          [checked]="selected(row.id) | async"
+          (change)="checkSingle(row.id)"></mat-checkbox>
       </mat-cell>
     </ng-container>
 
@@ -59,9 +64,6 @@
   </mat-table>
 
   <mat-paginator #paginator
-                 [length]="length"
-                 [pageIndex]="pageIndex"
-                 [pageSize]="25"
                  [pageSizeOptions]="[5, 10, 25, 100]">
   </mat-paginator>
 </div>
