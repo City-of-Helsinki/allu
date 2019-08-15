@@ -79,8 +79,7 @@ describe('UserAreasComponent', () => {
     parentComp.loading$.next(false);
     fixture.detectChanges();
     const listItems: DebugElement[] = de.queryAll(By.css('.mat-list-item'));
-    const addButton = getMatIconButton(listItems[0], 'add_circle_outline');
-    addButton.click();
+    listItems[0].nativeElement.click();
     fixture.detectChanges();
     expect(parentComp.areasSelected).toHaveBeenCalledWith([features[0]]);
   });
