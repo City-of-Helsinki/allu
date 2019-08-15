@@ -20,6 +20,9 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
+import * as fromAuth from '@feature/auth/reducers';
+import {ObjectUtil} from '@util/object.util';
+import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
 
 @Injectable()
 export class ApplicationSearchEffects {
@@ -42,6 +45,7 @@ export class ApplicationSearchEffects {
   @Effect()
   applicationSearch: Observable<Action> = this.actions.pipe(
     ofType<Search>(ApplicationSearchActionType.Search),
+    switchMap(action => this.setTargetTypeSpecificParameters(action)),
     switchMap((action) =>
       this.applicationService.pagedSearch(action.payload.query, action.payload.sort, action.payload.pageRequest).pipe(
         map(searchResult => new SearchSuccess(action.targetType, searchResult)),
@@ -64,9 +68,31 @@ export class ApplicationSearchEffects {
 
   private getCurrentWorkQueueSearch(): Observable<[ApplicationSearchQuery, Sort, PageRequest]> {
     return combineLatest(
-      this.store.pipe(select(fromWorkQueue.getApplicationSearchParameters), filter(search => !!search)),
+      this.store.pipe(select(fromWorkQueue.getApplicationSearchParameters), filter(params => !!params)),
       this.store.pipe(select(fromWorkQueue.getApplicationSearchSort)),
       this.store.pipe(select(fromWorkQueue.getApplicationSearchPageRequest)),
     );
+  }
+
+  /**
+   * In case of Application workqueue current tab must be checked. When current tab is user's own tab
+   * query should be updated to include only current users applications.
+   */
+  private setTargetTypeSpecificParameters(action: Search): Observable<Search> {
+    if (action.targetType === ActionTargetType.ApplicationWorkQueue) {
+      return combineLatest(
+        this.store.pipe(select(fromWorkQueue.getTab)),
+        this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
+      ).pipe(
+        map(([tab, user]) => {
+          const payload = action.payload;
+          const queryCopy = ObjectUtil.clone(payload.query);
+          queryCopy.owner = WorkQueueTab.OWN === tab ? [user.userName] : payload.query.owner;
+          return new Search(action.targetType, queryCopy, payload.sort, payload.pageRequest);
+        })
+      );
+    } else {
+      return of(action);
+    }
   }
 }

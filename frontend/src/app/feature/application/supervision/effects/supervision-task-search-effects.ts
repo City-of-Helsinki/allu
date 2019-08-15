@@ -21,6 +21,9 @@ import {
   SupervisionTaskActionType
 } from '@feature/application/supervision/actions/supervision-task-actions';
 import {SupervisionTaskSearchCriteria} from '@model/application/supervision/supervision-task-search-criteria';
+import * as fromAuth from '@feature/auth/reducers';
+import {ObjectUtil} from '@util/object.util';
+import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
 
 @Injectable()
 export class SupervisionTaskSearchEffects {
@@ -31,6 +34,7 @@ export class SupervisionTaskSearchEffects {
   @Effect()
   search: Observable<Action> = this.actions.pipe(
     ofType<Search>(SupervisionTaskSearchActionType.Search),
+    switchMap(action => this.setTargetTypeSpecificParameters(action)),
     switchMap(action =>
       this.taskService.search(action.payload.query, action.payload.sort, action.payload.pageRequest).pipe(
         map(result => new SearchSuccess(action.targetType, result)),
@@ -57,5 +61,27 @@ export class SupervisionTaskSearchEffects {
       this.store.pipe(select(fromSupervisionWorkQueue.getSort)),
       this.store.pipe(select(fromSupervisionWorkQueue.getPageRequest)),
     );
+  }
+
+  /**
+   * In case of Workqueue current tab must be checked. When current tab is user's own tab
+   * query should be updated to include only current users supervision tasks.
+   */
+  private setTargetTypeSpecificParameters(action: Search): Observable<Search> {
+    if (action.targetType === ActionTargetType.SupervisionTaskWorkQueue) {
+      return combineLatest(
+        this.store.pipe(select(fromSupervisionWorkQueue.getTab)),
+        this.store.pipe(select(fromAuth.getUser), filter(user => !!user))
+      ).pipe(
+        map(([tab, user]) => {
+          const payload = action.payload;
+          const queryCopy = ObjectUtil.clone(payload.query);
+          queryCopy.owners = WorkQueueTab.OWN === tab ? [user.id] : payload.query.owners;
+          return new Search(action.targetType, queryCopy, payload.sort, payload.pageRequest);
+        })
+      );
+    } else {
+      return of(action);
+    }
   }
 }
