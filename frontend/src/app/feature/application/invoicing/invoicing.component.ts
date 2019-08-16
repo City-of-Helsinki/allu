@@ -25,6 +25,9 @@ import {SetRecipient} from '@feature/application/invoicing/actions/invoicing-cus
 import {Invoice} from '@model/application/invoice/invoice';
 import {Load as LoadInvoicingPeriods} from '@feature/application/invoicing/actions/invoicing-period-actions';
 import {InvoicingInfoComponent} from '@feature/application/invoicing/invoicing-info/invoicing-info.component';
+import {FormUtil} from '@util/form.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {createTranslated} from '@service/error/error-info';
 
 @Component({
   selector: 'invoicing',
@@ -68,9 +71,14 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
   }
 
   onSubmit(): void {
-    this.saveApplicationInfo().subscribe(
-      () => this.saved(),
-      error => this.notification.error(error));
+    if (this.infoForm.valid) {
+      this.saveApplicationInfo().subscribe(
+        () => this.saved(),
+        error => this.notification.error(error));
+    } else {
+      FormUtil.validateFormFields(this.infoForm);
+      this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+    }
   }
 
   cancel(): void {
