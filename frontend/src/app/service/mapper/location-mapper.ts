@@ -1,4 +1,4 @@
-import {BackendLocation, SearchResultLocation} from '../backend-model/backend-location';
+import {BackendLocation, SearchResultLocation, BackendSupervisionTaskLocation} from '../backend-model/backend-location';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
 import {TimeUtil} from '../../util/time.util';
@@ -82,5 +82,23 @@ export class LocationMapper {
       underpass: location.underpass,
       additionalInfo: location.info
     } : undefined;
+  }
+
+  public static mapBackendSupervisionTaskLocations(supervisionTaskLocations: BackendSupervisionTaskLocation[]): Location[] {
+    return (supervisionTaskLocations)
+    ? supervisionTaskLocations.map(loc => LocationMapper.mapBackendSupervisionTaskLocation(loc))
+    : [];
+  }
+
+  public static mapBackendSupervisionTaskLocation(supervisionTaskLocation: BackendSupervisionTaskLocation): Location {
+    const location = new Location();
+    location.id = supervisionTaskLocation.applicationLocationId;
+    location.startTime = TimeUtil.dateFromBackend(supervisionTaskLocation.startTime);
+    location.endTime = TimeUtil.dateFromBackend(supervisionTaskLocation.endTime);
+    location.geometry = supervisionTaskLocation.geometry;
+    location.paymentTariff = supervisionTaskLocation.paymentTariff;
+    location.locationKey = supervisionTaskLocation.locationKey;
+    location.underpass = supervisionTaskLocation.underpass;
+    return location;
   }
 }

@@ -84,7 +84,8 @@
         <div fxFlex="0 1 auto">
           <supervision-task-location
             [taskId]="form.value.id"
-            [application]="application"
+            [locations]="locations"
+            [applicationType]="application.type"
             [relatedLocation]="location"></supervision-task-location>
         </div>
       </div>

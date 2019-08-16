@@ -1,6 +1,7 @@
 import {SupervisionTaskType} from './supervision-task-type';
 import {SupervisionTaskStatusType} from './supervision-task-status-type';
 import {User} from '../../user/user';
+import {Location} from '@model/common/location';
 
 export class SupervisionTask {
   constructor(
@@ -15,6 +16,7 @@ export class SupervisionTask {
     public status: SupervisionTaskStatusType = SupervisionTaskStatusType.OPEN,
     public description?: string,
     public result?: string,
-    public locationId?: number) {
+    public locationId?: number,
+    public approvedLocations?: Location[]) {
   }
 }

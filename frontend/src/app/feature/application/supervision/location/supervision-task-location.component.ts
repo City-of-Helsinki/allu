@@ -4,6 +4,7 @@ import {Application} from '@model/application/application';
 import {MapFeature} from '@feature/map/map-feature';
 import {findTranslation, findTranslationWithDefault} from '@util/translations';
 import {ApplicationType} from '@model/application/type/application-type';
+import {ArrayUtil} from '@app/util/array-util';
 
 @Component({
   selector: 'supervision-task-location',
@@ -12,17 +13,17 @@ import {ApplicationType} from '@model/application/type/application-type';
 })
 export class SupervisionTaskLocationComponent implements OnInit {
   @Input() taskId: number;
-  @Input() application: Application;
+  @Input() applicationType: ApplicationType;
   @Input() relatedLocation: Location;
+  @Input() locations: Location[] = [];
 
   mapFeatures: MapFeature[] = [];
   showPaymentTariff = false;
 
   ngOnInit(): void {
-    this.mapFeatures = this.application.locations.map(loc => ({id: loc.id, geometry: loc.geometry}));
-
+    this.mapFeatures = this.locations.map(loc => ({id: loc.id, geometry: loc.geometry}));
     this.showPaymentTariff = [ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.AREA_RENTAL]
-      .indexOf(this.application.type) >= 0;
+      .indexOf(this.applicationType) >= 0;
   }
 
   get paymentTariff() {

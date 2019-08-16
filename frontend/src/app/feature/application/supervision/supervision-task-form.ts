@@ -3,6 +3,7 @@ import {isAutomaticSupervisionTaskType, SupervisionTaskType} from '@model/applic
 import {Some} from '@util/option';
 import {User} from '@model/user/user';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
+import {Location} from '@model/common/location';
 
 export class SupervisionTaskForm {
   constructor(
@@ -20,7 +21,8 @@ export class SupervisionTaskForm {
     public description?: string,
     public result?: string,
     public automatic?: boolean,
-    public locationId?: number
+    public locationId?: number,
+    public approvedLocations?: Location[]
   ) {}
 
   static from(task: SupervisionTask): SupervisionTaskForm {
@@ -44,6 +46,7 @@ export class SupervisionTaskForm {
     form.result = task.result;
     form.automatic = isAutomaticSupervisionTaskType(task.type);
     form.locationId = task.locationId;
+    form.approvedLocations = task.approvedLocations;
     return form;
   }
 

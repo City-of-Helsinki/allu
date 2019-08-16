@@ -1,5 +1,16 @@
 import {BackendPostalAddress} from './backend-postal-address';
 
+export interface BackendSupervisionTaskLocation {
+  id: number;
+  applicationLocationId: number;
+  locationKey: number;
+  startTime: string;
+  endTime: string;
+  geometry: GeoJSON.GeometryCollection;
+  paymentTariff: string;
+  underpass: boolean;
+}
+
 export interface BackendLocation {
   id: number;
   locationKey: number;

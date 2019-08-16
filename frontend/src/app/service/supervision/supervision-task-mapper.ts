@@ -5,6 +5,8 @@ import {Some} from '../../util/option';
 import {BackendSupervisionTask} from '../../model/application/supervision/backend-supervision-task';
 import {SupervisionTaskType} from '../../model/application/supervision/supervision-task-type';
 import {SupervisionTaskStatusType} from '../../model/application/supervision/supervision-task-status-type';
+import {LocationMapper} from '@app/service/mapper/location-mapper';
+import {Location} from '@model/common/location';
 
 export class SupervisionTaskMapper {
   static mapBackendList(tasks: Array<BackendSupervisionTask>): Array<SupervisionTask> {
@@ -26,7 +28,8 @@ export class SupervisionTaskMapper {
       task.status,
       task.description,
       task.result,
-      task.locationId
+      task.locationId,
+      LocationMapper.mapBackendSupervisionTaskLocations(task.approvedLocations)
     );
   }
 

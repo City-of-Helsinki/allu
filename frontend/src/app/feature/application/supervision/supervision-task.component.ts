@@ -68,6 +68,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   editing = false;
   approveDisabled = false;
   location: Location;
+  locations: Location[];
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
@@ -106,7 +107,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.currentUserCanTakeOwnership(formValue.ownerId, formValue.status);
     this.userCanRemove(formValue.status);
-    this.location = this.getLocation(this.application.locations, formValue.locationId);
+    this.locations = this.getLocations();
+    this.location = this.getLocation(this.locations, formValue.locationId);
   }
 
   ngOnDestroy(): void {
@@ -359,6 +361,12 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     return this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, config).afterClosed().pipe(
       filter(result => !!result)
     );
+  }
+
+  private getLocations(): Location[] {
+    return !ArrayUtil.empty(this.form.value.approvedLocations)
+      ? this.form.value.approvedLocations
+      : this.application.locations;
   }
 
   private getLocation(locations: Location[], locationId: number): Location {

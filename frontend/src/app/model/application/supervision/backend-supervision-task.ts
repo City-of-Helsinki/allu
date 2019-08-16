@@ -1,6 +1,7 @@
 import {BackendUser} from '../../../service/backend-model/backend-user';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {SupervisionTaskStatusType} from '@model/application/supervision/supervision-task-status-type';
+import {BackendSupervisionTaskLocation} from '@app/service/backend-model/backend-location';
 
 export interface BackendSupervisionTask {
   id: number;
@@ -15,4 +16,5 @@ export interface BackendSupervisionTask {
   description: string;
   result: string;
   locationId: number;
+  approvedLocations: BackendSupervisionTaskLocation[];
 }

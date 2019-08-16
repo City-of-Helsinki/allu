@@ -62,8 +62,9 @@ const currentApplication = new Application(1);
 })
 class SupervisionTaskLocationMockComponent {
   @Input() taskId = 1;
-  @Input() application: Application;
+  @Input() applicationType: ApplicationType;
   @Input() relatedLocation: Location;
+  @Input() locations: Location[];
 }
 
 describe('SupervisionTaskComponent', () => {
