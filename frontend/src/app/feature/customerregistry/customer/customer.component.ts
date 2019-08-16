@@ -14,6 +14,8 @@ import {CustomerWithContacts} from '../../../model/customer/customer-with-contac
 import {CustomerWithContactsForm} from './customer-with-contacts.form';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
+import {FormUtil} from '@util/form.util';
+import {createTranslated} from '@service/error/error-info';
 
 @Component({
   selector: 'customer',
@@ -59,14 +61,15 @@ export class CustomerComponent implements OnInit {
   }
 
   onSubmit(formValues: CustomerWithContactsForm): void {
-    this.save(this.customerChanges(), this.contactChanges()).subscribe(
+    if (this.form.valid && this.form.dirty) {
+      this.save(this.customerChanges(), this.contactChanges()).subscribe(
         customer => this.notifyAndNavigateToCustomers(findTranslation('customer.action.save')),
         error => this.notification.errorInfo(error)
-    );
-  }
-
-  validWithChanges(): boolean {
-    return this.form.valid && this.form.dirty;
+      );
+    } else {
+      FormUtil.validateFormFields(this.form);
+      this.notification.errorInfo(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue'));
+    }
   }
 
   private save(customer: Customer, contacts: Array<Contact>): Observable<CustomerWithContacts> {
