@@ -1228,7 +1228,9 @@ export const translations = {
       emailInvalid: 'Virheellinen sähköpostiosoite',
       postalCode: 'Tarkista postinumero',
       dayInvalid: 'Virheellinen päivä',
-      monthInvalid: 'Virheellinen kuukausi'
+      monthInvalid: 'Virheellinen kuukausi',
+      faultyValueTitle: 'Puutteelliset tiedot',
+      faultyValue: 'Tarkista antamasi tiedot'
     },
     boolean: {
       'true': 'Kyllä',

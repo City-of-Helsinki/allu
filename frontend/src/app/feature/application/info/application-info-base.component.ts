@@ -23,6 +23,8 @@ import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
 import {select, Store} from '@ngrx/store';
 import {InformationRequest} from '@model/information-request/information-request';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {createTranslated, ErrorInfo} from '@service/error/error-info';
 
 /**
  * This component should be used only as base class for other more specific application components.
@@ -105,12 +107,15 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
   }
 
   onSubmit(form: FormGroup) {
-    this.submitPending = true;
-
-    const value = form.getRawValue();
-    const application = this.update(value);
-
-    this.save(application);
+    if (form.valid) {
+      this.submitPending = true;
+      const value = form.getRawValue();
+      const application = this.update(value);
+      this.save(application);
+    } else {
+      FormUtil.validateFormFields(form);
+      this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+    }
   }
 
   get hasPropertyDeveloper(): boolean {

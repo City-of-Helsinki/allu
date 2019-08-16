@@ -53,4 +53,22 @@ export class FormUtil {
       Object.keys(controls).map(name => form.addControl(name, controls[name]));
     }
   }
+
+  /**
+   * Runs field validation on all form fields.
+   * This can be used to mark missing fields and show errors when user
+   * is trying to save form with missing values.
+   */
+  public static validateFormFields(control: AbstractControl): void {
+    if (control instanceof FormGroup) {
+      Object.keys(control.controls).forEach(key => {
+        const formControl = control.get(key);
+        this.validateFormFields(formControl);
+      });
+    } else if (control instanceof FormArray) {
+      control.controls.forEach(arrayControl => this.validateFormFields(arrayControl));
+    } else {
+      control.markAsTouched({onlySelf: true});
+    }
+  }
 }
