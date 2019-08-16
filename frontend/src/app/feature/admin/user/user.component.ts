@@ -14,6 +14,9 @@ import {UserService} from '@service/user/user-service';
 import {filter, map, switchMap} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
 import {RoleType} from '@model/user/role-type';
+import {FormUtil} from '@util/form.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {createTranslated} from '@service/error/error-info';
 
 @Component({
   selector: 'user',
@@ -63,12 +66,17 @@ export class UserComponent implements OnInit {
   }
 
   save(user: User): void {
-    this.submitted = true;
-    this.userService.save(user).subscribe(savedUser => {
-      this.submitted = false;
-      this.userForm.patchValue(savedUser);
-      this.router.navigate(['/admin/users']);
-    });
+    if (this.userForm.valid) {
+      this.submitted = true;
+      this.userService.save(user).subscribe(savedUser => {
+        this.submitted = false;
+        this.userForm.patchValue(savedUser);
+        this.router.navigate(['/admin/users']);
+      });
+    } else {
+      FormUtil.validateFormFields(this.userForm);
+      this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+    }
   }
 
   canRemoveAdminRole(): Observable<boolean> {

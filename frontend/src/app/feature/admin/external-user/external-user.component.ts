@@ -13,6 +13,11 @@ import {translations} from '../../../util/translations';
 import {CustomerService} from '../../../service/customer/customer.service';
 import {debounceTime, filter, map, switchMap} from 'rxjs/internal/operators';
 import {ArrayUtil} from '@util/array-util';
+import {FormUtil} from '@util/form.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {createTranslated} from '@service/error/error-info';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '@feature/allu/reducers';
 
 const DEBOUNCE_TIME_MS = 300;
 
@@ -39,6 +44,7 @@ export class ExternalUserComponent implements OnInit {
               private userHub: ExternalUserHub,
               private customerService: CustomerService,
               private fb: FormBuilder,
+              private store: Store<fromRoot.State>,
               private notification: NotificationService) {
 
     this.connectedCustomersCtrl = this.fb.control([]);
@@ -79,17 +85,22 @@ export class ExternalUserComponent implements OnInit {
   }
 
   save(): void {
-    const user = ExternalUserForm.to(this.userForm.getRawValue());
-    this.submitted = true;
-    this.userHub.saveUser(user).pipe(
-      map(savedUser => ExternalUserForm.from(savedUser))
-    ).subscribe(savedUser => {
-      this.submitted = false;
-      this.userForm.patchValue(savedUser);
+    if (this.userForm.valid) {
+      const user = ExternalUserForm.to(this.userForm.getRawValue());
+      this.submitted = true;
+      this.userHub.saveUser(user).pipe(
+        map(savedUser => ExternalUserForm.from(savedUser))
+      ).subscribe(savedUser => {
+        this.submitted = false;
+        this.userForm.patchValue(savedUser);
 
-      const message = translations.externalUser.actions.saved;
-      this.notification.success(message);
-    });
+        const message = translations.externalUser.actions.saved;
+        this.notification.success(message);
+      });
+    } else {
+      FormUtil.validateFormFields(this.userForm);
+      this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+    }
   }
 
   addCustomer(customerId: number): void {
