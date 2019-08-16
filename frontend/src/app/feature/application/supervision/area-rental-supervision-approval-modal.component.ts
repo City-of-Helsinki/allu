@@ -12,11 +12,13 @@ import {
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from '@feature/application/supervision/supervision-approval-modal.component';
+import {ComplexValidator} from '@util/complex-validator';
 
 export interface AreaRentalSupervisionApprovalModalData extends SupervisionApprovalModalData {
   reportedDate?: Date;
   comparedDate?: Date;
   minDate?: Date;
+  lastAreaEndDate?: Date;
 }
 
 const taskTypeToReportedDateType = {
@@ -45,7 +47,7 @@ export class AreaRentalSupervisionApprovalModalComponent extends SupervisionAppr
     dialogRef: MatDialogRef<SupervisionApprovalModalComponent>) {
     super(data, fb, dialogRef);
     this.minDate = data.minDate;
-    this.maxReportedDate = new Date();
+    this.maxReportedDate = TimeUtil.minimum(data.lastAreaEndDate, new Date());
   }
 
   ngOnInit(): void {
@@ -75,7 +77,7 @@ export class AreaRentalSupervisionApprovalModalComponent extends SupervisionAppr
 
   private initDateReporting(): void {
     const reportedDate = TimeUtil.minimum(this.data.reportedDate, this.maxReportedDate);
-    const reportedDateCtrl = this.fb.control(reportedDate, Validators.required);
+    const reportedDateCtrl = this.fb.control(reportedDate, [Validators.required, ComplexValidator.maxDate(this.maxReportedDate)]);
     this.form.addControl('reportedDate', reportedDateCtrl);
     this.reportedDateType = taskTypeToReportedDateType[this.data.taskType];
 

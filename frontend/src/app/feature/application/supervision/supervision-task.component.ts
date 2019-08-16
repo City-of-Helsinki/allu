@@ -45,6 +45,7 @@ import {
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
 import {Location} from '@model/common/location';
 import {AreaRental} from '@model/application/area-rental/area-rental';
+import {TimeUtil} from '@util/time.util';
 
 @Component({
   selector: 'supervision-task',
@@ -322,6 +323,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     let reportedDate: Date;
     let comparedDate: Date;
     const minDate = this.findLatestStartingDate();
+    const lastAreaEndDate = this.findLatestEndDate();
 
     if (SupervisionTaskType.FINAL_SUPERVISION === baseData.taskType) {
       const extension = <AreaRental> baseData.application.extension;
@@ -333,7 +335,8 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       ...baseData,
       reportedDate,
       comparedDate,
-      minDate
+      minDate,
+      lastAreaEndDate
     };
   }
 
@@ -364,5 +367,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private findLatestStartingDate(): Date {
     return this.application.locations.reduce((d, l) => d > l.startTime ? d : l.startTime, new Date(0));
+  }
+
+  private findLatestEndDate(): Date {
+    return this.application.locations.reduce((d, l) => d > l.endTime ? d : l.endTime, new Date(0));
   }
 }

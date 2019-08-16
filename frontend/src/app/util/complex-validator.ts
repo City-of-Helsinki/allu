@@ -77,6 +77,13 @@ export class ComplexValidator {
     };
   }
 
+  static maxDate(date: Date): ValidatorFn {
+    return (fc: AbstractControl) => {
+      const maxDate = fc.value && fc.value >= date;
+      return maxDate ? {maxDate: fc.value} : undefined;
+    };
+  }
+
   static startBeforeEnd(startField: string, endField: string): ValidatorFn {
     return (fg: FormGroup) => {
       const start = this.fieldValue(fg, startField);

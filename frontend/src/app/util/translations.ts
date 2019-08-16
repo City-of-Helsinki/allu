@@ -583,7 +583,8 @@ export const translations = {
     },
     field: {
       reportedDateMissing: 'Päivä puuttuu',
-      reportingDateMissing: 'Ilmoituspäivä puuttuu'
+      reportingDateMissing: 'Ilmoituspäivä puuttuu',
+      dateInValidityPeriod: 'Päivän oltava hakemuksen voimassaolon aikana'
     },
     customerReportedDate: 'Asiakkaan ilmoittama päivä'
   },
@@ -1577,7 +1578,9 @@ export const translations = {
       resolution: {
         APPROVE: 'Hyväksy',
         REJECT: 'Hylkää'
-      }
+      },
+      workFinishedRule: 'Työ valmis päivän oltava hakemuksen voimassaolon aikavälillä. ' +
+        'Alueiden voimassaolon muokkaus on tehtävä korvaavalla päätöksellä',
     }
   },
   supervisionWorkqueue: {

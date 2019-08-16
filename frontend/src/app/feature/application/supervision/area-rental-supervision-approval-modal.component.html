@@ -34,13 +34,17 @@
              [min]="minDate"
              [max]="maxReportedDate">
       <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"
-                             [disabled]="form.disabled"></mat-datepicker-toggle>
+                             [disabled]="form.disabled"
+                             [matTooltip]="'supervision.task.workFinishedRule' | translation"></mat-datepicker-toggle>
       <mat-datepicker #reportedDatePicker></mat-datepicker>
-      <mat-hint *ngIf="data.reportedDate">
+      <mat-hint *ngIf="data.reportedDate && !form.errors">
         {{'dateReporting.customerReportedDate' | translation}}
       </mat-hint>
       <mat-error *ngIf="form.get('reportedDate').hasError('required')">
         {{'dateReporting.field.reportedDateMissing' | translation}}
+      </mat-error>
+      <mat-error *ngIf="form.get('reportedDate').hasError('maxDate')">
+        {{'dateReporting.field.dateInValidityPeriod' | translation}}
       </mat-error>
     </mat-form-field>
 
