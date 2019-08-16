@@ -20,6 +20,9 @@ import {ProjectService} from '@service/project/project.service';
 import {NumberUtil} from '@util/number.util';
 import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/internal/operators';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {FormUtil} from '@util/form.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {createTranslated} from '@service/error/error-info';
 
 @Component({
   selector: 'project-edit',
@@ -77,8 +80,13 @@ export class ProjectEditComponent {
   }
 
   onSubmit(form: ProjectForm) {
-    const project = ProjectForm.toProject(form);
-    this.store.dispatch(new Save(project));
+    if (this.form.valid) {
+      const project = ProjectForm.toProject(form);
+      this.store.dispatch(new Save(project));
+    } else {
+      FormUtil.validateFormFields(this.form);
+      this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+    }
   }
 
   customerName(customer?: Customer): string | undefined {
