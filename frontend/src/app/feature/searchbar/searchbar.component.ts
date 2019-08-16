@@ -26,6 +26,7 @@ import {TimePeriod} from '@feature/application/info/time-period';
 import {ComplexValidator} from '@util/complex-validator';
 import {TimeUtil} from '@util/time.util';
 import {ApplicationKind} from '@model/application/type/application-kind';
+import {FormUtil} from '@util/form.util';
 
 
 enum BarType {
@@ -178,6 +179,10 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
   get valid(): boolean {
     return this.searchForm.valid;
+  }
+
+  validate(): void {
+    FormUtil.validateFormFields(this.searchForm);
   }
 
   public notifySearchUpdated(searchFilter: MapSearchFilter): void {

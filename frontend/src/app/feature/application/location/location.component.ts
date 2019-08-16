@@ -52,6 +52,9 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import * as UserAreaActions from '@feature/application/location/actions/user-area-actions';
 import {Feature, GeometryCollection, GeometryObject} from 'geojson';
 import {MapComponent} from '@feature/map/map.component';
+import {FormUtil} from '@util/form.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {createTranslated} from '@service/error/error-info';
 
 @Component({
   selector: 'type',
@@ -304,34 +307,41 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSubmit(form: LocationForm) {
-    this.submitPending = true;
-    this.locationState.storeLocation(LocationForm.to(form));
-    const locations = this.locationState.locationsSnapshot;
-    this.application.locations = locations;
-    this.application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
-    this.application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
-    this.applicationStore.applicationChange(this.application);
+    if (this.submitAllowed) {
+      this.submitPending = true;
+      this.locationState.storeLocation(LocationForm.to(form));
+      const locations = this.locationState.locationsSnapshot;
+      this.application.locations = locations;
+      this.application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
+      this.application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
+      this.applicationStore.applicationChange(this.application);
 
-    const updated = this.applicationStore.snapshot.application;
+      const updated = this.applicationStore.snapshot.application;
 
-    this.initDistribution(updated);
-    this.addCurrentUserToDistribution(updated);
+      this.initDistribution(updated);
+      this.addCurrentUserToDistribution(updated);
 
-    const urlSuffix = this.applicationStore.isNew ? 'edit' : 'summary';
+      const urlSuffix = this.applicationStore.isNew ? 'edit' : 'summary';
 
-    this.applicationStore.save(updated)
-      .subscribe(
-        app => {
-          this.destroy.next(true);
-          this.notification.success(findTranslation('location.action.saved'));
-          this.router.navigate(['/applications', app.id, urlSuffix]);
-          this.submitPending = false;
-        },
-        err => {
-          this.locationState.editLocation(0);
-          this.notification.errorInfo(err);
-          this.submitPending = false;
-        });
+      this.applicationStore.save(updated)
+        .subscribe(
+          app => {
+            this.destroy.next(true);
+            this.notification.success(findTranslation('location.action.saved'));
+            this.router.navigate(['/applications', app.id, urlSuffix]);
+            this.submitPending = false;
+          },
+          err => {
+            this.locationState.editLocation(0);
+            this.notification.errorInfo(err);
+            this.submitPending = false;
+          });
+    } else {
+      FormUtil.validateFormFields(this.locationForm);
+      this.typeComponent.validate();
+      this.searchbarComponent.validate();
+      this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+    }
   }
 
   editedItemCountChanged(editedItemCount: number) {

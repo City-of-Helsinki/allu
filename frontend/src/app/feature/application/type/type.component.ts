@@ -25,6 +25,7 @@ import {SetKindsWithSpecifiers, SetType} from '@feature/application/actions/appl
 import {InformationRequestModalEvents} from '@feature/information-request/information-request-modal-events';
 import {Application} from '@model/application/application';
 import {ComplexValidator} from '@util/complex-validator';
+import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'application-type',
@@ -123,6 +124,10 @@ export class TypeComponent implements OnInit, OnDestroy {
 
   showPending(): void {
     this.modalEvents.openAcceptance();
+  }
+
+  validate(): void {
+    FormUtil.validateFormFields(this.form);
   }
 
   private initForm(app: Application) {
