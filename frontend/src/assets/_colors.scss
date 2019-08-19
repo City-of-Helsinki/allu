@@ -87,7 +87,7 @@ $allu-basic: (
 $allu-primary: mat-palette($allu-blue);
 $allu-accent:  mat-palette($allu-orange);
 $allu-warn:    mat-palette($mat-red);
-$allu-theme:   mat-light-theme($allu-primary, $allu-accent, $allu-warn);
+$allu-theme-palette:   mat-light-theme($allu-primary, $allu-accent, $allu-warn);
 
 $allu-background: mat-color($allu-primary, 50);
 $allu-text-black: #1f1f1f;
@@ -98,3 +98,25 @@ $allu-field-text-ok: rgba(0, 0, 0, .87);
 $allu-field-border-readonly: #8f8f8f;
 $allu-chip-dark: #9b9b9b;
 $allu-search-bar-background: #eeeded;
+
+$allu-dark-disabled-text: rgba(black, 0.48);
+
+$allu-light-theme-foreground: (
+  base:              black,
+  divider:           $dark-dividers,
+  dividers:          $dark-dividers,
+  disabled:          $allu-dark-disabled-text,
+  disabled-button:   rgba(black, 0.26),
+  disabled-text:     $allu-dark-disabled-text,
+  elevation:         black,
+  hint-text:         $allu-dark-disabled-text,
+  secondary-text:    $dark-secondary-text,
+  icon:              rgba(black, 0.54),
+  icons:             rgba(black, 0.54),
+  text:              rgba(black, 0.87),
+  slider-min:        rgba(black, 0.87),
+  slider-off:        rgba(black, 0.26),
+  slider-off-active: rgba(black, 0.38),
+);
+
+$allu-theme:   map-merge($allu-theme-palette, (foreground: $allu-light-theme-foreground));
