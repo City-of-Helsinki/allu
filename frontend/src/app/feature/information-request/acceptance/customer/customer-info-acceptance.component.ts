@@ -67,6 +67,7 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
     customer.phone = result.phone;
     customer.country = result.country;
     customer.active = this._newCustomer.active;
+    customer.sapCustomerNumber = result.sapCustomerNumber;
     this.customerChanges.emit(customer);
   }
 
@@ -94,7 +95,8 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
         city: postalAddress.city,
         email: customer.email,
         phone: customer.phone,
-        country: customer.country
+        country: customer.country,
+        sapCustomerNumber: customer.sapCustomerNumber
       };
     } else {
       return {};
@@ -119,7 +121,8 @@ export class CustomerInfoAcceptanceComponent extends InfoAcceptanceComponent<Cus
       new FieldDescription('city', findTranslation('postalAddress.postalOffice')),
       new FieldDescription('email', findTranslation('customer.email')),
       new FieldDescription('phone', findTranslation('customer.phone')),
-      new FieldDescription('country', findTranslation('customer.country'))
+      new FieldDescription('country', findTranslation('customer.country')),
+      new FieldDescription('sapCustomerNumber', findTranslation('customer.sapCustomerNumber'))
     ];
   }
 

@@ -9,7 +9,10 @@ import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/intern
 import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
-import {CustomerNameSearchMinChars, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
+import {
+  CustomerNameSearchMinChars, CustomerSearchQuery,
+  REGISTRY_KEY_SEARCH_MIN_CHARS
+} from '@service/customer/customer-search-query';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {MatDialog} from '@angular/material';
 import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
@@ -85,7 +88,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(CustomerNameSearchMinChars)
-    ).subscribe(term => this.searchCustomer(this.newCustomer.type, term, term));
+    ).subscribe(term => this.searchCustomer(this.newCustomer.type, term, term, term));
 
     this.initialSearch();
     this.init();
@@ -156,7 +159,8 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     this.searchCustomer(
       this.newCustomer.type,
       this.newCustomer.name,
-      this.newCustomer.registryKey
+      this.newCustomer.registryKey,
+      this.newCustomer.sapCustomerNumber
     );
 
     if (this.oldCustomer === undefined) {
@@ -171,10 +175,16 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
     }
   }
 
-  private searchCustomer(type: CustomerType, name: string, registryKey: string): void {
-    const query = registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS
-      ? {name, registryKey, active: true, matchAny: true}
-      : {name, active: true, matchAny: true};
+  private searchCustomer(type: CustomerType, name: string, registryKey: string, sapCustomerNumber: string): void {
+    const query: CustomerSearchQuery = {name, active: true, matchAny: true};
+
+    if (registryKey && registryKey.length >= REGISTRY_KEY_SEARCH_MIN_CHARS) {
+      query.registryKey = registryKey;
+    }
+
+    if (sapCustomerNumber) {
+      query.sapCustomerNumber = sapCustomerNumber;
+    }
 
     this.store.dispatch(new SearchByType(this.actionTargetType, {type, query}));
   }

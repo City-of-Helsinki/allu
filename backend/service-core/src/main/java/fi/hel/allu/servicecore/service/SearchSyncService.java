@@ -222,7 +222,7 @@ public class SearchSyncService {
 
   private CustomerES mapToES(Customer customer) {
     return new CustomerES(customer.getId(), customer.getName(), customer.getRegistryKey(), customer.getOvt(),
-        customer.getType(), customer.isActive(), customer.isInvoicingOnly());
+        customer.getType(), customer.isActive(), customer.isInvoicingOnly(), customer.getSapCustomerNumber());
   }
 
   private ContactES mapToES(Contact contact) {

@@ -6,6 +6,7 @@ import {SearchParameters} from '@feature/common/search-parameters';
 export interface CustomerSearchQuery {
   name?: string;
   registryKey?: string;
+  sapCustomerNumber?: string;
   type?: string;
   active?: boolean;
   invoicingOnly?: boolean;

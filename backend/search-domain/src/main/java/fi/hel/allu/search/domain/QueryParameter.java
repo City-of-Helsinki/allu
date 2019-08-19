@@ -24,6 +24,7 @@ public class QueryParameter {
   private List<String> fieldMultiValue;
   private ZonedDateTime startDateValue;
   private ZonedDateTime endDateValue;
+  private Float boost;
 
   public QueryParameter() {
   }
@@ -113,5 +114,13 @@ public class QueryParameter {
   public boolean hasValue() {
     return fieldValue != null || fieldMultiValue != null || startDateValue != null || endDateValue != null;
 
+  }
+
+  public Float getBoost() {
+    return boost;
+  }
+
+  public void setBoost(Float boost) {
+    this.boost = boost;
   }
 }

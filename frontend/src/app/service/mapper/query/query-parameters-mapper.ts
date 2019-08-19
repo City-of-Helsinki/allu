@@ -41,9 +41,10 @@ export class QueryParametersMapper {
   public static mapParameter(
     queryParameters: Array<BackendQueryParameter>,
     parameterName: string,
-    parameterValue: string): void {
+    parameterValue: string,
+    boost?: number): void {
       if (parameterValue) {
-        queryParameters.push(QueryParametersMapper.createParameter(parameterName, parameterValue));
+        queryParameters.push(QueryParametersMapper.createParameter(parameterName, parameterValue, boost));
       }
   }
 
@@ -133,13 +134,14 @@ export class QueryParametersMapper {
     };
   }
 
-  private static createParameter(parameterName: string, parameterValue: string) {
+  private static createParameter(parameterName: string, parameterValue: string, boost?: number) {
     return {
       fieldName: QueryParametersMapper.getBackendValueField(parameterName),
       fieldValue: parameterValue,
       fieldMultiValue: undefined,
       startDateValue: undefined,
-      endDateValue: undefined
+      endDateValue: undefined,
+      boost: boost
     };
   }
 

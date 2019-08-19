@@ -49,15 +49,20 @@ public class CustomerSearchService extends GenericSearchService<CustomerES, Quer
 
   private SearchRequestBuilder buildSearchRequest(CustomerType type, QueryParameters queryParameters,
       Pageable pageRequest, Boolean matchAny) {
+    boolean isScoringQuery = isScoringQuery(queryParameters);
+
     BoolQueryBuilder qb = QueryBuilders.boolQuery();
+
     qb.filter(QueryBuilders.matchQuery("type", type.name()));
     QueryParameter active = queryParameters.remove("active");
     handleActive(qb, active);
+
     BoolQueryBuilder fieldQb = QueryBuilders.boolQuery();
     addQueryParameters(queryParameters, matchAny, fieldQb);
-    qb.filter(fieldQb);
+    qb.must(fieldQb);
+
     SearchRequestBuilder srBuilder = prepareSearch(pageRequest, qb);
-    addSearchOrder(pageRequest, srBuilder);
+    addSearchOrder(pageRequest, srBuilder, isScoringQuery);
     logger.debug("Searching index {} with the following query:\n {}", ElasticSearchMappingConfig.CUSTOMER_INDEX_ALIAS,
         srBuilder.toString());
     return srBuilder;

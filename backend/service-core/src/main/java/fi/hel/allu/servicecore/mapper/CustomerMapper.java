@@ -134,7 +134,8 @@ public class CustomerMapper {
           customerJson.getOvt(),
           customerJson.getType(),
           customerJson.isActive(),
-          customerJson.isInvoicingOnly());
+          customerJson.isInvoicingOnly(),
+          customerJson.getSapCustomerNumber());
     } else {
       return null;
     }

@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -325,17 +324,22 @@ public class GenericSearchService<T, Q extends QueryParameters> {
 
   public SearchRequestBuilder buildSearchRequest(Q queryParameters, Pageable pageRequest,
       Boolean matchAny) {
+    boolean isScoringQuery = isScoringQuery(queryParameters);
     BoolQueryBuilder qb = QueryBuilders.boolQuery();
     QueryParameter active = queryParameters.remove("active");
     handleActive(qb, active);
     addQueryParameters(queryParameters, matchAny, qb);
     BoolQueryBuilder withAdditionalParameters = addAdditionalQueryParameters(qb, queryParameters);
     SearchRequestBuilder srBuilder = prepareSearch(pageRequest, withAdditionalParameters);
-    addSearchOrder(pageRequest, srBuilder);
+    addSearchOrder(pageRequest, srBuilder, isScoringQuery);
 
     logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexAliasName(),
         srBuilder.toString());
     return srBuilder;
+  }
+
+  protected boolean isScoringQuery(Q queryParameters) {
+    return queryParameters.getQueryParameters().stream().anyMatch(queryParameter -> queryParameter.getBoost() != null);
   }
 
   protected void addQueryParameters(QueryParameters queryParameters, Boolean matchAny, BoolQueryBuilder qb) {
@@ -361,7 +365,13 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     return srBuilder;
   }
 
-  protected void addSearchOrder(Pageable pageRequest, SearchRequestBuilder srBuilder) {
+  protected void addSearchOrder(Pageable pageRequest, SearchRequestBuilder srBuilder, boolean isScoringQuery) {
+    // only add sorting by score when it is required because scoring
+    // is not trivial and can produce unexpected order in results
+    if (isScoringQuery) {
+      srBuilder.addSort(SortBuilders.scoreSort());
+    }
+
     Optional.ofNullable(pageRequest.getSort()).ifPresent(s -> s.forEach(o -> {
       SortBuilder<?> sb = SortBuilders.fieldSort(getSortFieldForProperty(o.getProperty()));
       if (o.isAscending()) {
@@ -591,6 +601,10 @@ public class GenericSearchService<T, Q extends QueryParameters> {
     if (QueryParameter.FIELD_NAME_RECURRING_APPLICATION.equals(queryParameter.getFieldName())) {
       // very special handling for recurring applications
       return createRecurringQueryBuilder(queryParameter);
+    } else if (queryParameter.getBoost() != null) {
+      return QueryBuilders.constantScoreQuery(QueryBuilders.matchQuery(
+        queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND))
+        .boost(queryParameter.getBoost());
     } else if (queryParameter.getFieldValue() != null) {
       return QueryBuilders.matchQuery(
           queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND);
