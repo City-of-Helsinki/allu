@@ -1,4 +1,4 @@
-import {TimeUtil} from '../../../util/time.util';
+import {TimeUtil} from '@util/time.util';
 import {AttachmentInfoForm} from './attachment-info-form';
 import {AttachmentType} from '@model/application/attachment/attachment-type';
 
@@ -45,7 +45,7 @@ export class AttachmentInfo {
   static toForm(attachmentInfo: AttachmentInfo): AttachmentInfoForm {
     return {
       id: attachmentInfo.id,
-      type: attachmentInfo.type,
+      type: attachmentInfo.type || AttachmentType.ADDED_BY_HANDLER,
       mimeType: attachmentInfo.mimeType,
       name: attachmentInfo.name,
       description: attachmentInfo.description,
