@@ -1,6 +1,8 @@
+import {AttachmentType} from '@model/application/attachment/attachment-type';
+
 export interface AttachmentInfoForm {
   id?: number;
-  type?: string;
+  type?: AttachmentType;
   mimeType?: string;
   name?: string;
   description?: string;

@@ -143,7 +143,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy, CanComponentDeac
 
   private setAttachments(attachments: Array<AttachmentInfo>): void {
     this.commonAttachments = attachments.filter(a => isCommon(a.type));
-    this.defaultAttachments = attachments.filter(a => AttachmentType[a.type] === AttachmentType.DEFAULT);
-    this.defaultImages = attachments.filter(a => AttachmentType[a.type] === AttachmentType.DEFAULT_IMAGE);
+    this.defaultAttachments = attachments.filter(a => a.type === AttachmentType.DEFAULT);
+    this.defaultImages = attachments.filter(a => a.type === AttachmentType.DEFAULT_IMAGE);
   }
 }

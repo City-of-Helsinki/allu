@@ -1,10 +1,11 @@
 import {TimeUtil} from '../../../util/time.util';
 import {AttachmentInfoForm} from './attachment-info-form';
+import {AttachmentType} from '@model/application/attachment/attachment-type';
 
 export class AttachmentInfo {
   constructor(
     public id?: number,
-    public type?: string,
+    public type?: AttachmentType,
     public mimeType?: string,
     public name?: string,
     public description?: string,

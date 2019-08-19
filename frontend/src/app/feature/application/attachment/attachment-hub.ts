@@ -75,6 +75,6 @@ export class AttachmentHub {
   private filterByAttachmentType(attachments: Array<AttachmentInfo>, attachmentType?: AttachmentType) {
     return attachmentType === undefined
       ? attachments
-      : attachments.filter(a => AttachmentType[a.type] === attachmentType);
+      : attachments.filter(a => a.type === attachmentType);
   }
 }

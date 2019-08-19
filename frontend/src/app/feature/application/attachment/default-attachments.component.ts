@@ -19,7 +19,7 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 })
 export class DefaultAttachmentsComponent implements OnInit {
   @Input() applicationType: ApplicationType;
-  @Input() attachmentType: string;
+  @Input() attachmentType: AttachmentType;
   @Input() isAllowedToEdit = true;
   @Output() add = new EventEmitter<DefaultAttachmentInfo>();
   @Output() remove = new EventEmitter<DefaultAttachmentInfo>();
@@ -32,7 +32,7 @@ export class DefaultAttachmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.defaultAttachments$ = combineLatest(
-      this.attachmentHub.defaultAttachmentInfosBy(this.applicationType, AttachmentType[this.attachmentType]),
+      this.attachmentHub.defaultAttachmentInfosBy(this.applicationType, this.attachmentType),
       this._selectedAttachments$
     ).pipe(
       map(([existing, selected]) => existing.concat(selected)),

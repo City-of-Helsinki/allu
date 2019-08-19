@@ -32,6 +32,7 @@ import {NotificationService} from '@feature/notification/notification.service';
 import {ShortTermRental} from '@app/model/application/short-term-rental/short-term-rental';
 import {TerminationService} from '@feature/decision/termination/termination-service';
 import {TerminationModalService} from '@feature/decision/termination/termination-modal-service';
+import {AttachmentType} from '@model/application/attachment/attachment-type';
 
 class MatDialogRefMock {
   afterClosed(): Observable<any> {
@@ -174,7 +175,10 @@ describe('ApplicationActionsComponent', () => {
 
     const application = applicationStore.snapshot.application;
     application.id = 1;
-    application.attachmentList = [new AttachmentInfo(15, 'type', 'name'), new AttachmentInfo(10, 'type', 'name')];
+    application.attachmentList = [
+      new AttachmentInfo(15, AttachmentType.ADDED_BY_HANDLER, 'name'),
+      new AttachmentInfo(10, AttachmentType.ADDED_BY_HANDLER, 'name')
+    ];
     application.locations = [location];
     application.extension = new ShortTermRental();
 
