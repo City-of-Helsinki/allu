@@ -1,10 +1,12 @@
 package fi.hel.allu.servicecore.domain.supervision;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.domain.SupervisionTaskLocation;
 import fi.hel.allu.servicecore.domain.UserJson;
-
-import java.time.ZonedDateTime;
 
 public class SupervisionTaskJson {
   private Integer id;
@@ -19,6 +21,8 @@ public class SupervisionTaskJson {
   private String description;
   private String result;
   private Integer locationId;
+  private List<SupervisionTaskLocation> approvedLocations;
+
 
   public SupervisionTaskJson() {
     // for JSON deserialization
@@ -36,7 +40,8 @@ public class SupervisionTaskJson {
       SupervisionTaskStatusType status,
       String description,
       String result,
-      Integer locationId) {
+      Integer locationId,
+      List<SupervisionTaskLocation> approvedLocations) {
     this.id = id;
     this.applicationId = applicationId;
     this.type = type;
@@ -49,6 +54,7 @@ public class SupervisionTaskJson {
     this.description = description;
     this.result = result;
     this.locationId = locationId;
+    this.approvedLocations = approvedLocations;
   }
 
   /**
@@ -201,4 +207,16 @@ public class SupervisionTaskJson {
   public void setLocationId(Integer locationId) {
     this.locationId = locationId;
   }
+
+  /**
+   * Location(s) of application when task was approved
+   */
+  public List<SupervisionTaskLocation> getApprovedLocations() {
+    return approvedLocations;
+  }
+
+  public void setApprovedGeometry(List<SupervisionTaskLocation> approvedLocations) {
+    this.approvedLocations = approvedLocations;
+  }
+
 }

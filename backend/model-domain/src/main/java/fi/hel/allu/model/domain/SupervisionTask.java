@@ -1,9 +1,10 @@
 package fi.hel.allu.model.domain;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
-
-import java.time.ZonedDateTime;
 
 /**
  * Supervision task directs supervisors to supervise given applications and add their input as result.
@@ -21,6 +22,7 @@ public class SupervisionTask {
   private String description;
   private String result;
   private Integer locationId;
+  private List<SupervisionTaskLocation> approvedLocations;
 
   public SupervisionTask() {
     // for deserialization
@@ -216,4 +218,16 @@ public class SupervisionTask {
   public void setLocationId(Integer locationId) {
     this.locationId = locationId;
   }
+
+  /**
+   * Application location(s) when task was approved
+   */
+  public List<SupervisionTaskLocation> getApprovedLocations() {
+    return approvedLocations;
+  }
+
+  public void setApprovedLocations(List<SupervisionTaskLocation> approvedLocations) {
+    this.approvedLocations = approvedLocations;
+  }
+
 }

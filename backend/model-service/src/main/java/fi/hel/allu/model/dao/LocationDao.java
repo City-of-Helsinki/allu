@@ -86,7 +86,7 @@ public class LocationDao {
             .get(TUPLE_LOCATION, Location.class);
       List<Geometry> geometries = queryFactory.select(locationGeometry.geometry).from(locationGeometry)
           .where(locationGeometry.locationId.eq(cont.getId())).fetch();
-      GeometryCollection collection = toGeometryCollection(geometries);
+      GeometryCollection collection = GeometryUtil.toGeometryCollection(geometries);
       cont.setGeometry(collection);
       List<Integer> fixedLocationIds = queryFactory.select(locationFlids.fixedLocationId).from(locationFlids)
           .where(locationFlids.locationId.eq(cont.getId())).fetch();
@@ -349,7 +349,7 @@ public class LocationDao {
         GeometryCollection gc = bufferLineStrings((GeometryCollection) geometry);
         gc = removeOverlaps(gc);
         List<Geometry> flat = new ArrayList<>();
-        flatten(gc, flat);
+        GeometryUtil.flatten(gc, flat);
         flat.stream()
           .map(g -> removeRepeatedPoints(g))
           .forEach(
@@ -374,23 +374,7 @@ public class LocationDao {
     if (geometry instanceof GeometryCollection) {
       return (GeometryCollection) geometry;
     }
-    return toGeometryCollection(Arrays.asList(geometry));
-  }
-
-  private GeometryCollection toGeometryCollection(List<Geometry> geometries) {
-    Geometry[] geoArray = geometries.toArray(new Geometry[geometries.size()]);
-    return new GeometryCollection(geoArray);
-  }
-
-  /*
-   * flatten the geometries into destination
-   */
-  private void flatten(Geometry geometry, Collection<Geometry> destination) {
-    if (geometry instanceof GeometryCollection) {
-      ((GeometryCollection) geometry).forEach(g -> flatten(g, destination));
-    } else {
-      destination.add(geometry);
-    }
+    return GeometryUtil.toGeometryCollection(Arrays.asList(geometry));
   }
 
   private void setFixedLocationIds(int locationId, List<Integer> fixedLocationIds) {

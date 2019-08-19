@@ -1,18 +1,16 @@
 package fi.hel.allu.model.dao;
 
-import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.querydsl.sql.SQLExpressions;
+import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +18,12 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 
@@ -37,9 +37,9 @@ import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PathUtil;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.SupervisionTaskLocation;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
-
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -48,6 +48,9 @@ import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QProject.project;
 import static fi.hel.allu.QSupervisionTask.supervisionTask;
+import static fi.hel.allu.QSupervisionTaskApprovedLocation.supervisionTaskApprovedLocation;
+import static fi.hel.allu.QSupervisionTaskLocation.supervisionTaskLocation;
+import static fi.hel.allu.QSupervisionTaskLocationGeometry.supervisionTaskLocationGeometry;
 import static fi.hel.allu.QSupervisionTaskWithAddress.supervisionTaskWithAddress;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
@@ -71,41 +74,54 @@ public class SupervisionTaskDao {
   @Autowired
   private SQLQueryFactory queryFactory;
 
+
   final QBean<SupervisionTask> supervisionTaskBean = bean(SupervisionTask.class, supervisionTask.all());
   final QBean<SupervisionWorkItem> supervisionWorkItemBean = bean(SupervisionWorkItem.class, supervisionWorkItemFields());
+  final QBean<SupervisionTaskLocation> supervisionTaskLocationBean = bean(SupervisionTaskLocation.class, supervisionTaskLocation.all());
+
 
   @Transactional(readOnly = true)
   public Optional<SupervisionTask> findById(int id) {
     SupervisionTask st = queryFactory
         .select(supervisionTaskBean).from(supervisionTask).where(supervisionTask.id.eq(id)).fetchOne();
-    return Optional.ofNullable(st);
+    return Optional.ofNullable(setApprovedLocations(st));
   }
 
   @Transactional(readOnly = true)
   public List<SupervisionTask> findByApplicationId(int applicationId) {
-    return queryFactory.select(supervisionTaskBean).from(supervisionTask).where(supervisionTask.applicationId.eq(applicationId)).fetch();
+    return querySupervisionTasks(supervisionTask.applicationId.eq(applicationId));
   }
 
   @Transactional(readOnly = true)
   public List<SupervisionTask> findByLocationId(int locationId) {
-    return queryFactory.select(supervisionTaskBean).from(supervisionTask).where(supervisionTask.locationId.eq(locationId)).fetch();
+    return querySupervisionTasks(supervisionTask.locationId.eq(locationId));
   }
 
   @Transactional(readOnly = true)
   public List<SupervisionTask> findByApplicationIdAndType(int applicationId, SupervisionTaskType type) {
-    return queryFactory.select(supervisionTaskBean).from(supervisionTask)
-        .where(supervisionTask.applicationId.eq(applicationId), supervisionTask.type.eq(type))
-        .fetch();
+    return querySupervisionTasks(supervisionTask.applicationId.eq(applicationId), supervisionTask.type.eq(type));
   }
 
   @Transactional(readOnly = true)
   public List<SupervisionTask> findByApplicationIdAndTypeAndLocation(int applicationId, SupervisionTaskType type, int locationId) {
-    return queryFactory.select(supervisionTaskBean).from(supervisionTask)
-        .where(supervisionTask.applicationId.eq(applicationId),
+    return querySupervisionTasks(supervisionTask.applicationId.eq(applicationId),
                supervisionTask.type.eq(type),
-               supervisionTask.locationId.eq(locationId))
-        .fetch();
+               supervisionTask.locationId.eq(locationId));
   }
+
+  private List<SupervisionTask> querySupervisionTasks(Predicate... predicates) {
+    List<SupervisionTask> tasks = queryFactory.select(supervisionTaskBean).from(supervisionTask).where(predicates).fetch();
+    tasks.forEach(t -> setApprovedLocations(t));
+    return tasks;
+  }
+
+  private SupervisionTask setApprovedLocations(SupervisionTask task) {
+    if (task != null) {
+      task.setApprovedLocations(getApprovedLocations(task.getId()));
+    }
+    return task;
+  }
+
 
   @Transactional
   public SupervisionTask insert(SupervisionTask st) {
@@ -314,10 +330,18 @@ public class SupervisionTaskDao {
   }
 
   private void insertCopyForApplication(SupervisionTask task, Integer toApplicationId) {
+    Integer originalTaskId = task.getId();
     task.setId(null);
     task.setApplicationId(toApplicationId);
-    queryFactory.insert(supervisionTask).populate(task).execute();
+    Integer taskId = queryFactory.insert(supervisionTask).populate(task).executeWithKey(supervisionTask.id);
+    // Link approved locations to copied task
+    queryFactory.select(supervisionTaskApprovedLocation.supervisionTaskLocationId)
+        .from(supervisionTaskApprovedLocation)
+        .where(supervisionTaskApprovedLocation.supervisionTaskId.eq(originalTaskId))
+        .fetch()
+        .forEach(locationId -> addApprovedLocation(taskId, locationId));
   }
+
 
   @Transactional(readOnly = true)
   public Map<Integer, List<SupervisionTask>> getSupervisionTaskHistoryForExternalOwner(Integer externalOwnerId,
@@ -347,5 +371,51 @@ public class SupervisionTaskDao {
         .from(supervisionTaskWithAddress)
         .where(supervisionTaskWithAddress.id.eq(id))
         .fetchFirst();
+  }
+
+  @Transactional(readOnly = true)
+  public List<SupervisionTaskLocation> getApprovedLocations(Integer supervisionTaskId) {
+    List<SupervisionTaskLocation> locations = queryFactory.select(supervisionTaskLocationBean)
+        .from(supervisionTaskLocation)
+        .innerJoin(supervisionTaskApprovedLocation)
+          .on(supervisionTaskLocation.id.eq(supervisionTaskApprovedLocation.supervisionTaskLocationId))
+          .where(supervisionTaskApprovedLocation.supervisionTaskId.eq(supervisionTaskId))
+        .fetch();
+    locations.forEach(l -> setLocationGeometry(l));
+    return locations;
+  }
+
+  private void setLocationGeometry(SupervisionTaskLocation location) {
+    List<Geometry> geometries = queryFactory.select(supervisionTaskLocationGeometry.geometry)
+        .from(supervisionTaskLocationGeometry)
+        .where(supervisionTaskLocationGeometry.supervisionLocationId.eq(location.getId()))
+        .fetch();
+      location.setGeometry(GeometryUtil.toGeometryCollection(geometries));
+  }
+
+  @Transactional
+  public void saveApprovedLocation(Integer supervisionTaskId, SupervisionTaskLocation location) {
+      Integer id = queryFactory.insert(supervisionTaskLocation).populate(location).executeWithKey(supervisionTaskLocation.id);
+      addApprovedLocation(supervisionTaskId, id);
+      List<Geometry> geometries = new ArrayList<>();
+      GeometryUtil.flatten(location.getGeometry(), geometries);
+      geometries.forEach(geometry -> queryFactory.insert(supervisionTaskLocationGeometry)
+          .columns(supervisionTaskLocationGeometry.supervisionLocationId, supervisionTaskLocationGeometry.geometry)
+          .values(id, geometry)
+          .execute());
+  }
+
+  private void addApprovedLocation(Integer supervisionTaskId, Integer id) {
+    queryFactory.insert(supervisionTaskApprovedLocation)
+        .columns(supervisionTaskApprovedLocation.supervisionTaskId, supervisionTaskApprovedLocation.supervisionTaskLocationId)
+        .values(supervisionTaskId, id)
+        .execute();
+  }
+
+  @Transactional
+  public void deleteApprovedLocations(Integer supervisionTaskId) {
+    queryFactory.delete(supervisionTaskApprovedLocation)
+    .where(supervisionTaskApprovedLocation.supervisionTaskId.eq(supervisionTaskId))
+    .execute();
   }
 }

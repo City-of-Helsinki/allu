@@ -19,12 +19,11 @@ import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.SupervisionTaskToTag;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.domain.*;
 
 import static fi.hel.allu.common.domain.types.SupervisionTaskStatusType.*;
-import fi.hel.allu.model.domain.SupervisionWorkItem;
 
 /**
  * The service class for supervision task operations
@@ -33,11 +32,13 @@ import fi.hel.allu.model.domain.SupervisionWorkItem;
 public class SupervisionTaskService {
   private SupervisionTaskDao supervisionTaskDao;
   private ApplicationDao applicationDao;
+  private LocationDao locationDao;
 
   @Autowired
-  public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, ApplicationDao applicationDao) {
+  public SupervisionTaskService(SupervisionTaskDao supervisionTaskDao, ApplicationDao applicationDao, LocationDao locationDao) {
     this.supervisionTaskDao = supervisionTaskDao;
     this.applicationDao = applicationDao;
+    this.locationDao = locationDao;
   }
 
   @Transactional(readOnly = true)
@@ -103,6 +104,7 @@ public class SupervisionTaskService {
     supervisionTask.setStatus(APPROVED);
     supervisionTask.setActualFinishingTime(ZonedDateTime.now());
     SupervisionTask updated = supervisionTaskDao.update(supervisionTask);
+    saveApprovedLocations(updated);
     updateTags(updated);
     return updated;
   }
@@ -188,5 +190,19 @@ public class SupervisionTaskService {
 
   public String[] findAddressById(int id) {
     return supervisionTaskDao.findAddressById(id);
+  }
+
+  /**
+   * Saves current state of application locations for task
+   */
+  private void saveApprovedLocations(SupervisionTask task) {
+    supervisionTaskDao.deleteApprovedLocations(task.getId());
+    List<Location> locations = locationDao.findByApplication(task.getApplicationId());
+      locations.forEach(l -> saveApprovedLocation(task.getId(), l));
+    task.setApprovedLocations(supervisionTaskDao.getApprovedLocations(task.getId()));
+  }
+
+  private void saveApprovedLocation(Integer supervisionTaskId, Location location) {
+    supervisionTaskDao.saveApprovedLocation(supervisionTaskId, SupervisionTaskLocation.fromApplicationLocation(location));
   }
 }

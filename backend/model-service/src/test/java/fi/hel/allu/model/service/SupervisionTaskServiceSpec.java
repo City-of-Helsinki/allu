@@ -1,28 +1,27 @@
 package fi.hel.allu.model.service;
 
-import com.greghaskins.spectrum.Spectrum;
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
-import fi.hel.allu.common.domain.types.SupervisionTaskType;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.SupervisionTaskDao;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.SupervisionTask;
+import java.time.ZonedDateTime;
+
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import com.greghaskins.spectrum.Spectrum;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
+import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.SupervisionTaskDao;
+import fi.hel.allu.model.domain.ApplicationTag;
+import fi.hel.allu.model.domain.SupervisionTask;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(Spectrum.class)
@@ -32,13 +31,15 @@ public class SupervisionTaskServiceSpec {
 
   private SupervisionTaskDao supervisionTaskDao;
   private ApplicationDao applicationDao;
+  private LocationDao locationDao;
 
   {
     describe("SupervisionTaskService", () -> {
       beforeEach(() -> {
         supervisionTaskDao = mock(SupervisionTaskDao.class);
         applicationDao = mock(ApplicationDao.class);
-        service = new SupervisionTaskService(supervisionTaskDao, applicationDao);
+        locationDao = mock(LocationDao.class);
+        service = new SupervisionTaskService(supervisionTaskDao, applicationDao, locationDao);
       });
 
       describe("Insert", () -> {

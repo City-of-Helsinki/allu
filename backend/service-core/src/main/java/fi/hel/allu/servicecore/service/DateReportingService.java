@@ -208,7 +208,7 @@ public class DateReportingService {
     UserJson supervisionTaskOwner = getSupervisionTaskOwner(application);
     supervisionTaskService.insert(new SupervisionTaskJson(null, application.getId(), SupervisionTaskType.OPERATIONAL_CONDITION, null,
             supervisionTaskOwner, null, SupervisionDates.operationalConditionSupervisionDate(reportedDate),
-            null, SupervisionTaskStatusType.OPEN, null, null, null));
+            null, SupervisionTaskStatusType.OPEN, null, null, null, null));
   }
 
   private UserJson getSupervisionTaskOwner(Application application) {
