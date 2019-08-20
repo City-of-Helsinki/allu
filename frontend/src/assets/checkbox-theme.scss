@@ -1,0 +1,8 @@
+@mixin allu-checkbox-theme($theme) {
+  $foreground: map-get($theme, foreground);
+  $disabled-text: map-get($foreground, disabled-text);
+
+  .mat-checkbox-disabled .mat-checkbox-label {
+    color: $disabled-text;
+  }
+}
