@@ -424,7 +424,8 @@ export const translations = {
         propertyConnectivity: 'Tontti- / Kiinteistöliitos',
         constructionWork: 'Rakentaminen',
         maintenanceWork: 'Kunnossapito',
-        emergencyWork: 'Hätätyö'
+        emergencyWork: 'Hätätyö',
+        ordererMissing: 'Hakemuksen tilaaja puuttuu'
       },
       action: {
         markSurveyRequired: 'Lisää tunniste: Kartoitettava',

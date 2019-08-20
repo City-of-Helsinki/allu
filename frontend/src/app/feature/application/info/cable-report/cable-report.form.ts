@@ -83,7 +83,7 @@ export function from(application: Application): CableReportForm {
     propertyConnectivity: cableReport.propertyConnectivity,
     reportTimes: new TimePeriod(application.startTime, application.endTime),
     workDescription: cableReport.workDescription,
-    ordererId: fromOrdererId(cableReport.ordererId),
+    ordererId: cableReport.ordererId,
     mapExtractCount: cableReport.mapExtractCount,
     cableInfoEntries: cableReport.infoEntries,
     selectedCableInfoTypes: getSelectedInfoTypes(cableReport.infoEntries)

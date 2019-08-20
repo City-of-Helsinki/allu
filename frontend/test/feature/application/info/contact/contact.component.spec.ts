@@ -13,7 +13,6 @@ import {Contact} from '@model/customer/contact';
 import {getMatIconButton} from '@test/selector-helpers';
 import {ApplicationType} from '@model/application/type/application-type';
 import {Application} from '@model/application/application';
-import {createDefaultOrdererId, OrdererIdForm} from '@feature/application/info/cable-report/cable-report.form';
 import {CustomerWithContacts} from '@model/customer/customer-with-contacts';
 import {CustomerService} from '@service/customer/customer.service';
 import {DistributionListEvents} from '@feature/application/distribution/distribution-list/distribution-list-events';
@@ -138,12 +137,6 @@ describe('ContactComponent', () => {
     expect(page.getFromContact(0, '[formControlName="streetAddress"]').nativeElement.value).toBe('');
   }));
 
-  it('should show and select first contact from applicant as an orderer for cable report', fakeAsync(() => {
-    reInitWithCableReport();
-    expect(page.getFromContact(0, '.mat-radio-button')).toBeTruthy();
-    expect(page.getFromContact(0, '.mat-radio-button').componentInstance.checked).toBe(true);
-  }));
-
   it('should uncheck orderer when other orderer is selected', fakeAsync(() => {
     reInitWithCableReport();
     page.getFromContact(1, '.mat-radio-label').nativeElement.click();
@@ -166,11 +159,12 @@ describe('ContactComponent', () => {
 
   function createParentForm() {
     const fb = new FormBuilder();
-    const form = fb.group({});
+    const form = fb.group({
+      ordererId: [undefined]
+    });
     form.addControl(
       CustomerWithContactsForm.formName(CustomerRoleType.APPLICANT),
       CustomerWithContactsForm.initialForm(fb, CustomerRoleType.APPLICANT));
-    form.addControl('ordererId', fb.group(createDefaultOrdererId()));
     return form;
   }
 });

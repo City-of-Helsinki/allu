@@ -3,12 +3,12 @@ import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Contact} from '@model/customer/contact';
 import {Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {CustomerWithContactsForm} from '@feature/customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '@model/customer/customer-role-type';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationType} from '@model/application/type/application-type';
-import {createDefaultOrdererId, fromOrdererId, toOrdererId} from '../cable-report/cable-report.form';
+import {fromOrdererId, toOrdererId} from '../cable-report/cable-report.form';
 import {FormUtil} from '@util/form.util';
 import {CustomerService} from '@service/customer/customer.service';
 import {debounceTime, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/internal/operators';
@@ -20,7 +20,6 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {findTranslation} from '@util/translations';
 import {NotificationService} from '@feature/notification/notification.service';
 import {ContactService} from '@service/customer/contact.service';
-import {Subject} from 'rxjs';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -95,6 +94,10 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   isOrderer(index: number): boolean {
+    if (this.contacts.controls.length <= index) {
+      return false;
+    }
+
     const contact = this.contacts.at(index).value;
     return Some(this.parentForm.getRawValue().ordererId)
       .map(form => toOrdererId(form))
@@ -112,6 +115,7 @@ export class ContactComponent implements OnInit, OnDestroy {
         name: contactCtrl.value.name,
         active: true
       });
+      this.resetOrdererIfMatchingIndex(index);
     }
     contactCtrl.enable();
   }
@@ -166,17 +170,11 @@ export class ContactComponent implements OnInit, OnDestroy {
    * then reset orderer
    */
   onCustomerRemove() {
-    Some(this.parentForm.value.ordererId)
-      .map(form => toOrdererId(form))
-      .filter(ordererId => this.contacts.value.some(contact => ordererId.idOrRoleTypeMatches(contact.id, this.customerRoleType)))
-      .do(ordererId => this.parentForm.patchValue({ordererId: createDefaultOrdererId()}));
+    this.contacts.controls.forEach((contact, index) => this.resetOrdererIfMatchingIndex(index));
   }
 
   remove(index: number): void {
-    if (this.isOrderer(index)) {
-      this.parentForm.patchValue({ordererId: createDefaultOrdererId()});
-    }
-
+    this.resetOrdererIfMatchingIndex(index);
     this.contacts.removeAt(index);
   }
 
@@ -193,10 +191,11 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   resetContacts(): void {
-    this.contacts.reset();
     while (this.contacts.length > 1) {
       this.remove(1);
     }
+    this.resetOrdererIfMatchingIndex(0);
+    this.contacts.reset();
     this.contacts.enable();
   }
 
@@ -244,5 +243,11 @@ export class ContactComponent implements OnInit, OnDestroy {
     Object.keys(contactCtrl.controls)
       .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
       .forEach(key => contactCtrl.get(key).disable());
+  }
+
+  private resetOrdererIfMatchingIndex(index: number) {
+    if (this.isOrderer(index)) {
+      this.parentForm.patchValue({ordererId: undefined});
+    }
   }
 }

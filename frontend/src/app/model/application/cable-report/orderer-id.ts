@@ -1,7 +1,6 @@
-import {NumberUtil} from '../../../util/number.util';
+import {NumberUtil} from '@util/number.util';
 
 export class OrdererId {
-  constructor()
   constructor(
     public id?: number,
     public customerRoleType?: string,
@@ -15,9 +14,9 @@ export class OrdererId {
   }
 
   public static ofId(id: number): OrdererId {
-    const ordererId = new OrdererId();
-    ordererId.id = id;
-    return ordererId;
+    return NumberUtil.isDefined(id)
+      ? new OrdererId(id)
+      : undefined;
   }
 
   public static ofRoleAndIndex(customerRoleType: string, index: number): OrdererId {

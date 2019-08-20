@@ -71,4 +71,16 @@ export class FormUtil {
       control.markAsTouched({onlySelf: true});
     }
   }
+
+  public static errorCount(control: AbstractControl): number {
+    if (control instanceof FormGroup) {
+      return Object.keys(control.controls)
+        .map(key => control.get(key))
+        .reduce((prev, cur) => prev + this.errorCount(cur), 0);
+    } else if (control instanceof FormArray) {
+      return control.controls.reduce((prev, cur) => prev + this.errorCount(cur), 0);
+    } else {
+      return control.errors ? Object.keys(control.errors).length : 0;
+    }
+  }
 }

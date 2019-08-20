@@ -14,6 +14,9 @@ import {Add, Remove} from '@feature/application/actions/application-tag-actions'
 import {select} from '@ngrx/store';
 import {Observable} from 'rxjs/index';
 import {TimeUtil} from '@util/time.util';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
+import {createTranslated} from '@service/error/error-info';
+import {FormUtil} from '@util/form.util';
 
 @Component({
   selector: 'cable-report',
@@ -43,7 +46,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
         endTime: [undefined, Validators.required]
       }, { validator: ComplexValidator.startBeforeEnd('startTime', 'endTime') }),
       workDescription: [''],
-      ordererId: [createDefaultOrdererId(), Validators.required]
+      ordererId: [undefined, Validators.required]
     });
   }
 
@@ -65,6 +68,23 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     application.singleLocation.endTime = application.endTime;
 
     return application;
+  }
+
+  protected onValidationErrors(): void {
+    const ordererMissing = this.applicationForm.hasError('required', ['ordererId']);
+    const errorCount = FormUtil.errorCount(this.applicationForm);
+    const ordererMissingError = createTranslated('common.field.faultyValueTitle', 'application.cableReport.field.ordererMissing');
+    const basicError = createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue');
+
+    if (ordererMissing) {
+      this.store.dispatch(new NotifyFailure(ordererMissingError));
+
+      if (errorCount > 1) {
+        this.store.dispatch(new NotifyFailure(basicError));
+      }
+    } else {
+      this.store.dispatch(new NotifyFailure(basicError));
+    }
   }
 
   markSurveyRequired(): void {

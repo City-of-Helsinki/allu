@@ -114,7 +114,7 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       this.save(application);
     } else {
       FormUtil.validateFormFields(form);
-      this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
+      this.onValidationErrors();
     }
   }
 
@@ -183,6 +183,10 @@ export class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterCon
       application.decisionDistributionList = c.distributionRows.map(distribution => DistributionEntryForm.to(distribution));
     });
     return application;
+  }
+
+  protected onValidationErrors(): void {
+    this.store.dispatch(new NotifyFailure(createTranslated('common.field.faultyValueTitle', 'common.field.faultyValue')));
   }
 
   private getCustomers(form: ApplicationForm): Array<CustomerWithContacts> {
