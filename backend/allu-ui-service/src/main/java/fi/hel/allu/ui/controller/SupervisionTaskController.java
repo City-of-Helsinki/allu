@@ -47,7 +47,7 @@ public class SupervisionTaskController {
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE', 'ROLE_PROCESS_APPLICATION', 'ROLE_ADMIN')")
   public ResponseEntity<SupervisionTaskJson> update(@PathVariable int id, @Valid @RequestBody SupervisionTaskJson supervisionTask) {
     supervisionTask.setId(id);
     return new ResponseEntity<>(supervisionTaskService.update(supervisionTask), HttpStatus.OK);
@@ -60,7 +60,7 @@ public class SupervisionTaskController {
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE','ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE','ROLE_PROCESS_APPLICATION', 'ROLE_ADMIN')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     supervisionTaskService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);

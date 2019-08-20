@@ -8,7 +8,6 @@ import {AvailableToDirective} from '@service/authorization/available-to.directiv
 import {SupervisionTaskComponent} from '@feature/application/supervision/supervision-task.component';
 import {ApplicationStore} from '@service/application/application-store';
 import {CurrentUser} from '@service/user/current-user';
-import {ComplexValidator} from '@util/complex-validator';
 import {User} from '@model/user/user';
 import {SupervisionTaskType} from '@model/application/supervision/supervision-task-type';
 import {findTranslation} from '@util/translations';
@@ -26,8 +25,11 @@ import {ApplicationType} from '@model/application/type/application-type';
 import {getButtonWithText} from '../../../selector-helpers';
 import {UserService} from '@service/user/user-service';
 import {Location} from '@model/common/location';
+import {RoleType} from '@model/user/role-type';
 
+const handler = new User(1, 'handler', 'handler');
 const supervisor = new User(2, 'supervisor', 'supervisor');
+const admin = new User(3, 'admin', 'admin');
 
 const taskForm = {
   id: [undefined],
@@ -73,6 +75,7 @@ describe('SupervisionTaskComponent', () => {
   let store: Store<fromRoot.State>;
   let de: DebugElement;
   const currentUserMock = CurrentUserMock.create(true, true);
+
   let userService: UserServiceMock;
 
   beforeEach(async(() => {
@@ -113,6 +116,10 @@ describe('SupervisionTaskComponent', () => {
     comp.supervisors = [supervisor];
     currentApplication.type = ApplicationType.EVENT;
     comp.application = currentApplication;
+    handler.assignedRoles = [RoleType.ROLE_CREATE_APPLICATION, RoleType.ROLE_PROCESS_APPLICATION];
+    supervisor.assignedRoles = [RoleType.ROLE_SUPERVISE];
+    admin.assignedRoles = [RoleType.ROLE_ADMIN];
+
     comp.ngOnInit();
     fixture.detectChanges();
   });
@@ -143,7 +150,9 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should change to edit mode', fakeAsync(() => {
-    patchValueAndInit({id: 1});
+    spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
+    patchValueAndInit({id: 1, creatorId: handler.id});
+
     const editBtn = getButtonWithText(de, findTranslation('common.button.edit'));
     expect(comp.editing).toEqual(false, 'Form was enabled');
     expect(editBtn).toBeDefined('No edit button');
@@ -154,7 +163,9 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should cancel edit changes', fakeAsync(() => {
-    patchValueAndInit({id: 1});
+    spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
+    patchValueAndInit({id: 1, creatorId: handler.id});
+
     const editBtn = getButtonWithText(de, findTranslation('common.button.edit'));
     editBtn.click();
     detectAndTick();
@@ -170,7 +181,8 @@ describe('SupervisionTaskComponent', () => {
   it('should remove new on cancel', fakeAsync(() => {
     const onRemove = comp.onRemove;
     spyOn(onRemove, 'emit');
-    patchValueAndInit({});
+    spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
+    patchValueAndInit({id: undefined, status: SupervisionTaskStatusType.OPEN});
     const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel'));
     cancelBtn.click();
     detectAndTick();
@@ -192,13 +204,11 @@ describe('SupervisionTaskComponent', () => {
   }));
 
   it('should disallow editing by other users', fakeAsync(() => {
-    const myself = new User(1);
-    const other = new User(2);
-    patchValueAndInit({id: 1, creatorId: myself.id});
+    patchValueAndInit({id: 1, creatorId: handler.id});
     expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(1); // Only edit button
 
-    spyOn(currentUserMock, 'isCurrentUser').and.returnValue(of(false));
-    patchValueAndInit({creatorId: other.id});
+    spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(handler));
+    patchValueAndInit({creatorId: supervisor.id});
     expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(0);
   }));
 
@@ -211,6 +221,13 @@ describe('SupervisionTaskComponent', () => {
     const error = de.query(By.css('.mat-error')).nativeElement;
     expect(error).toBeDefined();
     expect(error.textContent).toMatch(findTranslation('supervision.task.field.plannedFinishingTimeMissing'));
+  }));
+
+  it('should allow admin to remove other users task', fakeAsync(() => {
+    spyOnProperty(currentUserMock, 'user', 'get').and.returnValue(of(admin));
+    patchValueAndInit({id: 1, creatorId: handler.id, status: SupervisionTaskStatusType.OPEN});
+    const removeButton = getButtonWithText(de, findTranslation('common.button.remove'));
+    expect(removeButton).toBeTruthy('No remove button found for admin');
   }));
 
   it('should preset supervisor when creating new task', fakeAsync(() => {

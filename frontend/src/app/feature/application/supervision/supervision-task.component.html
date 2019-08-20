@@ -106,7 +106,7 @@
             </ng-container>
           </ng-container>
           <ng-container *ngIf="canEdit">
-            <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE']">
+            <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE', 'ROLE_ADMIN']">
               <ng-container *ngIf="editing">
                 <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
                   {{'common.button.save' | translation}}

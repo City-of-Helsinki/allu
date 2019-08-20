@@ -45,7 +45,7 @@ import {
 } from '@feature/application/supervision/area-rental-supervision-approval-modal.component';
 import {Location} from '@model/common/location';
 import {AreaRental} from '@model/application/area-rental/area-rental';
-import {TimeUtil} from '@util/time.util';
+import {NumberUtil} from '@util/number.util';
 
 @Component({
   selector: 'supervision-task',
@@ -258,9 +258,11 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private currentUserCanEdit(creatorId: number, status: SupervisionTaskStatusType): void {
-    this.currentUser.isCurrentUser(creatorId).pipe(take(1)).subscribe(isCurrent => {
+    this.currentUser.user.pipe(take(1)).subscribe(current => {
+      const createdByCurrent = creatorId === current.id;
+      const isAdmin = current.hasRole(RoleType.ROLE_ADMIN);
       const editableStatus = SupervisionTaskStatusType.APPROVED !== status;
-      this.canEdit = (creatorId === undefined || isCurrent) && editableStatus;
+      this.canEdit = (!NumberUtil.isDefined(creatorId) || isAdmin || createdByCurrent) && editableStatus;
     });
   }
 
