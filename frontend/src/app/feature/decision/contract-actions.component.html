@@ -19,7 +19,9 @@
           {{'contract.createProposal' | translation | uppercase}}
         </button>
       </div>
-      <div class="action-item">
+      <div class="action-item"
+           [matTooltip]="'invoicing.requiredInvoicingInfoMissing' | translation"
+           [matTooltipDisabled]="isValidForDecision">
         <button mat-raised-button type="button" color="primary"
                 [disabled]="!isValidForDecision"
                 (click)="approve()">
