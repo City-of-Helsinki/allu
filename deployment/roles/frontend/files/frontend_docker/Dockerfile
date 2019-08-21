@@ -98,6 +98,7 @@ RUN ln -s /mapproxy/python /home/allu/mapproxy/python
 COPY root_crontab /tmp/root_crontab
 RUN crontab /tmp/root_crontab
 RUN rm /tmp/root_crontab
+CMD cron
 
 ######################################################################################
 # Changes that should not be cached
