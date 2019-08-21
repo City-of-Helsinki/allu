@@ -73,6 +73,27 @@ public class ApplicationArchiverServiceTest {
       .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
   }
 
+  @Test
+  public void shouldNotArchiveRecurringApplicationBeforeRecurringEnd() {
+    applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
+    applicationJson.setEndTime(ZonedDateTime.now().minusDays(1));
+    applicationJson.setRecurringEndTime(ZonedDateTime.now().plusDays(1));
+
+    archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
+    verify(applicationServiceComposer, never()).changeStatus(eq(APPLICATION_ID), any(StatusType.class), any(StatusChangeInfoJson.class));
+  }
+
+  @Test
+  public void shouldArchiveRecurringAfterRecurringEnd() {
+    applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
+    applicationJson.setEndTime(ZonedDateTime.now().minusDays(2));
+    applicationJson.setRecurringEndTime(ZonedDateTime.now().minusDays(1));
+
+    archiverService.archiveApplicationIfNecessary(APPLICATION_ID);
+    verify(applicationServiceComposer, times(1))
+        .changeStatus(eq(APPLICATION_ID), eq(StatusType.ARCHIVED), isNotNull(StatusChangeInfoJson.class));
+  }
+
   // Only the end time is expired
 
   @Test

@@ -158,7 +158,7 @@ public class ApplicationArchiverService {
     if (application.getStatus() == StatusType.TERMINATED) {
       return isTerminatedFinished(application);
     } else {
-      boolean isFinishedStatus = ZonedDateTime.now().isAfter(application.getEndTime());
+      boolean isFinishedStatus = isFinishedByDate(application);
       if (application.getType() == ApplicationType.CABLE_REPORT
           && application.getExtension() != null && application.getExtension() instanceof CableReportJson) {
         CableReportJson extension = (CableReportJson) application.getExtension();
@@ -166,6 +166,12 @@ public class ApplicationArchiverService {
       }
       return isFinishedStatus;
     }
+  }
+
+  private boolean isFinishedByDate(ApplicationJson application) {
+    ZonedDateTime effectiveEndTime = Optional.ofNullable(application.getRecurringEndTime())
+        .orElse(application.getEndTime());
+    return ZonedDateTime.now().isAfter(effectiveEndTime);
   }
 
   private boolean isTerminatedFinished(ApplicationJson application) {
