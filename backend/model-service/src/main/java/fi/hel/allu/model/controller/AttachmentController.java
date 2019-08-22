@@ -1,20 +1,24 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.model.dao.AttachmentDao;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import fi.hel.allu.model.service.event.ApplicationUpdateEvent;
 
 @RestController
 @RequestMapping("/attachments")
@@ -22,6 +26,8 @@ public class AttachmentController {
 
   @Autowired
   private AttachmentDao attachmentDao;
+  @Autowired
+  private ApplicationEventPublisher eventPublisher;
 
   public AttachmentController() {
   }
@@ -45,6 +51,7 @@ public class AttachmentController {
       Optional<DefaultAttachmentInfo> defaultAttachmentInfo = attachmentDao.findDefaultById(attachmentInfo.getId());
       if (defaultAttachmentInfo.isPresent()) {
         attachmentDao.linkApplicationToAttachment(applicationId, attachmentInfo.getId());
+        eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, attachmentInfo.getUserId()));
         return new ResponseEntity<>(attachmentInfo, HttpStatus.CREATED);
       } else {
         throw new NoSuchEntityException("attachment.attach.failed", attachmentInfo.getId());
@@ -54,8 +61,10 @@ public class AttachmentController {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } else {
       AttachmentInfo inserted = attachmentDao.insert(applicationId, attachmentInfo, data.getBytes());
+      eventPublisher.publishEvent(new ApplicationUpdateEvent(applicationId, attachmentInfo.getUserId()));
       return new ResponseEntity<>(inserted, HttpStatus.CREATED);
     }
+
   }
 
   @RequestMapping(value = "/applications/{applicationId}/default", method = RequestMethod.PUT)

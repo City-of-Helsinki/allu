@@ -30,7 +30,10 @@ import org.springframework.http.ResponseEntity;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ApplicationTagJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
@@ -146,7 +149,8 @@ public class ApplicationServiceTest extends MockServices {
   public void testUpdateApplicationOwner() {
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplicationOwner(2, Collections.singletonList(applicationJson.getId()));
-    Mockito.verify(restTemplate, Mockito.times(1)).put(null, Collections.singletonList(applicationJson.getId()), 2);
+    Mockito.verify(restTemplate, Mockito.times(1)).exchange(null, HttpMethod.PUT,
+        new HttpEntity<>(Collections.singletonList(applicationJson.getId())), Void.class, 2, USER_ID);
   }
 
   @Test

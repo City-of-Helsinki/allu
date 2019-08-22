@@ -12,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
@@ -44,15 +45,16 @@ public class ApplicationServiceTest {
   private UserDao userDao;
   @Mock
   private InvoicingPeriodService invoicingPeriodService;
-
-
+  @Mock
   private ApplicationService applicationService;
+  @Mock
+  private ApplicationEventPublisher eventPublisher;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisService, invoiceService,
-        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService);
+        customerDao, locationService, defaultValueService, userDao, invoicingPeriodService, eventPublisher);
   }
 
   @Test

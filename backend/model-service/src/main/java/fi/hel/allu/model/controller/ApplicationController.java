@@ -117,11 +117,12 @@ public class ApplicationController {
    * Updates owner of given applications.
    *
    * @param   ownerId     New owner set to the applications.
+   * @param   userId      Current user
    * @param   applications  Applications whose owner is updated.
    */
   @RequestMapping(value = "/owner/{ownerId}", method = RequestMethod.PUT)
-  public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestBody List<Integer> applications) {
-    applicationService.updateOwner(ownerId, applications);
+  public ResponseEntity<Void> updateOwner(@PathVariable int ownerId, @RequestParam int userId, @RequestBody List<Integer> applications) {
+    applicationService.updateOwner(ownerId, userId, applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

@@ -222,7 +222,9 @@ public class ApplicationService {
 
 
   void updateApplicationOwner(int updatedOwner, List<Integer> applicationIds) {
-    restTemplate.put(applicationProperties.getApplicationOwnerUpdateUrl(), applicationIds, updatedOwner);
+    restTemplate.exchange(
+        applicationProperties.getApplicationOwnerUpdateUrl(), HttpMethod.PUT, new HttpEntity<>(applicationIds),
+        Void.class, updatedOwner, userService.getCurrentUser().getId());
   }
 
   void removeApplicationOwner(List<Integer> applicationIds) {
