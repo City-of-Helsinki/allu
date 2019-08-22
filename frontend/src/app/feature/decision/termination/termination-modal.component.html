@@ -50,10 +50,10 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="saveDraft()">
-    {{'decision.termination.action.saveDraft' | translation}}
+    {{'decision.termination.action.saveDraft' | translation | uppercase }}
   </button>
   <button mat-raised-button type="button" color="primary" [disabled]="!terminationForm.valid" (click)="terminate()">
-    {{'decision.termination.action.toDecisionMaking' | translation}}
+    {{'decision.termination.action.toDecisionMaking' | translation | uppercase }}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">
     {{'common.button.cancel' | translation}}
