@@ -22,7 +22,7 @@ public class ApplicationGeometryValidator implements Validator {
   private LocationService locationService;
 
   @Autowired
-  private MessageSource messageSource;
+  private MessageSource validationMessageSource;
 
   private MessageSourceAccessor accessor;
 
@@ -35,7 +35,7 @@ public class ApplicationGeometryValidator implements Validator {
 
   @PostConstruct
   private void init() {
-      accessor = new MessageSourceAccessor(messageSource, Locale.getDefault());
+      accessor = new MessageSourceAccessor(validationMessageSource);
   }
 
   @Override
