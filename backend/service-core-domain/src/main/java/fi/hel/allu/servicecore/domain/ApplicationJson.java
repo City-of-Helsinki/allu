@@ -111,6 +111,7 @@ public class ApplicationJson {
 
   private Integer version;
 
+  private Boolean ownerNotification;
 
   @ApiModelProperty(value = "ID of the application", readOnly = true)
   public Integer getId() {
@@ -572,6 +573,15 @@ public class ApplicationJson {
   @ApiModelProperty(value = "Value indicating whether application is received from external system", readOnly = true)
   public boolean isExternalApplication() {
     return externalOwnerId != null;
+  }
+
+  @ApiModelProperty(value = "Value indicating whether application requires owners attention (has changes made by other users etc)", readOnly = true)
+  public Boolean getOwnerNotification() {
+    return ownerNotification;
+  }
+
+  public void setOwnerNotification(Boolean ownerNotification) {
+    this.ownerNotification = ownerNotification;
   }
 
 }

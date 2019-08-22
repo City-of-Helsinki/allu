@@ -1466,4 +1466,9 @@ public class ApplicationProperties {
   public String getUpsertCityDistrictsUrl() {
     return getModelServiceUrl("/citydistricts");
   }
+
+  public String getOwnerNotificationUrl() {
+    return getModelServiceUrl("/applications/{id}/ownernotification");
+  }
+
 }

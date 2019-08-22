@@ -56,7 +56,7 @@ public class ApplicationDao {
           application.metadataVersion, application.owner, application.replacedByApplicationId, application.replacesApplicationId,
           application.invoiced, application.clientApplicationData, application.applicationId,
           application.externalOwnerId, application.invoicingChanged, application.targetState,
-          application.externalApplicationId, application.invoicingPeriodLength);
+          application.externalApplicationId, application.invoicingPeriodLength, application.ownerNotification);
 
   private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
 
@@ -946,4 +946,25 @@ public class ApplicationDao {
     return queryFactory.select(application.version).from(application).where(application.id.eq(id)).fetchFirst();
   }
 
+  public void addOwnerNotification(Integer id) {
+    setOwnerNotification(id, true);
+  }
+
+  public void removeOwnerNotification(Integer id) {
+    setOwnerNotification(id, false);
+  }
+
+  private void setOwnerNotification(Integer id, boolean hasNotification) {
+    queryFactory.update(application)
+        .set(application.ownerNotification, hasNotification)
+        .where(application.id.eq(id))
+        .execute();
+  }
+
+  public Integer getApplicationOwner(Integer applicationId) {
+    return queryFactory.select(application.owner)
+        .from(application)
+        .where(application.id.eq(applicationId))
+        .fetchFirst();
+  }
 }

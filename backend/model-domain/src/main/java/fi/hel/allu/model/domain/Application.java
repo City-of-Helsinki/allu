@@ -82,6 +82,7 @@ public class Application {
   private Integer invoicingPeriodLength;
 
   private Integer version;
+  private Boolean ownerNotification;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -581,4 +582,13 @@ public class Application {
   public void setVersion(Integer version) {
     this.version = version;
   }
+
+  public Boolean getOwnerNotification() {
+    return ownerNotification;
+  }
+
+  public void setOwnerNotification(Boolean ownerNotification) {
+    this.ownerNotification = ownerNotification;
+  }
+
 }

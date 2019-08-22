@@ -543,4 +543,12 @@ public class ApplicationService {
   public ApplicationType getApplicationType(Integer id) {
     return findApplicationById(id).getType();
   }
+
+  public void addOwnerNotification(Integer id) {
+    restTemplate.postForEntity(applicationProperties.getOwnerNotificationUrl(), null, Void.class, id);
+  }
+
+  public void removeOwnerNotification(Integer id) {
+    restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), id);
+  }
 }

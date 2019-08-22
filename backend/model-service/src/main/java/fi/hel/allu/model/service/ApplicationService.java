@@ -568,4 +568,19 @@ public class ApplicationService {
   public Integer getVersion(int id) {
     return applicationDao.getVersion(id);
   }
+
+  @Transactional
+  public void addOwnerNotification(Integer id) {
+    applicationDao.addOwnerNotification(id);
+  }
+
+  @Transactional
+  public void removeOwnerNotification(Integer id) {
+    applicationDao.removeOwnerNotification(id);
+  }
+
+  @Transactional(readOnly = true)
+  public Integer getApplicationOwner(Integer applicationId) {
+    return applicationDao.getApplicationOwner(applicationId);
+  }
 }

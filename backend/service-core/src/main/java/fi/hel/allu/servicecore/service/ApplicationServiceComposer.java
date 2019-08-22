@@ -572,4 +572,18 @@ public class ApplicationServiceComposer {
   public Integer getApplicationVersion(Integer id) {
     return applicationService.getApplicationVersion(id);
   }
+
+  public void addOwnerNotification(Integer id) {
+    applicationService.addOwnerNotification(id);
+    updateSearchService(id);
+  }
+
+  public void removeOwnerNotification(Integer id) {
+    applicationService.removeOwnerNotification(id);
+    updateSearchService(id);
+  }
+
+  private void updateSearchService(Integer applicationId) {
+    searchService.updateApplications(Collections.singletonList(findApplicationById(applicationId)));
+  }
 }

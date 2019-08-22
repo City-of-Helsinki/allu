@@ -144,6 +144,7 @@ public class ApplicationMapper {
     }
     applicationES.setNrOfComments(applicationJson.getComments() != null ? applicationJson.getComments().size() : 0);
     applicationES.setIdentificationNumber(applicationJson.getIdentificationNumber());
+    applicationES.setOwnerNotification(applicationJson.getOwnerNotification());
     return applicationES;
   }
 
@@ -204,6 +205,7 @@ public class ApplicationMapper {
     applicationJson.setExternalApplicationId(application.getExternalApplicationId());
     applicationJson.setInvoicingPeriodLength(application.getInvoicingPeriodLength());
     applicationJson.setVersion(application.getVersion());
+    applicationJson.setOwnerNotification(application.getOwnerNotification());
     return applicationJson;
   }
 

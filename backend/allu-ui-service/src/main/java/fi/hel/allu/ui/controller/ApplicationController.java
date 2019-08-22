@@ -381,4 +381,18 @@ public class ApplicationController {
   public ResponseEntity<ApplicationJson> removeClientApplicationData(@PathVariable Integer id) {
     return ResponseEntity.ok(applicationServiceComposer.removeClientApplicationData(id));
   }
+
+  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> addOwnerNotification(@PathVariable Integer id) {
+    applicationServiceComposer.addOwnerNotification(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> removeOwnerNotification(@PathVariable Integer id) {
+    applicationServiceComposer.removeOwnerNotification(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

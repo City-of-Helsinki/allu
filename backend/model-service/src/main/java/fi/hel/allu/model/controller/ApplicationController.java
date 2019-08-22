@@ -426,4 +426,17 @@ public class ApplicationController {
   public ResponseEntity<Integer> getVersion(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.getVersion(id), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.POST)
+  public ResponseEntity<Void> addOwnerNotification(@PathVariable Integer id) {
+    applicationService.addOwnerNotification(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/ownernotification", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> removeOwnerNotification(@PathVariable Integer id) {
+    applicationService.removeOwnerNotification(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 }

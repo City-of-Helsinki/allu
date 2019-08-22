@@ -32,6 +32,7 @@ public class ApplicationES {
   private RecurringApplication recurringApplication;
   private Integer nrOfComments;
   private String identificationNumber;
+  private Boolean ownerNotification;
 
   public Integer getId() {
     return id;
@@ -183,6 +184,14 @@ public class ApplicationES {
 
   public void setIdentificationNumber(String identificationNumber) {
     this.identificationNumber = identificationNumber;
+  }
+
+  public Boolean getOwnerNotification() {
+    return ownerNotification;
+  }
+
+  public void setOwnerNotification(Boolean ownerNotification) {
+    this.ownerNotification = ownerNotification;
   }
 
 }
