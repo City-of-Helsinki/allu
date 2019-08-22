@@ -35,6 +35,7 @@ import {ProjectHistoryComponent} from './history/project-history.component';
 import {RelatedProjectsComponent} from './related-projects/related-projects.component';
 import {RelatedProjectListComponent} from './related-projects/related-project-list.component';
 import {ProjectSelectComponent} from './related-projects/project-select.component';
+import {CustomerRegistryModule} from '@feature/customerregistry/customer-registry.module';
 
 @NgModule({
   imports: [
@@ -60,7 +61,8 @@ import {ProjectSelectComponent} from './related-projects/project-select.componen
       ApplicationBasketEffects
     ]),
     CommentModule,
-    HistoryModule
+    HistoryModule,
+    CustomerRegistryModule
   ],
   declarations: [
     ProjectComponent,

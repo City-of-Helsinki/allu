@@ -20,6 +20,8 @@ import {of} from 'rxjs';
 import {CustomerAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-acceptance.component';
 import {CustomerType} from '@model/customer/customer-type';
 import {Page} from '@model/common/page';
+import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
+import {CustomerRegistryModule} from '@feature/customerregistry/customer-registry.module';
 
 @Component({
   selector: 'host',
@@ -107,7 +109,8 @@ describe('CustomerAcceptanceComponent', () => {
       declarations: [
         MockHostComponent,
         CustomerAcceptanceComponent,
-        MockCustomerInfoAcceptanceComponent
+        MockCustomerInfoAcceptanceComponent,
+        CustomerOptionContentComponent
       ],
       providers: [
         FormBuilder,

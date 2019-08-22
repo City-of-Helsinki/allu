@@ -11,6 +11,7 @@ import {CustomerService} from '../../../../src/app/service/customer/customer.ser
 import {CodeSetService} from '../../../../src/app/service/codeset/codeset.service';
 import {CodeSet} from '../../../../src/app/model/codeset/codeset';
 import {Observable, of} from 'rxjs/index';
+import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 
 class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}
@@ -58,7 +59,7 @@ describe('CustomerInfoComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
-      declarations: [CustomerInfoComponent],
+      declarations: [CustomerInfoComponent, CustomerOptionContentComponent],
       providers: [
         {provide: CustomerService, useClass: CustomerHubMock},
         {provide: CodeSetService, useClass: CodeSetServiceMock}

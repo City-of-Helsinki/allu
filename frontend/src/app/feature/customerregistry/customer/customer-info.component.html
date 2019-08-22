@@ -53,22 +53,10 @@
         <mat-autocomplete #nameSearch="matAutocomplete" class="multi-line-option">
           <mat-option *ngFor="let customer of matchingNameCustomers | async"
                       [value]="customer.name" (onSelectionChange)="customerSelected(customer)">
-            <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-              <div fxFlex="auto">
-                <h4 class="mat-option-header">{{customer.name}}</h4>
-                <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
-                  {{postalAddress.uiAddress}}
-                </div>
-                <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
-                  {{customer.sapCustomerNumber}}
-                </div>
-              </div>
-              <div fxFlex="none">
-                <mat-icon *ngIf="customer.invoicingOnly"
-                          [matTooltip]="'customer.invoicingOnly' | translation"
-                          class="mat-icon-18">attach_money</mat-icon>
-              </div>
-            </div>
+            <customer-option-content
+              [customer]="customer"
+              [showRegistryKey]="false"
+              [showInvoicingInfo]="showInvoicingInfo"></customer-option-content>
           </mat-option>
         </mat-autocomplete>
 
@@ -91,23 +79,10 @@
         <mat-autocomplete #registryKeySearch="matAutocomplete" class="multi-line-option">
           <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
                       [value]="customer.registryKey" (onSelectionChange)="customerSelected(customer)">
-            <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-              <div fxFlex="auto">
-                <h4 class="mat-option-header">{{customer.name}}</h4>
-                <div class="mat-option-line">{{customer.registryKey}}</div>
-                <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
-                  {{postalAddress.uiAddress}}
-                </div>
-                <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
-                  {{customer.sapCustomerNumber}}
-                </div>
-              </div>
-              <div fxFlex="none">
-                <mat-icon *ngIf="customer.invoicingOnly"
-                          [matTooltip]="'customer.invoicingOnly' | translation"
-                          class="mat-icon-18">attach_money</mat-icon>
-              </div>
-            </div>
+            <customer-option-content
+              [customer]="customer"
+              [showRegistryKey]="true"
+              [showInvoicingInfo]="showInvoicingInfo"></customer-option-content>
           </mat-option>
         </mat-autocomplete>
 
@@ -134,23 +109,10 @@
           <mat-autocomplete #nameSearch="matAutocomplete" class="multi-line-option">
             <mat-option *ngFor="let customer of matchingNameCustomers | async"
                         [value]="customer.name" (onSelectionChange)="customerSelected(customer)">
-              <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-                <div fxFlex="auto">
-                  <h4 class="mat-option-header">{{customer.name}}</h4>
-                  <div class="mat-option-line">{{customer.registryKey}}</div>
-                  <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
-                    {{postalAddress.uiAddress}}
-                  </div>
-                  <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
-                    {{customer.sapCustomerNumber}}
-                  </div>
-                </div>
-                <div fxFlex="none">
-                  <mat-icon *ngIf="customer.invoicingOnly"
-                            [matTooltip]="'customer.invoicingOnly' | translation"
-                            class="mat-icon-18">attach_money</mat-icon>
-                </div>
-              </div>
+              <customer-option-content
+                [customer]="customer"
+                [showRegistryKey]="true"
+                [showInvoicingInfo]="showInvoicingInfo"></customer-option-content>
             </mat-option>
           </mat-autocomplete>
 
@@ -175,23 +137,10 @@
           <mat-autocomplete #registryKeySearch="matAutocomplete" class="multi-line-option">
             <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
                         [value]="customer.registryKey" (onSelectionChange)="customerSelected(customer)">
-              <div fxLayout="row" fxLayoutAlign="start center" class="slim">
-                <div fxFlex="auto">
-                  <h4 class="mat-option-header">{{customer.name}}</h4>
-                  <div class="mat-option-line">{{customer.registryKey}}</div>
-                  <div class="mat-option-line" *ngIf="customer.postalAddress as postalAddress">
-                    {{postalAddress.uiAddress}}
-                  </div>
-                  <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
-                    {{customer.sapCustomerNumber}}
-                  </div>
-                </div>
-                <div fxFlex="none">
-                  <mat-icon *ngIf="customer.invoicingOnly"
-                            [matTooltip]="'customer.invoicingOnly' | translation"
-                            class="mat-icon-18">attach_money</mat-icon>
-                </div>
-              </div>
+              <customer-option-content
+                [customer]="customer"
+                [showRegistryKey]="true"
+                [showInvoicingInfo]="showInvoicingInfo"></customer-option-content>
             </mat-option>
           </mat-autocomplete>
 

@@ -18,6 +18,7 @@ import {CodeSet} from '../../../../../src/app/model/codeset/codeset';
 import {Observable, of} from 'rxjs/index';
 import {InformationRequestModalEvents} from '../../../../../src/app/feature/information-request/information-request-modal-events';
 import {NotificationService} from '@feature/notification/notification.service';
+import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 
 const headerText = 'Hakija';
 
@@ -77,7 +78,12 @@ describe('CustomerComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
-      declarations: [CustomerComponent, MockContactComponent, CustomerInfoComponent],
+      declarations: [
+        CustomerComponent,
+        MockContactComponent,
+        CustomerInfoComponent,
+        CustomerOptionContentComponent
+      ],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerService, useClass: CustomerServiceMock},

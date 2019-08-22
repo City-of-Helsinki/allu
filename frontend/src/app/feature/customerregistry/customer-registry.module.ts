@@ -11,12 +11,12 @@ import {CustomerModalComponent} from './customer/customer-modal.component';
 import {ContactModalComponent} from './contact/contact-modal.component';
 import {CustomerInfoComponent} from './customer/customer-info.component';
 import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
-import {InformationRequestModule} from '../information-request/information-request.module';
 import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {CustomerSearchEffects} from './effects/customer-search-effects';
 import {ContactSearchEffects} from '@feature/customerregistry/effects/contact-search-effects';
 import {reducersProvider, reducersToken} from '@feature/customerregistry/reducers';
+import {CustomerOptionContentComponent} from '@feature/customerregistry/customer/customer-option-content.component';
 
 @NgModule({
   imports: [
@@ -31,8 +31,7 @@ import {reducersProvider, reducersToken} from '@feature/customerregistry/reducer
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    AlluCommonModule,
-    InformationRequestModule
+    AlluCommonModule
   ],
   declarations: [
     CustomerRegistryComponent,
@@ -43,11 +42,13 @@ import {reducersProvider, reducersToken} from '@feature/customerregistry/reducer
     CustomerModalComponent,
     CustomerModalComponent,
     ContactModalComponent,
+    CustomerOptionContentComponent
   ],
   exports: [
     CustomerModalComponent,
     ContactModalComponent,
-    CustomerInfoComponent
+    CustomerInfoComponent,
+    CustomerOptionContentComponent
   ],
   providers: [
     reducersProvider
