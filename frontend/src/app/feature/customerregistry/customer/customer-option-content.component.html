@@ -6,7 +6,7 @@
       {{postalAddress.uiAddress}}
     </div>
     <div class="mat-option-line" *ngIf="showInvoicingInfo && customer.sapCustomerNumber">
-      {{customer.sapCustomerNumber}}
+      {{'customer.sapCustomerNumber' | translation}}: {{customer.sapCustomerNumber}}
     </div>
   </div>
   <div fxFlex="none">
