@@ -4,7 +4,7 @@ ARG CUSTOM_UID
 ARG CUSTOM_GID
 
 RUN apt-get update \
-    && apt-get install -y tzdata apache2 cron libapache2-mod-wsgi python-pip python-imaging python-yaml python-dev libproj9 build-essential libjpeg-dev zlib1g-dev libfreetype6-dev \
+    && apt-get install -y tzdata apache2 cron libapache2-mod-wsgi python-pip python-imaging python-yaml python-dev libproj9 build-essential libjpeg-dev zlib1g-dev libfreetype6-dev supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -37,6 +37,13 @@ EXPOSE 80
 EXPOSE 443
 
 ######################################################################################
+# Supervisord
+######################################################################################
+
+RUN pip install supervisor-stdout
+CMD /usr/bin/supervisord --configuration=/etc/supervisord.conf
+
+######################################################################################
 # Host volumes
 ######################################################################################
 
@@ -54,7 +61,6 @@ COPY fqdn.conf ssl-params.conf /etc/apache2/conf-available/
 
 COPY apache_start.sh /home/allu/apache
 RUN chmod ugo+x /home/allu/apache/apache_start.sh
-CMD /home/allu/apache/apache_start.sh
 
 RUN a2enmod proxy
 RUN a2enmod proxy_http
@@ -98,7 +104,13 @@ RUN ln -s /mapproxy/python /home/allu/mapproxy/python
 COPY root_crontab /tmp/root_crontab
 RUN crontab /tmp/root_crontab
 RUN rm /tmp/root_crontab
-CMD cron
+
+######################################################################################
+# Copy files to image
+######################################################################################
+
+# supervisord
+COPY supervisord.conf /etc/supervisord.conf
 
 ######################################################################################
 # Changes that should not be cached
