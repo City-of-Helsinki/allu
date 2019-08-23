@@ -6,6 +6,7 @@ import 'leaflet-measure-path';
 import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
 import '../../js/leaflet/draw-tools';
+import '../../js/leaflet/draw-toolbar';
 
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {MapUtil} from './map.util';
@@ -19,15 +20,13 @@ import {MapStore} from './map-store';
 import {MapEventHandler} from './map-event-handler';
 import {MapFeatureInfo} from './map-feature-info';
 import {MapPopupService} from './map-popup.service';
-import {Injectable, Optional} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {distinctUntilChanged, filter, map, takeUntil} from 'rxjs/operators';
 import {MapLayer} from '@service/map/map-layer';
-import GeoJSONOptions = L.GeoJSONOptions;
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {FeatureCollection, GeometryObject} from 'geojson';
-import {ArrayUtil} from '@util/array-util';
-import {FeatureGroup} from 'leaflet';
 import {Projection} from '@feature/map/projection';
+import GeoJSONOptions = L.GeoJSONOptions;
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -136,7 +135,7 @@ export class MapController {
   public setDynamicControls(controlsEnabled: boolean, editedItems?: L.FeatureGroup): void {
     const items = editedItems || this.editedItems;
 
-    const drawControl = new L.Control.Draw({
+    this.drawControl = new L.Control.Draw({
       position: 'topright',
       draw: drawOptions(controlsEnabled),
       intersectLayers: this.mapLayerService.contentLayerArray,
@@ -147,8 +146,7 @@ export class MapController {
     if (this.map && this.config.draw) {
       // remove old control
       Some(this.drawControl).do(control => this.map.removeControl(control));
-      this.map.addControl(drawControl);
-      this.drawControl = drawControl;
+      this.map.addControl(this.drawControl);
     }
   }
 
@@ -201,6 +199,17 @@ export class MapController {
     Some(this.editedItems.getBounds())
       .filter(bounds => Object.keys(bounds).length > 0) // has some bounds
       .do(bounds => this.map.fitBounds(bounds));
+  }
+
+  public savePending(): void {
+    this.saveIfActive(this.drawControl.getToolbar('edit'));
+    this.saveIfActive(this.drawControl.getToolbar('delete'));
+  }
+
+  private saveIfActive(control: L.EditToolbar): void {
+    if (control && control.enabled()) {
+      control.save();
+    }
   }
 
   reloadSelectedLayers(): void {
