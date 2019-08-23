@@ -1,6 +1,6 @@
 <div class="main-content">
   <progressbar [application]="application"></progressbar>
-  <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)">
+  <form [formGroup]="locationForm" (ngSubmit)="onSubmit()">
     <div fxLayout="row" fxLayoutGap="18px" fxLayoutAlign="start">
       <div fxFlex="calc(50% - 18px)">
         <application-type

@@ -306,10 +306,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .orElse(['/home']);
   }
 
-  onSubmit(form: LocationForm) {
+  onSubmit() {
     if (this.submitAllowed) {
       this.submitPending = true;
-      this.locationState.storeLocation(LocationForm.to(form));
+      this.mapController.savePending();
+      this.locationState.storeLocation(LocationForm.to(this.locationForm.value));
       const locations = this.locationState.locationsSnapshot;
       this.application.locations = locations;
       this.application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
