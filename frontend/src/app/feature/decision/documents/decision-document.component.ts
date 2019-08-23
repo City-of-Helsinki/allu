@@ -25,6 +25,7 @@ import {ArrayUtil} from '@util/array-util';
 export class DecisionDocumentComponent implements OnInit, OnDestroy {
   application$: Observable<Application>;
 
+  tab: DecisionTab;
   pdf$: Observable<Blob>;
   loading$: Observable<boolean>;
   processing$: Observable<boolean>;
@@ -63,6 +64,7 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
   }
 
   initContentByTab(tab: DecisionTab): void {
+    this.tab = tab;
     switch (tab) {
       case DecisionTab.CONTRACT: {
         this.pdf$ = this.store.select(fromDecision.getContractPdf);

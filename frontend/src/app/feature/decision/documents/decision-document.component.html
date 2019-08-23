@@ -10,6 +10,7 @@
     [application]="application$ | async"
     [approvedOperationalCondition]="approvedOperationalCondition$ | async"
     [hasInvoicing]="hasInvoicing$ | async"
+    [isTerminationTab]="tab == 'TERMINATION'"
     (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
 
   <contract-actions

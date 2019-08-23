@@ -37,6 +37,7 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
   @Input() application: Application;
   @Input() approvedOperationalCondition = false;
   @Input() hasInvoicing = false;
+  @Input() isTerminationTab = false;
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
   showProposal = false;
@@ -122,6 +123,12 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       ).subscribe(
         () => this.notification.success(findTranslation('decision.action.send')),
         error => this.notification.errorInfo(error));
+  }
+
+  public getDecisionReturnTextKey(): string {
+    return this.isTerminationTab ?
+      'decision.type.TERMINATED.rejectDraft' :
+      'decision.type.RETURNED_TO_PREPARATION.confirmText';
   }
 
 

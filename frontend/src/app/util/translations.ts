@@ -959,7 +959,8 @@ export const translations = {
       TERMINATED: {
         title: 'Irtisano hakemus',
         confirmText: 'Päätä',
-        confirmation: 'Hakemus irtisanottu'
+        confirmation: 'Hakemus irtisanottu',
+        rejectDraft: 'Hylkää luonnos'
       }
     },
     tab: {
