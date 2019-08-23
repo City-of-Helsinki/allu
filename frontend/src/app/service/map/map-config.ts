@@ -4,9 +4,9 @@ import {pathStyle} from './map-draw-styles';
 export function drawOptions(enabled: boolean): any {
   return enabled ? {
     // todo: this <false>false can be removed when typescript compiler allows type parameter of | false
-    polyline: <false>false,
-    marker: <false>false,
-    circlemarker: <false>false,
+    polyline: false,
+    marker: false,
+    circlemarker: false,
     polygon: {
       shapeOptions: pathStyle.DEFAULT_DRAW,
       allowIntersection: false,
@@ -32,7 +32,6 @@ export function drawOptions(enabled: boolean): any {
 export function editOptions(featureGroup: L.FeatureGroup, enabled: boolean): L.Control.EditOptions {
   return {
     featureGroup,
-    edit: enabled ? {selectedPathOptions: pathStyle.DEFAULT_EDIT} : false,
-    remove: enabled
+    edit: enabled ? {selectedPathOptions: pathStyle.DEFAULT_EDIT} : false
   };
 }
