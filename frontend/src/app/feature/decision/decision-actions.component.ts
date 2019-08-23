@@ -148,7 +148,8 @@ export class DecisionActionsComponent implements OnInit, OnChanges {
       data: {
         type,
         status,
-        distributionList: this.application.decisionDistributionList
+        distributionList: this.application.decisionDistributionList,
+        isTerminationTab: this.isTerminationTab
       }
     };
     return this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config)

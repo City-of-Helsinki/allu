@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>
-  {{['decision.type', type, 'title'] | translation }}
+  {{getHeaderTextKey() | translation }}
 </h1>
 <div mat-dialog-content>
   <form [formGroup]="decisionForm">
@@ -48,7 +48,7 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button type="button" color="primary" (click)="confirm()" [disabled]="!decisionForm.valid">
-    {{['decision.type', type, 'confirmText'] | translation | uppercase }}
+    {{getConfirmButtonTextKey() | translation | uppercase }}
   </button>
   <button mat-raised-button type="button" color="primary" (click)="cancel()">
     {{'common.button.cancel' | translation}}

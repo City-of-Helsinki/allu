@@ -960,7 +960,8 @@ export const translations = {
         title: 'Irtisano hakemus',
         confirmText: 'Päätä',
         confirmation: 'Hakemus irtisanottu',
-        rejectDraft: 'Hylkää luonnos'
+        rejectDraft: 'Hylkää luonnos',
+        rejectDraftConfirm: 'Hylkää'
       }
     },
     tab: {

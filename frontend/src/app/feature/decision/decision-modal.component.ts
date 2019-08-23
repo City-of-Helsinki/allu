@@ -22,6 +22,7 @@ interface DecisionModalData {
   status: ApplicationStatus;
   distributionList: Array<DistributionEntry>;
   distributionType: DistributionType;
+  isTerminationTab: boolean;
 }
 
 export const DECISION_MODAL_CONFIG = {
@@ -53,6 +54,7 @@ export class DecisionModalComponent implements OnInit {
   distributionList: Array<DistributionEntry>;
   emailDistribution: boolean;
   ownerSelection: boolean;
+  isTerminationTab: boolean;
 
   decisionForm: FormGroup;
 
@@ -72,6 +74,7 @@ export class DecisionModalComponent implements OnInit {
 
     this.status = this.data.status;
     this.type = this.data.type;
+    this.isTerminationTab = this.data.isTerminationTab;
     this.distributionList = this.data.distributionList;
     this.emailDistribution = DistributionType.EMAIL === this.data.distributionType
       && this.data.status !== ApplicationStatus.RETURNED_TO_PREPARATION;
@@ -95,6 +98,19 @@ export class DecisionModalComponent implements OnInit {
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  getHeaderTextKey(): string {
+    return this.isTerminationTab ?
+      'decision.type.TERMINATED.rejectDraft' :
+      `decision.type.${this.type}.title`;
+  }
+
+  getConfirmButtonTextKey(): string {
+    return this.isTerminationTab ?
+      'decision.type.TERMINATED.rejectDraftConfirm' :
+      `decision.type.${this.type}.confirmText`;
+
   }
 
   private decisionDistribution(): Array<DistributionEntry> {
