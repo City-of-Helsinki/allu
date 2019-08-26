@@ -1,7 +1,7 @@
 import * as fromDecision from '@feature/decision/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import {Injectable} from '@angular/core';
-import {Action, Store} from '@ngrx/store';
+import {Action, select, Store} from '@ngrx/store';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {TerminationService} from '@feature/decision/termination/termination-service';
 import {from, Observable} from 'rxjs/index';
@@ -14,6 +14,8 @@ import {
   MoveTerminationToDecision,
   MoveTerminationToDecisionFailed,
   MoveTerminationToDecisionSuccess,
+  RemoveTerminationDraftSuccess,
+  RemoveTerminationDraftFailure,
   Terminate,
   TerminationActionType,
   TerminationDraftFailed,
@@ -31,6 +33,7 @@ import {CommentType} from '@model/application/comment/comment-type';
 import {ApplicationStore} from '@service/application/application-store';
 import {ApplicationStatus} from '@model/application/application-status';
 import {Application} from '@model/application/application';
+import {withLatestExisting} from '@feature/common/with-latest-existing';
 
 @Injectable()
 export class TerminationEffects {
@@ -122,6 +125,25 @@ export class TerminationEffects {
       ])),
     ))
   );
+
+  @Effect()
+  removeTerminationDraft: Observable<Action> = this.actions.pipe(
+    ofType<Terminate>(TerminationActionType.RemoveTerminationDraft),
+    withLatestExisting(this.store.pipe(select(fromApplication.getCurrentApplication))),
+    switchMap(([action, application]) => {
+      return this.terminationService.removeTerminationInfo(application.id).pipe(
+        tap( () => this.router.navigate(['/applications', application.id, 'summary', 'decision'])),
+        switchMap(() => {
+          return from([new RemoveTerminationDraftSuccess()]);
+        }),
+        catchError(error => from([
+          new RemoveTerminationDraftFailure(error),
+          new NotifyFailure(error)
+        ]))
+      );
+    })
+  );
+
 
   private changeStatusToDecisionMaking(applicationId: number, terminationInfo: TerminationInfo): Observable<Application> {
     const statusChangeInfo = this.asStatusChangeInfo(terminationInfo);

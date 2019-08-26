@@ -5,6 +5,10 @@
               (click)="showTerminationModal()">
         {{'application.button.toTermination' | translation | uppercase}}
       </button>
+      <button mat-raised-button type="button" color="primary"
+              (click)="removeTerminationInfo()">
+        {{'application.button.removeTerminationDraft' | translation | uppercase}}
+      </button>
     </div>
   </ng-container>
 </div>

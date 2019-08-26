@@ -54,4 +54,10 @@ public class TerminationController {
   public ResponseEntity<List<Integer>> getTerminatedApplications() {
     return ResponseEntity.ok(terminationDao.getTerminatedApplications());
   }
+
+  @RequestMapping(value = "/{id}/termination/info", method = RequestMethod.DELETE)
+  public ResponseEntity<Boolean> removeTerminationInfo(@PathVariable Integer id) {
+    terminationDao.removeTerminationInfo(id);
+    return ResponseEntity.ok(true);
+  }
 }

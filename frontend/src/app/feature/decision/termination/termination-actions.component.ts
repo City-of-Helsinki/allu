@@ -22,4 +22,8 @@ export class TerminationActionsComponent implements OnInit, OnDestroy {
   showTerminationModal(): void {
     this.terminationModalService.showTerminationModal();
   }
+
+  removeTerminationInfo(): void {
+    this.terminationModalService.confirmDraftRemoval();
+  }
 }

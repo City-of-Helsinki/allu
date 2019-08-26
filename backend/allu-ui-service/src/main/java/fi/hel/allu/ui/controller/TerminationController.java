@@ -43,6 +43,13 @@ public class TerminationController {
     return ResponseEntity.ok(terminationService.updateTerminationInfo(applicationId, terminationInfo));
   }
 
+  @RequestMapping(value = "/{applicationId}/termination/info", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<Boolean> removeTerminationInfo(@PathVariable int applicationId) {
+    terminationService.removeTerminationInfo(applicationId);
+    return ResponseEntity.ok(true);
+  }
+
   @RequestMapping(value = "/{applicationId}/termination", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getTermination(@PathVariable Integer applicationId) {

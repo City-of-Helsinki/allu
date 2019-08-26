@@ -107,6 +107,29 @@ export function reducer(state: State = initialState, action: TerminationActions 
       };
     }
 
+    case TerminationActionType.RemoveTerminationDraft: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case TerminationActionType.RemoveTerminationDraftSuccess: {
+      return {
+        ...state,
+        loading: false,
+        termination: undefined,
+        terminationDocument: undefined
+      };
+    }
+
+    case TerminationActionType.RemoveTerminationDraftFailure: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
     case ApplicationActionType.LoadSuccess: {
       return {
         ...state,

@@ -51,6 +51,10 @@ public class TerminationService {
         requestEntity, TerminationInfo.class, applicationId).getBody();
   }
 
+  public void removeTerminationInfo(int applicationId) {
+    restTemplate.delete(applicationProperties.getTerminationInfoUrl(), applicationId);
+  }
+
   public void generateTermination(int applicationId, ApplicationJson application) {
     TerminationInfo info = getTerminationInfo(applicationId);
     TerminationJson terminationJson = terminationJsonMapper.mapToDocumentJson(application, info, false);

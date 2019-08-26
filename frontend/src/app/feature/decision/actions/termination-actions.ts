@@ -16,7 +16,10 @@ export enum TerminationActionType {
   TerminationDraftFailed = '[Termination] Termination draft failed',
   MoveTerminationToDecision = '[Termination] Move termination to decision',
   MoveTerminationToDecisionSuccess = '[Termination] Move termination to decision success',
-  MoveTerminationToDecisionFailed = '[Termination] Move termination to decision failed'
+  MoveTerminationToDecisionFailed = '[Termination] Move termination to decision failed',
+  RemoveTerminationDraft = '[Termination] Remove termination draft',
+  RemoveTerminationDraftSuccess = '[Termination] Remove termination draft success',
+  RemoveTerminationDraftFailure = '[Termination] Remove termination draft failure'
 }
 
 export class LoadInfo implements Action {
@@ -79,6 +82,21 @@ export class MoveTerminationToDecisionFailed implements ActionWithPayload<ErrorI
   constructor(public payload: ErrorInfo) {}
 }
 
+export class RemoveTerminationDraft implements Action {
+  readonly type = TerminationActionType.RemoveTerminationDraft;
+  constructor(public payload: TerminationInfo) {}
+}
+
+export class RemoveTerminationDraftSuccess implements Action {
+  readonly type = TerminationActionType.RemoveTerminationDraftSuccess;
+  constructor() {}
+}
+
+export class RemoveTerminationDraftFailure implements ActionWithPayload<ErrorInfo> {
+  readonly type = TerminationActionType.RemoveTerminationDraftFailure;
+  constructor(public payload: ErrorInfo) {}
+}
+
 export type TerminationActions =
   | LoadInfo
   | LoadInfoSuccess
@@ -91,4 +109,7 @@ export type TerminationActions =
   | TerminationDraftFailed
   | MoveTerminationToDecision
   | MoveTerminationToDecisionSuccess
-  | MoveTerminationToDecisionFailed;
+  | MoveTerminationToDecisionFailed
+  | RemoveTerminationDraft
+  | RemoveTerminationDraftSuccess
+  | RemoveTerminationDraftFailure;

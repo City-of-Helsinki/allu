@@ -40,6 +40,13 @@ export class TerminationService {
       : this.insertTerminationInfo(applicationId, terminationInfo);
   }
 
+  removeTerminationInfo(applicationId: number): Observable<TerminationInfo> {
+    const url = `${APPLICATION_URL}/${applicationId}/termination/info`;
+    return this.http.delete<BackendTerminationInfo>(url).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('termination.error.removeInfo')))
+    );
+  }
+
   private insertTerminationInfo(applicationId: number, terminationInfo: TerminationInfo) {
     const url = `${APPLICATION_URL}/${applicationId}/termination/info`;
     const info = JSON.stringify(TerminationInfoMapper.mapFrontEnd(terminationInfo));

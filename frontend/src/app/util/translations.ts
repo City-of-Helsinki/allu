@@ -505,11 +505,17 @@ export const translations = {
       handleInformationRequestResponse: 'Käsittele täydennyspyyntö',
       toDecisionMaking: 'Ehdota päätettäväksi',
       basicInfo: 'Jatka perustietoihin',
-      toTermination: 'Irtisano hakemus'
+      toTermination: 'Irtisano hakemus',
+      removeTerminationDraft: 'Poista luonnos'
     },
     confirmCancel: {
       title: 'Haluatko varmasti perua hakemuksen?',
       confirmText: 'Hyväksy',
+      cancelText: 'Hylkää'
+    },
+    confirmRemoveTerminationDraft: {
+      title: 'Haluatko varmasti poistaa luonnoksen?',
+      confirmText: 'Poista',
       cancelText: 'Hylkää'
     },
     clientData: {
@@ -1057,7 +1063,8 @@ export const translations = {
     error: {
       fetchInfo: 'Irtisanomistietojen hakeminen epäonnistui',
       saveInfo: 'Irtisanomistietojen tallentaminen epäonnistui',
-      fetchDocument: 'Irtisanomisdokumentin hakeminen epäonnistui'
+      fetchDocument: 'Irtisanomisdokumentin hakeminen epäonnistui',
+      removeInfo: 'Irtisanomistietojen poistaminen epäonnistui'
     }
   },
   approvalDocument: {
