@@ -381,10 +381,9 @@ export class MapController {
   private showTooltipOnClick(e: L.LeafletMouseEvent): void {
     const intersecting = MapEventHandler.clickIntersects(e, this.map, this.mapLayerService.clickableLayers);
     if (intersecting.length) {
-      const features = intersecting.map((l: any) => l.feature);
       L.popup({className: 'allu-map-popup'})
         .setLatLng(e.latlng)
-        .setContent(this.popupService.create(features))
+        .setContent(this.popupService.create(intersecting))
         .openOn(this.map);
     }
   }

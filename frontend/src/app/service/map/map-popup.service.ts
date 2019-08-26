@@ -1,8 +1,9 @@
 import * as L from 'leaflet';
 import {ALLU_PREFIX, isWinkkiId} from './map-layer-id';
-import {findTranslation} from '../../util/translations';
+import {findTranslation} from '@util/translations';
 import {ApplicationRef, ComponentFactoryResolver, Injectable, Injector} from '@angular/core';
-import {MapPopupComponent, MapPopupContentRow} from '../../feature/map/map-popup.component';
+import {MapPopupComponent, MapPopupContentRow} from '@feature/map/map-popup.component';
+import {Feature, GeometryObject} from 'geojson';
 
 @Injectable()
 export class MapPopupService {
@@ -12,7 +13,7 @@ export class MapPopupService {
               private appRef: ApplicationRef) {
   }
 
-  create(features: any[]): HTMLElement {
+  create(features: Feature<GeometryObject>[]): HTMLElement {
     if (features.length) {
       const header = this.createHeader(features);
       const content = this.createContent(features);
@@ -22,43 +23,45 @@ export class MapPopupService {
     }
   }
 
-  private createHeader(features: any[]): string {
+  private createHeader(features: Feature<GeometryObject>[]): string {
     if (features.length > 1) {
       return findTranslation('map.popup.titleMultipleFeatures', {count: String(features.length)});
     } else {
-      return this.createSingeFeatureHeader(features[0]);
+      return this.createSingleFeatureHeader(features[0]);
     }
   }
 
-  private createSingeFeatureHeader(feature: any): string {
+  private createSingleFeatureHeader(feature: Feature<GeometryObject>): string {
     const properties = feature.properties;
+    const featureId = feature.id.toString();
 
-    if (feature.id.indexOf(ALLU_PREFIX) >= 0) {
+    if (featureId.indexOf(ALLU_PREFIX) >= 0) {
       return properties.applicationId;
-    } else if (isWinkkiId(feature.id)) {
+    } else if (isWinkkiId(featureId)) {
       return properties.licence_identifier;
     } else {
-      throw new Error(`Unknown feature id ${feature.id}`);
+      throw new Error(`Unknown feature id ${featureId}`);
     }
   }
 
-  private createContent(features: any[]): MapPopupContentRow[] {
+  private createContent(features: Feature<GeometryObject>[]): MapPopupContentRow[] {
     return features.length > 1
       ? this.createSimplifiedContent(features)
       : this.createDetailedContent(features[0]);
   }
 
-  private createDetailedContent(feature: any): MapPopupContentRow[] {
+  private createDetailedContent(feature: Feature<GeometryObject>): MapPopupContentRow[] {
     const properties = feature.properties;
+    const featureId = feature.id.toString();
     let contentRows = [];
 
-    if (feature.id.indexOf(ALLU_PREFIX) >= 0) {
+    if (featureId.indexOf(ALLU_PREFIX) >= 0) {
       contentRows = [
         this.createContentRowLink(properties.name, properties.id, 'content-row-bold'),
         this.createContentRow(properties.applicant),
         this.createContentRow(`${properties.startTime} - ${properties.endTime}`)
       ];
-    } else if (isWinkkiId(feature.id)) {
+    } else if (isWinkkiId(featureId)) {
       contentRows = [
         this.createContentRow(properties.event_description, 'content-row-bold'),
         this.createContentRow(`${properties.lic_startdate_txt} - ${properties.lic_enddate_txt}`)
@@ -70,16 +73,17 @@ export class MapPopupService {
     return contentRows;
   }
 
-  private createSimplifiedContent(features: any[]): MapPopupContentRow[] {
+  private createSimplifiedContent(features: Feature<GeometryObject>[]): MapPopupContentRow[] {
     const contentRows = [];
     features.forEach(f => {
       const properties = f.properties;
-      if (f.id.indexOf(ALLU_PREFIX) >= 0) {
+      const featureId = f.id.toString();
+      if (featureId.indexOf(ALLU_PREFIX) >= 0) {
         contentRows.push(
           this.createContentRowLink(properties.applicationId, properties.id, 'content-row-bold'),
           this.createContentRow(properties.applicant),
           this.createContentRow(`${properties.startTime} - ${properties.endTime}`));
-      } else if (isWinkkiId(f.id)) {
+      } else if (isWinkkiId(featureId)) {
         contentRows.push(
           this.createContentRow(properties.licence_identifier, 'content-row-bold'),
           this.createContentRow(`${properties.lic_startdate_txt} - ${properties.lic_enddate_txt}`));
