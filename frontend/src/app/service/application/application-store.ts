@@ -330,7 +330,7 @@ export class ApplicationStore {
         if (!NumberUtil.isExisting(app) || app.status === ApplicationStatus.PRE_RESERVED) {
           return this.saveDraft(app);
         } else {
-          return this.applicationService.save(application);
+          return this.applicationService.save(app);
         }
       })
     );
