@@ -11,13 +11,13 @@ seeds:
     levels:
       to: 8
     refresh_before:
-      days: 1
+      hours: 1
 
 cleanups:
   remove_karttasarja_detailed_levels:
     caches: [hki_karttasarja_cache]
     remove_before:
-      days: 1
+      hours: 1
     levels:
       from: 9
 
@@ -42,4 +42,4 @@ cleanups:
       hki_johtokartta_yhdistelma_cache
     ]
     remove_before:
-      days: 1
+      hours: 1
