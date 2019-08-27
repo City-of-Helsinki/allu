@@ -4,6 +4,7 @@ import {findTranslation} from '@util/translations';
 import {ApplicationRef, ComponentFactoryResolver, Injectable, Injector} from '@angular/core';
 import {MapPopupComponent, MapPopupContentRow} from '@feature/map/map-popup.component';
 import {Feature, GeometryObject} from 'geojson';
+import {ArrayUtil} from '@util/array-util';
 
 @Injectable()
 export class MapPopupService {
@@ -15,8 +16,9 @@ export class MapPopupService {
 
   create(features: Feature<GeometryObject>[]): HTMLElement {
     if (features.length) {
-      const header = this.createHeader(features);
-      const content = this.createContent(features);
+      const entries = this.removeDuplicateEntries(features);
+      const header = this.createHeader(entries);
+      const content = this.createContent(entries);
       return this.createPopup(header, content);
     } else  {
       throw Error('Popup requires at least one feature');
@@ -117,5 +119,9 @@ export class MapPopupService {
     this.appRef.attachView(componentRef.hostView);
     popup.appendChild(componentRef.location.nativeElement);
     return popup;
+  }
+
+  private removeDuplicateEntries(features: Feature<GeometryObject>[]): Feature<GeometryObject>[] {
+    return features.filter(ArrayUtil.uniqueItem((item: Feature<GeometryObject>) => item.id));
   }
 }
