@@ -264,8 +264,8 @@ public class ApplicationServiceComposer {
       case OPERATIONAL_CONDITION:
         return StatusType.DECISION;
       case TERMINATED:
-        if (applicationHistoryService.hasStatusInHistory(applicationId, StatusType.ARCHIVED)) {
-          return StatusType.ARCHIVED;
+        if (applicationHistoryService.hasStatusInHistory(applicationId, StatusType.FINISHED)) {
+          return StatusType.FINISHED;
         } else {
           return StatusType.DECISION;
         }
