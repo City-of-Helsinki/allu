@@ -57,6 +57,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.mapStore.roleChange(this.role);
     this.mapController.availableLayers = this.availableLayers;
+    this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
   }
 
   /**
@@ -72,7 +73,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       showOnlyApplicationArea: this.showOnlyApplicationArea
     });
     this.initSubscriptions();
-    this.loading$ = this.store.pipe(select(fromMap.getApplicationsLoading));
   }
 
   ngOnDestroy() {
