@@ -142,27 +142,27 @@ export class ComplexValidator {
     };
   }
 
-  static after(dateCtrl: AbstractControl): ValidatorFn {
-    return (fg: AbstractControl) => {
-      const first = fg.value;
-      const second = dateCtrl.value;
-
-      if (first && second) {
-        const invalid = !TimeUtil.isBefore(first, second);
-        return invalid ? {after: `${first} not after ${second}`} : undefined;
-      }
-      return undefined;
-    };
-  }
-
   static before(dateCtrl: AbstractControl): ValidatorFn {
     return (fg: AbstractControl) => {
       const first = fg.value;
       const second = dateCtrl.value;
 
       if (first && second) {
-        const invalid = !TimeUtil.isAfter(first, second);
+        const invalid = !TimeUtil.isBefore(first, second);
         return invalid ? {before: `${first} not before ${second}`} : undefined;
+      }
+      return undefined;
+    };
+  }
+
+  static after(dateCtrl: AbstractControl): ValidatorFn {
+    return (fg: AbstractControl) => {
+      const first = fg.value;
+      const second = dateCtrl.value;
+
+      if (first && second) {
+        const invalid = !TimeUtil.isAfter(first, second);
+        return invalid ? {after: `${first} not after ${second}`} : undefined;
       }
       return undefined;
     };

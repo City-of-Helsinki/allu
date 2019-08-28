@@ -107,7 +107,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     const buildStart = this.applicationForm.get('structureTimes.startTime');
     const teardownEnd = this.applicationForm.get('structureTimes.endTime');
 
-    buildStart.setValidators(ComplexValidator.after(eventStart));
-    teardownEnd.setValidators(ComplexValidator.before(eventEnd));
+    buildStart.setValidators(ComplexValidator.before(eventStart));
+    teardownEnd.setValidators(ComplexValidator.after(eventEnd));
   }
 }

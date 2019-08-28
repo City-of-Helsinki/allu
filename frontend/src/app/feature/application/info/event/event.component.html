@@ -176,7 +176,7 @@
                       {{'application.event.field.startBeforeEnd' | translation}}
                     </field-error>
                   </mat-hint>
-                  <mat-error *ngIf="applicationForm.get('structureTimes.startTime').hasError('after')">
+                  <mat-error *ngIf="applicationForm.get('structureTimes.startTime').hasError('before')">
                     {{'application.event.field.buildBeforeEventStart' | translation}}
                   </mat-error>
                 </mat-form-field>
@@ -190,7 +190,7 @@
                   <mat-datepicker-toggle matSuffix [for]="structureEndTimePicker"
                                          [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #structureEndTimePicker></mat-datepicker>
-                  <mat-error *ngIf="applicationForm.get('structureTimes.endTime').hasError('before')">
+                  <mat-error *ngIf="applicationForm.get('structureTimes.endTime').hasError('after')">
                     {{'application.event.field.teardownAfterEventEnd' | translation}}
                   </mat-error>
                 </mat-form-field>
