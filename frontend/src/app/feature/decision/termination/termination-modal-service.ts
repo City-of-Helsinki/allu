@@ -29,7 +29,8 @@ export class TerminationModalService {
       data: {
         applicationType: app.type,
         applicationId: app.id,
-        termination: termination
+        termination: termination,
+        applicationStartTime: app.startTime
       }
     };
   }

@@ -1002,6 +1002,7 @@ export const translations = {
       },
       error: {
         expirationTimeMissing: 'Sopimuksen voimassaolon päättymisen päivä puuttuu',
+        expirationTimeBeforeApplicationStartDate: 'Sopimuksen voimassaolon päättymisen päivä ei voi olla ennen hakemuksen alkupäivää',
         commentMissing: 'Irtisanomisteksti puuttuu',
         handlerMissing: 'Päättäjä puuttuu'
       },

@@ -168,6 +168,19 @@ export class ComplexValidator {
     };
   }
 
+  static afterOrSameDay(date: Date): ValidatorFn {
+    return (fg: AbstractControl) => {
+      const first = fg.value;
+      const second = date;
+
+      if (first && second) {
+        const invalid = TimeUtil.isBefore(first, second, 'day');
+        return invalid ? {afterOrSameDay: `${first} not after or same day as ${second}`} : undefined;
+      }
+      return undefined;
+    };
+  }
+
   static inThePast(fc: AbstractControl): ValidationErrors {
     const now = new Date();
     now.setHours(0, 0, 0, 0); // start of the day

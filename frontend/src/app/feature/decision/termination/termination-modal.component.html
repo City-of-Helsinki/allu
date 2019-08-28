@@ -15,6 +15,9 @@
             <field-error [form]="terminationForm" field="expirationTime" hasError="required">
               {{'decision.termination.error.expirationTimeMissing' | translation}}
             </field-error>
+            <field-error [form]="terminationForm" field="expirationTime" hasError="afterOrSameDay">
+              {{'decision.termination.error.expirationTimeBeforeApplicationStartDate' | translation}}
+            </field-error>
           </mat-hint>
         </mat-form-field>
       </div>

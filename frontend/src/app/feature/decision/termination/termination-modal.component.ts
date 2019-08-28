@@ -10,6 +10,7 @@ import {filter, take} from 'rxjs/operators';
 import {ConfigurationHelperService} from '@service/config/configuration-helper.service';
 import {ApplicationType} from '@model/application/type/application-type';
 import {TerminationInfo} from '@feature/decision/termination/termination-info';
+import {ComplexValidator} from '@util/complex-validator';
 
 export const TERMINATION_MODAL_CONFIG = {width: '800px'};
 
@@ -17,6 +18,7 @@ export interface TerminationData {
   applicationType: ApplicationType;
   applicationId: number;
   termination: TerminationInfo;
+  applicationStartTime: Date;
 }
 
 @Component({
@@ -42,7 +44,8 @@ export class TerminationModalComponent implements OnInit {
     this.terminationForm = this.fb.group({
       comment: [this.existingTermination.comment, Validators.required],
       handler: [this.existingTermination.owner, Validators.required],
-      expirationTime: [this.existingTermination.expirationTime, Validators.required]
+      expirationTime: [this.existingTermination.expirationTime,
+        [Validators.required, ComplexValidator.afterOrSameDay(this.data.applicationStartTime)]]
     });
 
     this.handlers = this.userService.getByRole(RoleType.ROLE_DECISION);
