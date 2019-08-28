@@ -135,7 +135,7 @@ export class MapController {
   public setDynamicControls(controlsEnabled: boolean, editedItems?: L.FeatureGroup): void {
     const items = editedItems || this.editedItems;
 
-    this.drawControl = new L.Control.Draw({
+    const drawControl = new L.Control.Draw({
       position: 'topright',
       draw: drawOptions(controlsEnabled),
       intersectLayers: this.mapLayerService.contentLayerArray,
@@ -146,8 +146,10 @@ export class MapController {
     if (this.map && this.config.draw) {
       // remove old control
       Some(this.drawControl).do(control => this.map.removeControl(control));
-      this.map.addControl(this.drawControl);
+      this.map.addControl(drawControl);
     }
+
+    this.drawControl = drawControl;
   }
 
   public drawToLayer(layerName: string, featureCollection: FeatureCollection<GeometryObject>, style?: GeoJSONOptions) {
@@ -203,7 +205,6 @@ export class MapController {
 
   public savePending(): void {
     this.saveIfActive(this.drawControl.getToolbar('edit'));
-    this.saveIfActive(this.drawControl.getToolbar('delete'));
   }
 
   private saveIfActive(control: L.EditToolbar): void {
