@@ -30,7 +30,6 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   changes$: Observable<ChangeHistoryItem[]>;
   showBasicInfo$: Observable<boolean>;
   selectedLayersIds$: Observable<string[]>;
-  availableLayerIds$: Observable<string[] | number[]>;
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
 
@@ -45,7 +44,6 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
     this.comments$ = this.store.pipe(select(fromProject.getLatestComments('desc')));
     this.changes$ = this.store.pipe(select(fromProject.getHistory));
     this.showBasicInfo$ = this.store.pipe(select(fromProject.getShowBasicInfo));
-    this.availableLayerIds$ = this.store.pipe(select(fromProject.getLayerIds));
     this.selectedLayersIds$ = this.store.pipe(select(fromProject.getSelectedLayerIds));
     this.availableLayers$ = this.store.pipe(select(fromProject.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromProject.getSelectedLayers));

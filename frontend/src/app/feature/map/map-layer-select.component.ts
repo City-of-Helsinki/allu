@@ -24,7 +24,6 @@ import {StoredFilterType} from '@model/user/stored-filter-type';
 })
 export class MapLayerSelectComponent implements OnInit, OnDestroy {
   @Input() targetType: ActionTargetType = ActionTargetType.Home;
-  @Input() layers: string[] = [];
   @Input() classNames: string[] = [];
 
   treeControl: FlatTreeControl<MapLayerFlatNode>;

@@ -69,7 +69,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   defaultFilter: Observable<StoredFilter>;
   availableFilters: Observable<StoredFilter[]>;
   selectedLayers$: Observable<string[]>;
-  availableLayers$: Observable<string[] | number[]>;
   kind$: Observable<ApplicationKind>;
 
   private _timePeriod: TimePeriod = new TimePeriod();
@@ -120,7 +119,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.selectedFilter = this.storedFilterStore.getCurrent(StoredFilterType.MAP);
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
-    this.availableLayers$ = this.store.pipe(select(this.getLayerIds()));
     this.selectedLayers$ = this.store.pipe(select(this.getSelectedLayerIds()));
 
     this.maxEndDate$ = this.searchForm.get('startDate').valueChanges.pipe(

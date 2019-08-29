@@ -33,7 +33,6 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   multipleLocations = false;
   canBeEdited = true;
   selectedLayersIds$: Observable<string[]>;
-  availableLayerIds$: Observable<string[] | number[]>;
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
   fixedLocationInfos$: Observable<string[]>;
@@ -67,7 +66,6 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngOnInit(): void {
-    this.availableLayerIds$ = this.store.pipe(select(fromLocationMapLayers.getLayerIds));
     this.selectedLayersIds$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayerIds));
     this.availableLayers$ = this.store.pipe(select(fromLocationMapLayers.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayers));
