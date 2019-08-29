@@ -12,6 +12,8 @@ import {AddLayers, AddTreeStructure, MapLayerActionType, SelectLayers} from '@fe
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {MapLayerService} from '@feature/map/map-layer.service';
 import {MapStore} from '@service/map/map-store';
+import {ConfigService} from '@service/config/config.service';
+import {createLayerTree} from '@feature/map/map-layer-tree';
 import LayersObject = Control.LayersObject;
 
 @Injectable()
@@ -19,6 +21,7 @@ export class MapLayerEffects {
   constructor(private actions: Actions,
               private store: Store<fromRoot.State>,
               private layerService: MapLayerService,
+              private configService: ConfigService,
               private mapStore: MapStore) {
   }
 
@@ -38,11 +41,12 @@ export class MapLayerEffects {
   initMapLayerTree: Observable<Action> = defer(() => this.store.pipe(
     select(fromAuth.getLoggedIn),
     filter(loggedIn => loggedIn),
-    switchMap(() => this.layerService.createLayerTreeStructure()),
-    switchMap(structure => [
-      new AddTreeStructure(ActionTargetType.Home, structure),
-      new AddTreeStructure(ActionTargetType.Location, structure),
-      new AddTreeStructure(ActionTargetType.Project, structure)
+    switchMap(() => this.configService.isStagingOrProduction()),
+    switchMap((isStagingOrProduction) => [
+      new AddTreeStructure(ActionTargetType.Home, createLayerTree(isStagingOrProduction, true)),
+      new AddTreeStructure(ActionTargetType.Location, createLayerTree(isStagingOrProduction, true)),
+      new AddTreeStructure(ActionTargetType.Project, createLayerTree(isStagingOrProduction, true)),
+      new AddTreeStructure(ActionTargetType.Application, createLayerTree(isStagingOrProduction, false))
     ])
   ));
 

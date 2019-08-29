@@ -2,7 +2,6 @@ import {ApplicationType, applicationTypeList} from '@model/application/type/appl
 import {findTranslation} from '@util/translations';
 import {AuthService} from '@service/authorization/auth.service';
 import {Injectable} from '@angular/core';
-import {ConfigService} from '@service/config/config.service';
 import {CITY_DISTRICTS, pathStyle, winkki} from '../../service/map/map-draw-styles';
 import {Projection} from '@feature/map/projection';
 import * as L from 'leaflet';
@@ -12,8 +11,6 @@ import 'leaflet.markercluster.layersupport';
 import '../../js/leaflet/tilelayer-auth';
 import '../../js/leaflet/wfs-geojson';
 import 'leaflet-wfst';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/internal/operators';
 import TimeoutOptions = L.TimeoutOptions;
 import {MapLayer} from '@service/map/map-layer';
 import {ArrayUtil} from '@util/array-util';
@@ -30,47 +27,6 @@ const STATUS_PLAN = 'PLAN';
 const STATUS_ACTIVE = 'ACTIVE';
 const DETAILED_LAYER_MIN_ZOOM = 10;
 const OVERLAY_TILE_SIZE = 512; // px
-
-export const commonLayers = {
-  'Karttasarja': null,
-  'Kantakartta': null,
-  'Ajantasa-asemakaava': null,
-  'Kiinteistökartta': null,
-  'Ortoilmakuva': null,
-  'Winkin kartat': {
-    'Tulevat katutyöt': null,
-    'Aktiiviset katutyöt': null,
-    'Tulevat vuokraukset': null,
-    'Aktiiviset vuokraukset': null,
-  },
-  'Muut': {
-    'Kaupunginosat': null
-  }
-};
-
-export const restrictedLayers = {
-  'Maalämpökaivot': null,
-  'Kiinteistökartat': {
-    'Maanomistus ja vuokraus yhdistelmä': null,
-    'Maanomistus vuokrausalueet': null,
-    'Maanomistus sisäinen vuokraus': null
-  },
-  'Maanalaiset tilat': {
-    'Maanalaiset tilat reunaviivat': null,
-    'Maanalaiset tilat alueet': null,
-  },
-  'Johtokartat': {
-    'Imujätehuolto': null,
-    'Sähkö': null,
-    'Tietoliikenne': null,
-    'Kaukolämpö': null,
-    'Kaukojäähdytys': null,
-    'Kaasu': null,
-    'Vesijohto': null,
-    'Viemari': null,
-    'Yhdistelmäjohtokartta': null
-  },
-};
 
 export const applicationLayers = Object.keys(ApplicationType)
   .map(type => findTranslation(['application.type', type]));
@@ -89,7 +45,7 @@ export class MapLayerService {
     zoomToBoundsOnClick: true
   });
 
-  constructor(private authService: AuthService, private config: ConfigService, private projection: Projection) {
+  constructor(private authService: AuthService, private projection: Projection) {
     this.contentLayers = applicationTypeList
       .map(type => new MapLayer(findTranslation(['application.type', type]), L.featureGroup(), type));
 
@@ -124,15 +80,6 @@ export class MapLayerService {
     return this.contentLayers
       .map(cl => cl.layer)
       .map(layer => <L.FeatureGroup>layer);
-  }
-
-  createLayerTreeStructure(): Observable<any> {
-    return this.config.isStagingOrProduction().pipe(
-      map(stagingOrProduction => stagingOrProduction
-          ? this.createLayerTreeWithRestricted()
-          : this.createCommonLayerTree()
-      )
-    );
   }
 
   createOverlays(): L.Control.LayersObject {
@@ -202,30 +149,6 @@ export class MapLayerService {
 
   private toArray(layers: L.Control.LayersObject): L.Layer[] {
     return Object.keys(layers).map(key => layers[key]);
-  }
-
-  private createCommonLayerTree() {
-    return {
-      'Karttatasot': commonLayers,
-      'Hakemustyypit': this.createApplicationlayerTree()
-    };
-  }
-
-  private createLayerTreeWithRestricted() {
-    return {
-      'Karttatasot': {
-        ...commonLayers,
-        ...restrictedLayers
-      },
-      'Hakemustyypit': this.createApplicationlayerTree()
-    };
-  }
-
-  private createApplicationlayerTree() {
-    return applicationLayers.reduce((tree, layer) => {
-      tree[layer] = null;
-      return tree;
-    }, {});
   }
 
   private createAuthenticatedOverlayLayer(layerName: string, token: string, minZoom?: number): L.TileLayer {
