@@ -3,10 +3,11 @@ import {MapLayer} from '@service/map/map-layer';
 import {MapLayerActions, MapLayerActionType} from '@feature/map/actions/map-layer-actions';
 import {createReducer} from '@util/create-reducer';
 import {applicationLayers} from '@feature/map/map-layer.service';
+import {TreeStructureNode} from '@feature/common/tree/tree-node';
 
 export interface State extends EntityState<MapLayer> {
   selected: string[];
-  treeStructure: any;
+  treeStructure: TreeStructureNode<void>;
 }
 
 export const adapter: EntityAdapter<MapLayer> = createEntityAdapter<MapLayer>({

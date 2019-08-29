@@ -1,6 +1,10 @@
 import {Observable} from 'rxjs/internal/Observable';
 import {of} from 'rxjs/internal/observable/of';
 
+export interface TreeStructureNode<T> {
+  [key: string]: TreeStructureNode<T> | T | null;
+}
+
 export interface TreeNode {
   id: any;
   children?: TreeNode[];
