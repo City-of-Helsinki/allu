@@ -223,7 +223,7 @@ public class SearchSyncService {
   }
 
   private ApplicationES mapToES(Application application) {
-    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(application.getId());
+    ApplicationJson applicationJson = applicationServiceComposer.getCompactPopulatedApplication(application);
     return applicationMapper.createApplicationESModel(applicationJson);
   }
 

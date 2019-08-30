@@ -78,6 +78,18 @@ public class ApplicationServiceComposer {
     return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
+  /**
+   * Get's compact populated application json based on
+   * given application. Json is populated with application data and some
+   * related data.
+   *
+   * @param application Application which is used to populate the json
+   * @return Compact populated json representation of application
+   */
+  public ApplicationJson getCompactPopulatedApplication(Application application) {
+    return applicationJsonService.getCompactPopulatedApplication(application);
+  }
+
   public List<ApplicationJson> findApplicationsByIds(List<Integer> ids) {
     return applicationService.findApplicationsById(ids).stream()
         .map(app -> applicationJsonService.getCompactPopulatedApplication(app))

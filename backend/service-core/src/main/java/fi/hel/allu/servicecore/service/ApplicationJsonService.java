@@ -59,7 +59,6 @@ public class ApplicationJsonService {
 
     applicationJson.setHandler(applicationModel.getHandler() != null ? userService.findUserById(applicationModel.getHandler()) : null);
     applicationJson.setAttachmentList(attachmentService.findAttachmentsForApplication(applicationModel.getId()));
-    applicationJson.setComments(commentService.findByApplicationId(applicationModel.getId()));
 
     return applicationJson;
   }
@@ -80,6 +79,8 @@ public class ApplicationJsonService {
         .ifPresent(owner -> json.setOwner(owner));
 
     setAddress(json);
+
+    json.setComments(commentService.findByApplicationId(model.getId()));
 
     return json;
   }
