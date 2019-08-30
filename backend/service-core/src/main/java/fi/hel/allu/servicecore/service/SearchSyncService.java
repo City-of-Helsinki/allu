@@ -26,6 +26,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -126,6 +128,7 @@ public class SearchSyncService {
     Page<T> fromModel;
     do {
       fromModel = fetcher.apply(page);
+      logger.info("Page {} / {}", page + 1, fromModel.getTotalPages());
       if (fromModel.getNumberOfElements() > 0) {
         List<U> toSearch = fromModel.getContent().stream().map(mapper).collect(Collectors.toList());
         sender.accept(toSearch);
@@ -135,19 +138,27 @@ public class SearchSyncService {
   }
 
   private void syncApplications() {
+    logger.info("Application sync started");
     syncData(p -> fetchApplications(p), l -> sendApplications(l), a -> mapToES(a));
+    logger.info("Application sync finished");
   }
 
   private void syncProjects() {
+    logger.info("Project sync started");
     syncData(p -> fetchProjects(p), l -> sendProjects(l), p -> mapToES(p));
+    logger.info("Project sync finished");
   }
 
   private void syncCustomers() {
+    logger.info("Customer sync started");
     syncData(p -> fetchCustomers(p), l -> sendCustomers(l), c -> mapToES(c));
+    logger.info("Customer sync finished");
   }
 
   private void syncContacts() {
+    logger.info("Contact sync started");
     syncData(p -> fetchContacts(p), l -> sendContacts(l), c -> mapToES(c));
+    logger.info("Contact sync finished");
   }
 
   private Page<Application> fetchApplications(int pageNum) {
