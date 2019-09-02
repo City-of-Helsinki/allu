@@ -33,7 +33,8 @@ export class MapLayerEffects {
     switchMap(layers => [
       new AddLayers(ActionTargetType.Home, layers),
       new AddLayers(ActionTargetType.Location, layers),
-      new AddLayers(ActionTargetType.Project, layers)
+      new AddLayers(ActionTargetType.Project, layers),
+      new AddLayers(ActionTargetType.Application, layers)
     ])
   ));
 

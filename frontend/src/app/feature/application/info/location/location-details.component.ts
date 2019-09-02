@@ -12,10 +12,11 @@ import * as fromRoot from '@feature/allu/reducers';
 import {select, Store} from '@ngrx/store';
 import {map} from 'rxjs/internal/operators';
 import {findTranslation, findTranslationWithDefault} from '@app/util/translations';
-import * as fromLocationMapLayers from '@feature/application/location/reducers';
+import * as fromApplication from '@feature/application/reducers';
 import {MapLayer} from '@service/map/map-layer';
 import {needsPaymentTariff} from '@feature/common/payment-tariff';
 import {fixedLocationInfo, groupByArea} from '@model/common/fixed-location';
+import {TreeStructureNode} from '@feature/common/tree/tree-node';
 
 @Component({
   selector: 'location-details',
@@ -36,6 +37,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
   fixedLocationInfos$: Observable<string[]>;
+  layerTree$: Observable<TreeStructureNode<void>>;
 
   private _application: Application;
 
@@ -66,9 +68,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngOnInit(): void {
-    this.selectedLayersIds$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayerIds));
-    this.availableLayers$ = this.store.pipe(select(fromLocationMapLayers.getAllLayers));
-    this.selectedLayers$ = this.store.pipe(select(fromLocationMapLayers.getSelectedLayers));
+    this.selectedLayersIds$ = this.store.pipe(select(fromApplication.getSelectedLayerIds));
+    this.availableLayers$ = this.store.pipe(select(fromApplication.getAllLayers));
+    this.selectedLayers$ = this.store.pipe(select(fromApplication.getSelectedLayers));
+    this.layerTree$ = this.store.pipe(select(fromApplication.getTreeStructure));
   }
 
   ngAfterViewInit(): void {

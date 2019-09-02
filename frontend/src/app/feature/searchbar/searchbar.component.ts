@@ -27,6 +27,7 @@ import {ComplexValidator} from '@util/complex-validator';
 import {TimeUtil} from '@util/time.util';
 import {ApplicationKind} from '@model/application/type/application-kind';
 import {FormUtil} from '@util/form.util';
+import {TreeStructureNode} from '@feature/common/tree/tree-node';
 
 
 enum BarType {
@@ -69,6 +70,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   defaultFilter: Observable<StoredFilter>;
   availableFilters: Observable<StoredFilter[]>;
   selectedLayers$: Observable<string[]>;
+  layerTree$: Observable<TreeStructureNode<void>>;
   kind$: Observable<ApplicationKind>;
 
   private _timePeriod: TimePeriod = new TimePeriod();
@@ -120,6 +122,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.availableFilters = this.storedFilterStore.getAvailable(StoredFilterType.MAP);
     this.defaultFilter = this.storedFilterStore.getDefault(StoredFilterType.MAP);
     this.selectedLayers$ = this.store.pipe(select(this.getSelectedLayerIds()));
+    this.layerTree$ = this.store.pipe(select(this.getLayerTree()));
 
     this.maxEndDate$ = this.searchForm.get('startDate').valueChanges.pipe(
       map(start => TimeUtil.toTimePeriodEnd(start, this.timePeriod.endTime))
@@ -210,5 +213,11 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     return this.targetType === ActionTargetType.Location
       ? fromLocationMapLayers.getSelectedLayerIds
       : fromMap.getSelectedLayerIds;
+  }
+
+  private getLayerTree() {
+    return this.targetType === ActionTargetType.Location
+      ? fromLocationMapLayers.getTreeStructure
+      : fromMap.getTreeStructure;
   }
 }

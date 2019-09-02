@@ -1,11 +1,17 @@
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {select, Store} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
 import {Subject} from 'rxjs/internal/Subject';
-import {map, takeUntil} from 'rxjs/operators';
 import {SelectLayers} from '@feature/map/actions/map-layer-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {getChildren, getLevel, hasChild as nodeHasChild, isExpandable, isRoot as nodeIsRoot} from '@feature/common/tree/tree-node';
+import {
+  getChildren,
+  getLevel,
+  hasChild as nodeHasChild,
+  isExpandable,
+  isRoot as nodeIsRoot,
+  TreeStructureNode
+} from '@feature/common/tree/tree-node';
 import {buildTree, MapLayerFlatNode, MapLayerNode, transformer} from './map-layer-node';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material';
@@ -24,6 +30,7 @@ import {StoredFilterType} from '@model/user/stored-filter-type';
 })
 export class MapLayerSelectComponent implements OnInit, OnDestroy {
   @Input() targetType: ActionTargetType = ActionTargetType.Home;
+  @Input() layerTree: TreeStructureNode<void>;
   @Input() classNames: string[] = [];
 
   treeControl: FlatTreeControl<MapLayerFlatNode>;
@@ -42,11 +49,7 @@ export class MapLayerSelectComponent implements OnInit, OnDestroy {
     this.treeFlattener = new MatTreeFlattener(transformer, getLevel, isExpandable, getChildren);
     this.treeControl = new FlatTreeControl<MapLayerFlatNode>(getLevel, isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    this.store.pipe(
-      select(fromMapLayers.getTreeStructure),
-      takeUntil(this.destroy),
-      map(treeStructure => buildTree(treeStructure)),
-    ).subscribe(treeStructure => this.dataSource.data = treeStructure);
+    this.dataSource.data = buildTree(this.layerTree);
   }
 
   ngOnDestroy(): void {

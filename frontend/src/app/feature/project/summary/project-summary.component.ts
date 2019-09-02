@@ -16,6 +16,7 @@ import {shrinkFadeInOut} from '@feature/common/animation/common-animations';
 import {MapLayer} from '@service/map/map-layer';
 import {SearchSuccess} from '@feature/map/actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
+import {TreeStructureNode} from '@feature/common/tree/tree-node';
 
 @Component({
   selector: 'project-summary',
@@ -32,6 +33,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
   selectedLayersIds$: Observable<string[]>;
   selectedLayers$: Observable<MapLayer[]>;
   availableLayers$: Observable<MapLayer[]>;
+  layerTree$: Observable<TreeStructureNode<void>>;
 
   private destroy$ = new Subject<boolean>();
   @ViewChild(MapComponent) private map: MapComponent;
@@ -47,6 +49,7 @@ export class ProjectSummaryComponent implements OnInit, OnDestroy, AfterViewInit
     this.selectedLayersIds$ = this.store.pipe(select(fromProject.getSelectedLayerIds));
     this.availableLayers$ = this.store.pipe(select(fromProject.getAllLayers));
     this.selectedLayers$ = this.store.pipe(select(fromProject.getSelectedLayers));
+    this.layerTree$ = this.store.pipe(select(fromProject.getTreeStructure));
   }
 
   ngAfterViewInit(): void {
