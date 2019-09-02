@@ -71,7 +71,7 @@
     env:
       xpack.security.enabled: "false"
       cluster.name: allu-cluster
-      ES_JAVA_OPTS: "-Xms256m -Xmx2048m"
+      ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
   become: yes
 
 - name: remove Docker image tar file
