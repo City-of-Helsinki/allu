@@ -20,6 +20,7 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ApplicationKind} from '@model/application/type/application-kind';
 import * as fromLayers from '@feature/map/reducers/map-layer-reducer';
 import {createApplicationSearchSelectors} from '@feature/application/reducers/application-search-reducer';
+import {createMapLayerSelectors} from '@feature/map/reducers';
 
 export interface ApplicationState {
   application: fromApplication.State;
@@ -30,6 +31,7 @@ export interface ApplicationState {
   search: fromApplicationSearch.State;
   cableReportSearch: fromApplicationSearch.State;
   placementContractSearch: fromApplicationSearch.State;
+  layers: fromLayers.State;
 }
 
 export interface State extends fromRoot.State {
@@ -44,7 +46,8 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   replacementHistory: fromReplacementHistory.reducer,
   search: fromApplicationSearch.createReducerFor(ActionTargetType.Application),
   cableReportSearch: fromApplicationSearch.createReducerFor(ActionTargetType.CableReport),
-  placementContractSearch: fromApplicationSearch.createReducerFor(ActionTargetType.PlacementContract)
+  placementContractSearch: fromApplicationSearch.createReducerFor(ActionTargetType.PlacementContract),
+  layers: fromLayers.createReducerFor(ActionTargetType.Application),
 };
 
 export const reducersToken = new InjectionToken<ActionReducerMap<State>>('Application reducers');
@@ -259,3 +262,20 @@ export const getMatchingByTargetType = (type: ActionTargetType) => {
       throw new Error(`Invalid target type for matching applications ${type}`);
   }
 };
+
+// Map layer selectors
+export const getMapLayersEntityState = createSelector(
+  getApplicationState,
+  (state: ApplicationState) => state.layers
+);
+
+export const {
+  selectIds: getLayerIds,
+  selectEntities: getLayerEntities,
+  selectAll: getAllLayers,
+  selectTotal: getLayersCount,
+  getSelectedLayerIds: getSelectedLayerIds,
+  getSelectedLayers,
+  getTreeStructure,
+  getSelectedApplicationLayers
+} = createMapLayerSelectors(getMapLayersEntityState);
