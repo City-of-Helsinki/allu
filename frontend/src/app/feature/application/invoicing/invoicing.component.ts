@@ -36,7 +36,7 @@ import {createTranslated} from '@service/error/error-info';
 })
 export class InvoicingComponent implements OnInit, CanComponentDeactivate {
 
-  @ViewChild(InvoicingInfoComponent) invoicingInfo: InvoicingInfoComponent;
+  @ViewChild(InvoicingInfoComponent, { static: true }) invoicingInfo: InvoicingInfoComponent;
 
   applicationId: number;
   infoForm: FormGroup;

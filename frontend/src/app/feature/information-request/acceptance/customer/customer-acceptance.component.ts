@@ -43,7 +43,7 @@ export class CustomerAcceptanceComponent implements OnInit, OnDestroy {
   @Input() fieldKey: InformationRequestFieldKey;
   @Input() canBeInvoiceRecipient = false;
 
-  @ViewChild(CustomerInfoAcceptanceComponent) infoAcceptance: CustomerInfoAcceptanceComponent;
+  @ViewChild(CustomerInfoAcceptanceComponent, { static: true }) infoAcceptance: CustomerInfoAcceptanceComponent;
 
   referenceCustomer$: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(undefined);
 

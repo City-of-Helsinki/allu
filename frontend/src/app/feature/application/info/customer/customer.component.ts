@@ -34,7 +34,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   @Output() showPendingInfo = new EventEmitter<{}>();
 
-  @ViewChild('contacts') contacts: ContactComponent;
+  @ViewChild('contacts', { static: true }) contacts: ContactComponent;
 
   customerWithContactsForm: FormGroup;
   customerForm: FormGroup;

@@ -20,7 +20,7 @@ import {CommentType} from '@model/application/comment/comment-type';
 class MockParentComponent {
   comment: Comment;
 
-  @ViewChild(CommentComponent) commentComponent: CommentComponent;
+  @ViewChild(CommentComponent, {static: false}) commentComponent: CommentComponent;
 
   save(comment: Comment): void {}
   remove(comment: Comment): void {}

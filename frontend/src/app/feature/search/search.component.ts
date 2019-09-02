@@ -48,8 +48,8 @@ export class SearchComponent implements OnInit, OnDestroy {
   allSelected$: Observable<boolean>;
   someSelected$: Observable<boolean>;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   private destroy = new Subject<boolean>();
 

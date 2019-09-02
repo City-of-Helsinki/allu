@@ -90,11 +90,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private submitPending = false;
   private destroy = new Subject<boolean>();
 
-  @ViewChild(TypeComponent)
+  @ViewChild(TypeComponent, { static: true })
   private typeComponent: TypeComponent;
-  @ViewChild(SearchbarComponent)
+  @ViewChild(SearchbarComponent, { static: false })
   private searchbarComponent: SearchbarComponent;
-  @ViewChild(MapComponent)
+  @ViewChild(MapComponent, { static: false })
   private mapComponent: MapComponent;
 
   constructor(

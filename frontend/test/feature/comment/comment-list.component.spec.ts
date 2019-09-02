@@ -31,7 +31,7 @@ const COMMENT_TWO = new Comment(
 class MockParentComponent {
   comments$ = new BehaviorSubject<Comment[]>([]);
 
-  @ViewChild(CommentListComponent) commentsComponent: CommentListComponent;
+  @ViewChild(CommentListComponent, {static: true}) commentsComponent: CommentListComponent;
 
   save(comment: Comment): void {}
   remove(comment: Comment): void {}

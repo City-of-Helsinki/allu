@@ -24,7 +24,7 @@ export class CommentsComponent implements OnInit {
   loading$: Observable<boolean>;
   direction$: Observable<SortDirection>;
 
-  @ViewChild(CommentListComponent) commentListComponent: CommentListComponent;
+  @ViewChild(CommentListComponent, { static: false }) commentListComponent: CommentListComponent;
 
   constructor(private dialog: MatDialog,
               private store: Store<fromRoot.State>) {}

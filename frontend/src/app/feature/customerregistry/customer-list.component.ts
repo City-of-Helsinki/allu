@@ -28,8 +28,8 @@ export class CustomerListComponent implements OnInit {
   customerTypes = EnumUtil.enumValues(CustomerType);
   customerSource: CustomerDatasource;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(private router: Router,
               private store: Store<fromRoot.State>,

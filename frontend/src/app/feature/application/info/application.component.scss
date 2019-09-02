@@ -2,7 +2,7 @@
 @import '../../../../assets/variables';
 
 // deep makes styles available for child components
-:host /deep/ {
+:host ::ng-deep {
   .input-field label {
     top: .5rem;
   }

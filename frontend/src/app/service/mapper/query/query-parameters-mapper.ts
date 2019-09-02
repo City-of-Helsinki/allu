@@ -1,7 +1,6 @@
 import {BackendQueryParameter} from '../../backend-model/backend-query-parameters';
 import {Sort} from '../../../model/common/sort';
 import {Some} from '../../../util/option';
-import {RequestOptionsArgs} from '@angular/http';
 import {PageRequest} from '../../../model/common/page-request';
 import {HttpParams} from '@angular/common/http';
 

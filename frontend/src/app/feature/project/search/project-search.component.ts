@@ -29,8 +29,8 @@ export class ProjectSearchComponent implements OnInit {
   districts: Observable<Array<CityDistrict>>;
   dataSource: ProjectSearchDatasource;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(private projectService: ProjectService,
               private projectState: ProjectState,

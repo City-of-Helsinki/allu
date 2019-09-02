@@ -30,7 +30,7 @@ export class FieldSelectComponent implements OnInit, ControlValueAccessor {
   @Input() descriptions: FieldDescription[] = [];
   @Input() meta: StructureMeta;
 
-  @ViewChild(MatSelectionList) selectionList: MatSelectionList;
+  @ViewChild(MatSelectionList, { static: true }) selectionList: MatSelectionList;
 
   isDisabled: boolean;
 

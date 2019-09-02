@@ -38,7 +38,7 @@ export class InputBoxInputDirective {
 export class InputBoxComponent implements AfterContentInit {
   @Input() placeholder: string;
 
-  @ContentChild(InputBoxInputDirective) _inputChild: InputBoxInputDirective;
+  @ContentChild(InputBoxInputDirective, {static: false}) _inputChild: InputBoxInputDirective;
 
   @ContentChildren(MatError) errors: QueryList<MatError>;
 

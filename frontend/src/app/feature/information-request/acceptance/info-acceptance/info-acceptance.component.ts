@@ -13,8 +13,8 @@ export abstract class InfoAcceptanceComponent<T> implements OnInit, OnDestroy {
 
   @HostBinding('class') cssClasses = 'info-acceptance';
 
-  @ViewChild('oldValuesSelect') oldValuesSelect: FieldSelectComponent;
-  @ViewChild('newValuesSelect') newValuesSelect: FieldSelectComponent;
+  @ViewChild('oldValuesSelect', { static: true }) oldValuesSelect: FieldSelectComponent;
+  @ViewChild('newValuesSelect', { static: true }) newValuesSelect: FieldSelectComponent;
 
   selectionForm: FormGroup;
   fieldDescriptions: FieldDescription[];

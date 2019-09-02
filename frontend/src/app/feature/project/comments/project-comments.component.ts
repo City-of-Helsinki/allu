@@ -9,7 +9,7 @@ import {Observable} from 'rxjs';
   styleUrls: []
 })
 export class ProjectCommentsComponent implements CanComponentDeactivate {
-  @ViewChild(CommentsComponent) commentsComponent;
+  @ViewChild(CommentsComponent, { static: true }) commentsComponent;
 
   canDeactivate(): Observable<boolean> | boolean {
     return this.commentsComponent.canDeactivate();

@@ -33,7 +33,7 @@ class ParentComponent {
   selectedFilter: StoredFilter;
   availableFilters = filters;
 
-  @ViewChild(StoredFilterComponent)
+  @ViewChild(StoredFilterComponent, {static: false})
   public storedFilterComponent: StoredFilterComponent;
 
   onDestroy(): void {

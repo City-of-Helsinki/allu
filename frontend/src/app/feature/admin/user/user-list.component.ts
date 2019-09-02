@@ -22,8 +22,8 @@ export class UserListComponent implements OnInit {
   dataSource: AlluTableDataSource<UserElement>;
   displayedColumns: string[] = ['userName', 'realName', 'lastLogin', 'isActive', 'roles', 'applicationTypes', 'cityDistricts'];
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(private userService: UserService,
               private router: Router,

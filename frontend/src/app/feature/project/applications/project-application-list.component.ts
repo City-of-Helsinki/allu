@@ -36,8 +36,8 @@ export class ProjectApplicationListComponent implements OnInit, AfterViewInit, O
 
   dataSource = new MatTableDataSource<ApplicationElement>([]);
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   displayedColumns = [
     'ownerName', 'applicationId', 'type', 'status',
