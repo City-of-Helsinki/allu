@@ -92,7 +92,7 @@ public class ApplicationServiceComposer {
 
   public List<ApplicationJson> findApplicationsByIds(List<Integer> ids) {
     return applicationService.findApplicationsById(ids).stream()
-        .map(app -> applicationJsonService.getCompactPopulatedApplication(app))
+        .map(app -> applicationJsonService.getFullyPopulatedApplication(app))
         .collect(Collectors.toList());
   }
 
