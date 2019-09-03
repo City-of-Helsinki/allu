@@ -1,11 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {StoredFilterService} from '../../service/stored-filter/stored-filter.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {StoredFilterType} from '../../model/user/stored-filter-type';
 import {StoredFilter} from '../../model/user/stored-filter';
-import {NotificationService} from '../notification/notification.service';
-import {StoredFilterStore} from '../../service/stored-filter/stored-filter-store';
 
 export const STORED_FILTER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};
 

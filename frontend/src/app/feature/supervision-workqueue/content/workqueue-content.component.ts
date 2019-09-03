@@ -1,5 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 import {SupervisionWorkItemDatasource} from './supervision-work-item-datasource';

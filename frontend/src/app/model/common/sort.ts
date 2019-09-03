@@ -1,4 +1,4 @@
-import {MatSortable, Sort as MatSort} from '@angular/material';
+import {MatSortable, Sort as MatSort} from '@angular/material/sort';
 
 export type SortDirection = 'asc' | 'desc' | '';
 

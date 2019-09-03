@@ -1,7 +1,10 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MatCardModule, MatDialogModule, MatSlideToggleModule, MatToolbarModule} from '@angular/material';
+import {MatCardModule} from '@angular/material/card';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -41,7 +44,7 @@ import {SupervisionModule} from './supervision/supervision.module';
 import {ApplicationDraftService} from '../../service/application/application-draft.service';
 import {ApplicationCommentsComponent} from './comment/application-comments.component';
 import {StoreModule} from '@ngrx/store';
-import {reducersToken, reducersProvider} from './reducers';
+import {reducersProvider, reducersToken} from './reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {ApplicationTagEffects} from './effects/application-tag-effects';
 import {HistoryModule} from '../history/history.module';

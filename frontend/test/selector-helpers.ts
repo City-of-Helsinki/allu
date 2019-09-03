@@ -1,7 +1,7 @@
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {ArrayUtil} from '../src/app/util/array-util';
-import {MatIcon} from '@angular/material';
+import {MatIcon} from '@angular/material/icon';
 import {Some} from '@util/option';
 
 export function getMatIconButton(debugElement: DebugElement, buttonIcon: string) {

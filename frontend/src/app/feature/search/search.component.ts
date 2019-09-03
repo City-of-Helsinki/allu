@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Observable, Subject, combineLatest} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 
 import {Application} from '@model/application/application';
@@ -11,7 +11,8 @@ import {User} from '@model/user/user';
 import {RoleType} from '@model/user/role-type';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CityDistrict} from '@model/common/city-district';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {ArrayUtil} from '@util/array-util';
 import {AddMultiple} from '@feature/project/actions/application-basket-actions';
 import * as fromRoot from '@feature/allu/reducers';

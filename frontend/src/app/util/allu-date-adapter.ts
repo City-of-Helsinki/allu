@@ -1,4 +1,4 @@
-import {NativeDateAdapter} from '@angular/material';
+import {NativeDateAdapter} from '@angular/material/core';
 import {TimeUtil} from './time.util';
 
 const DEFAULT_MONTH_NAMES = {

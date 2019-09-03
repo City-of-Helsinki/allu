@@ -1,5 +1,6 @@
 import {combineLatest} from 'rxjs';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {Customer} from '@model/customer/customer';
 import {filter, takeUntil} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';

@@ -1,6 +1,7 @@
 import {DataSource} from '@angular/cdk/collections';
-import {Subject, Observable, merge, of} from 'rxjs';
-import {MatPaginator, MatSort} from '@angular/material';
+import {merge, Observable, of, Subject} from 'rxjs';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {ProjectService} from './project.service';
 import {Project} from '../../model/project/project';
 import {ProjectSearchQuery} from '../../model/project/project-search-query';

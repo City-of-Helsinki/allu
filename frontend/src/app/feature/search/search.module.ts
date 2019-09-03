@@ -3,7 +3,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {SearchComponent} from './search.component';
 import {AlluCommonModule} from '../common/allu-common.module';
-import {MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTableModule} from '@angular/material/table';
 
 
 @NgModule({

@@ -1,7 +1,7 @@
 import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MatCardModule} from '@angular/material';
+import {MatCardModule} from '@angular/material/card';
 
 import {CustomerComponent} from '../../../../../src/app/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
@@ -9,7 +9,7 @@ import {CustomerInfoComponent} from '../../../../../src/app/feature/customerregi
 import {Customer} from '../../../../../src/app/model/customer/customer';
 import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
-import {Component, Injectable, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
 import {CustomerServiceMock, NotificationServiceMock} from '../../../../mocks';
 import {CustomerService} from '../../../../../src/app/service/customer/customer.service';

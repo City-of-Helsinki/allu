@@ -1,6 +1,10 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatButtonToggleModule, MatChipsModule, MatPaginatorModule, MatSortModule, MatTableModule} from '@angular/material';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTableModule} from '@angular/material/table';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {WorkQueueComponent} from './workqueue.component';
 import {WorkQueueFilterComponent} from './filter/workqueue-filter.component';

@@ -6,11 +6,11 @@ import * as fromProject from '../project/reducers';
 import * as fromApplication from '../application/reducers';
 import {ChangeHistoryItem} from '../../model/history/change-history-item';
 import {BehaviorSubject, Observable, Subject} from 'rxjs/index';
-import {Load, SetFieldsVisible} from './actions/history-actions';
+import {SetFieldsVisible} from './actions/history-actions';
 import {takeUntil} from 'rxjs/internal/operators';
 import {TimeUtil} from '../../util/time.util';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
-import {MatSlideToggleChange} from '@angular/material';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'history',

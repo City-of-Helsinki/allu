@@ -1,10 +1,9 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
-import {MatOption} from '@angular/material';
+import {MatOption} from '@angular/material/core';
 import {debounceTime, takeUntil} from 'rxjs/internal/operators';
 import {Project} from '../../../model/project/project';
-import {Some} from '../../../util/option';
 
 @Component({
   selector: 'project-select',

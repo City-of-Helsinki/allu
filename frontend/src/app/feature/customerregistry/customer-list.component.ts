@@ -4,14 +4,15 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {EnumUtil} from '@util/enum.util';
 import {CustomerType} from '@model/customer/customer-type';
 import {Customer} from '@model/customer/customer';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {CustomerDatasource} from '@service/customer/customer-datasource';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromCustomer from '@feature/customerregistry/reducers';
 import {SetSearchQuery} from '@feature/customerregistry/actions/customer-search-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {filter, map, take} from 'rxjs/operators';
+import {filter, take} from 'rxjs/operators';
 
 @Component({
   selector: 'customer-list',

@@ -1,7 +1,9 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
-import {MatDialog, MatPaginator, MatSort} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {CommentsModalComponent} from '@feature/comment/comments-modal.component';
 import {ApplicationWorkItemDatasource} from './application-work-item-datasource';
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';

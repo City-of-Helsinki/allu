@@ -1,9 +1,10 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {
-  MatButtonToggleModule, MatChipsModule, MatPaginatorModule, MatSortModule,
-  MatTableModule
-} from '@angular/material';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTableModule} from '@angular/material/table';
 
 import {WorkQueueComponent} from './workqueue.component';
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -15,7 +16,7 @@ import {OwnerModalModule} from '../common/ownerModal/owner-modal.module';
 import {RouterModule} from '@angular/router';
 import {StoredFilterModule} from '../stored-filter/stored-filter.module';
 import {StoreModule} from '@ngrx/store';
-import {reducersToken, reducersProvider} from '@feature/workqueue/reducers';
+import {reducersProvider, reducersToken} from '@feature/workqueue/reducers';
 
 @NgModule({
   imports: [

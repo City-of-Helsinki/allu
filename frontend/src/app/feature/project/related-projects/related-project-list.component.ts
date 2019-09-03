@@ -1,6 +1,8 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Project} from '../../../model/project/project';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 import * as fromRoot from '../../allu/reducers';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';

@@ -1,8 +1,17 @@
 import {
-  AfterContentInit, Component, ContentChild, ContentChildren, Directive, ElementRef, HostBinding, HostListener, Input, QueryList,
+  AfterContentInit,
+  Component,
+  ContentChild,
+  ContentChildren,
+  Directive,
+  ElementRef,
+  HostBinding,
+  HostListener,
+  Input,
+  QueryList,
   ViewEncapsulation
 } from '@angular/core';
-import {MatError} from '@angular/material';
+import {MatError} from '@angular/material/form-field';
 
 @Directive({
   selector: 'input[inputBoxInput], select[inputBoxInput], mat-select[inputBoxInput], button[inputBoxInput], textarea[inputBoxInput]'

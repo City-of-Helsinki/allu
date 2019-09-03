@@ -1,5 +1,5 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import {Component, Input, OnInit} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {Observable, of} from 'rxjs';
 
 import {Comment} from '../../model/application/comment/comment';

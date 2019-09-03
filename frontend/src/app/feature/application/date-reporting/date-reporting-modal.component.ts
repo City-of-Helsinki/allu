@@ -1,6 +1,6 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DateReport} from '@model/application/date-report';
 import {FormUtil} from '@util/form.util';
 

@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Deposit} from '../../../../model/application/invoice/deposit';
 import {EnumUtil} from '../../../../util/enum.util';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';

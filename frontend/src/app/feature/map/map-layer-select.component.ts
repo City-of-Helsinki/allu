@@ -14,7 +14,7 @@ import {
 } from '@feature/common/tree/tree-node';
 import {buildTree, MapLayerFlatNode, MapLayerNode, transformer} from './map-layer-node';
 import {FlatTreeControl} from '@angular/cdk/tree';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material';
+import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {SelectionModel} from '@angular/cdk/collections';
 import {StoredFilterStore} from '@service/stored-filter/stored-filter-store';
 import {StoredFilterType} from '@model/user/stored-filter-type';

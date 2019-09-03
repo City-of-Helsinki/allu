@@ -1,13 +1,13 @@
 import {DataSource} from '@angular/cdk/collections';
 import {Observable, Subject} from 'rxjs';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
 import {map, take, takeUntil, tap} from 'rxjs/operators';
-import {Action, select, Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {SetPaging, SetSort} from '@feature/application/actions/application-search-actions';
 
 export abstract class StoreDatasource<T> extends DataSource<T> {
 

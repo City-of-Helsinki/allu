@@ -1,16 +1,13 @@
 import {Injectable} from '@angular/core';
 import {TerminationInfo} from '@feature/decision/termination/termination-info';
-import {
-  TERMINATION_MODAL_CONFIG,
-  TerminationModalComponent
-} from '@feature/decision/termination/termination-modal.component';
+import {TERMINATION_MODAL_CONFIG, TerminationModalComponent} from '@feature/decision/termination/termination-modal.component';
 import {Application} from '@model/application/application';
 import {RemoveTerminationDraft, Terminate} from '@feature/decision/actions/termination-actions';
 import {filter, map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import * as fromRoot from '@feature/allu/reducers';
 import * as fromApplication from '@feature/application/reducers';
 import * as fromDecision from '@feature/decision/reducers';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {Store} from '@ngrx/store';
 import {ConfirmDialogComponent} from '@feature/common/confirm-dialog/confirm-dialog.component';
 import {findTranslation} from '@util/translations';

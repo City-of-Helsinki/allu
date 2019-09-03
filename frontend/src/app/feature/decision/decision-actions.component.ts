@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Router} from '@angular/router';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {Observable, of} from 'rxjs';
 import {Application} from '@model/application/application';
 import {ApplicationStatus, inHandling} from '@model/application/application-status';

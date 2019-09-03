@@ -4,7 +4,7 @@ import {Observable, Subject} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {CustomerForm} from '@feature/customerregistry/customer/customer.form';
 import {ALWAYS_ENABLED_FIELDS} from '@feature/customerregistry/customer/customer-info.component';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-modal.component';
 import {NotificationService} from '@feature/notification/notification.service';
 import {Deposit} from '@model/application/invoice/deposit';
@@ -22,8 +22,7 @@ import {Customer} from '@model/customer/customer';
 import {ApplicationType} from '@app/model/application/type/application-type';
 import {Application} from '@model/application/application';
 import {ArrayUtil} from '@util/array-util';
-import {ApplicationKind, terraceKinds} from '@app/model/application/type/application-kind';
-import {InvoicingPeriod} from '@feature/application/invoicing/invoicing-period/invoicing-period';
+import {terraceKinds} from '@app/model/application/type/application-kind';
 import {Invoice} from '@model/application/invoice/invoice';
 
 @Component({

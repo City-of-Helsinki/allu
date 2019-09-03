@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {DefaultText} from '../../../model/application/cable-report/default-text';

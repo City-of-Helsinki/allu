@@ -9,12 +9,9 @@ import {debounceTime, filter, map, switchMap, take, takeUntil} from 'rxjs/intern
 import {SearchByType} from '@feature/customerregistry/actions/customer-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CustomerType} from '@model/customer/customer-type';
-import {
-  CustomerNameSearchMinChars, CustomerSearchQuery,
-  REGISTRY_KEY_SEARCH_MIN_CHARS
-} from '@service/customer/customer-search-query';
+import {CustomerNameSearchMinChars, CustomerSearchQuery, REGISTRY_KEY_SEARCH_MIN_CHARS} from '@service/customer/customer-search-query';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '@feature/information-request/acceptance/customer/customer-modal.component';
 import {isEqualWithSkip} from '@util/object.util';
 import {CustomerInfoAcceptanceComponent} from '@feature/information-request/acceptance/customer/customer-info-acceptance.component';

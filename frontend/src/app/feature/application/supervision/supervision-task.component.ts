@@ -17,7 +17,7 @@ import {
   SupervisionApprovalResolutionType,
   SupervisionApprovalResult
 } from './supervision-approval-modal.component';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SupervisionTask} from '@model/application/supervision/supervision-task';
 import {filter, map, take} from 'rxjs/internal/operators';
 import {Store} from '@ngrx/store';

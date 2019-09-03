@@ -1,4 +1,5 @@
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 import {ApplicationSearchDatasource} from '@service/application/application-search-datasource';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from '@feature/allu/reducers';

@@ -1,7 +1,10 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {CommonModule} from '@angular/common';
-import {MatToolbarModule, MatCardModule, MatSidenavModule, MatTooltipModule} from '@angular/material';
+import {MatCardModule} from '@angular/material/card';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {MapModule} from '../map/map.module';
 import {MapSearchComponent} from './mapsearch.component';
 import {SearchBarModule} from '../searchbar/searchbar.module';
