@@ -16,6 +16,7 @@ import {MapLayer} from '@service/map/map-layer';
 import {ArrayUtil} from '@util/array-util';
 import {FeatureGroup} from 'leaflet';
 import {Some} from '@util/option';
+import {ZoomLevel} from '@feature/map/zoom-level';
 
 const timeout: TimeoutOptions = {
   response: 60000, // Wait max x seconds for the server to start sending,
@@ -25,7 +26,6 @@ const timeout: TimeoutOptions = {
 export const DEFAULT_OVERLAY = 'helsinki_karttasarja';
 const STATUS_PLAN = 'PLAN';
 const STATUS_ACTIVE = 'ACTIVE';
-const DETAILED_LAYER_MIN_ZOOM = 10;
 const OVERLAY_TILE_SIZE = 512; // px
 
 export const applicationLayers = Object.keys(ApplicationType)
@@ -99,18 +99,18 @@ export class MapLayerService {
       'Maanomistus ja vuokraus yhdistelmä': this.createAuthenticatedOverlayLayer('helsinki_maanomistus_vuokrausalueet_yhdistelma', token),
       'Maanomistus vuokrausalueet': this.createAuthenticatedOverlayLayer('helsinki_maanomistus_vuokrausalueet', token),
       'Maanomistus sisäinen vuokraus': this.createAuthenticatedOverlayLayer('helsinki_maanomistus_sisainen', token),
-      'Maanalaiset tilat reunaviivat': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat', token, DETAILED_LAYER_MIN_ZOOM),
-      'Maanalaiset tilat alueet': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat_alueet', token, DETAILED_LAYER_MIN_ZOOM),
+      'Maanalaiset tilat reunaviivat': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat', token, ZoomLevel.METERS_50),
+      'Maanalaiset tilat alueet': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat_alueet', token, ZoomLevel.METERS_50),
       'Maalämpökaivot': this.createAuthenticatedOverlayLayer('helsinki_maalampokaivot', token),
-      'Sähkö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_sahko', token, DETAILED_LAYER_MIN_ZOOM),
-      'Tietoliikenne': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_tietoliikenne', token, DETAILED_LAYER_MIN_ZOOM),
-      'Kaukolämpö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukolampo', token, DETAILED_LAYER_MIN_ZOOM),
-      'Kaukojäähdytys': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukojaahdytys', token, DETAILED_LAYER_MIN_ZOOM),
-      'Kaasu': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaasu', token, DETAILED_LAYER_MIN_ZOOM),
-      'Vesijohto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_vesijohto', token, DETAILED_LAYER_MIN_ZOOM),
-      'Viemari': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_viemari', token, DETAILED_LAYER_MIN_ZOOM),
-      'Imujätehuolto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_imujatehuolto', token, DETAILED_LAYER_MIN_ZOOM),
-      'Yhdistelmäjohtokartta': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_yhdistelma', token, DETAILED_LAYER_MIN_ZOOM),
+      'Sähkö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_sahko', token, ZoomLevel.METERS_10),
+      'Tietoliikenne': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_tietoliikenne', token, ZoomLevel.METERS_10),
+      'Kaukolämpö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukolampo', token, ZoomLevel.METERS_10),
+      'Kaukojäähdytys': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukojaahdytys', token, ZoomLevel.METERS_10),
+      'Kaasu': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaasu', token, ZoomLevel.METERS_10),
+      'Vesijohto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_vesijohto', token, ZoomLevel.METERS_10),
+      'Viemari': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_viemari', token, ZoomLevel.METERS_10),
+      'Imujätehuolto': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_imujatehuolto', token, ZoomLevel.METERS_10),
+      'Yhdistelmäjohtokartta': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_yhdistelma', token, ZoomLevel.METERS_10),
     };
   }
 
