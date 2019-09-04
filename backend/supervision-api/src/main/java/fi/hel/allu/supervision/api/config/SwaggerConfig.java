@@ -88,7 +88,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
               new Tag("Application tags", "API to add and remove application tags"),
               new Tag("Comments", "API to list and add/remove application comments"),
               new Tag("Application attachments", "API to list and add application attachments"),
-              new Tag("City districts", "API to list city districts")
+              new Tag("City districts", "API to list city districts"),
+              new Tag("Customers", "API to search and manage customers")
               )
 
         .additionalModels(
