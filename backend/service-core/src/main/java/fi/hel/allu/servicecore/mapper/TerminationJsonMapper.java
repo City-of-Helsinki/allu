@@ -32,6 +32,7 @@ public class TerminationJsonMapper extends AbstractDocumentMapper<TerminationJso
     termination.setCustomerContactLines(customerContactLines(application));
     termination.setSiteAddressLine(siteAddressLine(application));
     termination.setSiteCityDistrict(siteCityDistrict(application));
+    termination.setDecisionDate(application.getDecisionTime());
 
     Optional.ofNullable(terminationInfo).ifPresent(info -> {
       termination.setExpirationTime(info.getExpirationTime());
