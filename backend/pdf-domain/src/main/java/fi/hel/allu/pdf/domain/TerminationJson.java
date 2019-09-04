@@ -67,9 +67,9 @@ public class TerminationJson {
     this.applicationId = applicationId;
   }
 
-  public String getExpirationTime() {
+  public String getExpirationDate() {
     return Optional.ofNullable(expirationTime)
-        .map(date -> TimeUtil.dateAsDateTimeString(date))
+        .map(date -> TimeUtil.dateAsString(date))
         .orElse(null);
   }
 
