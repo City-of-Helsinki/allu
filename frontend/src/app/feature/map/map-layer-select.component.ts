@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import * as fromMapLayers from '@feature/map/reducers';
 import {Subject} from 'rxjs/internal/Subject';
@@ -28,9 +28,8 @@ import {StoredFilterType} from '@model/user/stored-filter-type';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapLayerSelectComponent implements OnInit, OnDestroy {
+export class MapLayerSelectComponent implements OnDestroy {
   @Input() targetType: ActionTargetType = ActionTargetType.Home;
-  @Input() layerTree: TreeStructureNode<void>;
   @Input() classNames: string[] = [];
 
   treeControl: FlatTreeControl<MapLayerFlatNode>;
@@ -43,18 +42,19 @@ export class MapLayerSelectComponent implements OnInit, OnDestroy {
 
   private destroy: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private store: Store<fromMapLayers.State>, private storedFilterStore: StoredFilterStore) {}
-
-  ngOnInit(): void {
+  constructor(private store: Store<fromMapLayers.State>, private storedFilterStore: StoredFilterStore) {
     this.treeFlattener = new MatTreeFlattener(transformer, getLevel, isExpandable, getChildren);
     this.treeControl = new FlatTreeControl<MapLayerFlatNode>(getLevel, isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    this.dataSource.data = buildTree(this.layerTree);
   }
 
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+  }
+
+  @Input() set layerTree(tree: TreeStructureNode<void>) {
+    this.dataSource.data = buildTree(tree || {});
   }
 
   @Input() set selected(selected: string[]) {
