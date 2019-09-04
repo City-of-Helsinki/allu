@@ -23,5 +23,5 @@ import io.swagger.annotations.ApiModel;
       + "<li><b>Sort:</b> List containing sorting parameters (search parameter field key and direction). All search parameter field keys can be used in sort.</li>"
       + "</ul>"
 )
-public class SupervisionTaskSearchParameters extends SearchParameters<SupervisionTaskSearchParameterField> {
+public class SupervisionTaskSearchParameters extends SearchParametersWithGeometry<SupervisionTaskSearchParameterField> {
 }

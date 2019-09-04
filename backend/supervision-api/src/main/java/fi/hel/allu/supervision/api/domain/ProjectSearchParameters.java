@@ -30,6 +30,6 @@ import io.swagger.annotations.ApiModel;
      + "</li>"
      + "</ul>"
 )
-public class ProjectSearchParameters extends SearchParameters<ProjectSearchParameterField> {
+public class ProjectSearchParameters extends SearchParametersWithGeometry<ProjectSearchParameterField> {
 
 }

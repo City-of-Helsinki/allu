@@ -41,5 +41,5 @@ import io.swagger.annotations.ApiModel;
   + "</li>"
   + "</ul>"
 )
-public class ApplicationSearchParameters extends SearchParameters<ApplicationSearchParameterField> {
+public class ApplicationSearchParameters extends SearchParametersWithGeometry<ApplicationSearchParameterField> {
 }
