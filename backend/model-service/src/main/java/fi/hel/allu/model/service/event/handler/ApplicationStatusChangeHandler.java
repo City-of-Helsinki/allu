@@ -271,4 +271,9 @@ public class ApplicationStatusChangeHandler {
   protected InvoiceService getInvoiceService() {
     return invoiceService;
   }
+
+  protected ChargeBasisService getChargeBasisService() {
+    return chargeBasisService;
+  }
+
 }

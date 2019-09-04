@@ -220,6 +220,11 @@ public class ChargeBasisService {
   }
 
   @Transactional
+  public void unlockEntries(Integer applicationId) {
+    chargeBasisDao.unlockEntries(applicationId);
+  }
+
+  @Transactional
   public ChargeBasisEntry setInvoicable(int applicationId, int entryId, boolean invoiced) {
     validateModificationsAllowed(Collections.singleton(entryId), applicationId);
     ChargeBasisEntry entry = chargeBasisDao.setInvoicable(entryId, invoiced);

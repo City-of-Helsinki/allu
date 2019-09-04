@@ -6,6 +6,7 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
  * One line in an invoice
  */
 public class InvoiceRow {
+  Integer id;
   private Integer chargeBasisId;
   private ChargeBasisUnit unit;
   private double quantity;
@@ -27,6 +28,14 @@ public class InvoiceRow {
 
   public InvoiceRow() {
     // for deserialization
+  }
+
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
   }
 
   /**

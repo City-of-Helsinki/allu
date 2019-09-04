@@ -30,6 +30,7 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
   private static final Integer USER_ID = Integer.valueOf(99);
   private ExcavationAnnouncementStatusChangeHandler statusChangeHandler;
   private Application application;
+  private ExcavationAnnouncement extension;
 
   @Mock
   private LocationService locationService;
@@ -61,82 +62,105 @@ public class ExcavationAnnouncementStatusChangeHandlerTest {
         supervisionTaskService, locationService, applicationDao, chargeBasisService, historyDao,
         informationRequestDao, invoiceService, winterTimeService, terminationDao);
     createApplication();
+    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
+    extension = new ExcavationAnnouncement();
+    application.setExtension(extension);
     when(winterTimeService.getWinterTime()).thenReturn(winterTime);
+    when(winterTime.getWinterTimeStart(any(ZonedDateTime.class))).thenReturn(LocalDate.parse("2019-12-01"));
     when(winterTime.isInWinterTime(any(ZonedDateTime.class))).thenReturn(true);
 
   }
 
   @Test
   public void onDecisionShouldNotLockChargeBasisEntries() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(chargeBasisService, never()).lockEntries(eq(application.getId()));
   }
 
   @Test
   public void onDecisionShouldRemoveSupervisionDoneTag() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.DECISION, USER_ID));
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   @Test
   public void onOperationalConditionShouldLockChargeBasisEntries() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
     verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
   }
 
   @Test
   public void onOperationalConditionShouldRemoveSupervisionDoneTag() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
 
   @Test
   public void onFinishedShuoldLockChargeBasisEntries() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    application.setExtension(new ExcavationAnnouncement());
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(chargeBasisService, times(1)).lockEntries(eq(application.getId()));
   }
 
   @Test
   public void onOperationalConditionShouldSetInvoicable() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    ZonedDateTime operationalConditionDate = LocalDate.parse("2018-12-22").atStartOfDay(TimeUtil.HelsinkiZoneId);
-    ExcavationAnnouncement extension = new ExcavationAnnouncement();
-    extension.setWinterTimeOperation(operationalConditionDate);
-    application.setExtension(extension);
+    extension.setWinterTimeOperation(LocalDate.parse("2018-12-22").atStartOfDay(TimeUtil.HelsinkiZoneId));
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.OPERATIONAL_CONDITION, USER_ID));
-    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(operationalConditionDate));
+    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(extension.getWinterTimeOperation()));
   }
 
   @Test
   public void onFinishedShouldSetInvoicable() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    ZonedDateTime workFinishedDate = LocalDate.parse("2019-05-10").atStartOfDay(TimeUtil.HelsinkiZoneId);
-    ExcavationAnnouncement extension = new ExcavationAnnouncement();
-    extension.setWorkFinished(workFinishedDate);
+    extension.setWorkFinished(LocalDate.parse("2019-05-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
     application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
-    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(workFinishedDate));
+    verify(invoiceService, times(1)).setInvoicableTime(eq(application.getId()), eq(extension.getWorkFinished()));
   }
 
   @Test
   public void onFinishedShouldRemoveSupervisionDoneTag() {
-    application.setType(ApplicationType.EXCAVATION_ANNOUNCEMENT);
-    ZonedDateTime workFinishedDate = LocalDate.parse("2019-05-10").atStartOfDay(TimeUtil.HelsinkiZoneId);
-    ExcavationAnnouncement extension = new ExcavationAnnouncement();
-    extension.setWorkFinished(workFinishedDate);
+    extension.setWorkFinished(LocalDate.parse("2019-05-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
     application.setExtension(extension);
     statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
     verify(applicationService, times(1)).removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
+  }
+
+  @Test
+  public void onFinishedShouldAdjustInvoicingForSummertimeOperational() {
+    extension.setWorkFinished(LocalDate.parse("2019-08-31").atStartOfDay(TimeUtil.HelsinkiZoneId));
+    extension.setWinterTimeOperation(LocalDate.parse("2019-08-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
+    when(winterTime.isInWinterTime(extension.getWinterTimeOperation())).thenReturn(false);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verifyInvoicingAdjustment(true);
+  }
+
+  @Test
+  public void onFinishedShouldNotAdjustInvoicingIfInvoiced() {
+    when(invoiceService.applicationHasInvoiced(application.getId())).thenReturn(true);
+    extension.setWorkFinished(LocalDate.parse("2019-08-31").atStartOfDay(TimeUtil.HelsinkiZoneId));
+    extension.setWinterTimeOperation(LocalDate.parse("2019-08-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
+    when(winterTime.isInWinterTime(extension.getWinterTimeOperation())).thenReturn(false);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verifyInvoicingAdjustment(false);
+  }
+
+  @Test
+  public void onFinishedShouldNotAdjustInvoicingIfNotSummertimeOperational() {
+    when(invoiceService.applicationHasInvoiced(application.getId())).thenReturn(true);
+    extension.setWorkFinished(LocalDate.parse("2019-12-12").atStartOfDay(TimeUtil.HelsinkiZoneId));
+    extension.setWinterTimeOperation(LocalDate.parse("2019-12-10").atStartOfDay(TimeUtil.HelsinkiZoneId));
+    when(winterTime.isInWinterTime(extension.getWinterTimeOperation())).thenReturn(false);
+    statusChangeHandler.handleStatusChange(new ApplicationStatusChangeEvent(this, application, StatusType.FINISHED, USER_ID));
+    verifyInvoicingAdjustment(false);
+  }
+
+  private void verifyInvoicingAdjustment(boolean shouldAdjust) {
+    if (shouldAdjust) {
+      verify(applicationService, times(1)).updateChargeBasis(application.getId());
+      verify(invoiceService, times(1)).updateInvoiceRows(application.getId());
+    } else {
+      verify(applicationService, never()).updateChargeBasis(anyInt());
+      verify(invoiceService, never()).updateInvoiceRows(anyInt());
+    }
   }
 
   private void createApplication() {

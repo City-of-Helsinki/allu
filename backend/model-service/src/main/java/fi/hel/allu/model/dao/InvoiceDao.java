@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,8 @@ public class InvoiceDao {
   private final static ExcludingMapper EXCLUDE_IDS = new ExcludingMapper(NullHandling.DEFAULT,
       Arrays.asList(invoice.id, invoice.applicationId));
 
+  private final static ExcludingMapper EXCLUDE_ROW_IDS = new ExcludingMapper(NullHandling.DEFAULT,
+      Arrays.asList(invoiceRow.id, invoiceRow.invoiceId));
   private final QBean<Invoice> invoiceBean = bean(Invoice.class, invoice.all());
   private final QBean<InvoiceRow> invoiceRowBean = bean(InvoiceRow.class, invoiceRow.all());
 
@@ -242,7 +243,16 @@ public class InvoiceDao {
 
   @Transactional
   public void lockInvoices(int applicationId) {
-    queryFactory.update(invoice).set(invoice.locked, true).where(invoice.applicationId.eq(applicationId)).execute();
+    setInvoicingLocked(applicationId, true);
+  }
+
+  @Transactional
+  public void unlockInvoices(int applicationId) {
+    setInvoicingLocked(applicationId, false);
+  }
+
+  private void setInvoicingLocked(int applicationId, boolean isLocked) {
+    queryFactory.update(invoice).set(invoice.locked, isLocked).where(invoice.applicationId.eq(applicationId)).execute();
   }
 
   public List<Integer> getChargeBasisIdsInLockedInvoice(int applicationId) {
@@ -284,5 +294,19 @@ public class InvoiceDao {
       .set(invoice.sapIdPending, sapIdPending)
       .where(invoice.applicationId.eq(applicationId), invoice.invoiced.isFalse())
       .execute();
+  }
+
+  @Transactional(readOnly = true)
+  public List<InvoiceRow> getInvoiceRows(Integer applicationId) {
+    return queryFactory.select(invoiceRowBean)
+        .from(invoiceRow)
+        .join(invoice).on(invoice.id.eq(invoiceRow.invoiceId))
+        .where(invoice.applicationId.eq(applicationId))
+        .fetch();
+  }
+
+  public void updateInvoiceRow(Integer invoiceRowId, InvoiceRow updatedRow) {
+    queryFactory.update(invoiceRow).populate(updatedRow, EXCLUDE_ROW_IDS).where(invoiceRow.id.eq(invoiceRowId))
+        .execute();
   }
 }

@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,7 +84,7 @@ public class InvoiceService {
 
   private void addInvoiceForApplication(int applicationId, boolean sapIdPending, Application application,
       final InvoiceRecipient invoiceRecipient) {
-    List<InvoiceRow> invoiceRows = getInvoiceRows(applicationId, null);
+    List<InvoiceRow> invoiceRows = createInvoiceRows(applicationId, null);
     if (!invoiceRows.isEmpty()) {
       final int invoiceRecipientId = invoiceRecipientDao.insert(invoiceRecipient);
       ZonedDateTime invoicingDate = getInvoicingDate(application);
@@ -98,7 +99,7 @@ public class InvoiceService {
   }
 
   private void addInvoiceForPeriod(InvoicingPeriod period, Application application, Integer invoiceRecipientId, boolean sapIdPending) {
-    List<InvoiceRow> invoiceRows = getInvoiceRows(application.getId(), period.getId());
+    List<InvoiceRow> invoiceRows = createInvoiceRows(application.getId(), period.getId());
     if (!invoiceRows.isEmpty()) {
       ZonedDateTime invoicingDate = invoicingDateService.getInvoicingDateForPeriod(application, period);
       Invoice invoice = new Invoice(null, application.getId(), invoicingDate, false, sapIdPending, invoiceRows, invoiceRecipientId, period.getId());
@@ -106,7 +107,7 @@ public class InvoiceService {
     }
   }
 
-  private List<InvoiceRow> getInvoiceRows(int applicationId, Integer invoicingPeriodId) {
+  private List<InvoiceRow> createInvoiceRows(int applicationId, Integer invoicingPeriodId) {
     List<ChargeBasisEntry> chargeBasisEntries = getChargeBasisEntriesToInvoice(applicationId, invoicingPeriodId);
     List<InvoiceRow> invoiceRows = pricingService.toSingleInvoice(chargeBasisEntries);
     return invoiceRows;
@@ -220,4 +221,17 @@ public class InvoiceService {
     invoiceDao.setInvoiceRecipient(applicationId, invoiceRecipientId, sapIdPending);
   }
 
+  public void unlockInvoices(Integer applicationId) {
+    invoiceDao.unlockInvoices(applicationId);
+  }
+
+  // Update existing invoice rows. Does not create new rows / delete old rows
+  @Transactional
+  public void updateInvoiceRows(Integer applicationId) {
+    List<InvoiceRow> existingRows = invoiceDao.getInvoiceRows(applicationId);
+    Map<Integer, InvoiceRow> updatedRowsByChargeBasisId = pricingService.toSingleInvoice(chargeBasisService.getChargeBasis(applicationId))
+        .stream()
+        .collect(Collectors.toMap(InvoiceRow::getChargeBasisId, Function.identity()));
+    existingRows.forEach(row -> invoiceDao.updateInvoiceRow(row.getId(), updatedRowsByChargeBasisId.get(row.getChargeBasisId())));
+  }
 }

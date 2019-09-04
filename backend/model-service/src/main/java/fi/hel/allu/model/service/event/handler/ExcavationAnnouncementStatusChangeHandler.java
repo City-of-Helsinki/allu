@@ -1,10 +1,12 @@
 package fi.hel.allu.model.service.event.handler;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import fi.hel.allu.model.dao.InformationRequestDao;
 import fi.hel.allu.model.dao.TerminationDao;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
@@ -88,9 +90,33 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   @Override
   protected void handleFinishedStatus(Application application) {
     ExcavationAnnouncement extension = (ExcavationAnnouncement)application.getExtension();
+    adjustOperationalConditionPricing(application.getId(), extension);
     setExcavationAnnouncementInvoicable(application, extension.getWorkFinished());
     clearTargetState(application);
     clearOwner(application);
     removeTag(application.getId(), ApplicationTagType.SUPERVISION_DONE);
   }
+
+  // If operational condition date is after work finished and is not yet
+  // invoiced, open charge items / invoicing and update area fees of operational condition phase
+  private void adjustOperationalConditionPricing(Integer applicationId, ExcavationAnnouncement excavationAnnouncement) {
+    // Fix invoicing if needed and invoices are not yet invoiced
+    if (pricingUpdateNeeded(excavationAnnouncement) && !getInvoiceService().applicationHasInvoiced(applicationId)) {
+      getChargeBasisService().unlockEntries(applicationId);
+      getApplicationService().updateChargeBasis(applicationId);
+      getInvoiceService().updateInvoiceRows(applicationId);
+    }
+  }
+
+  // If operational condition is in summer, area fees are charged to winter time start
+  // If work finished is afterwords set to date before winter time start, we need to adjust operational
+  // condition area fees.
+  private boolean pricingUpdateNeeded(ExcavationAnnouncement excavationAnnouncement) {
+    ZonedDateTime operationalConditionDate = excavationAnnouncement.getWinterTimeOperation();
+    ZonedDateTime workFinishedDate = excavationAnnouncement.getWorkFinished();
+    WinterTime winterTime = winterTimeService.getWinterTime();
+    return !winterTime.isInWinterTime(operationalConditionDate) &&
+        winterTime.getWinterTimeStart(operationalConditionDate).isAfter(LocalDate.from(workFinishedDate));
+  }
+
 }

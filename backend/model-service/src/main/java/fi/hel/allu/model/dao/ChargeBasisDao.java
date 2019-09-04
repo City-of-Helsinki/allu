@@ -176,7 +176,16 @@ public class ChargeBasisDao {
 
   @Transactional
   public void lockEntries(Integer applicationId) {
-    queryFactory.update(chargeBasis).set(chargeBasis.locked, true).where(chargeBasis.applicationId.eq(applicationId)).execute();
+    setEntriesLocked(applicationId, true);
+  }
+
+  @Transactional
+  public void unlockEntries(Integer applicationId) {
+    setEntriesLocked(applicationId, false);
+  }
+
+  private void setEntriesLocked(Integer applicationId, boolean isLocked) {
+    queryFactory.update(chargeBasis).set(chargeBasis.locked, isLocked).where(chargeBasis.applicationId.eq(applicationId)).execute();
   }
 
   @Transactional(readOnly = true)
