@@ -280,6 +280,8 @@ public class MailComposerService {
         return String.format("%s_toiminnallinen_kunto.pdf", applicationId);
       case WORK_FINISHED:
         return String.format("%s_valmis.pdf", applicationId);
+      case TERMINATION:
+        return String.format("%s_irtisanominen.pdf", applicationId);
       default:
         return String.format("%s.pdf", applicationId);
     }

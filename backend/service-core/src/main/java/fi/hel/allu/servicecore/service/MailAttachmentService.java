@@ -23,16 +23,19 @@ public class MailAttachmentService {
   private final ContractService contractService;
   private final ApprovalDocumentService approvalDocumentService;
   private final AttachmentService attachmentService;
+  private final TerminationService terminationService;
 
   @Autowired
   public MailAttachmentService(DecisionService decisionService,
                                ContractService contractService,
                                ApprovalDocumentService approvalDocumentService,
-                               AttachmentService attachmentService) {
+                               AttachmentService attachmentService,
+                               TerminationService terminationService) {
     this.decisionService = decisionService;
     this.contractService = contractService;
     this.approvalDocumentService = approvalDocumentService;
     this.attachmentService = attachmentService;
+    this.terminationService = terminationService;
   }
 
   public List<Attachment> forApplication(ApplicationJson application, DecisionDocumentType type, String attachmentName) {
@@ -48,6 +51,8 @@ public class MailAttachmentService {
       case WORK_FINISHED:
         attachments.add(forWorkFinished(attachmentName, application.getId()));
         break;
+      case TERMINATION:
+        attachments.add(forTermination(attachmentName, application.getId()));
     }
     return attachments;
   }
@@ -77,6 +82,10 @@ public class MailAttachmentService {
   private Attachment forWorkFinished(String pdfName, Integer applicationId) {
     return new Attachment(pdfName, MediaType.APPLICATION_PDF_VALUE,
         approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED));
+  }
+
+  private Attachment forTermination(String pdfName, Integer applicationId) {
+    return new Attachment(pdfName, MediaType.APPLICATION_PDF_VALUE, terminationService.getFinalTermination(applicationId));
   }
 
   private List<Attachment> attachments(ApplicationJson application) {

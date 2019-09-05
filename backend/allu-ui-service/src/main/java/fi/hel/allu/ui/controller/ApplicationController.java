@@ -311,6 +311,16 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/{applicationId}/termination/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_DECISION')")
+  public ResponseEntity<Void> sendTermination(
+      @PathVariable int applicationId,
+      @RequestBody DecisionDetailsJson decisionDetailsJson) {
+    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson, DecisionDocumentType.TERMINATION);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+
   @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<List<ApplicationTagJson>> updateTags(@PathVariable int id,

@@ -32,6 +32,8 @@ public class MailAttachmentServiceTest {
   private ApprovalDocumentService approvalDocumentService;
   @Mock
   private AttachmentService attachmentService;
+  @Mock
+  private TerminationService terminationService;
 
   private MailAttachmentService mailAttachmentService;
 
@@ -40,12 +42,13 @@ public class MailAttachmentServiceTest {
   private final byte[] CONTRACT_DATA = "CONTRACT_DATA".getBytes();
   private final byte[] OPERATIONAL_CONDITION_DATA = "OPERATIONAL_CONDITION_DATA".getBytes();
   private final byte[] WORK_FINISHED_DATA = "WORK_FINISHED_DATA".getBytes();
+  private final byte[] TERMINATION_DATA = "TERMINATION_DATA".getBytes();
   private final byte[] ATTACHMENT_DATA = "ATTACHMENT_DATA".getBytes();
 
   @Before
   public void setup() {
     mailAttachmentService = new MailAttachmentService(decisionService,
-      contractService, approvalDocumentService, attachmentService);
+      contractService, approvalDocumentService, attachmentService, terminationService);
 
     when(decisionService.getDecision(eq(APPLICATION_ID))).thenReturn(DECISION_DATA);
     when(contractService.getContract(eq(APPLICATION_ID))).thenReturn(CONTRACT_DATA);
@@ -53,6 +56,7 @@ public class MailAttachmentServiceTest {
       .thenReturn(OPERATIONAL_CONDITION_DATA);
     when(approvalDocumentService.getFinalApprovalDocument(eq(APPLICATION_ID), eq(ApprovalDocumentType.WORK_FINISHED)))
       .thenReturn(WORK_FINISHED_DATA);
+    when(terminationService.getFinalTermination(eq(APPLICATION_ID))).thenReturn(TERMINATION_DATA);
     when(attachmentService.getAttachmentData(anyInt())).thenReturn(ATTACHMENT_DATA);
   }
 
@@ -178,6 +182,34 @@ public class MailAttachmentServiceTest {
 
     verify(attachmentService, never()).getAttachmentData(anyInt());
     assertEquals("Expected only work finished document", 1, attachments.size());
+  }
+
+  @Test
+  public void shouldAddTerminationDocumentDocumentTypeIsTermination() {
+    List<MailMessage.Attachment> attachments = mailAttachmentService.forApplication(
+      applicationWithType(ApplicationType.PLACEMENT_CONTRACT),
+      DecisionDocumentType.TERMINATION,
+      "termination");
+
+    verify(terminationService, times(1)).getFinalTermination(eq(APPLICATION_ID));
+    verify(attachmentService, never()).getAttachmentData(anyInt());
+    assertEquals(1, attachments.size());
+    assertEquals("termination", attachments.get(0).getFilename());
+    assertEquals(TERMINATION_DATA, attachments.get(0).getBytes());
+  }
+
+  @Test
+  public void shouldNotAddDecisionDocumentsWhenTermination() {
+    ApplicationJson application = applicationWithType(ApplicationType.PLACEMENT_CONTRACT);
+    application.setAttachmentList(Arrays.asList(createAttachmentInfo(1, true)));
+
+    List<MailMessage.Attachment> attachments = mailAttachmentService.forApplication(
+      application,
+      DecisionDocumentType.TERMINATION,
+      "termination");
+
+    verify(attachmentService, never()).getAttachmentData(anyInt());
+    assertEquals("Expected only work termination document", 1, attachments.size());
   }
 
   @Test

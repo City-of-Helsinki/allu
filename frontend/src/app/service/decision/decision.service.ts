@@ -12,6 +12,7 @@ const DECISION_URL = '/api/applications/:appId/decision';
 const DECISION_DISTRIBUTION_URL = '/api/applications/:appId/decision/send';
 const WORK_FINISHED_DISTRIBUTION_URL = '/api/applications/:appId/work_finished/send';
 const OPERATIONAL_CONDITION_DISTRIBUTION_URL = '/api/applications/:appId/operational_condition/send';
+const TERMINATION_DISTRIBUTION_URL = '/api/applications/:appId/termination/send';
 
 @Injectable()
 export class DecisionService {
@@ -39,6 +40,11 @@ export class DecisionService {
 
   public sendOperationalCondition(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
     const url = OPERATIONAL_CONDITION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
+    return this.sendToUrl(url, emailDetails);
+  }
+
+  public sendTermination(applicationId: number, emailDetails: DecisionDetails): Observable<{}> {
+    const url = TERMINATION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.sendToUrl(url, emailDetails);
   }
 
