@@ -61,9 +61,7 @@ public class AlluMailService {
   public class MailBuilder {
     private final MailMessage mailMessage = new MailMessage();
     private Map<String, Object> model = null;
-    private Attachment decisionAttachment = null;
-    private Attachment contractAttachment = null;
-    private List<Attachment> otherAttachments = Collections.emptyList();
+    private List<Attachment> attachments = new ArrayList<>();
 
     MailBuilder(List<String> recipients) {
       if (emailAcceptPattern != null) {
@@ -92,30 +90,13 @@ public class AlluMailService {
       return this;
     }
 
-    public MailBuilder withDecision(String decisionPdfName, int applicationId) {
-      decisionAttachment = new Attachment(decisionPdfName, MediaType.APPLICATION_PDF_VALUE, decisionService.getDecision(applicationId));
-      return this;
-    }
-
-    public MailBuilder withContract(String contractPdfName, int applicationId) {
-      contractAttachment = new Attachment(contractPdfName, MediaType.APPLICATION_PDF_VALUE, contractService.getContract(applicationId));
-      return this;
-    }
-
-    public MailBuilder withWorkFinished(String contractPdfName, int applicationId) {
-      contractAttachment = new Attachment(contractPdfName, MediaType.APPLICATION_PDF_VALUE,
-          approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.WORK_FINISHED));
-      return this;
-    }
-
-    public MailBuilder withOperationalCondition(String contractPdfName, int applicationId) {
-      contractAttachment = new Attachment(contractPdfName, MediaType.APPLICATION_PDF_VALUE,
-          approvalDocumentService.getFinalApprovalDocument(applicationId, ApprovalDocumentType.OPERATIONAL_CONDITION));
+    public MailBuilder withAttachment(Attachment attachment) {
+      attachments.add(attachment);
       return this;
     }
 
     public MailBuilder withAttachments(List<Attachment> attachments) {
-      otherAttachments = attachments;
+      this.attachments.addAll(attachments);
       return this;
     }
 
@@ -130,16 +111,6 @@ public class AlluMailService {
     }
 
     public MailSenderLog send() {
-      List<Attachment> attachments = new ArrayList<>();
-      if (decisionAttachment != null) {
-        attachments.add(decisionAttachment);
-      }
-      if (contractAttachment != null) {
-        attachments.add(contractAttachment);
-      }
-      if (otherAttachments != null) {
-        attachments.addAll(otherAttachments);
-      }
       mailMessage.setAttachments(attachments);
       MailSenderLog log;
       if (model != null) {

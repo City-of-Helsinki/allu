@@ -11,6 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.Multipart;
@@ -70,14 +71,18 @@ public class AlluMailServiceSpec {
         });
 
         it("Should accept allowed emails", () -> {
+          Attachment decisionDoc = new Attachment("Decision.doc", MediaType.APPLICATION_PDF_VALUE, "DECISION".getBytes());
           alluMailService.newMailTo(Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"))
-              .withSubject("Cheep Cialis").withDecision("Decision.doc", 123).withBody("Body").send();
+              .withSubject("Cheep Cialis").withAttachment(decisionDoc).withBody("Body").send();
           Mockito.verify(javaMailSender).send(Mockito.any(MimeMessage.class));
         });
 
         it("Should add all attachments", () -> {
+          Attachment image = new Attachment("image.jpg.exe", MediaType.IMAGE_PNG_VALUE, "IMAGE".getBytes());
           alluMailService.newMailTo(Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"))
-              .withSubject("iPhone 5 only $1!!").withDecision("image.jpg.exe", 123).withBody("BUY NOW!")
+              .withSubject("iPhone 5 only $1!!")
+              .withAttachment(image)
+              .withBody("BUY NOW!")
               .withAttachments(
                   Arrays.asList(new Attachment("eka", "text/plain", "EKA".getBytes()), new Attachment("toka", "text/plain", "TOKA".getBytes())))
               .send();

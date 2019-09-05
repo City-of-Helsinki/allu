@@ -79,15 +79,16 @@ public class MailComposerService {
   private static final Logger logger = LoggerFactory.getLogger(MailComposerService.class);
 
   private final AlluMailService alluMailService;
-  private final AttachmentService attachmentService;
   private final LogService logService;
   private final ApplicationService applicationService;
+  private final MailAttachmentService mailAttachmentService;
 
   @Autowired
-  public MailComposerService(AlluMailService alluMailService, AttachmentService attachmentService,
-      LogService logService, ApplicationService applicationService) {
+  public MailComposerService(AlluMailService alluMailService,
+                             MailAttachmentService mailAttachmentService,
+                             LogService logService, ApplicationService applicationService) {
     this.alluMailService = alluMailService;
-    this.attachmentService = attachmentService;
+    this.mailAttachmentService = mailAttachmentService;
     this.logService = logService;
     this.applicationService = applicationService;
   }
@@ -103,34 +104,14 @@ public class MailComposerService {
       MailSenderLog log;
       try {
         final String attachmentName = attachmentName(type, application.getApplicationId());
+        final List<Attachment> attachments = mailAttachmentService.forApplication(application, type, attachmentName);
         final MailBuilder mailBuilder = alluMailService.newMailTo(emailRecipients)
           .withSubject(subject)
           .withBody(textBodyFor(application))
           .withHtmlBody(htmlBodyFor(application))
           .withInlineResources(inlineResources)
-          .withModel(mailModel(application, decisionDetailsJson.getMessageBody(), decisionTypeFor(application.getType()), attachmentName));
-
-        if (application.getType() == ApplicationType.PLACEMENT_CONTRACT) {
-          mailBuilder.withContract(attachmentName, application.getId())
-              .withAttachments(attachments(application));
-        } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT ||
-                   application.getType() == ApplicationType.AREA_RENTAL) {
-          switch (type) {
-            case DECISION:
-              mailBuilder.withDecision(String.format(attachmentName, application.getApplicationId()), application.getId())
-                  .withAttachments(attachments(application));
-              break;
-            case OPERATIONAL_CONDITION:
-              mailBuilder.withOperationalCondition(attachmentName, application.getId());
-              break;
-            case WORK_FINISHED:
-              mailBuilder.withWorkFinished(attachmentName, application.getId());
-              break;
-          }
-        } else {
-          mailBuilder.withDecision(attachmentName, application.getId())
-              .withAttachments(attachments(application));
-        }
+          .withModel(mailModel(application, decisionDetailsJson.getMessageBody(), decisionTypeFor(application.getType()), attachmentName))
+          .withAttachments(attachments);
 
         log = mailBuilder.send();
       } catch (Exception e) {
@@ -164,12 +145,7 @@ public class MailComposerService {
     }
   }
 
-  private List<Attachment> attachments(ApplicationJson application) {
-    return application.getAttachmentList().stream()
-        .filter(ai -> ai.isDecisionAttachment())
-        .map(ai -> new Attachment(ai.getName(), ai.getMimeType(), attachmentService.getAttachmentData(ai.getId())))
-        .collect(Collectors.toList());
-  }
+
 
   private String textBodyFor(ApplicationJson applicationJson) {
     String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType()) + EXTENSION_TXT;
