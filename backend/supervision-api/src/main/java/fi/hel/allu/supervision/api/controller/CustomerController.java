@@ -58,4 +58,20 @@ public class CustomerController {
     return ResponseEntity.ok(response);
   }
 
+  @ApiOperation(value = "Create a new customer",
+    authorizations = @Authorization(value = "api_key"),
+    consumes = "application/json",
+    produces = "application/json",
+    response = CustomerSearchResult.class)
+  @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Customer created successfully", response = CustomerSearchResult.class),
+    @ApiResponse(code = 400, message = "Invalid customer data", response = ErrorInfo.class),
+    @ApiResponse(code = 403, message = "Customer addition forbidden", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/customers", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<CustomerSearchResult> create(@RequestBody @Valid CustomerJson customerJson) {
+    CustomerJson createdCustomer = customerService.createCustomer(customerJson);
+    return ResponseEntity.ok(customerSearchResultMapper.mapToSearchResult(createdCustomer));
+  }
 }
