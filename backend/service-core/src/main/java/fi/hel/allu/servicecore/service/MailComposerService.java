@@ -197,7 +197,7 @@ public class MailComposerService {
       case EXCAVATION_ANNOUNCEMENT:
         return TEMPLATE_EXCAVATION_ANNOUNCEMENT;
       case PLACEMENT_CONTRACT:
-        return TEMPLATE_PLACEMENT_CONTRACT;
+        return templateForStatus(TEMPLATE_PLACEMENT_CONTRACT, status);
       default:
         return TEMPLATE_GENERIC;
     }
