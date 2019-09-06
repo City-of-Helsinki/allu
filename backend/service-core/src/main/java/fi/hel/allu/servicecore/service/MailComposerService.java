@@ -38,14 +38,14 @@ public class MailComposerService {
   private static final String SUBJECT_TRAFFIC_ARRANGEMENT = "Liikennejärjestelypäätös %s";
 
   // E-mail templates for various application types:
-  private static final String TEMPLATE_GENERIC = "yleinen";
-  private static final String TEMPLATE_CABLE_REPORT = "johtoselvitys";
-  private static final String TEMPLATE_SHORT_TERM_RENTAL = "lyhytaikainen_vuokraus";
-  private static final String TEMPLATE_EVENT = "tapahtuma";
-  private static final String TEMPLATE_STREET_WORK = "katutyo";
-  private static final String TEMPLATE_PLACEMENT_CONTRACT = "sijoitussopimus";
-  private static final String TEMPLATE_EXCAVATION_ANN = "kaivuilmoitus";
-  private static final String TEMPLATE_AREA_RENTAL = "aluevuokraus";
+  private static final String TEMPLATE_GENERIC = "GENERIC";
+  private static final String TEMPLATE_CABLE_REPORT = "CABLE_REPORT";
+  private static final String TEMPLATE_SHORT_TERM_RENTAL = "SHORT_TERM_RENTAL";
+  private static final String TEMPLATE_EVENT = "EVENT";
+  private static final String TEMPLATE_TEMPORARY_TRAFFIC_ARRANGEMENTS = "TEMPORARY_TRAFFIC_ARRANGEMENTS";
+  private static final String TEMPLATE_PLACEMENT_CONTRACT = "PLACEMENT_CONTRACT";
+  private static final String TEMPLATE_EXCAVATION_ANNOUNCEMENT = "EXCAVATION_ANNOUNCEMENT";
+  private static final String TEMPLATE_AREA_RENTAL = "AREA_RENTAL";
 
   private static final String DECISION_TYPE_TRAFFIC_ARRANGEMENT = "liikennejärjestelypäätös";
   private static final String DECISION_TYPE_AREA_RENTAL = "aluevuokrauspäätös";
@@ -188,11 +188,11 @@ public class MailComposerService {
       case EVENT:
         return TEMPLATE_EVENT;
       case TEMPORARY_TRAFFIC_ARRANGEMENTS:
-        return TEMPLATE_STREET_WORK;
+        return TEMPLATE_TEMPORARY_TRAFFIC_ARRANGEMENTS;
       case AREA_RENTAL:
         return TEMPLATE_AREA_RENTAL;
       case EXCAVATION_ANNOUNCEMENT:
-        return TEMPLATE_EXCAVATION_ANN;
+        return TEMPLATE_EXCAVATION_ANNOUNCEMENT;
       case PLACEMENT_CONTRACT:
         return TEMPLATE_PLACEMENT_CONTRACT;
       default:
