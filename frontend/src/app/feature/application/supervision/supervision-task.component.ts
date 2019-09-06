@@ -103,6 +103,9 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.taskTypes = EnumUtil.enumValues(SupervisionTaskType)
         .filter(type => !isAutomaticSupervisionTaskType(SupervisionTaskType[type]));
     }
+    if ([SupervisionTaskStatusType.APPROVED, SupervisionTaskStatusType.REJECTED].indexOf(formValue.status) >= 0) {
+      this.supervisors = [new User(formValue.ownerId, undefined, formValue.ownerName)];
+    }
     this.currentUserCanEdit(formValue.creatorId, formValue.status);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.currentUserCanTakeOwnership(formValue.ownerId, formValue.status);
