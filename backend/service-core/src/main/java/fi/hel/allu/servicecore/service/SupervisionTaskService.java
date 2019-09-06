@@ -28,6 +28,7 @@ import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.event.ApplicationArchiveEvent;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import fi.hel.allu.servicecore.util.PageRequestBuilder;
 import fi.hel.allu.servicecore.util.RestResponsePage;
 
@@ -39,16 +40,18 @@ public class SupervisionTaskService {
   private final UserService userService;
   private final ApplicationServiceComposer applicationServiceComposer;
   private final ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationHistoryService applicationHistoryService;
 
   @Autowired
   public SupervisionTaskService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
                                 UserService userService, ApplicationServiceComposer applicationServiceComposer,
-                                ApplicationEventPublisher archiveEventPublisher) {
+                                ApplicationEventPublisher archiveEventPublisher, ApplicationHistoryService applicationHistoryService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
     this.applicationServiceComposer = applicationServiceComposer;
     this.applicationEventPublisher = archiveEventPublisher;
+    this.applicationHistoryService = applicationHistoryService;
   }
 
 
@@ -97,6 +100,7 @@ public class SupervisionTaskService {
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.postForEntity(
         applicationProperties.getSupervisionTaskCreateUrl(), task, SupervisionTask.class);
     applicationServiceComposer.refreshSearchTags(task.getApplicationId());
+    applicationHistoryService.addSupervisionAdded(task.getApplicationId(), task.getType());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -110,6 +114,7 @@ public class SupervisionTaskService {
         taskJson.getId());
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
+    applicationHistoryService.addSupervisionApproved(taskJson.getApplicationId(), taskJson.getType());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -127,6 +132,7 @@ public class SupervisionTaskService {
         uri, HttpMethod.PUT, supervisionTaskHttpEntity, SupervisionTask.class);
 
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
+    applicationHistoryService.addSupervisionRejected(taskJson.getApplicationId(), taskJson.getType());
     // TODO: send email to customer about new supervision date and reason of rejection
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
@@ -135,6 +141,7 @@ public class SupervisionTaskService {
     SupervisionTaskJson taskJson = findById(id);
     restTemplate.delete(applicationProperties.getSupervisionTaskByIdUrl(), id);
     applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
+    applicationHistoryService.addSupervisionRemoved(taskJson.getApplicationId(), taskJson.getType());
     applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
   }
 

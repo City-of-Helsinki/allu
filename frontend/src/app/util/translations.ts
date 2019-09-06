@@ -1833,6 +1833,8 @@ export const translations = {
         CONTACT_CHANGED: 'Yhteyshenkilö muutettu',
         OWNER_CHANGED: 'Hakemuksen omistaja muutettu',
         CONTRACT_STATUS_CHANGED: 'Sopimuksen tila muutettu',
+        COMMENT_ADDED: 'Kommentti lisätty',
+        COMMENT_REMOVED: 'Kommentti poistettu',
       },
       typeWithSpecifier: {
         STATUS_CHANGED: {
@@ -1870,6 +1872,44 @@ export const translations = {
           CONTRACTOR: 'Työn suorittajan yhteyshenkilö muutettu',
           REPRESENTATIVE: 'Asiamiehen yhteyshenkilö muutettu'
         },
+        SUPERVISION_ADDED: {
+          PRELIMINARY_SUPERVISION: 'Aloitusvalvonta lisätty',
+          SUPERVISION: 'Valvonta lisätty',
+          FINAL_SUPERVISION: 'Loppuvalvonta lisätty',
+          WORK_TIME_SUPERVISION: 'Työnaikainen valvonta lisätty',
+          OPERATIONAL_CONDITION: 'Toiminnallisen kunnon valvonta lisätty',
+          WARRANTY: 'Takuuvalvonta lisätty',
+          TERMINATION: 'Irtisanomisen valvonta lisätty'
+        },
+        SUPERVISION_REMOVED: {
+          PRELIMINARY_SUPERVISION: 'Aloitusvalvonta poistettu',
+          SUPERVISION: 'Valvonta poistettu',
+          FINAL_SUPERVISION: 'Loppuvalvonta poistettu',
+          WORK_TIME_SUPERVISION: 'Työnaikainen valvonta poistettu',
+          OPERATIONAL_CONDITION: 'Toiminnallisen kunnon valvonta poistettu',
+          WARRANTY: 'Takuuvalvonta poistettu',
+          TERMINATION: 'Irtisanomisen valvonta poistettu'
+        },
+        SUPERVISION_APPROVED: {
+          PRELIMINARY_SUPERVISION: 'Aloitusvalvonta hyväksytty',
+          SUPERVISION: 'Valvonta hyväksytty',
+          FINAL_SUPERVISION: 'Loppuvalvonta hyväksytty',
+          WORK_TIME_SUPERVISION: 'Työnaikainen valvonta hyväksytty',
+          OPERATIONAL_CONDITION: 'Toiminnallisen kunnon valvonta hyväksytty',
+          WARRANTY: 'Takuuvalvonta hyväksytty',
+          TERMINATION: 'Irtisanomisen valvonta hyväksytty'
+        },
+        SUPERVISION_REJECTED: {
+          PRELIMINARY_SUPERVISION: 'Aloitusvalvonta hylätty',
+          SUPERVISION: 'Valvonta hylätty',
+          FINAL_SUPERVISION: 'Loppuvalvonta hylätty',
+          WORK_TIME_SUPERVISION: 'Työnaikainen valvonta hylätty',
+          OPERATIONAL_CONDITION: 'Toiminnallisen kunnon valvonta hylätty',
+          WARRANTY: 'Takuuvalvonta hylätty',
+          TERMINATION: 'Irtisanomisen valvonta hylätty'
+        },
+        ATTACHMENT_ADDED: 'Liite {{attachmentName}} lisätty',
+        ATTACHMENT_REMOVED: 'Liite {{attachmentName}} poistettu',
         LOCATION_CHANGED: 'Aluetta {{locationKey}} päivitetty'
       },
       field: {

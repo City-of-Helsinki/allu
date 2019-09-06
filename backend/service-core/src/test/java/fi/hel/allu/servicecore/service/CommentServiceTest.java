@@ -21,6 +21,10 @@ import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class CommentServiceTest {
   @Mock
@@ -29,6 +33,8 @@ public class CommentServiceTest {
   private ApplicationProperties applicationProperties;
   @Mock
   private UserService userService;
+  @Mock
+  private ApplicationHistoryService applicationHistoryService;
   @InjectMocks
   private CommentService commentService;
 
@@ -38,6 +44,8 @@ public class CommentServiceTest {
   private static final String COMMENTS_DELETE_URL = "CommentsDeleteUrl";
   private static final String COMMENTS_COUNT_URL = "CommentsCountUrl";
   private static final String COMMENTS_FIND_BY_ID_URL = "CommentsFindByIdUrl";
+  private static final int APPLICATION_ID = 11;
+  private static final int USER_ID = 7;
 
   @Before
   public void setUp() {
@@ -57,15 +65,13 @@ public class CommentServiceTest {
 
   @Test
   public void testFindCommentsById() {
-    final int APPLICATION_ID = 12;
-    final int USER_ID = 5;
     Comment comment = newComment(CommentType.INTERNAL, "Hakijalla on hyvät suositukset", USER_ID);
     UserJson userJson = newUserJson("Kalle Käyttäjä", USER_ID);
     Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_FIND_BY_APP_URL), Mockito.eq(Comment[].class),
         Mockito.eq(APPLICATION_ID))).thenReturn(new ResponseEntity<>(new Comment[] { comment }, HttpStatus.OK));
     Mockito.when(userService.findUserById(Mockito.eq(USER_ID))).thenReturn(userJson);
 
-    List<CommentJson> comments = commentService.findByApplicationId(12);
+    List<CommentJson> comments = commentService.findByApplicationId(APPLICATION_ID);
 
     Assert.assertEquals(1, comments.size());
     Assert.assertEquals(comment.getText(), comments.get(0).getText());
@@ -74,8 +80,6 @@ public class CommentServiceTest {
 
   @Test
   public void testAddComment() {
-    final int APPLICATION_ID = 11;
-    final int USER_ID = 7;
     Comment comment = newComment(CommentType.INVOICING, "Sovittu laskutettavaksi kolmessa erässä", USER_ID);
     UserJson userJson = newUserJson("Kalle Käyttäjä", USER_ID);
     CommentJson commentJson = newCommentJson(CommentType.INTERNAL, "JSON-kommentti", USER_ID + 1);
@@ -88,6 +92,16 @@ public class CommentServiceTest {
     CommentJson result = commentService.addApplicationComment(APPLICATION_ID, commentJson);
     Assert.assertEquals(comment.getText(), result.getText());
     Assert.assertEquals(USER_ID, result.getUser().getId().intValue());
+  }
+
+  @Test
+  public void shouldAddHistoryWhenAdded() {
+    Comment comment = newComment(CommentType.INTERNAL, "comment", USER_ID);
+    Mockito.when(restTemplate.postForEntity(Mockito.eq(COMMENTS_CREATE_URL), Mockito.any(Comment.class),
+        Mockito.eq(Comment.class), Mockito.eq(APPLICATION_ID))).thenReturn(new ResponseEntity<>(comment, HttpStatus.OK));
+    Mockito.when(userService.getCurrentUser()).thenReturn(newUserJson("user", USER_ID));
+    commentService.addApplicationComment(APPLICATION_ID, newCommentJson(CommentType.INTERNAL, "comment", USER_ID));
+    verify(applicationHistoryService, times(1)).addCommentAdded(APPLICATION_ID);
   }
 
   @Test
@@ -118,6 +132,17 @@ public class CommentServiceTest {
 
     commentService.deleteComment(COMMENT_ID);
     Mockito.verify(restTemplate).delete(Mockito.eq(COMMENTS_DELETE_URL), Mockito.eq(COMMENT_ID));
+  }
+
+  @Test
+  public void shouldAddHistoryWhenDeleted() {
+    int commentId = 3;
+    Comment comment = newComment(CommentType.INTERNAL, "comment", USER_ID);
+    comment.setApplicationId(APPLICATION_ID);
+    Mockito.when(restTemplate.getForEntity(Mockito.eq(COMMENTS_FIND_BY_ID_URL), Mockito.eq(Comment.class), Mockito.eq(commentId)))
+            .thenReturn(ResponseEntity.ok(comment));
+    commentService.deleteComment(commentId);
+    verify(applicationHistoryService, times(1)).addCommentRemoved(APPLICATION_ID);
   }
 
   private CommentJson newCommentJson(CommentType type, String text, int userId) {

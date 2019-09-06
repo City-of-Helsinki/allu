@@ -17,6 +17,7 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 @Service
 public class CommentService {
@@ -24,6 +25,8 @@ public class CommentService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
+  private ApplicationHistoryService applicationHistoryService;
+
 
   private static Set<CommentType> allowedUserCommentTypes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
       CommentType.INTERNAL,
@@ -33,10 +36,11 @@ public class CommentService {
 
   @Autowired
   public CommentService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      UserService userService) {
+      UserService userService, ApplicationHistoryService applicationHistoryService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
+    this.applicationHistoryService = applicationHistoryService;
   }
 
   public List<CommentJson> findByApplicationId(int applicationId) {
@@ -55,6 +59,7 @@ public class CommentService {
     validateCommentType(commentJson.getType());
     CommentJson comment = addComment(applicationProperties.getApplicationCommentsCreateUrl(), applicationId, commentJson);
     updateSearchServiceNrOfComments(applicationId);
+    applicationHistoryService.addCommentAdded(applicationId);
     return comment;
 
   }
@@ -100,6 +105,7 @@ public class CommentService {
     restTemplate.delete(applicationProperties.getCommentsDeleteUrl(), id);
     if (comment.getApplicationId() != null) {
       updateSearchServiceNrOfComments(comment.getApplicationId());
+      applicationHistoryService.addCommentRemoved(comment.getApplicationId());
     }
   }
 

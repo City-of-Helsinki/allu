@@ -1,9 +1,6 @@
 package fi.hel.allu.servicecore.service.applicationhistory;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.ContractStatusType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
@@ -259,9 +256,45 @@ public class ApplicationHistoryService {
   }
 
   public void addContractStatusChange(Integer applicationId, ContractStatusType contractStatus) {
+    addChange(applicationId, ChangeType.CONTRACT_STATUS_CHANGED, contractStatus.name());
+  }
+
+  public void addCommentAdded(Integer applicationId) {
+    addChange(applicationId, ChangeType.COMMENT_ADDED, null);
+  }
+
+  public void addCommentRemoved(Integer applicationId) {
+    addChange(applicationId, ChangeType.COMMENT_REMOVED, null);
+  }
+
+  public void addAttachmentAdded(Integer applicationId, String attachmentName) {
+    addChange(applicationId, ChangeType.ATTACHMENT_ADDED, attachmentName);
+  }
+
+  public void addAttachmentRemoved(Integer applicationId, String attachmentName) {
+    addChange(applicationId, ChangeType.ATTACHMENT_REMOVED, attachmentName);
+  }
+
+  public void addSupervisionAdded(Integer applicationId, SupervisionTaskType taskType) {
+    addChange(applicationId, ChangeType.SUPERVISION_ADDED, taskType.name());
+  }
+
+  public void addSupervisionRemoved(Integer applicationId, SupervisionTaskType taskType) {
+    addChange(applicationId, ChangeType.SUPERVISION_REMOVED, taskType.name());
+  }
+
+  public void addSupervisionApproved(Integer applicationId, SupervisionTaskType taskType) {
+    addChange(applicationId, ChangeType.SUPERVISION_APPROVED, taskType.name());
+  }
+
+  public void addSupervisionRejected(Integer applicationId, SupervisionTaskType taskType) {
+    addChange(applicationId, ChangeType.SUPERVISION_REJECTED, taskType.name());
+  }
+
+  private void addChange(Integer applicationId, ChangeType type, String changeSpecifier) {
     ChangeHistoryItem change = new ChangeHistoryItem();
-    change.setChangeType(ChangeType.CONTRACT_STATUS_CHANGED);
-    change.setChangeSpecifier(contractStatus.name());
+    change.setChangeType(type);
+    change.setChangeSpecifier(changeSpecifier);
     addChangeItem(applicationId, change);
   }
 

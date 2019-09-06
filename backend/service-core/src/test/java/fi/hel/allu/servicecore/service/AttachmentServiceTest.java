@@ -1,10 +1,9 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.DefaultAttachmentInfo;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
-import fi.hel.allu.servicecore.domain.UserJson;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,11 +18,15 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
+import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
 
 /**
  * Tests for AttachmentService API
@@ -36,6 +39,7 @@ public class AttachmentServiceTest {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
+  private ApplicationHistoryService applicationHistoryService = Mockito.mock(ApplicationHistoryService.class);
 
   private final int USER_ID = 1;
   private final int APPLICATION_ID = 1234;
@@ -45,25 +49,24 @@ public class AttachmentServiceTest {
     applicationProperties = Mockito.mock(ApplicationProperties.class);
     restTemplate = Mockito.mock(RestTemplate.class);
     userService = Mockito.mock(UserService.class);
-    attachmentService = new AttachmentService(applicationProperties, restTemplate, userService);
+    attachmentService = new AttachmentService(applicationProperties, restTemplate, userService, applicationHistoryService);
     UserJson userJson = new UserJson();
     userJson.setId(USER_ID);
     userJson.setRealName("real name");
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
     Mockito.when(userService.findUserById(USER_ID)).thenReturn(userJson);
-  }
-
-  @Test
-  public void testAddAttachment() throws IllegalArgumentException, IOException {
     Mockito.when(restTemplate.exchange(
         Mockito.anyString(),
         Mockito.eq(HttpMethod.POST),
         Mockito.any(HttpEntity.class),
         Mockito.eq(AttachmentInfo.class),
-        Mockito.eq(99))).thenAnswer(
+        Mockito.eq(APPLICATION_ID))).thenAnswer(
             (Answer<ResponseEntity<AttachmentInfo>>) invocation -> new ResponseEntity<>(createMockAttachmentInfo(),
                 HttpStatus.CREATED));
+  }
 
+  @Test
+  public void testAddAttachment() throws IllegalArgumentException, IOException {
     final int ITEMS = 5;
     AttachmentInfoJson infos[] = new AttachmentInfoJson[ITEMS];
     MultipartFile files[] = new MultipartFile[ITEMS];
@@ -71,12 +74,20 @@ public class AttachmentServiceTest {
       infos[i] = newAttachmentInfoJson();
       files[i] = new MockMultipartFile("dumdedoo.bin", generateMockData(4321));
     }
-    List<AttachmentInfoJson> results = attachmentService.addAttachments(99, infos, files);
+    List<AttachmentInfoJson> results = attachmentService.addAttachments(APPLICATION_ID, infos, files);
 
     for (AttachmentInfoJson result : results) {
       checkThatIsMockResult(result);
     }
     assertEquals(ITEMS, results.size());
+  }
+
+  @Test
+  public void shouldAddHistoryWhenAdded() throws IOException {
+    AttachmentInfoJson infoJson = new AttachmentInfoJson();
+    infoJson.setName("attachment name");
+    attachmentService.addAttachment(APPLICATION_ID, infoJson, new MockMultipartFile("attachment.bin", generateMockData(30)));
+    Mockito.verify(applicationHistoryService, times(1)).addAttachmentAdded(APPLICATION_ID, infoJson.getName());
   }
 
   @Test
@@ -100,9 +111,21 @@ public class AttachmentServiceTest {
 
   @Test
   public void testDeleteAttachment() {
+    Mockito.when(restTemplate.getForObject(Mockito.anyString(), Mockito.eq(DefaultAttachmentInfo.class), Mockito.anyInt()))
+    .thenReturn(createMockAttachmentInfo());
     attachmentService.deleteAttachment(123, 1);
     Mockito.verify(restTemplate).delete(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
   }
+
+  @Test
+  public void shouldAddHistoryWhenDeleted() {
+    DefaultAttachmentInfo info = createMockAttachmentInfo();
+    Mockito.when(restTemplate.getForObject(Mockito.anyString(), Mockito.eq(DefaultAttachmentInfo.class), Mockito.anyInt()))
+    .thenReturn(info);
+    attachmentService.deleteAttachment(APPLICATION_ID, 2);
+    Mockito.verify(applicationHistoryService, times(1)).addAttachmentRemoved(APPLICATION_ID, info.getName());
+  }
+
 
   @Test
   public void testGetData() {

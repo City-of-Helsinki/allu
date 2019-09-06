@@ -29,6 +29,7 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 
 @Service
 public class AttachmentService {
@@ -39,12 +40,15 @@ public class AttachmentService {
   private final ApplicationProperties applicationProperties;
   private final RestTemplate restTemplate;
   private final UserService userService;
+  private final ApplicationHistoryService applicationHistoryService;
 
   @Autowired
-  public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService) {
+  public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService,
+      ApplicationHistoryService applicationHistoryService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
+    this.applicationHistoryService = applicationHistoryService;
   }
 
   public List<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
@@ -171,7 +175,9 @@ public class AttachmentService {
   }
 
   public void deleteAttachment(int applicationId, int attachmentId) {
+    AttachmentInfoJson info = getAttachment(attachmentId);
     restTemplate.delete(applicationProperties.getDeleteAttachmentUrl(), applicationId, attachmentId);
+    applicationHistoryService.addAttachmentRemoved(applicationId, info.getName());
   }
 
   public void deleteDefaultAttachment(int id) {
@@ -201,6 +207,7 @@ public class AttachmentService {
     // ...then execute the request
     ResponseEntity<AttachmentInfo> response = restTemplate.exchange(
         applicationProperties.getAddAttachmentUrl(), HttpMethod.POST, requestEntity, AttachmentInfo.class, applicationId);
+    applicationHistoryService.addAttachmentAdded(applicationId, info.getName());
     return toAttachmentInfoJson(response.getBody());
   }
 

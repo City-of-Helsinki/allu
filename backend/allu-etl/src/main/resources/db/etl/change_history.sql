@@ -25,6 +25,14 @@ SELECT
         WHEN change_type = 'LOCATION_CHANGED' THEN 'Sijainti päivitetty'
         WHEN change_type = 'OWNER_CHANGED' THEN 'Omistaja päivitetty'
         WHEN change_type = 'CONTRACT_STATUS_CHANGED' THEN 'Sopimuksen tila muutettu'
+        WHEN change_type = 'COMMENT_ADDED' THEN 'Kommentti lisätty'
+        WHEN change_type = 'COMMENT_REMOVED' THEN 'Kommentti poistettu'
+        WHEN change_type = 'ATTACHMENT_ADDED' THEN 'Liite lisätty'
+        WHEN change_type = 'ATTACHMENT_REMOVED' THEN 'Liite poistettu'
+        WHEN change_type = 'SUPERVISION_ADDED' THEN 'Valvonta lisätty'
+        WHEN change_type = 'SUPERVISION_APPROVED' THEN 'Valvonta hyväksytty'
+        WHEN change_type = 'SUPERVISION_REJECTED' THEN 'Valvonta hylätty'
+        WHEN change_type = 'SUPERVISION_REMOVED' THEN 'Valvonta poistettu'
     END AS muutostyyppi,
     CASE
         WHEN c.change_specifier = 'PENDING_CLIENT' THEN 'Vireillä asiakasjärjestelmässä'
