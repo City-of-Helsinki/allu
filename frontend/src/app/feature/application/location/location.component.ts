@@ -55,6 +55,7 @@ import {MapComponent} from '@feature/map/map.component';
 import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
+import {ObjectUtil} from '@util/object.util';
 
 @Component({
   selector: 'type',
@@ -239,6 +240,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  get fixedLocationsSelected(): boolean {
+    return Some(this.fixedLocationsCtrl.value)
+      .map(fixedLocations => fixedLocations.length > 0)
+      .orElse(false);
+  }
+
   onApplicationTypeChange(type: ApplicationType) {
     if (type !== this.application.type) {
       this.application.type = ApplicationType[type];
@@ -308,23 +315,21 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit() {
     if (this.submitAllowed) {
+      const application = ObjectUtil.clone(this.application);
       this.submitPending = true;
       this.mapController.savePending();
-      this.locationState.storeLocation(LocationForm.to(this.locationForm.value));
+      this.locationState.storeLocation(LocationForm.to(this.locationForm.value), false);
       const locations = this.locationState.locationsSnapshot;
-      this.application.locations = locations;
-      this.application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
-      this.application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
-      this.applicationStore.applicationChange(this.application);
+      application.locations = locations;
+      application.startTime = TimeUtil.minimum(... locations.map(l => l.startTime));
+      application.endTime = TimeUtil.maximum(... locations.map(l => l.endTime));
 
-      const updated = this.applicationStore.snapshot.application;
-
-      this.initDistribution(updated);
-      this.addCurrentUserToDistribution(updated);
+      this.initDistribution(application);
+      this.addCurrentUserToDistribution(application);
 
       const urlSuffix = this.applicationStore.isNew ? 'edit' : 'summary';
 
-      this.applicationStore.save(updated)
+      this.applicationStore.save(application)
         .subscribe(
           app => {
             this.destroy.next(true);

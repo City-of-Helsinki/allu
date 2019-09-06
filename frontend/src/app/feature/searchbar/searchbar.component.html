@@ -14,13 +14,15 @@
       </input-box>
     </div>
 
-    <div fxFlex="1 1 340px"
+    <div *ngIf="showAddress"
+         fxFlex="1 1 340px"
          fxFlex.lt-md="100%">
       <input-box class="input-raised">
         <button type="button" mat-raised-button matPrefix class="toggle-sidebar fill" (click)="showMore()" inputBoxPrefix>
           <mat-icon>subject</mat-icon>
         </button>
-        <input type="text" formControlName="address"
+        <input type="text"
+               formControlName="address"
                inputBoxInput
                class="input-addon-field last-item"
                [placeholder]="'searchbar.address' | translation"
@@ -54,10 +56,12 @@
   <div *ngIf="barType === 'BAR'" class="row-indent"
        fxLayout="row" fxLayoutGap="18px"
        fxLayout.lt-md="column" fxLayoutGap.lt-md="5px">
-    <div fxFlex="1 1 340px"
+    <div *ngIf="showAddress"
+         fxFlex="1 1 340px"
          fxFlex.lt-md="100%">
       <input-box class="input-raised">
-        <input type="text" formControlName="address"
+        <input type="text"
+               formControlName="address"
                inputBoxInput
                [placeholder]="'searchbar.address' | translation"
                (keyup.enter)="addressSelected(searchForm.value.address)"
@@ -126,10 +130,11 @@
   </div>
 
   <div *ngIf="barType === 'ADVANCED'">
-    <div fxLayout="row">
+    <div *ngIf="showAddress" fxLayout="row">
       <div fxFlex>
         <mat-form-field class="input-full-width">
-          <input matInput type="text" formControlName="address"
+          <input matInput type="text"
+                 formControlName="address"
                  [placeholder]="'searchbar.address' | translation"
                  (keyup.enter)="addressSelected(searchForm.value.address)"
                  [matAutocomplete]="addressSearch"/>

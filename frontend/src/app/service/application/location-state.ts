@@ -37,7 +37,7 @@ export class LocationState implements OnDestroy {
     return this._editIndex;
   }
 
-  storeLocation(location: Location): void {
+  storeLocation(location: Location, clearEdited = true): void {
     if (this.validLocation(location)) {
       const current = this.locations$.getValue();
       let next;
@@ -48,7 +48,10 @@ export class LocationState implements OnDestroy {
         next = current.concat(location);
       }
 
-      this.clearEdited();
+      if (clearEdited) {
+        this.clearEdited();
+      }
+
       this.locations$.next(next);
     }
   }

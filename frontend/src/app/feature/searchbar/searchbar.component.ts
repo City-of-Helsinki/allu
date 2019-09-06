@@ -52,6 +52,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   @Input() datesRequired = false;
   @Input() barType: BarType = BarType.BAR;
   @Input() targetType: ActionTargetType = ActionTargetType.Home;
+  @Input() showAddress = true;
 
   @Output() onShowAdvanced = new EventEmitter<boolean>();
   @Output() addressChange = new EventEmitter<string>();

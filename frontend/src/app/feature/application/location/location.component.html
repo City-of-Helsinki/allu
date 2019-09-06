@@ -66,6 +66,7 @@
                     [timePeriod]="timePeriod$ | async"
                     [filter]="searchFilter$ | async"
                     targetType="Location"
+                    [showAddress]="!fixedLocationsSelected"
                     (searchChange)="onSearchChange($event)"
                     (addressChange)="onAddressChange($event)">Loading searchbar</searchbar>
                 </div>
