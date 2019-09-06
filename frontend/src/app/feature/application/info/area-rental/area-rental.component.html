@@ -15,7 +15,8 @@
   <customer [parentForm]="applicationForm"
             [customerWithContacts]="application.contractor"
             [readonly]="readonly"
-            [showRepresentative]="true"></customer>
+            [showRepresentative]="true"
+            [contactRequired]="true"></customer>
 
   <customer *ngIf="hasRepresentative" [parentForm]="applicationForm" [customerWithContacts]="application.representative"
             [readonly]="readonly"></customer>
