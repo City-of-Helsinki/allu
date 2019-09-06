@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,8 @@ public class MailComposerService {
   private static final String TEMPLATE_PLACEMENT_CONTRACT = "PLACEMENT_CONTRACT";
   private static final String TEMPLATE_EXCAVATION_ANNOUNCEMENT = "EXCAVATION_ANNOUNCEMENT";
   private static final String TEMPLATE_AREA_RENTAL = "AREA_RENTAL";
+
+  private static final String TEMPLATE_TERMINATION_SUFFIX = "-termination";
 
   private static final String DECISION_TYPE_TRAFFIC_ARRANGEMENT = "liikennejärjestelypäätös";
   private static final String DECISION_TYPE_AREA_RENTAL = "aluevuokrauspäätös";
@@ -148,7 +151,7 @@ public class MailComposerService {
 
 
   private String textBodyFor(ApplicationJson applicationJson) {
-    String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType()) + EXTENSION_TXT;
+    String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType(), applicationJson.getStatus()) + EXTENSION_TXT;
     try {
       return ResourceUtil.readClassPathResource(templateFile);
     } catch (IOException e) {
@@ -158,7 +161,7 @@ public class MailComposerService {
   }
 
   private String htmlBodyFor(ApplicationJson applicationJson) {
-    String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType()) + EXTENSION_HTML;
+    String templateFile = TEMPLATE_PATH + templateFor(applicationJson.getType(), applicationJson.getStatus()) + EXTENSION_HTML;
     try {
       return ResourceUtil.readClassPathResource(templateFile);
     } catch (IOException e) {
@@ -179,12 +182,12 @@ public class MailComposerService {
     return result;
   }
 
-  private String templateFor(ApplicationType type) {
+  private String templateFor(ApplicationType type, StatusType status) {
     switch (type) {
       case CABLE_REPORT:
         return TEMPLATE_CABLE_REPORT;
       case SHORT_TERM_RENTAL:
-        return TEMPLATE_SHORT_TERM_RENTAL;
+        return templateForStatus(TEMPLATE_SHORT_TERM_RENTAL, status);
       case EVENT:
         return TEMPLATE_EVENT;
       case TEMPORARY_TRAFFIC_ARRANGEMENTS:
@@ -197,6 +200,14 @@ public class MailComposerService {
         return TEMPLATE_PLACEMENT_CONTRACT;
       default:
         return TEMPLATE_GENERIC;
+    }
+  }
+
+  private String templateForStatus(String baseTemplate, StatusType status) {
+    if (StatusType.TERMINATED == status) {
+      return baseTemplate + TEMPLATE_TERMINATION_SUFFIX;
+    } else {
+      return baseTemplate;
     }
   }
 
