@@ -202,12 +202,7 @@ public class MailComposerService {
 
   private String subject(ApplicationJson application, DecisionDocumentType type) {
     StringBuilder subject = new StringBuilder();
-    if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT ||
-        application.getType() == ApplicationType.AREA_RENTAL) {
-      subject.append(String.format(subjectFor(application.getType()), attachmentName(type, application.getApplicationId())));
-    } else {
-      subject.append(String.format(subjectFor(application.getType()), application.getApplicationId()));
-    }
+    subject.append(String.format(subjectFor(application.getType()), attachmentName(type, application.getApplicationId())));
     subject.append(getApplicationNameForSubject(application));
     subject.append(getAddressForSubject(application));
     return subject.toString();
