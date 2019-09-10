@@ -17,7 +17,7 @@ export class CustomerQueryParametersMapper {
     QueryParametersMapper.mapParameter(queryParameters,
       'registryKey', QueryParametersMapper.removeExtraWhitespace(query.registryKey), 2);
     QueryParametersMapper.mapParameter(queryParameters,
-      'sapCustomerNumber', QueryParametersMapper.removeExtraWhitespace(query.sapCustomerNumber), 3);
+      'sapCustomerNumber', QueryParametersMapper.removeExtraWhitespace(query.sapCustomerNumber), 4);
 
     QueryParametersMapper.mapRawParameter(queryParameters, 'type', query.type);
     QueryParametersMapper.mapBooleanParameter(queryParameters, 'active', query.active);
