@@ -55,7 +55,9 @@ public abstract class ModelFieldUpdater {
 
   private void validateIsUpdatable(PropertyDescriptor propertyDescriptor) {
     Method writeMethod = Optional.ofNullable(propertyDescriptor.getWriteMethod()).orElseThrow(() -> new IllegalArgumentException("Given field cannot be updated"));
-    Optional.ofNullable(writeMethod.getAnnotation(UpdatableProperty.class)).orElseThrow(() -> new IllegalArgumentException("Given field cannot be updated"));
+    if (requireUpdatablePropertyAnnotation()) {
+      Optional.ofNullable(writeMethod.getAnnotation(UpdatableProperty.class)).orElseThrow(() -> new IllegalArgumentException("Given field cannot be updated"));
+    }
   }
 
   private void updateFields(Map<String, Object> fields, Object targetObject)
@@ -63,5 +65,9 @@ public abstract class ModelFieldUpdater {
     JsonNode node = objectMapper.convertValue(fields, JsonNode.class);
     ObjectReader readerForUpdating = objectMapper.readerForUpdating(targetObject);
     readerForUpdating.readValue(node);
+  }
+
+  protected boolean requireUpdatablePropertyAnnotation() {
+    return true;
   }
 }
