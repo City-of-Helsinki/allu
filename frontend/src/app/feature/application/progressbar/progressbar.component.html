@@ -14,7 +14,12 @@
             </a>
           </div>
           <div *ngIf="application.identificationNumber" class="text-hint">
-            {{application.identificationNumber}}
+            <ng-container *ngIf="externalUrl; else plainIdentificationNumber">
+              <a [href]="externalUrl">{{application.identificationNumber}}</a>
+            </ng-container>
+            <ng-template #plainIdentificationNumber>
+              {{application.identificationNumber}}
+            </ng-template>
           </div>
         </div>
         <div fxFlex="none">

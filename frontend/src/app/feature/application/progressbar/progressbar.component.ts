@@ -10,6 +10,7 @@ import {map} from 'rxjs/internal/operators';
 import {select, Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers';
 import {Add} from '@feature/project/actions/application-basket-actions';
+import {getByIdentifier} from '@feature/common/external-url-config';
 
 export type ProgressColor =
   | 'pending'
@@ -34,6 +35,7 @@ export class ProgressbarComponent implements OnInit {
   replacements$: Observable<ApplicationIdentifier[]>;
   hasReplacements$: Observable<boolean>;
   existingApplication: boolean;
+  externalUrl: string;
 
   private _application: Application = new Application();
 
@@ -54,6 +56,7 @@ export class ProgressbarComponent implements OnInit {
     this.progress = this.calculateProgress(application.status);
     this.color = this.calculateColor(application.status);
     this.existingApplication = NumberUtil.isDefined(application.id);
+    this.externalUrl = getByIdentifier(application.identificationNumber);
   }
 
   show(id: number) {
