@@ -17,6 +17,7 @@ import {MapLayer} from '@service/map/map-layer';
 import {needsPaymentTariff} from '@feature/common/payment-tariff';
 import {fixedLocationInfo, groupByArea} from '@model/common/fixed-location';
 import {TreeStructureNode} from '@feature/common/tree/tree-node';
+import {Some} from '@util/option';
 
 @Component({
   selector: 'location-details',
@@ -88,6 +89,12 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit, OnDestro
     } else {
       return false;
     }
+  }
+
+  get fixedLocationsSelected(): boolean {
+    return Some(this.location.fixedLocationIds)
+      .map(ids => ids.length > 0)
+      .orElse(false);
   }
 
   paymentTariff(): string {

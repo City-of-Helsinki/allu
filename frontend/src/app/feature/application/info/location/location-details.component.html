@@ -2,13 +2,27 @@
   <mat-card-title>{{'location.title' | translation}}</mat-card-title>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="18px">
-      <div fxFlex="0 1 calc(20% - 18px)">
-        <mat-form-field class="input-full-width">
+      <div fxFlex="0 1 calc(40% - 18px)">
+        <mat-form-field *ngIf="!fixedLocationsSelected; else fixedLocations" class="input-full-width">
           <input matInput type="text"
                  [ngModel]="location.postalAddress.streetAddress"
                  [disabled]="readonly"
                  [placeholder]="'location.postalAddress' | translation"/>
         </mat-form-field>
+        <ng-template #fixedLocations>
+          <mat-form-field *ngIf="fixedLocationInfos$ | async as fixedLocationInfos" class="input-full-width">
+            <mat-select class="input-full-width"
+                        multiple
+                        [disabled]="readonly"
+                        [value]="['hidden']"
+                        [placeholder]="'location.fixedLocations' | translation">
+              <mat-select-trigger>
+                <partial-list-display [items]="fixedLocationInfos" [show]="2"></partial-list-display>
+              </mat-select-trigger>
+              <mat-option value="hidden">hidden</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-template>
       </div>
       <div fxFlex="0 1 calc(40% - 18px)">
         <mat-form-field class="input-full-width">
@@ -18,7 +32,7 @@
                  [placeholder]="'location.additionalInfo' | translation"/>
         </mat-form-field>
       </div>
-      <div fxFlex="0 1 calc(40%-18px)" class="align-right">
+      <div fxFlex="0 1 calc(20%-18px)" class="align-right">
         <button
           mat-raised-button
           type="button"
@@ -37,22 +51,6 @@
             {{'location.button.edit' | translation | uppercase}}
           </button>
         </ng-container>
-      </div>
-    </div>
-    <div fxLayout="row" fxLayoutGap="18px" *ngIf="fixedLocationInfos$ | async as fixedLocationInfos">
-      <div fxFlex="0 1 calc(40% - 18px)">
-        <mat-form-field class="input-full-width">
-          <mat-select class="input-full-width"
-                      multiple
-                      [disabled]="readonly"
-                      [value]="['hidden']"
-                      [placeholder]="'location.fixedLocations' | translation">
-            <mat-select-trigger>
-              <partial-list-display [items]="fixedLocationInfos" [show]="2"></partial-list-display>
-            </mat-select-trigger>
-            <mat-option value="hidden">hidden</mat-option>
-          </mat-select>
-        </mat-form-field>
       </div>
     </div>
     <div fxLayout="row" fxLayoutGap="18px">
