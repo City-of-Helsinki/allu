@@ -97,6 +97,12 @@ caches:
     cache:
       type: sqlite
 
+  hki_johto_porakaivot_vesi_cache:
+    grids: [EPSG_3879]
+      sources: [hki_wms_johto_porakaivot_vesi]
+      cache:
+        type: sqlite
+
   hki_johtokartta_sahko_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_johtokartta_sahko]
@@ -233,7 +239,7 @@ sources:
        layers: helsinki:Maanalaiset_tilat_alueet
        transparent: true
 
-#Maalämpökaivot
+#Kaivot
   hki_wms_maalampokaivot:
     type: wms
     supported_srs: ['EPSG:3879']
@@ -241,6 +247,14 @@ sources:
        url: https://{{ geoserver_username }}:{{ geoserver_password }}@kartta.hel.fi/ws/geoserver/helsinki/wms
        layers: helsinki:Maalampokaivot
        transparent: true
+
+  hki_wms_johto_porakaivot_vesi:
+    type: wms
+    supported_srs: ['EPSG:3879']
+      req:
+        url: https://{{ geoserver_username }}:{{ geoserver_password }}@kartta.hel.fi/ws/geoserver/helsinki/wms
+        layers: helsinki:johto_porakaivot_vesi
+        transparent: true
 
 #Johtokartat
   hki_wms_johtokartta_sahko:
