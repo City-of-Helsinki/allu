@@ -18,10 +18,10 @@ function createUrl(config: ExternalUrlConfig, identificationNumber: string): str
     : undefined;
 }
 
-export function getByIdentifier(identificationNumber: string = ''): string {
+export function getByIdentifier(identificationNumber: string): string {
   const matching =  Object.keys(externalUrls)
     .map(key => externalUrls[key])
-    .filter(link => identificationNumber.startsWith(link.prefix));
+    .filter(link => !!identificationNumber && identificationNumber.startsWith(link.prefix));
 
   return matching.length > 0
     ? createUrl(matching[0], identificationNumber)
