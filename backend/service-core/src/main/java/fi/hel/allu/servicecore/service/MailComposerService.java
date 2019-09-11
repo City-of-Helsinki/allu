@@ -113,7 +113,7 @@ public class MailComposerService {
           .withBody(textBodyFor(application))
           .withHtmlBody(htmlBodyFor(application))
           .withInlineResources(inlineResources)
-          .withModel(mailModel(application, decisionDetailsJson.getMessageBody(), decisionTypeFor(application.getType()), attachmentName))
+          .withModel(mailModel(application, decisionDetailsJson.getMessageBody(), type, attachmentName))
           .withAttachments(attachments);
 
         log = mailBuilder.send();
@@ -170,12 +170,12 @@ public class MailComposerService {
     }
   }
 
-  private Map<String, Object> mailModel(ApplicationJson applicationJson, String accompanyingMessage, String decisionType, String attachmentName) {
+  private Map<String, Object> mailModel(ApplicationJson applicationJson, String accompanyingMessage, DecisionDocumentType type, String attachmentName) {
     Map<String, Object> result = new HashMap<>();
     result.put("applicationId", applicationJson.getApplicationId());
-    result.put("decisionType", decisionType);
+    result.put("decisionType", decisionTypeFor(applicationJson.getType()));
     result.put("accompanyingMessage", accompanyingMessage);
-    result.put("handlerName", Optional.ofNullable(applicationJson.getHandler()).map(h -> h.getRealName()).orElse(null));
+    result.put("handlerName", handlerName(type, applicationJson.getHandler()));
     result.put("totalPrice", applicationJson.getCalculatedPrice());
     result.put("inlineImageName", "cid:" + INLINE_LOGO_CID);
     result.put("attachmentName", attachmentName);
@@ -290,6 +290,15 @@ public class MailComposerService {
         return String.format("%s_irtisanominen.pdf", applicationId);
       default:
         return String.format("%s.pdf", applicationId);
+    }
+  }
+
+  private String handlerName(DecisionDocumentType type, UserJson handler) {
+    // Handler name should be skipped for operational condition and work finished emails
+    if (handler == null || DecisionDocumentType.OPERATIONAL_CONDITION == type || DecisionDocumentType.WORK_FINISHED == type) {
+      return null;
+    } else {
+      return handler.getRealName();
     }
   }
 }

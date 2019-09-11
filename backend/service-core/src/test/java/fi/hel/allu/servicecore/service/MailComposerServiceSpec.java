@@ -7,10 +7,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.mail.model.MailMessage.InlineResource;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
-import fi.hel.allu.servicecore.domain.DecisionDetailsJson;
-import fi.hel.allu.servicecore.domain.DistributionEntryJson;
+import fi.hel.allu.servicecore.domain.*;
 
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -21,13 +18,15 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import fi.hel.allu.servicecore.domain.DecisionDocumentType;
+
 import org.springframework.http.MediaType;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(Spectrum.class)
 public class MailComposerServiceSpec {
@@ -62,6 +61,7 @@ public class MailComposerServiceSpec {
       });
       describe("Create decision e-mail", () -> {
         final int APPLICATION_ID = 911;
+        final UserJson handler = user(1, "userName", "realName");
 
         final Supplier<ApplicationJson> mockApplication = let(() -> Mockito.mock(ApplicationJson.class));
         final List<DistributionEntryJson> distribution = Collections
@@ -77,6 +77,7 @@ public class MailComposerServiceSpec {
           Mockito.when(mockApplication.get().getApplicationId()).thenReturn("HK_BLEU");
           Mockito.when(mockApplication.get().getType()).thenReturn(ApplicationType.NOTE);
           Mockito.when(mockApplication.get().getDecisionDistributionList()).thenReturn(distribution);
+          Mockito.when(mockApplication.get().getHandler()).thenReturn(handler);
           Mockito.when(mailAttachmentService.forApplication(
               Mockito.any(ApplicationJson.class),
               Mockito.any(DecisionDocumentType.class),
@@ -101,6 +102,32 @@ public class MailComposerServiceSpec {
           Mockito.verify(mailBuilder).send();
 
           assertEquals(attachments.size(), attachmentsCaptor.getValue().size());
+
+          ArgumentCaptor<Map> modelCapture = ArgumentCaptor.forClass(Map.class);
+          Mockito.verify(mailBuilder).withModel(modelCapture.capture());
+          assertEquals(modelCapture.getValue().get("handlerName"), handler.getRealName());
+        });
+
+        it("Ignores handler for operational condition", () -> {
+          DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
+          decisionDetailsJson.setDecisionDistributionList(distribution);
+          decisionDetailsJson.setMessageBody("MessageBody");
+          mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson, DecisionDocumentType.OPERATIONAL_CONDITION);
+
+          ArgumentCaptor<Map> modelCapture = ArgumentCaptor.forClass(Map.class);
+          Mockito.verify(mailBuilder).withModel(modelCapture.capture());
+          assertNull(modelCapture.getValue().get("handlerName"));
+        });
+
+        it("Ignores handler for work finished", () -> {
+          DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
+          decisionDetailsJson.setDecisionDistributionList(distribution);
+          decisionDetailsJson.setMessageBody("MessageBody");
+          mailComposerService.sendDecision(mockApplication.get(), decisionDetailsJson, DecisionDocumentType.WORK_FINISHED);
+
+          ArgumentCaptor<Map> modelCapture = ArgumentCaptor.forClass(Map.class);
+          Mockito.verify(mailBuilder).withModel(modelCapture.capture());
+          assertNull(modelCapture.getValue().get("handlerName"));
         });
       });
 
@@ -113,5 +140,13 @@ public class MailComposerServiceSpec {
     distributionEntryJson.setName(name);
     distributionEntryJson.setEmail(email);
     return distributionEntryJson;
+  }
+
+  private UserJson user(Integer id, String userName, String realName) {
+    UserJson user = new UserJson();
+    user.setId(id);
+    user.setUserName(userName);
+    user.setRealName(realName);
+    return user;
   }
 }
