@@ -41,6 +41,7 @@ export class AttachmentComponent implements OnInit {
     });
 
     this.attachmentForm.patchValue(AttachmentInfo.toForm(this.attachment));
+    this.setValidForDecision(this.attachment.mimeType);
 
     if (!!this.attachment.id) {
       this.attachmentForm.disable();

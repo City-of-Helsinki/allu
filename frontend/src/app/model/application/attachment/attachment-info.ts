@@ -24,6 +24,7 @@ export class AttachmentInfo {
     const attachment = new AttachmentInfo();
     attachment.name = file.name;
     attachment.file = file;
+    attachment.mimeType = file.type;
     return attachment;
   }
 
