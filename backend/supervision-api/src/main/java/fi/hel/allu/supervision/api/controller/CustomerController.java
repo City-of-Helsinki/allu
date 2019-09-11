@@ -123,4 +123,46 @@ public class CustomerController {
     List<ContactJson> contacts = contactService.findByCustomer(customerId);
     return ResponseEntity.ok(contacts);
   }
+
+  @ApiOperation(value = "Create a new contact",
+    authorizations = @Authorization(value = "api_key"),
+    consumes = "application/json",
+    produces = "application/json",
+    response = ContactJson.class)
+  @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Contact created successfully", response = ContactJson.class),
+    @ApiResponse(code = 400, message = "Invalid contact data", response = ErrorInfo.class),
+    @ApiResponse(code = 403, message = "Contact addition forbidden", response = ErrorInfo.class)
+  })
+  @RequestMapping(value = "/customers/{customerId}/contacts", method = RequestMethod.POST,
+    produces = "application/json", consumes = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<ContactJson> createContact(@PathVariable Integer customerId,
+                                                   @RequestBody @Valid ContactJson contactJson) {
+    contactJson.setCustomerId(customerId);
+    ContactJson createdContact = contactService.createContact(contactJson);
+    return ResponseEntity.ok(createdContact);
+  }
+
+  @ApiOperation(value = "Update a contact",
+    notes =
+      "<p>Data is given as key/value pair updated field being the key and it's new value (as JSON) the value. "
+        + "All fields that are not marked as read only can be updated through this API.</p>",
+    authorizations = @Authorization(value ="api_key"),
+    produces = "application/json"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Contact updated successfully"),
+    @ApiResponse(code = 403, message = "Contact update forbidden", response = ErrorInfo.class),
+
+  })
+  @RequestMapping(value = "/customers/{customerId}/contacts/{contactId}", method = RequestMethod.PUT, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<ContactJson> updateContact(@PathVariable Integer customerId,
+                                                   @PathVariable Integer contactId,
+                                                   @RequestBody @ApiParam("Map containing field names with their new values.") Map<String, Object> fields) {
+
+    ContactJson updatedContact = customerUpdateService.updateContact(customerId, contactId, fields);
+    return ResponseEntity.ok(updatedContact);
+  }
 }
