@@ -3,7 +3,9 @@ package fi.hel.allu.supervision.api.controller;
 
 import fi.hel.allu.common.exception.ErrorInfo;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.supervision.api.domain.CustomerSearchParameters;
 import fi.hel.allu.supervision.api.domain.CustomerSearchResult;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -44,6 +47,9 @@ public class CustomerController {
 
   @Autowired
   private CustomerUpdateService customerUpdateService;
+
+  @Autowired
+  private ContactService contactService;
 
   @ApiOperation(value = "Search customers",
       authorizations = @Authorization(value ="api_key"),
@@ -100,5 +106,21 @@ public class CustomerController {
                                                              @RequestBody @ApiParam("Map containing field names with their new values.") Map<String, Object> fields) {
     CustomerJson updatedCustomer = customerUpdateService.update(id, fields);
     return ResponseEntity.ok(customerSearchResultMapper.mapToSearchResult(updatedCustomer));
+  }
+
+  @ApiOperation(value = "List contacts of a customer",
+    authorizations = @Authorization(value ="api_key"),
+    produces = "application/json",
+    response = ContactJson.class,
+    responseContainer="List"
+  )
+  @ApiResponses( value = {
+    @ApiResponse(code = 200, message = "Contacts retrieved successfully", response = ContactJson.class, responseContainer="List")
+  })
+  @RequestMapping(value = "/customers/{customerId}/contacts", method = RequestMethod.GET, produces = "application/json")
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<List<ContactJson>> getContacts(@PathVariable Integer customerId) {
+    List<ContactJson> contacts = contactService.findByCustomer(customerId);
+    return ResponseEntity.ok(contacts);
   }
 }
