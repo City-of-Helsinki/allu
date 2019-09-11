@@ -18,7 +18,10 @@ export const commonLayers = {
 };
 
 export const restrictedLayers = {
-  'Maalämpökaivot': null,
+  'Kaivot': {
+    'Maalämpökaivot': null,
+    'Porakaivot': null
+  },
   'Kiinteistökartat': {
     'Maanomistus ja vuokraus yhdistelmä': null,
     'Maanomistus vuokrausalueet': null,
