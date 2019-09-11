@@ -313,7 +313,7 @@ sources:
        layers: helsinki:Johtokartta_viemari
        transparent: true
 
-  hki_wms_imujatehuolto_viemari:
+  hki_wms_imujatehuolto:
     type: wms
     supported_srs: ['EPSG:3879']
     req:
