@@ -98,9 +98,9 @@ export class SupervisionTaskEffects {
           new ApproveSuccess(task),
           this.applicationStore.setAndAction(app),
           new NotifySuccess('supervision.task.action.approve')
-        ]),
-        catchError(error => of(new NotifyFailure(error)))
-      ))
+        ])
+      )),
+      catchError(error => of(new NotifyFailure(error)))
     ))
   );
 
