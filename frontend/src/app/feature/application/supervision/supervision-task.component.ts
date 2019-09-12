@@ -57,7 +57,6 @@ import {NumberUtil} from '@util/number.util';
 export class SupervisionTaskComponent implements OnInit, OnDestroy {
   @Input() application: Application;
   @Input() form: FormGroup;
-  @Input() supervisors: Array<User> = [];
   @Output() onRemove = new EventEmitter<void>();
 
   taskTypes: string[] = [];
@@ -69,6 +68,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   approveDisabled = false;
   location: Location;
   locations: Location[];
+  availableSupervisors: User[] = [];
 
   private originalEntry: SupervisionTaskForm;
   private destroy = new Subject<boolean>();
@@ -103,9 +103,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.taskTypes = EnumUtil.enumValues(SupervisionTaskType)
         .filter(type => !isAutomaticSupervisionTaskType(SupervisionTaskType[type]));
     }
-    if ([SupervisionTaskStatusType.APPROVED, SupervisionTaskStatusType.REJECTED].indexOf(formValue.status) >= 0) {
-      this.supervisors = [new User(formValue.ownerId, undefined, formValue.ownerName)];
-    }
+
     this.currentUserCanEdit(formValue.creatorId, formValue.status);
     this.currentUserCanApprove(formValue.ownerId, formValue.status);
     this.currentUserCanTakeOwnership(formValue.ownerId, formValue.status);
@@ -117,6 +115,15 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+  }
+
+  @Input() set supervisors(users: []) {
+    const formValue = this.form.value;
+    if ([SupervisionTaskStatusType.APPROVED, SupervisionTaskStatusType.REJECTED].indexOf(formValue.status) >= 0) {
+      this.availableSupervisors = [new User(formValue.ownerId, undefined, formValue.ownerName)];
+    } else {
+      this.availableSupervisors = users;
+    }
   }
 
   remove(): void {
