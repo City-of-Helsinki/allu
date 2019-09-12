@@ -3,10 +3,11 @@
 </div>
 <ng-template #areaList>
   <mat-action-list>
-    <button mat-list-item
+    <button type="button"
+            mat-list-item
             *ngFor="let userArea of userAreas"
             [ngClass]="{'selected': isSelected(userArea)}"
-            (click)="areaSelected(userArea)">
+            (click)="selectArea(userArea)">
       <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px" class="menu-row">
         <div fxFlex="none" class="menu-row-header">
           {{userArea?.properties.id}}
@@ -17,4 +18,10 @@
       </div>
     </button>
   </mat-action-list>
+  <button
+    type="button"
+    mat-raised-button
+    color="primary"
+    class="centered"
+    (click)="selectAll()">{{'common.button.addAll' | translation}}</button>
 </ng-template>

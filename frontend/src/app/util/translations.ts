@@ -1261,6 +1261,7 @@ export const translations = {
       edit: 'MUOKKAA',
       home: 'Kartalle',
       add: 'Lisää',
+      addAll: 'Lisää kaikki',
       show: 'Näytä',
       search: 'Hae',
       toSelf: 'Omaksi',

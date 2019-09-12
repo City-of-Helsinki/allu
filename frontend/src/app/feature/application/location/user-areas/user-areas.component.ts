@@ -21,9 +21,14 @@ export class UserAreasComponent {
 
   constructor() {}
 
-  areaSelected(area: Feature<GeometryObject>): void {
+  selectArea(area: Feature<GeometryObject>): void {
     this.selectedAreas = ArrayUtil.addUnique(this.selectedAreas, [area.properties.id]);
     this.areasSelected.emit([area]);
+  }
+
+  selectAll(): void {
+    this.selectedAreas = this.userAreas.map(area => area.properties.id);
+    this.areasSelected.emit(this.userAreas);
   }
 
   isSelected(userArea: Feature<GeometryObject>) {
