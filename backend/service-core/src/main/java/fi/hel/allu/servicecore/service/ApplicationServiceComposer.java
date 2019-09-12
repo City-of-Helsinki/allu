@@ -485,6 +485,9 @@ public class ApplicationServiceComposer {
     return replacingApplication;
   }
 
+  public boolean isReplaced(int applicationId) {
+    return applicationService.getReplacingApplicationId(applicationId) != null;
+  }
 
   public List<ApplicationIdentifierJson> replacementHistory(int applicationId) {
     return applicationService.replacementHistory(applicationId);

@@ -553,4 +553,9 @@ public class ApplicationService {
   public void removeOwnerNotification(Integer id) {
     restTemplate.delete(applicationProperties.getOwnerNotificationUrl(), id);
   }
+
+  public Integer getReplacingApplicationId(Integer applicationId) {
+    return restTemplate.getForObject(applicationProperties.getReplacingApplicationIdUrl(), Integer.class,
+        applicationId);
+  }
 }

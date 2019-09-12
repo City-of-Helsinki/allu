@@ -1471,4 +1471,7 @@ public class ApplicationProperties {
     return getModelServiceUrl("/applications/{id}/ownernotification");
   }
 
+  public String getReplacingApplicationIdUrl() {
+    return getModelServiceUrl("/applications/{id}/replacing");
+  }
 }

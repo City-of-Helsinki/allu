@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.domain.SupervisionWorkItem;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
@@ -105,6 +106,7 @@ public class SupervisionTaskService {
   }
 
   public SupervisionTaskJson approve(SupervisionTaskJson taskJson) {
+    validateApprovalAllowed(taskJson);
     HttpEntity<SupervisionTask> supervisionTaskHttpEntity = new HttpEntity<>(SupervisionTaskMapper.mapToModel(taskJson));
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.exchange(
         applicationProperties.getSupervisionTaskApproveUrl(),
@@ -116,6 +118,16 @@ public class SupervisionTaskService {
     applicationEventPublisher.publishEvent(new ApplicationArchiveEvent(taskJson.getApplicationId()));
     applicationHistoryService.addSupervisionApproved(taskJson.getApplicationId(), taskJson.getType());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
+  }
+
+  private void validateApprovalAllowed(SupervisionTaskJson taskJson) {
+    if ((taskJson.getType() == SupervisionTaskType.OPERATIONAL_CONDITION
+        || taskJson.getType() == SupervisionTaskType.FINAL_SUPERVISION)
+        && applicationServiceComposer.isReplaced(taskJson.getApplicationId())) {
+      // Do not allow approval of operational condition / final supervision if replacing application exists since
+      // approval may change state of application
+      throw new IllegalOperationException("application.replaced.notAllowed");
+    }
   }
 
   public SupervisionTaskJson reject(SupervisionTaskJson taskJson, ZonedDateTime newSupervisionDate) {
