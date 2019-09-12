@@ -8,7 +8,7 @@ Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/
 
 Ystävällisin terveisin
 
-${handlerName}
+<#if handlerName??>${handlerName}</#if>
 
 Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut

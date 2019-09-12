@@ -6,7 +6,7 @@ Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/
 
 Terveisin
 
-${handlerName}
+<#if handlerName??>${handlerName}</#if>
 
 Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut

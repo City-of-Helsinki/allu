@@ -7,7 +7,7 @@ ${accompanyingMessage}
 Miten onnistuimme? Kerro mielipiteesi täällä: https://response.questback.com/helsinginkaupunki/mkqgmxkxxv
 Ystävällisin terveisin
 
-${handlerName}
+<#if handlerName??>${handlerName}</#if>
 
 Helsingin kaupunki
 Kaupunkiympäristön asukas- ja yrityspalvelut

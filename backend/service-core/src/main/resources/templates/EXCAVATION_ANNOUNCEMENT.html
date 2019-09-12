@@ -23,9 +23,11 @@
     Terveisin
   </p>
 
-  <p>
-    ${handlerName}
-  </p>
+  <#if handlerName??>
+    <p>
+      ${handlerName}
+    </p>
+  </#if>
 
   <address>
     Helsingin kaupunki<br/>
