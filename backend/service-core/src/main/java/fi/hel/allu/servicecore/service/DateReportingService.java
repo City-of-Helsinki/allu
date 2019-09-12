@@ -5,6 +5,7 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.exception.IllegalOperationException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.SupervisionDates;
 import fi.hel.allu.common.util.TimeUtil;
@@ -92,13 +93,19 @@ public class DateReportingService {
 
   public ApplicationJson reportCustomerValidity(Integer id, ApplicationDateReport dateReport) {
     final ApplicationJson oldApplicationJson = getApplicationJson(id);
-
+    validateApplicationNotFinished(oldApplicationJson);
     final Application newApplication = applicationService.setCustomerValidityDates(id, dateReport);
     final ApplicationJson newApplicationJson = applicationJsonService.getFullyPopulatedApplication(newApplication);
 
     applicationServiceComposer.addTag(id, new ApplicationTagJson(null, ApplicationTagType.DATE_CHANGE, null));
     applicationHistoryService.addFieldChanges(id, oldApplicationJson, newApplicationJson);
     return newApplicationJson;
+  }
+
+  private void validateApplicationNotFinished(ApplicationJson application) {
+    if (application.getStatus() == StatusType.FINISHED || application.getStatus() == StatusType.ARCHIVED) {
+      throw new IllegalOperationException("application.finished.notAllowed");
+    }
   }
 
   public ApplicationJson reportOperationalCondition(Integer id, ZonedDateTime operationalConditionDate) {

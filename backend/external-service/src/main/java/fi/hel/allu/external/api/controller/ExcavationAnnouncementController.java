@@ -81,7 +81,7 @@ public class ExcavationAnnouncementController
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Report change in application validity period",
+  @ApiOperation(value = "Report change in application validity period. Operation is not allowed if application is already finished.",
       authorizations=@Authorization(value ="api_key"))
   @ApiResponses(value =  {
       @ApiResponse(code = 200, message = "Validity period change reported successfully", response = Void.class),
