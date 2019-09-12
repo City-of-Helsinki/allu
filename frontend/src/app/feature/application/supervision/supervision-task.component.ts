@@ -328,6 +328,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       ...baseData,
       reportedDate,
       comparedDate,
+      minDate: baseData.application.startTime,
       compactionAndBearingCapacityMeasurement: extension.compactionAndBearingCapacityMeasurement,
       qualityAssuranceTest: extension.qualityAssuranceTest
     };

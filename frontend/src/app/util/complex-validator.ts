@@ -79,8 +79,15 @@ export class ComplexValidator {
 
   static maxDate(date: Date): ValidatorFn {
     return (fc: AbstractControl) => {
-      const maxDate = fc.value && fc.value >= date;
-      return maxDate ? {maxDate: fc.value} : undefined;
+      const afterMax = fc.value && fc.value > date;
+      return afterMax ? {maxDate: fc.value} : undefined;
+    };
+  }
+
+  static minDate(date: Date): ValidatorFn {
+    return (fc: AbstractControl) => {
+      const earlierThanMin = fc.value && fc.value < date;
+      return earlierThanMin ? {minDate: fc.value} : undefined;
     };
   }
 

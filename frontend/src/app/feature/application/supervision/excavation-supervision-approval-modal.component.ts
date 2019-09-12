@@ -19,10 +19,12 @@ import {
   SupervisionApprovalResult
 } from '@feature/application/supervision/supervision-approval-modal.component';
 import {RequiredTasks} from '@model/application/required-tasks';
+import {ComplexValidator} from '@util/complex-validator';
 
 export interface ExcavationSupervisionApprovalModalData extends SupervisionApprovalModalData {
   reportedDate?: Date;
   comparedDate?: Date;
+  minDate?: Date;
   compactionAndBearingCapacityMeasurement?: boolean;
   qualityAssuranceTest?: boolean;
 }
@@ -48,6 +50,7 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
   showRequiredTasks = false;
   reportedDateType: ReportedDateType;
   maxReportedDate: Date;
+  minReportedDate: Date;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ExcavationSupervisionApprovalModalData,
@@ -63,6 +66,7 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
     this.showDateReporting = this.needDateReporting(this.data.taskType, this.resolutionType);
     this.showRequiredTasks = SupervisionTaskType.PRELIMINARY_SUPERVISION === this.data.taskType;
     this.maxReportedDate = new Date();
+    this.minReportedDate = this.data.minDate;
     if (this.showDateReporting) {
       this.initDateReporting();
     }
@@ -91,7 +95,11 @@ export class ExcavationSupervisionApprovalModalComponent extends SupervisionAppr
 
   private initDateReporting(): void {
     const reportedDate = TimeUtil.minimum(this.data.reportedDate, this.maxReportedDate);
-    const reportedDateCtrl = this.fb.control(reportedDate, Validators.required);
+    const reportedDateCtrl = this.fb.control(reportedDate, [
+      Validators.required,
+      ComplexValidator.minDate(this.minReportedDate),
+      ComplexValidator.maxDate(this.maxReportedDate)
+    ]);
     this.form.addControl('reportedDate', reportedDateCtrl);
     this.reportedDateType = taskTypeToReportedDateType[this.data.taskType];
 

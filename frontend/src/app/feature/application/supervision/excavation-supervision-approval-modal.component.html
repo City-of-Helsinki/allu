@@ -31,6 +31,7 @@
       <input matInput formControlName="reportedDate" required
              [placeholder]="['dateReporting.reportedInfo', reportedDateType] | translation"
              [matDatepicker]="reportedDatePicker"
+             [min]="minReportedDate"
              [max]="maxReportedDate">
       <mat-datepicker-toggle matSuffix [for]="reportedDatePicker"
                              [disabled]="form.disabled"></mat-datepicker-toggle>
@@ -40,6 +41,12 @@
       </mat-hint>
       <mat-error *ngIf="form.get('reportedDate').hasError('required')">
         {{'dateReporting.field.reportedDateMissing' | translation}}
+      </mat-error>
+      <mat-error *ngIf="form.get('reportedDate').hasError('minDate')">
+        {{'dateReporting.field.reportedDateBeforeStartTime' | translation}}
+      </mat-error>
+      <mat-error *ngIf="form.get('reportedDate').hasError('maxDate')">
+        {{'dateReporting.field.reportedDateInFuture' | translation}}
       </mat-error>
     </mat-form-field>
 

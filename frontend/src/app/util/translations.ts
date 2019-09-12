@@ -590,6 +590,8 @@ export const translations = {
     },
     field: {
       reportedDateMissing: 'Päivä puuttuu',
+      reportedDateBeforeStartTime: 'Päivä ei voi olla ennen hakemuksen alkua',
+      reportedDateInFuture: 'Päivä ei voi olla tulevaisuudessa',
       reportingDateMissing: 'Ilmoituspäivä puuttuu',
       dateInValidityPeriod: 'Päivän oltava hakemuksen voimassaolon aikana'
     },
