@@ -113,10 +113,13 @@ public class ExcavationAnnouncementStatusChangeHandler extends ApplicationStatus
   // condition area fees.
   private boolean pricingUpdateNeeded(ExcavationAnnouncement excavationAnnouncement) {
     ZonedDateTime operationalConditionDate = excavationAnnouncement.getWinterTimeOperation();
-    ZonedDateTime workFinishedDate = excavationAnnouncement.getWorkFinished();
-    WinterTime winterTime = winterTimeService.getWinterTime();
-    return !winterTime.isInWinterTime(operationalConditionDate) &&
-        winterTime.getWinterTimeStart(operationalConditionDate).isAfter(LocalDate.from(workFinishedDate));
+    if (operationalConditionDate != null) {
+      ZonedDateTime workFinishedDate = excavationAnnouncement.getWorkFinished();
+      WinterTime winterTime = winterTimeService.getWinterTime();
+      return !winterTime.isInWinterTime(operationalConditionDate) &&
+          winterTime.getWinterTimeStart(operationalConditionDate).isAfter(LocalDate.from(workFinishedDate));
+    }
+    return false;
   }
 
 }
