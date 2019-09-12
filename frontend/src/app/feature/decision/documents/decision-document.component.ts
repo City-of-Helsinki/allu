@@ -136,14 +136,9 @@ export class DecisionDocumentComponent implements OnInit, OnDestroy {
 
   private showTerminationActions(app: Application): boolean {
     const isWaitingForTerminationDecision = ApplicationStatus.DECISIONMAKING === app.status;
-
     const isTerminated = ApplicationStatus.TERMINATED === app.status;
 
-    // TODO Archived status means that the application either can be terminated,
-    // TODO or is already terminated so we can't hide the button for that status yet.
-    const isExpiredAfterTermination = ApplicationStatus.ARCHIVED === app.status;
-
-    return !isWaitingForTerminationDecision && !isTerminated; // && !isExpiredAfterTermination;
+    return !isWaitingForTerminationDecision && !isTerminated;
   }
 
   private showDecisionActionsOnTerminationTab(app: Application): boolean {
