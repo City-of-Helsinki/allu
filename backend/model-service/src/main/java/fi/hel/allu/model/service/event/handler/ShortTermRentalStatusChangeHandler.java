@@ -37,6 +37,7 @@ public class ShortTermRentalStatusChangeHandler extends ApplicationStatusChangeH
 
   @Override
   protected void handleTerminatedStatus(Application application, Integer userId) {
+    updateTerminationDecisionInfo(application, userId);
     clearTargetState(application);
     clearOwner(application);
     createSupervisionTaskForTerminated(application, userId);

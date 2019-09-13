@@ -141,10 +141,14 @@ public class ApplicationStatusChangeHandler {
   }
 
   protected void handleTerminatedStatus(Application application, Integer userId) {
-    terminationDao.updateTerminator(application.getId(), userId);
+    updateTerminationDecisionInfo(application, userId);
     clearTargetState(application);
     clearOwner(application);
     createSupervisionTaskForTerminated(application, userId);
+  }
+
+  protected void updateTerminationDecisionInfo(Application application, Integer userId) {
+    terminationDao.updateTerminationDecisionInfo(application.getId(), userId, ZonedDateTime.now());
   }
 
   protected void handleDecisionMakingStatus(Application application, Integer userId) {
@@ -156,6 +160,9 @@ public class ApplicationStatusChangeHandler {
     if (targetState == StatusType.DECISION) {
       // Handler set only when making first "decision"
       applicationService.updateHandler(application.getId(), userId);
+    }
+    if (targetState == StatusType.TERMINATED) {
+      terminationDao.updateTerminationHandler(application.getId(), userId);
     }
   }
 

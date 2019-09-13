@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 public class TerminationInfo {
+
   private Integer id;
   @NotNull
   private Integer applicationId;
@@ -14,8 +15,10 @@ public class TerminationInfo {
   private ZonedDateTime expirationTime;
   @NotBlank
   private String reason;
+  private Integer terminationHandler;
   @NotNull
   private Integer terminator;
+  private ZonedDateTime terminationDecisionTime;
 
   public Integer getId() {
     return id;
@@ -64,4 +67,21 @@ public class TerminationInfo {
   public void setTerminator(Integer terminator) {
     this.terminator = terminator;
   }
+
+  public Integer getTerminationHandler() {
+    return terminationHandler;
+  }
+
+  public void setTerminationHandler(Integer terminationHandler) {
+    this.terminationHandler = terminationHandler;
+  }
+
+  public ZonedDateTime getTerminationDecisionTime() {
+    return terminationDecisionTime;
+  }
+
+  public void setTerminationDecisionTime(ZonedDateTime terminationDecisionTime) {
+    this.terminationDecisionTime = terminationDecisionTime;
+  }
+
 }

@@ -113,9 +113,19 @@ public class TerminationDao {
   }
 
   @Transactional
-  public void updateTerminator(Integer applicationId, Integer terminatorId) {
-    queryFactory.update(termination).set(termination.terminator, terminatorId)
+  public void updateTerminationDecisionInfo(Integer applicationId, Integer terminatorId, ZonedDateTime terminationDecisionTime) {
+    queryFactory.update(termination)
+      .set(termination.terminator, terminatorId)
+      .set(termination.terminationDecisionTime,  terminationDecisionTime)
       .where(termination.applicationId.eq(applicationId))
       .execute();
+  }
+
+  @Transactional
+  public void updateTerminationHandler(Integer applicationId, Integer userId) {
+    queryFactory.update(termination)
+    .set(termination.terminationHandler, userId)
+    .where(termination.applicationId.eq(applicationId))
+    .execute();
   }
 }
