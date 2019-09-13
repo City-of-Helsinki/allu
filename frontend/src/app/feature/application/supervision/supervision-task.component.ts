@@ -117,7 +117,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.destroy.unsubscribe();
   }
 
-  @Input() set supervisors(users: []) {
+  @Input() set supervisors(users: User[]) {
     const formValue = this.form.value;
     if ([SupervisionTaskStatusType.APPROVED, SupervisionTaskStatusType.REJECTED].indexOf(formValue.status) >= 0) {
       this.availableSupervisors = [new User(formValue.ownerId, undefined, formValue.ownerName)];
