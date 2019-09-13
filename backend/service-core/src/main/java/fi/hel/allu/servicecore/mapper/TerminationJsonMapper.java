@@ -38,24 +38,10 @@ public class TerminationJsonMapper extends AbstractDocumentMapper<TerminationJso
     termination.setCustomerContactLines(customerContactLines(application));
     termination.setSiteAddressLine(siteAddressLine(application));
     termination.setSiteCityDistrict(siteCityDistrict(application));
-    termination.setDecisionDate(application.getDecisionTime());
-
+    termination.setDecisionDate(terminationInfo.getTerminationDecisionTime());
 
     Optional.ofNullable(terminationInfo).ifPresent(info -> {
-      termination.setExpirationTime(info.getExpirationTime());
-      termination.setTerminationInfo(splitToList(Optional.ofNullable(info.getReason())));
-    });
-
-    Optional.ofNullable(application.getHandler()).ifPresent(handler -> {
-      termination.setHandlerTitle(handler.getTitle());
-      termination.setHandlerName(handler.getRealName());
-    });
-
-    Optional.ofNullable(terminationInfo.getTerminator())
-        .map(id -> userService.findUserById(id))
-        .ifPresent(terminator -> {
-      termination.setDeciderTitle(terminator.getTitle());
-      termination.setDeciderName(terminator.getRealName());
+      fillTerminationInformation(info, termination);
     });
 
     String additionalInfos = String.join("; ",
@@ -70,6 +56,24 @@ public class TerminationJsonMapper extends AbstractDocumentMapper<TerminationJso
     fillTypeSpecifics(application, termination);
     convertNonBreakingSpacesToSpaces(termination);
     return termination;
+  }
+
+  private void fillTerminationInformation(TerminationInfo info, TerminationJson termination) {
+    termination.setExpirationTime(info.getExpirationTime());
+    termination.setTerminationInfo(splitToList(Optional.ofNullable(info.getReason())));
+    Optional.ofNullable(info.getTerminationHandler())
+      .map(id -> userService.findUserById(id))
+      .ifPresent(handler -> {
+        termination.setHandlerTitle(handler.getTitle());
+        termination.setHandlerName(handler.getRealName());
+      });
+
+    Optional.ofNullable(info.getTerminator())
+      .map(id -> userService.findUserById(id))
+      .ifPresent(terminator -> {
+        termination.setDeciderTitle(terminator.getTitle());
+        termination.setDeciderName(terminator.getRealName());
+      });
   }
 
   private void fillTypeSpecifics(ApplicationJson application, TerminationJson termination) {
