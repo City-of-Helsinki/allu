@@ -1,0 +1,1 @@
+alter table allu.supervision_task_approved_location rename to supervision_task_supervised_location;

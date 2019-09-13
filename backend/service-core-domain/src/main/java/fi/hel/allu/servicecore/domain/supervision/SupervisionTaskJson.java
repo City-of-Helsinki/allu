@@ -21,7 +21,7 @@ public class SupervisionTaskJson {
   private String description;
   private String result;
   private Integer locationId;
-  private List<SupervisionTaskLocation> approvedLocations;
+  private List<SupervisionTaskLocation> supervisedLocations;
 
 
   public SupervisionTaskJson() {
@@ -41,7 +41,7 @@ public class SupervisionTaskJson {
       String description,
       String result,
       Integer locationId,
-      List<SupervisionTaskLocation> approvedLocations) {
+      List<SupervisionTaskLocation> supervisedLocations) {
     this.id = id;
     this.applicationId = applicationId;
     this.type = type;
@@ -54,7 +54,7 @@ public class SupervisionTaskJson {
     this.description = description;
     this.result = result;
     this.locationId = locationId;
-    this.approvedLocations = approvedLocations;
+    this.supervisedLocations = supervisedLocations;
   }
 
   /**
@@ -209,14 +209,14 @@ public class SupervisionTaskJson {
   }
 
   /**
-   * Location(s) of application when task was approved
+   * Location(s) of application when task was approved / rejected
    */
-  public List<SupervisionTaskLocation> getApprovedLocations() {
-    return approvedLocations;
+  public List<SupervisionTaskLocation> getSupervisedLocations() {
+    return supervisedLocations;
   }
 
-  public void setApprovedGeometry(List<SupervisionTaskLocation> approvedLocations) {
-    this.approvedLocations = approvedLocations;
+  public void setSupervisedLocations(List<SupervisionTaskLocation> supervisedLocations) {
+    this.supervisedLocations = supervisedLocations;
   }
 
 }

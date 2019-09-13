@@ -30,7 +30,7 @@ public class SupervisionTaskMapper {
         supervisionTask.getDescription(),
         supervisionTask.getResult(),
         supervisionTask.getLocationId(),
-        supervisionTask.getApprovedLocations());
+        supervisionTask.getSupervisedLocations());
   }
 
   public static SupervisionTask mapToModel(SupervisionTaskJson supervisionTaskJson) {

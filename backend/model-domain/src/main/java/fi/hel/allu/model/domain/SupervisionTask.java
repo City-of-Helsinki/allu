@@ -22,7 +22,7 @@ public class SupervisionTask {
   private String description;
   private String result;
   private Integer locationId;
-  private List<SupervisionTaskLocation> approvedLocations;
+  private List<SupervisionTaskLocation> supervisedLocations;
 
   public SupervisionTask() {
     // for deserialization
@@ -220,14 +220,14 @@ public class SupervisionTask {
   }
 
   /**
-   * Application location(s) when task was approved
+   * Application location(s) when task was approved / rejected
    */
-  public List<SupervisionTaskLocation> getApprovedLocations() {
-    return approvedLocations;
+  public List<SupervisionTaskLocation> getSupervisedLocations() {
+    return supervisedLocations;
   }
 
-  public void setApprovedLocations(List<SupervisionTaskLocation> approvedLocations) {
-    this.approvedLocations = approvedLocations;
+  public void setSupervisedLocations(List<SupervisionTaskLocation> supervisedLocations) {
+    this.supervisedLocations = supervisedLocations;
   }
 
 }

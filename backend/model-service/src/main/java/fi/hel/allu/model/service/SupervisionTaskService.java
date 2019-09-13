@@ -110,7 +110,7 @@ public class SupervisionTaskService {
     supervisionTask.setStatus(APPROVED);
     supervisionTask.setActualFinishingTime(ZonedDateTime.now());
     SupervisionTask updated = supervisionTaskDao.update(supervisionTask);
-    saveApprovedLocations(updated);
+    saveSupervisedLocations(updated);
     updateTags(updated);
     return updated;
   }
@@ -141,6 +141,7 @@ public class SupervisionTaskService {
     task.setActualFinishingTime(ZonedDateTime.now());
     SupervisionTask updated = supervisionTaskDao.update(task);
     updateTags(updated);
+    saveSupervisedLocations(updated);
     supervisionTaskDao.insert(rejectedToNewTask(task, newSupervisionDate));
     return updated;
   }
@@ -201,14 +202,14 @@ public class SupervisionTaskService {
   /**
    * Saves current state of application locations for task
    */
-  private void saveApprovedLocations(SupervisionTask task) {
-    supervisionTaskDao.deleteApprovedLocations(task.getId());
+  private void saveSupervisedLocations(SupervisionTask task) {
+    supervisionTaskDao.deleteSupervisedLocations(task.getId());
     List<Location> locations = locationDao.findByApplication(task.getApplicationId());
-      locations.forEach(l -> saveApprovedLocation(task.getId(), l));
-    task.setApprovedLocations(supervisionTaskDao.getApprovedLocations(task.getId()));
+      locations.forEach(l -> saveSupervisedLocation(task.getId(), l));
+    task.setSupervisedLocations(supervisionTaskDao.getSupervisedLocations(task.getId()));
   }
 
-  private void saveApprovedLocation(Integer supervisionTaskId, Location location) {
-    supervisionTaskDao.saveApprovedLocation(supervisionTaskId, SupervisionTaskLocation.fromApplicationLocation(location));
+  private void saveSupervisedLocation(Integer supervisionTaskId, Location location) {
+    supervisionTaskDao.saveSupervisedLocation(supervisionTaskId, SupervisionTaskLocation.fromApplicationLocation(location));
   }
 }

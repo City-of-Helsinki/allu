@@ -17,6 +17,6 @@ export class SupervisionTask {
     public description?: string,
     public result?: string,
     public locationId?: number,
-    public approvedLocations?: Location[]) {
+    public supervisedLocations?: Location[]) {
   }
 }

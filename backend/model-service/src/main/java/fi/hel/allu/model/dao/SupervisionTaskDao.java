@@ -48,7 +48,7 @@ import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QProject.project;
 import static fi.hel.allu.QSupervisionTask.supervisionTask;
-import static fi.hel.allu.QSupervisionTaskApprovedLocation.supervisionTaskApprovedLocation;
+import static fi.hel.allu.QSupervisionTaskSupervisedLocation.supervisionTaskSupervisedLocation;
 import static fi.hel.allu.QSupervisionTaskLocation.supervisionTaskLocation;
 import static fi.hel.allu.QSupervisionTaskLocationGeometry.supervisionTaskLocationGeometry;
 import static fi.hel.allu.QSupervisionTaskWithAddress.supervisionTaskWithAddress;
@@ -84,7 +84,7 @@ public class SupervisionTaskDao {
   public Optional<SupervisionTask> findById(int id) {
     SupervisionTask st = queryFactory
         .select(supervisionTaskBean).from(supervisionTask).where(supervisionTask.id.eq(id)).fetchOne();
-    return Optional.ofNullable(setApprovedLocations(st));
+    return Optional.ofNullable(setSupervisedLocations(st));
   }
 
   @Transactional(readOnly = true)
@@ -111,13 +111,13 @@ public class SupervisionTaskDao {
 
   private List<SupervisionTask> querySupervisionTasks(Predicate... predicates) {
     List<SupervisionTask> tasks = queryFactory.select(supervisionTaskBean).from(supervisionTask).where(predicates).fetch();
-    tasks.forEach(t -> setApprovedLocations(t));
+    tasks.forEach(t -> setSupervisedLocations(t));
     return tasks;
   }
 
-  private SupervisionTask setApprovedLocations(SupervisionTask task) {
+  private SupervisionTask setSupervisedLocations(SupervisionTask task) {
     if (task != null) {
-      task.setApprovedLocations(getApprovedLocations(task.getId()));
+      task.setSupervisedLocations(getSupervisedLocations(task.getId()));
     }
     return task;
   }
@@ -335,11 +335,11 @@ public class SupervisionTaskDao {
     task.setApplicationId(toApplicationId);
     Integer taskId = queryFactory.insert(supervisionTask).populate(task).executeWithKey(supervisionTask.id);
     // Link approved locations to copied task
-    queryFactory.select(supervisionTaskApprovedLocation.supervisionTaskLocationId)
-        .from(supervisionTaskApprovedLocation)
-        .where(supervisionTaskApprovedLocation.supervisionTaskId.eq(originalTaskId))
+    queryFactory.select(supervisionTaskSupervisedLocation.supervisionTaskLocationId)
+        .from(supervisionTaskSupervisedLocation)
+        .where(supervisionTaskSupervisedLocation.supervisionTaskId.eq(originalTaskId))
         .fetch()
-        .forEach(locationId -> addApprovedLocation(taskId, locationId));
+        .forEach(locationId -> addSupervisedLocation(taskId, locationId));
   }
 
 
@@ -374,12 +374,12 @@ public class SupervisionTaskDao {
   }
 
   @Transactional(readOnly = true)
-  public List<SupervisionTaskLocation> getApprovedLocations(Integer supervisionTaskId) {
+  public List<SupervisionTaskLocation> getSupervisedLocations(Integer supervisionTaskId) {
     List<SupervisionTaskLocation> locations = queryFactory.select(supervisionTaskLocationBean)
         .from(supervisionTaskLocation)
-        .innerJoin(supervisionTaskApprovedLocation)
-          .on(supervisionTaskLocation.id.eq(supervisionTaskApprovedLocation.supervisionTaskLocationId))
-          .where(supervisionTaskApprovedLocation.supervisionTaskId.eq(supervisionTaskId))
+        .innerJoin(supervisionTaskSupervisedLocation)
+          .on(supervisionTaskLocation.id.eq(supervisionTaskSupervisedLocation.supervisionTaskLocationId))
+          .where(supervisionTaskSupervisedLocation.supervisionTaskId.eq(supervisionTaskId))
         .fetch();
     locations.forEach(l -> setLocationGeometry(l));
     return locations;
@@ -394,9 +394,9 @@ public class SupervisionTaskDao {
   }
 
   @Transactional
-  public void saveApprovedLocation(Integer supervisionTaskId, SupervisionTaskLocation location) {
+  public void saveSupervisedLocation(Integer supervisionTaskId, SupervisionTaskLocation location) {
       Integer id = queryFactory.insert(supervisionTaskLocation).populate(location).executeWithKey(supervisionTaskLocation.id);
-      addApprovedLocation(supervisionTaskId, id);
+      addSupervisedLocation(supervisionTaskId, id);
       List<Geometry> geometries = new ArrayList<>();
       GeometryUtil.flatten(location.getGeometry(), geometries);
       geometries.forEach(geometry -> queryFactory.insert(supervisionTaskLocationGeometry)
@@ -405,17 +405,17 @@ public class SupervisionTaskDao {
           .execute());
   }
 
-  private void addApprovedLocation(Integer supervisionTaskId, Integer id) {
-    queryFactory.insert(supervisionTaskApprovedLocation)
-        .columns(supervisionTaskApprovedLocation.supervisionTaskId, supervisionTaskApprovedLocation.supervisionTaskLocationId)
+  private void addSupervisedLocation(Integer supervisionTaskId, Integer id) {
+    queryFactory.insert(supervisionTaskSupervisedLocation)
+        .columns(supervisionTaskSupervisedLocation.supervisionTaskId, supervisionTaskSupervisedLocation.supervisionTaskLocationId)
         .values(supervisionTaskId, id)
         .execute();
   }
 
   @Transactional
-  public void deleteApprovedLocations(Integer supervisionTaskId) {
-    queryFactory.delete(supervisionTaskApprovedLocation)
-    .where(supervisionTaskApprovedLocation.supervisionTaskId.eq(supervisionTaskId))
+  public void deleteSupervisedLocations(Integer supervisionTaskId) {
+    queryFactory.delete(supervisionTaskSupervisedLocation)
+    .where(supervisionTaskSupervisedLocation.supervisionTaskId.eq(supervisionTaskId))
     .execute();
   }
 }

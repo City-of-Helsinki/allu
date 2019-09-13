@@ -29,7 +29,7 @@ export class SupervisionTaskMapper {
       task.description,
       task.result,
       task.locationId,
-      LocationMapper.mapBackendSupervisionTaskLocations(task.approvedLocations)
+      LocationMapper.mapBackendSupervisionTaskLocations(task.supervisedLocations)
     );
   }
 

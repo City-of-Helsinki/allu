@@ -16,5 +16,5 @@ export interface BackendSupervisionTask {
   description: string;
   result: string;
   locationId: number;
-  approvedLocations: BackendSupervisionTaskLocation[];
+  supervisedLocations: BackendSupervisionTaskLocation[];
 }
