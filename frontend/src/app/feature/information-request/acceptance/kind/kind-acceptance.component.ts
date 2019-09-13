@@ -1,10 +1,5 @@
 import {ChangeDetectionStrategy, Component, HostBinding, Input, OnInit} from '@angular/core';
-import {
-  hasSpecifiers,
-  KindsWithSpecifiers,
-  SpecifierEntry,
-  toKindsWithSpecifiers
-} from '@model/application/type/application-specifier';
+import {hasSpecifiers, KindsWithSpecifiers, SpecifierEntry} from '@model/application/type/application-specifier';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {getAvailableKinds, getAvailableSpecifiers, hasMultipleKinds} from '@model/application/type/application-type';
 import {takeUntil} from 'rxjs/internal/operators';
@@ -12,7 +7,7 @@ import {Subject} from 'rxjs/index';
 import {Store} from '@ngrx/store';
 import * as fromApplication from '@feature/application/reducers/index';
 import {SetKindsWithSpecifiers} from '@feature/information-request/actions/information-request-result-actions';
-import {ApplicationKind} from '@model/application/type/application-kind';
+import {ApplicationKind, mergeKindsWithSpecifiers} from '@model/application/type/application-kind';
 
 @Component({
   selector: 'kind-acceptance',
@@ -67,18 +62,17 @@ export class KindAcceptanceComponent implements OnInit {
 
   kindSelection(kinds: string | Array<string>) {
     const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
-    const kindsWithSpecifiers = getAvailableSpecifiers(this.applicationType, selectedKinds);
-    this.availableKindsWithSpecifiers = kindsWithSpecifiers;
+    const availableSpecifiers = getAvailableSpecifiers(this.applicationType, selectedKinds);
+    this.availableKindsWithSpecifiers = availableSpecifiers;
 
-    if (hasSpecifiers(kindsWithSpecifiers)) {
-      this.updateSelectedSpecifiers();
+    if (hasSpecifiers(availableSpecifiers)) {
+      this.updateSelectedSpecifiers(selectedKinds);
     }
-    this.store.dispatch(new SetKindsWithSpecifiers(kindsWithSpecifiers));
+    this.store.dispatch(new SetKindsWithSpecifiers(this.getSelectedKindsWithSpecifiers()));
   }
 
-  onSpecifierSelection(specifierKeys: Array<string>) {
-    const kindsWithSpecifiers = toKindsWithSpecifiers(specifierKeys.map(key => SpecifierEntry.fromKey(key)));
-    this.store.dispatch(new SetKindsWithSpecifiers(kindsWithSpecifiers));
+  onSpecifierSelection() {
+    this.store.dispatch(new SetKindsWithSpecifiers(this.getSelectedKindsWithSpecifiers()));
   }
 
   private initEvents(): void {
@@ -86,15 +80,28 @@ export class KindAcceptanceComponent implements OnInit {
       .subscribe(kinds => this.kindSelection(kinds));
 
     this.specifiersCtrl.valueChanges.pipe(takeUntil(this.destroy))
-      .subscribe(specifiers => this.onSpecifierSelection(specifiers));
+      .subscribe(specifiers => this.onSpecifierSelection());
   }
 
-  private updateSelectedSpecifiers() {
-    const remainingSpecifiers = this.specifiersCtrl.value
-      .map(key => SpecifierEntry.fromKey(key))
-      .filter(se => this.availableKinds.indexOf(se.kind) >= 0)
+  private updateSelectedSpecifiers(selectedKinds: string[]) {
+    const remainingSpecifiers = this.getSelectedSpecifierEntries()
+      .filter(se => selectedKinds.indexOf(ApplicationKind[se.kind]) >= 0)
       .map(specifierEntry => specifierEntry.key);
-
     this.specifiersCtrl.patchValue(remainingSpecifiers);
+  }
+
+  private getSelectedKindsWithSpecifiers(): KindsWithSpecifiers {
+    const kinds: ApplicationKind[] = this.getSelectedKinds();
+    const specifiers: SpecifierEntry[] = this.getSelectedSpecifierEntries();
+    return mergeKindsWithSpecifiers(kinds, specifiers);
+  }
+
+  private getSelectedKinds(): ApplicationKind[] {
+    const kinds = this.kindsCtrl.value;
+    return Array.isArray(kinds) ? kinds : [kinds];
+  }
+
+  private getSelectedSpecifierEntries(): SpecifierEntry[] {
+    return this.specifiersCtrl.value.map(key => SpecifierEntry.fromKey(key));
   }
 }

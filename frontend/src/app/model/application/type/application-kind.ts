@@ -1,4 +1,4 @@
-import {KindsWithSpecifiers} from './application-specifier';
+import {KindsWithSpecifiers, SpecifierEntry, toKindsWithSpecifiers as specifiersToKindsWithSpecifiers} from './application-specifier';
 
 export enum ApplicationKind {
   PROMOTION = 'PROMOTION',
@@ -130,4 +130,18 @@ export const commonKinds: KindsWithSpecifiers = {
 export function drawingAllowedForKind(kind: ApplicationKind): boolean {
   return ![ApplicationKind.BRIDGE_BANNER, ApplicationKind.DOG_TRAINING_EVENT, ApplicationKind.DOG_TRAINING_FIELD]
     .some(k => k === kind);
+}
+
+export function mergeKindsWithSpecifiers(kinds: ApplicationKind[], specifierEntries: SpecifierEntry[]): KindsWithSpecifiers {
+  return {
+    ...toKindsWithSpecifiers(kinds),
+    ...specifiersToKindsWithSpecifiers(specifierEntries)
+  };
+}
+
+function toKindsWithSpecifiers(kinds: ApplicationKind[]): KindsWithSpecifiers {
+  return kinds.reduce((prev, cur) => ({
+    ...prev,
+    ...{[cur]: []}
+  }), {});
 }
