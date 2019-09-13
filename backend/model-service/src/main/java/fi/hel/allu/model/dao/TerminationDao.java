@@ -111,4 +111,11 @@ public class TerminationDao {
             .and(termination.expirationTime.before(startOfTheDay)))
         .fetch();
   }
+
+  @Transactional
+  public void updateTerminator(Integer applicationId, Integer terminatorId) {
+    queryFactory.update(termination).set(termination.terminator, terminatorId)
+      .where(termination.applicationId.eq(applicationId))
+      .execute();
+  }
 }

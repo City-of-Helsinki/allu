@@ -272,7 +272,8 @@ public class ApplicationService {
 
   private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
     HttpEntity<Integer> requestEntity;
-    if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType) || StatusType.DECISIONMAKING.equals(statusType)) {
+    if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType) || StatusType.DECISIONMAKING.equals(statusType)
+        || StatusType.TERMINATED.equals(statusType)) {
       UserJson currentUser = userService.getCurrentUser();
       requestEntity = new HttpEntity<>(currentUser.getId());
     } else {

@@ -141,6 +141,7 @@ public class ApplicationStatusChangeHandler {
   }
 
   protected void handleTerminatedStatus(Application application, Integer userId) {
+    terminationDao.updateTerminator(application.getId(), userId);
     clearTargetState(application);
     clearOwner(application);
     createSupervisionTaskForTerminated(application, userId);
