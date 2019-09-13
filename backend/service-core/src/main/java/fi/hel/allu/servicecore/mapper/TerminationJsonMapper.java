@@ -1,26 +1,32 @@
 package fi.hel.allu.servicecore.mapper;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import fi.hel.allu.common.domain.TerminationInfo;
 import fi.hel.allu.pdf.domain.TerminationJson;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.LocationJson;
 import fi.hel.allu.servicecore.domain.PlacementContractJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.servicecore.service.LocationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Optional;
-import java.util.stream.Collectors;
+import fi.hel.allu.servicecore.service.UserService;
 
 @Component
 public class TerminationJsonMapper extends AbstractDocumentMapper<TerminationJson> {
 
+  private final UserService userService;
+
   @Autowired
   public TerminationJsonMapper(CustomerService customerService, ContactService contactService,
-                               LocationService locationService) {
+                               LocationService locationService, UserService userService) {
     super(customerService, contactService, locationService);
+    this.userService = userService;
   }
 
   public TerminationJson mapToDocumentJson(ApplicationJson application, TerminationInfo terminationInfo, boolean draft) {
@@ -34,6 +40,7 @@ public class TerminationJsonMapper extends AbstractDocumentMapper<TerminationJso
     termination.setSiteCityDistrict(siteCityDistrict(application));
     termination.setDecisionDate(application.getDecisionTime());
 
+
     Optional.ofNullable(terminationInfo).ifPresent(info -> {
       termination.setExpirationTime(info.getExpirationTime());
       termination.setTerminationInfo(splitToList(Optional.ofNullable(info.getReason())));
@@ -44,9 +51,11 @@ public class TerminationJsonMapper extends AbstractDocumentMapper<TerminationJso
       termination.setHandlerName(handler.getRealName());
     });
 
-    Optional.ofNullable(application.getDecisionMaker()).ifPresent(decisionMaker -> {
-      termination.setDeciderTitle(decisionMaker.getTitle());
-      termination.setDeciderName(decisionMaker.getRealName());
+    Optional.ofNullable(terminationInfo.getTerminator())
+        .map(id -> userService.findUserById(id))
+        .ifPresent(terminator -> {
+      termination.setDeciderTitle(terminator.getTitle());
+      termination.setDeciderName(terminator.getRealName());
     });
 
     String additionalInfos = String.join("; ",
