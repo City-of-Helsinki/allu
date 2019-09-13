@@ -13,7 +13,14 @@ h1.popup-header {
 }
 
 .popup-content {
-  margin: 13px 19px;
+  height: 100%;
+  max-height: 50vh;
+  overflow-y: auto;
+
+  ul {
+    margin: 0;
+    padding: 13px 19px;
+  }
 }
 
 .popup-content .content-row-bold {
