@@ -24,6 +24,7 @@ import {Application} from '@model/application/application';
 import {ArrayUtil} from '@util/array-util';
 import {terraceKinds} from '@app/model/application/type/application-kind';
 import {Invoice} from '@model/application/invoice/invoice';
+import {flexDirectionColumn, flexDirectionRow} from '@feature/common/layout/fxLayout';
 
 @Component({
   selector: 'invoicing-info',
@@ -124,6 +125,10 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
 
   get billable(): boolean {
     return !this.notBillableCtrl.value;
+  }
+
+  get detailsDepositDirection(): string {
+    return this.billable ? flexDirectionColumn : flexDirectionRow;
   }
 
   get invoicingProhibited(): boolean {

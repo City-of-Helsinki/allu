@@ -1648,7 +1648,8 @@ export const translations = {
     open: 'Avoin',
     info: {
       address: 'Laskutusosoite',
-      depositAndOthers: 'Vakuus ja muut tiedot',
+      deposit: 'Vakuus',
+      details: 'Laskutustiedot',
       notBillable: 'Ei laskuteta',
       notBillableReason: 'Peruste',
       customerReference: 'Asiakkaan viite',

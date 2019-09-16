@@ -25,84 +25,96 @@
       </allu-card>
     </div>
     <div fxFlex>
-      <allu-card>
-        <mat-card-title>
-          {{'invoice.info.depositAndOthers' | translation}}
-        </mat-card-title>
-        <mat-card-content>
-          <div fxLayout="row wrap">
-            <div fxFlex class="height-fix-bottom">
-              <mat-checkbox formControlName="notBillable">{{'invoice.info.notBillable' | translation}}</mat-checkbox>
-            </div>
-          </div>
-          <div fxLayout="row">
-            <div fxFlex="50%" *ngIf="!billable">
-              <default-text formControlName="notBillableReason" required
-                            [readonly]="form.disabled"
-                            [applicationType]="applicationType"
-                            [textType]="'NOT_BILLABLE'"
-                            [includeTypes]="['NOT_BILLABLE']"></default-text>
-            </div>
-          </div>
-          <div fxLayout="row wrap">
-            <div fxFlex class="height-fix-bottom">
-              <mat-checkbox formControlName="skipPriceCalculation">{{'invoice.info.skipPriceCalculation' | translation}}</mat-checkbox>
-            </div>
-          </div>
-          <div fxLayout="row wrap" fxLayoutGap="18px">
-            <div fxFlex *ngIf="billable">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="customerReference"
-                       [placeholder]="'invoice.info.customerReference' | translation"/>
-              </mat-form-field>
-            </div>
+      <div [fxLayout]="detailsDepositDirection" fxLayoutGap="8px">
+        <div fxFlex>
+          <allu-card>
+            <mat-card-title>
+              {{'invoice.info.details' | translation}}
+            </mat-card-title>
+            <mat-card-content>
+              <div fxLayout="row wrap">
+                <div fxFlex class="height-fix-bottom">
+                  <mat-checkbox formControlName="notBillable">{{'invoice.info.notBillable' | translation}}</mat-checkbox>
+                </div>
+              </div>
+              <div fxLayout="row">
+                <div fxFlex *ngIf="!billable">
+                  <default-text formControlName="notBillableReason" required
+                                [readonly]="form.disabled"
+                                [applicationType]="applicationType"
+                                [textType]="'NOT_BILLABLE'"
+                                [includeTypes]="['NOT_BILLABLE']"></default-text>
+                </div>
+              </div>
+              <div fxLayout="row wrap">
+                <div fxFlex class="height-fix-bottom">
+                  <mat-checkbox formControlName="skipPriceCalculation">{{'invoice.info.skipPriceCalculation' | translation}}</mat-checkbox>
+                </div>
+              </div>
+              <div fxLayout="row wrap" fxLayoutGap="18px">
+                <div fxFlex *ngIf="billable">
+                  <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="customerReference"
+                           [placeholder]="'invoice.info.customerReference' | translation"/>
+                  </mat-form-field>
+                </div>
 
-            <div fxFlex *ngIf="billable && showInvoicingDate">
-              <mat-form-field class="input-full-width">
-                <input matInput formControlName="invoicingDate" required
-                       [placeholder]="'invoice.info.invoicingDate' | translation"
-                       [matDatepicker]="invoicingDatePicker">
-                <mat-datepicker-toggle matSuffix [for]="invoicingDatePicker"
-                                       [disabled]="form.disabled"></mat-datepicker-toggle>
-                <mat-datepicker #invoicingDatePicker></mat-datepicker>
-                <mat-hint>
-                  <field-error [form]="form" field="invoicingDate" hasError="required">
-                    {{'invoice.field.invoicingDateMissing' | translation}}
-                  </field-error>
-                </mat-hint>
-                </mat-form-field>
-            </div>
-            <div fxFlex *ngIf="showDeposit">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="depositAmount"
-                       [placeholder]="'deposit.amount' | translation"/>
-                <span matSuffix>€</span>
-              </mat-form-field>
-            </div>
-
-          </div>
-          <div fxLayout="row wrap" *ngIf="showDeposit">
-            <div fxFlex="100">
-              <mat-form-field class="input-full-width">
+                <div fxFlex *ngIf="billable && showInvoicingDate">
+                  <mat-form-field class="input-full-width">
+                    <input matInput formControlName="invoicingDate" required
+                           [placeholder]="'invoice.info.invoicingDate' | translation"
+                           [matDatepicker]="invoicingDatePicker">
+                    <mat-datepicker-toggle matSuffix [for]="invoicingDatePicker"
+                                           [disabled]="form.disabled"></mat-datepicker-toggle>
+                    <mat-datepicker #invoicingDatePicker></mat-datepicker>
+                    <mat-hint>
+                      <field-error [form]="form" field="invoicingDate" hasError="required">
+                        {{'invoice.field.invoicingDateMissing' | translation}}
+                      </field-error>
+                    </mat-hint>
+                  </mat-form-field>
+                </div>
+              </div>
+            </mat-card-content>
+          </allu-card>
+        </div>
+        <div fxFlex *ngIf="showDeposit">
+          <allu-card>
+            <mat-card-title>
+              {{'invoice.info.deposit' | translation}}
+            </mat-card-title>
+            <mat-card-content>
+              <div fxLayout="row" fxLayoutGap="18px">
+                <div fxFlex>
+                  <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="depositAmount"
+                           [placeholder]="'deposit.amount' | translation"/>
+                    <span matSuffix>€</span>
+                  </mat-form-field>
+                </div>
+                <div fxFlex>
+                  <button type="button" mat-raised-button color="primary"
+                          *ngIf="canChangeDepositStatus" (click)="nextDepositStatus()">
+                    {{['deposit.changeStatus', form.getRawValue().depositStatus] | translation}}
+                  </button>
+                  <button *availableTo="MODIFY_ROLES" type="button" mat-raised-button color="primary" (click)="editDeposit()">
+                    <span *ngIf="!hasDeposit">{{'deposit.add' | translation}}</span>
+                    <span *ngIf="hasDeposit">{{'deposit.edit' | translation}}</span>
+                  </button>
+                </div>
+              </div>
+              <div fxLayout="row">
+                <div fxFlex>
+                  <mat-form-field class="input-full-width">
                 <textarea matInput matTextareaAutosize formControlName="depositReason"
                           [placeholder]="'deposit.reason' | translation"></textarea>
-              </mat-form-field>
-            </div>
-          </div>
-          <div fxLayout="row wrap" *ngIf="showDeposit">
-            <div>
-              <button type="button" mat-raised-button color="primary"
-                      *ngIf="canChangeDepositStatus" (click)="nextDepositStatus()">
-                {{['deposit.changeStatus', form.getRawValue().depositStatus] | translation}}
-              </button>
-              <button *availableTo="MODIFY_ROLES" type="button" mat-raised-button color="primary" (click)="editDeposit()">
-                <span *ngIf="!hasDeposit">{{'deposit.add' | translation}}</span>
-                <span *ngIf="hasDeposit">{{'deposit.edit' | translation}}</span>
-              </button>
-            </div>
-          </div>
-        </mat-card-content>
-      </allu-card>
+                  </mat-form-field>
+                </div>
+              </div>
+            </mat-card-content>
+          </allu-card>
+        </div>
+      </div>
     </div>
   </div>
 </form>
