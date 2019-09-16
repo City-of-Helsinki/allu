@@ -20,3 +20,7 @@ export class AreaRental extends ApplicationExtension implements WorkFinishedDate
       || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }
 }
+
+export function isAreaRental(extension: ApplicationExtension): extension is AreaRental {
+  return ApplicationType.AREA_RENTAL === extension.applicationType;
+}

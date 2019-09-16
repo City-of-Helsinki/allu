@@ -50,6 +50,9 @@
                 <div fxFlex class="height-fix-bottom">
                   <mat-checkbox formControlName="skipPriceCalculation">{{'invoice.info.skipPriceCalculation' | translation}}</mat-checkbox>
                 </div>
+                <div fxFlex *ngIf="applicationType === 'AREA_RENTAL'">
+                  <mat-checkbox formControlName="majorDisturbance">{{'application.areaRental.majorDisturbance' | translation}}</mat-checkbox>
+                </div>
               </div>
               <div fxLayout="row wrap" fxLayoutGap="18px">
                 <div fxFlex *ngIf="billable">

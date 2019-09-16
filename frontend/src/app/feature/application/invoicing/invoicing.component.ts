@@ -27,6 +27,9 @@ import {InvoicingInfoComponent} from '@feature/application/invoicing/invoicing-i
 import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
+import {ApplicationExtension} from '@model/application/type/application-extension';
+import {ApplicationType} from '@model/application/type/application-type';
+import {AreaRental, isAreaRental} from '@model/application/area-rental/area-rental';
 
 @Component({
   selector: 'invoicing',
@@ -123,6 +126,7 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
           app.invoicingDate = invoicingInfo.invoicingDate;
           app.skipPriceCalculation = invoicingInfo.skipPriceCalculation;
           app.invoiceRecipientId = invoicingInfo.notBillable ? undefined : invoiceRecipientId;
+          this.updateExtension(invoicingInfo, app.extension);
           return this.applicationStore.save(app);
         } else {
           return of(app);
@@ -176,6 +180,12 @@ export class InvoicingComponent implements OnInit, CanComponentDeactivate {
       );
     } else {
       return of(true);
+    }
+  }
+
+  private updateExtension(form: InvoicingInfoForm, extension: ApplicationExtension): void {
+    if (isAreaRental(extension)) {
+      extension.majorDisturbance = form.majorDisturbance;
     }
   }
 }

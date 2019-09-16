@@ -12,7 +12,8 @@ export class InvoicingInfoForm {
     public depositStatus?: string,
     public customerReference?: string,
     public invoicingDate?: Date,
-    public skipPriceCalculation: boolean = false) {
+    public skipPriceCalculation: boolean = false,
+    public majorDisturbance?: boolean) {
     this.invoiceRecipient = invoiceRecipient || new CustomerForm();
   }
 
@@ -27,7 +28,8 @@ export class InvoicingInfoForm {
       depositStatus: [undefined],
       customerReference: [undefined],
       invoicingDate: [undefined],
-      skipPriceCalculation: [false]
+      skipPriceCalculation: [false],
+      majorDisturbance: [undefined]
     });
   }
 }

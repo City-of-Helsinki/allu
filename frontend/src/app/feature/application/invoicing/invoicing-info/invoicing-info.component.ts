@@ -25,6 +25,8 @@ import {ArrayUtil} from '@util/array-util';
 import {terraceKinds} from '@app/model/application/type/application-kind';
 import {Invoice} from '@model/application/invoice/invoice';
 import {flexDirectionColumn, flexDirectionRow} from '@feature/common/layout/fxLayout';
+import {AreaRental, isAreaRental} from '@model/application/area-rental/area-rental';
+import {ApplicationExtension} from '@model/application/type/application-extension';
 
 @Component({
   selector: 'invoicing-info',
@@ -154,6 +156,8 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
       this.showInvoicingDate = !ArrayUtil.contains([ApplicationType.AREA_RENTAL, ApplicationType.EXCAVATION_ANNOUNCEMENT], app.type)
       && !ArrayUtil.anyMatch(terraceKinds, app.kinds);
       this.applicationType = app.type;
+
+      this.initForExtension(app.extension);
     });
 
     this.store.select(fromInvoicing.getInvoicingCustomer).pipe(takeUntil(this.destroy))
@@ -244,5 +248,11 @@ export class InvoicingInfoComponent implements OnInit, OnDestroy {
     return earliestInvoice
       ? !TimeUtil.isBefore(earliestInvoice.invoicableTime, tomorrow)
       : true;
+  }
+
+  private initForExtension(extension: ApplicationExtension) {
+    if (isAreaRental(extension)) {
+      this.form.patchValue({majorDisturbance: extension.majorDisturbance});
+    }
   }
 }
