@@ -17,9 +17,9 @@ map_layers_restricted:
   - name: helsinki_maalampokaivot
     title: Helsinki Maalämpökaivot
     sources: [hki_maalampokaivot_cache]
-  - name: helsinki_porakaivot_vesi
+  - name: helsinki_porakaivo_vesi
     title: Helsinki Porakaivot
-    sources: [hki_porakaivot_vesi_cache]
+    sources: [hki_porakaivo_vesi_cache]
   - name: helsinki_johtokartta_sahko
     title: Helsinki Johtokartta sähkö
     sources: [hki_johtokartta_sahko_cache]

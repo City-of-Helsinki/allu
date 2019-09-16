@@ -102,7 +102,7 @@ export class MapLayerService {
       'Maanalaiset tilat reunaviivat': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat', token, ZoomLevel.METERS_50),
       'Maanalaiset tilat alueet': this.createAuthenticatedOverlayLayer('helsinki_maanalaiset_tilat_alueet', token, ZoomLevel.METERS_50),
       'Maalämpökaivot': this.createAuthenticatedOverlayLayer('helsinki_maalampokaivot', token),
-      'Porakaivot': this.createAuthenticatedOverlayLayer('helsinki_porakaivot_vesi', token),
+      'Porakaivot': this.createAuthenticatedOverlayLayer('helsinki_porakaivo_vesi', token),
       'Sähkö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_sahko', token, ZoomLevel.METERS_10),
       'Tietoliikenne': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_tietoliikenne', token, ZoomLevel.METERS_10),
       'Kaukolämpö': this.createAuthenticatedOverlayLayer('helsinki_johtokartta_kaukolampo', token, ZoomLevel.METERS_10),
