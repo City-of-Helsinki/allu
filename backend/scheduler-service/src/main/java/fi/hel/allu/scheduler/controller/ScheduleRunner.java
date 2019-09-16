@@ -3,6 +3,8 @@ package fi.hel.allu.scheduler.controller;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 import fi.hel.allu.scheduler.service.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -19,6 +21,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class ScheduleRunner {
+  private static final Logger logger = LoggerFactory.getLogger(ScheduleRunner.class);
+
   private final ApplicantReminderService applicantReminderService;
   private final InvoicingService invoicingService;
   private final SapCustomerService sapCustomerService;
@@ -50,7 +54,13 @@ public class ScheduleRunner {
   private void scheduleSearchDataSync() {
     final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
     scheduledExecutorService.schedule(
-        () -> syncSearchData(),
+      () -> {
+        try {
+          syncSearchData();
+        } catch (Exception e) {
+          logger.error("Initial search data sync failed!", e);
+        }
+      },
         applicationProperties.getSearchSyncStartupDelay(),
         TimeUnit.SECONDS);
   }
