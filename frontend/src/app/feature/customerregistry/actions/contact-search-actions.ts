@@ -1,4 +1,3 @@
-import {Action} from '@ngrx/store';
 import {ActionWithPayload} from '@feature/common/action-with-payload';
 import {ErrorInfo} from '@service/error/error-info';
 import {Contact} from '@model/customer/contact';
@@ -9,7 +8,7 @@ export enum ContactSearchActionType {
   LoadByCustomer = '[ContactSearch] Load contacts by customer',
   LoadByCustomerSuccess = '[ContactSearch] Load contacts by customer success',
   LoadByCustomerFailed = '[ContactSearch] Load contacts by customer failed',
-  Search = '[ContactSearch] Search contacts',
+  SearchForCurrentCustomer = '[ContactSearch] Search contacts for current customer'
 }
 
 export class LoadByCustomer implements ActionWithTarget {
@@ -30,8 +29,8 @@ export class LoadByCustomerFailed implements ActionWithTarget, ActionWithPayload
   constructor(public targetType: ActionTargetType, public payload: ErrorInfo) {}
 }
 
-export class Search implements ActionWithTarget {
-  readonly type = ContactSearchActionType.Search;
+export class SearchForCurrentCustomer implements ActionWithTarget {
+  readonly type = ContactSearchActionType.SearchForCurrentCustomer;
 
   constructor(public targetType: ActionTargetType, public payload: string) {}
 }
@@ -40,4 +39,4 @@ export type ContactSearchActions =
   | LoadByCustomer
   | LoadByCustomerSuccess
   | LoadByCustomerFailed
-  | Search;
+  | SearchForCurrentCustomer;

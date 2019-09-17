@@ -33,7 +33,7 @@ export const getTab = createSelector(
   fromWorkQueue.getTab
 );
 
-// Search selectors
+// SearchForCurrentCustomer selectors
 export const getSearchState = createSelector(
   getSupervisionWorkQueueState,
   (state: State) => state.search

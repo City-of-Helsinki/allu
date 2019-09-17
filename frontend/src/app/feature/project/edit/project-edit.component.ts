@@ -141,7 +141,7 @@ export class ProjectEditComponent {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(contact => typeof contact === 'string')
-    ).subscribe(name => this.store.dispatch(new ContactSearchAction.Search(ActionTargetType.Customer, name)));
+    ).subscribe(name => this.store.dispatch(new ContactSearchAction.SearchForCurrentCustomer(ActionTargetType.Customer, name)));
 
     this.customerCtrl.valueChanges.pipe(
       takeUntil(this.destroy),

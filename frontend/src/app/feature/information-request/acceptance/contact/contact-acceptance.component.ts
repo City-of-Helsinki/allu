@@ -6,7 +6,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs/index';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
-import {Search} from '@feature/customerregistry/actions/contact-search-actions';
+import {SearchForCurrentCustomer} from '@feature/customerregistry/actions/contact-search-actions';
 import {ArrayUtil} from '@util/array-util';
 import {CONTACT_MODAL_CONFIG, ContactModalComponent} from '@feature/information-request/acceptance/contact/contact-modal.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
@@ -82,7 +82,7 @@ export class ContactAcceptanceComponent implements OnInit, OnDestroy {
     this.searchForm.get('search').valueChanges.pipe(
       takeUntil(this.destroy),
       debounceTime(300)
-    ).subscribe(search => this.store.dispatch(new Search(this.config.actionTargetType, search)));
+    ).subscribe(search => this.store.dispatch(new SearchForCurrentCustomer(this.config.actionTargetType, search)));
 
     this.showCreateNew$ = combineLatest(
       this.referenceContact$,

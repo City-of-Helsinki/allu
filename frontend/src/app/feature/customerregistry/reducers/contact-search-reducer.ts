@@ -49,11 +49,7 @@ function reducer(state: State = initialState, action: ContactSearchActions) {
       };
     }
 
-    case ContactSearchActionType.Search: {
-      const searchTerm = action.payload ? action.payload.toLocaleLowerCase() : '';
-      const matching = state.available
-        .filter(c => c.name.toLocaleLowerCase().startsWith(searchTerm));
-
+    case ContactSearchActionType.SearchForCurrentCustomer: {
       return {
         ...state,
         matching: matchingContacts(state.available, action.payload)
