@@ -5,7 +5,7 @@ TestUtil.assertEnv();
 
 describe('Create external user', () => {
   it('Create', done => {
-    const extUser1 = {
+    const extUser = {
       'id': null,
       'username': 'ext-user',
       'name': 'Ext User',
@@ -14,7 +14,7 @@ describe('Create external user', () => {
       'expirationTime': '2022-07-07T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
-    const extUser2 = {
+    const extUserRkj = {
       'id': null,
       'username': 'ext-user-rkj',
       'name': 'RKJ Ext User',
@@ -23,16 +23,27 @@ describe('Create external user', () => {
       'expirationTime': '2022-07-07T00:00:00.000Z',
       'assignedRoles': ['ROLE_TRUSTED_PARTNER']
     }
-
-    let optionsTestUser1 = TestUtil.getPostOptions('/api/externalusers', extUser1);
-    let optionsTestUser2 = TestUtil.getPostOptions('/api/externalusers', extUser2);
+    const extUserHsy = {
+      'id': null,
+      'username': 'ext-user-hsy',
+      'name': 'HSY Ext User',
+      'password': 'as#33_24DFgh_AEfott3',
+      'active': 'true',
+      'expirationTime': '2022-07-07T00:00:00.000Z',
+      'assignedRoles': ['ROLE_TRUSTED_PARTNER']
+    }
+    let optionsTestUser = TestUtil.getPostOptions('/api/externalusers', extUser);
+    let optionsTestUserRkj = TestUtil.getPostOptions('/api/externalusers', extUserRkj);
+    let optionsTestUserHsy = TestUtil.getPostOptions('/api/externalusers', extUserHsy);
     TestUtil.login('admin')
       .then(token => {
-        TestUtil.addAuthorization(optionsTestUser1, token);
-        TestUtil.addAuthorization(optionsTestUser2, token);
+        TestUtil.addAuthorization(optionsTestUser, token);
+        TestUtil.addAuthorization(optionsTestUserRkj, token);
+        TestUtil.addAuthorization(optionsTestUserHsy, token);
       })
-      .then(() => rp(optionsTestUser1))
-      .then(() => rp(optionsTestUser2))
+      .then(() => rp(optionsTestUser))
+      .then(() => rp(optionsTestUserRkj))
+      .then(() => rp(optionsTestUserHsy))
       .then(done, done.fail);
   });
 
