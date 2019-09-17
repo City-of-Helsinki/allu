@@ -23,6 +23,8 @@ import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {FormUtil} from '@util/form.util';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 import {createTranslated} from '@service/error/error-info';
+import {ContactSearchQuery} from '@service/customer/contact-search-query';
+import {Sort} from '@model/common/sort';
 
 @Component({
   selector: 'project-edit',
@@ -141,7 +143,7 @@ export class ProjectEditComponent {
       takeUntil(this.destroy),
       debounceTime(300),
       filter(contact => typeof contact === 'string')
-    ).subscribe(name => this.store.dispatch(new ContactSearchAction.SearchForCurrentCustomer(ActionTargetType.Customer, name)));
+    ).subscribe(name => this.searchContact(name));
 
     this.customerCtrl.valueChanges.pipe(
       takeUntil(this.destroy),
@@ -159,6 +161,15 @@ export class ProjectEditComponent {
       } else {
         this.form.patchValue({identifier: undefined});
       }
+    }
+  }
+
+  private searchContact(name: string): void {
+    if (this.customerCtrl.value) {
+      this.store.dispatch(new ContactSearchAction.SearchForCurrentCustomer(ActionTargetType.Customer, name));
+    } else {
+      const query: ContactSearchQuery = {name, active: true};
+      this.store.dispatch(new ContactSearchAction.Search(ActionTargetType.Customer, {query, sort: new Sort('name', 'asc')}));
     }
   }
 }

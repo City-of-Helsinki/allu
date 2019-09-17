@@ -21,6 +21,7 @@ export const initialState: State = {
 
 function reducer(state: State = initialState, action: ContactSearchActions) {
   switch (action.type) {
+    case ContactSearchActionType.Search:
     case ContactSearchActionType.LoadByCustomer: {
       return {
         ...state,
@@ -53,6 +54,16 @@ function reducer(state: State = initialState, action: ContactSearchActions) {
       return {
         ...state,
         matching: matchingContacts(state.available, action.payload)
+      };
+    }
+
+    case ContactSearchActionType.SearchSuccess: {
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        available: action.payload,
+        matching: action.payload
       };
     }
 
