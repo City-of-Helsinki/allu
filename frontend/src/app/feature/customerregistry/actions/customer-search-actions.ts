@@ -16,7 +16,9 @@ export enum CustomerSearchActionType {
   Search = '[CustomerSearch] Search customer',
   SearchByType = '[CustomerSearch] Search customer by type',
   SearchSuccess = '[CustomerSearch] Search customer success',
-  SearchFailed = '[CustomerSearch] Search customer failed'
+  SearchFailed = '[CustomerSearch] Search customer failed',
+  FindById = '[CustomerSearch] Find customer by id',
+  FindByIdSuccess = '[CustomerSearch] Find customer by id success',
 }
 
 export interface CustomerSearchParams extends SearchParameters<CustomerSearchQuery> {}
@@ -63,6 +65,18 @@ export class SearchFailed implements ActionWithTarget, ActionWithPayload<ErrorIn
   constructor(public targetType: ActionTargetType, public payload: ErrorInfo) {}
 }
 
+export class FindById implements ActionWithTarget {
+  readonly type = CustomerSearchActionType.FindById;
+
+  constructor(public targetType: ActionTargetType, public payload: number) {}
+}
+
+export class FindByIdSuccess implements ActionWithTarget {
+  readonly type = CustomerSearchActionType.FindByIdSuccess;
+
+  constructor(public targetType: ActionTargetType, public payload: Customer) {}
+}
+
 export type CustomerSearchActions =
   | SetSearchQuery
   | SetSort
@@ -70,4 +84,6 @@ export type CustomerSearchActions =
   | Search
   | SearchByType
   | SearchSuccess
-  | SearchFailed;
+  | SearchFailed
+  | FindById
+  | FindByIdSuccess;

@@ -11,4 +11,3 @@ export class Page<T> {
     public totalPages?: number
   ) {}
 }
-

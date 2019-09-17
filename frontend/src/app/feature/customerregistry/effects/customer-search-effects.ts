@@ -4,7 +4,16 @@ import {Observable, of} from 'rxjs';
 import {Action} from '@ngrx/store';
 import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
 import {CustomerService} from '@service/customer/customer.service';
-import {CustomerSearchActionType, Search, SearchByType, SearchFailed, SearchSuccess} from '../actions/customer-search-actions';
+import {
+  CustomerSearchActionType,
+  FindById,
+  FindByIdSuccess,
+  Search,
+  SearchByType,
+  SearchFailed,
+  SearchSuccess
+} from '../actions/customer-search-actions';
+import {NotifyFailure} from '@feature/notification/actions/notification-actions';
 
 @Injectable()
 export class CustomerSearchEffects {
@@ -26,6 +35,15 @@ export class CustomerSearchEffects {
   searchCustomerByType: Observable<Action> = this.actions.pipe(
     ofType<SearchByType>(CustomerSearchActionType.SearchByType),
     concatMap(action => this.searchByType(action))
+  );
+
+  @Effect()
+  findById: Observable<Action> = this.actions.pipe(
+    ofType<FindById>(CustomerSearchActionType.FindById),
+    switchMap(action => this.customerService.findCustomerById(action.payload).pipe(
+      map(customer => new FindByIdSuccess(action.targetType, customer)),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
   );
 
   private searchByType(action: SearchByType): Observable<Action> {

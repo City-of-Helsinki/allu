@@ -78,7 +78,10 @@ export const {
   getLoading: getCustomersLoading,
   getSearch: getCustomerSearch,
   getSort: getCustomerSort,
-  getPageRequest: getCustomerPageRequest
+  getPageRequest: getCustomerPageRequest,
+  getSelectedId: getSelectedCustomerId,
+  getSelected: getSelectedCustomer,
+
 } = createCustomerSelectors(getCustomerSearchState);
 
 export const {

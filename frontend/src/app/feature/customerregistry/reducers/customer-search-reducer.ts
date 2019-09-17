@@ -6,8 +6,10 @@ import {Page} from '@model/common/page';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
 import {createSelector, MemoizedSelector} from '@ngrx/store';
+import {ArrayUtil} from '@util/array-util';
 
 export interface State {
+  selected: number;
   search: CustomerSearchQuery;
   sort: Sort;
   pageRequest: PageRequest;
@@ -16,6 +18,7 @@ export interface State {
 }
 
 const initialState: State = {
+  selected: undefined,
   search: undefined,
   loading: false,
   sort: new Sort(),
@@ -34,11 +37,19 @@ function reducer(state: State = initialState, action: CustomerSearchActions) {
       };
     }
 
+    case CustomerSearchActionType.FindById: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+
     case CustomerSearchActionType.SearchSuccess: {
       return {
         ...state,
         matching: action.payload,
-        loading: false
+        loading: false,
+        selected: undefined
       };
     }
 
@@ -46,7 +57,17 @@ function reducer(state: State = initialState, action: CustomerSearchActions) {
       return {
         ...state,
         matching: new Page<Customer>(),
-        loading: false
+        loading: false,
+        selected: undefined
+      };
+    }
+
+    case CustomerSearchActionType.FindByIdSuccess: {
+      return {
+        ...state,
+        matching: new Page([action.payload]),
+        loading: false,
+        selected: action.payload ? action.payload.id : undefined
       };
     }
 
@@ -101,6 +122,14 @@ export const getSort = (state: State) => state.sort;
 
 export const getPageRequest = (state: State) => state.pageRequest;
 
+export const getSelectedId = (state: State) => state.selected;
+
+export const getSelected = (state: State) => {
+  const selected = getSelectedId(state);
+  const matching = getMatchingList(state);
+  return ArrayUtil.first(matching, (customer => customer.id === selected));
+};
+
 export function createCustomerSelectors(getState: MemoizedSelector<object, State>) {
   return {
     getMatching: createSelector(getState, getMatching),
@@ -109,5 +138,7 @@ export function createCustomerSelectors(getState: MemoizedSelector<object, State
     getSearch: createSelector(getState, getSearch),
     getSort: createSelector(getState, getSort),
     getPageRequest: createSelector(getState, getPageRequest),
+    getSelectedId: createSelector(getState, getSelectedId),
+    getSelected: createSelector(getState, getSelected)
   };
 }

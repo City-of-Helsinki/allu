@@ -6,7 +6,7 @@ import * as fromProject from '../reducers';
 import * as fromCustomerSearch from '@feature/customerregistry/reducers';
 import * as CustomerSearchAction from '@feature/customerregistry/actions/customer-search-actions';
 import * as ContactSearchAction from '@feature/customerregistry/actions/contact-search-actions';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {Save} from '../actions/project-actions';
 import {EnumUtil} from '@util/enum.util';
 import {CustomerType} from '@model/customer/customer-type';
@@ -79,6 +79,10 @@ export class ProjectEditComponent {
       contactPhone: contact.phone,
       contactEmail: contact.email
     });
+
+    if (!this.customerCtrl.value) {
+      this.setCustomerForContact(contact);
+    }
   }
 
   onSubmit(form: ProjectForm) {
@@ -171,5 +175,15 @@ export class ProjectEditComponent {
       const query: ContactSearchQuery = {name, active: true};
       this.store.dispatch(new ContactSearchAction.Search(ActionTargetType.Customer, {query, sort: new Sort('name', 'asc')}));
     }
+  }
+
+  private setCustomerForContact(contact: Contact): void {
+    this.store.dispatch(new CustomerSearchAction.FindById(ActionTargetType.Customer, contact.customerId));
+    this.store.pipe(
+      select(fromCustomerSearch.getCustomersLoading),
+      filter(loading => !loading),
+      switchMap(() => this.store.pipe(select(fromCustomerSearch.getSelectedCustomer))),
+      take(1)
+    ).subscribe(customer => this.customerCtrl.patchValue(customer));
   }
 }
