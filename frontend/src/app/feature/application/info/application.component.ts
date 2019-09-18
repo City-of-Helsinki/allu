@@ -12,9 +12,10 @@ import {Option, Some} from '@util/option';
 import {NumberUtil} from '@util/number.util';
 import * as fromApplication from '../reducers';
 import * as fromSupervisionTask from '@feature/application/supervision/reducers';
-import {Store} from '@ngrx/store';
-import {map, takeUntil} from 'rxjs/internal/operators';
+import {select, Store} from '@ngrx/store';
+import {filter, map, takeUntil} from 'rxjs/internal/operators';
 import * as fromRoot from '@feature/allu/reducers';
+import * as fromDecision from '@feature/decision/reducers';
 
 @Component({
   selector: 'application',
@@ -26,6 +27,7 @@ import * as fromRoot from '@feature/allu/reducers';
 })
 export class ApplicationComponent implements OnInit, OnDestroy {
   applicationChanges: Observable<Application>;
+  terminationDate$: Observable<Date>;
   readonly: boolean;
   sidebarItems: Array<SidebarItem> = [];
 
@@ -41,6 +43,12 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     this.applicationChanges = this.applicationStore.application;
     this.applicationChanges.pipe(takeUntil(this.destroy))
       .subscribe(app => this.onApplicationChange(app));
+
+    this.terminationDate$ = this.store.pipe(
+      select(fromDecision.getTermination),
+      filter(termination => termination && !!termination.terminationDecisionTime),
+      map(termination => termination.expirationTime)
+    );
   }
 
   ngOnDestroy(): void {

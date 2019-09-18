@@ -39,6 +39,8 @@ export class ProgressbarComponent implements OnInit {
 
   private _application: Application = new Application();
 
+  @Input() terminationDate: Date;
+
   constructor(private router: Router,
               private service: ApplicationService,
               private store: Store<fromApplication.State>) {
