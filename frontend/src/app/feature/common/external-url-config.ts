@@ -19,12 +19,19 @@ function createUrl(config: ExternalUrlConfig, identificationNumber: string): str
 }
 
 export function getByIdentifier(identificationNumber: string): string {
-  const matching =  Object.keys(externalUrls)
-    .map(key => externalUrls[key])
-    .filter(link => !!identificationNumber && identificationNumber.startsWith(link.prefix));
+  const matchingConfigs =  matching(identificationNumber);
 
-  return matching.length > 0
-    ? createUrl(matching[0], identificationNumber)
+  return matchingConfigs.length > 0
+    ? createUrl(matchingConfigs[0], identificationNumber)
     : undefined;
 }
 
+const matching = (identificationNumber: string) => {
+  if (!!identificationNumber) {
+    return Object.keys(externalUrls)
+      .map(key => externalUrls[key])
+      .filter(link => identificationNumber.toUpperCase().startsWith(link.prefix.toUpperCase()));
+  } else {
+    return [];
+  }
+};
