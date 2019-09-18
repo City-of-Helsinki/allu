@@ -72,7 +72,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.storedFilterStore.getCurrentFilter(StoredFilterType.WORKQUEUE).pipe(
       takeUntil(this.destroy),
       map(filter => Sort.toMatSortable(filter.sort))
-    ).subscribe(sort => this.sort.sort(sort));
+    ).subscribe(sort => this.dataSource.setSort(sort));
   }
 
   ngOnDestroy(): void {

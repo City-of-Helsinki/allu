@@ -1,7 +1,7 @@
 import {DataSource} from '@angular/cdk/collections';
 import {Observable, Subject} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, MatSortable} from '@angular/material/sort';
 import {Sort} from '@model/common/sort';
 import {PageRequest} from '@model/common/page-request';
 import {map, take, takeUntil, tap} from 'rxjs/operators';
@@ -47,6 +47,14 @@ export abstract class StoreDatasource<T> extends DataSource<T> {
   disconnect(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
+  }
+
+  setSort(sort: MatSortable): void {
+    // Need to reset active to correctly set the sort.
+    // If we would sort by same field it would pick next sort direction
+    // instead of the one we give it inside sort
+    this.sort.active = undefined;
+    this.sort.sort(sort);
   }
 
   /**
