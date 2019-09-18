@@ -10,7 +10,8 @@ export class TerminationInfo extends StatusChangeInfo {
     public owner?: number,
     public creationTime?: Date,
     public expirationTime?: Date,
-    public comment?: string
+    public comment?: string,
+    public terminationDecisionTime?: Date
   ) {
     super(type, comment, owner);
   }

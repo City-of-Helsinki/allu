@@ -7,6 +7,10 @@ import {PlacementContract} from '@model/application/placement-contract/placement
 import {from, PlacementContractForm, to} from './placement-contract.form';
 import {ApplicationInfoBaseComponent} from '@feature/application/info/application-info-base.component';
 import {TimeUtil} from '@util/time.util';
+import {Observable} from 'rxjs';
+import {select} from '@ngrx/store';
+import * as fromDecision from '@feature/decision/reducers';
+import {filter, map} from 'rxjs/operators';
 
 
 @Component({
@@ -16,6 +20,17 @@ import {TimeUtil} from '@util/time.util';
   styleUrls: []
 })
 export class PlacementContractComponent extends ApplicationInfoBaseComponent implements OnInit {
+  terminationDate$: Observable<Date>;
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    this.terminationDate$ = this.store.pipe(
+      select(fromDecision.getTermination),
+      filter(termination => termination && !!termination.terminationDecisionTime),
+      map(termination => termination.expirationTime)
+    );
+  }
+
   protected createExtensionForm(): FormGroup {
     return this.fb.group({
       validityTimes: this.fb.group({

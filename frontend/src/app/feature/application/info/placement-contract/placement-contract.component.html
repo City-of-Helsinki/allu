@@ -50,25 +50,15 @@
                          [matDatepicker]="endTimePicker"/>
                   <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
                   <mat-datepicker #endTimePicker></mat-datepicker>
-                  <mat-hint>
-                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                  <mat-error *ngIf="applicationForm.get('validityTimes.endTime').hasError('required')">
                       {{'application.common.field.validityEndTimeMissing' | translation}}
-                    </field-error>
+                  </mat-error>
+                  <mat-hint *ngIf="terminationDate$ | async as terminationDate">
+                    {{'application.common.terminatedExpires' | translation}} {{terminationDate | date: 'shortDate'}}
                   </mat-hint>
                 </mat-form-field>
               </div>
             </div>
-            <div class="col m3">
-              <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="terminationDate"
-                       [placeholder]="'application.placementContract.terminationDate' | translation"
-                       [matDatepicker]="terminationDatePicker"/>
-                <mat-datepicker-toggle matSuffix [for]="terminationDatePicker"
-                                       [disabled]="readonly"></mat-datepicker-toggle>
-                <mat-datepicker #terminationDatePicker></mat-datepicker>
-              </mat-form-field>
-            </div>
-
           </div>
           <div class="row form-group">
             <div class="col m12">

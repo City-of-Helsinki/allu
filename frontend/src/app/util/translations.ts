@@ -309,6 +309,7 @@ export const translations = {
     common: {
       startTime: 'Voimassaolon aloitus',
       endTime: 'Voimassaolon lopetus',
+      terminatedExpires: 'Irtisanottu, päättyy',
       area: 'Pinta-ala',
       pksCard: 'Pks-kortti',
       propertyConnectivity: 'Tontti- / Kiinteistöliitos',

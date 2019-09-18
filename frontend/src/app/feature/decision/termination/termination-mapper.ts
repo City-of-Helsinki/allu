@@ -8,6 +8,7 @@ export interface BackendTerminationInfo {
   expirationTime: string;
   reason: string;
   terminator: number;
+  terminationDecisionTime?: string;
 }
 
 export class TerminationInfoMapper {
@@ -23,7 +24,8 @@ export class TerminationInfoMapper {
       backendTerminationInfo.terminator,
       TimeUtil.dateFromBackend(backendTerminationInfo.creationTime),
       TimeUtil.dateFromBackend(backendTerminationInfo.expirationTime),
-      backendTerminationInfo.reason
+      backendTerminationInfo.reason,
+      TimeUtil.dateFromBackend(backendTerminationInfo.terminationDecisionTime)
     );
   }
 

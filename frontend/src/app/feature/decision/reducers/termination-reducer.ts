@@ -20,7 +20,8 @@ export function reducer(state: State = initialState, action: TerminationActions 
     case TerminationActionType.LoadInfo: {
       return {
         ...state,
-        loading: true
+        loading: true,
+        termination: undefined
       };
     }
 
