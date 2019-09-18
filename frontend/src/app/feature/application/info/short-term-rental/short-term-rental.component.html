@@ -59,10 +59,11 @@
                       {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
                     </span>
                 </mat-error>
-                <mat-hint>
-                  <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
+                <mat-error *ngIf="applicationForm.get('rentalTimes.endTime').hasError('required')">
                     {{'application.common.field.validityEndTimeMissing' | translation}}
-                  </field-error>
+                </mat-error>
+                <mat-hint *ngIf="terminationDate$ | async as terminationDate">
+                  {{'application.common.terminatedExpires' | translation}} {{terminationDate | date: 'shortDate'}}
                 </mat-hint>
               </mat-form-field>
             </div>

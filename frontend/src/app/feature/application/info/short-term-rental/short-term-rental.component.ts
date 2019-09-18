@@ -7,7 +7,7 @@ import {ShortTermRental} from '@model/application/short-term-rental/short-term-r
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ApplicationKind} from '@model/application/type/application-kind';
 import {TimeUtil} from '@util/time.util';
-import {map, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
 import {findTranslation} from '@util/translations';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -24,6 +24,7 @@ import {setValidatorsAndValidate} from '@feature/common/validation/validation-ut
 import {TimePeriod} from '@feature/application/info/time-period';
 import {ComplexValidator} from '@util/complex-validator';
 import {DateFilter, defaultDateFilter} from '@util/date-filter';
+import * as fromDecision from '@feature/decision/reducers';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -54,6 +55,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   maxEndDate$: Observable<Date>;
   minStartDate$: Observable<Date>;
   timePeriod$: Observable<TimePeriod>;
+  terminationDate$: Observable<Date>;
 
   private commercialCtrl: FormControl;
 
@@ -71,6 +73,11 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.terminationDate$ = this.store.pipe(
+      select(fromDecision.getTermination),
+      filter(termination => termination && !!termination.terminationDecisionTime),
+      map(termination => termination.expirationTime)
+    );
   }
 
   protected initForm() {
