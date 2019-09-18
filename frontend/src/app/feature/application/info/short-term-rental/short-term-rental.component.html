@@ -18,7 +18,62 @@
         <mat-card-title>{{'application.shortTermRental.info' | translation}}</mat-card-title>
         <mat-card-content>
           <div fxLayout="row" fxLayoutGap="18px">
-            <div fxFlex="calc(50% - 18px)">
+            <div fxFlex="calc(25% - 18px)" formGroupName="rentalTimes">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="startTime" required
+                       [placeholder]="'application.common.startTime' | translation"
+                       [matDatepicker]="startTimePicker"
+                       [min]="minStartDate$ | async"
+                       [max]="applicationForm.get('rentalTimes.endTime').value"
+                       [matDatepickerFilter]="dateFilter"/>
+                <mat-datepicker-toggle matSuffix [for]="startTimePicker"
+                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #startTimePicker></mat-datepicker>
+                <mat-error *ngIf="applicationForm.get('rentalTimes.startTime').hasError('inTimePeriod') || applicationForm.get('rentalTimes.startTime').hasError('matDatepickerMin')">
+                    <span *ngIf="kind$ | async as kind">
+                      {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
+                    </span>
+                </mat-error>
+                <mat-hint>
+                  <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
+                    {{'application.common.field.validityStartTimeMissing' | translation}}
+                  </field-error>
+                  <field-error [form]="applicationForm" field="rentalTimes" hasError="startBeforeEnd">
+                    {{'application.common.field.validityStartBeforeEnd' | translation}}
+                  </field-error>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div fxFlex="calc(25% - 18px)" formGroupName="rentalTimes">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="endTime" required
+                       [placeholder]="'application.common.endTime' | translation"
+                       [matDatepicker]="endTimePicker"
+                       [min]="applicationForm.get('rentalTimes.startTime').value"
+                       [max]="maxEndDate$ | async"
+                       [matDatepickerFilter]="dateFilter"/>
+                <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #endTimePicker></mat-datepicker>
+                <mat-error *ngIf="applicationForm.get('rentalTimes.endTime').hasError('inTimePeriod') || applicationForm.get('rentalTimes.endTime').hasError('matDatepickerMax')">
+                    <span *ngIf="kind$ | async as kind">
+                      {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
+                    </span>
+                </mat-error>
+                <mat-hint>
+                  <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
+                    {{'application.common.field.validityEndTimeMissing' | translation}}
+                  </field-error>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div fxFlex="calc(50% - 18px)" *ngIf="recurringAllowed">
+              <recurring formControlName="recurringEndYear"
+                         [forNowSelectable]="false"
+                         [readonly]="readonly"></recurring>
+            </div>
+          </div>
+          <div fxLayout="row">
+            <div fxFlex="50%" class="gap-single-9">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="name" required
                        [placeholder]="'application.shortTermRental.name' | translation"/>
@@ -32,56 +87,6 @@
                 </mat-hint>
               </mat-form-field>
             </div>
-            <ng-container formGroupName="rentalTimes">
-              <div fxFlex="calc(25% - 18px)">
-                <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" required
-                         [placeholder]="'application.common.startTime' | translation"
-                         [matDatepicker]="startTimePicker"
-                         [min]="minStartDate$ | async"
-                         [max]="applicationForm.get('rentalTimes.endTime').value"
-                         [matDatepickerFilter]="dateFilter"/>
-                  <mat-datepicker-toggle matSuffix [for]="startTimePicker"
-                                         [disabled]="readonly"></mat-datepicker-toggle>
-                  <mat-datepicker #startTimePicker></mat-datepicker>
-                  <mat-error *ngIf="applicationForm.get('rentalTimes.startTime').hasError('inTimePeriod') || applicationForm.get('rentalTimes.startTime').hasError('matDatepickerMin')">
-                    <span *ngIf="kind$ | async as kind">
-                      {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
-                    </span>
-                  </mat-error>
-                  <mat-hint>
-                    <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
-                      {{'application.common.field.validityStartTimeMissing' | translation}}
-                    </field-error>
-                    <field-error [form]="applicationForm" field="rentalTimes" hasError="startBeforeEnd">
-                      {{'application.common.field.validityStartBeforeEnd' | translation}}
-                    </field-error>
-                  </mat-hint>
-                </mat-form-field>
-              </div>
-              <div fxFlex="calc(25% - 18px)">
-                <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" required
-                         [placeholder]="'application.common.endTime' | translation"
-                         [matDatepicker]="endTimePicker"
-                         [min]="applicationForm.get('rentalTimes.startTime').value"
-                         [max]="maxEndDate$ | async"
-                         [matDatepickerFilter]="dateFilter"/>
-                  <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                  <mat-datepicker #endTimePicker></mat-datepicker>
-                  <mat-error *ngIf="applicationForm.get('rentalTimes.endTime').hasError('inTimePeriod') || applicationForm.get('rentalTimes.endTime').hasError('matDatepickerMax')">
-                    <span *ngIf="kind$ | async as kind">
-                      {{['application.shortTermRental.field.notInValidTimePeriod', kind] | translation}}
-                    </span>
-                  </mat-error>
-                  <mat-hint>
-                    <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
-                      {{'application.common.field.validityEndTimeMissing' | translation}}
-                    </field-error>
-                  </mat-hint>
-                </mat-form-field>
-              </div>
-            </ng-container>
           </div>
           <div fxLayout="row">
             <div fxFlex>
@@ -97,13 +102,6 @@
               </mat-form-field>
             </div>
           </div>
-          <div fxLayout="row" *ngIf="recurringAllowed">
-            <div fxFlex>
-              <recurring formControlName="recurringEndYear"
-                         [forNowSelectable]="false"
-                         [readonly]="readonly"></recurring>
-            </div>
-          </div>
           <div fxLayout="row" *ngIf="showCommercial">
             <div fxFlex>
               <mat-slide-toggle formControlName="commercial">
@@ -111,7 +109,7 @@
               </mat-slide-toggle>
             </div>
           </div>
-      </mat-card-content>
+        </mat-card-content>
       </allu-card>
     </div>
   </div>

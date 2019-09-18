@@ -12,6 +12,44 @@
         <mat-card-title>Muistiinpanon tiedot</mat-card-title>
         <mat-card-content>
           <div class="row form-group">
+            <div class="col s3" formGroupName="validityTimes">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
+                       [matDatepicker]="startTimePicker"/>
+                <mat-datepicker-toggle matSuffix [for]="startTimePicker"
+                                       [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #startTimePicker></mat-datepicker>
+                <mat-hint>
+                  <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                    {{'application.common.field.validityStartTimeMissing' | translation}}
+                  </field-error>
+                  <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                    {{'application.common.field.validityStartBeforeEnd' | translation}}
+                  </field-error>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div class="col s3" formGroupName="validityTimes">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
+                       [matDatepicker]="endTimePicker"/>
+                <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                <mat-datepicker #endTimePicker></mat-datepicker>
+                <mat-hint>
+                  <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                    {{'application.note.field.validityEndTimeMissing' | translation}}
+                  </field-error>
+                  <field-error [form]="applicationForm" field="validityTimes" hasError="durationAtMax">
+                    {{'application.note.field.validityDurationAtMax' | translation}}
+                  </field-error>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div class="col m6">
+              <recurring formControlName="recurringEndYear" [readonly]="readonly"></recurring>
+            </div>
+          </div>
+          <div class="row form-group">
             <div class="col s6">
               <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="name" placeholder="Muistiinpanon nimi*"/>
@@ -24,46 +62,6 @@
                   </field-error>
                 </mat-hint>
               </mat-form-field>
-            </div>
-            <div formGroupName="validityTimes">
-              <div class="col s3">
-                <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
-                         [matDatepicker]="startTimePicker"/>
-                  <mat-datepicker-toggle matSuffix [for]="startTimePicker"
-                                         [disabled]="readonly"></mat-datepicker-toggle>
-                  <mat-datepicker #startTimePicker></mat-datepicker>
-                  <mat-hint>
-                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                      {{'application.common.field.validityStartTimeMissing' | translation}}
-                    </field-error>
-                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                      {{'application.common.field.validityStartBeforeEnd' | translation}}
-                    </field-error>
-                  </mat-hint>
-                </mat-form-field>
-              </div>
-              <div class="col s3">
-                <mat-form-field class="input-full-width">
-                  <input matInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
-                         [matDatepicker]="endTimePicker"/>
-                  <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                  <mat-datepicker #endTimePicker></mat-datepicker>
-                  <mat-hint>
-                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                      {{'application.note.field.validityEndTimeMissing' | translation}}
-                    </field-error>
-                    <field-error [form]="applicationForm" field="validityTimes" hasError="durationAtMax">
-                      {{'application.note.field.validityDurationAtMax' | translation}}
-                    </field-error>
-                  </mat-hint>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-          <div class="row form-group">
-            <div class="col m12">
-              <recurring formControlName="recurringEndYear" [readonly]="readonly"></recurring>
             </div>
           </div>
           <div class="row form-group">
