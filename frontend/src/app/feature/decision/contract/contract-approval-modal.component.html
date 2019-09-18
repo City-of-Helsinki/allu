@@ -5,7 +5,7 @@
   <form [formGroup]="approvalForm">
     <div fxLayout="row">
       <div fxFlex>
-        <mat-radio-group formControlName="approvalBasis">
+        <mat-radio-group formControlName="approvalBasis" class="horizontal-radio-group">
           <mat-radio-button value="contractAsAttachment">
             {{['contract.approval.basis.contractAsAttachment'] | translation}}
           </mat-radio-button>

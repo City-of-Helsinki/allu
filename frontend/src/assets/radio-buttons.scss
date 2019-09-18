@@ -22,12 +22,8 @@
   align-items: center;
 }
 
-.horizontal-radio-group .mat-radio-button {
-  margin: 0 5px;
-}
-
-.mat-radio-button:not(:first-of-type) {
-  margin: 5px 15px;
+.horizontal-radio-group .mat-radio-button:not(:first-of-type) {
+  margin-left: 10px;
 }
 
 .radio-group-error {
