@@ -184,6 +184,10 @@ export class ProjectEditComponent {
       filter(loading => !loading),
       switchMap(() => this.store.pipe(select(fromCustomerSearch.getSelectedCustomer))),
       take(1)
-    ).subscribe(customer => this.customerCtrl.patchValue(customer));
+    ).subscribe(customer => this.form.patchValue({
+        customerType: customer.type,
+        customer
+      })
+    );
   }
 }
