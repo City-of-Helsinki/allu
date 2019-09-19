@@ -78,14 +78,15 @@
       <mat-cell *matCellDef="let row">{{row.startTime | date:'shortDate'}}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="comments">
-      <mat-header-cell *matHeaderCellDef>{{'application.comments' | translation}}</mat-header-cell>
+    <ng-container matColumnDef="ownerNotification">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{'common.changes' | translation}}</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <span *ngIf="row.nrOfComments">
-          <button mat-raised-button type="button" color="primary" (click)="showComments(row.id)">
-            {{'common.button.show' | translation | uppercase}}
-          </button>
-        </span>
+        <button mat-raised-button
+                type="button"
+                color="accent"
+                *ngIf="row.ownerNotification">
+          {{'common.button.show' | translation | uppercase}}
+        </button>
       </mat-cell>
     </ng-container>
 

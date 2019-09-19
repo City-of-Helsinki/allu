@@ -1237,6 +1237,7 @@ export const translations = {
     select: 'Valitse',
     selectAll: 'Valitse kaikki',
     saving: 'Tallennus',
+    changes: 'Muutokset',
     field: {
       usernameMissing: 'Käyttäjänimi puuttuu',
       nameMissing: 'Nimi puuttuu',

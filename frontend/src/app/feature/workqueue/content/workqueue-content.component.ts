@@ -4,7 +4,6 @@ import {Observable, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {CommentsModalComponent} from '@feature/comment/comments-modal.component';
 import {ApplicationWorkItemDatasource} from './application-work-item-datasource';
 import {SupervisionWorkItem} from '@model/application/supervision/supervision-work-item';
 import {WorkQueueTab} from '@feature/workqueue/workqueue-tab';
@@ -29,7 +28,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   displayedColumns = [
     'selected', 'owner.userName', 'applicationId', 'type', 'status', 'project.identifier',
     'customers.applicant.customer.name', 'locations.address', 'locations.cityDistrictId',
-    'creationTime', 'startTime', 'comments'
+    'creationTime', 'startTime', 'ownerNotification'
   ];
   dataSource: ApplicationWorkItemDatasource;
   allSelected$: Observable<boolean>;
@@ -93,13 +92,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   checkSingle(id: number) {
     this.store.dispatch(new ToggleSelect(ActionTargetType.ApplicationWorkQueue, id));
-  }
-
-  showComments(applicationId: number): void {
-    const dialogRef = this.dialog.open<CommentsModalComponent>(CommentsModalComponent, {
-      disableClose: false, width: '800px'
-    });
-    dialogRef.componentInstance.applicationId = applicationId;
   }
 
   districtName(id: number): Observable<string> {
