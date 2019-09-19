@@ -63,6 +63,7 @@ import {DateReportingService} from '@service/application/date-reporting.service'
 import {ApplicationReplacementHistoryEffects} from '@feature/application/effects/application-replacement-history-effects';
 import {ApplicationIdentifierSelectModule} from '@feature/application/identifier-select/application-identifier-select.module';
 import {ApplicationSearchEffects} from '@feature/application/effects/application-search-effects';
+import {OwnerNotificationModule} from '@feature/application/owner-notification/owner-notification.module';
 
 @NgModule({
   imports: [
@@ -102,7 +103,8 @@ import {ApplicationSearchEffects} from '@feature/application/effects/application
     PdfModule,
     NotificationModule,
     DateReportingModule,
-    ApplicationIdentifierSelectModule
+    ApplicationIdentifierSelectModule,
+    OwnerNotificationModule
   ],
   declarations: [
     ApplicationComponent,

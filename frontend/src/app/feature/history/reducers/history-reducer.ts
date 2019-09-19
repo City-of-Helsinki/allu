@@ -15,7 +15,8 @@ export const initialState: State = {
 
 export function reducer(state: State = initialState, action: HistoryActions) {
   switch (action.type) {
-    case HistoryActionType.Load: {
+    case HistoryActionType.Load:
+    case HistoryActionType.LoadByTargetId: {
       return {
         ...state,
         history: [],

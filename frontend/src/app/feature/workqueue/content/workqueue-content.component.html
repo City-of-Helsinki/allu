@@ -84,7 +84,8 @@
         <button mat-raised-button
                 type="button"
                 color="accent"
-                *ngIf="row.ownerNotification">
+                *ngIf="row.ownerNotification"
+                (click)="showChanges(row.id)">
           {{'common.button.show' | translation | uppercase}}
         </button>
       </mat-cell>

@@ -18,6 +18,10 @@ import {ResetToFirstPage, ToggleSelect, ToggleSelectAll} from '@feature/applicat
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {SetTab} from '@feature/workqueue/actions/workqueue-actions';
 import {ApplicationTagType} from '@model/application/tag/application-tag-type';
+import {
+  OWNER_NOTIFICATION_MODAL_CONFIG,
+  OwnerNotificationModalComponent
+} from '@feature/application/owner-notification/owner-notification-modal.component';
 
 @Component({
   selector: 'workqueue-content',
@@ -119,5 +123,10 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   highlight(index: number) {
     const isHoveredRow = this.hoveredRowIndex === index;
     return this.hoveredRowIndex !== undefined && isHoveredRow;
+  }
+
+  showChanges(id) {
+    const config = { ...OWNER_NOTIFICATION_MODAL_CONFIG, data: { applicationId: id } };
+    this.dialog.open(OwnerNotificationModalComponent, config);
   }
 }

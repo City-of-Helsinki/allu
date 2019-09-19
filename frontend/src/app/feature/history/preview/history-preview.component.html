@@ -9,7 +9,7 @@
     </li>
   </ul>
 
-  <div fxLayout="row">
+  <div fxLayout="row" *ngIf="historyLink">
     <div fxFlex class="history-link">
       <a [routerLink]="historyLink">{{'history.showHistory' | translation}}</a>
     </div>

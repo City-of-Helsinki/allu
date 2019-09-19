@@ -540,6 +540,9 @@ export const translations = {
         isNumber: 'Tunnus saa sisältää vain numeroita',
         requiredLength: 'Sallittu tunnuksen pituus on {{length}} numeroa'
       }
+    },
+    ownerNotification: {
+      title: 'Hakemuksen muutokset'
     }
   },
   applicationSearch: {
