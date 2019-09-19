@@ -40,6 +40,7 @@ export class ApplicationMapper {
     application.receivedTime = TimeUtil.dateFromBackend(backendApplication.receivedTime);
     application.nrOfComments = backendApplication.nrOfComments;
     application.applicationTags = ApplicationTagMapper.mapSearchResultList(backendApplication.applicationTags);
+    application.ownerNotification = backendApplication.ownerNotification;
     return application;
   }
 
@@ -96,6 +97,7 @@ export class ApplicationMapper {
     application.targetState = backendApplication.targetState;
     application.invoicingPeriodLength = backendApplication.invoicingPeriodLength;
     application.version = backendApplication.version;
+    application.ownerNotification = backendApplication.ownerNotification;
     return application;
   }
 

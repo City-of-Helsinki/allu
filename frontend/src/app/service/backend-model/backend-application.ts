@@ -57,6 +57,7 @@ export interface BackendApplication {
   targetState?: ApplicationStatus;
   invoicingPeriodLength?: InvoicingPeriodLength;
   version: number;
+  ownerNotification?: boolean;
 }
 
 export interface SearchResultApplication {
@@ -75,4 +76,5 @@ export interface SearchResultApplication {
   locations: Array<SearchResultLocation>;
   nrOfComments: number;
   applicationTags: ApplicationTagType[];
+  ownerNotification: boolean;
 }

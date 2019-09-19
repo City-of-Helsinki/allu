@@ -58,6 +58,7 @@ export class Application {
     public clientApplicationData?: ClientApplicationData,
     public externalOwnerId?: number,
     public nrOfComments?: number,
+    public ownerNotification: boolean = false,
     public invoiced?: boolean,
     public invoicingChanged: boolean = false,
     public targetState?: ApplicationStatus,
