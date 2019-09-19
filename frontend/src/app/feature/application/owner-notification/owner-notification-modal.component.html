@@ -7,5 +7,21 @@
     mat-raised-button
     type="button"
     color="primary"
-    (click)="close()">{{'common.button.close' | translation | uppercase}}</button>
+    (click)="close()">
+    {{'common.button.close' | translation | uppercase}}
+  </button>
+  <button
+    mat-raised-button
+    type="button"
+    color="primary"
+    (click)="approveAndClose()">
+    {{'application.ownerNotification.approveAndClose' | translation | uppercase}}
+  </button>
+  <button
+    mat-raised-button
+    type="button"
+    color="accent"
+    (click)="approveAndShowApplication()">
+    {{'application.ownerNotification.showApplication' | translation | uppercase}}
+  </button>
 </div>

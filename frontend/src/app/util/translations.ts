@@ -60,7 +60,8 @@ export const translations = {
       reportCustomerOperationalCondition: 'Asiakkaan ilmoittaman toiminnallisen kunnon päivittäminen epäonnistui',
       reportCustomerWorkFinished: 'Asiakkaan ilmoittaman työn valmistumisen päivittäminen epäonnistui',
       reportCustomerValidity: 'Asiakkaan ilmoittaman voimassaolon päivittäminen epäonnistui',
-      confirmClientApplicationData: 'Asiakkaalta saapuneiden tietojen hyväksyminen epäonnistui'
+      confirmClientApplicationData: 'Asiakkaalta saapuneiden tietojen hyväksyminen epäonnistui',
+      removeOwnerNotification: 'Hakemuksen muutosten kuittaus epäonnistui'
     },
     action: {
       saved: 'Hakemus tallennettu',
@@ -71,6 +72,7 @@ export const translations = {
       reportCustomerOperationalCondition: 'Asiakkaan ilmoittama toiminnallinen kunto päivitetty',
       reportCustomerWorkFinished: 'Asiakkaan ilmoittama työn valmistuminen päivitetty',
       reportCustomerValidity: 'Asiakkaan ilmoittama voimassaolo päivitetty',
+      removeOwnerNotification: 'Ilmoitus hakemuksen muutoksista kuitattu'
     },
     progress: {
       location: 'Sijainti',
@@ -542,7 +544,9 @@ export const translations = {
       }
     },
     ownerNotification: {
-      title: 'Hakemuksen muutokset'
+      title: 'Hakemuksen muutokset',
+      approveAndClose: 'Sulje ja kuittaa',
+      showApplication: 'Näytä hakemus'
     }
   },
   applicationSearch: {

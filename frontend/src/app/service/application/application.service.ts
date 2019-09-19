@@ -241,5 +241,12 @@ export class ApplicationService {
       catchError(error => this.errorHandler.handle(error, findTranslation('application.error.confirmClientApplicationData')))
     );
   }
+
+  removeOwnerNotification(id: number): Observable<{}> {
+    const url = `${APPLICATIONS_URL}/${id}/ownernotification`;
+    return this.http.delete<void>(url).pipe(
+      catchError(error => this.errorHandler.handle(error, findTranslation('application.error.removeOwnerNotification')))
+    );
+  }
 }
 

@@ -88,6 +88,19 @@ export class ApplicationEffects {
   );
 
   @Effect()
+  removeOwnerNotification: Observable<Action> = this.actions.pipe(
+    ofType<ApplicationAction.RemoveOwnerNotification>(ApplicationActionType.RemoveOwnerNotification),
+    switchMap(action => this.applicationService.removeOwnerNotification(action.payload).pipe(
+      switchMap(() => [
+        new ApplicationAction.RemoveOwnerNotificationSuccess(),
+        new ApplicationAction.Load(action.payload),
+        new NotifySuccess(findTranslation('workqueue.notifications.ownerRemoved'))
+      ]),
+      catchError(error => of(new NotifyFailure(error)))
+    ))
+  );
+
+  @Effect()
   onApplicationLoad: Observable<Action> = this.actions.pipe(
     ofType<ApplicationAction.Load>(ApplicationActionType.Load),
     map(() => new ClearCoordinates())

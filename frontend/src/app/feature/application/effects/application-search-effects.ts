@@ -15,7 +15,12 @@ import {
   SearchSuccess
 } from '@feature/application/actions/application-search-actions';
 import {NotifyFailure} from '@feature/notification/actions/notification-actions';
-import {ApplicationActionType, ChangeOwnerSuccess, RemoveOwnerSuccess} from '@feature/application/actions/application-actions';
+import {
+  ApplicationActionType,
+  ChangeOwnerSuccess,
+  RemoveOwnerNotificationSuccess,
+  RemoveOwnerSuccess
+} from '@feature/application/actions/application-actions';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {ApplicationSearchQuery} from '@model/search/ApplicationSearchQuery';
 import {Sort} from '@model/common/sort';
@@ -57,8 +62,12 @@ export class ApplicationSearchEffects {
   );
 
   @Effect()
-  onOwnerChanges: Observable<Action> = this.actions.pipe(
-    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess>(ApplicationActionType.ChangeOwnerSuccess, ApplicationActionType.RemoveOwnerSuccess),
+  refreshWorkQueueSearch: Observable<Action> = this.actions.pipe(
+    ofType<ChangeOwnerSuccess | RemoveOwnerSuccess | RemoveOwnerNotificationSuccess>(
+      ApplicationActionType.ChangeOwnerSuccess,
+      ApplicationActionType.RemoveOwnerSuccess,
+      ApplicationActionType.RemoveOwnerNotificationSuccess
+    ),
     switchMap(() => this.getCurrentWorkQueueSearch()),
     switchMap(([search, sort, pageRequest]) => [
       new Search(ActionTargetType.ApplicationWorkQueue, search, sort, pageRequest),

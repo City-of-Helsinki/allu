@@ -16,6 +16,8 @@ export enum ApplicationActionType {
   ChangeOwnerSuccess = '[Application] Change owner for chosen applications success',
   RemoveOwner = '[Application] Remove owner from chosen applications',
   RemoveOwnerSuccess = '[Application] Remove owner from chosen applications success',
+  RemoveOwnerNotification = '[Application] Remove owner notification from chosen application',
+  RemoveOwnerNotificationSuccess = '[Application] Remove owner notification from chosen application success',
 }
 
 export class Load implements Action {
@@ -75,6 +77,16 @@ export class RemoveOwnerSuccess implements Action {
   readonly type = ApplicationActionType.RemoveOwnerSuccess;
 }
 
+export class RemoveOwnerNotification implements Action {
+  readonly type = ApplicationActionType.RemoveOwnerNotification;
+
+  constructor(public payload: number) {}
+}
+
+export class RemoveOwnerNotificationSuccess implements Action {
+  readonly type = ApplicationActionType.RemoveOwnerNotificationSuccess;
+}
+
 export type ApplicationActions =
   | Load
   | LoadSuccess
@@ -85,4 +97,6 @@ export type ApplicationActions =
   | ChangeOwner
   | ChangeOwnerSuccess
   | RemoveOwner
-  | RemoveOwnerSuccess;
+  | RemoveOwnerSuccess
+  | RemoveOwnerNotification
+  | RemoveOwnerNotificationSuccess;
