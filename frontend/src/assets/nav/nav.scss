@@ -53,6 +53,11 @@ nav.nav-bar-secondary {
 .labels-end .mat-tab-links {
   justify-content: flex-end;
   padding-right:10%;
+
+}
+
+.labels-end .mat-tab-list {
+  max-width: 95vw;
 }
 
 .mat-tab-links {
