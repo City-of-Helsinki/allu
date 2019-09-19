@@ -61,6 +61,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
       map(data => data.tab),
       takeUntil(this.destroy)
     ).subscribe((tab: WorkQueueTab) => {
+      this.updateDisplayedColumns(tab);
       this.store.dispatch(new SetTab(ActionTargetType.ApplicationWorkQueue, tab));
       this.store.dispatch(new ResetToFirstPage(ActionTargetType.ApplicationWorkQueue));
     });
@@ -128,5 +129,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   showChanges(id) {
     const config = { ...OWNER_NOTIFICATION_MODAL_CONFIG, data: { applicationId: id } };
     this.dialog.open(OwnerNotificationModalComponent, config);
+  }
+
+  private updateDisplayedColumns(tab: WorkQueueTab): void {
+    if (WorkQueueTab.COMMON === tab) {
+      this.displayedColumns = this.displayedColumns.filter(col => col !== 'ownerNotification');
+    }
   }
 }
