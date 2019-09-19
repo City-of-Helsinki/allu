@@ -50,22 +50,24 @@
           </div>
 
           <div class="unboxed">
-            <section>
-              <h2>Kohde</h2>
-              <p class="indented space-above"><xsl:value-of select="data/name" /></p>
-              <p class="indented">
-                <!-- [Vuokrattava paikka, Lohko], [Osoite] -->
-                <xsl:value-of select="data/siteAddressLine"/>
-              </p>
-              <xsl:if test="data/siteAdditionalInfo != ''">
-                <p class="indented space-above">
-                  <!-- Käytetään, jos Lisätietoja paikasta täytetty -->
-                  <!-- [Lisätietoja paikasta] -->
-                  <xsl:value-of select="data/siteAdditionalInfo"/>
+            <div class="unboxed avoid-pb">
+              <section>
+                <h2>Kohde</h2>
+                <p class="indented space-above"><xsl:value-of select="data/name" /></p>
+                <p class="indented">
+                  <!-- [Vuokrattava paikka, Lohko], [Osoite] -->
+                  <xsl:value-of select="data/siteAddressLine"/>
                 </p>
-              </xsl:if>
-              <p class="indented space-above">Kaupunginosa: <xsl:value-of select="data/siteCityDistrict"/></p>
-            </section>
+                <xsl:if test="data/siteAdditionalInfo != ''">
+                  <p class="indented space-above">
+                    <!-- Käytetään, jos Lisätietoja paikasta täytetty -->
+                    <!-- [Lisätietoja paikasta] -->
+                    <xsl:value-of select="data/siteAdditionalInfo"/>
+                  </p>
+                </xsl:if>
+                <p class="indented space-above">Kaupunginosa: <xsl:value-of select="data/siteCityDistrict"/></p>
+              </section>
+            </div>
 
             <div class="unboxed avoid-pb">
               <section>
