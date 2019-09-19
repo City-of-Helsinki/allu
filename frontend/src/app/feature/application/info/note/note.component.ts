@@ -62,9 +62,10 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
 
   private onRecurringEndYearChanged(val: number) {
     if (val) {
-      this.validityTimesControl.setValidators(
-          [ComplexValidator.durationAtMax('startTime', 'endTime', 364),
-           ComplexValidator.startBeforeEnd('startTime', 'endTime')]);
+      this.validityTimesControl.setValidators([
+        ComplexValidator.durationAtMax('startTime', 'endTime', 1, 'year'),
+        ComplexValidator.startBeforeEnd('startTime', 'endTime')
+      ]);
     } else {
       this.validityTimesControl.setValidators(ComplexValidator.startBeforeEnd('startTime', 'endTime'));
     }

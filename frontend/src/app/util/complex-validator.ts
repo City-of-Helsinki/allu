@@ -3,6 +3,7 @@ import {Some} from './option';
 import {TimeUtil} from './time.util';
 import {NumberUtil} from './number.util';
 import * as finnishSsn from 'finnish-ssn';
+import {unitOfTime} from 'moment';
 
 /**
  * Implements more complex validations than angular2 provides out of the box
@@ -106,15 +107,13 @@ export class ComplexValidator {
     };
   }
 
-  static durationAtMax(startField: string, endField: string, maxDurationAtDays: number): ValidatorFn {
+  static durationAtMax(startField: string, endField: string, maxDuration: number, unit: unitOfTime.DurationConstructor): ValidatorFn {
     return (fg: FormGroup) => {
       const start = this.fieldValue(fg, startField);
       const end = this.fieldValue(fg, endField);
 
       if (start && end) {
-        const maxEnd = new Date(start);
-        maxEnd.setDate(maxEnd.getDate() + maxDurationAtDays);
-
+        const maxEnd = TimeUtil.add(new Date(start), maxDuration, unit);
         const valid = TimeUtil.isBefore(end, maxEnd);
 
         // undefined means valid field
