@@ -2,22 +2,22 @@
   <div class="search-bar">
     <h1>{{'common.search' | translation | uppercase}}</h1>
     <form [formGroup]="queryForm" (ngSubmit)="search()">
-      <div class="row">
-        <div class="col m3">
+      <div fxLayout="row" fxLayoutGap="18px">
+        <div fxFlex="20%">
           <mat-form-field class="input-full-width">
             <input matInput type="text"
                    formControlName="ownerName"
                    [placeholder]="'projectSearch.owner' | translation"/>
           </mat-form-field>
         </div>
-        <div class="col m2">
+        <div fxFlex="20%">
           <mat-form-field class="input-full-width">
             <input matInput type="text"
                    formControlName="identifier"
                    [placeholder]="'projectSearch.identifier' | translation"/>
           </mat-form-field>
         </div>
-        <div class="col m2">
+        <div fxFlex="20%">
           <mat-form-field class="input-full-width">
             <mat-select formControlName="districts"
                         [multiple]="true"
@@ -28,7 +28,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col m1">
+        <div fxFlex="10%">
           <mat-form-field class="input-full-width">
             <input matInput
                    type="text"
@@ -39,7 +39,7 @@
             <mat-datepicker #startTimePicker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="col m1">
+        <div fxFlex="10%">
           <mat-form-field class="input-full-width">
             <input matInput type="text"
                    formControlName="endTime"
@@ -49,7 +49,7 @@
             <mat-datepicker #endTimePicker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="col m3">
+        <div fxFlex="20%">
           <mat-form-field class="input-full-width">
             <input matInput
                    type="text"
@@ -58,13 +58,13 @@
           </mat-form-field>
         </div>
       </div>
-      <div class="row">
-        <div class="col m3">
+      <div fxLayout="row">
+        <div fxFlex>
           <mat-checkbox formControlName="onlyActive">{{'projectSearch.onlyActive' | translation}}</mat-checkbox>
         </div>
       </div>
-      <div class="row">
-        <div class="col m12 s12">
+      <div fxLayout="row">
+        <div fxFlex>
           <button mat-raised-button type="submit" color="primary">
             {{'common.button.search' | translation | uppercase}}
           </button>
@@ -73,8 +73,8 @@
     </form>
   </div>
 
-  <div class="row">
-    <div class=" col s12">
+  <div fxLayout="row">
+    <div fxFlex>
       <div class="mat-elevation-z8 data-table data-table-with-paging">
         <div class="loading-shade" *ngIf="dataSource.loading">
           <mat-spinner></mat-spinner>
