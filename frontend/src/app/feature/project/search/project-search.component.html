@@ -59,52 +59,51 @@
 
   <div class="row">
     <div class=" col s12">
-      <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
-        <ng-container matColumnDef="identifier">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.id' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <a class="row-details-link" [routerLink]="['/projects', row.id]">
-              {{row.identifier}}
-            </a>
-          </mat-cell>
-        </ng-container>
+      <div class="mat-elevation-z8 data-table data-table-with-paging">
+        <div class="loading-shade" *ngIf="dataSource.loading">
+          <mat-spinner></mat-spinner>
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort [trackBy]="trackById">
+          <ng-container matColumnDef="identifier">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.id' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <a class="row-details-link" [routerLink]="['/projects', row.id]">
+                {{row.identifier}}
+              </a>
+            </mat-cell>
+          </ng-container>
 
-        <ng-container matColumnDef="ownerName">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.ownerName' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.customer.name}}</mat-cell>
-        </ng-container>
+          <ng-container matColumnDef="ownerName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.ownerName' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.customer.name}}</mat-cell>
+          </ng-container>
 
-        <ng-container matColumnDef="active">
-          <mat-header-cell *matHeaderCellDef mat-sort-header disabled>{{'project.state' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{['project.active', row.active] | translation}}</mat-cell>
-        </ng-container>
+          <ng-container matColumnDef="active">
+            <mat-header-cell *matHeaderCellDef mat-sort-header disabled>{{'project.state' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{['project.active', row.active] | translation}}</mat-cell>
+          </ng-container>
 
-        <ng-container matColumnDef="cityDistricts">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.cityDistricts' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{districtNames(row.cityDistricts) | async | commaSeparated}}</mat-cell>
-        </ng-container>
+          <ng-container matColumnDef="cityDistricts">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.cityDistricts' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{districtNames(row.cityDistricts) | async | commaSeparated}}</mat-cell>
+          </ng-container>
 
-        <ng-container matColumnDef="startTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.startTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.startTime | date:'shortDate'}}</mat-cell>
-        </ng-container>
+          <ng-container matColumnDef="startTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.startTime' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.startTime | date:'shortDate'}}</mat-cell>
+          </ng-container>
 
-        <ng-container matColumnDef="endTime">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.endTime' | translation}}</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.endTime| date:'shortDate'}}</mat-cell>
-        </ng-container>
+          <ng-container matColumnDef="endTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{'project.endTime' | translation}}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.endTime| date:'shortDate'}}</mat-cell>
+          </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"
-                 class="row-highlight"></mat-row>
-      </mat-table>
+          <mat-header-row *matHeaderRowDef="displayedColumns" class="allu-table-header"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"
+                   class="row-highlight"></mat-row>
+        </mat-table>
 
-      <mat-paginator #paginator
-                     [length]="dataSource.pageSnapshot.totalElements"
-                     [pageIndex]="dataSource.pageSnapshot.pageNumber"
-                     [pageSize]="25"
-                     [pageSizeOptions]="[5, 10, 25, 100]">
-      </mat-paginator>
+        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
     </div>
   </div>
-</div>

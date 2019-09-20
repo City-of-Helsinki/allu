@@ -7,19 +7,19 @@ export class ProjectSearchQuery {
   public onlyActive?: boolean;
   public districts?: Array<string>;
   public creator?: number;
+}
 
-  static fromForm(form: ProjectSearchQueryForm): ProjectSearchQuery {
-    const query = new ProjectSearchQuery();
-    query.id = form.id;
-    query.identifier = form.identifier;
-    query.startTime = form.startTime;
-    query.endTime = form.endTime;
-    query.ownerName = form.ownerName;
-    query.onlyActive = form.onlyActive;
-    query.districts = form.districts;
-    query.creator = form.creator;
-    return query;
-  }
+export function fromForm(form: ProjectSearchQueryForm): ProjectSearchQuery {
+  const query = new ProjectSearchQuery();
+  query.id = form.id;
+  query.identifier = form.identifier;
+  query.startTime = form.startTime;
+  query.endTime = form.endTime;
+  query.ownerName = form.ownerName;
+  query.onlyActive = form.onlyActive;
+  query.districts = form.districts;
+  query.creator = form.creator;
+  return query;
 }
 
 interface ProjectSearchQueryForm {
