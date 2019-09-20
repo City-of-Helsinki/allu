@@ -52,7 +52,7 @@ export class HistoryComponent implements OnInit {
 
   private splitByTime(changes: ChangeHistoryItem[]): void {
     const today = new Date();
-    const week = TimeUtil.add(new Date(), 7, 'day');
+    const weekBefore = TimeUtil.subract(new Date(), 7, 'day');
 
     const byTime = {
       today: [],
@@ -63,7 +63,7 @@ export class HistoryComponent implements OnInit {
     changes.forEach(change => {
       if (TimeUtil.isSame(change.changeTime, today, 'day')) {
         byTime.today = byTime.today.concat(change);
-      } else if (!TimeUtil.isAfter(change.changeTime, week)) {
+      } else if (!TimeUtil.isAfter(change.changeTime, weekBefore)) {
         byTime.withinWeek = byTime.withinWeek.concat(change);
       } else {
         byTime.older = byTime.older.concat(change);
