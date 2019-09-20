@@ -1,21 +1,27 @@
 <div class="main-content">
   <div class="search-bar">
-    <h1>HAKU</h1>
+    <h1>{{'common.search' | translation | uppercase}}</h1>
     <form [formGroup]="queryForm" (ngSubmit)="search()">
       <div class="row">
         <div class="col m3">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="ownerName" placeholder="Hankkeen omistaja"/>
+            <input matInput type="text"
+                   formControlName="ownerName"
+                   [placeholder]="'projectSearch.owner' | translation"/>
           </mat-form-field>
         </div>
         <div class="col m2">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="identifier" placeholder="Hankkeen tunnus"/>
+            <input matInput type="text"
+                   formControlName="identifier"
+                   [placeholder]="'projectSearch.identifier' | translation"/>
           </mat-form-field>
         </div>
         <div class="col m2">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa"
+            <mat-select formControlName="districts"
+                        [multiple]="true"
+                        [placeholder]="'projectSearch.districts' | translation"
                         class="input-full-width">
               <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}
               </mat-option>
@@ -24,7 +30,10 @@
         </div>
         <div class="col m1">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="startTime" placeholder="Alkupvm"
+            <input matInput
+                   type="text"
+                   formControlName="startTime"
+                   [placeholder]="'projectSearch.startTime' | translation"
                    [matDatepicker]="startTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #startTimePicker></mat-datepicker>
@@ -32,7 +41,9 @@
         </div>
         <div class="col m1">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="endTime" placeholder="Loppupvm"
+            <input matInput type="text"
+                   formControlName="endTime"
+                   [placeholder]="'projectSearch.endTime' | translation"
                    [matDatepicker]="endTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #endTimePicker></mat-datepicker>
@@ -40,18 +51,23 @@
         </div>
         <div class="col m3">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="creator" placeholder="Hankkeen lisääjä"/>
+            <input matInput
+                   type="text"
+                   formControlName="creator"
+                   [placeholder]="'projectSearch.creator' | translation"/>
           </mat-form-field>
         </div>
       </div>
       <div class="row">
         <div class="col m3">
-          <mat-checkbox formControlName="onlyActive">Vain aktiiviset</mat-checkbox>
+          <mat-checkbox formControlName="onlyActive">{{'projectSearch.onlyActive' | translation}}</mat-checkbox>
         </div>
       </div>
       <div class="row">
         <div class="col m12 s12">
-          <button mat-raised-button type="submit" color="primary">HAE</button>
+          <button mat-raised-button type="submit" color="primary">
+            {{'common.button.search' | translation | uppercase}}
+          </button>
         </div>
       </div>
     </form>

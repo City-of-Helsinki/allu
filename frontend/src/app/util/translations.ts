@@ -769,6 +769,16 @@ export const translations = {
       cancelText: 'Hylkää'
     }
   },
+  projectSearch: {
+    owner: 'Hankkeen omistaja',
+    identifier: 'Hankkeen tunnus',
+    districts: 'Kaupunginosat',
+    startTime: 'Alkupäivä',
+    endTime: 'Loppupäivä',
+    creator: 'Hankkeen lisääjä',
+    onlyActive: 'Vain aktiiviset',
+
+  },
   customer: {
     newCustomer: 'Luo uusi asiakas',
     nameLabel: 'Nimi',
@@ -1241,6 +1251,7 @@ export const translations = {
   common: {
     filter: 'Suodata',
     freeTextSearch: 'Vapaa tekstihaku',
+    search: 'Haku',
     select: 'Valitse',
     selectAll: 'Valitse kaikki',
     saving: 'Tallennus',
