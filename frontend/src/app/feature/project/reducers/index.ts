@@ -18,6 +18,7 @@ import {ArrayUtil} from '@util/array-util';
 import {ActionTargetType} from '@feature/allu/actions/action-target-type';
 import {InjectionToken} from '@angular/core';
 import {createMapLayerSelectors} from '@feature/map/reducers';
+import {createProjectSearchSelectors} from './project-search-reducer';
 
 
 export interface ProjectState {
@@ -117,10 +118,15 @@ export const getProjectSearchState = createSelector(
   (state: ProjectState) => state.projectSearch
 );
 
-export const getMatchingProjects = createSelector(
-  getProjectSearchState,
-  fromProjectSearch.getMatching
-);
+export const {
+  getMatching: getMatching,
+  getMatchingList: getMatchingList,
+  getMatchingIds: getMatchingIds,
+  getSearching: getSearching,
+  getParameters: getParameters,
+  getSort: getSort,
+  getPageRequest: getPageRequest
+} = createProjectSearchSelectors(getProjectSearchState);
 
 // Application search selectors
 export const getApplicationSearchState = createSelector(

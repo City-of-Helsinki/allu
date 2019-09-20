@@ -7,6 +7,7 @@ import {RemoveParent} from '../actions/project-actions';
 import {map, withLatestFrom} from 'rxjs/internal/operators';
 import {Add} from '../actions/child-project-actions';
 import {Search} from '../actions/project-search-actions';
+import {ProjectSearchQuery} from '@model/project/project-search-query';
 
 @Component({
   selector: 'related-projects',
@@ -30,8 +31,8 @@ export class RelatedProjectsComponent implements OnInit {
   }
 
   projectSelectSearchChange(term: string): void {
-    this.store.dispatch(new Search(term));
-    this.matchingProjects$ = this.store.select(fromProject.getMatchingProjects).pipe(
+    this.store.dispatch(new Search({identifier: term}));
+    this.matchingProjects$ = this.store.select(fromProject.getMatchingList).pipe(
       withLatestFrom(this.store.select(fromProject.getCurrentProject)),
       // Filter those which already belong to this project
       map(([projects, current]) => this.filterEligibleProjects(current, projects)),

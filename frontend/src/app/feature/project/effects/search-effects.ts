@@ -20,8 +20,7 @@ export class SearchEffects {
   projectSearch: Observable<Action> = this.actions.pipe(
     ofType<project.Search>(ProjectSearchActionType.Search),
     map(action => action.payload),
-    filter(term => term && term.length > 2),
-    switchMap(searchTerm => this.projectService.identifierSearch(searchTerm).pipe(
+    switchMap(params => this.projectService.pagedSearch(params.query, params.sort, params.pageRequest).pipe(
       map(projects => new project.SearchSuccess(projects)),
       catchError(error => of(new project.SearchFailed(error)))
     ))
