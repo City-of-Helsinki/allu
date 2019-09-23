@@ -295,10 +295,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapStore.locationSearchFilterChange(searchFilter);
   }
 
-  storeLocation(form: LocationForm): void {
+  storeLocation(): void {
+    this.mapController.savePending();
+    const form: LocationForm = this.locationForm.value;
     this.locationState.storeLocation(LocationForm.to(form));
     this.resetForm(form);
-    this.mapController.clearEdited();
   }
 
   cancelArea(form: LocationForm): void {
