@@ -63,7 +63,7 @@ export class HistoryComponent implements OnInit {
     changes.forEach(change => {
       if (TimeUtil.isSame(change.changeTime, today, 'day')) {
         byTime.today = byTime.today.concat(change);
-      } else if (!TimeUtil.isAfter(change.changeTime, weekBefore)) {
+      } else if (!TimeUtil.isBefore(change.changeTime, weekBefore, 'day')) {
         byTime.withinWeek = byTime.withinWeek.concat(change);
       } else {
         byTime.older = byTime.older.concat(change);
