@@ -99,6 +99,15 @@ public class SearchService {
   }
 
   /**
+   * Updates field of application with given value in search index
+   */
+  public <T> void updateApplicationField(int applicationId, String fieldName, T fieldValue) {
+    HashMap<Integer, Map<String, T>> applicationFields = new HashMap<>();
+    applicationFields.put(applicationId, Collections.singletonMap(fieldName, fieldValue));
+    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), applicationFields);
+  }
+
+  /**
    * Delete a note from search-service's database.
    *
    * @param applicationId note application's database ID
