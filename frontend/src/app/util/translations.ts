@@ -780,6 +780,7 @@ export const translations = {
 
   },
   customer: {
+    registryTitle: 'Asiakastiedot',
     newCustomer: 'Luo uusi asiakas',
     nameLabel: 'Nimi',
     registryKey: 'Tunniste',

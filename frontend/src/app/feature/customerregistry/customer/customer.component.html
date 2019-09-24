@@ -3,7 +3,19 @@
     <div class="row" formGroupName="customer">
       <div class="col m6">
         <allu-card>
-          <mat-card-title>Asiakastiedot</mat-card-title>
+          <mat-card-title>
+            <div fxLayout="row" fxFlexAlign="space-between">
+              <div fxFlex>
+                {{'customer.registryTitle' | translation}}
+              </div>
+              <div fxFlex *ngIf="customerForm.getRawValue().invoicingProhibited" class="align-right">
+                <mat-icon color="accent" class="align-with-text">
+                  report_problem
+                </mat-icon>
+                <span class="title-normal">{{'customer.invoicingProhibited' | translation}}</span>
+              </div>
+            </div>
+          </mat-card-title>
           <mat-card-content>
             <customer-info [form]="customerForm" [showInvoicingOnly]="true" [showInvoicingInfo]="true"
               [showInvoicingProhibited]="true"></customer-info>
