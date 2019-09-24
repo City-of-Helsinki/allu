@@ -8,6 +8,7 @@ import {ExternalUpdateNotificationService} from '@feature/application/notificati
 import {
   ExternalUpdateNotificationComponent
 } from '@feature/application/notification/external-update/external-update-notification.component';
+import {OwnerNotificationComponent} from '@feature/application/notification/owner-notification/owner-notification.component';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import {
   declarations: [
     ApplicationNotificationComponent,
     ApplicationNotificationEntryDirective,
-    ExternalUpdateNotificationComponent
+    ExternalUpdateNotificationComponent,
+    OwnerNotificationComponent
   ],
   providers: [
     ExternalUpdateNotificationService
@@ -24,7 +26,8 @@ import {
   exports: [
     ApplicationNotificationComponent,
     ApplicationNotificationEntryDirective,
-    ExternalUpdateNotificationComponent
+    ExternalUpdateNotificationComponent,
+    OwnerNotificationComponent
   ]
 })
 export class NotificationModule {}

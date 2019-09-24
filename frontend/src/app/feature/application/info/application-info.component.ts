@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import {ApplicationStore} from '@service/application/application-store';
 import {UrlUtil} from '@util/url.util';
 import {ActivatedRoute} from '@angular/router';
@@ -12,7 +12,7 @@ import * as fromRoot from '@feature/allu/reducers';
 import * as fromAuth from '@feature/auth/reducers';
 import * as fromApplication from '../reducers';
 import * as fromInformationRequest from '@feature/information-request/reducers';
-import {filter, map, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/internal/operators';
+import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/internal/operators';
 import * as InformationRequestResultAction from '@feature/information-request/actions/information-request-result-actions';
 import {InformationRequestResult} from '@feature/information-request/information-request-result';
 import {SetKindsWithSpecifiers} from '@feature/application/actions/application-actions';
@@ -41,6 +41,7 @@ import {ClientApplicationData} from '@model/application/client-application-data'
 import {ApplicationType} from '@model/application/type/application-type';
 import {ExternalUpdateNotificationType} from '@feature/application/notification/external-update/external-update-notification.component';
 import {ExternalUpdateNotificationService} from '@feature/application/notification/external-update/external-update-notification.service';
+import {User} from '@model/user/user';
 
 @Component({
   selector: 'application-info',
@@ -55,6 +56,8 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
   showDraftSelection: boolean;
   readonly: boolean;
   notificationType$: Observable<ExternalUpdateNotificationType>;
+  application$: Observable<Application>;
+  showOwnerNotification$: Observable<boolean>;
 
   private destroy = new Subject<boolean>();
 
@@ -67,10 +70,9 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    const application = this.applicationStore.snapshot.application;
-    this.form = this.fb.group(applicationForm(application));
-    this.type = application.type;
-    this.showDraftSelection = this.shouldShowDraftSelection(application);
+    this.initForm();
+
+    this.application$ = this.store.pipe(select(fromApplication.getCurrentApplication));
 
     this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary');
     this.notificationType$ = this.applicationNotificationService.getNotificationType();
@@ -84,6 +86,13 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
       takeUntil(this.destroy),
       filter(open => open)
     ).subscribe(() => this.showInformationRequest());
+
+    this.showOwnerNotification$ = combineLatest([
+      this.store.pipe(select(fromApplication.getCurrentApplication)),
+      this.store.pipe(select(fromAuth.getUser))
+    ]).pipe(
+      map(([app, user]) => app.ownerNotification && app.owner && app.owner.id === user.id)
+    );
   }
 
   ngOnDestroy(): void {
@@ -236,5 +245,16 @@ export class ApplicationInfoComponent implements OnInit, CanComponentDeactivate,
     fields = clientData.propertyDeveloper ? fields.concat(InformationRequestFieldKey.PROPERTY_DEVELOPER) : fields;
     fields = clientData.contractor ? fields.concat(InformationRequestFieldKey.CONTRACTOR) : fields;
     return fields;
+  }
+
+  private initForm(): void {
+    this.store.pipe(
+      select(fromApplication.getCurrentApplication),
+      take(1)
+    ).subscribe(app => {
+      this.form = this.fb.group(applicationForm(app));
+      this.type = app.type;
+      this.showDraftSelection = this.shouldShowDraftSelection(app);
+    });
   }
 }

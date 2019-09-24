@@ -533,6 +533,7 @@ export const translations = {
         INFORMATION_REQUEST_RESPONSE: 'Hakemus sisältää tietopäivityksiä.',
         PENDING_CLIENT_DATA: 'Hakemus sisältää tietopäivityksiä.'
       },
+      ownerNotification: 'Hakemuksen tiedot muuttuneet',
       show: 'Näytä'
     },
     identifiers: {
@@ -546,7 +547,8 @@ export const translations = {
     ownerNotification: {
       title: 'Hakemuksen muutokset',
       approveAndClose: 'Sulje ja kuittaa',
-      showApplication: 'Näytä hakemus'
+      showApplication: 'Näytä hakemus',
+      approve: 'Kuittaa'
     }
   },
   applicationSearch: {

@@ -6,6 +6,11 @@
         application-notification-entry
         [type]="notificationType">
       </external-update-notification>
+      <owner-notification
+        *ngIf="showOwnerNotification$ | async"
+        application-notification-entry
+        [applicationId]="(application$ | async).id">
+      </owner-notification>
     </application-notification>
   </div>
 </div>

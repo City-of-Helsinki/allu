@@ -94,7 +94,7 @@ export class ApplicationEffects {
       switchMap(() => [
         new ApplicationAction.RemoveOwnerNotificationSuccess(),
         new ApplicationAction.Load(action.payload),
-        new NotifySuccess(findTranslation('workqueue.notifications.ownerRemoved'))
+        new NotifySuccess(findTranslation('application.action.removeOwnerNotification'))
       ]),
       catchError(error => of(new NotifyFailure(error)))
     ))

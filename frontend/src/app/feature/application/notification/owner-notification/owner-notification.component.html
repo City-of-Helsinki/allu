@@ -1,0 +1,25 @@
+<div class="notification">
+  <div class="notification-content" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px">
+    <div fxFlex="none">
+      <mat-icon>warning</mat-icon>
+    </div>
+    <div fxFlex="none">
+      {{['application.notification.ownerNotification'] | translation}}
+    </div>
+    <div fxFlex="none">
+      <a class="clickable" (click)="show()">{{'application.notification.show' | translation}}</a>
+    </div>
+    <div fxFlex>
+      <div fxLayout="row" fxLayoutAlign="end center" class="inner-row">
+        <button
+          fxFlex="none"
+          type="button"
+          mat-flat-button
+          color="accent"
+          (click)="approve()">
+          {{'application.ownerNotification.approve' | translation | uppercase}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
